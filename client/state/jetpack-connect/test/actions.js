@@ -6,6 +6,7 @@
  * Internal dependencies
  */
 import * as actions from '../actions';
+import * as loginActions from 'state/login/actions';
 import useNock from 'test/helpers/use-nock';
 import wpcom from 'lib/wp';
 import {
@@ -432,5 +433,44 @@ describe( '#createAccount()', () => {
 
 		const spy = jest.fn();
 		expect( createAccount( userData )( spy ) ).rejects.toBe( error );
+	} );
+} );
+
+describe( '#createSocialAccount()', () => {
+	const { createSocialAccount } = actions;
+
+	beforeEach( jest.restoreAllMocks );
+
+	test( 'should dispatch create action', async () => {
+		const spy = jest.fn();
+		jest.spyOn( loginActions, 'createSocialUser' ).mockImplementation( () => async () => ( {} ) );
+		await createSocialAccount()( spy );
+		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
+	} );
+
+	test( 'should not continue on error', async () => {
+		jest.spyOn( loginActions, 'createSocialUser' ).mockImplementation( () => async () => {
+			throw { message: 'An error message', code: 'an_error_code' };
+		} );
+		const spy = jest.fn();
+
+		await createSocialAccount()( spy );
+		expect( spy ).not.toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE } );
+	} );
+
+	test( 'should dispatch receive action with appropriate data', async () => {
+		const username = 'a_happy_user';
+		const bearerToken = 'foobar';
+		jest
+			.spyOn( loginActions, 'createSocialUser' )
+			.mockImplementation( () => async () => ( { username, bearerToken } ) );
+		const spy = jest.fn();
+
+		await createSocialAccount()( spy );
+		expect( spy ).toHaveBeenCalledWith( {
+			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+			userData: { username },
+			data: { bearer_token: bearerToken },
+		} );
 	} );
 } );
