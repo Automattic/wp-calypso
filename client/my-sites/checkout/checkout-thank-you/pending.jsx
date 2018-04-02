@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { getSourcePaymentTransactionDetail } from 'state/selectors';
+import { getOrderTransaction } from 'state/selectors';
 
 class CheckoutPending extends PureComponent {
 	static propTypes = {
@@ -46,5 +46,5 @@ class CheckoutPending extends PureComponent {
 }
 
 export default connect( ( state, props ) => ( {
-	paymentInfo: getSourcePaymentTransactionDetail( state, props.orderId ),
+	transaction: getOrderTransaction( state, props.orderId ),
 } ) )( CheckoutPending );
