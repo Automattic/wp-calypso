@@ -10,12 +10,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchSourcePaymentTransactionDetail } from 'state/transactions/source-payment/actions';
-import { getSourcePaymentTransactionDetail } from 'state/selectors';
+import { fetchOrderTransaction } from 'state/order-transactions/actions';
+import { getOrderTransaction } from 'state/selectors';
 
 class QuerySourcePaymentTransactionDetail extends React.Component {
 	static propTypes = {
 		pollIntervalMs: PropTypes.number,
+		transaction: PropTypes.object.isRequired,
+		fetchTransaction: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -23,20 +25,20 @@ class QuerySourcePaymentTransactionDetail extends React.Component {
 	};
 
 	componentDidMount() {
-		const { pollIntervalMs, orderId, transactionDetail, fetchTransactionDetail } = this.props;
+		const { pollIntervalMs, orderId, transaction, fetchTransaction } = this.props;
 
 		if ( pollIntervalMs ) {
 			this.timer = setInterval( () => {
 				// no need to fetch if it's there.
-				if ( null !== transactionDetail ) {
+				if ( null !== transaction ) {
 					return;
 				}
-				fetchTransactionDetail( orderId );
+				fetchTransaction( orderId );
 			}, pollIntervalMs );
 			return;
 		}
 
-		this.props.fetchTransactionDetail( orderId );
+		fetchTransaction( orderId );
 	}
 
 	componentWillUnmount() {
@@ -52,9 +54,9 @@ class QuerySourcePaymentTransactionDetail extends React.Component {
 
 export default connect(
 	( state, props ) => ( {
-		transactionDetail: getSourcePaymentTransactionDetail( state, props.orderId ),
+		transaction: getOrderTransaction( state, props.orderId ),
 	} ),
 	{
-		fetchTransactionDetail: fetchSourcePaymentTransactionDetail,
+		fetchTransaction: fetchOrderTransaction,
 	}
 )( QuerySourcePaymentTransactionDetail );
