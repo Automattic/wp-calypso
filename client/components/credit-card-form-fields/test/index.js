@@ -15,7 +15,6 @@ import { identity, noop } from 'lodash';
  */
 import { CreditCardFormFields } from '../';
 import { shouldRenderAdditionalEbanxFields } from 'lib/checkout/ebanx';
-
 import mockCountriesList from './mocks/mock-countries-list';
 
 jest.mock( 'i18n-calypso', () => ( {
