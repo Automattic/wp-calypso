@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
-
 import moment from 'moment';
+import { format as urlFormat, parse as urlParse } from 'url';
 import { difference, find, get, includes, invoke, pick, values } from 'lodash';
 
 /**
@@ -335,15 +335,16 @@ export const isPlanFeaturesEnabled = () => {
 };
 
 export function plansLink( url, site, intervalType ) {
+	const parsedUrl = urlParse( url );
 	if ( 'monthly' === intervalType ) {
-		url += '/monthly';
+		parsedUrl.pathname += '/monthly';
 	}
 
 	if ( site && site.slug ) {
-		url += '/' + site.slug;
+		parsedUrl.pathname += '/' + site.slug;
 	}
 
-	return url;
+	return urlFormat( parsedUrl );
 }
 
 export function applyTestFiltersToPlansList( planName, abtest ) {

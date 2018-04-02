@@ -26,9 +26,9 @@ import OrgCredentialsForm from './remote-credentials';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
 import versionCompare from 'lib/version-compare';
+import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
-import { externalRedirect, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
@@ -290,7 +290,6 @@ export function plansLanding( context, next ) {
 			context={ context }
 			destinationType={ context.params.destinationType }
 			interval={ context.params.interval }
-			basePlansPath={ '/jetpack/connect/store' }
 			url={ context.query.site }
 		/>
 	);
@@ -313,7 +312,11 @@ export function plansSelection( context, next ) {
 	context.primary = (
 		<CheckoutData>
 			<Plans
-				basePlansPath={ JPC_PATH_PLANS }
+				basePlansPath={
+					context.query.redirect
+						? addQueryArgs( { redirect: context.query.redirect }, JPC_PATH_PLANS )
+						: JPC_PATH_PLANS
+				}
 				context={ context }
 				destinationType={ context.params.destinationType }
 				interval={ context.params.interval }

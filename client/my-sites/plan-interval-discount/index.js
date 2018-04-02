@@ -14,6 +14,7 @@ import { getCurrencyObject } from 'lib/format-currency';
 
 class PlanIntervalDiscount extends Component {
 	static propTypes = {
+		basePlansPath: PropTypes.string.isRequired,
 		currencyCode: PropTypes.string.isRequired,
 		discountPrice: PropTypes.number.isRequired,
 		isYearly: PropTypes.bool.isRequired,
@@ -47,10 +48,10 @@ class PlanIntervalDiscount extends Component {
 	}
 
 	renderMonthlyViewDiscountInfo() {
-		const { currencyCode, discountPrice, originalPrice } = this.props;
+		const { basePlansPath, currencyCode, discountPrice, originalPrice } = this.props;
 
 		// Ensure we have required props.
-		if ( ! currencyCode || ! discountPrice || ! originalPrice ) {
+		if ( ! basePlansPath || ! currencyCode || ! discountPrice || ! originalPrice ) {
 			return null;
 		}
 
@@ -61,7 +62,7 @@ class PlanIntervalDiscount extends Component {
 			{
 				args: price,
 				components: {
-					Link: <a href={ plansLink( '/jetpack/connect/plans', site, 'yearly' ) } />,
+					Link: <a href={ plansLink( basePlansPath, site, 'yearly' ) } />,
 					b: <b />,
 				},
 			}

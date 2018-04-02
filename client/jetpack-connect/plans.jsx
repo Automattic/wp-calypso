@@ -207,7 +207,7 @@ class Plans extends Component {
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
-					basePlansPath={ '/jetpack/connect/plans' }
+					basePlansPath={ this.props.basePlansPath }
 					onSelect={ this.selectPlan }
 					hideFreePlan={ true }
 					isLanding={ false }
