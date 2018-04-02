@@ -125,57 +125,53 @@ describe( '#authorize()', () => {
 			} );
 		} );
 
-		test( 'should dispatch login complete action when request completes', () => {
+		test( 'should dispatch login complete action when request completes', async () => {
 			const spy = jest.fn();
 			const { authorize } = actions;
 
-			return authorize( queryObject )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
-					data: {
-						code: 'abcdefghi1234',
-					},
-				} );
+			await authorize( queryObject )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
+				data: {
+					code: 'abcdefghi1234',
+				},
 			} );
 		} );
 
-		test( 'should dispatch authorize receive action when request completes', () => {
+		test( 'should dispatch authorize receive action when request completes', async () => {
 			const spy = jest.fn();
 			const { authorize } = actions;
 
-			return authorize( queryObject )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
-					siteId: client_id,
-					data: {
-						result: 'connected',
-						plans_url: '/plans/example.com',
-					},
-					error: null,
-				} );
+			await authorize( queryObject )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+				siteId: client_id,
+				data: {
+					result: 'connected',
+					plans_url: '/plans/example.com',
+				},
+				error: null,
 			} );
 		} );
 
-		test( 'should dispatch sites receive action when request completes', () => {
+		test( 'should dispatch sites receive action when request completes', async () => {
 			const spy = jest.fn();
 			const { authorize } = actions;
 
-			return authorize( queryObject )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: SITE_RECEIVE,
-					site: { ID: client_id },
-				} );
+			await authorize( queryObject )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: SITE_RECEIVE,
+				site: { ID: client_id },
 			} );
 		} );
 
-		test( 'should dispatch authorize receive site list action when request completes', () => {
+		test( 'should dispatch authorize receive site list action when request completes', async () => {
 			const spy = jest.fn();
 			const { authorize } = actions;
 
-			return authorize( queryObject )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-				} );
+			await authorize( queryObject )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 			} );
 		} );
 	} );
@@ -203,21 +199,20 @@ describe( '#authorize()', () => {
 				);
 		} );
 
-		test( 'should dispatch authorize receive action when request completes', () => {
+		test( 'should dispatch authorize receive action when request completes', async () => {
 			const spy = jest.fn();
 			const { authorize } = actions;
 
-			return authorize( queryObject )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
-					siteId: client_id,
-					data: null,
-					error: {
-						error: 'not_verified',
-						message: 'Could not verify your request.',
-						status: 400,
-					},
-				} );
+			await authorize( queryObject )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+				siteId: client_id,
+				data: null,
+				error: {
+					error: 'not_verified',
+					message: 'Could not verify your request.',
+					status: 400,
+				},
 			} );
 		} );
 	} );
@@ -282,17 +277,16 @@ describe( '#validateSSONonce()', () => {
 			} );
 		} );
 
-		test( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', async () => {
 			const spy = jest.fn();
 			const { validateSSONonce } = actions;
 
-			return validateSSONonce( siteId, ssoNonce )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					success: true,
-					blogDetails: blogDetails,
-					sharedDetails: sharedDetails,
-					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-				} );
+			await validateSSONonce( siteId, ssoNonce )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				success: true,
+				blogDetails: blogDetails,
+				sharedDetails: sharedDetails,
+				type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 			} );
 		} );
 	} );
@@ -316,19 +310,18 @@ describe( '#validateSSONonce()', () => {
 				);
 		} );
 
-		test( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', async () => {
 			const spy = jest.fn();
 			const { validateSSONonce } = actions;
 
-			return validateSSONonce( siteId, ssoNonce )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					error: {
-						error: 'invalid_input',
-						message: 'sso_nonce is a required parameter for this endpoint',
-						status: 400,
-					},
-					type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-				} );
+			await validateSSONonce( siteId, ssoNonce )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				error: {
+					error: 'invalid_input',
+					message: 'sso_nonce is a required parameter for this endpoint',
+					status: 400,
+				},
+				type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 			} );
 		} );
 	} );
@@ -360,16 +353,15 @@ describe( '#authorizeSSO()', () => {
 			} );
 		} );
 
-		test( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', async () => {
 			const spy = jest.fn();
 			const { authorizeSSO } = actions;
 
-			return authorizeSSO( siteId, ssoNonce, ssoUrl )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					ssoUrl,
-					siteUrl: ssoUrl,
-					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-				} );
+			await authorizeSSO( siteId, ssoNonce, ssoUrl )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				ssoUrl,
+				siteUrl: ssoUrl,
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 			} );
 		} );
 	} );
@@ -393,19 +385,18 @@ describe( '#authorizeSSO()', () => {
 				);
 		} );
 
-		test( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', async () => {
 			const spy = jest.fn();
 			const { authorizeSSO } = actions;
 
-			return authorizeSSO( siteId, ssoNonce, ssoUrl )( spy ).then( () => {
-				expect( spy ).toHaveBeenLastCalledWith( {
-					error: {
-						error: 'invalid_input',
-						message: 'sso_nonce is a required parameter for this endpoint',
-						status: 400,
-					},
-					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
-				} );
+			await authorizeSSO( siteId, ssoNonce, ssoUrl )( spy );
+			expect( spy ).toHaveBeenLastCalledWith( {
+				error: {
+					error: 'invalid_input',
+					message: 'sso_nonce is a required parameter for this endpoint',
+					status: 400,
+				},
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 			} );
 		} );
 	} );
