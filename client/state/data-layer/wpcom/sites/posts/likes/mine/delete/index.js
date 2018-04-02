@@ -35,6 +35,7 @@ export const fetch = action => {
 			path: `/sites/${ action.siteId }/posts/${ action.postId }/likes/mine/delete`,
 			apiVersion: '1.1',
 			body: {},
+			query,
 		},
 		action
 	);
