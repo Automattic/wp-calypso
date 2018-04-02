@@ -36,6 +36,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_ADDRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST,
@@ -126,7 +127,16 @@ export const submitStep = ( orderId, siteId, stepName ) => ( dispatch, getState 
 };
 
 const convertToApiPackage = ( pckg ) => {
-	return pick( pckg, [ 'id', 'box_id', 'service_id', 'length', 'width', 'height', 'weight' ] );
+	return pick( pckg, [
+		'id',
+		'box_id',
+		'service_id',
+		'length',
+		'width',
+		'height',
+		'weight',
+		'signature',
+	] );
 };
 
 export const clearAvailableRates = ( orderId, siteId ) => {
@@ -306,6 +316,16 @@ export const updatePackageWeight = ( orderId, siteId, packageId, value ) => {
 		orderId,
 		packageId,
 		value,
+	};
+};
+
+export const setPackageSignature = ( orderId, siteId, packageId, signature ) => {
+	return {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE,
+		siteId,
+		orderId,
+		packageId,
+		signature,
 	};
 };
 

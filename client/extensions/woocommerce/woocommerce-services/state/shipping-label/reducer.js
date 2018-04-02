@@ -23,6 +23,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_ADDRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST,
@@ -241,6 +242,24 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT ] = ( state,
 		...newPackages[ packageId ],
 		weight: parseFloat( value ),
 		isUserSpecifiedWeight: true,
+	};
+
+	return { ...state,
+		form: { ...state.form,
+			packages: { ...state.form.packages,
+				selected: newPackages,
+				saved: false,
+			},
+		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE ] = ( state, { packageId, signature } ) => {
+	const newPackages = { ...state.form.packages.selected };
+
+	newPackages[ packageId ] = {
+		...newPackages[ packageId ],
+		signature,
 	};
 
 	return { ...state,
