@@ -40,7 +40,7 @@ class ReaderLikeButton extends React.Component {
 			<LikeButtonContainer
 				{ ...this.props }
 				onLikeToggle={ this.recordLikeToggle }
-				likeSource={ 'reader' }
+				likeSource="reader"
 			/>
 		);
 	}
