@@ -14,14 +14,14 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import { CreditCardFormFields } from '../';
-import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
+import { isEbanxEnabledForCountry } from 'lib/checkout/ebanx';
 import mockCountriesList from './mocks/mock-countries-list';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
 } ) );
 
-jest.mock( 'lib/credit-card-details/ebanx', () => {
+jest.mock( 'lib/checkout/ebanx', () => {
 	return {
 		isEbanxEnabledForCountry: jest.fn( false ),
 	};
