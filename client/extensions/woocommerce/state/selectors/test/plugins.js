@@ -14,6 +14,14 @@ import plugins from './fixtures/plugins.js';
 
 const state = deepFreeze( { plugins } );
 
+/*
+ * state.plugins has four sites:
+ *  - site.one: all plugins installed and active
+ *  - site.two: all plugins installed, WCS inactive
+ *  - site.three: 2/3 plugins installed, WCS not installed
+ *  - site.four: plugin state is still loading
+ */
+
 describe( 'plugins', () => {
 	describe( '#areAllRequiredPluginsActive', () => {
 		it( 'should be null if the plugin list is being requested', () => {
