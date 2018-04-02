@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
+import { assign, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,9 +22,18 @@ class PieChart extends Component {
 		plural: PropTypes.string,
 	};
 
-	drawChart() {
-		const { data } = this.props;
+	constructor( props ) {
+		super( props );
+		this.state = this.processData( props.data );
+	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( ! isEqual( this.props.data, nextProps.data ) ) {
+			this.setState( this.processData( nextProps.data ) );
+		}
+	}
+
+	processData( data ) {
 		const arcs = d3Pie()
 			.startAngle( Math.PI )
 			.startAngle( -Math.PI )
@@ -34,28 +44,18 @@ class PieChart extends Component {
 
 		const paths = arcs.map( arc => arcGen( arc ) );
 
-		let sectionNum = -1;
-
-		return (
-			<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
-				{ paths.map( ( path, index ) => {
-					sectionNum = ( sectionNum + 1 ) % NUM_COLOR_SECTIONS;
-					return (
-						<path
-							className={ `pie-chart__chart-section-${ sectionNum }` }
-							key={ index.toString() }
-							d={ path }
-						/>
-					);
-				} ) }
-			</g>
-		);
+		return {
+			data: data.map( ( datum, index ) =>
+				assign( {}, datum, { sectionNum: index % NUM_COLOR_SECTIONS, path: paths[ index ] } )
+			),
+			dataTotal: data.reduce( ( pv, cv ) => pv + cv.value, 0 ),
+		};
 	}
 
 	render() {
-		const { data, plural } = this.props;
-		// const dataSorted = data.sort((a, b) => a - b );
-		const dataTotal = data.reduce( ( pv, cv ) => pv + cv.value, 0 );
+		const { plural } = this.props;
+		const { dataTotal, data } = this.state;
+
 		return (
 			<div>
 				<div className={ 'pie-chart__chart' }>
@@ -64,20 +64,29 @@ class PieChart extends Component {
 						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
 						preserveAspectRatio={ 'xMidYMid meet' }
 					>
-						{ this.drawChart() }
+						<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
+							{ data.map( ( datum, index ) => {
+								return (
+									<path
+										className={ `pie-chart__chart-section-${ datum.sectionNum }` }
+										key={ index.toString() }
+										d={ datum.path }
+									/>
+								);
+							} ) }
+						</g>
 					</svg>
 				</div>
 				<h2 className={ 'pie-chart__title' }>{ `${ dataTotal } ${ plural ? plural : '' }` }</h2>
 				<div className={ 'pie-chart__legend' }>
 					{ data.map( ( datum, index ) => {
-						const sectionNumber = index % NUM_COLOR_SECTIONS;
 						return (
 							<LegendItem
 								key={ index.toString() }
 								name={ datum.name }
 								value={ datum.value }
-								sectionNumber={ sectionNumber }
-								percent={ Math.round( datum.value / dataTotal * 100 ) }
+								sectionNumber={ datum.sectionNum }
+								percent={ Math.round( datum.value / dataTotal * 100 ).toString() }
 								description={ datum.description }
 							/>
 						);
