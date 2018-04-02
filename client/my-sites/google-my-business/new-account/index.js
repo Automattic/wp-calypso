@@ -79,11 +79,18 @@ class GoogleMyBusinessNewAccount extends Component {
 					</p>
 
 					<div className="gmb-new-account__actions">
-						<Button primary onClick={ this.trackCreateMyListingClick }>
+						<Button
+							href={ `/google-my-business/${ siteSlug }/select-location` }
+							onClick={ this.trackCreateMyListingClick }
+							primary
+						>
 							{ translate( 'Create My Listing' ) }
 						</Button>
 
-						<Button href={ `/stats/${ siteSlug }` } onClick={ this.trackNoThanksClick }>
+						<Button
+							href={ `/stats/${ siteSlug }` }
+							onClick={ this.trackNoThanksClick }
+						>
 							{ translate( 'No thanks' ) }
 						</Button>
 					</div>
