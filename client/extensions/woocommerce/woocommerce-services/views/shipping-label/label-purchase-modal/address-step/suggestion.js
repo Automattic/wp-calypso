@@ -33,7 +33,7 @@ const AddressSummary = ( { values, originalValues, countriesData, expandStateNam
 		const statesMap = ( expandStateName && ( countriesData[ country ] || {} ).states ) || {};
 		stateStr = statesMap[ state ] || state;
 	}
-	const countryStr = countriesData[ country ].name;
+	const countryStr = countriesData[ country ] ? countriesData[ country ].name : country;
 
 	const getValue = ( fieldName ) => {
 		const rawValue = values[ fieldName ];

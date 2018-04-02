@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, isEmpty, isEqual, isFinite, mapValues, round, some } from 'lodash';
+import { find, get, includes, isEmpty, isEqual, isFinite, mapValues, round, some } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -14,6 +14,9 @@ import {
 	isLoaded as arePackagesLoaded,
 	isFetchError as arePackagesErrored,
 } from 'woocommerce/woocommerce-services/state/packages/selectors';
+
+// "Countries" from when USPS can ship a package
+export const USPS_COUNTRIES = [ 'US', 'AS', 'PR', 'VI', 'GU', 'MP', 'UM', 'FM', 'MH' ];
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingLabel', orderId ], null );
@@ -112,6 +115,40 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 	} : null;
 };
 
+export const needsCustomsForm = createSelector(
+	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+		const form = getForm( state, orderId, siteId );
+		if ( isEmpty( form ) ) {
+			return false;
+		}
+		const originStatus = form.origin;
+		const origin = ( originStatus.isNormalized && originStatus.selectNormalized && originStatus.normalized )
+			? originStatus.normalized
+			: originStatus.values;
+		const destinationStatus = form.destination;
+		const destination = ( destinationStatus.isNormalized && destinationStatus.selectNormalized && destinationStatus.normalized )
+			? destinationStatus.normalized
+			: destinationStatus.values;
+
+		// Special case: Any shipment from/to military addresses must have Customs
+		if ( 'US' === origin.country && includes( [ 'AA', 'AE', 'AP' ], origin.state ) ) {
+			return true;
+		}
+		if ( 'US' === destination.country && includes( [ 'AA', 'AE', 'AP' ], destination.state ) ) {
+			return true;
+		}
+		// No need to have Customs if shipping inside the same territory (for example, from Guam to Guam)
+		if ( origin.country === destination.country ) {
+			return false;
+		}
+		// Shipments between US, Puerto Rico and Virgin Islands don't need Customs, everything else does
+		return ! includes( [ 'US', 'PR', 'VI' ], origin.country ) || ! includes( [ 'US', 'PR', 'VI' ], destination.country );
+	},
+	( state, orderId, siteId = getSelectedSiteId( state ) ) => [
+		getForm( state, orderId, siteId ),
+	]
+);
+
 const getAddressErrors = ( {
 	values,
 	isNormalized,
@@ -140,12 +177,10 @@ const getAddressErrors = ( {
 	} );
 
 	if ( countriesData[ country ] ) {
-		switch ( country ) {
-			case 'US':
-				if ( ! /^\d{5}(?:-\d{4})?$/.test( postcode ) ) {
-					errors.postcode = translate( 'Invalid ZIP code format' );
-				}
-				break;
+		if ( includes( USPS_COUNTRIES, country ) ) {
+			if ( ! /^\d{5}(?:-\d{4})?$/.test( postcode ) ) {
+				errors.postcode = translate( 'Invalid ZIP code format' );
+			}
 		}
 
 		if ( ! isEmpty( countriesData[ country ].states ) && ! state ) {
@@ -189,6 +224,10 @@ const getPackagesErrors = ( values ) => mapValues( values, ( pckg ) => {
 	return errors;
 } );
 
+export const getCustomsErrors = ( customs ) => {
+	return customs.dummyField ? {} : { dummyField: 'Dummy error' };
+};
+
 export const getRatesErrors = ( { values: selectedRates, available: allRates } ) => {
 	return {
 		server: mapValues( allRates, ( rate ) => {
@@ -230,6 +269,7 @@ export const getFormErrors = createSelector(
 			origin: getAddressErrors( form.origin, countriesData ),
 			destination: getAddressErrors( form.destination, countriesData ),
 			packages: getPackagesErrors( form.packages.selected ),
+			customs: getCustomsErrors( form.customs ),
 			rates: getRatesErrors( form.rates ),
 			sidebar: getSidebarErrors( paperSize ),
 		};
@@ -269,6 +309,10 @@ export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteI
 
 	if ( hasNonEmptyLeaves( errors.packages ) ) {
 		return 'packages';
+	}
+
+	if ( needsCustomsForm( state, orderId, siteId ) && hasNonEmptyLeaves( errors.customs ) ) {
+		return 'customs';
 	}
 
 	if ( hasNonEmptyLeaves( errors.rates ) ) {

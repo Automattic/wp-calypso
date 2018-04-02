@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { first } from 'lodash';
+import { first, includes } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -23,6 +23,7 @@ import {
 	getCountriesData,
 	getLabels,
 	isLabelDataFetchError,
+	USPS_COUNTRIES,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import {
 	areSettingsGeneralLoaded,
@@ -142,42 +143,17 @@ class OrderFulfillment extends Component {
 	};
 
 	isAddressValidForLabels( address ) {
-		const { labelCountriesData } = this.props;
-		if ( ! labelCountriesData ) {
-			return false;
-		}
-
-		const countryData = labelCountriesData[ address.country ];
-
-		//country not supported
-		if ( ! countryData ) {
-			return false;
-		}
-
-		//supported country doesn't have a states data
-		if ( ! countryData.states ) {
-			return true;
-		}
-
-		//check if the address state is supported
-		return Boolean( countryData.states[ address.state ] );
+		return includes( USPS_COUNTRIES, address.country );
 	}
 
 	shouldShowLabels() {
-		const { labelsLoaded, labelsEnabled, order, storeAddress, hasLabelsPaymentMethod } = this.props;
+		const { labelsLoaded, labelsEnabled, storeAddress, hasLabelsPaymentMethod } = this.props;
 
 		if ( ! labelsLoaded ) {
 			return false;
 		}
 
-		const { shipping } = order;
-
-		return (
-			labelsEnabled &&
-			hasLabelsPaymentMethod &&
-			this.isAddressValidForLabels( storeAddress ) &&
-			this.isAddressValidForLabels( shipping )
-		);
+		return labelsEnabled && hasLabelsPaymentMethod && this.isAddressValidForLabels( storeAddress );
 	}
 
 	renderFulfillmentAction() {

@@ -69,6 +69,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
 } from '../action-types.js';
 
 export const fetchLabelsData = ( orderId, siteId ) => ( dispatch ) => {
@@ -148,16 +149,16 @@ export const clearAvailableRates = ( orderId, siteId ) => {
  * @param {Number} orderId order ID
  * @param {Number} siteId site ID
  * @param {Function} dispatch dispatch function
- * @param {Function} getState getState functuon
- *
- * @returns {Promise} getRates promise
+ * @param {Function} getState getState function
  */
 const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	const state = getState();
 	const erroneousStep = getFirstErroneousStep( state, orderId, siteId );
 	if ( erroneousStep && 'rates' !== erroneousStep ) {
 		expandFirstErroneousStep( orderId, siteId, dispatch, getState );
-		return;
+		if ( 'customs' !== erroneousStep ) {
+			return;
+		}
 	}
 
 	const formState = getShippingLabel( state, orderId, siteId ).form;
@@ -167,7 +168,7 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 		packages,
 	} = formState;
 
-	return getRates( orderId, siteId, dispatch, origin.values, destination.values, map( packages.selected, convertToApiPackage ) )
+	getRates( orderId, siteId, dispatch, origin.values, destination.values, map( packages.selected, convertToApiPackage ) )
 		.then( () => expandFirstErroneousStep( orderId, siteId, dispatch, getState ) )
 		.catch( ( error ) => {
 			console.error( error );
@@ -464,6 +465,19 @@ export const confirmPackages = ( orderId, siteId ) => ( dispatch, getState ) => 
 	dispatch( toggleStep( orderId, siteId, 'packages' ) );
 	dispatch( savePackages( orderId, siteId ) );
 	tryGetLabelRates( orderId, siteId, dispatch, getState );
+};
+
+export const saveCustoms = ( orderId, siteId ) => {
+	return {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
+		siteId,
+		orderId,
+	};
+};
+
+export const confirmCustoms = ( orderId, siteId ) => ( dispatch, getState ) => {
+	dispatch( saveCustoms( orderId, siteId ) );
+	dispatch( submitStep( orderId, siteId, 'customs' ) );
 };
 
 export const updateRate = ( orderId, siteId, packageId, value ) => {

@@ -15,6 +15,7 @@ import Dialog from 'components/dialog';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import AddressStep from './address-step';
 import PackagesStep from './packages-step';
+import CustomsStep from './customs-step';
 import RatesStep from './rates-step';
 import Sidebar from './sidebar';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -26,6 +27,7 @@ import {
 	getTotalPriceBreakdown,
 	getFormErrors,
 	canPurchase,
+	needsCustomsForm,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PurchaseDialog = ( props ) => {
@@ -118,6 +120,10 @@ const PurchaseDialog = ( props ) => {
 						<PackagesStep
 							siteId={ props.siteId }
 							orderId={ props.orderId } />
+						{ props.needsCustomsForm &&
+						<CustomsStep
+							siteId={ props.siteId }
+							orderId={ props.orderId } /> }
 						<RatesStep
 							siteId={ props.siteId }
 							orderId={ props.orderId } />
@@ -150,6 +156,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		errors: loaded && getFormErrors( state, orderId, siteId ),
 		canPurchase: loaded && canPurchase( state, orderId, siteId ),
 		ratesTotal: priceBreakdown ? priceBreakdown.total : 0,
+		needsCustomsForm: needsCustomsForm( state, orderId, siteId ),
 	};
 };
 

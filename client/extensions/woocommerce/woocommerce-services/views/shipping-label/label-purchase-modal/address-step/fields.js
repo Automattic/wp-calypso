@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEqual, isObject, size } from 'lodash';
+import { isEqual, isObject, pick, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,6 +30,7 @@ import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
+	USPS_COUNTRIES,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const AddressFields = ( props ) => {
@@ -170,7 +171,13 @@ AddressFields.propTypes = {
 const mapStateToProps = ( state, { group, orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	const storeOptions = loaded ? shippingLabel.storeOptions : {};
+	let storeOptions = loaded ? shippingLabel.storeOptions : {};
+	if ( 'origin' === group ) {
+		storeOptions = {
+			...storeOptions,
+			countriesData: pick( storeOptions.countriesData, USPS_COUNTRIES ),
+		};
+	}
 	return {
 		...shippingLabel.form[ group ],
 		errors: loaded && getFormErrors( state, orderId, siteId )[ group ],

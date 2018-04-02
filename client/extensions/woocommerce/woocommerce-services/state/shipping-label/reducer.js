@@ -59,6 +59,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
 } from '../action-types';
 import {
 	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
@@ -548,6 +549,33 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_PACKAGES ] = ( state ) => {
 			...state.form,
 			packages: {
 				...state.form.packages,
+				saved: true,
+			},
+		},
+	};
+};
+
+reducers.WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CUSTOMS_TOGGLE_DUMMY_FIELD = ( state, { value } ) => {
+	return {
+		...state,
+		form: {
+			...state.form,
+			customs: {
+				...state.form.customs,
+				dummyField: value,
+				saved: false,
+			},
+		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS ] = ( state ) => {
+	return {
+		...state,
+		form: {
+			...state.form,
+			customs: {
+				...state.form.customs,
 				saved: true,
 			},
 		},
