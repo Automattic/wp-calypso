@@ -107,7 +107,7 @@ class Dashboard extends Component {
 	}
 
 	fetchStoreData = () => {
-		const { siteId, productsLoaded, finishedInstallOfRequiredPlugins } = this.props;
+		const { finishedInstallOfRequiredPlugins, productsLoaded, siteId } = this.props;
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
 			return;
@@ -238,21 +238,11 @@ class Dashboard extends Component {
 	};
 
 	render() {
-		const {
-			className,
-			isSetupComplete,
-			loading,
-			selectedSite,
-			siteId,
-			finishedInstallOfRequiredPlugins,
-		} = this.props;
+		const { className, finishedInstallOfRequiredPlugins, isSetupComplete, siteId } = this.props;
 
 		return (
 			<Main className={ classNames( 'dashboard', className ) } wideLayout>
-				<ActionHeader
-					breadcrumbs={ this.getBreadcrumb() }
-					isLoading={ loading || ! selectedSite }
-				/>
+				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
 				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
 				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
 			</Main>

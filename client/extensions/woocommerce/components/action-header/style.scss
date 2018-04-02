@@ -73,10 +73,6 @@
 	.action-header__breadcrumbs {
 		font-size: 13px;
 
-		&.is-loading {
-			@include placeholder();
-		}
-
 		span {
 			display: inline-block;
 		}
