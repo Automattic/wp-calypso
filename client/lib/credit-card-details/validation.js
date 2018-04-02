@@ -9,8 +9,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEbanxEnabledForCountry, isValidCPF } from 'lib/credit-card-details/ebanx';
-import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from './constants';
+import { isEbanxEnabledForCountry, isValidCPF } from 'lib/checkout/ebanx';
+import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
 
 function ebanxFieldRules( country ) {
 	const requiredFields = PAYMENT_PROCESSOR_EBANX_COUNTRIES[ country ].requiredFields || [];
