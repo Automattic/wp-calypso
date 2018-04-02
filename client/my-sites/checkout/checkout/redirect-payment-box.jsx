@@ -130,56 +130,78 @@ export class RedirectPaymentBox extends PureComponent {
 		} );
 	}
 
-	renderIdealBankOptions() {
+	renderBankOptions( paymentType ) {
 		// Source https://stripe.com/docs/sources/ideal
-		const idealBanks = {
-			abn_amro: 'ABN AMRO',
-			asn_bank: 'ASN Bank',
-			bunq: 'Bunq',
-			ing: 'ING',
-			knab: 'Knab',
-			rabobank: 'Rabobank',
-			regiobank: 'RegioBank',
-			sns_bank: 'SNS Bank',
-			triodos_bank: 'Triodos Bank',
-			van_lanschot: 'Van Lanschot',
+		const banks = {
+			ideal: {
+				abn_amro: 'ABN AMRO',
+				asn_bank: 'ASN Bank',
+				bunq: 'Bunq',
+				ing: 'ING',
+				knab: 'Knab',
+				rabobank: 'Rabobank',
+				regiobank: 'RegioBank',
+				sns_bank: 'SNS Bank',
+				triodos_bank: 'Triodos Bank',
+				van_lanschot: 'Van Lanschot',
+			},
+			tef: {
+				banrisul: 'Banrisul',
+				bradesco: 'Bradesco',
+				bancodobrasil: 'Banco do Brasil',
+				itau: 'Itaú',
+			},
 		};
 
-		const idealBanksOptions = map( idealBanks, ( text, optionValue ) => (
+		const banksOptions = map( banks[ paymentType ], ( text, optionValue ) => (
 			<option value={ optionValue } key={ optionValue }>{ text }</option>
 		) );
 
 		return [
 			<option value="" key="-">{ translate( 'Please select your bank.' ) }</option>,
-			...idealBanksOptions,
+			...banksOptions,
 		];
 	}
 
 	renderAdditionalFields() {
-		if ( 'ideal' === this.props.paymentType ) {
-			return (
-				<div className="checkout__checkout-field">
-					<FormLabel htmlFor="ideal-bank">
-						{ translate( 'Bank' ) }
-					</FormLabel>
-					<FormSelect
-						name="ideal-bank"
+		switch ( this.props.paymentType ) {
+			case 'ideal':
+				return (
+					<div className="checkout__checkout-field">
+						<FormLabel htmlFor="ideal-bank">
+							{ translate( 'Bank' ) }
+						</FormLabel>
+						<FormSelect
+							name="ideal-bank"
+							onChange={ this.handleChange }
+						>
+							{ this.renderBankOptions( 'ideal' ) }
+						</FormSelect>
+					</div>
+				);
+			case 'p24':
+				return (
+					<Input
+						additionalClasses="checkout-field"
+						name="email"
 						onChange={ this.handleChange }
-					>
-						{ this.renderIdealBankOptions() }
-					</FormSelect>
-				</div>
-			);
-		}
-		if ( 'p24' === this.props.paymentType ) {
-			return (
-				<Input
-					additionalClasses="checkout-field"
-					name="email"
-					onChange={ this.handleChange }
-					label={ translate( 'Email Address' ) }
-					eventFormName="Checkout Form" />
-			);
+						label={ translate( 'Email Address' ) }
+						eventFormName="Checkout Form" />
+				);
+			case 'tef':
+				return (
+					<div className="checkout__checkout-field">
+						<FormLabel htmlFor="tef-bank">
+							{ translate( 'Bank' ) }
+						</FormLabel>
+						<FormSelect
+							name="tef-bank"
+							onChange={ this.handleChange }
+						>
+							{ this.renderBankOptions( 'tef' ) }
+						</FormSelect>
+					</div>
+				);
 		}
 	}
 
