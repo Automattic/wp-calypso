@@ -4,7 +4,8 @@
  * Internal dependencies
  */
 import { SchemaError } from 'state/data-layer/wpcom-http/utils';
-import fromApi from '../from-api';
+import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
+import fromApi, { convertProcessingStatus } from '../from-api';
 
 describe( 'wpcom-api', () => {
 	describe( 'fromApi()', () => {
@@ -12,13 +13,13 @@ describe( 'wpcom-api', () => {
 			const response = {
 				user_id: 123,
 				order_id: 456,
-				processing_status: 'profit!',
+				processing_status: 'success',
 			};
 
 			const expectedOutput = {
 				userId: response.user_id,
 				orderId: response.order_id,
-				processingStatus: response.processing_status,
+				processingStatus: ORDER_TRANSACTION_STATUS.SUCCESS,
 			};
 
 			expect( fromApi( response ) ).toEqual( expectedOutput );
@@ -34,6 +35,32 @@ describe( 'wpcom-api', () => {
 			};
 
 			expect( invalidateCall ).toThrowError( SchemaError );
+		} );
+	} );
+
+	describe( 'convertProcessingStatus()', () => {
+		test( 'should convert to success', () => {
+			expect( convertProcessingStatus( 'success' ) ).toEqual( ORDER_TRANSACTION_STATUS.SUCCESS );
+		} );
+
+		test( 'should convert to processing.', () => {
+			expect( convertProcessingStatus( 'processing' ) ).toEqual(
+				ORDER_TRANSACTION_STATUS.PROCESSING
+			);
+		} );
+
+		test( 'should convert to failure.', () => {
+			expect( convertProcessingStatus( 'payment-failure' ) ).toEqual(
+				ORDER_TRANSACTION_STATUS.FAILURE
+			);
+		} );
+
+		test( 'should convert to error.', () => {
+			expect( convertProcessingStatus( 'error' ) ).toEqual( ORDER_TRANSACTION_STATUS.ERROR );
+		} );
+
+		test( 'should convert to unknown.', () => {
+			expect( convertProcessingStatus( 'profit!' ) ).toEqual( ORDER_TRANSACTION_STATUS.UNKNOWN );
 		} );
 	} );
 } );
