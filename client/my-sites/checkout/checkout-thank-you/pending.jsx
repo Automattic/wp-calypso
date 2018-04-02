@@ -33,45 +33,57 @@ class CheckoutPending extends PureComponent {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const { transaction: { processingStatus }, error } = nextProps;
-
+		const { transaction, error } = nextProps;
 		const { translate, showErrorNotice } = this.props;
 
-		if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
-			page( `/checkout/thank-you/${ this.props.siteSlug }` );
-			return;
-		}
-
-		// It is mostly because the user has cancelled the payment.
-		// See the explanation in https://github.com/Automattic/wp-calypso/pull/23670#issuecomment-377186515
-		if ( ORDER_TRANSACTION_STATUS.FAILURE === processingStatus ) {
-			// Bring the user back to the homepage in this case.
-			page( '/' );
-			return;
-		}
-
-		// It could be a HTTP error or the processing status indicates that there was something wrong.
-		if ( error != null || ORDER_TRANSACTION_STATUS.ERROR === processingStatus ) {
-			// redirect users back to the checkout page so they can try again.
+		const retryOnError = () => {
 			page( `/checkout/${ this.props.siteSlug }` );
 
 			showErrorNotice(
 				translate( 'Sorry, we failed to process your payment. Please try again later.' )
 			);
+		};
 
-			return;
+		if ( transaction ) {
+			const { processingStatus } = transaction;
+
+			if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
+				page( `/checkout/thank-you/${ this.props.siteSlug }` );
+				return;
+			}
+
+			// It is mostly because the user has cancelled the payment.
+			// See the explanation in https://github.com/Automattic/wp-calypso/pull/23670#issuecomment-377186515
+			if ( ORDER_TRANSACTION_STATUS.FAILURE === processingStatus ) {
+				// Bring the user back to the homepage in this case.
+				page( '/' );
+				return;
+			}
+
+			// or the processing status indicates that there was something wrong.
+			if ( ORDER_TRANSACTION_STATUS.ERROR === processingStatus ) {
+				// redirect users back to the checkout page so they can try again.
+				retryOnError();
+
+				return;
+			}
+
+			// The API has responded a status string that we don't expect somehow.
+			if ( ORDER_TRANSACTION_STATUS.UNKNOWN === processingStatus ) {
+				// Redirect users back to the homepage so that they won't be stuck here.
+				page( '/' );
+
+				showErrorNotice(
+					translate( "Sorry, we've encountered an unknown problem. Please try again later." )
+				);
+
+				return;
+			}
 		}
 
-		// The API has responded a status string that we don't expect somehow.
-		if ( ORDER_TRANSACTION_STATUS.UNKNOWN === processingStatus ) {
-			// Redirect users back to the homepage so that they won't be stuck here.
-			page( '/' );
-
-			showErrorNotice(
-				translate( "Sorry, we've encountered an unknown problem. Please try again later." )
-			);
-
-			return;
+		// A HTTP error occurs. We use the same handling
+		if ( error ) {
+			retryOnError();
 		}
 	}
 
@@ -91,7 +103,7 @@ class CheckoutPending extends PureComponent {
 export default connect(
 	( state, props ) => ( {
 		transaction: getOrderTransaction( state, props.orderId ),
-		transactionError: getOrderTransactionError( state, props.orderId ),
+		error: getOrderTransactionError( state, props.orderId ),
 	} ),
 	{
 		showErrorNotice: errorNotice,
