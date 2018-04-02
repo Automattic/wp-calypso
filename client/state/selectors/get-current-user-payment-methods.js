@@ -28,6 +28,7 @@ const paymentMethods = {
 		US: DEFAULT_PAYMENT_METHODS,
 		AT: [ 'credit-card', 'eps', 'paypal' ],
 		BE: [ 'credit-card', 'bancontact', 'paypal' ],
+		BR: [ 'credit-card', 'tef', 'paypal' ],
 		CN: [ 'credit-card', 'alipay', 'paypal' ],
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
 		NL: [ 'credit-card', 'ideal', 'paypal' ],
@@ -47,7 +48,7 @@ export default function getCurrentUserPaymentMethods( state ) {
 	const countryCode = getGeoCountryShort( state );
 	const wpcomLang = getCurrentUserLocale( state );
 	const generatedLocale = lowerCase( wpcomLang ) + '-' + upperCase( countryCode );
-
+	return [ 'credit-card', 'tef' ];
 	return (
 		paymentMethods.byLocale[ generatedLocale ] ||
 		paymentMethods.byCountry[ countryCode ] ||
