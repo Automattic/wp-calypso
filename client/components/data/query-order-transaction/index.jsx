@@ -13,10 +13,11 @@ import { connect } from 'react-redux';
 import { fetchOrderTransaction } from 'state/order-transactions/actions';
 import { getOrderTransaction } from 'state/selectors';
 
-class QuerySourcePaymentTransactionDetail extends React.Component {
+class QueryOrderTransaction extends React.Component {
 	static propTypes = {
+		orderId: PropTypes.number.isRequired,
 		pollIntervalMs: PropTypes.number,
-		transaction: PropTypes.object.isRequired,
+		transaction: PropTypes.object,
 		fetchTransaction: PropTypes.func.isRequired,
 	};
 
@@ -59,4 +60,4 @@ export default connect(
 	{
 		fetchTransaction: fetchOrderTransaction,
 	}
-)( QuerySourcePaymentTransactionDetail );
+)( QueryOrderTransaction );
