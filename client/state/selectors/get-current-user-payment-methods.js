@@ -48,7 +48,7 @@ export default function getCurrentUserPaymentMethods( state ) {
 	const countryCode = getGeoCountryShort( state );
 	const wpcomLang = getCurrentUserLocale( state );
 	const generatedLocale = lowerCase( wpcomLang ) + '-' + upperCase( countryCode );
-	return [ 'credit-card', 'tef' ];
+
 	return (
 		paymentMethods.byLocale[ generatedLocale ] ||
 		paymentMethods.byCountry[ countryCode ] ||
