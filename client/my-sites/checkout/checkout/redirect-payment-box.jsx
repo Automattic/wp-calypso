@@ -57,7 +57,7 @@ class RedirectPaymentBox extends PureComponent {
 		}
 
 		this.setState( {
-			formDisabled: submitState.disabled
+			formDisabled: submitState.disabled,
 		} );
 	}
 
@@ -72,7 +72,7 @@ class RedirectPaymentBox extends PureComponent {
 		this.setSubmitState( {
 			info: translate( 'Setting up your %(paymentProvider)s payment', {
 				args: { paymentProvider: this.getPaymentProviderName() } } ),
-			disabled: true
+			disabled: true,
 		} );
 
 		let cancelUrl = origin + '/checkout/';
@@ -90,7 +90,7 @@ class RedirectPaymentBox extends PureComponent {
 				cancelUrl,
 			} ),
 			cart: this.props.cart,
-			domainDetails: this.props.transaction.domainDetails
+			domainDetails: this.props.transaction.domainDetails,
 		};
 
 		// get the redirect URL from rest endpoint
@@ -105,12 +105,12 @@ class RedirectPaymentBox extends PureComponent {
 
 				this.setSubmitState( {
 					error: errorMessage,
-					disabled: false
+					disabled: false,
 				} );
 			} else if ( result.redirect_url ) {
 				this.setSubmitState( {
 					info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
-					disabled: true
+					disabled: true,
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
 				analytics.tracks.recordEvent( 'calypso_checkout_with_redirect' + this.props.paymentType );
@@ -122,12 +122,12 @@ class RedirectPaymentBox extends PureComponent {
 	renderButtonText() {
 		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
 			return translate( 'Purchase %(price)s subscription with %(paymentProvider)s', {
-				args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() }
+				args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() },
 			} );
 		}
 
 		return translate( 'Pay %(price)s with %(paymentProvider)s', {
-			args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() }
+			args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() },
 		} );
 	}
 
@@ -152,7 +152,7 @@ class RedirectPaymentBox extends PureComponent {
 
 		return [
 			<option value="" key="-">{ translate( 'Please select your bank.' ) }</option>,
-			...idealBanksOptions
+			...idealBanksOptions,
 		];
 	}
 
