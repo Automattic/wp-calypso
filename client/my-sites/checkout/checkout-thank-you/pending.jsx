@@ -22,15 +22,20 @@ class CheckoutPending extends PureComponent {
 		orderId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		transaction: PropTypes.object,
+		error: PropTypes.object,
+		errorNotice: PropTypes.func,
 		localize: PropTypes.func,
 	};
 
 	static defaultProps = {
 		localize: identity,
+		errorNotice: identity,
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const { transaction: processingStatus, translate, error } = nextProps;
+		const { transaction: { processingStatus }, error } = nextProps;
+
+		const { translate, showErrorNotice } = this.props;
 
 		if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
 			page( `/checkout/thank-you/${ this.props.siteSlug }` );
@@ -46,22 +51,26 @@ class CheckoutPending extends PureComponent {
 		}
 
 		// It could be a HTTP error or the processing status indicates that there was something wrong.
-		if ( error !== null || ORDER_TRANSACTION_STATUS.ERROR === processingStatus ) {
-			errorNotice(
-				translate( 'We have problems fetching your payment status. Please try again later.' )
-			);
-
+		if ( error != null || ORDER_TRANSACTION_STATUS.ERROR === processingStatus ) {
 			// redirect users back to the checkout page so they can try again.
 			page( `/checkout/${ this.props.siteSlug }` );
+
+			showErrorNotice(
+				translate( 'Sorry, we failed to process your payment. Please try again later.' )
+			);
+
 			return;
 		}
 
 		// The API has responded a status string that we don't expect somehow.
 		if ( ORDER_TRANSACTION_STATUS.UNKNOWN === processingStatus ) {
-			errorNotice( translate( "We've encountered unknown. Please try again later." ) );
-
 			// Redirect users back to the homepage so that they won't be stuck here.
 			page( '/' );
+
+			showErrorNotice(
+				translate( "Sorry, we've encountered an unknown problem. Please try again later." )
+			);
+
 			return;
 		}
 	}
@@ -79,7 +88,12 @@ class CheckoutPending extends PureComponent {
 	}
 }
 
-export default connect( ( state, props ) => ( {
-	transaction: getOrderTransaction( state, props.orderId ),
-	transactionError: getOrderTransactionError( state, props.orderId ),
-} ) )( localize( CheckoutPending ) );
+export default connect(
+	( state, props ) => ( {
+		transaction: getOrderTransaction( state, props.orderId ),
+		transactionError: getOrderTransactionError( state, props.orderId ),
+	} ),
+	{
+		showErrorNotice: errorNotice,
+	}
+)( localize( CheckoutPending ) );
