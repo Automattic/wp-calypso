@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { getOrderTransaction } from 'state/selectors';
+import QueryOrderTransaction from 'components/data/query-order-transaction';
 
 class CheckoutPending extends PureComponent {
 	static propTypes = {
@@ -20,13 +21,15 @@ class CheckoutPending extends PureComponent {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( 'successful' === nextProps.paymentInfo.status ) {
+		const { processingStatus } = nextProps.paymentInfo;
+
+		if ( 'success' === processingStatus ) {
 			page( `/checkout/thank-you/${ this.props.siteSlug }` );
 			return;
 		}
 
 		// redirect users back to the checkout page so they can try again.
-		if ( 'failed' === nextProps.paymentInfo.status ) {
+		if ( 'payment-failure' === processingStatus ) {
 			page( `/checkout/${ this.props.siteSlug }` );
 			return;
 		}
@@ -39,6 +42,7 @@ class CheckoutPending extends PureComponent {
 		// Replace this placeholder by the real one
 		return (
 			<div>
+				<QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } />
 				<p>Waiting for the payment result of { orderId }</p>
 			</div>
 		);
