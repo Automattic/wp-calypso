@@ -4,7 +4,7 @@
  * External dependencies
  */
 import moment from 'moment';
-import urlModule from 'url';
+import { format as urlFormat, parse as urlParse } from 'url';
 import { difference, find, get, includes, invoke, pick, values } from 'lodash';
 
 /**
@@ -335,7 +335,7 @@ export const isPlanFeaturesEnabled = () => {
 };
 
 export function plansLink( url, site, intervalType ) {
-	const parsedUrl = urlModule.parse( url );
+	const parsedUrl = urlParse( url );
 	if ( 'monthly' === intervalType ) {
 		parsedUrl.pathname += '/monthly';
 	}
@@ -344,7 +344,7 @@ export function plansLink( url, site, intervalType ) {
 		parsedUrl.pathname += '/' + site.slug;
 	}
 
-	return urlModule.format( parsedUrl );
+	return urlFormat( parsedUrl );
 }
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
