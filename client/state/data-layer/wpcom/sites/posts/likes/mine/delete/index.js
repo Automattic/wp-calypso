@@ -23,8 +23,13 @@ export function fromApi( response ) {
 	};
 }
 
-export const fetch = action =>
-	http(
+export const fetch = action => {
+	const query = {};
+	if ( action.source ) {
+		query.source = action.source;
+	}
+
+	return http(
 		{
 			method: 'POST',
 			path: `/sites/${ action.siteId }/posts/${ action.postId }/likes/mine/delete`,
@@ -33,6 +38,7 @@ export const fetch = action =>
 		},
 		action
 	);
+};
 
 export const onSuccess = ( { siteId, postId }, { likeCount, liker } ) =>
 	removeLiker( siteId, postId, likeCount, liker );
