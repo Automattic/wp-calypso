@@ -14,7 +14,7 @@ import { bumpStat } from 'state/analytics/actions';
 import * as LoadingError from 'layout/error';
 import * as controller from './controller/index.web';
 import { restoreLastSession } from 'lib/restore-last-path';
-import { hub as preloadHub } from 'sections-preload';
+import { hooks } from 'sections-info';
 import { switchCSS } from 'lib/i18n-utils/switch-locale';
 import { pathToRegExp } from './utils';
 
@@ -47,7 +47,13 @@ function preload( sectionName ) {
 	return Promise.all( filteredSections.map( section => section.load() ) );
 }
 
-preloadHub.on( 'preload', preload );
+hooks.addAction( 'preload', 'sections-middleware-preload', preload );
+
+function getSectionByName( _, sectionName ) {
+	return find( sections, { name: sectionName } );
+}
+
+hooks.addFilter( 'get_section', 'sections-middleware-get-section', getSectionByName );
 
 function activateSection( sectionDefinition, context, next ) {
 	const dispatch = context.store.dispatch;

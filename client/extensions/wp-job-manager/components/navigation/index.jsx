@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, flowRight, get, values } from 'lodash';
+import { flowRight, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import { addSiteFragment } from 'lib/route';
-import { getSections } from 'sections-middleware';
+import { getSection } from 'sections-info';
 import { Tabs } from '../../constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -32,10 +32,8 @@ class Navigation extends Component {
 	};
 
 	getSettingsPath() {
-		const sections = getSections();
-		const section = find( sections, value => value.name === 'wp-job-manager' );
-
-		return get( section, 'settings_path' );
+		const section = getSection( 'wp-job-manager' );
+		return section && section.settings_path;
 	}
 
 	renderTabItem( { label, slug } ) {

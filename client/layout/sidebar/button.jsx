@@ -12,7 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { isExternal } from 'lib/url';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-info';
 
 class SidebarButton extends React.Component {
 	static propTypes = {
