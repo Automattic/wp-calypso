@@ -196,8 +196,10 @@ function addStorePage( storePage, storeNavigation ) {
 		storeNavigation,
 		( context, next ) => {
 			const component = React.createElement( storePage.container, { params: context.params } );
-			const appProps =
-				( storePage.documentTitle && { documentTitle: storePage.documentTitle } ) || {};
+			const appProps = {};
+			if ( storePage.documentTitle ) {
+				appProps.documentTitle = storePage.documentTitle;
+			}
 
 			let analyticsPath = storePage.path;
 			const { filter } = context.params;

@@ -1,10 +1,7 @@
 /** @format */
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -20,9 +17,9 @@ import Button from 'components/button';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
+import { getRequiredPluginsList } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
@@ -61,6 +58,7 @@ class RequiredPluginsInstallView extends Component {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		title: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -131,16 +129,6 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	getRequiredPluginsList = () => {
-		const { translate } = this.props;
-
-		return {
-			woocommerce: translate( 'WooCommerce' ),
-			'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
-			'woocommerce-services': translate( 'WooCommerce Services' ),
-		};
-	};
-
 	doInitialization = () => {
 		const { site, sitePlugins, wporg } = this.props;
 		const { workingOn } = this.state;
@@ -171,7 +159,7 @@ class RequiredPluginsInstallView extends Component {
 
 		// Iterate over the required plugins, fetching plugin
 		// data from wordpress.org for each into state
-		const requiredPlugins = this.getRequiredPluginsList();
+		const requiredPlugins = getRequiredPluginsList();
 		let pluginDataLoaded = true;
 		for ( const requiredPluginSlug in requiredPlugins ) {
 			const pluginData = getPlugin( wporg, requiredPluginSlug );
@@ -408,7 +396,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	render() {
-		const { site, translate, hasPendingAT } = this.props;
+		const { hasPendingAT, title, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
@@ -419,11 +407,10 @@ class RequiredPluginsInstallView extends Component {
 			<div className="dashboard__setup-wrapper setup__wrapper">
 				<SetupNotices />
 				<div className="card dashboard__plugins-install-view">
-					{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
 					<SetupHeader
 						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 						imageWidth={ 160 }
-						title={ translate( 'Building your store' ) }
+						title={ title || translate( 'Building your store' ) }
 						subtitle={ translate( "Give us a minute and we'll move right along." ) }
 					>
 						<ProgressBar value={ progress } total={ totalSeconds } isPulsing />
