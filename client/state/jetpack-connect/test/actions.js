@@ -410,53 +410,50 @@ describe( '#createAccount()', () => {
 
 	beforeEach( jest.restoreAllMocks );
 
-	test( 'should dispatch create action', () => {
+	test( 'should dispatch create action', async () => {
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew( _, callback ) {
-				callback( null, {} );
+			async usersNew() {
+				return {};
 			},
 		} ) );
 
 		const spy = jest.fn();
-		createAccount()( spy );
+		await createAccount()( spy );
 		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
 	} );
 
-	test( 'should dispatch receive action with appropriate data', () => {
+	test( 'should dispatch receive action with appropriate data', async () => {
 		const userData = { username: 'happyuser' };
 		const data = { some: 'data' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew( _, callback ) {
-				callback( null, data );
+			async usersNew() {
+				return data;
 			},
 		} ) );
 
 		const spy = jest.fn();
-		createAccount( userData )( spy );
+		await createAccount( userData )( spy );
 		expect( spy ).toHaveBeenCalledWith( {
 			data,
-			error: null,
 			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 			userData,
 		} );
 	} );
 
-	test( 'should dispatch receive action with error data', () => {
+	test( 'should dispatch receive action with error data', async () => {
 		const userData = { username: 'saduser' };
-		const error = { code: 'error' };
+		const error = { code: 'error', message: 'This is an error' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew( _, callback ) {
-				callback( error, null );
+			async usersNew() {
+				throw error;
 			},
 		} ) );
 
 		const spy = jest.fn();
-		createAccount( userData )( spy );
+		await createAccount( userData )( spy );
 		expect( spy ).toHaveBeenCalledWith( {
-			data: null,
 			error,
 			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			userData,
 		} );
 	} );
 } );
