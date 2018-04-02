@@ -439,5 +439,24 @@ describe( '#authorizeSSO()', () => {
 				userData,
 			} );
 		} );
+
+		test( 'should dispatch receive action with error data', async () => {
+			const userData = { username: 'saduser' };
+			const error = { code: 'error' };
+			jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+				usersNew( _, callback ) {
+					callback( error, null );
+				},
+			} ) );
+
+			const spy = jest.fn();
+			await createAccount( userData )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				data: null,
+				error,
+				type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+				userData,
+			} );
+		} );
 	} );
 } );
