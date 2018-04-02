@@ -40,25 +40,25 @@ class SetupTasks extends Component {
 	};
 
 	componentDidMount = () => {
-		const { site } = this.props;
+		const { site, productsLoaded } = this.props;
 
 		if ( site && site.ID ) {
 			this.props.fetchPaymentMethods( site.ID );
 
-			if ( ! areProductsLoaded ) {
+			if ( ! productsLoaded ) {
 				this.props.fetchProducts( site.ID, { page: 1 } );
 			}
 		}
 	};
 
 	componentWillReceiveProps = newProps => {
-		const { site } = this.props;
+		const { site, productsLoaded } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
 
 		if ( newSiteId && oldSiteId !== newSiteId ) {
-			if ( ! areProductsLoaded ) {
+			if ( ! productsLoaded ) {
 				this.props.fetchProducts( newSiteId, { page: 1 } );
 			}
 		}

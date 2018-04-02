@@ -107,7 +107,12 @@ class Dashboard extends Component {
 	}
 
 	fetchStoreData = () => {
-		const { siteId, productsLoaded } = this.props;
+		const { siteId, productsLoaded, finishedInstallOfRequiredPlugins } = this.props;
+
+		if ( ! finishedInstallOfRequiredPlugins ) {
+			return;
+		}
+
 		this.props.fetchOrders( siteId );
 
 		if ( ! productsLoaded ) {
@@ -233,7 +238,14 @@ class Dashboard extends Component {
 	};
 
 	render() {
-		const { className, isSetupComplete, loading, selectedSite, siteId } = this.props;
+		const {
+			className,
+			isSetupComplete,
+			loading,
+			selectedSite,
+			siteId,
+			finishedInstallOfRequiredPlugins,
+		} = this.props;
 
 		return (
 			<Main className={ classNames( 'dashboard', className ) } wideLayout>
@@ -242,7 +254,7 @@ class Dashboard extends Component {
 					isLoading={ loading || ! selectedSite }
 				/>
 				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
-				<QuerySettingsGeneral siteId={ siteId } />
+				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
 			</Main>
 		);
 	}
