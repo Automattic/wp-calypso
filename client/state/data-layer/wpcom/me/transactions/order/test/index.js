@@ -5,20 +5,16 @@
  */
 import { fetchOrderTransaction, onSuccess, onError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { setOrderTransaction } from 'state/order-transactions/actions';
-
-// we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
-jest.mock( 'lib/impure-lodash', () => ( {
-	uniqueId: () => 'mock-unique-id',
-} ) );
+import { setOrderTransaction, setOrderTransactionError } from 'state/order-transactions/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'me/transactions/order', () => {
+		const orderId = 123;
+
 		describe( 'fetchOrderTransaction()', () => {
 			test( 'should return the expected http request action.', () => {
 				const action = {
-					orderId: 123,
+					orderId,
 				};
 
 				expect( fetchOrderTransaction( action ) ).toEqual(
@@ -40,7 +36,7 @@ describe( 'wpcom-api', () => {
 		describe( 'onSuccess()', () => {
 			test( 'should return the expected setting action for populating state.', () => {
 				const action = {
-					orderId: 123,
+					orderId,
 				};
 				const detail = {
 					status: 'profit!',
@@ -54,8 +50,11 @@ describe( 'wpcom-api', () => {
 
 		describe( 'onError()', () => {
 			test( 'should return the expected error notice action.', () => {
-				expect( onError() ).toEqual(
-					errorNotice( 'We have problems fetching your payment status. Please try again later.' )
+				const error = {
+					message: 'something goes wrong!',
+				};
+				expect( onError( { orderId }, error ) ).toEqual(
+					setOrderTransactionError( orderId, error )
 				);
 			} );
 		} );
