@@ -13,8 +13,8 @@ import notification from './notification';
 import settings from './settings';
 import sendVerificationEmail from './send-verification-email';
 import countries from './transactions/supported-countries';
+import order from './transactions/order';
 import twoStep from './two-step';
-import sourcePayment from './transactions/source-payment';
 
 export default mergeHandlers(
 	block,
@@ -24,5 +24,5 @@ export default mergeHandlers(
 	settings,
 	sendVerificationEmail,
 	twoStep,
-	sourcePayment
+	order
 );

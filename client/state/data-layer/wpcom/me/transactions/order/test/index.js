@@ -3,10 +3,10 @@
 /**
  * Internal dependencies
  */
-import { fetchSourcePaymentTransactionDetail, onSuccess, onError } from '../';
+import { fetchOrderTransaction, onSuccess, onError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
-import { setSourcePaymentTransactionDetail } from 'state/transactions/source-payment/actions';
+import { setOrderTransaction } from 'state/order-transactions/actions';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {
@@ -14,18 +14,18 @@ jest.mock( 'lib/impure-lodash', () => ( {
 } ) );
 
 describe( 'wpcom-api', () => {
-	describe( 'me/transactions/source-payment', () => {
-		describe( 'fetchSourcePaymentTransactionDetail()', () => {
+	describe( 'me/transactions/order', () => {
+		describe( 'fetchOrderTransaction()', () => {
 			test( 'should return the expected http request action.', () => {
 				const action = {
 					orderId: 123,
 				};
 
-				expect( fetchSourcePaymentTransactionDetail( action ) ).toEqual(
+				expect( fetchOrderTransaction( action ) ).toEqual(
 					http(
 						{
 							method: 'GET',
-							path: `/me/transactions/source-payment/${ action.orderId }`,
+							path: `/me/transactions/order/${ action.orderId }`,
 							apiNamespace: 'rest/v1',
 						},
 						action
@@ -44,7 +44,7 @@ describe( 'wpcom-api', () => {
 				};
 
 				expect( onSuccess( action, detail ) ).toEqual(
-					setSourcePaymentTransactionDetail( action.orderId, detail )
+					setOrderTransaction( action.orderId, detail )
 				);
 			} );
 		} );

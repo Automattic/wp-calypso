@@ -11,22 +11,21 @@ import { translate } from 'i18n-calypso';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { setSourcePaymentTransactionDetail } from 'state/transactions/source-payment/actions';
-import { SOURCE_PAYMENT_TRANSACTION_DETAIL_FETCH } from 'state/action-types';
+import { setOrderTransaction } from 'state/order-transactions/actions';
+import { ORDER_TRANSACTION_FETCH } from 'state/action-types';
 import fromApi from './from-api';
 
-export const fetchSourcePaymentTransactionDetail = action =>
+export const fetchOrderTransaction = action =>
 	http(
 		{
 			method: 'GET',
-			path: `/me/transactions/source-payment/${ action.orderId }`,
+			path: `/me/transactions/order/${ action.orderId }`,
 			apiNamespace: 'rest/v1',
 		},
 		action
 	);
 
-export const onSuccess = ( { orderId }, detail ) =>
-	setSourcePaymentTransactionDetail( orderId, detail );
+export const onSuccess = ( { orderId }, detail ) => setOrderTransaction( orderId, detail );
 
 export const onError = () =>
 	errorNotice(
@@ -34,9 +33,9 @@ export const onError = () =>
 	);
 
 export default {
-	[ SOURCE_PAYMENT_TRANSACTION_DETAIL_FETCH ]: [
+	[ ORDER_TRANSACTION_FETCH ]: [
 		dispatchRequestEx( {
-			fetch: fetchSourcePaymentTransactionDetail,
+			fetch: fetchOrderTransaction,
 			onSuccess,
 			onError,
 			fromApi,
