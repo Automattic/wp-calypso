@@ -326,13 +326,13 @@ const SecurePaymentForm = createReactClass( {
 			case 'giropay':
 			case 'ideal':
 			case 'p24':
+			case 'tef':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }
 						{ this.renderRedirectPaymentBox( visiblePaymentBox ) }
 					</div>
 				);
-
 			default:
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
 				return null;
