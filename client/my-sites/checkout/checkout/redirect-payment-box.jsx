@@ -130,7 +130,7 @@ export class RedirectPaymentBox extends PureComponent {
 		} );
 	}
 
-	renderBankOptions() {
+	renderIdealBankOptions() {
 		// Source https://stripe.com/docs/sources/ideal
 		const idealBanks = {
 			abn_amro: 'ABN AMRO',
@@ -166,7 +166,7 @@ export class RedirectPaymentBox extends PureComponent {
 						name="ideal-bank"
 						onChange={ this.handleChange }
 					>
-						{ this.renderBankOptions() }
+						{ this.renderIdealBankOptions() }
 					</FormSelect>
 				</div>
 			);
