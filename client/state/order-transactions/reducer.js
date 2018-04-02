@@ -51,8 +51,8 @@ export const errors = keyedReducer(
 	)
 );
 
-export default combineReducers(
+export default combineReducers( {
 	items,
 	isFetching,
 	errors,
-);
+} );
