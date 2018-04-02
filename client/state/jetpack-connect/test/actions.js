@@ -7,6 +7,7 @@
  */
 import * as actions from '../actions';
 import useNock from 'test/helpers/use-nock';
+import wpcom from 'lib/wp';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
@@ -22,6 +23,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	SITE_RECEIVE,
+	JETPACK_CONNECT_CREATE_ACCOUNT,
 } from 'state/action-types';
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
@@ -398,6 +400,24 @@ describe( '#authorizeSSO()', () => {
 				},
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 			} );
+		} );
+	} );
+
+	describe( '#createAccount()', () => {
+		const { createAccount } = actions;
+
+		beforeEach( jest.restoreAllMocks );
+
+		test( 'should dispatch create action', () => {
+			jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+				usersNew( _, callback ) {
+					callback( null, {} );
+				},
+			} ) );
+
+			const spy = jest.fn();
+			createAccount()( spy );
+			expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
 		} );
 	} );
 } );
