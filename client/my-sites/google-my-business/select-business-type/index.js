@@ -13,18 +13,23 @@ import page from 'page';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import CompactCard from 'components/card/compact';
+import Card from 'components/card';
 import ActionCard from 'components/action-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import ExternalLink from 'components/external-link';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-class SelectBusinessType extends Component {
+class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteId: PropTypes.string.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+	};
+
+	goBack = () => {
+		page.back( `/stats/day/${ this.props.siteSlug }` );
 	};
 
 	trackCreateMyListingClick = () => {
@@ -45,33 +50,30 @@ class SelectBusinessType extends Component {
 		);
 	};
 
-	goBack = () => {
-		page.back( `/stats/day/${ this.props.siteId }` );
-	};
-
 	render() {
-		const { translate, siteId } = this.props;
+		const { siteSlug, translate } = this.props;
 
 		return (
-			<Main className="select-business-type">
+			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker
 					path="/google-my-business/:site/select-business-type"
 					title="Google My Business > Select Business Type"
 				/>
+
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<CompactCard className="select-business-type__explanation">
-					<div className="select-business-type__explanation-main">
-						<h1 className="select-business-type__explanation-heading">
+				<Card className="gmb-select-business-type__explanation">
+					<div className="gmb-select-business-type__explanation-main">
+						<h1 className="gmb-select-business-type__heading">
 							{ translate( 'Which type of business are you?' ) }
 						</h1>
 
 						<p>
 							{ translate(
 								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
-									'It works for businesses that have a physical location or serve a local area.',
+								'It works for businesses that have a physical location or serve a local area.',
 								{
 									components: {
 										link: (
@@ -90,11 +92,11 @@ class SelectBusinessType extends Component {
 					</div>
 
 					<img
-						className="select-business-type__explanation-image"
+						className="gmb-select-business-type__illustration"
 						src="/calypso/images/google-my-business/business-local.svg"
-						alt="Local business illustration"
+						alt={ translate( 'Local business illustration' ) }
 					/>
-				</CompactCard>
+				</Card>
 
 				<ActionCard
 					headerText={ translate( 'Physical Location or Service Area', {
@@ -102,7 +104,7 @@ class SelectBusinessType extends Component {
 					} ) }
 					mainText={ translate(
 						'Your business has a physical location customers can visit, ' +
-							'or provides goods and services to local customers, or both.'
+						'or provides goods and services to local customers, or both.'
 					) }
 					buttonText={ translate( 'Create Your Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
@@ -122,7 +124,7 @@ class SelectBusinessType extends Component {
 						"Don't provide in-person services? Learn more about reaching your customers online."
 					) }
 					buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
-					buttonHref={ '/settings/traffic/' + siteId }
+					buttonHref={ `/settings/traffic/${ siteSlug }` }
 					buttonOnClick={ this.trackOptimizeYourSEOClick }
 				/>
 			</Main>
@@ -130,4 +132,11 @@ class SelectBusinessType extends Component {
 	}
 }
 
-export default connect( undefined, { recordTracksEvent } )( localize( SelectBusinessType ) );
+export default connect(
+	state => ( {
+		siteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{
+		recordTracksEvent,
+	}
+)( localize( GoogleMyBusinessSelectBusinessType ) );
