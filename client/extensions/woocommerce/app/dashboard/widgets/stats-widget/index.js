@@ -149,6 +149,7 @@ class StatsWidget extends Component {
 				data={ ( orderData && orderData.data ) || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				type="number"
 			/>
 		);
@@ -168,6 +169,7 @@ class StatsWidget extends Component {
 				data={ ( orderData && orderData.data ) || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				type="currency"
 			/>
 		);
@@ -184,6 +186,7 @@ class StatsWidget extends Component {
 				data={ visitorData || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				statType="statsVisits"
 				query={ queries.visitorQuery }
 				attribute="visitors"
@@ -207,6 +210,7 @@ class StatsWidget extends Component {
 				data={ data || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				statType="statsOrders"
 				query={ queries.orderQuery }
 				attribute="conversionRate"

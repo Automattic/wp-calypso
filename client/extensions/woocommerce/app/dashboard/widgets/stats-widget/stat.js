@@ -30,7 +30,12 @@ class StatsWidgetStat extends Component {
 		type: PropTypes.string.isRequired,
 		data: PropTypes.array.isRequired,
 		date: PropTypes.string.isRequired,
+		unit: PropTypes.string,
 		delta: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ).isRequired,
+	};
+
+	static defaultProps = {
+		unit: 'week',
 	};
 
 	renderDelta = () => {
@@ -57,7 +62,7 @@ class StatsWidgetStat extends Component {
 	};
 
 	render() {
-		const { data, site, date, attribute, label, requesting, type, labelToolTip } = this.props;
+		const { data, site, date, attribute, label, requesting, type, labelToolTip, unit } = this.props;
 
 		if ( requesting || ! site.ID || ! data || ! data.length ) {
 			return (
@@ -73,7 +78,16 @@ class StatsWidgetStat extends Component {
 		}
 
 		const value = data[ index ][ attribute ];
+
+		// Our store stats REST API endpoints return zero filled data. The visitors endpoint and conversion data
+		// have not been zero filled. This catches any missing data points and fills them in so sparklines look consistent.
 		const timeSeries = data.map( row => +row[ attribute ] );
+		const expectedDataPoints = 'month' === unit ? 12 : 30;
+		const missingDataPoints = expectedDataPoints - timeSeries.length;
+		for ( let i = missingDataPoints; i > 0; i-- ) {
+			timeSeries.unshift( 0 );
+		}
+		const highlightIndex = timeSeries.length - 1;
 
 		const labelClasses = classNames( 'stats-widget__box-label', {
 			'stats-widget__box-label-tooltip': labelToolTip,
@@ -96,7 +110,7 @@ class StatsWidgetStat extends Component {
 					<Sparkline
 						aspectRatio={ 3 }
 						data={ timeSeries }
-						highlightIndex={ index }
+						highlightIndex={ highlightIndex }
 						maxHeight={ 50 }
 					/>
 				</div>
