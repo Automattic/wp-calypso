@@ -60,7 +60,7 @@ class GoogleMyBusinessNewAccount extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card className="gmb-new-account__card">
+				<Card>
 					<img
 						alt={ translate( 'Local business illustration' ) }
 						className="gmb-new-account__illustration"
