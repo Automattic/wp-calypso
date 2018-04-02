@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import debugFactory from 'debug';
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -32,6 +32,7 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
+import Card from 'components/card';
 import Notice from 'components/notice';
 import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
@@ -66,6 +67,8 @@ import {
 	recordSearchResultsReceive,
 	recordTransferDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
+
+const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
 const domains = wpcom.domains();
 
@@ -184,9 +187,10 @@ class RegisterDomainStep extends React.Component {
 			lastDomainSearched: null,
 			lastDomainStatus: null,
 			lastDomainIsTransferrable: false,
-			loadingResults: loadingResults,
+			loadingResults,
 			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
 			notice: null,
+			pageNumber: 1,
 			searchResults: null,
 			subdomainSearchResults: null,
 		};
@@ -343,6 +347,16 @@ class RegisterDomainStep extends React.Component {
 					/>
 				) }
 				{ this.content() }
+				{ isKrackenUI &&
+					! this.state.loadingResults && (
+						<Card
+							className="register-domain-step__next-page"
+							tagName="button"
+							onClick={ this.showNextPage }
+						>
+							Show more results
+						</Card>
+					) }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
 			</div>
@@ -371,8 +385,20 @@ class RegisterDomainStep extends React.Component {
 		this.props.onSave( this.state );
 	};
 
-	repeatSearch = () => {
-		this.onSearchChange( this.state.lastQuery, () => this.onSearch( this.state.lastQuery ) );
+	repeatSearch = ( pageNumber = 1 ) => {
+		this.setState(
+			{
+				exactMatchDomain: null,
+				lastDomainSearched: null,
+				loadingResults: true,
+				loadingSubdomainResults: true,
+				notice: null,
+				pageNumber,
+			},
+			() => {
+				this.onSearch( this.state.lastQuery );
+			}
+		);
 	};
 
 	getActiveFiltersForAPI() {
@@ -412,9 +438,10 @@ class RegisterDomainStep extends React.Component {
 				exactMatchDomain: null,
 				lastQuery: searchQuery,
 				lastDomainSearched: null,
-				loadingResults: loadingResults,
+				loadingResults,
 				loadingSubdomainResults: loadingResults,
 				notice: null,
+				pageNumber: 1,
 				searchResults: null,
 				subdomainSearchResults: null,
 			},
@@ -487,11 +514,14 @@ class RegisterDomainStep extends React.Component {
 			quantity: suggestionQuantity,
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
+			page_number: this.state.pageNumber,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: searchVendor,
 			vertical: this.props.surveyVertical,
 			...this.getActiveFiltersForAPI(),
 		};
+
+		debug( 'Fetching domains suggestions with the following query', query );
 
 		return domains
 			.suggestions( query )
@@ -508,7 +538,12 @@ class RegisterDomainStep extends React.Component {
 					this.props.analyticsSection
 				);
 
-				return domainSuggestions;
+				// If page number is greater than 1, then we assume the user has advanced
+				// to the next page. Given our "load more" pagination design, this means
+				// we'd want to combine the existing suggestions with the new suggestions
+				return this.state.pageNumber > 1
+					? [ ...this.state.searchResults, ...domainSuggestions ]
+					: domainSuggestions;
 			} )
 			.catch( error => {
 				const timeDiff = Date.now() - timestamp;
@@ -533,7 +568,7 @@ class RegisterDomainStep extends React.Component {
 			} );
 	};
 
-	handleDomainSuggestions = domain => result => {
+	handleDomainSuggestions = domain => results => {
 		if (
 			! this.state.loadingResults ||
 			domain !== this.state.lastDomainSearched ||
@@ -544,7 +579,7 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		const suggestions = uniqBy( flatten( compact( result ) ), function( suggestion ) {
+		const suggestions = uniqBy( flatten( compact( results ) ), function( suggestion ) {
 			return suggestion.domain_name;
 		} );
 
@@ -662,8 +697,6 @@ class RegisterDomainStep extends React.Component {
 
 		this.setState( {
 			lastDomainSearched: domain,
-			searchResults: [],
-			subdomainSearchResults: [],
 			railcarSeed: this.getNewRailcarSeed(),
 		} );
 
@@ -685,6 +718,10 @@ class RegisterDomainStep extends React.Component {
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			this.getSubdomainSuggestions( domain, timestamp );
 		}
+	};
+
+	showNextPage = () => {
+		this.repeatSearch( this.state.pageNumber + 1 );
 	};
 
 	initialSuggestions() {
