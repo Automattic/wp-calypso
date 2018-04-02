@@ -15,13 +15,13 @@ describe( 'wpcom-api', () => {
 				processing_status: 'profit!',
 			};
 
-			const expect = {
+			const expectedOutput = {
 				userId: response.user_id,
 				orderId: response.order_id,
 				processingStatus: response.processing_status,
 			};
 
-			expect( fromApi( response ) ).toEqual( response );
+			expect( fromApi( response ) ).toEqual( expectedOutput );
 		} );
 
 		test( 'should invalidate when the required field is missing.', () => {
