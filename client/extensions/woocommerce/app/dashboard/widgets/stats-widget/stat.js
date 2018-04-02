@@ -30,8 +30,12 @@ class StatsWidgetStat extends Component {
 		type: PropTypes.string.isRequired,
 		data: PropTypes.array.isRequired,
 		date: PropTypes.string.isRequired,
-		unit: PropTypes.string.isRequired,
+		unit: PropTypes.string,
 		delta: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ).isRequired,
+	};
+
+	static defaultProps = {
+		unit: 'week',
 	};
 
 	renderDelta = () => {
