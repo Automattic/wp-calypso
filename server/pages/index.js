@@ -397,6 +397,7 @@ function setUpCSP( req, res, next ) {
 			'*.gravatar.com',
 			'https://www.google-analytics.com',
 			'https://amplifypixel.outbrain.com',
+			'https://img.youtube.com',
 		],
 		'frame-src': [ "'self'", 'https://public-api.wordpress.com', 'https://accounts.google.com/' ],
 		'font-src': [
