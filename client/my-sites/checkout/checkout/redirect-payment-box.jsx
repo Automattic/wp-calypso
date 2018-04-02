@@ -23,7 +23,7 @@ import notices from 'notices';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
 
-class SourcePaymentBox extends PureComponent {
+class RedirectPaymentBox extends PureComponent {
 	static propTypes = {
 		paymentType: PropTypes.string.isRequired,
 		cart: PropTypes.object.isRequired,
@@ -112,8 +112,8 @@ class SourcePaymentBox extends PureComponent {
 					info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
 					disabled: true
 				} );
-				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
-				analytics.tracks.recordEvent( 'calypso_checkout_with_source_' + this.props.paymentType );
+				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
+				analytics.tracks.recordEvent( 'calypso_checkout_with_redirect' + this.props.paymentType );
 				location.href = result.redirect_url;
 			}
 		}.bind( this ) );
@@ -232,6 +232,6 @@ class SourcePaymentBox extends PureComponent {
 		return paymentMethodName( this.props.paymentType );
 	}
 }
-SourcePaymentBox.displayName = 'SourcePaymentBox';
+RedirectPaymentBox.displayName = 'RedirectPaymentBox';
 
-export default localize( SourcePaymentBox );
+export default localize( RedirectPaymentBox );
