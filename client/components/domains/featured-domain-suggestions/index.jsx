@@ -12,7 +12,7 @@ import { pickBy, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import FeaturedDomainSuggestion from 'components/domains/featured-domain-suggestions/featured-domain-suggestion';
+import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
@@ -39,8 +39,16 @@ export class FeaturedDomainSuggestions extends Component {
 
 		return (
 			<div className="featured-domain-suggestions">
-				<FeaturedDomainSuggestion suggestion={ primarySuggestion } { ...childProps } />
-				<FeaturedDomainSuggestion suggestion={ secondarySuggestion } { ...childProps } />
+				<DomainRegistrationSuggestion
+					suggestion={ primarySuggestion }
+					isFeatured
+					{ ...childProps }
+				/>
+				<DomainRegistrationSuggestion
+					suggestion={ secondarySuggestion }
+					isFeatured
+					{ ...childProps }
+				/>
 			</div>
 		);
 	}

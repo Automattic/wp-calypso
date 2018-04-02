@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -24,10 +25,14 @@ import {
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isNewTLD, isTestTLD } from 'components/domains/domain-registration-suggestion/utility';
+import ProgressBar from 'components/progress-bar';
+
+const NOTICE_GREEN = '#4ab866';
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
 		isSignupStep: PropTypes.bool,
+		isFeatured: PropTypes.bool,
 		cart: PropTypes.object,
 		suggestion: PropTypes.shape( {
 			domain_name: PropTypes.string.isRequired,
@@ -139,7 +144,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion,
 			translate,
 		} = this.props;
-		const domain = suggestion.domain_name;
+		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
 
 		let buttonClasses, buttonContent;
@@ -163,23 +168,78 @@ class DomainRegistrationSuggestion extends React.Component {
 		};
 	}
 
-	render() {
+	getPriceRule() {
 		const { cart, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
-		const { domain_name: domain } = suggestion;
+		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion );
+	}
+
+	renderDomain() {
+		const { suggestion: { domain_name: domain }, isFeatured } = this.props;
+		return (
+			<h3 className="domain-registration-suggestion__title">
+				{ domain }
+				{ ! isFeatured ? this.getDomainFlags() : null }
+			</h3>
+		);
+	}
+
+	renderProgressBar() {
+		const { suggestion: { isRecommended, isBestAlternative }, translate, isFeatured } = this.props;
+
+		if ( ! isFeatured ) {
+			return null;
+		}
+
+		let title, props;
+		if ( isRecommended ) {
+			title = translate( 'Best Match' );
+			props = {
+				color: NOTICE_GREEN,
+				title,
+				value: 90,
+			};
+		}
+
+		if ( isBestAlternative ) {
+			title = translate( 'Best Alternative' );
+			props = {
+				title,
+				value: 80,
+			};
+		}
+
+		if ( title ) {
+			return (
+				<div className="domain-registration-suggestion__progress-bar">
+					<ProgressBar { ...props } />
+					<span className="domain-registration-suggestion__progress-bar-text">{ title }</span>
+				</div>
+			);
+		}
+	}
+
+	render() {
+		const {
+			domainsWithPlansOnly,
+			isFeatured,
+			suggestion: { domain_name: domain, product_slug: productSlug, cost },
+		} = this.props;
+
+		const extraClasses = classNames( { 'featured-domain-suggestion': isFeatured } );
 
 		return (
 			<DomainSuggestion
-				priceRule={ getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion ) }
-				price={ suggestion.product_slug && suggestion.cost }
+				extraClasses={ extraClasses }
+				priceRule={ this.getPriceRule() }
+				price={ productSlug && cost }
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
+				showExpandedPrice={ isFeatured }
 				{ ...this.getButtonProps() }
 			>
-				<h3>
-					{ domain }
-					{ this.getDomainFlags() }
-				</h3>
+				{ this.renderDomain() }
+				{ this.renderProgressBar() }
 			</DomainSuggestion>
 		);
 	}
