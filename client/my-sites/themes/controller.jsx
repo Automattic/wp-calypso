@@ -25,12 +25,12 @@ import { getThemeFilters } from 'state/selectors';
 const debug = debugFactory( 'calypso:themes' );
 
 function getProps( context ) {
-	const { tier, filter, vertical, site_id: siteId } = context.params;
+	const { tier, filter, vertical } = context.params;
 
-	const { basePath, analyticsPageTitle } = getAnalyticsData( context.path, tier, siteId );
+	const { analyticsPath, analyticsPageTitle } = getAnalyticsData( context.path, context.params );
 
 	const boundTrackScrollPage = function() {
-		trackScrollPage( basePath, analyticsPageTitle, 'Themes' );
+		trackScrollPage( analyticsPath, analyticsPageTitle, 'Themes' );
 	};
 
 	return {
@@ -38,7 +38,7 @@ function getProps( context ) {
 		filter,
 		vertical,
 		analyticsPageTitle,
-		analyticsPath: basePath,
+		analyticsPath,
 		search: context.query.s,
 		pathName: context.pathname,
 		trackScrollPage: boundTrackScrollPage,
