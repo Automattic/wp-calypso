@@ -34,7 +34,12 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected } ) =>
 						className="account-dialog-account__picture"
 					/>
 				) }
-				<span className="account-dialog-account__name">{ account.name }</span>
+				<span className="account-dialog-account__content">
+					<div className="account-dialog-account__name">{ account.name }</div>
+					{ account.description && (
+						<div className="account-dialog-account__description">{ account.description }</div>
+					) }
+				</span>
 			</label>
 		</li>
 	);

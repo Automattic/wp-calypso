@@ -25,7 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { getSiteUserSharingConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
 import { canCurrentUser, isPublicizeEnabled } from 'state/selectors';
 
@@ -178,7 +178,7 @@ export default connect(
 			siteId,
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
 			canUserPublishPosts,
-			connections: getSiteUserConnections( state, siteId, userId ),
+			connections: getSiteUserSharingConnections( state, siteId, userId ),
 		};
 	},
 	{ requestConnections }
