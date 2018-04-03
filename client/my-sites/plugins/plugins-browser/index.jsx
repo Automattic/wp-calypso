@@ -42,12 +42,14 @@ import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jet
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import HeaderButton from 'components/header-button';
 import { isBusiness, isEnterprise, isPremium } from 'lib/products-values';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 
-const PluginsBrowser = createReactClass( {
+// eslint-disable-next-line react/prefer-es6-class
+export const PluginsBrowser = createReactClass( {
 	displayName: 'PluginsBrowser',
 	_SHORT_LIST_LENGTH: 6,
 	visibleCategories: [ 'new', 'popular', 'featured' ],
@@ -479,7 +481,12 @@ const PluginsBrowser = createReactClass( {
 	},
 
 	renderUpgradeNudge() {
-		if ( ! this.props.selectedSiteId || this.props.isJetpackSite || this.props.hasBusinessPlan ) {
+		if (
+			! this.props.selectedSiteId ||
+			! this.props.sitePlan ||
+			this.props.isJetpackSite ||
+			this.props.hasBusinessPlan
+		) {
 			return null;
 		}
 
@@ -487,7 +494,9 @@ const PluginsBrowser = createReactClass( {
 			<Banner
 				feature={ FEATURE_UPLOAD_PLUGINS }
 				event={ 'calypso_plugins_browser_upgrade_nudge' }
-				plan={ PLAN_BUSINESS }
+				plan={ findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
+					type: TYPE_BUSINESS,
+				} ) }
 				title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
 			/>
 		);
