@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -74,7 +73,7 @@ class PostsMain extends React.Component {
 	}
 
 	render() {
-		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
+		const { author, category, search, siteId, statusSlug, tag } = this.props;
 		const classes = classnames( 'posts', {
 			'is-multisite': ! this.props.siteId,
 			'is-single-site': this.props.siteId,
@@ -94,7 +93,6 @@ class PostsMain extends React.Component {
 
 		return (
 			<Main className={ classes }>
-				<DocumentHead title={ translate( 'Blog Posts' ) } />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<SidebarNavigation />
 				<div className="posts__primary">
