@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -12,24 +12,30 @@ import React, { Component } from 'react';
 import PieChart from 'components/pie-chart';
 import Card from 'components/card';
 
-function PieChartExample() {
+const PieChartExample = () => {
 	return (
 		<Card>
 			<PieChart
 				data={ [
 					{
-						value: 362,
+						value: 189,
 						name: 'Direct',
 						description: 'Customers who find your listing searching for your business or address',
 					},
 					{
-						value: 189,
+						value: 362,
 						name: 'Discovery',
 						description:
 							'Customers who find your listing searching for a category, product, or service',
 					},
+					{
+						value: 122,
+						name: 'Referral',
+						description: 'Customers who find your listing by being referred from another type of search',
+
+					}
 				] }
-				plural={ 'Total Searches' }
+				title={ 'Total Searches' }
 			/>
 		</Card>
 	);

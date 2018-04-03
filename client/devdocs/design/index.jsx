@@ -70,7 +70,7 @@ import ListEnd from 'components/list-end/docs/example';
 import Notices from 'components/notice/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
-import PieChart from 'components/pie-chart/docs';
+import PieChart from 'components/pie-chart/docs/example';
 import Popovers from 'components/popover/docs/example';
 import ProgressBar from 'components/progress-bar/docs/example';
 import Ranges from 'components/forms/range/docs/example';
@@ -197,7 +197,7 @@ class DesignAssets extends React.Component {
 					<Notices />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
-					<PieChart />
+					<PieChart readmeFilePath="pie-chart" />
 					<Popovers readmeFilePath="popover" />
 					<ProgressBar readmeFilePath="progress-bar" />
 					<Ranges readmeFilePath="forms/range" />

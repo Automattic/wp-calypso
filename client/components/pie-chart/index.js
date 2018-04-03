@@ -3,10 +3,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
-import { assign, isEqual } from 'lodash';
+import { assign, isEqual, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,7 @@ const SVG_SIZE = 300;
 class PieChart extends Component {
 	static propTypes = {
 		data: PropTypes.array.isRequired,
-		plural: PropTypes.string,
+		title: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -34,10 +33,12 @@ class PieChart extends Component {
 	}
 
 	processData( data ) {
+		const sortedData = sortBy( data, datum => datum.value ).reverse();
+
 		const arcs = d3Pie()
 			.startAngle( Math.PI )
 			.startAngle( -Math.PI )
-			.value( d => d.value )( data );
+			.value( d => d.value )( sortedData );
 		const arcGen = d3Arc()
 			.innerRadius( 0 )
 			.outerRadius( SVG_SIZE / 2 );
@@ -45,15 +46,15 @@ class PieChart extends Component {
 		const paths = arcs.map( arc => arcGen( arc ) );
 
 		return {
-			data: data.map( ( datum, index ) =>
+			data: sortedData.map( ( datum, index ) =>
 				assign( {}, datum, { sectionNum: index % NUM_COLOR_SECTIONS, path: paths[ index ] } )
 			),
-			dataTotal: data.reduce( ( pv, cv ) => pv + cv.value, 0 ),
+			dataTotal: sortedData.reduce( ( pv, cv ) => pv + cv.value, 0 ),
 		};
 	}
 
 	render() {
-		const { plural } = this.props;
+		const { title } = this.props;
 		const { dataTotal, data } = this.state;
 
 		return (
@@ -77,7 +78,7 @@ class PieChart extends Component {
 						</g>
 					</svg>
 				</div>
-				<h2 className={ 'pie-chart__title' }>{ `${ dataTotal } ${ plural ? plural : '' }` }</h2>
+				{ title ? <h2 className={ 'pie-chart__title' }>{ `${ dataTotal } ${ title }` }</h2> : '' }
 				<div className={ 'pie-chart__legend' }>
 					{ data.map( ( datum, index ) => {
 						return (
@@ -97,4 +98,4 @@ class PieChart extends Component {
 	}
 }
 
-export default localize( PieChart );
+export default PieChart;
