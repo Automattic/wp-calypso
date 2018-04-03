@@ -7,13 +7,30 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { noSite, siteSelection } from 'my-sites/controller';
 import checkoutController from './controller';
 import SiftScience from 'lib/siftscience';
-import { makeLayout, render as clientRender } from 'controller';
+import userFactory from 'lib/user';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
+import { noSite, siteSelection } from 'my-sites/controller';
 
 export default function() {
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
+
 	SiftScience.recordUser();
+
+	// TODO (seear): Temporary logged-out handling. Remove when a general solution arrives in #23785.
+	if ( isLoggedOut ) {
+		page(
+			'/checkout/:domain/:product?',
+			redirectLoggedOut,
+			siteSelection,
+			checkoutController.checkout,
+			makeLayout,
+			clientRender
+		);
+		return;
+	}
 
 	page(
 		'/checkout/thank-you/no-site/:receiptId?',
