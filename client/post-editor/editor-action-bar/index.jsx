@@ -32,7 +32,6 @@ class EditorActionBar extends Component {
 		site: PropTypes.object,
 		type: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
-		postAuthor: PropTypes.object,
 	};
 
 	state = {
@@ -45,7 +44,7 @@ class EditorActionBar extends Component {
 		// update based on post changes. Flux changes are passed down from parent components.
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
 		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
-		const { isPostPrivate, postAuthor } = this.props;
+		const { isPostPrivate } = this.props;
 
 		return (
 			<div className="editor-action-bar">
@@ -54,12 +53,7 @@ class EditorActionBar extends Component {
 				</div>
 				<div className="editor-action-bar__cell is-center">
 					{ multiUserSite && (
-						<AsyncLoad
-							require="post-editor/editor-author"
-							post={ this.props.post }
-							isNew={ this.props.isNew }
-							postAuthor={ postAuthor }
-						/>
+						<AsyncLoad require="post-editor/editor-author" isNew={ this.props.isNew } />
 					) }
 				</div>
 				<div className="editor-action-bar__cell is-right">
