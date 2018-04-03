@@ -33,10 +33,11 @@ import { countries } from 'components/phone-input/data';
 import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import formState from 'lib/form-state';
 import analytics from 'lib/analytics';
+import { tryToGuessPostalCodeFormat } from 'lib/domains/utils';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
-import GAppsFieldset from './custom-form-fieldsets/g-apps-fieldset';
-import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
+import GAppsFieldset from 'components/domains/contact-details-form-fields/custom-form-fieldsets/g-apps-fieldset';
+import RegionAddressFieldsets from 'components/domains/contact-details-form-fields/custom-form-fieldsets/region-address-fieldsets';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
@@ -167,7 +168,10 @@ export class ContactDetailsFormFields extends Component {
 				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
 				// TODO: Do this on submit. Is it too annoying?
 				if ( fieldName === 'postalCode' ) {
-					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
+					sanitizedFieldValues[ fieldName ] = tryToGuessPostalCodeFormat(
+						sanitizedFieldValues[ fieldName ].toUpperCase(),
+						get( sanitizedFieldValues, 'countryCode', null )
+					);
 				}
 			}
 		} );
@@ -181,7 +185,7 @@ export class ContactDetailsFormFields extends Component {
 
 	handleBlur = () => {
 		this.formStateController.sanitize();
-		this.formStateController.validate();
+		this.formStateController._debouncedValidate();
 	};
 
 	validate = ( fieldValues, onComplete ) =>

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import {
 	assign,
 	camelCase,
@@ -90,7 +89,7 @@ assign( Controller.prototype, {
 		this._setState( changeFieldValue( formState, name, value, hideError ) );
 
 		// If we want to handle sanitize/validate differently in the component (e.g. onBlur)
-		// Form Stat will sanitize/validate pre-submit always
+		// FormState handleSubmit() will sanitize/validate if not done yet
 		if ( ! this._skipSanitizeAndValidateOnFieldChange ) {
 			this._debouncedSanitize();
 			this._debouncedValidate();
