@@ -17,7 +17,7 @@ import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
 import { canCurrentUserEditPost } from 'state/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 
 function preloadEditor() {
 	preload( 'post-editor' );

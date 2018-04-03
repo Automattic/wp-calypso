@@ -17,7 +17,7 @@ import { flowRight, isEqual, size, without } from 'lodash';
 import ListEnd from 'components/list-end';
 import QueryPosts from 'components/data/query-posts';
 import Page from './page';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import InfiniteScroll from 'components/infinite-scroll';
 import EmptyContent from 'components/empty-content';
 import NoResults from 'my-sites/no-results';

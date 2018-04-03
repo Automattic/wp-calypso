@@ -24,7 +24,7 @@ import FeedError from 'reader/feed-error';
 import StreamComponent from 'reader/following/main';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
 import { recordTrack } from 'reader/stats';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';

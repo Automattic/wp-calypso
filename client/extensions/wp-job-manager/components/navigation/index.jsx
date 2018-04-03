@@ -16,7 +16,7 @@ import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import { addSiteFragment } from 'lib/route';
-import { getSections } from 'sections-middleware';
+import { getSections } from 'sections-helper';
 import { Tabs } from '../../constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
