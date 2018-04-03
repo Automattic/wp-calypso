@@ -89,15 +89,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	inlineHelpWithContactForm: {
-		datestamp: '20180306',
-		variations: {
-			original: 0,
-			inlinecontact: 100,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
 	mobilePlansTablesOnSignup: {
 		datestamp: '20180330',
 		variations: {
