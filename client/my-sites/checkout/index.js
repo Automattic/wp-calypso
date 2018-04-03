@@ -7,7 +7,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-
 import checkoutController from './controller';
 import SiftScience from 'lib/siftscience';
 import userFactory from 'lib/user';
@@ -20,7 +19,7 @@ export default function() {
 
 	SiftScience.recordUser();
 
-	// TODO (seear): Temporary logged-out handling. Remove when a general solution in #23785 arrives.
+	// TODO (seear): Temporary logged-out handling. Remove when a general solution arrives in #23785.
 	if ( isLoggedOut ) {
 		page(
 			'/checkout/:domain/:product?',
