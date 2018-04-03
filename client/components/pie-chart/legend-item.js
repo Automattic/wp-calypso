@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 
 const SVG_SIZE = 30;
 
@@ -13,8 +12,8 @@ class LegendItem extends Component {
 		name: PropTypes.string.isRequired,
 		sectionNumber: PropTypes.number.isRequired,
 		value: PropTypes.number.isRequired,
+		percent: PropTypes.string.isRequired,
 		description: PropTypes.string,
-		percent: PropTypes.string,
 	};
 
 	render() {
@@ -37,12 +36,10 @@ class LegendItem extends Component {
 				</div>
 				<div className={ 'pie-chart__legend-item-detail' }>
 					<div className={ 'pie-chart__legend-item-detail-value' }>
-						{ percent ? `${ value } (${ percent }%)` : `${ value }` }
+						{ `${ value } (${ percent }%)` }
 					</div>
-					{ description ? (
+					{ description && (
 						<div className={ 'pie-chart__legend-item-detail-description' }>{ description }</div>
-					) : (
-						''
 					) }
 				</div>
 			</div>
@@ -50,4 +47,4 @@ class LegendItem extends Component {
 	}
 }
 
-export default localize( LegendItem );
+export default LegendItem;

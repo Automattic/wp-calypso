@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
-import { assign, isEqual, sortBy } from 'lodash';
+import { assign, isEqualWith, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ class PieChart extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props.data, nextProps.data ) ) {
+		if ( ! isEqualWith( this.props.data, nextProps.data, ( lv, rv ) => lv.value === rv.value ) ) {
 			this.setState( this.processData( nextProps.data ) );
 		}
 	}
@@ -78,7 +78,7 @@ class PieChart extends Component {
 						</g>
 					</svg>
 				</div>
-				{ title ? <h2 className={ 'pie-chart__title' }>{ `${ dataTotal } ${ title }` }</h2> : '' }
+				{ title && <h2 className={ 'pie-chart__title' }>{ title }</h2> }
 				<div className={ 'pie-chart__legend' }>
 					{ data.map( ( datum, index ) => {
 						return (
