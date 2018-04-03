@@ -14,8 +14,6 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import AsyncLoad from 'components/async-load';
-import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
@@ -39,7 +37,6 @@ import { isOffline } from 'state/application/selectors';
 import { hasSidebar, masterbarIsVisible } from 'state/ui/selectors';
 import InlineHelp from 'blocks/inline-help';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
@@ -48,6 +45,8 @@ import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
+
+const masterbarPlaceholder = <header id="header" class="masterbar" />;
 
 /* eslint-disable react/no-deprecated */
 const Layout = createReactClass( {
@@ -76,21 +75,29 @@ const Layout = createReactClass( {
 
 	renderMasterbar: function() {
 		if ( ! this.props.user ) {
-			return <MasterbarLoggedOut sectionName={ this.props.section.name } />;
+			return (
+				<AsyncLoad
+					require="layout/masterbar/logged-out"
+					sectionName={ this.props.section.name }
+					placeholder={ masterbarPlaceholder }
+				/>
+			);
 		}
 
 		return (
-			<MasterbarLoggedIn
+			<AsyncLoad
+				require="layout/masterbar/logged-in"
 				user={ this.props.user }
 				section={ this.props.section.group }
 				sites={ this.props.sites }
+				placeholder={ masterbarPlaceholder }
 			/>
 		);
 	},
 
 	renderPreview() {
 		if ( config.isEnabled( 'preview-layout' ) && this.props.section.group === 'sites' ) {
-			return <SitePreview />;
+			return <AsyncLoad require="blocks/site-preview" />;
 		}
 	},
 
