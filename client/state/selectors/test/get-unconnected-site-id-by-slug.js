@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import { getUnconnectedSiteIdBySlug } from 'state/selectors';
 
 describe( '#getUnconnectedSiteIdBySlug()', () => {
