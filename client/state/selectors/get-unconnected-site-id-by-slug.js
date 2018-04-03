@@ -19,7 +19,7 @@ import { urlToSlug } from 'lib/url';
  */
 export default function getUnconnectedSiteIdBySlug( state, siteSlug ) {
 	const siteId = findKey(
-		state.jetpackOnboarding.credentials,
+		state.jetpack.onboarding.credentials,
 		( { siteUrl } ) => siteSlug === urlToSlug( siteUrl )
 	);
 
