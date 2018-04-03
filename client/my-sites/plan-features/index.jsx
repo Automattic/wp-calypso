@@ -74,15 +74,15 @@ class PlanFeatures extends Component {
 	}
 
 	render() {
-		const { planProperties, isInSignup, showModifiedPricingDisplay, site } = this.props;
+		const { isInSignup, planProperties, showModifiedPricingDisplay, site } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
-			'plan-features--signup': isInSignup,
 			'abtest-pricing-display': showModifiedPricingDisplay,
 			'has-mobile-table': abtest( 'mobilePlansTablesOnSignup' ) === 'vertical',
+			'plan-features--signup': isInSignup,
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
 		let mobileView, planDescriptions;
@@ -817,12 +817,12 @@ export default connect(
 
 		return {
 			canPurchase,
-			planProperties,
 			freePlanProperties,
-			siteType,
-			sitePlan,
 			maxCredits,
+			planProperties,
 			showModifiedPricingDisplay,
+			sitePlan,
+			siteType,
 		};
 	},
 	{
