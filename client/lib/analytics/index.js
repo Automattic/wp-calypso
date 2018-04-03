@@ -268,14 +268,30 @@ const analytics = {
 			eventProperties = eventProperties || {};
 
 			if ( process.env.NODE_ENV !== 'production' ) {
+				if ( ! /^calypso(?:_[a-z]+){2,4}$/.test( eventName ) ) {
+					//eslint-disable-next-line no-console
+					console.error(
+						'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,4}/. ' +
+							'Please use a compliant event name.',
+						eventName
+					);
+				}
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
 						const errorMessage =
-							`Unable to record event "${ eventName }" because nested` +
+							`Tracks: Unable to record event "${ eventName }" because nested ` +
 							`properties are not supported by Tracks. Check '${ key }' on`;
 						console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
 
 						return;
+					}
+					if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
+						//eslint-disable-next-line no-console
+						console.error(
+							'Tracks: Event property `%s` will be ignored because it does not match /^[a-z_][a-z0-9_]*$/. ' +
+								'Please use a compliant property name.',
+							key
+						);
 					}
 				}
 			}
