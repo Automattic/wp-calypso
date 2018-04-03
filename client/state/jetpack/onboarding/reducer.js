@@ -25,6 +25,6 @@ credentialsReducer.hasCustomPersistence = true;
 
 export { credentialsReducer as credentials };
 
-export default combineReducers( {
+export const reducer = combineReducers( {
 	credentials: credentialsReducer,
 } );
