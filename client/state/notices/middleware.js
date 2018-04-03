@@ -301,21 +301,23 @@ const onSiteDeleteFailure = ( { error } ) => {
 	return errorNotice( error.message );
 };
 
-const onBillingTransactionRequestFailure = ( { transactionId, error } ) => {
+export const onBillingTransactionRequestFailure = ( { transactionId, error } ) => {
+	const displayOnNextPage = true;
+	const id = `transaction-fetch-${ transactionId }`;
 	if ( 'invalid_receipt' === error.error ) {
 		return errorNotice(
 			translate( "Sorry, we couldn't find receipt #%s", { args: transactionId } ),
 			{
-				id: `transaction-fetch-${ transactionId }`,
-				displayOnNextPage: true,
+				id,
+				displayOnNextPage,
 				duration: 5000,
 			}
 		);
 	}
 
 	return errorNotice( translate( 'Sorry, we had a problem loading that receipt.' ), {
-		id: `transaction-fetch-${ transactionId }`,
-		displayOnNextPage: true,
+		id,
+		displayOnNextPage,
 		button: translate( 'Try again' ),
 		href: billingHistoryReceipt( transactionId ),
 	} );

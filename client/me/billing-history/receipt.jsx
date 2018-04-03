@@ -22,8 +22,8 @@ import tableRows from './table-rows';
 import { groupDomainProducts } from './utils';
 import { getPastBillingTransaction, isPastBillingTransactionError } from 'state/selectors';
 import {
-	requestBillingTransaction,
 	clearBillingTransactionError,
+	requestBillingTransaction,
 } from 'state/billing-transactions/individual-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -50,13 +50,13 @@ class BillingReceipt extends React.Component {
 	};
 
 	redirectIfInvalidTransaction() {
-		const { transactionFetchError } = this.props;
+		const { transactionFetchError, transactionId } = this.props;
 
 		if ( ! transactionFetchError ) {
 			return;
 		}
 
-		this.props.clearBillingTransactionError();
+		this.props.clearBillingTransactionError( transactionId );
 		page.redirect( billingHistory );
 	}
 
@@ -292,8 +292,8 @@ export default connect(
 		transactionFetchError: isPastBillingTransactionError( state, transactionId ),
 	} ),
 	{
+		clearBillingTransactionError,
 		recordGoogleEvent,
 		requestBillingTransaction,
-		clearBillingTransactionError,
 	}
 )( localize( BillingReceipt ) );
