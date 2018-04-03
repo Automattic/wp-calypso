@@ -159,7 +159,7 @@ describe( 'reducer', () => {
 
 		test( 'should mark the module as active upon successful module activation', () => {
 			const siteId = 12345678,
-				stateIn = {
+				initialState = {
 					12345678: {
 						setting_123: 'test',
 						'module-a': false,
@@ -170,7 +170,7 @@ describe( 'reducer', () => {
 					siteId,
 					moduleSlug: 'module-a',
 				};
-			const stateOut = settingsReducer( deepFreeze( stateIn ), action );
+			const stateOut = settingsReducer( deepFreeze( initialState ), action );
 			expect( stateOut ).toEqual( {
 				12345678: {
 					setting_123: 'test',
@@ -181,7 +181,7 @@ describe( 'reducer', () => {
 
 		test( 'should mark the module as inactive upon successful module deactivation', () => {
 			const siteId = 12345678,
-				stateIn = {
+				initialState = {
 					12345678: {
 						setting_123: 'test',
 						'module-a': true,
@@ -192,7 +192,7 @@ describe( 'reducer', () => {
 					siteId,
 					moduleSlug: 'module-a',
 				};
-			const stateOut = settingsReducer( deepFreeze( stateIn ), action );
+			const stateOut = settingsReducer( deepFreeze( initialState ), action );
 			expect( stateOut ).toEqual( {
 				12345678: {
 					setting_123: 'test',
@@ -203,7 +203,7 @@ describe( 'reducer', () => {
 
 		test( 'should update the module activation state upon receiving new modules', () => {
 			const siteId = 12345678,
-				stateIn = {
+				initialState = {
 					12345678: {
 						setting_123: 'test',
 						'module-a': true,
@@ -222,7 +222,7 @@ describe( 'reducer', () => {
 						},
 					},
 				};
-			const stateOut = settingsReducer( deepFreeze( stateIn ), action );
+			const stateOut = settingsReducer( deepFreeze( initialState ), action );
 			expect( stateOut ).toEqual( {
 				12345678: {
 					setting_123: 'test',
@@ -234,7 +234,7 @@ describe( 'reducer', () => {
 
 		test( 'should update module settings with normalized ones when receiving new modules', () => {
 			const siteId = 12345678,
-				stateIn = {
+				initialState = {
 					12345678: {
 						setting_123: 'test',
 					},
@@ -256,7 +256,7 @@ describe( 'reducer', () => {
 						},
 					},
 				};
-			const stateOut = settingsReducer( deepFreeze( stateIn ), action );
+			const stateOut = settingsReducer( deepFreeze( initialState ), action );
 			expect( stateOut ).toEqual( {
 				12345678: {
 					setting_123: 'test',
