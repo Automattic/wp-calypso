@@ -11,7 +11,11 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { fetchOrderTransaction } from 'state/order-transactions/actions';
-import { getOrderTransaction } from 'state/selectors';
+import {
+	getOrderTransaction,
+	getOrderTransactionError,
+	isFetchingOrderTransaction,
+} from 'state/selectors';
 
 class QueryOrderTransaction extends React.Component {
 	static propTypes = {
@@ -19,27 +23,36 @@ class QueryOrderTransaction extends React.Component {
 		pollIntervalMs: PropTypes.number,
 		transaction: PropTypes.object,
 		fetchTransaction: PropTypes.func.isRequired,
+		error: PropTypes.object,
+		isFetching: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		pollIntervalMs: 0,
 	};
 
+	canFetch = () => {
+		const { error, isFetching } = this.props;
+
+		// fetch if no error has occurred and a fetch is not in progress.
+		return null == error && ! isFetching;
+	};
+
 	componentDidMount() {
-		const { pollIntervalMs, orderId, transaction, fetchTransaction } = this.props;
+		const { pollIntervalMs, orderId, fetchTransaction } = this.props;
 
 		if ( pollIntervalMs ) {
 			this.timer = setInterval( () => {
-				// no need to fetch if it's there.
-				if ( null !== transaction ) {
-					return;
+				if ( this.canFetch() ) {
+					fetchTransaction( orderId );
 				}
-				fetchTransaction( orderId );
 			}, pollIntervalMs );
 			return;
 		}
 
-		fetchTransaction( orderId );
+		if ( this.canFetch() ) {
+			fetchTransaction( orderId );
+		}
 	}
 
 	componentWillUnmount() {
@@ -56,6 +69,8 @@ class QueryOrderTransaction extends React.Component {
 export default connect(
 	( state, props ) => ( {
 		transaction: getOrderTransaction( state, props.orderId ),
+		error: getOrderTransactionError( state, props.orderId ),
+		isFetching: isFetchingOrderTransaction( state, props.orderId ),
 	} ),
 	{
 		fetchTransaction: fetchOrderTransaction,
