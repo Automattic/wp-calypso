@@ -29,7 +29,6 @@ export default {
 
 				site_id_label: selectedSite.jetpack ? 'jetpack' : 'wpcom',
 				site_plan_id: selectedSite.plan ? selectedSite.plan.product_id : null,
-				site_post_count: selectedSite.post_count,
 			};
 		}
 
