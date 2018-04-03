@@ -96,6 +96,7 @@ export default class extends React.Component {
 					autoComplete={ this.props.autoComplete }
 					disabled={ this.props.disabled }
 					maxLength={ this.props.maxLength }
+					onBlur={ this.props.onBlur }
 					onChange={ this.props.onChange }
 					onClick={ this.recordFieldClick }
 					isError={ this.props.isError }
