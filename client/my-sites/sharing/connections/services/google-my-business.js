@@ -6,12 +6,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { last, isEqual, memoize } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
+import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
 
 export class GoogleMyBusiness extends SharingService {
@@ -66,11 +66,9 @@ export class GoogleMyBusiness extends SharingService {
 	renderLogo() {
 		// Render a custom logo here because Google My Business is not part of SocialLogos
 		return (
-			<img
-				alt={ translate( 'Google My Business logo' ) }
+			<GoogleMyBusinessLogo
 				className="sharing-service__logo"
 				height="36"
-				src={ '/calypso/images/google-my-business/logo.svg' }
 				style={ { padding: 6 + 'px' } }
 				width="36"
 			/>

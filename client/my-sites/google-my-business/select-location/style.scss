@@ -29,11 +29,10 @@
 }
 
 .gmb-location__logo {
+	align-items: center;
 	background-color: $gray-light;
-	background-image: url( '/calypso/images/google-my-business/logo.svg' );
-	background-position: center center;
-	background-repeat: no-repeat;
-	background-size: 50%;
+	display: flex;
+	justify-content: center;
 	min-width: 60px; // Makes sure aspect ratio is maintained when viewport is super narrow
 }
 

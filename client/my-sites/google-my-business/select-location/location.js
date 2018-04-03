@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import LocationType from './location-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -45,7 +46,9 @@ class GoogleMyBusinessLocation extends Component {
 							src={ location.photo }
 						/>
 					) : (
-						<div className="gmb-location__logo" />
+						<div className="gmb-location__logo">
+							<GoogleMyBusinessLogo height="30" width="30" />
+						</div>
 					) }
 
 					<div className="gmb-location__description">
