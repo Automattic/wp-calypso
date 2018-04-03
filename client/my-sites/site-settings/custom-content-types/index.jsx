@@ -184,7 +184,7 @@ class CustomContentTypes extends Component {
 							) }{' '}
 							<ExternalLink
 								target="_blank"
-								icon
+								icon={ false }
 								href="https://jetpack.com/support/custom-content-types/"
 							>
 								{ translate( 'Learn more' ) }
@@ -203,7 +203,7 @@ class CustomContentTypes extends Component {
 							) }{' '}
 							<ExternalLink
 								target="_blank"
-								icon
+								icon={ false }
 								href="https://jetpack.com/support/custom-content-types/"
 							>
 								{ translate( 'Learn more' ) }

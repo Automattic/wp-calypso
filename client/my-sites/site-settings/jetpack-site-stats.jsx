@@ -138,6 +138,7 @@ class JetpackSiteStats extends Component {
 								) }{' '}
 								<ExternalLink
 									href="https://jetpack.com/support/wordpress-com-stats/"
+									icon={ false }
 									target="_blank"
 								>
 									{ translate( 'Learn more' ) }
