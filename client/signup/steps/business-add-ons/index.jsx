@@ -95,45 +95,49 @@ class BusinessAddOnsStep extends React.Component {
 		return (
 			<form onSubmit={ this.handleSubmit }>
 				<Card className="business-add-ons__wrapper">
-					<FormFieldset>
-						<FormLabel htmlFor="blogEnabled">
+					<FormFieldset className="business-add-ons__checkboxes">
+						<FormLabel htmlFor="blogEnabled" className="business-add-ons__checkbox-label">
 							<FormInputCheckbox
 								name="blogEnabled"
 								id="blogEnabled"
+								className="business-add-ons__checkbox"
 								onChange={ this.handleChangeEvent }
 							/>
 							{ translate( 'A blog' ) }
 						</FormLabel>
 
-						<FormLabel htmlFor="contactForm">
+						<FormLabel htmlFor="contactForm" className="business-add-ons__checkbox-label">
 							<FormInputCheckbox
 								name="contactForm"
 								id="contactForm"
+								className="business-add-ons__checkbox"
 								onChange={ this.handleChangeEvent }
 							/>
 							{ translate( 'A contact form' ) }
 						</FormLabel>
 
-						<FormLabel htmlFor="leadGeneration">
+						<FormLabel htmlFor="leadGeneration" className="business-add-ons__checkbox-label">
 							<FormInputCheckbox
 								name="leadGeneration"
 								id="leadGeneration"
+								className="business-add-ons__checkbox"
 								onChange={ this.handleChangeEvent }
 							/>
 							{ translate( 'An email subscription pop-up' ) }
 						</FormLabel>
 
-						<FormLabel htmlFor="simplePayments">
+						<FormLabel htmlFor="simplePayments" className="business-add-ons__checkbox-label">
 							<FormInputCheckbox
 								name="simplePayments"
 								id="simplePayments"
+								className="business-add-ons__checkbox"
 								onChange={ this.handleChangeEvent }
 							/>
 							{ translate( 'Simple payment buttons' ) }
 						</FormLabel>
 					</FormFieldset>
 
-					<Button primary={ true } type="submit">
+					<Button primary={ true } type="submit" className="business-add-ons__submit">
 						{ translate( 'Continue' ) }
 					</Button>
 				</Card>

@@ -1,3 +1,40 @@
-.business-information__wrapper {
-	max-width: 480px;
+.business-add-ons__wrapper {
+	max-width: 500px;
+	margin: 0 auto;
+	filter: blur( 0 );
+	transform: translateZ( 0 ) translateX( 0 );
+	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
+
+	.business-add-ons__checkbox {
+		margin: 0 10px 0 0;
+	}
+}
+
+.business-add-ons__checkboxes {
+	border: 1px solid $gray-lighten-20;
+	border-radius: 3px;
+}
+
+.business-add-ons__checkbox-label {
+	line-height: 1.2em;
+	border-top: 1px solid $gray-lighten-20;
+	color: $gray-darken-20;
+	display: block;
+	font-weight: normal;
+	margin: 0;
+	padding: 15px;
+
+	&:first-child {
+		border-top: 0;
+	}
+
+	&:hover {
+		cursor: pointer;
+		background: $gray-light;
+	}
+}
+
+.business-add-ons__submit {
+	display: block;
+	margin: 0 auto;
 }

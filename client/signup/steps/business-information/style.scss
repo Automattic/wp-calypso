@@ -1,3 +1,21 @@
-.business-add-ons__wrapper {
-	max-width: 480px;
+.business-information__wrapper {
+	max-width: 500px;
+	margin: 0 auto;
+	filter: blur( 0 );
+	transform: translateZ( 0 ) translateX( 0 );
+	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
+
+	.business-information__checkbox {
+		margin-right: 5px;
+	}
+}
+
+.business-information__checkbox-label {
+	display: inline-block;
+	line-height: 1.2em;
+}
+
+.business-information__submit {
+	display: block;
+	margin: 0 auto;
 }

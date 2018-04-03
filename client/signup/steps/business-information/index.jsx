@@ -139,13 +139,12 @@ class BusinessInformationStep extends React.Component {
 							placeholder={ translate( '123 Main Street, Somewhere XY, 54321' ) }
 							onChange={ this.handleChangeEvent }
 						/>
-					</FormFieldset>
 
-					<FormFieldset>
-						<FormLabel htmlFor="contactMap">
+						<FormLabel htmlFor="contactMap" className="business-information__checkbox-label">
 							<FormInputCheckbox
 								name="contactMap"
 								id="contactMap"
+								className="business-information__checkbox"
 								onChange={ this.handleChangeEvent }
 								value={ true }
 							/>
@@ -165,7 +164,7 @@ class BusinessInformationStep extends React.Component {
 						/>
 					</FormFieldset>
 
-					<Button primary={ true } type="submit">
+					<Button primary={ true } type="submit" className="business-information__submit">
 						{ translate( 'Continue' ) }
 					</Button>
 				</Card>
