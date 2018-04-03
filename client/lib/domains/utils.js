@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { drop, get, includes, isEmpty, join, find, split, values } from 'lodash';
+import { drop, isEmpty, join, find, split, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -98,87 +98,9 @@ function parseDomainAgainstTldList( domainFragment, tldList ) {
 	return parseDomainAgainstTldList( suffix, tldList );
 }
 
-function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
-	if ( ! countryCode ) {
-		return postalCode;
-	}
-
-	const twoPartPostalCodes = {
-		BR: {
-			length: [ 8 ],
-			delimeter: '-',
-			partLength: 5,
-		},
-		CA: {
-			length: [ 6 ],
-			delimeter: ' ',
-			partLength: 3,
-		},
-		GB: {
-			length: [ 5, 6, 7 ],
-			delimeter: ' ',
-			partLength: 4,
-		},
-		IE: {
-			length: [ 7 ],
-			delimeter: ' ',
-			partLength: 3,
-		},
-		JP: {
-			length: [ 7 ],
-			delimeter: '-',
-			partLength: 3,
-		},
-		KY: {
-			length: [ 7 ],
-			delimeter: '-',
-			partLength: 3,
-		},
-		NL: {
-			length: [ 6 ],
-			delimeter: ' ',
-			partLength: 4,
-		},
-		PL: {
-			length: [ 5 ],
-			delimeter: '-',
-			partLength: 2,
-		},
-		PT: {
-			length: [ 7 ],
-			delimeter: '-',
-			partLength: 4,
-		},
-		SE: {
-			length: [ 5 ],
-			delimeter: ' ',
-			partLength: 3,
-		},
-	};
-
-	const countryCodeData = get( twoPartPostalCodes, countryCode, false );
-	if ( ! countryCodeData ) {
-		return postalCode;
-	}
-
-	if (
-		includes( countryCodeData.length, postalCode.length ) &&
-		postalCode.indexOf( countryCodeData.delimeter ) === -1
-	) {
-		return (
-			postalCode.substring( 0, countryCodeData.partLength ) +
-			countryCodeData.delimeter +
-			postalCode.substring( countryCodeData.partLength )
-		);
-	}
-
-	return postalCode;
-}
-
 export {
 	getDomainNameFromReceiptOrCart,
 	getDomainType,
 	getTransferStatus,
 	parseDomainAgainstTldList,
-	tryToGuessPostalCodeFormat,
 };
