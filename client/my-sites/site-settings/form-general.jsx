@@ -33,13 +33,14 @@ import Timezone from 'components/timezone';
 import SiteIconSetting from './site-icon-setting';
 import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
-import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
+import { FEATURE_NO_BRANDING, TYPE_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 
-class SiteSettingsFormGeneral extends Component {
+export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
 		this._showWarning( this.props.site );
 	}
@@ -237,7 +238,7 @@ class SiteSettingsFormGeneral extends Component {
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 				/>
 				<FormSettingExplanation>
-					{ translate( 'The site\'s primary language.' ) }&nbsp;
+					{ translate( "The site's primary language." ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
@@ -515,7 +516,7 @@ class SiteSettingsFormGeneral extends Component {
 							! isBusiness( site.plan ) && (
 								<Banner
 									feature={ FEATURE_NO_BRANDING }
-									plan={ PLAN_BUSINESS }
+									plan={ findFirstSimilarPlanKey( site.plan, { type: TYPE_BUSINESS } ) }
 									title={ translate(
 										'Remove the footer credit entirely with WordPress.com Business'
 									) }
