@@ -23,7 +23,9 @@ import notices from 'notices';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
 
-class SourcePaymentBox extends PureComponent {
+class RedirectPaymentBox extends PureComponent {
+	static displayName = 'RedirectPaymentBox';
+
 	static propTypes = {
 		paymentType: PropTypes.string.isRequired,
 		cart: PropTypes.object.isRequired,
@@ -57,7 +59,7 @@ class SourcePaymentBox extends PureComponent {
 		}
 
 		this.setState( {
-			formDisabled: submitState.disabled
+			formDisabled: submitState.disabled,
 		} );
 	}
 
@@ -72,7 +74,7 @@ class SourcePaymentBox extends PureComponent {
 		this.setSubmitState( {
 			info: translate( 'Setting up your %(paymentProvider)s payment', {
 				args: { paymentProvider: this.getPaymentProviderName() } } ),
-			disabled: true
+			disabled: true,
 		} );
 
 		let cancelUrl = origin + '/checkout/';
@@ -90,7 +92,7 @@ class SourcePaymentBox extends PureComponent {
 				cancelUrl,
 			} ),
 			cart: this.props.cart,
-			domainDetails: this.props.transaction.domainDetails
+			domainDetails: this.props.transaction.domainDetails,
 		};
 
 		// get the redirect URL from rest endpoint
@@ -105,15 +107,15 @@ class SourcePaymentBox extends PureComponent {
 
 				this.setSubmitState( {
 					error: errorMessage,
-					disabled: false
+					disabled: false,
 				} );
 			} else if ( result.redirect_url ) {
 				this.setSubmitState( {
 					info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
-					disabled: true
+					disabled: true,
 				} );
-				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
-				analytics.tracks.recordEvent( 'calypso_checkout_with_source_' + this.props.paymentType );
+				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
+				analytics.tracks.recordEvent( 'calypso_checkout_with_redirect' + this.props.paymentType );
 				location.href = result.redirect_url;
 			}
 		}.bind( this ) );
@@ -122,12 +124,12 @@ class SourcePaymentBox extends PureComponent {
 	renderButtonText() {
 		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
 			return translate( 'Purchase %(price)s subscription with %(paymentProvider)s', {
-				args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() }
+				args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() },
 			} );
 		}
 
 		return translate( 'Pay %(price)s with %(paymentProvider)s', {
-			args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() }
+			args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() },
 		} );
 	}
 
@@ -152,7 +154,7 @@ class SourcePaymentBox extends PureComponent {
 
 		return [
 			<option value="" key="-">{ translate( 'Please select your bank.' ) }</option>,
-			...idealBanksOptions
+			...idealBanksOptions,
 		];
 	}
 
@@ -232,6 +234,5 @@ class SourcePaymentBox extends PureComponent {
 		return paymentMethodName( this.props.paymentType );
 	}
 }
-SourcePaymentBox.displayName = 'SourcePaymentBox';
 
-export default localize( SourcePaymentBox );
+export default localize( RedirectPaymentBox );

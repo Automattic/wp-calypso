@@ -18,7 +18,7 @@ import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
-import SourcePaymentBox from './source-payment-box';
+import RedirectPaymentBox from './redirect-payment-box';
 import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
@@ -237,16 +237,16 @@ const SecurePaymentForm = createReactClass( {
 		);
 	},
 
-	renderSourcePaymentBox( paymentType ) {
+	renderRedirectPaymentBox( paymentType ) {
 		return (
 			<PaymentBox
-				classSet="source-payment-box"
+				classSet="redirect-payment-box"
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod={ paymentType }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
-				<SourcePaymentBox
+				<RedirectPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
 					selectedSite={ this.props.selectedSite }
@@ -320,7 +320,7 @@ const SecurePaymentForm = createReactClass( {
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }
-						{ this.renderSourcePaymentBox( visiblePaymentBox ) }
+						{ this.renderRedirectPaymentBox( visiblePaymentBox ) }
 					</div>
 				);
 
