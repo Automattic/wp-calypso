@@ -17,6 +17,7 @@
     "> 1%"
   ],
   "dependencies": {
+    "@wordpress/hooks": "1.1.6",
     "assets-webpack-plugin": "3.5.1",
     "autoprefixer": "6.3.5",
     "autosize": "3.0.15",

@@ -4,18 +4,14 @@
  * External dependencies
  */
 
-import { find, get } from 'lodash';
-
 /**
  * Internal dependencies
  */
-import { getSections } from 'sections-middleware';
+import { getSection } from 'sections-info';
 
 const getSettingsPath = () => {
-	const sections = getSections();
-	const section = find( sections, value => value.name === 'zoninator' );
-
-	return get( section, 'settings_path' );
+	const section = getSection( 'zoninator' );
+	return section && section.settings_path;
 };
 
 export const settingsPath = getSettingsPath();
