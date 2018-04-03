@@ -3,14 +3,14 @@
 /**
  * Internal dependencies
  */
-import { createReducer, keyedReducer } from 'state/utils';
+import { createReducer, combineReducers, keyedReducer } from 'state/utils';
 import { jetpackOnboardingCredentialsSchema } from './schema';
 import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 } from 'state/action-types';
 
-export const reducer = keyedReducer(
+const credentialsReducer = keyedReducer(
 	'siteId',
 	createReducer(
 		{},
@@ -21,4 +21,10 @@ export const reducer = keyedReducer(
 		jetpackOnboardingCredentialsSchema
 	)
 );
-reducer.hasCustomPersistence = true;
+credentialsReducer.hasCustomPersistence = true;
+
+export { credentialsReducer as credentials };
+
+export default combineReducers( {
+	credentials: credentialsReducer,
+} );
