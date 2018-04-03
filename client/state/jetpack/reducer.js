@@ -9,6 +9,7 @@ import { combineReducers } from 'state/utils';
 import { reducer as credentials } from './credentials/reducer';
 import { reducer as jumpstart } from './jumpstart/reducer';
 import { reducer as modules } from './modules/reducer';
+import { reducer as onboarding } from './onboarding/reducer';
 import { reducer as settings } from './settings/reducer';
 
 export default combineReducers( {
@@ -16,5 +17,6 @@ export default combineReducers( {
 	credentials,
 	jumpstart,
 	modules,
+	onboarding,
 	settings,
 } );
