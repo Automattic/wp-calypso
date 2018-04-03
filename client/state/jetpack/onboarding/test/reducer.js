@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { credentials as credentialsReducer } from '../reducer';
+import { credentials as credentialsReducer, reducer } from '../reducer';
 import {
 	DESERIALIZE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
