@@ -15,17 +15,12 @@ import React, { Component } from 'react';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import LocationType from './location-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessLocation extends Component {
 	static propTypes = {
-		location: PropTypes.shape( {
-			id: PropTypes.number.isRequired,
-			address: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			photo: PropTypes.string,
-			verified: PropTypes.bool.isRequired,
-		} ),
+		location: LocationType.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
