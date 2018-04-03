@@ -74,7 +74,7 @@ export function requestReadFeed( action ) {
 		{
 			apiVersion: '1.1',
 			method: 'GET',
-			path: `/read/feed/${ action.payload.ID }`,
+			path: `/read/feed/${ encodeURIComponent( action.payload.ID ) }`,
 			retryPolicy: noRetry(),
 		},
 		action
@@ -86,7 +86,7 @@ export function receiveReadFeedSuccess( action, response ) {
 }
 
 export function receiveReadFeedError( action, response ) {
-	return receiveReaderFeedRequestFailure( action, response );
+	return receiveReaderFeedRequestFailure( action.payload.ID, response );
 }
 
 export default {

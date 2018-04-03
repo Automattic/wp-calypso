@@ -30,10 +30,10 @@ export function receiveReaderFeedRequestSuccess( data ) {
 	};
 }
 
-export function receiveReaderFeedRequestFailure( action, error ) {
+export function receiveReaderFeedRequestFailure( feedId, error ) {
 	return {
 		type: READER_FEED_REQUEST_FAILURE,
-		payload: action.payload,
+		payload: { feed_ID: feedId },
 		error,
 	};
 }
