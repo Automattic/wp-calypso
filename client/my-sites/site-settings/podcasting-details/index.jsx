@@ -281,7 +281,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 
 	// The settings form wrapper gives us a string here, but inside this
 	// component, we always want to work with a number.
-	let podcastingCategoryId =
+	const podcastingCategoryId =
 		ownProps.fields &&
 		ownProps.fields.podcasting_category_id &&
 		Number( ownProps.fields.podcasting_category_id );
