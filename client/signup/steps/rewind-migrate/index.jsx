@@ -70,6 +70,7 @@ class RewindMigrate extends Component {
 					<ActivityLogRewindToggle
 						siteId={ siteId }
 						label={ translate( 'Migrate your credentials' ) }
+						isVpMigrate={ true }
 					/>
 				</Card>
 				<div className="rewind-migrate__warning">
