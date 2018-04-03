@@ -251,7 +251,7 @@ describe( 'middleware', () => {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-error',
-						text: `Sorry, we couldn't find receipt #${ transactionId }`,
+						text: `Sorry, we couldn't find receipt #${ transactionId }.`,
 						noticeId: `transaction-fetch-${ transactionId }`,
 						displayOnNextPage: true,
 						duration: 5000,
@@ -272,7 +272,7 @@ describe( 'middleware', () => {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-error',
-						text: 'Sorry, we had a problem loading that receipt.',
+						text: "Sorry, we weren't able to load the requested receipt.",
 						noticeId: `transaction-fetch-${ transactionId }`,
 						displayOnNextPage: true,
 					},

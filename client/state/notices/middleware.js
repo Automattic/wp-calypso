@@ -306,7 +306,7 @@ export const onBillingTransactionRequestFailure = ( { transactionId, error } ) =
 	const id = `transaction-fetch-${ transactionId }`;
 	if ( 'invalid_receipt' === error.error ) {
 		return errorNotice(
-			translate( "Sorry, we couldn't find receipt #%s", { args: transactionId } ),
+			translate( "Sorry, we couldn't find receipt #%s.", { args: transactionId } ),
 			{
 				id,
 				displayOnNextPage,
@@ -315,7 +315,7 @@ export const onBillingTransactionRequestFailure = ( { transactionId, error } ) =
 		);
 	}
 
-	return errorNotice( translate( 'Sorry, we had a problem loading that receipt.' ), {
+	return errorNotice( translate( "Sorry, we weren't able to load the requested receipt." ), {
 		id,
 		displayOnNextPage,
 		button: translate( 'Try again' ),
