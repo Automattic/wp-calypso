@@ -26,6 +26,18 @@ import PlanFeaturesSummary from './summary';
 import SpinnerLine from 'components/spinner-line';
 import { abtest, getABTestVariation } from 'lib/abtest';
 import { getCurrentUserCurrencyCode, getCurrentUserId } from 'state/current-user/selectors';
+import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { retargetViewPlans } from 'lib/analytics/ad-tracking';
+import {
+	applyTestFiltersToPlansList,
+	canUpgradeToPlan,
+	getMonthlyPlanByYearly,
+	getPlanPath,
+	isFreePlan,
+} from 'lib/plans';
 import {
 	getPlanClass,
 	getPlanFeaturesObject,
@@ -43,23 +55,11 @@ import {
 	isCurrentUserCurrentPlanOwner,
 } from 'state/sites/plans/selectors';
 import {
-	getPlanPath,
-	canUpgradeToPlan,
-	applyTestFiltersToPlansList,
-	getMonthlyPlanByYearly,
-	isFreePlan,
-} from 'lib/plans';
-import { getPlanRawPrice, getPlan, getPlanSlug, getPlanBySlug } from 'state/plans/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import {
 	getSitePlan,
 	getSiteSlug,
 	isCurrentPlanPaid,
 	isCurrentSitePlan,
 } from 'state/sites/selectors';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 
 class PlanFeatures extends Component {
 	componentDidMount() {
