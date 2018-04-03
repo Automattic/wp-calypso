@@ -30,6 +30,7 @@ const paymentMethods = {
 		BE: [ 'credit-card', 'bancontact', 'paypal' ],
 		CN: [ 'credit-card', 'alipay', 'paypal' ],
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
+		MX: [ 'credit-card', 'spei', 'paypal' ],
 		NL: [ 'credit-card', 'ideal', 'paypal' ],
 		PL: [ 'credit-card', 'p24', 'paypal' ],
 	},
