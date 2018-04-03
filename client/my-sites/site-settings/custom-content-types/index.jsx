@@ -163,12 +163,14 @@ class CustomContentTypes extends Component {
 				<FormFieldset>
 					<div className="custom-content-types__info-link-container site-settings__info-link-container">
 						<InfoPopover position="left">
+							{ translate( 'Showcases your portfolio or displays testimonials on your site.' ) +
+								' ' }
 							<ExternalLink
 								href="https://support.wordpress.com/custom-post-types/"
-								icon
+								icon={ false }
 								target="_blank"
 							>
-								{ translate( 'Learn more about Custom Content Types.' ) }
+								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>
