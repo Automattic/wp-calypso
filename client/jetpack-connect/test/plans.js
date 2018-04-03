@@ -14,9 +14,16 @@ import React from 'react';
 import PlansGrid from '../plans-grid';
 import QueryPlans from 'components/data/query-plans';
 import { DEFAULT_PROPS, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
+import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { PlansTestComponent as Plans } from '../plans';
 import * as path from 'lib/route/path';
 
+jest.mock( 'lib/analytics', () => ( {
+	mc: {
+		bumpStat: () => {},
+	},
+} ) );
+jest.mock( 'lib/cart/store', () => ( {} ) );
 jest.mock( 'lib/route/path', () => ( {
 	externalRedirect: jest.fn(),
 } ) );
@@ -101,20 +108,40 @@ describe( 'Plans', () => {
 		expect( redirect ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	test( 'should redirect if Atomic', () => {
-		shallow(
-			<Plans
-				{ ...DEFAULT_PROPS }
-				hasPlan={ true }
-				isAutomatedTransfer={ true }
-				selectedSite={ {
-					...SELECTED_SITE,
-					plan: SITE_PLAN_PRO,
-					is_automated_transfer: true,
-				} }
-			/>
-		);
+	const defProps = {
+		recordTracksEvent: x => x,
+		completeFlow: x => x,
+	};
 
-		expect( path.externalRedirect ).toHaveBeenCalledTimes( 1 );
+	test( 'selectPlan should call selectFreeJetpackPlan when cartItem is null', () => {
+		const plans = new Plans( defProps );
+		plans.redirect = jest.fn();
+		plans.selectFreeJetpackPlan = jest.fn();
+		plans.selectPlan( null );
+		expect( plans.selectFreeJetpackPlan ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'selectPlan should call selectFreeJetpackPlan when cartItem is jetpack free plan', () => {
+		const plans = new Plans( defProps );
+		plans.redirect = jest.fn();
+		plans.selectFreeJetpackPlan = jest.fn();
+		plans.selectPlan( { product_slug: PLAN_JETPACK_FREE } );
+		expect( plans.selectFreeJetpackPlan ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'selectPlan should not call selectFreeJetpackPlan when cartItem is not jetpack free plan (premium jetpack)', () => {
+		const plans = new Plans( defProps );
+		plans.redirect = jest.fn();
+		plans.selectFreeJetpackPlan = jest.fn();
+		plans.selectPlan( { product_slug: PLAN_JETPACK_PREMIUM } );
+		expect( plans.selectFreeJetpackPlan ).toHaveBeenCalledTimes( 0 );
+	} );
+
+	test( 'selectPlan should not call selectFreeJetpackPlan when cartItem is not jetpack free plan (premium wpcom)', () => {
+		const plans = new Plans( defProps );
+		plans.redirect = jest.fn();
+		plans.selectFreeJetpackPlan = jest.fn();
+		plans.selectPlan( { product_slug: PLAN_PREMIUM } );
+		expect( plans.selectFreeJetpackPlan ).toHaveBeenCalledTimes( 0 );
 	} );
 } );
