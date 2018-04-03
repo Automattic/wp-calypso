@@ -14,7 +14,7 @@ import { find, isNumber, pick, noop, get } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, getSitePlan } from 'state/sites/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSimplePayments } from 'state/selectors';
 import QuerySimplePayments from 'components/data/query-simple-payments';
@@ -36,7 +36,13 @@ import {
 	receiveUpdateProduct,
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
-import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
+import {
+	TYPE_PREMIUM,
+	GROUP_WPCOM,
+	TERM_ANNUALLY,
+	FEATURE_SIMPLE_PAYMENTS,
+} from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -91,7 +97,7 @@ const trashPaymentButton = ( siteId, paymentId ) => dispatch => {
 		.then( () => dispatch( receiveDeleteProduct( siteId, paymentId ) ) );
 };
 
-class SimplePaymentsDialog extends Component {
+export class SimplePaymentsDialog extends Component {
 	static propTypes = {
 		showDialog: PropTypes.bool.isRequired,
 		// If not null and is a valid payment button ID, start editing the button.
@@ -395,6 +401,7 @@ class SimplePaymentsDialog extends Component {
 			siteId,
 			siteSlug,
 			paymentButtons,
+			currentPlan,
 			currencyCode,
 			isJetpackNotSupported,
 			translate,
@@ -410,6 +417,12 @@ class SimplePaymentsDialog extends Component {
 			( activeTab === 'form' && ! this.isDirectEdit() && ! isEmptyArray( paymentButtons ) );
 
 		if ( ! shouldQuerySitePlans && isJetpackNotSupported ) {
+			const findPlan = ( query = {} ) =>
+				findFirstSimilarPlanKey( currentPlan.product_slug, {
+					type: TYPE_PREMIUM,
+					group: GROUP_WPCOM,
+					...query,
+				} );
 			return this.renderEmptyDialog(
 				<EmptyContent
 					className="upgrade-jetpack"
@@ -422,7 +435,7 @@ class SimplePaymentsDialog extends Component {
 							title={ translate( 'Upgrade your Jetpack!' ) }
 							description={ translate( 'Simple Payments requires Jetpack version 5.2 or later.' ) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
-							plan={ PLAN_PREMIUM }
+							plan={ findPlan() || findPlan( { term: TERM_ANNUALLY } ) }
 							href={ '../../plugins/jetpack/' + siteSlug }
 						/>
 					}
@@ -501,7 +514,7 @@ class SimplePaymentsDialog extends Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => {
+export const mapStateToProps = ( state, { siteId } ) => {
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
@@ -509,6 +522,7 @@ export default connect( ( state, { siteId } ) => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		currentPlan: getSitePlan( state, getSelectedSiteId( state ) ),
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
@@ -519,4 +533,6 @@ export default connect( ( state, { siteId } ) => {
 		formIsDirty: isProductFormDirty( state ),
 		currentUserEmail: getCurrentUserEmail( state ),
 	};
-} )( localize( SimplePaymentsDialog ) );
+};
+
+export default connect( mapStateToProps )( localize( SimplePaymentsDialog ) );
