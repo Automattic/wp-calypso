@@ -170,8 +170,8 @@ describe( 'reducer', () => {
 					siteId,
 					moduleSlug: 'module-a',
 				};
-			const stateOut = settingsReducer( deepFreeze( initialState ), action );
-			expect( stateOut ).toEqual( {
+			const state = settingsReducer( deepFreeze( initialState ), action );
+			expect( state ).toEqual( {
 				12345678: {
 					setting_123: 'test',
 					'module-a': true,
@@ -192,8 +192,8 @@ describe( 'reducer', () => {
 					siteId,
 					moduleSlug: 'module-a',
 				};
-			const stateOut = settingsReducer( deepFreeze( initialState ), action );
-			expect( stateOut ).toEqual( {
+			const state = settingsReducer( deepFreeze( initialState ), action );
+			expect( state ).toEqual( {
 				12345678: {
 					setting_123: 'test',
 					'module-a': false,
@@ -222,8 +222,8 @@ describe( 'reducer', () => {
 						},
 					},
 				};
-			const stateOut = settingsReducer( deepFreeze( initialState ), action );
-			expect( stateOut ).toEqual( {
+			const state = settingsReducer( deepFreeze( initialState ), action );
+			expect( state ).toEqual( {
 				12345678: {
 					setting_123: 'test',
 					'module-a': false,
@@ -256,8 +256,8 @@ describe( 'reducer', () => {
 						},
 					},
 				};
-			const stateOut = settingsReducer( deepFreeze( initialState ), action );
-			expect( stateOut ).toEqual( {
+			const state = settingsReducer( deepFreeze( initialState ), action );
+			expect( state ).toEqual( {
 				12345678: {
 					setting_123: 'test',
 					minileven: true,
