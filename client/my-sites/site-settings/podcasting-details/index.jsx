@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map, toPairs, pick, get, find, flowRight } from 'lodash';
+import { map, toPairs, pick, flowRight } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -29,7 +29,7 @@ import TermTreeSelector from 'blocks/term-tree-selector';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getTerms, isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
+import { isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
@@ -240,23 +240,28 @@ class PodcastingDetails extends Component {
 	}
 
 	onCategorySelected = category => {
-		const { onChangeField } = this.props;
-
-		const event = { target: { value: category.slug } };
-
-		onChangeField( 'podcasting_archive' )( event );
+		this.setPodcastingCategoryId( category.ID );
 	};
 
 	onCategoryCleared = () => {
+		this.setPodcastingCategoryId( 0 );
+	};
+
+	setPodcastingCategoryId = newCategoryId => {
 		const { onChangeField } = this.props;
 
-		onChangeField( 'podcasting_archive' )( { target: { value: '' } } );
+		// Always send and save category IDs as strings because this is what
+		// the settings form wrapper expects (otherwise the settings form will
+		// be marked dirty again immediately after saving).
+		const event = { target: { value: String( newCategoryId ) } };
+
+		onChangeField( 'podcasting_category_id' )( event );
 	};
 }
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'podcasting_archive',
+		'podcasting_category_id',
 		'podcasting_title',
 		'podcasting_subtitle',
 		'podcasting_talent_name',
@@ -274,26 +279,13 @@ const getFormSettings = settings => {
 const connectComponent = connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
-	let podcastingCategoryId = null;
-
-	// Retrieve podcasting category ID from saved category slug (if any)
-	const podcastingCategorySlug = get( ownProps.fields, 'podcasting_archive' );
-	if ( podcastingCategorySlug && podcastingCategorySlug !== '0' ) {
-		const categories = getTerms( state, siteId, 'category' );
-		if ( categories && categories.length ) {
-			// This is not a bound selector
-			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			const podcastingCategory = find( categories, c => c.slug === podcastingCategorySlug );
-			if ( podcastingCategory ) {
-				podcastingCategoryId = podcastingCategory.ID;
-			}
-		}
-	}
-
-	const isPodcastingEnabled = !! (
-		podcastingCategoryId ||
-		( podcastingCategorySlug && podcastingCategorySlug !== '0' )
-	);
+	// The settings form wrapper gives us a string here, but inside this
+	// component, we always want to work with a number.
+	let podcastingCategoryId =
+		ownProps.fields &&
+		ownProps.fields.podcasting_category_id &&
+		Number( ownProps.fields.podcasting_category_id );
+	const isPodcastingEnabled = podcastingCategoryId > 0;
 
 	return {
 		siteId,

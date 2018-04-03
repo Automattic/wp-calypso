@@ -275,7 +275,7 @@ const getFormSettings = settings => {
 		'time_format',
 		'timezone_string',
 		'lazy-images',
-		'podcasting_archive',
+		'podcasting_category_id',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values
