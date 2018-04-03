@@ -18,8 +18,6 @@ import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL,
-} from 'lib/plans/constants';
-import {
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -27,6 +25,8 @@ import {
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	GROUP_WPCOM,
+	GROUP_JETPACK,
 } from './constants';
 
 /**
@@ -223,6 +223,38 @@ export function isPersonalPlan( planSlug ) {
 
 export function isFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+export function isWpComBusinessPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
+}
+
+export function isWpComPremiumPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
+}
+
+export function isWpComPersonalPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_WPCOM } );
+}
+
+export function isWpComFreePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_WPCOM } );
+}
+
+export function isJetpackBusinessPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
+}
+
+export function isJetpackPremiumPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_JETPACK } );
+}
+
+export function isJetpackPersonalPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_JETPACK } );
+}
+
+export function isJetpackFreePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
 }
 
 /**
