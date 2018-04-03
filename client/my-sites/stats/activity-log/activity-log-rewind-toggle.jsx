@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import { activateRewind } from 'state/activity-log/actions';
 import { isRewindActivating } from 'state/selectors';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 class ActivityLogRewindToggle extends Component {
 	static propTypes = {
@@ -66,6 +67,10 @@ export default connect(
 		isActivating: isRewindActivating( state, siteId ),
 	} ),
 	{
-		activateRewind,
+		activateRewind: ( siteId, isVpMigrate ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_vp_migrate_rewind', { rewindOptIn: isVpMigrate } ),
+				activateRewind( siteId, isVpMigrate )
+			),
 	}
 )( localize( ActivityLogRewindToggle ) );
