@@ -15,6 +15,24 @@ import DomainManagementData from 'components/data/domain-management';
 import EmailData from 'components/data/domain-management/email';
 import EmailForwardingData from 'components/data/domain-management/email-forwarding';
 import NameserversData from 'components/data/domain-management/nameservers';
+import {
+	domainManagementAddGoogleApps,
+	domainManagementContactsPrivacy,
+	domainManagementDns,
+	domainManagementEdit,
+	domainManagementEditContactInfo,
+	domainManagementEmail,
+	domainManagementEmailForwarding,
+	domainManagementList,
+	domainManagementNameServers,
+	domainManagementPrivacyProtection,
+	domainManagementRedirectSettings,
+	domainManagementTransfer,
+	domainManagementTransferIn,
+	domainManagementTransferOut,
+	domainManagementTransferToAnotherUser,
+	domainManagementTransferToOtherSite,
+} from 'my-sites/domains/paths';
 import ProductsList from 'lib/products-list';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -29,7 +47,7 @@ export default {
 	domainManagementList( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
-				analyticsPath="/domains/manage/:site"
+				analyticsPath={ domainManagementList( ':site' ) }
 				analyticsTitle="Domain Management"
 				component={ DomainManagement.List }
 				context={ pageContext }
@@ -47,8 +65,8 @@ export default {
 			<DomainManagementData
 				analyticsPath={
 					isTransfer
-						? '/domains/manage/:domain/transfer/in/:site'
-						: '/domains/manage/:domain/edit/:site'
+						? domainManagementTransferIn( ':site', ':domain' )
+						: domainManagementEdit( ':site', ':domain' )
 				}
 				analyticsTitle="Domain Management > Edit"
 				component={ component }
@@ -70,7 +88,7 @@ export default {
 	domainManagementContactsPrivacy( pageContext, next ) {
 		pageContext.primary = (
 			<WhoisData
-				analyticsPath="/domains/manage/:domain/contacts-privacy/:site"
+				analyticsPath={ domainManagementContactsPrivacy( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Contacts and Privacy"
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
@@ -83,7 +101,7 @@ export default {
 	domainManagementEditContactInfo( pageContext, next ) {
 		pageContext.primary = (
 			<WhoisData
-				analyticsPath="/domains/manage/:domain/edit-contact-info/:site"
+				analyticsPath={ domainManagementEditContactInfo( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Contacts and Privacy > Edit Contact Info"
 				component={ DomainManagement.EditContactInfo }
 				context={ pageContext }
@@ -96,11 +114,10 @@ export default {
 	domainManagementEmail( pageContext, next ) {
 		pageContext.primary = (
 			<EmailData
-				analyticsPath={
-					pageContext.params.domain
-						? '/domains/manage/:domain/email/:site'
-						: '/domains/manage/email/:site'
-				}
+				analyticsPath={ domainManagementEmail(
+					':site',
+					pageContext.params.domain ? ':domain' : undefined
+				) }
 				analyticsTitle="Domain Management > Email"
 				component={ DomainManagement.Email }
 				productsList={ productsList }
@@ -114,7 +131,7 @@ export default {
 	domainManagementEmailForwarding( pageContext, next ) {
 		pageContext.primary = (
 			<EmailForwardingData
-				analyticsPath="/domains/manage/:domain/email-forwarding/:site"
+				analyticsPath={ domainManagementEmailForwarding( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Email Forwarding"
 				component={ DomainManagement.EmailForwarding }
 				selectedDomainName={ pageContext.params.domain }
@@ -126,7 +143,7 @@ export default {
 	domainManagementDns( pageContext, next ) {
 		pageContext.primary = (
 			<DnsData
-				analyticsPath="/domains/manage/:domain/dns/:site"
+				analyticsPath={ domainManagementDns( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
 				component={ DomainManagement.Dns }
 				selectedDomainName={ pageContext.params.domain }
@@ -137,7 +154,7 @@ export default {
 	domainManagementNameServers( pageContext, next ) {
 		pageContext.primary = (
 			<NameserversData
-				analyticsPath="/domains/manage/:domain/name-servers/:site"
+				analyticsPath={ domainManagementNameServers( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Name Servers and DNS"
 				component={ DomainManagement.NameServers }
 				selectedDomainName={ pageContext.params.domain }
@@ -149,7 +166,7 @@ export default {
 	domainManagementPrivacyProtection( pageContext, next ) {
 		pageContext.primary = (
 			<WhoisData
-				analyticsPath="/domains/manage/:domain/privacy-protection/:site"
+				analyticsPath={ domainManagementPrivacyProtection( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Contacts and Privacy > Privacy Protection"
 				component={ DomainManagement.PrivacyProtection }
 				context={ pageContext }
@@ -162,11 +179,10 @@ export default {
 	domainManagementAddGoogleApps( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
-				analyticsPath={
-					pageContext.params.domain
-						? '/domains/manage/:domain/add-google-apps/:site'
-						: '/domains/manage/add-google-apps/:site'
-				}
+				analyticsPath={ domainManagementAddGoogleApps(
+					':site',
+					pageContext.params.domain ? ':domain' : undefined
+				) }
 				analyticsTitle="Domain Management > Add Google Apps"
 				component={ DomainManagement.AddGoogleApps }
 				context={ pageContext }
@@ -180,7 +196,7 @@ export default {
 	domainManagementRedirectSettings( pageContext, next ) {
 		pageContext.primary = (
 			<SiteRedirectData
-				analyticsPath="/domains/manage/:domain/redirect-settings/:site"
+				analyticsPath={ domainManagementRedirectSettings( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Redirect Settings"
 				component={ DomainManagement.SiteRedirect }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
@@ -199,7 +215,7 @@ export default {
 	domainManagementTransfer( pageContext, next ) {
 		pageContext.primary = (
 			<TransferData
-				analyticsPath="/domains/manage/:domain/transfer/:site"
+				analyticsPath={ domainManagementTransfer( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer"
 				component={ DomainManagement.Transfer }
 				selectedDomainName={ pageContext.params.domain }
@@ -211,7 +227,7 @@ export default {
 	domainManagementTransferToOtherSite( pageContext, next ) {
 		pageContext.primary = (
 			<TransferData
-				analyticsPath="/domains/manage/:domain/transfer/other-site/:site"
+				analyticsPath={ domainManagementTransferToOtherSite( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other Site"
 				component={ DomainManagement.TransferToOtherSite }
 				selectedDomainName={ pageContext.params.domain }
@@ -232,7 +248,7 @@ export default {
 
 		pageContext.primary = (
 			<TransferData
-				analyticsPath="/domains/manage/:domain/transfer/other-user/:site"
+				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other User"
 				component={ DomainManagement.TransferToOtherUser }
 				selectedDomainName={ pageContext.params.domain }
@@ -244,7 +260,7 @@ export default {
 	domainManagementTransferOut( pageContext, next ) {
 		pageContext.primary = (
 			<TransferData
-				analyticsPath="/domains/manage/:domain/transfer/out/:site"
+				analyticsPath={ domainManagementTransferOut( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Another Registrar"
 				component={ DomainManagement.TransferOut }
 				selectedDomainName={ pageContext.params.domain }

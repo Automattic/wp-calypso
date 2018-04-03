@@ -18,7 +18,7 @@ import Card from 'components/card/compact';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Notice from 'components/notice';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import { domainManagementEdit } from 'my-sites/domains/paths';
+import { domainManagementEdit, domainManagementPrimaryDomain } from 'my-sites/domains/paths';
 import { setPrimaryDomain } from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
@@ -102,7 +102,7 @@ class PrimaryDomain extends React.Component {
 		return (
 			<Main className="domain-management-primary-domain">
 				<PageViewTracker
-					path="/domains/manage/:domain/primary-domain/:site"
+					path={ domainManagementPrimaryDomain( ':site', ':domain' ) }
 					title="Domain Management > Set Primary Domain"
 				/>
 				<QuerySiteDomains siteId={ selectedSite && selectedSite.ID } />

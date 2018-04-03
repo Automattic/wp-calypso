@@ -26,7 +26,12 @@ import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import GoogleApps from 'components/upgrades/google-apps';
-import { domainManagementTransferIn } from 'my-sites/domains/paths';
+import {
+	domainManagementTransferIn,
+	domainManagementTransferInPrecheck,
+	domainMapping,
+	domainTransferIn,
+} from 'my-sites/domains/paths';
 import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'controller';
@@ -96,7 +101,7 @@ const siteRedirect = ( context, next ) => {
 const mapDomain = ( context, next ) => {
 	context.primary = (
 		<Main>
-			<PageViewTracker path="/domains/add/mapping/:site" title="Domain Search > Domain Mapping" />
+			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
 			<CartData>
 				<MapDomain initialQuery={ context.query.initialQuery } />
@@ -109,7 +114,10 @@ const mapDomain = ( context, next ) => {
 const transferDomain = ( context, next ) => {
 	context.primary = (
 		<Main>
-			<PageViewTracker path="/domains/add/transfer/:site" title="Domain Search > Domain Transfer" />
+			<PageViewTracker
+				path={ domainTransferIn( ':site' ) }
+				title="Domain Search > Domain Transfer"
+			/>
 			<DocumentHead title={ translate( 'Transfer a Domain' ) } />
 			<CartData>
 				<TransferDomain
@@ -133,7 +141,7 @@ const transferDomainPrecheck = ( context, next ) => {
 	context.primary = (
 		<Main>
 			<PageViewTracker
-				path="/domains/manage/:domain/transfer/precheck/:site"
+				path={ domainManagementTransferInPrecheck( ':site', ':domain' ) }
 				title="My Sites > Domains > Selected Domain"
 			/>
 			<CartData>
