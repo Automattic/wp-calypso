@@ -5,8 +5,8 @@
  */
 import { get, includes } from 'lodash';
 
-function defaultFormatter( postalCode, delimeter, partLength ) {
-	return postalCode.substring( 0, partLength ) + delimeter + postalCode.substring( partLength );
+function defaultFormatter( postalCode, delimiter, partLength ) {
+	return postalCode.substring( 0, partLength ) + delimiter + postalCode.substring( partLength );
 }
 
 /**
@@ -24,58 +24,58 @@ export function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
 	const twoPartPostalCodes = {
 		BR: {
 			length: [ 8 ],
-			delimeter: '-',
+			delimiter: '-',
 			partLength: 5,
 		},
 		CA: {
 			length: [ 6 ],
-			delimeter: ' ',
+			delimiter: ' ',
 			partLength: 3,
 		},
 		GB: {
 			length: [ 5, 6, 7 ],
-			delimeter: ' ',
-			formatter: ( postalCodeInput, delimeter ) => {
+			delimiter: ' ',
+			formatter: ( postalCodeInput, delimiter ) => {
 				return (
 					postalCodeInput.substring( 0, postalCodeInput.length - 3 ) +
-					delimeter +
+					delimiter +
 					postalCodeInput.substring( postalCodeInput.length - 3 )
 				);
 			},
 		},
 		IE: {
 			length: [ 7 ],
-			delimeter: ' ',
+			delimiter: ' ',
 			partLength: 3,
 		},
 		JP: {
 			length: [ 7 ],
-			delimeter: '-',
+			delimiter: '-',
 			partLength: 3,
 		},
 		KY: {
 			length: [ 7 ],
-			delimeter: '-',
+			delimiter: '-',
 			partLength: 3,
 		},
 		NL: {
 			length: [ 6 ],
-			delimeter: ' ',
+			delimiter: ' ',
 			partLength: 4,
 		},
 		PL: {
 			length: [ 5 ],
-			delimeter: '-',
+			delimiter: '-',
 			partLength: 2,
 		},
 		PT: {
 			length: [ 7 ],
-			delimeter: '-',
+			delimiter: '-',
 			partLength: 4,
 		},
 		SE: {
 			length: [ 5 ],
-			delimeter: ' ',
+			delimiter: ' ',
 			partLength: 3,
 		},
 	};
@@ -87,14 +87,13 @@ export function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
 
 	if (
 		includes( countryCodeData.length, postalCode.length ) &&
-		postalCode.indexOf( countryCodeData.delimeter ) === -1
+		postalCode.indexOf( countryCodeData.delimiter ) === -1
 	) {
-		let formatter = defaultFormatter;
 		if ( countryCodeData.formatter ) {
-			formatter = countryCodeData.formatter;
+			return countryCodeData.formatter( postalCode, countryCodeData.delimiter );
 		}
 
-		return formatter( postalCode, countryCodeData.delimeter, countryCodeData.partLength );
+		return defaultFormatter( postalCode, countryCodeData.delimiter, countryCodeData.partLength );
 	}
 
 	return postalCode;
