@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { drop, get, isEmpty, join, find, split, values } from 'lodash';
+import { drop, get, includes, isEmpty, join, find, split, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -105,52 +105,52 @@ function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
 
 	const twoPartPostalCodes = {
 		BR: {
-			length: 8,
+			length: [ 8 ],
 			delimeter: '-',
 			partLength: 5,
 		},
 		CA: {
-			length: 6,
+			length: [ 6 ],
 			delimeter: ' ',
 			partLength: 3,
 		},
 		GB: {
-			length: 7,
+			length: [ 5, 6, 7 ],
 			delimeter: ' ',
 			partLength: 4,
 		},
 		IE: {
-			length: 7,
+			length: [ 7 ],
 			delimeter: ' ',
 			partLength: 3,
 		},
 		JP: {
-			length: 7,
+			length: [ 7 ],
 			delimeter: '-',
 			partLength: 3,
 		},
 		KY: {
-			length: 7,
+			length: [ 7 ],
 			delimeter: '-',
 			partLength: 3,
 		},
 		NL: {
-			length: 6,
+			length: [ 6 ],
 			delimeter: ' ',
 			partLength: 4,
 		},
 		PL: {
-			length: 5,
+			length: [ 5 ],
 			delimeter: '-',
 			partLength: 2,
 		},
 		PT: {
-			length: 7,
+			length: [ 7 ],
 			delimeter: '-',
 			partLength: 4,
 		},
 		SE: {
-			length: 5,
+			length: [ 5 ],
 			delimeter: ' ',
 			partLength: 3,
 		},
@@ -162,7 +162,7 @@ function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
 	}
 
 	if (
-		postalCode.length === countryCodeData.length &&
+		includes( countryCodeData.length, postalCode.length ) &&
 		postalCode.indexOf( countryCodeData.delimeter ) === -1
 	) {
 		return (
