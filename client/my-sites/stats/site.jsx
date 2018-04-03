@@ -241,7 +241,12 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			isJetpack,
-			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
+			hasPodcasts:
+				// Podcasting category slug
+				// TODO: remove when settings API is updated for new option
+				!! getSiteOption( state, siteId, 'podcasting_archive' ) ||
+				// Podcasting category ID
+				!! getSiteOption( state, siteId, 'podcasting_category_id' ),
 			isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
 				state,
 				siteId
