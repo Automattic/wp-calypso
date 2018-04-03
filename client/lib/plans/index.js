@@ -210,19 +210,19 @@ export function planLevelsMatch( planSlugA, planSlugB ) {
 }
 
 export function isBusinessPlan( planSlug ) {
-	return getPlan( planSlug ).type === TYPE_BUSINESS;
+	return planMatches( planSlug, { type: TYPE_BUSINESS } );
 }
 
 export function isPremiumPlan( planSlug ) {
-	return getPlan( planSlug ).type === TYPE_PREMIUM;
+	return planMatches( planSlug, { type: TYPE_PREMIUM } );
 }
 
 export function isPersonalPlan( planSlug ) {
-	return getPlan( planSlug ).type === TYPE_PERSONAL;
+	return planMatches( planSlug, { type: TYPE_PERSONAL } );
 }
 
 export function isFreePlan( planSlug ) {
-	return getPlan( planSlug ).type === TYPE_FREE;
+	return planMatches( planSlug, { type: TYPE_FREE } );
 }
 
 /**

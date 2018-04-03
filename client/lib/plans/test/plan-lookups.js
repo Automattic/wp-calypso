@@ -59,6 +59,7 @@ describe( 'isFreePlan', () => {
 		expect( isFreePlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
 		expect( isFreePlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isFreePlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isFreePlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 
@@ -76,6 +77,7 @@ describe( 'isPersonalPlan', () => {
 		expect( isPersonalPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).to.equal( false );
 		expect( isPersonalPlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isPersonalPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isPersonalPlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 
@@ -93,6 +95,7 @@ describe( 'isPremiumPlan', () => {
 		expect( isPremiumPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
 		expect( isPremiumPlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isPremiumPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isPremiumPlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 
@@ -110,6 +113,7 @@ describe( 'isBusinessPlan', () => {
 		expect( isBusinessPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
 		expect( isBusinessPlan( PLAN_PREMIUM ) ).to.equal( false );
 		expect( isBusinessPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isBusinessPlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 
