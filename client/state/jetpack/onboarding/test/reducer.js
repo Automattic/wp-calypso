@@ -15,9 +15,14 @@ import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	SERIALIZE,
 } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	describe( 'credentials', () => {
+		useSandbox( sandbox => {
+			sandbox.stub( console, 'warn' );
+		} );
+
 		const siteCredentials = {
 			token: 'abcd1234',
 			siteUrl: 'http://yourgroovydomain.com/',
