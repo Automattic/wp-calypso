@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
  */
 import config from 'config';
 import controller from 'me/controller';
-import Happychat from './main';
+import HappychatPage from './main';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -21,7 +21,7 @@ const renderChat = ( context, next ) => {
 	context.primary = (
 		<div>
 			<PageViewTracker path="/me/chat" title="Chat" />
-			<Happychat />
+			<HappychatPage />
 		</div>
 	);
 	next();
