@@ -30,13 +30,15 @@ import {
 /**
  * Turn the 'rewind' feature on for a site.
  *
- * @param {String|number} siteId site ID
- * @return {Object} action object
+ * @param  {String|number} siteId      Site ID
+ * @param  {bool}          isVpMigrate Whether this is a VaultPress migration.
+ * @return {Object}        Action object
  */
-export function activateRewind( siteId ) {
+export function activateRewind( siteId, isVpMigrate ) {
 	return {
 		type: REWIND_ACTIVATE_REQUEST,
 		siteId,
+		isVpMigrate,
 	};
 }
 
