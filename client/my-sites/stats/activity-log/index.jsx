@@ -615,14 +615,15 @@ export default connect(
 		const requestedRestoreId = getRequestedRewind( state, siteId );
 		const requestedBackupId = getRequestedBackup( state, siteId );
 		const logRequestQuery = getActivityLogQuery( { gmtOffset, startDate, timezone } );
-		const restoreStatus = get( state, [ 'rewind', siteId, 'rewind' ], false );
+		const rewindState = getRewindState( state, siteId );
+		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
-			enableRewind: restoreStatus
-				? ! includes( [ 'queued', 'running' ], get( restoreStatus, [ 'status' ], false ) )
-				: false,
+			enableRewind:
+				'uninitialized' !== rewindState.state &&
+				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
 			logRequestQuery,
 			logs: getActivityLogs(
 				state,
@@ -636,7 +637,7 @@ export default connect(
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
 			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
-			rewindState: getRewindState( state, siteId ),
+			rewindState,
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
