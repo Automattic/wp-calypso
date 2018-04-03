@@ -18,7 +18,8 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getHelpCourses } from 'state/help/courses/selectors';
 import { helpCourses } from './constants';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
+import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import { receiveHelpCourses } from 'state/help/courses/actions';
 import {
 	getUserPurchases,
@@ -63,11 +64,13 @@ class Courses extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
+const isWPCOMBusinessPlan = purchase =>
+	planMatches( purchase.productSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
+
+export function mapStateToProps( state ) {
 	const userId = getCurrentUserId( state );
 	const purchases = getUserPurchases( state, userId );
-	const isBusinessPlanUser =
-		purchases && !! find( purchases, purchase => purchase.productSlug === PLAN_BUSINESS );
+	const isBusinessPlanUser = purchases && !! find( purchases, isWPCOMBusinessPlan );
 	const courses = getHelpCourses( state );
 	const isLoading =
 		isFetchingUserPurchases( state ) || ! courses || ! hasLoadedUserPurchasesFromServer( state );
