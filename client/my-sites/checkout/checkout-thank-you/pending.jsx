@@ -16,6 +16,7 @@ import { identity } from 'lodash';
 import { getOrderTransaction, getOrderTransactionError } from 'state/selectors';
 import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
 import { errorNotice } from 'state/notices/actions';
+import QuerySourcePaymentTransactionDetail from 'components/data/query-source-payment-transaction-detail';
 
 class CheckoutPending extends PureComponent {
 	static propTypes = {
@@ -96,6 +97,7 @@ class CheckoutPending extends PureComponent {
 		// Replace this placeholder by the real one
 		return (
 			<div>
+				<QuerySourcePaymentTransactionDetail orderId={ orderId } pollIntervalMs={ 5000 } />
 				<p>Waiting for the payment result of { orderId }</p>
 			</div>
 		);

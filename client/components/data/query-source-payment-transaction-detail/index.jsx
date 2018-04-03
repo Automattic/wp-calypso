@@ -10,12 +10,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchSourcePaymentTransactionDetail } from 'state/transaction-detail/actions';
+import { fetchSourcePaymentTransactionDetail } from 'state/transactions/source-payment/actions';
 import { getSourcePaymentTransactionDetail } from 'state/selectors';
 
 class QuerySourcePaymentTransactionDetail extends React.Component {
 	static propTypes = {
-		pollIntervalMs: PropTypes.int,
+		pollIntervalMs: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -43,6 +43,10 @@ class QuerySourcePaymentTransactionDetail extends React.Component {
 		if ( this.timer ) {
 			clearInterval( this.timer );
 		}
+	}
+
+	render() {
+		return null;
 	}
 }
 
