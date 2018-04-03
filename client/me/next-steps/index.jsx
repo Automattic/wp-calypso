@@ -18,6 +18,7 @@ import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
 } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class NextSteps extends React.Component {
 	componentWillUnmount() {
@@ -155,6 +156,11 @@ class NextSteps extends React.Component {
 	render() {
 		return (
 			<div className="main main-column next-steps">
+				<PageViewTracker
+					path={ this.props.isWelcome ? '/me/next/welcome' : '/me/next' }
+					title="Me > Next Steps"
+				/>
+
 				{ this.renderMeSidebar() }
 
 				{ this.renderIntroMessage() }

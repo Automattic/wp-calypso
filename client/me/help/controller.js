@@ -10,9 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import { login } from 'lib/paths';
-import { sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import config from 'config';
 import HelpComponent from './main';
@@ -44,31 +42,19 @@ export default {
 	},
 
 	help( context, next ) {
-		const basePath = sectionify( context.path );
-
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
-
-		analytics.pageView.record( basePath, 'Help' );
 
 		context.primary = <HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />;
 		next();
 	},
 
 	courses( context, next ) {
-		const basePath = sectionify( context.path );
-
-		analytics.pageView.record( basePath, 'Help > Courses' );
-
 		context.primary = <CoursesComponent />;
 		next();
 	},
 
 	contact( context, next ) {
-		const basePath = sectionify( context.path );
-
-		analytics.pageView.record( basePath, 'Help > Contact' );
-
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );

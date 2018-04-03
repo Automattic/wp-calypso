@@ -25,6 +25,7 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import ReauthRequired from 'me/reauth-required';
 import formBase from 'me/form-base';
 import MeSidebarNavigation from 'me/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
@@ -57,6 +58,7 @@ const Privacy = createReactClass( {
 
 		return (
 			<Main className="privacy">
+				<PageViewTracker path="/me/privacy" title="Me > Privacy" />
 				<DocumentHead title={ this.props.translate( 'Privacy Settings' ) } />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />

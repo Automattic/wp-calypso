@@ -31,6 +31,7 @@ import { getConciergeAvailableTimes, getUserSettings } from 'state/selectors';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 import { getSite } from 'state/sites/selectors';
 import Upsell from './shared/upsell';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class ConciergeMain extends Component {
 	constructor( props ) {
@@ -76,10 +77,11 @@ export class ConciergeMain extends Component {
 	};
 
 	render() {
-		const { site } = this.props;
+		const { analyticsPath, analyticsTitle, site } = this.props;
 
 		return (
 			<Main>
+				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
 				<QueryUserSettings />
 				<QueryConciergeAvailableTimes scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />
 				<QuerySites />

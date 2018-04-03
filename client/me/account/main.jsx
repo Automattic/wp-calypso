@@ -45,6 +45,7 @@ import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'lib/i18n-utils';
 import { isRequestingMissingSites } from 'state/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import _user from 'lib/user';
 
 const user = _user();
@@ -743,6 +744,7 @@ const Account = createReactClass( {
 
 		return (
 			<Main className="account">
+				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<Card className="account__settings">
