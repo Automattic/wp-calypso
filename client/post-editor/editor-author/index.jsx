@@ -14,7 +14,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
-import userFactory from 'lib/user';
 import AuthorSelector from 'blocks/author-selector';
 import { hasTouch } from 'lib/touch-detect';
 import * as stats from 'lib/posts/stats';
@@ -23,11 +22,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
-
-/**
- * Module dependencies
- */
-const user = userFactory();
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export class EditorAuthor extends Component {
 	static propTypes = {
@@ -36,14 +31,13 @@ export class EditorAuthor extends Component {
 	};
 
 	render() {
-		const { post, translate, site } = this.props;
+		const { post, author, translate, site } = this.props;
 
 		// if it's not a new post and we are still loading, show a placeholder component
 		if ( ! post && ! this.props.isNew ) {
 			return this.renderPlaceholder();
 		}
 
-		const author = get( post, 'author', user.get() );
 		const name = author.display_name || author.name;
 		const Wrapper = this.userCanAssignAuthor() ? AuthorSelector : 'div';
 		const popoverPosition = hasTouch() ? 'bottom right' : 'bottom left';
@@ -106,10 +100,11 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 
-		return {
-			site: getSite( state, siteId ),
-			post: getEditedPost( state, siteId, postId ),
-		};
+		const site = getSite( state, siteId );
+		const post = getEditedPost( state, siteId, postId );
+		const author = get( post, 'author', getCurrentUser( state ) );
+
+		return { site, post, author };
 	},
 	{ editPost }
 )( localize( EditorAuthor ) );
