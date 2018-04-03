@@ -82,7 +82,7 @@ class ConversationCaterpillarComponent extends React.Component {
 			: size( allExpandableComments );
 
 		// Only display authors with a gravatar, and only display each author once
-		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'ID' );
+		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'email' );
 		const displayedAuthors = takeRight(
 			filter( uniqueAuthors, 'avatar_URL' ),
 			MAX_GRAVATARS_TO_DISPLAY
