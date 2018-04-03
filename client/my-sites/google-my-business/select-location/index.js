@@ -97,14 +97,23 @@ export default connect(
 		locations: [
 			{
 				id: 12345,
-				address: 'Centre Commercial Cap 3000, Avenue Eugene Donadei, 06700 Saint-Laurent-du-Var, France',
+				address: [
+					'Centre Commercial Cap 3000',
+					'Avenue Eugene Donadei',
+					'06700 Saint-Laurent-du-Var',
+					'France',
+				],
 				name: 'Starbucks',
 				photo: 'http://www.shantee.net/wp-content/uploads/2016/02/cookies-internet-1030x684.jpg',
 				verified: true,
 			},
 			{
 				id: 67890,
-				address: '234 Piedmont Drive, Talihassee, FL 34342, USA',
+				address: [
+					'234 Piedmont Drive',
+					'Talihassee, FL 34342',
+					'USA',
+				],
 				name: 'Pinch Bakeshop',
 				verified: false,
 			},

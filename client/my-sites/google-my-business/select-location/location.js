@@ -56,9 +56,13 @@ class GoogleMyBusinessLocation extends Component {
 							{ location.name }
 						</h2>
 
-						<p className="gmb-location__address">
-							{ location.address }
-						</p>
+						<div className="gmb-location__address">
+							{ location.address.map( ( line, index ) => (
+								<p key={ index }>
+									{ line }
+								</p>
+							) ) }
+						</div>
 
 						{ location.verified && (
 							<div className="gmb-location__verified">
