@@ -11,7 +11,6 @@ import { assign, some, map } from 'lodash';
 import { localize, translate } from 'i18n-calypso';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 import TermsOfService from './terms-of-service';
 import Input from 'my-sites/domains/components/form/input';
@@ -22,8 +21,10 @@ import wpcom from 'lib/wp';
 import notices from 'notices';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
+import { planMatches } from 'lib/plans';
+import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
 
-class RedirectPaymentBox extends PureComponent {
+export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
 
 	static propTypes = {
@@ -187,7 +188,12 @@ class RedirectPaymentBox extends PureComponent {
 	}
 
 	render() {
-		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
+		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
+			planMatches( product_slug, {
+				type: TYPE_BUSINESS,
+				group: GROUP_WPCOM,
+			} )
+		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
