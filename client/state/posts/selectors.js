@@ -15,6 +15,7 @@ import {
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
+	isAuthorEqual,
 	isDiscussionEqual,
 	mergeIgnoringArrays,
 	normalizePostForEditing,
@@ -411,14 +412,17 @@ export const isEditedPostDirty = createSelector(
 
 			if ( post ) {
 				switch ( key ) {
+					case 'author': {
+						return ! isAuthorEqual( value, post.author );
+					}
 					case 'date': {
 						return ! moment( value ).isSame( post.date );
 					}
-					case 'parent': {
-						return get( post, 'parent.ID', 0 ) !== value;
-					}
 					case 'discussion': {
 						return ! isDiscussionEqual( value, post.discussion );
+					}
+					case 'parent': {
+						return get( post, 'parent.ID', 0 ) !== value;
 					}
 				}
 				return post[ key ] !== value;

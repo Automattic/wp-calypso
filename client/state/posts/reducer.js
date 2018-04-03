@@ -47,8 +47,9 @@ import likes from './likes/reducer';
 import revisions from './revisions/reducer';
 import {
 	getSerializedPostsQuery,
-	isTermsEqual,
+	isAuthorEqual,
 	isDiscussionEqual,
+	isTermsEqual,
 	mergeIgnoringArrays,
 	normalizePostForState,
 } from './utils';
@@ -419,10 +420,12 @@ export function edits( state = {}, action ) {
 						[ post.site_ID, post.ID ],
 						omitBy( postEdits, ( value, key ) => {
 							switch ( key ) {
-								case 'terms':
-									return isTermsEqual( value, post[ key ] );
+								case 'author':
+									return isAuthorEqual( value, post[ key ] );
 								case 'discussion':
 									return isDiscussionEqual( value, post[ key ] );
+								case 'terms':
+									return isTermsEqual( value, post[ key ] );
 							}
 							return isEqual( post[ key ], value );
 						} )
