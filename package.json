@@ -171,7 +171,7 @@
   },
   "scripts": {
     "preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production npm run -s build-client -- --profile --json > stats.json",
-    "analyze-bundles": "webpack-bundle-analyzer stats.json public -h 127.0.0.1 -p 9899 -s gzip",
+    "analyze-bundles": "webpack-bundle-analyzer stats.json public -h 127.0.0.1 -p 9898 -s gzip",
     "analyze-css": "node bin/analyze-css.js",
     "autoprefixer": "postcss -r --use autoprefixer",
     "postcss": "postcss -r -u postcss-custom-properties -u autoprefixer -c postcss.config.json",
