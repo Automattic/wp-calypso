@@ -15,7 +15,7 @@ import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
 import { newPost } from 'lib/paths';
 import { isMobile } from 'lib/viewport';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import { getSelectedSite } from 'state/ui/selectors';
 import MasterbarDrafts from './drafts';
 import { isRtl as isRtlSelector } from 'state/selectors';

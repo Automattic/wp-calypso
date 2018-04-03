@@ -26,7 +26,7 @@ import * as utils from 'lib/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';

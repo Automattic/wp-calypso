@@ -21,7 +21,7 @@ import ReaderPopoverMenu from 'components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import SiteSelector from 'components/site-selector';
 import { getPrimarySiteId } from 'state/selectors';
 

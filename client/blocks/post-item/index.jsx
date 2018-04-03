@@ -36,7 +36,7 @@ import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 
 function preloadEditor() {
 	preload( 'post-editor' );
