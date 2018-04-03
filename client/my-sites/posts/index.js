@@ -28,9 +28,9 @@ export default function() {
 		const siteFragment = getSiteFragment( path );
 
 		if ( siteFragment ) {
-			return page.redirect( `/posts/${ siteFragment }` );
+			return page.redirect( `/posts/my/${ siteFragment }` );
 		}
 
-		return page.redirect( '/posts' );
+		return page.redirect( '/posts/my' );
 	} );
 }
