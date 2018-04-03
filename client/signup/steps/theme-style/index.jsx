@@ -15,7 +15,6 @@ import SignupActions from 'lib/signup/actions';
 import SignupThemeStyleList from './signup-theme-style-list';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
-import { getCurrentUser } from 'state/current-user/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
 class ThemeStyleStep extends Component {
@@ -28,7 +27,7 @@ class ThemeStyleStep extends Component {
 
 	pickThemeStyle = themeStyle => {
 		analytics.tracks.recordEvent( 'calypso_signup_theme_style_select', {
-			themeStyle
+			themeStyle,
 		} );
 
 		SignupActions.submitSignupStep(
@@ -49,7 +48,7 @@ class ThemeStyleStep extends Component {
 	renderThemeStyleList() {
 		return (
 			<SignupThemeStyleList
-				//theme={ this.props.signupDependencies.themeSlugWithRepo }
+				theme={ this.props.signupDependencies.themeSlugWithRepo }
 				handleScreenshotClick={ this.pickThemeStyle }
 			/>
 		);
@@ -66,7 +65,7 @@ class ThemeStyleStep extends Component {
 	render = () => {
 		const { translate } = this.props;
 		const headerText = translate( 'Choose a style for your website.' );
-		const subHeaderText = translate( 'Don\'t worry, you can change this later.' );
+		const subHeaderText = translate( "Don't worry, you can change this later." );
 		const defaultDependencies = { themeSlugWithRepo: 'pub/radcliffe-2' };
 
 		return (
@@ -83,7 +82,6 @@ class ThemeStyleStep extends Component {
 	};
 }
 
-export default connect( ( state ) => ( {
-	currentUser: getCurrentUser( state ),
+export default connect( state => ( {
 	dependencyStore: getSignupDependencyStore( state ),
 } ) )( localize( ThemeStyleStep ) );

@@ -40,13 +40,13 @@ class SignupThemeStyleList extends Component {
 			<Card
 				key={ style.slug }
 				href={ `#${ style.slug }` }
-				className="theme-style__style"
+				className="theme-style__item"
 				onClick={ this.props.handleScreenshotClick }
 			>
-				<img className="theme-style__style-image" src={ style.image } />
-				<div className="theme-style__style-copy">
-					<span className="button is-compact design-style__cta">{ style.name }</span>
-					<p className="theme-style__style-description">{ style.description }</p>
+				<img className="theme-style__item-image" src={ style.image } alt={ style.name } />
+				<div className="theme-style__item-copy">
+					<span className="theme-style__item-cta button is-compact">{ style.name }</span>
+					<p className="theme-style__item-description">{ style.description }</p>
 				</div>
 			</Card>
 		);

@@ -23,6 +23,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
+import FormInputCheckbox from 'components/forms/form-checkbox';
 
 class BusinessInformationStep extends React.Component {
 	static propTypes = {
@@ -36,7 +37,13 @@ class BusinessInformationStep extends React.Component {
 
 	componentDidMount() {
 		this.formStateController = new formState.Controller( {
-			fieldNames: [ 'phoneNumber', 'emailAddress', 'mailingAddress', 'businessHours' ],
+			fieldNames: [
+				'phoneNumber',
+				'emailAddress',
+				'mailingAddress',
+				'businessHours',
+				'contactMap',
+			],
 			validatorFunction: noop,
 			onNewState: this.setFormState,
 			hideFieldErrorsOnChange: true,
@@ -44,6 +51,7 @@ class BusinessInformationStep extends React.Component {
 				phoneNumber: { value: '' },
 				emailAddress: { value: '' },
 				mailingAddress: { value: '' },
+				contactMap: { value: true },
 				businessHours: { value: '' },
 			},
 		} );
@@ -78,6 +86,7 @@ class BusinessInformationStep extends React.Component {
 					phoneNumber: formState.getFieldValue( this.state.form, 'phoneNumber' ),
 					emailAddress: formState.getFieldValue( this.state.form, 'emailAddress' ),
 					mailingAddress: formState.getFieldValue( this.state.form, 'mailingAddress' ),
+					contactMap: formState.getFieldValue( this.state.form, 'contactMap' ),
 					businessHours: formState.getFieldValue( this.state.form, 'businessHours' ),
 				},
 			}
@@ -95,7 +104,7 @@ class BusinessInformationStep extends React.Component {
 
 		return (
 			<form onSubmit={ this.handleSubmit }>
-				<Card>
+				<Card className="business-information__wrapper">
 					<FormFieldset>
 						<FormLabel htmlFor="phoneNumber">
 							{ translate( 'What’s the phone number that customers will use to contact you?' ) }
@@ -122,7 +131,7 @@ class BusinessInformationStep extends React.Component {
 
 					<FormFieldset>
 						<FormLabel htmlFor="mailingAddress">
-							{ translate( 'Would you like to include your business’s address and a map?' ) }
+							{ translate( 'What’s your business’s address?' ) }
 						</FormLabel>
 						<FormTextarea
 							id="mailingAddress"
@@ -130,6 +139,18 @@ class BusinessInformationStep extends React.Component {
 							placeholder={ translate( '123 Main Street, Somewhere XY, 54321' ) }
 							onChange={ this.handleChangeEvent }
 						/>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="contactMap">
+							<FormInputCheckbox
+								name="contactMap"
+								id="contactMap"
+								onChange={ this.handleChangeEvent }
+								value={ true }
+							/>
+							{ translate( 'Would you like us to include a map?' ) }
+						</FormLabel>
 					</FormFieldset>
 
 					<FormFieldset>
