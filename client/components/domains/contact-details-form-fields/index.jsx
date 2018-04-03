@@ -124,13 +124,14 @@ export class ContactDetailsFormFields extends Component {
 
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
+			debounceWait: 500,
 			fieldNames: CONTACT_DETAILS_FORM_FIELDS,
 			loadFunction: this.loadFormState,
-			sanitizerFunction: this.sanitize,
-			validatorFunction: this.validate,
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError,
-			debounceWait: 500,
+			sanitizerFunction: this.sanitize,
+			skipSanitizeAndValidateOnFieldChange: true,
+			validatorFunction: this.validate,
 		} );
 	}
 
@@ -176,6 +177,11 @@ export class ContactDetailsFormFields extends Component {
 		} else {
 			onComplete( sanitizedFieldValues );
 		}
+	};
+
+	handleBlur = () => {
+		this.formStateController.sanitize();
+		this.formStateController.validate();
 	};
 
 	validate = ( fieldValues, onComplete ) =>
@@ -297,6 +303,7 @@ export class ContactDetailsFormFields extends Component {
 				'\n'
 			),
 			onChange: this.handleFieldChange,
+			onBlur: this.handleBlur,
 			value: formState.getFieldValue( form, name ) || '',
 			name,
 			eventFormName,
