@@ -3,56 +3,63 @@
 /**
  * External dependencies
  */
-
+import classNames from 'classnames';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { compact, filter, map, noop, reduce, reject } from 'lodash';
 import { connect } from 'react-redux';
-import { map, reduce, noop, compact, filter, reject } from 'lodash';
-import page from 'page';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import PlanFeaturesHeader from './header';
-import PlanFeaturesItem from './item';
+import FoldableCard from 'components/foldable-card';
+import formatCurrency from 'lib/format-currency';
+import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesBottom from './bottom';
+import PlanFeaturesHeader from './header';
+import PlanFeaturesItem from './item';
 import PlanFeaturesSummary from './summary';
-import {
-	isCurrentPlanPaid,
-	isCurrentSitePlan,
-	getSitePlan,
-	getSiteSlug,
-} from 'state/sites/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
+import SpinnerLine from 'components/spinner-line';
+import { abtest, getABTestVariation } from 'lib/abtest';
 import { getCurrentUserCurrencyCode, getCurrentUserId } from 'state/current-user/selectors';
-import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
-import { getPlanRawPrice, getPlan, getPlanSlug, getPlanBySlug } from 'state/plans/selectors';
+import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import {
-	isPopular,
-	isNew,
+	applyTestFiltersToPlansList,
+	canUpgradeToPlan,
+	getMonthlyPlanByYearly,
+	getPlanPath,
+	isFreePlan,
+} from 'lib/plans';
+import {
+	getPlanClass,
+	getPlanFeaturesObject,
 	isBestValue,
 	isMonthly,
-	getPlanFeaturesObject,
-	getPlanClass,
+	isNew,
+	isPopular,
+	PLAN_BUSINESS,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-	PLAN_BUSINESS,
 } from 'lib/plans/constants';
-import { getMonthlyPlanByYearly, isFreePlan } from 'lib/plans';
-import { getPlanPath, canUpgradeToPlan, applyTestFiltersToPlansList } from 'lib/plans';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
-import Notice from 'components/notice';
-import SpinnerLine from 'components/spinner-line';
-import FoldableCard from 'components/foldable-card';
-import { recordTracksEvent } from 'state/analytics/actions';
-import formatCurrency from 'lib/format-currency';
-import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import { abtest, getABTestVariation } from 'lib/abtest';
+import {
+	getPlanDiscountedRawPrice,
+	getPlansBySiteId,
+	isCurrentUserCurrentPlanOwner,
+} from 'state/sites/plans/selectors';
+import {
+	getSitePlan,
+	getSiteSlug,
+	isCurrentPlanPaid,
+	isCurrentSitePlan,
+} from 'state/sites/selectors';
 
 class PlanFeatures extends Component {
 	componentDidMount() {
@@ -67,15 +74,15 @@ class PlanFeatures extends Component {
 	}
 
 	render() {
-		const { planProperties, isInSignup, showModifiedPricingDisplay, site } = this.props;
+		const { isInSignup, planProperties, showModifiedPricingDisplay, site } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
-			'plan-features--signup': isInSignup,
 			'abtest-pricing-display': showModifiedPricingDisplay,
 			'has-mobile-table': abtest( 'mobilePlansTablesOnSignup' ) === 'vertical',
+			'plan-features--signup': isInSignup,
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
 		let mobileView, planDescriptions;
@@ -810,12 +817,12 @@ export default connect(
 
 		return {
 			canPurchase,
-			planProperties,
 			freePlanProperties,
-			siteType,
-			sitePlan,
 			maxCredits,
+			planProperties,
 			showModifiedPricingDisplay,
+			sitePlan,
+			siteType,
 		};
 	},
 	{
