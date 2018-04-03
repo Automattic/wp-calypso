@@ -59,7 +59,7 @@ function getCharacterCount( post ) {
 }
 
 export function imageIsBigEnoughForGallery( image ) {
-	return image.width >= GALLERY_MIN_IMAGE_WIDTH;
+	return image.width >= GALLERY_MIN_IMAGE_WIDTH && image.height >= MIN_IMAGE_HEIGHT;
 }
 
 const hasShortContent = post => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
