@@ -16,7 +16,6 @@ import { localize } from 'i18n-calypso';
 import MediaLibrary from 'my-sites/media-library';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Dialog from 'components/dialog';
-import DocumentHead from 'components/data/document-head';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import { getSelectedSite } from 'state/ui/selectors';
 import ImageEditor from 'blocks/image-editor';
@@ -273,26 +272,19 @@ class Media extends Component {
 	};
 
 	getAnalyticsPath = () => {
-		const { filter, selectedSite } = this.props;
-		let analyticsPath = '/media';
+		const { filter } = this.props;
 
 		if ( filter ) {
-			analyticsPath += `/${ filter }`;
+			return `/media/${ filter }/:site`;
 		}
 
-		if ( selectedSite && selectedSite.ID ) {
-			analyticsPath += '/:site';
-		}
-
-		return analyticsPath;
+		return '/media/:site';
 	};
 
 	render() {
-		const { translate } = this.props;
 		const site = this.props.selectedSite;
 		return (
 			<div ref="container" className="main main-column media" role="main">
-				<DocumentHead title={ translate( 'Media' ) } />
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<SidebarNavigation />
 				{ ( this.state.editedImageItem !== null ||
