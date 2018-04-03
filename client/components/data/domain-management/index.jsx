@@ -19,6 +19,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const stores = [ DomainsStore, CartStore ];
 
@@ -38,6 +39,8 @@ const DomainManagementData = createReactClass( {
 	displayName: 'DomainManagementData',
 
 	propTypes: {
+		analyticsPath: PropTypes.string,
+		analyticsTitle: PropTypes.string,
 		context: PropTypes.object.isRequired,
 		productsList: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
@@ -67,6 +70,7 @@ const DomainManagementData = createReactClass( {
 	render: function() {
 		return (
 			<div>
+				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
 				<StoreConnection
 					component={ this.props.component }
 					stores={ stores }

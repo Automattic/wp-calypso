@@ -17,6 +17,7 @@ import StoreConnection from 'components/data/store-connection';
 import { fetchNameservers } from 'lib/upgrades/actions';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const stores = [ NameserversStore ];
 
@@ -33,6 +34,8 @@ function getStateFromStores( props ) {
 
 export class NameserversData extends Component {
 	static propTypes = {
+		analyticsPath: PropTypes.string,
+		analyticsTitle: PropTypes.string,
 		component: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.object,
@@ -55,6 +58,7 @@ export class NameserversData extends Component {
 
 		return (
 			<div>
+				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
 				<QuerySiteDomains siteId={ selectedSite && selectedSite.ID } />
 				<StoreConnection
 					component={ this.props.component }

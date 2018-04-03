@@ -26,6 +26,7 @@ import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class PrimaryDomain extends React.Component {
 	static propTypes = {
@@ -100,6 +101,10 @@ class PrimaryDomain extends React.Component {
 
 		return (
 			<Main className="domain-management-primary-domain">
+				<PageViewTracker
+					path="/domains/manage/:domain/primary-domain/:site"
+					title="Domain Management > Set Primary Domain"
+				/>
 				<QuerySiteDomains siteId={ selectedSite && selectedSite.ID } />
 
 				<Header selectedDomainName={ selectedDomainName } onClick={ this.goToEditDomainRoot }>

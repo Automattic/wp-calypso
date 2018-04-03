@@ -25,6 +25,7 @@ import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getProductsList } from 'state/products-list/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const user = userFactory();
 
@@ -49,6 +50,8 @@ class EmailData extends React.Component {
 	static displayName = 'EmailData';
 
 	static propTypes = {
+		analyticsPath: PropTypes.string,
+		analyticsTitle: PropTypes.string,
 		component: PropTypes.func.isRequired,
 		context: PropTypes.object.isRequired,
 		productsList: PropTypes.object.isRequired,
@@ -83,6 +86,7 @@ class EmailData extends React.Component {
 	render() {
 		return (
 			<div>
+				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
 				<QueryProducts />
 				<QuerySites />
 				<StoreConnection
