@@ -4,6 +4,12 @@
 
 	.logged-out-form__links {
 		max-width: 100%;
+
+		/* Move up to the Card above */
+		margin-top: -10px;
+		@include breakpoint( '>480px' ) {
+			margin-top: -16px;
+		}
 	}
 
 	.formatted-header {
