@@ -43,7 +43,7 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 	}
 
 	if ( site_id ) {
-		analyticsPath += '/:site_id';
+		analyticsPath += '/:site';
 		analyticsPageTitle += ' > Single Site';
 	}
 
