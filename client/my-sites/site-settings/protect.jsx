@@ -125,8 +125,15 @@ class Protect extends Component {
 					<div className="protect__module-settings site-settings__child-settings">
 						<div className="protect__info-link-container site-settings__info-link-container">
 							<InfoPopover position="left">
-								<ExternalLink href="https://jetpack.com/support/protect" target="_blank">
-									{ translate( 'Learn more about Jetpack protect' ) }
+								{ translate(
+									'Protects your site from traditional and distributed brute force login attacks.'
+								) }{' '}
+								<ExternalLink
+									href="https://jetpack.com/support/protect"
+									icon={ false }
+									target="_blank"
+								>
+									{ translate( 'Learn more' ) }
 								</ExternalLink>
 							</InfoPopover>
 						</div>

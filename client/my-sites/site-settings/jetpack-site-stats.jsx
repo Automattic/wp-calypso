@@ -132,11 +132,16 @@ class JetpackSiteStats extends Component {
 					<FormFieldset>
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
+								{ translate(
+									'Displays information on your site activity, ' +
+										'including visitors and popular posts or pages.'
+								) }{' '}
 								<ExternalLink
 									href="https://jetpack.com/support/wordpress-com-stats/"
+									icon={ false }
 									target="_blank"
 								>
-									{ translate( 'Learn more about WordPress.com Stats' ) }
+									{ translate( 'Learn more' ) }
 								</ExternalLink>
 							</InfoPopover>
 						</div>

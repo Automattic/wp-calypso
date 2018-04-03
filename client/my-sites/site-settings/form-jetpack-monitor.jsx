@@ -141,8 +141,13 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<Card className="jetpack-monitor-settings">
 					<div className="site-settings__info-link-container">
 						<InfoPopover position="left">
-							<ExternalLink href="https://jetpack.com/support/monitor/" icon target="_blank">
-								{ translate( 'Learn more about downtime monitoring' ) }
+							{ translate( "Notifies you when there's an issue with your site." ) }{' '}
+							<ExternalLink
+								href="https://jetpack.com/support/monitor/"
+								icon={ false }
+								target="_blank"
+							>
+								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>

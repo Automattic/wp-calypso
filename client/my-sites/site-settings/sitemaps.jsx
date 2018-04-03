@@ -62,8 +62,11 @@ class Sitemaps extends Component {
 		return (
 			<div className="sitemaps__info-link-container site-settings__info-link-container">
 				<InfoPopover position="left">
-					<ExternalLink href={ url } icon target="_blank">
-						{ translate( 'Learn more about Sitemaps.' ) }
+					{ translate(
+						'Automatically generates the files required for search engines to index your site.'
+					) }{' '}
+					<ExternalLink href={ url } icon={ false } target="_blank">
+						{ translate( 'Learn more' ) }
 					</ExternalLink>
 				</InfoPopover>
 			</div>

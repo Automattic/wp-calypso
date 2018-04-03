@@ -120,8 +120,15 @@ class PublishingTools extends Component {
 			<FormFieldset>
 				<div className="publishing-tools__info-link-container site-settings__info-link-container">
 					<InfoPopover position="left">
-						<ExternalLink href="https://jetpack.com/support/post-by-email/" icon target="_blank">
-							{ translate( 'Learn more about Post by Email.' ) }
+						{ translate(
+							'Allows you to publish new posts by sending an email to a special address.'
+						) }{' '}
+						<ExternalLink
+							href="https://jetpack.com/support/post-by-email/"
+							icon={ false }
+							target="_blank"
+						>
+							{ translate( 'Learn more' ) }
 						</ExternalLink>
 					</InfoPopover>
 				</div>
