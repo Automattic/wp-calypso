@@ -40,7 +40,7 @@ class RecommendationSelect extends PureComponent {
 			<div className="nps-survey__recommendation-select">
 				<div className="nps-survey__scale-labels">
 					<span>{ translate( 'Unlikely' ) }</span>
-					<span className="nps-survey__very-likely-label">{ translate( 'Very Likely' ) }</span>
+					<span className="nps-survey__very-likely-label">{ translate( 'Very likely' ) }</span>
 				</div>
 				<div className="nps-survey__options">{ options }</div>
 			</div>
