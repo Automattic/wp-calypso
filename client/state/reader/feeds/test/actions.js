@@ -36,10 +36,7 @@ describe( 'actions', () => {
 
 	describe( '#receiveReaderFeedRequestFailure', () => {
 		test( 'should return an action when a feed request fails', () => {
-			const action = receiveReaderFeedRequestFailure(
-				{ payload: { feed_ID: 123 } },
-				{ statusCode: 410 }
-			);
+			const action = receiveReaderFeedRequestFailure( 123, { statusCode: 410 } );
 			expect( action ).toEqual( {
 				type: READER_FEED_REQUEST_FAILURE,
 				payload: { feed_ID: 123 },

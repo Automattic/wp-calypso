@@ -153,7 +153,7 @@ describe( 'wpcom-api', () => {
 
 				expect( receiveReadFeedError( action, apiResponse ) ).toMatchObject( {
 					type: READER_FEED_REQUEST_FAILURE,
-					payload: { ID: 123 },
+					payload: { feed_ID: 123 },
 					error: apiResponse,
 				} );
 			} );
