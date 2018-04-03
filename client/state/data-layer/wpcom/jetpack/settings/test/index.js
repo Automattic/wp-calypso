@@ -91,12 +91,14 @@ describe( 'announceRequestFailure()', () => {
 
 	test( 'should trigger an error notice with an action button when request fails for an unconnected site', () => {
 		const getState = () => ( {
-			jetpackOnboarding: {
-				credentials: {
-					[ siteId ]: {
-						siteUrl,
-						token: 'abcd1234',
-						userEmail: 'example@yourgroovydomain.com',
+			jetpack: {
+				onboarding: {
+					credentials: {
+						[ siteId ]: {
+							siteUrl,
+							token: 'abcd1234',
+							userEmail: 'example@yourgroovydomain.com',
+						},
 					},
 				},
 			},
@@ -122,8 +124,10 @@ describe( 'announceRequestFailure()', () => {
 
 	test( 'should trigger an error notice with an action button when request fails for a connected site', () => {
 		const getState = () => ( {
-			jetpackOnboarding: {
-				credentials: {},
+			jetpack: {
+				onboarding: {
+					credentials: {},
+				},
 			},
 			sites: {
 				items: {
@@ -152,11 +156,13 @@ describe( 'announceRequestFailure()', () => {
 
 	test( 'should trigger an error notice without action button if url is missing', () => {
 		const getState = () => ( {
-			jetpackOnboarding: {
-				credentials: {
-					[ siteId ]: {
-						token: 'abcd1234',
-						userEmail: 'example@yourgroovydomain.com',
+			jetpack: {
+				onboarding: {
+					credentials: {
+						[ siteId ]: {
+							token: 'abcd1234',
+							userEmail: 'example@yourgroovydomain.com',
+						},
 					},
 				},
 			},
