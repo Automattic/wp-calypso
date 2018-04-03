@@ -235,7 +235,7 @@ describe( 'handleSaveSuccess()', () => {
 	};
 
 	test( 'should dispatch a save success action upon successful save request', () => {
-		handleSaveSuccess( { dispatch }, { siteId, settings } );
+		handleSaveSuccess( { dispatch }, { siteId }, { data: settings } );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( saveJetpackSettingsSuccess( siteId, settings ) )
