@@ -39,7 +39,7 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 	}
 
 	if ( filter ) {
-		analyticsPath += '/filters/:filters';
+		analyticsPath += '/filter/:filter';
 	}
 
 	if ( site_id ) {
