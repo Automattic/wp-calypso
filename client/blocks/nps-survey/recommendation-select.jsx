@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { range } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -31,14 +32,15 @@ class RecommendationSelect extends PureComponent {
 	}
 
 	render() {
+		const { translate } = this.props;
 		const values = range( 0, 11 );
 		const options = values.map( value => this.renderOption( value ) );
 
 		return (
 			<div className="nps-survey__recommendation-select">
 				<div className="nps-survey__scale-labels">
-					<span>Unlikely</span>
-					<span className="nps-survey__very-likely-label">Very Likely</span>
+					<span>{ translate( 'Unlikely' ) }</span>
+					<span className="nps-survey__very-likely-label">{ translate( 'Very likely' ) }</span>
 				</div>
 				<div className="nps-survey__options">{ options }</div>
 			</div>
@@ -46,4 +48,4 @@ class RecommendationSelect extends PureComponent {
 	}
 }
 
-export default RecommendationSelect;
+export default localize( RecommendationSelect );
