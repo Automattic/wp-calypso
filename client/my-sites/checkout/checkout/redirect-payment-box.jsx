@@ -24,6 +24,8 @@ import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
 
 class RedirectPaymentBox extends PureComponent {
+	static displayName = 'RedirectPaymentBox';
+
 	static propTypes = {
 		paymentType: PropTypes.string.isRequired,
 		cart: PropTypes.object.isRequired,
@@ -232,6 +234,5 @@ class RedirectPaymentBox extends PureComponent {
 		return paymentMethodName( this.props.paymentType );
 	}
 }
-RedirectPaymentBox.displayName = 'RedirectPaymentBox';
 
 export default localize( RedirectPaymentBox );
