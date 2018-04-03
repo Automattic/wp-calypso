@@ -29,6 +29,7 @@ import {
 	isExpired,
 	isExpiring,
 	isOneTimePurchase,
+	isPaidWithCreditCard,
 	isRefundable,
 	isRenewable,
 	isRenewal,
@@ -195,7 +196,11 @@ class ManagePurchase extends Component {
 			const path = getEditCardDetailsPath( this.props.selectedSite, purchase );
 			const renewing = isRenewing( purchase );
 
-			if ( renewing && ! cardProcessorSupportsUpdates( purchase ) ) {
+			if (
+				renewing &&
+				isPaidWithCreditCard( purchase ) &&
+				! cardProcessorSupportsUpdates( purchase )
+			) {
 				return null;
 			}
 
