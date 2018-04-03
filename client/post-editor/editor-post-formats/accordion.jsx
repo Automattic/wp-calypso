@@ -6,9 +6,9 @@
 
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { has, isEmpty } from 'lodash';
+import { get, has, isEmpty } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -16,38 +16,25 @@ import classNames from 'classnames';
  */
 import Accordion from 'components/accordion';
 import QueryPostFormats from 'components/data/query-post-formats';
-import PostFormats from './';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import EditorPostFormats from './';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 import { getSiteDefaultPostFormat } from 'state/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
-class EditorPostFormatsAccordion extends React.Component {
+class EditorPostFormatsAccordion extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
-		site: PropTypes.object,
-		post: PropTypes.object,
+		isLoading: PropTypes.bool,
 		postFormats: PropTypes.object,
-		defaultPostFormat: PropTypes.string,
+		formatValue: PropTypes.string,
 	};
 
-	getFormatValue = () => {
-		const { post, defaultPostFormat } = this.props;
-		if ( ! post ) {
-			return;
-		}
+	getSubtitle() {
+		const { isLoading, postFormats, formatValue } = this.props;
 
-		if ( post.format ) {
-			return post.format;
-		}
-
-		return defaultPostFormat;
-	};
-
-	getSubtitle = () => {
-		const formatValue = this.getFormatValue();
-		const { post, postFormats } = this.props;
-
-		if ( ! post || ! postFormats ) {
+		if ( isLoading ) {
 			return;
 		}
 
@@ -58,17 +45,17 @@ class EditorPostFormatsAccordion extends React.Component {
 		return this.props.translate( 'Standard', {
 			context: 'Post format',
 		} );
-	};
+	}
 
 	render() {
-		const { className, post, postFormats } = this.props;
+		const { className, isLoading, siteId, postFormats } = this.props;
 		const classes = classNames( 'editor-post-formats__accordion', className, {
-			'is-loading': ! post || ! postFormats,
+			'is-loading': isLoading,
 		} );
 
 		return (
-			<div>
-				<QueryPostFormats siteId={ this.props.siteId } />
+			<Fragment>
+				<QueryPostFormats siteId={ siteId } />
 				{ ! isEmpty( postFormats ) && (
 					<Accordion
 						title={ this.props.translate( 'Post Format' ) }
@@ -76,21 +63,21 @@ class EditorPostFormatsAccordion extends React.Component {
 						className={ classes }
 						e2eTitle="post-format"
 					>
-						<PostFormats value={ this.getFormatValue() } />
+						<EditorPostFormats />
 					</Accordion>
 				) }
-			</div>
+			</Fragment>
 		);
 	}
 }
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const post = getEditedPost( state, siteId, postId );
+	const postFormats = getPostFormats( state, siteId );
+	const isLoading = ! ( post && postFormats );
+	const formatValue = get( post, 'format' ) || getSiteDefaultPostFormat( state, siteId );
 
-	return {
-		siteId,
-		site: getSelectedSite( state ),
-		postFormats: getPostFormats( state, siteId ),
-		defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
-	};
+	return { siteId, isLoading, postFormats, formatValue };
 } )( localize( EditorPostFormatsAccordion ) );

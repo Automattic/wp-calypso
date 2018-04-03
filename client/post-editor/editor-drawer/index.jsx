@@ -149,7 +149,6 @@ class EditorDrawer extends Component {
 		return (
 			<AsyncLoad
 				require="post-editor/editor-post-formats/accordion"
-				post={ this.props.post }
 				className="editor-drawer__accordion"
 			/>
 		);
