@@ -146,8 +146,6 @@ export class ContactDetailsFormFields extends Component {
 		const mainFieldValues = formState.getAllFieldValues( this.state.form );
 		return {
 			...mainFieldValues,
-			// domains registered according to ancient validation rules may have state set even though not required
-			state: this.props.hasCountryStates ? mainFieldValues.state : '',
 			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
 		};
 	}
