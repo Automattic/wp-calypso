@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { assign, some, map } from 'lodash';
+import { assign, some, map, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,9 @@ import wpcom from 'lib/wp';
 import notices from 'notices';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
+import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import FormFieldset from 'components/forms/form-fieldset';
+import { forSms as countriesList } from 'lib/countries-list';
 import { planMatches } from 'lib/plans';
 import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
 
@@ -50,6 +53,10 @@ export class RedirectPaymentBox extends PureComponent {
 
 		this.setState( data );
 	}
+
+	handlePhoneChange = phone => {
+		this.setState( { phone: phone.value, phoneCountry: phone.countryCode } );
+	};
 
 	setSubmitState( submitState ) {
 		if ( submitState.error ) {
@@ -160,30 +167,44 @@ export class RedirectPaymentBox extends PureComponent {
 	}
 
 	renderAdditionalFields() {
-		if ( 'ideal' === this.props.paymentType ) {
-			return (
-				<div className="checkout__checkout-field">
-					<FormLabel htmlFor="ideal-bank">
-						{ translate( 'Bank' ) }
-					</FormLabel>
-					<FormSelect
-						name="ideal-bank"
+		switch ( this.props.paymentType ) {
+			case 'ideal':
+				return (
+					<div className="checkout__checkout-field">
+						<FormLabel htmlFor="ideal-bank">
+							{ translate( 'Bank' ) }
+						</FormLabel>
+						<FormSelect
+							name="ideal-bank"
+							onChange={ this.handleChange }
+						>
+							{ this.renderBankOptions() }
+						</FormSelect>
+					</div>
+				);
+			case 'p24':
+				return (
+					<Input
+						additionalClasses="checkout-field"
+						name="email"
 						onChange={ this.handleChange }
-					>
-						{ this.renderBankOptions() }
-					</FormSelect>
-				</div>
-			);
-		}
-		if ( 'p24' === this.props.paymentType ) {
-			return (
-				<Input
-					additionalClasses="checkout-field"
-					name="email"
-					onChange={ this.handleChange }
-					label={ translate( 'Email Address' ) }
-					eventFormName="Checkout Form" />
-			);
+						label={ translate( 'Email Address' ) }
+						eventFormName="Checkout Form" />
+				);
+			case 'spei':
+				return (
+					<FormFieldset key="phone">
+						<FormPhoneMediaInput
+							label={ translate( 'Phone Number' ) }
+							countriesList={ countriesList }
+							countryCode={ get( this.state, 'phoneCountry', 'MX' ) }
+							value={ get( this.state, 'phone', '' ) }
+							name="phone"
+							onChange={ this.handlePhoneChange }
+						/>
+					</FormFieldset>
+				);
+
 		}
 	}
 
