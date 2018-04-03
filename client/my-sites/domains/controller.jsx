@@ -11,7 +11,6 @@ import { get, noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
 import DocumentHead from 'components/data/document-head';
 import { sectionify } from 'lib/route';
 import Main from 'components/main';
@@ -228,17 +227,18 @@ const redirectToAddMappingIfVipSite = () => {
 
 const jetpackNoDomainsWarning = ( context, next ) => {
 	const state = context.store.getState();
-	const basePath = sectionify( context.path );
 	const selectedSite = getSelectedSite( state );
 
 	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
 		context.primary = (
 			<Main>
+				<PageViewTracker
+					path={ context.path.indexOf( '/domains/add' ) === 0 ? '/domains/add' : '/domains/manage' }
+					title="My Sites > Domains > No Domains On Jetpack"
+				/>
 				<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={ selectedSite.ID } />
 			</Main>
 		);
-
-		analytics.pageView.record( basePath, '> No Domains On Jetpack' );
 
 		makeLayout( context, noop );
 		clientRender( context );
