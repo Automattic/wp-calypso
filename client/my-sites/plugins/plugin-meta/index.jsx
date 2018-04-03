@@ -36,7 +36,8 @@ import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer'
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
 import Banner from 'components/banner';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
@@ -45,7 +46,7 @@ import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/select
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 
-class PluginMeta extends Component {
+export class PluginMeta extends Component {
 	static OUT_OF_DATE_YEARS = 2;
 
 	static propTypes = {
@@ -95,6 +96,13 @@ class PluginMeta extends Component {
 		return (
 			isBusiness( this.props.selectedSite.plan ) || isEnterprise( this.props.selectedSite.plan )
 		);
+	}
+
+	getPlan() {
+		if ( ! this.props.selectedSite ) {
+			return false;
+		}
+		return this.props.selectedSite.plan();
 	}
 
 	isWpcomPreinstalled = () => {
@@ -597,6 +605,7 @@ class PluginMeta extends Component {
 					this.isWpcomPreinstalled() ) && <div style={ { marginBottom: 16 } } /> }
 
 				{ this.props.selectedSite &&
+					this.props.selectedSite.plan &&
 					! get( this.props.selectedSite, 'jetpack' ) &&
 					! this.hasBusinessPlan() &&
 					! this.isWpcomPreinstalled() && (
@@ -604,7 +613,9 @@ class PluginMeta extends Component {
 							<Banner
 								feature={ FEATURE_UPLOAD_PLUGINS }
 								event={ 'calypso_plugin_detail_page_upgrade_nudge' }
-								plan={ PLAN_BUSINESS }
+								plan={ findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
+									type: TYPE_BUSINESS,
+								} ) }
 								title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
 							/>
 						</div>
