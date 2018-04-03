@@ -63,12 +63,12 @@ export class SimpleSiteRenameForm extends Component {
 		}
 
 		if ( domain.match( /[^a-z0-9]/i ) ) {
-			return translate( 'Site address can only contain letters (a-z) and numbers.' );
+			return translate( 'Your site address can only contain letters and numbers.' );
 		}
 
 		if ( ! inRange( domain.length, SUBDOMAIN_LENGTH_MINIMUM, SUBDOMAIN_LENGTH_MAXIMUM ) ) {
 			return translate(
-				'Site address length should be between %(minimumLength)s and %(maximumLength)s characters.',
+				'Your site address should be between %(minimumLength)s and %(maximumLength)s characters in length.',
 				{
 					args: {
 						minimumLength: SUBDOMAIN_LENGTH_MINIMUM,
@@ -134,7 +134,7 @@ export class SimpleSiteRenameForm extends Component {
 				<form onSubmit={ this.onSubmit }>
 					<TrackComponentView eventName="calypso_siterename_form_view" />
 					<Card className="simple-site-rename-form__content">
-						<FormSectionHeading>{ translate( 'Edit Site Address' ) }</FormSectionHeading>
+						<FormSectionHeading>{ translate( 'Change Site Address' ) }</FormSectionHeading>
 						<FormTextInputWithAffixes
 							type="text"
 							value={ this.state.domainFieldValue }
