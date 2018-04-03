@@ -117,12 +117,15 @@ export const saveJetpackSettings = ( { dispatch }, action ) => {
 	);
 };
 
-// Although we don't use the save success action in any of the reducers,
-// we need to dispatch some action in order to signal to the data layer that
+// We need to dispatch some action in order to signal to the data layer that
 // the save request has finished. Tracking those requests is necessary for
 // displaying an up to date progress indicator for some steps.
-export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
-	dispatch( saveJetpackSettingsSuccess( siteId, settings ) );
+// We also need this to store a regenerated post-by-email address in Redux state.
+export const handleSaveSuccess = (
+	{ dispatch },
+	{ siteId },
+	{ data: { code, message, ...updatedSettings } } // eslint-disable-line no-unused-vars
+) => dispatch( saveJetpackSettingsSuccess( siteId, updatedSettings ) );
 
 export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 	dispatch(
