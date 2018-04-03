@@ -9,8 +9,8 @@ import { mapValues, merge } from 'lodash';
  * Internal dependencies
  */
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
-import { normalizeSettings } from 'state/jetpack/settings/utils';
 import { jetpackOnboardingCredentialsSchema, jetpackSettingsSchema } from './schema';
+import { normalizeSettings } from 'state/jetpack/settings/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
