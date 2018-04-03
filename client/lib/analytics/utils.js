@@ -96,7 +96,7 @@ export function shouldSkipAds() {
 	return result;
 }
 
-const SITE_FRAGMENT_REGEX = /\/:site(\/|$)/;
+const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslug)(\/|$|\?)/i;
 
 /**
  * Check if a path should report the currently selected site ID.

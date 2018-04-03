@@ -32,4 +32,28 @@ describe( '#shouldReportOmitBlogId', () => {
 		expect( shouldReportOmitBlogId( '/me/concierge/:site/book' ) ).toBe( false );
 		expect( shouldReportOmitBlogId( '/following/:site' ) ).toBe( false );
 	} );
+	test( 'always returns false when :site_id is in the path', () => {
+		expect( shouldReportOmitBlogId( '/settings/security/:site_id' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/sites/:site_id/external-media-upload' ) ).toBe( false );
+	} );
+	test( 'always returns false when :siteSlug is in the path', () => {
+		expect( shouldReportOmitBlogId( '/me/concierge/:siteSlug/:appointmentId/cancel' ) ).toBe(
+			false
+		);
+		expect( shouldReportOmitBlogId( '/me/concierge/:siteslug' ) ).toBe( false );
+	} );
+	test( 'always returns false when :siteId is in the path', () => {
+		expect( shouldReportOmitBlogId( '/jetpack/sso/:siteId?/:ssoNonce' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/jetpack/sso/:siteId' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/jetpack/sso/:siteid' ) ).toBe( false );
+	} );
+	test( 'always returns false when :blog_id is in the path', () => {
+		expect( shouldReportOmitBlogId( '/read/blogs/:blog_id' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/read/blogs/:blog_id/posts' ) ).toBe( false );
+	} );
+	test( 'always returns false when :blogId is in the path', () => {
+		expect( shouldReportOmitBlogId( '/read/blogs/:blogId' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/read/blogs/:blogid/posts' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/read/blogs/:blogId/posts' ) ).toBe( false );
+	} );
 } );
