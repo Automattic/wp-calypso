@@ -16,7 +16,6 @@ import { current as currentPage } from 'page';
  * Internal dependencies
  */
 import QueryPostTypes from 'components/data/query-post-types';
-import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import QuerySitePlans from 'components/data/query-site-plans';
 import Button from 'components/button';
@@ -567,7 +566,6 @@ class PostShare extends Component {
 					{ this.renderConnectionsWarning() }
 					{ this.renderPrimarySection() }
 				</div>
-				<QueryPosts { ...{ siteId, postId } } />
 				<SharingPreviewModal
 					siteId={ siteId }
 					postId={ postId }
