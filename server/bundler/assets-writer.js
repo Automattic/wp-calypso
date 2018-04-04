@@ -4,6 +4,7 @@
  */
 const fs = require( 'fs' ); // eslint-disable-line  import/no-nodejs-modules
 const path = require( 'path' );
+const _ = require( 'lodash' );
 
 function AssetsWriter( options ) {
 	this.options = Object.assign(
@@ -54,43 +55,25 @@ Object.assign( AssetsWriter.prototype, {
 				}
 			}
 
-			statsToOutput.entrypoints = stats.entrypoints;
-
 			function fixupPath( f ) {
 				return path.join( stats.publicPath, f );
 			}
 
-			for ( const entrypoint in statsToOutput.entrypoints ) {
-				// remove the manifest
-				statsToOutput.entrypoints[ entrypoint ].chunks = statsToOutput.entrypoints[
-					entrypoint
-				].chunks.filter( function( p ) {
-					return ! String( p ).startsWith( 'manifest' );
-				} );
-				statsToOutput.entrypoints[ entrypoint ].assets = statsToOutput.entrypoints[
-					entrypoint
-				].assets
-					.filter( function( p ) {
-						return ! p.startsWith( 'manifest' );
-					} )
-					.map( fixupPath );
-			}
-			statsToOutput.assetsByChunkName = stats.assetsByChunkName;
+			statsToOutput.entrypoints = _.mapValues( stats.entrypoints, entry => ( {
+				chunks: _.reject( entry.chunks, chunk => chunk.startsWith( 'manifest' ) ),
+				assets: _.reject( entry.assets, asset => asset.startsWith( 'manifest' ) ).map( fixupPath ),
+			} ) );
 
-			for ( const chunkname in statsToOutput.assetsByChunkName ) {
-				const files = statsToOutput.assetsByChunkName[ chunkname ];
+			statsToOutput.assetsByChunkName = _.mapValues( stats.assetsByChunkName, asset =>
+				_.castArray( asset ).map( fixupPath )
+			);
 
-				if ( Array.isArray( files ) ) {
-					statsToOutput.assetsByChunkName[ chunkname ] = files.map( fixupPath );
-				} else {
-					statsToOutput.assetsByChunkName[ chunkname ] = fixupPath( files );
-				}
-			}
-			statsToOutput.chunks = stats.chunks.map( function( chunk ) {
-				return Object.assign( {}, chunk, {
+			statsToOutput.chunks = stats.chunks.map( chunk =>
+				Object.assign( {}, chunk, {
 					files: chunk.files.map( fixupPath ),
-				} );
-			} );
+					siblings: _.reject( chunk.siblings, sibling => sibling.startsWith( 'manifest' ) ),
+				} )
+			);
 
 			self.outputStream.write( JSON.stringify( statsToOutput, null, '\t' ) );
 		} );
