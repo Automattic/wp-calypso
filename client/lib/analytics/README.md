@@ -14,7 +14,7 @@ You can limit to only calls made to GA, Tracks, or MC by replacing the `*` with 
 
 ## Which analytics tool should I use?
 
-*Page Views* (`analytics.pageView.record`) should be used to record all page views (when the main content body completely changes). This will automatically record the pageview to both Google Analytics and Tracks.
+*Page Views* should be used to record all page views (when the main content body completely changes). This will automatically record the pageview to both Google Analytics and Tracks. The preferred tool to record page views is the [`PageViewTracker`](https://github.com/Automattic/wp-calypso/tree/master/client/lib/analytics/page-view-tracker) component.
 
 *Google Analytics* should be used to record all events the user performs on a page that *do not* trigger a page view (this will allow us to determine bounce rate on pages).
 
@@ -33,11 +33,28 @@ import analytics from 'lib/analytics';
 
 ```
 
-## PageView Wrapper
+## PageViewTracker
+
+Record a page view both in Google Analytics and Tracks:
+
+```js
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+
+render() {
+    return (
+        <Main>
+            <PageViewTracker path="/section/page" title="My Cool Section > My Cool Page" />
+            <MyCoolComponent>
+                <MyCoolChildren />
+            </MyCoolComponent>
+        </Main>
+    );
+);
+```
 
 ### analytics#pageView#record( pageURL, pageTitle )
 
-Record a pageview both in Google Analytics and Tracks:
+*Note: Unless you have a strong reason to directly record a pageview, you should use the `PageViewTracker` component instead*
 
 ```js
 analytics.pageView.record( '/posts/draft', 'Posts > Drafts' );
@@ -122,3 +139,16 @@ If we had instead used `calypso_add_cart_product` and `calypso_remove_cart_produ
 Finally, for consistency, the verb at the end should be in the form `add`, `remove`, `view`, `click`, etc and _not_ `adds`, `added`, `adding`, etc.
 
 With the exception of separating tokens with underscores, these rules do not apply to property names. `coupon_code` is perfectly fine.
+
+## Page Views Paths Conventions
+
+There are currently no enforced rules for page views paths reporting but, where possible, they should be normalized and the variables values replaced by placeholders.
+
+E.g. the path `/comments/all/example.wordpress.com/1234` should be reported as `/comments/all/:site/:post_id`.
+
+As a rule of thumb:
+
+- The **site fragment** should be reported simply as `:site`.
+- **IDs** should be reported as `:element_id` (notice the snake case).
+- **Non-enumerable variables** (e.g. the domain name in `/domains/manage/:domain/edit/:site`) should be reported without unnecessary qualifiers.
+- The value of **enumerable variables** should be reported instead of the placeholder where it make sense (e.g. if changing the variable value results in a page change, as it happens for the status in `/comments/spam/:site`).
