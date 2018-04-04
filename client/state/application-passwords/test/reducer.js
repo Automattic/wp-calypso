@@ -19,9 +19,7 @@ import {
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		const state = reducer( undefined, {} );
-
-		expect( state ).toHaveProperty( 'items' );
-		expect( state ).toHaveProperty( 'newPassword' );
+		expect( state ).toMatchSnapshot();
 	} );
 
 	describe( 'items', () => {
