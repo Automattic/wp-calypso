@@ -17681,8 +17681,8 @@
       "dev": true
     },
     "webpack": {
-      "version": "4.2.0",
-      "integrity": "sha512-O/KmJ2MYoSfsZzq3//RyyYICYTb1gPAuYSIoD4XbxWFqkDrZCkF8BIAwPuFjA8SFqTcsIL3gTS7hiTZaUN2Tjw==",
+      "version": "4.5.0",
+      "integrity": "sha512-6GrZsvQJnG7o7mjbfjp6s5CyMfdopjt1A/X8LcYwceis9ySjqBX6Lusso2wNZ06utHj2ZvfL6L3f7hfgVeJP6g==",
       "requires": {
         "acorn": "5.5.3",
         "acorn-dynamic-import": "3.0.0",

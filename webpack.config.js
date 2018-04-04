@@ -110,7 +110,6 @@ const webpackConfig = {
 		splitChunks: {
 			chunks: 'all',
 			name: isDevelopment,
-
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
