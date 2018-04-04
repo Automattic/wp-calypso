@@ -4,7 +4,7 @@
  * @format
  */
 
-import { has, invoke, isNil, omitBy } from 'lodash';
+import { flowRight, has, invoke, isNil, omit, omitBy, partialRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,10 +31,18 @@ const eventServices = {
 	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
 };
 
+// list of unsafe params that need to be blocked from beign passed down to the recorder.
+const PAGE_VIEW_SERVICES_BLOCKED_PARAMS = [ 'service' ];
+
+const omitUnsafeParams = flowRight(
+	partialRight( omitBy, isNil ),
+	partialRight( omit, PAGE_VIEW_SERVICES_BLOCKED_PARAMS )
+);
+
 const pageViewServices = {
 	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
 	default: ( { url, title, ...params } ) =>
-		analytics.pageView.record( url, title, omitBy( params, isNil ) ),
+		analytics.pageView.record( url, title, omitUnsafeParams( params ) ),
 };
 
 const loadTrackingTool = ( trackingTool, state ) => {
