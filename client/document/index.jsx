@@ -162,7 +162,7 @@ class Document extends React.Component {
 						} }
 					/>
 
-					{ i18nLocaleScript && <script key={ i18nLocaleScript } src={ i18nLocaleScript } /> }
+					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					<script
 						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {
