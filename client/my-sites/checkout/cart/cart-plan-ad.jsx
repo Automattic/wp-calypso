@@ -18,14 +18,26 @@ import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isDomainOnlySite } from 'state/selectors';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { isPlan } from 'lib/products-values';
 import { addItem } from 'lib/upgrades/actions';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
+import { TERM_ANNUALLY, TYPE_PREMIUM, GROUP_WPCOM } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 
-class CartPlanAd extends Component {
+export class CartPlanAd extends Component {
 	addToCartAndRedirect = event => {
 		event.preventDefault();
-		addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
+		const findPlan = ( query = {} ) =>
+			findFirstSimilarPlanKey( this.props.currentPlanSlug, {
+				type: TYPE_PREMIUM,
+				group: GROUP_WPCOM,
+				...query,
+			} );
+		addItem(
+			cartItems.premiumPlan( findPlan() || findPlan( { term: TERM_ANNUALLY } ), {
+				isFreeTrial: false,
+			} )
+		);
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 
@@ -80,5 +92,6 @@ export default connect( state => {
 
 	return {
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
+		currentPlanSlug: ( getCurrentPlan( state ) || {} ).product_slug,
 	};
 } )( localize( CartPlanAd ) );
