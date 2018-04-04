@@ -102,7 +102,7 @@ export const recordCustomFacebookConversionEvent = ( name, properties ) =>
 export const recordCustomAdWordsRemarketingEvent = properties =>
 	recordEvent( 'adwords', { properties } );
 
-export const recordPageView = ( url, title, service ) => ( {
+export const recordPageView = ( url, title, service, properties = {} ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,
 	meta: {
 		analytics: [
@@ -112,6 +112,7 @@ export const recordPageView = ( url, title, service ) => ( {
 					service,
 					url,
 					title,
+					...properties,
 				},
 			},
 		],

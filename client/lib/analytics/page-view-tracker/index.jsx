@@ -33,6 +33,7 @@ export class PageViewTracker extends React.Component {
 		hasSelectedSiteLoaded: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		title: PropTypes.string.isRequired,
+		properties: PropTypes.object,
 	};
 
 	state = {
@@ -59,7 +60,14 @@ export class PageViewTracker extends React.Component {
 	}
 
 	queuePageView = () => {
-		const { delay = 0, path, recorder = noop, hasSelectedSiteLoaded, title } = this.props;
+		const {
+			delay = 0,
+			path,
+			recorder = noop,
+			hasSelectedSiteLoaded,
+			title,
+			properties,
+		} = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
@@ -68,7 +76,7 @@ export class PageViewTracker extends React.Component {
 		}
 
 		if ( ! delay ) {
-			return recorder( path, title );
+			return recorder( path, title, undefined, properties );
 		}
 
 		this.setState( {
