@@ -271,11 +271,7 @@ const onSiteDelete = ( { siteId } ) => ( dispatch, getState ) => {
 	);
 };
 
-const onSiteDeleteReceive = ( { siteId, silent } ) => ( dispatch, getState ) => {
-	if ( silent ) {
-		return;
-	}
-
+const onSiteDeleteReceive = ( { siteId } ) => ( dispatch, getState ) => {
 	const siteDomain = getSiteDomain( getState(), siteId );
 
 	dispatch(

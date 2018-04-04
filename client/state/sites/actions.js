@@ -33,14 +33,12 @@ import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants
  * deleted.
  *
  * @param  {Number} siteId  ID of deleted site
- * @param  {Boolean} silent Indicates to not show the global notice after the site is removed from the state.
  * @return {Object}         Action object
  */
-export function receiveDeletedSite( siteId, silent = false ) {
+export function receiveDeletedSite( siteId ) {
 	return {
 		type: SITE_DELETE_RECEIVE,
 		siteId,
-		silent,
 	};
 }
 
