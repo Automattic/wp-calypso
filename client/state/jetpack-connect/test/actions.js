@@ -7,12 +7,15 @@
  */
 import * as actions from '../actions';
 import useNock from 'test/helpers/use-nock';
+import wpcom from 'lib/wp';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
+	JETPACK_CONNECT_CREATE_ACCOUNT,
+	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -398,6 +401,62 @@ describe( '#authorizeSSO()', () => {
 				},
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 			} );
+		} );
+	} );
+} );
+
+describe( '#createAccount()', () => {
+	const { createAccount } = actions;
+
+	beforeEach( jest.restoreAllMocks );
+
+	test( 'should dispatch create action', () => {
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			usersNew( _, callback ) {
+				callback( null, {} );
+			},
+		} ) );
+
+		const spy = jest.fn();
+		createAccount()( spy );
+		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
+	} );
+
+	test( 'should dispatch receive action with appropriate data', () => {
+		const userData = { username: 'happyuser' };
+		const data = { some: 'data' };
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			usersNew( _, callback ) {
+				callback( null, data );
+			},
+		} ) );
+
+		const spy = jest.fn();
+		createAccount( userData )( spy );
+		expect( spy ).toHaveBeenCalledWith( {
+			data,
+			error: null,
+			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+			userData,
+		} );
+	} );
+
+	test( 'should dispatch receive action with error data', () => {
+		const userData = { username: 'saduser' };
+		const error = { code: 'error' };
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			usersNew( _, callback ) {
+				callback( error, null );
+			},
+		} ) );
+
+		const spy = jest.fn();
+		createAccount( userData )( spy );
+		expect( spy ).toHaveBeenCalledWith( {
+			data: null,
+			error,
+			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+			userData,
 		} );
 	} );
 } );
