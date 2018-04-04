@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, isEmpty, last, map } from 'lodash';
+import { get, head, includes, isEmpty, last, map, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import EditorRevisionsListHeader from './header';
 import EditorRevisionsListNavigation from './navigation';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
+import PostEditStore from 'lib/posts/post-edit-store';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
@@ -28,6 +29,7 @@ class EditorRevisionsList extends PureComponent {
 		selectedRevisionId: PropTypes.number,
 		nextIsDisabled: PropTypes.bool,
 		prevIsDisabled: PropTypes.bool,
+		newRevisionIds: PropTypes.array,
 	};
 
 	selectRevision = revisionId => {
@@ -45,13 +47,9 @@ class EditorRevisionsList extends PureComponent {
 	componentDidMount() {
 		// Make sure that scroll position in the editor is not preserved.
 		window.scrollTo( 0, 0 );
-
 		KeyboardShortcuts.on( 'move-selection-up', this.selectNextRevision );
 		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
-
-		if ( ! this.props.selectedRevisionId ) {
-			this.trySelectingLatestRevision();
-		}
+		this.trySelectingLatestRevision();
 	}
 
 	componentWillUnmount() {
@@ -137,12 +135,17 @@ class EditorRevisionsList extends PureComponent {
 			prevIsDisabled,
 			postId,
 			revisions,
+			newRevisionIds,
 			selectedRevisionId,
 			siteId,
 		} = this.props;
 		const classes = classNames( 'editor-revisions-list', {
-			'is-loading': isEmpty( revisions ),
+			'is-loading': isEmpty( revisions ) || ! isEmpty( newRevisionIds ),
 		} );
+
+		if ( isEmpty( revisions ) ) {
+			return null;
+		}
 
 		return (
 			<div className={ classes }>
@@ -155,6 +158,10 @@ class EditorRevisionsList extends PureComponent {
 				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
+						{ isEmpty( revisions ) ||
+							( ! isEmpty( newRevisionIds ) && (
+								<li className={ 'editor-revisions-list__revision-placeholder' } />
+							) ) }
 						{ map( revisions, revision => {
 							const itemClasses = classNames( 'editor-revisions-list__revision', {
 								'is-selected': revision.id === selectedRevisionId,
@@ -178,8 +185,11 @@ class EditorRevisionsList extends PureComponent {
 	}
 }
 
+const filterNewRevisionsIds = ( newRevisionIds, revisions ) =>
+	reject( newRevisionIds, x => includes( map( revisions, 'id' ), x ) );
+
 export default connect(
-	( state, { comparisons, revisions, selectedRevisionId } ) => {
+	( state, { comparisons, revisions, selectedRevisionId, postId } ) => {
 		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
 		const latestRevisionId = get( head( revisions ), 'id' );
 		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
@@ -187,6 +197,8 @@ export default connect(
 			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
 		const nextIsDisabled = latestRevisionIsSelected || revisions.length === 1;
 		const prevIsDisabled = earliestRevisionIsSelected || revisions.length === 1;
+		const revisionIds = PostEditStore.getRevisionIds( postId );
+		const newRevisionIds = filterNewRevisionsIds( revisionIds, revisions );
 
 		return {
 			latestRevisionId,
@@ -194,6 +206,7 @@ export default connect(
 			nextIsDisabled,
 			nextRevisionId,
 			prevRevisionId,
+			newRevisionIds,
 		};
 	},
 	{ selectPostRevision }
