@@ -35,7 +35,7 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 	}
 
 	if ( tier ) {
-		analyticsPath += '/:tier';
+		analyticsPath += `/${ tier }`;
 	}
 
 	if ( filter ) {
