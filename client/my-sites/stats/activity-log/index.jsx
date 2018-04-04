@@ -622,7 +622,7 @@ export default connect(
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
 			enableRewind:
-				'uninitialized' !== rewindState.state &&
+				'active' === rewindState.state &&
 				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
 			logRequestQuery,
 			logs: getActivityLogs(
