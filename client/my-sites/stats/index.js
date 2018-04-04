@@ -58,6 +58,8 @@ export default function() {
 			clientRender
 		);
 
+		page( '/stats/insights', siteSelection, navigation, sites, makeLayout, clientRender );
+
 		// Stat Insights Page
 		page(
 			'/stats/insights/:site_id',
@@ -102,9 +104,22 @@ export default function() {
 			clientRender
 		);
 
+		const validModules = [
+			'posts',
+			'referrers',
+			'clicks',
+			'countryviews',
+			'authors',
+			'videoplays',
+			'videodetails',
+			'podcastdownloads',
+			'searchterms',
+			'annualstats',
+		];
+
 		// Stat Summary Pages
 		page(
-			'/stats/:module/:site_id',
+			`/stats/:module(${ validModules.join( '|' ) })/:site_id`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -112,7 +127,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/day/:module/:site_id',
+			`/stats/day/:module(${ validModules.join( '|' ) })/:site_id`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -120,7 +135,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/week/:module/:site_id',
+			`/stats/week/:module(${ validModules.join( '|' ) })/:site_id`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -128,7 +143,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/month/:module/:site_id',
+			`/stats/month/:module(${ validModules.join( '|' ) })/:site_id`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -136,7 +151,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/year/:module/:site_id',
+			`/stats/year/:module(${ validModules.join( '|' ) })/:site_id`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -185,14 +200,7 @@ export default function() {
 			page( '/stats/reset-first-view', statsController.resetFirstView, makeLayout, clientRender );
 		}
 
-		// Anything else should require site-selection
-		page(
-			'/stats/(.*)',
-			siteSelection,
-			statsController.redirectToDefaultSitePage,
-			sites,
-			makeLayout,
-			clientRender
-		);
+		// Anything else should redirect to default stats page
+		page( '/stats/(.*)', statsController.redirectToDefaultSitePage );
 	}
 }
