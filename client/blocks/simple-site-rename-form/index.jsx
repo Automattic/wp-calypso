@@ -103,13 +103,20 @@ export class SimpleSiteRenameForm extends Component {
 	};
 
 	onFieldChange = event => {
-		const domainFieldValue = get( event, 'target.value', '' ).toLowerCase();
+		const domainFieldValue = get( event, 'target.value', '' );
+		const formattedValue = domainFieldValue.toLowerCase().replace( / /g, '' );
 		const shouldUpdateError = ! isEmpty( this.state.domainFieldError );
 
+		// The problem here is that `formattedValue` === `domainFieldValue` when typing 'space'.
+		// This works, but doesn't give any input feedback to the form user.
+		// We can't use the regular validation pathway as the field itself _is_ valid.
+		// I think the UX could be a 'pulse' of validation,
+		// possibly with a validation message shown that toasts after a few secs
+
 		this.setState( {
-			domainFieldValue,
+			domainFieldValue: formattedValue,
 			...( shouldUpdateError && {
-				domainFieldError: this.getDomainValidationMessage( domainFieldValue ),
+				domainFieldError: this.getDomainValidationMessage( formattedValue ),
 			} ),
 		} );
 	};
