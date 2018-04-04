@@ -196,7 +196,9 @@ function addStorePage( storePage, storeNavigation ) {
 		storeNavigation,
 		( context, next ) => {
 			const component = React.createElement( storePage.container, { params: context.params } );
-			const appProps = {};
+			const appProps = {
+				isDashboard: '/store/:site' === storePage.path,
+			};
 			if ( storePage.documentTitle ) {
 				appProps.documentTitle = storePage.documentTitle;
 			}

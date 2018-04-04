@@ -23,6 +23,7 @@ import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
 import Main from 'components/main';
+import Placeholder from './dashboard/placeholder';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
 import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
@@ -30,11 +31,12 @@ import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
 class App extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
-		documentTitle: PropTypes.string,
 		canUserManageOptions: PropTypes.bool.isRequired,
-		isAtomicSite: PropTypes.bool.isRequired,
-		hasPendingAutomatedTransfer: PropTypes.bool.isRequired,
 		children: PropTypes.element.isRequired,
+		documentTitle: PropTypes.string,
+		hasPendingAutomatedTransfer: PropTypes.bool.isRequired,
+		isAtomicSite: PropTypes.bool.isRequired,
+		isDashboard: PropTypes.bool.isRequired,
 	};
 
 	componentDidMount() {
@@ -80,8 +82,16 @@ class App extends Component {
 
 	renderPlaceholder() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		if ( this.props.isDashboard ) {
+			return (
+				<Main className="dashboard" wideLayout>
+					<Placeholder />
+				</Main>
+			);
+		}
+
 		return (
-			<Main wideLayout className="woocommerce__placeholder">
+			<Main className="woocommerce__placeholder" wideLayout>
 				<Card className="woocommerce__placeholder-card" />
 			</Main>
 		);
