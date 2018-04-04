@@ -41,14 +41,14 @@ Record a page view both in Google Analytics and Tracks:
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 render() {
-    return (
-        <Main>
-            <PageViewTracker path="/section/page" title="My Cool Section > My Cool Page" />
-            <MyCoolComponent>
-                <MyCoolChildren />
-            </MyCoolComponent>
-        </Main>
-    );
+	return (
+		<Main>
+			<PageViewTracker path="/section/page" title="My Cool Section > My Cool Page" />
+			<MyCoolComponent>
+				<MyCoolChildren />
+			</MyCoolComponent>
+		</Main>
+	);
 );
 ```
 
