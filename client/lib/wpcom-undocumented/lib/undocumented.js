@@ -2442,6 +2442,22 @@ Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
 };
 
 /**
+ * Send the optional feedback for the NPS Survey.
+ * @param {string}   surveyName   The name of the NPS survey being submitted
+ * @param {string}   feedback     The content
+ * @param {Function} fn           The callback function
+ * @returns {Promise} A promise
+ */
+Undocumented.prototype.sendNPSSurveyFeedback = function( surveyName, feedback, fn ) {
+	return this.wpcom.req.post(
+		{ path: `/nps/${ surveyName }` },
+		{ apiVersion: '1.2' },
+		{ feedback },
+		fn
+	);
+};
+
+/**
  * Get OAuth2 Client data for a given client ID
  * @param {string}     clientId       The client ID
  * @param {Function}   fn             The callback function

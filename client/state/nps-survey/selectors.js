@@ -73,6 +73,10 @@ export function getNpsSurveyScore( state ) {
 	return get( state.npsSurvey, 'score', null );
 }
 
+export function getNpsSurveyFeedback( state ) {
+	return get( state.npsSurvey, 'feedback', null );
+}
+
 export function hasAnsweredNpsSurvey( state ) {
 	return ! isNpsSurveyNotSubmitted( state ) && Number.isInteger( getNpsSurveyScore( state ) );
 }

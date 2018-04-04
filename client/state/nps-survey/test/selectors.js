@@ -22,6 +22,7 @@ import {
 	getNpsSurveyScore,
 	hasAnsweredNpsSurvey,
 	hasAnsweredNpsSurveyWithNoScore,
+	getNpsSurveyFeedback,
 } from '../selectors';
 
 describe( 'isSessionEligibleForNpsSurvey', () => {
@@ -361,6 +362,27 @@ describe( 'getNpsSurveyScore', () => {
 		} );
 
 		expect( surveyScore ).to.be.null;
+	} );
+} );
+
+describe( 'getNpsSurveyFeedback', () => {
+	test( 'should return the contextual feedback if set', () => {
+		const feedback = getNpsSurveyFeedback( {
+			npsSurvey: {
+				score: 9,
+				feedback: 'contextual feedback',
+			},
+		} );
+		expect( feedback ).to.equal( 'contextual feedback' );
+	} );
+
+	test( 'should return null if the contextual feedback is not set', () => {
+		const feedback = getNpsSurveyFeedback( {
+			npsSurvey: {
+				score: 9,
+			},
+		} );
+		expect( feedback ).to.be.null;
 	} );
 } );
 

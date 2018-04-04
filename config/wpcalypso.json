@@ -90,7 +90,7 @@
 		"network-connection": true,
 		"notifications2beta": true,
 		"notifications/link-to-reader": true,
-		"nps-survey/devdocs": false,
+		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
 		"nps-survey/notice": true,
 		"onboarding-checklist": true,

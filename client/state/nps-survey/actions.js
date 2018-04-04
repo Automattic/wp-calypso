@@ -20,6 +20,9 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUESTING,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
+	NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
+	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
+	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 } from 'state/action-types';
 import { NPS_SURVEY_RAND_MAX } from './constants';
 
@@ -99,6 +102,25 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 	};
 }
 
+export function sendNpsSurveyFeedback( surveyName, feedback ) {
+	return dispatch => {
+		debug( 'Sending NPS survey feedback...' );
+		dispatch( sendNpsSurveyFeedbackRequesting( surveyName, feedback ) );
+
+		return wpcom
+			.undocumented()
+			.sendNPSSurveyFeedback( surveyName, feedback )
+			.then( () => {
+				debug( '...Successfully sent NPS survey feedback.' );
+				dispatch( sendNpsSurveyFeedbackSuccess() );
+			} )
+			.catch( err => {
+				debug( '...Error sending NPS survey feedback.' );
+				dispatch( sendNpsSurveyFeedbackFailure( err ) );
+			} );
+	};
+}
+
 export function submitNpsSurveyRequesting( surveyName, score ) {
 	return {
 		type: NPS_SURVEY_SUBMIT_REQUESTING,
@@ -137,5 +159,26 @@ export function submitNpsSurveyWithNoScoreRequestFailure( err ) {
 	return {
 		type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 		error: err,
+	};
+}
+
+export function sendNpsSurveyFeedbackRequesting( surveyName, feedback ) {
+	return {
+		type: NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
+		surveyName,
+		feedback,
+	};
+}
+
+export function sendNpsSurveyFeedbackSuccess() {
+	return {
+		type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
+	};
+}
+
+export function sendNpsSurveyFeedbackFailure( error ) {
+	return {
+		type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
+		error,
 	};
 }
