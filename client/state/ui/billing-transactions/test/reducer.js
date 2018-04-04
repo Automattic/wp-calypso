@@ -8,7 +8,7 @@ import {
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
-import { app, date, page, query } from 'state/billing-transactions/transaction-filters/reducer';
+import { app, date, page, query } from '../reducer';
 
 describe( 'transaction filter reducer', () => {
 	describe( '#app', () => {

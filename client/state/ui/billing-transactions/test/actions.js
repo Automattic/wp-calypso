@@ -15,7 +15,7 @@ import {
 	setBefore,
 	setPage,
 	setQuery,
-} from 'state/billing-transactions/transaction-filters/actions';
+} from '../actions';
 
 describe( 'transaction filter actions', () => {
 	describe( '#setApp', () => {
