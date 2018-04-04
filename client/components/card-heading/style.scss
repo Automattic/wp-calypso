@@ -1,0 +1,46 @@
+.card-heading {
+	font-weight: 400;
+	margin-bottom: 5px;
+	margin-top: 5px;
+
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 10px;
+		margin-top: 10px;
+	}
+}
+
+.card-heading-54 {
+	font-size: 54px;
+}
+
+.card-heading-47 {
+	font-size: 47px;
+}
+
+.card-heading-36 {
+	font-size: 36px;
+}
+
+.card-heading-32 {
+	font-size: 32px;
+}
+
+.card-heading-24 {
+	font-size: 24px;
+}
+
+.card-heading-21 {
+	font-size: 21px;
+}
+
+.card-heading-16 {
+	font-size: 16px;
+}
+
+.card-heading-14 {
+	font-size: 14px;
+}
+
+.card-heading-11 {
+	font-size: 11px;
+}
