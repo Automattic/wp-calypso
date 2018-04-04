@@ -6,7 +6,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,12 +23,8 @@ class ChatBusinessConciergeNotice extends Component {
 
 		// Connected props
 		isBusinessPlanUser: PropTypes.bool.isRequired,
-		moment: PropTypes.func,
-		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
+		moment: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 	};
 
 	trackConciergeOfferClick = () => {
