@@ -64,6 +64,10 @@
 	// from components/card/style.scss
 	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
 
+	// from components/domains/domain-suggestion/style
+	// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+	transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
+
 	&:hover {
 		color: $blue-medium;
 
