@@ -47,6 +47,16 @@ class Cards extends React.Component {
 					<Card highlight="success">I am a Card, highlighted as success</Card>
 					<Card highlight="error">I am a Card, highlighted as error</Card>
 					<Card highlight="warning">I am a Card, highlighted as warning</Card>
+
+					<Card formatted>
+						<h1>I am a Heading 1 in a FormattedCard</h1>
+						<h2>I am a Heading 2 in a FormattedCard</h2>
+						<h3>I am a Heading 3 in a FormattedCard</h3>
+						<h4>I am a Heading 4 in a FormattedCard</h4>
+						<h5>I am a Heading 5 in a FormattedCard</h5>
+						<h6>I am a Heading 6 in a FormattedCard</h6>
+						<p>I am a paragraph in a FormattedCard</p>
+					</Card>
 				</div>
 			);
 		} else {
@@ -65,6 +75,16 @@ class Cards extends React.Component {
 					<CompactCard highlight="success">I am a CompactCard, highlighted as success</CompactCard>
 					<CompactCard highlight="error">I am a CompactCard, highlighted as error</CompactCard>
 					<CompactCard highlight="warning">I am a CompactCard, highlighted as warning</CompactCard>
+
+					<Card compact formatted>
+						<h1>I am a Heading 1 in a FormattedCard</h1>
+						<h2>I am a Heading 2 in a FormattedCard</h2>
+						<h3>I am a Heading 3 in a FormattedCard</h3>
+						<h4>I am a Heading 4 in a FormattedCard</h4>
+						<h5>I am a Heading 5 in a FormattedCard</h5>
+						<h6>I am a Heading 6 in a FormattedCard</h6>
+						<p>I am a paragraph in a FormattedCard</p>
+					</Card>
 				</div>
 			);
 		}
