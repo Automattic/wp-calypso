@@ -38,6 +38,7 @@
 		"google-my-business": true,
 		"help": true,
 		"jetpack/happychat": true,
+		"jetpack/connect/social-signup": true,
 		"jitms": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,

@@ -172,7 +172,9 @@ export class JetpackSignup extends Component {
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
-						isSocialSignupEnabled={ isEnabled( 'signup/social' ) }
+						isSocialSignupEnabled={
+							isEnabled( 'signup/social' ) && isEnabled( 'jetpack/connect/social-signup' )
+						}
 						locale={ this.props.locale }
 						redirectToAfterLoginUrl={ addQueryArgs(
 							{ auth_approved: true },
