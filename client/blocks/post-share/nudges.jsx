@@ -3,18 +3,28 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
+import { connect } from 'react-redux';
+import { getSitePlan } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
+import { TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 import formatCurrency from 'lib/format-currency';
 
-export const UpgradeToPremiumNudge = props => {
-	const { premiumPrice, jetpackPremiumPrice, translate, userCurrency, isJetpack } = props;
+export const UpgradeToPremiumNudgePure = props => {
+	const {
+		premiumPrice,
+		jetpackPremiumPrice,
+		currentPlanSlug,
+		translate,
+		userCurrency,
+		isJetpack,
+	} = props;
 
 	let price, featureList, proposedPlan;
 	if ( isJetpack ) {
@@ -25,7 +35,10 @@ export const UpgradeToPremiumNudge = props => {
 			translate( 'VideoPress support' ),
 			translate( 'Daily Malware Scanning' ),
 		];
-		proposedPlan = PLAN_JETPACK_PREMIUM;
+		proposedPlan = findFirstSimilarPlanKey( currentPlanSlug, {
+			type: TYPE_PREMIUM,
+			term: TERM_ANNUALLY,
+		} );
 	} else {
 		price = premiumPrice;
 		featureList = [
@@ -35,7 +48,7 @@ export const UpgradeToPremiumNudge = props => {
 			translate( 'Easy monetization options' ),
 			translate( 'Unlimited premium themes.' ),
 		];
-		proposedPlan = PLAN_PREMIUM;
+		proposedPlan = findFirstSimilarPlanKey( currentPlanSlug, { type: TYPE_PREMIUM } );
 	}
 
 	return (
@@ -51,3 +64,7 @@ export const UpgradeToPremiumNudge = props => {
 		/>
 	);
 };
+
+export const UpgradeToPremiumNudge = connect( state => ( {
+	currentPlanSlug: getSitePlan( state, getSelectedSiteId( state ) ),
+} ) )( UpgradeToPremiumNudgePure );
