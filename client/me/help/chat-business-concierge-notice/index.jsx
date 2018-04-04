@@ -24,6 +24,7 @@ class ChatBusinessConciergeNotice extends Component {
 		from: PropTypes.string.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		to: PropTypes.string.isRequired,
+		moment: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -35,11 +36,11 @@ class ChatBusinessConciergeNotice extends Component {
 	};
 
 	render = () => {
-		const { selectedSite, translate } = this.props;
-		const fromDate = i18n.moment( this.props.from );
-		const toDate = i18n.moment( this.props.to );
+		const { moment, selectedSite, translate } = this.props;
+		const fromDate = moment( this.props.from );
+		const toDate = moment( this.props.to );
 
-		if ( ! i18n.moment().isAfter( fromDate ) || ! i18n.moment().isBefore( toDate ) ) {
+		if ( ! moment().isAfter( fromDate ) || ! moment().isBefore( toDate ) ) {
 			return null;
 		}
 
