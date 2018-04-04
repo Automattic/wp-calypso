@@ -178,8 +178,7 @@ const googleAppsWithRegistration = ( context, next ) => {
 	context.primary = (
 		<Main>
 			<PageViewTracker
-				path="/domains/add/:domain/google-apps/:site
-"
+				path="/domains/add/:domain/google-apps/:site"
 				title="Domain Search > Domain Registration > Google Apps"
 			/>
 			<DocumentHead

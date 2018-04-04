@@ -70,7 +70,6 @@ class TransferData extends Component {
 	render() {
 		return (
 			<div>
-				{' '}
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
 				<StoreConnection
 					component={ this.props.component }
