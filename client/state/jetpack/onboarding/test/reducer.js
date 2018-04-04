@@ -15,12 +15,9 @@ import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	SERIALIZE,
 } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
-		sandbox.stub( console, 'warn' );
-	} );
+	beforeEach( jest.restoreAllMocks );
 
 	test( 'should export expected reducer keys', () => {
 		const state = reducer( undefined, {} );
@@ -126,6 +123,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
+			jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 			const original = deepFreeze( {
 				[ 12345678 ]: {
 					...siteCredentials,
