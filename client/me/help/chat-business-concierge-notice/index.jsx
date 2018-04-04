@@ -3,12 +3,11 @@
 /**
  * External dependencies
  */
-
-import { identity } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
