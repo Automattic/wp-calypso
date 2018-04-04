@@ -33,6 +33,7 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import { CALYPSO_CONTACT } from 'lib/url/support';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const user = userFactory();
 
@@ -204,6 +205,10 @@ class CancelPrivacyProtection extends Component {
 
 		return (
 			<Main>
+				<PageViewTracker
+					path="/me/purchases/:site/:purchaseId/cancel-privacy-protection"
+					title="Purchases > Cancel Privacy Protection"
+				/>
 				<QueryUserPurchases userId={ user.get().ID } />
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ titles.cancelPrivacyProtection }

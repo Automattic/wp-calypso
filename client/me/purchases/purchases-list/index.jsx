@@ -28,6 +28,7 @@ import PurchasesSite from '../purchases-site';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import userFactory from 'lib/user';
 const user = userFactory();
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -76,6 +77,7 @@ class PurchasesList extends Component {
 
 		return (
 			<Main className="purchases-list">
+				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
 				<PurchasesHeader section={ 'purchases' } />
 				<QueryUserPurchases userId={ user.get().ID } />
