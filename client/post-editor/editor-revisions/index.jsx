@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -13,8 +14,8 @@ import { flow, get } from 'lodash';
  */
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import {
-	getPostRevisions,
-	getPostRevisionsComparisons,
+	getPostRevisionsMajor,
+	getPostRevisionsComparisonsMajor,
 	getPostRevisionsAuthorsId,
 	getPostRevisionsSelectedRevisionId,
 } from 'state/selectors';
@@ -91,9 +92,9 @@ export default flow(
 			const postId = getEditorPostId( state );
 			const siteId = getSelectedSiteId( state );
 
-			const revisions = getPostRevisions( state, siteId, postId );
+			const revisions = getPostRevisionsMajor( state, siteId, postId );
 			const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
-			const comparisons = getPostRevisionsComparisons( state, siteId, postId );
+			const comparisons = getPostRevisionsComparisonsMajor( state, siteId, postId );
 			const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
 
 			return {
