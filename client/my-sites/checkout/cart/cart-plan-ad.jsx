@@ -16,9 +16,9 @@ import { get } from 'lodash';
  */
 import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isDomainOnlySite } from 'state/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSitePlan } from 'state/sites/selectors';
 import { isPlan } from 'lib/products-values';
 import { addItem } from 'lib/upgrades/actions';
 import { TERM_ANNUALLY, TYPE_PREMIUM, GROUP_WPCOM } from 'lib/plans/constants';
@@ -88,10 +88,11 @@ CartPlanAd.propTypes = {
 };
 
 export default connect( state => {
+	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
-
 	return {
+		selectedSite,
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
-		currentPlanSlug: ( getCurrentPlan( state ) || {} ).product_slug,
+		currentPlanSlug: ( getSitePlan( state, selectedSiteId ) || {} ).product_slug,
 	};
 } )( localize( CartPlanAd ) );
