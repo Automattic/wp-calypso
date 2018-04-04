@@ -50,19 +50,9 @@ import {
 	isVideoPress,
 } from 'lib/products-values';
 import sortProducts from 'lib/products-values/sort';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { getTld } from 'lib/domains';
 import { domainProductSlugs } from 'lib/domains/constants';
-
-import {
-	PLAN_FREE,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'lib/plans/constants';
+import { isPersonalPlan, isPremiumPlan, isBusinessPlan, isWpComFreePlan } from 'lib/plans';
 
 /**
  * Adds the specified item to a shopping cart.
@@ -395,7 +385,7 @@ export function hasRenewableSubscription( cart ) {
  */
 export function planItem( productSlug, isFreeTrialItem = false ) {
 	// Free plan doesn't have shopping cart.
-	if ( productSlug === PLAN_FREE ) {
+	if ( isWpComFreePlan( productSlug ) ) {
 		return null;
 	}
 
@@ -638,26 +628,19 @@ export function spaceUpgradeItem( slug ) {
 export function getItemForPlan( plan, properties ) {
 	properties = properties || {};
 
-	switch ( plan.product_slug ) {
-		case PLAN_PERSONAL:
-			return personalPlan( plan.product_slug, properties );
-		case 'value_bundle':
-		case PLAN_JETPACK_PREMIUM:
-		case PLAN_JETPACK_PREMIUM_MONTHLY:
-			return premiumPlan( plan.product_slug, properties );
-
-		case PLAN_JETPACK_PERSONAL:
-		case PLAN_JETPACK_PERSONAL_MONTHLY:
-			return premiumPlan( plan.product_slug, properties );
-
-		case 'business-bundle':
-		case PLAN_JETPACK_BUSINESS:
-		case PLAN_JETPACK_BUSINESS_MONTHLY:
-			return businessPlan( plan.product_slug, properties );
-
-		default:
-			throw new Error( 'Invalid plan product slug: ' + plan.product_slug );
+	if ( isPersonalPlan( plan.product_slug ) ) {
+		return personalPlan( plan.product_slug, properties );
 	}
+
+	if ( isPremiumPlan( plan.product_slug ) ) {
+		return premiumPlan( plan.product_slug, properties );
+	}
+
+	if ( isBusinessPlan( plan.product_slug ) ) {
+		return businessPlan( plan.product_slug, properties );
+	}
+
+	throw new Error( 'Invalid plan product slug: ' + plan.product_slug );
 }
 
 /**
