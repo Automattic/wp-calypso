@@ -31,7 +31,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 import { JPC_PATH_PLANS } from './constants';
 import { mc } from 'lib/analytics';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
+import { isJetpackFreePlan } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	canCurrentUser,
@@ -158,7 +158,7 @@ class Plans extends Component {
 	selectPlan = cartItem => {
 		clearPlan();
 
-		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
+		if ( ! cartItem || isJetpackFreePlan( cartItem.product_slug ) ) {
 			return this.selectFreeJetpackPlan();
 		}
 
