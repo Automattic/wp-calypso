@@ -61,38 +61,40 @@ class GoogleMyBusinessNewAccount extends Component {
 				</HeaderCake>
 
 				<Card>
-					<img
-						alt={ translate( 'Local business illustration' ) }
-						className="gmb-new-account__illustration"
-						src="/calypso/images/google-my-business/business-local.svg"
-					/>
+					<div className="gmb-new-account__wrapper">
+						<img
+							alt={ translate( 'Local business illustration' ) }
+							className="gmb-new-account__illustration"
+							src="/calypso/images/google-my-business/business-local.svg"
+						/>
 
-					<h1 className="gmb-new-account__heading">
-						{ translate( 'It looks like you might be new to Google My Business' ) }
-					</h1>
+						<h1 className="gmb-new-account__heading">
+							{ translate( 'It looks like you might be new to Google My Business' ) }
+						</h1>
 
-					<p>
-						{ translate(
-							'Google My Business lists your local business on Google Search and Google Maps. ' +
-							'It works for businesses that have a physical location or serve a local area'
-						) }
-					</p>
+						<p>
+							{ translate(
+								'Google My Business lists your local business on Google Search and Google Maps. ' +
+									'It works for businesses that have a physical location or serve a local area'
+							) }
+						</p>
 
-					<div className="gmb-new-account__actions">
-						<Button
-							href={ `/google-my-business/${ siteSlug }/select-location` }
-							onClick={ this.trackCreateMyListingClick }
-							primary
-						>
-							{ translate( 'Create My Listing' ) }
-						</Button>
+						<div className="gmb-new-account__actions">
+							<Button
+								href={ `/google-my-business/${ siteSlug }/select-location` }
+								onClick={ this.trackCreateMyListingClick }
+								primary
+							>
+								{ translate( 'Create My Listing' ) }
+							</Button>
 
-						<Button
-							href={ `/stats/${ siteSlug }` }
-							onClick={ this.trackNoThanksClick }
-						>
-							{ translate( 'No thanks' ) }
-						</Button>
+							<Button
+								href={ `/stats/${ siteSlug }` }
+								onClick={ this.trackNoThanksClick }
+							>
+								{ translate( 'No thanks' ) }
+							</Button>
+						</div>
 					</div>
 				</Card>
 			</Main>
