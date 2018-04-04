@@ -7,7 +7,6 @@ import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-import url from 'url';
 
 /**
  * Internal dependencies
@@ -133,9 +132,7 @@ class ChecklistShow extends PureComponent {
 	}
 
 	render() {
-		const { siteId, tasks } = this.props;
-		const parsedUrl = url.parse( location.href, true );
-		const displayMode = parsedUrl.query.d;
+		const { displayMode, siteId, tasks } = this.props;
 
 		const completed = tasks && ! find( tasks, { completed: false } );
 
