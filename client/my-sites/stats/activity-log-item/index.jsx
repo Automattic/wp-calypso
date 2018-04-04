@@ -16,6 +16,7 @@ import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
+import Button from 'components/button';
 import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
 import FormattedBlock from 'components/notes-formatted-block';
@@ -36,8 +37,8 @@ import {
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
 } from 'state/selectors';
-
 import { adjustMoment } from '../activity-log/utils';
+import { getSiteSlug } from 'state/sites/selectors';
 
 class ActivityLogItem extends Component {
 	confirmBackup = () => this.props.confirmBackup( this.props.activity.rewindId );
@@ -74,13 +75,19 @@ class ActivityLogItem extends Component {
 	}
 
 	renderItemAction() {
-		const { hideRestore, activity: { activityIsRewindable, activityName } } = this.props;
+		const {
+			hideRestore,
+			activity: { activityIsRewindable, activityName, activityMeta },
+		} = this.props;
 
 		switch ( activityName ) {
 			case 'plugin__update_failed':
-			case 'rewind__backup_error':
 			case 'rewind__scan_result_found':
 				return this.renderHelpAction();
+			case 'rewind__backup_error':
+				return 'bad_credentials' === activityMeta.errorCode
+					? this.renderFixCredsAction()
+					: this.renderHelpAction();
 		}
 
 		if ( ! hideRestore && activityIsRewindable ) {
@@ -131,6 +138,25 @@ class ActivityLogItem extends Component {
 	);
 
 	handleTrackHelp = () => this.props.trackHelp( this.props.activity.activityName );
+
+	/**
+	 * Displays a button to take users to enter credentials.
+	 *
+	 * @returns {Object} Get button to fix credentials.
+	 */
+	renderFixCredsAction = () => (
+		<Button
+			className="activity-log-item__fix-creds"
+			primary
+			compact
+			href={ `/start/rewind-setup/?siteId=${ this.props.siteId }&siteSlug=${
+				this.props.siteSlug
+			}` }
+			onClick={ this.props.trackFixCreds }
+		>
+			{ this.props.translate( 'Fix credentials' ) }
+		</Button>
+	);
 
 	render() {
 		const {
@@ -229,6 +255,7 @@ const mapStateToProps = ( state, { activityId, siteId } ) => ( {
 	mightBackup: activityId && activityId === getRequestedBackup( state, siteId ),
 	mightRewind: activityId && activityId === getRequestedRewind( state, siteId ),
 	timezone: getSiteTimezoneValue( state, siteId ),
+	siteSlug: getSiteSlug( state, siteId ),
 } );
 
 const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
@@ -282,6 +309,7 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 		dispatch(
 			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
 		),
+	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );
