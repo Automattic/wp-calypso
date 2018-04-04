@@ -224,7 +224,6 @@ const webpackConfig = {
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
 		] ),
-		//new NameAllModulesPlugin(),
 		new AssetsWriter( {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
