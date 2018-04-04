@@ -65,10 +65,10 @@ class DomainProductPrice extends React.Component {
 	renderIncludedInPremium() {
 		const { translate, showExpandedPrice } = this.props;
 
-		let textLabel = this.props.translate( 'Included in WordPress.com Premium' );
+		let textLabel = translate( 'Included in WordPress.com Premium' );
 
-		const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
-		if ( isKrackenUI ) {
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
+		if ( isKrackenUi ) {
 			textLabel = showExpandedPrice
 				? translate( 'Price included in paid plans' )
 				: translate( 'Included in paid plans' );

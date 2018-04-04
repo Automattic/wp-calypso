@@ -51,6 +51,7 @@
 		&.button.is-primary {
 			width: 100%;
 			margin-left: 0;
+			flex-grow: 0;
 		}
 	}
 }

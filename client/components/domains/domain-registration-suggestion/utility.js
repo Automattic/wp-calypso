@@ -5,7 +5,7 @@
  */
 import { includes } from 'lodash';
 
-export const newTLDs = [
+const newTlds = [
 	'.art',
 	'.bar',
 	'.beer',
@@ -52,12 +52,12 @@ export const newTLDs = [
 	'.yoga',
 ];
 
-export const testTLDs = [ '.de' ];
+const testTlds = [ '.de' ];
 
-export function isNewTLD( tld ) {
-	return includes( newTLDs, tld );
+export function isNewTld( tld ) {
+	return includes( newTlds, tld );
 }
 
-export function isTestTLD( tld ) {
-	return includes( testTLDs, tld );
+export function isTestTld( tld ) {
+	return includes( testTlds, tld );
 }

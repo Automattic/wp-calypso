@@ -24,7 +24,7 @@ import {
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isNewTLD, isTestTLD } from 'components/domains/domain-registration-suggestion/utility';
+import { isNewTld, isTestTld } from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
 
 const NOTICE_GREEN = '#4ab866';
@@ -90,7 +90,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			// This won't work if we add subdomains.
 			const tld = domain.substring( domain.indexOf( '.' ) );
 
-			if ( isNewTLD( tld ) ) {
+			if ( isNewTld( tld ) ) {
 				domainFlags.push(
 					<DomainSuggestionFlag
 						key={ `${ domain }-new` }
@@ -100,7 +100,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				);
 			}
 
-			if ( isTestTLD( tld ) ) {
+			if ( isTestTld( tld ) ) {
 				domainFlags.push(
 					<DomainSuggestionFlag
 						key={ `${ domain }-testing` }
@@ -190,10 +190,10 @@ class DomainRegistrationSuggestion extends React.Component {
 			return null;
 		}
 
-		let title, props;
+		let title, progressBarProps;
 		if ( isRecommended ) {
 			title = translate( 'Best Match' );
-			props = {
+			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
 				value: 90,
@@ -202,7 +202,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		if ( isBestAlternative ) {
 			title = translate( 'Best Alternative' );
-			props = {
+			progressBarProps = {
 				title,
 				value: 80,
 			};
@@ -211,7 +211,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		if ( title ) {
 			return (
 				<div className="domain-registration-suggestion__progress-bar">
-					<ProgressBar { ...props } />
+					<ProgressBar { ...progressBarProps } />
 					<span className="domain-registration-suggestion__progress-bar-text">{ title }</span>
 				</div>
 			);

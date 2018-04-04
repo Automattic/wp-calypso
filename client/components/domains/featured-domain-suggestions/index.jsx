@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { pickBy, includes } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +30,7 @@ export class FeaturedDomainSuggestions extends Component {
 			'query',
 			'onButtonClick',
 		];
-		return pickBy( this.props, ( value, key ) => includes( childKeys, key ) );
+		return pick( this.props, childKeys );
 	}
 
 	render() {
