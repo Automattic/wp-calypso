@@ -19,7 +19,7 @@ function setUpLocale( context, next ) {
 		stepSectionName = undefined;
 	} else if ( ! lang && stepName && getLanguage( stepName ) ) {
 		lang = stepName;
-		flowName = undefined;
+		stepName = undefined;
 	} else if ( ! lang && flowName && getLanguage( flowName ) ) {
 		lang = flowName;
 		flowName = undefined;
