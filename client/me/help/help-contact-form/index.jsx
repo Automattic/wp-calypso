@@ -334,7 +334,7 @@ export class HelpContactForm extends React.PureComponent {
 				<ChatBusinessConciergeNotice
 					from="2017-07-19T00:00:00Z"
 					to="2017-07-21T00:00:00Z"
-					selectedSite={ this.props.selectedSite }
+					selectedSite={ this.props.helpSite }
 				/>
 
 				{ showHowCanWeHelpField && (
