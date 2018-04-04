@@ -295,11 +295,10 @@
 
 .activity-log-item__help-action {
 	color: $gray;
-	width: 117px;
-	height: 29px;
-	font-weight: normal;
-	font-size: 1.3rem;
-	padding-top: 2px;
+	font-weight: 400;
+	font-size: 13px;
+	white-space: nowrap;
+	padding: 2px 7px 3px;
 
 	@include breakpoint( '<480px' ) {
 		display: block;
@@ -311,6 +310,12 @@
 	margin-right: 5px;
 }
 
-.activity-log-item__fix-creds {
+.button.activity-log-item__quick-action {
+	font-size: 13px;
 	white-space: nowrap;
+
+	@include breakpoint( '<480px' ) {
+		display: table;
+		margin-top: 1.5rem;
+	}
 }

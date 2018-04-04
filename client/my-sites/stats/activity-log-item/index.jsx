@@ -133,7 +133,7 @@ class ActivityLogItem extends Component {
 			onClick={ this.handleTrackHelp }
 		>
 			<Gridicon icon="chat" size={ 18 } />
-			{ this.props.translate( 'Get Help' ) }
+			{ this.props.translate( 'Get help' ) }
 		</HappychatButton>
 	);
 
@@ -146,7 +146,7 @@ class ActivityLogItem extends Component {
 	 */
 	renderFixCredsAction = () => (
 		<Button
-			className="activity-log-item__fix-creds"
+			className="activity-log-item__quick-action"
 			primary
 			compact
 			href={ `/start/rewind-setup/?siteId=${ this.props.siteId }&siteSlug=${
