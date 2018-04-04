@@ -124,7 +124,13 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				use: [ 'thread-loader', babelLoader ],
+				use: [
+					{
+						loader: 'thread-loader',
+						options: { workers: 3 },
+					},
+					babelLoader,
+				],
 			},
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
