@@ -70,30 +70,19 @@ describe( 'UpgradeToPremiumNudgePure.render()', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
+		PLAN_FREE,
+		PLAN_PERSONAL,
+		PLAN_PREMIUM,
+		PLAN_BUSINESS,
+		PLAN_PERSONAL_2_YEARS,
+		PLAN_PREMIUM_2_YEARS,
+		PLAN_BUSINESS_2_YEARS,
 	].forEach( plan => {
-		test( `Should pass jetpack premium plan for jetpack plans ${ plan }`, () => {
-			const comp = shallow(
-				<UpgradeToPremiumNudgePure { ...props } isJetpack={ true } currentPlanSlug={ plan } />
-			);
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_JETPACK_PREMIUM );
-		} );
-	} );
-
-	[ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ].forEach( plan => {
-		test( `Should pass wp.com premium plan for annual wp.com plans ${ plan }`, () => {
-			const comp = shallow(
-				<UpgradeToPremiumNudgePure { ...props } isJetpack={ false } currentPlanSlug={ plan } />
-			);
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_PREMIUM );
-		} );
-	} );
-
-	[ PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS ].forEach( plan => {
 		test( `Should pass 2-years wp.com premium plan for 2-years plans ${ plan }`, () => {
 			const comp = shallow(
-				<UpgradeToPremiumNudgePure { ...props } isJetpack={ false } currentPlanSlug={ plan } />
+				<UpgradeToPremiumNudgePure { ...props } isJetpack={ false } planSlug={ plan } />
 			);
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_PREMIUM_2_YEARS );
+			expect( comp.find( 'Banner' ).props().plan ).toBe( plan );
 		} );
 	} );
 } );
