@@ -35,7 +35,7 @@ class InlineHelpPopover extends Component {
 		showContactForm: false,
 	};
 
-	openResult = href => {
+	openResult = ( event, href ) => {
 		if ( ! href ) {
 			return;
 		}
@@ -45,7 +45,13 @@ class InlineHelpPopover extends Component {
 			result_url: href,
 		} );
 
-		window.location = href;
+		if ( ! event.metaKey ) {
+			event.preventDefault();
+			window.location = href;
+		} else if ( event.key === 'Enter' ) {
+			event.preventDefault();
+			window.open( href, '_blank' );
+		}
 	};
 
 	moreHelpClicked = () => {

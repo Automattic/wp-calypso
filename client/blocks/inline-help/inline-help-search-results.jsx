@@ -124,8 +124,7 @@ class InlineHelpSearchResults extends Component {
 	}
 
 	onHelpLinkClick = event => {
-		event.preventDefault();
-		this.props.openResult( event.target.href );
+		this.props.openResult( event, event.target.href );
 	};
 
 	renderHelpLink = ( link, index ) => {
