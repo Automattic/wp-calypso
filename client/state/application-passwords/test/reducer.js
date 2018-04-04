@@ -92,7 +92,7 @@ describe( 'reducer', () => {
 
 		test( 'should default to null', () => {
 			const state = newPassword( undefined, {} );
-			expect( state ).toEqual( null );
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should set new application password when successfully created', () => {
@@ -110,7 +110,7 @@ describe( 'reducer', () => {
 				appPassword,
 			} );
 
-			expect( state ).toEqual( null );
+			expect( state ).toBeNull();
 		} );
 	} );
 } );
