@@ -20,7 +20,7 @@ import Card from 'components/card';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import { getWidgetPath, formatValue } from 'woocommerce/app/store-stats/utils';
 import Pagination from 'components/pagination';
-import { getStoreReferrers } from 'state/selectors';
+import { getStoreReferrersByDate } from 'state/selectors';
 
 class StoreStatsReferrerWidget extends Component {
 	static propTypes = {
@@ -28,7 +28,7 @@ class StoreStatsReferrerWidget extends Component {
 		query: PropTypes.object.isRequired,
 		siteId: PropTypes.number,
 		statType: PropTypes.string.isRequired,
-		unitSelectedDate: PropTypes.string.isRequired,
+		endSelectedDate: PropTypes.string.isRequired,
 		unit: PropTypes.string.isRequired,
 		queryParams: PropTypes.object.isRequired,
 		slug: PropTypes.string.isRequired,
@@ -111,7 +111,7 @@ class StoreStatsReferrerWidget extends Component {
 	render() {
 		const {
 			data,
-			unitSelectedDate,
+			endSelectedDate,
 			translate,
 			unit,
 			slug,
@@ -123,7 +123,7 @@ class StoreStatsReferrerWidget extends Component {
 		const { page } = this.state;
 		const basePath = '/store/stats/referrers';
 		if ( data.length === 0 ) {
-			const messages = this.getEmptyDataMessage( unitSelectedDate );
+			const messages = this.getEmptyDataMessage( endSelectedDate );
 			return (
 				<Card className="store-stats-referrer-widget stats-module is-showing-error has-no-data">
 					<ErrorPanel message={ messages.shift() }>{ messages }</ErrorPanel>
@@ -180,6 +180,6 @@ class StoreStatsReferrerWidget extends Component {
 export default connect( ( state, ownProps ) => {
 	const { fetchedData } = ownProps;
 	return {
-		data: fetchedData || getStoreReferrers( state, ownProps ),
+		data: fetchedData || getStoreReferrersByDate( state, ownProps ),
 	};
 } )( localize( StoreStatsReferrerWidget ) );
