@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _debug from 'debug';
 import moment from 'moment';
-import { intersection, map, every, find, get, each } from 'lodash';
+import { intersection, map, every, find, get, each, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -54,7 +54,7 @@ const expiringDomainsCannotManageWarning = 'expiring-domains-cannot-manage';
 
 export class DomainWarnings extends React.PureComponent {
 	state = {
-		newTransfersNameServersLoaded: false,
+		newTransfers: [],
 	};
 
 	static propTypes = {
@@ -430,13 +430,8 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
-	loadNameServers = domains => each( domains, domain => fetchNameservers( domain.name ) );
-
-	nameServersLoaded = domains =>
-		every( domains, domain => NameserversStore.getByDomainName( domain.name ).hasLoadedFromServer );
-
-	newTransfersWrongNS = () => {
-		let newTransfers = this.getDomains().filter(
+	newTransfers = domains =>
+		domains.filter(
 			domain =>
 				domain.registrationMoment &&
 				moment( domain.registrationMoment )
@@ -445,22 +440,23 @@ export class DomainWarnings extends React.PureComponent {
 				domain.transferStatus === transferStatus.COMPLETED
 		);
 
-		if ( newTransfers.length === 0 ) {
+	loadNameServers = domains => each( domains, domain => fetchNameservers( domain.name ) );
+
+	nameServersLoaded = domains =>
+		every( domains, domain => NameserversStore.getByDomainName( domain.name ).hasLoadedFromServer );
+
+	newTransfersWrongNS = () => {
+		const { newTransfers } = this.state;
+
+		if ( newTransfers.length === 0 || ! this.nameServersLoaded( newTransfers ) ) {
 			return null;
 		}
 
-		if ( ! this.nameServersLoaded( newTransfers ) ) {
-			this.loadNameServers( newTransfers );
-			return null;
-		}
-
-		newTransfers = newTransfers.filter(
+		const newTransfersOtherNS = newTransfers.filter(
 			domain => ! isWpcomDefaults( NameserversStore.getByDomainName( domain.name ) )
 		);
 
-		const domain = newTransfers[ 0 ].name;
-
-		// const nameServers = NameserversStore.getByDomainName( domain );
+		const domain = newTransfersOtherNS[ 0 ].name;
 
 		const { translate } = this.props;
 		const compactMessage = translate( 'Update nameservers' );
@@ -478,8 +474,8 @@ export class DomainWarnings extends React.PureComponent {
 		);
 
 		const message = translate(
-			'To make {{strong}}%(domain)s{{/strong}} work with WordPress.com site, you may need to update ' +
-				'the nameservers. {{a}}More Info{{/a}}',
+			'To make {{strong}}%(domain)s{{/strong}} work with your WordPress.com site, you may need to ' +
+				'update the nameservers. {{a}}More Info{{/a}}',
 			{
 				components: {
 					strong: <strong />,
@@ -982,6 +978,14 @@ export class DomainWarnings extends React.PureComponent {
 	componentWillMount() {
 		if ( ! this.props.domains && ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		const nextNewTransfers = this.newTransfers( nextProps.domains || [ nextProps.domain ] );
+		if ( ! isEqual( nextNewTransfers, this.state.newTransfers ) ) {
+			this.loadNameServers( nextNewTransfers );
+			this.setState( { newTransfers: nextNewTransfers } );
 		}
 	}
 
