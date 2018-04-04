@@ -63,9 +63,23 @@
 
 	.main {
 		padding-top: 35px;
+
 		@include breakpoint( "<660px" ) {
 			padding-top: 72px;
 		}
+	}
+
+	.woocommerce__placeholder {
+		padding-top: 0;
+
+		@include breakpoint( "<660px" ) {
+			padding-top: 16px;
+		}
+	}
+
+	.woocommerce__placeholder-card {
+		@include placeholder();
+		height: 70vh;
 	}
 
 	@include breakpoint( ">660px" ) {
