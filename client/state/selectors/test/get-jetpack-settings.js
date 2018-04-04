@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { getJetpackSettings } from 'state/selectors';
@@ -20,7 +15,7 @@ describe( 'getJetpackSettings()', () => {
 			},
 			siteId = 12345678;
 		const output = getJetpackSettings( stateIn, siteId );
-		expect( output ).to.eql( SETTINGS_FIXTURE[ siteId ] );
+		expect( output ).toEqual( SETTINGS_FIXTURE[ siteId ] );
 	} );
 
 	test( 'should return null for an unknown site', () => {
@@ -33,6 +28,6 @@ describe( 'getJetpackSettings()', () => {
 			},
 			siteId = 12345678;
 		const output = getJetpackSettings( stateIn, siteId );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );
