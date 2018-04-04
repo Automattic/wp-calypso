@@ -13,12 +13,15 @@ import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import NpsSurvey from 'blocks/nps-survey';
 import {
-	showNpsSurveyNotice,
 	setNpsSurveyDialogShowing,
 	setupNpsSurveyDevTrigger,
 } from 'state/ui/nps-survey-notice/actions';
 import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
-import { submitNpsSurveyWithNoScore, setupNpsSurveyEligibility } from 'state/nps-survey/actions';
+import {
+	submitNpsSurveyWithNoScore,
+	setupNpsSurveyEligibility,
+	markNpsSurveyShownThisSession,
+} from 'state/nps-survey/actions';
 import {
 	hasAnsweredNpsSurvey,
 	hasAnsweredNpsSurveyWithNoScore,
@@ -58,7 +61,8 @@ class NpsSurveyNotice extends Component {
 			// (1) the user gets a chance to look briefly at the uncluttered screen, and
 			// (2) the user notices the notice more, since it will cause a change to the
 			//     screen they are already looking at
-			setTimeout( this.props.showNpsSurveyNotice, 3000 );
+			this.props.setNpsSurveyDialogShowing( true );
+			this.props.markNpsSurveyShownThisSession();
 
 			analytics.mc.bumpStat( 'calypso_nps_survey', 'notice_displayed' );
 			analytics.tracks.recordEvent( 'calypso_nps_notice_displayed' );
@@ -91,9 +95,9 @@ const mapStateToProps = state => {
 };
 
 export default connect( mapStateToProps, {
-	showNpsSurveyNotice,
 	setNpsSurveyDialogShowing,
 	submitNpsSurveyWithNoScore,
 	setupNpsSurveyDevTrigger,
 	setupNpsSurveyEligibility,
+	markNpsSurveyShownThisSession,
 } )( NpsSurveyNotice );
