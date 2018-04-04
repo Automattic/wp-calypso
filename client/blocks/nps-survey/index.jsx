@@ -138,7 +138,7 @@ class NpsSurvey extends Component {
 				<div className="nps-survey__recommendation-select-wrapper">
 					<FormTextArea
 						onChange={ this.handleTextBoxChange }
-						placeholder="Please input your thoughts here"
+						placeholder={ translate( 'Please input your thoughts here' ) }
 					/>
 				</div>
 				<div className="nps-survey__buttons">
