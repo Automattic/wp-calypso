@@ -13,6 +13,7 @@ const logoPathSize32 = (
 	<g>
 		<path
 			className="jetpack-logo__icon-circle"
+			fill="#00be28"
 			d="M16,0C7.2,0,0,7.2,0,16s7.2,16,16,16s16-7.2,16-16S24.8,0,16,0z"
 		/>
 		<polygon className="jetpack-logo__icon-triangle" fill="#fff" points="15,19 7,19 15,3 " />

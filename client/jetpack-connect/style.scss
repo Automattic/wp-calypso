@@ -45,10 +45,6 @@
 .jetpack-connect__main-logo {
 	text-align: center;
 
-	.jetpack-logo__icon-circle {
-		fill: $green-jetpack;
-	}
-
 	@include breakpoint( '<660px' ) {
 		margin-top: 20px;
 	}
