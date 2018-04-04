@@ -131,7 +131,9 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 						onChange={ this.toggleConfirmationChecked }
 					/>
 					<span>
-						{ translate( "I understand that I can't undo this change to my site address." ) }
+						{ translate(
+							"I understand that I won't be able to undo this change to my site address."
+						) }
 					</span>
 				</FormLabel>
 			</Dialog>
