@@ -109,7 +109,7 @@ const webpackConfig = {
 	optimization: {
 		splitChunks: {
 			chunks: 'all',
-			name: isDevelopment,
+			name: isDevelopment || shouldEmitStats,
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
