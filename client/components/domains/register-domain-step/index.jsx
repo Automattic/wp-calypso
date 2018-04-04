@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import debugFactory from 'debug';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -67,6 +68,7 @@ import {
 	recordSearchResultsReceive,
 	recordTransferDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
+import Spinner from 'components/spinner';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
@@ -189,6 +191,7 @@ class RegisterDomainStep extends React.Component {
 			lastDomainIsTransferrable: false,
 			loadingResults,
 			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
+			loadingNextPageResults: false,
 			notice: null,
 			pageNumber: 1,
 			searchResults: null,
@@ -347,19 +350,37 @@ class RegisterDomainStep extends React.Component {
 					/>
 				) }
 				{ this.content() }
-				{ isKrackenUI &&
-					! this.state.loadingResults && (
-						<Card
-							className="register-domain-step__next-page"
-							tagName="button"
-							onClick={ this.showNextPage }
-						>
-							Show more results
-						</Card>
-					) }
+				{ this.renderPaginationControls() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
 			</div>
+		);
+	}
+
+	renderPaginationControls() {
+		const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
+		if ( ! isKrackenUI || this.state.searchResults === null ) {
+			return null;
+		}
+
+		const isLoading = this.state.loadingResults || this.state.loadingNextPageResults;
+		const className = classNames( 'button', 'register-domain-step__next-page', {
+			'register-domain-step__next-page--is-loading': isLoading,
+		} );
+		return (
+			<Card
+				className={ className }
+				disabled={ isLoading }
+				onClick={ this.showNextPage }
+				tagName="button"
+			>
+				<div className="register-domain-step__next-page-content">
+					{ this.props.translate( 'Show more results' ) }
+				</div>
+				<div className="register-domain-step__next-page-loader">
+					<Spinner size={ 20 } />
+				</div>
+			</Card>
 		);
 	}
 
@@ -385,20 +406,19 @@ class RegisterDomainStep extends React.Component {
 		this.props.onSave( this.state );
 	};
 
-	repeatSearch = ( pageNumber = 1 ) => {
-		this.setState(
-			{
-				exactMatchDomain: null,
-				lastDomainSearched: null,
-				loadingResults: true,
-				loadingSubdomainResults: true,
-				notice: null,
-				pageNumber,
-			},
-			() => {
-				this.onSearch( this.state.lastQuery );
-			}
-		);
+	repeatSearch = ( stateOverride = {} ) => {
+		const nextState = {
+			exactMatchDomain: null,
+			lastDomainSearched: null,
+			loadingResults: true,
+			loadingSubdomainResults: true,
+			notice: null,
+			...stateOverride,
+		};
+		debug( 'Repeating a search with the following input for setState', nextState );
+		this.setState( nextState, () => {
+			this.onSearch( this.state.lastQuery );
+		} );
 	};
 
 	getActiveFiltersForAPI() {
@@ -541,9 +561,12 @@ class RegisterDomainStep extends React.Component {
 				// If page number is greater than 1, then we assume the user has advanced
 				// to the next page. Given our "load more" pagination design, this means
 				// we'd want to combine the existing suggestions with the new suggestions
-				return this.state.pageNumber > 1
-					? [ ...this.state.searchResults, ...domainSuggestions ]
-					: domainSuggestions;
+				if ( this.state.pageNumber > 1 ) {
+					this.setState( { loadingNextPageResults: false } );
+					return [ ...this.state.searchResults, ...domainSuggestions ];
+				}
+
+				return domainSuggestions;
 			} )
 			.catch( error => {
 				const timeDiff = Date.now() - timestamp;
@@ -681,6 +704,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	onSearch = searchQuery => {
+		debug( 'onSearch handler was triggered with query', searchQuery );
 		const domain = getFixedDomainSearch( searchQuery );
 
 		this.setState(
@@ -688,8 +712,9 @@ class RegisterDomainStep extends React.Component {
 			this.save
 		);
 
-		if ( ! domain || ! this.state.loadingResults ) {
+		if ( ! domain || ( typeof domain === 'string' && domain.trim() === '' ) ) {
 			// the search was cleared or the domain contained only spaces
+			debug( 'onSearch handler was terminated by an empty domain input' );
 			return;
 		}
 
@@ -721,7 +746,14 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	showNextPage = () => {
-		this.repeatSearch( this.state.pageNumber + 1 );
+		debug( 'showNextPage was triggered' );
+
+		this.repeatSearch( {
+			loadingNextPageResults: true,
+			loadingResults: false,
+			loadingSubdomainResults: false,
+			pageNumber: this.state.pageNumber + 1,
+		} );
 	};
 
 	initialSuggestions() {
