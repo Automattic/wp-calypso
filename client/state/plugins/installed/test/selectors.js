@@ -125,6 +125,20 @@ describe( 'Installed plugin selectors', () => {
 		} );
 	} );
 
+	describe( 'isLoaded', () => {
+		test( 'Should get `false` if this site is not in the current state', () => {
+			expect( selectors.isLoaded( state, 'no.site' ) ).to.be.false;
+		} );
+
+		test( 'Should get `true` if this site is done being fetched', () => {
+			expect( selectors.isLoaded( state, 'site.one' ) ).to.be.true;
+		} );
+
+		test( 'Should get `false` if this site is currently being fetched', () => {
+			expect( selectors.isLoaded( state, 'site.three' ) ).to.be.false;
+		} );
+	} );
+
 	describe( 'isRequestingForSites', () => {
 		test( 'Should get `false` if no sites are being fetched', () => {
 			expect( selectors.isRequestingForSites( state, [ 'site.one', 'site.two' ] ) ).to.be.false;
