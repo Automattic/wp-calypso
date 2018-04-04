@@ -35,7 +35,7 @@ import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
-import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
+import { receiveJetpackOnboardingCredentials } from 'state/jetpack/onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
 import { urlToSlug } from 'lib/url';
