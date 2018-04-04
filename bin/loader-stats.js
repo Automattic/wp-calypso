@@ -64,14 +64,19 @@ async function calculateSizes( section ) {
 		console.log( `   ${f}: (${ filesWithSizes[ f ] / 1000 }kb)`);
 	})
 
-	console.log("Total: " + (section.filesToLoad.reduce((totalSize, f) => totalSize + filesWithSizes[f], 0) / 1000) + "kb");
+	const totalSize = section.filesToLoad.reduce((totalSize, f) => totalSize + filesWithSizes[f], 0);
+
+	console.log("\t" + ( totalSize / 1000) + "kb");
 	console.log('');
+	return totalSize;
 }
 
 async function go() {
+	let totalSize = 0;
 	for (section in filesToLoadPerSection) {
-		await calculateSizes(filesToLoadPerSection[ section ]);
+		totalSize += await calculateSizes(filesToLoadPerSection[ section ]);
 	}
+	console.log("Total Load: " + (totalSize / 1000) + "kb");
 }
 
 go();
