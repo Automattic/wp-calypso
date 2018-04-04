@@ -23,58 +23,101 @@ import {
 import { combineReducers } from 'state/utils';
 
 export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, siteId, type } ) {
-	if ( type !== POST_REVISIONS_RECEIVE ) {
-		return state;
-	}
 	if ( ! isInteger( siteId ) || siteId <= 0 ) {
 		return state;
 	}
 
-	const sitePostState = get( state, [ siteId, postId ], {} );
-	const mergedRevisions = {
-		...get( sitePostState, 'revisions', {} ),
-		...revisions,
-	};
-
-	const filteredDiffs = filter( diffsFromServer, ( { diff, from, to } ) => {
-		if ( ! isInteger( from ) || from < 0 ) {
-			// `from` can be zero
-			return false;
-		}
-		if ( ! isInteger( to ) || to < 1 ) {
-			// `to` cannot be zero
-			return false;
-		}
-
-		// Ensure fresh revisions were provided for `from` and `to` in the payload
-		if ( from !== 0 && isEmpty( mergedRevisions[ from ] ) ) {
-			// if `from` is `0`, there won't be a revision to validate
-			return false;
-		}
-		if ( isEmpty( mergedRevisions[ to ] ) ) {
-			return false;
-		}
-
-		return ! isEmpty( diff );
-	} );
-
-	if ( isEmpty( filteredDiffs ) ) {
+	if ( type !== 'POST_REVISIONS_LOAD_PENDING' && type !== POST_REVISIONS_RECEIVE ) {
 		return state;
 	}
 
-	return {
-		...state,
-		[ siteId ]: {
-			...state[ siteId ],
-			[ postId ]: {
-				...{
-					...omit( sitePostState, 'revisions' ),
-					...keyBy( filteredDiffs, d => `${ d.from }:${ d.to }` ),
+	// general for both
+	const sitePostState = get( state, [ siteId, postId ], {} );
+	const previousRevisions = get( sitePostState, 'revisions', {} );
+
+	if ( type === 'POST_REVISIONS_LOAD_PENDING' ) {
+		return {
+			...state,
+			[ siteId ]: {
+				...state[ siteId ],
+				[ postId ]: {
+					...get( sitePostState, 'pending.diffs', {} ),
+					revisions: get( sitePostState, 'pending.revisions', {} ),
+					pending: {},
 				},
-				revisions: mergedRevisions,
 			},
-		},
-	};
+		};
+	}
+
+	if ( type === POST_REVISIONS_RECEIVE ) {
+		const mergedRevisions = {
+			...get( sitePostState, 'revisions', {} ),
+			...revisions,
+		};
+
+		const filteredDiffs = filter( diffsFromServer, ( { diff, from, to } ) => {
+			if ( ! isInteger( from ) || from < 0 ) {
+				// `from` can be zero
+				return false;
+			}
+			if ( ! isInteger( to ) || to < 1 ) {
+				// `to` cannot be zero
+				return false;
+			}
+
+			// Ensure fresh revisions were provided for `from` and `to` in the payload
+			if ( from !== 0 && isEmpty( mergedRevisions[ from ] ) ) {
+				// if `from` is `0`, there won't be a revision to validate
+				return false;
+			}
+			if ( isEmpty( mergedRevisions[ to ] ) ) {
+				return false;
+			}
+
+			return ! isEmpty( diff );
+		} );
+
+		if ( isEmpty( filteredDiffs ) ) {
+			return state;
+		}
+
+		const keyedDiffs = keyBy( filteredDiffs, d => `${ d.from }:${ d.to }` );
+
+		if ( ! isEmpty( previousRevisions ) ) {
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ postId ]: {
+						// return previous sitePostState as-is, updating only the pending values
+						...sitePostState,
+						pending: {
+							count: length,
+							diffs: keyedDiffs,
+							revisions: mergedRevisions,
+						},
+					},
+				},
+			};
+		}
+
+		return {
+			...state,
+			[ siteId ]: {
+				...state[ siteId ],
+				[ postId ]: {
+					...{
+						...omit( sitePostState, [ 'revisions', 'pending' ] ),
+						...keyedDiffs,
+					},
+					revisions: mergedRevisions,
+					pending: {},
+				},
+			},
+		};
+	}
+
+	return state;
 }
 
 export function requesting( state = {}, action ) {

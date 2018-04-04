@@ -63,7 +63,10 @@ class EditorRevisionsList extends PureComponent {
 		if ( ! this.props.selectedRevisionId ) {
 			this.trySelectingLatestRevision();
 		}
-		if ( this.props.selectedRevisionId !== prevProps.selectedRevisionId ) {
+		if (
+			this.props.selectedRevisionId !== prevProps.selectedRevisionId ||
+			this.props.revisions.length !== prevProps.revisions.length
+		) {
 			this.scrollToSelectedItem();
 		}
 	}
