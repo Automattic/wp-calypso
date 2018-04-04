@@ -133,7 +133,7 @@ class PlanFeaturesHeader extends Component {
 		// Note: Don't make this translatable because it's only visible to English-language users
 		return (
 			<span className="plan-features__header-credit-label">
-				{ site.jetpack ? 'Discount available' : 'Credit available' }
+				{ site.jetpack ? 'Discount' : 'Credit available' }
 			</span>
 		);
 	}
@@ -230,25 +230,6 @@ class PlanFeaturesHeader extends Component {
 			return <div className={ classes } />;
 		}
 
-		if ( discountPrice ) {
-			return (
-				<span className="plan-features__header-price-group">
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ rawPrice }
-						isInSignup={ isInSignup }
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ discountPrice }
-						isInSignup={ isInSignup }
-						discounted
-					/>
-				</span>
-			);
-		}
-
 		if ( relatedMonthlyPlan ) {
 			const originalPrice = relatedMonthlyPlan.raw_price * 12;
 			return (
@@ -264,6 +245,25 @@ class PlanFeaturesHeader extends Component {
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ rawPrice }
+						isInSignup={ isInSignup }
+						discounted
+					/>
+				</span>
+			);
+		}
+
+		if ( discountPrice ) {
+			return (
+				<span className="plan-features__header-price-group">
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ rawPrice }
+						isInSignup={ isInSignup }
+						original
+					/>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ discountPrice }
 						isInSignup={ isInSignup }
 						discounted
 					/>

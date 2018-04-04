@@ -166,7 +166,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderCreditSummary() {
-		const { canPurchase, planProperties, site, sitePlan } = this.props;
+		const { canPurchase, planProperties, site } = this.props;
 
 		return map( planProperties, properties => {
 			const {
@@ -187,7 +187,6 @@ class PlanFeatures extends Component {
 						canPurchase={ canPurchase }
 						currencyCode={ currencyCode }
 						current={ current }
-						currentPlanTitle={ sitePlan.product_name_short }
 						discountPrice={ discountPrice }
 						planTitle={ planConstantObj.getTitle() }
 						planType={ planName }
@@ -813,7 +812,10 @@ export default connect(
 
 		const maxCredits = getMaxCredits( planProperties, ownProps.site.jetpack );
 		const showModifiedPricingDisplay =
-			! isInSignup && !! maxCredits.amount && abtest( 'upgradePricingDisplayV2' ) === 'modified';
+			! isInSignup &&
+			isPaid &&
+			!! maxCredits.amount &&
+			abtest( 'upgradePricingDisplayV3' ) === 'modified';
 
 		return {
 			canPurchase,

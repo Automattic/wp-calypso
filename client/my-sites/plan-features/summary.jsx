@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
@@ -18,102 +18,100 @@ class PlanFeaturesSummary extends Component {
 		available: PropTypes.bool.isRequired,
 		currencyCode: PropTypes.string,
 		current: PropTypes.bool,
-		currentPlanTitle: PropTypes.string,
 		planTitle: PropTypes.string.isRequired,
 		rawPrice: PropTypes.number,
 		relatedMonthlyPlan: PropTypes.object,
 		site: PropTypes.object.isRequired,
 	};
 
-	// Note: Don't make this translatable because it's only visible to English-language users
-	getTitle() {
-		const { current, site } = this.props;
-		const isJetpackSite = !! site.jetpack;
+	renderWPCOMSummary() {
+		const { currencyCode, discountPrice, planTitle, rawPrice } = this.props;
+		const discount = rawPrice - discountPrice;
 
-		if ( current ) {
-			return 'Plan summary';
+		if ( ! discountPrice ) {
+			return null;
 		}
 
-		if ( isJetpackSite ) {
-			return 'Discount summary';
+		// Note: Don't make this translatable because it's only visible to English-language users
+		return (
+			<Fragment>
+				<strong className="plan-features__summary-title">Credit summary</strong>
+				<div className="plan-features__summary-price-row">
+					<span className="plan-features__summary-item">{ planTitle } plan</span>
+					<span className="plan-features__summary-price">
+						{ formatCurrency( rawPrice, currencyCode ) }
+					</span>
+				</div>
+				<div className="plan-features__summary-price-row plan-features__summary-discount">
+					<span className="plan-features__summary-item">WordPress.com credits</span>
+					<span className="plan-features__summary-price">
+						{ formatCurrency( discount, currencyCode ) }
+					</span>
+					<div className="plan-features__summary-price-desc">
+						( { formatCurrency( discount * 12, currencyCode ) } / 12 months )
+					</div>
+				</div>
+				<div className="plan-features__summary-price-row plan-features__summary-total">
+					<span className="plan-features__summary-item">Total</span>
+					<span className="plan-features__summary-price">
+						{ formatCurrency( discountPrice, currencyCode ) }
+					</span>
+				</div>
+			</Fragment>
+		);
+	}
+
+	renderJetpackSummary() {
+		const { currencyCode, planTitle, rawPrice, relatedMonthlyPlan } = this.props;
+
+		if ( ! relatedMonthlyPlan ) {
+			return null;
 		}
 
-		return 'Credit summary';
+		const discount = relatedMonthlyPlan.raw_price * 12 - rawPrice;
+
+		// Note: Don't make this translatable because it's only visible to English-language users
+		return (
+			<Fragment>
+				<strong className="plan-features__summary-title">Discount summary</strong>
+				<div className="plan-features__summary-price-row">
+					<span className="plan-features__summary-item">{ planTitle } plan</span>
+					<span className="plan-features__summary-price">
+						{ formatCurrency( relatedMonthlyPlan.raw_price * 12, currencyCode ) }
+					</span>
+				</div>
+				<div className="plan-features__summary-price-row plan-features__summary-discount">
+					<span className="plan-features__summary-item">Jetpack discount</span>
+					<span className="plan-features__summary-price">
+						{ formatCurrency( discount, currencyCode ) }
+					</span>
+				</div>
+				<div className="plan-features__summary-price-row plan-features__summary-total">
+					<span className="plan-features__summary-item">Total</span>
+					<span className="plan-features__summary-price">
+						{ formatCurrency( rawPrice, currencyCode ) }
+					</span>
+				</div>
+			</Fragment>
+		);
 	}
 
 	render() {
-		const {
-			available,
-			currencyCode,
-			current,
-			currentPlanTitle,
-			discountPrice,
-			planTitle,
-			rawPrice,
-			relatedMonthlyPlan,
-			site,
-		} = this.props;
-		const isJetpackSite = !! site.jetpack;
+		const { available, current, site } = this.props;
 
-		let monthlyPrice, yearlyPrice, discountYearlyPrice;
-
-		if ( ! current && ! available ) {
+		if ( current || ! available ) {
 			return null;
 		}
 
-		if ( isJetpackSite && current ) {
-			return null;
-		}
-
-		if ( discountPrice ) {
-			if ( isJetpackSite ) {
-				yearlyPrice = rawPrice;
-				discountYearlyPrice = discountPrice;
-			} else {
-				monthlyPrice = rawPrice;
-				yearlyPrice = monthlyPrice * 12;
-				discountYearlyPrice = discountPrice * 12;
-			}
-		} else if ( relatedMonthlyPlan ) {
-			yearlyPrice = relatedMonthlyPlan.raw_price * 12;
-			discountYearlyPrice = rawPrice;
-		}
-
-		if ( ! yearlyPrice || ! discountYearlyPrice ) {
+		const summary = site.jetpack ? this.renderJetpackSummary() : this.renderWPCOMSummary();
+		if ( ! summary ) {
 			return null;
 		}
 
 		// Note: Don't make this translatable because it's only visible to English-language users
 		return (
 			<div className="plan-features__summary">
-				<strong className="plan-features__summary-title">{ this.getTitle() }</strong>
-				<div className="plan-features__summary-price-row">
-					<span className="plan-features__summary-item">{ planTitle } plan</span>
-					<span className="plan-features__summary-price">
-						{ formatCurrency( yearlyPrice, currencyCode ) }
-					</span>
-					{ monthlyPrice && (
-						<div className="plan-features__summary-price-desc">
-							({ formatCurrency( monthlyPrice, currencyCode ) } x 12 months)
-						</div>
-					) }
-				</div>
-				{ !! discountYearlyPrice && (
-					<div className="plan-features__summary-price-row plan-features__summary-discount">
-						<span className="plan-features__summary-item">
-							{ isJetpackSite ? 'Jetpack discount' : `${ currentPlanTitle } plan credits` }
-						</span>
-						<span className="plan-features__summary-price">
-							{ formatCurrency( discountYearlyPrice - yearlyPrice, currencyCode ) }
-						</span>
-					</div>
-				) }
-				<div className="plan-features__summary-price-row plan-features__summary-total">
-					<span className="plan-features__summary-item">Total</span>
-					<span className="plan-features__summary-price">
-						{ formatCurrency( discountYearlyPrice || yearlyPrice, currencyCode ) }
-					</span>
-				</div>
+				{ summary }
 				{ ! current && (
 					<div className="plan-features__summary-policy">30-day money-back guarantee included</div>
 				) }
