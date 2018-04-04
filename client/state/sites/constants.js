@@ -44,6 +44,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'page_on_front',
 	'page_for_posts',
 	'podcasting_archive',
+	'podcasting_category_id',
 	'publicize_permanently_disabled',
 	'show_on_front',
 	'signup_is_store',

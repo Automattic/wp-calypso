@@ -9,6 +9,10 @@
 		width: 35%;
 		padding-right: 24px;
 	}
+
+	button {
+		width: 100%;
+	}
 }
 
 .podcasting-details__basic-settings {
@@ -29,4 +33,11 @@
 	font-size: 13px;
 	font-style: italic;
 	font-weight: 400;
+}
+
+.podcasting-details__wrapper {
+	&.is-disabled fieldset:not( .podcasting-details__category-selector ) label,
+	&.is-disabled fieldset:not( .podcasting-details__category-selector ) .form-setting-explanation {
+		color: $gray-lighten-10;
+	}
 }

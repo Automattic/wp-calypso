@@ -18,7 +18,8 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 class PodcastingLink extends Component {
 	render() {
 		const { fields, siteSlug, translate } = this.props;
-		const podcastingEnabled = !! fields.podcasting_archive;
+		const podcastingEnabled =
+			fields && fields.podcasting_category_id && Number( fields.podcasting_category_id ) > 0;
 		const detailsLink = `/settings/podcasting/${ siteSlug }`;
 
 		return (

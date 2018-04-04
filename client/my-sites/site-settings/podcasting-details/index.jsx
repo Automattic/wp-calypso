@@ -7,7 +7,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map, toPairs, pick, get, find, flowRight } from 'lodash';
+import { map, toPairs, pick, flowRight } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -28,11 +29,17 @@ import TermTreeSelector from 'blocks/term-tree-selector';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getTerms, isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
+import { isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
-		const { fields, handleSelect, isRequestingSettings, translate } = this.props;
+		const {
+			fields,
+			handleSelect,
+			isRequestingSettings,
+			translate,
+			isPodcastingEnabled,
+		} = this.props;
 
 		return (
 			<FormFieldset>
@@ -42,7 +49,7 @@ class PodcastingDetails extends Component {
 					name="podcasting_explicit"
 					onChange={ handleSelect }
 					value={ fields.podcasting_explicit || 'no' }
-					disabled={ isRequestingSettings }
+					disabled={ isRequestingSettings || ! isPodcastingEnabled }
 				>
 					<option value="no">{ translate( 'No' ) }</option>
 					<option value="yes">{ translate( 'Yes' ) }</option>
@@ -74,7 +81,7 @@ class PodcastingDetails extends Component {
 	}
 
 	renderTextField( { FormComponent = FormInput, key, label } ) {
-		const { fields, isRequestingSettings, onChangeField } = this.props;
+		const { fields, isRequestingSettings, onChangeField, isPodcastingEnabled } = this.props;
 
 		return (
 			<FormFieldset>
@@ -85,21 +92,21 @@ class PodcastingDetails extends Component {
 					type="text"
 					value={ decodeEntities( fields[ key ] ) || '' }
 					onChange={ onChangeField( key ) }
-					disabled={ isRequestingSettings }
+					disabled={ isRequestingSettings || ! isPodcastingEnabled }
 				/>
 			</FormFieldset>
 		);
 	}
 
 	renderTopicSelector( key ) {
-		const { fields, handleSelect, isRequestingSettings } = this.props;
+		const { fields, handleSelect, isRequestingSettings, isPodcastingEnabled } = this.props;
 		return (
 			<FormSelect
 				id={ key }
 				name={ key }
 				onChange={ handleSelect }
 				value={ fields[ key ] || 0 }
-				disabled={ isRequestingSettings }
+				disabled={ isRequestingSettings || ! isPodcastingEnabled }
 			>
 				<option value="0">None</option>
 				{ map( toPairs( podcastingTopics ), ( [ topic, subtopics ] ) => {
@@ -142,10 +149,21 @@ class PodcastingDetails extends Component {
 	}
 
 	render() {
-		const { handleSubmitForm, siteSlug, siteId, podcastingCategoryId, translate } = this.props;
+		const {
+			handleSubmitForm,
+			siteSlug,
+			siteId,
+			podcastingCategoryId,
+			translate,
+			isPodcastingEnabled,
+		} = this.props;
 		if ( ! siteId ) {
 			return null;
 		}
+
+		const classes = classNames( 'podcasting-details__wrapper', {
+			'is-disabled': ! isPodcastingEnabled,
+		} );
 
 		const writingHref = `/settings/writing/${ siteSlug }`;
 
@@ -163,7 +181,7 @@ class PodcastingDetails extends Component {
 					>
 						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
-					<Card className="podcasting-details__wrapper">
+					<Card className={ classes }>
 						<FormFieldset className="podcasting-details__category-selector">
 							<QueryTerms siteId={ siteId } taxonomy="category" />
 							<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
@@ -178,7 +196,13 @@ class PodcastingDetails extends Component {
 								onChange={ this.onCategorySelected }
 								addTerm={ true }
 								onAddTermSuccess={ this.onCategorySelected }
+								height={ 200 }
 							/>
+							{ isPodcastingEnabled && (
+								<Button onClick={ this.onCategoryCleared } scary>
+									{ translate( 'Disable Podcast' ) }
+								</Button>
+							) }
 						</FormFieldset>
 						<div className="podcasting-details__basic-settings">
 							{ this.renderTextField( {
@@ -216,17 +240,28 @@ class PodcastingDetails extends Component {
 	}
 
 	onCategorySelected = category => {
+		this.setPodcastingCategoryId( category.ID );
+	};
+
+	onCategoryCleared = () => {
+		this.setPodcastingCategoryId( 0 );
+	};
+
+	setPodcastingCategoryId = newCategoryId => {
 		const { onChangeField } = this.props;
 
-		const event = { target: { value: category.slug } };
+		// Always send and save category IDs as strings because this is what
+		// the settings form wrapper expects (otherwise the settings form will
+		// be marked dirty again immediately after saving).
+		const event = { target: { value: String( newCategoryId ) } };
 
-		onChangeField( 'podcasting_archive' )( event );
+		onChangeField( 'podcasting_category_id' )( event );
 	};
 }
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'podcasting_archive',
+		'podcasting_category_id',
 		'podcasting_title',
 		'podcasting_subtitle',
 		'podcasting_talent_name',
@@ -244,26 +279,19 @@ const getFormSettings = settings => {
 const connectComponent = connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
-	let podcastingCategoryId = null;
-
-	// Retrieve podcasting category ID from saved category slug (if any)
-	const podcastingCategorySlug = get( ownProps.fields, 'podcasting_archive' );
-	if ( podcastingCategorySlug && podcastingCategorySlug !== '0' ) {
-		const categories = getTerms( state, siteId, 'category' );
-		if ( categories && categories.length ) {
-			// This is not a bound selector
-			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			const podcastingCategory = find( categories, c => c.slug === podcastingCategorySlug );
-			if ( podcastingCategory ) {
-				podcastingCategoryId = podcastingCategory.ID;
-			}
-		}
-	}
+	// The settings form wrapper gives us a string here, but inside this
+	// component, we always want to work with a number.
+	const podcastingCategoryId =
+		ownProps.fields &&
+		ownProps.fields.podcasting_category_id &&
+		Number( ownProps.fields.podcasting_category_id );
+	const isPodcastingEnabled = podcastingCategoryId > 0;
 
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		podcastingCategoryId,
+		isPodcastingEnabled,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 	};
 } );
