@@ -37,29 +37,29 @@ export const setNewest = transactionType => ( {
 /**
  * Sets the date filter value on the given transactionType table to show transactions from the given month
  * @param {String} transactionType - transaction type: 'past' or 'upcoming'
- * @param {String} date - month in format 'YYYY-MM-DD'
+ * @param {String} month - month in format 'YYYY-MM'
  * @returns {Object} action
  */
-export const setMonth = ( transactionType, date ) => ( {
+export const setMonth = ( transactionType, month ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
 	transactionType,
 	newest: false,
-	month: date,
+	month,
 	before: '',
 } );
 
 /**
  * Sets the date filter value on the given transactionType table to show transactions from BEFORE the given month
  * @param {String} transactionType - transaction type: 'past' or 'upcoming'
- * @param {String} date - month in format 'YYYY-MM-DD'
+ * @param {String} before - month in format 'YYYY-MM'
  * @returns {Object} action
  */
-export const setBefore = ( transactionType, date ) => ( {
+export const setBefore = ( transactionType, before ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
 	transactionType,
 	newest: false,
 	month: '',
-	before: date,
+	before,
 } );
 
 /**
@@ -75,7 +75,7 @@ export const setPage = ( transactionType, page ) => ( {
 } );
 
 /**
- * Sets the string query by which to filter the givent transactions
+ * Sets the search query by which to filter the transactions of the given type
  * @param {String} transactionType - transaction type: 'past' or 'upcoming'
  * @param {String} query - string query
  * @returns {Object} action
