@@ -101,7 +101,7 @@ describe( 'reducer', () => {
 				appPassword,
 			} );
 
-			expect( state ).toEqual( appPassword );
+			expect( state ).toBe( appPassword );
 		} );
 
 		test( 'should clear new application password when clearing requested', () => {

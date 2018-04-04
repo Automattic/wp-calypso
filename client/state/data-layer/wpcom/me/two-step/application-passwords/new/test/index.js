@@ -63,6 +63,6 @@ describe( 'apiTransformer()', () => {
 	test( 'should transform original response for a successful request', () => {
 		const appPassword = 'abcd 1234 efgh 5678';
 
-		expect( apiTransformer( { application_password: appPassword } ) ).toEqual( appPassword );
+		expect( apiTransformer( { application_password: appPassword } ) ).toBe( appPassword );
 	} );
 } );
