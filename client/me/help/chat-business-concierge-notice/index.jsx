@@ -31,7 +31,7 @@ class ChatBusinessConciergeNotice extends Component {
 		analytics.tracks.recordEvent( 'calypso_help_concierge_offer_click' );
 	};
 
-	render = () => {
+	render() {
 		const { moment, selectedSite, translate } = this.props;
 		const fromDate = moment( this.props.from );
 		const toDate = moment( this.props.to );
@@ -60,7 +60,7 @@ class ChatBusinessConciergeNotice extends Component {
 				description={ translate( 'Click here to get one-on-one help with a Happiness Engineer.' ) }
 			/>
 		);
-	};
+	}
 }
 
 export default connect( state => ( {
