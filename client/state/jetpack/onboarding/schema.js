@@ -1,6 +1,6 @@
 /** @format */
 
-export const jetpackOnboardingCredentialsSchema = {
+export default {
 	type: 'object',
 	additionalProperties: false,
 	required: [ 'siteUrl', 'token', 'userEmail' ],

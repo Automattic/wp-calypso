@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
-import { jetpackOnboardingCredentialsSchema } from './schema';
+import credentialsSchema from './schema';
 import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
@@ -18,7 +18,7 @@ const credentialsReducer = keyedReducer(
 			[ JETPACK_ONBOARDING_CREDENTIALS_RECEIVE ]: ( state, { credentials } ) => credentials,
 			[ JETPACK_CONNECT_AUTHORIZE_RECEIVE ]: () => undefined,
 		},
-		jetpackOnboardingCredentialsSchema
+		credentialsSchema
 	)
 );
 credentialsReducer.hasCustomPersistence = true;
