@@ -16,7 +16,7 @@ import { combineReducers, createReducer, keyedReducer } from 'state/utils';
  * @param  {Object} action Action payload
  * @return {String}        Updated state
  */
-export const app = createReducer( '', {
+export const app = createReducer( null, {
 	[ BILLING_TRANSACTIONS_FILTER_SET_APP ]: ( state, action ) => action.app,
 } );
 

@@ -13,7 +13,7 @@ import { app, date, page, query } from '../reducer';
 describe( 'transaction filter reducer', () => {
 	describe( '#app', () => {
 		test( 'should update from empty filter', () => {
-			const state = app( '', {
+			const state = app( null, {
 				type: BILLING_TRANSACTIONS_FILTER_SET_APP,
 				transactionType: 'past',
 				app: 'Test app',
@@ -34,9 +34,9 @@ describe( 'transaction filter reducer', () => {
 			const state = app( 'Test app', {
 				type: BILLING_TRANSACTIONS_FILTER_SET_APP,
 				transactionType: 'past',
-				app: '',
+				app: null,
 			} );
-			expect( state ).toEqual( '' );
+			expect( state ).toBeNull();
 		} );
 	} );
 
