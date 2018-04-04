@@ -17,6 +17,7 @@ export default function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
 		page(
 			'/plugins/setup',
+			pluginsController.scrollTopIfNoHash,
 			siteSelection,
 			pluginsController.setupPlugins,
 			makeLayout,
@@ -25,6 +26,7 @@ export default function() {
 
 		page(
 			'/plugins/setup/:site',
+			pluginsController.scrollTopIfNoHash,
 			siteSelection,
 			pluginsController.setupPlugins,
 			makeLayout,
@@ -59,9 +61,17 @@ export default function() {
 		} );
 
 		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
-			page( '/plugins/upload', siteSelection, sites, makeLayout, clientRender );
+			page(
+				'/plugins/upload',
+				pluginsController.scrollTopIfNoHash,
+				siteSelection,
+				sites,
+				makeLayout,
+				clientRender
+			);
 			page(
 				'/plugins/upload/:site_id',
+				pluginsController.scrollTopIfNoHash,
 				siteSelection,
 				navigation,
 				pluginsController.upload,
@@ -72,6 +82,7 @@ export default function() {
 
 		page(
 			'/plugins',
+			pluginsController.scrollTopIfNoHash,
 			siteSelection,
 			navigation,
 			pluginsController.browsePlugins,
@@ -81,6 +92,7 @@ export default function() {
 
 		page(
 			'/plugins/manage/:site?',
+			pluginsController.scrollTopIfNoHash,
 			siteSelection,
 			navigation,
 			pluginsController.plugins,
@@ -90,6 +102,7 @@ export default function() {
 
 		page(
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
+			pluginsController.scrollTopIfNoHash,
 			siteSelection,
 			navigation,
 			pluginsController.jetpackCanUpdate,
@@ -100,6 +113,7 @@ export default function() {
 
 		page(
 			'/plugins/:plugin/:site_id?',
+			pluginsController.scrollTopIfNoHash,
 			siteSelection,
 			navigation,
 			pluginsController.browsePluginsOrPlugin,
@@ -109,6 +123,7 @@ export default function() {
 
 		page(
 			'/plugins/:plugin/eligibility/:site_id',
+			pluginsController.scrollTopIfNoHash,
 			siteSelection,
 			navigation,
 			pluginsController.eligibility,

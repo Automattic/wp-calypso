@@ -242,6 +242,13 @@ const controller = {
 		lastPluginsListVisited = null;
 		lastPluginsQuerystring = null;
 	},
+
+	scrollTopIfNoHash( context, next ) {
+		if ( typeof window !== 'undefined' && ! window.location.hash ) {
+			window.scrollTo( 0, 0 );
+		}
+		next();
+	},
 };
 
 export default controller;
