@@ -143,7 +143,6 @@ const webpackConfig = {
 		noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
 		rules: [
 			{
-				type: 'javascript/auto',
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
 				use: _.compact( [
