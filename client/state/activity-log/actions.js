@@ -92,7 +92,7 @@ export function activityLogRequest( siteId, params ) {
 	};
 }
 
-export function activityLogUpdate( siteId, data, found, oldestItemTs, query ) {
+export function activityLogUpdate( siteId, data, found, oldestItemTs, query, { doMerge } ) {
 	return {
 		type: ACTIVITY_LOG_UPDATE,
 		siteId,
@@ -100,6 +100,7 @@ export function activityLogUpdate( siteId, data, found, oldestItemTs, query ) {
 		found,
 		oldestItemTs,
 		query,
+		doMerge,
 	};
 }
 

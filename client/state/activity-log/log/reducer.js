@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
@@ -10,10 +9,10 @@ import { logItemsSchema } from './schema';
 
 export const logItem = withSchemaValidation(
 	logItemsSchema,
-	( state = new ActivityQueryManager(), { type, data, found, query } ) => {
+	( state = new ActivityQueryManager(), { type, data, found, query, doMerge = false } ) => {
 		switch ( type ) {
 			case ACTIVITY_LOG_UPDATE:
-				return state.receive( data, { found, query } );
+				return ( doMerge ? state : new ActivityQueryManager() ).receive( data, { found, query } );
 
 			case DESERIALIZE:
 				return new ActivityQueryManager( state.data, state.options );
@@ -28,7 +27,6 @@ export const logItem = withSchemaValidation(
 );
 
 export const logItems = keyedReducer( 'siteId', logItem );
-logItems.hasCustomPersistence = true;
 
 export const oldestItemTs = keyedReducer( 'siteId', ( state = Infinity, action ) => {
 	switch ( action.type ) {
