@@ -3,10 +3,11 @@
 /**
  * Internal dependencies
  */
-import { addApplicationPassword, handleAddError, handleAddSuccess } from '../';
+import { addApplicationPassword, apiTransformer, handleAddError, handleAddSuccess } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	createApplicationPassword,
+	createApplicationPasswordSuccess,
 	requestApplicationPasswords,
 } from 'state/application-passwords/actions';
 
@@ -33,10 +34,14 @@ describe( 'addApplicationPassword()', () => {
 } );
 
 describe( 'handleAddSuccess()', () => {
-	test( 'should return an application passwords request action', () => {
-		const action = handleAddSuccess();
+	test( 'should return a create success action and an application passwords request action', () => {
+		const appPassword = 'abcd 1234 efgh 5678';
+		const action = handleAddSuccess( null, appPassword );
 
-		expect( action ).toEqual( requestApplicationPasswords() );
+		expect( action ).toEqual( [
+			createApplicationPasswordSuccess( appPassword ),
+			requestApplicationPasswords(),
+		] );
 	} );
 } );
 
@@ -51,5 +56,13 @@ describe( 'handleAddError()', () => {
 				duration: 8000,
 			} ),
 		} );
+	} );
+} );
+
+describe( 'apiTransformer()', () => {
+	test( 'should transform original response for a successful request', () => {
+		const appPassword = 'abcd 1234 efgh 5678';
+
+		expect( apiTransformer( { application_password: appPassword } ) ).toBe( appPassword );
 	} );
 } );
