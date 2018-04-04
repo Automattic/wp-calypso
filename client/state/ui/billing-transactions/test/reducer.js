@@ -8,7 +8,8 @@ import deepFreeze from 'deep-freeze';
  */
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
-	BILLING_TRANSACTIONS_FILTER_SET_DATE,
+	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
+	BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
@@ -52,47 +53,57 @@ describe( 'transaction filter reducer', () => {
 	describe( '#date()', () => {
 		test( 'should return default state', () => {
 			const state = date( undefined, {} );
-			expect( state ).toEqual( { newest: true } );
+			expect( state ).toEqual( null );
 		} );
 
 		test( 'should set the date filter to month', () => {
-			const state = date( deepFreeze( { newest: true } ), {
-				type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
+			const state = date( null, {
+				type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 				transactionType: 'past',
-				newest: false,
-				month: '2018-03-29',
-				before: '',
+				month: '2018-03',
+				operator: 'equal',
 			} );
-			expect( state ).toEqual( { newest: false, month: '2018-03-29', before: '' } );
+			expect( state ).toEqual( { month: '2018-03', operator: 'equal' } );
 		} );
 
 		test( 'should set the date filter to before', () => {
-			const state = date( deepFreeze( { newest: true } ), {
-				type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
+			const state = date( null, {
+				type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 				transactionType: 'past',
-				newest: false,
-				month: '',
-				before: '2018-03-29',
+				month: '2018-03',
+				operator: 'before',
 			} );
-			expect( state ).toEqual( { newest: false, month: '', before: '2018-03-29' } );
+			expect( state ).toEqual( { month: '2018-03', operator: 'before' } );
 		} );
 
-		test( 'should update existing filter', () => {
+		test( 'should update existing filter with new month', () => {
 			const state = date(
 				deepFreeze( {
-					newest: false,
-					month: '2018-03-29',
-					before: '',
+					month: '2018-03',
+					operator: 'before',
 				} ),
 				{
-					type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
+					type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 					transactionType: 'past',
-					newest: true,
-					month: '',
-					before: '',
+					month: '2018-09',
+					operator: 'equal',
 				}
 			);
-			expect( state ).toEqual( { newest: true, month: '', before: '' } );
+			expect( state ).toEqual( { month: '2018-09', operator: 'equal' } );
+		} );
+
+		test( 'should change the existing filter to newest', () => {
+			const state = date(
+				deepFreeze( {
+					month: '2018-03',
+					operator: 'before',
+				} ),
+				{
+					type: BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
+					transactionType: 'past',
+				}
+			);
+			expect( state ).toBeNull();
 		} );
 	} );
 
@@ -120,13 +131,20 @@ describe( 'transaction filter reducer', () => {
 			expect( state ).toEqual( 1 );
 		} );
 
-		test( 'should reset to 1 on date filter change', () => {
+		test( 'should reset to 1 on date filter being set to a month', () => {
 			const state = page( 4, {
-				type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
+				type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 				transactionType: 'past',
-				newest: false,
-				month: '2018-03-29',
-				before: '',
+				month: '2018-03',
+				operator: 'equal',
+			} );
+			expect( state ).toEqual( 1 );
+		} );
+
+		test( 'should reset to 1 on date filter being set to newest', () => {
+			const state = page( 4, {
+				type: BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
+				transactionType: 'past',
 			} );
 			expect( state ).toEqual( 1 );
 		} );

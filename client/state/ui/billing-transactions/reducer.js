@@ -4,7 +4,8 @@
  */
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
-	BILLING_TRANSACTIONS_FILTER_SET_DATE,
+	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
+	BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
@@ -26,16 +27,13 @@ export const app = createReducer( null, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const date = createReducer(
-	{ newest: true },
-	{
-		[ BILLING_TRANSACTIONS_FILTER_SET_DATE ]: ( state, { before, month, newest } ) => ( {
-			before,
-			month,
-			newest,
-		} ),
-	}
-);
+export const date = createReducer( null, {
+	[ BILLING_TRANSACTIONS_FILTER_SET_NEWEST ]: () => null,
+	[ BILLING_TRANSACTIONS_FILTER_SET_MONTH ]: ( state, { month, operator } ) => ( {
+		month,
+		operator,
+	} ),
+} );
 
 /**
  * Returns the updated page state after an action has been dispatched
@@ -45,7 +43,8 @@ export const date = createReducer(
  */
 export const page = createReducer( 1, {
 	[ BILLING_TRANSACTIONS_FILTER_SET_APP ]: () => 1,
-	[ BILLING_TRANSACTIONS_FILTER_SET_DATE ]: () => 1,
+	[ BILLING_TRANSACTIONS_FILTER_SET_MONTH ]: () => 1,
+	[ BILLING_TRANSACTIONS_FILTER_SET_NEWEST ]: () => 1,
 	[ BILLING_TRANSACTIONS_FILTER_SET_PAGE ]: ( state, action ) => action.page,
 	[ BILLING_TRANSACTIONS_FILTER_SET_QUERY ]: () => 1,
 } );

@@ -4,11 +4,12 @@
  */
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
-	BILLING_TRANSACTIONS_FILTER_SET_DATE,
+	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
+	BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
-import { setApp, setBefore, setMonth, setNewest, setPage, setQuery } from '../actions';
+import { setApp, setDate, setNewest, setPage, setQuery } from '../actions';
 
 describe( 'transaction filter actions', () => {
 	describe( '#setApp()', () => {
@@ -26,37 +27,20 @@ describe( 'transaction filter actions', () => {
 		test( 'should return an action object', () => {
 			const action = setNewest( 'past' );
 			expect( action ).toEqual( {
-				type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
+				type: BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 				transactionType: 'past',
-				newest: true,
-				month: '',
-				before: '',
 			} );
 		} );
 	} );
 
-	describe( '#setMonth()', () => {
+	describe( '#setDate()', () => {
 		test( 'should return an action object', () => {
-			const action = setMonth( 'past', '2018-03-29' );
+			const action = setDate( 'past', '2018-03', 'equal' );
 			expect( action ).toEqual( {
-				type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
+				type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 				transactionType: 'past',
-				newest: false,
-				month: '2018-03-29',
-				before: '',
-			} );
-		} );
-	} );
-
-	describe( '#setBefore()', () => {
-		test( 'should return an action object', () => {
-			const action = setBefore( 'past', '2017-03-29' );
-			expect( action ).toEqual( {
-				type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
-				transactionType: 'past',
-				newest: false,
-				month: '',
-				before: '2017-03-29',
+				month: '2018-03',
+				operator: 'equal',
 			} );
 		} );
 	} );

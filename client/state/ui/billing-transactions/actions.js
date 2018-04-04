@@ -4,7 +4,8 @@
  */
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
-	BILLING_TRANSACTIONS_FILTER_SET_DATE,
+	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
+	BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
@@ -27,39 +28,23 @@ export const setApp = ( transactionType, app ) => ( {
  * @returns {Object} action
  */
 export const setNewest = transactionType => ( {
-	type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
+	type: BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 	transactionType,
-	newest: true,
-	month: '',
-	before: '',
 } );
 
 /**
- * Sets the date filter value on the given transactionType table to show transactions from the given month
+ * Sets the date filter value on the given transactionType table to show the transactions relative
+ * to the given month
  * @param {String} transactionType - transaction type: 'past' or 'upcoming'
  * @param {String} month - month in format 'YYYY-MM'
+ * @param {String} operator - operator for the month. One of: equal, before
  * @returns {Object} action
  */
-export const setMonth = ( transactionType, month ) => ( {
-	type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
+export const setDate = ( transactionType, month, operator ) => ( {
+	type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 	transactionType,
-	newest: false,
 	month,
-	before: '',
-} );
-
-/**
- * Sets the date filter value on the given transactionType table to show transactions from BEFORE the given month
- * @param {String} transactionType - transaction type: 'past' or 'upcoming'
- * @param {String} before - month in format 'YYYY-MM'
- * @returns {Object} action
- */
-export const setBefore = ( transactionType, before ) => ( {
-	type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
-	transactionType,
-	newest: false,
-	month: '',
-	before,
+	operator,
 } );
 
 /**
