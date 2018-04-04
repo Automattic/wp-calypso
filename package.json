@@ -21,7 +21,7 @@
     "autoprefixer": "6.3.5",
     "autosize": "3.0.15",
     "babel-core": "6.25.0",
-    "babel-loader": "7.1.1",
+    "babel-loader": "7.1.4",
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-plugin-syntax-jsx": "6.18.0",
     "babel-plugin-transform-class-properties": "6.24.1",
@@ -160,7 +160,6 @@
     "webpack": "4.2.0",
     "webpack-cli": "2.0.9",
     "webpack-dev-middleware": "2.0.6",
-    "webpack-hot-middleware": "2.15.0",
     "wpcom": "5.4.1",
     "wpcom-oauth": "0.3.3",
     "wpcom-proxy-request": "5.0.0",
@@ -281,7 +280,8 @@
     "stylelint": "6.9.0",
     "supertest": "2.0.0",
     "terminal-kit": "1.13.13",
-    "webpack-bundle-analyzer": "2.11.1"
+    "webpack-bundle-analyzer": "2.11.1",
+    "webpack-hot-middleware": "2.15.0"
   },
   "optionalDependencies": {
     "fsevents": "1.1.3"

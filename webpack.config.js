@@ -95,7 +95,7 @@ const babelLoader = {
 
 const webpackConfig = {
 	bail: ! isDevelopment,
-	entry: {},
+	entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
 	profile: shouldEmitStats,
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: isDevelopment ? '#eval' : process.env.SOURCEMAP || false, // in production builds you can specify a source-map via env var
@@ -113,13 +113,6 @@ const webpackConfig = {
 
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
-			/*cacheGroups: {
-				tinymce: {
-					test: /[\\/]node_modules[\\/]tinymce[\\/]/,
-					priority: 10,
-					name: 'tinymce',
-				},
-			},*/
 		},
 		runtimeChunk: { name: 'manifest' },
 		namedModules: true,
@@ -251,7 +244,6 @@ const webpackConfig = {
 					timings: true,
 				},
 			} ),
-		//new webpack.HashedModuleIdsPlugin(),
 	] ),
 	externals: [ 'electron' ],
 };
@@ -271,14 +263,8 @@ if ( isDevelopment ) {
 	webpackConfig.output.filename = '[name].js';
 	webpackConfig.output.chunkFilename = '[name].js';
 
-	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new webpack.HotModuleReplacementPlugin(),
-		new webpack.LoaderOptionsPlugin( { debug: true } ),
-	] );
-	webpackConfig.entry.build = [ path.join( __dirname, 'client', 'boot', 'app' ) ];
-	webpackConfig.devServer = { hot: true, inline: true };
-} else {
-	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
+	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
+	webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
 }
 
 if ( ! config.isEnabled( 'desktop' ) ) {
