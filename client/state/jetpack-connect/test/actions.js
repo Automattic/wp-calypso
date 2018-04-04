@@ -403,60 +403,60 @@ describe( '#authorizeSSO()', () => {
 			} );
 		} );
 	} );
+} );
 
-	describe( '#createAccount()', () => {
-		const { createAccount } = actions;
+describe( '#createAccount()', () => {
+	const { createAccount } = actions;
 
-		beforeEach( jest.restoreAllMocks );
+	beforeEach( jest.restoreAllMocks );
 
-		test( 'should dispatch create action', () => {
-			jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-				usersNew( _, callback ) {
-					callback( null, {} );
-				},
-			} ) );
+	test( 'should dispatch create action', () => {
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			usersNew( _, callback ) {
+				callback( null, {} );
+			},
+		} ) );
 
-			const spy = jest.fn();
-			createAccount()( spy );
-			expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
+		const spy = jest.fn();
+		createAccount()( spy );
+		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
+	} );
+
+	test( 'should dispatch receive action with appropriate data', () => {
+		const userData = { username: 'happyuser' };
+		const data = { some: 'data' };
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			usersNew( _, callback ) {
+				callback( null, data );
+			},
+		} ) );
+
+		const spy = jest.fn();
+		createAccount( userData )( spy );
+		expect( spy ).toHaveBeenCalledWith( {
+			data,
+			error: null,
+			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+			userData,
 		} );
+	} );
 
-		test( 'should dispatch receive action with appropriate data', () => {
-			const userData = { username: 'happyuser' };
-			const data = { some: 'data' };
-			jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-				usersNew( _, callback ) {
-					callback( null, data );
-				},
-			} ) );
+	test( 'should dispatch receive action with error data', () => {
+		const userData = { username: 'saduser' };
+		const error = { code: 'error' };
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			usersNew( _, callback ) {
+				callback( error, null );
+			},
+		} ) );
 
-			const spy = jest.fn();
-			createAccount( userData )( spy );
-			expect( spy ).toHaveBeenCalledWith( {
-				data,
-				error: null,
-				type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-				userData,
-			} );
-		} );
-
-		test( 'should dispatch receive action with error data', () => {
-			const userData = { username: 'saduser' };
-			const error = { code: 'error' };
-			jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-				usersNew( _, callback ) {
-					callback( error, null );
-				},
-			} ) );
-
-			const spy = jest.fn();
-			createAccount( userData )( spy );
-			expect( spy ).toHaveBeenCalledWith( {
-				data: null,
-				error,
-				type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-				userData,
-			} );
+		const spy = jest.fn();
+		createAccount( userData )( spy );
+		expect( spy ).toHaveBeenCalledWith( {
+			data: null,
+			error,
+			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+			userData,
 		} );
 	} );
 } );
