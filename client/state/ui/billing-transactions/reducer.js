@@ -29,10 +29,10 @@ export const app = createReducer( null, {
 export const date = createReducer(
 	{ newest: true },
 	{
-		[ BILLING_TRANSACTIONS_FILTER_SET_DATE ]: ( state, { newest, month, before } ) => ( {
-			newest,
-			month,
+		[ BILLING_TRANSACTIONS_FILTER_SET_DATE ]: ( state, { before, month, newest } ) => ( {
 			before,
+			month,
+			newest,
 		} ),
 	}
 );

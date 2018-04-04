@@ -1,5 +1,9 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import deepFreeze from 'deep-freeze';
+/**
  * Internal dependencies
  */
 import {
@@ -11,7 +15,12 @@ import {
 import { app, date, page, query } from '../reducer';
 
 describe( 'transaction filter reducer', () => {
-	describe( '#app', () => {
+	describe( '#app()', () => {
+		test( 'should return default state', () => {
+			const state = app( undefined, {} );
+			expect( state ).toBeNull();
+		} );
+
 		test( 'should update from empty filter', () => {
 			const state = app( null, {
 				type: BILLING_TRANSACTIONS_FILTER_SET_APP,
@@ -40,9 +49,14 @@ describe( 'transaction filter reducer', () => {
 		} );
 	} );
 
-	describe( '#date', () => {
+	describe( '#date()', () => {
+		test( 'should return default state', () => {
+			const state = date( undefined, {} );
+			expect( state ).toEqual( { newest: true } );
+		} );
+
 		test( 'should set the date filter to month', () => {
-			const state = date( Object.freeze( { newest: true } ), {
+			const state = date( deepFreeze( { newest: true } ), {
 				type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
 				transactionType: 'past',
 				newest: false,
@@ -53,7 +67,7 @@ describe( 'transaction filter reducer', () => {
 		} );
 
 		test( 'should set the date filter to before', () => {
-			const state = date( Object.freeze( { newest: true } ), {
+			const state = date( deepFreeze( { newest: true } ), {
 				type: BILLING_TRANSACTIONS_FILTER_SET_DATE,
 				transactionType: 'past',
 				newest: false,
@@ -65,7 +79,7 @@ describe( 'transaction filter reducer', () => {
 
 		test( 'should update existing filter', () => {
 			const state = date(
-				Object.freeze( {
+				deepFreeze( {
 					newest: false,
 					month: '2018-03-29',
 					before: '',
@@ -82,7 +96,12 @@ describe( 'transaction filter reducer', () => {
 		} );
 	} );
 
-	describe( '#page', () => {
+	describe( '#page()', () => {
+		test( 'should return default state', () => {
+			const state = page( undefined, {} );
+			expect( state ).toEqual( 1 );
+		} );
+
 		test( 'should update set the page number', () => {
 			const state = page( 1, {
 				type: BILLING_TRANSACTIONS_FILTER_SET_PAGE,
@@ -122,7 +141,12 @@ describe( 'transaction filter reducer', () => {
 		} );
 	} );
 
-	describe( '#query', () => {
+	describe( '#query()', () => {
+		test( 'should return default state', () => {
+			const state = query( undefined, {} );
+			expect( state ).toEqual( '' );
+		} );
+
 		test( 'should update from empty query', () => {
 			const state = query( '', {
 				type: BILLING_TRANSACTIONS_FILTER_SET_QUERY,
@@ -139,15 +163,6 @@ describe( 'transaction filter reducer', () => {
 				query: 'Another test query',
 			} );
 			expect( state ).toEqual( 'Another test query' );
-		} );
-
-		test( 'should clear the query', () => {
-			const state = query( 'Test query', {
-				type: BILLING_TRANSACTIONS_FILTER_SET_QUERY,
-				transactionType: 'past',
-				query: '',
-			} );
-			expect( state ).toEqual( '' );
 		} );
 	} );
 } );
