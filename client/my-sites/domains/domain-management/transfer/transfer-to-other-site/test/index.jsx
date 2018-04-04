@@ -89,7 +89,7 @@ describe( 'TransferToOtherSite.isSiteEligible()', () => {
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
 	].forEach( plan => {
-		test( `Should return false for plan ${ plan }`, () => {
+		test( `Should return true for plan ${ plan }`, () => {
 			const instance = new TransferToOtherSite( props );
 			expect( instance.isSiteEligible( { ...site, plan: { product_slug: plan } } ) ).toBe( true );
 		} );
