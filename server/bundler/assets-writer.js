@@ -60,7 +60,9 @@ Object.assign( AssetsWriter.prototype, {
 			}
 
 			statsToOutput.entrypoints = _.mapValues( stats.entrypoints, entry => ( {
-				chunks: _.reject( entry.chunks, chunk => chunk.startsWith( 'manifest' ) ),
+				chunks: _.reject( entry.chunks, chunk => {
+					String( chunk ).startsWith( 'manifest' );
+				} ),
 				assets: _.reject( entry.assets, asset => asset.startsWith( 'manifest' ) ).map( fixupPath ),
 			} ) );
 
@@ -71,7 +73,9 @@ Object.assign( AssetsWriter.prototype, {
 			statsToOutput.chunks = stats.chunks.map( chunk =>
 				Object.assign( {}, chunk, {
 					files: chunk.files.map( fixupPath ),
-					siblings: _.reject( chunk.siblings, sibling => sibling.startsWith( 'manifest' ) ),
+					siblings: _.reject( chunk.siblings, sibling =>
+						String( sibling ).startsWith( 'manifest' )
+					),
 				} )
 			);
 
