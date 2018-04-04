@@ -12,7 +12,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
 
-import { getJetpackOnboardingSettings } from 'state/selectors';
+import { getJetpackSettings } from 'state/selectors';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
 function MyJetpackSettings( { settings, siteId } ) {
@@ -28,7 +28,7 @@ function MyJetpackSettings( { settings, siteId } ) {
 
 export default connect(
 	( state, { siteId } ) => ( {
-		settings: getJetpackOnboardingSettings( state, siteId )
+		settings: getJetpackSettings( state, siteId )
 	} )
 )( MyJetpackSettings );
 ```
