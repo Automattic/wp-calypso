@@ -14,14 +14,14 @@ This component is aware of the selected site and, if the current URL contains a 
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 render() {
-    return (
-        <Main>
-            <PageViewTracker path="/section/page" title="My Cool Section > My Cool Page" />
-            <MyCoolComponent>
-                <MyCoolChildren />
-            </MyCoolComponent>
-        </Main>
-    );
+	return (
+		<Main>
+			<PageViewTracker path="/section/page" title="My Cool Section > My Cool Page" />
+			<MyCoolComponent>
+				<MyCoolChildren />
+			</MyCoolComponent>
+		</Main>
+	);
 );
 ```
 
@@ -31,20 +31,20 @@ render() {
 import PageViewTracker from 'analytics/page-view-tracker';
 
 render() {
-    // consider a view for less than 500ms as an
-    // accidental view and thus don't track
+	// consider a view for less than 500ms as an
+	// accidental view and thus don't track
 
-    return (
-        <Main>
-            <PageViewTracker 
-                delay={ 500 } 
+	return (
+		<Main>
+			<PageViewTracker 
+				delay={ 500 } 
 				path="/section/page"
 				title="My Cool Section > My Cool Page"
-            />
-            <MyCoolComponent>
-                <MyCoolChildren />
-            </MyCoolComponent>
-        </Main>
-    );
+			/>
+			<MyCoolComponent>
+				<MyCoolChildren />
+			</MyCoolComponent>
+		</Main>
+	);
 );
 ```
