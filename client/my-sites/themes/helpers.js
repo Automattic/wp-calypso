@@ -31,7 +31,7 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 	let analyticsPageTitle = 'Themes';
 
 	if ( vertical ) {
-		analyticsPath += '/:vertical';
+		analyticsPath += `/${ vertical }`;
 	}
 
 	if ( tier ) {
@@ -39,7 +39,7 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 	}
 
 	if ( filter ) {
-		analyticsPath += '/filter/:filter';
+		analyticsPath += `/filter/${ filter }`;
 	}
 
 	if ( site_id ) {
