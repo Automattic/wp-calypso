@@ -18,7 +18,11 @@ const SVG_SIZE = 300;
 
 class PieChart extends Component {
 	static propTypes = {
-		data: PropTypes.array.isRequired,
+		data: PropTypes.arrayOf( PropTypes.shape( {
+			description: PropTypes.string,
+			name: PropTypes.string.isRequired,
+			value: PropTypes.number.isRequired,
+		} ) ).isRequired,
 		title: PropTypes.string,
 	};
 
