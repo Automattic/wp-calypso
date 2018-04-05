@@ -25,7 +25,7 @@ describe( 'getApplicationPasswords()', () => {
 			},
 		};
 		const result = getApplicationPasswords( state );
-		expect( result ).toEqual( appPasswords );
+		expect( result ).toBe( appPasswords );
 	} );
 
 	test( 'should return an empty array with an empty state', () => {
