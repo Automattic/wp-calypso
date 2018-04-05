@@ -36,7 +36,6 @@ const productsWithPrices = [
 const SubscriptionLengthPickerExample = () => (
 	<div>
 		<SubscriptionLengthPicker
-			initialValue=""
 			currencyCode="USD"
 			productsWithPrices={ productsWithPrices }
 			initialValue={ PLAN_BUSINESS_2_YEARS }

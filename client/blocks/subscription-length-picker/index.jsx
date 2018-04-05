@@ -35,6 +35,11 @@ export class SubscriptionLengthPicker extends React.Component {
 		productsWithPrices: PropTypes.array.isRequired,
 		onChange: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+
+		fetchingPlans: PropTypes.bool,
+		fetchingProducts: PropTypes.bool,
+		requestProductsList: PropTypes.func,
+		requestPlans: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -46,6 +51,17 @@ export class SubscriptionLengthPicker extends React.Component {
 		this.state = {
 			checked: props.initialValue,
 		};
+	}
+
+	componentWillMount() {
+		if ( this.props.productsWithPrices.length === 0 ) {
+			if ( ! this.props.fetchingProducts && this.props.requestProductsList ) {
+				this.props.requestProductsList();
+			}
+			if ( ! this.props.fetchingPlans && this.props.requestPlans ) {
+				this.props.requestPlans();
+			}
+		}
 	}
 
 	render() {
@@ -95,32 +111,6 @@ export class SubscriptionLengthPicker extends React.Component {
 		} );
 		this.props.onChange( { value } );
 	};
-}
-
-class SubscriptionLengthPickerContainer extends React.Component {
-	static defaultProps = {
-		...SubscriptionLengthPicker.defaultProps,
-
-		fetchingPlans: PropTypes.bool.isRequired,
-		fetchingProducts: PropTypes.bool.isRequired,
-		requestProductsList: PropTypes.func.isRequired,
-		requestPlans: PropTypes.func.isRequired,
-	};
-
-	componentWillMount() {
-		if ( this.props.productsWithPrices.length === 0 ) {
-			if ( ! this.props.fetchingProducts ) {
-				this.props.requestProductsList();
-			}
-			if ( ! this.props.fetchingPlans ) {
-				this.props.requestPlans();
-			}
-		}
-	}
-
-	render() {
-		return <SubscriptionLengthPicker { ...this.props } />;
-	}
 }
 
 const EPSILON = 0.009;
@@ -192,4 +182,4 @@ export const mapStateToProps = ( state, { plans } ) => {
 export default connect( mapStateToProps, {
 	requestPlans,
 	requestProductsList,
-} )( localize( SubscriptionLengthPickerContainer ) );
+} )( localize( SubscriptionLengthPicker ) );
