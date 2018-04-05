@@ -24,10 +24,10 @@ import {
 	// shufflePosts,
 } from 'state/reader/streams/actions';
 import {
-	getStream,
-	getTransformedStreamItems,
-	shouldRequestRecs,
-} from 'state/reader/streams/selectors';
+	getReaderStream as getStream,
+	getReaderStreamTransformedItems as getTransformedStreamItems,
+	getReaderStreamShouldRequestRecommendations as shouldRequestRecs,
+} from 'state/selectors';
 
 import LikeHelper from 'reader/like-helper';
 import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';

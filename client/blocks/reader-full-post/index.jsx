@@ -63,7 +63,11 @@ import { READER_FULL_POST } from 'reader/follow-sources';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import isLikedPost from 'state/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
-import { getCurrentStream, getPreviousItem, getNextItem } from 'state/reader/streams/selectors';
+import {
+	getReaderCurrentStream as getCurrentStream,
+	getReaderStreamPrevItem as getPreviousItem,
+	getReaderStreamNextItem as getNextItem,
+} from 'state/selectors';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
