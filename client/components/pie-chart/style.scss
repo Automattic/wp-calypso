@@ -1,3 +1,20 @@
+.pie-chart__chart {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.pie-chart__chart-drawing {
+	max-width: 400px;
+	max-height: 400px;
+}
+
+.pie-chart__title {
+	margin-top: 15px;
+	font-size: 24px;
+	text-align: center;
+}
+
 .pie-chart__chart-section-0,
 .pie-chart__legend-sample-0 {
 	fill: $blue-dark;
@@ -13,16 +30,11 @@
 	fill: $blue-light;
 }
 
-.pie-chart__chart {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
 .pie-chart__legend-item {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	margin-top: 20px;
 }
 
 .pie-chart__legend-item-title {
@@ -36,13 +48,8 @@
 	align-content: center;
 }
 
-.pie-chart__title {
-	text-align: center;
-	font-size: 24px;
-}
-
 .pie-chart__legend-item-title-name {
-	font-size: 20px;
+	font-size: 21px;
 }
 
 .pie-chart__legend-item-title-sample-drawing {
@@ -57,15 +64,10 @@
 }
 
 .pie-chart__legend-item-detail-value {
-	font-size: 20px;
+	font-size: 16px;
 }
 
 .pie-chart__legend-item-detail-description {
-	font-size: 20px;
+	font-size: 16px;
 	color: $gray-text-min;
-}
-
-.pie-chart__chart-drawing {
-	max-width: 400px;
-	max-height: 400px;
 }
