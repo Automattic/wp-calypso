@@ -285,7 +285,7 @@ describe( 'handleSaveFailure()', () => {
 			expect.objectContaining( {
 				notice: expect.objectContaining( {
 					status: 'is-error',
-					text: 'An unexpected error occurred. Please try again later.',
+					text: 'There was a problem saving your changes. Please try again.',
 					noticeId: `jpo-notice-error-${ siteId }`,
 					duration: 5000,
 				} ),
@@ -353,7 +353,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 			expect.objectContaining( {
 				notice: expect.objectContaining( {
 					status: 'is-error',
-					text: 'An unexpected error occurred. Please try again later.',
+					text: 'There was a problem saving your changes. Please try again.',
 					noticeId: `jpo-notice-error-${ siteId }`,
 					duration: 5000,
 				} ),

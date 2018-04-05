@@ -138,7 +138,7 @@ export const handleSaveFailure = (
 ) => {
 	dispatch( updateJetpackSettings( siteId, previousSettings ) );
 	dispatch(
-		errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
+		errorNotice( translate( 'There was a problem saving your changes. Please try again.' ), {
 			id: `jpo-notice-error-${ siteId }`,
 			duration: 5000,
 		} )
