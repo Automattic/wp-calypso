@@ -413,7 +413,7 @@ describe( '#createAccount()', () => {
 	test( 'should dispatch create action', async () => {
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
 			async usersNew() {
-				return {};
+				return { bearer_token: '1234 abcd' };
 			},
 		} ) );
 
@@ -422,9 +422,9 @@ describe( '#createAccount()', () => {
 		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
 	} );
 
-	test( 'should dispatch receive action with appropriate data', async () => {
+	test( 'should dispatch receive action', async () => {
 		const userData = { username: 'happyuser' };
-		const data = { some: 'data' };
+		const data = { bearer_token: '1234 abcd' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
 			async usersNew() {
 				return data;
@@ -433,11 +433,20 @@ describe( '#createAccount()', () => {
 
 		const spy = jest.fn();
 		await createAccount( userData )( spy );
-		expect( spy ).toHaveBeenCalledWith( {
-			data,
-			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			userData,
-		} );
+		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE } );
+	} );
+
+	test( 'should resolve with the bearer token', async () => {
+		const userData = { username: 'happyuser' };
+		const data = { bearer_token: '1234 abcd' };
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			async usersNew() {
+				return data;
+			},
+		} ) );
+
+		const spy = jest.fn();
+		expect( createAccount( userData )( spy ) ).resolves.toBe( data.bearer_token );
 	} );
 
 	test( 'should dispatch receive action with error data', async () => {
@@ -450,10 +459,25 @@ describe( '#createAccount()', () => {
 		} ) );
 
 		const spy = jest.fn();
-		await createAccount( userData )( spy );
+		try {
+			await createAccount( userData )( spy );
+		} catch ( err ) {}
 		expect( spy ).toHaveBeenCalledWith( {
-			error,
 			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+			error: true,
 		} );
+	} );
+
+	test( 'should reject with the error', async () => {
+		const userData = { username: 'happyuser' };
+		const error = { code: 'user_exists' };
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			usersNew() {
+				return Promise.reject( error );
+			},
+		} ) );
+
+		const spy = jest.fn();
+		expect( createAccount( userData )( spy ) ).rejects.toBe( error );
 	} );
 } );

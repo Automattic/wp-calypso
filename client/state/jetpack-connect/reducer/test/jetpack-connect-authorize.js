@@ -45,24 +45,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 		} );
 	} );
 
-	test( 'should omit userData and bearerToken when starting authorization', () => {
-		const state = jetpackConnectAuthorize(
-			{
-				userData: {
-					ID: 123,
-					email: 'example@example.com',
-				},
-				bearerToken: 'abcd1234',
-			},
-			{
-				type: JETPACK_CONNECT_AUTHORIZE,
-			}
-		);
-
-		expect( state ).not.toHaveProperty( 'userData' );
-		expect( state ).not.toHaveProperty( 'bearerToken' );
-	} );
-
 	test( 'should set authorizeSuccess to true when completed authorization successfully', () => {
 		const data = {
 			plans_url: 'https://wordpress.com/jetpack/connect/plans/',
@@ -153,26 +135,15 @@ describe( '#jetpackConnectAuthorize()', () => {
 		} );
 	} );
 
-	test( 'should receive userData and bearerToken on successful account creation', () => {
-		const userData = {
-			ID: 123,
-			email: 'example@example.com',
-		};
-		const bearer_token = 'abcd1234';
+	test( 'should update state on successful account creation', () => {
 		const state = jetpackConnectAuthorize( undefined, {
 			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			userData,
-			data: {
-				bearer_token,
-			},
 		} );
 
 		expect( state ).toMatchObject( {
 			isAuthorizing: true,
 			authorizeSuccess: false,
 			authorizeError: false,
-			userData: userData,
-			bearerToken: bearer_token,
 		} );
 	} );
 

@@ -2,7 +2,7 @@
 /**
  * External dependencis
  */
-import { get, isEmpty, omit } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ import {
 function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_AUTHORIZE:
-			return Object.assign( omit( state, 'userData', 'bearerToken' ), {
+			return Object.assign( {}, state, {
 				isAuthorizing: true,
 				authorizeSuccess: false,
 				authorizeError: false,
@@ -77,7 +77,7 @@ function jetpackConnectAuthorize( state = {}, action ) {
 			} );
 
 		case JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE:
-			if ( ! isEmpty( action.error ) ) {
+			if ( action.error ) {
 				return Object.assign( {}, state, {
 					isAuthorizing: false,
 					authorizeSuccess: false,
@@ -88,8 +88,6 @@ function jetpackConnectAuthorize( state = {}, action ) {
 				isAuthorizing: true,
 				authorizeSuccess: false,
 				authorizeError: false,
-				userData: action.userData,
-				bearerToken: get( action, [ 'data', 'bearer_token' ] ),
 			} );
 
 		case SITE_REQUEST_FAILURE:

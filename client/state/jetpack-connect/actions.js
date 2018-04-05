@@ -46,6 +46,7 @@ import {
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { makeParser } from 'state/data-layer/wpcom-http/utils';
 
 /**
  * Module constants
@@ -202,15 +203,21 @@ export function createAccount( userData ) {
 
 		dispatch( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
 
-		// Try/catch initially to emulate existing behavior
 		try {
 			const data = await wpcom.undocumented().usersNew( userData );
+			const bearerToken = makeParser(
+				{
+					type: 'object',
+					required: [ 'bearer_token' ],
+					properties: { bearer_token: { type: 'string' } },
+				},
+				{},
+				( { bearer_token } ) => bearer_token
+			)( data );
+
 			dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
-			dispatch( {
-				type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-				data,
-				userData,
-			} );
+			dispatch( { type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE } );
+			return bearerToken;
 		} catch ( error ) {
 			dispatch(
 				recordTracksEvent( 'calypso_jpc_create_account_error', {
@@ -218,10 +225,8 @@ export function createAccount( userData ) {
 					error: JSON.stringify( error ),
 				} )
 			);
-			dispatch( {
-				type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-				error,
-			} );
+			dispatch( { type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE, error: true } );
+			throw error;
 		}
 	};
 }
