@@ -28,16 +28,6 @@ describe( 'getApplicationPasswords()', () => {
 		expect( result ).toEqual( appPasswords );
 	} );
 
-	test( 'should return an empty array if no application passwords exist', () => {
-		const state = {
-			applicationPasswords: {
-				items: [],
-			},
-		};
-		const result = getApplicationPasswords( state );
-		expect( result ).toEqual( [] );
-	} );
-
 	test( 'should return an empty array with an empty state', () => {
 		const result = getApplicationPasswords( undefined );
 		expect( result ).toEqual( [] );
