@@ -551,7 +551,7 @@ class ThemeSheet extends React.Component {
 		const { siteId, retired } = this.props;
 
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${
-			siteId ? '/:site_id' : ''
+			siteId ? '/:site' : ''
 		}`;
 		const analyticsPageTitle = `Themes > Details Sheet${
 			section ? ' > ' + titlecase( section ) : ''
