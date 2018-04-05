@@ -24,15 +24,15 @@ import MainWrapper from './main-wrapper';
 import page from 'page';
 import SiteUrlInput from './site-url-input';
 import versionCompare from 'lib/version-compare';
-import { addCalypsoEnvQueryArg } from './utils';
-import { addQueryArgs, externalRedirect, untrailingslashit } from 'lib/route';
+import { addCalypsoEnvQueryArg, cleanUrl } from './utils';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
+import { persistSession, retrieveMobileRedirect, retrievePlan } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { retrieveMobileRedirect, retrievePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
 import {
 	JPC_PATH_PLANS,
@@ -66,7 +66,7 @@ export class JetpackConnectMain extends Component {
 	/* eslint-disable indent */
 	state = this.props.url
 		? {
-				currentUrl: this.cleanUrl( this.props.url ),
+				currentUrl: cleanUrl( this.props.url ),
 				shownUrl: this.props.url,
 				waitingForSites: false,
 			}
@@ -79,7 +79,7 @@ export class JetpackConnectMain extends Component {
 
 	componentWillMount() {
 		if ( this.props.url ) {
-			this.checkUrl( this.cleanUrl( this.props.url ) );
+			this.checkUrl( cleanUrl( this.props.url ) );
 		}
 	}
 
@@ -206,19 +206,10 @@ export class JetpackConnectMain extends Component {
 	handleUrlChange = event => {
 		const url = event.target.value;
 		this.setState( {
-			currentUrl: this.cleanUrl( url ),
+			currentUrl: cleanUrl( url ),
 			shownUrl: url,
 		} );
 	};
-
-	cleanUrl( inputUrl ) {
-		let url = inputUrl.trim().toLowerCase();
-		if ( url && url.substr( 0, 4 ) !== 'http' ) {
-			url = 'http://' + url;
-		}
-		url = url.replace( /wp-admin\/?$/, '' );
-		return untrailingslashit( url );
-	}
 
 	checkUrl( url ) {
 		return this.props.checkUrl( url, !! this.props.getJetpackSiteByUrl( url ) );
@@ -231,6 +222,8 @@ export class JetpackConnectMain extends Component {
 		if ( this.props.isRequestingSites ) {
 			this.setState( { waitingForSites: true } );
 		} else {
+			// Track that connection was started by button-click, so we can auto-approve at auth step.
+			persistSession( this.state.currentUrl );
 			this.checkUrl( this.state.currentUrl );
 		}
 	};
