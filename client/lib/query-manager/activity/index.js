@@ -29,8 +29,14 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @return {Number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	static compare( query, { activityTs: tsA }, { activityTs: tsB } ) {
-		return Date.parse( tsB ) - Date.parse( tsA );
+	static compare( query, a, b ) {
+		if ( a.rewindId && b.rewindId ) {
+			return b.rewindId - a.rewindId;
+		}
+
+		// if for some reason no rewindId exists
+		// (it _should_ exist)
+		return b.activityTs - a.activityTs;
 	}
 
 	/**
