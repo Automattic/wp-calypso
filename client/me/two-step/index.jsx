@@ -137,7 +137,7 @@ class TwoStep extends Component {
 			return null;
 		}
 
-		return <AppPasswords appPasswordsData={ this.props.appPasswordsData } />;
+		return <AppPasswords />;
 	};
 
 	renderBackupCodes = () => {
