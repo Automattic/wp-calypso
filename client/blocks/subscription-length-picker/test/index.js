@@ -5,11 +5,6 @@ jest.mock( 'lib/abtest', () => ( {
 } ) );
 
 const translate = x => x;
-jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	numberFormat: x => x,
-} ) );
-
 jest.mock( '../option', () => 'SubscriptionLengthOption' );
 
 /**
