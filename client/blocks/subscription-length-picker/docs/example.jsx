@@ -18,12 +18,16 @@ const productsWithPrices = [
 	{
 		planSlug: PLAN_BUSINESS,
 		plan: getPlan( PLAN_BUSINESS ),
+		// These prices should not be hardcoded in real code, this is just to
+		// show how things will look like in devdocs
 		priceFull: 200,
 		priceMonthly: 200 / 24,
 	},
 	{
 		planSlug: PLAN_BUSINESS_2_YEARS,
 		plan: getPlan( PLAN_BUSINESS_2_YEARS ),
+		// These prices should not be hardcoded in real code, this is just to
+		// show how things will look like in devdocs
 		priceFull: 380,
 		priceMonthly: 380 / 48,
 	},
