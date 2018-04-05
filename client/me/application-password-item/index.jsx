@@ -13,35 +13,19 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import { errorNotice } from 'state/notices/actions';
+import { deleteApplicationPassword } from 'state/application-passwords/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ApplicationPasswordsItem extends React.Component {
-	state = {
-		removingPassword: false,
-	};
-
 	handleRemovePasswordButtonClick = () => {
+		const { password } = this.props;
+
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Remove Application Password Button' );
-		this.removeApplicationPassword();
+		this.props.deleteApplicationPassword( parseInt( password.ID, 10 ) );
 	};
-
-	removeApplicationPassword() {
-		this.setState( { removingPassword: true } );
-
-		this.props.appPasswordsData.revoke( parseInt( this.props.password.ID, 10 ), error => {
-			if ( error && 'unknown_application_password' !== error.error ) {
-				this.setState( { removingPassword: false } );
-				this.props.errorNotice(
-					this.props.translate(
-						'The application password was not successfully deleted. Please try again.'
-					)
-				);
-			}
-		} );
-	}
 
 	render() {
-		const password = this.props.password;
+		const { password } = this.props;
 
 		return (
 			<li className="application-password-item__password" key={ password.ID }>
@@ -66,6 +50,7 @@ class ApplicationPasswordsItem extends React.Component {
 }
 
 export default connect( null, {
+	deleteApplicationPassword,
 	errorNotice,
 	recordGoogleEvent,
 } )( localize( ApplicationPasswordsItem ) );
