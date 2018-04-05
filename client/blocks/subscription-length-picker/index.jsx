@@ -25,16 +25,20 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { abtest } from 'lib/abtest';
 import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
-import { TERM_MONTHLY } from 'lib/plans/constants';
+import { PLANS_LIST, TERM_MONTHLY } from 'lib/plans/constants';
 import SubscriptionLengthOption from './option';
 
 export class SubscriptionLengthPicker extends React.Component {
 	static propTypes = {
 		initialValue: PropTypes.string,
+		plans: PropTypes.oneOf( Object.keys( PLANS_LIST ) ),
+
 		currencyCode: PropTypes.string.isRequired,
-		productsWithPrices: PropTypes.array.isRequired,
 		onChange: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+
+		// Comes from connect():
+		productsWithPrices: PropTypes.array.isRequired,
 
 		fetchingPlans: PropTypes.bool,
 		fetchingProducts: PropTypes.bool,
