@@ -15,7 +15,7 @@ import analytics from 'lib/analytics';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import titlecase from 'to-title-case';
 import { savePreference } from 'state/preferences/actions';
-import { getSite, getSiteOption } from 'state/sites/selectors';
+import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -27,6 +27,7 @@ import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
+import config from 'config';
 
 const analyticsPageTitle = 'Stats';
 
@@ -407,9 +408,15 @@ export default {
 	activityLog: function( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
 		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
 			? context.query.startDate
 			: undefined;
+
+		if ( siteId && ! isJetpack && ! config.isEnabled( 'activity-log-simple-sites' ) ) {
+			page.redirect( '/stats' );
+			return next();
+		}
 
 		analytics.pageView.record( '/stats/activity/:site', analyticsPageTitle + ' > Activity ' );
 
