@@ -1,0 +1,86 @@
+/**
+ * Base styles
+ */
+
+.chat-panel {
+	overflow: hidden;
+	position: fixed;
+	bottom: 0;
+	right: 12px;
+	font-size: 14px;
+	display: none;
+	box-sizing: border-box;
+
+	transform: translateZ(0);
+	backface-visibility: hidden;
+
+	&.is-open {
+		display: block;
+		background: $gray-lighten-30;
+		bottom: 0;
+		z-index: z-index( 'root', '.chat-panel.is-open' );
+	}
+
+	&.is-hidden {
+		display: none;
+	}
+}
+
+/**
+ * Panel mode
+ */
+@include breakpoint( ">480px" ) {
+
+	.layout:not( .is-section-chat ) {
+		.chat-panel.is-open {
+			box-shadow: 0 1px 2px rgba( 0,0,0,.2 ), 0 1px 10px rgba( 0,0,0, .1 );
+			width: 280px;
+		}
+	}
+
+}
+
+@include breakpoint( "<480px" ) {
+
+	.layout:not( .is-section-chat ) {
+		.chat-panel.is-open {
+			right: 0;
+		}
+	}
+}
+
+
+/**
+ * Sidebar mode
+ */
+@include breakpoint( ">1040px" ) {
+
+	// be more specific in scope to override the panel mode
+	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .chat-panel.is-open {
+		position: fixed;
+		height: calc( 100% - 47px );
+		bottom: 0;
+		right: 0;
+		width: 272px;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		box-shadow: none;
+	}
+
+	// add space in the main column for the docked sidebar
+	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .layout__content {
+		padding: 79px 304px 32px;
+	}
+
+	// adjust when scoll arrows show up in stats insights when panel is open
+	.has-chat.is-section-stats .post-trends__scroll-left,
+	.has-chat.is-section-stats .post-trends__scroll-right {
+			display: block;
+	}
+
+	// make space in customizer
+	.has-chat .main.customize.is-iframe {
+		right: 272px;
+	}
+}

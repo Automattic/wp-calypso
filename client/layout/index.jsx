@@ -149,7 +149,7 @@ const Layout = createReactClass( {
 				/>
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) &&
-					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+					this.props.chatIsOpen && <AsyncLoad require="blocks/happychat/chat-panel" /> }
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
