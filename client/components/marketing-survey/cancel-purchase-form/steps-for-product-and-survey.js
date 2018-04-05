@@ -4,21 +4,27 @@
  * Internal dependencies
  */
 
-import * as plans from 'lib/plans/constants';
+import {
+	GROUP_WPCOM,
+	GROUP_JETPACK,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+	TYPE_BUSINESS,
+} from 'lib/plans/constants';
+import { findPlansKeys } from 'lib/plans';
 import { includesProduct } from 'lib/products-values';
 import { abtest } from 'lib/abtest';
 import * as steps from './steps';
 
-const BUSINESS_PLANS = [ plans.PLAN_BUSINESS ];
-const PERSONAL_PREMIUM_PLANS = [ plans.PLAN_PERSONAL, plans.PLAN_PREMIUM ];
-const JETPACK_PAID_PLANS = [
-	plans.PLAN_JETPACK_BUSINESS,
-	plans.PLAN_JETPACK_BUSINESS_MONTHLY,
-	plans.PLAN_JETPACK_PERSONAL,
-	plans.PLAN_JETPACK_PERSONAL_MONTHLY,
-	plans.PLAN_JETPACK_PREMIUM,
-	plans.PLAN_JETPACK_PREMIUM_MONTHLY,
-];
+const BUSINESS_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+const PERSONAL_PREMIUM_PLANS = []
+	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PERSONAL } ) )
+	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) );
+
+const JETPACK_PAID_PLANS = []
+	.concat( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_PERSONAL } ) )
+	.concat( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_PREMIUM } ) )
+	.concat( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_BUSINESS } ) );
 
 export default function stepsForProductAndSurvey(
 	survey,
