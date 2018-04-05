@@ -14,9 +14,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-/* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
 import AppPasswordItem from 'me/application-password-item';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
@@ -39,7 +36,6 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 const ApplicationPasswords = createReactClass( {
 	displayName: 'ApplicationPasswords',
-	mixins: [ observe( 'appPasswordsData' ) ],
 
 	componentDidMount: function() {
 		debug( this.displayName + ' React component is mounted.' );
