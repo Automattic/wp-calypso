@@ -55,10 +55,6 @@ export class JetpackSignup extends Component {
 
 	state = { newUsername: null, bearerToken: null };
 
-	clearState() {
-		this.setState( { newUsername: null, bearerToken: null } );
-	}
-
 	componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view', {
