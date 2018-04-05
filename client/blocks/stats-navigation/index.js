@@ -15,26 +15,29 @@ import NavTabs from 'components/section-nav/tabs';
 import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
 import { isSiteStore } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 
 class StatsNavigation extends Component {
 	static propTypes = {
 		interval: PropTypes.oneOf( intervalConstants.map( i => i.value ) ),
-		isJetpack: PropTypes.bool,
 		isStore: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
 	};
 
+	isOverview = () => {
+		const { siteId } = this.props;
+		return 'undefined' === typeof siteId;
+	};
+
 	isValidItem = item => {
-		const { isStore, isJetpack } = this.props;
+		const { isStore } = this.props;
 		switch ( item ) {
-			case 'activity':
-				return isJetpack;
 			case 'store':
 				return isStore;
+			case 'activity':
+				return ! this.isOverview();
 			default:
 				return true;
 		}
@@ -75,7 +78,6 @@ class StatsNavigation extends Component {
 
 export default connect( ( state, { siteId } ) => {
 	return {
-		isJetpack: isJetpackSite( state, siteId ),
 		isStore: isSiteStore( state, siteId ),
 		siteId,
 	};
