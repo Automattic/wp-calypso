@@ -29,7 +29,9 @@ class PieChart extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqualWith( this.props.data, nextProps.data, ( lv, rv ) => lv.value === rv.value ) ) {
+		const customizer = ( datum, otherDatum ) => datum.value === otherDatum.value;
+
+		if ( ! isEqualWith( this.props.data, nextProps.data, customizer ) ) {
 			this.setState( this.processData( nextProps.data ) );
 		}
 	}
@@ -40,7 +42,7 @@ class PieChart extends Component {
 		const arcs = d3Pie()
 			.startAngle( Math.PI )
 			.startAngle( -Math.PI )
-			.value( d => d.value )( sortedData );
+			.value( datum => datum.value )( sortedData );
 
 		const arcGen = d3Arc()
 			.innerRadius( 0 )
@@ -55,7 +57,7 @@ class PieChart extends Component {
 					path: paths[ index ],
 				} )
 			),
-			dataTotal: sortedData.reduce( ( pv, cv ) => pv + cv.value, 0 ),
+			dataTotal: sortedData.reduce( ( result, datum ) => result + datum.value, 0 ),
 		};
 	}
 

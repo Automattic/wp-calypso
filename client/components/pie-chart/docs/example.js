@@ -35,7 +35,7 @@ class PieChartExample extends Component {
 			},
 		];
 
-		const dataTotal = data.reduce( ( pv, cv ) => pv + cv.value, 0 );
+		const dataTotal = data.reduce( ( result, datum ) => result + datum.value, 0 );
 
 		this.state = {
 			data,
