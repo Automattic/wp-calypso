@@ -1,0 +1,56 @@
+/** @format */
+
+.featured-domain-suggestion {
+	flex-direction: column;
+	justify-content: flex-end;
+	width: 100%;
+
+	.domain-suggestion__content {
+		flex-direction: column;
+	}
+
+	.domain-registration-suggestion__title,
+	.domain-registration-suggestion__progress-bar,
+	.domain-product-price {
+		width: 100%;
+	}
+
+	.domain-registration-suggestion__title {
+		order: 0;
+		font-size: 2em;
+		font-weight: 600;
+	}
+
+	// .card used to increase specificity
+	&.card .domain-product-price {
+		align-items: left;
+		margin: 0 0 0.5em 0;
+		order: 1;
+		&.is-with-plans-only:not(.is-free-domain) {
+			flex-basis: auto;
+		}
+	}
+
+	.domain-registration-suggestion__progress-bar {
+		order: 2;
+		display: flex;
+		align-items: center;
+
+		.progress-bar {
+			width: 25%;
+			margin-right: 1em;
+		}
+	}
+
+	// .card increases specificity
+	&.card .domain-suggestion__action {
+		margin-top: 1em;
+
+		// Increase specificity
+		&.button.is-primary {
+			width: 100%;
+			margin-left: 0;
+			flex-grow: 0;
+		}
+	}
+}
