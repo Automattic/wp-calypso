@@ -150,15 +150,16 @@ export class SimpleSiteRenameForm extends Component {
 								<Gridicon icon="info-outline" size={ 18 } />
 								<p>
 									{ translate(
-										'Once you change your site address, %(currentDomainName)s will no longer be available. ' +
-											'{{link}}Before you confirm the change, please read this important information.{{/link}}',
+										'Once you change your site address, %(currentDomainName)s will no longer be available.',
 										{
 											args: { currentDomainName },
-											components: {
-												link: <a href={ ADDRESS_CHANGE_SUPPORT_URL } />,
-											},
 										}
-									) }
+									) }{' '}
+									<a href={ ADDRESS_CHANGE_SUPPORT_URL }>
+										{ translate(
+											'Before you confirm the change, please read this important information.'
+										) }
+									</a>
 								</p>
 							</div>
 							<FormButton disabled={ isDisabled } busy={ isSiteRenameRequesting } type="submit">
