@@ -54,7 +54,7 @@ const JetpackConnectHappychatButton = ( {
 			onClick={ getHappyChatButtonClickHandler( eventName ) }
 		>
 			<HappychatConnection />
-			<Gridicon icon="chat" size={ 18 } /> { label || translate( 'Get help connecting your site' ) }
+			<Gridicon icon="chat" size={ 18 } /> { label || translate( 'Get help setting up Jetpack' ) }
 		</HappychatButton>
 	);
 };

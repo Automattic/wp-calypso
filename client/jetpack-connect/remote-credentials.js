@@ -226,7 +226,7 @@ export class OrgCredentialsForm extends Component {
 				<LoggedOutFormLinkItem href={ manualInstallUrl }>
 					{ translate( 'Install Jetpack manually' ) }
 				</LoggedOutFormLinkItem>
-				<HelpButton label={ 'Get help connecting your site' } />
+				<HelpButton />
 				<div className="jetpack-connect__navigation">
 					<Button
 						compact

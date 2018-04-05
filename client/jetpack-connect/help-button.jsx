@@ -22,7 +22,7 @@ const JetpackConnectHelpButton = ( { label, translate, onClick } ) => {
 			onClick={ onClick }
 		>
 			<Gridicon icon="help-outline" size={ 18 } />{' '}
-			{ label || translate( 'Get help connecting your site' ) }
+			{ label || translate( 'Get help setting up Jetpack' ) }
 		</LoggedOutFormLinkItem>
 	);
 };
