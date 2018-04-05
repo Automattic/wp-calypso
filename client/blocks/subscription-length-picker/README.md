@@ -1,4 +1,4 @@
-SubscriptionLengthPicker
+Subscription Length Picker
 ==========
 
 Displays a list of terms (monthly, yearly, biennially).
@@ -18,7 +18,7 @@ Each item in the `plans` array must be a constant from lib/plans/constants.jsx`.
 
 For a complete list of props along with their types, please refer to the `SubscriptionLengthPicker` component's `propTypes` member.
 
-SubscriptionLengthOption
+Subscription Length Option
 ==========
 
 Represents a term that user could pick when choosing his plan (monthly, yearly, biennially)
