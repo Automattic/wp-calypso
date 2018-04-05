@@ -2,11 +2,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import createReactClass from 'create-react-class';
+import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { find, isEmpty, some } from 'lodash';
+import { find, flow, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,7 +19,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
-import URLSearch from 'lib/mixins/url-search';
+import urlSearch from 'lib/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
@@ -47,21 +46,16 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import HeaderButton from 'components/header-button';
 import { isEnabled } from 'config';
 
-const PluginsMain = createReactClass( {
-	displayName: 'PluginsMain',
-	mixins: [ URLSearch ],
-
-	getInitialState() {
-		return this.getPluginsState( this.props );
-	},
+export class PluginsMain extends Component {
+	state = this.getPluginsState( this.props );
 
 	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshPlugins );
-	},
+	}
 
 	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshPlugins );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		const { hasJetpackSites: hasJpSites, selectedSiteIsJetpack, selectedSiteSlug } = nextProps;
@@ -81,7 +75,7 @@ const PluginsMain = createReactClass( {
 		}
 
 		this.refreshPlugins( nextProps );
-	},
+	}
 
 	getPluginsFromStore( nextProps, sites ) {
 		const props = nextProps || this.props;
@@ -101,7 +95,7 @@ const PluginsMain = createReactClass( {
 		}
 
 		return this.addWporgDataToPlugins( plugins );
-	},
+	}
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
@@ -112,7 +106,7 @@ const PluginsMain = createReactClass( {
 			}
 			return Object.assign( {}, plugin, pluginData );
 		} );
-	},
+	}
 
 	getPluginsState( nextProps ) {
 		const sites = this.props.sites,
@@ -122,18 +116,18 @@ const PluginsMain = createReactClass( {
 			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
 			selectedAction: 'Actions',
 		};
-	},
+	}
 
-	refreshPlugins( nextProps ) {
+	refreshPlugins = nextProps => {
 		this.setState( this.getPluginsState( nextProps ) );
-	},
+	};
 
 	matchSearchTerms( search, plugin ) {
 		search = search.toLowerCase();
 		return [ 'name', 'description', 'author' ].some(
 			attribute => plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
 		);
-	},
+	}
 
 	getFilters() {
 		const { translate } = this.props;
@@ -161,11 +155,11 @@ const PluginsMain = createReactClass( {
 				id: 'updates',
 			},
 		];
-	},
+	}
 
 	isFetchingPlugins() {
 		return this.props.sites.some( PluginsStore.isFetchingSite );
-	},
+	}
 
 	getSelectedText() {
 		const found = find( this.getFilters(), filterItem => this.props.filter === filterItem.id );
@@ -173,7 +167,7 @@ const PluginsMain = createReactClass( {
 			return found.title;
 		}
 		return '';
-	},
+	}
 
 	getSearchPlaceholder() {
 		const { translate } = this.props;
@@ -191,7 +185,7 @@ const PluginsMain = createReactClass( {
 			case 'all':
 				return translate( 'Search All…', { textOnly: true } );
 		}
-	},
+	}
 
 	getEmptyContentUpdateData() {
 		const { translate } = this.props;
@@ -241,7 +235,7 @@ const PluginsMain = createReactClass( {
 		}
 
 		return emptyContentData;
-	},
+	}
 
 	getEmptyContentData() {
 		const { translate } = this.props;
@@ -263,7 +257,7 @@ const PluginsMain = createReactClass( {
 				return null;
 		}
 		return emptyContentData;
-	},
+	}
 
 	getUpdatesTabVisibility() {
 		const { selectedSite } = this.props;
@@ -279,17 +273,17 @@ const PluginsMain = createReactClass( {
 				this.props.isJetpackSite( site.ID ) &&
 				this.props.canJetpackSiteUpdateFiles( site.ID )
 		);
-	},
+	}
 
 	shouldShowPluginListPlaceholders() {
 		const { plugins } = this.state;
 
 		return isEmpty( plugins ) && this.isFetchingPlugins();
-	},
+	}
 
 	renderDocumentHead() {
 		return <DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
-	},
+	}
 
 	renderPluginsContent() {
 		const { plugins = [] } = this.state;
@@ -352,7 +346,7 @@ const PluginsMain = createReactClass( {
 				{ suggestedPluginsList }
 			</div>
 		);
-	},
+	}
 
 	getMockPluginItems() {
 		const plugins = [
@@ -393,11 +387,11 @@ const PluginsMain = createReactClass( {
 				/>
 			);
 		} );
-	},
+	}
 
-	handleAddPluginButtonClick() {
+	handleAddPluginButtonClick = () => {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Add New Plugins' );
-	},
+	};
 
 	renderAddPluginButton() {
 		const { selectedSiteSlug, translate } = this.props;
@@ -412,11 +406,11 @@ const PluginsMain = createReactClass( {
 				onClick={ this.handleAddPluginButtonClick }
 			/>
 		);
-	},
+	}
 
-	handleUploadPluginButtonClick() {
+	handleUploadPluginButtonClick = () => {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
-	},
+	};
 
 	renderUploadPluginButton() {
 		if ( ! isEnabled( 'manage/plugins/upload' ) ) {
@@ -435,7 +429,7 @@ const PluginsMain = createReactClass( {
 				onClick={ this.handleUploadPluginButtonClick }
 			/>
 		);
-	},
+	}
 
 	render() {
 		const { selectedSiteId } = this.props;
@@ -488,7 +482,7 @@ const PluginsMain = createReactClass( {
 						<Search
 							pinned
 							fitsContainer
-							onSearch={ this.doSearch }
+							onSearch={ this.props.doSearch }
 							initialValue={ this.props.search }
 							ref="url-search"
 							analyticsGroup="Plugins"
@@ -503,32 +497,39 @@ const PluginsMain = createReactClass( {
 				{ this.renderPluginsContent() }
 			</Main>
 		);
-	},
-} );
+	}
+}
 
-export default connect(
-	state => {
-		const selectedSite = getSelectedSite( state );
-		const selectedSiteId = getSelectedSiteId( state );
+export default flow(
+	localize,
+	urlSearch,
+	connect(
+		state => {
+			const selectedSite = getSelectedSite( state );
+			const selectedSiteId = getSelectedSiteId( state );
 
-		return {
-			hasJetpackSites: hasJetpackSites( state ),
-			sites: getSelectedOrAllSitesWithPlugins( state ),
-			selectedSite,
-			selectedSiteId,
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
-			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSiteId ),
-			canSelectedJetpackSiteUpdateFiles:
-				selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
-			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
-			isJetpackSite: siteId => isJetpackSite( state, siteId ),
-			wporgPlugins: state.plugins.wporg.items,
-			isRequestingSites: isRequestingSites( state ),
-			userCanManagePlugins: selectedSiteId
-				? canCurrentUser( state, selectedSiteId, 'manage_options' )
-				: canCurrentUserManagePlugins( state ),
-		};
-	},
-	{ wporgFetchPluginData, recordGoogleEvent }
-)( localize( PluginsMain ) );
+			return {
+				hasJetpackSites: hasJetpackSites( state ),
+				sites: getSelectedOrAllSitesWithPlugins( state ),
+				selectedSite,
+				selectedSiteId,
+				selectedSiteSlug: getSelectedSiteSlug( state ),
+				selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
+				canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSiteId ),
+				canSelectedJetpackSiteUpdateFiles:
+					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
+				/* eslint-disable wpcalypso/redux-no-bound-selectors */
+				// @TODO: follow up with fixing these functions
+				canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
+				isJetpackSite: siteId => isJetpackSite( state, siteId ),
+				/* eslint-enable wpcalypso/redux-no-bound-selectors */
+				wporgPlugins: state.plugins.wporg.items,
+				isRequestingSites: isRequestingSites( state ),
+				userCanManagePlugins: selectedSiteId
+					? canCurrentUser( state, selectedSiteId, 'manage_options' )
+					: canCurrentUserManagePlugins( state ),
+			};
+		},
+		{ wporgFetchPluginData, recordGoogleEvent }
+	)
+)( PluginsMain );
