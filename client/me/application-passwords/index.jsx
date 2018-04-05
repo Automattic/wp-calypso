@@ -6,23 +6,23 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import AppPasswordItem from 'me/application-password-item';
-import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
+import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import Card from 'components/card';
+import FormTextInput from 'components/forms/form-text-input';
 import QueryApplicationPasswords from 'components/data/query-application-passwords';
+import SectionHeader from 'components/section-header';
 import {
 	clearNewApplicationPassword,
 	createApplicationPassword,
