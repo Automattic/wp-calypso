@@ -32,6 +32,7 @@ import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import {
+	planMatches,
 	applyTestFiltersToPlansList,
 	canUpgradeToPlan,
 	getMonthlyPlanByYearly,
@@ -50,8 +51,6 @@ import {
 	isCurrentSitePlan,
 } from 'state/sites/selectors';
 import {
-	getPlanClass,
-	getPlanFeaturesObject,
 	isBestValue,
 	isMonthly,
 	isNew,
@@ -63,16 +62,6 @@ import {
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
 } from 'lib/plans/constants';
-import { planMatches, getMonthlyPlanByYearly, isFreePlan } from 'lib/plans';
-import { getPlanPath, canUpgradeToPlan, applyTestFiltersToPlansList } from 'lib/plans';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
-import Notice from 'components/notice';
-import SpinnerLine from 'components/spinner-line';
-import FoldableCard from 'components/foldable-card';
-import { recordTracksEvent } from 'state/analytics/actions';
-import formatCurrency from 'lib/format-currency';
-import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import { abtest, getABTestVariation } from 'lib/abtest';
 
 class PlanFeatures extends Component {
 	componentDidMount() {
