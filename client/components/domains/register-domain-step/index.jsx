@@ -338,7 +338,7 @@ class RegisterDomainStep extends React.Component {
 							filters={ this.state.filters }
 							onChange={ this.onFiltersChange }
 							onFiltersReset={ this.onFiltersReset }
-							onFiltersSubmit={ this.repeatSearch }
+							onFiltersSubmit={ this.onFiltersSubmit }
 						/>
 					</div>
 				) }
@@ -444,6 +444,10 @@ class RegisterDomainStep extends React.Component {
 			},
 			this.repeatSearch
 		);
+	};
+
+	onFiltersSubmit = () => {
+		this.repeatSearch( { pageNumber: 1 } );
 	};
 
 	onSearchChange = ( searchQuery, callback = noop ) => {
