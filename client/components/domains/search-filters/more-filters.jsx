@@ -22,18 +22,12 @@ import Button from 'components/button';
 
 export class MoreFiltersControl extends Component {
 	static propTypes = {
-		excludeDashes: PropTypes.bool,
-		maxCharacters: PropTypes.string,
-		onChange: PropTypes.func,
-		onFiltersReset: PropTypes.func,
-		onFiltersSubmit: PropTypes.func,
-		showExactMatchesOnly: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		maxCharacters: '',
-		excludeDashes: true,
-		showExactMatchesOnly: false,
+		includeDashes: PropTypes.bool.isRequired,
+		maxCharacters: PropTypes.string.isRequired,
+		onChange: PropTypes.func.isRequired,
+		onFiltersReset: PropTypes.func.isRequired,
+		onFiltersSubmit: PropTypes.func.isRequired,
+		showExactMatchesOnly: PropTypes.bool.isRequired,
 	};
 
 	state = {
@@ -49,7 +43,7 @@ export class MoreFiltersControl extends Component {
 
 	getFiltercounts() {
 		return (
-			( ! this.props.excludeDashes && 1 ) +
+			( this.props.includeDashes && 1 ) +
 			( this.props.showExactMatchesOnly && 1 ) +
 			( this.props.maxCharacters !== '' && 1 )
 		);
@@ -122,15 +116,16 @@ export class MoreFiltersControl extends Component {
 	}
 
 	renderPopover() {
-		const { excludeDashes, maxCharacters, showExactMatchesOnly, translate } = this.props;
+		const { includeDashes, maxCharacters, showExactMatchesOnly, translate } = this.props;
 
 		return (
 			<Popover
+				autoPosition={ false }
 				className="search-filters__popover"
 				context={ this.button }
 				isVisible={ this.state.showPopover }
-				position="bottom right"
 				onClose={ this.togglePopover }
+				position="bottom right"
 			>
 				<ValidationFieldset
 					className="search-filters__text-input-fieldset"
@@ -169,18 +164,16 @@ export class MoreFiltersControl extends Component {
 						</span>
 					</FormLabel>
 
-					<FormLabel className="search-filters__label" htmlFor="search-filters-exclude-dashes">
+					<FormLabel className="search-filters__label" htmlFor="search-filters-include-dashes">
 						<FormInputCheckbox
 							className="search-filters__checkbox"
-							checked={ excludeDashes }
-							id="search-filters-exclude-dashes"
-							name="excludeDashes"
+							checked={ includeDashes }
+							id="search-filters-include-dashes"
+							name="includeDashes"
 							onChange={ this.handleOnChange }
-							value="excludeDashes"
+							value="includeDashes"
 						/>
-						<span className="search-filters__checkbox-label">
-							{ translate( 'Exclude dashes' ) }
-						</span>
+						<span className="search-filters__checkbox-label">{ translate( 'Enable dashes' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 

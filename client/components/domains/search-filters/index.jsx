@@ -17,7 +17,7 @@ import MoreFiltersControl from './more-filters';
 export default class SearchFilters extends Component {
 	static propTypes = {
 		filters: PropTypes.shape( {
-			excludeDashes: PropTypes.bool,
+			includeDashes: PropTypes.bool,
 			maxCharacters: PropTypes.string,
 			showExactMatchesOnly: PropTypes.bool,
 		} ).isRequired,
@@ -45,7 +45,7 @@ export default class SearchFilters extends Component {
 			<div className="search-filters">
 				<MoreFiltersControl
 					{ ...pick( this.props.filters, [
-						'excludeDashes',
+						'includeDashes',
 						'maxCharacters',
 						'showExactMatchesOnly',
 						'onFiltersReset',
