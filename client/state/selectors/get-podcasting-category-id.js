@@ -3,8 +3,7 @@
 /**
  * Internal dependencies
  */
-
-import { getSiteOption } from 'state/sites/selectors';
+import { get } from 'lodash';
 
 /**
  * Returns the Podcasting category ID for a given site ID.
@@ -14,5 +13,5 @@ import { getSiteOption } from 'state/sites/selectors';
  * @return {Number}          Category ID or null if not found
  */
 export default function getPodcastingCategoryId( state, siteId ) {
-	return getSiteOption( state, siteId, 'podcasting_category_id' );
+	return get( state.siteSettings.items, [ siteId, 'podcasting_category_id' ], null );
 }
