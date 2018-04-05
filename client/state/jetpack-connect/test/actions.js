@@ -14,8 +14,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
-	JETPACK_CONNECT_CREATE_ACCOUNT,
-	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -410,32 +408,6 @@ describe( '#createAccount()', () => {
 
 	beforeEach( jest.restoreAllMocks );
 
-	test( 'should dispatch create action', async () => {
-		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			async usersNew() {
-				return { bearer_token: '1234 abcd' };
-			},
-		} ) );
-
-		const spy = jest.fn();
-		await createAccount()( spy );
-		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
-	} );
-
-	test( 'should dispatch receive action', async () => {
-		const userData = { username: 'happyuser' };
-		const data = { bearer_token: '1234 abcd' };
-		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			async usersNew() {
-				return data;
-			},
-		} ) );
-
-		const spy = jest.fn();
-		await createAccount( userData )( spy );
-		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE } );
-	} );
-
 	test( 'should resolve with the bearer token', async () => {
 		const userData = { username: 'happyuser' };
 		const data = { bearer_token: '1234 abcd' };
@@ -447,25 +419,6 @@ describe( '#createAccount()', () => {
 
 		const spy = jest.fn();
 		expect( createAccount( userData )( spy ) ).resolves.toBe( data.bearer_token );
-	} );
-
-	test( 'should dispatch receive action with error data', async () => {
-		const userData = { username: 'saduser' };
-		const error = { code: 'error', message: 'This is an error' };
-		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			async usersNew() {
-				throw error;
-			},
-		} ) );
-
-		const spy = jest.fn();
-		try {
-			await createAccount( userData )( spy );
-		} catch ( err ) {}
-		expect( spy ).toHaveBeenCalledWith( {
-			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			error: true,
-		} );
 	} );
 
 	test( 'should reject with the error', async () => {

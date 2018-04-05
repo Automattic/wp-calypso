@@ -31,7 +31,6 @@ import WpcomLoginForm from 'signup/wpcom-login-form';
 import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
 import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
-import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { errorNotice as errorNoticeAction } from 'state/notices/actions';
@@ -45,15 +44,16 @@ export class JetpackSignup extends Component {
 		path: PropTypes.string,
 
 		// Connected props
-		authorizationData: PropTypes.shape( {
-			isAuthorizing: PropTypes.bool,
-		} ).isRequired,
 		createAccount: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = { newUsername: null, bearerToken: null };
+	state = {
+		isCreatingAccount: false,
+		newUsername: null,
+		bearerToken: null,
+	};
 
 	componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
@@ -73,16 +73,24 @@ export class JetpackSignup extends Component {
 
 	handleSubmitSignup = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
-		this.props.createAccount( userData ).then(
-			bearerToken =>
-				this.setState( {
-					newUsername: userData.username,
-					bearerToken,
-				} ),
-			error => {
-				debug( 'Signup error: %o', error );
-				this.props.errorNotice( 'Danger!!!' );
-			}
+		this.setState(
+			{
+				isCreatingAccount: true,
+			},
+			() =>
+				this.props.createAccount( userData ).then(
+					bearerToken =>
+						this.setState( {
+							newUsername: userData.username,
+							bearerToken,
+							isCreatingAccount: false,
+						} ),
+					error => {
+						debug( 'Signup error: %o', error );
+						this.setState( { isCreatingAccount: false } );
+						this.props.errorNotice( 'Danger!!!' );
+					}
+				)
 		);
 	};
 
@@ -131,14 +139,14 @@ export class JetpackSignup extends Component {
 		);
 	}
 	render() {
-		const { isAuthorizing } = this.props.authorizationData;
+		const { isCreatingAccount } = this.state;
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader authQuery={ this.props.authQuery } />
 					<SignupForm
-						disabled={ isAuthorizing }
+						disabled={ isCreatingAccount }
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						locale={ this.props.locale }
@@ -148,7 +156,7 @@ export class JetpackSignup extends Component {
 						) }
 						submitButtonText={ this.props.translate( 'Create your account' ) }
 						submitForm={ this.handleSubmitSignup }
-						submitting={ isAuthorizing }
+						submitting={ isCreatingAccount }
 						suggestedUsername=""
 					/>
 					{ this.renderLoginUser() }
@@ -157,13 +165,8 @@ export class JetpackSignup extends Component {
 		);
 	}
 }
-export default connect(
-	state => ( {
-		authorizationData: getAuthorizationData( state ),
-	} ),
-	{
-		createAccount: createAccountAction,
-		errorNotice: errorNoticeAction,
-		recordTracksEvent: recordTracksEventAction,
-	}
-)( localize( JetpackSignup ) );
+export default connect( null, {
+	createAccount: createAccountAction,
+	errorNotice: errorNoticeAction,
+	recordTracksEvent: recordTracksEventAction,
+} )( localize( JetpackSignup ) );
