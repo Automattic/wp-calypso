@@ -27,7 +27,7 @@ import read from './read';
 import sites from './sites';
 import themeFilters from './theme-filters';
 import timezones from './timezones';
-import usersAuthOptions from './users/auth-options';
+import users from './users';
 import videos from './videos';
 
 export const handlers = mergeHandlers(
@@ -53,7 +53,7 @@ export const handlers = mergeHandlers(
 	sites,
 	themeFilters,
 	timezones,
-	usersAuthOptions,
+	users,
 	videos
 );
 
