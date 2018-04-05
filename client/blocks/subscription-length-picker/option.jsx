@@ -39,7 +39,7 @@ export class SubscriptionLengthOption extends React.Component {
 	render() {
 		const { savePercent, price, term, checked } = this.props;
 		const className = classnames( 'subscription-length-option', {
-			'subscription-length-option--active': checked,
+			'is-active': checked,
 		} );
 		return (
 			<label className={ className } htmlFor={ this.htmlId }>

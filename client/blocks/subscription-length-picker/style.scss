@@ -92,12 +92,12 @@
     margin-left: 5px;
   }
 
-  &:not( .subscription-length-option--active ) {
+  &:not( .is-active ) {
     border: 1px solid $gray;
     padding: $padding-size + 2px;
   }
 
-  &--active {
+  &.is-active {
     border: 3px solid $alert-green;
   }
 }
