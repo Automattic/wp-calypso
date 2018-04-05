@@ -59,13 +59,21 @@ As a rule of thumb:
 
 Where possible, paths should be set manually, without relying on helper functions (e.g. `sectionify( context.path )`) that might result in inconsistent reporting.
 
-Some examples:
+Some examples of **what to do**:
 
 - `/posts/my/published/:site`
-- `/comments/all/:site/:post_id`
 - `/media/images/:site`
+- `/comments/all/:site/:post_id`
 - `/domains/manage/:domain/transfer/in/:site`
 - `/me/purchases/:site/:purchase_id/payment/edit/:card_id`
+
+Some examples of **what not to do**:
+
+- `/posts/my/:status/:site`: different statuses should be recorded separately.
+- `/media/images/:siteSlug`: the site fragment must be always reported as `:site`.
+- `/comments/all/:site/1234`: the post ID is overspecific and results in an incorrect categorization of the path.
+- `/domains/manage/www.example.com/transfer/in/:site`: the domain is as overspecific as the post ID in the previous example.
+- `/me/purchases/:site/:purchase/payment/edit/:cardId`: the purchase is an ID, so it should be reported as `:purchase_id`; also, placeholders should be always written in snake-case, so the card ID should be reported as `:card_id`.
 
 ## Titles Conventions
 
