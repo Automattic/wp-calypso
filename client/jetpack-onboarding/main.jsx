@@ -16,7 +16,7 @@ import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
+import Query from 'components/data/query';
 import QuerySites from 'components/data/query-sites';
 import Wizard from 'components/wizard';
 import WordPressLogo from 'components/wordpress-logo';
@@ -38,7 +38,7 @@ import {
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { requestJetpackSettings, saveJetpackSettings } from 'state/jetpack-onboarding/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 
 class JetpackOnboardingMain extends React.PureComponent {
@@ -164,7 +164,12 @@ class JetpackOnboardingMain extends React.PureComponent {
 				   * the site is a connected Jetpack site or not, and a network request that uses
 				   * the wrong argument can mess up our request tracking quite badly. */
 				this.state.hasFinishedRequestingSite && (
-					<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
+					<Query
+						compareOptions={ { deep: [ 'query' ] } }
+						requestAction={ requestJetpackSettings }
+						siteId={ siteId }
+						query={ jpoAuth }
+					/>
 				) }
 				{ siteId ? (
 					<Wizard
