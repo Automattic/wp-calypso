@@ -24,6 +24,7 @@ import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -594,6 +595,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
+				<PageViewTracker path="/stats/activity/:site" title="Stats > Activity" />
 				<DocumentHead title={ translate( 'Stats' ) } />
 				<QueryRewindState siteId={ siteId } />
 				{ '' !== rewindNoThanks && rewindIsNotReady

@@ -23,6 +23,7 @@ import ChartTabs from './stats-chart-tabs';
 import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsFirstView from './stats-first-view';
 import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
@@ -134,6 +135,10 @@ class StatsSite extends Component {
 		return (
 			<Main wideLayout={ true }>
 				<DocumentHead title={ translate( 'Stats' ) } />
+				<PageViewTracker
+					path={ `/stats/${ period }/:site` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
 				<PrivacyPolicyBanner />
 				<StatsFirstView />
 				<SidebarNavigation />
