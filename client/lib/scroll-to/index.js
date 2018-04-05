@@ -43,6 +43,9 @@ class Stepper {
 		this.container = options.container;
 	}
 
+	/**
+	 * Schedule the next step in the animation
+	 */
 	animate() {
 		this.nextFrame = requestAnimationFrame( this.step );
 	}
@@ -58,6 +61,11 @@ class Stepper {
 		}
 	}
 
+	/**
+	 * Jump directly to a position, bypassing the stepper
+	 * @param {Number} x - x coord
+	 * @param {Number} y - y coord
+	 */
 	jumpTo( x, y ) {
 		this.cancel();
 		this.end = {
@@ -76,8 +84,15 @@ class Stepper {
 		scrollers.delete( this.container );
 	};
 
+	/**
+	 * Move a step along the timeline, with optional easing
+	 * @param {Number} ts - timestamp
+	 */
 	step = ts => {
+		// reset the nextFrame raf handle so we can schedule another step
 		this.nextFrame = null;
+
+		// if this is the first time we've stepped, just mark this as the starting time and schedule another step
 		if ( ! this.startTime ) {
 			this.startTime = ts;
 			this.animate();
@@ -91,37 +106,44 @@ class Stepper {
 			return;
 		}
 
-		// how far along are we as a percentage?
+		// how far along are we? normalize this to a double in the range (0,1)
 		const progress = ( ts - this.startTime ) / this.duration;
 
-		// ease the progress
+		// ease the progress. Easing can transform our progress outside of the 0,1 range, but it's still seen as a percentage
 		const easedProgress = this.easing( progress );
 
-		// figure out the new values
+		// figure out the new target values for this step.
+		// Just multiply the eased progress by the total distance and add it to the starting point
 		const newX = Math.round( this.start.x + ( this.end.x - this.start.x ) * easedProgress );
 		const newY = Math.round( this.start.y + ( this.end.y - this.start.y ) * easedProgress );
 
+		// There's a chance this step didn't actually change our values
+		// (if we're stepping a short distance with a long duration for instance)
+		// If there's no change, don't bother updating
 		if ( newX !== this.x || newY !== this.y ) {
 			this.x = newX;
 			this.y = newY;
 			this.updater( newX, newY );
 		}
 
-		// set up the next turn
+		// schedule the next step
 		this.animate();
 	};
 }
 
-function circularInOutEasing( val ) {
-	if ( ( val *= 2 ) < 1 ) {
-		return -0.5 * ( Math.sqrt( 1 - val * val ) - 1 );
-	}
-
-	return 0.5 * ( Math.sqrt( 1 - ( val -= 2 ) * val ) + 1 );
+/**
+ * Eases the progress of a curve from 0 to 1. Slows down as it approaches the target.
+ *
+ * @param {Number} val current value to be eased. [0,1]
+ * @returns {Number} eased val
+ */
+function circularOutEasing( val ) {
+	const inverse = val - 1;
+	return Math.sqrt( 1 - inverse * inverse );
 }
 
 /**
- * Scrolls to the specified window location
+ * Scrolls a container to the specified location
  * @param {Object} options - options object (see below)
  * @param {number} options.x - desired left or x coordinate
  * @param {number} options.y - desired top or y coordinate
@@ -130,9 +152,11 @@ function circularInOutEasing( val ) {
  * @param {function} options.onStart - callback before start is called
  * @param {function} options.onComplete - callback when scroll is finished
  * @param {HTMLElement} options.container - the container to scroll instead of window, if any
+ * @returns {Object} - the stepper
  */
 export default function scrollTo( options ) {
 	const container = options.container || window;
+
 	if ( scrollers.has( container ) ) {
 		const scroller = scrollers.get( container );
 		scroller.jumpTo( options.x, options.y );
@@ -149,7 +173,7 @@ export default function scrollTo( options ) {
 			y: options.y,
 		},
 		container,
-		easing: options.easing || circularInOutEasing,
+		easing: options.easing || circularOutEasing,
 		duration: options.duration || 500,
 		updater: makeScrollUpdater( container ),
 		x: currentScroll.x,
