@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -18,6 +19,7 @@ class LegendItem extends Component {
 
 	render() {
 		const { name, sectionNumber, value, percent, description } = this.props;
+
 		return (
 			<div className={ 'pie-chart__legend-item' }>
 				<div className={ 'pie-chart__legend-item-title' }>
@@ -32,14 +34,21 @@ class LegendItem extends Component {
 							r={ SVG_SIZE / 2 }
 						/>
 					</svg>
-					<div className={ 'pie-chart__legend-item-title-name' }>{ name }</div>
+
+					<div className={ 'pie-chart__legend-item-title-name' }>
+						{ name }
+					</div>
 				</div>
+
 				<div className={ 'pie-chart__legend-item-detail' }>
 					<div className={ 'pie-chart__legend-item-detail-value' }>
 						{ `${ value } (${ percent }%)` }
 					</div>
+
 					{ description && (
-						<div className={ 'pie-chart__legend-item-detail-description' }>{ description }</div>
+						<div className={ 'pie-chart__legend-item-detail-description' }>
+							{ description }
+						</div>
 					) }
 				</div>
 			</div>

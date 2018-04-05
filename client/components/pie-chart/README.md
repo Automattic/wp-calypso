@@ -13,7 +13,6 @@ This component renders a dataset as a pie chart.
 ## Usage
 
 ```jsx
-
 /**
  * External dependencies
  */
@@ -52,14 +51,14 @@ class PieChartExample extends Component {
 			{
 				value: 122,
 				name: props.translate( 'Referral' ),
-				description: 
+				description:
 					props.translate(
 						'Customers who find your listing by being referred from another type of search'
 					),
 			}
 		];
 
-		const dataTotal = data.reduce( (pv, cv) => pv + cv.value, 0 );
+		const dataTotal = data.reduce( ( pv, cv ) => pv + cv.value, 0 );
 
 		this.state = {
 			data,
@@ -67,7 +66,7 @@ class PieChartExample extends Component {
 				args: {
 					total: dataTotal,
 				}
-			})
+			} )
 		};
 	}
 
@@ -87,4 +86,3 @@ export default localize( PieChartExample ) ;
 ## Limits
 
 Currently there are only 3 colors used in a pie chart. While there is no hard limit on exceeding this limit, it will make identifying the corresponding section difficult.
-

@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -23,6 +24,7 @@ class PieChart extends Component {
 
 	constructor( props ) {
 		super( props );
+
 		this.state = this.processData( props.data );
 	}
 
@@ -39,6 +41,7 @@ class PieChart extends Component {
 			.startAngle( Math.PI )
 			.startAngle( -Math.PI )
 			.value( d => d.value )( sortedData );
+
 		const arcGen = d3Arc()
 			.innerRadius( 0 )
 			.outerRadius( SVG_SIZE / 2 );
@@ -47,7 +50,10 @@ class PieChart extends Component {
 
 		return {
 			data: sortedData.map( ( datum, index ) =>
-				assign( {}, datum, { sectionNum: index % NUM_COLOR_SECTIONS, path: paths[ index ] } )
+				assign( {}, datum, {
+					sectionNum: index % NUM_COLOR_SECTIONS,
+					path: paths[ index ],
+				} )
 			),
 			dataTotal: sortedData.reduce( ( pv, cv ) => pv + cv.value, 0 ),
 		};
@@ -78,7 +84,9 @@ class PieChart extends Component {
 						</g>
 					</svg>
 				</div>
+
 				{ title && <h2 className={ 'pie-chart__title' }>{ title }</h2> }
+
 				<div className={ 'pie-chart__legend' }>
 					{ data.map( ( datum, index ) => {
 						return (
