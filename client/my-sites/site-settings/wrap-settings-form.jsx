@@ -68,7 +68,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
 						id: 'site-settings-save',
 					} );
-				} else {
+					// Upon failure to save Jetpack Settings, don't show an error message,
+					// since the JP settings data layer already does that for us.
+				} else if ( ! this.props.jetpackSettingsUISupported ) {
 					let text = this.props.translate(
 						'There was a problem saving your changes. Please try again.'
 					);
