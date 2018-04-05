@@ -61,7 +61,7 @@ class PieChart extends Component {
 
 	render() {
 		const { title } = this.props;
-		const { dataTotal, data } = this.state;
+		const { data, dataTotal } = this.state;
 
 		return (
 			<div>

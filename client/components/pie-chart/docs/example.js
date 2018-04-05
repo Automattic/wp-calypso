@@ -8,8 +8,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import PieChart from 'components/pie-chart';
 import Card from 'components/card';
+import PieChart from 'components/pie-chart';
 
 class PieChartExample extends Component {
 	static displayName = 'PieChart';

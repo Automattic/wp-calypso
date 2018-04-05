@@ -10,15 +10,15 @@ const SVG_SIZE = 30;
 
 class LegendItem extends Component {
 	static propTypes = {
+		description: PropTypes.string,
 		name: PropTypes.string.isRequired,
+		percent: PropTypes.string.isRequired,
 		sectionNumber: PropTypes.number.isRequired,
 		value: PropTypes.number.isRequired,
-		percent: PropTypes.string.isRequired,
-		description: PropTypes.string,
 	};
 
 	render() {
-		const { name, sectionNumber, value, percent, description } = this.props;
+		const { description, name, percent, sectionNumber, value } = this.props;
 
 		return (
 			<div className={ 'pie-chart__legend-item' }>
