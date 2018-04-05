@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
-import { isEqualWith, sortBy } from 'lodash';
+import { isEqual, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,11 +18,13 @@ const SVG_SIZE = 300;
 
 class PieChart extends Component {
 	static propTypes = {
-		data: PropTypes.arrayOf( PropTypes.shape( {
-			description: PropTypes.string,
-			name: PropTypes.string.isRequired,
-			value: PropTypes.number.isRequired,
-		} ) ).isRequired,
+		data: PropTypes.arrayOf(
+			PropTypes.shape( {
+				description: PropTypes.string,
+				name: PropTypes.string.isRequired,
+				value: PropTypes.number.isRequired,
+			} )
+		).isRequired,
 		title: PropTypes.string,
 	};
 
@@ -33,9 +35,7 @@ class PieChart extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const customizer = ( datum, otherDatum ) => datum.value === otherDatum.value;
-
-		if ( ! isEqualWith( this.props.data, nextProps.data, customizer ) ) {
+		if ( ! isEqual( this.props.data, nextProps.data ) ) {
 			this.setState( this.processData( nextProps.data ) );
 		}
 	}
