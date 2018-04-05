@@ -19,6 +19,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
 import { urlToSlug } from 'lib/url';
+import { withoutNotice } from 'state/notices/actions';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
@@ -262,7 +263,7 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 				debug( 'user is not connected from', error );
 				if ( siteIsOnSitesList ) {
 					debug( 'removing site from sites list', siteId );
-					dispatch( receiveDeletedSite( siteId, true ) );
+					dispatch( withoutNotice( receiveDeletedSite )( siteId ) );
 				}
 			} );
 	};
