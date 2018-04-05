@@ -35,7 +35,7 @@ class JetpackPlansGrid extends Component {
 		const { isLanding, translate } = this.props;
 
 		const headerText = translate( 'Explore our Jetpack plans' );
-		let subheaderText = translate( "Now that you're connected, pick a plan that fits your needs." );
+		let subheaderText = translate( "Now that you're set up, pick a plan that fits your needs." );
 
 		if ( isLanding ) {
 			subheaderText = translate( 'Pick a plan that fits your needs.' );

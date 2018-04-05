@@ -100,7 +100,7 @@ export class AuthFormHeader extends Component {
 				case 'pressable':
 					return translate( 'In partnership with Pressable' );
 				default:
-					return translate( 'Completing connection' );
+					return translate( 'Completing set up' );
 			}
 		}
 
@@ -108,10 +108,10 @@ export class AuthFormHeader extends Component {
 			case 'logged-out':
 				return translate( 'Create an account to set up Jetpack' );
 			case 'logged-in-success':
-				return translate( 'You are connected!' );
+				return translate( "You're all set!" );
 			case 'logged-in':
 			default:
-				return translate( 'Completing connection' );
+				return translate( 'Completing set up' );
 		}
 	}
 
@@ -120,14 +120,14 @@ export class AuthFormHeader extends Component {
 
 		switch ( this.getState() ) {
 			case 'logged-out':
-				return translate( 'You are moments away from connecting your site.' );
+				return translate( 'You are moments away from a better WordPress.' );
 			case 'logged-in-success':
 				return translate( 'Thank you for flying with Jetpack' );
 			case 'partner':
 				return translate( 'Your new plan requires a connection to WordPress.com' );
 			case 'logged-in':
 			default:
-				return translate( 'Jetpack is finishing up the connection process' );
+				return translate( 'Jetpack is finishing set up' );
 		}
 	}
 
