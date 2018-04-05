@@ -24,7 +24,7 @@
   }
 }
 
-.subscription-length-option {
+.subscription-length-picker__option {
   $padding-size: 18px;
 
   display: flex;
@@ -36,12 +36,12 @@
 
   background: $white;
 
-  .subscription-length-option__radio-wrapper {
+  .subscription-length-picker__option-radio-wrapper {
     width: 21px;
     margin-right: 12px;
   }
 
-  .subscription-length-option__radio {
+  .subscription-length-picker__option-radio {
     width: 21px;
     height: 21px;
 
@@ -51,43 +51,43 @@
     }
   }
 
-  .subscription-length-option__header,
-  .subscription-length-option__description {
+  .subscription-length-picker__option-header,
+  .subscription-length-picker__option-description {
     width: 100%;
   }
 
-  .subscription-length-option__term,
-  .subscription-length-option__price,
-  .subscription-length-option__discount,
-  .subscription-length-option__side-note,
-  .subscription-length-option__description {
+  .subscription-length-picker__option-term,
+  .subscription-length-picker__option-price,
+  .subscription-length-picker__option-discount,
+  .subscription-length-picker__option-side-note,
+  .subscription-length-picker__option-description {
     display: inline-block;
     vertical-align: middle;
   }
 
-  .subscription-length-option__header {
+  .subscription-length-picker__option-header {
     line-height: 24px;
   }
 
-  .subscription-length-option__term {
+  .subscription-length-picker__option-term {
     display: inline-block;
     font-size: 24px;
     line-height: 24px;
   }
 
-  .subscription-length-option__discount {
+  .subscription-length-picker__option-discount {
     margin-left: 10px;
   }
 
-  .subscription-length-option__description {
+  .subscription-length-picker__option-description {
     font-size: 16px;
   }
 
-  .subscription-length-option__price {
+  .subscription-length-picker__option-price {
     color: $gray-dark;
   }
 
-  .subscription-length-option__side-note {
+  .subscription-length-picker__option-side-note {
     color: $gray-text-min;
     margin-left: 5px;
   }

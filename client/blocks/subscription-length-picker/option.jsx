@@ -38,31 +38,31 @@ export class SubscriptionLengthOption extends React.Component {
 
 	render() {
 		const { savePercent, price, term, checked } = this.props;
-		const className = classnames( 'subscription-length-option', {
+		const className = classnames( 'subscription-length-picker__option', {
 			'is-active': checked,
 		} );
 		return (
 			<label className={ className } htmlFor={ this.htmlId }>
-				<div className="subscription-length-option__radio-wrapper">
+				<div className="subscription-length-picker__option-radio-wrapper">
 					<input
 						id={ this.htmlId }
 						type="radio"
-						className="subscription-length-option__radio"
+						className="subscription-length-picker__option-radio"
 						checked={ checked }
 						onChange={ this.handleChange }
 					/>
 				</div>
 
-				<div className="subscription-length-option__content">
-					<div className="subscription-length-option__header">
-						<div className="subscription-length-option__term">{ this.getTermText() }</div>
-						<div className="subscription-length-option__discount">
+				<div className="subscription-length-picker__option-content">
+					<div className="subscription-length-picker__option-header">
+						<div className="subscription-length-picker__option-term">{ this.getTermText() }</div>
+						<div className="subscription-length-picker__option-discount">
 							{ savePercent ? this.renderSaveBadge() : false }
 						</div>
 					</div>
-					<div className="subscription-length-option__description">
-						<div className="subscription-length-option__price">{ price }</div>
-						<div className="subscription-length-option__side-note">
+					<div className="subscription-length-picker__option-description">
+						<div className="subscription-length-picker__option-price">{ price }</div>
+						<div className="subscription-length-picker__option-side-note">
 							{ term !== TERM_MONTHLY ? this.renderPricePerMonth() : false }
 						</div>
 					</div>
