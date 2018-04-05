@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import List from 'react-virtualized/List';
+import Gridicon from 'gridicons';
 import {
 	debounce,
 	difference,
@@ -34,6 +35,7 @@ import {
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
+import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 /**
  * Constants
@@ -322,8 +324,9 @@ class TermTreeSelectorList extends Component {
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getTermChildren( item.ID );
 
-		const { multiple, defaultTermId, translate, selected } = this.props;
+		const { multiple, defaultTermId, translate, selected, podcastingId } = this.props;
 		const itemId = item.ID;
+		const isPodcasting = podcastingId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const checked = includes( selected, itemId );
 		const inputType = multiple ? 'checkbox' : 'radio';
@@ -344,7 +347,10 @@ class TermTreeSelectorList extends Component {
 			<div key={ itemId } ref={ setItemRef } className="term-tree-selector__list-item">
 				<label>
 					{ input }
-					<span className="term-tree-selector__label">{ name }</span>
+					<span className="term-tree-selector__label">
+						{ name }
+						{ isPodcasting && <Gridicon icon="microphone" size={ 18 } /> }
+					</span>
 				</label>
 				{ children.length > 0 && (
 					<div className="term-tree-selector__nested-list">
@@ -449,5 +455,6 @@ export default connect( ( state, ownProps ) => {
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		query,
+		podcastingId: getPodcastingCategoryId( state, siteId ),
 	};
 } )( localize( TermTreeSelectorList ) );
