@@ -16,7 +16,7 @@ You can limit to only calls made to Google Analytics, Tracks, or MC by replacing
 
 _Note: Each tool has its own documentation with extensive usage guidelines and examples._
 
-[**Page Views**](./docs/page-views.md) should be used to record all page views (when the main content body completely changes). This will automatically record the pageview to both Google Analytics and Tracks.
+[**Page Views**](./docs/page-views.md) should be used to record all page views (when the main content body completely changes). This will automatically record the page view to both Google Analytics and Tracks.
 
 [**Google Analytics**](./docs/google-analytics.md) should be used to record all events the user performs on a page that *do not* trigger a page view (this will allow us to determine bounce rate on pages).
 
