@@ -5,10 +5,10 @@ This component renders a dataset as a pie chart.
 ## Props 
 
 * **data** — (required) Array of objects holding the data
-	* **value** - (required) (Number) the value of the datum
-	* **name** - (required) (String) A name to represent the datum
+	* **value** - (required) (Number) Value of the datum
+	* **name** - (required) (String) Name to represent the datum
 	* **description** - (optional) (String) A longer description of the datum 
-* **title** — (optional) title for the chart. No additional work is done by the pie chart, so if you want the total like in the exmaple it will have to be done before the prop is passed to the chart
+* **title** — (optional) (String) Title for the chart
 
 ## Usage
 
@@ -17,70 +17,52 @@ This component renders a dataset as a pie chart.
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PieChart from 'components/pie-chart';
 
-class PieChartExample extends Component {
-
-	static displayName = 'PieChart';
-
-	constructor( props ) {
-		super( props );
-
+export default class Example extends Component {
+	render() {
 		const data = [
 			{
 				value: 189,
-				name: props.translate( 'Direct' ),
+				name: translate( 'Direct' ),
 				description:
-					props.translate(
+					translate(
 						'Customers who find your listing searching for your business or address'
 					),
 			},
 			{
 				value: 362,
-				name: props.translate( 'Discovery' ),
+				name: translate( 'Discovery' ),
 				description:
-					props.translate(
+					translate(
 						'Customers who find your listing searching for a category, product, or service'
 					),
 			},
 			{
 				value: 122,
-				name: props.translate( 'Referral' ),
+				name: translate( 'Referral' ),
 				description:
-					props.translate(
+					translate(
 						'Customers who find your listing by being referred from another type of search'
 					),
 			}
 		];
 
-		const dataTotal = data.reduce( ( pv, cv ) => pv + cv.value, 0 );
+		const total = data.reduce( ( result, datum ) => result + datum.value, 0 );
 
-		this.state = {
-			data,
-			title: props.translate( '%(total)s Total Searches', {
-				args: {
-					total: dataTotal,
-				}
-			} )
-		};
-	}
-
-	render() {
 		return (
 			<PieChart
-				data={ this.state.data }
-				title={ this.state.title }
+				data={ data }
+				title={ translate( '%(total)s Total Searches', { args: { total } } ) }
 			/>
 		);
 	}
 }
-
-export default localize( PieChartExample ) ;
 ```
 
 ## Limits
