@@ -406,7 +406,7 @@ class RegisterDomainStep extends React.Component {
 		this.props.onSave( this.state );
 	};
 
-	repeatSearch = ( stateOverride = {} ) => {
+	repeatSearch = ( stateOverride = {}, { shouldQuerySubdomains = true } = {} ) => {
 		const nextState = {
 			exactMatchDomain: null,
 			lastDomainSearched: null,
@@ -417,7 +417,7 @@ class RegisterDomainStep extends React.Component {
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
 		this.setState( nextState, () => {
-			this.onSearch( this.state.lastQuery );
+			this.onSearch( this.state.lastQuery, { shouldQuerySubdomains } );
 		} );
 	};
 
@@ -703,7 +703,7 @@ class RegisterDomainStep extends React.Component {
 		} );
 	};
 
-	onSearch = searchQuery => {
+	onSearch = ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
 		const domain = getFixedDomainSearch( searchQuery );
 
@@ -712,8 +712,7 @@ class RegisterDomainStep extends React.Component {
 			this.save
 		);
 
-		if ( ! domain || ( typeof domain === 'string' && domain.trim() === '' ) ) {
-			// the search was cleared or the domain contained only spaces
+		if ( domain === '' ) {
 			debug( 'onSearch handler was terminated by an empty domain input' );
 			return;
 		}
@@ -740,7 +739,10 @@ class RegisterDomainStep extends React.Component {
 			.catch( () => [] ) // handle the error and return an empty list
 			.then( this.handleDomainSuggestions( domain ) );
 
-		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
+		if (
+			shouldQuerySubdomains &&
+			( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
+		) {
 			this.getSubdomainSuggestions( domain, timestamp );
 		}
 	};
@@ -748,12 +750,15 @@ class RegisterDomainStep extends React.Component {
 	showNextPage = () => {
 		debug( 'showNextPage was triggered' );
 
-		this.repeatSearch( {
-			loadingNextPageResults: true,
-			loadingResults: false,
-			loadingSubdomainResults: false,
-			pageNumber: this.state.pageNumber + 1,
-		} );
+		this.repeatSearch(
+			{
+				loadingNextPageResults: true,
+				loadingResults: false,
+				loadingSubdomainResults: false,
+				pageNumber: this.state.pageNumber + 1,
+			},
+			{ shouldQuerySubdomains: false }
+		);
 	};
 
 	initialSuggestions() {
