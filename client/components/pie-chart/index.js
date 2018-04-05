@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
-import { assign, isEqualWith, sortBy } from 'lodash';
+import { isEqualWith, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,12 +55,11 @@ class PieChart extends Component {
 		const paths = arcs.map( arc => arcGen( arc ) );
 
 		return {
-			data: sortedData.map( ( datum, index ) =>
-				assign( {}, datum, {
-					sectionNum: index % NUM_COLOR_SECTIONS,
-					path: paths[ index ],
-				} )
-			),
+			data: sortedData.map( ( datum, index ) => ( {
+				...datum,
+				sectionNum: index % NUM_COLOR_SECTIONS,
+				path: paths[ index ],
+			} ) ),
 			dataTotal: sortedData.reduce( ( result, datum ) => result + datum.value, 0 ),
 		};
 	}
