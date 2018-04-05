@@ -173,24 +173,23 @@ const computeProductsWithPrices = ( state, plans ) => {
 		.sort( ( a, b ) => b.priceMonthly - a.priceMonthly );
 };
 
-export default connect(
-	( state, { plans } ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const fetchingProducts = ! getProductsList( state ) && isProductsListFetching( state );
-		const fetchingPlans = ! plans && isRequestingPlans( state );
-		const fetchingSitePlans =
-			! getPlansBySiteId( selectedSiteId ) || isRequestingSitePlans( state, selectedSiteId );
-		const fetchingDeps = fetchingProducts || fetchingPlans || fetchingSitePlans;
+export const mapStateToProps = ( state, { plans } ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const fetchingProducts = ! getProductsList( state ) && isProductsListFetching( state );
+	const fetchingPlans = ! plans && isRequestingPlans( state );
+	const fetchingSitePlans =
+		! getPlansBySiteId( selectedSiteId ) || isRequestingSitePlans( state, selectedSiteId );
+	const fetchingDeps = fetchingProducts || fetchingPlans || fetchingSitePlans;
 
-		return {
-			fetchingPlans,
-			fetchingProducts,
-			currencyCode: getCurrentUserCurrencyCode( state ),
-			productsWithPrices: fetchingDeps ? [] : computeProductsWithPrices( state, plans ),
-		};
-	},
-	{
-		requestPlans,
-		requestProductsList,
-	}
-)( localize( SubscriptionLengthPickerContainer ) );
+	return {
+		fetchingPlans,
+		fetchingProducts,
+		currencyCode: getCurrentUserCurrencyCode( state ),
+		productsWithPrices: fetchingDeps ? [] : computeProductsWithPrices( state, plans ),
+	};
+};
+
+export default connect( mapStateToProps, {
+	requestPlans,
+	requestProductsList,
+} )( localize( SubscriptionLengthPickerContainer ) );
