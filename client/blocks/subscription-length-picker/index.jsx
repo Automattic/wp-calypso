@@ -84,17 +84,19 @@ export class SubscriptionLengthPicker extends React.Component {
 		);
 	}
 
-	renderProduct = p => {
-		const { plan, planSlug } = p;
+	renderProduct = product => {
+		const { plan, planSlug } = product;
 
 		return (
 			<div className="subscription-length-picker__option-container" key={ planSlug }>
 				<SubscriptionLengthOption
 					term={ plan.term }
 					checked={ planSlug === this.state.checked }
-					price={ myFormatCurrency( p.priceFull, this.props.currencyCode ) }
-					pricePerMonth={ myFormatCurrency( p.priceMonthly, this.props.currencyCode ) }
-					savePercent={ Math.round( 100 * ( 1 - p.priceMonthly / this.getHighestMonthlyPrice() ) ) }
+					price={ myFormatCurrency( product.priceFull, this.props.currencyCode ) }
+					pricePerMonth={ myFormatCurrency( product.priceMonthly, this.props.currencyCode ) }
+					savePercent={ Math.round(
+						100 * ( 1 - product.priceMonthly / this.getHighestMonthlyPrice() )
+					) }
 					value={ planSlug }
 					onCheck={ this.handleCheck }
 				/>
