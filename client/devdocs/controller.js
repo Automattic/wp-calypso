@@ -93,15 +93,38 @@ const devdocs = {
 		next();
 	},
 
-	wizard: function( context, next ) {
-		context.primary = <WizardComponent stepName={ context.params.stepName } />;
-		next();
-	},
-
-	// App Blocks
+	/*
+	 * Components: Blocks
+	 */
 	blocks: function( context, next ) {
 		context.primary = (
 			<AsyncLoad component={ context.params.component } require="./design/blocks" />
+		);
+		next();
+	},
+
+	/*
+	 * Components: Banners and Notices
+	 */
+	banners: function( context, next ) {
+		context.primary = (
+			<AsyncLoad
+				component={ context.params.component }
+				require="./design/components/banners-and-notices"
+			/>
+		);
+		next();
+	},
+
+	/*
+	 * Components: Text and Images
+	 */
+	text: function( context, next ) {
+		context.primary = (
+			<AsyncLoad
+				component={ context.params.component }
+				require="./design/components/text-and-images"
+			/>
 		);
 		next();
 	},
@@ -114,6 +137,11 @@ const devdocs = {
 				selector={ context.params.selector }
 			/>
 		);
+		next();
+	},
+
+	wizard: function( context, next ) {
+		context.primary = <WizardComponent stepName={ context.params.stepName } />;
 		next();
 	},
 
