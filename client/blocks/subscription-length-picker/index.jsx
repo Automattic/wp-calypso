@@ -10,16 +10,19 @@ import PropTypes from 'prop-types';
 /**
  * Internal Dependencies
  */
-import { getPlansBySiteId, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { localize } from 'i18n-calypso';
 import formatCurrency from 'lib/format-currency';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import { requestPlans } from 'state/plans/actions';
-import { getPlanRawPrice, isRequestingPlans } from '../../state/plans/selectors';
-import { getCurrentUserCurrencyCode } from '../../state/current-user/selectors';
-import { getPlanDiscountedRawPrice } from '../../state/sites/plans/selectors';
-import { getSelectedSiteId } from '../../state/ui/selectors';
+import { getPlanRawPrice, isRequestingPlans } from 'state/plans/selectors';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import {
+	getPlansBySiteId,
+	isRequestingSitePlans,
+	getPlanDiscountedRawPrice,
+} from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { abtest } from 'lib/abtest';
 import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
 import { TERM_MONTHLY } from 'lib/plans/constants';
