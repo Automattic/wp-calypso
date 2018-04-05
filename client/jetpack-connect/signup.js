@@ -2,12 +2,9 @@
 /**
  * Handle log in and sign up as part of the Jetpack Connect flow
  *
- * For user creation, this component relies on redux to store state as a user is created via a
- * series of actions. Eventually this results in updating the `authorizationData.userData` prop on
- * this component.
- *
- * When this component receives `userData`, it renders a `<WpcomLoginForm />` with the userData,
- * which handles logging in the new user and redirection.
+ * When this component receives a bearer token after attempting to create a new
+ * user, it renders a <WpcomLoginForm />, which handles logging in the new user
+ * and redirection.
  */
 
 /**
@@ -17,7 +14,6 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -38,6 +34,7 @@ import { createAccount as createAccountAction } from 'state/jetpack-connect/acti
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { errorNotice as errorNoticeAction } from 'state/notices/actions';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
@@ -49,14 +46,18 @@ export class JetpackSignup extends Component {
 
 		// Connected props
 		authorizationData: PropTypes.shape( {
-			bearerToken: PropTypes.string,
 			isAuthorizing: PropTypes.bool,
-			userData: PropTypes.object,
 		} ).isRequired,
 		createAccount: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
+
+	state = { newUsername: null, bearerToken: null };
+
+	clearState() {
+		this.setState( { newUsername: null, bearerToken: null } );
+	}
 
 	componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
@@ -76,31 +77,35 @@ export class JetpackSignup extends Component {
 
 	handleSubmitSignup = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
-		this.props.createAccount( userData );
+		this.props.createAccount( userData ).then(
+			bearerToken =>
+				this.setState( {
+					newUsername: userData.username,
+					bearerToken,
+				} ),
+			error => {
+				debug( 'Signup error: %o', error );
+				this.props.errorNotice( 'Danger!!!' );
+			}
+		);
 	};
 
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
-	/**
-	 * Log in the new user
-	 *
-	 * After an account is created, `authorizationData.userData` is populated
-	 * and we render this component to log the new user in.
-	 *
-	 * @return {Object} React element for render.
-	 */
 	renderLoginUser() {
-		const { userData, bearerToken } = this.props.authorizationData;
-
+		const { newUsername, bearerToken } = this.state;
 		return (
-			<WpcomLoginForm
-				authorization={ 'Bearer ' + bearerToken }
-				emailAddress={ this.props.authQuery.userEmail }
-				log={ userData.username }
-				redirectTo={ addQueryArgs( { auth_approved: true }, window.location.href ) }
-			/>
+			newUsername &&
+			bearerToken && (
+				<WpcomLoginForm
+					authorization={ 'Bearer ' + bearerToken }
+					emailAddress={ this.props.authQuery.userEmail }
+					log={ newUsername }
+					redirectTo={ addQueryArgs( { auth_approved: true }, window.location.href ) }
+				/>
+			)
 		);
 	}
 
@@ -112,7 +117,6 @@ export class JetpackSignup extends Component {
 
 	renderFooterLink() {
 		const emailAddress = this.props.authQuery.userEmail;
-
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem
@@ -130,10 +134,8 @@ export class JetpackSignup extends Component {
 			</LoggedOutFormLinks>
 		);
 	}
-
 	render() {
-		const { isAuthorizing, userData } = this.props.authorizationData;
-
+		const { isAuthorizing } = this.props.authorizationData;
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
@@ -151,21 +153,21 @@ export class JetpackSignup extends Component {
 						submitButtonText={ this.props.translate( 'Create your account' ) }
 						submitForm={ this.handleSubmitSignup }
 						submitting={ isAuthorizing }
-						suggestedUsername={ get( userData, 'username', '' ) }
+						suggestedUsername=""
 					/>
-					{ userData && this.renderLoginUser() }
+					{ this.renderLoginUser() }
 				</div>
 			</MainWrapper>
 		);
 	}
 }
-
 export default connect(
 	state => ( {
 		authorizationData: getAuthorizationData( state ),
 	} ),
 	{
 		createAccount: createAccountAction,
+		errorNotice: errorNoticeAction,
 		recordTracksEvent: recordTracksEventAction,
 	}
 )( localize( JetpackSignup ) );
