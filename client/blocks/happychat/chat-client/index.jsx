@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import HappychatClientApi from 'happychat-client';
-import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -26,8 +25,8 @@ import {
 	HAPPYCHAT_EVENT_AVAILABILITY,
 	HAPPYCHAT_SKILL_LANGUAGE,
 	HAPPYCHAT_SKILL_PRODUCT,
-	LAYOUT_PANEL_MAX_PARENT_SIZE,
-	LAYOUT_MAX_PARENT_SIZE,
+	LAYOUT_FULLSCREEN,
+	LAYOUT_PANEL,
 } from './constants';
 
 /*
@@ -44,7 +43,7 @@ export class HappychatClient extends Component {
 
 	static defaultProps = {
 		entry: ENTRY_CHAT,
-		layout: LAYOUT_PANEL_MAX_PARENT_SIZE,
+		layout: LAYOUT_PANEL,
 		nodeId: 'happychat-client',
 		skills: {
 			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_WPCOM ],
@@ -81,10 +80,7 @@ export class HappychatClient extends Component {
 			<div
 				id="happychat-client"
 				className={ classnames( 'chat-client', {
-					'is-fullscreen': includes(
-						[ LAYOUT_MAX_PARENT_SIZE, LAYOUT_PANEL_MAX_PARENT_SIZE ],
-						layout
-					),
+					'is-fullscreen': layout === LAYOUT_FULLSCREEN,
 				} ) }
 			/>
 		);
