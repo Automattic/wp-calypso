@@ -4,6 +4,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -13,7 +15,6 @@ import { connect } from 'react-redux';
 import AppPasswordItem from 'me/application-password-item';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import Gridicon from 'gridicons';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
@@ -21,7 +22,6 @@ import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import Card from 'components/card';
-import classNames from 'classnames';
 import QueryApplicationPasswords from 'components/data/query-application-passwords';
 import {
 	clearNewApplicationPassword,
