@@ -50,12 +50,9 @@ export class SubscriptionLengthPicker extends React.Component {
 		onChange: () => null,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			checked: props.initialValue,
-		};
-	}
+	state = {
+		checked: this.props.initialValue,
+	};
 
 	componentWillMount() {
 		if ( this.props.productsWithPrices.length === 0 ) {
