@@ -18,12 +18,10 @@ import { isBusinessPlanUser } from 'state/selectors';
 class ChatBusinessConciergeNotice extends Component {
 	static propTypes = {
 		from: PropTypes.string.isRequired,
-		selectedSite: PropTypes.object.isRequired,
-		to: PropTypes.string.isRequired,
-
-		// Connected props
 		isBusinessPlanUser: PropTypes.bool.isRequired,
 		moment: PropTypes.func.isRequired,
+		selectedSite: PropTypes.object.isRequired,
+		to: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
