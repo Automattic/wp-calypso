@@ -22,7 +22,7 @@ describe( 'utils', () => {
 				{ ID: 123, type: 'post' },
 				{ slug: 'en.blog.wordpress.com' }
 			);
-			assert( url === '/post/en.blog.wordpress.com/123' );
+			expect( url ).toEqual( '/post/en.blog.wordpress.com/123' );
 		} );
 
 		test( 'should return correct path type=page is supplied', () => {
@@ -30,7 +30,7 @@ describe( 'utils', () => {
 				{ ID: 123, type: 'page' },
 				{ slug: 'en.blog.wordpress.com' }
 			);
-			assert( url === '/page/en.blog.wordpress.com/123' );
+			expect( url ).toEqual( '/page/en.blog.wordpress.com/123' );
 		} );
 
 		test( 'should return correct path when custom post type is supplied', () => {
@@ -38,7 +38,12 @@ describe( 'utils', () => {
 				{ ID: 123, type: 'jetpack-portfolio' },
 				{ slug: 'en.blog.wordpress.com' }
 			);
-			assert( url === '/edit/jetpack-portfolio/en.blog.wordpress.com/123' );
+			expect( url ).toEqual( '/edit/jetpack-portfolio/en.blog.wordpress.com/123' );
+		} );
+
+		test( 'should default to type=post if no post type is supplied', () => {
+			const url = postUtils.getEditURL( { ID: 123, type: '' }, { slug: 'en.blog.wordpress.com' } );
+			expect( url ).toEqual( '/post/en.blog.wordpress.com/123' );
 		} );
 	} );
 

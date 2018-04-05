@@ -16,11 +16,11 @@ import postNormalizer from 'lib/post-normalizer';
 export const getEditURL = function( post, site ) {
 	let basePath = '';
 
-	if ( ! includes( [ 'post', 'page' ], post.type ) ) {
+	if ( post.type && ! includes( [ 'post', 'page' ], post.type ) ) {
 		basePath = '/edit';
 	}
 
-	return `${ basePath }/${ post.type }/${ site.slug }/${ post.ID }`;
+	return `${ basePath }/${ post.type || 'post' }/${ site.slug }/${ post.ID }`;
 };
 
 export const getPreviewURL = function( site, post ) {
