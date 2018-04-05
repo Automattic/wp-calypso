@@ -81,7 +81,7 @@ class ApplicationPasswords extends Component {
 	};
 
 	renderNewAppPasswordForm() {
-		const { appPasswords } = this.props;
+		const { appPasswords, translate } = this.props;
 		const cardClasses = classNames( 'application-passwords__add-new-card', {
 			'is-visible': this.state.addingPassword,
 		} );
@@ -94,9 +94,7 @@ class ApplicationPasswords extends Component {
 					onSubmit={ this.createApplicationPassword }
 				>
 					<FormFieldset>
-						<FormLabel htmlFor="application-name">
-							{ this.props.translate( 'Application Name' ) }
-						</FormLabel>
+						<FormLabel htmlFor="application-name">{ translate( 'Application Name' ) }</FormLabel>
 						<FormTextInput
 							className="application-passwords__add-new-field"
 							disabled={ this.state.submittingForm }
@@ -114,8 +112,8 @@ class ApplicationPasswords extends Component {
 							onClick={ this.getClickHandler( 'Generate New Application Password Button' ) }
 						>
 							{ this.state.submittingForm
-								? this.props.translate( 'Generating Password…' )
-								: this.props.translate( 'Generate Password' ) }
+								? translate( 'Generating Password…' )
+								: translate( 'Generate Password' ) }
 						</FormButton>
 						{ appPasswords.length ? (
 							<FormButton
@@ -125,7 +123,7 @@ class ApplicationPasswords extends Component {
 									this.toggleNewPassword
 								) }
 							>
-								{ this.props.translate( 'Cancel' ) }
+								{ translate( 'Cancel' ) }
 							</FormButton>
 						) : null }
 					</FormButtonsBar>
@@ -135,13 +133,13 @@ class ApplicationPasswords extends Component {
 	}
 
 	renderNewAppPassword() {
-		const { newAppPassword } = this.props;
+		const { newAppPassword, translate } = this.props;
 		return (
 			<Card className="application-passwords__new-password">
 				<p className="application-passwords__new-password-display">{ newAppPassword }</p>
 
 				<p className="application-passwords__new-password-help">
-					{ this.props.translate(
+					{ translate(
 						'Use this password to log in to {{strong}}%(appName)s{{/strong}}. Note: spaces are ignored.',
 						{
 							args: {
@@ -161,7 +159,7 @@ class ApplicationPasswords extends Component {
 							this.clearNewApplicationPassword
 						) }
 					>
-						{ this.props.translate( 'Done' ) }
+						{ translate( 'Done' ) }
 					</FormButton>
 				</FormButtonsBar>
 			</Card>
@@ -169,14 +167,14 @@ class ApplicationPasswords extends Component {
 	}
 
 	renderApplicationPasswords() {
-		const { appPasswords } = this.props;
+		const { appPasswords, translate } = this.props;
 		if ( ! appPasswords.length ) {
 			return null;
 		}
 
 		return (
 			<div className="application-passwords__active">
-				<FormSectionHeading>{ this.props.translate( 'Active Passwords' ) }</FormSectionHeading>
+				<FormSectionHeading>{ translate( 'Active Passwords' ) }</FormSectionHeading>
 				<ul className="application-passwords__list">
 					{ appPasswords.map( function( password ) {
 						return <AppPasswordItem password={ password } key={ password.ID } />;
@@ -187,13 +185,13 @@ class ApplicationPasswords extends Component {
 	}
 
 	render() {
-		const { newAppPassword } = this.props;
+		const { newAppPassword, translate } = this.props;
 
 		return (
 			<div>
 				<QueryApplicationPasswords />
 
-				<SectionHeader label={ this.props.translate( 'Application Passwords' ) }>
+				<SectionHeader label={ translate( 'Application Passwords' ) }>
 					<Button
 						compact
 						onClick={ this.getClickHandler(
@@ -204,14 +202,14 @@ class ApplicationPasswords extends Component {
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						<Gridicon icon="plus-small" size={ 16 } />
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-						{ this.props.translate( 'Add New Application Password' ) }
+						{ translate( 'Add New Application Password' ) }
 					</Button>
 				</SectionHeader>
 				<Card>
 					{ newAppPassword ? this.renderNewAppPassword() : this.renderNewAppPasswordForm() }
 
 					<p>
-						{ this.props.translate(
+						{ translate(
 							'With Two-Step Authentication active, you can generate a custom password for ' +
 								'each third-party application you authorize to use your WordPress.com account. ' +
 								'You can revoke access for an individual application here if you ever need to.'
