@@ -14,10 +14,10 @@ import {
 	APPLICATION_PASSWORD_NEW_CLEAR,
 	APPLICATION_PASSWORDS_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
 
-export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
+export const items = ( state = [], action ) => {
 	switch ( action.type ) {
 		case APPLICATION_PASSWORD_DELETE_SUCCESS:
 			return reject( state, { ID: action.appPasswordId } );
@@ -26,7 +26,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
 		default:
 			return state;
 	}
-} );
+};
+items.schema = itemsSchema;
 
 export const newPassword = ( state = null, action ) => {
 	switch ( action.type ) {
