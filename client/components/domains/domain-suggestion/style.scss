@@ -18,6 +18,9 @@
 	&.is-clickable {
 		cursor: pointer;
 
+		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+		transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
+
 		&:hover {
 			box-shadow: 0 0 0 1px $gray;
 			z-index: z-index('root', '.domain-suggestion.is-clickable:hover');
@@ -119,6 +122,12 @@
 		padding-left: 3em;
 		padding-right: 3em;
 		margin-left: 1em;
+		transition: all 0.1s linear;
+
+		&:hover {
+			background-color: lighten($blue-medium, 4%);
+			border-color: darken($blue-medium, 4%);
+		}
 	}
 
 	.is-placeholder & {

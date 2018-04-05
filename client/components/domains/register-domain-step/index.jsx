@@ -3,7 +3,8 @@
 /**
  * External dependencies
  */
-
+import classNames from 'classnames';
+import debugFactory from 'debug';
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -32,6 +33,7 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
+import Card from 'components/card';
 import Notice from 'components/notice';
 import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
@@ -66,6 +68,9 @@ import {
 	recordSearchResultsReceive,
 	recordTransferDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
+import Spinner from 'components/spinner';
+
+const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
 const domains = wpcom.domains();
 
@@ -184,9 +189,11 @@ class RegisterDomainStep extends React.Component {
 			lastDomainSearched: null,
 			lastDomainStatus: null,
 			lastDomainIsTransferrable: false,
-			loadingResults: loadingResults,
+			loadingResults,
 			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
+			loadingNextPageResults: false,
 			notice: null,
+			pageNumber: 1,
 			searchResults: null,
 			subdomainSearchResults: null,
 		};
@@ -304,10 +311,10 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
-		const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
 
 		return (
-			<div className={ `register-domain-step ${ isKrackenUI ? 'is-kracken-ui' : '' }` }>
+			<div className={ `register-domain-step ${ isKrackenUi ? 'is-kracken-ui' : '' }` }>
 				<div className="register-domain-step__search">
 					<SearchCard
 						ref={ this.bindSearchCardReference }
@@ -325,13 +332,13 @@ class RegisterDomainStep extends React.Component {
 						maxLength={ 60 }
 					/>
 				</div>
-				{ isKrackenUI && (
+				{ isKrackenUi && (
 					<div className="register-domain-step__filter">
 						<SearchFilters
 							filters={ this.state.filters }
 							onChange={ this.onFiltersChange }
 							onFiltersReset={ this.onFiltersReset }
-							onFiltersSubmit={ this.repeatSearch }
+							onFiltersSubmit={ this.onFiltersSubmit }
 						/>
 					</div>
 				) }
@@ -343,9 +350,37 @@ class RegisterDomainStep extends React.Component {
 					/>
 				) }
 				{ this.content() }
+				{ this.renderPaginationControls() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
 			</div>
+		);
+	}
+
+	renderPaginationControls() {
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
+		if ( ! isKrackenUi || this.state.searchResults === null ) {
+			return null;
+		}
+
+		const isLoading = this.state.loadingResults || this.state.loadingNextPageResults;
+		const className = classNames( 'button', 'register-domain-step__next-page', {
+			'register-domain-step__next-page--is-loading': isLoading,
+		} );
+		return (
+			<Card
+				className={ className }
+				disabled={ isLoading }
+				onClick={ this.showNextPage }
+				tagName="button"
+			>
+				<div className="register-domain-step__next-page-content">
+					{ this.props.translate( 'Show more results' ) }
+				</div>
+				<div className="register-domain-step__next-page-loader">
+					<Spinner size={ 20 } />
+				</div>
+			</Card>
 		);
 	}
 
@@ -371,8 +406,19 @@ class RegisterDomainStep extends React.Component {
 		this.props.onSave( this.state );
 	};
 
-	repeatSearch = () => {
-		this.onSearchChange( this.state.lastQuery, () => this.onSearch( this.state.lastQuery ) );
+	repeatSearch = ( stateOverride = {}, { shouldQuerySubdomains = true } = {} ) => {
+		const nextState = {
+			exactMatchDomain: null,
+			lastDomainSearched: null,
+			loadingResults: true,
+			loadingSubdomainResults: true,
+			notice: null,
+			...stateOverride,
+		};
+		debug( 'Repeating a search with the following input for setState', nextState );
+		this.setState( nextState, () => {
+			this.onSearch( this.state.lastQuery, { shouldQuerySubdomains } );
+		} );
 	};
 
 	getActiveFiltersForAPI() {
@@ -400,6 +446,10 @@ class RegisterDomainStep extends React.Component {
 		);
 	};
 
+	onFiltersSubmit = () => {
+		this.repeatSearch( { pageNumber: 1 } );
+	};
+
 	onSearchChange = ( searchQuery, callback = noop ) => {
 		if ( ! this._isMounted ) {
 			return;
@@ -412,9 +462,10 @@ class RegisterDomainStep extends React.Component {
 				exactMatchDomain: null,
 				lastQuery: searchQuery,
 				lastDomainSearched: null,
-				loadingResults: loadingResults,
+				loadingResults,
 				loadingSubdomainResults: loadingResults,
 				notice: null,
+				pageNumber: 1,
 				searchResults: null,
 				subdomainSearchResults: null,
 			},
@@ -487,11 +538,14 @@ class RegisterDomainStep extends React.Component {
 			quantity: suggestionQuantity,
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
+			page_number: this.state.pageNumber,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: searchVendor,
 			vertical: this.props.surveyVertical,
 			...this.getActiveFiltersForAPI(),
 		};
+
+		debug( 'Fetching domains suggestions with the following query', query );
 
 		return domains
 			.suggestions( query )
@@ -507,6 +561,14 @@ class RegisterDomainStep extends React.Component {
 					domainSuggestions.length,
 					this.props.analyticsSection
 				);
+
+				// If page number is greater than 1, then we assume the user has advanced
+				// to the next page. Given our "load more" pagination design, this means
+				// we'd want to combine the existing suggestions with the new suggestions
+				if ( this.state.pageNumber > 1 ) {
+					this.setState( { loadingNextPageResults: false } );
+					return [ ...this.state.searchResults, ...domainSuggestions ];
+				}
 
 				return domainSuggestions;
 			} )
@@ -533,7 +595,7 @@ class RegisterDomainStep extends React.Component {
 			} );
 	};
 
-	handleDomainSuggestions = domain => result => {
+	handleDomainSuggestions = domain => results => {
 		if (
 			! this.state.loadingResults ||
 			domain !== this.state.lastDomainSearched ||
@@ -544,7 +606,7 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		const suggestions = uniqBy( flatten( compact( result ) ), function( suggestion ) {
+		const suggestions = uniqBy( flatten( compact( results ) ), function( suggestion ) {
 			return suggestion.domain_name;
 		} );
 
@@ -645,7 +707,8 @@ class RegisterDomainStep extends React.Component {
 		} );
 	};
 
-	onSearch = searchQuery => {
+	onSearch = ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
+		debug( 'onSearch handler was triggered with query', searchQuery );
 		const domain = getFixedDomainSearch( searchQuery );
 
 		this.setState(
@@ -653,8 +716,8 @@ class RegisterDomainStep extends React.Component {
 			this.save
 		);
 
-		if ( ! domain || ! this.state.loadingResults ) {
-			// the search was cleared or the domain contained only spaces
+		if ( domain === '' ) {
+			debug( 'onSearch handler was terminated by an empty domain input' );
 			return;
 		}
 
@@ -662,8 +725,6 @@ class RegisterDomainStep extends React.Component {
 
 		this.setState( {
 			lastDomainSearched: domain,
-			searchResults: [],
-			subdomainSearchResults: [],
 			railcarSeed: this.getNewRailcarSeed(),
 		} );
 
@@ -682,9 +743,26 @@ class RegisterDomainStep extends React.Component {
 			.catch( () => [] ) // handle the error and return an empty list
 			.then( this.handleDomainSuggestions( domain ) );
 
-		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
+		if (
+			shouldQuerySubdomains &&
+			( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
+		) {
 			this.getSubdomainSuggestions( domain, timestamp );
 		}
+	};
+
+	showNextPage = () => {
+		debug( 'showNextPage was triggered' );
+
+		this.repeatSearch(
+			{
+				loadingNextPageResults: true,
+				loadingResults: false,
+				loadingSubdomainResults: false,
+				pageNumber: this.state.pageNumber + 1,
+			},
+			{ shouldQuerySubdomains: false }
+		);
 	};
 
 	initialSuggestions() {
