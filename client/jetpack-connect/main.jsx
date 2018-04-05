@@ -358,7 +358,7 @@ export class JetpackConnectMain extends Component {
 		return {
 			headerTitle: translate( 'Set up Jetpack on your self-hosted WordPress' ),
 			headerSubtitle: translate(
-				"We'll be installing the Jetpack plugin so WordPress.com can communicate to " +
+				"We'll be installing the Jetpack plugin so WordPress.com can communicate with " +
 					'your self-hosted WordPress site.'
 			),
 		};
