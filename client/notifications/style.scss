@@ -38,13 +38,13 @@
 			left: inherit;
 			width: 400px;
 
-			@media screen and (max-width: 799px) {
-		    left: 0;
+			@include breakpoint( '<800px' ) {
+		    	left: 0;
 				width: auto;
 		  }
 	}
 
-	@media screen and (max-width: 799px) {
+	@include breakpoint( '<800px' ) {
 		&.wpnc__main header {
 			top: 47px;
 		}
