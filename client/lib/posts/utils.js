@@ -21,7 +21,7 @@ export const getEditURL = function( post, site ) {
 		basePath = '/edit';
 	}
 
-	return `${ basePath }/${ postType || 'post' }/${ site.slug }/${ post.ID }`;
+	return `${ basePath }/${ postType }/${ site.slug }/${ post.ID }`;
 };
 
 export const getPreviewURL = function( site, post ) {
