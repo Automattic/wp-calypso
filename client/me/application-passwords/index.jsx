@@ -18,7 +18,6 @@ import { connect } from 'react-redux';
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import AppPasswordItem from 'me/application-password-item';
-import notices from 'notices';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
@@ -30,7 +29,12 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import Card from 'components/card';
 import classNames from 'classnames';
-import { errorNotice } from 'state/notices/actions';
+import QueryApplicationPasswords from 'components/data/query-application-passwords';
+import {
+	clearNewApplicationPassword,
+	createApplicationPassword,
+} from 'state/application-passwords/actions';
+import { getApplicationPasswords, getNewApplicationPassword } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const ApplicationPasswords = createReactClass( {
@@ -53,6 +57,12 @@ const ApplicationPasswords = createReactClass( {
 		};
 	},
 
+	componentWillReceiveProps: function( nextProps ) {
+		if ( this.state.submittingForm && ! this.props.newAppPassword && !! nextProps.newAppPassword ) {
+			this.setState( { submittingForm: false } );
+		}
+	},
+
 	getClickHandler( action, callback ) {
 		return event => {
 			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
@@ -71,29 +81,11 @@ const ApplicationPasswords = createReactClass( {
 		event.preventDefault();
 		this.setState( { submittingForm: true } );
 
-		this.props.appPasswordsData.create(
-			this.state.applicationName,
-			function( error ) {
-				this.setState( { submittingForm: false } );
-				if ( error ) {
-					debug( 'Failure creating application password.' );
-
-					// handle error case here
-					notices.clearNotices( 'notices' );
-					this.props.errorNotice(
-						this.props.translate(
-							'There was a problem creating your application password. Please try again.'
-						)
-					);
-				} else {
-					debug( 'Application password created successfully.' );
-				}
-			}.bind( this )
-		);
+		this.props.createApplicationPassword( this.state.applicationName );
 	},
 
 	clearNewApplicationPassword: function() {
-		this.props.appPasswordsData.clearNewPassword();
+		this.props.clearNewApplicationPassword();
 		this.setState( this.getInitialState() );
 	},
 
@@ -103,6 +95,7 @@ const ApplicationPasswords = createReactClass( {
 	},
 
 	renderNewAppPasswordForm: function() {
+		const { appPasswords } = this.props;
 		const cardClasses = classNames( 'application-passwords__add-new-card', {
 			'is-visible': this.state.addingPassword,
 		} );
@@ -138,7 +131,7 @@ const ApplicationPasswords = createReactClass( {
 								? this.props.translate( 'Generating Password…' )
 								: this.props.translate( 'Generate Password' ) }
 						</FormButton>
-						{ this.props.appPasswordsData.get().length ? (
+						{ appPasswords.length ? (
 							<FormButton
 								isPrimary={ false }
 								onClick={ this.getClickHandler(
@@ -156,12 +149,10 @@ const ApplicationPasswords = createReactClass( {
 	},
 
 	renderNewAppPassword: function() {
-		var newPassword = this.props.appPasswordsData.newApplicationPassword;
+		const { newAppPassword } = this.props;
 		return (
 			<Card className="application-passwords__new-password">
-				<p className="application-passwords__new-password-display">
-					{ newPassword.application_password }
-				</p>
+				<p className="application-passwords__new-password-display">{ newAppPassword }</p>
 
 				<p className="application-passwords__new-password-help">
 					{ this.props.translate(
@@ -192,7 +183,8 @@ const ApplicationPasswords = createReactClass( {
 	},
 
 	renderApplicationPasswords: function() {
-		if ( ! this.props.appPasswordsData.get().length ) {
+		const { appPasswords } = this.props;
+		if ( ! appPasswords.length ) {
 			return null;
 		}
 
@@ -200,14 +192,8 @@ const ApplicationPasswords = createReactClass( {
 			<div className="application-passwords__active">
 				<FormSectionHeading>{ this.props.translate( 'Active Passwords' ) }</FormSectionHeading>
 				<ul className="application-passwords__list">
-					{ this.props.appPasswordsData.get().map( function( password ) {
-						return (
-							<AppPasswordItem
-								password={ password }
-								appPasswordsData={ this.props.appPasswordsData }
-								key={ password.ID }
-							/>
-						);
+					{ appPasswords.map( function( password ) {
+						return <AppPasswordItem password={ password } key={ password.ID } />;
 					}, this ) }
 				</ul>
 			</div>
@@ -215,10 +201,12 @@ const ApplicationPasswords = createReactClass( {
 	},
 
 	render: function() {
-		var hasNewPassword = this.props.appPasswordsData.hasNewPassword();
+		const { newAppPassword } = this.props;
 
 		return (
 			<div>
+				<QueryApplicationPasswords />
+
 				<SectionHeader label={ this.props.translate( 'Application Passwords' ) }>
 					<Button
 						compact
@@ -234,7 +222,7 @@ const ApplicationPasswords = createReactClass( {
 					</Button>
 				</SectionHeader>
 				<Card>
-					{ hasNewPassword ? this.renderNewAppPassword() : this.renderNewAppPasswordForm() }
+					{ newAppPassword ? this.renderNewAppPassword() : this.renderNewAppPasswordForm() }
 
 					<p>
 						{ this.props.translate(
@@ -256,6 +244,14 @@ const ApplicationPasswords = createReactClass( {
 	},
 } );
 
-export default connect( null, { errorNotice, recordGoogleEvent } )(
-	localize( ApplicationPasswords )
-);
+export default connect(
+	state => ( {
+		appPasswords: getApplicationPasswords( state ),
+		newAppPassword: getNewApplicationPassword( state ),
+	} ),
+	{
+		clearNewApplicationPassword,
+		createApplicationPassword,
+		recordGoogleEvent,
+	}
+)( localize( ApplicationPasswords ) );
