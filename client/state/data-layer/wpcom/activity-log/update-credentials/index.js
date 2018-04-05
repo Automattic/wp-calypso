@@ -146,8 +146,7 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 		case 'service_unavailable':
 			announce(
 				translate(
-					"Our service isn't working at the moment. We'll get it up and " +
-						'running as fast as we can, so please try again later.'
+					"Our service isn't working right now. We're working to restore it as soon as possible."
 				),
 				{ button: translate( 'Try again' ), onClick: () => dispatch( action ) }
 			);
@@ -176,7 +175,7 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 		case 'invalid_credentials':
 			announce(
 				translate(
-					"Oops! We couldn't connect to your site with these credentials — let's give it another try."
+					"We couldn't connect to your site. Please verify your credentials and give it another try."
 				)
 			);
 			spreadHappiness( 'Rewind Credentials: invalid credentials' );
