@@ -20,3 +20,6 @@ export const HAPPYCHAT_GROUP_WOO = 'woo';
 export const HAPPYCHAT_GROUP_JPPHP = 'jpphp';
 export const HAPPYCHAT_GROUP_WPCOM = 'WP.com';
 
+// Events
+export const HAPPYCHAT_EVENT_AVAILABILITY = 'availability';
+

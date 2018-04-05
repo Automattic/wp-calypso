@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import HappychatClient from 'happychat-client';
+import HappychatClientApi from 'happychat-client';
 
 /**
  * Internal dependencies
@@ -17,10 +17,12 @@ import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSkills from 'state/happychat/selectors/get-skills';
+import { receiveAccept } from 'state/happychat/connection/actions';
 import {
 	AUTH_TYPE_WPCOM_PROXY_IFRAME,
 	ENTRY_CHAT,
 	HAPPYCHAT_GROUP_WPCOM,
+	HAPPYCHAT_EVENT_AVAILABILITY,
 	HAPPYCHAT_SKILL_LANGUAGE,
 	HAPPYCHAT_SKILL_PRODUCT,
 	LAYOUT_FULLSCREEN,
@@ -30,7 +32,7 @@ import {
 /*
  * Main chat UI component
  */
-export class Happychat extends Component {
+export class HappychatClient extends Component {
 	static propTypes = {
 		entry: PropTypes.string,
 		layout: PropTypes.string,
@@ -53,7 +55,7 @@ export class Happychat extends Component {
 		const { entry, layout, nodeId, skills, user } = this.props;
 
 		// configure and open happychat
-		HappychatClient.open( {
+		HappychatClientApi.open( {
 			authentication: {
 				type: AUTH_TYPE_WPCOM_PROXY_IFRAME,
 				options: {
@@ -66,6 +68,10 @@ export class Happychat extends Component {
 			skills,
 			user,
 		} );
+
+		// events
+		HappychatClientApi.on( HAPPYCHAT_EVENT_AVAILABILITY, this.props.receiveAccept );
+		window.unload = () => HappychatClientApi.off( HAPPYCHAT_EVENT_AVAILABILITY );
 	}
 
 	render() {
@@ -73,7 +79,7 @@ export class Happychat extends Component {
 		return (
 			<div
 				id="happychat-client"
-				className={ classnames( 'happychat-client__wrapper', {
+				className={ classnames( 'chat-client', {
 					'is-fullscreen': layout === LAYOUT_FULLSCREEN,
 				} ) }
 			/>
@@ -81,11 +87,15 @@ export class Happychat extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapState = state => {
 	return {
 		user: getCurrentUser( state ),
 		skills: getSkills( state, getSelectedSiteId( state ) ),
 	};
+};
+
+const mapDispatch = {
+	receiveAccept,
 };
 
 const mergeProps = ( propsFromState, propsFromDispatch, ownProps ) => {
@@ -99,4 +109,4 @@ const mergeProps = ( propsFromState, propsFromDispatch, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, {}, mergeProps )( Happychat );
+export default connect( mapState, mapDispatch, mergeProps )( HappychatClient );

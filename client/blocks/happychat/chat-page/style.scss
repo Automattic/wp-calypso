@@ -4,7 +4,7 @@
  * even though we'll be hiding that for the time being.
  */
 
-.chat__page {
+.chat-page {
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 	display: flex;
@@ -22,7 +22,7 @@
 
 @include breakpoint( ">1040px" ) {
 
-	.chat__page .happychat__timeline-message {
+	.chat-page .happychat__timeline-message {
 		max-width: 80%;
 	}
 
@@ -30,7 +30,7 @@
 
 @include breakpoint( "<960px" ) {
 
-	.chat__page {
+	.chat-page {
 		left: 229px;
 	}
 
@@ -38,7 +38,7 @@
 
 @include breakpoint( "<660px" ) {
 
-	.chat__page {
+	.chat-page {
 		left: 0;
 	}
 
