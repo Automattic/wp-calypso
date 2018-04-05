@@ -6,26 +6,11 @@ jest.mock( 'lib/abtest', () => ( {
 
 const translate = x => x;
 jest.mock( 'i18n-calypso', () => ( {
-	localize: ComposedComponent => {
-		const React = require( 'react' );
-		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
-		return class Wrapper extends React.Component {
-			static displayName = componentName;
-
-			render() {
-				return (
-					<ComposedComponent
-						{ ...this.props }
-						translate={ function( x ) {
-							return x;
-						} }
-					/>
-				);
-			}
-		};
-	},
+	localize: x => x,
 	numberFormat: x => x,
 } ) );
+
+jest.mock( '../option', () => 'SubscriptionLengthOption' );
 
 /**
  * External dependencies
