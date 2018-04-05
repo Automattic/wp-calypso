@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
-import createReactClass from 'create-react-class';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -32,24 +30,22 @@ import {
 import { getApplicationPasswords, getNewApplicationPassword } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const ApplicationPasswords = createReactClass( {
-	displayName: 'ApplicationPasswords',
+class ApplicationPasswords extends Component {
+	initialState = {
+		applicationName: '',
+		addingPassword: false,
+		submittingForm: false,
+	};
 
-	getInitialState: function() {
-		return {
-			applicationName: '',
-			addingPassword: false,
-			submittingForm: false,
-		};
-	},
+	state = this.initialState;
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.state.submittingForm && ! this.props.newAppPassword && !! nextProps.newAppPassword ) {
 			this.setState( { submittingForm: false } );
 		}
-	},
+	}
 
-	getClickHandler( action, callback ) {
+	getClickHandler = ( action, callback ) => {
 		return event => {
 			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 
@@ -57,30 +53,34 @@ const ApplicationPasswords = createReactClass( {
 				callback( event );
 			}
 		};
-	},
+	};
 
-	handleApplicationNameFocus() {
+	handleApplicationNameFocus = () => {
 		this.props.recordGoogleEvent( 'Me', 'Focused on Application Name Field' );
-	},
+	};
 
-	createApplicationPassword: function( event ) {
+	createApplicationPassword = event => {
 		event.preventDefault();
 		this.setState( { submittingForm: true } );
-
 		this.props.createApplicationPassword( this.state.applicationName );
-	},
+	};
 
-	clearNewApplicationPassword: function() {
+	clearNewApplicationPassword = () => {
 		this.props.clearNewApplicationPassword();
-		this.setState( this.getInitialState() );
-	},
+		this.setState( this.initialState );
+	};
 
-	toggleNewPassword: function( e ) {
-		e.preventDefault();
+	toggleNewPassword = event => {
+		event.preventDefault();
 		this.setState( { addingPassword: ! this.state.addingPassword } );
-	},
+	};
 
-	renderNewAppPasswordForm: function() {
+	handleChange = event => {
+		const { name, value } = event.currentTarget;
+		this.setState( { [ name ]: value } );
+	};
+
+	renderNewAppPasswordForm() {
 		const { appPasswords } = this.props;
 		const cardClasses = classNames( 'application-passwords__add-new-card', {
 			'is-visible': this.state.addingPassword,
@@ -132,9 +132,9 @@ const ApplicationPasswords = createReactClass( {
 				</form>
 			</Card>
 		);
-	},
+	}
 
-	renderNewAppPassword: function() {
+	renderNewAppPassword() {
 		const { newAppPassword } = this.props;
 		return (
 			<Card className="application-passwords__new-password">
@@ -166,9 +166,9 @@ const ApplicationPasswords = createReactClass( {
 				</FormButtonsBar>
 			</Card>
 		);
-	},
+	}
 
-	renderApplicationPasswords: function() {
+	renderApplicationPasswords() {
 		const { appPasswords } = this.props;
 		if ( ! appPasswords.length ) {
 			return null;
@@ -184,9 +184,9 @@ const ApplicationPasswords = createReactClass( {
 				</ul>
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		const { newAppPassword } = this.props;
 
 		return (
@@ -222,13 +222,8 @@ const ApplicationPasswords = createReactClass( {
 				</Card>
 			</div>
 		);
-	},
-
-	handleChange( e ) {
-		const { name, value } = e.currentTarget;
-		this.setState( { [ name ]: value } );
-	},
-} );
+	}
+}
 
 export default connect(
 	state => ( {
