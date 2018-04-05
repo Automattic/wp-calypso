@@ -8,6 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { getStatsDefaultSitePage } from 'lib/route';
 import statsController from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
@@ -23,8 +24,11 @@ export default function() {
 	);
 
 	if ( config.isEnabled( 'manage/stats' ) ) {
+		// Redirect this to default /stats/day/ view in order to keep
+		// the paths and page view reporting consistent.
+		page( '/stats', () => page.redirect( getStatsDefaultSitePage() ) );
+
 		// Stat Overview Page
-		page( '/stats', siteSelection, navigation, statsController.overview, makeLayout, clientRender );
 		page(
 			'/stats/day',
 			siteSelection,
@@ -117,15 +121,14 @@ export default function() {
 			'annualstats',
 		];
 
-		// Stat Summary Pages
+		// Redirect this to default /stats/day/:module/:site_id view to
+		// keep the paths and page view reporting consistent.
 		page(
 			`/stats/:module(${ validModules.join( '|' ) })/:site_id`,
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
+			statsController.redirectToDefaultModulePage
 		);
+
+		// Stat Summary Pages
 		page(
 			`/stats/day/:module(${ validModules.join( '|' ) })/:site_id`,
 			siteSelection,

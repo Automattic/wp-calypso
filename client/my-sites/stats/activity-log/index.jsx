@@ -364,7 +364,6 @@ class ActivityLog extends Component {
 		const requestedRestoreId = this.props.requestedRestoreId || rewindId;
 		return (
 			<div key={ `end-banner-${ restoreId || downloadId }` }>
-				<PageViewTracker path="/stats/activity/:site" title="Stats > Activity" />
 				<QueryActivityLog siteId={ siteId } />
 				{ errorCode || backupError ? (
 					<ErrorBanner
@@ -596,6 +595,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
+				<PageViewTracker path="/stats/activity/:site" title="Stats > Activity" />
 				<DocumentHead title={ translate( 'Stats' ) } />
 				<QueryRewindState siteId={ siteId } />
 				{ '' !== rewindNoThanks && rewindIsNotReady

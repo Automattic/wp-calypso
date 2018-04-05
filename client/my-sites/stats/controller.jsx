@@ -121,6 +121,10 @@ export default {
 		page.redirect( getStatsDefaultSitePage( siteFragment ) );
 	},
 
+	redirectToDefaultModulePage: function( context ) {
+		page.redirect( `/stats/day/${ context.params.module }/${ context.params.site_id }` );
+	},
+
 	insights: function( context, next ) {
 		context.primary = <StatsInsights followList={ new FollowList() } />;
 		next();
