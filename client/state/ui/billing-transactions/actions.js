@@ -5,7 +5,6 @@
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
 	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
-	BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
@@ -28,8 +27,10 @@ export const setApp = ( transactionType, app ) => ( {
  * @returns {Object} action
  */
 export const setNewest = transactionType => ( {
-	type: BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
+	type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 	transactionType,
+	month: null,
+	operator: null,
 } );
 
 /**

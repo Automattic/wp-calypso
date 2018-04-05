@@ -9,7 +9,6 @@ import deepFreeze from 'deep-freeze';
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
 	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
-	BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
@@ -53,7 +52,7 @@ describe( 'transaction filter reducer', () => {
 	describe( '#date()', () => {
 		test( 'should return default state', () => {
 			const state = date( undefined, {} );
-			expect( state ).toEqual( null );
+			expect( state ).toEqual( { month: null, operator: null } );
 		} );
 
 		test( 'should set the date filter to month', () => {
@@ -92,18 +91,20 @@ describe( 'transaction filter reducer', () => {
 			expect( state ).toEqual( { month: '2018-09', operator: 'equal' } );
 		} );
 
-		test( 'should change the existing filter to newest', () => {
+		test( 'should change the existing filter to newest (null month and operator)', () => {
 			const state = date(
 				deepFreeze( {
 					month: '2018-03',
 					operator: 'before',
 				} ),
 				{
-					type: BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
+					type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 					transactionType: 'past',
+					month: null,
+					operator: null,
 				}
 			);
-			expect( state ).toBeNull();
+			expect( state ).toEqual( { month: null, operator: null } );
 		} );
 	} );
 
@@ -137,14 +138,6 @@ describe( 'transaction filter reducer', () => {
 				transactionType: 'past',
 				month: '2018-03',
 				operator: 'equal',
-			} );
-			expect( state ).toEqual( 1 );
-		} );
-
-		test( 'should reset to 1 on date filter being set to newest', () => {
-			const state = page( 4, {
-				type: BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
-				transactionType: 'past',
 			} );
 			expect( state ).toEqual( 1 );
 		} );

@@ -5,11 +5,10 @@
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
 	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
-	BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 
 /**
  * Returns the updated app filter state after an action has been dispatched
@@ -17,9 +16,12 @@ import { combineReducers, createReducer, keyedReducer } from 'state/utils';
  * @param  {Object} action Action payload
  * @return {String}        Updated state
  */
-export const app = createReducer( null, {
-	[ BILLING_TRANSACTIONS_FILTER_SET_APP ]: ( state, action ) => action.app,
-} );
+export const app = ( state = null, action ) => {
+	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_APP ) {
+		return action.app;
+	}
+	return state;
+};
 
 /**
  * Returns the updated date filter state after an action has been dispatched
@@ -27,13 +29,15 @@ export const app = createReducer( null, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const date = createReducer( null, {
-	[ BILLING_TRANSACTIONS_FILTER_SET_NEWEST ]: () => null,
-	[ BILLING_TRANSACTIONS_FILTER_SET_MONTH ]: ( state, { month, operator } ) => ( {
-		month,
-		operator,
-	} ),
-} );
+export const date = ( state = { month: null, operator: null }, { type, month, operator } ) => {
+	if ( type === BILLING_TRANSACTIONS_FILTER_SET_MONTH ) {
+		return {
+			month,
+			operator,
+		};
+	}
+	return state;
+};
 
 /**
  * Returns the updated page state after an action has been dispatched
@@ -41,13 +45,18 @@ export const date = createReducer( null, {
  * @param  {Object} action Action payload
  * @return {Number}        Updated state
  */
-export const page = createReducer( 1, {
-	[ BILLING_TRANSACTIONS_FILTER_SET_APP ]: () => 1,
-	[ BILLING_TRANSACTIONS_FILTER_SET_MONTH ]: () => 1,
-	[ BILLING_TRANSACTIONS_FILTER_SET_NEWEST ]: () => 1,
-	[ BILLING_TRANSACTIONS_FILTER_SET_PAGE ]: ( state, action ) => action.page,
-	[ BILLING_TRANSACTIONS_FILTER_SET_QUERY ]: () => 1,
-} );
+export const page = ( state = 1, action ) => {
+	switch ( action.type ) {
+		case BILLING_TRANSACTIONS_FILTER_SET_PAGE:
+			return action.page;
+		case BILLING_TRANSACTIONS_FILTER_SET_APP:
+		case BILLING_TRANSACTIONS_FILTER_SET_MONTH:
+		case BILLING_TRANSACTIONS_FILTER_SET_QUERY:
+			return 1;
+		default:
+			return state;
+	}
+};
 
 /**
  * Returns the updated string search filter state after an action has been dispatched
@@ -55,9 +64,12 @@ export const page = createReducer( 1, {
  * @param  {Object} action Action payload
  * @return {String}        Updated state
  */
-export const query = createReducer( '', {
-	[ BILLING_TRANSACTIONS_FILTER_SET_QUERY ]: ( state, action ) => action.query,
-} );
+export const query = ( state = '', action ) => {
+	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_QUERY ) {
+		return action.query;
+	}
+	return state;
+};
 
 export default keyedReducer(
 	'transactionType',

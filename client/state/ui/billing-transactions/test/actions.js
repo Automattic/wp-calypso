@@ -5,7 +5,6 @@
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
 	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
-	BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
@@ -13,7 +12,7 @@ import { setApp, setDate, setNewest, setPage, setQuery } from '../actions';
 
 describe( 'transaction filter actions', () => {
 	describe( '#setApp()', () => {
-		test( 'should return an action object', () => {
+		test( 'should return an action object with the app name', () => {
 			const action = setApp( 'past', 'Test app' );
 			expect( action ).toEqual( {
 				type: BILLING_TRANSACTIONS_FILTER_SET_APP,
@@ -24,17 +23,19 @@ describe( 'transaction filter actions', () => {
 	} );
 
 	describe( '#setNewest()', () => {
-		test( 'should return an action object', () => {
+		test( 'should return an action object with month and operator set to null', () => {
 			const action = setNewest( 'past' );
 			expect( action ).toEqual( {
-				type: BILLING_TRANSACTIONS_FILTER_SET_NEWEST,
+				type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 				transactionType: 'past',
+				month: null,
+				operator: null,
 			} );
 		} );
 	} );
 
 	describe( '#setDate()', () => {
-		test( 'should return an action object', () => {
+		test( 'should return an action object with month and operator', () => {
 			const action = setDate( 'past', '2018-03', 'equal' );
 			expect( action ).toEqual( {
 				type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
@@ -46,7 +47,7 @@ describe( 'transaction filter actions', () => {
 	} );
 
 	describe( '#setPage()', () => {
-		test( 'should return an action object', () => {
+		test( 'should return an action object with the page number', () => {
 			const action = setPage( 'past', 14 );
 			expect( action ).toEqual( {
 				type: BILLING_TRANSACTIONS_FILTER_SET_PAGE,
@@ -57,7 +58,7 @@ describe( 'transaction filter actions', () => {
 	} );
 
 	describe( '#setQuery()', () => {
-		test( 'should return an action object', () => {
+		test( 'should return an action object with the query set', () => {
 			const action = setQuery( 'past', 'some query' );
 			expect( action ).toEqual( {
 				type: BILLING_TRANSACTIONS_FILTER_SET_QUERY,
