@@ -58,6 +58,7 @@ class StateSelect extends Component {
 			name,
 			value,
 			disabled,
+			onBlur,
 			onChange,
 			isError,
 			inputRef,
@@ -79,6 +80,7 @@ class StateSelect extends Component {
 							name={ name }
 							value={ value }
 							disabled={ disabled }
+							onBlur={ onBlur }
 							onChange={ onChange }
 							onClick={ this.recordStateSelectClick }
 							isError={ isError }

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import {
 	assign,
 	camelCase,
@@ -42,6 +41,7 @@ function Controller( options ) {
 
 	this._sanitizerFunction = options.sanitizerFunction;
 	this._validatorFunction = options.validatorFunction;
+	this._skipSanitizeAndValidateOnFieldChange = options.skipSanitizeAndValidateOnFieldChange;
 	this._loadFunction = options.loadFunction;
 	this._onNewState = options.onNewState;
 	this._onError = options.onError;
@@ -87,8 +87,13 @@ assign( Controller.prototype, {
 			hideError = this._hideFieldErrorsOnChange || change.hideError;
 
 		this._setState( changeFieldValue( formState, name, value, hideError ) );
-		this._debouncedSanitize();
-		this._debouncedValidate();
+
+		// If we want to handle sanitize/validate differently in the component (e.g. onBlur)
+		// FormState handleSubmit() will sanitize/validate if not done yet
+		if ( ! this._skipSanitizeAndValidateOnFieldChange ) {
+			this._debouncedSanitize();
+			this._debouncedValidate();
+		}
 	},
 
 	handleSubmit: function( onComplete ) {

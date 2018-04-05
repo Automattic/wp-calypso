@@ -166,7 +166,7 @@ describe( 'ContactDetailsFormFields', () => {
 				defaultProps.contactDetails.state
 			);
 		} );
-		test( 'should return empty province/state value when the country does not have states', () => {
+		test( 'should return province/state value when the country does not have states', () => {
 			const onContactDetailsChange = jest.fn();
 			const wrapper = shallow(
 				<ContactDetailsFormFields
@@ -175,7 +175,9 @@ describe( 'ContactDetailsFormFields', () => {
 				/>
 			);
 			wrapper.setProps( { hasCountryStates: false } );
-			expect( wrapper.instance().getMainFieldValues().state ).toEqual( '' );
+			expect( wrapper.instance().getMainFieldValues().state ).toEqual(
+				defaultProps.contactDetails.state
+			);
 		} );
 	} );
 } );

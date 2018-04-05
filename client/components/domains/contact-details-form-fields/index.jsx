@@ -33,10 +33,11 @@ import { countries } from 'components/phone-input/data';
 import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import formState from 'lib/form-state';
 import analytics from 'lib/analytics';
+import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
-import GAppsFieldset from './custom-form-fieldsets/g-apps-fieldset';
-import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
+import GAppsFieldset from 'components/domains/contact-details-form-fields/custom-form-fieldsets/g-apps-fieldset';
+import RegionAddressFieldsets from 'components/domains/contact-details-form-fields/custom-form-fieldsets/region-address-fieldsets';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
@@ -124,13 +125,14 @@ export class ContactDetailsFormFields extends Component {
 
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
+			debounceWait: 500,
 			fieldNames: CONTACT_DETAILS_FORM_FIELDS,
 			loadFunction: this.loadFormState,
-			sanitizerFunction: this.sanitize,
-			validatorFunction: this.validate,
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError,
-			debounceWait: 500,
+			sanitizerFunction: this.sanitize,
+			skipSanitizeAndValidateOnFieldChange: true,
+			validatorFunction: this.validate,
 		} );
 	}
 
@@ -144,8 +146,6 @@ export class ContactDetailsFormFields extends Component {
 		const mainFieldValues = formState.getAllFieldValues( this.state.form );
 		return {
 			...mainFieldValues,
-			// domains registered according to ancient validation rules may have state set even though not required
-			state: this.props.hasCountryStates ? mainFieldValues.state : '',
 			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
 		};
 	}
@@ -166,7 +166,10 @@ export class ContactDetailsFormFields extends Component {
 				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
 				// TODO: Do this on submit. Is it too annoying?
 				if ( fieldName === 'postalCode' ) {
-					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
+					sanitizedFieldValues[ fieldName ] = tryToGuessPostalCodeFormat(
+						sanitizedFieldValues[ fieldName ].toUpperCase(),
+						get( sanitizedFieldValues, 'countryCode', null )
+					);
 				}
 			}
 		} );
@@ -176,6 +179,11 @@ export class ContactDetailsFormFields extends Component {
 		} else {
 			onComplete( sanitizedFieldValues );
 		}
+	};
+
+	handleBlur = () => {
+		this.formStateController.sanitize();
+		this.formStateController._debouncedValidate();
 	};
 
 	validate = ( fieldValues, onComplete ) =>
@@ -297,6 +305,7 @@ export class ContactDetailsFormFields extends Component {
 				'\n'
 			),
 			onChange: this.handleFieldChange,
+			onBlur: this.handleBlur,
 			value: formState.getFieldValue( form, name ) || '',
 			name,
 			eventFormName,
