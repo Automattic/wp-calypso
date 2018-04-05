@@ -111,10 +111,10 @@
 	}
 }
 
-// Fade-in used by SidebarBanner component
+// Fade-out-in used by SidebarBanner component
 .layout__primary {
-	&.fade-in {
-		animation: appear 1s ease;
+	&.fade-out-in {
+		animation: loading-fade-out-in .75s ease;
 	}
 }
 

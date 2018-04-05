@@ -36,12 +36,12 @@ export class SidebarBanner extends Component {
 	};
 
 	onClick = () => {
-		this.maybeFadeIn();
+		this.maybeFadeOutIn();
 		const { ctaName, track } = this.props;
 		track( 'calypso_upgrade_nudge_cta_click', { cta_name: ctaName } );
 	};
 
-	maybeFadeIn() {
+	maybeFadeOutIn() {
 		const { href } = this.props;
 		const location = window.location;
 
@@ -56,9 +56,9 @@ export class SidebarBanner extends Component {
 		const layoutPrimary = layout ? layout.querySelector( '.layout__primary' ) : null;
 
 		if ( layoutPrimary ) {
-			layoutPrimary.classList.remove( 'fade-in' );
+			layoutPrimary.classList.remove( 'fade-out-in' );
 			void layoutPrimary.offsetWidth; // Force reflow.
-			layoutPrimary.classList.add( 'fade-in' );
+			layoutPrimary.classList.add( 'fade-out-in' );
 		}
 	}
 
