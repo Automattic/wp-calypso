@@ -91,7 +91,6 @@ class ThemeSheet extends React.Component {
 		isJetpack: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
-		themeSlug: PropTypes.string,
 		backPath: PropTypes.string,
 		isWpcomTheme: PropTypes.bool,
 		defaultOption: PropTypes.shape( {
@@ -549,9 +548,9 @@ class ThemeSheet extends React.Component {
 
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
-		const { siteId, retired, themeSlug } = this.props;
+		const { id, siteId, retired } = this.props;
 
-		const analyticsPath = `/theme/${ themeSlug }${ section ? '/' + section : '' }${
+		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
 		}`;
 		const analyticsPageTitle = `Themes > Details Sheet${
