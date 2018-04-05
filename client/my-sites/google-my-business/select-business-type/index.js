@@ -14,6 +14,7 @@ import page from 'page';
  */
 import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
+import CardHeading from 'components/card-heading';
 import ActionCard from 'components/action-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -66,14 +67,14 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 				<Card className="gmb-select-business-type__explanation">
 					<div className="gmb-select-business-type__explanation-main">
-						<h1 className="gmb-select-business-type__heading">
+						<CardHeading tagName="h1" size={ 24 }>
 							{ translate( 'Which type of business are you?' ) }
-						</h1>
+						</CardHeading>
 
 						<p>
 							{ translate(
 								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
-								'It works for businesses that have a physical location or serve a local area.',
+									'It works for businesses that have a physical location or serve a local area.',
 								{
 									components: {
 										link: (
@@ -104,7 +105,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					} ) }
 					mainText={ translate(
 						'Your business has a physical location customers can visit, ' +
-						'or provides goods and services to local customers, or both.'
+							'or provides goods and services to local customers, or both.'
 					) }
 					buttonText={ translate( 'Create Your Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',

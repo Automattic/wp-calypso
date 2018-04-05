@@ -34,6 +34,7 @@ import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
 import Buttons from 'components/button/docs/example';
 import Cards from 'components/card/docs/example';
+import CardHeading from 'components/card-heading/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
@@ -158,6 +159,7 @@ class DesignAssets extends React.Component {
 					<SplitButton readmeFilePath="split-button" />
 					<Badge />
 					<Cards readmeFilePath="card" />
+					<CardHeading />
 					<Checklist />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
 					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
