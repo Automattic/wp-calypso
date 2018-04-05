@@ -311,10 +311,10 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
-		const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
 
 		return (
-			<div className={ `register-domain-step ${ isKrackenUI ? 'is-kracken-ui' : '' }` }>
+			<div className={ `register-domain-step ${ isKrackenUi ? 'is-kracken-ui' : '' }` }>
 				<div className="register-domain-step__search">
 					<SearchCard
 						ref={ this.bindSearchCardReference }
@@ -332,7 +332,7 @@ class RegisterDomainStep extends React.Component {
 						maxLength={ 60 }
 					/>
 				</div>
-				{ isKrackenUI && (
+				{ isKrackenUi && (
 					<div className="register-domain-step__filter">
 						<SearchFilters
 							filters={ this.state.filters }
@@ -358,8 +358,8 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderPaginationControls() {
-		const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
-		if ( ! isKrackenUI || this.state.searchResults === null ) {
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
+		if ( ! isKrackenUi || this.state.searchResults === null ) {
 			return null;
 		}
 
