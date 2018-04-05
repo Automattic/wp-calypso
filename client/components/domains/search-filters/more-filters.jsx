@@ -22,18 +22,12 @@ import Button from 'components/button';
 
 export class MoreFiltersControl extends Component {
 	static propTypes = {
-		includeDashes: PropTypes.bool,
-		maxCharacters: PropTypes.string,
-		onChange: PropTypes.func,
-		onFiltersReset: PropTypes.func,
-		onFiltersSubmit: PropTypes.func,
-		showExactMatchesOnly: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		maxCharacters: '',
-		includeDashes: true,
-		showExactMatchesOnly: false,
+		includeDashes: PropTypes.bool.isRequired,
+		maxCharacters: PropTypes.string.isRequired,
+		onChange: PropTypes.func.isRequired,
+		onFiltersReset: PropTypes.func.isRequired,
+		onFiltersSubmit: PropTypes.func.isRequired,
+		showExactMatchesOnly: PropTypes.bool.isRequired,
 	};
 
 	state = {
