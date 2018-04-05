@@ -25,15 +25,15 @@ class ApplicationPasswordsItem extends React.Component {
 	};
 
 	render() {
-		const { password } = this.props;
+		const { moment, password, translate } = this.props;
 
 		return (
 			<li className="application-password-item__password" key={ password.ID }>
 				<div className="application-password-item__details">
 					<h2 className="application-password-item__name">{ password.name }</h2>
 					<p className="application-password-item__generated">
-						{ this.props.translate( 'Generated on %s', {
-							args: this.props.moment( password.generated ).format( 'lll' ),
+						{ translate( 'Generated on %s', {
+							args: moment( password.generated ).format( 'lll' ),
 						} ) }
 					</p>
 				</div>
