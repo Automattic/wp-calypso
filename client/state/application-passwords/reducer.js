@@ -15,6 +15,7 @@ import {
 	APPLICATION_PASSWORDS_RECEIVE,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
+import { itemsSchema } from './schema';
 
 export const items = ( state = [], action ) => {
 	switch ( action.type ) {
@@ -26,6 +27,7 @@ export const items = ( state = [], action ) => {
 			return state;
 	}
 };
+items.schema = itemsSchema;
 
 export const newPassword = ( state = null, action ) => {
 	switch ( action.type ) {
