@@ -35,15 +35,6 @@ export default connect(
 
 ## Props
 
-### `query`
-
-<table>
-	<tr><th>Type</th><td>Object</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-</table>
-
-A query to use when requesting Jetpack Settings.
-
 ### `siteId`
 
 <table>
@@ -52,3 +43,12 @@ A query to use when requesting Jetpack Settings.
 </table>
 
 The site ID for which Jetpack Settings should be requested.
+
+### `query`
+
+<table>
+	<tr><th>Type</th><td>Object</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+A query to use when requesting Jetpack Settings.
