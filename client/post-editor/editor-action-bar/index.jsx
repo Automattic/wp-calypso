@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import EditorStatusLabel from 'post-editor/editor-status-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
+import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 class EditorActionBar extends Component {
 	static propTypes = {
@@ -44,7 +46,7 @@ class EditorActionBar extends Component {
 		// update based on post changes. Flux changes are passed down from parent components.
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
 		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
-		const { isPostPrivate } = this.props;
+		const { isPostPrivate, podcastingEnabled } = this.props;
 
 		return (
 			<div className="editor-action-bar">
@@ -61,6 +63,9 @@ class EditorActionBar extends Component {
 						this.props.type === 'post' &&
 						! isPasswordProtected &&
 						! isPostPrivate && <EditorSticky /> }
+					{ podcastingEnabled && (
+						<Gridicon icon="microphone" className="editor-action-bar__podcasting-icon" />
+					) }
 					{ utils.isPublished( this.props.savedPost ) && (
 						<Button
 							href={ this.props.savedPost.URL }
@@ -94,10 +99,18 @@ export default connect( state => {
 	const post = getEditedPost( state, siteId, postId );
 	const type = getEditedPostValue( state, siteId, postId, 'type' );
 
+	const podcastingCategoryId = getPodcastingCategoryId( state, siteId );
+	let podcastingEnabled = false;
+	if ( podcastingCategoryId ) {
+		const postCategories = getEditedPostValue( state, siteId, postId, 'categories' );
+		podcastingEnabled = find( postCategories, { ID: podcastingCategoryId } ) !== undefined;
+	}
+
 	return {
 		siteId,
 		postId,
 		post,
 		type,
+		podcastingEnabled,
 	};
 } )( EditorActionBar );
