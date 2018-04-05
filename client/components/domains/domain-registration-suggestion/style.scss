@@ -1,9 +1,8 @@
 /** @format */
 
 .featured-domain-suggestion {
-	display: flex;
 	flex-direction: column;
-	align-items: center;
+	justify-content: flex-end;
 	width: 100%;
 
 	.domain-suggestion__content {
