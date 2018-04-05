@@ -17,16 +17,6 @@ describe( 'getNewApplicationPassword()', () => {
 		expect( result ).toBe( newPassword );
 	} );
 
-	test( 'should return null if there is currently no new application password', () => {
-		const state = {
-			applicationPasswords: {
-				newPassword: null,
-			},
-		};
-		const result = getNewApplicationPassword( state );
-		expect( result ).toBeNull();
-	} );
-
 	test( 'should return null with an empty state', () => {
 		const result = getNewApplicationPassword( undefined );
 		expect( result ).toBeNull();
