@@ -51,10 +51,6 @@ class SiteImporterInputPane extends React.Component {
 		siteURLInput: '',
 	};
 
-	componentWillUnmount() {
-		window.clearInterval( this.randomizeTimer );
-	}
-
 	// TODO This can be improved if we move to Redux.
 	componentWillReceiveProps = nextProps => {
 		// TODO test on a site without posts
