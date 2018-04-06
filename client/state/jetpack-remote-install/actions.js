@@ -15,13 +15,15 @@ import {
  * @param {string} url - The remote site url
  * @param {string} user - username or email for remote site login
  * @param {string} password - password for remote site login
+ * @param {string} retries - number of retries to attempt on timeout
  * @return {Object} action object
  */
-export const jetpackRemoteInstall = ( url, user, password ) => ( {
+export const jetpackRemoteInstall = ( url, user, password, retries = 3 ) => ( {
 	type: JETPACK_REMOTE_INSTALL,
 	url,
 	user,
 	password,
+	retries,
 	meta: {
 		dataLayer: {
 			trackRequest: true,
