@@ -109,6 +109,7 @@
     "name-all-modules-plugin": "1.0.1",
     "node-sass": "4.5.3",
     "notifications-panel": "2.1.8",
+    "npm": "5.8.0",
     "npm-run-all": "4.0.2",
     "object-path-immutable": "0.5.2",
     "objectpath": "1.2.1",

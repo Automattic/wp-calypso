@@ -82,7 +82,9 @@ class SiteTools extends Component {
 		);
 
 		const importTitle = translate( 'Import' );
-		const importText = translate( 'Import content from another WordPress or Medium site.' );
+		const importText = translate(
+			'Import content from another WordPress site and other platforms.'
+		);
 		const exportTitle = translate( 'Export' );
 		const exportText = translate(
 			'Export content from your site. You own your data — take it anywhere!'
