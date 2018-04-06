@@ -89,6 +89,13 @@ export function getPlanSlug( state, productId ) {
 
 export function getIntervalTypeFromCurrentPlan( state, siteId ) {
 	const currentPlanProduct = getSitePlan( state, siteId );
+	if ( ! currentPlanProduct ) {
+		return null;
+	}
+
 	const currentPlanObject = libGetPlan( currentPlanProduct.product_slug );
+	if ( ! currentPlanObject ) {
+		return null;
+	}
 	return TERM_TO_INTERVAL_TYPE[ currentPlanObject.term ];
 }

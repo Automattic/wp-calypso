@@ -273,4 +273,18 @@ describe( 'getIntervalTypeFromCurrentPlan', () => {
 		const result = getIntervalTypeFromCurrentPlan( state, {} );
 		expect( result ).to.equal( 'monthly' );
 	} );
+
+	test( 'should return null intervalType if no product can be identified', () => {
+		getSitePlan.mockImplementation( () => null );
+		const result = getIntervalTypeFromCurrentPlan( state, {} );
+		expect( result ).to.equal( null );
+		getSitePlan.mockImplementation( () => ( {} ) );
+	} );
+
+	test( 'should return null intervalType if no plan can be identified', () => {
+		getSitePlan.mockImplementation( () => ( {} ) );
+		plansLib.getPlan.mockImplementation( () => null );
+		const result = getIntervalTypeFromCurrentPlan( state, {} );
+		expect( result ).to.equal( null );
+	} );
 } );
