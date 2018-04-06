@@ -1,9 +1,9 @@
 Analytics: Page Views
 =====================
 
-Page views should be used to record all page views (when the main content body completely changes). This will automatically record the page view to both Google Analytics and Tracks.
+Page views should be recorded every time the main content body completely changes. This includes both when the browser is refreshed and any time the URL is updated via the browser history API.
 
-The preferred tool to record page views is the **`PageViewTracker`** component which is aware of the selected site and, if the current URL contains a site fragment, it will delay the page view recording until the selected site is set or updated.
+These tools will automatically record page views to both Google Analytics and Tracks. The preferred one is the **`PageViewTracker`** component which is aware of the selected site and, if the current URL contains a site fragment, it will delay the page view recording until the selected site is set or updated.
 
 ## Usage
 
@@ -57,7 +57,7 @@ As a rule of thumb:
 - **Non-enumerable, infinite, or unknown variables** (e.g. the domain name in `/domains/manage/:domain/edit/:site`) should be reported without unnecessary qualifiers.
 - The value of **enumerable, finite, or known variables** should be reported instead of the placeholder where it make sense (e.g. if changing the variable value results in a page change, as it happens for the status in `/comments/spam/:site`).
 
-Where possible, paths should be set manually, without relying on helper functions (e.g. `sectionify( context.path )`) that might result in inconsistent reporting.
+Where possible, paths should be hardcoded, without relying on helper functions (e.g. `sectionify( context.path )`) that might result in inconsistent reporting. This will also make the path easier to find in searches.
 
 Some examples of **what to do**:
 
