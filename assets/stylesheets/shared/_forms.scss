@@ -161,11 +161,6 @@ input[type=radio] + span {
 input[type=checkbox] {
 	border-radius: 2px;
 
-	&:checked {
-		border-color: $blue-medium;
-		background-color: $blue-medium;
-	}
-
 	&:checked:before {
 		content: url( "/calypso/images/checkbox-icons/checkmark.svg" );
 		width: 12px;
@@ -173,7 +168,6 @@ input[type=checkbox] {
 		margin: 1px auto;
 		display: inline-block;
 		speak: none;
-		background-color: $blue-medium;
 	}
 
 	&:disabled:checked:before {

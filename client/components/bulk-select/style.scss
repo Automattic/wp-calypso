@@ -29,14 +29,4 @@ input[type=checkbox].bulk-select__box {
 	min-width: 16px;
 	padding: 0;
 	width: 16px;
-	background-color: $blue-medium;
-	border-color: $blue-medium;
-
-	&:before {
-		content: '–';
-		color: $white;
-		display: inline-block;
-		line-height: 12px;
-		speak: none;
-	}
 }
