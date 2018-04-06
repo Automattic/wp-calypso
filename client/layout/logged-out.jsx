@@ -15,10 +15,10 @@ import { includes } from 'lodash';
  */
 import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
-import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {
