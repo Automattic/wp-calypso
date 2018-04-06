@@ -7,7 +7,7 @@ Turn on debugging in the JavaScript developer console to view calls being made w
 
 `localStorage.setItem('debug', 'calypso:analytics:*');`
 
-You can limit to only calls made to Google Analytics, Tracks, or MC by replacing the `*` with an appropriate suffix. `ga` for Google Analytics, `tracks` for Tracks, and `mc` for MC.
+You can limit to only calls made to Google Analytics, Tracks, or MC by replacing the `*` with an appropriate suffix. `ga` for Google Analytics, `tracks` for Tracks, `mc` for MC, and `ad-tracking` for Ad Tracking.
 
 `localStorage.setItem('debug', 'calypso:analytics:tracks'); // only show debug for tracks`
 
