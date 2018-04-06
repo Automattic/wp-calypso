@@ -12,8 +12,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import ComponentPlayground from 'devdocs/design/component-playground';
 import Accordion from 'components/accordion';
 import Gridicon from 'gridicons';
+
+const scope = { Accordion, Gridicon };
 
 export default class extends React.PureComponent {
 	static displayName = 'AccordionExample';
@@ -43,18 +46,41 @@ export default class extends React.PureComponent {
 				</div>
 
 				<div style={ { maxWidth: '300px' } }>
-					<Accordion title="Section One">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
-						pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat,
-						lorem semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae
-						velit.
-					</Accordion>
-					<Accordion title="Section Two" icon={ <Gridicon icon="time" /> }>
-						In tempor orci sapien, non tempor risus suscipit ut. Class aptent taciti sociosqu ad
-						litora torquent per conubia nostra, per inceptos himenaeos. Mauris vitae volutpat nunc.
-						Nunc at congue arcu. Proin non leo augue. Nulla dapibus laoreet ligula, nec varius sit
-						amet.
-					</Accordion>
+					<ComponentPlayground
+						code={
+							'<Accordion title="Section One">' +
+							'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at ' +
+							'pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, ' +
+							'lorem semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae ' +
+							'velit.' +
+							'</Accordion>'
+						}
+						scope={ scope }
+					/>
+					<ComponentPlayground
+						code={
+							'<Accordion title="Section Two" icon={ <Gridicon icon="time" /> }>' +
+							'In tempor orci sapien, non tempor risus suscipit ut. Class aptent taciti sociosqu ad ' +
+							'litora torquent per conubia nostra, per inceptos himenaeos. Mauris vitae volutpat nunc. ' +
+							'Nunc at congue arcu. Proin non leo augue. Nulla dapibus laoreet ligula, nec varius sit ' +
+							'amet.' +
+							'</Accordion>'
+						}
+						scope={ scope }
+					/>
+					<ComponentPlayground
+						code={
+							'<Accordion title="Section Three" subtitle="' +
+							( this.state.showSubtitles ? 'With Subtitle' : null ) +
+							'">' +
+							'Suspendisse pellentesque diam in nisi pulvinar maximus. Integer feugiat feugiat justo ac ' +
+							'vehicula. Curabitur iaculis, risus suscipit sodales auctor, nisl urna elementum sem, non ' +
+							'vestibulum mauris ante et purus. Duis iaculis nisl neque, eget rutrum erat imperdiet ' +
+							'non.' +
+							'</Accordion>'
+						}
+						scope={ scope }
+					/>
 					<Accordion
 						title="Section Three"
 						subtitle={ this.state.showSubtitles ? 'With Subtitle' : null }
@@ -67,9 +93,9 @@ export default class extends React.PureComponent {
 					<Accordion
 						title="Section Four"
 						subtitle={
-							this.state.showSubtitles ? (
-								'With a Very Long Subtitle to Demonstrate the Fade Effect'
-							) : null
+							this.state.showSubtitles
+								? 'With a Very Long Subtitle to Demonstrate the Fade Effect'
+								: null
 						}
 					>
 						Drumstick ham tongue flank doner pork chop picanha. Cow short ribs tail kevin capicola

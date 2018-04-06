@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import SocialLogo from 'social-logos';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
+import { keys } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
+import DropdownItem from 'components/select-dropdown/item';
 
 /**
  * Docs examples
@@ -123,6 +125,13 @@ import Version from 'components/version';
 import VerticalMenu from 'components/vertical-menu';
 import Wizard from 'components/wizard';
 
+
+import { countCode } from 'components/count/docs/example';
+
+const examples = {
+	Count: countCode,
+};
+
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 
@@ -133,9 +142,85 @@ class DesignAssets extends React.Component {
 		}
 	}
 
+	state = {
+		code: `<Main>
+    <HeaderCake actionText="Fun" actionIcon="status">Welcome to the Playground</HeaderCake>
+  	<Button primary onClick={
+  		function() {
+  			alert( 'World' )
+  		}
+  	}>
+  		<Gridicon icon="code" /> Hello
+  	</Button>
+  	<br /><hr /><br />
+  	<ActionCard
+  		headerText={ 'Change the code above' }
+  		mainText={ 'The playground lets you drop in components and play with values. Its experiemental and likely will break.' }
+  		buttonText={ 'WordPress' }
+  		buttonIcon="external"
+  		buttonPrimary={ false }
+  		buttonHref="https://wordpress.com"
+  		buttonTarget="_blank"
+  	/>
+  	<br /><hr /><br />
+  	<JetpackLogo />
+    <SectionNav >
+      <NavTabs label="Status" selectedText="Published">
+          <NavItem path="/posts" selected={ true }>Published</NavItem>
+          <NavItem path="/posts/drafts" selected={ false }>Drafts</NavItem>
+          <NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
+          <NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
+      </NavTabs>
+
+      <NavSegmented label="Author">
+          <NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
+          <NavItem path="/posts" selected={ true }>Everyone</NavItem>
+      </NavSegmented>
+
+      <Search
+          pinned
+          fitsContainer
+          placeholder="Search Published..."
+          delaySearch={ true }
+      />
+    </SectionNav>
+</Main>`,
+	};
+
 	backToComponents = () => {
 		page( '/devdocs/design/' );
 	};
+
+	addComponent = Component => () => {
+		this.setState( {
+			code:
+				'<Main>' +
+				this.state.code.replace( /(^<Main>)/, '' ).replace( /(<\/Main>$)/, '' ) +
+				'\n\t' +
+				Component +
+				'\n</Main>',
+		} );
+	};
+
+	handleChange = code => {
+		this.setState( {
+			code: code,
+		} );
+	};
+
+	listOfExamples() {
+		return (
+			<SelectDropdown>
+				{ keys( examples ).map( name => {
+					return (
+						<DropdownItem key={ name } onClick={ this.addComponent( examples[ name ] ) }>
+							{ name }
+						</DropdownItem>
+					);
+				} ) }
+			</SelectDropdown>
+		);
+	}
 
 	render() {
 		const className = classnames( 'devdocs', 'devdocs__components', {
@@ -248,54 +333,11 @@ class DesignAssets extends React.Component {
 			Wizard,
 		};
 
-		const code = `<Main>
-    <HeaderCake actionText="Fun" actionIcon="status">Welcome to the Playground</HeaderCake>
-	<Button primary onClick={
-		function() {
-			alert( 'World' );
-		}
-	}>
-		<Gridicon icon="code" /> Hello
-	</Button>
-	<br /><hr /><br />
-	<ActionCard
-		headerText={ 'Change the code above' }
-		mainText={ 'The playground lets you drop in components and play with values. It is experimental and likely will break.' }
-		buttonText={ 'WordPress' }
-		buttonIcon="external"
-		buttonPrimary={ false }
-		buttonHref="https://wordpress.com"
-		buttonTarget="_blank"
-	/>
-	<br /><hr /><br />
-	<JetpackLogo />
-  <SectionNav >
-    <NavTabs label="Status" selectedText="Published">
-        <NavItem path="/posts" selected={ true }>Published</NavItem>
-        <NavItem path="/posts/drafts" selected={ false }>Drafts</NavItem>
-        <NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
-        <NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
-    </NavTabs>
-
-    <NavSegmented label="Author">
-        <NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
-        <NavItem path="/posts" selected={ true }>Everyone</NavItem>
-    </NavSegmented>
-
-    <Search
-        pinned
-        fitsContainer
-        placeholder="Search Published..."
-        delaySearch={ true }
-    />
-  </SectionNav>
-</Main>`;
-
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Playground" />
 				<LiveProvider
-					code={ code }
+					code={ this.state.code }
 					scope={ scope }
 					mountStylesheet={ false }
 					className="design__playground"
@@ -307,6 +349,7 @@ class DesignAssets extends React.Component {
 						<LiveEditor />
 					</div>
 					<div className="design__preview">
+						{ this.listOfExamples() }
 						<LivePreview />
 					</div>
 				</LiveProvider>
