@@ -41,6 +41,7 @@ import {
 	getEditorPostId,
 	getEditorPath,
 	isConfirmationSidebarEnabled,
+	isEditorSaveBlocked,
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
@@ -115,7 +116,6 @@ export class PostEditor extends React.Component {
 			savedPost: PostEditStore.getSavedPost(),
 			loadingError: PostEditStore.getLoadingError(),
 			isDirty: PostEditStore.isDirty(),
-			isSaveBlocked: PostEditStore.isSaveBlocked(),
 			hasContent: PostEditStore.hasContent(),
 			previewUrl: PostEditStore.getPreviewUrl(),
 			post: PostEditStore.get(),
@@ -526,7 +526,7 @@ export class PostEditor extends React.Component {
 	};
 
 	isSaveBlocked = () => {
-		return this.state.isSaveBlocked || ! this.state.isEditorInitialized;
+		return this.props.isSaveBlocked || ! this.state.isEditorInitialized;
 	};
 
 	onEditorInitialized = () => {
@@ -1336,6 +1336,7 @@ const enhance = flow(
 				hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 				isSitePreviewable: isSitePreviewable( state, siteId ),
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
+				isSaveBlocked: isEditorSaveBlocked( state ),
 			};
 		},
 		{
