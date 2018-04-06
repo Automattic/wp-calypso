@@ -93,6 +93,7 @@
 		"signup/social-management": true,
 		"signup/wpcc": true,
 		"ui/first-view": false,
+		"upgrades/2-year-plans": false,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
