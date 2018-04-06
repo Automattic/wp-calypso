@@ -69,7 +69,9 @@ export default connect(
 	{
 		activateRewind: ( siteId, isVpMigrate ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_vp_migrate_rewind', { rewindOptIn: isVpMigrate } ),
+				recordTracksEvent( 'calypso_activitylog_vp_migrate_rewind', {
+					rewind_opt_in: isVpMigrate,
+				} ),
 				activateRewind( siteId, isVpMigrate )
 			),
 	}

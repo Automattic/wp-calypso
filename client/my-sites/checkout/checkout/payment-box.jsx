@@ -7,6 +7,7 @@
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +31,7 @@ export class PaymentBox extends PureComponent {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
 		return function() {
 			analytics.ga.recordEvent( 'Upgrades', 'Switch Payment Method' );
-			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + paymentMethod );
+			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
 			onSelectPaymentMethod( paymentMethod );
 		};
 	}
