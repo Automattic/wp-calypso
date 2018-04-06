@@ -10,7 +10,9 @@ import { get, find } from 'lodash';
  * Internal Dependencies
  */
 import createSelector from 'lib/create-selector';
-import { calculateMonthlyPriceForPlan } from 'lib/plans';
+import { calculateMonthlyPriceForPlan, getPlan as libGetPlan } from 'lib/plans';
+import { getSitePlan } from 'state/sites/selectors';
+import { TERM_TO_INTERVAL_TYPE } from './interval-types';
 
 /**
  * Return WordPress plans getting from state object
@@ -83,4 +85,10 @@ export function getPlanSlug( state, productId ) {
 	const plan = getPlan( state, productId );
 
 	return get( plan, 'product_slug', null );
+}
+
+export function getIntervalTypeFromCurrentPlan( state, siteId ) {
+	const currentPlanProduct = getSitePlan( state, siteId );
+	const currentPlanObject = libGetPlan( currentPlanProduct.product_slug );
+	return TERM_TO_INTERVAL_TYPE[ currentPlanObject.term ];
 }

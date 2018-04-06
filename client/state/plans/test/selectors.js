@@ -26,6 +26,10 @@ jest.mock( 'lib/plans/constants', () => ( {
 	},
 } ) );
 
+jest.mock( 'state/sites/selectors', () => ( {
+	getSitePlan: jest.fn( () => ( {} ) ),
+} ) );
+
 /**
  * External dependencies
  */
@@ -35,8 +39,20 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getPlans, isRequestingPlans, getPlan, getPlanRawPrice, getPlanSlug } from '../selectors';
+import {
+	getPlans,
+	isRequestingPlans,
+	getPlan,
+	getPlanRawPrice,
+	getPlanSlug,
+	getIntervalTypeFromCurrentPlan,
+} from '../selectors';
 import { PLANS, getStateInstance } from './fixture';
+import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import * as plansLib from 'lib/plans';
+
+plansLib.getPlan = jest.fn();
+import { getSitePlan } from 'state/sites/selectors';
 
 describe( 'selectors', () => {
 	describe( '#getPlans()', () => {
@@ -224,5 +240,37 @@ describe( 'selectors', () => {
 
 			expect( planSlug ).to.equal( null );
 		} );
+	} );
+} );
+
+describe( 'getIntervalTypeFromCurrentPlan', () => {
+	const state = {};
+
+	beforeEach( () => {
+		getSitePlan.mockImplementation( () => ( {} ) );
+	} );
+
+	test( 'should return 2-year intervalType if current plan is a 2-year plan', () => {
+		plansLib.getPlan.mockImplementation( () => ( {
+			term: TERM_BIENNIALLY,
+		} ) );
+		const result = getIntervalTypeFromCurrentPlan( state, {} );
+		expect( result ).to.equal( '2yearly' );
+	} );
+
+	test( 'should return 1-year intervalType if current plan is a 1-year plan', () => {
+		plansLib.getPlan.mockImplementation( () => ( {
+			term: TERM_ANNUALLY,
+		} ) );
+		const result = getIntervalTypeFromCurrentPlan( state, {} );
+		expect( result ).to.equal( 'yearly' );
+	} );
+
+	test( 'should return monthly intervalType if current plan is a monthly plan', () => {
+		plansLib.getPlan.mockImplementation( () => ( {
+			term: TERM_MONTHLY,
+		} ) );
+		const result = getIntervalTypeFromCurrentPlan( state, {} );
+		expect( result ).to.equal( 'monthly' );
 	} );
 } );
