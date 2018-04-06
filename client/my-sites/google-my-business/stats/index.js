@@ -13,7 +13,6 @@ import { random, range } from 'lodash';
  * Internal dependencies
  */
 import Main from 'components/main';
-import StatsFirstView from 'my-sites/stats/stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
@@ -27,30 +26,29 @@ import SearchDataType from './search-data-type';
 
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
-		translate: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string.isRequired,
-		siteId: PropTypes.number.isRequired,
+		actionData: PropTypes.array.isRequired,
 		searchData: PropTypes.arrayOf( SearchDataType ).isRequired,
 		searchDataTotal: PropTypes.number.isRequired,
+		siteId: PropTypes.number.isRequired,
+		siteSlug: PropTypes.string.isRequired,
+		translate: PropTypes.func.isRequired,
 		viewData: PropTypes.array.isRequired,
-		actionData: PropTypes.array.isRequired,
 	};
 
 	render() {
 		const {
-			translate,
-			siteSlug,
-			siteId,
+			actionData,
 			searchData,
 			searchDataTotal,
+			siteId,
+			siteSlug,
+			translate,
 			viewData,
-			actionData,
 		} = this.props;
 
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ translate( 'Stats' ) } />
-				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 
