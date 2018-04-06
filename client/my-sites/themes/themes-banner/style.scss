@@ -59,7 +59,7 @@
 		top: 0;
 		right: 0;
 
-		@media (max-width: 1440px) {
+		@include breakpoint( '<1400px' ) {
 			opacity: 0.5;
 		}
 	}
