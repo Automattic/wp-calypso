@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { random, range } from 'lodash';
 
@@ -23,10 +23,13 @@ import SectionHeader from 'components/section-header';
 import PieChart from 'components/pie-chart';
 import Chart from 'components/chart';
 import SearchDataType from './search-data-type';
+import LocationType from '../select-location/location-type';
+import Location from '../select-location/location';
 
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
 		actionData: PropTypes.array.isRequired,
+		locationData: LocationType.isRequired,
 		searchData: PropTypes.arrayOf( SearchDataType ).isRequired,
 		searchDataTotal: PropTypes.number.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -90,13 +93,17 @@ const dataSummer = ( prevResult, datum ) => prevResult + datum.value;
 
 const searchData = [
 	{
-		name: 'Direct',
-		description: 'Customers who find your listing searching for you business name or address',
+		name: translate( 'Direct' ),
+		description: translate(
+			'Customers who find your listing searching for you business name or address'
+		),
 		value: random( 300, 500 ),
 	},
 	{
-		name: 'Discovery',
-		description: 'Customers who find your listing searching for a category, product, or service',
+		name: translate( 'Discovery' ),
+		description: translate(
+			'Customers who find your listing searching for a category, product, or service'
+		),
 		value: random( 200, 400 ),
 	},
 ];
@@ -105,20 +112,38 @@ const searchDataTotal = searchData.reduce( dataSummer, 0 );
 const viewData = range( 19, 30 ).map( day => ( {
 	value: random( 10, 90 ),
 	nestedValue: random( 5, 80 ),
-	label: `Mar ${ day }`,
+	label: translate( 'Mar %(day)d', {
+		args: { day },
+	} ),
 } ) );
 
 const actionData = range( 19, 30 ).map( day => ( {
 	value: random( 10, 90 ),
 	nestedValue: random( 5, 80 ),
-	label: `Mar ${ day }`,
+	label: translate( 'Mar %(day)d', {
+		args: { day },
+	} ),
 } ) );
 
+const locationData = {
+	id: 12345,
+	address: [
+		'Centre Commercial Cap 3000',
+		'Avenue Eugene Donadei',
+		'06700 Saint-Laurent-du-Var',
+		'France',
+	],
+	name: 'Starbucks',
+	photo: 'http://www.shantee.net/wp-content/uploads/2016/02/cookies-internet-1030x684.jpg',
+	verified: true,
+};
+
 export default connect( state => ( {
-	siteSlug: getSelectedSiteSlug( state ),
-	siteId: getSelectedSiteId( state ),
+	actionData,
+	locationData,
 	searchData,
 	searchDataTotal,
+	siteId: getSelectedSiteId( state ),
+	siteSlug: getSelectedSiteSlug( state ),
 	viewData,
-	actionData,
 } ) )( localize( GoogleMyBusinessStats ) );
