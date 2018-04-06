@@ -63,6 +63,7 @@ describe( 'assembler', () => {
 			whoisUpdateUnmodifiableFields: undefined,
 			hasZone: undefined,
 			pointsToWpcom: undefined,
+			hasWpcomNameservers: undefined,
 		},
 		mappedDomainObject = assign( {}, redirectDomainObject, {
 			type: domainTypes.MAPPED,
