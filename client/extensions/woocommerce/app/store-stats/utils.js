@@ -7,6 +7,7 @@
 import { find, includes, forEach, findIndex, round } from 'lodash';
 import classnames from 'classnames';
 import { moment, translate } from 'i18n-calypso';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -295,8 +296,6 @@ export function getQueries( unit, baseDate, overrides = {} ) {
  * @return {string} - widget path url portion
  */
 export function getWidgetPath( unit, slug, urlQuery ) {
-	const query = Object.keys( urlQuery || {} ).reduce( ( querystring, param, index ) => {
-		return `${ querystring }${ index === 0 ? '?' : '&' }${ param }=${ urlQuery[ param ] }`;
-	}, '' );
+	const query = qs.stringify( urlQuery, { addQueryPrefix: true } );
 	return `/${ unit }/${ slug }${ query }`;
 }
