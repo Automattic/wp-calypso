@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { filter, last, isEqual } from 'lodash';
+import { filter, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +14,10 @@ import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
-import { getSiteSettings, isRequestingSiteSettings } from 'state/site-settings/selectors';
+import {
+	getSiteSettings,
+	isRequestingSiteSettings,
+} from 'state/site-settings/selectors';
 
 export class GoogleMyBusiness extends SharingService {
 	static propTypes = {
@@ -30,14 +33,24 @@ export class GoogleMyBusiness extends SharingService {
 	};
 
 	// override `createOrUpdateConnection` to ignore connection update, this is only useful for publicize services
-	createOrUpdateConnection = () => {};
+	createOrUpdateConnection = ( keyringConnectionId, externalUserId = 0 ) => {
+		this.props.saveSiteSettings( this.props.siteId, {
+			gmb_api_token: keyringConnectionId,
+			gmb_location_id: externalUserId,
+		} );
+	};
 
 	// override `removeConnection` to remove the keyring connection instead of the publicize one
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
-		this.props.saveSiteSettings( this.props.siteId, { gmb_api_token: null } );
-		// TODO: only delete if this is the last site that uses this keyring connection
-		this.props.deleteStoredKeyringConnection( last( this.getConnections() ) );
+		this.props
+			.saveSiteSettings( this.props.siteId, {
+				gmb_api_token: null,
+				gmb_location_id: null,
+			} )
+			.then( () => {
+				this.setState( { isDisconnecting: false } );
+			} );
 	};
 
 	componentWillMount() {
@@ -56,40 +69,26 @@ export class GoogleMyBusiness extends SharingService {
 			this.requestSettings( nextProps );
 		}
 
-		if ( ! isEqual( this.props.availableExternalAccounts, nextProps.availableExternalAccounts ) ) {
+		if ( this.state.isAwaitingConnections ) {
+			this.setState( {
+				isAwaitingConnections: false,
+				isSelectingAccount: true,
+			} );
+			return;
+		}
+
+		if ( ! isEqual( this.props.brokenConnections, nextProps.brokenConnections ) ) {
+			this.setState( { isRefreshing: false } );
+		}
+
+		// do not use `availableExternalAccounts` as a datasource to know if a connection was successful
+		// because we allow the same location to be used on multiple sites in the case of GMB.
+		// Just check that a new connection is added
+		if ( ! isEqual( this.props.siteUserConnections, nextProps.siteUserConnections ) ) {
 			this.setState( {
 				isConnecting: false,
 				isDisconnecting: false,
 			} );
-		}
-
-		if ( ! this.state.isAwaitingConnections ) {
-			return;
-		}
-
-		this.setState( {
-			isAwaitingConnections: false,
-			isRefreshing: false,
-		} );
-
-		if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) ) {
-			const savingSiteSettings =
-				nextProps.saveRequests[ this.props.siteId ] &&
-				nextProps.saveRequests[ this.props.siteId ].saving;
-
-			if ( ! savingSiteSettings ) {
-				this.props.saveSiteSettings( this.props.siteId, {
-					gmb_api_token: last( nextProps.availableExternalAccounts ).keyringConnectionId,
-				} );
-			}
-
-			this.setState( { isConnecting: false } );
-			this.props.successNotice(
-				this.props.translate( 'The %(service)s account was successfully connected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize connection confirmation',
-				} )
-			);
 		}
 	}
 
@@ -107,18 +106,33 @@ export class GoogleMyBusiness extends SharingService {
 }
 
 const getSiteKeyringConnections = ( service, connections, siteSettings ) => {
-	if ( ! service || ! siteSettings || ! siteSettings.gmb_api_token ) {
+	if (
+		! service ||
+		! siteSettings ||
+		! siteSettings.gmb_api_token ||
+		! siteSettings.gmb_location_id
+	) {
 		return [];
 	}
 
-	connections = connections.map( connection => ( {
-		...connection,
-		keyring_connection_ID: connection.ID,
-	} ) );
+	const keyringConnections = [];
+	connections.forEach( connection => {
+		if ( connection.additional_external_users ) {
+			connection.additional_external_users.forEach( externalUser => {
+				keyringConnections.push( {
+					...connection,
+					keyring_connection_ID: connection.ID,
+					external_ID: externalUser.external_ID,
+					external_display: externalUser.external_name,
+				} );
+			} );
+		}
+	} );
 
-	return filter( connections, {
+	return filter( keyringConnections, {
 		service: service.ID,
 		keyring_connection_ID: siteSettings.gmb_api_token,
+		external_ID: siteSettings.gmb_location_id,
 	} );
 };
 
@@ -126,17 +140,26 @@ export default connectFor(
 	GoogleMyBusiness,
 	( state, props ) => {
 		const siteSettings = getSiteSettings( state, props.siteId );
+
+		// only keep external connections (aka GMB locations) to choose from
+		const availableExternalAccounts = filter( props.availableExternalAccounts || [], {
+			isExternal: true,
+		} );
+
+		const siteUserConnections = getSiteKeyringConnections(
+			props.service,
+			props.keyringConnections,
+			siteSettings
+		);
+
 		return {
 			...props,
+			availableExternalAccounts,
 			requestingSiteSettings: isRequestingSiteSettings( state, props.siteId ),
 			saveRequests: state.siteSettings.saveRequests,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: getSiteKeyringConnections(
-				props.service,
-				props.keyringConnections,
-				siteSettings
-			),
+			siteUserConnections,
 		};
 	},
 	{
