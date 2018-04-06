@@ -13,6 +13,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
@@ -117,9 +118,13 @@ export const mapStateToProps = ( state, ownProps ) => {
 
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
 	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
+	let intervalType = ownProps.intervalType;
+	if ( ! intervalType && config.isEnabled( 'upgrades/2-year-plans' ) ) {
+		intervalType = getIntervalTypeFromCurrentPlan( state, selectedSiteId );
+	}
 
 	return {
-		intervalType: ownProps.intervalType || getIntervalTypeFromCurrentPlan( state, selectedSiteId ),
+		intervalType,
 		selectedSite: getSelectedSite( state ),
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 	};
