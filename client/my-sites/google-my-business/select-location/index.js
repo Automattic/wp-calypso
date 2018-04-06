@@ -33,7 +33,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/google-my-business/${ this.props.siteSlug }/new` );
+		page.back( `/google-my-business/new/${ this.props.siteSlug }` );
 	};
 
 	trackAddYourBusinessLinkClick = () => {
@@ -48,7 +48,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 		return (
 			<Main className="gmb-select-location" wideLayout>
 				<PageViewTracker
-					path="/google-my-business/:site/select-location"
+					path="/google-my-business/select-location/:site"
 					title="Google My Business > Select Location"
 				/>
 

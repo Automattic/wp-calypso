@@ -9,52 +9,67 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { makeLayout } from 'controller';
+import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { newAccount, selectBusinessType, selectLocation } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
-	page(
+export default function( router ) {
+	router(
 		'/google-my-business',
+		'/google-my-business/select-business-type'
+	);
+
+	router(
+		'/google-my-business/select-business-type',
 		siteSelection,
 		sites,
 		makeLayout,
-		clientRender
 	);
 
-	page(
-		'/google-my-business/:site',
-		context => page.redirect( `/google-my-business/${ context.params.site }/select-business-type` )
-	);
-
-	if ( config.isEnabled( 'google-my-business' ) ) {
-		page(
-			'/google-my-business/:site/new',
-			siteSelection,
-			navigation,
-			newAccount,
-			makeLayout,
-			clientRender
-		);
-	}
-
-	page(
-		'/google-my-business/:site/select-business-type',
+	router(
+		'/google-my-business/select-business-type/:site',
 		siteSelection,
-		navigation,
 		selectBusinessType,
+		navigation,
 		makeLayout,
-		clientRender
 	);
 
 	if ( config.isEnabled( 'google-my-business' ) ) {
-		page(
-			'/google-my-business/:site/select-location',
+		router(
+			'/google-my-business/new',
 			siteSelection,
-			navigation,
-			selectLocation,
+			sites,
 			makeLayout,
-			clientRender
+		);
+
+		router(
+			'/google-my-business/new/:site',
+			siteSelection,
+			newAccount,
+			navigation,
+			makeLayout,
+		);
+
+		router(
+			'/google-my-business/select-location',
+			siteSelection,
+			sites,
+			makeLayout,
+		);
+
+		router(
+			'/google-my-business/select-location/:site',
+			siteSelection,
+			selectLocation,
+			navigation,
+			makeLayout,
 		);
 	}
+
+	router(
+		'/google-my-business/:site',
+		( context ) => {
+			page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
+		}
+	);
 }

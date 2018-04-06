@@ -58,7 +58,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker
-					path="/google-my-business/:site/select-business-type"
+					path="/google-my-business/select-business-type/:site"
 					title="Google My Business > Select Business Type"
 				/>
 
