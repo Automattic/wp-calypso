@@ -111,7 +111,7 @@ class Plans extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+export const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
