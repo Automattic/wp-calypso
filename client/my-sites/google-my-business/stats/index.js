@@ -3,28 +3,30 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
-import { localize, translate } from 'i18n-calypso';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize, translate } from 'i18n-calypso';
 import { random, range } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import StatsNavigation from 'blocks/stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import DocumentHead from 'components/data/document-head';
+import Button from 'components/button';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
-import SectionHeader from 'components/section-header';
-import PieChart from 'components/pie-chart';
 import Chart from 'components/chart';
-import SearchDataType from './search-data-type';
-import LocationType from '../select-location/location-type';
+import DocumentHead from 'components/data/document-head';
 import Location from '../select-location/location';
+import LocationType from '../select-location/location-type';
+import Main from 'components/main';
+import PieChart from 'components/pie-chart';
+import SearchDataType from './search-data-type';
+import SectionHeader from 'components/section-header';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import StatsNavigation from 'blocks/stats-navigation';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
@@ -41,6 +43,7 @@ class GoogleMyBusinessStats extends Component {
 	render() {
 		const {
 			actionData,
+			locationData,
 			searchData,
 			searchDataTotal,
 			siteId,
@@ -56,6 +59,13 @@ class GoogleMyBusinessStats extends Component {
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 
 				<div>
+					<Card className="gmb-location">
+						<Location location={ locationData } />
+						<Button className="gmb-location__button">
+							{ translate( 'Update Listing' ) } { <Gridicon icon={ 'external' } /> }
+						</Button>
+					</Card>
+
 					<SectionHeader label={ translate( 'How customers search for your business' ) } />
 					<Card>
 						<PieChart

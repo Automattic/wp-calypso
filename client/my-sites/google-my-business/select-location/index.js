@@ -12,6 +12,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
@@ -42,8 +43,14 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
+	trackConnectLocationButtonClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_location_connect_location_button_click'
+		);
+	};
+
 	render() {
-		const { locations, translate } = this.props;
+		const { locations, translate, siteSlug } = this.props;
 
 		return (
 			<Main className="gmb-select-location" wideLayout>
@@ -62,11 +69,17 @@ class GoogleMyBusinessSelectLocation extends Component {
 					{ translate( 'Select the listing you would like to connect to:' ) }
 				</CompactCard>
 
-				{ locations.map( ( location ) => (
-					<GoogleMyBusinessLocation
-						key={ location.id }
-						location={ location }
-					/>
+				{ locations.map( location => (
+					<CompactCard className="gmb-location">
+						<GoogleMyBusinessLocation key={ location.id } location={ location } />
+						<Button
+							className="gmb-location__button"
+							href={ `/stats/${ siteSlug }` }
+							onClick={ this.trackConnectLocationButtonClick }
+						>
+							{ translate( 'Connect Location' ) }
+						</Button>
+					</CompactCard>
 				) ) }
 
 				<Card className="gmb-select-location__add">
@@ -109,11 +122,7 @@ export default connect(
 			},
 			{
 				id: 67890,
-				address: [
-					'234 Piedmont Drive',
-					'Talihassee, FL 34342',
-					'USA',
-				],
+				address: [ '234 Piedmont Drive', 'Talihassee, FL 34342', 'USA' ],
 				name: 'Pinch Bakeshop',
 				verified: false,
 			},
