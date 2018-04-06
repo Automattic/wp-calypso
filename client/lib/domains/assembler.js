@@ -31,6 +31,7 @@ export function createDomainObjects( dataTransferObject ) {
 			expirySoon: domain.expiry_soon,
 			googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
 			hasPrivacyProtection: domain.has_private_registration,
+			hasWpcomNameservers: domain.has_wpcom_nameservers,
 			hasZone: domain.has_zone,
 			isAutoRenewing: domain.auto_renewing,
 			isPendingIcannVerification: domain.is_pending_icann_verification,

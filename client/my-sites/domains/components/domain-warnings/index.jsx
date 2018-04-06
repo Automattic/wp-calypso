@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _debug from 'debug';
 import moment from 'moment';
-import { intersection, map, every, find, get, each, isEqual } from 'lodash';
+import { intersection, map, every, find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -22,6 +22,7 @@ import { type as domainTypes, transferStatus } from 'lib/domains/constants';
 import { isSubdomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import {
 	ALL_ABOUT_DOMAINS,
+	CHANGE_NAME_SERVERS,
 	DOMAINS,
 	DOMAIN_HELPER_PREFIX,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
@@ -35,9 +36,6 @@ import {
 	domainManagementTransferIn,
 } from 'my-sites/domains/paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { isWpcomDefaults } from 'lib/domains/nameservers';
-import NameserversStore from 'lib/domains/nameservers/store';
-import { fetchNameservers } from 'lib/upgrades/actions';
 
 const debug = _debug( 'calypso:domain-warnings' );
 
@@ -53,10 +51,6 @@ const expiringDomainsCanManageWarning = 'expiring-domains-can-manage';
 const expiringDomainsCannotManageWarning = 'expiring-domains-cannot-manage';
 
 export class DomainWarnings extends React.PureComponent {
-	state = {
-		newTransfers: [],
-	};
-
 	static propTypes = {
 		domains: PropTypes.array,
 		ruleWhiteList: PropTypes.array,
@@ -430,60 +424,58 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
-	newTransfers = domains =>
-		domains.filter(
+	newTransfersWrongNS = () => {
+		const newTransfers = this.getDomains().filter(
 			domain =>
 				domain.registrationMoment &&
 				moment( domain.registrationMoment )
 					.add( 3, 'days' )
 					.isAfter( moment() ) &&
-				domain.transferStatus === transferStatus.COMPLETED
+				domain.transferStatus === transferStatus.COMPLETED &&
+				! domain.hasWpcomNameservers
 		);
 
-	loadNameServers = domains => each( domains, domain => fetchNameservers( domain.name ) );
-
-	nameServersLoaded = domains =>
-		every( domains, domain => NameserversStore.getByDomainName( domain.name ).hasLoadedFromServer );
-
-	newTransfersWrongNS = () => {
-		const { newTransfers } = this.state;
-
-		if ( newTransfers.length === 0 || ! this.nameServersLoaded( newTransfers ) ) {
+		if ( newTransfers.length === 0 ) {
 			return null;
 		}
 
-		const newTransfersOtherNS = newTransfers.filter(
-			domain => ! isWpcomDefaults( NameserversStore.getByDomainName( domain.name ) )
-		);
-
-		const domain = newTransfersOtherNS[ 0 ].name;
-
 		const { translate } = this.props;
 		const compactMessage = translate( 'Update nameservers' );
-		const domainManagementNameserversLink = domainManagementNameServers(
-			this.props.selectedSite.slug,
-			domain
-		);
+		let actionLink;
+		let message;
+
+		if ( newTransfers.length > 1 ) {
+			actionLink = CHANGE_NAME_SERVERS;
+			message = translate(
+				'To make your newly transferred domains work with WordPress.com, you need to ' +
+					'update the nameservers. {{a}}Learn more{{/a}}',
+				{
+					components: {
+						a: <a href={ actionLink } rel="noopener noreferrer" />,
+					},
+				}
+			);
+		} else {
+			const domain = newTransfers[ 0 ].name;
+			actionLink = domainManagementNameServers( this.props.selectedSite.slug, domain );
+			message = translate(
+				'To make {{strong}}%(domain)s{{/strong}} work with your WordPress.com site, you need to ' +
+					'update the nameservers. {{a}}Try it now{{/a}}',
+				{
+					components: {
+						strong: <strong />,
+						a: <a href={ actionLink } rel="noopener noreferrer" />,
+					},
+					args: { domain },
+				}
+			);
+		}
 
 		const actionText = translate( 'Info', {
-			context: 'Call to action link for updating the nameservers on a newly transferred domain',
+			comment: 'Call to action link for updating the nameservers on a newly transferred domain',
 		} );
 
-		const action = (
-			<NoticeAction href={ domainManagementNameserversLink }>{ actionText }</NoticeAction>
-		);
-
-		const message = translate(
-			'To make {{strong}}%(domain)s{{/strong}} work with your WordPress.com site, you may need to ' +
-				'update the nameservers. {{a}}More Info{{/a}}',
-			{
-				components: {
-					strong: <strong />,
-					a: <a href={ domainManagementNameserversLink } rel="noopener noreferrer" />,
-				},
-				args: { domain },
-			}
-		);
+		const action = <NoticeAction href={ actionLink }>{ actionText }</NoticeAction>;
 
 		return (
 			<Notice
@@ -978,14 +970,6 @@ export class DomainWarnings extends React.PureComponent {
 	componentWillMount() {
 		if ( ! this.props.domains && ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
-		}
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		const nextNewTransfers = this.newTransfers( nextProps.domains || [ nextProps.domain ] );
-		if ( ! isEqual( nextNewTransfers, this.state.newTransfers ) ) {
-			this.loadNameServers( nextNewTransfers );
-			this.setState( { newTransfers: nextNewTransfers } );
 		}
 	}
 
