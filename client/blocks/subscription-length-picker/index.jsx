@@ -103,9 +103,7 @@ const EPSILON = 0.009;
 
 function myFormatCurrency( price, code ) {
 	const hasCents = Math.abs( price % 1 ) > EPSILON;
-	return formatCurrency( price, code, {
-		precision: hasCents ? 2 : 0,
-	} );
+	return formatCurrency( price, code, hasCents ? {} : { precision: 0 } );
 }
 
 export const mapStateToProps = ( state, { plans } ) => {
