@@ -3,23 +3,28 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import ActionCard from 'components/action-card';
+import Button from 'components/button';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
-import ActionCard from 'components/action-card';
-import Main from 'components/main';
-import { recordTracksEvent } from 'state/analytics/actions';
+import config from 'config';
 import ExternalLink from 'components/external-link';
+import GoogleMyBusinessConnectButton from 'my-sites/google-my-business/connect-button';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
@@ -51,9 +56,43 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		);
 	};
 
-	render() {
-		const { siteSlug, translate } = this.props;
+	handleConnect = () => {
+		/* eslint-disable no-console */
+		console.log( 'connected' );
+		// TODO: handle redirect to the "Create My Listings" page here
+	};
 
+	render() {
+		const { canUserManageOptions, siteSlug, translate } = this.props;
+
+		let connectButton;
+
+		if ( config.isEnabled( 'google-my-business' ) && canUserManageOptions ) {
+			connectButton = (
+				<GoogleMyBusinessConnectButton
+					onClick={ this.trackCreateMyListingClick }
+					onConnect={ this.handleConnect }
+				>
+					{ translate( 'Create Your Listing', {
+						comment: 'Call to Action to add a business listing to Google My Business',
+					} ) }
+				</GoogleMyBusinessConnectButton>
+			);
+		} else {
+			connectButton = (
+				<Button
+					primary
+					href="https://www.google.com/business/"
+					target="_blank"
+					onClick={ this.trackCreateMyListingClick }
+				>
+					{ translate( 'Create Your Listing', {
+						comment: 'Call to Action to add a business listing to Google My Business',
+					} ) }{ ' ' }
+					<Gridicon icon="external" />
+				</Button>
+			);
+		}
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker
@@ -74,7 +113,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 						<p>
 							{ translate(
 								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
-									'It works for businesses that have a physical location or serve a local area.',
+								'It works for businesses that have a physical location or serve a local area.',
 								{
 									components: {
 										link: (
@@ -105,17 +144,11 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					} ) }
 					mainText={ translate(
 						'Your business has a physical location customers can visit, ' +
-							'or provides goods and services to local customers, or both.'
+						'or provides goods and services to local customers, or both.'
 					) }
-					buttonText={ translate( 'Create Your Listing', {
-						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }
-					buttonIcon="external"
-					buttonPrimary={ true }
-					buttonHref="https://www.google.com/business/"
-					buttonTarget="_blank"
-					buttonOnClick={ this.trackCreateMyListingClick }
-				/>
+				>
+					{ connectButton }
+				</ActionCard>
 
 				<ActionCard
 					headerText={ translate( 'Online Only', {
@@ -135,6 +168,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 export default connect(
 	state => ( {
+		canUserManageOptions: canCurrentUser( state, getSelectedSiteSlug( state ), 'manage_options' ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
