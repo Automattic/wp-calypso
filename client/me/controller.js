@@ -5,20 +5,16 @@
  */
 
 import React from 'react';
-import { includes } from 'lodash';
 import page from 'page';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { setSection } from 'state/ui/actions';
 import SidebarComponent from 'me/sidebar';
 import AppsComponent from 'me/get-apps';
-import NextSteps from './next-steps';
 
 export default {
 	sidebar( context, next ) {
@@ -48,34 +44,6 @@ export default {
 			userSettings: userSettings,
 			path: context.path,
 		} );
-		next();
-	},
-
-	nextSteps( context, next ) {
-		const isWelcome = 'welcome' === context.params.welcome;
-
-		context.store.dispatch( setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-
-		if ( isWelcome ) {
-			context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-		}
-
-		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );
-
-		context.primary = React.createElement( NextSteps, {
-			path: context.path,
-			isWelcome: isWelcome,
-		} );
-		next();
-	},
-
-	// Users that are redirected to `/me/next?welcome` after signup should visit
-	// `/me/next/welcome` instead.
-	nextStepsWelcomeRedirect( context, next ) {
-		if ( includes( context.path, '?welcome' ) ) {
-			return page.redirect( '/me/next/welcome' );
-		}
-
 		next();
 	},
 

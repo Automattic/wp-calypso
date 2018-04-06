@@ -73,7 +73,6 @@
 		"me/account": true,
 		"me/find-friends": false,
 		"me/my-profile": true,
-		"me/next-steps": true,
 		"me/notifications": true,
 		"me/trophies": false,
 		"notifications/link-to-reader": true,

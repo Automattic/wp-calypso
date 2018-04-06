@@ -22,17 +22,6 @@ export default function() {
 		page( '/me/public-profile', controller.profileRedirect, makeLayout, clientRender );
 	}
 
-	if ( config.isEnabled( 'me/next-steps' ) ) {
-		page(
-			'/me/next/:welcome?',
-			controller.sidebar,
-			controller.nextStepsWelcomeRedirect,
-			controller.nextSteps,
-			makeLayout,
-			clientRender
-		);
-	}
-
 	// Trophies and Find-Friends only exist in Atlas
 	// Using a reverse config flag here to try to reflect that
 	// If they're "not enabled", then the router should not redirect them, so they will be handled in Atlas
