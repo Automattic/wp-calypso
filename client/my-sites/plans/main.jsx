@@ -111,7 +111,7 @@ class Plans extends React.Component {
 	}
 }
 
-export default connect( state => {
+const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
@@ -121,4 +121,6 @@ export default connect( state => {
 		selectedSite: getSelectedSite( state ),
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 	};
-} )( localize( Plans ) );
+};
+
+export default connect( mapStateToProps )( localize( Plans ) );
