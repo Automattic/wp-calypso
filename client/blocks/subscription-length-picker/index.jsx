@@ -12,24 +12,18 @@ import PropTypes from 'prop-types';
  */
 import { localize } from 'i18n-calypso';
 import formatCurrency from 'lib/format-currency';
-import {
-	computeProductsWithPrices,
-	getProductsList,
-	isProductsListFetching,
-} from 'state/products-list/selectors';
-import { requestProductsList } from 'state/products-list/actions';
-import { requestPlans } from 'state/plans/actions';
-import { isRequestingPlans } from 'state/plans/selectors';
+import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlansBySiteId, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { PLANS_LIST } from 'lib/plans/constants';
+import QueryPlans from 'components/data/query-plans';
+import QueryProductsList from 'components/data/query-products-list';
 import SubscriptionLengthOption from './option';
 
 export class SubscriptionLengthPicker extends React.Component {
 	static propTypes = {
 		initialValue: PropTypes.string,
-		plans: PropTypes.oneOf( Object.keys( PLANS_LIST ) ),
+		plans: PropTypes.arrayOf( PropTypes.oneOf( Object.keys( PLANS_LIST ) ) ),
 
 		currencyCode: PropTypes.string.isRequired,
 		onChange: PropTypes.func.isRequired,
@@ -37,11 +31,6 @@ export class SubscriptionLengthPicker extends React.Component {
 
 		// Comes from connect():
 		productsWithPrices: PropTypes.array.isRequired,
-
-		fetchingPlans: PropTypes.bool,
-		fetchingProducts: PropTypes.bool,
-		requestProductsList: PropTypes.func,
-		requestPlans: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -52,21 +41,17 @@ export class SubscriptionLengthPicker extends React.Component {
 		checked: this.props.initialValue,
 	};
 
-	componentWillMount() {
-		if ( this.props.productsWithPrices.length === 0 ) {
-			if ( ! this.props.fetchingProducts && this.props.requestProductsList ) {
-				this.props.requestProductsList();
-			}
-			if ( ! this.props.fetchingPlans && this.props.requestPlans ) {
-				this.props.requestPlans();
-			}
-		}
-	}
-
 	render() {
 		const { productsWithPrices, translate } = this.props;
 		return (
 			<div className="subscription-length-picker">
+				{ ! productsWithPrices && (
+					<React.Fragment>
+						<QueryPlans />
+						<QueryProductsList />
+					</React.Fragment>
+				) }
+
 				<div className="subscription-length-picker__header">
 					{ translate( 'Choose the length of your subscription', {
 						comment:
@@ -125,21 +110,11 @@ function myFormatCurrency( price, code ) {
 
 export const mapStateToProps = ( state, { plans } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
-	const fetchingProducts = ! getProductsList( state ) && isProductsListFetching( state );
-	const fetchingPlans = ! plans && isRequestingPlans( state );
-	const fetchingSitePlans =
-		! getPlansBySiteId( selectedSiteId ) || isRequestingSitePlans( state, selectedSiteId );
-	const fetchingDeps = fetchingProducts || fetchingPlans || fetchingSitePlans;
 
 	return {
-		fetchingPlans,
-		fetchingProducts,
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		productsWithPrices: fetchingDeps ? [] : computeProductsWithPrices( state, plans ),
+		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans ),
 	};
 };
 
-export default connect( mapStateToProps, {
-	requestPlans,
-	requestProductsList,
-} )( localize( SubscriptionLengthPicker ) );
+export default connect( mapStateToProps )( localize( SubscriptionLengthPicker ) );
