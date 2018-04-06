@@ -8,6 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -106,25 +107,27 @@ describe( 'mapStateToProps', () => {
 		expect( result.displayJetpackPlans ).toBe( false );
 	} );
 
-	test( 'should return intervalType returned by getIntervalTypeFromCurrentPlan', () => {
-		getIntervalTypeFromCurrentPlan.mockImplementation( () => '2yearly' );
-		expect( mapStateToProps( state, {} ).intervalType ).toBe( '2yearly' );
+	if ( config.isEnabled( 'upgrades/2-year-plans' ) ) {
+		test( 'should return intervalType returned by getIntervalTypeFromCurrentPlan', () => {
+			getIntervalTypeFromCurrentPlan.mockImplementation( () => '2yearly' );
+			expect( mapStateToProps( state, {} ).intervalType ).toBe( '2yearly' );
 
-		getIntervalTypeFromCurrentPlan.mockImplementation( () => 'yearly' );
-		expect( mapStateToProps( state, {} ).intervalType ).toBe( 'yearly' );
-	} );
+			getIntervalTypeFromCurrentPlan.mockImplementation( () => 'yearly' );
+			expect( mapStateToProps( state, {} ).intervalType ).toBe( 'yearly' );
+		} );
 
-	test(
-		'should return null intervalType if getIntervalTypeFromCurrentPlan returns monthly - to keep ' +
-			'jetpack upgrade page same as before this was introduced',
-		() => {
-			getIntervalTypeFromCurrentPlan.mockImplementation( () => 'monthly' );
-			expect( mapStateToProps( state, {} ).intervalType ).toBe( null );
-		}
-	);
+		test(
+			'should return null intervalType if getIntervalTypeFromCurrentPlan returns monthly - to keep ' +
+				'jetpack upgrade page same as before this was introduced',
+			() => {
+				getIntervalTypeFromCurrentPlan.mockImplementation( () => 'monthly' );
+				expect( mapStateToProps( state, {} ).intervalType ).toBe( null );
+			}
+		);
 
-	test( 'should return intervalType from props if it is passed', () => {
-		getIntervalTypeFromCurrentPlan.mockImplementation( () => '2yearly' );
-		expect( mapStateToProps( state, { intervalType: 'yearly' } ).intervalType ).toBe( 'yearly' );
-	} );
+		test( 'should return intervalType from props if it is passed', () => {
+			getIntervalTypeFromCurrentPlan.mockImplementation( () => '2yearly' );
+			expect( mapStateToProps( state, { intervalType: 'yearly' } ).intervalType ).toBe( 'yearly' );
+		} );
+	}
 } );
