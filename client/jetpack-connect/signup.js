@@ -89,7 +89,9 @@ export class JetpackSignup extends Component {
 						debug( 'Signup error: %o', error );
 						this.setState( { isCreatingAccount: false } );
 						this.props.errorNotice(
-							this.props.translate( 'There was a problem creating your account.' )
+							this.props.translate(
+								'There was a problem creating your account. Please contact support.'
+							)
 						);
 					}
 				)
