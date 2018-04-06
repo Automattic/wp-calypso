@@ -411,6 +411,20 @@ $devdocs-max-width: 720px;
 	}
 }
 
+
+//Playground
+.react-live {
+	.prism-code {
+		background: #000000;
+		color: #eaeaea;
+		font-size: 16px;
+		margin: -32px -32px 32px -32px;
+		padding: 48px;
+		line-height: 1.4;
+	}
+}
+
+
 // Documentation — Copy-heavy things like Contributing and Typography
 .devdocs__doc-content,
 .docs-example__readme-viewer {

@@ -20,7 +20,6 @@ import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
-import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 
 /**
  * Docs examples
@@ -140,6 +139,7 @@ class DesignAssets extends React.Component {
 			'is-single': true,
 			'is-list': ! this.props.component,
 		} );
+
 		const scope = {
 			Accordions,
 			ActionCard,
@@ -240,29 +240,36 @@ class DesignAssets extends React.Component {
 			VerticalMenu,
 			Wizard,
 		};
+
 		const code = `<div>
-    <Button primary onClick={function() {alert('World')}}><Gridicon icon="code" /> Hello </Button>
-    <ActionCard
-            headerText={ 'Header' }
-            mainText={ 'Some text' }
-            buttonText={ 'Call to action!' }
-            buttonIcon="external"
-            buttonPrimary={ true }
-            buttonHref="https://wordpress.com"
-            buttonTarget="_blank"
-        />
-    </div>
-    `;
+	<Button primary onClick={
+		function() {
+			alert( 'World' )
+		}
+	}>
+		<Gridicon icon="code" /> Hello
+	</Button>
+	<br /><hr /><br />
+	<ActionCard
+		headerText={ 'Change the code above' }
+		mainText={ 'The playground lets you drop in components and play with values. Its experiemental and likely will break.' }
+		buttonText={ 'WordPress' }
+		buttonIcon="external"
+		buttonPrimary={ false }
+		buttonHref="https://wordpress.com"
+		buttonTarget="_blank"
+	/>
+	<br /><hr /><br />
+	<JetpackLogoExample />
+</div>`;
+
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Playground" />
-				<h1>Playground</h1>
 				<LiveProvider code={ code } scope={ scope } mountStylesheet={ false }>
 					<LiveEditor />
 					<LiveError />
-					<DocsExampleWrapper unique={ true } name="Preview">
-						<LivePreview />
-					</DocsExampleWrapper>
+					<LivePreview />
 				</LiveProvider>
 			</Main>
 		);
