@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { random, range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,8 +19,10 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import DocumentHead from 'components/data/document-head';
 import Card from 'components/card';
+import CardHeading from 'components/card-heading';
 import SectionHeader from 'components/section-header';
 import PieChart from 'components/pie-chart';
+import Chart from 'components/chart';
 import SearchDataType from './search-data-type';
 
 class GoogleMyBusinessStats extends Component {
@@ -29,10 +32,20 @@ class GoogleMyBusinessStats extends Component {
 		siteId: PropTypes.number.isRequired,
 		searchData: PropTypes.arrayOf( SearchDataType ).isRequired,
 		searchDataTotal: PropTypes.number.isRequired,
+		viewData: PropTypes.array.isRequired,
+		actionData: PropTypes.array.isRequired,
 	};
 
 	render() {
-		const { translate, siteSlug, siteId, searchData, searchDataTotal } = this.props;
+		const {
+			translate,
+			siteSlug,
+			siteId,
+			searchData,
+			searchDataTotal,
+			viewData,
+			actionData,
+		} = this.props;
 
 		return (
 			<Main wideLayout>
@@ -51,6 +64,24 @@ class GoogleMyBusinessStats extends Component {
 							} ) }
 						/>
 					</Card>
+
+					<SectionHeader
+						label={ translate( 'Where your customers view your business on Google' ) }
+					/>
+					<Card>
+						<CardHeading tagName={ 'h2' } size={ 16 }>
+							{ translate( 'The Google services that customers use to find your business' ) }
+						</CardHeading>
+						<Chart data={ viewData } />
+					</Card>
+
+					<SectionHeader label={ translate( 'Customer Actions' ) } />
+					<Card>
+						<CardHeading tagName={ 'h2' } size={ 16 }>
+							{ translate( 'The most common actions that customers take on your listing' ) }
+						</CardHeading>
+						<Chart data={ actionData } />
+					</Card>
 				</div>
 			</Main>
 		);
@@ -59,25 +90,37 @@ class GoogleMyBusinessStats extends Component {
 
 const dataSummer = ( prevResult, datum ) => prevResult + datum.value;
 
-export default connect( state => {
-	const searchData = [
-		{
-			name: 'Direct',
-			description: 'Customers who find your listing searching for you business name or address',
-			value: 362,
-		},
-		{
-			name: 'Discovery',
-			description: 'Customers who findyour listing searching for a category, product, or service',
-			value: 189,
-		},
-	];
-	const searchDataTotal = searchData.reduce( dataSummer, 0 );
+const searchData = [
+	{
+		name: 'Direct',
+		description: 'Customers who find your listing searching for you business name or address',
+		value: random( 300, 500 ),
+	},
+	{
+		name: 'Discovery',
+		description: 'Customers who find your listing searching for a category, product, or service',
+		value: random( 200, 400 ),
+	},
+];
+const searchDataTotal = searchData.reduce( dataSummer, 0 );
 
-	return {
-		siteSlug: getSelectedSiteSlug( state ),
-		siteId: getSelectedSiteId( state ),
-		searchData,
-		searchDataTotal,
-	};
-} )( localize( GoogleMyBusinessStats ) );
+const viewData = range( 19, 30 ).map( day => ( {
+	value: random( 10, 90 ),
+	nestedValue: random( 5, 80 ),
+	label: `Mar ${ day }`,
+} ) );
+
+const actionData = range( 19, 30 ).map( day => ( {
+	value: random( 10, 90 ),
+	nestedValue: random( 5, 80 ),
+	label: `Mar ${ day }`,
+} ) );
+
+export default connect( state => ( {
+	siteSlug: getSelectedSiteSlug( state ),
+	siteId: getSelectedSiteId( state ),
+	searchData,
+	searchDataTotal,
+	viewData,
+	actionData,
+} ) )( localize( GoogleMyBusinessStats ) );
