@@ -533,11 +533,6 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		// Ignore Jetpack sites as they've opted into this interface.
-		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
-			return null;
-		}
-
 		if ( ! this.useWPAdminFlows() && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
