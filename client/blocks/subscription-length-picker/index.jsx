@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
  */
 import { localize } from 'i18n-calypso';
 import formatCurrency from 'lib/format-currency';
+import { CURRENCIES } from 'lib/format-currency/currencies';
 import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -25,7 +26,7 @@ export class SubscriptionLengthPicker extends React.Component {
 		initialValue: PropTypes.string,
 		plans: PropTypes.arrayOf( PropTypes.oneOf( Object.keys( PLANS_LIST ) ) ),
 
-		currencyCode: PropTypes.string.isRequired,
+		currencyCode: PropTypes.oneOf( Object.keys( CURRENCIES ) ).isRequired,
 		onChange: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 
@@ -99,10 +100,11 @@ export class SubscriptionLengthPicker extends React.Component {
 	};
 }
 
-const EPSILON = 0.009;
+export function myFormatCurrency( price, code ) {
+	const precision = CURRENCIES[ code ].precision;
+	const EPSILON = Math.pow( 10, -precision );
 
-function myFormatCurrency( price, code ) {
-	const hasCents = Math.abs( price % 1 ) > EPSILON;
+	const hasCents = Math.abs( price % 1 ) >= EPSILON;
 	return formatCurrency( price, code, hasCents ? {} : { precision: 0 } );
 }
 

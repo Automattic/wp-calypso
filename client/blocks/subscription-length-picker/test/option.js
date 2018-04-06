@@ -20,7 +20,6 @@ jest.mock( 'i18n-calypso', () => ( {
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { TERM_1_YEAR } from 'lib/plans/constants';
@@ -31,7 +30,7 @@ import { TERM_1_YEAR } from 'lib/plans/constants';
 import { SubscriptionLengthOption } from '../option';
 
 describe( 'TermPickerOpton basic tests', () => {
-	test( 'should have term-picker-option class', () => {
+	test( 'should have term-picker-picker__option class', () => {
 		const option = shallow(
 			<SubscriptionLengthOption
 				term={ TERM_1_YEAR }
@@ -40,7 +39,7 @@ describe( 'TermPickerOpton basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.lengthOf( option.find( '.subscription-length-option' ), 1 );
+		expect( option.find( '.subscription-length-picker__option' ).length ).toBe( 1 );
 	} );
 	test( 'should display save badge if savePercent is specified', () => {
 		const option = shallow(
@@ -52,7 +51,7 @@ describe( 'TermPickerOpton basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.equal( option.find( 'Badge' ).length, 1 );
+		expect( option.find( 'Badge' ).length ).toBe( 1 );
 	} );
 	test( 'should say "{price} / month" if savePercent is not specified', () => {
 		const option = shallow(
@@ -63,8 +62,7 @@ describe( 'TermPickerOpton basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.equal(
-			option.find( '.subscription-length-option__side-note' ).text(),
+		expect( option.find( '.subscription-length-picker__option-side-note' ).text() ).toEqual(
 			'%(price)s / month'
 		);
 	} );
@@ -78,8 +76,7 @@ describe( 'TermPickerOpton basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.equal(
-			option.find( '.subscription-length-option__side-note' ).text(),
+		expect( option.find( '.subscription-length-picker__option-side-note' ).text() ).toEqual(
 			'only %(price)s / month'
 		);
 	} );

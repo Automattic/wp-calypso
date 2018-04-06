@@ -10,7 +10,6 @@ jest.mock( '../option', () => 'SubscriptionLengthOption' );
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { getPlan } from 'lib/plans';
@@ -19,7 +18,7 @@ import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'lib/plans/constants';
 /**
  * Internal dependencies
  */
-import { SubscriptionLengthPicker } from '../index';
+import { SubscriptionLengthPicker, myFormatCurrency } from '../index';
 
 describe( 'SubscriptionLengthPicker basic tests', () => {
 	const productsWithPrices = [
@@ -45,7 +44,7 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.lengthOf( picker.find( '.subscription-length-picker' ), 1 );
+		expect( picker.find( '.subscription-length-picker' ).length ).toBe( 1 );
 	} );
 
 	test( 'should contain as many <SubscriptionLengthOption/> as products passed', () => {
@@ -56,7 +55,7 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.lengthOf( picker.find( 'SubscriptionLengthOption' ), 2 );
+		expect( picker.find( 'SubscriptionLengthOption' ).length ).toBe( 2 );
 	} );
 
 	test( 'should mark appropriate SubscriptionLengthOption as checked', () => {
@@ -70,11 +69,67 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 		);
 
 		const first = picker.find( 'SubscriptionLengthOption' ).first();
-		assert.equal( first.props().value, PLAN_BUSINESS );
-		assert.equal( first.props().checked, false );
+		expect( first.props().value ).toEqual( PLAN_BUSINESS );
+		expect( first.props().checked ).toEqual( false );
 
 		const last = picker.find( 'SubscriptionLengthOption' ).last();
-		assert.equal( last.props().value, PLAN_BUSINESS_2_YEARS );
-		assert.equal( last.props().checked, true );
+		expect( last.props().value ).toEqual( PLAN_BUSINESS_2_YEARS );
+		expect( last.props().checked ).toEqual( true );
+	} );
+} );
+
+describe( 'myFormatCurrency', () => {
+	describe( 'USD - precision 2', () => {
+		const code = 'USD';
+		const symbol = '$';
+		const results = amount => myFormatCurrency( amount, code ).replace( symbol, '' );
+
+		test( 'Should return correctly formatted amount for no cents', () => {
+			expect( results( 1 ) ).toBe( '1' );
+			expect( results( 9 ) ).toBe( '9' );
+			expect( results( 12 ) ).toBe( '12' );
+		} );
+		test( 'Should return correctly formatted amount with cents', () => {
+			expect( results( 0.01 ) ).toBe( '0.01' );
+			expect( results( 0.02 ) ).toBe( '0.02' );
+			expect( results( 0.03 ) ).toBe( '0.03' );
+			expect( results( 1.11 ) ).toBe( '1.11' );
+		} );
+		test( 'Should return correctly formatted amount with fractions lower than cents', () => {
+			expect( results( 0.001 ) ).toBe( '0' );
+			expect( results( 0.002 ) ).toBe( '0' );
+			expect( results( 0.003 ) ).toBe( '0' );
+			expect( results( 0.009 ) ).toBe( '0' );
+			expect( results( 1.0099999 ) ).toBe( '1' );
+		} );
+	} );
+	describe( 'BHD - precision 3', () => {
+		const code = 'BHD';
+		const symbol = 'د.ب.‏';
+		const results = amount => myFormatCurrency( amount, code ).replace( symbol, '' );
+
+		test( 'Should return correctly formatted amount for no cents', () => {
+			expect( results( 1 ) ).toBe( '1' );
+			expect( results( 9 ) ).toBe( '9' );
+			expect( results( 12 ) ).toBe( '12' );
+		} );
+		test( 'Should return correctly formatted amount with cents', () => {
+			expect( results( 0.01 ) ).toBe( '0.010' );
+			expect( results( 0.02 ) ).toBe( '0.020' );
+			expect( results( 0.03 ) ).toBe( '0.030' );
+			expect( results( 1.11 ) ).toBe( '1.110' );
+
+			expect( results( 0.001 ) ).toBe( '0.001' );
+			expect( results( 0.002 ) ).toBe( '0.002' );
+			expect( results( 0.003 ) ).toBe( '0.003' );
+			expect( results( 1.111 ) ).toBe( '1.111' );
+		} );
+		test( 'Should return correctly formatted amount with fractions lower than cents', () => {
+			expect( results( 0.0001 ) ).toBe( '0' );
+			expect( results( 0.0002 ) ).toBe( '0' );
+			expect( results( 0.0003 ) ).toBe( '0' );
+			expect( results( 0.0009 ) ).toBe( '0' );
+			expect( results( 1.00099999 ) ).toBe( '1' );
+		} );
 	} );
 } );
