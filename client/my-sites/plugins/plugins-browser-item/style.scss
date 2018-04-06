@@ -84,15 +84,6 @@
 	font-size: 13px;
 }
 
-.plugins-browser-item .plugin-icon.is-placeholder,
-.plugins-browser-item .plugin-icon[style*='undefined'] {
-	&::before {
-		width: 40px;
-		height: 40px;
-		font: normal 40px/40px Noticons;
-	}
-}
-
 .plugins-browser-item .plugin-icon {
 	margin-right: 0;
 }
