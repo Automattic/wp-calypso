@@ -23,6 +23,7 @@ import EditorStatusLabel from 'post-editor/editor-status-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
+import PodcastIndicator from 'components/podcast-indicator';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 class EditorActionBar extends Component {
@@ -64,7 +65,11 @@ class EditorActionBar extends Component {
 						! isPasswordProtected &&
 						! isPostPrivate && <EditorSticky /> }
 					{ isPodcastEpisode && (
-						<Gridicon icon="microphone" className="editor-action-bar__podcasting-icon" />
+						<PodcastIndicator
+							className="editor-action-bar__podcasting-indicator"
+							size={ 24 }
+							hasTooltip={ true }
+						/>
 					) }
 					{ utils.isPublished( this.props.savedPost ) && (
 						<Button

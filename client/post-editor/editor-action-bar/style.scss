@@ -100,9 +100,9 @@
 	}
 }
 
-.editor-action-bar__podcasting-icon {
-	margin-top: 1px;
-	fill: #9b4dd5;
+.editor-action-bar__podcasting-indicator .gridicon {
+	position: relative;
+	top: 2px;
 }
 
 .editor-action-bar__view-post-tooltip .popover__inner {
