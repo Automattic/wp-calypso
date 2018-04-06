@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { overSome, partial } from 'lodash';
+import { partial } from 'lodash';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
@@ -18,14 +18,9 @@ import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import ClipboardButtonInput from 'components/clipboard-button-input';
-import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
-import { userCan } from 'lib/site/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
-
-const hasSeoSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );
 
 class PreviewToolbar extends Component {
 	static propTypes = {
@@ -101,7 +96,9 @@ class PreviewToolbar extends Component {
 			translate,
 		} = this.props;
 
-		const selectedDevice = this.devices[ currentDevice ];
+		const selectedDevice = this.devices[
+			! showSEO && 'seo' === currentDevice ? 'computer' : currentDevice
+		];
 		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
 
 		return (
@@ -174,16 +171,4 @@ class PreviewToolbar extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { showSEO } ) => {
-	const site = getSelectedSite( state );
-	const supportsSEO = site && site.plan && hasSeoSupportingPlan( site.plan );
-	const userCanManageSite = userCan( 'manage_options', site );
-
-	return {
-		showSEO: showSEO && ( supportsSEO || userCanManageSite ),
-	};
-};
-
-export default connect( mapStateToProps, {
-	recordTracksEvent,
-} )( localize( PreviewToolbar ) );
+export default connect( null, { recordTracksEvent } )( localize( PreviewToolbar ) );
