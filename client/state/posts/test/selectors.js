@@ -2034,6 +2034,44 @@ describe( 'selectors', () => {
 
 			expect( isDirty ).to.be.false;
 		} );
+
+		test( "should return false if author ID didn't change", () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										author: {
+											ID: 123,
+											name: 'Robert Trujillo',
+										},
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									author: {
+										ID: 123,
+										name: 'Bob Trujillo',
+									},
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.false;
+		} );
 	} );
 
 	describe( 'getPostPreviewUrl()', () => {

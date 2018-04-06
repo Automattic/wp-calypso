@@ -335,7 +335,6 @@ export const PostEditor = createReactClass( {
 								savedPost={ this.state.savedPost }
 								site={ site }
 								isPostPrivate={ utils.isPrivate( this.state.post ) }
-								postAuthor={ this.state.post ? this.state.post.author : null }
 							/>
 							<div className="post-editor__site">
 								<Site

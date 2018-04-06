@@ -1205,6 +1205,46 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove author edit after it is saved and user IDs are equal', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							title: 'Hello World',
+							type: 'post',
+							author: {
+								ID: 123,
+								name: 'Robert Trujillo',
+							},
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							title: 'Hello',
+							author: {
+								ID: 123,
+								name: 'Bob Trujillo',
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+					},
+				},
+			} );
+		} );
+
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
