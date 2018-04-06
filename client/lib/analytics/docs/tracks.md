@@ -17,14 +17,14 @@ analytics.tracks.recordEvent( 'calypso_checkout_coupon_apply', {
 
 ## Naming Conventions
 
-Event names should be prefixed by `calypso_` to make it easy to identify when analyzing the data with our various analytics tools.
+To be recorded, event names originating from Calypso must be prefixed by `calypso_`, and each token in the event and property names must be separated by an underscore (`_`).
 
-Each token in the event and property names should be separated by an underscore (`_`), not spaces or dashes.
+_Note: Events not prefixed by `calypso_`, with words not separated by underscore (e.g. by spaces or dashes), or written in camel case, **will be discarded**._
 
-In order to keep similar events grouped together when output in an alphabetized list (as is typical with ananlytics tools), put the verb at _the end_ of the event name:
+In order to keep similar events grouped together when output in an alphabetized list (as is typical with analytics tools), put the verb at _the end_ of the event name:
 
-* `calypso_cart_product_add`
-* `calypso_cart_product_remove`
+- `calypso_cart_product_add`
+- `calypso_cart_product_remove`
 
 If we had instead used `calypso_add_cart_product` and `calypso_remove_cart_product` for example, then they'd likely be separated in a list of all the event names.
 
