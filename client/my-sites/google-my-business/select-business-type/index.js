@@ -3,24 +3,25 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import ActionCard from 'components/action-card';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
-import ActionCard from 'components/action-card';
-import Main from 'components/main';
-import { recordTracksEvent } from 'state/analytics/actions';
+import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
@@ -61,6 +62,8 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					title="Google My Business > Select Business Type"
 				/>
 
+				<DocumentHead title={ translate( 'Google My Business' ) } />
+
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
@@ -74,7 +77,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 						<p>
 							{ translate(
 								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
-									'It works for businesses that have a physical location or serve a local area.',
+								'It works for businesses that have a physical location or serve a local area.',
 								{
 									components: {
 										link: (
@@ -105,7 +108,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					} ) }
 					mainText={ translate(
 						'Your business has a physical location customers can visit, ' +
-							'or provides goods and services to local customers, or both.'
+						'or provides goods and services to local customers, or both.'
 					) }
 					buttonText={ translate( 'Create Your Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',

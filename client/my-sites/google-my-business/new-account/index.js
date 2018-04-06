@@ -14,10 +14,11 @@ import React, { Component } from 'react';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import DocumentHead from 'components/data/document-head';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessNewAccount extends Component {
@@ -53,36 +54,47 @@ class GoogleMyBusinessNewAccount extends Component {
 					title="Google My Business > New"
 				/>
 
+				<DocumentHead title={ translate( 'Google My Business' ) } />
+
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card className="gmb-new-account__card">
-					<img
-						alt={ translate( 'Local business illustration' ) }
-						className="gmb-new-account__illustration"
-						src="/calypso/images/google-my-business/business-local.svg"
-					/>
+				<Card>
+					<div className="gmb-new-account__wrapper">
+						<img
+							alt={ translate( 'Local business illustration' ) }
+							className="gmb-new-account__illustration"
+							src="/calypso/images/google-my-business/business-local.svg"
+						/>
 
-					<h1 className="gmb-new-account__heading">
-						{ translate( 'It looks like you might be new to Google My Business' ) }
-					</h1>
+						<h1 className="gmb-new-account__heading">
+							{ translate( 'It looks like you might be new to Google My Business' ) }
+						</h1>
 
-					<p>
-						{ translate(
-							'Google My Business lists your local business on Google Search and Google Maps. ' +
-							'It works for businesses that have a physical location or serve a local area'
-						) }
-					</p>
+						<p>
+							{ translate(
+								'Google My Business lists your local business on Google Search and Google Maps. ' +
+									'It works for businesses that have a physical location or serve a local area'
+							) }
+						</p>
 
-					<div className="gmb-new-account__actions">
-						<Button primary onClick={ this.trackCreateMyListingClick }>
-							{ translate( 'Create My Listing' ) }
-						</Button>
+						<div className="gmb-new-account__actions">
+							<Button
+								href={ `/google-my-business/${ siteSlug }/select-location` }
+								onClick={ this.trackCreateMyListingClick }
+								primary
+							>
+								{ translate( 'Create My Listing' ) }
+							</Button>
 
-						<Button href={ `/stats/${ siteSlug }` } onClick={ this.trackNoThanksClick }>
-							{ translate( 'No thanks' ) }
-						</Button>
+							<Button
+								href={ `/stats/${ siteSlug }` }
+								onClick={ this.trackNoThanksClick }
+							>
+								{ translate( 'No thanks' ) }
+							</Button>
+						</div>
 					</div>
 				</Card>
 			</Main>

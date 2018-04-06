@@ -1,8 +1,7 @@
 @import 'my-sites/google-my-business/style';
 
-.gmb-new-account__card {
-	display: flex;
-	flex-direction: column;
+.gmb-new-account__wrapper {
+	max-width: 660px;
 }
 
 .gmb-new-account__illustration {
@@ -29,11 +28,11 @@
 
 	&.is-primary {
 		@include breakpoint( '<480px' ) {
-			margin-bottom: 1em;
+			margin-bottom: 10px;
 		}
 
 		@include breakpoint( '>480px' ) {
-			margin-right: 1em;
+			margin-right: 10px;
 		}
 	}
 }

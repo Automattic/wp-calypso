@@ -10,7 +10,7 @@ import page from 'page';
  */
 import config from 'config';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { newAccount, selectBusinessType } from './controller';
+import { newAccount, selectBusinessType, selectLocation } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
@@ -46,4 +46,15 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
+	if ( config.isEnabled( 'google-my-business' ) ) {
+		page(
+			'/google-my-business/:site/select-location',
+			siteSelection,
+			navigation,
+			selectLocation,
+			makeLayout,
+			clientRender
+		);
+	}
 }
