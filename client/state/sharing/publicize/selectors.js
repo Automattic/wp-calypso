@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { filter, get } from 'lodash';
+import { filter, get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,8 @@ import createSelector from 'lib/create-selector';
 import { canCurrentUser } from 'state/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+
+const sharingServices = [ 'facebook', 'google_plus', 'linkedin', 'path', 'tumblr', 'twitter' ];
 
 /**
  * Returns an array of known connections for the given site ID.
@@ -44,6 +46,22 @@ export const getSiteUserConnections = createSelector(
 		),
 	state => [ state.sharing.publicize.connections ]
 );
+
+/**
+ * Returns an array of known sharing connections for the given site ID
+ * that are available to the specified user ID.
+ * Sharing connections are publicize connections that have "sharing" (publicize posts) enabled.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} userId User ID to filter
+ * @return {Array}         User sharing connections
+ */
+export function getSiteUserSharingConnections( state, siteId, userId ) {
+	return filter( getSiteUserConnections( state, siteId, userId ), connection =>
+		includes( sharingServices, connection.service )
+	);
+}
 
 /**
  * Returns an array of known connections for the given site ID

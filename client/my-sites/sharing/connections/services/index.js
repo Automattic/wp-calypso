@@ -2,7 +2,7 @@
 export eventbrite from './eventbrite';
 export instagram from './instagram';
 export google_photos from './google-photos';
-export google_my_business from './google-my-business';
+//export google_my_business from './google-my-business';
 
-const services = new Set( [ 'eventbrite', 'instagram', 'google_photos', 'google_my_business' ] );
+const services = new Set( [ 'eventbrite', 'instagram', 'google_photos' ] );
 export const hasOwnProperty = name => services.has( name );

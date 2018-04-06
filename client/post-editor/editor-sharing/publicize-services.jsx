@@ -15,7 +15,7 @@ import { groupBy, map } from 'lodash';
 import EditorSharingPublicizeConnection from './publicize-connection';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { getSiteUserSharingConnections } from 'state/sharing/publicize/selectors';
 
 export const EditorSharingPublicizeServices = ( { connections, post, newConnectionPopup } ) => (
 	<ul className="editor-sharing__publicize-services">
@@ -47,6 +47,6 @@ export default connect( state => {
 	const userId = getCurrentUserId( state );
 
 	return {
-		connections: getSiteUserConnections( state, siteId, userId ),
+		connections: getSiteUserSharingConnections( state, siteId, userId ),
 	};
 } )( EditorSharingPublicizeServices );

@@ -27,7 +27,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { isJetpackModuleActive } from 'state/sites/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { getSiteUserSharingConnections } from 'state/sharing/publicize/selectors';
 import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -149,7 +149,7 @@ export default connect(
 		const isLikesActive = false !== isJetpackModuleActive( state, siteId, 'likes' );
 
 		return {
-			connections: getSiteUserConnections( state, siteId, userId ),
+			connections: getSiteUserSharingConnections( state, siteId, userId ),
 			hasBrokenConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 			isSharingActive,
 			isLikesActive,
