@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import List from 'react-virtualized/List';
-import Gridicon from 'gridicons';
 import {
 	debounce,
 	difference,
@@ -35,6 +34,7 @@ import {
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
+import PodcastIndicator from 'components/podcast-indicator';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 /**
@@ -349,7 +349,7 @@ class TermTreeSelectorList extends Component {
 					{ input }
 					<span className="term-tree-selector__label">
 						{ name }
-						{ isPodcasting && <Gridicon icon="microphone" size={ 18 } /> }
+						{ isPodcasting && <PodcastIndicator size={ 18 } /> }
 					</span>
 				</label>
 				{ children.length > 0 && (

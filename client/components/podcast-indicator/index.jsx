@@ -54,7 +54,7 @@ class PodcastIndicator extends React.Component {
 		} );
 
 		return (
-			<div className={ classes }>
+			<span className={ classes }>
 				<Gridicon
 					icon="microphone"
 					size={ size }
@@ -72,7 +72,7 @@ class PodcastIndicator extends React.Component {
 						{ translate( 'Included in your Podcast feed' ) }
 					</Tooltip>
 				) }
-			</div>
+			</span>
 		);
 	}
 }
