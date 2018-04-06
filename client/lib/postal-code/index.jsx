@@ -85,7 +85,7 @@ export function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
 		return postalCode;
 	}
 
-	const postalCodeWithoutDelimeters = replace( postalCode, /[ -]/g, '' );
+	const postalCodeWithoutDelimeters = replace( postalCode, /[\s-]/g, '' );
 
 	if ( includes( countryCodeData.length, postalCodeWithoutDelimeters.length ) ) {
 		if ( countryCodeData.formatter ) {
