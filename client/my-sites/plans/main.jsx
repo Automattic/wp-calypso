@@ -22,8 +22,10 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/domains/navigation';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, getSitePlan } from 'state/sites/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import { getPlan } from 'lib/plans';
+import { TERM_TO_INTERVAL_TYPE } from './interval-types';
 
 class Plans extends React.Component {
 	static propTypes = {
@@ -111,13 +113,21 @@ class Plans extends React.Component {
 	}
 }
 
-export const mapStateToProps = state => {
+export const mapStateToProps = ( state, ownProps ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
 	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
 
+	let intervalType = ownProps.intervalType;
+	if ( ! intervalType ) {
+		const currentPlanProduct = getSitePlan( state, selectedSiteId );
+		const currentPlanObject = getPlan( currentPlanProduct.product_slug );
+		intervalType = TERM_TO_INTERVAL_TYPE[ currentPlanObject.term ];
+	}
+
 	return {
+		intervalType,
 		selectedSite: getSelectedSite( state ),
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 	};
