@@ -22,7 +22,7 @@ There are also three optional properties:
 
 Example:
 ```javascript
-account: { steps: [ 'site', 'user' ], destination: '/me/next?welcome' }
+account: { steps: [ 'site', 'user' ], destination: '/' }
 ```
 
 Once you've added the flow to `flows.js`, it'll be available for users at `/start/flow-name` where `flow-name` is the key of your flow in `flows`.
@@ -120,7 +120,7 @@ The steps below guide you through creating a new flow and step:
 ```javascript
 import React from 'react';
 
-export default class extends React.Component { 
+export default class extends React.Component {
 	static displayName = 'HelloWorld';
 
 	render() {
