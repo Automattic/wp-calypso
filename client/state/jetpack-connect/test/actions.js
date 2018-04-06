@@ -425,8 +425,8 @@ describe( '#createAccount()', () => {
 		const userData = { username: 'happyuser' };
 		const error = { code: 'user_exists' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew() {
-				return Promise.reject( error );
+			async usersNew() {
+				throw error;
 			},
 		} ) );
 
