@@ -25,7 +25,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
 import { addCalypsoEnvQueryArg } from './utils';
-import { addQueryArgs, externalRedirect } from 'lib/route';
+import { addQueryArgs } from 'lib/route';
 import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
 import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
@@ -78,11 +78,38 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	componentDidUpdate() {
-		const { isResponseCompleted, siteToConnect } = this.props;
+		const { isResponseCompleted } = this.props;
 
 		if ( isResponseCompleted ) {
-			externalRedirect( addCalypsoEnvQueryArg( siteToConnect + REMOTE_PATH_AUTH ) );
+			// Login to remote site and redirect to JP connect URL
+			this.buildRemoteSiteLoginForm().submit();
 		}
+	}
+
+	buildRemoteSiteLoginForm() {
+		const { siteToConnect } = this.props;
+
+		const form = document.createElement( 'form' );
+		form.setAttribute( 'method', 'post' );
+
+		const redirectUrl = addCalypsoEnvQueryArg( REMOTE_PATH_AUTH );
+		const actionUrl = addQueryArgs( { redirect_to: redirectUrl }, siteToConnect + '/wp-login.php' );
+		form.setAttribute( 'action', actionUrl );
+
+		const user = document.createElement( 'input' );
+		user.setAttribute( 'type', 'hidden' );
+		user.setAttribute( 'name', 'log' );
+		user.setAttribute( 'value', this.state.username );
+		form.appendChild( user );
+
+		const pwd = document.createElement( 'input' );
+		pwd.setAttribute( 'type', 'hidden' );
+		pwd.setAttribute( 'name', 'pwd' );
+		pwd.setAttribute( 'value', this.state.password );
+		form.appendChild( pwd );
+
+		document.body.appendChild( form );
+		return form;
 	}
 
 	getChangeHandler = field => event => {
