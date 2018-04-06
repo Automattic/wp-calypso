@@ -2,11 +2,12 @@
 
 .featured-domain-suggestion {
 	flex-direction: column;
-	justify-content: flex-end;
 	width: 100%;
+	margin-top: 0;
 
 	.domain-suggestion__content {
 		flex-direction: column;
+		flex-grow: 2;
 	}
 
 	.domain-registration-suggestion__title,
@@ -19,15 +20,19 @@
 		order: 0;
 		font-size: 2em;
 		font-weight: 600;
+		flex-grow: 2;
 	}
 
 	// .card used to increase specificity
 	&.card .domain-product-price {
 		align-items: left;
-		margin: 0 0 0.5em 0;
+		margin: 0;
 		order: 1;
 		&.is-with-plans-only:not(.is-free-domain) {
 			flex-basis: auto;
+			small {
+				font-size: 1em;
+			}
 		}
 	}
 
@@ -36,9 +41,29 @@
 		display: flex;
 		align-items: center;
 
+		.domain-registration-suggestion__progress-bar-text {
+			text-transform: uppercase;
+		}
+
 		.progress-bar {
 			width: 25%;
 			margin-right: 1em;
+		}
+	}
+
+	.domain-registration-suggestion__match-reasons {
+		order: 3;
+	}
+
+	.domain-registration-suggestion__match-reason {
+		color: $gray-text-min;
+		padding: 0.125em 0;
+		display: flex;
+		align-items: center;
+
+		.gridicon {
+			color: $alert-green;
+			margin-right: 0.25em;
 		}
 	}
 
@@ -52,5 +77,12 @@
 			margin-left: 0;
 			flex-grow: 0;
 		}
+	}
+}
+
+.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
+	.domain-registration-suggestion__match-reasons {
+		order: 3;
+		flex-basis: 26px;
 	}
 }

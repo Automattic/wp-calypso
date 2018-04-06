@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
+import { includes, last } from 'lodash';
 
 const newTlds = [
 	'.art',
@@ -53,6 +53,20 @@ const newTlds = [
 ];
 
 const testTlds = [ '.de' ];
+
+export function getTld( domainName = '' ) {
+	return last( domainName.split( '.' ) );
+}
+
+export function getMatchReasonPhrasesMap( tld ) {
+	return new Map( [
+		[ 'tld-exact', `Extension ".${ tld }" matches your query` ],
+		[ 'tld-similar', `Extension ".${ tld }" closely matches your query` ],
+		[ 'exact-match', 'Exact match left of the dot' ],
+		[ 'similar-match', 'Close match left of the dot' ],
+		[ 'tld-common', `Most common extension, ".${ tld }"` ],
+	] );
+}
 
 export function isNewTld( tld ) {
 	return includes( newTlds, tld );

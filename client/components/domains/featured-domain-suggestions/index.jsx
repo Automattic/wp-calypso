@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -33,12 +33,23 @@ export class FeaturedDomainSuggestions extends Component {
 		return pick( this.props, childKeys );
 	}
 
+	hasMatchReasons() {
+		const { primarySuggestion, secondarySuggestion } = this.props;
+		return (
+			Array.isArray( primarySuggestion.matchReasons ) ||
+			Array.isArray( secondarySuggestion.matchReasons )
+		);
+	}
+
 	render() {
 		const { primarySuggestion, secondarySuggestion } = this.props;
 		const childProps = this.getChildProps();
+		const className = classNames( 'featured-domain-suggestions', {
+			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
+		} );
 
 		return (
-			<div className="featured-domain-suggestions">
+			<div className={ className }>
 				{ primarySuggestion && (
 					<DomainRegistrationSuggestion
 						suggestion={ primarySuggestion }

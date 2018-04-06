@@ -24,7 +24,12 @@ import {
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isNewTld, isTestTld } from 'components/domains/domain-registration-suggestion/utility';
+import {
+	getMatchReasonPhrasesMap,
+	getTld,
+	isNewTld,
+	isTestTld,
+} from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
 
 const NOTICE_GREEN = '#4ab866';
@@ -38,6 +43,15 @@ class DomainRegistrationSuggestion extends React.Component {
 			domain_name: PropTypes.string.isRequired,
 			product_slug: PropTypes.string,
 			cost: PropTypes.string,
+			matchReasons: PropTypes.arrayOf(
+				PropTypes.oneOf( [
+					'tld-exact',
+					'tld-similar',
+					'exact-match',
+					'similar-match',
+					'tld-common',
+				] )
+			),
 		} ).isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -218,6 +232,30 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 	}
 
+	renderMatchReason() {
+		const { suggestion: { domain_name: domain }, isFeatured } = this.props;
+
+		if ( ! isFeatured || ! Array.isArray( this.props.suggestion.matchReasons ) ) {
+			return null;
+		}
+
+		const matchReasonsMap = getMatchReasonPhrasesMap( getTld( domain ) );
+		const matchReasons = this.props.suggestion.matchReasons
+			.filter( matchReason => matchReasonsMap.has( matchReason ) )
+			.map( matchReason => matchReasonsMap.get( matchReason ) );
+
+		return (
+			<div className="domain-registration-suggestion__match-reasons">
+				{ matchReasons.map( ( phrase, index ) => (
+					<div className="domain-registration-suggestion__match-reason" key={ index }>
+						<Gridicon icon="checkmark" size={ 18 } />
+						{ phrase }
+					</div>
+				) ) }
+			</div>
+		);
+	}
+
 	render() {
 		const {
 			domainsWithPlansOnly,
@@ -240,6 +278,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
+				{ this.renderMatchReason() }
 			</DomainSuggestion>
 		);
 	}
