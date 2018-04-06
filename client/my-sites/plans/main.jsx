@@ -121,6 +121,9 @@ export const mapStateToProps = ( state, ownProps ) => {
 	let intervalType = ownProps.intervalType;
 	if ( ! intervalType && config.isEnabled( 'upgrades/2-year-plans' ) ) {
 		intervalType = getIntervalTypeFromCurrentPlan( state, selectedSiteId );
+		if ( intervalType === 'monthly' ) {
+			intervalType = null;
+		}
 	}
 
 	return {

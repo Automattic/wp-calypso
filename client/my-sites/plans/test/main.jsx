@@ -114,6 +114,15 @@ describe( 'mapStateToProps', () => {
 		expect( mapStateToProps( state, {} ).intervalType ).toBe( 'yearly' );
 	} );
 
+	test(
+		'should return null intervalType if getIntervalTypeFromCurrentPlan returns monthly - to keep ' +
+			'jetpack upgrade page same as before this was introduced',
+		() => {
+			getIntervalTypeFromCurrentPlan.mockImplementation( () => 'monthly' );
+			expect( mapStateToProps( state, {} ).intervalType ).toBe( null );
+		}
+	);
+
 	test( 'should return intervalType from props if it is passed', () => {
 		getIntervalTypeFromCurrentPlan.mockImplementation( () => '2yearly' );
 		expect( mapStateToProps( state, { intervalType: 'yearly' } ).intervalType ).toBe( 'yearly' );
