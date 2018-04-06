@@ -15,7 +15,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import PostActions from 'lib/posts/actions';
 import PostEditStore from 'lib/posts/post-edit-store';
 import * as MediaConstants from 'lib/media/constants';
 import MediaActions from 'lib/media/actions';
@@ -31,6 +30,8 @@ import advanced from './advanced';
 import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { unblockSave } from 'state/ui/editor/save-blockers/actions';
+import { isEditorSaveBlocked } from 'state/ui/editor/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
@@ -50,7 +51,7 @@ function mediaButton( editor ) {
 		return;
 	}
 
-	const { getState } = store;
+	const { dispatch, getState } = store;
 
 	let nodes = {},
 		resizeEditor,
@@ -361,10 +362,10 @@ function mediaButton( editor ) {
 			}
 		} );
 
-		if ( ! transients && PostEditStore.isSaveBlocked( 'MEDIA_MODAL_TRANSIENT_INSERT' ) ) {
+		if ( ! transients && isEditorSaveBlocked( getState(), 'MEDIA_MODAL_TRANSIENT_INSERT' ) ) {
 			// At this point, no temporary media should remain in the post
 			// contents, so we can safely allow saving once more
-			PostActions.unblockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
+			dispatch( unblockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' ) );
 		}
 
 		if ( isTransientDetected && ! transients ) {

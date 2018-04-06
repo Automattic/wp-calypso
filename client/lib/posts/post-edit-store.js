@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, filter, get, isEqual, pickBy, without } from 'lodash';
+import { assign, filter, get, isEqual, pickBy } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:posts:post-edit-store' );
 import emitter from 'lib/mixins/emitter';
@@ -14,6 +14,8 @@ import emitter from 'lib/mixins/emitter';
 import Dispatcher from 'dispatcher';
 import { decodeEntities } from 'lib/formatting';
 import * as utils from './utils';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { resetSaveBlockers } from 'state/ui/editor/save-blockers/actions';
 
 /**
  * Module variables
@@ -24,7 +26,6 @@ var REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/,
 var _initialRawContent = null,
 	_isAutosaving = false,
 	_isLoading = false,
-	_saveBlockers = [],
 	_isNew = false,
 	_loadingError = null,
 	_post = null,
@@ -37,10 +38,10 @@ var _initialRawContent = null,
 
 function resetState() {
 	debug( 'Reset state' );
+	reduxDispatch( resetSaveBlockers() );
 	_initialRawContent = null;
 	_isAutosaving = false;
 	_isLoading = false;
-	_saveBlockers = [];
 	_isNew = false;
 	_loadingError = null;
 	_post = null;
@@ -238,18 +239,6 @@ function dispatcherCallback( payload ) {
 			PostEditStore.emit( 'change' );
 			break;
 
-		case 'BLOCK_EDIT_POST_SAVE':
-			if ( -1 === _saveBlockers.indexOf( action.key ) ) {
-				_saveBlockers.push( action.key );
-				PostEditStore.emit( 'change' );
-			}
-			break;
-
-		case 'UNBLOCK_EDIT_POST_SAVE':
-			_saveBlockers = without( _saveBlockers, action.key );
-			PostEditStore.emit( 'change' );
-			break;
-
 		case 'EDIT_POST_SAVE':
 			_queueChanges = true;
 			break;
@@ -370,14 +359,6 @@ PostEditStore = {
 
 	isAutosaving: function() {
 		return _isAutosaving;
-	},
-
-	isSaveBlocked: function( key ) {
-		if ( ! key ) {
-			return !! _saveBlockers.length;
-		}
-
-		return -1 !== _saveBlockers.indexOf( key );
 	},
 
 	getPreviewUrl: function() {
