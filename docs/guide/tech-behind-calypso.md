@@ -17,6 +17,7 @@ Here are few resources to get up to speed with “modern” JavaScript and ES6:
 * [JavaScript Allongé, the "Six" Edition](https://leanpub.com/javascriptallongesix/read)
 * [Exploring ES6](http://exploringjs.com/es6/)
 * [What the heck is the event loop anyway?](https://www.youtube.com/watch?v=8aGhZQkoFbQ) – short presentation that sheds some light on how asynchronous operations are executed in JavaScript
+* [In The Loop — Jake Archibald: JSConf.Asia 2018](https://www.youtube.com/watch?v=cCOL7MC4Pl0) — Some more details about event loop – correct order of execution of different parts of loop – paint, layout, render, rAF, tasks, microtasks, difference between task queues, animation frame queues, microtask queues, etc. 
 
 Key concepts checklist:
 
