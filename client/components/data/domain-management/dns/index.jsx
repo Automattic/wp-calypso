@@ -14,6 +14,7 @@ import DnsStore from 'lib/domains/dns/store';
 import DomainsStore from 'lib/domains/store';
 import { fetchDns, fetchDomains } from 'lib/upgrades/actions';
 import { getSelectedSite } from 'state/ui/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const stores = [ DomainsStore, DnsStore ];
 
@@ -34,6 +35,8 @@ function getStateFromStores( props ) {
 
 export class DnsData extends Component {
 	static propTypes = {
+		analyticsPath: PropTypes.string,
+		analyticsTitle: PropTypes.string,
 		component: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.object,
@@ -56,13 +59,16 @@ export class DnsData extends Component {
 
 	render() {
 		return (
-			<StoreConnection
-				component={ this.props.component }
-				stores={ stores }
-				getStateFromStores={ getStateFromStores }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.selectedSite }
-			/>
+			<div>
+				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+				<StoreConnection
+					component={ this.props.component }
+					stores={ stores }
+					getStateFromStores={ getStateFromStores }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.selectedSite }
+				/>
+			</div>
 		);
 	}
 }
