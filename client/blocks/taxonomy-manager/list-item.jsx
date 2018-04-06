@@ -29,6 +29,8 @@ import { decodeEntities } from 'lib/formatting';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+import PodcastIndicator from 'components/podcast-indicator';
+import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -128,7 +130,7 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const { canSetAsDefault, isDefault, onClick, term, translate } = this.props;
+		const { canSetAsDefault, isDefault, onClick, term, isPodcasting, translate } = this.props;
 		const name = this.getName();
 		const hasPosts = get( term, 'post_count', 0 ) > 0;
 		const className = classNames( 'taxonomy-manager__item', {
@@ -151,6 +153,7 @@ class TaxonomyManagerListItem extends Component {
 							{ translate( 'default', { context: 'label for terms marked as default' } ) }
 						</span>
 					) }
+					{ isPodcasting && <PodcastIndicator className="taxonomy-manager__podcast-indicator" /> }
 				</span>
 				{ ! isUndefined( term.post_count ) && (
 					<Count
@@ -216,6 +219,7 @@ export default connect(
 		const isPreviewable = get( site, 'is_previewable' );
 		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
+		const isPodcasting = getPodcastingCategoryId( state, siteId ) === term.ID;
 
 		return {
 			canSetAsDefault,
@@ -224,6 +228,7 @@ export default connect(
 			siteId,
 			siteSlug,
 			siteUrl,
+			isPodcasting,
 		};
 	},
 	{
