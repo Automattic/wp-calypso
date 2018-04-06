@@ -9,7 +9,19 @@ _Please do not ship anything that does not have Google Analytics tracking in pla
 
 ## Usage
 
-### `analytics.ga.recordEvent( eventCategory, eventAction [, optionLabel, optionValue ] )`
+In most situations it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
+
+### `recordGoogleEvent( category, action [, label, value ] )`
+
+```js
+import { recordGoogleEvent } from 'state/analytics/actions';
+
+dispatch( recordGoogleEvent( 'Reader', 'Loaded Next Page', 'page', 2 ) );
+```
+
+### `analytics.ga.recordEvent( category, action [, label, value ] )` (Deprecated)
+
+_Note: Unless you have a strong reason to call `analytics.ga` directly, you should use the Analytics Middleware instead._
 
 Record an event:
 
@@ -21,7 +33,7 @@ analytics.ga.recordEvent( 'Reader', 'Loaded Next Page', 'page', 2 );
 For more information and examples about how and when to provide the optional `optionLabel` and `optionValue` parameters, refer to the [Google Analytics Event Tracking documentation](https://developers.google.com/analytics/devguides/collection/analyticsjs/events#overview).
 
 
-### `analytics.ga.recordPageView( url, title )`
+### `analytics.ga.recordPageView( url, title )` (Deprecated)
 
 _Note: Unless you have a strong reason to directly record a page view to Google Analytics, you should use [`PageViewTracker`](./page-views.md) instead._
 
