@@ -408,7 +408,7 @@ describe( '#createAccount()', () => {
 
 	beforeEach( jest.restoreAllMocks );
 
-	test( 'should resolve with the bearer token', async () => {
+	test( 'should resolve with the bearer token', () => {
 		const userData = { username: 'happyuser' };
 		const data = { bearer_token: '1234 abcd' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
@@ -421,7 +421,7 @@ describe( '#createAccount()', () => {
 		expect( createAccount( userData )( spy ) ).resolves.toBe( data.bearer_token );
 	} );
 
-	test( 'should reject with the error', async () => {
+	test( 'should reject with the error', () => {
 		const userData = { username: 'happyuser' };
 		const error = { code: 'user_exists' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
