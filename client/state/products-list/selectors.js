@@ -53,7 +53,7 @@ export const getDiscountedOrRegularPrice = ( state, siteId, plan, isMonthlyPrefe
 	);
 };
 
-export const planSlugToPlanProduct = ( products, planSlug ) => {
+export const planSlugToPlanProduct = createSelector( ( products, planSlug ) => {
 	const plan = getPlan( planSlug );
 	const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 	return {
@@ -61,14 +61,14 @@ export const planSlugToPlanProduct = ( products, planSlug ) => {
 		plan: planConstantObj,
 		product: products[ planSlug ],
 	};
-};
+} );
 
 export const computeFullAndMonthlyPricesForPlan = ( state, siteId, plan ) => ( {
 	priceFull: getDiscountedOrRegularPrice( state, siteId, plan, false ),
 	priceMonthly: getDiscountedOrRegularPrice( state, siteId, plan, true ),
 } );
 
-export const computeProductsWithPrices = createSelector( ( state, siteId, plans ) => {
+export const computeProductsWithPrices = ( state, siteId, plans ) => {
 	const products = getProductsList( state );
 
 	return plans
@@ -80,4 +80,4 @@ export const computeProductsWithPrices = createSelector( ( state, siteId, plans 
 		} ) )
 		.filter( p => p.priceFull )
 		.sort( ( a, b ) => b.priceMonthly - a.priceMonthly );
-} );
+};
