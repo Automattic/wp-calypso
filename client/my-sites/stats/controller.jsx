@@ -26,6 +26,7 @@ import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
+import config from 'config';
 
 function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -370,7 +371,7 @@ export default {
 			? context.query.startDate
 			: undefined;
 
-		if ( siteId && ! isJetpack ) {
+		if ( siteId && ! isJetpack && ! config.isEnabled( 'activity-log-simple-sites' ) ) {
 			page.redirect( '/stats' );
 			return next();
 		}

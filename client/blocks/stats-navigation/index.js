@@ -17,11 +17,11 @@ import FollowersCount from 'blocks/followers-count';
 import { isSiteStore } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
+import config from 'config';
 
 class StatsNavigation extends Component {
 	static propTypes = {
 		interval: PropTypes.oneOf( intervalConstants.map( i => i.value ) ),
-		isJetpack: PropTypes.bool,
 		isStore: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
@@ -29,12 +29,18 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = item => {
-		const { isStore, isJetpack } = this.props;
+		const { isStore, isJetpack, siteId } = this.props;
 		switch ( item ) {
-			case 'activity':
-				return isJetpack;
 			case 'store':
 				return isStore;
+			case 'activity':
+				if ( 'undefined' === typeof siteId ) {
+					return false;
+				}
+				if ( isJetpack ) {
+					return true;
+				}
+				return config.isEnabled( 'activity-log-simple-sites' );
 			default:
 				return true;
 		}
@@ -75,8 +81,8 @@ class StatsNavigation extends Component {
 
 export default connect( ( state, { siteId } ) => {
 	return {
-		isJetpack: isJetpackSite( state, siteId ),
 		isStore: isSiteStore( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
 		siteId,
 	};
 } )( StatsNavigation );
