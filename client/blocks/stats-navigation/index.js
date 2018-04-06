@@ -28,18 +28,13 @@ class StatsNavigation extends Component {
 		slug: PropTypes.string,
 	};
 
-	isOverview = () => {
-		const { siteId } = this.props;
-		return 'undefined' === typeof siteId;
-	};
-
 	isValidItem = item => {
-		const { isStore, isJetpack } = this.props;
+		const { isStore, isJetpack, siteId } = this.props;
 		switch ( item ) {
 			case 'store':
 				return isStore;
 			case 'activity':
-				if ( this.isOverview() ) {
+				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
 				if ( isJetpack ) {
