@@ -1,10 +1,21 @@
 /** @format */
 
 /**
- * Internal dependencies
+ * External dependencies
  */
 
 import { pickBy } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+
+import { abtest } from 'lib/abtest';
+import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
+import { getPlanRawPrice } from 'state/plans/selectors';
+import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
+import { TERM_MONTHLY } from 'lib/plans/constants';
+import createSelector from 'lib/create-selector';
 
 export function isProductsListFetching( state ) {
 	return state.productsList.isFetching;
@@ -33,3 +44,40 @@ export function getProductDisplayCost( state, productSlug ) {
 
 	return product.cost_display;
 }
+
+export const getDiscountedOrRegularPrice = ( state, siteId, plan, isMonthlyPreference ) => {
+	const isMonthly = isMonthlyPreference && plan.term !== TERM_MONTHLY;
+	return (
+		getPlanDiscountedRawPrice( state, siteId, plan.getStoreSlug(), { isMonthly } ) ||
+		getPlanRawPrice( state, plan.getProductId(), isMonthly )
+	);
+};
+
+export const planSlugToPlanProduct = ( products, planSlug ) => {
+	const plan = getPlan( planSlug );
+	const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
+	return {
+		planSlug,
+		plan: planConstantObj,
+		product: products[ planSlug ],
+	};
+};
+
+export const computeFullAndMonthlyPricesForPlan = ( state, siteId, plan ) => ( {
+	priceFull: getDiscountedOrRegularPrice( state, siteId, plan, false ),
+	priceMonthly: getDiscountedOrRegularPrice( state, siteId, plan, true ),
+} );
+
+export const computeProductsWithPrices = createSelector( ( state, siteId, plans ) => {
+	const products = getProductsList( state );
+
+	return plans
+		.map( p => planSlugToPlanProduct( products, p ) )
+		.filter( p => p.plan && p.product && p.product.available )
+		.map( object => ( {
+			...object,
+			...computeFullAndMonthlyPricesForPlan( state, siteId, object.plan ),
+		} ) )
+		.filter( p => p.priceFull )
+		.sort( ( a, b ) => b.priceMonthly - a.priceMonthly );
+} );

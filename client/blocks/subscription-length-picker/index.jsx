@@ -12,20 +12,18 @@ import PropTypes from 'prop-types';
  */
 import { localize } from 'i18n-calypso';
 import formatCurrency from 'lib/format-currency';
-import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
+import {
+	computeProductsWithPrices,
+	getProductsList,
+	isProductsListFetching,
+} from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import { requestPlans } from 'state/plans/actions';
-import { getPlanRawPrice, isRequestingPlans } from 'state/plans/selectors';
+import { isRequestingPlans } from 'state/plans/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import {
-	getPlansBySiteId,
-	isRequestingSitePlans,
-	getPlanDiscountedRawPrice,
-} from 'state/sites/plans/selectors';
+import { getPlansBySiteId, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { abtest } from 'lib/abtest';
-import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
-import { PLANS_LIST, TERM_MONTHLY } from 'lib/plans/constants';
+import { PLANS_LIST } from 'lib/plans/constants';
 import SubscriptionLengthOption from './option';
 
 export class SubscriptionLengthPicker extends React.Component {
@@ -124,47 +122,6 @@ function myFormatCurrency( price, code ) {
 		precision: hasCents ? 2 : 0,
 	} );
 }
-
-const computeProductsWithPrices = ( state, plans ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const products = getProductsList( state );
-
-	const computePrice = ( planSlug, planProductId, isMonthlyPreference ) => {
-		// @TODO: In another PR getPlanDiscountedRawPrice and getPlanRawPrice should be
-		//			  updated to not divide jetpack monthly plans price by 12 if monthly price
-		//        is requested. This may have system-wide consequences and requires delicate
-		//        attention out of scope of this code.
-		const plan = getPlan( planSlug );
-		const isMonthly = isMonthlyPreference && plan.term !== TERM_MONTHLY;
-		return (
-			getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, { isMonthly } ) ||
-			getPlanRawPrice( state, planProductId, isMonthly )
-		);
-	};
-
-	return plans
-		.map( planSlug => {
-			const plan = getPlan( planSlug );
-			const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
-			return {
-				planSlug,
-				plan: planConstantObj,
-				product: products[ planSlug ],
-			};
-		} )
-		.filter( p => p.plan && p.product && p.product.available )
-		.map( object => {
-			const productId = object.plan.getProductId();
-			return {
-				...object,
-
-				priceFull: computePrice( object.planSlug, productId, false ),
-				priceMonthly: computePrice( object.planSlug, productId, true ),
-			};
-		} )
-		.filter( p => p.priceFull )
-		.sort( ( a, b ) => b.priceMonthly - a.priceMonthly );
-};
 
 export const mapStateToProps = ( state, { plans } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
