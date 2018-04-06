@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import InfoPopover from 'components/info-popover';
+import SupportInfo from 'components/support-info';
 import ExternalLink from 'components/external-link';
 import FormInput from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -308,22 +308,13 @@ class SiteVerification extends Component {
 				<Card>
 					{ siteIsJetpack && (
 						<FormFieldset>
-							<div className="seo-settings__info site-settings__info-link-container">
-								<InfoPopover position="left">
-									{ translate(
-										'Provides the necessary hidden tags needed to ' +
-											'verify your WordPress site with various services.'
-									) }{' '}
-									<ExternalLink
-										href="https://jetpack.com/support/site-verification-tools"
-										icon={ false }
-										target="_blank"
-									>
-										{ translate( 'Learn more' ) }
-									</ExternalLink>
-								</InfoPopover>
-							</div>
-
+							<SupportInfo
+								text={ translate(
+									'Provides hidden tags needed to verify your' +
+										' WordPress site with various services.'
+								) }
+								link="https://jetpack.com/support/site-verification-tools/"
+							/>
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="verification-tools"

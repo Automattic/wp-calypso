@@ -20,8 +20,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import {
 	PLAN_JETPACK_PREMIUM,
 	FEATURE_VIDEO_CDN_LIMITED,
@@ -78,18 +77,10 @@ class MediaSettings extends Component {
 		return (
 			isVideoPressAvailable && (
 				<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
-					<div className="site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate( 'Hosts your video files on the global WordPress.com servers.' ) }{' '}
-							<ExternalLink
-								target="_blank"
-								icon={ false }
-								href="https://jetpack.com/support/videopress/"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
+						link="https://jetpack.com/support/videopress/"
+					/>
 					<JetpackModuleToggle
 						siteId={ siteId }
 						moduleSlug="videopress"
@@ -198,18 +189,10 @@ class MediaSettings extends Component {
 					 */ }
 					{ ! jetpackVersionSupportsLazyImages && (
 						<FormFieldset>
-							<div className="site-settings__info-link-container">
-								<InfoPopover position="left">
-									{ translate( 'Hosts your image files on the global WordPress.com servers.' ) }{' '}
-									<ExternalLink
-										target="_blank"
-										icon={ false }
-										href="https://jetpack.com/support/photon"
-									>
-										{ translate( 'Learn more' ) }
-									</ExternalLink>
-								</InfoPopover>
-							</div>
+							<SupportInfo
+								text={ translate( 'Hosts your image files on the global WordPress.com servers.' ) }
+								link="https://jetpack.com/support/photon/"
+							/>
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="photon"
@@ -220,21 +203,10 @@ class MediaSettings extends Component {
 						</FormFieldset>
 					) }
 					<FormFieldset className={ carouselFieldsetClasses }>
-						<div className="site-settings__info-link-container">
-							<InfoPopover position="left">
-								{ translate(
-									'Replaces the standard WordPress galleries with a ' +
-										'full-screen photo browsing experience, including comments and EXIF metadata.'
-								) }{' '}
-								<ExternalLink
-									target="_blank"
-									icon={ false }
-									href="https://jetpack.com/support/carousel"
-								>
-									{ translate( 'Learn more' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
+						<SupportInfo
+							text={ translate( 'Gorgeous full-screen photo browsing experience.' ) }
+							link="https://jetpack.com/support/carousel/"
+						/>
 						<JetpackModuleToggle
 							siteId={ siteId }
 							moduleSlug="carousel"

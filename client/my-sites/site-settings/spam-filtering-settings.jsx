@@ -20,7 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Gridicon from 'gridicons';
-import InfoPopover from 'components/info-popover';
+import SupportInfo from 'components/support-info';
 import ExternalLink from 'components/external-link';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
@@ -95,18 +95,10 @@ const SpamFilteringSettings = ( {
 		>
 			<FormFieldset>
 				<div className="spam-filtering__settings site-settings__child-settings">
-					<div className="spam-filtering__info-link-container site-settings__info-link-container">
-						<InfoPopover>
-							{ translate( 'Removes spam from comments and contact forms.' ) }{' '}
-							<ExternalLink
-								target="_blank"
-								icon={ false }
-								href={ 'https://jetpack.com/features/security/spam-filtering/' }
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate( 'Removes spam from comments and contact forms.' ) }
+						link="https://jetpack.com/features/security/spam-filtering/"
+					/>
 					<FormLabel htmlFor="wordpress_api_key">{ translate( 'Your API Key' ) }</FormLabel>
 					<FormTextInput
 						name="wordpress_api_key"

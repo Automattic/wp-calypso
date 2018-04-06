@@ -13,12 +13,11 @@ import { localize } from 'i18n-calypso';
  */
 import CompactCard from 'components/card/compact';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import ExternalLink from 'components/external-link';
 import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
+import SupportInfo from 'components/support-info';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QuerySiteRoles from 'components/data/query-site-roles';
@@ -128,22 +127,13 @@ class JetpackSiteStats extends Component {
 					clickableHeader
 				>
 					<FormFieldset>
-						<div className="site-settings__info-link-container">
-							<InfoPopover position="left">
-								{ translate(
-									'Displays information on your site activity, ' +
-										'including visitors and popular posts or pages.'
-								) }{' '}
-								<ExternalLink
-									href="https://jetpack.com/support/wordpress-com-stats/"
-									icon={ false }
-									target="_blank"
-								>
-									{ translate( 'Learn more' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
-
+						<SupportInfo
+							text={ translate(
+								'Displays information on your site activity, ' +
+									'including visitors and popular posts or pages.'
+							) }
+							link="https://jetpack.com/support/wordpress-com-stats/"
+						/>
 						{ this.renderToggle(
 							'admin_bar',
 							translate( 'Put a chart showing 48 hours of views in the admin bar' )

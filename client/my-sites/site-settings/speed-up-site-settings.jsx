@@ -14,12 +14,11 @@ import { connect } from 'react-redux';
 import Card from 'components/card';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
-import ExternalLink from 'components/external-link';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import InfoPopover from 'components/info-popover';
+import SupportInfo from 'components/support-info';
 
 class SpeedUpSiteSettings extends Component {
 	static propTypes = {
@@ -49,18 +48,10 @@ class SpeedUpSiteSettings extends Component {
 			<div className="site-settings__module-settings site-settings__speed-up-site-settings">
 				<Card>
 					<FormFieldset className="site-settings__formfieldset">
-						<div className="site-settings__info-link-container">
-							<InfoPopover position="left">
-								{ translate( 'Hosts your image files on the global WordPress.com servers.' ) }{' '}
-								<ExternalLink
-									target="_blank"
-									icon={ false }
-									href="https://jetpack.com/support/photon"
-								>
-									{ translate( 'Learn more' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
+						<SupportInfo
+							text={ translate( 'Hosts your image files on the global WordPress.com servers.' ) }
+							link="https://jetpack.com/support/photon/"
+						/>
 						<JetpackModuleToggle
 							siteId={ selectedSiteId }
 							moduleSlug="photon"
@@ -76,20 +67,12 @@ class SpeedUpSiteSettings extends Component {
 
 					{ jetpackVersionSupportsLazyImages && (
 						<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
-							<div className="site-settings__info-link-container">
-								<InfoPopover position="left">
-									{ translate(
-										"Delays the loading of images until they are visible in the visitor's browser."
-									) }{' '}
-									<ExternalLink
-										target="_blank"
-										icon={ false }
-										href="https://jetpack.com/support/lazy-images"
-									>
-										{ translate( 'Learn more' ) }
-									</ExternalLink>
-								</InfoPopover>
-							</div>
+							<SupportInfo
+								text={ translate(
+									"Delays the loading of images until they are visible in the visitor's browser."
+								) }
+								link="https://jetpack.com/support/lazy-images/"
+							/>
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
 								moduleSlug="lazy-images"

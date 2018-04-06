@@ -22,8 +22,7 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 
 class CustomContentTypes extends Component {
 	componentDidUpdate() {
@@ -162,57 +161,33 @@ class CustomContentTypes extends Component {
 		return (
 			<Card className="custom-content-types site-settings">
 				<FormFieldset>
-					<div className="custom-content-types__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate( 'Showcases your portfolio or displays testimonials on your site.' ) +
-								' ' }
-							<ExternalLink
-								href="https://support.wordpress.com/custom-post-types/"
-								icon={ false }
-								target="_blank"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate( 'Showcases your portfolio or displays testimonials on your site.' ) }
+						link="https://support.wordpress.com/custom-post-types/"
+						privacyLink={ false }
+					/>
 					{ this.renderBlogPostSettings() }
 				</FormFieldset>
 
 				<FormFieldset>
-					<div className="custom-content-types__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate(
-								'Adds the Testimonial custom post type, allowing you to collect, organize, ' +
-									'and display testimonials on your site.'
-							) }{' '}
-							<ExternalLink
-								target="_blank"
-								icon={ false }
-								href="https://jetpack.com/support/custom-content-types/"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate(
+							'Adds the Testimonial custom post type, allowing you to collect, organize, ' +
+								'and display testimonials on your site.'
+						) }
+						link="https://jetpack.com/support/custom-content-types/"
+					/>
 					{ this.renderTestimonialSettings() }
 				</FormFieldset>
 
 				<FormFieldset>
-					<div className="custom-content-types__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate(
-								'Adds the Portfolio custom post type, allowing you to ' +
-									'manage and showcase projects on your site.'
-							) }{' '}
-							<ExternalLink
-								target="_blank"
-								icon={ false }
-								href="https://jetpack.com/support/custom-content-types/"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate(
+							'Adds the Portfolio custom post type, allowing you to ' +
+								'manage and showcase projects on your site.'
+						) }
+						link="https://jetpack.com/support/custom-content-types/"
+					/>
 					{ this.renderPortfolioSettings() }
 				</FormFieldset>
 			</Card>
