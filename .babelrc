@@ -1,15 +1,15 @@
 {
 	"presets": [
-		[ "env", {
-			"targets": {
-				"browsers": [
-					"last 2 versions",
-					"Safari >= 10",
-					"iOS >= 10",
-					"not ie <= 10"
-				]
+		[
+			"env",
+			{
+				"targets": {
+					"browsers": [
+						"last 2 versions"
+					]
+				}
 			}
-		} ],
+		],
 		"stage-2"
 	],
 	"plugins": [
@@ -33,9 +33,14 @@
 		"test": {
 			"plugins": [
 				"./server/bundler/babel/babel-lodash-es",
-				[ "transform-builtin-extend", {
-					"globals": [ "Error" ]
-				} ]
+				[
+					"transform-builtin-extend",
+					{
+						"globals": [
+							"Error"
+						]
+					}
+				]
 			]
 		}
 	}
