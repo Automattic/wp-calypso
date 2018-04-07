@@ -411,6 +411,23 @@ class RequiredPluginsInstallView extends Component {
 		const { translate, wporg } = this.props;
 		const { workingOn } = this.state;
 		const plugin = getPlugin( wporg, workingOn );
+
+		const subtitle = [
+			<p key="line-1">
+				{ translate(
+					"Your store is missing some required plugins. We can't fix this automatically " +
+						'due to a problem with the {{b}}%(pluginName)s{{/b}} plugin.',
+					{
+						args: { pluginName: plugin.name || workingOn },
+						components: { b: <strong /> },
+					}
+				) }
+			</p>,
+			<p key="line-2">
+				{ translate( "Please contact support and we'll get your store back up and running!" ) }
+			</p>,
+		];
+
 		return (
 			<div className="dashboard__setup-wrapper setup__wrapper">
 				<div className="card dashboard__plugins-install-view">
@@ -418,15 +435,7 @@ class RequiredPluginsInstallView extends Component {
 						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 						imageWidth={ 160 }
 						title={ translate( "We can't update your store" ) }
-						subtitle={ translate(
-							"Your store is missing some required plugins. We can't fix this automatically due to " +
-								'a problem with the {{b}}%(plugin)s{{/b}} plugin. {{br/}}{{br/}}' +
-								"Please contact support and we'll get your store back up and running!",
-							{
-								args: { plugin: plugin.name || workingOn },
-								components: { b: <strong />, br: <br /> },
-							}
-						) }
+						subtitle={ subtitle }
 					>
 						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
 							{ this.props.translate( 'Get in touch' ) }
