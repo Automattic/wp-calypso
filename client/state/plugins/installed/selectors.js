@@ -138,6 +138,13 @@ export function getStatusForPlugin( state, siteId, pluginId ) {
 	return Object.assign( {}, status, { siteId: siteId, pluginId: pluginId } );
 }
 
+export function getStatusForSite( state, siteId ) {
+	if ( typeof state.plugins.installed.status[ siteId ] === 'undefined' ) {
+		return false;
+	}
+	return state.plugins.installed.status[ siteId ];
+}
+
 export function isPluginDoingAction( state, siteId, pluginId ) {
 	const status = getStatusForPlugin( state, siteId, pluginId );
 	return !! status && 'inProgress' === status.status;

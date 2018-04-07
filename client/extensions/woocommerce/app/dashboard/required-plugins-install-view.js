@@ -14,9 +14,10 @@ import { localize } from 'i18n-calypso';
  */
 import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
 import Button from 'components/button';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
+import { getPlugins, getStatusForSite } from 'state/plugins/installed/selectors';
 import { getRequiredPluginsList } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
@@ -227,7 +228,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doInstallation = () => {
-		const { site, sitePlugins, wporg } = this.props;
+		const { pluginsStatus, site, sitePlugins, wporg } = this.props;
 
 		// If we are working on nothing presently, get the next thing to install and install it
 		if ( 0 === this.state.workingOn.length ) {
@@ -242,7 +243,10 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			const workingOn = toInstall.shift();
-			this.props.installPlugin( site.ID, getPlugin( wporg, workingOn ) );
+			const thisPlugin = getPlugin( wporg, workingOn );
+			// Set a default ID if needed.
+			thisPlugin.id = thisPlugin.id || thisPlugin.slug;
+			this.props.installPlugin( site.ID, thisPlugin );
 
 			this.setState( {
 				toInstall,
@@ -257,6 +261,14 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: '',
 				progress: this.state.progress + this.getPluginInstallationTime(),
+			} );
+		}
+
+		// Or, it's in the error state
+		const pluginStatus = pluginsStatus[ this.state.workingOn ];
+		if ( pluginStatus && 'error' === pluginStatus.status ) {
+			this.setState( {
+				engineState: 'DONEFAILURE',
 			} );
 		}
 	};
@@ -395,12 +407,55 @@ class RequiredPluginsInstallView extends Component {
 		return TIME_TO_PLUGIN_INSTALLATION;
 	};
 
+	renderContactSupport() {
+		const { translate, wporg } = this.props;
+		const { workingOn } = this.state;
+		const plugin = getPlugin( wporg, workingOn );
+
+		const subtitle = [
+			<p key="line-1">
+				{ translate(
+					"Your store is missing some required plugins. We can't fix this automatically " +
+						'due to a problem with the {{b}}%(pluginName)s{{/b}} plugin.',
+					{
+						args: { pluginName: plugin.name || workingOn },
+						components: { b: <strong /> },
+					}
+				) }
+			</p>,
+			<p key="line-2">
+				{ translate( "Please contact support and we'll get your store back up and running!" ) }
+			</p>,
+		];
+
+		return (
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<div className="card dashboard__plugins-install-view">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
+						imageWidth={ 160 }
+						title={ translate( "We can't update your store" ) }
+						subtitle={ subtitle }
+					>
+						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+							{ this.props.translate( 'Get in touch' ) }
+						</Button>
+					</SetupHeader>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { hasPendingAT, title, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
 			return this.renderConfirmScreen();
+		}
+
+		if ( 'DONEFAILURE' === engineState ) {
+			return this.renderContactSupport();
 		}
 
 		return (
@@ -426,11 +481,13 @@ function mapStateToProps( state ) {
 	const siteId = site.ID;
 
 	const sitePlugins = site ? getPlugins( state, [ siteId ] ) : [];
+	const pluginsStatus = getStatusForSite( state, siteId );
 
 	return {
 		site,
 		siteId,
 		sitePlugins,
+		pluginsStatus,
 		wporg: state.plugins.wporg.items,
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
 		hasPendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
