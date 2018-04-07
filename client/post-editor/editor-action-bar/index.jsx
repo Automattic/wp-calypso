@@ -24,6 +24,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
 import PodcastIndicator from 'components/podcast-indicator';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 class EditorActionBar extends Component {
@@ -64,10 +65,12 @@ class EditorActionBar extends Component {
 		// update based on post changes. Flux changes are passed down from parent components.
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
 		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
-		const { isPostPrivate, isPodcastEpisode } = this.props;
+		const { isPostPrivate, siteId, isPodcastEpisode } = this.props;
 
 		return (
 			<div className="editor-action-bar">
+				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+
 				<div className="editor-action-bar__cell is-left">
 					<EditorStatusLabel post={ this.props.savedPost } advancedStatus />
 				</div>

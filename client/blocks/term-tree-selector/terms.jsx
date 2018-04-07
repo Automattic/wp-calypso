@@ -35,6 +35,7 @@ import {
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
 import PodcastIndicator from 'components/podcast-indicator';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 /**
@@ -427,6 +428,8 @@ class TermTreeSelectorList extends Component {
 						query={ { ...query, page } }
 					/>
 				) ) }
+				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+
 				{ showSearch && <Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> }
 				<List
 					ref={ this.setListRef }
