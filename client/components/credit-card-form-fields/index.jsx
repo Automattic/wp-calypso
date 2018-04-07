@@ -19,6 +19,7 @@ import { StateSelect, Input, HiddenInput } from 'my-sites/domains/components/for
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { maskField, unmaskField, getCreditCardType } from 'lib/credit-card-details';
 import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
+import InfoPopover from 'components/info-popover';
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
@@ -219,9 +220,7 @@ export class CreditCardFormFields extends React.Component {
 				<div className={ creditCardFormFieldsExtrasClassNames }>
 					{ this.createField( 'expiration-date', Input, {
 						inputMode: 'numeric',
-						label: translate( 'MM/YY', {
-							context: 'Expiry label on credit card form',
-						} ),
+						label: translate( 'Expiry: MM/YY' ),
 					} ) }
 
 					{ this.createField( 'cvv', Input, {
@@ -230,6 +229,10 @@ export class CreditCardFormFields extends React.Component {
 							context: '3 digit security number on credit card form',
 						} ),
 					} ) }
+
+					<InfoPopover position="top right">
+						{ translate( '3-digit number usually found on the back of the credit card' ) }
+					</InfoPopover>
 
 					{ this.createField( 'country', PaymentCountrySelect, {
 						label: translate( 'Country' ),
