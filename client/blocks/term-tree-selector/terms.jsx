@@ -63,6 +63,7 @@ class TermTreeSelectorList extends Component {
 		isError: PropTypes.bool,
 		height: PropTypes.number,
 		width: PropTypes.number,
+		hasPodcastIndicator: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -74,6 +75,7 @@ class TermTreeSelectorList extends Component {
 		onChange: () => {},
 		onNextPage: () => {},
 		height: 300,
+		hasPodcastIndicator: true,
 	};
 
 	// initialState is also used to reset state when a the taxonomy prop changes
@@ -325,9 +327,16 @@ class TermTreeSelectorList extends Component {
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getTermChildren( item.ID );
 
-		const { multiple, defaultTermId, translate, selected, podcastingId } = this.props;
+		const {
+			multiple,
+			defaultTermId,
+			translate,
+			selected,
+			hasPodcastIndicator,
+			podcastingId,
+		} = this.props;
 		const itemId = item.ID;
-		const isPodcasting = podcastingId === itemId;
+		const isPodcasting = hasPodcastIndicator && podcastingId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const checked = includes( selected, itemId );
 		const inputType = multiple ? 'checkbox' : 'radio';
@@ -350,7 +359,8 @@ class TermTreeSelectorList extends Component {
 					{ input }
 					<span className="term-tree-selector__label">
 						{ name }
-						{ isPodcasting && <PodcastIndicator size={ 18 } hasTooltip={ false } /> }
+						{ hasPodcastIndicator &&
+							isPodcasting && <PodcastIndicator size={ 18 } hasTooltip={ false } /> }
 					</span>
 				</label>
 				{ children.length > 0 && (
@@ -410,7 +420,17 @@ class TermTreeSelectorList extends Component {
 		const showSearch =
 			( searchLength > 0 || ! isSmall ) &&
 			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
-		const { className, isError, loading, siteId, taxonomy, query, height, width } = this.props;
+		const {
+			className,
+			isError,
+			loading,
+			siteId,
+			taxonomy,
+			query,
+			height,
+			width,
+			hasPodcastIndicator,
+		} = this.props;
 		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,
 			'is-small': isSmall,
@@ -428,7 +448,7 @@ class TermTreeSelectorList extends Component {
 						query={ { ...query, page } }
 					/>
 				) ) }
-				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+				{ hasPodcastIndicator && siteId && <QuerySiteSettings siteId={ siteId } /> }
 
 				{ showSearch && <Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> }
 				<List
@@ -458,6 +478,6 @@ export default connect( ( state, ownProps ) => {
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		query,
-		podcastingId: getPodcastingCategoryId( state, siteId ),
+		podcastingId: ownProps.hasPodcastIndicator && getPodcastingCategoryId( state, siteId ),
 	};
 } )( localize( TermTreeSelectorList ) );

@@ -30,6 +30,7 @@ export default class extends React.Component {
 		addTerm: PropTypes.bool,
 		postType: PropTypes.string,
 		onAddTermSuccess: PropTypes.func,
+		hasPodcastIndicator: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -95,12 +96,14 @@ export default class extends React.Component {
 					multiple={ multiple }
 					height={ height }
 					compact={ compact }
+					hasPodcastIndicator
 				/>
 				{ addTerm && (
 					<TermSelectorAddTerm
 						taxonomy={ taxonomy }
 						postType={ postType }
 						onSuccess={ onAddTermSuccess }
+						hasPodcastIndicator
 					/>
 				) }
 			</div>
