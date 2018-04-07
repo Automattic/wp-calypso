@@ -37,8 +37,25 @@ class EditorActionBar extends Component {
 		isPostPrivate: PropTypes.bool,
 	};
 
-	state = {
-		viewLinkTooltip: false,
+	constructor( props ) {
+		super( props );
+		this.state = {
+			viewLinkTooltip: false,
+		};
+	}
+
+	showViewLinkTooltip = () => {
+		this.setState( { viewLinkTooltip: true } );
+	};
+
+	hideViewLinkTooltip = () => {
+		this.setState( { viewLinkTooltip: false } );
+	};
+
+	setViewLinkTooltipContext = viewLinkTooltipContext => {
+		if ( viewLinkTooltipContext ) {
+			this.setState( { viewLinkTooltipContext } );
+		}
 	};
 
 	render() {
@@ -76,15 +93,15 @@ class EditorActionBar extends Component {
 							href={ this.props.savedPost.URL }
 							target="_blank"
 							rel="noopener noreferrer"
-							onMouseEnter={ () => this.setState( { viewLinkTooltip: true } ) }
-							onMouseLeave={ () => this.setState( { viewLinkTooltip: false } ) }
-							ref="viewLink"
+							ref={ this.setViewLinkTooltipContext }
+							onMouseEnter={ this.showViewLinkTooltip }
+							onMouseLeave={ this.hideViewLinkTooltip }
 							borderless
 						>
 							<Gridicon icon="external" />
 							<Tooltip
 								className="editor-action-bar__view-post-tooltip"
-								context={ this.refs && this.refs.viewLink }
+								context={ this.state.viewLinkTooltipContext }
 								isVisible={ this.state.viewLinkTooltip }
 								position="bottom left"
 							>
