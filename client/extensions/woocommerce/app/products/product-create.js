@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -36,13 +35,11 @@ import {
 	getProductEdits,
 } from 'woocommerce/state/ui/products/selectors';
 import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import {
 	clearProductVariationEdits,
 	editProductVariation,
 } from 'woocommerce/state/ui/products/variations/actions';
-import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -182,15 +179,7 @@ class ProductCreate extends React.Component {
 	}
 
 	render() {
-		const {
-			site,
-			product,
-			hasEdits,
-			className,
-			variations,
-			productCategories,
-			actionList,
-		} = this.props;
+		const { site, productId, product, hasEdits, className, actionList } = this.props;
 
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
@@ -210,10 +199,9 @@ class ProductCreate extends React.Component {
 				/>
 				<ProtectFormGuard isChanged={ hasEdits } />
 				<ProductForm
+					wcApiSite={ site && site.ID }
+					productId={ productId }
 					siteId={ site && site.ID }
-					product={ product || { type: 'simple' } }
-					variations={ variations }
-					productCategories={ productCategories }
 					editProduct={ this.props.editProduct }
 					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
@@ -232,17 +220,14 @@ function mapStateToProps( state ) {
 	const combinedProduct = getProductWithLocalEdits( state, productId );
 	const product = combinedProduct || ( productId && { id: productId } );
 	const hasEdits = Boolean( getProductEdits( state, productId ) );
-	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
-	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
 
 	return {
 		site,
+		productId,
 		product,
 		hasEdits,
-		variations,
-		productCategories,
 		actionList,
 		finishedInitialSetup,
 	};
