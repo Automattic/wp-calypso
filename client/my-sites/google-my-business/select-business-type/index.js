@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import ActionCard from 'components/action-card';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
+import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -52,13 +53,67 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		);
 	};
 
-	render() {
+	renderLocalBusinessCard() {
 		const { siteSlug, translate } = this.props;
+
+		let buttonProps = {};
+
+		if ( config.isEnabled( 'google-my-business' ) ) {
+			buttonProps = {
+				buttonHref: `/google-my-business/new/${ siteSlug }`,
+			};
+		} else {
+			buttonProps = {
+				buttonHref: 'https://www.google.com/business/',
+				buttonIcon: 'external',
+				buttonTarget: '_blank',
+			};
+		}
+
+		return (
+			<ActionCard
+				headerText={ translate( 'Physical Location or Service Area', {
+					comment: 'In the context of a business activity, brick and mortar or online service',
+				} ) }
+				mainText={ translate(
+					'Your business has a physical location customers can visit, ' +
+					'or provides goods and services to local customers, or both.'
+				) }
+				buttonText={ translate( 'Create Your Listing', {
+					comment: 'Call to Action to add a business listing to Google My Business',
+				} ) }
+				buttonPrimary={ true }
+				buttonOnClick={ this.trackCreateMyListingClick }
+				{ ...buttonProps }
+			/>
+		);
+	}
+
+	renderOnlineBusinessCard() {
+		const { siteSlug, translate } = this.props;
+
+		return (
+			<ActionCard
+				headerText={ translate( 'Online Only', {
+					comment: 'In the context of a business activity, as opposed to a brick and mortar',
+				} ) }
+				mainText={ translate(
+					"Don't provide in-person services? Learn more about reaching your customers online."
+				) }
+				buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
+				buttonHref={ `/settings/traffic/${ siteSlug }` }
+				buttonOnClick={ this.trackOptimizeYourSEOClick }
+			/>
+		);
+	}
+
+	render() {
+		const { translate } = this.props;
 
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker
-					path="/google-my-business/:site/select-business-type"
+					path="/google-my-business/select-business-type/:site"
 					title="Google My Business > Select Business Type"
 				/>
 
@@ -102,35 +157,9 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					/>
 				</Card>
 
-				<ActionCard
-					headerText={ translate( 'Physical Location or Service Area', {
-						comment: 'In the context of a business activity, brick and mortar or online service',
-					} ) }
-					mainText={ translate(
-						'Your business has a physical location customers can visit, ' +
-						'or provides goods and services to local customers, or both.'
-					) }
-					buttonText={ translate( 'Create Your Listing', {
-						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }
-					buttonIcon="external"
-					buttonPrimary={ true }
-					buttonHref="https://www.google.com/business/"
-					buttonTarget="_blank"
-					buttonOnClick={ this.trackCreateMyListingClick }
-				/>
+				{ this.renderLocalBusinessCard() }
 
-				<ActionCard
-					headerText={ translate( 'Online Only', {
-						comment: 'In the context of a business activity, as opposed to a brick and mortar',
-					} ) }
-					mainText={ translate(
-						"Don't provide in-person services? Learn more about reaching your customers online."
-					) }
-					buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
-					buttonHref={ `/settings/traffic/${ siteSlug }` }
-					buttonOnClick={ this.trackOptimizeYourSEOClick }
-				/>
+				{ this.renderOnlineBusinessCard() }
 			</Main>
 		);
 	}

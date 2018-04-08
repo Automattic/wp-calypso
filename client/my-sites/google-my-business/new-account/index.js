@@ -29,7 +29,7 @@ class GoogleMyBusinessNewAccount extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/google-my-business/${ this.props.siteSlug }/select-business-type` );
+		page.back( `/google-my-business/select-business-type/${ this.props.siteSlug }` );
 	};
 
 	trackCreateMyListingClick = () => {
@@ -50,7 +50,7 @@ class GoogleMyBusinessNewAccount extends Component {
 		return (
 			<Main className="gmb-new-account" wideLayout>
 				<PageViewTracker
-					path="/google-my-business/:site/new"
+					path="/google-my-business/new/:site"
 					title="Google My Business > New"
 				/>
 
@@ -81,7 +81,7 @@ class GoogleMyBusinessNewAccount extends Component {
 
 						<div className="gmb-new-account__actions">
 							<Button
-								href={ `/google-my-business/${ siteSlug }/select-location` }
+								href={ `/google-my-business/select-location/${ siteSlug }` }
 								onClick={ this.trackCreateMyListingClick }
 								primary
 							>
