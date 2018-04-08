@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, includes } from 'lodash';
+import { get, includes, replace } from 'lodash';
 
 function defaultFormatter( postalCode, delimiter, partLength ) {
 	return postalCode.substring( 0, partLength ) + delimiter + postalCode.substring( partLength );
@@ -85,15 +85,18 @@ export function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
 		return postalCode;
 	}
 
-	if (
-		includes( countryCodeData.length, postalCode.length ) &&
-		postalCode.indexOf( countryCodeData.delimiter ) === -1
-	) {
+	const postalCodeWithoutDelimeters = replace( postalCode, /[\s-]/g, '' );
+
+	if ( includes( countryCodeData.length, postalCodeWithoutDelimeters.length ) ) {
 		if ( countryCodeData.formatter ) {
-			return countryCodeData.formatter( postalCode, countryCodeData.delimiter );
+			return countryCodeData.formatter( postalCodeWithoutDelimeters, countryCodeData.delimiter );
 		}
 
-		return defaultFormatter( postalCode, countryCodeData.delimiter, countryCodeData.partLength );
+		return defaultFormatter(
+			postalCodeWithoutDelimeters,
+			countryCodeData.delimiter,
+			countryCodeData.partLength
+		);
 	}
 
 	return postalCode;
