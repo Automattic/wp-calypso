@@ -268,14 +268,15 @@ const analytics = {
 			eventProperties = eventProperties || {};
 
 			if ( process.env.NODE_ENV !== 'production' ) {
-				if ( ! /^calypso(?:_[a-z]+){2,4}$/.test( eventName ) ) {
+				if ( ! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) ) {
 					//eslint-disable-next-line no-console
 					console.error(
-						'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,4}/. ' +
+						'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,}$/. ' +
 							'Please use a compliant event name.',
 						eventName
 					);
 				}
+
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
 						const errorMessage =
@@ -285,6 +286,7 @@ const analytics = {
 
 						return;
 					}
+
 					if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
 						//eslint-disable-next-line no-console
 						console.error(
