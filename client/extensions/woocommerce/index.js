@@ -202,10 +202,13 @@ function addStorePage( storePage, storeNavigation ) {
 				appProps.documentTitle = storePage.documentTitle;
 			}
 
-			appProps.analyticsPath = storePage.path;
-			const { filter } = context.params;
+			appProps.analyticsPath = storePage.path.replace( '?', '' );
+			const { filter, productId } = context.params;
 			if ( filter ) {
 				appProps.analyticsPath = appProps.analyticsPath.replace( ':filter', filter );
+			}
+			if ( productId ) {
+				appProps.analyticsPath = appProps.analyticsPath.replace( ':productId', ':product-id' );
 			}
 
 			appProps.analyticsTitle = 'Store';
