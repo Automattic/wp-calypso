@@ -14,7 +14,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { CartItem } from '../cart-item';
-import { isPlan, isMonthly } from 'lib/products-values';
+import { isPlan, isMonthly, isYearly, isBiennially } from 'lib/products-values';
 import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_JETPACK_PERSONAL,
@@ -41,6 +41,8 @@ jest.mock( 'lib/products-values', () => ( {
 	isPlan: jest.fn( () => null ),
 	isTheme: jest.fn( () => null ),
 	isMonthly: jest.fn( () => null ),
+	isYearly: jest.fn( () => null ),
+	isBiennially: jest.fn( () => null ),
 	isBundled: jest.fn( () => null ),
 	isCredits: jest.fn( () => null ),
 	isGoogleApps: jest.fn( () => null ),
@@ -243,6 +245,64 @@ describe( 'cart-item', () => {
 				},
 			} );
 			expect( () => instance.calcMonthlyBillingDetails() ).toThrowError();
+		} );
+	} );
+
+	describe( 'getSubscriptionLength()', () => {
+		test( 'Returns false values for cart item with invalid bill_period (0)', () => {
+			const instance = new CartItem( { ...props, cartItem: { bill_period: 0 } } );
+			isMonthly.mockImplementation( () => true );
+			isYearly.mockImplementation( () => false );
+			isBiennially.mockImplementation( () => false );
+			expect( instance.getSubscriptionLength() ).toEqual( false );
+		} );
+
+		test( 'Returns false values for cart item with invalid bill_period (-1)', () => {
+			const instance = new CartItem( { ...props, cartItem: { bill_period: -1 } } );
+			isMonthly.mockImplementation( () => true );
+			isYearly.mockImplementation( () => false );
+			isBiennially.mockImplementation( () => false );
+			expect( instance.getSubscriptionLength() ).toEqual( false );
+		} );
+
+		test( 'Returns false values for cart item with invalid bill_period (4)', () => {
+			const instance = new CartItem( { ...props, cartItem: { bill_period: -1 } } );
+			isMonthly.mockImplementation( () => true );
+			isYearly.mockImplementation( () => false );
+			isBiennially.mockImplementation( () => false );
+			expect( instance.getSubscriptionLength() ).toEqual( false );
+		} );
+
+		test( 'Returns "monthly subscription" for monthly plan', () => {
+			const instance = new CartItem( props );
+			isMonthly.mockImplementation( () => true );
+			isYearly.mockImplementation( () => false );
+			isBiennially.mockImplementation( () => false );
+			expect( instance.getSubscriptionLength() ).toEqual( 'monthly subscription' );
+		} );
+
+		test( 'Returns "annual subscription" for annual plan', () => {
+			const instance = new CartItem( props );
+			isMonthly.mockImplementation( () => false );
+			isYearly.mockImplementation( () => true );
+			isBiennially.mockImplementation( () => false );
+			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
+		} );
+
+		test( 'Returns "biennial subscription" for biennial plan', () => {
+			const instance = new CartItem( props );
+			isMonthly.mockImplementation( () => false );
+			isYearly.mockImplementation( () => false );
+			isBiennially.mockImplementation( () => true );
+			expect( instance.getSubscriptionLength() ).toEqual( 'biennial subscription' );
+		} );
+
+		test( 'Returns false for unknown type of plan', () => {
+			const instance = new CartItem( props );
+			isMonthly.mockImplementation( () => false );
+			isYearly.mockImplementation( () => false );
+			isBiennially.mockImplementation( () => false );
+			expect( instance.getSubscriptionLength() ).toEqual( false );
 		} );
 	} );
 } );
