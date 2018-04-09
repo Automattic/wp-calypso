@@ -74,30 +74,12 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
-	handleSubmitSignup = ( form, userData ) => {
-		debug( 'submitting new account', form, userData );
-		this.setState(
-			{
-				isCreatingAccount: true,
-			},
-			() =>
-				this.props.createAccount( userData ).then(
-					bearerToken =>
-						this.setState( {
-							newUsername: userData.username,
-							bearerToken,
-							isCreatingAccount: false,
-						} ),
-					error => {
-						debug( 'Signup error: %o', error );
-						this.setState( { isCreatingAccount: false } );
-						this.props.errorNotice(
-							this.props.translate(
-								'There was a problem creating your account. Please contact support.'
-							)
-						);
-					}
-				)
+	handleSubmitSignup = ( _, userData ) => {
+		debug( 'submitting new account', userData );
+		this.setState( { isCreatingAccount: true }, () =>
+			this.props
+				.createAccount( userData )
+				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
 		);
 	};
 
@@ -106,15 +88,48 @@ export class JetpackSignup extends Component {
 	 *
 	 * @see client/signup/steps/user/index.jsx
 	 *
-	 * @param {String} service      The name of the social service
-	 * @param {String} access_token An OAuth2 acccess token
-	 * @param {String} id_token     (Optional) a JWT id_token which contains the signed user info
+	 * @param {string} service      The name of the social service
+	 * @param {string} access_token An OAuth2 acccess token
+	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
 	 *                              So our server doesn't have to request the user profile on its end.
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null ) => {
 		debug( 'submitting new social account' );
-		this.props.createSocialAccount( { service, access_token, id_token } );
+		this.setState( { isCreatingAccount: true }, () =>
+			this.props
+				.createSocialAccount( { service, access_token, id_token } )
+				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
+		);
 	};
+
+	/**
+	 * Handle user creation result
+	 *
+	 * @param {Object} _             …
+	 * @param {string} _.username    Username
+	 * @param {string} _.bearerToken Bearer token
+	 */
+	handleUserCreationSuccess( { username, bearerToken } ) {
+		this.setState( {
+			newUsername: username,
+			bearerToken,
+			isCreatingAccount: false,
+		} );
+	}
+
+	/**
+	 * Handle error on user creation
+	 *
+	 * @param {?Object} error Error result
+	 */
+	handleUserCreationError( error ) {
+		const { errorNotice, translate } = this.props;
+		debug( 'Signup error: %o', error );
+		this.setState( { isCreatingAccount: false } );
+		errorNotice(
+			translate( 'There was a problem creating your account. Please contact support.' )
+		);
+	}
 
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );

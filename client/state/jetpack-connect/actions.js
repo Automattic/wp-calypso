@@ -196,37 +196,59 @@ export function retryAuth( url, attemptNumber ) {
 	};
 }
 
+/**
+ * Create a user account
+ *
+ * !! Must have same return shape as createAccount !!
+ *
+ * @param  {Object} socialInfo              …
+ * @param  {Object} socialInfo.service      The name of the social service
+ * @param  {Object} socialInfo.access_token An OAuth2 acccess token
+ * @param  {Object} socialInfo.id_token     (Optional) a JWT id_token which contains the signed user info
+ *
+ * @return {Promise}                  Resolves to { username, bearerToken }
+ */
 export function createSocialAccount( socialInfo ) {
-	return dispatch => {
+	return async dispatch => {
 		dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount' ) );
 
-		dispatch( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
-		/**
-		 * @TODO (sirreal) update to `jetpack-connect` when D11099-code lands
-		 *
-		 * The signup flow is required and affects some post signup activity.
-		 * `account` should be safe until patch lands.
-		 */
-		return createSocialUser( socialInfo, 'account' /* 'jetpack-connect' */ )( dispatch ).then(
-			( { username, bearerToken } ) => {
-				dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
-				dispatch( {
-					type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-					userData: { username },
-					data: { bearer_token: bearerToken },
-				} );
-			},
-			error =>
-				dispatch(
-					recordTracksEvent( 'calypso_jpc_social_createaccount_error', {
-						error: JSON.stringify( error ),
-						error_code: error.code,
-					} )
-				)
-		);
+		try {
+			/**
+			 * @TODO (sirreal) update to `jetpack-connect` when D11099-code lands
+			 *
+			 * The signup flow is required and affects some post signup activity.
+			 * `account` should be safe until patch lands.
+			 */
+			const { username, bearerToken } = await createSocialUser(
+				socialInfo,
+				'account' /* 'jetpack-connect' */
+			)( dispatch );
+			dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
+			return { username, bearerToken };
+		} catch ( error ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jpc_social_createaccount_error', {
+					error: JSON.stringify( error ),
+					error_code: error.code,
+				} )
+			);
+			throw error;
+		}
 	};
 }
 
+/**
+ * Create a user account
+ *
+ * !! Must have same return shape as createSocialAccount !!
+ *
+ * @param  {Object} userData          …
+ * @param  {Object} userData.username Username
+ * @param  {Object} userData.password Password
+ * @param  {Object} userData.email    Email
+ *
+ * @return {Promise}                  Resolves to { username, bearerToken }
+ */
 export function createAccount( userData ) {
 	return async dispatch => {
 		dispatch( recordTracksEvent( 'calypso_jpc_create_account' ) );
@@ -246,7 +268,7 @@ export function createAccount( userData ) {
 			)( data );
 
 			dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
-			return bearerToken;
+			return { username: userData.username, bearerToken };
 		} catch ( error ) {
 			dispatch(
 				recordTracksEvent( 'calypso_jpc_create_account_error', {
