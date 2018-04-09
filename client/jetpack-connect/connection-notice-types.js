@@ -5,7 +5,7 @@
  *
  * These notice types are indicators of Jetpack Connection status.
  */
-export const ACTIVATION_FAILURE = 'unableToActivateInvalidVersion';
+export const ACTIVATION_FAILURE = 'unableToActivate';
 export const ACTIVATION_RESPONSE_ERROR = 'unableToActivate';
 export const ALREADY_CONNECTED = 'alreadyConnected';
 export const ALREADY_CONNECTED_BY_OTHER_USER = 'alreadyConnectedByOtherUser';

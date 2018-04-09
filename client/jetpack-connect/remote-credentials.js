@@ -7,6 +7,7 @@ import config from 'config';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * External dependencies
@@ -19,7 +20,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormattedHeader from 'components/formatted-header';
 import FormPasswordInput from 'components/forms/form-password-input';
 import HelpButton from './help-button';
-import JetpackConnectNotices from './jetpack-connect-notices';
+import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
@@ -30,7 +31,6 @@ import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
 import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { REMOTE_PATH_AUTH } from './constants';
-
 import {
 	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,
@@ -123,15 +123,29 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate } = this.props;
+		const { installError, translate } = this.props;
+		let subheader = translate(
+			'Add your WordPress administrator credentials ' +
+				'for this site. Your credentials will not be stored and are used for the purpose ' +
+				'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
+		);
 
+		switch ( this.getError( installError ) ) {
+			case LOGIN_FAILURE:
+				subheader = translate(
+					'We were unable to install Jetpack because your WordPress Administrator credentials were invalid. ' +
+						'Please try again with the correct credentials or try installing Jetpack manually.'
+				);
+			case UNKNOWN_REMOTE_INSTALL_ERROR:
+				subheader = translate(
+					'We were unable to install Jetpack because something went wrong. ' +
+						'Please try again by inputting your WordPress Administrator credentials, ' +
+						'or try installing Jetpack manually.'
+				);
+		}
 		return (
 			<span className="jetpack-connect__install-step jetpack-connect__creds-form">
-				{ translate(
-					'Add your WordPress administrator credentials ' +
-						'for this site. Your credentials will not be stored and are used for the purpose ' +
-						'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
-				) }
+				{ subheader }
 			</span>
 		);
 	}
@@ -158,24 +172,12 @@ export class OrgCredentialsForm extends Component {
 		return UNKNOWN_REMOTE_INSTALL_ERROR;
 	}
 
-	renderNotice() {
-		const { installError } = this.props;
-		return (
-			<div className="jetpack-connect__notice">
-				{ installError ? (
-					<JetpackConnectNotices noticeType={ this.getError( installError ) } />
-				) : null }
-			</div>
-		);
-	}
-
 	formFields() {
 		const { translate } = this.props;
 		const { isSubmitting, password, username } = this.state;
 
 		return (
 			<Fragment>
-				{ this.renderNotice() }
 				<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="user" />
@@ -281,15 +283,31 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	render() {
+		const { installError } = this.props;
+		const isFormInNotice = includes(
+			[ LOGIN_FAILURE, UNKNOWN_REMOTE_INSTALL_ERROR ],
+			this.getError( installError )
+		);
+
 		return (
 			<MainWrapper>
-				{ this.renderHeadersText() }
-				<Card className="jetpack-connect__site-url-input-container">
-					<form onSubmit={ this.handleSubmit }>
-						{ this.formFields() }
-						{ this.formFooter() }
-					</form>
-				</Card>
+				{ installError &&
+					! isFormInNotice && (
+						<div className="jetpack-connect__notice">
+							<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
+						</div>
+					) }
+				{ ( ( installError && isFormInNotice ) || ! installError ) && (
+					<div>
+						{ this.renderHeadersText() }
+						<Card className="jetpack-connect__site-url-input-container">
+							<form onSubmit={ this.handleSubmit }>
+								{ this.formFields() }
+								{ this.formFooter() }
+							</form>
+						</Card>
+					</div>
+				) }
 				{ this.footerLink() }
 			</MainWrapper>
 		);

@@ -12,8 +12,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	ACTIVATION_FAILURE,
-	ACTIVATION_RESPONSE_ERROR,
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
 	ALREADY_OWNED,
@@ -22,22 +20,18 @@ import {
 	IS_DOT_COM,
 	JETPACK_IS_DISCONNECTED,
 	JETPACK_IS_VALID,
-	LOGIN_FAILURE,
 	NOT_ACTIVE_JETPACK,
 	NOT_CONNECTED_JETPACK,
 	NOT_EXISTS,
 	NOT_JETPACK,
 	NOT_WORDPRESS,
 	OUTDATED_JETPACK,
-	INVALID_PERMISSIONS,
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
-	UNKNOWN_REMOTE_INSTALL_ERROR,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
-import { JETPACK_MINIMUM_WORDPRESS_VERSION } from './constants';
 import Notice from 'components/notice';
 import { addQueryArgs } from 'lib/route';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
@@ -49,15 +43,12 @@ export class JetpackConnectNotices extends Component {
 		// instead of showing a notice.
 		onTerminalError: PropTypes.func,
 		noticeType: PropTypes.oneOf( [
-			ACTIVATION_FAILURE,
-			ACTIVATION_RESPONSE_ERROR,
 			ALREADY_CONNECTED,
 			ALREADY_CONNECTED_BY_OTHER_USER,
 			ALREADY_OWNED,
 			DEFAULT_AUTHORIZE_ERROR,
 			INSTALL_RESPONSE_ERROR,
 			IS_DOT_COM,
-			LOGIN_FAILURE,
 			JETPACK_IS_DISCONNECTED,
 			JETPACK_IS_VALID,
 			NOT_ACTIVE_JETPACK,
@@ -66,11 +57,9 @@ export class JetpackConnectNotices extends Component {
 			NOT_JETPACK,
 			NOT_WORDPRESS,
 			OUTDATED_JETPACK,
-			INVALID_PERMISSIONS,
 			RETRY_AUTH,
 			RETRYING_AUTH,
 			SECRET_EXPIRED,
-			UNKNOWN_REMOTE_INSTALL_ERROR,
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 		] ).isRequired,
@@ -115,38 +104,6 @@ export class JetpackConnectNotices extends Component {
 		}
 
 		switch ( noticeType ) {
-			case ACTIVATION_FAILURE:
-				noticeValues.text = translate(
-					'We were unable to activate Jetpack. Please upgrade to the latest version ' +
-						'of WordPress. Jetpack needs version %(jetpackWPVersion)s or higher.',
-					{
-						args: {
-							jetpackWPVersion: JETPACK_MINIMUM_WORDPRESS_VERSION,
-						},
-					}
-				);
-				return noticeValues;
-
-			case ACTIVATION_RESPONSE_ERROR:
-				noticeValues.text = translate(
-					'We were unable to activate Jetpack. You can either {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
-						'or {{support}}contact support{{/support}} for help.',
-					{
-						components: {
-							manualInstall: (
-								<a
-									href={ this.getHelperUrl( 'manual' ) }
-									onClick={ this.trackManualInstallClick }
-								/>
-							),
-							support: (
-								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
-							),
-						},
-					}
-				);
-				return noticeValues;
-
 			case NOT_EXISTS:
 				return noticeValues;
 
@@ -171,10 +128,6 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.text = translate( 'You must update Jetpack before connecting.' );
 				return noticeValues;
 
-			case INVALID_PERMISSIONS:
-				noticeValues.text = translate( 'User has no permissions to install plugins.' );
-				return noticeValues;
-
 			case JETPACK_IS_DISCONNECTED:
 				noticeValues.icon = 'link-break';
 				noticeValues.text = translate( 'Jetpack is currently disconnected.' );
@@ -184,47 +137,6 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.status = 'is-success';
 				noticeValues.icon = 'plugins';
 				noticeValues.text = translate( 'Jetpack is connected.' );
-				return noticeValues;
-
-			case LOGIN_FAILURE:
-				noticeValues.text = translate(
-					'Invalid credentials. ' +
-						'Try again, {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
-						'or {{support}}contact support{{/support}} for help.',
-					{
-						components: {
-							manualInstall: (
-								<a
-									href={ this.getHelperUrl( 'manual' ) }
-									onClick={ this.trackManualInstallClick }
-								/>
-							),
-							support: (
-								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
-							),
-						},
-					}
-				);
-				return noticeValues;
-
-			case INSTALL_RESPONSE_ERROR:
-				noticeValues.text = translate(
-					'We were unable to install Jetpack. You can either {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
-						'or {{support}}contact support{{/support}} for help.',
-					{
-						components: {
-							manualInstall: (
-								<a
-									href={ this.getHelperUrl( 'manual' ) }
-									onClick={ this.trackManualInstallClick }
-								/>
-							),
-							support: (
-								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
-							),
-						},
-					}
-				);
 				return noticeValues;
 
 			case NOT_JETPACK:
@@ -296,26 +208,6 @@ export class JetpackConnectNotices extends Component {
 				);
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
-				return noticeValues;
-
-			case UNKNOWN_REMOTE_INSTALL_ERROR:
-				noticeValues.text = translate(
-					'Something went wrong. You can try again, {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
-						'or {{support}}contact support{{/support}} for help.',
-					{
-						components: {
-							manualInstall: (
-								<a
-									href={ this.getHelperUrl( 'manual' ) }
-									onClick={ this.trackManualInstallClick }
-								/>
-							),
-							support: (
-								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
-							),
-						},
-					}
-				);
 				return noticeValues;
 		}
 	}
