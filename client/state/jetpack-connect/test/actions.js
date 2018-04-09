@@ -442,14 +442,22 @@ describe( '#createSocialAccount()', () => {
 	beforeEach( jest.restoreAllMocks );
 
 	test( 'should reject with the error', async () => {
-		const error = { message: 'An error message', code: 'an_error_code' };
+		const error = {
+			data: { email: 'email@example.com' },
+			error: 'an_error_code',
+			message: 'An error message',
+		};
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
 			async usersSocialNew() {
 				throw error;
 			},
 		} ) );
 
-		await expect( createSocialAccount()( () => {} ) ).rejects.toBe( error );
+		await expect( createSocialAccount()( () => {} ) ).rejects.toEqual( {
+			code: error.error,
+			data: error.data,
+			message: error.message,
+		} );
 	} );
 
 	test( 'should resolve with the username and bearer token', async () => {
