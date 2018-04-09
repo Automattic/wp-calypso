@@ -16,11 +16,14 @@ import {
 	isSiteAutomatedTransfer,
 	hasSitePendingAutomatedTransfer,
 } from 'state/selectors';
+import Card from 'components/card';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
+import Main from 'components/main';
+import Placeholder from './dashboard/placeholder';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
 import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
@@ -28,11 +31,12 @@ import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
 class App extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
-		documentTitle: PropTypes.string,
 		canUserManageOptions: PropTypes.bool.isRequired,
-		isAtomicSite: PropTypes.bool.isRequired,
-		hasPendingAutomatedTransfer: PropTypes.bool.isRequired,
 		children: PropTypes.element.isRequired,
+		documentTitle: PropTypes.string,
+		hasPendingAutomatedTransfer: PropTypes.bool.isRequired,
+		isAtomicSite: PropTypes.bool.isRequired,
+		isDashboard: PropTypes.bool.isRequired,
 	};
 
 	componentDidMount() {
@@ -76,10 +80,28 @@ class App extends Component {
 		window.location.href = '/stats/day';
 	}
 
+	renderPlaceholder() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		if ( this.props.isDashboard ) {
+			return (
+				<Main className="dashboard" wideLayout>
+					<Placeholder />
+				</Main>
+			);
+		}
+
+		return (
+			<Main className="woocommerce__placeholder" wideLayout>
+				<Card className="woocommerce__placeholder-card" />
+			</Main>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
 	maybeRenderChildren() {
 		const { allRequiredPluginsActive, children, pluginsLoaded, translate } = this.props;
 		if ( ! pluginsLoaded ) {
-			return null;
+			return this.renderPlaceholder();
 		}
 
 		if ( pluginsLoaded && ! allRequiredPluginsActive ) {
