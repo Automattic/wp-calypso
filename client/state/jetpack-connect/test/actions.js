@@ -409,7 +409,7 @@ describe( '#createAccount()', () => {
 
 	beforeEach( jest.restoreAllMocks );
 
-	test( 'should resolve with the bearer token', () => {
+	test( 'should resolve with the username and bearer token', async () => {
 		const userData = { username: 'happyuser' };
 		const data = { bearer_token: '1234 abcd' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
@@ -419,10 +419,13 @@ describe( '#createAccount()', () => {
 		} ) );
 
 		const spy = jest.fn();
-		expect( createAccount( userData )( spy ) ).resolves.toBe( data.bearer_token );
+		await expect( createAccount( userData )( spy ) ).resolves.toEqual( {
+			username: userData.username,
+			bearerToken: data.bearer_token,
+		} );
 	} );
 
-	test( 'should reject with the error', () => {
+	test( 'should reject with the error', async () => {
 		const userData = { username: 'happyuser' };
 		const error = { code: 'user_exists' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
@@ -431,8 +434,7 @@ describe( '#createAccount()', () => {
 			},
 		} ) );
 
-		const spy = jest.fn();
-		expect( createAccount( userData )( spy ) ).rejects.toBe( error );
+		await expect( createAccount( userData )( () => {} ) ).rejects.toBe( error );
 	} );
 } );
 
@@ -441,36 +443,20 @@ describe( '#createSocialAccount()', () => {
 
 	beforeEach( jest.restoreAllMocks );
 
-	test( 'should dispatch create action', async () => {
-		const spy = jest.fn();
-		jest.spyOn( loginActions, 'createSocialUser' ).mockImplementation( () => async () => ( {} ) );
-		await createSocialAccount()( spy );
-		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
-	} );
-
-	test( 'should not continue on error', async () => {
+	test( 'should reject with the error', async () => {
+		const error = { message: 'An error message', code: 'an_error_code' };
 		jest.spyOn( loginActions, 'createSocialUser' ).mockImplementation( () => async () => {
-			throw { message: 'An error message', code: 'an_error_code' };
+			throw error;
 		} );
-		const spy = jest.fn();
 
-		await createSocialAccount()( spy );
-		expect( spy ).not.toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE } );
+		await expect( createSocialAccount()( () => {} ) ).rejects.toBe( error );
 	} );
 
-	test( 'should dispatch receive action with appropriate data', async () => {
-		const username = 'a_happy_user';
-		const bearerToken = 'foobar';
-		jest
-			.spyOn( loginActions, 'createSocialUser' )
-			.mockImplementation( () => async () => ( { username, bearerToken } ) );
-		const spy = jest.fn();
+	test( 'should resolve with the username and bearer token', async () => {
+		const result = { username: 'a_happy_user', bearerToken: 'foobar' };
+		// eslint-disable-next-line no-multi-spaces
+		jest.spyOn( loginActions, 'createSocialUser' ).mockImplementation( () => async () => result  );
 
-		await createSocialAccount()( spy );
-		expect( spy ).toHaveBeenCalledWith( {
-			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			userData: { username },
-			data: { bearer_token: bearerToken },
-		} );
+		await expect( createSocialAccount()( () => {} ) ).resolves.toEqual( result );
 	} );
 } );
