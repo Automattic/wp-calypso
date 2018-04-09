@@ -25,8 +25,8 @@ import {
 	PLAN_WPCOM_ENTERPRISE,
 	PLAN_CHARGEBACK,
 	PLAN_MONTHLY_PERIOD,
-	PLAN_ANNUALLY_PERIOD,
-	PLAN_BIENNIALLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
 } from 'lib/plans/constants';
 import { domainProductSlugs } from 'lib/domains/constants';
 
@@ -179,14 +179,14 @@ export function isYearly( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return parseInt( product.bill_period, 10 ) === PLAN_ANNUALLY_PERIOD;
+	return parseInt( product.bill_period, 10 ) === PLAN_ANNUAL_PERIOD;
 }
 
-export function isBiennialy( product ) {
+export function isBiennially( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return parseInt( product.bill_period, 10 ) === PLAN_BIENNIALLY_PERIOD;
+	return parseInt( product.bill_period, 10 ) === PLAN_BIENNIAL_PERIOD;
 }
 
 export function isJpphpBundle( product ) {
