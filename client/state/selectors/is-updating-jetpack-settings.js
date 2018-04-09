@@ -6,7 +6,7 @@
 import { get } from 'lodash';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { getRequest } from 'state/selectors';
 import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
