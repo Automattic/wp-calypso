@@ -14,7 +14,7 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import { CreditCardFormFields } from '../';
-import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
+import { shouldRenderAdditionalEbanxFields } from 'lib/credit-card-details/ebanx';
 import mockCountriesList from './mocks/mock-countries-list';
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -23,7 +23,7 @@ jest.mock( 'i18n-calypso', () => ( {
 
 jest.mock( 'lib/credit-card-details/ebanx', () => {
 	return {
-		isEbanxEnabledForCountry: jest.fn( false ),
+		shouldRenderAdditionalEbanxFields: jest.fn( false ),
 	};
 } );
 
@@ -44,10 +44,10 @@ describe( 'CreditCardFormFields', () => {
 
 	describe( 'with ebanx activated', () => {
 		beforeAll( () => {
-			isEbanxEnabledForCountry.mockReturnValue( true );
+			shouldRenderAdditionalEbanxFields.mockReturnValue( true );
 		} );
 		afterAll( () => {
-			isEbanxEnabledForCountry.mockReturnValue( false );
+			shouldRenderAdditionalEbanxFields.mockReturnValue( false );
 		} );
 
 		test( 'should display Ebanx fields when an Ebanx payment country is selected', () => {

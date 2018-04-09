@@ -10,7 +10,7 @@
 /**
  * Internal dependencies
  */
-import { isEbanxEnabledForCountry, isValidCPF } from '../ebanx';
+import { isEbanxEnabledForCountry, isValidCPF, shouldRenderAdditionalEbanxFields } from '../ebanx';
 import { isPaymentMethodEnabled } from 'lib/cart-values';
 
 jest.mock( 'lib/cart-values', () => {
@@ -46,6 +46,25 @@ describe( 'Ebanx payment processing methods', () => {
 		test( 'should return false for invalid CPF', () => {
 			expect( isValidCPF( '85384484612' ) ).toEqual( false );
 			expect( isValidCPF( '853.844.846.12' ) ).toEqual( false );
+		} );
+	} );
+
+	describe( 'shouldRenderAdditionalEbanxFields', () => {
+		beforeAll( () => {
+			isPaymentMethodEnabled.mockReturnValue( true );
+		} );
+		afterAll( () => {
+			isPaymentMethodEnabled.mockReturnValue( false );
+		} );
+
+		test( 'should return false for non-ebanx country', () => {
+			expect( shouldRenderAdditionalEbanxFields( 'AU' ) ).toEqual( false );
+		} );
+		test( 'should return true for ebanx country that requires additional fields', () => {
+			expect( shouldRenderAdditionalEbanxFields( 'BR' ) ).toEqual( true );
+		} );
+		test( 'should return false for ebanx country that does not requires additional fields', () => {
+			expect( shouldRenderAdditionalEbanxFields( 'MX' ) ).toEqual( false );
 		} );
 	} );
 } );
