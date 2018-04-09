@@ -440,6 +440,7 @@ class ActivityLog extends Component {
 
 	getActivityLog() {
 		const {
+			enableRewind,
 			logRequestQuery,
 			logs,
 			moment,
@@ -451,6 +452,7 @@ class ActivityLog extends Component {
 		} = this.props;
 
 		const disableRestore =
+			! enableRewind ||
 			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
@@ -615,10 +617,15 @@ export default connect(
 		const requestedRestoreId = getRequestedRewind( state, siteId );
 		const requestedBackupId = getRequestedBackup( state, siteId );
 		const logRequestQuery = getActivityLogQuery( { gmtOffset, startDate, timezone } );
+		const rewindState = getRewindState( state, siteId );
+		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
+			enableRewind:
+				'active' === rewindState.state &&
+				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
 			logRequestQuery,
 			logs: getActivityLogs(
 				state,
@@ -632,7 +639,7 @@ export default connect(
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
 			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
-			rewindState: getRewindState( state, siteId ),
+			rewindState,
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
