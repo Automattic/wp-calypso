@@ -18,16 +18,16 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import GoogleMyBusinessLocation from './location';
+import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
+import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import HeaderCake from 'components/header-cake';
-import LocationType from './location-type';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
-		locations: PropTypes.arrayOf( LocationType ).isRequired,
+		locations: PropTypes.arrayOf( GoogleMyBusinessLocationType ).isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,

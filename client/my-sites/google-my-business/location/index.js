@@ -38,7 +38,7 @@ function GoogleMyBusinessLocation( { location, translate } ) {
 
 				{ location.verified && (
 					<div className="gmb-location__verified">
-						<Gridicon className="gmb-location__verified-icon" icon="checkmark-circle" size={ 18 } />{' '}
+						<Gridicon className="gmb-location__verified-icon" icon="checkmark-circle" size={ 18 } />{ ' ' }
 						{ translate( 'Verified' ) }
 					</div>
 				) }

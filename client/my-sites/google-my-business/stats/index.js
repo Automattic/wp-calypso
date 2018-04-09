@@ -18,8 +18,8 @@ import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import Chart from 'components/chart';
 import DocumentHead from 'components/data/document-head';
-import Location from '../select-location/location';
-import LocationType from '../select-location/location-type';
+import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
+import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import Main from 'components/main';
 import PieChart from 'components/pie-chart';
 import SearchDataType from './search-data-type';
@@ -31,7 +31,7 @@ import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
 		actionData: PropTypes.array.isRequired,
-		locationData: LocationType.isRequired,
+		locationData: GoogleMyBusinessLocationType.isRequired,
 		searchData: PropTypes.arrayOf( SearchDataType ).isRequired,
 		searchDataTotal: PropTypes.number.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -55,12 +55,15 @@ class GoogleMyBusinessStats extends Component {
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ translate( 'Stats' ) } />
+
 				<SidebarNavigation />
+
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 
 				<div>
 					<Card className="gmb-location">
-						<Location location={ locationData } />
+						<GoogleMyBusinessLocation location={ locationData } />
+
 						<Button className="gmb-location__button">
 							{ translate( 'Update Listing' ) } { <Gridicon icon={ 'external' } /> }
 						</Button>
@@ -83,6 +86,7 @@ class GoogleMyBusinessStats extends Component {
 						<CardHeading tagName={ 'h2' } size={ 16 }>
 							{ translate( 'The Google services that customers use to find your business' ) }
 						</CardHeading>
+
 						<Chart data={ viewData } />
 					</Card>
 
@@ -91,6 +95,7 @@ class GoogleMyBusinessStats extends Component {
 						<CardHeading tagName={ 'h2' } size={ 16 }>
 							{ translate( 'The most common actions that customers take on your listing' ) }
 						</CardHeading>
+
 						<Chart data={ actionData } />
 					</Card>
 				</div>
@@ -117,6 +122,7 @@ const searchData = [
 		value: random( 200, 400 ),
 	},
 ];
+
 const searchDataTotal = searchData.reduce( dataSummer, 0 );
 
 const viewData = range( 19, 30 ).map( day => ( {
