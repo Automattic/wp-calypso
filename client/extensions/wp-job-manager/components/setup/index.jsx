@@ -22,6 +22,7 @@ import PageSetup from './page-setup';
 import Wizard from 'components/wizard';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { saveSetupStatus } from '../../state/setup/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class SetupWizard extends Component {
 	static propTypes = {
@@ -72,6 +73,10 @@ class SetupWizard extends Component {
 					minimumVersion={ MinPluginVersion }
 					pluginId="wp-job-manager"
 					siteId={ siteId }
+				/>
+				<PageViewTracker
+					path={ `/extensions/wp-job-manager/setup/:site/${ stepName }` }
+					title="WP Job Manager > Setup"
 				/>
 				<DocumentHead title={ translate( 'Setup' ) } />
 				<Wizard

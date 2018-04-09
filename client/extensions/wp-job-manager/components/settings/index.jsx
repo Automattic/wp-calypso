@@ -23,6 +23,8 @@ import SetupRedirect from '../setup/setup-redirect';
 import { saveSettings } from '../../state/settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSettings, isFetchingSettings } from '../../state/settings/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 class Settings extends Component {
 	static propTypes = {
@@ -36,6 +38,19 @@ class Settings extends Component {
 
 	onSubmit = ( form, data ) => this.props.saveSettings( this.props.siteId, form, data );
 
+	trackPageView = () =>
+		!! this.props.tab ? (
+			<PageViewTracker
+				path={ `/extensions/wp-job-manager/${ this.props.tab }/:site` }
+				title={ `WP Job Manager > ${ titlecase( this.props.tab ) }` }
+			/>
+		) : (
+			<PageViewTracker
+				path="/extensions/wp-job-manager/:site"
+				title="WP Job Manager > Job Listings"
+			/>
+		);
+
 	render() {
 		const { children, initialValues, isFetching, siteId, tab, translate } = this.props;
 		const mainClassName = 'wp-job-manager__main';
@@ -48,6 +63,7 @@ class Settings extends Component {
 					siteId={ siteId }
 				/>
 				<SetupRedirect siteId={ siteId } />
+				{ this.trackPageView() }
 				<QuerySettings siteId={ siteId } />
 				<DocumentHead title={ translate( 'WP Job Manager' ) } />
 				<Navigation activeTab={ tab } />
