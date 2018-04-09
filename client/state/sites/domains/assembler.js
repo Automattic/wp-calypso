@@ -24,6 +24,7 @@ export const createSiteDomainObject = domain => {
 		hasPrivacyProtection: Boolean( domain.has_private_registration ),
 		privacyAvailable: Boolean( domain.privacy_available ),
 		hasRegistration: Boolean( domain.has_registration ),
+		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPrimary: Boolean( domain.primary_domain ),

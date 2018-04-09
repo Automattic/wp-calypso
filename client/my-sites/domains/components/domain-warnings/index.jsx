@@ -49,6 +49,7 @@ const expiredDomainsCanManageWarning = 'expired-domains-can-manage';
 const expiredDomainsCannotManageWarning = 'expired-domains-cannot-manage';
 const expiringDomainsCanManageWarning = 'expiring-domains-can-manage';
 const expiringDomainsCannotManageWarning = 'expiring-domains-cannot-manage';
+const newTransfersWrongNSWarning = 'new-transfer-wrong-ns';
 
 export class DomainWarnings extends React.PureComponent {
 	static propTypes = {
@@ -424,6 +425,10 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
+	onNewTransfersWrongNSNoticeClick = () => {
+		this.trackClick( newTransfersWrongNSWarning );
+	};
+
 	newTransfersWrongNS = () => {
 		const newTransfers = this.getDomains().filter(
 			domain =>
@@ -440,42 +445,49 @@ export class DomainWarnings extends React.PureComponent {
 		}
 
 		const { translate } = this.props;
-		const compactMessage = translate( 'Update nameservers' );
+		let compactMessage;
 		let actionLink;
+		let actionText;
 		let message;
 
 		if ( newTransfers.length > 1 ) {
 			actionLink = CHANGE_NAME_SERVERS;
+			actionText = translate( 'Learn more', {
+				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
+			} );
+			compactMessage = translate( 'Domains require updating.' );
 			message = translate(
 				'To make your newly transferred domains work with WordPress.com, you need to ' +
-					'update the nameservers. {{a}}Learn more{{/a}}',
-				{
-					components: {
-						a: <a href={ actionLink } rel="noopener noreferrer" />,
-					},
-				}
+					'update the nameservers.'
 			);
 		} else {
 			const domain = newTransfers[ 0 ].name;
 			actionLink = domainManagementNameServers( this.props.selectedSite.slug, domain );
+			actionText = translate( 'Update now', {
+				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
+			} );
+			compactMessage = translate( 'Domain requires updating.' );
 			message = translate(
 				'To make {{strong}}%(domain)s{{/strong}} work with your WordPress.com site, you need to ' +
-					'update the nameservers. {{a}}Try it now{{/a}}',
+					'update the nameservers.',
 				{
 					components: {
 						strong: <strong />,
-						a: <a href={ actionLink } rel="noopener noreferrer" />,
 					},
 					args: { domain },
 				}
 			);
 		}
 
-		const actionText = translate( 'Info', {
-			comment: 'Call to action link for updating the nameservers on a newly transferred domain',
-		} );
-
-		const action = <NoticeAction href={ actionLink }>{ actionText }</NoticeAction>;
+		const action = (
+			<NoticeAction
+				href={ actionLink }
+				onClick={ this.onNewTransfersWrongNSNoticeClick }
+				rel="noopener noreferrer"
+			>
+				{ actionText }
+			</NoticeAction>
+		);
 
 		return (
 			<Notice
@@ -485,7 +497,8 @@ export class DomainWarnings extends React.PureComponent {
 				key="new-transfer-wrong-ns"
 				text={ this.props.isCompact ? compactMessage : message }
 			>
-				{ this.props.isCompact && action }
+				{ action }
+				{ this.trackImpression( newTransfersWrongNSWarning, newTransfers.length ) }
 			</Notice>
 		);
 	};
