@@ -12,7 +12,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import App from './app';
 import Dashboard from './app/dashboard';
 import EmptyContent from 'components/empty-content';
@@ -203,20 +202,18 @@ function addStorePage( storePage, storeNavigation ) {
 				appProps.documentTitle = storePage.documentTitle;
 			}
 
-			let analyticsPath = storePage.path;
+			appProps.analyticsPath = storePage.path;
 			const { filter } = context.params;
 			if ( filter ) {
-				analyticsPath = analyticsPath.replace( ':filter', filter );
+				appProps.analyticsPath = appProps.analyticsPath.replace( ':filter', filter );
 			}
 
-			let analyticsPageTitle = 'Store';
+			appProps.analyticsTitle = 'Store';
 			if ( storePage.documentTitle ) {
-				analyticsPageTitle += ` > ${ storePage.documentTitle }`;
+				appProps.analyticsTitle += ` > ${ storePage.documentTitle }`;
 			} else {
-				analyticsPageTitle += ' > Dashboard';
+				appProps.analyticsTitle += ' > Dashboard';
 			}
-
-			analytics.pageView.record( analyticsPath, analyticsPageTitle );
 
 			context.primary = React.createElement( App, appProps, component );
 			next();
