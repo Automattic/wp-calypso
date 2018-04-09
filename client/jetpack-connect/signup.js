@@ -74,6 +74,17 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
+	getLoginRoute() {
+		const emailAddress = this.props.authQuery.userEmail;
+		return login( {
+			emailAddress,
+			isJetpack: true,
+			isNative: isEnabled( 'login/native-login-links' ),
+			locale: this.props.locale,
+			redirectTo: window.location.href,
+		} );
+	}
+
 	handleSubmitSignup = ( _, userData ) => {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
@@ -157,18 +168,9 @@ export class JetpackSignup extends Component {
 	}
 
 	renderFooterLink() {
-		const emailAddress = this.props.authQuery.userEmail;
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem
-					href={ login( {
-						emailAddress,
-						isJetpack: true,
-						isNative: isEnabled( 'login/native-login-links' ),
-						locale: this.props.locale,
-						redirectTo: window.location.href,
-					} ) }
-				>
+				<LoggedOutFormLinkItem href={ this.getLoginRoute() }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton onClick={ this.handleClickHelp } />
