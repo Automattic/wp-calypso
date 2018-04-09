@@ -1,9 +1,9 @@
 Analytics: Page Views
 =====================
 
-Page views should be recorded every time the main content body completely changes. This includes both when the browser is refreshed and any time the URL is updated via the browser history API.
+We should record Page views every time the main content body completely changes. This includes both when the browser is refreshed and any time the URL is updated via the browser history API.
 
-These tools will automatically record page views to both Google Analytics and Tracks. The preferred one is the **`PageViewTracker`** component which is aware of the selected site and, if the current URL contains a site fragment, it will delay the page view recording until the selected site is set or updated.
+These tools will automatically record page views to both Google Analytics and Tracks. The preferred tool is the **`PageViewTracker`** component which is aware of the selected site and, if the current URL contains a site fragment, it will delay the recording of the page view until the selected site is set or updated.
 
 ## Usage
 
@@ -46,18 +46,18 @@ analytics.pageView.record( '/section/page', 'My Cool Section > My Cool Page' );
 
 ## Paths Conventions
 
-There are currently no enforced rules for page views paths reporting but, where possible, they should be normalized and the variables values replaced by placeholders.
+There are currently no enforced rules for the reporting page views' paths but, where possible, we should normalize them and replace the variables' values with placeholders.
 
 E.g. the path `/comments/all/example.wordpress.com/1234` should be reported as `/comments/all/:site/:post_id`.
 
 As a rule of thumb:
 
-- The **site fragment** should be reported simply as `:site`.
-- **IDs** should be reported as `:element_id` (notice the snake case).
-- **Non-enumerable, infinite, or unknown variables** (e.g. the domain name in `/domains/manage/:domain/edit/:site`) should be reported without unnecessary qualifiers.
-- The value of **enumerable, finite, or known variables** should be reported instead of the placeholder where it make sense (e.g. if changing the variable value results in a page change, as it happens for the status in `/comments/spam/:site`).
+- Report **site fragment** simply as `:site`.
+- Report **IDs** as `:element_id` (notice the snake case).
+- Report **Non-enumerable, infinite, or unknown variables** (e.g. the domain name in `/domains/manage/:domain/edit/:site`) without unnecessary qualifiers.
+- Report the value of **enumerable, finite, or known variables** instead of the placeholder where it makes sense (e.g. if changing the variable value results in a page change, as it happens for the status in `/comments/spam/:site`).
 
-Where possible, paths should be hardcoded, without relying on helper functions (e.g. `sectionify( context.path )`) that might result in inconsistent reporting. This will also make the path easier to find in searches.
+Where possible, hardcode paths without relying on helper functions (e.g. `sectionify( context.path )`) that might result in inconsistent reporting. This will also make the path easier to find in searches.
 
 Some examples of **what to do**:
 
@@ -69,11 +69,11 @@ Some examples of **what to do**:
 
 Some examples of **what not to do**:
 
-- `/posts/my/:status/:site`: different statuses should be recorded separately.
-- `/media/images/:siteSlug`: the site fragment must be always reported as `:site`.
-- `/comments/all/:site/1234`: the post ID is overspecific and results in an incorrect categorization of the path.
-- `/domains/manage/www.example.com/transfer/in/:site`: the domain is as overspecific as the post ID in the previous example.
-- `/me/purchases/:site/:purchase/payment/edit/:cardId`: the purchase is an ID, so it should be reported as `:purchase_id`; also, placeholders should be always written in snake-case, so the card ID should be reported as `:card_id`.
+- `/posts/my/:status/:site`: record different statuses separately.
+- `/media/images/:siteSlug`: always report the site fragment as `:site`.
+- `/comments/all/:site/1234`: the post ID is over-specific and results in an incorrect categorization of the path.
+- `/domains/manage/www.example.com/transfer/in/:site`: the domain is as over-specific as the post ID in the previous example.
+- `/me/purchases/:site/:purchase/payment/edit/:cardId`: the purchase is an ID, so report it as `:purchase_id`; also, always write placeholders in snake-case, so report the card ID as `:card_id`.
 
 ## Titles Conventions
 

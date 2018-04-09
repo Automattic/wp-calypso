@@ -1,15 +1,15 @@
 Analytics: Google Analytics
 ===========================
 
-Google Analytics should be used to record all events the user performs on a page that _do not_ trigger a page view (this will allow us to determine bounce rate on pages).
+We should use Google Analytics to record all events the user performs on a page that _do not_ trigger a page view (this will allow us to determine bounce rate on pages).
 
-We are using Google Analytics to monitor user flows through the user interface of Calypso in order learn where they succeed and fail, as well as determine usage of different sections.
+We are using Google Analytics to monitor user flows through the Calypso user interface in order to learn where they succeed and where they fail, as well as to determine the usage of different sections.
 
 _Please do not ship anything that does not have Google Analytics tracking in place_, otherwise we will create big gaps in our understanding.
 
 ## Usage
 
-In most situations it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
+In most situations, it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
 
 ### `recordGoogleEvent( category, action [, label, value ] )`
 
@@ -45,6 +45,8 @@ analytics.ga.recordPageView( '/posts/draft', 'Posts > Drafts' );
 
 ## Naming Conventions
 
-Events should be categorized by the section they are in. Examples are `Posts`, `Pages`, `Reader`, `Sharing`. Event actions should be written in readable form, and action centric. Good examples are `Clicked Save Button`, `Clicked Like`, `Activated Theme`.
+We should categorize events by the section they are in. Examples are `Posts`, `Pages`, `Reader`, and `Sharing`.
+
+We should write event actions in readable form, and use action-centric language. Good examples are `Clicked Save Button`, `Clicked Like`, and `Activated Theme`.
 
 For page view tracking conventions, refer to the [Page Views](./page-views.md) documentation.

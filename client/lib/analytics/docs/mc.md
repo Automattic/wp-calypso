@@ -7,7 +7,7 @@ Automatticians may refer to internal documentation for more information about MC
 
 ### `analytics.mc.bumpStat( group, name )`
 
-Bump a single WP.com stat.
+Bump a single WP.com stat:
 
 ```js
 analytics.mc.bumpStat( 'newdash_visits', 'sites' );
