@@ -29,7 +29,8 @@
 		margin: 0;
 		order: 1;
 		&.is-with-plans-only:not(.is-free-domain) {
-			flex-basis: auto;
+			flex-basis: 25px;
+			flex-grow: 0;
 			small {
 				font-size: 1em;
 			}
