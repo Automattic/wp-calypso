@@ -109,27 +109,27 @@ export class JetpackSignup extends Component {
 	 * @param {string} _.username    Username
 	 * @param {string} _.bearerToken Bearer token
 	 */
-	handleUserCreationSuccess( { username, bearerToken } ) {
+	handleUserCreationSuccess = ( { username, bearerToken } ) => {
 		this.setState( {
 			newUsername: username,
 			bearerToken,
 			isCreatingAccount: false,
 		} );
-	}
+	};
 
 	/**
 	 * Handle error on user creation
 	 *
 	 * @param {?Object} error Error result
 	 */
-	handleUserCreationError( error ) {
+	handleUserCreationError = error => {
 		const { errorNotice, translate } = this.props;
 		debug( 'Signup error: %o', error );
 		this.setState( { isCreatingAccount: false } );
 		errorNotice(
 			translate( 'There was a problem creating your account. Please contact support.' )
 		);
-	}
+	};
 
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
