@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { assign, some, map } from 'lodash';
+import { assign, snakeCase, some, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -116,7 +116,7 @@ export class RedirectPaymentBox extends PureComponent {
 					disabled: true,
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
-				analytics.tracks.recordEvent( 'calypso_checkout_with_redirect' + this.props.paymentType );
+				analytics.tracks.recordEvent( 'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType ) );
 				location.href = result.redirect_url;
 			}
 		}.bind( this ) );

@@ -69,8 +69,8 @@ class JetpackSyncPanel extends React.Component {
 	onClickDebug = () => {
 		debug( 'Clicked check connection button' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
-			errorCode: get( this.props, 'syncStatus.error.error', '' ),
-			errorMsg: get( this.props, 'syncStatus.error.message', '' ),
+			error_code: get( this.props, 'syncStatus.error.error', '' ),
+			error_msg: get( this.props, 'syncStatus.error.message', '' ),
 		} );
 	};
 
