@@ -24,7 +24,6 @@ import {
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { removeItem } from 'lib/upgrades/actions';
-import formatCurrency from 'lib/format-currency';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
@@ -77,10 +76,11 @@ export class CartItem extends React.Component {
 
 		const { months, monthlyPrice } = this.calcMonthlyBillingDetails();
 
-		return translate( '(%(monthlyPrice)s x %(months) months)', {
+		return translate( '(%(monthlyPrice)s %(currency)s x %(months)d months)', {
 			args: {
 				months,
-				monthlyPrice: formatCurrency( monthlyPrice, currency ),
+				currency,
+				monthlyPrice: monthlyPrice.toFixed( currency === 'JPY' ? 0 : 2 ),
 			},
 		} );
 	}

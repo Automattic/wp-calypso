@@ -22,8 +22,6 @@ import {
 	PLAN_PREMIUM,
 } from 'lib/plans/constants';
 
-import formatCurrency from 'lib/format-currency';
-
 const plansModule = require( 'lib/plans' );
 const originalPlansModuleFunctions = pick( plansModule, [
 	'calculateMonthlyPriceForPlan',
@@ -71,9 +69,6 @@ describe( 'cart-item', () => {
 	describe( 'monthlyPrice', () => {
 		let myTranslate, instance;
 		beforeEach( () => {
-			formatCurrency.mockReset();
-			formatCurrency.mockImplementation( () => '133.00 AUD' );
-
 			myTranslate = jest.fn( identity );
 			instance = new CartItem( {
 				translate: myTranslate,
@@ -94,18 +89,13 @@ describe( 'cart-item', () => {
 			expect( instance.calcMonthlyBillingDetails ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		test( 'Should format currency using formatCurrency()', () => {
-			instance.monthlyPrice();
-			expect( formatCurrency ).toHaveBeenCalledTimes( 1 );
-			expect( formatCurrency ).toHaveBeenCalledWith( 133, 'AUD' );
-		} );
-
 		test( 'Should call translate() with args returned from calcMonthlyBillingDetails()', () => {
 			instance.monthlyPrice();
 			expect( myTranslate ).toHaveBeenCalledTimes( 1 );
 			expect( myTranslate.mock.calls[ 0 ][ 1 ] ).toEqual( {
 				args: {
-					monthlyPrice: '133.00 AUD',
+					monthlyPrice: '133.00',
+					currency: 'AUD',
 					months: 17,
 				},
 			} );
