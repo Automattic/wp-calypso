@@ -37,13 +37,13 @@ class GoogleMyBusinessSelectLocation extends Component {
 		page.back( `/google-my-business/new/${ this.props.siteSlug }` );
 	};
 
-	trackAddYourBusinessLinkClick = () => {
+	trackAddYourBusinessClick = () => {
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_location_add_your_business_link_click'
 		);
 	};
 
-	trackConnectLocationButtonClick = () => {
+	trackConnectLocationClick = () => {
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_location_connect_location_button_click'
 		);
@@ -73,7 +73,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 					<GoogleMyBusinessLocation isCompact key={ location.id } location={ location }>
 						<Button
 							href={ `/google-my-business/stats/${ siteSlug }` }
-							onClick={ this.trackConnectLocationButtonClick }
+							onClick={ this.trackConnectLocationClick }
 						>
 							{ translate( 'Connect Location' ) }
 						</Button>
@@ -91,7 +91,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 										target="_blank"
 										rel="noopener noreferrer"
 										icon={ true }
-										onClick={ this.trackAddYourBusinessLinkClick }
+										onClick={ this.trackAddYourBusinessClick }
 									/>
 								),
 							},

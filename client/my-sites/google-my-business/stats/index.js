@@ -21,23 +21,32 @@ import FakeData from './fake-data';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PieChart from 'components/pie-chart';
 import SearchDataType from './search-data-type';
 import SectionHeader from 'components/section-header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
 		actionData: PropTypes.array.isRequired,
 		locationData: GoogleMyBusinessLocationType.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		searchData: PropTypes.arrayOf( SearchDataType ).isRequired,
 		searchDataTotal: PropTypes.number.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		viewData: PropTypes.array.isRequired,
+	};
+
+	trackUpdateListingClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_stats_update_listing_button_click'
+		);
 	};
 
 	render() {
@@ -54,6 +63,11 @@ class GoogleMyBusinessStats extends Component {
 
 		return (
 			<Main wideLayout>
+				<PageViewTracker
+					path="/google-my-business/stats/:site"
+					title="Google My Business > Stats"
+				/>
+
 				<DocumentHead title={ translate( 'Stats' ) } />
 
 				<SidebarNavigation />
@@ -64,6 +78,7 @@ class GoogleMyBusinessStats extends Component {
 					<GoogleMyBusinessLocation location={ locationData }>
 						<Button
 							href="https://www.google.com/business/"
+							onClick={ this.trackUpdateListingClick }
 							target="_blank"
 						>
 							{ translate( 'Update Listing' ) } <Gridicon icon={ 'external' } />
@@ -113,4 +128,6 @@ export default connect( state => ( {
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSelectedSiteSlug( state ),
 	viewData: FakeData.viewData,
-} ) )( localize( GoogleMyBusinessStats ) );
+} ), {
+	recordTracksEvent,
+} )( localize( GoogleMyBusinessStats ) );
