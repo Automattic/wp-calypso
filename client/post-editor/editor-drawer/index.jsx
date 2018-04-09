@@ -169,9 +169,7 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return (
-			<AsyncLoad require="./featured-image" site={ this.props.site } post={ this.props.post } />
-		);
+		return <AsyncLoad require="./featured-image" />;
 	}
 
 	renderExcerpt() {

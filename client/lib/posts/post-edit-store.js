@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, filter, get, isEqual, pickBy, without, omit } from 'lodash';
+import { assign, filter, get, isEqual, pickBy, without } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:posts:post-edit-store' );
 import emitter from 'lib/mixins/emitter';
@@ -134,13 +134,6 @@ function set( attributes ) {
 	}
 
 	updatedPost = assign( {}, _post, attributes );
-
-	// This prevents an unsaved changes dialogue from appearing
-	// on a new post when only the featured image is added then removed.
-	// See #17701 for context.
-	if ( updatedPost.featured_image === '' && ! _savedPost.featured_image && _post.featured_image ) {
-		updatedPost = omit( updatedPost, 'featured_image' );
-	}
 
 	updatedPost = normalize( updatedPost );
 

@@ -147,7 +147,12 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 			 *
 			 * @see https://github.com/Automattic/wp-calypso/pull/13933
 			 */
-			const reduxPostAttributes = pick( postAttributes, [ 'format', 'terms', 'title' ] );
+			const reduxPostAttributes = pick( postAttributes, [
+				'featured_image',
+				'format',
+				'terms',
+				'title',
+			] );
 
 			actions.startEditingNew( site, {
 				content: postToCopy.content,

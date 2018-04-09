@@ -360,12 +360,7 @@ export const PostEditor = createReactClass( {
 								) }
 							</div>
 							<div className="post-editor__inner-content">
-								<FeaturedImage
-									site={ site }
-									post={ this.state.post }
-									maxWidth={ 1462 }
-									hasDropZone={ true }
-								/>
+								<FeaturedImage maxWidth={ 1462 } hasDropZone />
 								<div className="post-editor__header">
 									<EditorTitle onChange={ this.onEditorTitleChange } tabIndex={ 1 } />
 									{ this.state.post && isPage && site ? (
