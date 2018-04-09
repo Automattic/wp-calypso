@@ -16,6 +16,8 @@ import {
 	isGoogleApps,
 	isTheme,
 	isMonthly,
+	isYearly,
+	isBiennially,
 	isPlan,
 	isBundled,
 } from 'lib/products-values';
@@ -162,12 +164,9 @@ export class CartItem extends React.Component {
 		const { cartItem, translate } = this.props;
 
 		let name = this.getProductName();
-		if ( cartItem.bill_period && parseInt( cartItem.bill_period ) !== -1 ) {
-			if ( isMonthly( cartItem ) ) {
-				name += ' - ' + translate( 'monthly subscription' );
-			} else {
-				name += ' - ' + translate( 'annual subscription' );
-			}
+		const subscriptionLength = this.getSubscriptionLength();
+		if ( subscriptionLength ) {
+			name += ' - ' + subscriptionLength;
 		}
 
 		if ( isTheme( cartItem ) ) {
@@ -190,6 +189,24 @@ export class CartItem extends React.Component {
 			</li>
 		);
 		/*eslint-enable wpcalypso/jsx-classname-namespace*/
+	}
+
+	getSubscriptionLength() {
+		const { cartItem, translate } = this.props;
+		const hasBillPeriod = cartItem.bill_period && parseInt( cartItem.bill_period ) !== -1;
+		if ( ! hasBillPeriod ) {
+			return false;
+		}
+
+		if ( isMonthly( cartItem ) ) {
+			return translate( 'monthly subscription' );
+		} else if ( isYearly( cartItem ) ) {
+			return translate( 'annual subscription' );
+		} else if ( isBiennially( cartItem ) ) {
+			return translate( 'biennial subscription' );
+		}
+
+		return false;
 	}
 
 	getProductName() {
