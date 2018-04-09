@@ -29,8 +29,6 @@ import {
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
-	JETPACK_CONNECT_CREATE_ACCOUNT,
-	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_RETRY_AUTH,
@@ -46,6 +44,7 @@ import {
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { makeParser } from 'state/data-layer/wpcom-http/utils';
 
 /**
  * Module constants
@@ -197,28 +196,34 @@ export function retryAuth( url, attemptNumber ) {
 }
 
 export function createAccount( userData ) {
-	return dispatch => {
-		dispatch( recordTracksEvent( 'calypso_jpc_create_account', {} ) );
+	return async dispatch => {
+		dispatch( recordTracksEvent( 'calypso_jpc_create_account' ) );
 
-		dispatch( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
-		wpcom.undocumented().usersNew( userData, ( error, data ) => {
-			if ( error ) {
-				dispatch(
-					recordTracksEvent( 'calypso_jpc_create_account_error', {
-						error: JSON.stringify( error ),
-						error_code: error.code,
-					} )
-				);
-			} else {
-				dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
-			}
-			dispatch( {
-				type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-				data,
-				error,
-				userData,
-			} );
-		} );
+		try {
+			const data = await wpcom.undocumented().usersNew( userData );
+			const bearerToken = makeParser(
+				{
+					type: 'object',
+					required: [ 'bearer_token' ],
+					properties: {
+						bearer_token: { type: 'string' },
+					},
+				},
+				{},
+				( { bearer_token } ) => bearer_token
+			)( data );
+
+			dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
+			return bearerToken;
+		} catch ( error ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jpc_create_account_error', {
+					error_code: error.code,
+					error: JSON.stringify( error ),
+				} )
+			);
+			throw error;
+		}
 	};
 }
 

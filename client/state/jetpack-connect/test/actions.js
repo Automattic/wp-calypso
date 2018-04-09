@@ -14,8 +14,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
-	JETPACK_CONNECT_CREATE_ACCOUNT,
-	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -410,53 +408,29 @@ describe( '#createAccount()', () => {
 
 	beforeEach( jest.restoreAllMocks );
 
-	test( 'should dispatch create action', () => {
-		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew( _, callback ) {
-				callback( null, {} );
-			},
-		} ) );
-
-		const spy = jest.fn();
-		createAccount()( spy );
-		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
-	} );
-
-	test( 'should dispatch receive action with appropriate data', () => {
+	test( 'should resolve with the bearer token', () => {
 		const userData = { username: 'happyuser' };
-		const data = { some: 'data' };
+		const data = { bearer_token: '1234 abcd' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew( _, callback ) {
-				callback( null, data );
+			async usersNew() {
+				return data;
 			},
 		} ) );
 
 		const spy = jest.fn();
-		createAccount( userData )( spy );
-		expect( spy ).toHaveBeenCalledWith( {
-			data,
-			error: null,
-			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			userData,
-		} );
+		expect( createAccount( userData )( spy ) ).resolves.toBe( data.bearer_token );
 	} );
 
-	test( 'should dispatch receive action with error data', () => {
-		const userData = { username: 'saduser' };
-		const error = { code: 'error' };
+	test( 'should reject with the error', () => {
+		const userData = { username: 'happyuser' };
+		const error = { code: 'user_exists' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew( _, callback ) {
-				callback( error, null );
+			async usersNew() {
+				throw error;
 			},
 		} ) );
 
 		const spy = jest.fn();
-		createAccount( userData )( spy );
-		expect( spy ).toHaveBeenCalledWith( {
-			data: null,
-			error,
-			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			userData,
-		} );
+		expect( createAccount( userData )( spy ) ).rejects.toBe( error );
 	} );
 } );
