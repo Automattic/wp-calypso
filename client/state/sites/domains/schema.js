@@ -21,6 +21,7 @@ export const itemsSchema = {
 					googleAppsSubscription: { type: 'object' },
 					hasPrivacyProtection: { type: 'boolean' },
 					hasRegistration: { type: 'boolean' },
+					hasWpcomNameservers: { type: 'boolean' },
 					hasZone: { type: 'boolean' },
 					isPendingIcannVerification: { type: 'boolean' },
 					isPrimary: { type: 'boolean' },

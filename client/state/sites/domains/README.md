@@ -69,6 +69,7 @@ state.sites.domains = {
 				googleAppsSubscription: String,
 				hasPrivacyProtection: Boolean,
 				hasRegistration: Boolean,
+				hasWpcomNameservers: Boolean,
 				hasZone: Boolean,
 				isPendingIcannVerification: Boolean,
 				manualTransferRequired: Boolean,
@@ -84,7 +85,7 @@ state.sites.domains = {
 			}
 		]
 	},
-	
+
 	requesting: [
 		[ siteId ]: Boolean
 	],
