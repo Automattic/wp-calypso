@@ -29,7 +29,10 @@ import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
-import { errorNotice as errorNoticeAction } from 'state/notices/actions';
+import {
+	errorNotice as errorNoticeAction,
+	warningNotice as warningNoticeAction,
+} from 'state/notices/actions';
 import { isEnabled } from 'config';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -52,11 +55,17 @@ export class JetpackSignup extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
+	static initialState = Object.freeze( {
 		isCreatingAccount: false,
 		newUsername: null,
 		bearerToken: null,
-	};
+	} );
+
+	state = this.constructor.initialState;
+
+	resetState() {
+		this.setState( this.constructor.initialState );
+	}
 
 	componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
@@ -134,9 +143,21 @@ export class JetpackSignup extends Component {
 	 * @param {?Object} error Error result
 	 */
 	handleUserCreationError = error => {
-		const { errorNotice, translate } = this.props;
+		const { errorNotice, translate, warningNotice } = this.props;
 		debug( 'Signup error: %o', error );
-		this.setState( { isCreatingAccount: false } );
+		this.resetState();
+		if ( error && 'user_exists' === error.code ) {
+			warningNotice(
+				translate(
+					'The email already exists. Log in to connect your accounts or choose another Google profile.'
+				),
+
+				{
+					button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,
+				}
+			);
+			return;
+		}
 		errorNotice(
 			translate( 'There was a problem creating your account. Please contact support.' )
 		);
@@ -212,5 +233,6 @@ export default connect( null, {
 	createAccount: createAccountAction,
 	createSocialAccount: createSocialAccountAction,
 	errorNotice: errorNoticeAction,
+	warningNotice: warningNoticeAction,
 	recordTracksEvent: recordTracksEventAction,
 } )( localize( JetpackSignup ) );
