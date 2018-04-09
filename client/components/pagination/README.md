@@ -9,7 +9,7 @@ import Pagination from 'components/pagination';
 
 render: function() {
 	return (
-		<Pagination compact={ <Boolean> } page={ <Number> } perPage={ <Number> } total={ <Number> } pageClick={ <Function> } />;	
+		<Pagination compact={ <Boolean> } page={ <Number> } perPage={ <Number> } total={ <Number> } pageClick={ <Function> } />;
 	);
 }
 ```
@@ -23,3 +23,5 @@ render: function() {
 
 #### Optional Props
 * `compact`: Render a smaller version
+* `nextLabel`: Overrides the "Next" button label
+* `prevLabel`: Overrides the "Previous" button label
