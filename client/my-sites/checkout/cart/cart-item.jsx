@@ -23,6 +23,7 @@ import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { removeItem } from 'lib/upgrades/actions';
 import { localize } from 'i18n-calypso';
+import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
 
@@ -67,28 +68,46 @@ export class CartItem extends React.Component {
 		const { cartItem, translate } = this.props;
 		const { cost, currency } = cartItem;
 
-		if ( typeof cost === 'undefined' ) {
-			return null;
-		}
-
-		if ( ! isPlan( cartItem ) ) {
-			return null;
-		}
-
-		if ( cost <= 0 ) {
-			return null;
-		}
-
-		if ( isMonthly( cartItem ) ) {
+		if ( ! this.monthlyPriceApplies() ) {
 			return null;
 		}
 
 		return translate( '(%(monthlyPrice)f %(currency)s x 12 months)', {
 			args: {
-				monthlyPrice: +( cost / 12 ).toFixed( currency === 'JPY' ? 0 : 2 ),
+				monthlyPrice: calculateMonthlyPriceForPlan( cartItem.product_slug, cost ).toFixed(
+					currency === 'JPY' ? 0 : 2
+				),
 				currency,
 			},
 		} );
+	}
+
+	monthlyPriceApplies() {
+		const { cartItem } = this.props;
+		const { cost } = cartItem;
+
+		if ( ! isPlan( cartItem ) ) {
+			return false;
+		}
+
+		if ( isMonthly( cartItem ) ) {
+			return false;
+		}
+
+		const hasValidPrice = typeof cost !== 'undefined' && cost > 0;
+		if ( ! hasValidPrice ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	calcMonthlyBillingDetails() {
+		const { cost, product_slug } = this.props.cartItem;
+		return {
+			monthlyPrice: calculateMonthlyPriceForPlan( product_slug, cost ),
+			months: getBillingMonthsForPlan( product_slug ),
+		};
 	}
 
 	getDomainPlanPrice( cartItem ) {
