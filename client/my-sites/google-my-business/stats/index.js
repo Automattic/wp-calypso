@@ -132,17 +132,13 @@ const searchDataTotal = searchData.reduce( dataSummer, 0 );
 const viewData = range( 19, 30 ).map( day => ( {
 	value: random( 10, 90 ),
 	nestedValue: random( 5, 80 ),
-	label: translate( 'Mar %(day)d', {
-		args: { day },
-	} ),
+	label: `Mar ${ day }`,
 } ) );
 
 const actionData = range( 19, 30 ).map( day => ( {
 	value: random( 10, 90 ),
 	nestedValue: random( 5, 80 ),
-	label: translate( 'Mar %(day)d', {
-		args: { day },
-	} ),
+	label: `Mar ${ day }`,
 } ) );
 
 const locationData = {
