@@ -78,8 +78,8 @@ function hasIncludedDomain( purchase ) {
 	return Boolean( purchase.includedDomain );
 }
 
-function hasPrivacyProtection( purchase ) {
-	return purchase.hasPrivacyProtection;
+function hasPrivacyProtectionProduct( purchase ) {
+	return purchase.hasPrivacyProtectionProduct;
 }
 
 /**
@@ -327,7 +327,7 @@ export {
 	getPurchasesBySite,
 	getSubscriptionEndDate,
 	hasIncludedDomain,
-	hasPrivacyProtection,
+	hasPrivacyProtectionProduct,
 	isCancelable,
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,

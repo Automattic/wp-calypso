@@ -72,7 +72,7 @@ export class TransferDomain extends Component {
 		transferItems.push(
 			cartItems.domainTransfer( {
 				domain,
-				extra: { privacy_available: supportsPrivacy },
+				extra: { private_registration_product_purchase_allowed: supportsPrivacy },
 			} )
 		);
 

@@ -210,7 +210,7 @@ describe( 'reducer', () => {
 				user_id: userId,
 				amount: 2200,
 				error: null,
-				has_private_registration: false,
+				has_private_registration_product: false,
 			},
 		} );
 
@@ -222,7 +222,7 @@ describe( 'reducer', () => {
 					user_id: userId,
 					amount: 2200,
 					error: null,
-					has_private_registration: false,
+					has_private_registration_product: false,
 				},
 				{
 					ID: '4',

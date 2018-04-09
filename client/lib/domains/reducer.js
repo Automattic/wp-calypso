@@ -47,7 +47,7 @@ function reducer( state, payload ) {
 	var { action } = payload,
 		{ type, siteId } = action,
 		domainData,
-		privateDomain;
+		privacyEnabled;
 
 	switch ( type ) {
 		case UpgradesActionTypes.DOMAINS_INITIALIZE:
@@ -104,7 +104,7 @@ function reducer( state, payload ) {
 
 		case UpgradesActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.siteId, action.domainName, {
-				privateDomain: true,
+				privacyEnabled: true,
 			} );
 
 		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
@@ -112,10 +112,10 @@ function reducer( state, payload ) {
 				domains: getBySite( state, action.siteId ),
 				selectedDomainName: action.domainName,
 			} );
-			privateDomain = ! action.disablePrivacy && domainData.privateDomain;
+			privacyEnabled = ! action.disablePrivacy && domainData.privacyEnabled;
 
 			return updateDomainState( state, action.siteId, action.domainName, {
-				privateDomain,
+				privacyEnabled,
 			} );
 
 		default:

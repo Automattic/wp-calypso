@@ -72,7 +72,7 @@ function reducer( state, payload ) {
 					selectedDomainName: action.domainName,
 				} ),
 				locked = ! action.unlock && data.locked,
-				pendingTransfer = ! domainData.privateDomain && ! locked;
+				pendingTransfer = ! domainData.privacyEnabled && ! locked;
 
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {

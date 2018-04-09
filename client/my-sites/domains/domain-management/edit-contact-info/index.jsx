@@ -68,7 +68,7 @@ class EditContactInfo extends React.Component {
 			return <PendingWhoisUpdateCard />;
 		}
 
-		if ( ! includes( [ OPENHRS, OPENSRS ], domain.registrar ) && domain.privateDomain ) {
+		if ( ! includes( [ OPENHRS, OPENSRS ], domain.registrar ) && domain.privacyEnabled ) {
 			return <EditContactInfoPrivacyEnabledCard />;
 		}
 

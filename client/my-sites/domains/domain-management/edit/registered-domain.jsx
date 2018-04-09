@@ -73,11 +73,11 @@ const RegisteredDomain = createReactClass( {
 
 	getPrivacyProtection() {
 		const {
-				hasPrivacyProtection,
-				privateDomain,
-				privacyAvailable,
+				hasPrivacyProtectionProduct,
 				name,
 				pendingTransfer,
+				privacyEnabled,
+				privacyProductAvailable,
 			} = this.props.domain,
 			{ slug } = this.props.selectedSite,
 			{ translate } = this.props,
@@ -85,7 +85,7 @@ const RegisteredDomain = createReactClass( {
 			transferPath = domainManagementTransferOut( slug, name );
 		let label;
 
-		if ( ! privacyAvailable ) {
+		if ( ! privacyProductAvailable ) {
 			return false;
 		}
 
@@ -97,8 +97,8 @@ const RegisteredDomain = createReactClass( {
 					context: 'An icon label when domain is pending transfer.',
 				} ),
 			} );
-		} else if ( hasPrivacyProtection ) {
-			if ( privateDomain ) {
+		} else if ( hasPrivacyProtectionProduct ) {
+			if ( privacyEnabled ) {
 				label = this.getLabel( {
 					status: 'is-success',
 					icon: 'lock',
@@ -190,7 +190,7 @@ const RegisteredDomain = createReactClass( {
 	},
 
 	contactsPrivacyNavItem() {
-		const { privacyAvailable } = this.props.domain;
+		const { privacyProductAvailable } = this.props.domain;
 		const { translate } = this.props;
 		const path = domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
@@ -199,7 +199,7 @@ const RegisteredDomain = createReactClass( {
 
 		return (
 			<VerticalNavItem path={ path }>
-				{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
+				{ privacyProductAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
 			</VerticalNavItem>
 		);
 	},

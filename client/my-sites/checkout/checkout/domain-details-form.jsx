@@ -135,8 +135,8 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	allDomainProductsSupportPrivacy() {
-		return cartItems.hasOnlyDomainProductsWithPrivacySupport( this.props.cart );
+	allDomainProductsSupportPrivacyProduct() {
+		return cartItems.hasOnlyDomainProductsWithPrivacyProductSupport( this.props.cart );
 	}
 
 	allDomainItemsHavePrivacy() {
@@ -276,7 +276,7 @@ export class DomainDetailsForm extends PureComponent {
 		const renderPrivacy =
 			( cartItems.hasDomainRegistration( this.props.cart ) ||
 				cartItems.hasTransferProduct( this.props.cart ) ) &&
-			this.allDomainProductsSupportPrivacy();
+			this.allDomainProductsSupportPrivacyProduct();
 
 		return (
 			<div>
