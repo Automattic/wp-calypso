@@ -7,8 +7,7 @@ import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, translate } from 'i18n-calypso';
-import { random, range } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import Chart from 'components/chart';
 import DocumentHead from 'components/data/document-head';
+import FakeData from './fake-data';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import Main from 'components/main';
@@ -77,8 +77,8 @@ class GoogleMyBusinessStats extends Component {
 					<Card>
 						<PieChart
 							data={ searchData }
-							title={ translate( '%(searchDataTotal)d Total Searches', {
-								args: { searchDataTotal },
+							title={ translate( '%(total)d Total Searches', {
+								args: { total: searchDataTotal },
 							} ) }
 						/>
 					</Card>
@@ -108,58 +108,12 @@ class GoogleMyBusinessStats extends Component {
 	}
 }
 
-const dataSummer = ( prevResult, datum ) => prevResult + datum.value;
-
-const searchData = [
-	{
-		name: translate( 'Direct' ),
-		description: translate(
-			'Customers who find your listing searching for you business name or address'
-		),
-		value: random( 300, 500 ),
-	},
-	{
-		name: translate( 'Discovery' ),
-		description: translate(
-			'Customers who find your listing searching for a category, product, or service'
-		),
-		value: random( 200, 400 ),
-	},
-];
-
-const searchDataTotal = searchData.reduce( dataSummer, 0 );
-
-const viewData = range( 19, 30 ).map( day => ( {
-	value: random( 10, 90 ),
-	nestedValue: random( 5, 80 ),
-	label: `Mar ${ day }`,
-} ) );
-
-const actionData = range( 19, 30 ).map( day => ( {
-	value: random( 10, 90 ),
-	nestedValue: random( 5, 80 ),
-	label: `Mar ${ day }`,
-} ) );
-
-const locationData = {
-	id: 12345,
-	address: [
-		'Centre Commercial Cap 3000',
-		'Avenue Eugene Donadei',
-		'06700 Saint-Laurent-du-Var',
-		'France',
-	],
-	name: 'Starbucks',
-	photo: 'http://www.shantee.net/wp-content/uploads/2016/02/cookies-internet-1030x684.jpg',
-	verified: true,
-};
-
 export default connect( state => ( {
-	actionData,
-	locationData,
-	searchData,
-	searchDataTotal,
+	actionData: FakeData.actionData,
+	locationData: FakeData.locationData,
+	searchData: FakeData.searchData,
+	searchDataTotal: FakeData.searchDataTotal,
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSelectedSiteSlug( state ),
-	viewData,
+	viewData: FakeData.viewData,
 } ) )( localize( GoogleMyBusinessStats ) );
