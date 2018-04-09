@@ -6,7 +6,6 @@
  * Internal dependencies
  */
 import * as actions from '../actions';
-import * as loginActions from 'state/login/actions';
 import useNock from 'test/helpers/use-nock';
 import wpcom from 'lib/wp';
 import {
@@ -445,18 +444,30 @@ describe( '#createSocialAccount()', () => {
 
 	test( 'should reject with the error', async () => {
 		const error = { message: 'An error message', code: 'an_error_code' };
-		jest.spyOn( loginActions, 'createSocialUser' ).mockImplementation( () => async () => {
-			throw error;
-		} );
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			async usersSocialNew() {
+				throw error;
+			},
+		} ) );
 
 		await expect( createSocialAccount()( () => {} ) ).rejects.toBe( error );
 	} );
 
 	test( 'should resolve with the username and bearer token', async () => {
-		const result = { username: 'a_happy_user', bearerToken: 'foobar' };
-		// eslint-disable-next-line no-multi-spaces
-		jest.spyOn( loginActions, 'createSocialUser' ).mockImplementation( () => async () => result  );
+		const bearerToken = 'foobar';
+		const username = 'a_happy_user';
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			async usersSocialNew() {
+				return {
+					bearer_token: bearerToken,
+					username,
+				};
+			},
+		} ) );
 
-		await expect( createSocialAccount()( () => {} ) ).resolves.toEqual( result );
+		await expect( createSocialAccount()( () => {} ) ).resolves.toEqual( {
+			bearerToken,
+			username,
+		} );
 	} );
 } );

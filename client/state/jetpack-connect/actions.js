@@ -14,7 +14,6 @@ import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { clearPlan, persistSession } from 'jetpack-connect/persistence-utils';
-import { createSocialUser } from 'state/login/actions';
 import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
@@ -219,12 +218,12 @@ export function createSocialAccount( socialInfo ) {
 			 * The signup flow is required and affects some post signup activity.
 			 * `account` should be safe until patch lands.
 			 */
-			const { username, bearerToken } = await createSocialUser(
-				socialInfo,
-				'account' /* 'jetpack-connect' */
-			)( dispatch );
+			const { username, bearer_token } = await wpcom.undocumented().usersSocialNew( {
+				...socialInfo,
+				signup_flow_name: 'account' /* 'jetpack-connect' */,
+			} );
 			dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
-			return { username, bearerToken };
+			return { username, bearerToken: bearer_token };
 		} catch ( error ) {
 			dispatch(
 				recordTracksEvent( 'calypso_jpc_social_createaccount_error', {
