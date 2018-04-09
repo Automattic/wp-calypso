@@ -9,6 +9,7 @@ This component renders a dataset as a pie chart. A separate `PieChartLegend` sub
 	* **name** - (required) (String) Name to represent the datum
 	* **description** - (optional) (String) A longer description of the datum 
 * **title** — (optional) (String) Title for the chart
+* **legendBelowChart** - (optional) (Boolean) Choose between drawing the legend below or to the right of the chart. Defaults to drawing the legend below the chart, or `true`
 
 ## Usage
 

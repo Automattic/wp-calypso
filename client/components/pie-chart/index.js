@@ -19,6 +19,11 @@ class PieChart extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
 		title: PropTypes.string,
+		legendBelowChart: PropTypes.boolean,
+	};
+
+	static defaultProps = {
+		legendBelowChart: true,
 	};
 
 	constructor( props ) {
