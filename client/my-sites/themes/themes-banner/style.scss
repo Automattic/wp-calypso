@@ -1,7 +1,7 @@
 .themes-banner {
 	$image_max_width: 410px;
 
-	display: block;
+	display: none;
 	position: relative;
 	background: no-repeat $blue-medium;
 	color: white !important;
@@ -66,5 +66,9 @@
 
 	.button.themes-banner__cta {
 		margin-top: 1em;
+	}
+
+	@media(min-width:769px) {
+		display: block;
 	}
 }
