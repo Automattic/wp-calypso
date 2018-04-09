@@ -10,7 +10,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, forEach, intersection, snakeCase } from 'lodash';
+import { get, includes, pick, flatten, forEach, intersection, snakeCase } from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -79,6 +79,34 @@ const getAssets = ( () => {
 	};
 } )();
 
+const getFilesForChunk = chunkName => {
+	const assets = getAssets();
+
+	function getChunkByName( _chunkName ) {
+		return assets.chunks.find( chunk => chunk.names.some( name => name === _chunkName ) );
+	}
+
+	function getChunkById( chunkId ) {
+		return assets.chunks.find( chunk => chunk.id === chunkId );
+	}
+
+	const chunk = getChunkByName( chunkName );
+	if ( ! chunk ) {
+		console.warn( 'cannot find the chunk ' + chunkName );
+		console.warn( 'available chunks:' );
+		assets.chunks.forEach( c => {
+			console.log( '    ' + c.id + ': ' + c.names.join( ',' ) );
+		} );
+		return [];
+	}
+
+	const allTheFiles = chunk.files.concat(
+		flatten( chunk.siblings.map( sibling => getChunkById( sibling ).files ) )
+	);
+
+	return allTheFiles;
+};
+
 /**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
@@ -87,10 +115,10 @@ const getAssets = ( () => {
  **/
 function generateStaticUrls() {
 	const urls = { ...staticFilesUrls };
-	const assets = getAssets();
+	const assets = getAssets().assetsByChunkName;
 
 	forEach( assets, ( asset, name ) => {
-		urls[ name ] = asset.js;
+		urls[ name ] = asset;
 	} );
 
 	return urls;
@@ -183,7 +211,10 @@ function getDefaultContext( request ) {
 		isDebug,
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
-		jsFile: 'build',
+		entrypoint: getAssets().entrypoints.build.assets.filter(
+			asset => ! asset.startsWith( 'manifest' )
+		),
+		manifest: getAssets().manifests.manifest,
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
@@ -537,7 +568,7 @@ module.exports = function() {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
 
 					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context.chunk = section.name;
+						req.context.chunkFiles = getFilesForChunk( section.name );
 					}
 
 					if ( section.secondary && req.context ) {
