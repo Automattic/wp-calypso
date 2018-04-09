@@ -417,8 +417,7 @@ describe( '#createAccount()', () => {
 			},
 		} ) );
 
-		const spy = jest.fn();
-		await expect( createAccount( userData )( spy ) ).resolves.toEqual( {
+		await expect( createAccount( userData )( () => {} ) ).resolves.toEqual( {
 			username: userData.username,
 			bearerToken: data.bearer_token,
 		} );
