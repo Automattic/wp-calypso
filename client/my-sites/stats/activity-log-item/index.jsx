@@ -171,7 +171,6 @@ class ActivityLogItem extends Component {
 			dismissBackup,
 			dismissRewind,
 			gmtOffset,
-			isDiscarded,
 			mightBackup,
 			mightRewind,
 			moment,
@@ -180,9 +179,7 @@ class ActivityLogItem extends Component {
 		} = this.props;
 		const { activityIcon, activityStatus, activityTs } = activity;
 
-		const classes = classNames( 'activity-log-item', className, {
-			'is-discarded': isDiscarded,
-		} );
+		const classes = classNames( 'activity-log-item', className );
 
 		const adjustedTime = adjustMoment( { gmtOffset, moment: moment.utc( activityTs ), timezone } );
 

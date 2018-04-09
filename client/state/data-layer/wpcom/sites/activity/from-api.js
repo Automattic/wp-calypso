@@ -62,7 +62,6 @@ export function processItem( item ) {
 			activityGroup: ( item.name || '' ).split( '__', 1 )[ 0 ], // split always returns at least one item
 			activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
 			activityId: item.activity_id,
-			activityIsDiscarded: item.is_discarded,
 			activityIsRewindable: item.is_rewindable,
 			activityName: item.name,
 			activityTitle: item.summary,
