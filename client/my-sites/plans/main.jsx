@@ -13,7 +13,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
@@ -24,7 +23,6 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/domains/navigation';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getIntervalTypeFromCurrentPlan } from 'state/plans/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 
 class Plans extends React.Component {
@@ -113,21 +111,13 @@ class Plans extends React.Component {
 	}
 }
 
-export const mapStateToProps = ( state, ownProps ) => {
+export const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
 	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
-	let intervalType = ownProps.intervalType;
-	if ( ! intervalType && config.isEnabled( 'upgrades/2-year-plans' ) ) {
-		intervalType = getIntervalTypeFromCurrentPlan( state, selectedSiteId );
-		if ( intervalType === 'monthly' ) {
-			intervalType = null;
-		}
-	}
 
 	return {
-		intervalType,
 		selectedSite: getSelectedSite( state ),
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 	};
