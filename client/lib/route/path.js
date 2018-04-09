@@ -18,6 +18,7 @@ const statsLocationsByTab = {
 	month: '/stats/month/',
 	year: '/stats/year/',
 	insights: '/stats/insights/',
+	googleMyBusiness: '/google-my-business/stats/',
 };
 
 export function getSiteFragment( path ) {

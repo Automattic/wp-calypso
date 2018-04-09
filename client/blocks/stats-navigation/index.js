@@ -30,17 +30,29 @@ class StatsNavigation extends Component {
 
 	isValidItem = item => {
 		const { isStore, isJetpack, siteId } = this.props;
+
 		switch ( item ) {
 			case 'store':
 				return isStore;
+
 			case 'activity':
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
+
 				if ( isJetpack ) {
 					return true;
 				}
+
 				return config.isEnabled( 'activity-log-simple-sites' );
+
+			case 'googleMyBusiness':
+				if ( 'undefined' === typeof siteId ) {
+					return false;
+				}
+
+				return config.isEnabled( 'google-my-business' );
+
 			default:
 				return true;
 		}

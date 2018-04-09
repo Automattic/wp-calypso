@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
 
 export const intervals = [
@@ -14,8 +13,29 @@ export const intervals = [
 ];
 
 export const navItems = {
-	traffic: { label: translate( 'Traffic' ), path: '/stats', showIntervals: true },
-	insights: { label: translate( 'Insights' ), path: '/stats/insights', showIntervals: false },
-	activity: { label: translate( 'Activity' ), path: '/stats/activity', showIntervals: false },
-	store: { label: translate( 'Store' ), path: '/store/stats/orders', showIntervals: true },
+	traffic: {
+		label: translate( 'Traffic' ),
+		path: '/stats',
+		showIntervals: true,
+	},
+	insights: {
+		label: translate( 'Insights' ),
+		path: '/stats/insights',
+		showIntervals: false,
+	},
+	activity: {
+		label: translate( 'Activity' ),
+		path: '/stats/activity',
+		showIntervals: false,
+	},
+	store: {
+		label: translate( 'Store' ),
+		path: '/store/stats/orders',
+		showIntervals: true,
+	},
+	googleMyBusiness: {
+		label: translate( 'Google My Business' ),
+		path: '/google-my-business/stats',
+		showIntervals: false,
+	},
 };

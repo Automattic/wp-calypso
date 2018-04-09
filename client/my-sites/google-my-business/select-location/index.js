@@ -12,21 +12,22 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import GoogleMyBusinessLocation from './location';
+import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
+import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import HeaderCake from 'components/header-cake';
-import LocationType from './location-type';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
-		locations: PropTypes.arrayOf( LocationType ).isRequired,
+		locations: PropTypes.arrayOf( GoogleMyBusinessLocationType ).isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -36,14 +37,20 @@ class GoogleMyBusinessSelectLocation extends Component {
 		page.back( `/google-my-business/new/${ this.props.siteSlug }` );
 	};
 
-	trackAddYourBusinessLinkClick = () => {
+	trackAddYourBusinessClick = () => {
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_location_add_your_business_link_click'
 		);
 	};
 
+	trackConnectLocationClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_location_connect_location_button_click'
+		);
+	};
+
 	render() {
-		const { locations, translate } = this.props;
+		const { locations, translate, siteSlug } = this.props;
 
 		return (
 			<Main className="gmb-select-location" wideLayout>
@@ -62,11 +69,15 @@ class GoogleMyBusinessSelectLocation extends Component {
 					{ translate( 'Select the listing you would like to connect to:' ) }
 				</CompactCard>
 
-				{ locations.map( ( location ) => (
-					<GoogleMyBusinessLocation
-						key={ location.id }
-						location={ location }
-					/>
+				{ locations.map( location => (
+					<GoogleMyBusinessLocation isCompact key={ location.id } location={ location }>
+						<Button
+							href={ `/google-my-business/stats/${ siteSlug }` }
+							onClick={ this.trackConnectLocationClick }
+						>
+							{ translate( 'Connect Location' ) }
+						</Button>
+					</GoogleMyBusinessLocation>
 				) ) }
 
 				<Card className="gmb-select-location__add">
@@ -80,7 +91,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 										target="_blank"
 										rel="noopener noreferrer"
 										icon={ true }
-										onClick={ this.trackAddYourBusinessLinkClick }
+										onClick={ this.trackAddYourBusinessClick }
 									/>
 								),
 							},
@@ -109,11 +120,7 @@ export default connect(
 			},
 			{
 				id: 67890,
-				address: [
-					'234 Piedmont Drive',
-					'Talihassee, FL 34342',
-					'USA',
-				],
+				address: [ '234 Piedmont Drive', 'Talihassee, FL 34342', 'USA' ],
 				name: 'Pinch Bakeshop',
 				verified: false,
 			},

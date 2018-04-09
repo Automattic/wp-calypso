@@ -35,7 +35,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		page.back( `/stats/day/${ this.props.siteSlug }` );
 	};
 
-	trackCreateMyListingClick = () => {
+	trackCreateYourListingClick = () => {
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_business_type_create_my_listing_button_click'
 		);
@@ -47,7 +47,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		);
 	};
 
-	trackGoogleMyBusinessLinkClick = () => {
+	trackGoogleMyBusinessClick = () => {
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_business_type_google_my_business_link_click'
 		);
@@ -83,7 +83,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					comment: 'Call to Action to add a business listing to Google My Business',
 				} ) }
 				buttonPrimary={ true }
-				buttonOnClick={ this.trackCreateMyListingClick }
+				buttonOnClick={ this.trackCreateYourListingClick }
 				{ ...buttonProps }
 			/>
 		);
@@ -141,7 +141,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 												target="_blank"
 												rel="noopener noreferrer"
 												icon={ true }
-												onClick={ this.trackGoogleMyBusinessLinkClick }
+												onClick={ this.trackGoogleMyBusinessClick }
 											/>
 										),
 									},

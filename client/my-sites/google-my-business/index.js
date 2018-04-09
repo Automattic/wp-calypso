@@ -11,7 +11,7 @@ import page from 'page';
 import config from 'config';
 import { makeLayout } from 'controller';
 import { navigation, sites, siteSelection } from 'my-sites/controller';
-import { newAccount, selectBusinessType, selectLocation } from './controller';
+import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
 
 export default function( router ) {
 	router(
@@ -61,6 +61,21 @@ export default function( router ) {
 			'/google-my-business/select-location/:site',
 			siteSelection,
 			selectLocation,
+			navigation,
+			makeLayout,
+		);
+
+		router(
+			'/google-my-business/stats',
+			siteSelection,
+			sites,
+			makeLayout,
+		);
+
+		router(
+			'/google-my-business/stats/:site',
+			siteSelection,
+			stats,
 			navigation,
 			makeLayout,
 		);
