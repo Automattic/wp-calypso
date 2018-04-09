@@ -133,8 +133,8 @@ export function getStatsPathForTab( tab, siteIdOrSlug ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );
 	}
 
-	if ( ( tab === 'insights' || tab === 'googleMyBusiness' ) && ! siteIdOrSlug ) {
-		// Insights & GMB only supports single-site - Link to an overview for now
+	if ( tab === 'insights' && ! siteIdOrSlug ) {
+		// Insights only supports single-site - Link to an overview for now
 		return getStatsDefaultSitePage();
 	}
 
