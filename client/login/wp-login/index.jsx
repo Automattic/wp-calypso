@@ -15,12 +15,10 @@ import { startCase } from 'lodash';
  */
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import GlobalNotices from 'components/global-notices';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
 import LoginLinks from './login-links';
 import Main from 'components/main';
-import notices from 'notices';
 import PrivateSite from './private-site';
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
@@ -177,8 +175,6 @@ export class Login extends React.Component {
 						title={ translate( 'Log In' ) }
 						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
 					/>
-
-					<GlobalNotices id="notices" notices={ notices.list } />
 
 					<div>
 						<div className="wp-login__container">{ this.renderContent() }</div>

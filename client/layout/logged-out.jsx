@@ -13,10 +13,12 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
-import { getSection, masterbarIsVisible } from 'state/ui/selectors';
+import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {
@@ -68,6 +70,12 @@ const LayoutLoggedOut = ( {
 			{ masterbar }
 
 			<div id="content" className="layout__content">
+				<GlobalNotices
+					id="notices"
+					notices={ notices.list }
+					forcePinned={ 'post' === section.name }
+				/>
+
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
