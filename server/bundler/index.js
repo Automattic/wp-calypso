@@ -85,21 +85,20 @@ function middleware( app ) {
 	app.use( waitForCompiler );
 	app.use(
 		webpackMiddleware( compiler, {
-			mode: 'development',
 			publicPath: '/calypso/',
 			stats: {
 				colors: true,
 				hash: true,
 				version: false,
 				timings: true,
-				assets: true,
-				chunks: false,
+				assets: false,
+				chunks: true,
+				chunkModules: false,
 				modules: false,
 				cached: false,
 				reasons: false,
 				source: false,
 				errorDetails: true,
-				entrypoints: true,
 			},
 		} )
 	);
