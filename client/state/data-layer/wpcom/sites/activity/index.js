@@ -186,7 +186,7 @@ export const receiveActivityLog = ( action, data ) => {
 		data.totalItems,
 		data.oldestItemTs,
 		action.params,
-		{ doMerge: action.params.hasOwnProperty( 'searchAfter' ) }
+		{ doMerge: action.params && action.params.hasOwnProperty( 'searchAfter' ) }
 	);
 
 	// if we have no further pages to fetch (nothing more to do)

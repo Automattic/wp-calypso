@@ -426,9 +426,11 @@ class ActivityLog extends Component {
 						) ) }
 						<Pagination
 							key="activity-list-pagination"
+							nextLabel={ translate( 'Older' ) }
 							page={ this.state.currentPage }
 							pageClick={ this.changePage }
 							perPage={ PAGE_SIZE }
+							prevLabel={ translate( 'Newer' ) }
 							total={ logs.length }
 						/>
 					</section>
