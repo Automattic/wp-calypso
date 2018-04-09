@@ -43,10 +43,17 @@ function streamKeySuffix( streamKey ) {
 const PER_PAGE = 6;
 
 export const getQueryString = ( extras = {} ) => {
-	const meta = 'post,discover_original_post';
+	const meta = [ 'post', 'discover_original_post' ].join( ',' );
 	return { orderBy: 'date', meta, ...extras };
 };
 const defaultQueryFn = getQueryString;
+
+function getQueryStringForPoll( extras ) {
+	return {
+		orderBy: 'date',
+		fields: [ 'ID', 'site_ID', 'date', 'feed_ID', 'feed_item_ID', 'global_ID' ].join( ',' ),
+	};
+}
 
 // Each object is a composed of:
 //   path: a function that given the action, returns The API path to hit
@@ -59,7 +66,7 @@ const streamApis = {
 		path: () => '/read/search',
 		query: ( pageHandle, { streamKey } ) => {
 			const { sort, q } = JSON.parse( streamKeySuffix( streamKey ) );
-			return { orderBy: sort, q, ...pageHandle };
+			return { orderBy: sort, q, ...pageHandle, sort };
 		},
 	},
 	feed: {

@@ -48,6 +48,7 @@ import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { reduxGetState } from 'lib/redux-bridge';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { viewStream } from 'state/reader/watermarks/actions';
+import Interval, { EVERY_MINUTE } from 'lib/interval';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -96,6 +97,7 @@ class ReaderStream extends React.Component {
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
 		}
+
 		if ( this.props.shouldRequestRecs ) {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
@@ -286,6 +288,11 @@ class ReaderStream extends React.Component {
 		}
 	};
 
+	poll() {
+		const { streamKey } = this.props;
+		this.props.requestPage( { streamKey, isPoll: true } );
+	}
+
 	fetchNextPage = options => {
 		const { streamKey, stream } = this.props;
 		if ( options.triggeredByScroll ) {
@@ -402,6 +409,7 @@ class ReaderStream extends React.Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
+				<Interval onTick={ this.poll } period={ EVERY_MINUTE } />
 				{ this.props.isMain &&
 					this.props.showMobileBackToSidebar && (
 						<MobileBackToSidebar>

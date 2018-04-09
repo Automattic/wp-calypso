@@ -26,7 +26,7 @@ import {
  * @param  {object} query    The query for posts. Parameters vary by stream type.
  * @return {object}          The action object
  */
-export function requestPage( { streamKey, pageHandle } ) {
+export function requestPage( { streamKey, pageHandle, isPoll } ) {
 	const indexOfColon = streamKey.indexOf( ':' );
 	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
 	return {
@@ -35,6 +35,7 @@ export function requestPage( { streamKey, pageHandle } ) {
 			streamKey,
 			pageHandle,
 			streamType,
+			isPoll,
 		},
 	};
 }
