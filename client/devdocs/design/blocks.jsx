@@ -58,6 +58,7 @@ import PostShare from 'blocks/post-share/docs/example';
 import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
 import DismissibleCard from 'blocks/dismissible-card/docs/example';
 import PostEditButton from 'blocks/post-edit-button/docs/example';
+import SubscriptionLengthPicker from 'blocks/subscription-length-picker/docs/example';
 import PostComment from 'blocks/comments/docs/post-comment-example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
@@ -177,6 +178,7 @@ export default class AppComponents extends React.Component {
 					<ReaderImportButton readmeFilePath="reader-import-button" />
 					<SharingPreviewPane />
 					<SimplePaymentsDialog />
+					<SubscriptionLengthPicker />
 					<ReaderShare readmeFilePath="reader-share" />
 					<ReaderEmailSettings readmeFilePath="reader-email-settings" />
 					<UploadImage readmeFilePath="upload-image" />
