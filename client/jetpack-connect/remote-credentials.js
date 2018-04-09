@@ -191,7 +191,6 @@ export class OrgCredentialsForm extends Component {
 					/>
 				</div>
 				<div className="jetpack-connect__password-container">
-					{ isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" /> }
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					<div className="jetpack-connect__password-form">
 						<Gridicon size={ 24 } icon="lock" />
@@ -279,12 +278,15 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	render() {
+		const { isSubmitting } = this.state;
+
 		return (
 			<MainWrapper>
 				{ this.renderHeadersText() }
 				<Card className="jetpack-connect__site-url-input-container">
 					<form onSubmit={ this.handleSubmit }>
 						{ this.formFields() }
+						{ isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" /> }
 						{ this.formFooter() }
 					</form>
 				</Card>

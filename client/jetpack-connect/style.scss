@@ -649,7 +649,7 @@
 	.spinner {
 		z-index: z-index(
 			'root',
-			'.jetpack-connect__password-container .jetpack-connect__creds-form-spinner'
+			'.jetpack-connect__site-url-input-container .jetpack-connect__creds-form-spinner'
 		);
 	}
 }
