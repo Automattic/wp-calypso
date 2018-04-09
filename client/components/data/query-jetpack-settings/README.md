@@ -1,7 +1,7 @@
 Query Jetpack Settings
-================
+======================
 
-`<QueryJetpackSettings />` is a React component used in managing network requests for settings of a specific Jetpack site.
+`<QueryJetpackSettings />` is a React component used in managing network requests for Jetpack Settings.
 
 ## Usage
 
@@ -9,24 +9,40 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
-import MyJetpackSettingsListItem from './list-item';
+import { connect } from 'react-redux';
+import { map } from 'lodash';
 
-export default function MyJetpackSettingsList( { jetpackSettings } ) {
+import { getJetpackOnboardingSettings } from 'state/selectors';
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+
+function MyJetpackSettings( { settings, siteId } ) {
 	return (
 		<div>
-			<QueryJetpackSettings siteId={ 12345678 } />
-			{ jetpackSettings.map( ( setting ) => {
-				return (
-					<MyJetpackSettingsListItem setting={ setting } />
-				);
-			} }
+			<QueryJetpackSettings siteId={ siteId } />
+			{ map( settings, ( value, name ) => (
+				<div>{ name }: { value.toString() }</div>
+			) }
 		</div>
 	);
 }
+
+export default connect(
+	( state, { siteId } ) => ( {
+		settings: getJetpackOnboardingSettings( state, siteId )
+	} )
+)( MyJetpackSettings );
 ```
 
 ## Props
+
+### `query`
+
+<table>
+	<tr><th>Type</th><td>Object</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+A query to use when requesting Jetpack Settings.
 
 ### `siteId`
 
@@ -35,4 +51,4 @@ export default function MyJetpackSettingsList( { jetpackSettings } ) {
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The site ID for which the Jetpack settings should be requested.
+The site ID for which Jetpack Settings should be requested.
