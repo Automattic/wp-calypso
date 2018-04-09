@@ -776,6 +776,10 @@
 			.section-nav-tab__link {
 				color: $blue-wordpress;
 				background-color: $gray-light;
+
+				@include breakpoint( '>480px' ) {
+					background-color: transparent;
+				}
 			}
 		}
 
