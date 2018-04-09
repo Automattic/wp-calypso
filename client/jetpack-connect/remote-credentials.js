@@ -297,7 +297,8 @@ export class OrgCredentialsForm extends Component {
 export default connect(
 	state => {
 		const jetpackConnectSite = getConnectingSite( state );
-		const siteToConnect = jetpackConnectSite.url;
+		const siteData = jetpackConnectSite.data || {};
+		const siteToConnect = siteData.urlAfterRedirects || jetpackConnectSite.url;
 		const installError = getJetpackRemoteInstallErrorCode( state, siteToConnect );
 		const isResponseCompleted = isJetpackRemoteInstallComplete( state, siteToConnect );
 		return {
