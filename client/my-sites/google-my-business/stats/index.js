@@ -64,8 +64,12 @@ class GoogleMyBusinessStats extends Component {
 					<Card className="gmb-location">
 						<GoogleMyBusinessLocation location={ locationData } />
 
-						<Button className="gmb-location__button">
-							{ translate( 'Update Listing' ) } { <Gridicon icon={ 'external' } /> }
+						<Button
+							className="gmb-location__button"
+							href="https://www.google.com/business/"
+							target="_blank"
+						>
+							{ translate( 'Update Listing' ) } <Gridicon icon={ 'external' } />
 						</Button>
 					</Card>
 

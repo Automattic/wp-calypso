@@ -72,9 +72,10 @@ class GoogleMyBusinessSelectLocation extends Component {
 				{ locations.map( location => (
 					<CompactCard className="gmb-location">
 						<GoogleMyBusinessLocation key={ location.id } location={ location } />
+
 						<Button
 							className="gmb-location__button"
-							href={ `/stats/${ siteSlug }` }
+							href={ `/google-my-business/stats/${ siteSlug }` }
 							onClick={ this.trackConnectLocationButtonClick }
 						>
 							{ translate( 'Connect Location' ) }
