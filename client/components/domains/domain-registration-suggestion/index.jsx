@@ -23,10 +23,10 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
+import { getTld } from 'lib/domains';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	getMatchReasonPhrasesMap,
-	getTld,
 	isNewTld,
 	isTestTld,
 } from 'components/domains/domain-registration-suggestion/utility';
