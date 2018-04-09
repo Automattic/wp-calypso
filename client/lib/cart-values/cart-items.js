@@ -27,6 +27,7 @@ import {
  */
 import {
 	formatProduct,
+	getDomain,
 	isCustomDesign,
 	isDependentProduct,
 	isDomainMapping,
@@ -140,7 +141,7 @@ export function remove( cartItemToRemove ) {
 			if (
 				isPlan( existingCartItem ) &&
 				isRemovingDomainProduct &&
-				cartItemToRemove.meta === get( existingCartItem, 'extra.domain_to_bundle', '' )
+				getDomain( cartItemToRemove ) === getDomain( existingCartItem )
 			) {
 				return update( existingCartItem, { extra: { $merge: { domain_to_bundle: '' } } } );
 			}

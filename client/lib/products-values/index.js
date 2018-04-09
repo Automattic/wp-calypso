@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, difference, isEmpty, pick } from 'lodash';
+import { assign, difference, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,8 +11,11 @@ import { assign, difference, isEmpty, pick } from 'lodash';
 import {
 	JETPACK_PLANS,
 	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PREMIUM,
@@ -41,10 +44,19 @@ const productDependencies = {
 	[ PLAN_BUSINESS ]: {
 		domain_redemption: true,
 	},
+	[ PLAN_BUSINESS_2_YEARS ]: {
+		domain_redemption: true,
+	},
 	[ PLAN_PERSONAL ]: {
 		domain_redemption: true,
 	},
+	[ PLAN_PERSONAL_2_YEARS ]: {
+		domain_redemption: true,
+	},
 	[ PLAN_PREMIUM ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PREMIUM_2_YEARS ]: {
 		domain_redemption: true,
 	},
 	[ domainProductSlugs.TRANSFER_IN ]: {
@@ -302,6 +314,18 @@ export function getDomainProductRanking( product ) {
 	}
 }
 
+export function getDomain( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	const domainToBundle = get( product, 'extra.domain_to_bundle', false );
+	if ( domainToBundle ) {
+		return domainToBundle;
+	}
+
+	return product.meta;
+}
+
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
 	let isPlansOnlyDependent = false;
 
@@ -323,7 +347,7 @@ export function isDependentProduct( product, dependentProduct, domainsWithPlansO
 		isPlansOnlyDependent ||
 		( productDependencies[ slug ] &&
 			productDependencies[ slug ][ dependentSlug ] &&
-			product.meta === dependentProduct.meta )
+			getDomain( product ) === getDomain( dependentProduct ) )
 	);
 }
 export function isFreeWordPressComDomain( product ) {
