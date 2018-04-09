@@ -182,7 +182,7 @@ export const handleActivityLogRequest = action => {
 export const receiveActivityLog = ( action, data ) => {
 	const stateUpdate = activityLogUpdate(
 		action.siteId,
-		data.items.filter( i => i.hasOwnProperty( 'rewindId' ) ),
+		data.items,
 		data.totalItems,
 		data.oldestItemTs,
 		action.params,
