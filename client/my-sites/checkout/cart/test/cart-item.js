@@ -20,7 +20,9 @@ import {
 	PLAN_JETPACK_PERSONAL,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-} from '../../../../lib/plans/constants';
+} from 'lib/plans/constants';
+
+import formatCurrency from 'lib/format-currency';
 
 const plansModule = require( 'lib/plans' );
 const originalPlansModuleFunctions = pick( plansModule, [
@@ -33,6 +35,7 @@ const mockPlansModule = () => {
 };
 mockPlansModule();
 
+jest.mock( 'lib/format-currency', () => jest.fn() );
 jest.mock( 'lib/mixins/analytics', () => ( {} ) );
 jest.mock( 'lib/products-values', () => ( {
 	isPlan: jest.fn( () => null ),
@@ -61,6 +64,50 @@ describe( 'cart-item', () => {
 	test( 'Does not blow up', () => {
 		const comp = shallow( <CartItem { ...props } /> );
 		expect( comp.find( '.cart-item' ).length ).toBe( 1 );
+	} );
+
+	describe( 'monthlyPrice', () => {
+		let myTranslate, instance;
+		beforeEach( () => {
+			formatCurrency.mockReset();
+			formatCurrency.mockImplementation( () => '133.00 AUD' );
+
+			myTranslate = jest.fn( identity );
+			instance = new CartItem( {
+				translate: myTranslate,
+				cartItem: {
+					currency: 'AUD',
+				},
+			} );
+			instance.monthlyPriceApplies = jest.fn( () => true );
+			instance.calcMonthlyBillingDetails = jest.fn( () => ( {
+				months: 17,
+				monthlyPrice: 133,
+			} ) );
+		} );
+
+		test( 'Should call monthlyPriceApplies(), monthlyPriceApplies()', () => {
+			instance.monthlyPrice();
+			expect( instance.monthlyPriceApplies ).toHaveBeenCalledTimes( 1 );
+			expect( instance.calcMonthlyBillingDetails ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'Should format currency using formatCurrency()', () => {
+			instance.monthlyPrice();
+			expect( formatCurrency ).toHaveBeenCalledTimes( 1 );
+			expect( formatCurrency ).toHaveBeenCalledWith( 133, 'AUD' );
+		} );
+
+		test( 'Should call translate() with args returned from calcMonthlyBillingDetails()', () => {
+			instance.monthlyPrice();
+			expect( myTranslate ).toHaveBeenCalledTimes( 1 );
+			expect( myTranslate.mock.calls[ 0 ][ 1 ] ).toEqual( {
+				args: {
+					monthlyPrice: '133.00 AUD',
+					months: 17,
+				},
+			} );
+		} );
 	} );
 
 	describe( 'monthlyPriceApplies', () => {
