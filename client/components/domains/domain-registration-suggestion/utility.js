@@ -58,8 +58,8 @@ export function getMatchReasonPhrasesMap( tld ) {
 	return new Map( [
 		[ 'tld-exact', `Extension ".${ tld }" matches your query` ],
 		[ 'tld-similar', `Extension ".${ tld }" closely matches your query` ],
-		[ 'exact-match', 'Exact match left of the dot' ],
-		[ 'similar-match', 'Close match left of the dot' ],
+		[ 'exact-match', 'Query match' ],
+		[ 'similar-match', 'Query match' ],
 		[ 'tld-common', `Most common extension, ".${ tld }"` ],
 	] );
 }
