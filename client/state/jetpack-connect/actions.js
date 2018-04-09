@@ -225,13 +225,17 @@ export function createSocialAccount( socialInfo ) {
 			dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
 			return { username, bearerToken: bearer_token };
 		} catch ( error ) {
+			const err = {
+				code: error.error,
+				message: error.message,
+			};
 			dispatch(
 				recordTracksEvent( 'calypso_jpc_social_createaccount_error', {
-					error: JSON.stringify( error ),
-					error_code: error.code,
+					error: JSON.stringify( err ),
+					error_code: err.code,
 				} )
 			);
-			throw error;
+			throw err;
 		}
 	};
 }
