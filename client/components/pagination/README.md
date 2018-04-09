@@ -23,5 +23,5 @@ render: function() {
 
 #### Optional Props
 * `compact`: Render a smaller version
-* `nextLabel`: Override for the text on the next button
-* `prevLabel`: Override for the text on the previous button
+* `nextLabel`: Overrides the "Next" button label
+* `prevLabel`: Overrides the "Previous" button label
