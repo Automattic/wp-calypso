@@ -26,12 +26,14 @@ class PieChartExample extends Component {
 			{
 				value: 362,
 				name: 'Discovery',
-				description: 'Customers who find your listing searching for a category, product, or service',
+				description:
+					'Customers who find your listing searching for a category, product, or service',
 			},
 			{
 				value: 122,
 				name: 'Referral',
-				description: 'Customers who find your listing by being referred from another type of search',
+				description:
+					'Customers who find your listing by being referred from another type of search',
 			},
 		];
 
@@ -46,7 +48,7 @@ class PieChartExample extends Component {
 	render() {
 		return (
 			<Card>
-				<PieChart data={ this.state.data } title={ this.state.title } />
+				<PieChart data={ this.state.data } title={ this.state.title } legendBelowChart={ false } />
 			</Card>
 		);
 	}

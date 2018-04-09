@@ -26,6 +26,11 @@ class PieChart extends Component {
 			} )
 		).isRequired,
 		title: PropTypes.string,
+		legendBelowChart: PropTypes.boolean,
+	};
+
+	static defaultProps = {
+		legendBelowChart: true,
 	};
 
 	constructor( props ) {
@@ -65,12 +70,14 @@ class PieChart extends Component {
 	}
 
 	render() {
-		const { title } = this.props;
+		const { title, legendBelowChart } = this.props;
 		const { data, dataTotal } = this.state;
 
 		return (
-			<div>
-				<div className={ 'pie-chart__chart' }>
+			<div
+				className={ legendBelowChart ? 'pie-chart__chart' : 'pie-chart__chart-horizontal-layout' }
+			>
+				<div>
 					<svg
 						className={ 'pie-chart__chart-drawing' }
 						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
@@ -88,10 +95,8 @@ class PieChart extends Component {
 							} ) }
 						</g>
 					</svg>
+					{ title && <h2 className={ 'pie-chart__title' }>{ title }</h2> }
 				</div>
-
-				{ title && <h2 className={ 'pie-chart__title' }>{ title }</h2> }
-
 				<div className={ 'pie-chart__legend' }>
 					{ data.map( ( datum, index ) => {
 						return (

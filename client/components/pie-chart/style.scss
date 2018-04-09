@@ -4,6 +4,19 @@
 	align-items: center;
 }
 
+.pie-chart__chart-horizontal-layout {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+
+	.pie-chart__chart-drawing {
+		padding-right: 30px;
+		min-width: 200px;
+		min-height: 200px;
+	}
+}
+
 .pie-chart__chart-drawing {
 	max-width: 400px;
 	max-height: 400px;
