@@ -228,6 +228,7 @@ export function createSocialAccount( socialInfo ) {
 			const err = {
 				code: error.error,
 				message: error.message,
+				data: error.data,
 			};
 			dispatch(
 				recordTracksEvent( 'calypso_jpc_social_createaccount_error', {

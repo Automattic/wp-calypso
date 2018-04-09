@@ -147,15 +147,21 @@ export class JetpackSignup extends Component {
 		debug( 'Signup error: %o', error );
 		this.resetState();
 		if ( error && 'user_exists' === error.code ) {
-			warningNotice(
-				translate(
-					'The email already exists. Log in to connect your accounts or choose another Google profile.'
-				),
+			const text =
+				error.data && error.data.email
+					? translate(
+							'The email address "%(email)s" is associated with a WordPress.com account. ' +
+								'Log in to connect it to your Google profile, or choose a different Google profile.',
+							{ args: { email: error.data.email } }
+						)
+					: translate(
+							'The email address is associated with a WordPress.com account. ' +
+								'Log in to connect it to your Google profile, or choose a different Google profile.'
+						);
 
-				{
-					button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,
-				}
-			);
+			warningNotice( text, {
+				button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,
+			} );
 			return;
 		}
 		errorNotice(
