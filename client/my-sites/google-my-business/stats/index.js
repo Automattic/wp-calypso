@@ -61,17 +61,14 @@ class GoogleMyBusinessStats extends Component {
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 
 				<div>
-					<Card className="gmb-location">
-						<GoogleMyBusinessLocation location={ locationData } />
-
+					<GoogleMyBusinessLocation location={ locationData }>
 						<Button
-							className="gmb-location__button"
 							href="https://www.google.com/business/"
 							target="_blank"
 						>
 							{ translate( 'Update Listing' ) } <Gridicon icon={ 'external' } />
 						</Button>
-					</Card>
+					</GoogleMyBusinessLocation>
 
 					<SectionHeader label={ translate( 'How customers search for your business' ) } />
 					<Card>
