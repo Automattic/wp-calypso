@@ -22,6 +22,7 @@ import DocumentHead from 'components/data/document-head';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
+import { isStoreSetupComplete } from 'woocommerce/state/sites/setup-choices/selectors';
 import Main from 'components/main';
 import Placeholder from './dashboard/placeholder';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
@@ -99,9 +100,21 @@ class App extends Component {
 	}
 
 	maybeRenderChildren() {
-		const { allRequiredPluginsActive, children, pluginsLoaded, translate } = this.props;
+		const {
+			allRequiredPluginsActive,
+			children,
+			isDashboard,
+			isSetupComplete,
+			pluginsLoaded,
+			translate,
+		} = this.props;
 		if ( ! pluginsLoaded ) {
 			return this.renderPlaceholder();
+		}
+
+		// Pass through to the dashboard when setup isn't completed
+		if ( isDashboard && ! isSetupComplete ) {
+			return children;
 		}
 
 		if ( pluginsLoaded && ! allRequiredPluginsActive ) {
@@ -162,11 +175,14 @@ function mapStateToProps( state ) {
 	const pluginsLoaded = arePluginsLoaded( state, siteId );
 	const allRequiredPluginsActive = areAllRequiredPluginsActive( state, siteId );
 
+	const isSetupComplete = isStoreSetupComplete( state, siteId );
+
 	return {
 		siteId,
 		allRequiredPluginsActive,
 		canUserManageOptions: siteId ? canUserManageOptions : false,
 		isAtomicSite: siteId ? isAtomicSite : false,
+		isSetupComplete,
 		hasPendingAutomatedTransfer: siteId ? hasPendingAutomatedTransfer : false,
 		pluginsLoaded,
 	};
