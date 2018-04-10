@@ -348,18 +348,24 @@ export function calculateMonthlyPriceForPlan( planSlug, termPrice ) {
 }
 
 export function calculateMonthlyPrice( term, termPrice ) {
-	let divisor;
+	const divisor = getBillingMonthsForTerm( term );
+	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
+}
+
+export function getBillingMonthsForPlan( planSlug ) {
+	return getBillingMonthsForTerm( getPlan( planSlug ).term );
+}
+
+export function getBillingMonthsForTerm( term ) {
 	if ( term === TERM_MONTHLY ) {
-		divisor = 1;
+		return 1;
 	} else if ( term === TERM_ANNUALLY ) {
-		divisor = 12;
+		return 12;
 	} else if ( term === TERM_BIENNIALLY ) {
-		divisor = 24;
-	} else {
-		throw new Error( `Unknown term: ${ term }` );
+		return 24;
 	}
 
-	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
+	throw new Error( `Unknown term: ${ term }` );
 }
 
 export const isPlanFeaturesEnabled = () => {
