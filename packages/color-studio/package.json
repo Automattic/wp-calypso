@@ -4,18 +4,28 @@
   "private": true,
   "main": "index.js",
   "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
     "chroma-js": "^1.3.6",
-    "lodash": "^4.17.5"
+    "lodash": "^4.17.5",
+    "webpack": "^4.5.0"
   },
   "devDependencies": {
     "husky": "^0.14.3",
+    "webpack-cli": "^2.0.14",
     "xo": "^0.20.3"
   },
   "scripts": {
+    "development": "webpack --watch",
     "lint": "xo",
-    "precommit": "yarn lint"
+    "precommit": "yarn lint && webpack"
   },
   "xo": {
+    "ignores": [
+      "**/*.build.js"
+    ],
     "esnext": true,
     "space": true,
     "semicolon": false,

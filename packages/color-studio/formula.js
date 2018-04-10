@@ -1,5 +1,8 @@
 const chroma = require('chroma-js')
-const { clone, flatten, uniq, zip } = require('lodash')
+const clone = require('lodash/clone')
+const flatten = require('lodash/flatten')
+const uniq = require('lodash/uniq')
+const zip = require('lodash/zip')
 
 const BLEND_MODE_NORMAL = 'normal'
 const BLEND_MODE_HARD_LIGHT = 'hard light'
