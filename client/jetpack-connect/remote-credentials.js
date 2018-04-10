@@ -227,12 +227,15 @@ export class OrgCredentialsForm extends Component {
 		const { isSubmitting } = this.state;
 
 		return (
-			<FormButton
-				className="jetpack-connect__credentials-submit"
-				disabled={ ! this.state.username || ! this.state.password || isSubmitting }
-			>
-				{ this.renderButtonLabel() }
-			</FormButton>
+			<div className="jetpack-connect__creds-form-footer">
+				{ isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" /> }
+				<FormButton
+					className="jetpack-connect__credentials-submit"
+					disabled={ ! this.state.username || ! this.state.password || isSubmitting }
+				>
+					{ this.renderButtonLabel() }
+				</FormButton>
+			</div>
 		);
 	}
 
@@ -278,15 +281,12 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	render() {
-		const { isSubmitting } = this.state;
-
 		return (
 			<MainWrapper>
 				{ this.renderHeadersText() }
 				<Card className="jetpack-connect__site-url-input-container">
 					<form onSubmit={ this.handleSubmit }>
 						{ this.formFields() }
-						{ isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" /> }
 						{ this.formFooter() }
 					</form>
 				</Card>

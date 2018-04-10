@@ -649,8 +649,14 @@
 	.spinner {
 		z-index: z-index(
 			'root',
-			'.jetpack-connect__site-url-input-container .jetpack-connect__creds-form-spinner'
+			'.jetpack-connect__creds-form-footer .jetpack-connect__creds-form-spinner'
 		);
+	}
+}
+
+.jetpack-connect__creds-form-footer {
+	.button {
+		margin-top: 22px;
 	}
 }
 
