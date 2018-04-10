@@ -9,17 +9,6 @@
 	margin: 0 0 1.7em;
 }
 
-// We need .form-label for specificity
-.form-label.registrant-extra-info__optional {
-	display: flex;
-
-	.registrant-extra-info__optional-label {
-		color: $gray-darken-20;
-		font-weight: 200;
-		margin-left: 5px;
-	}
-}
-
 // Turn off number spinners
 .registrant-extra-info__form {
 	input[type=number] {
@@ -30,6 +19,15 @@
 			-webkit-appearance: none;
 			margin: 0;
 		}
+	}
+
+	.form-label .form-label__optional {
+		font-size: 100%;
+		margin-left: 5px;
+	}
+
+	.form-input-validation {
+		font-weight: normal;
 	}
 }
 

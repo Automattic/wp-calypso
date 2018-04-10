@@ -85,7 +85,9 @@ export default class extends React.Component {
 
 		return (
 			<div className={ classes }>
-				<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+				<FormLabel htmlFor={ this.props.name } { ...this.props.labelProps }>
+					{ this.props.label }
+				</FormLabel>
 				<FormTextInput
 					placeholder={ this.props.placeholder ? this.props.placeholder : this.props.label }
 					id={ this.props.name }
