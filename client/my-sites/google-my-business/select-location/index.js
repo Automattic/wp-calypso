@@ -26,6 +26,40 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+class GoogleMyBusinessLocationWithConnectButton extends Component {
+	static propTypes = {
+		location: PropTypes.shape( {
+			id: PropTypes.string.isRequired,
+		} ).isRequired,
+		siteSlug: PropTypes.string.isRequired,
+		siteId: PropTypes.string.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
+	connectLocation = () => {
+		this.props.connectGoogleMyBusinessLocation( this.props.siteId, this.props.location.id );
+
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_location_connect_location_button_click'
+		);
+	};
+
+	render() {
+		const { location, siteSlug, translate } = this.props;
+		return (
+			<GoogleMyBusinessLocation isCompact key={ location.id } location={ location }>
+				<Button href={ `/google-my-business/stats/${ siteSlug }` } onClick={ this.connectLocation }>
+					{ translate( 'Connect Location' ) }
+				</Button>
+			</GoogleMyBusinessLocation>
+		);
+	}
+}
+
+const LocalizedGoogleMyBusinessLocationWithConnectButton = localize(
+	GoogleMyBusinessLocationWithConnectButton
+);
+
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
 		connectGoogleMyBusinessLocation: PropTypes.func.isRequired,
@@ -46,16 +80,8 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
-	connectLocation = ( locationId ) => {
-		this.props.connectGoogleMyBusinessLocation( this.props.siteId, locationId );
-
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_location_connect_location_button_click'
-		);
-	};
-
 	render() {
-		const { locations, translate, siteSlug } = this.props;
+		const { locations, translate, siteSlug, siteId } = this.props;
 
 		return (
 			<Main className="gmb-select-location" wideLayout>
@@ -75,14 +101,11 @@ class GoogleMyBusinessSelectLocation extends Component {
 				</CompactCard>
 
 				{ locations.map( location => (
-					<GoogleMyBusinessLocation isCompact key={ location.id } location={ location }>
-						<Button
-							href={ `/google-my-business/stats/${ siteSlug }` }
-							onClick={ this.connectLocation.bind( null, location.id ) }
-						>
-							{ translate( 'Connect Location' ) }
-						</Button>
-					</GoogleMyBusinessLocation>
+					<LocalizedGoogleMyBusinessLocationWithConnectButton
+						siteId={ siteId }
+						siteSlug={ siteSlug }
+						location={ location }
+					/>
 				) ) }
 
 				<Card className="gmb-select-location__add">
