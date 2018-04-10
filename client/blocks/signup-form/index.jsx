@@ -418,7 +418,6 @@ class SignupForm extends Component {
 			<div>
 				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
 				<FormTextInput
-					autoFocus={ ! this.props.isSocialSignupEnabled }
 					autoCapitalize="off"
 					autoCorrect="off"
 					className="signup-form__input"
