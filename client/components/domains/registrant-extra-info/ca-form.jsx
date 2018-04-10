@@ -148,7 +148,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	};
 
 	needsOrganization() {
-		return get( this.props.contactDetails, 'extra.legalType' ) === 'CCO';
+		return get( this.props.ccTldDetails, 'legalType' ) === 'CCO';
 	}
 
 	organizationFieldIsValid() {
