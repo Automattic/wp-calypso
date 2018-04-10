@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 
-// TODO: this is not used anymore, instead we use blocks/happychat/page, we keep it to make sure we
+// TODO: HAPPYCHAT_CLEANUP this is not used anymore, instead we use blocks/happychat/page, we keep it to make sure we
 // have happychat-client parity, it should be removed when doing happychat cleanup.
 
 import config from 'config';
