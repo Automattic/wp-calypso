@@ -202,6 +202,17 @@ describe( 'saveJetpackSettings()', () => {
 		},
 	};
 
+	const previousSettings = {
+		onboarding: {
+			siteTitle: '',
+			siteDescription: 'Just another WordPress site',
+		},
+	};
+
+	const getState = () => ( {
+		jetpackOnboarding: { settings: { [ 12345678 ]: previousSettings } },
+	} );
+
 	const action = {
 		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
 		siteId,
@@ -209,7 +220,7 @@ describe( 'saveJetpackSettings()', () => {
 	};
 
 	test( 'should dispatch an action for POST HTTP request to save Jetpack settings, omitting JPO credentials', () => {
-		saveJetpackSettings( { dispatch }, action );
+		saveJetpackSettings( { dispatch, getState }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
@@ -223,7 +234,7 @@ describe( 'saveJetpackSettings()', () => {
 						json: true,
 					},
 				},
-				action
+				{ ...action, meta: { ...action.meta, settings: previousSettings.onboarding } }
 			)
 		);
 		expect( dispatch ).toHaveBeenCalledWith(
@@ -252,9 +263,23 @@ describe( 'handleSaveSuccess()', () => {
 describe( 'announceSaveFailure()', () => {
 	const dispatch = jest.fn();
 	const siteId = 12345678;
+	const action = {
+		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+		siteId,
+		settings: {
+			siteTitle: 'My Awesome Site',
+			siteDescription: 'Not just another WordPress Site',
+		},
+		meta: {
+			settings: {
+				siteTitle: '',
+				siteDescription: 'Just another WordPress site',
+			},
+		},
+	};
 
 	test( 'should trigger an error notice upon unsuccessful save request', () => {
-		announceSaveFailure( { dispatch }, { siteId } );
+		announceSaveFailure( { dispatch }, { siteId }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
