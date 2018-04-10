@@ -157,6 +157,18 @@ export const TYPE_PERSONAL = 'TYPE_PERSONAL';
 export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 
+const WPComGetBillingTimeframe = abtest => {
+	if ( isEnabled( 'upgrades/2-year-plans' ) ) {
+		return i18n.translate( '/month, billed annually or biennially' );
+	}
+
+	if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
+		// Note: Don't make this translatable because it's only visible to English-language users
+		return '/month, billed annually';
+	}
+	return i18n.translate( 'per month, billed yearly' );
+};
+
 const getPlanPersonalDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
@@ -203,13 +215,7 @@ const getPlanPersonalDetails = () => ( {
 		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		FEATURE_ALL_FREE_FEATURES,
 	],
-	getBillingTimeFrame: abtest => {
-		if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return '/month, billed annually';
-		}
-		return i18n.translate( 'per month, billed yearly' );
-	},
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -270,13 +276,7 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_PREMIUM_THEMES,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
-	getBillingTimeFrame: abtest => {
-		if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return '/month, billed annually';
-		}
-		return i18n.translate( 'per month, billed yearly' );
-	},
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -365,13 +365,7 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_UNLIMITED_STORAGE_SIGNUP,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
-	getBillingTimeFrame: abtest => {
-		if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return '/month, billed annually';
-		}
-		return i18n.translate( 'per month, billed yearly' );
-	},
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
