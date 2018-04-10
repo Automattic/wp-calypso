@@ -408,7 +408,7 @@ describe( '#createAccount()', () => {
 
 	beforeEach( jest.restoreAllMocks );
 
-	test( 'should resolve with the bearer token', () => {
+	test( 'should resolve with the username and bearer token', async () => {
 		const userData = { username: 'happyuser' };
 		const data = { bearer_token: '1234 abcd' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
@@ -417,11 +417,13 @@ describe( '#createAccount()', () => {
 			},
 		} ) );
 
-		const spy = jest.fn();
-		expect( createAccount( userData )( spy ) ).resolves.toBe( data.bearer_token );
+		await expect( createAccount( userData )( () => {} ) ).resolves.toEqual( {
+			username: userData.username,
+			bearerToken: data.bearer_token,
+		} );
 	} );
 
-	test( 'should reject with the error', () => {
+	test( 'should reject with the error', async () => {
 		const userData = { username: 'happyuser' };
 		const error = { code: 'user_exists' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
@@ -430,7 +432,49 @@ describe( '#createAccount()', () => {
 			},
 		} ) );
 
-		const spy = jest.fn();
-		expect( createAccount( userData )( spy ) ).rejects.toBe( error );
+		await expect( createAccount( userData )( () => {} ) ).rejects.toBe( error );
+	} );
+} );
+
+describe( '#createSocialAccount()', () => {
+	const { createSocialAccount } = actions;
+
+	beforeEach( jest.restoreAllMocks );
+
+	test( 'should reject with the error', async () => {
+		const error = {
+			data: { email: 'email@example.com' },
+			error: 'an_error_code',
+			message: 'An error message',
+		};
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			async usersSocialNew() {
+				throw error;
+			},
+		} ) );
+
+		await expect( createSocialAccount()( () => {} ) ).rejects.toEqual( {
+			code: error.error,
+			data: error.data,
+			message: error.message,
+		} );
+	} );
+
+	test( 'should resolve with the username and bearer token', async () => {
+		const bearerToken = 'foobar';
+		const username = 'a_happy_user';
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			async usersSocialNew() {
+				return {
+					bearer_token: bearerToken,
+					username,
+				};
+			},
+		} ) );
+
+		await expect( createSocialAccount()( () => {} ) ).resolves.toEqual( {
+			bearerToken,
+			username,
+		} );
 	} );
 } );

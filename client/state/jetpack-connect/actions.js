@@ -195,6 +195,64 @@ export function retryAuth( url, attemptNumber ) {
 	};
 }
 
+/**
+ * Create a user account
+ *
+ * !! Must have same return shape as createAccount !!
+ *
+ * @param  {Object}  socialInfo              …
+ * @param  {string}  socialInfo.service      The name of the social service
+ * @param  {string}  socialInfo.access_token An OAuth2 acccess token
+ * @param  {?string} socialInfo.id_token     (Optional) a JWT id_token which contains the signed user info
+ *
+ * @return {Promise}                         Resolves to { username, bearerToken }
+ */
+export function createSocialAccount( socialInfo ) {
+	return async dispatch => {
+		dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount' ) );
+
+		try {
+			/**
+			 * @TODO (sirreal) update to `jetpack-connect` when D11099-code lands
+			 *
+			 * The signup flow is required and affects some post signup activity.
+			 * `account` should be safe until patch lands.
+			 */
+			const { username, bearer_token } = await wpcom.undocumented().usersSocialNew( {
+				...socialInfo,
+				signup_flow_name: 'account' /* 'jetpack-connect' */,
+			} );
+			dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
+			return { username, bearerToken: bearer_token };
+		} catch ( error ) {
+			const err = {
+				code: error.error,
+				message: error.message,
+				data: error.data,
+			};
+			dispatch(
+				recordTracksEvent( 'calypso_jpc_social_createaccount_error', {
+					error: JSON.stringify( err ),
+					error_code: err.code,
+				} )
+			);
+			throw err;
+		}
+	};
+}
+
+/**
+ * Create a user account
+ *
+ * !! Must have same return shape as createSocialAccount !!
+ *
+ * @param  {Object} userData          …
+ * @param  {string} userData.username Username
+ * @param  {string} userData.password Password
+ * @param  {string} userData.email    Email
+ *
+ * @return {Promise}                  Resolves to { username, bearerToken }
+ */
 export function createAccount( userData ) {
 	return async dispatch => {
 		dispatch( recordTracksEvent( 'calypso_jpc_create_account' ) );
@@ -214,7 +272,7 @@ export function createAccount( userData ) {
 			)( data );
 
 			dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
-			return bearerToken;
+			return { username: userData.username, bearerToken };
 		} catch ( error ) {
 			dispatch(
 				recordTracksEvent( 'calypso_jpc_create_account_error', {
