@@ -15,7 +15,6 @@ import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
 import { TERM_MONTHLY } from 'lib/plans/constants';
-import createSelector from 'lib/create-selector';
 
 export function isProductsListFetching( state ) {
 	return state.productsList.isFetching;
@@ -53,7 +52,7 @@ export const getDiscountedOrRegularPrice = ( state, siteId, plan, isMonthlyPrefe
 	);
 };
 
-export const planSlugToPlanProduct = createSelector( ( products, planSlug ) => {
+export const planSlugToPlanProduct = ( products, planSlug ) => {
 	const plan = getPlan( planSlug );
 	const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 	return {
@@ -61,7 +60,7 @@ export const planSlugToPlanProduct = createSelector( ( products, planSlug ) => {
 		plan: planConstantObj,
 		product: products[ planSlug ],
 	};
-} );
+};
 
 export const computeFullAndMonthlyPricesForPlan = ( state, siteId, plan ) => ( {
 	priceFull: getDiscountedOrRegularPrice( state, siteId, plan, false ),
