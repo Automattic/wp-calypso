@@ -23,7 +23,7 @@ export class SubscriptionLengthOption extends React.Component {
 		savePercent: PropTypes.number,
 		price: PropTypes.string.isRequired,
 		pricePerMonth: PropTypes.string.isRequired,
-		checked: PropTypes.bool.isRequired,
+		checked: PropTypes.bool,
 		value: PropTypes.any.isRequired,
 		onCheck: PropTypes.func,
 		translate: PropTypes.func.isRequired,
