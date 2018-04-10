@@ -360,7 +360,11 @@ class ActivityLog extends Component {
 
 				if ( null === last || moment( ts ).format( 'D' ) !== moment( last ).format( 'D' ) ) {
 					last = ts;
-					return <p key={ `time-period-${ ts }` }>{ moment( ts ).format( 'LL' ) }</p>;
+					return (
+						<h2 className="activity-log__time-period" key={ `time-period-${ ts }` }>
+							{ moment( ts ).format( 'LL' ) }
+						</h2>
+					);
 				}
 
 				return null;
@@ -407,24 +411,27 @@ class ActivityLog extends Component {
 				{ isEmpty( logs ) ? (
 					noLogsContent
 				) : (
-					<section className="activity-log__wrapper">
-						{ theseLogs.map( log => (
-							<Fragment>
-								{ timePeriod( log ) }
-								<ActivityLogItem
-									key={ log.activityId }
-									activityId={ log.activityId }
-									disableRestore={ disableRestore }
-									disableBackup={ disableBackup }
-									hideRestore={ 'active' !== rewindState.state }
-									isDiscarded={
-										isDiscarded ? isDiscarded( log.activityTs ) : log.activityIsDiscarded
-									}
-									siteId={ siteId }
-								/>
-							</Fragment>
-						) ) }
+					<div>
+						<section className="activity-log__wrapper">
+							{ theseLogs.map( log => (
+								<Fragment>
+									{ timePeriod( log ) }
+									<ActivityLogItem
+										key={ log.activityId }
+										activityId={ log.activityId }
+										disableRestore={ disableRestore }
+										disableBackup={ disableBackup }
+										hideRestore={ 'active' !== rewindState.state }
+										isDiscarded={
+											isDiscarded ? isDiscarded( log.activityTs ) : log.activityIsDiscarded
+										}
+										siteId={ siteId }
+									/>
+								</Fragment>
+							) ) }
+						</section>
 						<Pagination
+							className="activity-log__pagination"
 							key="activity-list-pagination"
 							nextLabel={ translate( 'Older' ) }
 							page={ this.state.currentPage }
@@ -433,7 +440,7 @@ class ActivityLog extends Component {
 							prevLabel={ translate( 'Newer' ) }
 							total={ logs.length }
 						/>
-					</section>
+					</div>
 				) }
 			</div>
 		);
