@@ -52,7 +52,7 @@ describe( 'getCurrentPlanTerm', () => {
 	test( 'should return null intervalType if no product can be identified', () => {
 		getSitePlan.mockImplementation( () => null );
 		const result = getCurrentPlanTerm( state, {} );
-		expect( result ).toBe( null );
+		expect( result ).toBeNull();
 		getSitePlan.mockImplementation( () => ( {} ) );
 	} );
 
@@ -60,6 +60,6 @@ describe( 'getCurrentPlanTerm', () => {
 		getSitePlan.mockImplementation( () => ( {} ) );
 		getPlan.mockImplementation( () => null );
 		const result = getCurrentPlanTerm( state, {} );
-		expect( result ).toBe( null );
+		expect( result ).toBeNull();
 	} );
 } );
