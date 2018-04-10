@@ -21,6 +21,6 @@ describe( 'getIntervalTypeFromTerm', () => {
 	} );
 
 	test( 'should return null intervalType if no product can be identified', () => {
-		expect( getIntervalTypeFromTerm( 'fake' ) ).toBe( null );
+		expect( getIntervalTypeFromTerm( 'fake' ) ).toBeNull();
 	} );
 } );
