@@ -21,7 +21,7 @@ class ApplicationPasswordsItem extends React.Component {
 		const { password } = this.props;
 
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Remove Application Password Button' );
-		this.props.deleteApplicationPassword( parseInt( password.ID, 10 ) );
+		this.props.deleteApplicationPassword( password.ID );
 	};
 
 	render() {
