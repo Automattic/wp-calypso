@@ -246,7 +246,11 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	footerLink() {
-		const { siteToConnect, translate } = this.props;
+		const { installError, siteToConnect, translate } = this.props;
+		const isFormInNotice = includes(
+			[ LOGIN_FAILURE, UNKNOWN_REMOTE_INSTALL_ERROR ],
+			this.getError( installError )
+		);
 		const manualInstallUrl = addQueryArgs(
 			{ url: siteToConnect },
 			'/jetpack/connect/instructions'
@@ -254,9 +258,11 @@ export class OrgCredentialsForm extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ manualInstallUrl }>
-					{ translate( 'Install Jetpack manually' ) }
-				</LoggedOutFormLinkItem>
+				{ ( isFormInNotice || ! installError ) && (
+					<LoggedOutFormLinkItem href={ manualInstallUrl }>
+						{ translate( 'Install Jetpack manually' ) }
+					</LoggedOutFormLinkItem>
+				) }
 				<HelpButton />
 				<div className="jetpack-connect__navigation">
 					<Button
@@ -291,13 +297,13 @@ export class OrgCredentialsForm extends Component {
 
 		return (
 			<MainWrapper>
-				{ installError &&
-					! isFormInNotice && (
+				{ ! isFormInNotice &&
+					installError && (
 						<div className="jetpack-connect__notice">
 							<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
 						</div>
 					) }
-				{ ( ( installError && isFormInNotice ) || ! installError ) && (
+				{ ( isFormInNotice || ! installError ) && (
 					<div>
 						{ this.renderHeadersText() }
 						<Card className="jetpack-connect__site-url-input-container">
