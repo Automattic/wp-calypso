@@ -38,19 +38,6 @@ class Settings extends Component {
 
 	onSubmit = ( form, data ) => this.props.saveSettings( this.props.siteId, form, data );
 
-	trackPageView = () =>
-		!! this.props.tab ? (
-			<PageViewTracker
-				path={ `/extensions/wp-job-manager/${ this.props.tab }/:site` }
-				title={ `WP Job Manager > ${ titlecase( this.props.tab ) }` }
-			/>
-		) : (
-			<PageViewTracker
-				path="/extensions/wp-job-manager/:site"
-				title="WP Job Manager > Job Listings"
-			/>
-		);
-
 	render() {
 		const { children, initialValues, isFetching, siteId, tab, translate } = this.props;
 		const mainClassName = 'wp-job-manager__main';
@@ -63,7 +50,10 @@ class Settings extends Component {
 					siteId={ siteId }
 				/>
 				<SetupRedirect siteId={ siteId } />
-				{ this.trackPageView() }
+				<PageViewTracker
+					path={ `/extensions/wp-job-manager/${ tab ? tab + '/' : '' }:site` }
+					title={ `WP Job Manager > ${ tab ? titlecase( tab ) : 'Job Listings' }` }
+				/>
 				<QuerySettings siteId={ siteId } />
 				<DocumentHead title={ translate( 'WP Job Manager' ) } />
 				<Navigation activeTab={ tab } />
