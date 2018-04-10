@@ -53,7 +53,6 @@ describe( 'getCurrentPlanTerm', () => {
 		getSitePlan.mockImplementation( () => null );
 		const result = getCurrentPlanTerm( state, {} );
 		expect( result ).toBeNull();
-		getSitePlan.mockImplementation( () => ( {} ) );
 	} );
 
 	test( 'should return null intervalType if no plan can be identified', () => {
