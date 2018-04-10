@@ -444,10 +444,11 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const { translate } = this.props;
+		const { translate, isCompact } = this.props;
 		let compactMessage;
 		let actionLink;
 		let actionText;
+		let compactActionText;
 		let message;
 
 		if ( newTransfers.length > 1 ) {
@@ -455,7 +456,10 @@ export class DomainWarnings extends React.PureComponent {
 			actionText = translate( 'Learn more', {
 				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
 			} );
-			compactMessage = translate( 'Domains require updating.' );
+			compactActionText = translate( 'Info', {
+				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
+			} );
+			compactMessage = translate( 'Domains require updating' );
 			message = translate(
 				'To make your newly transferred domains work with WordPress.com, you need to ' +
 					'update the nameservers.'
@@ -466,7 +470,10 @@ export class DomainWarnings extends React.PureComponent {
 			actionText = translate( 'Update now', {
 				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
 			} );
-			compactMessage = translate( 'Domain requires updating.' );
+			compactActionText = translate( 'Fix', {
+				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
+			} );
+			compactMessage = translate( 'Domain requires updating' );
 			message = translate(
 				'To make {{strong}}%(domain)s{{/strong}} work with your WordPress.com site, you need to ' +
 					'update the nameservers.',
@@ -485,7 +492,7 @@ export class DomainWarnings extends React.PureComponent {
 				onClick={ this.onNewTransfersWrongNSNoticeClick }
 				rel="noopener noreferrer"
 			>
-				{ actionText }
+				{ isCompact ? compactActionText : actionText }
 			</NoticeAction>
 		);
 
@@ -495,7 +502,7 @@ export class DomainWarnings extends React.PureComponent {
 				showDismiss={ false }
 				status="is-warning"
 				key="new-transfer-wrong-ns"
-				text={ this.props.isCompact ? compactMessage : message }
+				text={ isCompact ? compactMessage : message }
 			>
 				{ action }
 				{ this.trackImpression( newTransfersWrongNSWarning, newTransfers.length ) }
@@ -686,7 +693,7 @@ export class DomainWarnings extends React.PureComponent {
 					</ul>
 				</span>
 			);
-			compactNoticeText = translate( 'Issues with your domains.' );
+			compactNoticeText = translate( 'Issues with your domains' );
 			compactContent = (
 				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ action }
@@ -705,7 +712,7 @@ export class DomainWarnings extends React.PureComponent {
 					</ul>
 				</span>
 			);
-			compactNoticeText = translate( 'Verification required for domains.' );
+			compactNoticeText = translate( 'Verification required for domains' );
 			compactContent = (
 				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ action }
@@ -755,7 +762,7 @@ export class DomainWarnings extends React.PureComponent {
 						},
 					}
 				),
-				compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}.', {
+				compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}', {
 					components: { strong: <strong /> },
 					args: { domain: domains[ 0 ].name },
 				} );
@@ -785,7 +792,7 @@ export class DomainWarnings extends React.PureComponent {
 					</ul>
 				</span>
 			),
-			compactNoticeText = translate( 'Issues with domains on this site.' );
+			compactNoticeText = translate( 'Issues with domains on this site' );
 
 		return (
 			<Notice
