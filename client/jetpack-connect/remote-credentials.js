@@ -151,6 +151,9 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	getError( installError ) {
+		if ( installError === null ) {
+			return undefined;
+		}
 		if (
 			installError === 'ACTIVATION_FAILURE' ||
 			installError === 'ACTIVATION_ON_INSTALL_FAILURE'
