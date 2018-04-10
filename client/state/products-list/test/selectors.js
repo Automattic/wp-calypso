@@ -11,7 +11,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
-	getDiscountedOrRegularPrice,
+	getPlanPrice,
 	planSlugToPlanProduct,
 	computeFullAndMonthlyPricesForPlan,
 	computeProductsWithPrices,
@@ -40,7 +40,7 @@ jest.mock( 'state/plans/selectors', () => ( {
 } ) );
 
 describe( 'selectors', () => {
-	describe( '#getDiscountedOrRegularPrice()', () => {
+	describe( '#getPlanPrice()', () => {
 		beforeEach( () => {
 			getPlanDiscountedRawPrice.mockReset();
 			getPlanDiscountedRawPrice.mockImplementation( () => 12 );
@@ -51,12 +51,12 @@ describe( 'selectors', () => {
 
 		test( 'Should return discounted price if available', () => {
 			const plan = { getStoreSlug: () => 'abc' };
-			expect( getDiscountedOrRegularPrice( {}, 1, plan ) ).toBe( 12 );
+			expect( getPlanPrice( {}, 1, plan ) ).toBe( 12 );
 		} );
 
 		test( 'Should pass correct arguments to getPlanDiscountedRawPrice', () => {
 			const plan = { getStoreSlug: () => 'abc' };
-			getDiscountedOrRegularPrice( { state: 1 }, 1, plan, false );
+			getPlanPrice( { state: 1 }, 1, plan, false );
 			expect( getPlanDiscountedRawPrice.mock.calls[ 0 ] ).toEqual( [
 				{ state: 1 },
 				1,
@@ -69,26 +69,26 @@ describe( 'selectors', () => {
 			getPlanDiscountedRawPrice.mockImplementation( () => null );
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( getDiscountedOrRegularPrice( {}, 1, plan, false ) ).toBe( 50 );
+			expect( getPlanPrice( {}, 1, plan, false ) ).toBe( 50 );
 		} );
 
 		test( 'Should pass correct arguments to getPlanRawPrice', () => {
 			getPlanDiscountedRawPrice.mockImplementation( () => null );
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			getDiscountedOrRegularPrice( { state: 1 }, 1, plan, false );
+			getPlanPrice( { state: 1 }, 1, plan, false );
 			expect( getPlanRawPrice.mock.calls[ 0 ] ).toEqual( [ { state: 1 }, 'def', false ] );
 		} );
 
 		test( 'Should pass correct isMonthly value', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			getDiscountedOrRegularPrice( {}, 1, plan, false );
+			getPlanPrice( {}, 1, plan, false );
 			expect( getPlanDiscountedRawPrice.mock.calls[ 0 ][ 3 ] ).toEqual( { isMonthly: false } );
 
-			getDiscountedOrRegularPrice( {}, 1, plan, true );
+			getPlanPrice( {}, 1, plan, true );
 			expect( getPlanDiscountedRawPrice.mock.calls[ 1 ][ 3 ] ).toEqual( { isMonthly: true } );
 
-			getDiscountedOrRegularPrice( {}, 1, { ...plan, term: TERM_MONTHLY }, true );
+			getPlanPrice( {}, 1, { ...plan, term: TERM_MONTHLY }, true );
 			expect( getPlanDiscountedRawPrice.mock.calls[ 2 ][ 3 ] ).toEqual( { isMonthly: false } );
 		} );
 	} );
