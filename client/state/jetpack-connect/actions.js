@@ -200,12 +200,12 @@ export function retryAuth( url, attemptNumber ) {
  *
  * !! Must have same return shape as createAccount !!
  *
- * @param  {Object} socialInfo              …
- * @param  {Object} socialInfo.service      The name of the social service
- * @param  {Object} socialInfo.access_token An OAuth2 acccess token
- * @param  {Object} socialInfo.id_token     (Optional) a JWT id_token which contains the signed user info
+ * @param  {Object}  socialInfo              …
+ * @param  {string}  socialInfo.service      The name of the social service
+ * @param  {string}  socialInfo.access_token An OAuth2 acccess token
+ * @param  {?string} socialInfo.id_token     (Optional) a JWT id_token which contains the signed user info
  *
- * @return {Promise}                  Resolves to { username, bearerToken }
+ * @return {Promise}                         Resolves to { username, bearerToken }
  */
 export function createSocialAccount( socialInfo ) {
 	return async dispatch => {
@@ -247,9 +247,9 @@ export function createSocialAccount( socialInfo ) {
  * !! Must have same return shape as createSocialAccount !!
  *
  * @param  {Object} userData          …
- * @param  {Object} userData.username Username
- * @param  {Object} userData.password Password
- * @param  {Object} userData.email    Email
+ * @param  {string} userData.username Username
+ * @param  {string} userData.password Password
+ * @param  {string} userData.email    Email
  *
  * @return {Promise}                  Resolves to { username, bearerToken }
  */
