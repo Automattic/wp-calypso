@@ -33,7 +33,7 @@ import { isEnabled } from 'config';
 import { plansLink, findPlansKeys, getPlan } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-import PaymentMethods from 'blocks/payment-methods';
+import PlanFooter from 'blocks/plan-footer';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
@@ -184,7 +184,7 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
-				<PaymentMethods />
+				<PlanFooter isInSignup={ isInSignup } />
 				{ faqs }
 				<div className="plans-features-main__bottom" />
 			</div>
