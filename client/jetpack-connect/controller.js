@@ -52,12 +52,6 @@ import {
  * Module variables
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
-const analyticsPageTitleByType = {
-	install: 'Jetpack Install',
-	personal: 'Jetpack Connect Personal',
-	premium: 'Jetpack Connect Premium',
-	pro: 'Jetpack Install Pro',
-};
 
 const removeSidebar = context =>
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
@@ -150,9 +144,8 @@ export function setMasterbar( context, next ) {
 }
 
 export function connect( context, next ) {
-	const { path, pathname, params, query } = context;
+	const { path, params, query } = context;
 	const { type = false, interval } = params;
-	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
 	debug( 'entered connect flow with params %o', params );
 
@@ -161,12 +154,11 @@ export function connect( context, next ) {
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
 	planSlug && storePlan( planSlug );
 
-	analytics.pageView.record( pathname, analyticsPageTitle );
-
 	removeSidebar( context );
 
 	context.primary = React.createElement( JetpackConnect, {
 		context,
+		interval,
 		locale: params.locale,
 		path,
 		type,

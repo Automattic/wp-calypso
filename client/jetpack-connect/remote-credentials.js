@@ -30,6 +30,7 @@ import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
 import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { REMOTE_PATH_AUTH } from './constants';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 import {
 	ACTIVATION_FAILURE,
@@ -281,6 +282,10 @@ export class OrgCredentialsForm extends Component {
 	render() {
 		return (
 			<MainWrapper>
+				<PageViewTracker
+					path="/jetpack/connect/install"
+					title="Jetpack > Add your website credentials"
+				/>
 				{ this.renderHeadersText() }
 				<Card className="jetpack-connect__site-url-input-container">
 					<form onSubmit={ this.handleSubmit }>
