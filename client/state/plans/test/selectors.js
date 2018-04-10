@@ -25,6 +25,7 @@ jest.mock( 'lib/plans/constants', () => ( {
 		},
 	},
 } ) );
+
 /**
  * External dependencies
  */
