@@ -20,12 +20,12 @@ import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constant
 export class SubscriptionLengthOption extends React.Component {
 	static propTypes = {
 		term: PropTypes.string.isRequired,
-		savePercent: PropTypes.number.isRequired,
+		savePercent: PropTypes.number,
 		price: PropTypes.string.isRequired,
 		pricePerMonth: PropTypes.string.isRequired,
 		checked: PropTypes.bool.isRequired,
 		value: PropTypes.any.isRequired,
-		onCheck: PropTypes.func.isRequired,
+		onCheck: PropTypes.func,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -41,7 +41,7 @@ export class SubscriptionLengthOption extends React.Component {
 	}
 
 	render() {
-		const { savePercent, price, term, checked } = this.props;
+		const { checked, price, savePercent, term, translate } = this.props;
 		const className = classnames( 'subscription-length-picker__option', {
 			'is-active': checked,
 		} );
@@ -61,7 +61,15 @@ export class SubscriptionLengthOption extends React.Component {
 					<div className="subscription-length-picker__option-header">
 						<div className="subscription-length-picker__option-term">{ this.getTermText() }</div>
 						<div className="subscription-length-picker__option-discount">
-							{ savePercent ? this.renderSaveBadge() : false }
+							{ savePercent && (
+								<Badge type={ checked ? 'success' : 'warning' }>
+									{ translate( 'Save %(percent)s%%', {
+										args: {
+											percent: savePercent,
+										},
+									} ) }
+								</Badge>
+							) }
 						</div>
 					</div>
 					<div className="subscription-length-picker__option-description">
@@ -89,29 +97,13 @@ export class SubscriptionLengthOption extends React.Component {
 		}
 	}
 
-	renderSaveBadge() {
-		const { savePercent, checked, translate } = this.props;
-		return (
-			<Badge type={ checked ? 'success' : 'warning' }>
-				{ translate( 'Save %(percent)s%%', {
-					args: {
-						percent: savePercent,
-					},
-				} ) }
-			</Badge>
-		);
-	}
-
 	renderPricePerMonth() {
 		const { savePercent, pricePerMonth, translate } = this.props;
 
-		let retval;
-		if ( savePercent ) {
-			retval = translate( 'only %(price)s / month', { args: { price: pricePerMonth } } );
-		} else {
-			retval = translate( '%(price)s / month', { args: { price: pricePerMonth } } );
-		}
-		return retval;
+		const args = { args: { price: pricePerMonth } };
+		return savePercent
+			? translate( 'only %(price)s / month', args )
+			: translate( '%(price)s / month', args );
 	}
 
 	handleChange = e => {
