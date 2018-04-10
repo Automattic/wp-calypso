@@ -1,3 +1,20 @@
+.gmb-stats__metrics {
+	@include breakpoint( '>1280px' ) {
+		column-count: 2;
+		column-gap: 16px;
+	}
+
+	.pie-chart__chart-drawing {
+		max-width: 200px;
+	}
+}
+
+.gmb-stats__metric {
+	display: inline-block;
+	margin-top: 1px; // Fixes shadow truncated at the top of the second column
+	width: 100%;
+}
+
 .gmb-stats__tip-main {
 	align-items: center;
 	color: $gray-darken-20;
