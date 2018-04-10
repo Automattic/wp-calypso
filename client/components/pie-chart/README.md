@@ -1,6 +1,6 @@
 # Pie Chart
 
-This component renders a dataset as a pie chart.
+This component renders a dataset as a pie chart. A separate `PieChartLegend` sub-component will render an accompanying legend.
 
 ## Props 
 
