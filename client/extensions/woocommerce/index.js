@@ -188,6 +188,27 @@ const getStorePages = () => {
 	return pages;
 };
 
+function getAnalyticsPath( path, params ) {
+	if ( '/store/settings/:site' === path ) {
+		return '/store/settings/payments/:site';
+	}
+
+	if ( '/store/settings/email/:site/:setup?' === path ) {
+		return !! params.setup ? '/store/settings/email/:site/:setup' : '/store/settings/email/:site';
+	}
+
+	if ( '/store/settings/shipping/zone/:site/:zone?' === path ) {
+		return !! params.zone
+			? '/store/settings/shipping/zone/:site/:zone'
+			: '/store/settings/shipping/zone/:site';
+	}
+
+	return path
+		.replace( '?', '' )
+		.replace( ':filter', params.filter )
+		.replace( ':productId', ':product-id' );
+}
+
 function addStorePage( storePage, storeNavigation ) {
 	page(
 		storePage.path,
@@ -202,21 +223,11 @@ function addStorePage( storePage, storeNavigation ) {
 				appProps.documentTitle = storePage.documentTitle;
 			}
 
-			appProps.analyticsPath = storePage.path.replace( '?', '' );
-			const { filter, productId } = context.params;
-			if ( filter ) {
-				appProps.analyticsPath = appProps.analyticsPath.replace( ':filter', filter );
-			}
-			if ( productId ) {
-				appProps.analyticsPath = appProps.analyticsPath.replace( ':productId', ':product-id' );
-			}
+			appProps.analyticsPath = getAnalyticsPath( storePage.path, context.params );
 
-			appProps.analyticsTitle = 'Store';
-			if ( storePage.documentTitle ) {
-				appProps.analyticsTitle += ` > ${ storePage.documentTitle }`;
-			} else {
-				appProps.analyticsTitle += ' > Dashboard';
-			}
+			appProps.analyticsTitle = `Store > ${
+				storePage.documentTitle ? storePage.documentTitle : 'Dashboard'
+			}`;
 
 			context.primary = React.createElement( App, appProps, component );
 			next();
