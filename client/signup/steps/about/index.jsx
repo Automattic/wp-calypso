@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey, shuffle } from 'lodash';
+import { invoke, noop, findKey } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -19,8 +19,6 @@ import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { setSiteGoalsArray } from 'state/signup/steps/site-goals-array/actions';
-import { getSiteGoalsArray } from 'state/signup/steps/site-goals-array/selectors';
 import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -78,28 +76,6 @@ class AboutStep extends Component {
 		} );
 
 		this.setFormState( this.formStateController.getInitialState() );
-	}
-
-	componentDidMount() {
-		if ( this.props.siteGoalsArray.length === 0 ) {
-			const localStorageOptions = localStorage.getItem( 'setSiteGoalsArray' );
-			let arrayValues = [
-				'shareOption',
-				'promoteOption',
-				'educateOption',
-				'sellOption',
-				'showcaseOption',
-			];
-
-			if ( abtest( 'siteGoalsShuffle' ) === 'variant' ) {
-				arrayValues = shuffle( arrayValues );
-			}
-
-			const optionsArray = localStorageOptions ? localStorageOptions.split( ',' ) : arrayValues;
-
-			localStorage.setItem( 'setSiteGoalsArray', optionsArray );
-			this.props.setSiteGoalsArray( optionsArray );
-		}
 	}
 
 	setFormState = state => {
@@ -365,7 +341,7 @@ class AboutStep extends Component {
 	};
 
 	renderGoalCheckboxes() {
-		const { translate, siteGoalsArray } = this.props;
+		const { translate } = this.props;
 		// Note that the key attributes will be used in the name of a tracks event attribute so can not
 		// contain whitespace.
 		const options = {
@@ -392,6 +368,14 @@ class AboutStep extends Component {
 				formLabel: translate( 'Showcase your portfolio' ),
 			},
 		};
+
+		const siteGoalsArray = [
+			'shareOption',
+			'promoteOption',
+			'educateOption',
+			'sellOption',
+			'showcaseOption',
+		];
 
 		return (
 			<div className="about__checkboxes">
@@ -608,7 +592,6 @@ export default connect(
 	state => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
-		siteGoalsArray: getSiteGoalsArray( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
 	} ),
@@ -616,7 +599,6 @@ export default connect(
 		setSiteTitle,
 		setDesignType,
 		setSiteGoals,
-		setSiteGoalsArray,
 		setSurvey,
 		setUserExperience,
 		recordTracksEvent,
