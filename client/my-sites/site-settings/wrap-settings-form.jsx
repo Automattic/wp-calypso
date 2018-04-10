@@ -286,8 +286,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			if ( jetpackSettingsUISupported ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
-				isSaveRequestSuccessful =
-					isSaveRequestSuccessful && ! isJetpackSettingsSaveFailure( state, siteId );
 				settings = { ...settings, ...jetpackSettings };
 				settingsFields.jetpack = keys( jetpackSettings );
 				const fieldsToUpdate = /^error_/.test( fields.lang_id )
@@ -296,6 +294,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				jetpackFieldsToUpdate = pick( fieldsToUpdate, settingsFields.jetpack );
 				isSavingSettings =
 					isSavingSettings || isUpdatingJetpackSettings( state, siteId, jetpackFieldsToUpdate );
+				isSaveRequestSuccessful =
+					isSaveRequestSuccessful &&
+					! isJetpackSettingsSaveFailure( state, siteId, jetpackFieldsToUpdate );
 				isRequestingSettings =
 					isRequestingSettings ||
 					( isRequestingJetpackSettings( state, siteId ) && ! jetpackSettings );
