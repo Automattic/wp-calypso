@@ -1,0 +1,13 @@
+.spanner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.spanner--max {
+  min-height: 100vh;
+}
+
+.spanner__content {
+  flex: 1;
+}

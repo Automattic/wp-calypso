@@ -1,10 +1,12 @@
 const path = require('path')
+const MiniExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   mode: 'production',
   context: path.join(__dirname, '/ui'),
   entry: [
-    './main.js'
+    './javascripts/main.js',
+    './stylesheets/main.scss'
   ],
   module: {
     rules: [
@@ -22,11 +24,26 @@ module.exports = {
             ]
           }
         }
+      },
+      {
+        test: /\.scss$/,
+        exclude: path.join(__dirname, '/node_modules'),
+        use: [
+          MiniExtractPlugin.loader,
+          'css-loader',
+          'sass-loader'
+        ]
       }
     ]
   },
   output: {
-    path: path.join(__dirname, '/ui'),
-    filename: '[name].build.js'
-  }
+    path: path.join(__dirname, '/ui/build'),
+    filename: '[name].js'
+  },
+  plugins: [
+    new MiniExtractPlugin({
+      filename: '[name].css',
+      allChunks: true
+    })
+  ]
 }

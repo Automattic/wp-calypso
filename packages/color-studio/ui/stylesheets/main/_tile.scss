@@ -1,0 +1,28 @@
+.tile {
+  flex: 1;
+  padding: 3.65em 0;
+  font-size: 0.65em;
+  text-align: center;
+  text-transform: uppercase;
+  overflow: hidden;
+
+  @include media-breakpoint-up(lg) {
+    font-size: 0.85em;
+  }
+
+  @include media-breakpoint-up(xl) {
+    font-size: 1em;
+  }
+}
+
+.tile--base {
+  flex: 2;
+}
+
+.tile--auxiliary {
+  padding: 1.85em 0;
+}
+
+.tile__subtitle {
+  font-size: 0.85em;
+}

@@ -88,7 +88,7 @@ function createPaletteColors(baseColor, baseColorName) {
 
   const correctedDarkShades   = correctLightness(baseColor, darkShades)
   const correctedBrightShades = correctLightness(brightShades, baseColor)
-  correctedBrightShades.unshift(COLOR_WHITE)
+  correctedBrightShades.unshift(chroma(COLOR_WHITE).hex())
 
   const standardPalette = uniq(correctedBrightShades.concat(correctedDarkShades)).map((color, index) => {
     const colorIndex = index * 10
@@ -110,7 +110,6 @@ function createPaletteColors(baseColor, baseColorName) {
     const copy = clone(colorObject)
     copy.color = chroma(copy.color).desaturate(1).hex()
     copy.auxiliary = true
-    copy.base = false
     return copy
   })
 
