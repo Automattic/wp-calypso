@@ -18,7 +18,6 @@ import accountPasswordData from 'lib/account-password-data';
 import SocialLoginComponent from 'me/social-login';
 import ConnectedAppsComponent from 'me/connected-applications';
 import connectedAppsData from 'lib/connected-applications-data';
-import appPasswordsData from 'lib/application-passwords-data';
 import AccountRecoveryComponent from 'me/security-account-recovery';
 
 export default {
@@ -45,7 +44,6 @@ export default {
 		context.primary = React.createElement( TwoStepComponent, {
 			userSettings: userSettings,
 			path: context.path,
-			appPasswordsData: appPasswordsData,
 		} );
 		next();
 	},
