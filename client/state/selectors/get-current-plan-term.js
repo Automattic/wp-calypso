@@ -6,7 +6,8 @@ import { getPlan } from 'lib/plans';
 import { getSitePlan } from 'state/sites/selectors';
 
 /**
- * Returns term of the active plan for given siteId, e.g. TERM_MONTHLY
+ * Returns term of the active plan for given siteId, e.g. value
+ * of constant TERM_MONTHLY defined in lib/plans/constants
  *
  * @param {Object} state Current state
  * @param {Number} siteId Site ID
