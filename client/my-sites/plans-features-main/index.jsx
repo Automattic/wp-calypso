@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { filter, get } from 'lodash';
+import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -14,17 +14,15 @@ import { connect } from 'react-redux';
  */
 import PlanFeatures from 'my-sites/plan-features';
 import {
-	PLAN_FREE,
-	PLAN_JETPACK_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
+	TYPE_FREE,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+	TYPE_BUSINESS,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	GROUP_WPCOM,
+	GROUP_JETPACK,
 } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import QueryPlans from 'components/data/query-plans';
@@ -33,7 +31,7 @@ import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { isEnabled } from 'config';
 import { purchasesRoot } from 'me/purchases/paths';
-import { plansLink } from 'lib/plans';
+import { plansLink, findPlansKeys, getPlan } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
@@ -42,7 +40,7 @@ import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
-class PlansFeaturesMain extends Component {
+export class PlansFeaturesMain extends Component {
 	componentWillUpdate( nextProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
@@ -63,8 +61,6 @@ class PlansFeaturesMain extends Component {
 			basePlansPath,
 			displayJetpackPlans,
 			domainName,
-			hideFreePlan,
-			intervalType,
 			isInSignup,
 			isLandingPage,
 			onUpgradeClick,
@@ -73,75 +69,11 @@ class PlansFeaturesMain extends Component {
 			site,
 		} = this.props;
 
-		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
-		if ( displayJetpackPlans && intervalType === 'monthly' ) {
-			const jetpackPlans = [
-				PLAN_JETPACK_FREE,
-				PLAN_JETPACK_PERSONAL_MONTHLY,
-				PLAN_JETPACK_PREMIUM_MONTHLY,
-				PLAN_JETPACK_BUSINESS_MONTHLY,
-			];
-			if ( hideFreePlan ) {
-				jetpackPlans.shift();
-			}
-			return (
-				<div className="plans-features-main__group" data-e2e-plans="jetpack">
-					<PlanFeatures
-						basePlansPath={ basePlansPath }
-						displayJetpackPlans={ displayJetpackPlans }
-						domainName={ domainName }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						onUpgradeClick={ onUpgradeClick }
-						plans={ jetpackPlans }
-						selectedFeature={ selectedFeature }
-						selectedPlan={ selectedPlan }
-						site={ site }
-					/>
-				</div>
-			);
-		}
-
-		if ( displayJetpackPlans ) {
-			const jetpackPlans = [
-				PLAN_JETPACK_FREE,
-				PLAN_JETPACK_PERSONAL,
-				PLAN_JETPACK_PREMIUM,
-				PLAN_JETPACK_BUSINESS,
-			];
-			if ( hideFreePlan ) {
-				jetpackPlans.shift();
-			}
-			return (
-				<div className="plans-features-main__group" data-e2e-plans="jetpack">
-					<PlanFeatures
-						basePlansPath={ basePlansPath }
-						displayJetpackPlans={ displayJetpackPlans }
-						domainName={ domainName }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						onUpgradeClick={ onUpgradeClick }
-						plans={ jetpackPlans }
-						selectedFeature={ selectedFeature }
-						selectedPlan={ selectedPlan }
-						site={ site }
-					/>
-				</div>
-			);
-		}
-
-		const plans = filter(
-			[
-				hideFreePlan ? null : PLAN_FREE,
-				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
-				PLAN_PREMIUM,
-				PLAN_BUSINESS,
-			],
-			value => !! value
-		);
-
 		return (
-			<div className="plans-features-main__group" data-e2e-plans="wpcom">
+			<div
+				className="plans-features-main__group"
+				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
+			>
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
 					displayJetpackPlans={ displayJetpackPlans }
@@ -149,13 +81,51 @@ class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					onUpgradeClick={ onUpgradeClick }
-					plans={ plans }
-					selectedPlan={ selectedPlan }
+					plans={ this.getPlansForPlanFeatures() }
 					selectedFeature={ selectedFeature }
+					selectedPlan={ selectedPlan }
 					site={ site }
 				/>
 			</div>
 		);
+	}
+
+	getPlansForPlanFeatures() {
+		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
+
+		const currentPlan = getPlan( selectedPlan );
+
+		let term;
+		if ( intervalType === 'monthly' ) {
+			term = TERM_MONTHLY;
+		} else if ( intervalType === 'yearly' ) {
+			term = TERM_ANNUALLY;
+		} else if ( intervalType === '2yearly' ) {
+			term = TERM_BIENNIALLY;
+		} else if ( currentPlan ) {
+			term = currentPlan.term;
+		} else {
+			term = TERM_ANNUALLY;
+		}
+
+		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
+		const personalPlan = findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ];
+		const plans = [
+			findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
+			personalPlan,
+			findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
+			findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+		];
+
+		if ( hideFreePlan ) {
+			plans.shift();
+		}
+
+		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
+			plans.splice( plans.indexOf( personalPlan ), 1 );
+		}
+
+		return plans;
 	}
 
 	getJetpackFAQ() {
