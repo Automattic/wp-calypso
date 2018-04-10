@@ -20,7 +20,7 @@ import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
-const enhanceContextWithLogin = context => {
+export const enhanceContextWithLogin = context => {
 	const { params: { flow, isJetpack, socialService, twoFactorAuthType }, path } = context;
 
 	context.cacheQueryKeys = [ 'client_id', 'signup_flow' ];
