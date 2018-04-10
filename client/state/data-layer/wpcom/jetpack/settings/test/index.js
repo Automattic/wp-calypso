@@ -210,7 +210,7 @@ describe( 'saveJetpackSettings()', () => {
 	};
 
 	const getState = () => ( {
-		jetpackOnboarding: { settings: { [ 12345678 ]: previousSettings } },
+		jetpack: { settings: { [ 12345678 ]: previousSettings } },
 	} );
 
 	const action = {
