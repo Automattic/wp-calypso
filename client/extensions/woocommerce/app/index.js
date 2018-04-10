@@ -67,13 +67,8 @@ class App extends Component {
 		}
 	}
 
-	fetchData( { allRequiredPluginsActive, pluginsLoaded, siteId } ) {
+	fetchData( { siteId } ) {
 		if ( ! siteId ) {
-			return;
-		}
-
-		// We don't know yet if we can get a response
-		if ( ! pluginsLoaded || ! allRequiredPluginsActive ) {
 			return;
 		}
 
