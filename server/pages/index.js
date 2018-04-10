@@ -390,6 +390,8 @@ function setUpCSP( req, res, next ) {
 	const originalUrlPathname = req.originalUrl.split( '?' )[ 0 ];
 
 	// We only setup CSP for /log-in* for now
+	// If you change this, please look at the usages of analyticsScriptNonce and see how the client-side rendering
+	// would be affected.
 	if ( ! /^\/log-in/.test( originalUrlPathname ) ) {
 		next();
 		return;

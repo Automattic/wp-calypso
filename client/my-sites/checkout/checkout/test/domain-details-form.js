@@ -21,6 +21,7 @@ jest.mock( 'lib/analytics', () => ( {
 	pageView: {
 		record: () => {},
 	},
+	isGoogleAnalyticsAllowed: () => false,
 } ) );
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,

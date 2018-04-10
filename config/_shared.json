@@ -16,7 +16,6 @@
 	"discover_logged_out_redirect_url": false,
 	"facebook_api_key": false,
 	"features": {},
-	"google_analytics_enabled": false,
 	"google_analytics_key": false,
 	"google_adwords_conversion_id": false,
 	"google_adwords_conversion_id_jetpack": false,

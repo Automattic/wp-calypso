@@ -201,15 +201,17 @@ class Document extends React.Component {
 						 `,
 						} }
 					/>
-					{ // Load GA only if enabled in the config.
-					appConfig( 'google_analytics_enabled' ) && (
-						<script
-							async={ true }
-							type="text/javascript"
-							src="https://www.google-analytics.com/analytics.js"
-							nonce={ analyticsScriptNonce }
-						/>
-					) }
+					{ // Server-side rendering of the analytics tag ONLY if a nonce is provided
+					// Otherwise, the GA script will be loaded via ad-tracking.js
+					appConfig.isEnabled( 'google-analytics' ) &&
+						analyticsScriptNonce && (
+							<script
+								async={ true }
+								type="text/javascript"
+								src="https://www.google-analytics.com/analytics.js"
+								nonce={ analyticsScriptNonce }
+							/>
+						) }
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>

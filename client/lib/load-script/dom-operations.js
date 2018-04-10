@@ -4,6 +4,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { find } from 'lodash';
 const debug = debugFactory( 'lib/load-script/dom-operations' );
 
 /**
@@ -20,6 +21,15 @@ export function createScriptElement( url ) {
 	script.onload = handleRequestSuccess;
 	script.onerror = handleRequestError;
 	return script;
+}
+
+export function hasScriptElement( url ) {
+	const scriptMatchingUrl = find(
+		document.getElementsByTagName( 'script' ),
+		scriptTag => scriptTag.src === url
+	);
+
+	return typeof scriptMatchingUrl !== 'undefined';
 }
 
 export function attachToHead( element ) {
