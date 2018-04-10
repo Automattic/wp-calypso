@@ -176,9 +176,9 @@ class ApplicationPasswords extends Component {
 			<div className="application-passwords__active">
 				<FormSectionHeading>{ translate( 'Active Passwords' ) }</FormSectionHeading>
 				<ul className="application-passwords__list">
-					{ appPasswords.map( function( password ) {
-						return <AppPasswordItem password={ password } key={ password.ID } />;
-					}, this ) }
+					{ appPasswords.map( password => (
+						<AppPasswordItem password={ password } key={ password.ID } />
+					) ) }
 				</ul>
 			</div>
 		);
