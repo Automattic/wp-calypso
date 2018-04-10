@@ -1,18 +1,11 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import React from 'react';
-
-/**
  * Internal dependencies
  */
-import config from 'config';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getIntervalTypeFromCurrentPlan } from 'state/plans/selectors';
 
 import { mapStateToProps } from '../main';
 
@@ -41,18 +34,6 @@ jest.mock( 'state/sites/selectors', () => ( {
 	isJetpackSite: jest.fn(),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
-
 const state = {};
 
 describe( 'mapStateToProps', () => {
@@ -66,11 +47,7 @@ describe( 'mapStateToProps', () => {
 		isSiteAutomatedTransferSelector.mockImplementation( () => false );
 
 		const result = mapStateToProps( state, {} );
-		expect( Object.keys( result ) ).toEqual( [
-			'intervalType',
-			'selectedSite',
-			'displayJetpackPlans',
-		] );
+		expect( Object.keys( result ) ).toEqual( [ 'selectedSite', 'displayJetpackPlans' ] );
 		expect( result.selectedSite ).toEqual( { id: 1 } );
 		expect( result.displayJetpackPlans ).toBe( false );
 	} );
@@ -106,28 +83,4 @@ describe( 'mapStateToProps', () => {
 		const result = mapStateToProps( state, {} );
 		expect( result.displayJetpackPlans ).toBe( false );
 	} );
-
-	if ( config.isEnabled( 'upgrades/2-year-plans' ) ) {
-		test( 'should return intervalType returned by getIntervalTypeFromCurrentPlan', () => {
-			getIntervalTypeFromCurrentPlan.mockImplementation( () => '2yearly' );
-			expect( mapStateToProps( state, {} ).intervalType ).toBe( '2yearly' );
-
-			getIntervalTypeFromCurrentPlan.mockImplementation( () => 'yearly' );
-			expect( mapStateToProps( state, {} ).intervalType ).toBe( 'yearly' );
-		} );
-
-		test(
-			'should return null intervalType if getIntervalTypeFromCurrentPlan returns monthly - to keep ' +
-				'jetpack upgrade page same as before this was introduced',
-			() => {
-				getIntervalTypeFromCurrentPlan.mockImplementation( () => 'monthly' );
-				expect( mapStateToProps( state, {} ).intervalType ).toBe( null );
-			}
-		);
-
-		test( 'should return intervalType from props if it is passed', () => {
-			getIntervalTypeFromCurrentPlan.mockImplementation( () => '2yearly' );
-			expect( mapStateToProps( state, { intervalType: 'yearly' } ).intervalType ).toBe( 'yearly' );
-		} );
-	}
 } );
