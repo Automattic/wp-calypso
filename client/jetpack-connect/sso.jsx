@@ -40,6 +40,7 @@ import { getSSO } from 'state/jetpack-connect/selectors';
 import { login } from 'lib/paths';
 import { persistSsoApproved } from './persistence-utils';
 import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /*
  * Module variables
@@ -404,6 +405,7 @@ class JetpackSsoForm extends Component {
 
 		return (
 			<MainWrapper>
+				<PageViewTracker path="/jetpack/sso/:site" title="Jetpack SSO" />
 				<div className="jetpack-connect__sso">
 					<FormattedHeader
 						headerText={ translate( 'Connect with WordPress.com' ) }

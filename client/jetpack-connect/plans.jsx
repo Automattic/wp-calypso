@@ -39,6 +39,7 @@ import {
 	isRtl,
 	isSiteAutomatedTransfer,
 } from 'state/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -204,6 +205,10 @@ class Plans extends Component {
 
 		return (
 			<Fragment>
+				<PageViewTracker
+					path={ `/jetpack/connect/plans${ interval ? '/' + interval : '' }/:site` }
+					title="Plans"
+				/>
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid

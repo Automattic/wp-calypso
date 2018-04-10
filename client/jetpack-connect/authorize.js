@@ -68,6 +68,7 @@ import {
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isRemoteSiteOnSitesList,
 } from 'state/jetpack-connect/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Constants
@@ -658,8 +659,15 @@ export class JetpackAuthorize extends Component {
 	}
 
 	render() {
+		const { interval, locale } = this.props;
 		return (
 			<MainWrapper>
+				<PageViewTracker
+					path={ `/jetpack/connect/authorize${ interval ? '/' + interval : '' }${
+						locale ? '/:locale' : ''
+					} ` }
+					title="Jetpack Authorize"
+				/>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection

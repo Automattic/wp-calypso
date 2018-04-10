@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class NoDirectAccessError extends Component {
 	static propTypes = {
@@ -28,6 +29,7 @@ class NoDirectAccessError extends Component {
 	render() {
 		return (
 			<Main className="jetpack-connect__main-error">
+				<PageViewTracker path="/jetpack/connect/authorize" title="Jetpack Authorize" />
 				<EmptyContent
 					illustration="/calypso/images/illustrations/whoops.svg"
 					title={ this.props.translate( 'Oops, this URL should not be accessed directly' ) }

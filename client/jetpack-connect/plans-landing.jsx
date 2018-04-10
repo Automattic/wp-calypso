@@ -23,6 +23,7 @@ import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { storePlan } from './persistence-utils';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 
@@ -96,6 +97,10 @@ class PlansLanding extends Component {
 
 		return (
 			<div>
+				<PageViewTracker
+					path={ `/jetpack/connect/store${ interval ? '/' + interval : '' }` }
+					title="Plans"
+				/>
 				<QueryPlans />
 
 				<PlansGrid
