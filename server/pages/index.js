@@ -392,6 +392,7 @@ function setUpCSP( req, res, next ) {
 		'object-src': [ "'none'" ],
 		'img-src': [
 			"'self'",
+			'data',
 			'*.wp.com',
 			'*.files.wordpress.com',
 			'*.gravatar.com',
