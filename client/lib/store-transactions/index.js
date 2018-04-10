@@ -22,7 +22,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
 import wp from 'lib/wp';
-import { isEbanxEnabledForCountry, translatedEbanxError } from 'lib/credit-card-details/ebanx';
+import { isEbanxEnabledForCountry, translatedEbanxError } from 'lib/checkout/ebanx';
 
 const wpcom = wp.undocumented();
 

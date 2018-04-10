@@ -10,9 +10,9 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { validateCardDetails } from '../validation';
-import { isEbanxEnabledForCountry, isValidCPF } from 'lib/credit-card-details/ebanx';
+import { isEbanxEnabledForCountry, isValidCPF } from 'lib/checkout/ebanx';
 
-jest.mock( 'lib/credit-card-details/ebanx', () => {
+jest.mock( 'lib/checkout/ebanx', () => {
 	return {
 		isEbanxEnabledForCountry: jest.fn( false ),
 		isValidCPF: jest.fn( false ),

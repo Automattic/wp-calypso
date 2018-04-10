@@ -18,7 +18,7 @@ import PaymentCountrySelect from 'components/payment-country-select';
 import { StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { maskField, unmaskField, getCreditCardType } from 'lib/credit-card-details';
-import { shouldRenderAdditionalEbanxFields } from 'lib/credit-card-details/ebanx';
+import { shouldRenderAdditionalEbanxFields } from 'lib/checkout/ebanx';
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
