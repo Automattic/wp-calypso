@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
+import { keys } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,12 +22,13 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
+import ComponentAdd from './component-add';
 
 /**
  * Docs examples
  */
 import ActionCard from 'components/action-card';
-import Accordions from 'components/accordion';
+import Accordion from 'components/accordion';
 import BackButton from 'components/back-button';
 import Badge from 'components/badge';
 import Banner from 'components/banner';
@@ -121,6 +123,18 @@ import Version from 'components/version';
 import VerticalMenu from 'components/vertical-menu';
 import Wizard from 'components/wizard';
 
+import { AccordionPlayground } from 'components/accordion/docs/example';
+import { ActionCardPlayground } from 'components/action-card/docs/example';
+import { BackButtonPlayground } from 'components/back-button/docs/example';
+import { CardHeadingPlayground } from 'components/card-heading/docs/example';
+
+const examples = {
+	Accordion: AccordionPlayground,
+	ActionCard: ActionCardPlayground,
+	BackButton: BackButtonPlayground,
+	CardHeading: CardHeadingPlayground,
+};
+
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 
@@ -135,13 +149,45 @@ class DesignAssets extends React.Component {
 		page( '/devdocs/design/' );
 	};
 
+	add = Component => {
+		this.setState( {
+			code:
+				'<div>' +
+				this.state.code.replace( /(^<div>)/, '' ).replace( /(<\/div>$)/, '' ) +
+				'\n\t' +
+				Component +
+				'\n</div>',
+		} );
+	};
+
+	state = {
+		code: `<div>
+\t<Button primary onClick={function() {alert('World')}}><Gridicon icon="code" /> Hello </Button>
+\t<ActionCard
+\t\theaderText={ 'Header' }
+\t\tmainText={ 'Some text' }
+\t\tbuttonText={ 'Call to action!' }
+\t\tbuttonIcon="external"
+\t\tbuttonPrimary={ true }
+\t\tbuttonHref="https://wordpress.com"
+\t\tbuttonTarget="_blank"
+\t/>
+</div>`,
+	};
+
+	handleChange = code => {
+		this.setState( {
+			code: code,
+		} );
+	};
+
 	render() {
 		const className = classnames( 'devdocs', 'devdocs__components', {
 			'is-single': true,
 			'is-list': ! this.props.component,
 		} );
 		const scope = {
-			Accordions,
+			Accordion,
 			ActionCard,
 			BackButton,
 			Badge,
@@ -240,25 +286,20 @@ class DesignAssets extends React.Component {
 			VerticalMenu,
 			Wizard,
 		};
-		const code = `<div>
-    <Button primary onClick={function() {alert('World')}}><Gridicon icon="code" /> Hello </Button>
-    <ActionCard
-            headerText={ 'Header' }
-            mainText={ 'Some text' }
-            buttonText={ 'Call to action!' }
-            buttonIcon="external"
-            buttonPrimary={ true }
-            buttonHref="https://wordpress.com"
-            buttonTarget="_blank"
-        />
-    </div>
-    `;
+
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Playground" />
 				<h1>Playground</h1>
-				<LiveProvider code={ code } scope={ scope } mountStylesheet={ false }>
-					<LiveEditor />
+				<LiveProvider code={ this.state.code } scope={ scope } mountStylesheet={ false }>
+					<div className="design__wrapper">
+						<div className="design__components">
+							{ keys( examples ).map( name => {
+								return <ComponentAdd add={ this.add } example={ examples[ name ] } name={ name } />;
+							} ) }
+						</div>
+						<LiveEditor onChange={ this.handleChange } />
+					</div>
 					<LiveError />
 					<DocsExampleWrapper unique={ true } name="Preview">
 						<LivePreview />

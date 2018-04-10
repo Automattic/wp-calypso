@@ -19,3 +19,5 @@ const BackButtonExample = () => (
 BackButtonExample.displayName = 'BackButton';
 
 export default BackButtonExample;
+
+export const BackButtonPlayground = `<BackButton />`;
