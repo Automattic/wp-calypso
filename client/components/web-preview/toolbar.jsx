@@ -96,7 +96,9 @@ class PreviewToolbar extends Component {
 			translate,
 		} = this.props;
 
-		const selectedDevice = this.devices[ currentDevice ];
+		const selectedDevice = this.devices[
+			! showSEO && 'seo' === currentDevice ? 'computer' : currentDevice
+		];
 		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
 
 		return (
@@ -169,6 +171,4 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( PreviewToolbar ) );
+export default connect( null, { recordTracksEvent } )( localize( PreviewToolbar ) );

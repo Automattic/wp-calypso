@@ -25,6 +25,9 @@ import {
 	getSiteSlug,
 	getSiteOption,
 } from 'state/sites/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
+
 import versionCompare from 'lib/version-compare';
 
 const analyticsPageTitle = 'Sharing';
@@ -107,6 +110,20 @@ export const buttons = ( context, next ) => {
 	}
 
 	context.contentComponent = createElement( SharingButtons );
+
+	next();
+};
+
+export const canUserManageSharing = ( context, next ) => {
+	const { store } = context;
+	const state = store.getState();
+	const siteId = getSelectedSiteId( state );
+	const hasRepublicizeFeature = hasFeature( state, siteId, FEATURE_REPUBLICIZE );
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+
+	if ( ! hasRepublicizeFeature && ! canUserManageOptions ) {
+		page.redirect( '/stats' );
+	}
 
 	next();
 };

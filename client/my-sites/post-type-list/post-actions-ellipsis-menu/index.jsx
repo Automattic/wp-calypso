@@ -5,6 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Children, cloneElement } from 'react';
+import { compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,20 +22,27 @@ import PostActionsEllipsisMenuView from './view';
 import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuDuplicate from './duplicate';
 
-export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {
+export default function PostActionsEllipsisMenu( {
+	globalId,
+	includeDefaultActions,
+	showShareAction,
+	children,
+} ) {
 	let actions = [];
 
 	if ( includeDefaultActions ) {
 		actions.push(
-			<PostActionsEllipsisMenuEdit key="edit" />,
-			<PostActionsEllipsisMenuView key="view" />,
-			<PostActionsEllipsisMenuStats key="stats" />,
-			<PostActionsEllipsisMenuComments key="comments" />,
-			<PostActionsEllipsisMenuPublish key="publish" />,
-			<PostActionsEllipsisMenuShare key="share" />,
-			<PostActionsEllipsisMenuRestore key="restore" />,
-			<PostActionsEllipsisMenuDuplicate key="duplicate" />,
-			<PostActionsEllipsisMenuTrash key="trash" />
+			...compact( [
+				<PostActionsEllipsisMenuEdit key="edit" />,
+				<PostActionsEllipsisMenuView key="view" />,
+				<PostActionsEllipsisMenuStats key="stats" />,
+				<PostActionsEllipsisMenuComments key="comments" />,
+				<PostActionsEllipsisMenuPublish key="publish" />,
+				showShareAction && <PostActionsEllipsisMenuShare key="share" />,
+				<PostActionsEllipsisMenuRestore key="restore" />,
+				<PostActionsEllipsisMenuDuplicate key="duplicate" />,
+				<PostActionsEllipsisMenuTrash key="trash" />,
+			] )
 		);
 	}
 
@@ -59,8 +67,10 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 PostActionsEllipsisMenu.propTypes = {
 	globalId: PropTypes.string,
 	includeDefaultActions: PropTypes.bool,
+	showShareAction: PropTypes.bool,
 };
 
 PostActionsEllipsisMenu.defaultProps = {
 	includeDefaultActions: true,
+	showShareAction: true,
 };

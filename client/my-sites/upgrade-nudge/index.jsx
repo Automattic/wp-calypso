@@ -21,6 +21,7 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import { getValidFeatureKeys } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { userCan } from 'lib/site/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
@@ -68,10 +69,14 @@ class UpgradeNudge extends React.Component {
 	};
 
 	shouldDisplay() {
-		const { feature, jetpack, planHasFeature, shouldDisplay, site } = this.props;
+		const { feature, jetpack, planHasFeature, shouldDisplay, site, userCanManageSite } = this.props;
 
 		if ( shouldDisplay ) {
 			return shouldDisplay();
+		}
+
+		if ( ! userCanManageSite ) {
+			return false;
 		}
 
 		if ( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) {
@@ -166,9 +171,12 @@ class UpgradeNudge extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
+
 		return {
-			site: getSelectedSite( state ),
+			site,
 			planHasFeature: hasFeature( state, siteId, ownProps.feature ),
+			userCanManageSite: userCan( 'manage_options', site ),
 		};
 	},
 	{ recordTracksEvent }

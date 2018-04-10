@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { noop, isFunction } from 'lodash';
+import { noop, isFunction, overSome } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
 import { addQueryArgs } from 'lib/route';
@@ -22,9 +22,13 @@ import { localize } from 'i18n-calypso';
 import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { userCan } from 'lib/site/utils';
+import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const debug = debugModule( 'calypso:web-preview' );
 
+const hasSeoSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );
 export class WebPreviewContent extends Component {
 	previewId = uuid();
 	_hasTouch = false;
@@ -227,7 +231,7 @@ export class WebPreviewContent extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, showSEO } = this.props;
 
 		const className = classNames( this.props.className, 'web-preview__inner', {
 			'is-touch': this._hasTouch,
@@ -249,6 +253,7 @@ export class WebPreviewContent extends Component {
 		return (
 			<div className={ className } ref={ this.setWrapperElement }>
 				<Toolbar
+					showSEO={ showSEO }
 					setDeviceViewport={ this.setDeviceViewport }
 					device={ this.state.device }
 					{ ...this.props }
@@ -268,7 +273,7 @@ export class WebPreviewContent extends Component {
 						className={ classNames( 'web-preview__frame-wrapper', {
 							'is-resizable': ! this.props.isModalWindow,
 						} ) }
-						style={ { display: 'seo' === this.state.device ? 'none' : 'inherit' } }
+						style={ { display: showSEO && 'seo' === this.state.device ? 'none' : 'inherit' } }
 					>
 						<iframe
 							ref={ this.setIframeInstance }
@@ -278,9 +283,10 @@ export class WebPreviewContent extends Component {
 							title={ this.props.iframeTitle || translate( 'Preview' ) }
 						/>
 					</div>
-					{ 'seo' === this.state.device && (
-						<SeoPreviewPane frontPageMetaDescription={ this.props.frontPageMetaDescription } />
-					) }
+					{ showSEO &&
+						'seo' === this.state.device && (
+							<SeoPreviewPane frontPageMetaDescription={ this.props.frontPageMetaDescription } />
+						) }
 				</div>
 			</div>
 		);
@@ -297,7 +303,7 @@ WebPreviewContent.propTypes = {
 	// Show close button
 	showClose: PropTypes.bool,
 	// Show SEO button
-	showSEO: PropTypes.bool,
+	showSEO: PropTypes.bool.isRequired,
 	// Show device viewport switcher
 	showDeviceSwitcher: PropTypes.bool,
 	// Show edit button
@@ -355,4 +361,14 @@ WebPreviewContent.defaultProps = {
 	isModalWindow: false,
 };
 
-export default connect( null, { recordTracksEvent } )( localize( WebPreviewContent ) );
+const mapStateToProps = ( state, { showSEO } ) => {
+	const site = getSelectedSite( state );
+	const supportsSEO = site && site.plan && hasSeoSupportingPlan( site.plan );
+	const userCanManageSite = userCan( 'manage_options', site );
+
+	return {
+		showSEO: !! showSEO || supportsSEO || userCanManageSite,
+	};
+};
+
+export default connect( mapStateToProps, { recordTracksEvent } )( localize( WebPreviewContent ) );
