@@ -1,0 +1,78 @@
+.gmb-location {
+	display: flex;
+	justify-content: space-between;
+
+	@include breakpoint( '<960px' ) {
+		flex-direction: column;
+	}
+
+	&:after {
+		display: none; // Disables clearfix that messes up with Flexbox alignment
+	}
+
+	.button {
+		align-self: stretch;
+
+		@include breakpoint( '<480px' ) {
+			text-align: center;
+		}
+
+		@include breakpoint( '480px-960px' ) {
+			align-self: flex-start;
+		}
+
+		@include breakpoint( '<960px' ) {
+			margin-top: 10px;
+		}
+
+		@include breakpoint( '>960px' ) {
+			align-self: center;
+			flex-shrink: 0;
+			margin-left: 15px;
+		}
+	}
+}
+
+.gmb-location__content {
+	display: flex;
+}
+
+.gmb-location__logo,
+.gmb-location__photo {
+	border-radius: 50%;
+	height: 60px;
+	width: 60px;
+}
+
+.gmb-location__logo {
+	align-items: center;
+	background-color: $gray-light;
+	display: flex;
+	justify-content: center;
+	min-width: 60px; // Makes sure aspect ratio is maintained when viewport is super narrow
+}
+
+.gmb-location__description {
+	align-self: center;
+	flex-grow: 1;
+	margin-left: 15px;
+}
+
+.gmb-location__name {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.gmb-location__address p {
+	margin-bottom: 0;
+}
+
+.gmb-location__verified {
+	margin-top: 10px;
+}
+
+.gmb-location__verified-icon {
+	color: $alert-green;
+	margin-left: -2px;
+	vertical-align: text-bottom;
+}
