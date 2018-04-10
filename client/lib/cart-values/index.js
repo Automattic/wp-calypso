@@ -159,7 +159,7 @@ function paymentMethodClassName( method ) {
 		ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
 		paypal: 'WPCOM_Billing_PayPal_Express',
 		p24: 'WPCOM_Billing_Stripe_Source_P24',
-		tef: 'WPCOM_Billing_Ebanx_Tef',
+		tef: 'WPCOM_Billing_Ebanx_Redirect_Tef',
 	};
 
 	return paymentMethodsClassNames[ method ] || '';
