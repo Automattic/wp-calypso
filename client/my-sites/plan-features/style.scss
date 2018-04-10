@@ -114,7 +114,7 @@ $plan-features-sidebar-width: 272px;
 		border: 1px solid $blue-wordpress;
 		background-color: rgba( $blue-wordpress, 0.1 );
 		position: relative;
-			top: -1px;
+		top: -1px;
 
 		.plan-features__item-checkmark {
 			fill: $blue-wordpress;
@@ -423,7 +423,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__item-description {
 	display: inline-block;
 	margin-left: 10px;
- }
+}
 
 
 /*= Plans in Signup
@@ -440,11 +440,15 @@ $plan-features-sidebar-width: 272px;
 
 .plans-wrapper {
 	margin: 0 auto;
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
-	height: 100%;
 	padding: 20px 0 10px;
-    transform: translateY(-20px);
+	transform: translateY(-20px);
+}
+
+.touch {
+	.plans-wrapper {
+		overflow-x: scroll;
+		-webkit-overflow-scrolling: touch;
+	}
 }
 
 .plan-features--signup {
@@ -489,7 +493,7 @@ $plan-features-sidebar-width: 272px;
 	.plan-features__graphic {
 		width: 100px;
 		height: 100px;
-    	margin: 20px auto;
+		margin: 20px auto;
 	}
 
 	.plan-features__pricing,
@@ -544,9 +548,11 @@ $plan-features-sidebar-width: 272px;
 .plans-features-main__bottom .plan-features__actions {
 	padding-bottom: 0;
 }
+
 .plans-features-main__bottom .plan-features__actions-button {
 	width: auto;
 }
+
 /**
  * A/B test for upgrade pricing display
  */
@@ -648,9 +654,9 @@ $plan-features-sidebar-width: 272px;
  * A/B test for horizontal vs vertical scroll
  */
 .has-mobile-table.plan-features--signup {
-	
+
 	@include breakpoint( "<660px" ) {
-	
+
 		.signup__steps &,
 		.jetpack-connect__plans & {
 			width: auto;
