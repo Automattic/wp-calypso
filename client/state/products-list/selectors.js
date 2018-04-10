@@ -44,7 +44,7 @@ export function getProductDisplayCost( state, productSlug ) {
 	return product.cost_display;
 }
 
-export const getDiscountedOrRegularPrice = ( state, siteId, plan, isMonthlyPreference ) => {
+export const getPlanPrice = ( state, siteId, plan, isMonthlyPreference ) => {
 	const isMonthly = isMonthlyPreference && plan.term !== TERM_MONTHLY;
 	return (
 		getPlanDiscountedRawPrice( state, siteId, plan.getStoreSlug(), { isMonthly } ) ||
@@ -63,8 +63,8 @@ export const planSlugToPlanProduct = ( products, planSlug ) => {
 };
 
 export const computeFullAndMonthlyPricesForPlan = ( state, siteId, plan ) => ( {
-	priceFull: getDiscountedOrRegularPrice( state, siteId, plan, false ),
-	priceMonthly: getDiscountedOrRegularPrice( state, siteId, plan, true ),
+	priceFull: getPlanPrice( state, siteId, plan, false ),
+	priceMonthly: getPlanPrice( state, siteId, plan, true ),
 } );
 
 export const computeProductsWithPrices = ( state, siteId, plans ) => {
