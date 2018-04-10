@@ -1245,6 +1245,38 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove featured image edit after it is saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							featured_image: 123,
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							featured_image: 'https://example.files.wordpress.com/2018/02/img_4879.jpg',
+							post_thumbnail: {
+								ID: 123,
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {},
+				},
+			} );
+		} );
+
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {

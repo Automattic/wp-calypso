@@ -223,6 +223,16 @@ describe( 'utils', () => {
 			expect( id ).toBeNull();
 		} );
 
+		test( 'should return empty string if that is the featured_image value', () => {
+			// These values are typical for posts without a featured image
+			const id = postUtils.getFeaturedImageId( {
+				featured_image: '',
+				post_thumbnail: null,
+			} );
+
+			expect( id ).toEqual( '' );
+		} );
+
 		test( 'should fall back to post thumbnail object ID if exists, if featured_image is URL', () => {
 			const id = postUtils.getFeaturedImageId( {
 				featured_image: 'https://example.com/image.png',
