@@ -82,8 +82,6 @@ const DARK_STEP_DEFINITIONS = [
 
 module.exports = createPaletteColors
 
-// console.log(createPaletteColors('#8437c2'))
-
 function createPaletteColors(baseColor, baseColorName) {
   const brightShades = blendColorWithDefinitions(baseColor, BRIGHT_STEP_DEFINITIONS)
   const darkShades   = blendColorWithDefinitions(baseColor, DARK_STEP_DEFINITIONS)

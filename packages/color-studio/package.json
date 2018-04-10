@@ -2,7 +2,6 @@
   "name": "palette",
   "version": "0.2.1",
   "private": true,
-  "main": "index.js",
   "dependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
@@ -20,7 +19,7 @@
   "scripts": {
     "development": "webpack --watch",
     "lint": "xo",
-    "precommit": "yarn lint && webpack"
+    "precommit": "yarn lint && webpack --display=errors-only"
   },
   "xo": {
     "ignores": [
