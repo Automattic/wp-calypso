@@ -107,6 +107,7 @@ const webpackConfig = {
 		filename: 'bundle.js',
 	},
 	mode: isDevelopment ? 'development' : 'production',
+	optimization: { minimize: false },
 	module: {
 		rules: [
 			{
