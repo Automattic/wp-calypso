@@ -77,7 +77,7 @@ class GoogleMyBusinessStats extends Component {
 
 				<GoogleMyBusinessLocation location={ locationData }>
 					<Button
-						href="https://www.google.com/business/"
+						href="https://business.google.com/"
 						onClick={ this.trackUpdateListingClick }
 						target="_blank"
 					>
@@ -100,7 +100,7 @@ class GoogleMyBusinessStats extends Component {
 
 					<div className="gmb-stats__metric">
 						<GoogleMyBusinessStatsTip
-							buttonHref="https://business.google.com/photos"
+							buttonHref="https://business.google.com/"
 							buttonText={ translate( 'Post Photos' ) }
 							eventName="'calypso_google_my_business_stats_post_photos_button_click'"
 							illustration="reviews"
@@ -148,7 +148,9 @@ class GoogleMyBusinessStats extends Component {
 							buttonText={ translate( 'Complete Your Listing' ) }
 							eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
 							illustration="compare"
-							text={ translate( 'Customers compare business listings on Google to make decisions. Make your listing count.' ) }
+							text={
+								translate( 'Customers compare business listings on Google to make decisions. Make your listing count.' )
+							}
 						/>
 					</div>
 				</div>
