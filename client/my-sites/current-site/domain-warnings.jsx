@@ -28,6 +28,7 @@ const ruleWhiteList = [
 	'wrongNSMappedDomains',
 	'pendingGappsTosAcceptanceDomains',
 	'transferStatus',
+	'newTransfersWrongNS',
 ];
 
 const CurrentSiteDomainWarnings = ( { domains, isAtomic, isJetpack, selectedSite } ) => {

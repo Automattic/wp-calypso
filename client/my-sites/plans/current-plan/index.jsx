@@ -119,6 +119,7 @@ class CurrentPlan extends Component {
 							'pendingGappsTosAcceptanceDomains',
 							'unverifiedDomainsCannotManage',
 							'wrongNSMappedDomains',
+							'newTransfersWrongNS',
 						] }
 					/>
 				) }

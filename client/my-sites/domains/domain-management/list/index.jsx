@@ -75,6 +75,7 @@ export class List extends React.Component {
 						'unverifiedDomainsCannotManage',
 						'wrongNSMappedDomains',
 						'transferStatus',
+						'newTransfersWrongNS',
 					] }
 				/>
 			);
