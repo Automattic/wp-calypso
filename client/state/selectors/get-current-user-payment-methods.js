@@ -3,54 +3,49 @@
 /**
  * External dependencies
  */
-
-import { lowerCase, upperCase } from 'lodash';
+import { isEmpty, uniq } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { getGeoCountryShort } from 'state/geo/selectors';
+import { getPaymentCountryCode } from 'state/selectors';
 
 /**
  * Constants
- *
- * Payment methods can be targeted via a full lang-CC locale, a two
- * digit GeoIP country code, or a WP.com "locale" code (more of a
- * two letter lang code really). Return value precedence is in that order.
  */
-const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
-
-const paymentMethods = {
-	byLocale: {},
-
-	byCountry: {
-		US: DEFAULT_PAYMENT_METHODS,
-		AT: [ 'credit-card', 'eps', 'paypal' ],
-		BE: [ 'credit-card', 'bancontact', 'paypal' ],
-		CN: [ 'credit-card', 'alipay', 'paypal' ],
-		DE: [ 'credit-card', 'giropay', 'paypal' ],
-		NL: [ 'credit-card', 'ideal', 'paypal' ],
-		PL: [ 'credit-card', 'p24', 'paypal' ],
-	},
-
-	byWpcomLang: {},
+const countrySpecificPaymentMethods = {
+	AT: [ 'eps' ],
+	BE: [ 'bancontact' ],
+	CN: [ 'alipay' ],
+	DE: [ 'giropay' ],
+	NL: [ 'ideal' ],
+	PL: [ 'p24' ],
 };
 
 /**
- * Returns the preferred payment methods for the current locale.
+ * Returns the preferred payment methods for the current user.
  *
  * @param  {Object}  state       Global state tree
  * @return {Array}               Preferred payment methods
  */
 export default function getCurrentUserPaymentMethods( state ) {
-	const countryCode = getGeoCountryShort( state );
-	const wpcomLang = getCurrentUserLocale( state );
-	const generatedLocale = lowerCase( wpcomLang ) + '-' + upperCase( countryCode );
+	let paymentMethods = [ 'credit-card' ];
 
-	return (
-		paymentMethods.byLocale[ generatedLocale ] ||
-		paymentMethods.byCountry[ countryCode ] ||
-		paymentMethods.byWpcomLang[ wpcomLang ] || [ ...DEFAULT_PAYMENT_METHODS ]
-	);
+	// If the user is physically located in a particular country or has
+	// selected that country as their payment country, include that country's
+	// payment methods.
+	const geoCountryPaymentMethods = countrySpecificPaymentMethods[ getGeoCountryShort( state ) ];
+	if ( ! isEmpty( geoCountryPaymentMethods ) ) {
+		paymentMethods = paymentMethods.concat( geoCountryPaymentMethods );
+	}
+	const paymentCountryPaymentMethods =
+		countrySpecificPaymentMethods[ getPaymentCountryCode( state ) ];
+	if ( ! isEmpty( paymentCountryPaymentMethods ) ) {
+		paymentMethods = paymentMethods.concat( paymentCountryPaymentMethods );
+	}
+
+	paymentMethods.push( 'paypal' );
+
+	return uniq( paymentMethods );
 }

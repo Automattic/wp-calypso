@@ -14,6 +14,7 @@ import { filter, isFunction, noop, omit } from 'lodash';
 import CountrySelect from 'my-sites/domains/components/form/country-select';
 import { getPaymentCountryCode } from 'state/selectors';
 import { setPaymentCountryCode } from 'state/ui/payment/actions';
+import { updateCartPaymentCountry } from 'lib/upgrades/actions';
 
 export class PaymentCountrySelect extends Component {
 	static propTypes = {
@@ -48,6 +49,8 @@ export class PaymentCountrySelect extends Component {
 
 	handleFieldChange = event => {
 		this.props.updateGlobalCountryCode( event.target.value );
+		// Force the shopping cart to use the new country.
+		updateCartPaymentCountry( event.target.value );
 		// Notify the callback function that a new country was selected.
 		this.props.onCountrySelected( event.target.name, event.target.value );
 		// Also notify the standard onChange field handler, if there is one.
@@ -72,7 +75,7 @@ export class PaymentCountrySelect extends Component {
 		return (
 			<CountrySelect
 				{ ...omit( this.props, propsToOmit ) }
-				value={ this.props.countryCode }
+				value={ this.props.value || this.props.countryCode }
 				onChange={ this.handleFieldChange }
 			/>
 		);

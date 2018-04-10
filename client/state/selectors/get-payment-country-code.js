@@ -3,7 +3,12 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, isNull } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { getGeoCountryShort } from 'state/geo/selectors';
 
 /**
  * Returns the current payment country.
@@ -12,5 +17,12 @@ import { get } from 'lodash';
  * @return {?string} - The current payment country, or null.
  */
 export default function getPaymentCountryCode( state ) {
-	return get( state, 'ui.payment.countryCode', null );
+	const countryCode = get( state, 'ui.payment.countryCode', null );
+
+	if ( ! isNull( countryCode ) ) {
+		return countryCode;
+	}
+
+	// Fall back on GeoIP if the user hasn't selected a payment country yet.
+	return getGeoCountryShort( state );
 }

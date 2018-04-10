@@ -14,6 +14,7 @@
 		"total_cost_display": { "type": "string" },
 		"temporary": { "type": "boolean" },
 		"currency": { "type": "string" },
+		"payment_country": { "type": "string" },
 		"coupon": { "type": "string" },
 		"is_coupon_applied": { "type": "boolean" },
 		"has_bundle_credit": { "type": "boolean" },

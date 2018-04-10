@@ -108,3 +108,10 @@ export function applyCoupon( coupon ) {
 		coupon,
 	} );
 }
+
+export function updateCartPaymentCountry( paymentCountry ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.CART_PAYMENT_COUNTRY_UPDATE,
+		paymentCountry,
+	} );
+}

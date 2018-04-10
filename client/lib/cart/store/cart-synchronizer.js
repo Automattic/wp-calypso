@@ -52,7 +52,7 @@ function preprocessCartForServer( cart ) {
 		'products',
 		'coupon',
 		'is_coupon_applied',
-		'currency',
+		'payment_country',
 		'temporary',
 		'extra'
 	);
