@@ -10,6 +10,7 @@
 	font-size: 14px;
 	display: none;
 	box-sizing: border-box;
+	height: 330px;
 
 	transform: translateZ(0);
 	backface-visibility: hidden;
@@ -61,11 +62,12 @@
 		height: calc( 100% - 47px );
 		bottom: 0;
 		right: 0;
-		width: 272px;
+		width: 273px;
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;
 		box-shadow: none;
+		border-left: 1px solid $gray-lighten-25;
 	}
 
 	// add space in the main column for the docked sidebar
@@ -81,6 +83,6 @@
 
 	// make space in customizer
 	.has-chat .main.customize.is-iframe {
-		right: 272px;
+		right: 273px;
 	}
 }
