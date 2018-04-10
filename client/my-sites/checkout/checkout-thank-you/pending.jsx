@@ -17,6 +17,8 @@ import { getOrderTransaction, getOrderTransactionError } from 'state/selectors';
 import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
 import { errorNotice } from 'state/notices/actions';
 import QueryOrderTransaction from 'components/data/query-order-transaction';
+import EmptyContent from 'components/empty-content';
+import Main from 'components/main';
 
 class CheckoutPending extends PureComponent {
 	static propTypes = {
@@ -91,15 +93,18 @@ class CheckoutPending extends PureComponent {
 	}
 
 	render() {
-		const { orderId } = this.props;
+		const { orderId, translate } = this.props;
 
-		// TODO:
-		// Replace this placeholder by the real one
 		return (
-			<div>
+			<Main className="checkout-thank-you__pending">
 				<QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } />
-				<p>Waiting for the payment result of { orderId }</p>
-			</div>
+				<EmptyContent
+					illustration={ '/calypso/images/illustrations/almost-there.svg' }
+					illustrationWidth={ 500 }
+					title={ 'Processing …' }
+					line={ translate( 'Please wait while we are processing your order.' ) }
+				/>
+			</Main>
 		);
 	}
 }
