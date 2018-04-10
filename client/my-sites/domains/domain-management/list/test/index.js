@@ -56,6 +56,7 @@ describe( 'index', () => {
 			},
 		},
 		sitePlans: {},
+		userCanManageOptions: true,
 	} );
 
 	function renderWithProps( props = defaultProps ) {
