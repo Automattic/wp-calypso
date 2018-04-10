@@ -18,9 +18,14 @@ import fromApi from './from-api';
 export const fetchOrderTransaction = action =>
 	http(
 		{
-			method: 'GET',
 			path: `/me/transactions/order/${ action.orderId }`,
+			method: 'GET',
 			apiNamespace: 'rest/v1',
+			// At the moment, we have to pass this explicitly for rest/v1 APIs.
+			// It is actually not ideal since it should work with or without http envelope.
+			query: {
+				http_envelope: 1,
+			},
 		},
 		action
 	);
