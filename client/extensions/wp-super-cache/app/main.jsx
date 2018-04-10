@@ -43,16 +43,6 @@ class WPSuperCache extends Component {
 		tab: '',
 	};
 
-	trackPageView = () =>
-		!! this.props.tab ? (
-			<PageViewTracker
-				path={ `/extensions/wp-super-cache/${ this.props.tab }/:site` }
-				title={ `WP Super Cache > ${ titlecase( this.props.tab ) }` }
-			/>
-		) : (
-			<PageViewTracker path="/extensions/wp-super-cache/:site" title="WP Super Cache > Easy" />
-		);
-
 	renderTab( isReadOnly ) {
 		const { tab } = this.props;
 
@@ -104,7 +94,10 @@ class WPSuperCache extends Component {
 					redirectUrl={ redirectUrl }
 				/>
 				<QueryStatus siteId={ siteId } />
-				{ this.trackPageView() }
+				<PageViewTracker
+					path={ `/extensions/wp-super-cache/${ tab ? tab + '/' : '' }:site` }
+					title={ `WP Super Cache > ${ tab ? titlecase( tab ) : 'Easy' }` }
+				/>
 
 				{ cacheDisabled && (
 					<Notice
