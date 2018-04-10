@@ -24,6 +24,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import PieChart from 'components/pie-chart';
+import PieChartLegend from 'components/pie-chart/legend';
 
 export default class Example extends Component {
 	render() {
@@ -61,6 +62,7 @@ export default class Example extends Component {
 				data={ data }
 				title={ translate( '%(total)s Total Searches', { args: { total } } ) }
 			/>
+			<PieChartLegend data={ data } />
 		);
 	}
 }

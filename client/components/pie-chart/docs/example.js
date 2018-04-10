@@ -10,6 +10,7 @@ import React, { Component } from 'react';
  */
 import Card from 'components/card';
 import PieChart from 'components/pie-chart';
+import PieChartLegend from 'components/pie-chart/legend';
 
 class PieChartExample extends Component {
 	static displayName = 'PieChart';
@@ -48,7 +49,8 @@ class PieChartExample extends Component {
 	render() {
 		return (
 			<Card>
-				<PieChart data={ this.state.data } title={ this.state.title } legendBelowChart={ false } />
+				<PieChart data={ this.state.data } title={ this.state.title } />
+				<PieChartLegend data={ this.state.data } />
 			</Card>
 		);
 	}
