@@ -4,8 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -33,9 +31,6 @@ import {
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
 import Notice from 'components/notice';
-import { addQueryArgs } from 'lib/route';
-import { getConnectingSite } from 'state/jetpack-connect/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 export class JetpackConnectNotices extends Component {
 	static propTypes = {
@@ -65,27 +60,6 @@ export class JetpackConnectNotices extends Component {
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
-	};
-
-	getHelperUrl( helpType ) {
-		const { siteToConnect } = this.props;
-
-		// show full instructions
-		if ( helpType === 'manual' ) {
-			return addQueryArgs( { url: siteToConnect }, '/jetpack/connect/instructions' );
-		}
-
-		if ( helpType === 'support' ) {
-			return 'https://jetpack.com/support/installing-jetpack/';
-		}
-	}
-
-	trackManualInstallClick = () => {
-		this.props.recordTracksEvent( 'calypso_remote_install_manual_install_click' );
-	};
-
-	trackSupportClick = () => {
-		this.props.recordTracksEvent( 'calypso_remote_install_support_click' );
 	};
 
 	getNoticeValues() {
@@ -244,12 +218,5 @@ export class JetpackConnectNotices extends Component {
 		return null;
 	}
 }
-export default connect(
-	state => {
-		const jetpackConnectSite = getConnectingSite( state );
-		return {
-			siteToConnect: get( jetpackConnectSite, 'url', '' ),
-		};
-	},
-	{ recordTracksEvent }
-)( localize( JetpackConnectNotices ) );
+
+export default localize( JetpackConnectNotices );
