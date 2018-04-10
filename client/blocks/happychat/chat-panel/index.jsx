@@ -20,8 +20,8 @@ import {
 import { getCurrentUser } from 'state/current-user/selectors';
 import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import HappychatClient from 'components/happychat-client';
-import { LAYOUT_FULLSCREEN } from 'components/happychat-client/constants';
+import HappychatClient from 'blocks/happychat/chat-client';
+import { LAYOUT_PANEL_MAX_PARENT_SIZE } from 'blocks/happychat/chat-client/constants';
 
 /*
  * Main chat panel UI component
@@ -49,7 +49,7 @@ export class HappychatPanel extends Component {
 				} ) }
 			>
 				<HappychatClient
-					layout={ LAYOUT_FULLSCREEN }
+					layout={ LAYOUT_PANEL_MAX_PARENT_SIZE }
 					user={ currentUser }
 				/>
 			</div>
