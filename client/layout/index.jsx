@@ -120,8 +120,7 @@ const Layout = createReactClass( {
 				<QuerySites allSites />
 				<QueryPreferences />
 				{ <GuidedTours /> }
-				{ config.isEnabled( 'nps-survey/notice' ) &&
-					! this.props.isSupportUser && <NpsSurveyNotice /> }
+				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
