@@ -61,7 +61,7 @@ export class JetpackRemoteInstallNotices extends Component {
 				);
 				noticeImage = <img src="/calypso/images/illustrations/install-button.svg" alt="" />;
 				buttonLabel = translate( 'Update WordPress now' );
-				redirectTo = '';
+				redirectTo = siteToConnect + '/wp-admin/update-core.php';
 
 			case INVALID_PERMISSIONS:
 				header = translate( 'Contact your site Administrator' );
