@@ -20,6 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import FakeData from './fake-data';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
+import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PieChart from 'components/pie-chart';
@@ -95,6 +96,14 @@ class GoogleMyBusinessStats extends Component {
 						/>
 					</Card>
 
+					<GoogleMyBusinessStatsTip
+						buttonHref="https://business.google.com/photos"
+						buttonText={ translate( 'Post Photos' ) }
+						eventName="'calypso_google_my_business_stats_post_photos_button_click'"
+						illustration="reviews"
+						text={ translate( 'Listings with recent photos typically drive more view to their business websites.' ) }
+					/>
+
 					<SectionHeader
 						label={ translate( 'Where your customers view your business on Google' ) }
 					/>
@@ -114,6 +123,22 @@ class GoogleMyBusinessStats extends Component {
 
 						<Chart data={ actionData } />
 					</Card>
+
+					<GoogleMyBusinessStatsTip
+						buttonHref="https://business.google.com/"
+						buttonText={ translate( 'Complete Your Listing' ) }
+						eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
+						illustration="complete-listing"
+						text={ translate( 'Complete business listings get on average 7x more clicks than empty listings.' ) }
+					/>
+
+					<GoogleMyBusinessStatsTip
+						buttonHref="https://business.google.com/"
+						buttonText={ translate( 'Complete Your Listing' ) }
+						eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
+						illustration="compare"
+						text={ translate( 'Customers compare business listings on Google to make decisions. Make your listing count.' ) }
+					/>
 				</div>
 			</Main>
 		);
