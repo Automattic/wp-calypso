@@ -168,22 +168,22 @@ export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
 }
 
-export function isMonthly( product ) {
-	product = formatProduct( product );
+export function isMonthly( rawProduct ) {
+	const product = formatProduct( rawProduct );
 	assertValidProduct( product );
 
 	return parseInt( product.bill_period, 10 ) === PLAN_MONTHLY_PERIOD;
 }
 
-export function isYearly( product ) {
-	product = formatProduct( product );
+export function isYearly( rawProduct ) {
+	const product = formatProduct( rawProduct );
 	assertValidProduct( product );
 
 	return parseInt( product.bill_period, 10 ) === PLAN_ANNUAL_PERIOD;
 }
 
-export function isBiennially( product ) {
-	product = formatProduct( product );
+export function isBiennially( rawProduct ) {
+	const product = formatProduct( rawProduct );
 	assertValidProduct( product );
 
 	return parseInt( product.bill_period, 10 ) === PLAN_BIENNIAL_PERIOD;
