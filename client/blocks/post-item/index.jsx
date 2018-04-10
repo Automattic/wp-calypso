@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { overSome } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,6 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { getSite, isSingleUserSite } from 'state/sites/selectors';
-
 import { areAllSitesSingleUser, canCurrentUserEditPost } from 'state/selectors';
 import {
 	isSharePanelOpen,
@@ -28,6 +26,7 @@ import {
 } from 'state/ui/post-type-list/selectors';
 import { hideActiveSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
 import { bumpStat } from 'state/analytics/actions';
+import { hasFeature } from 'state/sites/plans/selectors';
 import ExternalLink from 'components/external-link';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import PostTime from 'blocks/post-time';
@@ -39,10 +38,8 @@ import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellips
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 import { preload } from 'sections-helper';
-import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
+import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
 import { userCan } from 'lib/site/utils';
-
-const hasSeoSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -253,7 +250,7 @@ export default connect(
 		const hasExpandedContent = isSharePanelOpen( state, globalId ) || false;
 
 		const site = getSite( state, siteId );
-		const supportsSEO = site && site.plan && hasSeoSupportingPlan( site.plan );
+		const supportsPublicize = site && site.plan && hasFeature( state, siteId, FEATURE_REPUBLICIZE );
 		const userCanManageSite = userCan( 'manage_options', site );
 
 		return {
@@ -266,7 +263,7 @@ export default connect(
 			hasExpandedContent,
 			isCurrentPostSelected: isPostSelected( state, globalId ),
 			multiSelectEnabled: isMultiSelectEnabled( state ),
-			showShareAction: supportsSEO || userCanManageSite,
+			showShareAction: userCanManageSite || supportsPublicize,
 		};
 	},
 	{
