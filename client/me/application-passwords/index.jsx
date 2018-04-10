@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
@@ -188,7 +188,7 @@ class ApplicationPasswords extends Component {
 		const { newAppPassword, translate } = this.props;
 
 		return (
-			<div>
+			<Fragment>
 				<QueryApplicationPasswords />
 
 				<SectionHeader label={ translate( 'Application Passwords' ) }>
@@ -218,7 +218,7 @@ class ApplicationPasswords extends Component {
 
 					{ this.renderApplicationPasswords() }
 				</Card>
-			</div>
+			</Fragment>
 		);
 	}
 }
