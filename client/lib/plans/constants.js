@@ -53,6 +53,7 @@ export const JETPACK_MONTHLY_PLANS = [
 
 export const PLAN_MONTHLY_PERIOD = 31;
 export const PLAN_ANNUAL_PERIOD = 365;
+export const PLAN_BIENNIAL_PERIOD = 730;
 
 // features constants
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
