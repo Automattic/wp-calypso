@@ -31,13 +31,13 @@ import { getApplicationPasswords, getNewApplicationPassword } from 'state/select
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ApplicationPasswords extends Component {
-	initialState = {
+	static initialState = Object.freeze( {
 		applicationName: '',
 		addingPassword: false,
 		submittingForm: false,
-	};
+	} );
 
-	state = this.initialState;
+	state = this.constructor.initialState;
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.state.submittingForm && ! this.props.newAppPassword && !! nextProps.newAppPassword ) {
@@ -67,7 +67,7 @@ class ApplicationPasswords extends Component {
 
 	clearNewApplicationPassword = () => {
 		this.props.clearNewApplicationPassword();
-		this.setState( this.initialState );
+		this.setState( this.constructor.initialState );
 	};
 
 	toggleNewPassword = event => {
