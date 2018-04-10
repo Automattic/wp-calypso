@@ -1,10 +1,15 @@
 .tile {
+  position: relative;
   flex: 1;
   padding: 3.65em 0;
   font-size: 0.65em;
   text-align: center;
   text-transform: uppercase;
   overflow: hidden;
+  transition: 0.15s ease-out;
+  transition-property: border-radius, box-shadow, transform;
+  user-select: none;
+  cursor: pointer;
 
   @include media-breakpoint-up(lg) {
     font-size: 0.85em;
@@ -12,6 +17,18 @@
 
   @include media-breakpoint-up(xl) {
     font-size: 1em;
+  }
+
+  &:hover {
+    z-index: 1;
+    border-radius: 4px;
+    box-shadow: 0 0 36px rgba(#000, 0.35);
+    transform: scale(1.15);
+  }
+
+  &:active {
+    transform: scale(1.125);
+    transition: none;
   }
 }
 
@@ -21,6 +38,10 @@
 
 .tile--auxiliary {
   padding: 1.85em 0;
+}
+
+.tile__subtitle {
+  pointer-events: none;
 }
 
 .tile__subtitle {

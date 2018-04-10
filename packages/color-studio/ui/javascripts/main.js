@@ -2,22 +2,48 @@
 
 const chroma = require('chroma-js')
 const compact = require('lodash/compact')
+const copyToClipboard = require('copy-text-to-clipboard')
 const flatten = require('lodash/flatten')
+const toArray = require('lodash/toArray')
 
 const createPaletteColors = require('../../formula')
 
 const COLOR_WHITE = '#ffffff'
 const COLOR_BLACK = '#000000'
 
-const output = document.getElementById('output')
+const input = document.getElementById('base-color')
+const output = document.getElementById('color-tiles')
 
-handleColor('#8437c2')
+input.addEventListener('input', event => {
+  handleColor(String(event.target.value).trim())
+})
+
+setTimeout(init, 0)
+
+function init() {
+  handleRandomColor()
+}
 
 function handleColor(color) {
-  const baseColor = chroma(color).hex()
+  let baseColor
 
-  setBodyBackground(baseColor)
-  output.innerHTML = createColorTiles(baseColor)
+  try {
+    baseColor = chroma(color).hex()
+  } catch (e) {}
+
+  if (baseColor) {
+    setBodyBackground(baseColor)
+    setContent(createColorTiles(baseColor))
+  } else {
+    setBodyBackground(COLOR_WHITE)
+    setContent()
+  }
+}
+
+function handleRandomColor() {
+  const color = chroma.random().hex()
+  input.value = color
+  handleColor(color)
 }
 
 function createColorTiles(color) {
@@ -38,6 +64,21 @@ function setBodyBackground(color) {
   document.body.style.background = color
 }
 
+function setContent(html = '') {
+  output.innerHTML = html
+
+  if (html) {
+    activateTiles(output)
+  }
+}
+
+function activateTiles(scope = document) {
+  toArray(scope.getElementsByClassName('tile')).forEach(element => {
+    const color = String(element.dataset.color).trim()
+    element.addEventListener('click', () => copyToClipboard(color))
+  })
+}
+
 function createColorTile(colorObject) {
   const { index, color, base, auxiliary } = colorObject
 
@@ -52,7 +93,7 @@ function createColorTile(colorObject) {
 
   /* eslint-disable indent */
   return join([
-    `<div class="${tileClassNames} text-center" style="background: ${color}; color: ${primaryTextColor}">`,
+    `<div class="${tileClassNames} text-center" style="background: ${color}; color: ${primaryTextColor}" data-color="${color}">`,
       `<div class="tile__title font-weight-bold">`,
         printedIndex,
       '</div>',
