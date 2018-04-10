@@ -15,9 +15,10 @@ import React, { Component } from 'react';
 import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
+import { connectGoogleMyBusinessLocation } from 'state/google-my-business/action';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import HeaderCake from 'components/header-cake';
@@ -27,8 +28,10 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
+		connectGoogleMyBusinessLocation: PropTypes.func.isRequired,
 		locations: PropTypes.arrayOf( GoogleMyBusinessLocationType ).isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -43,7 +46,9 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
-	trackConnectLocationClick = () => {
+	connectLocation = ( locationId ) => {
+		this.props.connectGoogleMyBusinessLocation( this.props.siteId, locationId );
+
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_location_connect_location_button_click'
 		);
@@ -73,7 +78,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 					<GoogleMyBusinessLocation isCompact key={ location.id } location={ location }>
 						<Button
 							href={ `/google-my-business/stats/${ siteSlug }` }
-							onClick={ this.trackConnectLocationClick }
+							onClick={ this.connectLocation.bind( null, location.id ) }
 						>
 							{ translate( 'Connect Location' ) }
 						</Button>
@@ -125,9 +130,11 @@ export default connect(
 				verified: false,
 			},
 		],
+		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
+		connectGoogleMyBusinessLocation,
 		recordTracksEvent,
 	}
 )( localize( GoogleMyBusinessSelectLocation ) );

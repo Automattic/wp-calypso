@@ -41,6 +41,7 @@ import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
+import googleMyBusiness from './google-my-business/reducer';
 import help from './help/reducer';
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
@@ -129,6 +130,7 @@ const reducers = {
 	form,
 	geo,
 	googleAppsUsers,
+	googleMyBusiness,
 	happinessEngineers,
 	happychat,
 	help,
