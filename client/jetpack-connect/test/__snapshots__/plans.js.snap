@@ -9,6 +9,10 @@ exports[`Plans should render placeholder when shouldShowPlaceholder is true 1`] 
 
 exports[`Plans should render plans 1`] = `
 <React.Fragment>
+  <Connect(PageViewTracker)
+    path="/jetpack/connect/plans/:site"
+    title="Plans"
+  />
   <Connect(QueryPlans) />
   <Connect(QuerySitePlans)
     siteId={1234567}

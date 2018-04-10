@@ -665,7 +665,7 @@ export class JetpackAuthorize extends Component {
 				<PageViewTracker
 					path={ `/jetpack/connect/authorize${ interval ? '/' + interval : '' }${
 						locale ? '/:locale' : ''
-					} ` }
+					}` }
 					title="Jetpack Authorize"
 				/>
 				<div className="jetpack-connect__authorize-form">

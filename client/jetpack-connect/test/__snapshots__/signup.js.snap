@@ -4,6 +4,10 @@ exports[`JetpackSignup should render 1`] = `
 <JetpackConnectMainWrapper
   isWide={false}
 >
+  <Connect(PageViewTracker)
+    path="/jetpack/connect/authorize"
+    title="Jetpack Authorize"
+  />
   <div
     className="jetpack-connect__authorize-form"
   >
@@ -60,6 +64,10 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
 <JetpackConnectMainWrapper
   isWide={false}
 >
+  <Connect(PageViewTracker)
+    path="/jetpack/connect/authorize/:locale"
+    title="Jetpack Authorize"
+  />
   <div
     className="jetpack-connect__authorize-form"
   >
