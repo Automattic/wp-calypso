@@ -54,7 +54,7 @@
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
-		"google-my-business": false,
+		"google-my-business": true,
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
