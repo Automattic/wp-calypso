@@ -1,7 +1,6 @@
 const chroma = require('chroma-js')
 const clone = require('lodash/clone')
 const flatten = require('lodash/flatten')
-const uniq = require('lodash/uniq')
 const zip = require('lodash/zip')
 
 const BLEND_MODE_NORMAL = 'normal'
@@ -82,15 +81,16 @@ const DARK_STEP_DEFINITIONS = [
 
 module.exports = createPaletteColors
 
-function createPaletteColors(baseColor, baseColorName) {
+function createPaletteColors(baseColor, baseColorName = '') {
   const brightShades = blendColorWithDefinitions(baseColor, BRIGHT_STEP_DEFINITIONS)
   const darkShades   = blendColorWithDefinitions(baseColor, DARK_STEP_DEFINITIONS)
 
-  const correctedDarkShades   = correctLightness(baseColor, darkShades)
   const correctedBrightShades = correctLightness(brightShades, baseColor)
-  correctedBrightShades.unshift(chroma(COLOR_WHITE).hex())
+  const correctedDarkShades   = correctLightness(baseColor, darkShades)
 
-  const standardPalette = uniq(correctedBrightShades.concat(correctedDarkShades)).map((color, index) => {
+  const colors = mergePaletteShades(correctedBrightShades, correctedDarkShades)
+
+  const standardPalette = colors.map((color, index) => {
     const colorIndex = index * 10
     const colorObject = {
       color,
@@ -108,15 +108,28 @@ function createPaletteColors(baseColor, baseColorName) {
 
   const auxiliaryPalette = standardPalette.map(colorObject => {
     const copy = clone(colorObject)
-    copy.color = chroma(copy.color).desaturate(1).hex()
+    copy.color = chroma(colorObject.color).desaturate(1).hex()
+    copy.distance = chroma.distance(colorObject.color, copy.color)
     copy.auxiliary = true
     return copy
   })
 
-  if (baseColorName === 'gray') {
-    return standardPalette
+  const distantAuxiliaryPalette = auxiliaryPalette.filter(colorObject => {
+    return colorObject.distance > 10
+  })
+
+  if (distantAuxiliaryPalette.length > 0) {
+    return standardPalette.concat(auxiliaryPalette)
   }
-  return standardPalette.concat(auxiliaryPalette)
+  return standardPalette
+}
+
+function mergePaletteShades(brightShades, darkShades) {
+  const shades = clone(brightShades)
+  shades.length -= 1
+  shades.unshift(chroma(COLOR_WHITE).hex())
+
+  return shades.concat(darkShades)
 }
 
 function blendColorWithDefinitions(baseColor, definitions) {
