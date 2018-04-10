@@ -31,6 +31,7 @@ import {
 } from 'state/invites/selectors';
 import { deleteInvite } from 'state/invites/actions';
 import { canCurrentUser } from 'state/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class PeopleInviteDetails extends React.PureComponent {
 	static propTypes = {
@@ -174,6 +175,7 @@ export class PeopleInviteDetails extends React.PureComponent {
 		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
+					<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
 					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
@@ -185,6 +187,7 @@ export class PeopleInviteDetails extends React.PureComponent {
 
 		return (
 			<Main className="people-invite-details">
+				<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<SidebarNavigation />
 
