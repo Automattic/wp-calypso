@@ -40,7 +40,7 @@ class CheckoutPending extends PureComponent {
 			page( `/checkout/${ this.props.siteSlug }` );
 
 			showErrorNotice(
-				translate( 'Sorry, we failed to process your payment. Please try again later.' )
+				translate( "Sorry, we couldn't process your payment. Please try again later." )
 			);
 		};
 
@@ -73,9 +73,7 @@ class CheckoutPending extends PureComponent {
 				// Redirect users back to the homepage so that they won't be stuck here.
 				page( '/' );
 
-				showErrorNotice(
-					translate( "Sorry, we've encountered an unknown problem. Please try again later." )
-				);
+				showErrorNotice( translate( 'Oops! Something went wrong. Please try again later.' ) );
 
 				return;
 			}
