@@ -2197,14 +2197,15 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
  * @return {Promise} promise
  */
 Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
-	const { host, path, protocol } = url.parse( targetUrl );
+	const { host, pathname, protocol } = url.parse( targetUrl );
 
 	// Expected protocols are `http:` and `https:`
 	// API expects no trailing `:`
 	// Default to http
 	const protocolPart = 'https:' === protocol ? 'https' : 'http';
 
-	const siteUrlPart = host + ( path && path !== '/' ? path.replace( /\//g, '::' ) : '' );
+	const siteUrlPart =
+		host + ( pathname && pathname !== '/' ? pathname.replace( /\//g, '::' ) : '' );
 
 	const endpointUrl = `/connect/site-info/${ protocolPart }/${ siteUrlPart }`;
 
