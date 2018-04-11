@@ -131,7 +131,7 @@ export const handleSaveSuccess = (
 	{ data: { code, message, ...updatedSettings } } // eslint-disable-line no-unused-vars
 ) => dispatch( saveJetpackSettingsSuccess( siteId, updatedSettings ) );
 
-export const announceSaveFailure = (
+export const handleSaveFailure = (
 	{ dispatch },
 	{ siteId },
 	{ meta: { settings: previousSettings } }
@@ -157,7 +157,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 		! startsWith( errorMessage, 'cURL error 28' ) || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
-		return announceSaveFailure( { dispatch }, { siteId }, action );
+		return handleSaveFailure( { dispatch }, { siteId }, action );
 	}
 
 	// We cannot use `extendAction( action, ... )` here, since `meta.dataLayer` now includes error information,

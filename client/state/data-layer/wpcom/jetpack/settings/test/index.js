@@ -10,7 +10,7 @@ import {
 	saveJetpackSettings,
 	handleSaveSuccess,
 	announceRequestFailure,
-	announceSaveFailure,
+	handleSaveFailure,
 	retryOrAnnounceSaveFailure,
 	fromApi,
 } from '../';
@@ -260,7 +260,7 @@ describe( 'handleSaveSuccess()', () => {
 	} );
 } );
 
-describe( 'announceSaveFailure()', () => {
+describe( 'handleSaveFailure()', () => {
 	const dispatch = jest.fn();
 	const siteId = 12345678;
 	const action = {
@@ -279,7 +279,7 @@ describe( 'announceSaveFailure()', () => {
 	};
 
 	test( 'should trigger an error notice upon unsuccessful save request', () => {
-		announceSaveFailure( { dispatch }, { siteId }, action );
+		handleSaveFailure( { dispatch }, { siteId }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -335,7 +335,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 		);
 	} );
 
-	test( 'should trigger announceSaveFailure upon max number of WooCommerce install timeout', () => {
+	test( 'should trigger handleSaveFailure upon max number of WooCommerce install timeout', () => {
 		const thirdAttemptAction = {
 			...action,
 			meta: {
