@@ -54,6 +54,7 @@ import {
 	normalizePostForState,
 } from './utils';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
+import { getFeaturedImageId } from 'lib/posts/utils';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -424,6 +425,8 @@ export function edits( state = {}, action ) {
 									return isAuthorEqual( value, post[ key ] );
 								case 'discussion':
 									return isDiscussionEqual( value, post[ key ] );
+								case 'featured_image':
+									return value === getFeaturedImageId( post );
 								case 'terms':
 									return isTermsEqual( value, post[ key ] );
 							}

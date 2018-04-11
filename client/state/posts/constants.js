@@ -24,4 +24,5 @@ export const DEFAULT_NEW_POST_VALUES = {
 	type: 'post',
 	parent: 0,
 	format: 'default',
+	featured_image: '',
 };

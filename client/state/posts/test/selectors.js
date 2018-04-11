@@ -2072,6 +2072,41 @@ describe( 'selectors', () => {
 
 			expect( isDirty ).to.be.false;
 		} );
+
+		test( "should return false if featured image ID didn't change", () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										featured_image: 'https://example.files.wordpress.com/2018/02/img_4879.jpg',
+										post_thumbnail: {
+											ID: 123,
+										},
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									featured_image: 123,
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.false;
+		} );
 	} );
 
 	describe( 'getPostPreviewUrl()', () => {
