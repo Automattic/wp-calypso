@@ -28,6 +28,7 @@ import Placeholder from './dashboard/placeholder';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
 import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class App extends Component {
 	static propTypes = {
@@ -38,6 +39,8 @@ class App extends Component {
 		hasPendingAutomatedTransfer: PropTypes.bool.isRequired,
 		isAtomicSite: PropTypes.bool.isRequired,
 		isDashboard: PropTypes.bool.isRequired,
+		analyticsPath: PropTypes.string,
+		analyticsTitle: PropTypes.string,
 	};
 
 	componentDidMount() {
@@ -133,6 +136,8 @@ class App extends Component {
 			isAtomicSite,
 			hasPendingAutomatedTransfer,
 			translate,
+			analyticsPath,
+			analyticsTitle,
 		} = this.props;
 		if ( ! siteId ) {
 			return null;
@@ -157,6 +162,7 @@ class App extends Component {
 		const className = 'woocommerce';
 		return (
 			<div className={ className }>
+				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
 				<DocumentHead title={ documentTitle } />
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				{ this.maybeRenderChildren() }
