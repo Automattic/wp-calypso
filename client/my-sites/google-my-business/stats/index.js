@@ -20,6 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import FakeData from './fake-data';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
+import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PieChart from 'components/pie-chart';
@@ -74,46 +75,84 @@ class GoogleMyBusinessStats extends Component {
 
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 
-				<div>
-					<GoogleMyBusinessLocation location={ locationData }>
-						<Button
-							href="https://www.google.com/business/"
-							onClick={ this.trackUpdateListingClick }
-							target="_blank"
-						>
-							{ translate( 'Update Listing' ) } <Gridicon icon={ 'external' } />
-						</Button>
-					</GoogleMyBusinessLocation>
+				<GoogleMyBusinessLocation location={ locationData }>
+					<Button
+						href="https://business.google.com/"
+						onClick={ this.trackUpdateListingClick }
+						target="_blank"
+					>
+						{ translate( 'Update Listing' ) } <Gridicon icon={ 'external' } />
+					</Button>
+				</GoogleMyBusinessLocation>
 
-					<SectionHeader label={ translate( 'How customers search for your business' ) } />
-					<Card>
-						<PieChart
-							data={ searchData }
-							title={ translate( '%(total)d Total Searches', {
-								args: { total: searchDataTotal },
-							} ) }
+				<div className="gmb-stats__metrics">
+					<div className="gmb-stats__metric">
+						<SectionHeader label={ translate( 'How customers search for your business' ) } />
+						<Card>
+							<PieChart
+								data={ searchData }
+								title={ translate( '%(total)d Total Searches', {
+									args: { total: searchDataTotal },
+								} ) }
+							/>
+						</Card>
+					</div>
+
+					<div className="gmb-stats__metric">
+						<GoogleMyBusinessStatsTip
+							buttonHref="https://business.google.com/"
+							buttonText={ translate( 'Post Photos' ) }
+							eventName="'calypso_google_my_business_stats_post_photos_button_click'"
+							illustration="reviews"
+							text={ translate( 'Listings with recent photos typically drive more view to their business websites.' ) }
 						/>
-					</Card>
+					</div>
 
-					<SectionHeader
-						label={ translate( 'Where your customers view your business on Google' ) }
-					/>
-					<Card>
-						<CardHeading tagName={ 'h2' } size={ 16 }>
-							{ translate( 'The Google services that customers use to find your business' ) }
-						</CardHeading>
+					<div className="gmb-stats__metric">
+						<SectionHeader
+							label={ translate( 'Where your customers view your business on Google' ) }
+						/>
+						<Card>
+							<CardHeading tagName={ 'h2' } size={ 16 }>
+								{ translate( 'The Google services that customers use to find your business' ) }
+							</CardHeading>
 
-						<Chart data={ viewData } />
-					</Card>
+							<Chart data={ viewData } />
+						</Card>
+					</div>
 
-					<SectionHeader label={ translate( 'Customer Actions' ) } />
-					<Card>
-						<CardHeading tagName={ 'h2' } size={ 16 }>
-							{ translate( 'The most common actions that customers take on your listing' ) }
-						</CardHeading>
+					<div className="gmb-stats__metric">
+						<SectionHeader label={ translate( 'Customer Actions' ) } />
+						<Card>
+							<CardHeading tagName={ 'h2' } size={ 16 }>
+								{ translate( 'The most common actions that customers take on your listing' ) }
+							</CardHeading>
 
-						<Chart data={ actionData } />
-					</Card>
+							<Chart data={ actionData } />
+						</Card>
+					</div>
+
+					<div className="gmb-stats__metric">
+						<GoogleMyBusinessStatsTip
+							buttonHref="https://business.google.com/"
+							buttonText={ translate( 'Complete Your Listing' ) }
+							eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
+							illustration="complete-listing"
+							text={ translate( 'Complete business listings get on average 7x more clicks than empty listings.' ) }
+						/>
+					</div>
+
+					<div className="gmb-stats__metric">
+						<GoogleMyBusinessStatsTip
+							buttonHref="https://business.google.com/"
+							buttonText={ translate( 'Complete Your Listing' ) }
+							eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
+							illustration="compare"
+							text={
+								translate( 'Customers compare business listings on Google to make decisions. Make your listing count.' )
+							}
+						/>
+					</div>
 				</div>
 			</Main>
 		);
