@@ -220,10 +220,6 @@ export class JetpackAuthorize extends Component {
 	}
 
 	shouldAutoAuthorize() {
-		if ( this.props.isMobileAppFlow ) {
-			return false;
-		}
-
 		const { alreadyAuthorized, authApproved } = this.props.authQuery;
 
 		return (

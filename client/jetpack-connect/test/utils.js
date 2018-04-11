@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { addCalypsoEnvQueryArg, getRoleFromScope } from '../utils';
+import { addCalypsoEnvQueryArg, cleanUrl, getRoleFromScope } from '../utils';
 
 jest.mock( 'config', () => input => {
 	const lookupTable = {
@@ -20,6 +20,22 @@ describe( 'addCalypsoEnvQueryArg', () => {
 		expect( addCalypsoEnvQueryArg( 'http://example.com' ) ).toBe(
 			'http://example.com/?calypso_env=mocked-test-env-id'
 		);
+	} );
+} );
+
+describe( 'cleanUrl', () => {
+	test( 'should prepare entered urls for network access', () => {
+		const results = [
+			{ input: '', expected: '' },
+			{ input: 'a', expected: 'http://a' },
+			{ input: 'example.com', expected: 'http://example.com' },
+			{ input: '  example.com   ', expected: 'http://example.com' },
+			{ input: 'http://example.com/', expected: 'http://example.com' },
+			{ input: 'eXAmple.com', expected: 'http://example.com' },
+			{ input: 'example.com/wp-admin', expected: 'http://example.com' },
+		];
+
+		results.forEach( ( { input, expected } ) => expect( cleanUrl( input ) ).toBe( expected ) );
 	} );
 } );
 

@@ -13,7 +13,7 @@ import config from 'config';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
-import { clearPlan, persistSession } from 'jetpack-connect/persistence-utils';
+import { clearPlan } from 'jetpack-connect/persistence-utils';
 import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
@@ -81,7 +81,6 @@ export function checkUrl( url, isUrlOnSites ) {
 			return;
 		}
 		if ( isUrlOnSites ) {
-			persistSession( url );
 			dispatch( {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: url,
@@ -106,7 +105,6 @@ export function checkUrl( url, isUrlOnSites ) {
 		}
 		_fetching[ url ] = true;
 		setTimeout( () => {
-			persistSession( url );
 			dispatch( {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: url,
