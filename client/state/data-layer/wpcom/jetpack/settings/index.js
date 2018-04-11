@@ -115,7 +115,7 @@ export const saveJetpackSettings = ( { dispatch, getState }, action ) => {
 			},
 			{
 				...action,
-				meta: { ...action.meta, settings: previousSettings },
+				meta: { ...action.meta, settings: { onboarding: previousSettings } },
 			}
 		)
 	);

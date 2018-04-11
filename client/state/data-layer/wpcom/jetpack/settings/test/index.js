@@ -234,7 +234,7 @@ describe( 'saveJetpackSettings()', () => {
 						json: true,
 					},
 				},
-				{ ...action, meta: { ...action.meta, settings: previousSettings.onboarding } }
+				{ ...action, meta: { ...action.meta, settings: previousSettings } }
 			)
 		);
 		expect( dispatch ).toHaveBeenCalledWith(
