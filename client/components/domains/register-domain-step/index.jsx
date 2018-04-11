@@ -332,16 +332,7 @@ class RegisterDomainStep extends React.Component {
 						maxLength={ 60 }
 					/>
 				</div>
-				{ isKrackenUi && (
-					<div className="register-domain-step__filter">
-						<SearchFilters
-							filters={ this.state.filters }
-							onChange={ this.onFiltersChange }
-							onFiltersReset={ this.onFiltersReset }
-							onFiltersSubmit={ this.onFiltersSubmit }
-						/>
-					</div>
-				) }
+				{ this.renderSearchFilters() }
 				{ this.state.notice && (
 					<Notice
 						text={ this.state.notice }
@@ -357,8 +348,24 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
+	renderSearchFilters() {
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
+		return (
+			isKrackenUi && (
+				<div className="register-domain-step__filter">
+					<SearchFilters
+						filters={ this.state.filters }
+						onChange={ this.onFiltersChange }
+						onFiltersReset={ this.onFiltersReset }
+						onFiltersSubmit={ this.onFiltersSubmit }
+					/>
+				</div>
+			)
+		);
+	}
+
 	renderPaginationControls() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
 		if ( ! isKrackenUi || this.state.searchResults === null ) {
 			return null;
 		}
