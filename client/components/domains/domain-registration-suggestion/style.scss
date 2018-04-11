@@ -8,6 +8,7 @@
 	.domain-suggestion__content {
 		flex-direction: column;
 		flex-grow: 2;
+		margin-top: 0;
 	}
 
 	.domain-registration-suggestion__title,
@@ -20,19 +21,23 @@
 		order: 0;
 		font-size: 2em;
 		font-weight: 600;
-		flex-grow: 2;
+		flex-grow: 0;
 	}
 
 	// .card used to increase specificity
 	&.card .domain-product-price {
 		align-items: left;
 		margin: 0;
+		padding: 0;
 		order: 1;
-		&.is-with-plans-only:not(.is-free-domain) {
-			flex-basis: 25px;
-			flex-grow: 0;
+		flex-grow: 0;
+		flex-basis: auto;
+
+		&.is-with-plans-only,
+		&.is-free-domain {
+			font-size: 0.9em;
 			small {
-				font-size: 1em;
+				font-size: 0.9em;
 			}
 		}
 	}
@@ -41,10 +46,6 @@
 		order: 2;
 		display: flex;
 		align-items: center;
-
-		.domain-registration-suggestion__progress-bar-text {
-			text-transform: uppercase;
-		}
 
 		.progress-bar {
 			width: 25%;
