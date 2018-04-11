@@ -88,7 +88,7 @@ function createColorTile(colorObject) {
   const tileClassNames = join([
     'tile',
     base ? 'tile--base' : '',
-    auxiliary ? 'tile--auxiliary' : ''
+    auxiliary ? 'tile--auxiliary' : 'tile--standard'
   ], ' ')
 
   /* eslint-disable indent */

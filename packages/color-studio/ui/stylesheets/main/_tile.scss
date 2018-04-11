@@ -37,13 +37,14 @@
 }
 
 .tile--auxiliary {
-  padding: 1.85em 0;
+  padding: 1.65em 0;
 }
 
-.tile__subtitle {
-  pointer-events: none;
+.tile--standard .tile__title {
+  font-size: 1.15em;
 }
 
+.tile--auxiliary .tile__title,
 .tile__subtitle {
   font-size: 0.85em;
 }
