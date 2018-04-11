@@ -191,7 +191,6 @@ export class OrgCredentialsForm extends Component {
 					/>
 				</div>
 				<div className="jetpack-connect__password-container">
-					{ isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" /> }
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					<div className="jetpack-connect__password-form">
 						<Gridicon size={ 24 } icon="lock" />
@@ -228,12 +227,15 @@ export class OrgCredentialsForm extends Component {
 		const { isSubmitting } = this.state;
 
 		return (
-			<FormButton
-				className="jetpack-connect__credentials-submit"
-				disabled={ ! this.state.username || ! this.state.password || isSubmitting }
-			>
-				{ this.renderButtonLabel() }
-			</FormButton>
+			<div className="jetpack-connect__creds-form-footer">
+				{ isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" /> }
+				<FormButton
+					className="jetpack-connect__credentials-submit"
+					disabled={ ! this.state.username || ! this.state.password || isSubmitting }
+				>
+					{ this.renderButtonLabel() }
+				</FormButton>
+			</div>
 		);
 	}
 
