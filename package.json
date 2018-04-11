@@ -32,7 +32,6 @@
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-env": "1.6.0",
     "babel-preset-stage-2": "6.24.1",
-    "babel-register": "6.24.1",
     "blob": "0.0.4",
     "body-parser": "1.17.2",
     "bounding-client-rect": "1.0.5",
