@@ -192,18 +192,20 @@ class ApplicationPasswords extends Component {
 				<QueryApplicationPasswords />
 
 				<SectionHeader label={ translate( 'Application Passwords' ) }>
-					<Button
-						compact
-						onClick={ this.getClickHandler(
-							'Create Application Password Button',
-							this.toggleNewPassword
-						) }
-					>
-						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						<Gridicon icon="plus-small" size={ 16 } />
-						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-						{ translate( 'Add New Application Password' ) }
-					</Button>
+					{ ! newAppPassword && (
+						<Button
+							compact
+							onClick={ this.getClickHandler(
+								'Create Application Password Button',
+								this.toggleNewPassword
+							) }
+						>
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							<Gridicon icon="plus-small" size={ 16 } />
+							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+							{ translate( 'Add New Application Password' ) }
+						</Button>
+					) }
 				</SectionHeader>
 				<Card>
 					{ newAppPassword ? this.renderNewAppPassword() : this.renderNewAppPasswordForm() }
