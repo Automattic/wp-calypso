@@ -219,11 +219,12 @@ export class JetpackConnectMain extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl,
 		} );
+		// Track that connection was started by button-click, so we can auto-approve at auth step.
+		persistSession( this.state.currentUrl );
+
 		if ( this.props.isRequestingSites ) {
 			this.setState( { waitingForSites: true } );
 		} else {
-			// Track that connection was started by button-click, so we can auto-approve at auth step.
-			persistSession( this.state.currentUrl );
 			this.checkUrl( this.state.currentUrl );
 		}
 	};
