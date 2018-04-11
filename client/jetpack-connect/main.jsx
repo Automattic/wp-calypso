@@ -22,6 +22,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainHeader from './main-header';
 import MainWrapper from './main-wrapper';
 import page from 'page';
+import PlansStatic from './plans-static';
 import SiteUrlInput from './site-url-input';
 import versionCompare from 'lib/version-compare';
 import { addCalypsoEnvQueryArg, cleanUrl } from './utils';
@@ -353,8 +354,13 @@ export class JetpackConnectMain extends Component {
 	}
 
 	render() {
+		const { interval } = this.props;
 		const status = this.getStatus();
 		const { type } = this.props;
+
+		if ( this.isCurrentUrlFetching() || this.state.redirecting || this.state.waitingForSites ) {
+			return <PlansStatic interval={ interval } basePlansPath={ '/jetpack/connect' } />;
+		}
 
 		return (
 			<MainWrapper>
