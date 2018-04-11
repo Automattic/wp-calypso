@@ -17,6 +17,7 @@ import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import EditorLocationSearch from './search';
 import Notice from 'components/notice';
+import RemoveButton from 'components/remove-button';
 
 /**
  * Module variables
@@ -143,10 +144,10 @@ class EditorLocation extends React.Component {
 					label={ buttonText }
 					empty={ ! this.props.coordinates }
 					onClick={ this.geolocate }
-					onRemove={ this.clear }
 					disabled={ this.state.locating }
 				>
 					{ this.renderCurrentLocation() }
+					<RemoveButton onRemove={ this.clear } />
 				</EditorDrawerWell>
 				<EditorLocationSearch
 					onError={ this.onGeolocateFailure }

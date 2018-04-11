@@ -7,11 +7,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { noop, identity } from 'lodash';
+import { noop } from 'lodash';
 import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
 
-class EditorDrawerWell extends Component {
+export default class EditorDrawerWell extends Component {
 	static propTypes = {
 		disabled: PropTypes.bool,
 		empty: PropTypes.bool,
@@ -20,14 +19,12 @@ class EditorDrawerWell extends Component {
 		label: PropTypes.node,
 		onClick: PropTypes.func,
 		customDropZone: PropTypes.node,
-		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
 		disabled: false,
 		isHidden: false,
 		onClick: noop,
-		translate: identity,
 	};
 
 	render() {
@@ -56,5 +53,3 @@ class EditorDrawerWell extends Component {
 		);
 	}
 }
-
-export default localize( EditorDrawerWell );
