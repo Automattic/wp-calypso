@@ -223,7 +223,9 @@ export function authorizeForm( context, next ) {
 	const transformedQuery = parseAuthorizationQuery( query );
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
-		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
+		context.primary = (
+			<JetpackAuthorize authQuery={ transformedQuery } interval={ context.params.interval } />
+		);
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}
