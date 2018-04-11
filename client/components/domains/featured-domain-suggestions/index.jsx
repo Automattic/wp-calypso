@@ -39,16 +39,20 @@ export class FeaturedDomainSuggestions extends Component {
 
 		return (
 			<div className="featured-domain-suggestions">
-				<DomainRegistrationSuggestion
-					suggestion={ primarySuggestion }
-					isFeatured
-					{ ...childProps }
-				/>
-				<DomainRegistrationSuggestion
-					suggestion={ secondarySuggestion }
-					isFeatured
-					{ ...childProps }
-				/>
+				{ primarySuggestion && (
+					<DomainRegistrationSuggestion
+						suggestion={ primarySuggestion }
+						isFeatured
+						{ ...childProps }
+					/>
+				) }
+				{ secondarySuggestion && (
+					<DomainRegistrationSuggestion
+						suggestion={ secondarySuggestion }
+						isFeatured
+						{ ...childProps }
+					/>
+				) }
 			</div>
 		);
 	}
