@@ -99,7 +99,7 @@ class CheckoutPending extends PureComponent {
 			<Main className="checkout-thank-you__pending">
 				<QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } />
 				<EmptyContent
-					illustration={ '/calypso/images/illustrations/almost-there.svg' }
+					illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
 					illustrationWidth={ 500 }
 					title={ 'Processing…' }
 					line={ translate( "Almost there – we're currently finalizing your order." ) }
