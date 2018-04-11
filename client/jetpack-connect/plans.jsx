@@ -222,7 +222,7 @@ class Plans extends Component {
 					selectedSite={ selectedSite }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
-					<PlansExtendedInfo onClick={ this.handleInfoButtonClick } />
+					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
 							label={ helpButtonLabel }
