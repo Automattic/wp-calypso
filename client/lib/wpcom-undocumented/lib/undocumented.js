@@ -2198,11 +2198,15 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
  */
 Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 	const { host, path, protocol } = url.parse( targetUrl );
-	let endpointUrl = `/connect/site-info/${ protocol.slice( 0, -1 ) }/${ host }`;
 
-	if ( path && path !== '/' ) {
-		endpointUrl += path.replace( /\//g, '::' );
-	}
+	// Expected protocols are `http:` and `https:`
+	// API expects no trailing `:`
+	// Default to http
+	const protocolPart = 'https:' === protocol ? 'https' : 'http';
+
+	const siteUrlPart = host + ( path && path !== '/' ? path.replace( /\//g, '::' ) : '' );
+
+	const endpointUrl = `/connect/site-info/${ protocolPart }/${ siteUrlPart }`;
 
 	return this.wpcom.req.get( endpointUrl );
 };
