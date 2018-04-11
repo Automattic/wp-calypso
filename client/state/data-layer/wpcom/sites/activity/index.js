@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, merge, omitBy } from 'lodash';
+import { merge, omitBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -51,10 +51,9 @@ export const receiveActivityLog = ( action, data ) => {
 		{ doMerge: action.params && action.params.hasOwnProperty( 'searchAfter' ) }
 	);
 
-	// if we have no further pages to fetch (nothing more to do)
-	// or if we are receiving a polling action (polling will handle next action)
+	// if we have no further pages to fetch
 	// then let it be and inject into state
-	if ( ! data.hasOwnProperty( 'nextAfter' ) || get( action, 'meta.dataLayer.isWatching' ) ) {
+	if ( ! data.hasOwnProperty( 'nextAfter' ) ) {
 		return stateUpdate;
 	}
 
