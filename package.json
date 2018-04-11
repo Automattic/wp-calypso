@@ -159,7 +159,7 @@
     "walk": "2.3.4",
     "webpack": "4.5.0",
     "webpack-cli": "2.0.9",
-    "webpack-dev-middleware": "2.0.6",
+    "webpack-dev-middleware": "3.1.2",
     "wpcom": "5.4.1",
     "wpcom-oauth": "0.3.3",
     "wpcom-proxy-request": "5.0.0",
@@ -281,7 +281,7 @@
     "supertest": "2.0.0",
     "terminal-kit": "1.13.13",
     "webpack-bundle-analyzer": "2.11.1",
-    "webpack-hot-middleware": "2.15.0"
+    "webpack-hot-middleware": "2.22.0"
   },
   "optionalDependencies": {
     "fsevents": "1.1.3"
