@@ -210,6 +210,8 @@ export class RedirectPaymentBox extends PureComponent {
 					{ this.renderAdditionalFields() }
 				</div>
 
+				{ this.props.children }
+
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
 

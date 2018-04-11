@@ -194,6 +194,8 @@ export class CreditCardPaymentBox extends React.Component {
 					transaction={ transaction }
 				/>
 
+				{ this.props.children }
+
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 				/>
