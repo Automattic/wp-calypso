@@ -376,6 +376,30 @@
 		}
 	}
 
+	// Term-picker rules
+	// -----------------------------------
+
+	.subscription-length-picker {
+		margin-top: 15px;
+	}
+
+	&__subscription-length-picker-separator {
+		display: none;
+		position: relative;
+		// Parent overflow is hidden, so 80px here is an arbitrary number
+		// to make sure this element will cover entire width of the parent.
+		// If it's wider, it's okay too.
+		width: calc(100% + 80px * 2);
+		left: -80px;
+		margin-top: 1.7em;
+		margin-bottom: 1.7em;
+		background: $gray-lighten-30;
+	}
+
+	.subscription-length-picker + &__subscription-length-picker-separator {
+		display: block;
+	}
+
 	// PayPal Payment Box
 	// -----------------------------------
 

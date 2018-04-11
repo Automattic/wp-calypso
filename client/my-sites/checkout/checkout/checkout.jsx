@@ -487,12 +487,12 @@ class Checkout extends React.Component {
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 			>
-				{ config.isEnabled( 'upgrades/2-year-plans' ) && this.renderTermPicker() }
+				{ config.isEnabled( 'upgrades/2-year-plans' ) && this.renderSubscriptionLengthPicker() }
 			</SecurePaymentForm>
 		);
 	}
 
-	renderTermPicker() {
+	renderSubscriptionLengthPicker() {
 		const planInCart = this.getPlanProducts()[ 0 ];
 		if ( ! planInCart ) {
 			return false;
@@ -518,7 +518,7 @@ class Checkout extends React.Component {
 					onChange={ this.handleTermChange }
 					key="picker"
 				/>
-				<hr className="checkout__term-picker-separator" key="separator" />
+				<hr className="checkout__subscription-length-picker-separator" key="separator" />
 			</React.Fragment>
 		);
 	}
