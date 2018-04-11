@@ -4,7 +4,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -32,14 +31,10 @@ class PlanFooter extends Component {
 			<div className="plan-footer">
 				<div className="plan-footer__guarantee">
 					<Gridicon icon="checkmark-circle" size="18" />
-					{ translate( '30 day money back guarantee*', {
-						comment: '* is for a footnote to follow',
-					} ) }
+					30 day money back guarantee*
 				</div>
 				<div className="plan-footer__fineprint">
-					{ translate( '* Domains purchased with a plan are only refundable for 48 hours.', {
-						comment: '* is a leading footnote indicator',
-					} ) }
+					* Domains purchased with a plan are only refundable for 48 hours.
 				</div>
 			</div>
 		);
