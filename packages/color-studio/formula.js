@@ -1,5 +1,4 @@
 const chroma = require('chroma-js')
-const clone = require('lodash/clone')
 const flatten = require('lodash/flatten')
 const zip = require('lodash/zip')
 
@@ -107,11 +106,13 @@ function createPaletteColors(baseColor, baseColorName = '') {
   })
 
   const auxiliaryPalette = standardPalette.map(colorObject => {
-    const copy = clone(colorObject)
-    copy.color = chroma(colorObject.color).desaturate(1).hex()
-    copy.distance = chroma.distance(colorObject.color, copy.color)
-    copy.auxiliary = true
-    return copy
+    const color = chroma(colorObject.color).desaturate(1).hex()
+
+    return Object.assign({}, colorObject, {
+      color,
+      distance: chroma.distance(colorObject.color, color),
+      auxiliary: true
+    })
   })
 
   const distantAuxiliaryPalette = auxiliaryPalette.filter(colorObject => {
@@ -125,7 +126,7 @@ function createPaletteColors(baseColor, baseColorName = '') {
 }
 
 function mergePaletteShades(brightShades, darkShades) {
-  const shades = clone(brightShades)
+  const shades = [].concat(brightShades)
   shades.length -= 1
   shades.unshift(chroma(COLOR_WHITE).hex())
 

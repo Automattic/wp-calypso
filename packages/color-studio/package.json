@@ -25,7 +25,7 @@
     "xo": "^0.20.3"
   },
   "scripts": {
-    "development": "webpack --watch --mode=development",
+    "development": "open index.html && webpack --watch --mode=development",
     "lint": "xo",
     "precommit": "yarn lint && webpack --display=errors-only"
   },
