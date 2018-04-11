@@ -42,16 +42,22 @@ export class JetpackRemoteInstallNotices extends Component {
 
 	renderNotice() {
 		const { noticeType, siteToConnect, translate } = this.props;
-		// default values for ACTIVATION_RESPONSE_ERROR, INSTALL_RESPONSE_ERROR,
+		// default values for INSTALL_RESPONSE_ERROR,
 		let header = translate( 'Add your website credentials' );
 		let subheader = translate(
-			"We were unable to activate Jetpack. Don't worry- you can either install Jetpack manually or contact support for help."
+			"We were unable to install Jetpack. Don't worry you can either install Jetpack manually or contact support for help."
 		);
 		let buttonLabel = translate( 'Install Jetpack manually' );
 		let noticeImage = <img src="/calypso/images/illustrations/customizeTheme.svg" alt="" />;
 		let redirectTo = addQueryArgs( { url: siteToConnect }, '/jetpack/connect/instructions' );
 
 		switch ( noticeType ) {
+			case ACTIVATION_RESPONSE_ERROR:
+				subheader = translate(
+					"We were unable to activate Jetpack. Don't worry- you can either install Jetpack manually or contact support for help."
+				);
+				break;
+
 			case ACTIVATION_FAILURE:
 				header = translate( 'WordPress version update needed' );
 				subheader = translate(
@@ -62,6 +68,7 @@ export class JetpackRemoteInstallNotices extends Component {
 				noticeImage = <img src="/calypso/images/illustrations/install-button.svg" alt="" />;
 				buttonLabel = translate( 'Update WordPress now' );
 				redirectTo = siteToConnect + '/wp-admin/update-core.php';
+				break;
 
 			case INVALID_PERMISSIONS:
 				header = translate( 'Contact your site Administrator' );

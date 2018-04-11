@@ -136,6 +136,8 @@ export class OrgCredentialsForm extends Component {
 					'We were unable to install Jetpack because your WordPress Administrator credentials were invalid. ' +
 						'Please try again with the correct credentials or try installing Jetpack manually.'
 				);
+				break;
+
 			case UNKNOWN_REMOTE_INSTALL_ERROR:
 				subheader = translate(
 					'We were unable to install Jetpack because something went wrong. ' +
@@ -154,6 +156,7 @@ export class OrgCredentialsForm extends Component {
 		if ( installError === null ) {
 			return undefined;
 		}
+
 		if (
 			installError === 'ACTIVATION_FAILURE' ||
 			installError === 'ACTIVATION_ON_INSTALL_FAILURE'
