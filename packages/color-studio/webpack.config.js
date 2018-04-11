@@ -1,5 +1,7 @@
 const path = require('path')
+
 const MiniExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
 module.exports = {
   mode: 'production',
@@ -44,6 +46,9 @@ module.exports = {
     new MiniExtractPlugin({
       filename: '[name].css',
       allChunks: true
+    }),
+    new OptimizeAssetsPlugin({
+      cssProcessor: require('cssnano')
     })
   ]
 }
