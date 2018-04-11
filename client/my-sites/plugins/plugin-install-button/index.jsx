@@ -29,7 +29,6 @@ export class PluginInstallButton extends Component {
 			siteId,
 			isInstalling,
 			plugin,
-			notices,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
@@ -38,7 +37,7 @@ export class PluginInstallButton extends Component {
 			return;
 		}
 
-		PluginsActions.removePluginsNotices( notices.completed.concat( notices.errors ) );
+		PluginsActions.removePluginsNotices( 'completed', 'error' );
 		PluginsActions.installPlugin( selectedSite, plugin );
 
 		if ( isEmbed ) {
@@ -302,7 +301,6 @@ PluginInstallButton.propTypes = {
 	plugin: PropTypes.object.isRequired,
 	isEmbed: PropTypes.bool,
 	isInstalling: PropTypes.bool,
-	notices: PropTypes.object,
 	isMock: PropTypes.bool,
 	disabled: PropTypes.bool,
 };
