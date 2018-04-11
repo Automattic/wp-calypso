@@ -172,6 +172,7 @@ export function connect( context, next ) {
 		url: query.url,
 		ctaId: query.cta_id, // origin tracking params
 		ctaFrom: query.cta_from,
+		interval,
 	} );
 	next();
 }
@@ -230,7 +231,7 @@ export function authorizeForm( context, next ) {
 	const transformedQuery = parseAuthorizationQuery( query );
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
-		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
+		context.primary = <JetpackAuthorize authQuery={ transformedQuery } interval={ interval } />;
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}
