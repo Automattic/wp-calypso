@@ -1,6 +1,6 @@
 # Pie Chart
 
-This component renders a dataset as a pie chart.
+This component renders a dataset as a pie chart. A separate `PieChartLegend` sub-component will render an accompanying legend.
 
 ## Props 
 
@@ -23,6 +23,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import PieChart from 'components/pie-chart';
+import PieChartLegend from 'components/pie-chart/legend';
 
 export default class Example extends Component {
 	render() {
@@ -56,10 +57,13 @@ export default class Example extends Component {
 		const total = data.reduce( ( result, datum ) => result + datum.value, 0 );
 
 		return (
-			<PieChart
-				data={ data }
-				title={ translate( '%(total)s Total Searches', { args: { total } } ) }
-			/>
+			<div>
+				<PieChart
+					data={ data }
+					title={ translate( '%(total)s Total Searches', { args: { total } } ) }
+				/>
+				<PieChartLegend data={ data } />
+			</div>
 		);
 	}
 }
