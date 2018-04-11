@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should return expected output for a variety of inputs 1`] = `
+Array [
+  "/connect/site-info/http/example.com",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 2`] = `
+Array [
+  "/connect/site-info/https/example.com",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 3`] = `
+Array [
+  "/connect/site-info/http/www.example.com",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 4`] = `
+Array [
+  "/connect/site-info/http/example.com",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 5`] = `
+Array [
+  "/connect/site-info/https/example.com",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 6`] = `
+Array [
+  "/connect/site-info/http/example.com::a::path",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 7`] = `
+Array [
+  "/connect/site-info/http/example.com::a::path?query=args",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 8`] = `
+Array [
+  "/connect/site-info/http/example.com:12345",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 9`] = `
+Array [
+  "/connect/site-info/http/example.com:12345",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 10`] = `
+Array [
+  "/connect/site-info/http/example.com:12345::a::path?query=args",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 11`] = `
+Array [
+  "/connect/site-info/http/example.com::a%20path?full&of=bad%25chars",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 12`] = `
+Array [
+  "/connect/site-info/http/xn--1camcyp5b2a.com",
+  Object {
+    "apiVersion": "1.1",
+    "filters": undefined,
+  },
+]
+`;
