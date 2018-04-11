@@ -67,7 +67,5 @@ describe( 'Head', () => {
 		wrapper.find( { rel: 'apple-touch-icon' } ).map( link => {
 			expect( link.prop( 'href' ) ).toMatch( /^\/\/s1.wp.com/ );
 		} );
-
-		expect( wrapper.find( 'link[id="noticons-css"]' ).prop( 'href' ) ).toMatch( /^\/\/s1.wp.com/ );
 	} );
 } );

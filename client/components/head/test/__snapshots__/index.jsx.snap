@@ -138,11 +138,6 @@ exports[`Head should render custom title 1`] = `
     href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
     rel="stylesheet"
   />
-  <link
-    href="//arbitrary-cdn/i/noticons/noticons.css?v=20150727"
-    id="noticons-css"
-    rel="stylesheet"
-  />
 </head>
 `;
 
@@ -282,11 +277,6 @@ exports[`Head should render default title 1`] = `
   />
   <link
     href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
-    rel="stylesheet"
-  />
-  <link
-    href="//arbitrary-cdn/i/noticons/noticons.css?v=20150727"
-    id="noticons-css"
     rel="stylesheet"
   />
 </head>
