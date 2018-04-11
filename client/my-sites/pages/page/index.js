@@ -306,12 +306,6 @@ class Page extends Component {
 		pageRouter( editLinkForPage( this.props.page, this.props.site ) );
 	};
 
-	// // making new homepage function
-	// makeHomepage = () => {
-	// 	this.props.recordHomepage();
-	// 	pageRouter( homepageLinkForPage( this.props.page, this.props.site) );
-	// }
-
 	getPageStatusInfo() {
 		if ( this.props.page.status === 'publish' ) {
 			return null;
