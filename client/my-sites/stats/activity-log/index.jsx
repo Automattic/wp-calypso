@@ -41,6 +41,7 @@ import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	activityLogRequest,
+	getRewindRestoreProgress,
 	rewindRequestDismiss,
 	rewindRestore,
 	rewindBackupDismiss,
@@ -228,7 +229,20 @@ class ActivityLog extends Component {
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+		this.findExistingRewind( this.props );
 	}
+
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.rewindState.rewind && this.props.rewindState.rewind ) {
+			this.findExistingRewind( this.props );
+		}
+	}
+
+	findExistingRewind = ( { siteId, rewindState } ) => {
+		if ( rewindState.rewind ) {
+			this.props.getRewindRestoreProgress( siteId, rewindState.rewind.restoreId );
+		}
+	};
 
 	getStartMoment() {
 		const { gmtOffset, startDate, timezone } = this.props;
@@ -663,6 +677,7 @@ export default connect(
 				recordTracksEvent( 'calypso_activitylog_backup_cancel' ),
 				rewindBackupDismiss( siteId )
 			),
+		getRewindRestoreProgress,
 		rewindRequestDismiss: siteId =>
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
