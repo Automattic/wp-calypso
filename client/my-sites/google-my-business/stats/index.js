@@ -21,6 +21,7 @@ import FakeData from './fake-data';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
+import Legend from 'components/chart/legend';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PieChart from 'components/pie-chart';
@@ -45,9 +46,7 @@ class GoogleMyBusinessStats extends Component {
 	};
 
 	trackUpdateListingClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_stats_update_listing_button_click'
-		);
+		this.props.recordTracksEvent( 'calypso_google_my_business_stats_update_listing_button_click' );
 	};
 
 	render() {
@@ -116,7 +115,15 @@ class GoogleMyBusinessStats extends Component {
 							<CardHeading tagName={ 'h2' } size={ 16 }>
 								{ translate( 'The Google services that customers use to find your business' ) }
 							</CardHeading>
-
+							<Legend
+								activeTab={ { label: translate( 'Listings On Search' ), attr: 'searchListings' } }
+								activeCharts={ [ 'mapListings' ] }
+								availableCharts={ [ 'mapListings' ] }
+								tabs={ [
+									{ label: translate( 'Listings On Search' ), attr: 'searchListings' },
+									{ label: translate( 'Listings On Maps' ), attr: 'mapListings' },
+								] }
+							/>
 							<Chart data={ viewData } />
 						</Card>
 					</div>
@@ -127,7 +134,15 @@ class GoogleMyBusinessStats extends Component {
 							<CardHeading tagName={ 'h2' } size={ 16 }>
 								{ translate( 'The most common actions that customers take on your listing' ) }
 							</CardHeading>
-
+							<Legend
+								activeTab={ { label: translate( 'Visit your Website' ), attr: 'visitWebsite' } }
+								activeCharts={ [ 'requestDirections' ] }
+								availableCharts={ [ 'requestDirections' ] }
+								tabs={ [
+									{ label: translate( 'Visit your Website' ), attr: 'visitWebsite' },
+									{ label: translate( 'Request Directions' ), attr: 'requestDirections' },
+								] }
+							/>
 							<Chart data={ actionData } />
 						</Card>
 					</div>
@@ -159,14 +174,17 @@ class GoogleMyBusinessStats extends Component {
 	}
 }
 
-export default connect( state => ( {
-	actionData: FakeData.actionData,
-	locationData: FakeData.locationData,
-	searchData: FakeData.searchData,
-	searchDataTotal: FakeData.searchDataTotal,
-	siteId: getSelectedSiteId( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-	viewData: FakeData.viewData,
-} ), {
-	recordTracksEvent,
-} )( localize( GoogleMyBusinessStats ) );
+export default connect(
+	state => ( {
+		actionData: FakeData.actionData,
+		locationData: FakeData.locationData,
+		searchData: FakeData.searchData,
+		searchDataTotal: FakeData.searchDataTotal,
+		siteId: getSelectedSiteId( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+		viewData: FakeData.viewData,
+	} ),
+	{
+		recordTracksEvent,
+	}
+)( localize( GoogleMyBusinessStats ) );
