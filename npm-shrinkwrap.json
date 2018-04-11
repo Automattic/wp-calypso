@@ -500,7 +500,7 @@
       "integrity": "sha1-a8vQOKM3xwYn5/zkQ4+lgYjwk3s=",
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000827",
+        "caniuse-db": "1.0.30000828",
         "normalize-range": "0.1.2",
         "num2fraction": "1.2.2",
         "postcss": "5.2.18",
@@ -561,7 +561,7 @@
         "babel-generator": "6.26.1",
         "babel-helpers": "6.24.1",
         "babel-messages": "6.23.0",
-        "babel-register": "6.24.1",
+        "babel-register": "6.26.0",
         "babel-runtime": "6.26.0",
         "babel-template": "6.26.0",
         "babel-traverse": "6.26.0",
@@ -1353,7 +1353,7 @@
           "version": "2.11.3",
           "integrity": "sha512-yWu5cXT7Av6mVwzWc8lMsJMHWn4xyjSuGYi4IozbVTLUOEYPSagUB8kiMDUHA1fS3zjr8nkxkn9jdvug4BBRmA==",
           "requires": {
-            "caniuse-lite": "1.0.30000827",
+            "caniuse-lite": "1.0.30000828",
             "electron-to-chromium": "1.3.42"
           }
         },
@@ -1464,10 +1464,10 @@
       }
     },
     "babel-register": {
-      "version": "6.24.1",
-      "integrity": "sha1-fhDhOi9xBlvfrVoXh7pFvKbe118=",
+      "version": "6.26.0",
+      "integrity": "sha1-btAhFz4vy0htestFxgCahW9kcHE=",
       "requires": {
-        "babel-core": "6.25.0",
+        "babel-core": "6.26.0",
         "babel-runtime": "6.26.0",
         "core-js": "2.5.5",
         "home-or-tmp": "2.0.0",
@@ -1476,6 +1476,42 @@
         "source-map-support": "0.4.18"
       },
       "dependencies": {
+        "babel-core": {
+          "version": "6.26.0",
+          "integrity": "sha1-rzL3izGm/O8RnIew/Y2XU/A6C7g=",
+          "requires": {
+            "babel-code-frame": "6.26.0",
+            "babel-generator": "6.26.1",
+            "babel-helpers": "6.24.1",
+            "babel-messages": "6.23.0",
+            "babel-register": "6.26.0",
+            "babel-runtime": "6.26.0",
+            "babel-template": "6.26.0",
+            "babel-traverse": "6.26.0",
+            "babel-types": "6.26.0",
+            "babylon": "6.18.0",
+            "convert-source-map": "1.5.1",
+            "debug": "2.6.9",
+            "json5": "0.5.1",
+            "lodash": "4.17.5",
+            "minimatch": "3.0.4",
+            "path-is-absolute": "1.0.1",
+            "private": "0.1.8",
+            "slash": "1.0.0",
+            "source-map": "0.5.7"
+          }
+        },
+        "debug": {
+          "version": "2.6.9",
+          "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
+        },
         "source-map": {
           "version": "0.5.7",
           "integrity": "sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w="
@@ -1870,7 +1906,7 @@
       "version": "1.3.6",
       "integrity": "sha1-lS/0jVZGPTtTj4XvL46t39KEsTM=",
       "requires": {
-        "caniuse-db": "1.0.30000827"
+        "caniuse-db": "1.0.30000828"
       }
     },
     "bser": {
@@ -2012,12 +2048,12 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000827",
-      "integrity": "sha1-vSg53Rlgk7RMKMF/k1ExQMnZJYg="
+      "version": "1.0.30000828",
+      "integrity": "sha1-7W1vA7WoH7KRw8DgiIKLEacJSL8="
     },
     "caniuse-lite": {
-      "version": "1.0.30000827",
-      "integrity": "sha512-j9Q9hP5AhqOARNP6fLdctr3XrGhF921sBSycudf4E+8RCWpFT3rJdTfp/5o8LDp6p0NJTpYWEpBFiM+QEDzA6g=="
+      "version": "1.0.30000828",
+      "integrity": "sha512-v+ySC6Ih8N8CyGZYd4svPipuFIqskKsTOi18chFM0qtu1G8mGuSYajb+h49XDWgmzX8MRDOp1Agw6KQaPUdIhg=="
     },
     "cardinal": {
       "version": "1.0.0",
@@ -3641,7 +3677,7 @@
       "dev": true,
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000827",
+        "caniuse-db": "1.0.30000828",
         "css-rule-stream": "1.1.0",
         "duplexer2": "0.0.2",
         "jsonfilter": "1.1.2",
@@ -4521,7 +4557,7 @@
       "dev": true,
       "requires": {
         "debug": "2.6.9",
-        "resolve": "1.7.0"
+        "resolve": "1.7.1"
       },
       "dependencies": {
         "debug": {
@@ -9148,7 +9184,7 @@
         "babel-plugin-transform-flow-strip-types": "6.22.0",
         "babel-preset-es2015": "6.24.1",
         "babel-preset-stage-1": "6.24.1",
-        "babel-register": "6.24.1",
+        "babel-register": "6.26.0",
         "babylon": "6.18.0",
         "colors": "1.2.1",
         "es6-promise": "3.3.1",
@@ -9210,7 +9246,7 @@
             "regenerator": "0.8.40",
             "regexpu": "1.3.0",
             "repeating": "1.1.3",
-            "resolve": "1.7.0",
+            "resolve": "1.7.1",
             "shebang-regex": "1.0.0",
             "slash": "1.0.0",
             "source-map": "0.5.7",
@@ -12037,7 +12073,7 @@
         "neo-async": "1.8.2",
         "postcss": "5.2.18",
         "read-file-stdin": "0.2.1",
-        "resolve": "1.7.0",
+        "resolve": "1.7.1",
         "yargs": "3.10.0"
       },
       "dependencies": {
@@ -13160,7 +13196,7 @@
             "browser-resolve": "1.11.2",
             "jest-file-exists": "17.0.0",
             "jest-haste-map": "17.0.3",
-            "resolve": "1.7.0"
+            "resolve": "1.7.1"
           }
         },
         "jest-resolve-dependencies": {
@@ -13793,7 +13829,7 @@
       "version": "0.6.2",
       "integrity": "sha1-hSBLVNuoLVdC4oyWdW70OvUOM4Q=",
       "requires": {
-        "resolve": "1.7.0"
+        "resolve": "1.7.1"
       }
     },
     "redent": {
@@ -14144,8 +14180,8 @@
       "dev": true
     },
     "resolve": {
-      "version": "1.7.0",
-      "integrity": "sha512-QdgZ5bjR1WAlpLaO5yHepFvC+o3rCr6wpfE2tpJNMkXdulf2jKomQBdNRQITF3ZKHNlT71syG98yQP03gasgnA==",
+      "version": "1.7.1",
+      "integrity": "sha512-c7rwLofp8g1U+h1KNyHL/jicrKg1Ek4q+Lr33AL65uZTinUZHe30D5HlyN5V9NW0JX1D5dXQ4jqW5l7Sy/kGfw==",
       "requires": {
         "path-parse": "1.0.5"
       }
@@ -17949,7 +17985,7 @@
             "babel-plugin-transform-flow-strip-types": "6.22.0",
             "babel-preset-es2015": "6.24.1",
             "babel-preset-stage-1": "6.24.1",
-            "babel-register": "6.24.1",
+            "babel-register": "6.26.0",
             "babylon": "6.18.0",
             "colors": "1.2.1",
             "flow-parser": "0.69.0",
@@ -18337,7 +18373,7 @@
         "mkdirp": "0.5.1",
         "p-each-series": "1.0.0",
         "p-lazy": "1.0.0",
-        "prettier": "1.11.1",
+        "prettier": "1.12.0",
         "recast": "0.13.2",
         "resolve-cwd": "2.0.0",
         "supports-color": "4.5.0",
@@ -18444,7 +18480,7 @@
             "babel-plugin-transform-flow-strip-types": "6.22.0",
             "babel-preset-es2015": "6.24.1",
             "babel-preset-stage-1": "6.24.1",
-            "babel-register": "6.24.1",
+            "babel-register": "6.26.0",
             "babylon": "6.18.0",
             "colors": "1.2.1",
             "flow-parser": "0.69.0",
@@ -18501,8 +18537,8 @@
           "integrity": "sha1-7RQaasBDqEnqWISY59yosVMw6Qw="
         },
         "prettier": {
-          "version": "1.11.1",
-          "integrity": "sha512-T/KD65Ot0PB97xTrG8afQ46x3oiVhnfGjGESSI9NWYcG92+OUPZKkwHqGWXH2t9jK1crnQjubECW0FuOth+hxw=="
+          "version": "1.12.0",
+          "integrity": "sha512-Wz0SMncgaglBzDcohH3ZIAi4nVpzOIEweFzCOmgVEoRSeO72b4dcKGfgxoRGVMaFlh1r7dlVaJ+f3CIHfeH6xg=="
         },
         "read-pkg": {
           "version": "2.0.0",
