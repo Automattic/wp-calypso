@@ -53,7 +53,7 @@ export const settingsReducer = keyedReducer(
 				state,
 				{ settings: { post_by_email_address } }
 			) => {
-				if ( post_by_email_address !== state.post_by_email_address ) {
+				if ( post_by_email_address && post_by_email_address !== state.post_by_email_address ) {
 					return { ...state, post_by_email_address };
 				}
 				return state;

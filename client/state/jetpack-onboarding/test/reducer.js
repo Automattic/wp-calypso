@@ -230,6 +230,24 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( "shouldn't update post-by-email address if it hasn't been regenerated", () => {
+			const siteId = 12345678;
+			const newSettings = {
+				post_by_email_address: '',
+			};
+			const initialState = deepFreeze( {
+				[ siteId ]: settings,
+				[ 87654321 ]: settings,
+			} );
+			const state = settingsReducer( initialState, {
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+				siteId,
+				settings: newSettings,
+			} );
+
+			expect( state ).toEqual( initialState );
+		} );
+
 		test( 'should keep non-updated settings for sites', () => {
 			const siteId = 12345678;
 			const newSettings = {
