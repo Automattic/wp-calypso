@@ -85,7 +85,7 @@ class GoogleMyBusinessNewAccount extends Component {
 								onClick={ this.trackCreateMyListingClick }
 								primary
 							>
-								{ translate( 'Create My Listing' ) }
+								{ translate( 'Create Your Listing' ) }
 							</Button>
 
 							<Button
