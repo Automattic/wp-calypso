@@ -388,9 +388,15 @@ describe( 'selectors', () => {
 			} );
 			expect( discountPrice ).to.equal( 10 );
 		} );
-		test( 'should return a monthly discount price - monthly term', () => {
+		test( 'should return a monthly discount price - monthly term (isMonthly: true)', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'jetpack_premium_monthly', {
 				isMonthly: true,
+			} );
+			expect( discountPrice ).to.equal( 30 );
+		} );
+		test( 'should return a monthly discount price - monthly term (isMonthly: false)', () => {
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'jetpack_premium_monthly', {
+				isMonthly: false,
 			} );
 			expect( discountPrice ).to.equal( 30 );
 		} );

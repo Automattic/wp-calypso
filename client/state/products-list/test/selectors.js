@@ -89,7 +89,7 @@ describe( 'selectors', () => {
 			expect( getPlanDiscountedRawPrice.mock.calls[ 1 ][ 3 ] ).toEqual( { isMonthly: true } );
 
 			getPlanPrice( {}, 1, { ...plan, term: TERM_MONTHLY }, true );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 2 ][ 3 ] ).toEqual( { isMonthly: false } );
+			expect( getPlanDiscountedRawPrice.mock.calls[ 2 ][ 3 ] ).toEqual( { isMonthly: true } );
 		} );
 	} );
 
