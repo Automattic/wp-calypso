@@ -34,29 +34,33 @@ class CheckoutPending extends PureComponent {
 
 	componentWillReceiveProps( nextProps ) {
 		const { transaction, error } = nextProps;
-		const { translate, showErrorNotice } = this.props;
+		const { translate, showErrorNotice, siteSlug } = this.props;
 
 		const retryOnError = () => {
-			page( `/checkout/${ this.props.siteSlug }` );
+			page( `/checkout/${ siteSlug }` );
 
 			showErrorNotice(
 				translate( "Sorry, we couldn't process your payment. Please try again later." )
 			);
 		};
 
+		const planRoute = `/plans/my-plan/${ siteSlug }`;
+
 		if ( transaction ) {
 			const { processingStatus } = transaction;
 
 			if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
-				page( `/checkout/thank-you/${ this.props.siteSlug }` );
+				page( `/checkout/thank-you/${ siteSlug }` );
+
 				return;
 			}
 
 			// It is mostly because the user has cancelled the payment.
 			// See the explanation in https://github.com/Automattic/wp-calypso/pull/23670#issuecomment-377186515
 			if ( ORDER_TRANSACTION_STATUS.FAILURE === processingStatus ) {
-				// Bring the user back to the homepage in this case.
-				page( '/' );
+				// Bring the user back to the plan page in this case.
+				page( planRoute );
+
 				return;
 			}
 
@@ -70,8 +74,8 @@ class CheckoutPending extends PureComponent {
 
 			// The API has responded a status string that we don't expect somehow.
 			if ( ORDER_TRANSACTION_STATUS.UNKNOWN === processingStatus ) {
-				// Redirect users back to the homepage so that they won't be stuck here.
-				page( '/' );
+				// Redirect users back to the plan page so that they won't be stuck here.
+				page( planRoute );
 
 				showErrorNotice( translate( 'Oops! Something went wrong. Please try again later.' ) );
 
