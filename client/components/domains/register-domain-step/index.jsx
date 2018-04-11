@@ -53,7 +53,6 @@ import {
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
 
-import { abtest } from 'lib/abtest';
 import {
 	getStrippedDomainBase,
 	getTldWeightOverrides,
@@ -79,7 +78,7 @@ const domains = wpcom.domains();
 const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
-let searchVendor = 'domainsbot';
+let searchVendor = 'group_1';
 const fetchAlgo = searchVendor + '/v1';
 
 let searchQueue = [];
@@ -737,9 +736,9 @@ class RegisterDomainStep extends React.Component {
 		} );
 
 		const timestamp = Date.now();
-		const testGroup = abtest( 'domainSuggestionKrakenV313' );
-		if ( includes( [ 'group_1', 'group_2', 'group_3', 'group_4', 'group_5' ], testGroup ) ) {
-			searchVendor = testGroup;
+
+		if ( this.props.isSignupStep ) {
+			searchVendor = 'group_2';
 		}
 
 		const domainSuggestions = Promise.all( [
@@ -845,13 +844,7 @@ class RegisterDomainStep extends React.Component {
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
 		const searchResults = this.state.searchResults || [];
-		const testGroup = abtest( 'domainSuggestionKrakenV313' );
-		let suggestions = includes(
-			[ 'group_1', 'group_2', 'group_3', 'group_4', 'group_5' ],
-			testGroup
-		)
-			? [ ...searchResults ]
-			: reject( searchResults, matchesSearchedDomain );
+		let suggestions = [ ...searchResults ];
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
