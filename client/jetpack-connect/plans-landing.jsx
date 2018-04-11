@@ -87,10 +87,9 @@ class PlansLanding extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
-	handleInfoButtonClick = info => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_plans_info_lookup_click', {
-			site_type: 'unconnected',
-			source: info,
+	handleInfoButtonClick = info => () => {
+		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
+			help_type: info,
 		} );
 	};
 

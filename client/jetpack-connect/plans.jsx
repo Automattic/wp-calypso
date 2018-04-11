@@ -189,9 +189,9 @@ class Plans extends Component {
 		);
 	}
 
-	handleInfoButtonClick = info => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_click', {
-			site_type: info,
+	handleInfoButtonClick = info => () => {
+		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
+			help_type: info,
 		} );
 	};
 
