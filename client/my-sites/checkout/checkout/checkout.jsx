@@ -500,12 +500,13 @@ class Checkout extends React.Component {
 		}
 
 		const currentPlanSlug = this.props.selectedSite.plan.product_slug;
-
 		const chosenPlan = getPlan( planInCart.product_slug );
+
 		// Only render this for WP.com plans
 		if ( chosenPlan.group !== GROUP_WPCOM ) {
 			return false;
 		}
+
 		const availableTerms = findPlansKeys( {
 			group: chosenPlan.group,
 			type: chosenPlan.type,
