@@ -57,8 +57,9 @@ import { abtest } from 'lib/abtest';
 import {
 	getStrippedDomainBase,
 	getTldWeightOverrides,
-	isFreeOrUnknownSuggestion,
+	isFreeSuggestion,
 	isNumberString,
+	isUnknownSuggestion,
 } from 'components/domains/register-domain-step/utility';
 import {
 	recordDomainAvailabilityReceive,
@@ -606,6 +607,8 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
+
 		const suggestions = uniqBy( flatten( compact( results ) ), function( suggestion ) {
 			return suggestion.domain_name;
 		} );
@@ -616,9 +619,14 @@ class RegisterDomainStep extends React.Component {
 			startsWith( suggestion.domain_name, `${ strippedDomainBase }.` );
 		const bestAlternative = suggestion =>
 			! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
-		const availableSuggestions = reject( suggestions, isFreeOrUnknownSuggestion );
+
+		let availableSuggestions = reject( suggestions, isUnknownSuggestion );
+		if ( ! isKrackenUi ) {
+			availableSuggestions = reject( suggestions, isFreeSuggestion );
+		}
 
 		const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
+
 		if ( recommendedSuggestion ) {
 			recommendedSuggestion.isRecommended = true;
 		} else if ( availableSuggestions.length > 0 ) {
