@@ -11,7 +11,7 @@ import { getJetpackSettingsSaveRequestStatus } from 'state/selectors';
  * @param  {Object}  state     Global state tree
  * @param  {Number}  siteId    Site ID
  * @param  {Object}  settings  The settings we're updating
- * @return {Boolean}           Whether the requests is successful or not
+ * @return {Boolean}           Whether the request is successful or not
  */
 export default function isJetpackSettingsSaveFailure( state, siteId, settings ) {
 	return getJetpackSettingsSaveRequestStatus( state, siteId, settings ) === 'failure';
