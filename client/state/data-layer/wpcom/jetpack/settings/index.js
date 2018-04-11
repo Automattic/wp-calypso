@@ -16,7 +16,7 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 } from 'state/action-types';
-import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
+import { getJetpackOnboardingSettings, getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
@@ -93,8 +93,9 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
-export const saveJetpackSettings = ( { dispatch }, action ) => {
+export const saveJetpackSettings = ( { dispatch, getState }, action ) => {
 	const { settings, siteId } = action;
+	const previousSettings = getJetpackOnboardingSettings( getState(), siteId );
 
 	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
 	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
@@ -112,7 +113,10 @@ export const saveJetpackSettings = ( { dispatch }, action ) => {
 					json: true,
 				},
 			},
-			action
+			{
+				...action,
+				meta: { ...action.meta, settings: { onboarding: previousSettings } },
+			}
 		)
 	);
 };
@@ -127,13 +131,19 @@ export const handleSaveSuccess = (
 	{ data: { code, message, ...updatedSettings } } // eslint-disable-line no-unused-vars
 ) => dispatch( saveJetpackSettingsSuccess( siteId, updatedSettings ) );
 
-export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
+export const handleSaveFailure = (
+	{ dispatch },
+	{ siteId },
+	{ meta: { settings: previousSettings } }
+) => {
+	dispatch( updateJetpackSettings( siteId, previousSettings ) );
 	dispatch(
 		errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
 			id: `jpo-notice-error-${ siteId }`,
 			duration: 5000,
 		} )
 	);
+};
 
 export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: errorMessage } ) => {
 	const { settings, siteId, type, meta: { dataLayer } } = action;
@@ -147,7 +157,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 		! startsWith( errorMessage, 'cURL error 28' ) || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
-		return announceSaveFailure( { dispatch }, { siteId } );
+		return handleSaveFailure( { dispatch }, { siteId }, action );
 	}
 
 	// We cannot use `extendAction( action, ... )` here, since `meta.dataLayer` now includes error information,
