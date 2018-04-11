@@ -11,17 +11,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { fetchOrderTransaction } from 'state/order-transactions/actions';
-import {
-	getOrderTransaction,
-	getOrderTransactionError,
-	isFetchingOrderTransaction,
-} from 'state/selectors';
+import { getOrderTransactionError, isFetchingOrderTransaction } from 'state/selectors';
 
 class QueryOrderTransaction extends React.Component {
 	static propTypes = {
 		orderId: PropTypes.number.isRequired,
 		pollIntervalMs: PropTypes.number,
-		transaction: PropTypes.object,
 		fetchTransaction: PropTypes.func.isRequired,
 		error: PropTypes.object,
 		isFetching: PropTypes.bool,
@@ -68,7 +63,6 @@ class QueryOrderTransaction extends React.Component {
 
 export default connect(
 	( state, props ) => ( {
-		transaction: getOrderTransaction( state, props.orderId ),
 		error: getOrderTransactionError( state, props.orderId ),
 		isFetching: isFetchingOrderTransaction( state, props.orderId ),
 	} ),
