@@ -55,6 +55,7 @@ import {
 } from 'state/selectors';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey, getUpgradePlanSlugFromPath, getPlan, findPlansKeys } from 'lib/plans';
+import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
@@ -501,6 +502,10 @@ class Checkout extends React.Component {
 		const currentPlanSlug = this.props.selectedSite.plan.product_slug;
 
 		const chosenPlan = getPlan( planInCart.product_slug );
+		// Only render this for WP.com plans
+		if ( chosenPlan.group !== GROUP_WPCOM ) {
+			return false;
+		}
 		const availableTerms = findPlansKeys( {
 			group: chosenPlan.group,
 			type: chosenPlan.type,
