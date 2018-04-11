@@ -46,7 +46,7 @@ export class SubscriptionLengthPicker extends React.Component {
 		const { productsWithPrices, translate } = this.props;
 		return (
 			<div className="subscription-length-picker">
-				{ ! productsWithPrices && (
+				{ ! productsWithPrices.length && (
 					<React.Fragment>
 						<QueryPlans />
 						<QueryProductsList />
