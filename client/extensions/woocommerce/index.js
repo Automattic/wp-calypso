@@ -206,7 +206,7 @@ function getAnalyticsPath( path, params ) {
 	return path
 		.replace( '?', '' )
 		.replace( ':filter', params.filter )
-		.replace( ':productId', ':product-id' );
+		.replace( ':productId', ':product_id' );
 }
 
 function addStorePage( storePage, storeNavigation ) {
