@@ -57,11 +57,13 @@ export default class Example extends Component {
 		const total = data.reduce( ( result, datum ) => result + datum.value, 0 );
 
 		return (
-			<PieChart
-				data={ data }
-				title={ translate( '%(total)s Total Searches', { args: { total } } ) }
-			/>
-			<PieChartLegend data={ data } />
+			<div>
+				<PieChart
+					data={ data }
+					title={ translate( '%(total)s Total Searches', { args: { total } } ) }
+				/>
+				<PieChartLegend data={ data } />
+			</div>
 		);
 	}
 }
