@@ -61,7 +61,7 @@ export class SubscriptionLengthOption extends React.Component {
 					<div className="subscription-length-picker__option-header">
 						<div className="subscription-length-picker__option-term">{ this.getTermText() }</div>
 						<div className="subscription-length-picker__option-discount">
-							{ savePercent && (
+							{ savePercent ? (
 								<Badge type={ checked ? 'success' : 'warning' }>
 									{ translate( 'Save %(percent)s%%', {
 										args: {
@@ -69,6 +69,8 @@ export class SubscriptionLengthOption extends React.Component {
 										},
 									} ) }
 								</Badge>
+							) : (
+								false
 							) }
 						</div>
 					</div>
