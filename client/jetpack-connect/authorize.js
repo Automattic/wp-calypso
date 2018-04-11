@@ -29,6 +29,7 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
+import PlansStatic from './plans-static';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
@@ -623,6 +624,13 @@ export class JetpackAuthorize extends Component {
 	}
 
 	render() {
+		const { authorizeSuccess } = this.props.authorizationData;
+		const { interval } = this.props;
+
+		if ( this.isAuthorizing() || authorizeSuccess ) {
+			return <PlansStatic interval={ interval } basePlansPath={ '/jetpack/connect/authorize' } />;
+		}
+
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
