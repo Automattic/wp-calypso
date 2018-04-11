@@ -12,60 +12,22 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import { connectGoogleMyBusinessLocation } from 'state/google-my-business/action';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
+import GoogleMyBusinessSelectLocationButton from './button';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-class GoogleMyBusinessLocationWithConnectButton extends Component {
-	static propTypes = {
-		location: PropTypes.shape( {
-			id: PropTypes.string.isRequired,
-		} ).isRequired,
-		siteSlug: PropTypes.string.isRequired,
-		siteId: PropTypes.string.isRequired,
-		translate: PropTypes.func.isRequired,
-	};
-
-	connectLocation = () => {
-		this.props.connectGoogleMyBusinessLocation( this.props.siteId, this.props.location.id );
-
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_location_connect_location_button_click'
-		);
-	};
-
-	render() {
-		const { location, siteSlug, translate } = this.props;
-		return (
-			<GoogleMyBusinessLocation isCompact key={ location.id } location={ location }>
-				<Button href={ `/google-my-business/stats/${ siteSlug }` } onClick={ this.connectLocation }>
-					{ translate( 'Connect Location' ) }
-				</Button>
-			</GoogleMyBusinessLocation>
-		);
-	}
-}
-
-const LocalizedGoogleMyBusinessLocationWithConnectButton = localize(
-	GoogleMyBusinessLocationWithConnectButton
-);
-
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
-		connectGoogleMyBusinessLocation: PropTypes.func.isRequired,
 		locations: PropTypes.arrayOf( GoogleMyBusinessLocationType ).isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -81,7 +43,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 	};
 
 	render() {
-		const { locations, translate, siteSlug, siteId } = this.props;
+		const { locations, translate } = this.props;
 
 		return (
 			<Main className="gmb-select-location" wideLayout>
@@ -101,9 +63,8 @@ class GoogleMyBusinessSelectLocation extends Component {
 				</CompactCard>
 
 				{ locations.map( location => (
-					<LocalizedGoogleMyBusinessLocationWithConnectButton
-						siteId={ siteId }
-						siteSlug={ siteSlug }
+					<GoogleMyBusinessSelectLocationButton
+						key={ location.id }
 						location={ location }
 					/>
 				) ) }
@@ -153,11 +114,9 @@ export default connect(
 				verified: false,
 			},
 		],
-		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
-		connectGoogleMyBusinessLocation,
 		recordTracksEvent,
 	}
 )( localize( GoogleMyBusinessSelectLocation ) );
