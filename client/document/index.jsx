@@ -169,7 +169,7 @@ class Document extends React.Component {
 						* since the manifest needs to be updated on each save
 						*/ }
 					{ env === 'development' && <script src="/calypso/manifest.js" /> }
-					{ env === 'production' && (
+					{ env !== 'development' && (
 						<script
 							nonce={ inlineScriptNonce }
 							dangerouslySetInnerHTML={ {
