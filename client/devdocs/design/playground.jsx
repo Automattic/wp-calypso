@@ -9,6 +9,7 @@ import classnames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import SocialLogo from 'social-logos';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 
 /**
@@ -49,7 +50,7 @@ import ExternalLink from 'components/external-link';
 import FAQ from 'components/faq';
 import FeatureGate from 'components/feature-example';
 import FilePickers from 'components/file-picker';
-import FocusableExample from 'components/focusable';
+import Focusable from 'components/focusable';
 import FoldableCard from 'components/foldable-card';
 import FormattedHeader from 'components/formatted-header';
 import FormButton from 'components/forms/form-button';
@@ -83,8 +84,8 @@ import HeaderButton from 'components/header-button';
 import ImagePreloader from 'components/image-preloader';
 import InfoPopover from 'components/info-popover';
 import InputChrono from 'components/input-chrono';
-import JetpackColophonExample from 'components/jetpack-colophon';
-import JetpackLogoExample from 'components/jetpack-logo';
+import JetpackColophon from 'components/jetpack-colophon';
+import JetpackLogo from 'components/jetpack-logo';
 import LanguagePicker from 'components/language-picker';
 import ListEnd from 'components/list-end';
 import Notices from 'components/notice';
@@ -96,15 +97,17 @@ import ProgressBar from 'components/progress-bar';
 import Ranges from 'components/forms/range';
 import Rating from 'components/rating';
 import Ribbon from 'components/ribbon';
-import ScreenReaderTextExample from 'components/screen-reader-text';
-import SearchDemo from 'components/search';
+import ScreenReaderText from 'components/screen-reader-text';
+import Search from 'components/search';
 import SectionHeader from 'components/section-header';
 import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavSegmented from 'components/section-nav/segmented';
+import NavItem from 'components/section-nav/item';
 import SegmentedControl from 'components/segmented-control';
 import SelectDropdown from 'components/select-dropdown';
 import ShareButton from 'components/share-button';
 import SiteTitleControl from 'components/site-title';
-import SocialLogos from 'social-logos/example';
 import Spinner from 'components/spinner';
 import SpinnerButton from 'components/spinner-button';
 import SpinnerLine from 'components/spinner-line';
@@ -166,7 +169,7 @@ class DesignAssets extends React.Component {
 			FAQ,
 			FeatureGate,
 			FilePickers,
-			FocusableExample,
+			Focusable,
 			FoldableCard,
 			FormattedHeader,
 			FormButton,
@@ -202,11 +205,12 @@ class DesignAssets extends React.Component {
 			ImagePreloader,
 			InfoPopover,
 			InputChrono,
-			JetpackColophonExample,
-			JetpackLogoExample,
+			JetpackColophon,
+			JetpackLogo,
 			LanguagePicker,
 			ListEnd,
 			Notices,
+			Main,
 			Pagination,
 			PaymentLogo,
 			PieChart,
@@ -215,16 +219,19 @@ class DesignAssets extends React.Component {
 			Ranges,
 			Rating,
 			Ribbon,
-			ScreenReaderTextExample,
+			ScreenReaderText,
 			SearchCard,
-			SearchDemo,
+			Search,
 			SectionHeader,
 			SectionNav,
+			NavTabs,
+			NavSegmented,
+			NavItem,
 			SegmentedControl,
 			SelectDropdown,
 			ShareButton,
 			SiteTitleControl,
-			SocialLogos,
+			SocialLogo,
 			Spinner,
 			SpinnerButton,
 			SpinnerLine,
@@ -241,7 +248,8 @@ class DesignAssets extends React.Component {
 			Wizard,
 		};
 
-		const code = `<div>
+		const code = `<Main>
+    <HeaderCake actionText="Fun" actionIcon="status">Welcome to the Playground</HeaderCake>
 	<Button primary onClick={
 		function() {
 			alert( 'World' )
@@ -260,8 +268,28 @@ class DesignAssets extends React.Component {
 		buttonTarget="_blank"
 	/>
 	<br /><hr /><br />
-	<JetpackLogoExample />
-</div>`;
+	<JetpackLogo />
+  <SectionNav >
+    <NavTabs label="Status" selectedText="Published">
+        <NavItem path="/posts" selected={ true }>Published</NavItem>
+        <NavItem path="/posts/drafts" selected={ false }>Drafts</NavItem>
+        <NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
+        <NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
+    </NavTabs>
+
+    <NavSegmented label="Author">
+        <NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
+        <NavItem path="/posts" selected={ true }>Everyone</NavItem>
+    </NavSegmented>
+
+    <Search
+        pinned
+        fitsContainer
+        placeholder="Search Published..."
+        delaySearch={ true }
+    />
+  </SectionNav>
+</Main>`;
 
 		return (
 			<Main className={ className }>

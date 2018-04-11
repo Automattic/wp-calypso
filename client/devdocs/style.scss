@@ -424,6 +424,13 @@ $devdocs-max-width: 720px;
 	}
 }
 
+.react-live-error {
+  margin: -32px -32px 20px;
+  background: #FFF;
+  padding: 16px;
+  color: $alert-red;
+}
+
 
 // Documentation — Copy-heavy things like Contributing and Typography
 .devdocs__doc-content,
