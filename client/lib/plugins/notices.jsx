@@ -103,7 +103,7 @@ export default {
 				onRemoveCallback: () => PluginsActions.removePluginsNotices( 'completed', 'error' ),
 			} );
 		} else if ( logNotices.errors.length > 0 ) {
-			notices.error( this.getMessage( logNotices.errors, this.errorMessage, 'errors' ), {
+			notices.error( this.getMessage( logNotices.errors, this.errorMessage, 'error' ), {
 				button: this.getErrorButton( logNotices.errors ),
 				href: this.getErrorHref( logNotices.errors ),
 				onRemoveCallback: () => PluginsActions.removePluginsNotices( 'error' ),
@@ -579,7 +579,7 @@ export default {
 				this.successMessage,
 				'completed'
 			),
-			errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'errors' );
+			errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'error' );
 		return ' ' + completedMessage + ' ' + errorMessage;
 	},
 
