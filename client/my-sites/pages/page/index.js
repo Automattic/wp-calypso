@@ -73,7 +73,7 @@ class Page extends Component {
 		recordMoreOptions: PropTypes.func.isRequired,
 		recordPageTitle: PropTypes.func.isRequired,
 		recordEditPage: PropTypes.func.isRequired,
-		//adding new make homepage item
+		// Adding new make homepage item
 		recordMakeHomepage: PropTypes.func.isRequired,
 		recordViewPage: PropTypes.func.isRequired,
 		recordStatsPage: PropTypes.func.isRequired,
@@ -205,7 +205,7 @@ class Page extends Component {
 		);
 	}
 
-	//// inserting new Make Homepage item to popover menu
+	// Inserting new Make Homepage item to popover menu.
 	getHomepageItem() {
 		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
 			return null;
@@ -364,7 +364,7 @@ class Page extends Component {
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
-		//adding homepage item
+		// Adding homepage item
 		const homepageItem = this.getHomepageItem();
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
@@ -375,7 +375,7 @@ class Page extends Component {
 			viewItem ||
 			publishItem ||
 			editItem ||
-			//adding new homepage item
+			// Adding new homepage item
 			homepageItem ||
 			statsItem ||
 			restoreItem ||
@@ -630,7 +630,7 @@ const mapDispatch = {
 	recordMoreOptions: partial( recordEvent, 'Clicked More Options Menu' ),
 	recordPageTitle: partial( recordEvent, 'Clicked Page Title' ),
 	recordEditPage: partial( recordEvent, 'Clicked Edit Page' ),
-	//adding homepage item
+	// Adding homepage item
 	recordHomepage: partial( recordEvent, 'Clicked Make Homepage' ),
 	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
