@@ -152,7 +152,7 @@ exports[`Plans should render plans 1`] = `
       onClick={[Function]}
     />
     <Localized(PlansExtendedInfo)
-      onClick={[Function]}
+      recordTracks={[Function]}
     />
     <LoggedOutFormLinks>
       <Connect(Localized(JetpackConnectHappychatButton))
