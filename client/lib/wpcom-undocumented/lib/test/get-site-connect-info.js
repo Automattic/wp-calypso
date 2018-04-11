@@ -90,3 +90,9 @@ test( 'should translate / in paths to ::', () => {
 		`${ apiPath }/http/example.com::a::multipart::path`
 	);
 } );
+
+test( 'should discard a query', () => {
+	expect( getSiteConnectInfo( 'http://example.com/?a=query' )[ 0 ] ).toBe(
+		`${ apiPath }/http/example.com`
+	);
+} );
