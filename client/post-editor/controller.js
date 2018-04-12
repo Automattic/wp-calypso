@@ -18,7 +18,6 @@ import { map, pick, reduce, startsWith } from 'lodash';
 import actions from 'lib/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import User from 'lib/user';
-import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
 import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
@@ -53,8 +52,8 @@ function determinePostType( context ) {
 	return context.params.type;
 }
 
-function renderEditor( context ) {
-	context.primary = React.createElement( PostEditor );
+function renderEditor( context, props ) {
+	context.primary = React.createElement( PostEditor, props );
 }
 
 function maybeRedirect( context ) {
@@ -207,28 +206,14 @@ export default {
 				return;
 			}
 
-			let gaTitle;
-			switch ( postType ) {
-				case 'post':
-					gaTitle = 'Post';
-					break;
-				case 'page':
-					gaTitle = 'Page';
-					break;
-				default:
-					gaTitle = 'Custom Post Type';
-			}
-
 			// We have everything we need to start loading the post for editing,
 			// so kick it off here to minimize time spent waiting for it to load
 			// in the view components
 			if ( postToCopyId ) {
 				startEditingPostCopy( site, postToCopyId, context );
-				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			} else if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingExisting( site, postID );
-				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
 				const postOptions = { type: postType };
 
@@ -244,7 +229,6 @@ export default {
 
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingNew( site, postOptions );
-				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			}
 		}
 
@@ -276,7 +260,30 @@ export default {
 			unsubscribe = context.store.subscribe( startEditingOnSiteSelected );
 		}
 
-		renderEditor( context );
+		let analyticsPath, analyticsTitle;
+		switch ( postType ) {
+			case 'post':
+				analyticsPath = '/post/:site';
+				analyticsTitle = 'Post > ';
+				break;
+			case 'page':
+				analyticsPath = '/page/:site';
+				analyticsTitle = 'Page > ';
+				break;
+			default:
+				analyticsPath = `/edit/${ postType }/:site`;
+				analyticsTitle = 'Custom Post Type > ';
+		}
+		if ( postToCopyId ) {
+			analyticsTitle += 'New';
+		} else if ( postID ) {
+			analyticsPath += '/:post_id';
+			analyticsTitle += 'Edit';
+		} else {
+			analyticsTitle += 'New';
+		}
+
+		renderEditor( context, { analyticsPath, analyticsTitle } );
 
 		next();
 	},
