@@ -214,7 +214,7 @@ class DesignAssets extends React.Component {
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
-					<Suggestions />
+					<Suggestions readmeFilePath="suggestions" />
 					<TextDiff readmeFilePath="text-diff" />
 					<TileGrid readmeFilePath="tile-grid" />
 					<TimeSince readmeFilePath="time-since" />
