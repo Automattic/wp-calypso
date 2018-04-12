@@ -202,7 +202,7 @@ class DesignAssets extends React.Component {
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
 					<Ribbon readmeFilePath="ribbon" />
-					<ScreenReaderTextExample />
+					<ScreenReaderTextExample readmeFilePath="screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />
