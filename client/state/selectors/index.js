@@ -207,7 +207,6 @@ export { default as hasSitePendingAutomatedTransfer } from './has-site-pending-a
 export { default as hasUnsavedUserSettings } from './has-unsaved-user-settings';
 export { default as hasUserAskedADirectlyQuestion } from './has-user-asked-a-directly-question';
 export { default as hasUserSettings } from './has-user-settings';
-export { default as index } from './index';
 export { default as isAccountRecoveryResetOptionsReady } from './is-account-recovery-reset-options-ready';
 export { default as isAccountRecoveryResetPasswordSucceeded } from './is-account-recovery-reset-password-succeeded';
 export { default as isAccountRecoveryUserDataReady } from './is-account-recovery-user-data-ready';
