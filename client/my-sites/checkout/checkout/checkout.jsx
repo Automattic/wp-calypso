@@ -530,11 +530,7 @@ class Checkout extends React.Component {
 	}
 
 	handleTermChange = ( { value: planSlug } ) => {
-		// Remove all cart items that are plans
-		const selectedPlans = this.props.cart.products.filter( ( { product_slug } ) =>
-			getPlan( product_slug )
-		);
-		selectedPlans.forEach( removeItem );
+		this.getPlanProducts().forEach( removeItem );
 
 		const cartItem = getCartItemForPlan( planSlug );
 		analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
