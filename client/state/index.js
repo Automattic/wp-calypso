@@ -47,7 +47,6 @@ import i18n from './i18n/reducer';
 import invites from './invites/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
-import jetpackOnboarding from './jetpack-onboarding/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
@@ -138,7 +137,6 @@ const reducers = {
 	inlineHelpSearchResults,
 	invites,
 	jetpackConnect,
-	jetpackOnboarding,
 	jetpack,
 	jetpackRemoteInstall,
 	jetpackSync,

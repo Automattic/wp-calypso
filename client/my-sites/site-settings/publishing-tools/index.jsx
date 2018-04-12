@@ -21,7 +21,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
+import { regeneratePostByEmail } from 'state/jetpack-onboarding/actions';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,

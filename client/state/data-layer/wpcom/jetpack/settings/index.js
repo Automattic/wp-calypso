@@ -16,7 +16,7 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 } from 'state/action-types';
-import { getJetpackOnboardingSettings, getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
+import { getJetpackSettings, getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
@@ -95,7 +95,7 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
  */
 export const saveJetpackSettings = ( { dispatch, getState }, action ) => {
 	const { settings, siteId } = action;
-	const previousSettings = getJetpackOnboardingSettings( getState(), siteId );
+	const previousSettings = getJetpackSettings( getState(), siteId );
 
 	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
 	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
@@ -115,7 +115,7 @@ export const saveJetpackSettings = ( { dispatch, getState }, action ) => {
 			},
 			{
 				...action,
-				meta: { ...action.meta, settings: { onboarding: previousSettings } },
+				meta: { ...action.meta, settings: previousSettings },
 			}
 		)
 	);
