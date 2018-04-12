@@ -2,6 +2,7 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
+import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import config from 'config';
 import Gridicon from 'gridicons';
@@ -174,9 +175,21 @@ export class OrgCredentialsForm extends Component {
 		return UNKNOWN_REMOTE_INSTALL_ERROR;
 	}
 
+	isInvalidCreds() {
+		const { installError } = this.props;
+		return includes( [ LOGIN_FAILURE ], this.getError( installError ) );
+	}
+
 	formFields() {
 		const { translate } = this.props;
 		const { isSubmitting, password, username } = this.state;
+
+		const userClassName = classnames( 'jetpack-connect__credentials-form-input', {
+			'is-error': this.isInvalidCreds(),
+		} );
+		const passwordClassName = classnames( 'jetpack-connect__password-form-input', {
+			'is-error': this.isInvalidCreds(),
+		} );
 
 		return (
 			<Fragment>
@@ -186,7 +199,7 @@ export class OrgCredentialsForm extends Component {
 					<FormTextInput
 						autoCapitalize="off"
 						autoCorrect="off"
-						className="jetpack-connect__credentials-form-input"
+						className={ userClassName }
 						disabled={ isSubmitting }
 						id="username"
 						name="username"
@@ -199,7 +212,7 @@ export class OrgCredentialsForm extends Component {
 					<div className="jetpack-connect__password-form">
 						<Gridicon size={ 24 } icon="lock" />
 						<FormPasswordInput
-							className="jetpack-connect__password-form-input"
+							className={ passwordClassName }
 							disabled={ isSubmitting }
 							id="password"
 							name="password"
@@ -245,7 +258,7 @@ export class OrgCredentialsForm extends Component {
 
 	onClickBack = () => {
 		const { installError, siteToConnect } = this.props;
-		if ( installError ) {
+		if ( installError && ! this.isInvalidCreds() ) {
 			this.props.jetpackRemoteInstallUpdateError( siteToConnect, null, null );
 			return;
 		}
@@ -294,17 +307,16 @@ export class OrgCredentialsForm extends Component {
 
 	render() {
 		const { installError } = this.props;
-		const isFormInNotice = includes( [ LOGIN_FAILURE ], this.getError( installError ) );
 
 		return (
 			<MainWrapper>
-				{ ! isFormInNotice &&
+				{ ! this.isInvalidCreds() &&
 					installError && (
 						<div className="jetpack-connect__notice">
 							<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
 						</div>
 					) }
-				{ ( isFormInNotice || ! installError ) && (
+				{ ( this.isInvalidCreds() || ! installError ) && (
 					<div>
 						{ this.renderHeadersText() }
 						<Card className="jetpack-connect__site-url-input-container">
