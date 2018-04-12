@@ -2228,13 +2228,15 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
  * @param {String} filters - Comma separated string with the filters to run
  * @returns {Promise}  promise
  */
-Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
+Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters = null ) {
 	const parsedUrl = url.parse( targetUrl );
 	let endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
-	const params = {
-		filters: filters,
-		apiVersion: '1.1',
-	};
+	const params = Object.assign(
+		{
+			apiVersion: '1.1',
+		},
+		filters && { filters }
+	);
 
 	if ( parsedUrl.path && parsedUrl.path !== '/' ) {
 		endpointUrl += parsedUrl.path.replace( /\//g, '::' );
