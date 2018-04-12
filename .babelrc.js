@@ -43,7 +43,6 @@ const config = {
 			{ async: isCalypsoClient && codeSplit },
 		],
 		'@babel/plugin-proposal-export-default-from',
-		'@babel/plugin-proposal-export-namespace-from',
 		'@babel/transform-runtime',
 		[
 			'transform-imports',
