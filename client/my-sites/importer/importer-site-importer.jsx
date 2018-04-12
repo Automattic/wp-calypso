@@ -13,16 +13,15 @@ import React from 'react';
  */
 import SiteImporter from './site-importer/site-importer';
 
-/**
- * Module variables
- */
-const importerData = {
-	title: 'Site Importer (Beta)',
-	icon: 'site-importer',
-};
-
 class ImporterSiteImporter extends React.PureComponent {
 	static displayName = 'ImporterSiteImporter';
+
+	importerData = {
+		title: 'Site Importer (Beta)',
+		icon: 'site-importer',
+		description: this.props.translate( 'Import posts, pages, and media from your existing site!' ),
+		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
+	};
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
@@ -39,15 +38,7 @@ class ImporterSiteImporter extends React.PureComponent {
 	};
 
 	render() {
-		importerData.description = this.props.translate(
-			'Import posts, pages, and media from your existing site!'
-		);
-
-		importerData.uploadDescription = this.props.translate(
-			'Type your existing site URL to start the import.'
-		);
-
-		return <SiteImporter importerData={ importerData } { ...this.props } />;
+		return <SiteImporter importerData={ this.importerData } { ...this.props } />;
 	}
 }
 
