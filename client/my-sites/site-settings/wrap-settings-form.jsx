@@ -64,7 +64,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			if ( ! this.props.isSavingSettings && prevProps.isSavingSettings ) {
-				if ( this.props.isSaveRequestSuccessful && this.props.isJetpackSaveRequestSuccessful ) {
+				if (
+					this.props.isSaveRequestSuccessful &&
+					( this.props.isJetpackSaveRequestSuccessful || ! this.props.jetpackSettingsUISupported )
+				) {
 					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
 						id: 'site-settings-save',
 					} );
