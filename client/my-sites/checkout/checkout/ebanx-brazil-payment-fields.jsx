@@ -69,7 +69,7 @@ export class EbanxBrazilPaymentFields extends Component {
 		this.props.handleFieldChange( event.target.name, event.target.value );
 	};
 
-	render() {
+	renderFields() {
 		const { translate, countriesList, countryCode } = this.props;
 		const { userSelectedPhoneCountryCode } = this.state;
 		const countryData = find( countriesList.get(), { code: countryCode } );
@@ -86,7 +86,6 @@ export class EbanxBrazilPaymentFields extends Component {
 				}
 			);
 		}
-
 		return [
 			<span key="ebanx-required-fields" className="checkout__form-info-text">
 				{ ebanxMessage }
@@ -95,15 +94,15 @@ export class EbanxBrazilPaymentFields extends Component {
 			this.createField( 'document', Input, {
 				label: translate( 'Taxpayer Identification Number', {
 					comment:
-					'Individual taxpayer registry identification required ' +
-					'for Brazilian payment methods on credit card form',
+						'Individual taxpayer registry identification required ' +
+						'for Brazilian payment methods on credit card form',
 				} ),
 				key: 'document',
 			} ),
 
 			this.createField( 'phone-number', FormPhoneMediaInput, {
 				onChange: this.handlePhoneFieldChange,
-				countriesList: countriesList,
+				countriesList,
 				// If the user has manually selected a country for the phone
 				// number, use that, but otherwise default this to the same
 				// country as the billing address.
@@ -145,6 +144,10 @@ export class EbanxBrazilPaymentFields extends Component {
 				} ) }
 			</div>,
 		];
+	}
+
+	render() {
+		return <React.Fragment>{ this.renderFields() }</React.Fragment>;
 	}
 }
 

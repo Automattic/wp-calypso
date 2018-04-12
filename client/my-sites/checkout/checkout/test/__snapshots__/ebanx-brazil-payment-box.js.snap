@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<EbanxBrazilPaymentFields /> should render 1`] = `
+<React.Fragment>
+  <span
+    className="checkout__form-info-text"
+    key="ebanx-required-fields"
+  >
+    The following fields are also required for payments in %(countryName)s
+  </span>
+  <Input
+    additionalClasses="checkout__form-field ebanx-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    isError={false}
+    key="document"
+    label="Taxpayer Identification Number"
+    labelClass="checkout__form-label"
+    name="document"
+    onBlur={[Function]}
+    onChange={[Function]}
+  />
+  <FormPhoneMediaInput
+    additionalClasses="checkout__form-field ebanx-brazil"
+    autoComplete="off"
+    countriesList={
+      Object {
+        "get": [Function],
+      }
+    }
+    countryCode="BR"
+    isError={false}
+    key="phone-number"
+    label="Phone"
+    labelClass="checkout__form-label"
+    name="phone-number"
+    onBlur={[Function]}
+    onChange={[Function]}
+  />
+  <Input
+    additionalClasses="checkout__form-field ebanx-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    isError={false}
+    key="address-1"
+    label="Address"
+    labelClass="checkout__form-label"
+    maxLength={40}
+    name="address-1"
+    onBlur={[Function]}
+    onChange={[Function]}
+  />
+  <Input
+    additionalClasses="checkout__form-field ebanx-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    inputMode="numeric"
+    isError={false}
+    key="street-number"
+    label="Street Number"
+    labelClass="checkout__form-label"
+    name="street-number"
+    onBlur={[Function]}
+    onChange={[Function]}
+  />
+  <HiddenInput
+    additionalClasses="checkout__form-field ebanx-brazil"
+    autoComplete="off"
+    isError={false}
+    key="address-2"
+    label="Address Line 2"
+    labelClass="checkout__form-label"
+    maxLength={40}
+    name="address-2"
+    onBlur={[Function]}
+    onChange={[Function]}
+    text="+ Add Address Line 2"
+  />
+  <Input
+    additionalClasses="checkout__form-field ebanx-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    isError={false}
+    key="city"
+    label="City"
+    labelClass="checkout__form-label"
+    name="city"
+    onBlur={[Function]}
+    onChange={[Function]}
+  />
+  <div
+    className="checkout__form-state-field"
+    key="state"
+  >
+    <Connect(Localized(StateSelect))
+      additionalClasses="checkout__form-field ebanx-brazil"
+      autoComplete="off"
+      countryCode="BR"
+      isError={false}
+      label="State"
+      labelClass="checkout__form-label"
+      name="state"
+      onBlur={[Function]}
+      onChange={[Function]}
+    />
+  </div>
+</React.Fragment>
+`;
