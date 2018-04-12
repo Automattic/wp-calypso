@@ -201,7 +201,7 @@ class DesignAssets extends React.Component {
 					<ProgressBar readmeFilePath="progress-bar" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
-					<Ribbon />
+					<Ribbon readmeFilePath="ribbon" />
 					<ScreenReaderTextExample />
 					<SearchDemo readmeFilePath="search" />
 					<SectionHeader readmeFilePath="section-header" />

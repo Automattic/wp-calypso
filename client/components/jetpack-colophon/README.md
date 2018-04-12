@@ -14,7 +14,7 @@ function MyFooter() {
 	return (
 		<div>
 			<JetpackColophon />
-	  </div>
+		</div>
 	);
 }
 ```
