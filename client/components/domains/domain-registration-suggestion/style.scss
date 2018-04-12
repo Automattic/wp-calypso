@@ -76,6 +76,7 @@
 		// Increase specificity
 		&.button.is-primary {
 			width: 100%;
+			align-self: flex-start;
 			margin-left: 0;
 			flex-grow: 0;
 		}

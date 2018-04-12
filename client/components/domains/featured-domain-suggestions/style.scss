@@ -5,6 +5,10 @@
 
 	@include breakpoint( '<660px' ) {
 		flex-flow: wrap;
+
+		.featured-domain-suggestion .domain-suggestion__action.button.is-primary {
+			width: initial;
+		}
 	}
 }
 
@@ -32,6 +36,10 @@
 
 		.featured-domain-suggestion {
 			margin-top: 0;
+		}
+
+		.featured-domain-suggestion .domain-suggestion__action.button.is-primary {
+			width: initial;
 		}
 	}
 }
