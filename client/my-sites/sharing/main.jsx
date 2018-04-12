@@ -60,13 +60,13 @@ export const Sharing = ( {
 
 	const selected = find( filters, { route: path } );
 
+	const isButtonsPage = 0 === path.indexOf( '/sharing/buttons' );
+
 	return (
 		<Main className="sharing">
 			<PageViewTracker
-				path={ `/sharing${ 0 === path.indexOf( '/sharing/buttons' ) ? '/buttons' : '' }/:site` }
-				title={ `Sharing > ${
-					0 === path.indexOf( '/sharing/buttons' ) ? 'Buttons' : 'Connections'
-				}` }
+				path={ `/sharing${ isButtonsPage ? '/buttons' : '' }/:site` }
+				title={ `Sharing > ${ isButtonsPage ? 'Buttons' : 'Connections' }` }
 			/>
 			<DocumentHead title={ translate( 'Sharing' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
