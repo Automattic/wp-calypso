@@ -27,6 +27,22 @@ describe( 'wpcom-api', () => {
 			expect( fromApi( response ) ).toEqual( expectedOutput );
 		} );
 
+		test( 'should still validate since receipt id is optional.', () => {
+			const response = {
+				user_id: 123,
+				order_id: 456,
+				processing_status: 'success',
+			};
+
+			const expectedOutput = {
+				userId: response.user_id,
+				orderId: response.order_id,
+				processingStatus: ORDER_TRANSACTION_STATUS.SUCCESS,
+			};
+
+			expect( fromApi( response ) ).toEqual( expectedOutput );
+		} );
+
 		test( 'should invalidate when the required field is missing.', () => {
 			const invalidateCall = () => {
 				const invalidResponse = {
