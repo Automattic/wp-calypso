@@ -4,6 +4,7 @@
  * External dependencies
  */
 
+import deterministicStringify from 'json-stable-stringify';
 import {
 	sortBy,
 	toPairs,
@@ -139,7 +140,7 @@ export function buildExportArray( data, parent = null ) {
  * @return {String}          Serialized stats query
  */
 export function getSerializedStatsQuery( query = {} ) {
-	return JSON.stringify( sortBy( toPairs( query ), pair => pair[ 0 ] ) );
+	return deterministicStringify( query );
 }
 
 /**
