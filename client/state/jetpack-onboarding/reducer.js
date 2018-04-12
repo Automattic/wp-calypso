@@ -10,7 +10,7 @@ import { mapValues, merge } from 'lodash';
  */
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
 import { jetpackSettingsSchema } from './schema';
-import { normalizeSettings } from 'state/jetpack/settings/utils';
+import { normalizeSettings } from './utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,

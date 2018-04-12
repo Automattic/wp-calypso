@@ -21,7 +21,7 @@ import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
 	sanitizeSettings,
-} from 'state/jetpack/settings/utils';
+} from 'state/jetpack-onboarding/utils';
 import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,

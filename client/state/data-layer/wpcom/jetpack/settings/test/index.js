@@ -18,7 +18,7 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
-import { normalizeSettings } from 'state/jetpack/settings/utils';
+import { normalizeSettings } from 'state/jetpack-onboarding/utils';
 import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
