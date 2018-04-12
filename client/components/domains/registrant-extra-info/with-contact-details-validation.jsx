@@ -19,6 +19,8 @@ import getValidationSchemas from 'state/selectors/get-validation-schemas';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import warn from 'lib/warn';
 
+const missingSchema = { not: {} };
+
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {
 		return children;
@@ -168,7 +170,7 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 
 	return connect(
 		state => ( {
-			validationSchema: get( getValidationSchemas( state ), tld, { not: {} } ),
+			validationSchema: get( getValidationSchemas( state ), tld, missingSchema ),
 			recordTracksEvent,
 		} ),
 		{
