@@ -47,7 +47,7 @@ export class JetpackRemoteInstallNotices extends Component {
 		// default values for INSTALL_RESPONSE_ERROR,
 		let header = translate( 'Try Installing Manually' );
 		let subheader = translate(
-			"We were unable to install Jetpack. Don't worry you can either install Jetpack manually or contact support for help."
+			"We were unable to install Jetpack. Don't worry—you can either install Jetpack manually or contact support for help."
 		);
 		let buttonLabel = translate( 'Install Jetpack manually' );
 		let noticeImage = '/calypso/images/illustrations/customizeTheme.svg';
@@ -56,7 +56,7 @@ export class JetpackRemoteInstallNotices extends Component {
 		switch ( noticeType ) {
 			case ACTIVATION_RESPONSE_ERROR:
 				subheader = translate(
-					"We were unable to activate Jetpack. Don't worry- you can either install Jetpack manually or contact support for help."
+					"We were unable to activate Jetpack. Don't worry—you can either install Jetpack manually or contact support for help."
 				);
 				break;
 
