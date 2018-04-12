@@ -50,6 +50,29 @@ export const getRawSite = ( state, siteId ) => {
 };
 
 /**
+ * Returns the slug for a site, or null if the site is unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?String}        Site slug
+ */
+export const getSiteSlug = createSelector(
+	( state, siteId ) => {
+		const site = getRawSite( state, siteId );
+		if ( ! site ) {
+			return null;
+		}
+
+		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+		}
+
+		return urlToSlug( site.URL );
+	},
+	[ getSitesItems ]
+);
+
+/**
  * Returns a site object by its slug.
  *
  * @param  {Object}  state     Global state tree
@@ -225,29 +248,6 @@ export function isJetpackMinimumVersion( state, siteId, version ) {
 
 	return versionCompare( siteVersion, version, '>=' );
 }
-
-/**
- * Returns the slug for a site, or null if the site is unknown.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?String}        Site slug
- */
-export const getSiteSlug = createSelector(
-	( state, siteId ) => {
-		const site = getRawSite( state, siteId );
-		if ( ! site ) {
-			return null;
-		}
-
-		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-		}
-
-		return urlToSlug( site.URL );
-	},
-	[ getSitesItems ]
-);
 
 /**
  * Returns the domain for a site, or null if the site is unknown.
