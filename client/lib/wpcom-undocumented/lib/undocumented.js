@@ -2193,7 +2193,7 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 /**
  * Check different info about WordPress and Jetpack status on a url
  *
- * @param  {string}  targetUrl The url of the site to check
+ * @param  {string}  targetUrl The url of the site to check. Must use http or https protocol.
  * @return {Promise} promise
  */
 Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
