@@ -51,6 +51,9 @@
     }
   }
 
+  .subscription-length-picker__option-content {
+    flex-grow: 1;
+  }
   .subscription-length-picker__option-header,
   .subscription-length-picker__option-description {
     width: 100%;
@@ -60,6 +63,8 @@
   .subscription-length-picker__option-price,
   .subscription-length-picker__option-discount,
   .subscription-length-picker__option-side-note,
+  .subscription-length-picker__option-old-price,
+  .subscription-length-picker__option-credit-info,
   .subscription-length-picker__option-description {
     display: inline-block;
     vertical-align: middle;
@@ -83,7 +88,28 @@
     font-size: 16px;
   }
 
+  .subscription-length-picker__option-credit-info {
+    float: right;
+    color: $gray;
+  }
+
+  .subscription-length-picker__option-old-price {
+    position: relative;
+    display: inline-block;
+    color: $gray-dark;
+    margin-right: 5px;
+
+    &::before {
+      border-bottom: 3px solid $alert-green;
+      position: absolute;
+      content: '';
+      width: 100%;
+      height: 50%;
+    }
+  }
+
   .subscription-length-picker__option-price {
+    display: inline-block;
     color: $gray-dark;
   }
 
@@ -99,5 +125,8 @@
 
   &.is-active {
     border: 3px solid $alert-green;
+    .subscription-length-picker__option-credit-info {
+      color: $alert-green;
+    }
   }
 }

@@ -44,6 +44,9 @@ export class SubscriptionLengthPicker extends React.Component {
 
 	render() {
 		const { productsWithPrices, translate } = this.props;
+		const hasDiscount = productsWithPrices.some(
+			( { priceBeforeDiscount } ) => priceBeforeDiscount
+		);
 		return (
 			<div className="subscription-length-picker">
 				{ ! productsWithPrices && (
@@ -62,21 +65,28 @@ export class SubscriptionLengthPicker extends React.Component {
 				</div>
 
 				<div className="subscription-length-picker__options">
-					{ productsWithPrices.map( ( { plan, planSlug, priceFull, priceMonthly } ) => (
-						<div className="subscription-length-picker__option-container" key={ planSlug }>
-							<SubscriptionLengthOption
-								term={ plan.term }
-								checked={ planSlug === this.state.checked }
-								price={ myFormatCurrency( priceFull, this.props.currencyCode ) }
-								pricePerMonth={ myFormatCurrency( priceMonthly, this.props.currencyCode ) }
-								savePercent={ Math.round(
-									100 * ( 1 - priceMonthly / this.getHighestMonthlyPrice() )
-								) }
-								value={ planSlug }
-								onCheck={ this.handleCheck }
-							/>
-						</div>
-					) ) }
+					{ productsWithPrices.map(
+						( { plan, planSlug, priceBeforeDiscount, priceFull, priceMonthly } ) => (
+							<div className="subscription-length-picker__option-container" key={ planSlug }>
+								<SubscriptionLengthOption
+									type={ hasDiscount ? 'upgrade' : 'new-sale' }
+									term={ plan.term }
+									checked={ planSlug === this.state.checked }
+									price={ myFormatCurrency( priceFull, this.props.currencyCode ) }
+									priceBeforeDiscount={ myFormatCurrency(
+										priceBeforeDiscount,
+										this.props.currencyCode
+									) }
+									pricePerMonth={ myFormatCurrency( priceMonthly, this.props.currencyCode ) }
+									savePercent={ Math.round(
+										100 * ( 1 - priceMonthly / this.getHighestMonthlyPrice() )
+									) }
+									value={ planSlug }
+									onCheck={ this.handleCheck }
+								/>
+							</div>
+						)
+					) }
 				</div>
 			</div>
 		);
