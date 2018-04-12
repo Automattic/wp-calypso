@@ -64,13 +64,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			if ( ! this.props.isSavingSettings && prevProps.isSavingSettings ) {
-				if ( this.props.isSaveRequestSuccessful ) {
+				if ( this.props.isSaveRequestSuccessful && this.props.isJetpackSaveRequestSuccessful ) {
 					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
 						id: 'site-settings-save',
 					} );
 					// Upon failure to save Jetpack Settings, don't show an error message,
 					// since the JP settings data layer already does that for us.
-				} else if ( ! this.props.jetpackSettingsUISupported ) {
+				} else if ( ! this.props.isSaveRequestSuccessful ) {
 					let text = this.props.translate(
 						'There was a problem saving your changes. Please try again.'
 					);
@@ -265,6 +265,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			let isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 			let settings = getSiteSettings( state, siteId );
 			let isRequestingSettings = isRequestingSiteSettings( state, siteId ) && ! settings;
+			let isJetpackSaveRequestSuccessful;
 			let jetpackFieldsToUpdate;
 			const siteSettingsSaveError = getSiteSettingsSaveError( state, siteId );
 			const settingsFields = {
@@ -294,15 +295,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				jetpackFieldsToUpdate = pick( fieldsToUpdate, settingsFields.jetpack );
 				isSavingSettings =
 					isSavingSettings || isUpdatingJetpackSettings( state, siteId, jetpackFieldsToUpdate );
-				isSaveRequestSuccessful =
-					isSaveRequestSuccessful &&
-					! isJetpackSettingsSaveFailure( state, siteId, jetpackFieldsToUpdate );
+				isJetpackSaveRequestSuccessful = ! isJetpackSettingsSaveFailure(
+					state,
+					siteId,
+					jetpackFieldsToUpdate
+				);
 				isRequestingSettings =
 					isRequestingSettings ||
 					( isRequestingJetpackSettings( state, siteId ) && ! jetpackSettings );
 			}
 
 			return {
+				isJetpackSaveRequestSuccessful,
 				isRequestingSettings,
 				isSavingSettings,
 				isSaveRequestSuccessful,
