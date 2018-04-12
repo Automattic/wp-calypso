@@ -30,6 +30,7 @@ import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
+import RewindBanner from './rewind-banner';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
@@ -55,7 +56,6 @@ import {
 	getRequest,
 	getRequestedBackup,
 	getRequestedRewind,
-	getRestoreProgress,
 	getRewindState,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
@@ -262,17 +262,7 @@ class ActivityLog extends Component {
 	 * Close Restore, Backup, or Transfer confirmation dialog.
 	 * @param {string} type Type of dialog to close.
 	 */
-	handleCloseDialog = type => {
-		const { siteId } = this.props;
-		switch ( type ) {
-			case 'restore':
-				this.props.rewindRequestDismiss( siteId );
-				break;
-			case 'backup':
-				this.props.dismissBackup( siteId );
-				break;
-		}
-	};
+	handleCloseDialog = () => this.props.dismissBackup( this.props.siteId );
 
 	/**
 	 * Adjust a moment by the site timezone or gmt offset. Use the resulting function wherever log
@@ -292,36 +282,23 @@ class ActivityLog extends Component {
 	 * @returns {object} Component showing progress.
 	 */
 	renderActionProgress() {
-		const { siteId, restoreProgress, backupProgress } = this.props;
+		const { siteId, backupProgress } = this.props;
 
-		if ( ! restoreProgress && ! backupProgress ) {
+		if ( ! backupProgress ) {
 			return null;
 		}
 
-		const cards = [];
-
-		if ( !! restoreProgress ) {
-			cards.push(
-				'finished' === restoreProgress.status
-					? this.getEndBanner( siteId, restoreProgress )
-					: this.getProgressBanner( siteId, restoreProgress, 'restore' )
-			);
+		if ( 0 <= backupProgress.progress ) {
+			return this.getProgressBanner( siteId, backupProgress, 'backup' );
 		}
 
-		if ( !! backupProgress ) {
-			if ( 0 <= backupProgress.progress ) {
-				cards.push( this.getProgressBanner( siteId, backupProgress, 'backup' ) );
-			} else if (
-				! isEmpty( backupProgress.url ) &&
-				Date.now() < Date.parse( backupProgress.validUntil )
-			) {
-				cards.push( this.getEndBanner( siteId, backupProgress ) );
-			} else if ( ! isEmpty( backupProgress.backupError ) ) {
-				cards.push( this.getEndBanner( siteId, backupProgress ) );
-			}
+		if ( ! isEmpty( backupProgress.url ) && Date.now() < Date.parse( backupProgress.validUntil ) ) {
+			return this.getEndBanner( siteId, backupProgress );
 		}
 
-		return cards;
+		if ( ! isEmpty( backupProgress.backupError ) ) {
+			return this.getEndBanner( siteId, backupProgress );
+		}
 	}
 
 	/**
@@ -332,25 +309,16 @@ class ActivityLog extends Component {
 	 * @returns {object}                 Card showing progress.
 	 */
 	getProgressBanner( siteId, actionProgress, action ) {
-		const {
-			percent,
-			progress,
-			restoreId,
-			downloadId,
-			status,
-			timestamp,
-			rewindId,
-		} = actionProgress;
+		const { percent, progress, downloadId, status, timestamp } = actionProgress;
 		return (
 			<ProgressBanner
-				key={ `progress-${ restoreId || downloadId }` }
+				key={ `progress-${ downloadId }` }
 				applySiteOffset={ this.applySiteOffset }
 				percent={ percent || progress }
-				restoreId={ restoreId }
 				downloadId={ downloadId }
 				siteId={ siteId }
 				status={ status }
-				timestamp={ timestamp || rewindId }
+				timestamp={ timestamp }
 				action={ action }
 			/>
 		);
@@ -371,23 +339,19 @@ class ActivityLog extends Component {
 			timestamp,
 			url,
 			downloadCount,
-			restoreId,
 			downloadId,
 			rewindId,
 		} = progress;
-		const requestedRestoreId = this.props.requestedRestoreId || rewindId;
 		return (
-			<div key={ `end-banner-${ restoreId || downloadId }` }>
+			<div key={ `end-banner-${ downloadId }` }>
 				<QueryActivityLog siteId={ siteId } />
 				{ errorCode || backupError ? (
 					<ErrorBanner
-						key={ `error-${ restoreId || downloadId }` }
+						key={ `error-${ downloadId }` }
 						errorCode={ errorCode || backupError }
 						downloadId={ downloadId }
-						requestedRestoreId={ requestedRestoreId }
 						failureReason={ failureReason }
 						createBackup={ this.props.createBackup }
-						rewindRestore={ this.props.rewindRestore }
 						closeDialog={ this.handleCloseDialog }
 						siteId={ siteId }
 						siteTitle={ siteTitle }
@@ -395,7 +359,7 @@ class ActivityLog extends Component {
 					/>
 				) : (
 					<SuccessBanner
-						key={ `success-${ restoreId || downloadId }` }
+						key={ `success-${ downloadId }` }
 						applySiteOffset={ this.applySiteOffset }
 						siteId={ siteId }
 						timestamp={ rewindId }
@@ -525,6 +489,9 @@ class ActivityLog extends Component {
 					/>
 				) }
 				{ this.renderErrorMessage() }
+				{ rewindState.rewind && (
+					<RewindBanner siteId={ siteId } applySiteOffset={ this.applySiteOffset } />
+				) }
 				{ this.renderActionProgress() }
 				{ this.renderMonthNavigation() }
 				{ isEmpty( logs ) ? (
@@ -650,7 +617,6 @@ export default connect(
 			requestedRestoreId,
 			requestedBackup: getActivityLog( state, siteId, requestedBackupId ),
 			requestedBackupId,
-			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
 			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
 			rewindState,
