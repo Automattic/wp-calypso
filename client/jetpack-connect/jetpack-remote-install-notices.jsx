@@ -50,7 +50,7 @@ export class JetpackRemoteInstallNotices extends Component {
 			"We were unable to install Jetpack. Don't worry you can either install Jetpack manually or contact support for help."
 		);
 		let buttonLabel = translate( 'Install Jetpack manually' );
-		let noticeImage = <img src="/calypso/images/illustrations/customizeTheme.svg" alt="" />;
+		let noticeImage = '/calypso/images/illustrations/customizeTheme.svg';
 		let redirectTo = addQueryArgs( { url: siteToConnect }, '/jetpack/connect/instructions' );
 
 		switch ( noticeType ) {
@@ -67,7 +67,7 @@ export class JetpackRemoteInstallNotices extends Component {
 						'of WordPress. Jetpack needs WordPress version 4.7 or higher. ' +
 						'Please update to the latest version by clicking below.'
 				);
-				noticeImage = <img src="/calypso/images/illustrations/install-button.svg" alt="" />;
+				noticeImage = '/calypso/images/illustrations/install-button.svg';
 				buttonLabel = translate( 'Update WordPress now' );
 				redirectTo = siteToConnect + '/wp-admin/update-core.php';
 				break;
@@ -79,7 +79,7 @@ export class JetpackRemoteInstallNotices extends Component {
 						"to install plugins. Please contact your site's Administrator to " +
 						'continue with installing Jetpack or try installing Jetpack manually.'
 				);
-				noticeImage = <img src="/calypso/images/illustrations/almost-there.svg" alt="" />;
+				noticeImage = '/calypso/images/illustrations/almost-there.svg';
 				break;
 
 			case UNKNOWN_REMOTE_INSTALL_ERROR:
@@ -89,7 +89,7 @@ export class JetpackRemoteInstallNotices extends Component {
 			<Fragment>
 				<FormattedHeader headerText={ header } subHeaderText={ subheader } />
 				<Card className="jetpack-connect__site-url-input-container">
-					<div className="jetpack-connect__notices-image">{ noticeImage }</div>
+					<img className="jetpack-connect__notices-image" src={ noticeImage } alt="" />
 					<Button
 						className="jetpack-connect__connect-button"
 						primary
