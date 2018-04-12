@@ -109,5 +109,5 @@ export const computeProductsWithPrices = ( state, siteId, planSlugs ) => {
 			...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan ),
 		} ) )
 		.filter( availablePlanProduct => availablePlanProduct.priceFull )
-		.sort( ( a, b ) => getTermDuration( b.plan.term ) - getTermDuration( a.plan.term ) );
+		.sort( ( a, b ) => getTermDuration( a.plan.term ) - getTermDuration( b.plan.term ) );
 };
