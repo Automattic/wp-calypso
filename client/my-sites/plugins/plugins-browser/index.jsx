@@ -19,6 +19,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import InfiniteScroll from 'components/infinite-scroll';
 import NoResults from 'my-sites/no-results';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
@@ -501,6 +502,19 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
+	renderPageViewTracker() {
+		const { category, selectedSiteId } = this.props;
+
+		const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
+		let analyticsPath = category ? `/plugins/${ category }` : '/plugins';
+
+		if ( selectedSiteId ) {
+			analyticsPath += '/:site';
+		}
+
+		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+	}
+
 	render() {
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
 			return (
@@ -516,6 +530,7 @@ export class PluginsBrowser extends Component {
 
 		return (
 			<MainComponent wideLayout>
+				{ this.renderPageViewTracker() }
 				<InfiniteScroll nextPageMethod={ this.fetchNextPagePlugins } />
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }

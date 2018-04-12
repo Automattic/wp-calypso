@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { find, flow, isEmpty, some } from 'lodash';
+import { capitalize, find, flow, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,6 +24,7 @@ import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginsList from './plugins-list';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
@@ -285,6 +286,16 @@ export class PluginsMain extends Component {
 		return <DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 	}
 
+	renderPageViewTracking() {
+		const { selectedSiteId, filter } = this.props;
+
+		const analyticsPageTitle = filter ? 'Plugins > ' + capitalize( filter ) : 'Plugins';
+
+		const analyticsPath = selectedSiteId ? '/plugins/manage/:site' : '/plugins/manage';
+
+		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+	}
+
 	renderPluginsContent() {
 		const { plugins = [] } = this.state;
 		const { filter, search } = this.props;
@@ -442,6 +453,7 @@ export class PluginsMain extends Component {
 			return (
 				<Main>
 					{ this.renderDocumentHead() }
+					{ this.renderPageViewTracking() }
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
@@ -475,6 +487,7 @@ export class PluginsMain extends Component {
 			<Main wideLayout>
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
+				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
 				<div className="plugins__header">
 					<SectionNav selectedText={ this.getSelectedText() }>

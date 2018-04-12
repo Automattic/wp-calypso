@@ -25,6 +25,7 @@ import PluginNotices from 'lib/plugins/notices';
 import MainComponent from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginSections from 'my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
 import DocumentHead from 'components/data/document-head';
@@ -224,6 +225,12 @@ const SinglePlugin = createReactClass( {
 		return <DocumentHead title={ this.getPageTitle() } />;
 	},
 
+	renderPageViewTracker() {
+		const analyticsPath = this.props.selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+
+		return <PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />;
+	},
+
 	renderSitesList( plugin ) {
 		if ( this.props.siteUrl || this.isFetching() ) {
 			return;
@@ -343,6 +350,7 @@ const SinglePlugin = createReactClass( {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
+					{ this.renderPageViewTracker() }
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
@@ -365,6 +373,7 @@ const SinglePlugin = createReactClass( {
 			<MainComponent>
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
+				{ this.renderPageViewTracker() }
 				<SidebarNavigation />
 				<div className="plugin__page">
 					{ this.displayHeader() }
