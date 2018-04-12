@@ -153,14 +153,14 @@ class DesignAssets extends React.Component {
 						readmeFilePath="accordion"
 					/>
 					<BackButton readmeFilePath="back-button" />
-					<Badge />
+					<Badge readmeFilePath="badge" />
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
 					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
 					<SplitButton readmeFilePath="split-button" />
 					<Cards readmeFilePath="card" />
-					<CardHeading />
+					<CardHeading readmeFilePath="card-heading" />
 					<Checklist />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
 					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
@@ -184,7 +184,7 @@ class DesignAssets extends React.Component {
 					<GlobalNotices />
 					<Gravatar readmeFilePath="gravatar" />
 					<Gridicons />
-					<HeaderButton />
+					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
 					<InfoPopover readmeFilePath="info-popover" />
@@ -215,9 +215,9 @@ class DesignAssets extends React.Component {
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<Suggestions />
-					<TextDiff />
-					<TileGrid />
-					<TimeSince />
+					<TextDiff readmeFilePath="text-diff" />
+					<TileGrid readmeFilePath="tile-grid" />
+					<TimeSince readmeFilePath="time-since" />
 					<Timezone readmeFilePath="timezone" />
 					<TokenFields readmeFilePath="token-field" />
 					<Tooltip readmeFilePath="tooltip" />
