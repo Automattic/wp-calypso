@@ -24,6 +24,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export const Sharing = ( {
 	contentComponent,
@@ -61,6 +62,12 @@ export const Sharing = ( {
 
 	return (
 		<Main className="sharing">
+			<PageViewTracker
+				path={ `/sharing${ 0 === path.indexOf( '/sharing/buttons' ) ? '/buttons' : '' }/:site` }
+				title={ `Sharing > ${
+					0 === path.indexOf( '/sharing/buttons' ) ? 'Buttons' : 'Connections'
+				}` }
+			/>
 			<DocumentHead title={ translate( 'Sharing' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
