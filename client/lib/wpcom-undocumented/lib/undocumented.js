@@ -2211,7 +2211,13 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 	const siteUrlPart =
 		host + ( pathname && pathname !== '/' ? pathname.replace( /\//g, '::' ) : '' );
 
-	const endpointUrl = `/connect/site-info/${ protocolPart }/${ siteUrlPart }`;
+	const endpointUrl = [
+		'/connect',
+		'site-info',
+		protocolPart,
+		// backwards-compat, keep '::' path replacement
+		encodeURIComponent( siteUrlPart ).replace( /%3A%3A/g, '::' ),
+	].join( '/' );
 
 	return this.wpcom.req.get( endpointUrl );
 };
