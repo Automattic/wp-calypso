@@ -223,7 +223,7 @@ class DesignAssets extends React.Component {
 					<Tooltip readmeFilePath="tooltip" />
 					<VerticalMenu readmeFilePath="vertical-menu" />
 					<Version readmeFilePath="version" />
-					<Wizard />
+					<Wizard readmeFilePath="wizard" />
 				</Collection>
 			</Main>
 		);
