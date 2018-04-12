@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getRequest } from 'state/selectors';
-import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { requestJetpackSettings } from 'state/jetpack/settings/actions';
 
 /**
  * Returns true if we are currently making a request to fetch the Jetpack settings. False otherwise

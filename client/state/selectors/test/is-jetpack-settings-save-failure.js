@@ -10,7 +10,7 @@ import { expect } from 'chai';
  */
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 import { isJetpackSettingsSaveFailure } from 'state/selectors';
-import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
 
 describe( 'isJetpackSettingsSaveFailure()', () => {

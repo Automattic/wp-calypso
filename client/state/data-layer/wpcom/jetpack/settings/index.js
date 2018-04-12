@@ -21,11 +21,8 @@ import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
 	sanitizeSettings,
-} from 'state/jetpack-onboarding/utils';
-import {
-	saveJetpackSettingsSuccess,
-	updateJetpackSettings,
-} from 'state/jetpack-onboarding/actions';
+} from 'state/jetpack/settings/utils';
+import { saveJetpackSettingsSuccess, updateJetpackSettings } from 'state/jetpack/settings/actions';
 import { trailingslashit } from 'lib/route';
 
 export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;

@@ -10,7 +10,7 @@ import { expect } from 'chai';
  */
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 import { isRegeneratingJetpackPostByEmail } from 'state/selectors';
-import { regeneratePostByEmail } from 'state/jetpack-onboarding/actions';
+import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
 
 describe( 'isRegeneratingJetpackPostByEmail()', () => {
 	test( 'should return true if post by email is currently being regenerated', () => {

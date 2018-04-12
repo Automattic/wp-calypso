@@ -5,7 +5,7 @@
  */
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 import { isRequestingJetpackSettings } from 'state/selectors';
-import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { requestJetpackSettings } from 'state/jetpack/settings/actions';
 
 describe( 'isRequestingJetpackSettings()', () => {
 	test( 'should return true if settings are currently being requested', () => {
