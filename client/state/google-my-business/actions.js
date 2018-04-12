@@ -7,6 +7,7 @@ import {
 	GOOGLE_MY_BUSINESS_CONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_DISCONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
+	GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
 } from 'state/action-types';
 import { saveSiteSettings } from 'state/site-settings/actions';
 
@@ -66,3 +67,9 @@ export const changeGoogleMyBusinessStatsInterval = ( siteId, statType, interval 
 	statType,
 	interval,
 } );
+
+export const requestGoogleMyBusinessStatsSearch = ( siteId, timeSpan = 'week' ) => ( {
+	type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
+} );
+
+export const receiveGoogleMyBusinessStatsSearch = data => ( {} );
