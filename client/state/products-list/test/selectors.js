@@ -20,7 +20,7 @@ import {
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import { getPlan } from 'lib/plans';
-import { TERM_MONTHLY } from 'lib/plans/constants';
+import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
@@ -149,12 +149,14 @@ describe( 'selectors', () => {
 		const plans = {
 			plan1: {
 				id: 1,
+				term: TERM_MONTHLY,
 				getStoreSlug: () => 'abc',
 				getProductId: () => 'def',
 			},
 
 			plan2: {
 				id: 2,
+				term: TERM_ANNUALLY,
 				getStoreSlug: () => 'jkl',
 				getProductId: () => 'mno',
 			},

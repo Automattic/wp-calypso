@@ -14,6 +14,7 @@ import { abtest } from 'lib/abtest';
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
+import { TERMS_SORTED } from 'lib/plans/constants';
 
 export function isProductsListFetching( state ) {
 	return state.productsList.isFetching;
@@ -109,5 +110,5 @@ export const computeProductsWithPrices = ( state, siteId, planSlugs ) => {
 			...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan ),
 		} ) )
 		.filter( availablePlanProduct => availablePlanProduct.priceFull )
-		.sort( ( a, b ) => b.priceMonthly - a.priceMonthly );
+		.sort( ( a, b ) => TERMS_SORTED.indexOf( b.plan.term ) - TERMS_SORTED.indexOf( a.plan.term ) );
 };
