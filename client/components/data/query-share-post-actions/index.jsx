@@ -11,8 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isFetchingPublicizeShareActionsScheduled from 'state/selectors/is-fetching-publicize-share-actions-scheduled';
-import isFetchingPublicizeShareActionsPublished from 'state/selectors/is-fetching-publicize-share-actions-published';
+import {
+	isFetchingPublicizeShareActionsPublished,
+	isFetchingPublicizeShareActionsScheduled,
+} from 'state/selectors';
 import {
 	fetchPostShareActionsScheduled,
 	fetchPostShareActionsPublished,
