@@ -2234,6 +2234,7 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters = null 
 	const params = Object.assign(
 		{
 			apiVersion: '1.1',
+			lockImplementation: '1',
 		},
 		Array.isArray( filters ) && { filters: filters.join() }
 	);
