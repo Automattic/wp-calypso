@@ -4,7 +4,7 @@
  * @format
  */
 
-import { flowRight, has, invoke, isNil, omit, omitBy, partialRight } from 'lodash';
+import { has, invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,18 +31,9 @@ const eventServices = {
 	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
 };
 
-// list of unsafe params that need to be blocked from beign passed down to the recorder.
-const PAGE_VIEW_SERVICES_BLOCKED_PARAMS = [ 'service' ];
-
-const omitUnsafeParams = flowRight(
-	partialRight( omitBy, isNil ),
-	partialRight( omit, PAGE_VIEW_SERVICES_BLOCKED_PARAMS )
-);
-
 const pageViewServices = {
 	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
-	default: ( { url, title, ...params } ) =>
-		analytics.pageView.record( url, title, omitUnsafeParams( params ) ),
+	default: ( { url, title, ...params } ) => analytics.pageView.record( url, title, params ),
 };
 
 const loadTrackingTool = ( trackingTool, state ) => {
@@ -55,23 +46,23 @@ const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
 
 export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 	analyticsMeta.forEach( ( { type, payload } ) => {
-		const { service = 'default' } = payload;
+		const { service = 'default', ...params } = payload;
 
 		switch ( type ) {
 			case ANALYTICS_EVENT_RECORD:
-				return invoke( eventServices, service, payload );
+				return invoke( eventServices, service, params );
 
 			case ANALYTICS_PAGE_VIEW_RECORD:
-				return invoke( pageViewServices, service, payload );
+				return invoke( pageViewServices, service, params );
 
 			case ANALYTICS_STAT_BUMP:
-				return statBump( payload );
+				return statBump( params );
 
 			case ANALYTICS_TRACKING_ON:
-				return loadTrackingTool( payload, state );
+				return loadTrackingTool( params, state );
 
 			case ANALYTICS_TRACKS_OPT_OUT:
-				return analytics.tracks.setOptOut( payload );
+				return analytics.tracks.setOptOut( params );
 		}
 	} );
 };
