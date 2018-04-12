@@ -33,6 +33,9 @@ jest.mock( 'state/sites/plans/selectors', () => ( {
 jest.mock( 'lib/plans', () => ( {
 	applyTestFiltersToPlansList: jest.fn( x => x ),
 	getPlan: jest.fn(),
+	getTermDuration: jest.fn(
+		term => ( term === 'TERM_MONTHLY' ? 31 : term === 'TERM_ANNUALLY' ? 365 : 730 ) // eslint-disable-line no-nested-ternary
+	),
 } ) );
 
 jest.mock( 'state/plans/selectors', () => ( {
