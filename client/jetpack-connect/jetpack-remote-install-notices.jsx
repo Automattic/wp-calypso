@@ -38,8 +38,10 @@ export class JetpackRemoteInstallNotices extends Component {
 		url: PropTypes.string,
 	};
 
-	trackManualInstallClick = () => {
-		this.props.recordTracksEvent( 'calypso_remote_install_manual_install_click' );
+	trackManualInstallClick = noticeType => () => {
+		this.props.recordTracksEvent( 'calypso_remote_install_manual_install_click', {
+			notice_type: noticeType,
+		} );
 	};
 
 	renderNotice() {
@@ -94,7 +96,7 @@ export class JetpackRemoteInstallNotices extends Component {
 						className="jetpack-connect__connect-button"
 						primary
 						href={ redirectTo }
-						onClick={ this.trackManualInstallClick() }
+						onClick={ this.trackManualInstallClick( noticeType ) }
 					>
 						{ buttonLabel }
 					</Button>
