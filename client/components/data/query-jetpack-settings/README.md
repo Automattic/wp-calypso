@@ -16,9 +16,14 @@ import { getJetpackSettings } from 'state/selectors';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
 function MyJetpackSettings( { settings, siteId } ) {
+	const query = {
+		token: 'skyfKuaiKjbd8mK0Ngo75XyzfeKjp8sA',
+		userEmail: 'exampleuser@example.com'
+	};
+
 	return (
 		<div>
-			<QueryJetpackSettings siteId={ siteId } />
+			<QueryJetpackSettings query={ query } siteId={ siteId } />
 			{ map( settings, ( value, name ) => (
 				<div>{ name }: { value.toString() }</div>
 			) }
@@ -51,4 +56,4 @@ The site ID for which Jetpack Settings should be requested.
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-A query to use when requesting Jetpack Settings.
+A query to use when requesting Jetpack Settings. We currently use this only to send Jetpack Onboarding credentials, which enable us to query and change a few settings through the REST API without needing to have a Jetpack site connected to WordPress.com.
