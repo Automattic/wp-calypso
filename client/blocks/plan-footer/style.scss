@@ -2,20 +2,42 @@
 	margin: 0 10px 20px;
 	display: block;
 	text-align: center;
-
-	small {
-		font-style: italic;
-	}
-
-	.gridicons-checkmark-circle {
-		vertical-align: text-bottom;
-		margin-right: 4px;
-	}
 }
 .plan-footer__guarantee {
-	margin-bottom: 15px;
+	margin: 10px 0 40px;
+	position: relative;
+	display: inline-block;
+
+	&::after {
+		content: "*";
+		color: $gray-darken-20;
+		position: absolute;
+			top: -3px;
+			right: -10px;
+	}
+}
+.plan-footer__text {
+	display: inline-block;
+	background-color: $gray-darken-20;
+	color: $gray-light;
+	z-index: 2;
+	position: relative;
+	padding: 5px 10px;
+	height: 23px;
+}
+.plan-footer__banner {
+	z-index: 1;
+	position: absolute;
+		bottom: -25px;
+		left: -25px;
+	&.is-right {
+		transform: scaleX(-1);
+		left: auto;
+		right: -25px;
+	}
 }
 .plan-footer__fineprint {
+	color: $gray-darken-20;
 	font-size: 11px;
 	font-style: italic;
 }
