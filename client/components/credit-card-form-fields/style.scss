@@ -11,10 +11,6 @@
 		margin-left: 15px;
 	}
 
-	.credit-card-form-fields__state-field {
-		flex-basis: calc( 100% );
-	}
-
 	.form__hidden-input a {
 		display: block;
 		font-size:  12px;
@@ -75,12 +71,4 @@
 	input[disabled] {
 		cursor: not-allowed;
 	}
-}
-
-.credit-card-form-fields__info-text {
-	margin-left: 15px;
-	color: $gray-lighten-10;
-	display: block;
-	font-size: 12px;
-	font-style: italic;
 }

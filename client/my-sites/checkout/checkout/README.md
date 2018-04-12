@@ -11,3 +11,13 @@ Domain contact details data flow (2017-06-07):
 3. `formStateController`'s state is authoritative _while on the main domain details form_ and we watch it for changes which we immediately propagate uni-directionally into Redux. Extra domain detail forms (like ccTLD forms for example) interact directly with Redux and the Redux state is authoritative on those forms at all times.
 4. Rendering is done by pulling `formStateController` state values on the main domain details form. Rendering is done by pulling from Redux on extra domain detail forms.
 5. The Redux properties are entirely authoritative at the end of the checkout process. We grab everything in there to submit to the server-side.
+
+## Components
+
+### Brazil/Ebanx - ebanx-brazil-payment-fields.jsx
+
+Processing payments in Brazil require us to collect extra information from the user.
+
+See: `PAYMENT_PROCESSOR_EBANX_COUNTRIES.BR.requiredFields` in `client/lib/checkout/constants.js`
+
+Most prominent is the tax identification number, for which unique validation exists. See: `client/lib/checkout/ebanx.js`

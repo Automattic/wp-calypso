@@ -54,8 +54,7 @@ describe( 'CreditCardFormFields', () => {
 		test( 'should display Ebanx fields when an Ebanx payment country is selected', () => {
 			const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
 			wrapper.setProps( { card: { country: 'BR' } } );
-			expect( wrapper.find( '.ebanx-details-required' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.credit-card-form-fields__info-text' ) ).toHaveLength( 1 );
+			expect( wrapper.find( 'EbanxBrazilPaymentFields' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );
