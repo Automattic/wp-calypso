@@ -14,13 +14,16 @@ import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
-import { getSiteSettings, isRequestingSiteSettings } from 'state/site-settings/selectors';
+import { isRequestingSiteSettings } from 'state/site-settings/selectors';
+import { getGoogleMyBusinessConnectedLocation } from 'state/selectors';
+import { getSiteSettings } from '../../../../state/site-settings/selectors';
 
 export class GoogleMyBusiness extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
 		saveSiteSettings: PropTypes.func,
 		saveRequests: PropTypes.object,
+		siteSettings: PropTypes.object,
 		deleteStoredKeyringConnection: PropTypes.func,
 	};
 
@@ -117,61 +120,25 @@ export class GoogleMyBusiness extends SharingService {
 	}
 }
 
-const getSiteKeyringConnections = ( service, connections, siteSettings ) => {
-	if (
-		! service ||
-		! siteSettings ||
-		! siteSettings.google_my_business_keyring_id ||
-		! siteSettings.google_my_business_location_id
-	) {
-		return [];
-	}
-
-	const keyringConnections = [];
-	connections.forEach( connection => {
-		if ( connection.additional_external_users ) {
-			connection.additional_external_users.forEach( externalUser => {
-				keyringConnections.push( {
-					...connection,
-					keyring_connection_ID: connection.ID,
-					external_ID: externalUser.external_ID,
-					external_display: externalUser.external_name,
-				} );
-			} );
-		}
-	} );
-
-	return filter( keyringConnections, {
-		service: service.ID,
-		keyring_connection_ID: siteSettings.google_my_business_keyring_id,
-		external_ID: siteSettings.google_my_business_location_id,
-	} );
-};
-
 export default connectFor(
 	GoogleMyBusiness,
 	( state, props ) => {
-		const siteSettings = getSiteSettings( state, props.siteId );
+		const connectedLocation = getGoogleMyBusinessConnectedLocation( state, props.siteId );
 
 		// only keep external connections (aka GMB locations) to choose from
 		const availableExternalAccounts = filter( props.availableExternalAccounts || [], {
 			isExternal: true,
 		} );
 
-		const siteUserConnections = getSiteKeyringConnections(
-			props.service,
-			props.keyringConnections,
-			siteSettings
-		);
-
 		return {
 			...props,
 			availableExternalAccounts,
+			siteSettings: getSiteSettings( state, props.siteId ),
 			requestingSiteSettings: isRequestingSiteSettings( state, props.siteId ),
 			saveRequests: state.siteSettings.saveRequests,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections,
+			siteUserConnections: connectedLocation ? [ connectedLocation ] : [],
 		};
 	},
 	{
