@@ -37,15 +37,20 @@ test( 'should return expected output for a variety of inputs', () => {
 	[
 		'http://example.com',
 		'https://example.com',
+		/* Break tests and snapshots */
+		// '//example.com',
+		// 'example.com',
 		'http://www.example.com',
 		'http://example.com/',
 		'https://example.com/',
 		'http://example.com/a/path',
 		'http://example.com/a/path?query=args',
+		'http://example.com?query=args',
 		'http://example.com:12345',
 		'http://example.com:12345/',
 		'http://example.com:12345/a/path?query=args',
-		'http://example.com/a%20path?full&of=bad%25chars',
+		'http://example.com:12345?query=args',
+		'http://example.com/this-is-a-tricky-path-%2F%3F%26%3D%3A',
 		'http://áèîøüñç.com',
 	].forEach( url => expect( getSiteConnectInfo( url ) ).toMatchSnapshot() );
 } );
@@ -54,6 +59,20 @@ test( 'should correctly handle a simple URL', () => {
 	expect( getSiteConnectInfo( 'http://example.com/' )[ 0 ] ).toBe(
 		`${ apiPath }/http/example.com`
 	);
+} );
+
+test( 'should handle http and https', () => {
+	expect( getSiteConnectInfo( 'http://example.com/' )[ 0 ] ).toBe(
+		`${ apiPath }/http/example.com`
+	);
+
+	expect( getSiteConnectInfo( 'https://example.com/' )[ 0 ] ).toBe(
+		`${ apiPath }/https/example.com`
+	);
+} );
+
+test( 'should default to http', () => {
+	expect( getSiteConnectInfo( 'example.com' )[ 0 ] ).toBe( `${ apiPath }/http/example.com` );
 } );
 
 test( 'should pass filters as a query argument', () => {
