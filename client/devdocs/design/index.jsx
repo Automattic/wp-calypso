@@ -190,7 +190,7 @@ class DesignAssets extends React.Component {
 					<InfoPopover readmeFilePath="info-popover" />
 					<InputChrono readmeFilePath="input-chrono" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
-					<JetpackLogoExample />
+					<JetpackLogoExample readmeFilePath="jetpack-logo" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<ListEnd />
 					<Notices />
