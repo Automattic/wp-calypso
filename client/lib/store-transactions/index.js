@@ -203,7 +203,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 			}
 
 			paymentGatewayLoader
-				.ready( configuration.js_url, 'Paygate', true )
+				.ready( configuration.js_url, 'Paygate' )
 				.then( Paygate => {
 					Paygate.setProcessor( configuration.processor );
 					Paygate.setApiUrl( configuration.api_url );
