@@ -22,19 +22,19 @@ import SiteImporterInputPane from './site-importer-input-pane';
 /**
  * Module variables
  */
-const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
-	importingStates = [
-		appStates.IMPORT_FAILURE,
-		appStates.IMPORT_SUCCESS,
-		appStates.IMPORTING,
-		appStates.MAP_AUTHORS,
-	],
-	uploadingStates = [
-		appStates.READY_FOR_UPLOAD,
-		appStates.UPLOAD_FAILURE,
-		appStates.UPLOAD_SUCCESS,
-		appStates.UPLOADING,
-	];
+const compactStates = [ appStates.DISABLED, appStates.INACTIVE ];
+const importingStates = [
+	appStates.IMPORT_FAILURE,
+	appStates.IMPORT_SUCCESS,
+	appStates.IMPORTING,
+	appStates.MAP_AUTHORS,
+];
+const uploadingStates = [
+	appStates.READY_FOR_UPLOAD,
+	appStates.UPLOAD_FAILURE,
+	appStates.UPLOAD_SUCCESS,
+	appStates.UPLOADING,
+];
 
 export default class extends React.PureComponent {
 	static displayName = 'SiteImporter';
@@ -62,12 +62,12 @@ export default class extends React.PureComponent {
 	render() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
 		const site = this.props.site;
-		const state = this.props.importerStatus,
-			isEnabled = appStates.DISABLED !== state.importerState,
-			cardClasses = classNames( 'importer__shell', {
-				'is-compact': includes( compactStates, state.importerState ),
-				'is-disabled': ! isEnabled,
-			} );
+		const state = this.props.importerStatus;
+		const isEnabled = appStates.DISABLED !== state.importerState;
+		const cardClasses = classNames( 'importer__shell', {
+			'is-compact': includes( compactStates, state.importerState ),
+			'is-disabled': ! isEnabled,
+		} );
 
 		return (
 			<Card className={ cardClasses }>
