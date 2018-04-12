@@ -18,7 +18,7 @@ import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 function MyJetpackSettings( { settings, siteId } ) {
 	const query = {
 		token: 'skyfKuaiKjbd8mK0Ngo75XyzfeKjp8sA',
-		userEmail: 'exampleuser@example.com'
+		userEmail: 'exampleuser@yourgroovydomain.com'
 	};
 
 	return (
