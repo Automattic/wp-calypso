@@ -69,7 +69,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { onClose, translate } = this.props;
 		const { showContactForm } = this.state;
 		const popoverClasses = { 'is-help-active': showContactForm };
 
@@ -90,7 +90,11 @@ class InlineHelpPopover extends Component {
 				</div>
 
 				<div className="inline-help__contact">
-					<HelpContact compact={ true } selectedSite={ this.props.selectedSite } />
+					<HelpContact
+						compact={ true }
+						selectedSite={ this.props.selectedSite }
+						closeInlineHelp={ onClose }
+					/>
 				</div>
 
 				<div className="inline-help__footer">
