@@ -15,6 +15,15 @@
 	width: 100%;
 }
 
+.gmb-stats__metric-search {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	:first-child {
+		margin-right: 15px;
+	}
+}
+
 .gmb-stats__tip-main {
 	align-items: center;
 	color: $gray-darken-20;

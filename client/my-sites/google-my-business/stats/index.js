@@ -25,6 +25,7 @@ import Legend from 'components/chart/legend';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PieChart from 'components/pie-chart';
+import PieChartLegend from 'components/pie-chart/legend';
 import SearchDataType from './search-data-type';
 import SectionHeader from 'components/section-header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -88,12 +89,16 @@ class GoogleMyBusinessStats extends Component {
 					<div className="gmb-stats__metric">
 						<SectionHeader label={ translate( 'How customers search for your business' ) } />
 						<Card>
-							<PieChart
-								data={ searchData }
-								title={ translate( '%(total)d Total Searches', {
-									args: { total: searchDataTotal },
-								} ) }
-							/>
+							<div className={ 'gmb-stats__metric-search' }>
+								<PieChart
+									data={ searchData }
+									title={ translate( '%(total)d Total Searches', {
+										args: { total: searchDataTotal },
+									} ) }
+									className={ 'gmb-stats__metric-search-chart' }
+								/>
+								<PieChartLegend data={ searchData } />
+							</div>
 						</Card>
 					</div>
 
@@ -103,7 +108,9 @@ class GoogleMyBusinessStats extends Component {
 							buttonText={ translate( 'Post Photos' ) }
 							eventName="'calypso_google_my_business_stats_post_photos_button_click'"
 							illustration="reviews"
-							text={ translate( 'Listings with recent photos typically drive more view to their business websites.' ) }
+							text={ translate(
+								'Listings with recent photos typically drive more view to their business websites.'
+							) }
 						/>
 					</div>
 
@@ -153,7 +160,9 @@ class GoogleMyBusinessStats extends Component {
 							buttonText={ translate( 'Complete Your Listing' ) }
 							eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
 							illustration="complete-listing"
-							text={ translate( 'Complete business listings get on average 7x more clicks than empty listings.' ) }
+							text={ translate(
+								'Complete business listings get on average 7x more clicks than empty listings.'
+							) }
 						/>
 					</div>
 
@@ -163,9 +172,9 @@ class GoogleMyBusinessStats extends Component {
 							buttonText={ translate( 'Complete Your Listing' ) }
 							eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
 							illustration="compare"
-							text={
-								translate( 'Customers compare business listings on Google to make decisions. Make your listing count.' )
-							}
+							text={ translate(
+								'Customers compare business listings on Google to make decisions. Make your listing count.'
+							) }
 						/>
 					</div>
 				</div>
