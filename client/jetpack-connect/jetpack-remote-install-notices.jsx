@@ -5,7 +5,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -113,8 +112,9 @@ export class JetpackRemoteInstallNotices extends Component {
 export default connect(
 	state => {
 		const jetpackConnectSite = getConnectingSite( state );
+		const siteData = jetpackConnectSite.data || {};
 		return {
-			siteToConnect: get( jetpackConnectSite, 'url', '' ),
+			siteToConnect: siteData.urlAfterRedirects || jetpackConnectSite.url,
 		};
 	},
 	{ recordTracksEvent }
