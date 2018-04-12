@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`should reject with no protocol 1`] = `[Error: Received bad URL. Must use http or https protocol.]`;
+
 exports[`should return expected output for a variety of inputs 1`] = `
 Array [
   "/connect/site-info/http/example.com",

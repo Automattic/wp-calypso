@@ -37,9 +37,6 @@ test( 'should return expected output for a variety of inputs', () => {
 	[
 		'http://example.com',
 		'https://example.com',
-		/* Break tests and snapshots */
-		// '//example.com',
-		// 'example.com',
 		'http://www.example.com',
 		'http://example.com/',
 		'https://example.com/',
@@ -71,8 +68,8 @@ test( 'should handle http and https', () => {
 	);
 } );
 
-test( 'should default to http', () => {
-	expect( getSiteConnectInfo( 'example.com' )[ 0 ] ).toBe( `${ apiPath }/http/example.com` );
+test( 'should reject with no protocol', async () => {
+	await expect( getSiteConnectInfo( '//example.com' ) ).rejects.toMatchSnapshot();
 } );
 
 test( 'should pass filters as a query argument', () => {

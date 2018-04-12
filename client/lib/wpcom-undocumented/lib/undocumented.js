@@ -2199,10 +2199,14 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 	const { host, pathname, protocol } = url.parse( targetUrl );
 
-	// Expected protocols are `http:` and `https:`
-	// API expects no trailing `:`
-	// Default to http
-	const protocolPart = 'https:' === protocol ? 'https' : 'http';
+	// No idea what to do when protocol is not provided.
+	// Protocol-less URLs confuse the url parsing and it becomes unreliable.
+	if ( 'http:' !== protocol && 'https:' !== protocol ) {
+		return Promise.reject( new Error( 'Received bad URL. Must use http or https protocol.' ) );
+	}
+
+	// Drop trailing ':'
+	const protocolPart = protocol.slice( 0, -1 );
 
 	const siteUrlPart =
 		host + ( pathname && pathname !== '/' ? pathname.replace( /\//g, '::' ) : '' );
