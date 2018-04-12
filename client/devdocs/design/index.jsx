@@ -181,7 +181,7 @@ class DesignAssets extends React.Component {
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
 					<Gauge readmeFilePath="gauge" />
-					<GlobalNotices />
+					<GlobalNotices readmeFilePath="global-notices" />
 					<Gravatar readmeFilePath="gravatar" />
 					<Gridicons />
 					<HeaderButton readmeFilePath="header-button" />
