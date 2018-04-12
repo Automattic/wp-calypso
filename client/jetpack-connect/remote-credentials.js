@@ -27,7 +27,10 @@ import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs } from 'lib/route';
-import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
+import {
+	jetpackRemoteInstall,
+	jetpackRemoteInstallUpdateError,
+} from 'state/jetpack-remote-install/actions';
 import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { REMOTE_PATH_AUTH } from './constants';
@@ -240,9 +243,14 @@ export class OrgCredentialsForm extends Component {
 		);
 	}
 
-	onClickBack() {
+	onClickBack = () => {
+		const { installError, siteToConnect } = this.props;
+		if ( installError ) {
+			this.props.jetpackRemoteInstallUpdateError( siteToConnect, null, null );
+			return;
+		}
 		page.redirect( '/jetpack/connect' );
-	}
+	};
 
 	footerLink() {
 		const { installError, siteToConnect, translate } = this.props;
@@ -326,5 +334,8 @@ export default connect(
 			siteToConnect,
 		};
 	},
-	{ jetpackRemoteInstall }
+	{
+		jetpackRemoteInstall,
+		jetpackRemoteInstallUpdateError,
+	}
 )( localize( OrgCredentialsForm ) );
