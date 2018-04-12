@@ -137,13 +137,6 @@ export class OrgCredentialsForm extends Component {
 						'Please try again with the correct credentials or try installing Jetpack manually.'
 				);
 				break;
-
-			case UNKNOWN_REMOTE_INSTALL_ERROR:
-				subheader = translate(
-					'We were unable to install Jetpack because something went wrong. ' +
-						'Please try again by inputting your WordPress Administrator credentials, ' +
-						'or try installing Jetpack manually.'
-				);
 		}
 		return (
 			<span className="jetpack-connect__install-step jetpack-connect__creds-form">
@@ -253,10 +246,7 @@ export class OrgCredentialsForm extends Component {
 
 	footerLink() {
 		const { installError, siteToConnect, translate } = this.props;
-		const isFormInNotice = includes(
-			[ LOGIN_FAILURE, UNKNOWN_REMOTE_INSTALL_ERROR ],
-			this.getError( installError )
-		);
+		const isFormInNotice = includes( [ LOGIN_FAILURE ], this.getError( installError ) );
 		const manualInstallUrl = addQueryArgs(
 			{ url: siteToConnect },
 			'/jetpack/connect/instructions'
@@ -296,10 +286,7 @@ export class OrgCredentialsForm extends Component {
 
 	render() {
 		const { installError } = this.props;
-		const isFormInNotice = includes(
-			[ LOGIN_FAILURE, UNKNOWN_REMOTE_INSTALL_ERROR ],
-			this.getError( installError )
-		);
+		const isFormInNotice = includes( [ LOGIN_FAILURE ], this.getError( installError ) );
 
 		return (
 			<MainWrapper>

@@ -22,6 +22,7 @@ import {
 	ACTIVATION_RESPONSE_ERROR,
 	INSTALL_RESPONSE_ERROR,
 	INVALID_PERMISSIONS,
+	UNKNOWN_REMOTE_INSTALL_ERROR,
 } from './connection-notice-types';
 
 export class JetpackRemoteInstallNotices extends Component {
@@ -31,6 +32,7 @@ export class JetpackRemoteInstallNotices extends Component {
 			ACTIVATION_RESPONSE_ERROR,
 			INSTALL_RESPONSE_ERROR,
 			INVALID_PERMISSIONS,
+			UNKNOWN_REMOTE_INSTALL_ERROR,
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
@@ -43,7 +45,7 @@ export class JetpackRemoteInstallNotices extends Component {
 	renderNotice() {
 		const { noticeType, siteToConnect, translate } = this.props;
 		// default values for INSTALL_RESPONSE_ERROR,
-		let header = translate( 'Add your website credentials' );
+		let header = translate( 'Try Installing Manually' );
 		let subheader = translate(
 			"We were unable to install Jetpack. Don't worry you can either install Jetpack manually or contact support for help."
 		);
@@ -78,6 +80,10 @@ export class JetpackRemoteInstallNotices extends Component {
 						'continue with installing Jetpack or try installing Jetpack manually.'
 				);
 				noticeImage = <img src="/calypso/images/illustrations/almost-there.svg" alt="" />;
+				break;
+
+			case UNKNOWN_REMOTE_INSTALL_ERROR:
+				subheader = translate( 'We were unable to install Jetpack because something went wrong.' );
 		}
 		return (
 			<Fragment>
