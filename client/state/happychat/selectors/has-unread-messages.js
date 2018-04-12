@@ -8,7 +8,7 @@ import { get, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
 import getLostFocusTimestamp from 'state/happychat/selectors/get-lostfocus-timestamp';
 

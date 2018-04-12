@@ -14,7 +14,7 @@ import moment from 'moment';
 import { initialSiteState } from './reducer';
 import { getSite } from 'state/sites/selectors';
 import { createSitePlanObject } from './assembler';
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { calculateMonthlyPriceForPlan } from 'lib/plans';
 import { PLANS_LIST } from 'lib/plans/constants';
 

@@ -9,7 +9,7 @@ import { get, find } from 'lodash';
 /**
  * Internal Dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import purchasesAssembler from 'lib/purchases/assembler';
 import { isSubscription } from 'lib/purchases';
 import { isDomainRegistration, isDomainMapping } from 'lib/products-values';

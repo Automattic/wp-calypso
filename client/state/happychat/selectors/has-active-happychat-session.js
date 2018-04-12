@@ -13,7 +13,7 @@ import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_CHAT_STATUS_NEW,
 } from 'state/happychat/constants';
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 
 /**
  * Returns true if there's an active chat session in-progress. Chat sessions with

@@ -9,7 +9,7 @@ import { find, filter, flatMap, get, isArray, isEmpty, omit, sortBy } from 'loda
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 

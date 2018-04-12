@@ -9,7 +9,7 @@ import { filter, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 
 /**
  * Returns an array of keyring connection objects.

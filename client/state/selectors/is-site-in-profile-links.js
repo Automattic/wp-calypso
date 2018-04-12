@@ -8,7 +8,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getProfileLinks } from 'state/selectors';
 
 /**

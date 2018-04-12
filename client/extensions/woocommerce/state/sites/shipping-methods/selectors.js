@@ -9,7 +9,7 @@ import { every, filter, find, get, isArray, some, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 import { LOADING } from 'woocommerce/state/constants';

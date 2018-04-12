@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 
 function getGoogleAppsUsersState( state ) {
 	return state.googleAppsUsers;

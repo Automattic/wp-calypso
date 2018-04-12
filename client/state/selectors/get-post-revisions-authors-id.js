@@ -9,7 +9,7 @@ import { get, map, uniq } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 
 const getPostRevisionsAuthorsId = createSelector(
 	( state, siteId, postId ) =>

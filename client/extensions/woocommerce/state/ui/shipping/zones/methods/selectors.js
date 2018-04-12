@@ -19,7 +19,7 @@ import {
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getAPIShippingZones,

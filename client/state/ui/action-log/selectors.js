@@ -9,7 +9,7 @@ import { findLast, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { ROUTE_SET } from 'state/action-types';
 
 /**
