@@ -8,15 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	SERIALIZE,
-	DESERIALIZE,
-	HAPPYCHAT_BLUR,
-	HAPPYCHAT_FOCUS,
-	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
-	HAPPYCHAT_SET_CURRENT_MESSAGE,
-} from 'state/action-types';
-import { lostFocusAt as lostFocusAtWithoutValidation, currentMessage } from '../reducer';
+import { SERIALIZE, DESERIALIZE, HAPPYCHAT_BLUR, HAPPYCHAT_FOCUS } from 'state/action-types';
+import { lostFocusAt as lostFocusAtWithoutValidation } from '../reducer';
 import { withSchemaValidation } from 'state/utils';
 jest.mock( 'lib/warn', () => () => {} );
 
@@ -56,25 +49,6 @@ describe( 'reducers', () => {
 
 		test( 'returns null on HAPPYCHAT_FOCUS actions', () => {
 			expect( lostFocusAt( 12345, { type: HAPPYCHAT_FOCUS } ) ).to.be.null;
-		} );
-	} );
-
-	describe( '#message()', () => {
-		test( 'defaults to an empty string', () => {
-			const result = currentMessage( undefined, {} );
-			expect( result ).to.eql( '' );
-		} );
-
-		test( 'saves messages passed from HAPPYCHAT_SET_CURRENT_MESSAGE', () => {
-			const action = { type: HAPPYCHAT_SET_CURRENT_MESSAGE, message: 'abcd' };
-			const result = currentMessage( undefined, action );
-			expect( result ).to.eql( 'abcd' );
-		} );
-
-		test( 'resets to empty string on HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE', () => {
-			const action = { type: HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE, payload: { message: 'abcd' } };
-			const result = currentMessage( 'abcd', action );
-			expect( result ).to.eql( '' );
 		} );
 	} );
 } );

@@ -9,7 +9,6 @@ import {
 	HAPPYCHAT_MINIMIZING,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
-	HAPPYCHAT_SET_CURRENT_MESSAGE,
 	HAPPYCHAT_PANEL_HIDE,
 	HAPPYCHAT_PANEL_SHOW,
 } from 'state/action-types';
@@ -75,10 +74,3 @@ export const blur = () => ( { type: HAPPYCHAT_BLUR } );
 export const focus = () => ( { type: HAPPYCHAT_FOCUS } );
 
 export const updateActivity = () => ( { type: HAPPYCHAT_ACTIVITY } );
-/**
- * Returns an action object that sets the current chat message
- *
- * @param  { String } message Current message to be set
- * @return { Object } Action object
- */
-export const setCurrentMessage = message => ( { type: HAPPYCHAT_SET_CURRENT_MESSAGE, message } );
