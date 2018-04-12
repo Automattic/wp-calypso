@@ -2225,7 +2225,7 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
  * Check different info about WordPress and Jetpack status on a url
  *
  * @param {String} targetUrl - The url of the site to check
- * @param {String} filters - Comma separated string with the filters to run
+ * @param {?Array<string>} filters - Array of filters to run
  * @returns {Promise}  promise
  */
 Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters = null ) {
@@ -2235,7 +2235,7 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters = null 
 		{
 			apiVersion: '1.1',
 		},
-		filters && { filters }
+		Array.isArray( filters ) && { filters: filters.join() }
 	);
 
 	if ( parsedUrl.path && parsedUrl.path !== '/' ) {
