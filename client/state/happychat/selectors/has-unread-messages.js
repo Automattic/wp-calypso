@@ -3,18 +3,17 @@
 /**
  * External dependencies
  */
-import { get, last } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
 import getLostFocusTimestamp from 'state/happychat/selectors/get-lostfocus-timestamp';
 
 export default createSelector(
 	state => {
-		const lastMessageTimestamp = get( last( getHappychatTimeline( state ) ), 'timestamp' );
+		const lastMessageTimestamp = get( { timestamp: Date.now() - 1000 }, 'timestamp' );
 		const lostFocusAt = getLostFocusTimestamp( state );
 
 		return (
@@ -25,5 +24,5 @@ export default createSelector(
 			lastMessageTimestamp * 1000 >= lostFocusAt
 		);
 	},
-	[ getHappychatTimeline, getLostFocusTimestamp ]
+	[ getLostFocusTimestamp ]
 );
