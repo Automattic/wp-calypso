@@ -79,10 +79,10 @@ test( 'should handle punyencoded IDNs', () => {
 	);
 } );
 
-test( 'should handle escaped characters', () => {
-	expect( getSiteConnectInfo( 'http://example.com/a%20path?full&of=bad%25chars' )[ 0 ] ).toBe(
-		`${ apiPath }/http/example.com::a%20path?full&of=bad%25chars`
-	);
+test( 'should escape the site url', () => {
+	expect(
+		getSiteConnectInfo( 'http://example.com/this-is-a-tricky-path-%2F%3F%26%3D%3A' )[ 0 ]
+	).toBe( `${ apiPath }/http/example.com::this-is-a-tricky-path-%252F%253F%2526%253D%253A` );
 } );
 
 test( 'should translate / in paths to ::', () => {
