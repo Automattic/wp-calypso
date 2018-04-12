@@ -72,16 +72,18 @@ class AllSites extends Component {
 		return (
 			<div className={ allSitesClass }>
 				<a
-					className="site__content"
+					className="all-sites__content site__content"
 					href={ href }
 					onMouseEnter={ this.props.onMouseEnter }
 					onMouseLeave={ this.props.onMouseLeave }
 					onClick={ this.onSelect }
 				>
 					{ showCount && this.renderSiteCount() }
-					<div className="site__info">
-						<span className="site__title">{ title || translate( 'All My Sites' ) }</span>
-						{ domain && <span className="site__domain">{ domain }</span> }
+					<div className="all-sites__info site__info">
+						<span className="all-sites__title site__title">
+							{ title || translate( 'All My Sites' ) }
+						</span>
+						{ domain && <span className="all-sites__domain site__domain">{ domain }</span> }
 						<AllSitesIcon sites={ sites } />
 					</div>
 				</a>
