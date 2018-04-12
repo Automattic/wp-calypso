@@ -1,7 +1,5 @@
 const path = require('path')
-
 const MiniExtractPlugin = require('mini-css-extract-plugin')
-const OptimizeAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
 module.exports = {
   mode: 'production',
@@ -31,9 +29,28 @@ module.exports = {
         test: /\.scss$/,
         exclude: path.join(__dirname, '/node_modules'),
         use: [
-          MiniExtractPlugin.loader,
-          'css-loader',
-          'sass-loader'
+          {
+            loader: MiniExtractPlugin.loader
+          },
+          {
+            loader: 'css-loader'
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => {
+                return [
+                  require('autoprefixer')
+                ]
+              }
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              outputStyle: 'compressed'
+            }
+          }
         ]
       }
     ]
@@ -46,9 +63,6 @@ module.exports = {
     new MiniExtractPlugin({
       filename: '[name].css',
       allChunks: true
-    }),
-    new OptimizeAssetsPlugin({
-      cssProcessor: require('cssnano')
     })
   ]
 }

@@ -3,6 +3,7 @@
   "version": "0.2.1",
   "private": true,
   "dependencies": {
+    "autoprefixer": "^8.2.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-runtime": "^6.23.0",
@@ -11,11 +12,10 @@
     "chroma-js": "^1.3.6",
     "copy-text-to-clipboard": "^1.0.4",
     "css-loader": "^0.28.11",
-    "cssnano": "^3.10.0",
     "lodash": "^4.17.5",
     "mini-css-extract-plugin": "^0.4.0",
     "node-sass": "^4.8.3",
-    "optimize-css-assets-webpack-plugin": "^4.0.0",
+    "postcss-loader": "^2.1.3",
     "sass-loader": "^6.0.7",
     "webpack": "^4.5.0"
   },
@@ -27,7 +27,7 @@
   "scripts": {
     "development": "open index.html && webpack --watch --mode=development",
     "lint": "xo",
-    "precommit": "yarn lint && webpack --display=errors-only"
+    "precommit": "yarn lint && webpack --display=errors-only && git add --update"
   },
   "xo": {
     "ignores": [
