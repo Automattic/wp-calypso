@@ -76,7 +76,7 @@ export class PageViewTracker extends React.Component {
 		}
 
 		if ( ! delay ) {
-			return recorder( path, title, undefined, properties );
+			return recorder( path, title, 'default', properties );
 		}
 
 		this.setState( {
