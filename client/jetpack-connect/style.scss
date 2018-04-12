@@ -694,3 +694,21 @@
 		padding-right: 319px;
 	}
 }
+
+.jetpack-connect__plan-info {
+	text-align: center;
+	max-width: 500px;
+	margin-top: 20px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+.jetpack-connect__plan-info-illustration {
+	max-width: 200px;
+}
+
+.jetpack-connect__plan-info-buttons {
+	.button + .button {
+		margin-left: 10px;
+	}
+}
