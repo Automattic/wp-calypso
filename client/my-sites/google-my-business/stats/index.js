@@ -14,14 +14,12 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import CardHeading from 'components/card-heading';
-import Chart from 'components/chart';
 import DocumentHead from 'components/data/document-head';
 import FakeData from './fake-data';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
-import Legend from 'components/chart/legend';
+import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PieChart from 'components/pie-chart';
@@ -115,43 +113,23 @@ class GoogleMyBusinessStats extends Component {
 					</div>
 
 					<div className="gmb-stats__metric">
-						<SectionHeader
-							label={ translate( 'Where your customers view your business on Google' ) }
+						<GoogleMyBusinessStatsChart
+							title={ translate( 'Where your customers view your business on Google' ) }
+							description={ translate(
+								'The Google services that customers use to find your business'
+							) }
+							data={ viewData }
 						/>
-						<Card>
-							<CardHeading tagName={ 'h2' } size={ 16 }>
-								{ translate( 'The Google services that customers use to find your business' ) }
-							</CardHeading>
-							<Legend
-								activeTab={ { label: translate( 'Listings On Search' ), attr: 'searchListings' } }
-								activeCharts={ [ 'mapListings' ] }
-								availableCharts={ [ 'mapListings' ] }
-								tabs={ [
-									{ label: translate( 'Listings On Search' ), attr: 'searchListings' },
-									{ label: translate( 'Listings On Maps' ), attr: 'mapListings' },
-								] }
-							/>
-							<Chart data={ viewData } />
-						</Card>
 					</div>
 
 					<div className="gmb-stats__metric">
-						<SectionHeader label={ translate( 'Customer Actions' ) } />
-						<Card>
-							<CardHeading tagName={ 'h2' } size={ 16 }>
-								{ translate( 'The most common actions that customers take on your listing' ) }
-							</CardHeading>
-							<Legend
-								activeTab={ { label: translate( 'Visit your Website' ), attr: 'visitWebsite' } }
-								activeCharts={ [ 'requestDirections' ] }
-								availableCharts={ [ 'requestDirections' ] }
-								tabs={ [
-									{ label: translate( 'Visit your Website' ), attr: 'visitWebsite' },
-									{ label: translate( 'Request Directions' ), attr: 'requestDirections' },
-								] }
-							/>
-							<Chart data={ actionData } />
-						</Card>
+						<GoogleMyBusinessStatsChart
+							title={ translate( 'Customer Actions' ) }
+							description={ translate(
+								'The most common actions that customers take on your listing'
+							) }
+							data={ actionData }
+						/>
 					</div>
 
 					<div className="gmb-stats__metric">

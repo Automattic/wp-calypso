@@ -9,6 +9,11 @@
 	}
 }
 
+.gmb-stats__metric-hr {
+	width: 95%;
+	color: $gray-light;
+}
+
 .gmb-stats__metric {
 	display: inline-block;
 	margin-top: 1px; // Fixes shadow truncated at the top of the second column
