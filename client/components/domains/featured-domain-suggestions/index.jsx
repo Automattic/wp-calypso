@@ -76,8 +76,8 @@ export class FeaturedDomainSuggestions extends Component {
 	hasMatchReasons() {
 		const { primarySuggestion = {}, secondarySuggestion = {} } = this.props;
 		return (
-			Array.isArray( primarySuggestion.matchReasons ) ||
-			Array.isArray( secondarySuggestion.matchReasons )
+			Array.isArray( primarySuggestion.match_reasons ) ||
+			Array.isArray( secondarySuggestion.match_reasons )
 		);
 	}
 

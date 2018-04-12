@@ -23,12 +23,12 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
-import { getTld } from 'lib/domains';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
-	getMatchReasonPhrasesMap,
 	isNewTld,
 	isTestTld,
+	parseMatchReasons,
+	VALID_MATCH_REASONS,
 } from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
 
@@ -43,15 +43,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			domain_name: PropTypes.string.isRequired,
 			product_slug: PropTypes.string,
 			cost: PropTypes.string,
-			matchReasons: PropTypes.arrayOf(
-				PropTypes.oneOf( [
-					'tld-exact',
-					'tld-similar',
-					'exact-match',
-					'similar-match',
-					'tld-common',
-				] )
-			),
+			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 		} ).isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -235,14 +227,11 @@ class DomainRegistrationSuggestion extends React.Component {
 	renderMatchReason() {
 		const { suggestion: { domain_name: domain }, isFeatured } = this.props;
 
-		if ( ! isFeatured || ! Array.isArray( this.props.suggestion.matchReasons ) ) {
+		if ( ! isFeatured || ! Array.isArray( this.props.suggestion.match_reasons ) ) {
 			return null;
 		}
 
-		const matchReasonsMap = getMatchReasonPhrasesMap( getTld( domain ) );
-		const matchReasons = this.props.suggestion.matchReasons
-			.filter( matchReason => matchReasonsMap.has( matchReason ) )
-			.map( matchReason => matchReasonsMap.get( matchReason ) );
+		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
 
 		return (
 			<div className="domain-registration-suggestion__match-reasons">
