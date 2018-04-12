@@ -85,7 +85,7 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 		debug( 'Submitting NPS survey with no score...' );
 		dispatch( submitNpsSurveyWithNoScoreRequesting( surveyName ) );
 
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_dismiseed' );
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
 		analytics.tracks.recordEvent( 'calypso_nps_survey_dismissed' );
 
 		return wpcom

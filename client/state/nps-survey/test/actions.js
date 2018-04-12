@@ -77,7 +77,7 @@ describe( 'actions', () => {
 			expect( analytics.mc.bumpStat.mock.calls.length ).toBe( 1 );
 			expect( analytics.mc.bumpStat.mock.calls[ 0 ] ).toEqual( [
 				'calypso_nps_survey',
-				'survey_dismiseed',
+				'survey_dismissed',
 			] );
 
 			expect( analytics.tracks.recordEvent.mock.calls.length ).toBe( 1 );
