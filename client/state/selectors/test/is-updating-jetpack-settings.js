@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 import { isUpdatingJetpackSettings } from 'state/selectors';
 import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
-import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 
 describe( 'isUpdatingJetpackSettings()', () => {
 	const siteId = 12345678;

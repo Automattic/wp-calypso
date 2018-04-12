@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getRequest } from 'state/selectors';
-import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 
 /**
  * Returns the status of the last Jetpack site settings save request
