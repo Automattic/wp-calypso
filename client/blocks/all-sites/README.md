@@ -6,7 +6,7 @@ This component displays the All Sites item. It's used in the Sidebar as the curr
 #### How to use:
 
 ```js
-import AllSites from 'my-sites/all-sites';
+import AllSites from 'blocks/all-sites';
 
 render() {
 	return (

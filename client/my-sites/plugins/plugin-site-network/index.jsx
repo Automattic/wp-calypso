@@ -13,7 +13,7 @@ import React from 'react';
  */
 import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
-import AllSites from 'my-sites/all-sites';
+import AllSites from 'blocks/all-sites';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';

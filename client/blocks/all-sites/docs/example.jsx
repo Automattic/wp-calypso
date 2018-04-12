@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import AllSites from 'my-sites/all-sites';
+import AllSites from 'blocks/all-sites';
 import Card from 'components/card';
 
 const AllSitesExample = () => (

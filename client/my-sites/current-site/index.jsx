@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import AllSites from 'my-sites/all-sites';
+import AllSites from 'blocks/all-sites';
 import AsyncLoad from 'components/async-load';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
