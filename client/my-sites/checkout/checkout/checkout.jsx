@@ -15,6 +15,7 @@ import React from 'react';
 import { abtest, getABTestVariation } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
+import config from 'config';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
@@ -28,6 +29,7 @@ import { getExitCheckoutUrl } from 'lib/checkout';
 import { hasDomainDetails } from 'lib/store-transactions';
 import notices from 'notices';
 import { managePurchase } from 'me/purchases/paths';
+import SubscriptionLengthPicker from 'blocks/subscription-length-picker';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryGeo from 'components/data/query-geo';
@@ -38,7 +40,13 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import { addItem, applyCoupon, resetTransaction, setDomainDetails } from 'lib/upgrades/actions';
+import {
+	addItem,
+	removeItem,
+	applyCoupon,
+	resetTransaction,
+	setDomainDetails,
+} from 'lib/upgrades/actions';
 import {
 	getContactDetailsCache,
 	getCurrentUserPaymentMethods,
@@ -46,7 +54,8 @@ import {
 	isEligibleForCheckoutToChecklist,
 } from 'state/selectors';
 import { getStoredCards } from 'state/stored-cards/selectors';
-import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
+import { isValidFeatureKey, getUpgradePlanSlugFromPath, getPlan, findPlansKeys } from 'lib/plans';
+import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
@@ -148,6 +157,10 @@ class Checkout extends React.Component {
 		} );
 
 		recordViewCheckout( props.cart );
+	}
+
+	getPlanProducts() {
+		return this.props.cart.products.filter( ( { product_slug } ) => getPlan( product_slug ) );
 	}
 
 	getProductSlugFromSynonym( slug ) {
@@ -474,9 +487,59 @@ class Checkout extends React.Component {
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
-			/>
+			>
+				{ config.isEnabled( 'upgrades/2-year-plans' ) && this.renderSubscriptionLengthPicker() }
+			</SecurePaymentForm>
 		);
 	}
+
+	renderSubscriptionLengthPicker() {
+		const planInCart = this.getPlanProducts()[ 0 ];
+		if ( ! planInCart ) {
+			return false;
+		}
+
+		const currentPlanSlug = this.props.selectedSite.plan.product_slug;
+		const chosenPlan = getPlan( planInCart.product_slug );
+
+		// Only render this for WP.com plans
+		if ( chosenPlan.group !== GROUP_WPCOM ) {
+			return false;
+		}
+
+		const availableTerms = findPlansKeys( {
+			group: chosenPlan.group,
+			type: chosenPlan.type,
+		} ).filter( planSlug => getPlan( planSlug ).availableFor( currentPlanSlug ) );
+
+		if ( availableTerms.length < 2 ) {
+			return false;
+		}
+
+		return (
+			<React.Fragment>
+				<SubscriptionLengthPicker
+					plans={ availableTerms }
+					initialValue={ planInCart.product_slug }
+					onChange={ this.handleTermChange }
+					key="picker"
+				/>
+				<hr className="checkout__subscription-length-picker-separator" key="separator" />
+			</React.Fragment>
+		);
+	}
+
+	handleTermChange = ( { value: planSlug } ) => {
+		this.getPlanProducts().forEach( removeItem );
+
+		const cartItem = getCartItemForPlan( planSlug );
+		analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+			product_slug: cartItem.product_slug,
+			free_trial: cartItem.free_trial,
+			from_section: 'checkout',
+		} );
+		addItem( cartItem );
+	};
 
 	paymentMethodsAbTestFilter() {
 		// This methods can be used to filter payment methods
