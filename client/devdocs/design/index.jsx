@@ -193,7 +193,7 @@ class DesignAssets extends React.Component {
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<ListEnd readmeFilePath="list-end" />
-					<Notices />
+					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
 					<PieChart readmeFilePath="pie-chart" />
