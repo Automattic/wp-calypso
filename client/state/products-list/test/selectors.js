@@ -19,8 +19,8 @@ import {
 
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
-import { getPlan } from 'lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
+const plans = require( 'lib/plans' );
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
@@ -30,13 +30,10 @@ jest.mock( 'state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 } ) );
 
-jest.mock( 'lib/plans', () => ( {
-	applyTestFiltersToPlansList: jest.fn( x => x ),
-	getPlan: jest.fn(),
-	getTermDuration: jest.fn(
-		term => ( term === 'TERM_MONTHLY' ? 31 : term === 'TERM_ANNUALLY' ? 365 : 730 ) // eslint-disable-line no-nested-ternary
-	),
-} ) );
+plans.applyTestFiltersToPlansList = jest.fn( x => x );
+plans.getPlan = jest.fn();
+
+const { getPlan } = plans;
 
 jest.mock( 'state/plans/selectors', () => ( {
 	getPlanRawPrice: jest.fn(),
