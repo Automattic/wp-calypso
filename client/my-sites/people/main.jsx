@@ -86,7 +86,7 @@ export const People = createReactClass( {
 				<Main>
 					<PageViewTracker
 						path={ `/people/${ filter }/:site` }
-						title={ `Peole > ${ titlecase( filter ) }` }
+						title={ `People > ${ titlecase( filter ) }` }
 					/>
 					<SidebarNavigation />
 					<JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.7" />
@@ -98,7 +98,7 @@ export const People = createReactClass( {
 				<Main>
 					<PageViewTracker
 						path={ `/people/${ filter }/:site` }
-						title={ `Peole > ${ titlecase( filter ) }` }
+						title={ `People > ${ titlecase( filter ) }` }
 					/>
 					<SidebarNavigation />
 					<EmptyContent
@@ -112,7 +112,7 @@ export const People = createReactClass( {
 			<Main>
 				<PageViewTracker
 					path={ `/people/${ filter }/:site` }
-					title={ `Peole > ${ titlecase( filter ) }` }
+					title={ `People > ${ titlecase( filter ) }` }
 				/>
 				<SidebarNavigation />
 				<div>
