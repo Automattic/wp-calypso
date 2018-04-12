@@ -153,12 +153,12 @@ class DesignAssets extends React.Component {
 						readmeFilePath="accordion"
 					/>
 					<BackButton readmeFilePath="back-button" />
+					<Badge />
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
 					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
 					<SplitButton readmeFilePath="split-button" />
-					<Badge />
 					<Cards readmeFilePath="card" />
 					<CardHeading />
 					<Checklist />
@@ -188,7 +188,6 @@ class DesignAssets extends React.Component {
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
 					<InfoPopover readmeFilePath="info-popover" />
-					<Tooltip readmeFilePath="tooltip" />
 					<InputChrono readmeFilePath="input-chrono" />
 					<JetpackColophonExample />
 					<JetpackLogoExample />
@@ -221,6 +220,7 @@ class DesignAssets extends React.Component {
 					<TimeSince />
 					<Timezone readmeFilePath="timezone" />
 					<TokenFields readmeFilePath="token-field" />
+					<Tooltip readmeFilePath="tooltip" />
 					<VerticalMenu readmeFilePath="vertical-menu" />
 					<Version readmeFilePath="version" />
 					<Wizard />
