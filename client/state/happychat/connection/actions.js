@@ -9,6 +9,7 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import {
+	HAPPYCHAT_IO_CONNECTION_STATUS,
 	HAPPYCHAT_IO_INIT,
 	HAPPYCHAT_IO_RECEIVE_ACCEPT,
 	HAPPYCHAT_IO_RECEIVE_CONNECT,
@@ -303,4 +304,15 @@ export const sendPreferences = ( locale, groups, skills ) => ( {
 		groups,
 		skills,
 	},
+} );
+
+/**
+ * Returns an action object sets the client connection
+ * @param { String } status socket connection status
+ *
+ * @return { Object } Action object
+ */
+export const setConnectionStatus = status => ( {
+	type: HAPPYCHAT_IO_CONNECTION_STATUS,
+	status,
 } );
