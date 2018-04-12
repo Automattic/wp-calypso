@@ -357,11 +357,11 @@ class Checkout extends React.Component {
 			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	};
 
-	handleCheckoutExternalRedirect: function( redirectUrl ) {
+	handleCheckoutExternalRedirect( redirectUrl ) {
 		window.location.href = redirectUrl;
-	},
+	}
 
-	handleCheckoutCompleteRedirect: function() {
+	handleCheckoutCompleteRedirect = () => {
 		let product, purchasedProducts, renewalItem;
 
 		const {
