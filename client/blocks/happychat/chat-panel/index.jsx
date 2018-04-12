@@ -10,9 +10,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { blur, focus, closeChat, minimizeChat, minimizedChat } from 'state/happychat/ui/actions';
+import { blur, focus, closeChat } from 'state/happychat/ui/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
-import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatPanelHidden from 'state/happychat/selectors/is-happychat-panel-hidden';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
@@ -41,7 +40,6 @@ export class HappychatPanel extends Component {
 			currentUser,
 			isChatOpen,
 			isChatSessionActive,
-			isMinimizing,
 			isPanelHidden,
 			wasRecentlyActive,
 		} = this.props;
@@ -50,7 +48,6 @@ export class HappychatPanel extends Component {
 				className={ classnames( 'chat-panel', {
 					'is-open': isChatOpen && ! isPanelHidden,
 					'is-visible': ( isChatSessionActive || wasRecentlyActive ) && ! isPanelHidden,
-					'is-minimizing': isMinimizing,
 				} ) }
 			>
 				<HappychatClient layout={ LAYOUT_PANEL_MAX_PARENT_SIZE } user={ currentUser } />
@@ -64,7 +61,6 @@ const mapState = state => {
 		currentUser: getCurrentUser( state ),
 		isChatOpen: isHappychatOpen( state ),
 		isPanelHidden: isHappychatPanelHidden( state ),
-		isMinimizing: isHappychatMinimizing( state ),
 		wasRecentlyActive: wasHappychatRecentlyActive( state ),
 		isChatSessionActive: hasActiveHappychatSession( state ),
 	};
@@ -72,8 +68,6 @@ const mapState = state => {
 
 const mapDispatch = {
 	onCloseChat: closeChat,
-	onMinimizeChat: minimizeChat,
-	onMinimizedChat: minimizedChat,
 	setBlurred: blur,
 	setFocused: focus,
 };
