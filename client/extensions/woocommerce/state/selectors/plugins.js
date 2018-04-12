@@ -2,13 +2,13 @@
 /**
  * External dependencies
  */
-import { every, find, keys } from 'lodash';
+import { every, find } from 'lodash';
 /**
  * Internal dependencies
  */
 import config from 'config';
 import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
-import { getRequiredPluginsList } from 'woocommerce/lib/get-required-plugins';
+import { getRequiredPluginsForCalypso } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteWithFallback } from '../sites/selectors';
 
 export const isWcsEnabled = ( state, siteId = getSelectedSiteWithFallback( state ) ) => {
@@ -36,7 +36,7 @@ export const areAllRequiredPluginsActive = (
 		return null;
 	}
 
-	const requiredPlugins = keys( getRequiredPluginsList() );
+	const requiredPlugins = getRequiredPluginsForCalypso();
 	const plugins = getPlugins( state, siteIds, 'active' );
 
 	return every( requiredPlugins, slug => !! find( plugins, { slug } ) );

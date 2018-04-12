@@ -1,13 +1,17 @@
 /** @format */
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
 
-export function getRequiredPluginsList() {
-	return {
-		woocommerce: translate( 'WooCommerce' ),
-		'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
-		'woocommerce-services': translate( 'WooCommerce Services' ),
-	};
+/**
+ * Get the list of plugins required to use Store on WP.com
+ * @return {Array} List of plugin slugs
+ */
+export function getRequiredPluginsForCalypso() {
+	return [ 'woocommerce', 'woocommerce-services' ];
+}
+
+/**
+ * Get the list of plugins we want to install for site setup
+ * @return {Array} List of plugin slugs
+ */
+export function getPluginsForStoreSetup() {
+	return [ 'woocommerce', 'woocommerce-gateway-stripe', 'woocommerce-services' ];
 }
