@@ -36,13 +36,17 @@ const pageViewServices = {
 	default: ( { url, title, ...params } ) => analytics.pageView.record( url, title, params ),
 };
 
-const loadTrackingTool = ( trackingTool, state ) => {
+const loadTrackingTool = ( { trackingTool }, state ) => {
 	if ( trackingTool === 'HotJar' && ! isTracking( state, 'HotJar' ) ) {
 		analytics.hotjar.addHotJarScript();
 	}
 };
 
 const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
+
+const setAnonymousUserId = ( { anonId } ) => analytics.tracks.setAnonymousUserId( anonId );
+
+const setOptOut = ( { isOptingOut } ) => analytics.tracks.setOptOut( isOptingOut );
 
 export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 	analyticsMeta.forEach( ( { type, payload } ) => {
@@ -62,7 +66,7 @@ export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 				return loadTrackingTool( params, state );
 
 			case ANALYTICS_TRACKS_OPT_OUT:
-				return analytics.tracks.setOptOut( params );
+				return setOptOut( params );
 		}
 	} );
 };
