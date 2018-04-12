@@ -21,11 +21,14 @@ import ZoneItem from './zone-item';
 import ZonePlaceholder from './zone-placeholder';
 import { getZones, isRequestingZones } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const placeholderCount = 5;
 
 const ZonesDashboard = ( { isRequesting, siteSlug, translate, zones } ) => (
 	<div>
+		<PageViewTracker path="/extensions/zoninator/:site" title="WP Zone Manager" />
+
 		<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` }>Zoninator Settings</HeaderCake>
 
 		<SectionHeader label={ translate( 'Zones' ) }>
