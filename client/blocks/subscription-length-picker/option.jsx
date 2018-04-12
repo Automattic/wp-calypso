@@ -102,7 +102,7 @@ export class SubscriptionLengthOption extends React.Component {
 	}
 
 	renderUpgradeContent() {
-		const { type, price, priceBeforeDiscount, translate } = this.props;
+		const { price, priceBeforeDiscount, translate } = this.props;
 		return (
 			<React.Fragment>
 				<div className="subscription-length-picker__option-header">
@@ -117,13 +117,9 @@ export class SubscriptionLengthOption extends React.Component {
 						false
 					) }
 					<div className="subscription-length-picker__option-price">{ price }</div>
-					{ type === 'upgrade' ? (
-						<div className="subscription-length-picker__option-credit-info">
-							{ translate( 'Credit applied' ) }
-						</div>
-					) : (
-						false
-					) }
+					<div className="subscription-length-picker__option-credit-info">
+						{ translate( 'Credit applied' ) }
+					</div>
 				</div>
 			</React.Fragment>
 		);
