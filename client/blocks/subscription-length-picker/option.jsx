@@ -17,10 +17,16 @@ import { localize } from 'i18n-calypso';
 import Badge from 'components/badge';
 import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 
+const TYPE_NEW_SALE = 'new-sale';
+const TYPE_UPGRADE = 'upgrade';
+
 export class SubscriptionLengthOption extends React.Component {
 	static propTypes = {
+		type: PropTypes.oneOf( [ TYPE_NEW_SALE, TYPE_UPGRADE ] ),
+
 		term: PropTypes.string.isRequired,
 		savePercent: PropTypes.number,
+		priceBeforeDiscount: PropTypes.string,
 		price: PropTypes.string.isRequired,
 		pricePerMonth: PropTypes.string.isRequired,
 		checked: PropTypes.bool,
@@ -30,6 +36,7 @@ export class SubscriptionLengthOption extends React.Component {
 	};
 
 	static defaultProps = {
+		type: TYPE_NEW_SALE,
 		checked: false,
 		savePercent: 0,
 		onCheck: () => null,
@@ -41,7 +48,7 @@ export class SubscriptionLengthOption extends React.Component {
 	}
 
 	render() {
-		const { checked, price, savePercent, term, translate } = this.props;
+		const { type, checked } = this.props;
 		const className = classnames( 'subscription-length-picker__option', {
 			'is-active': checked,
 		} );
@@ -58,30 +65,63 @@ export class SubscriptionLengthOption extends React.Component {
 				</div>
 
 				<div className="subscription-length-picker__option-content">
-					<div className="subscription-length-picker__option-header">
-						<div className="subscription-length-picker__option-term">{ this.getTermText() }</div>
-						<div className="subscription-length-picker__option-discount">
-							{ savePercent ? (
-								<Badge type={ checked ? 'success' : 'warning' }>
-									{ translate( 'Save %(percent)s%%', {
-										args: {
-											percent: savePercent,
-										},
-									} ) }
-								</Badge>
-							) : (
-								false
-							) }
-						</div>
-					</div>
-					<div className="subscription-length-picker__option-description">
-						<div className="subscription-length-picker__option-price">{ price }</div>
-						<div className="subscription-length-picker__option-side-note">
-							{ term !== TERM_MONTHLY ? this.renderPricePerMonth() : false }
-						</div>
-					</div>
+					{ type === TYPE_NEW_SALE ? this.renderNewSaleContent() : this.renderUpgradeContent() }
 				</div>
 			</label>
+		);
+	}
+
+	renderNewSaleContent() {
+		const { checked, price, savePercent, term, translate } = this.props;
+		return (
+			<React.Fragment>
+				<div className="subscription-length-picker__option-header">
+					<div className="subscription-length-picker__option-term">{ this.getTermText() }</div>
+					<div className="subscription-length-picker__option-discount">
+						{ savePercent ? (
+							<Badge type={ checked ? 'success' : 'warning' }>
+								{ translate( 'Save %(percent)s%%', {
+									args: {
+										percent: savePercent,
+									},
+								} ) }
+							</Badge>
+						) : (
+							false
+						) }
+					</div>
+				</div>
+				<div className="subscription-length-picker__option-description">
+					<div className="subscription-length-picker__option-price">{ price }</div>
+					<div className="subscription-length-picker__option-side-note">
+						{ term !== TERM_MONTHLY ? this.renderPricePerMonth() : false }
+					</div>
+				</div>
+			</React.Fragment>
+		);
+	}
+
+	renderUpgradeContent() {
+		const { price, priceBeforeDiscount, translate } = this.props;
+		return (
+			<React.Fragment>
+				<div className="subscription-length-picker__option-header">
+					<div className="subscription-length-picker__option-term">{ this.getTermText() }</div>
+				</div>
+				<div className="subscription-length-picker__option-description">
+					{ priceBeforeDiscount ? (
+						<div className="subscription-length-picker__option-old-price">
+							{ priceBeforeDiscount }
+						</div>
+					) : (
+						false
+					) }
+					<div className="subscription-length-picker__option-price">{ price }</div>
+					<div className="subscription-length-picker__option-credit-info">
+						{ translate( 'Credit applied' ) }
+					</div>
+				</div>
+			</React.Fragment>
 		);
 	}
 
