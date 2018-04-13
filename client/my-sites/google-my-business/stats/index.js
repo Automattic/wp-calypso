@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import FakeData from './fake-data';
+import Notice from 'components/notice';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
@@ -79,6 +80,13 @@ class GoogleMyBusinessStats extends Component {
 				<SidebarNavigation />
 
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
+
+				{ /* remove this notice once we stop using fake data */ }
+				<Notice
+					status="is-error"
+					showDismiss={ false }
+					text="All data on this page is a placeholder used for development only!"
+				/>
 
 				<GoogleMyBusinessLocation location={ locationData }>
 					<Button
