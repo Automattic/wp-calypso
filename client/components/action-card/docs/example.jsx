@@ -24,7 +24,7 @@ function ActionCardExample( props ) {
 			buttonPrimary={ true }
 			buttonHref="https://wordpress.com"
 			buttonTarget="_blank"
-			buttonOnClick={ noop }
+			buttonOnClick={ null }
 		/>
 	);
 }
@@ -36,3 +36,14 @@ ActionCardExample.propTypes = {
 ActionCardExample.displayName = 'ActionCard';
 
 export default ActionCardExample;
+
+export const ActionCardPlayground =
+	'<ActionCard draggable' +
+	"headerText='This is a header text' " +
+	"mainText='This is some description of the header text, that ellaborates a bit a bout it and explaning about the action we are going to call to.' " +
+	"buttonText='Call to action!' " +
+	"buttonIcon='external' " +
+	'buttonPrimary={ true } ' +
+	"buttonHref='https://wordpress.com' " +
+	"buttonTarget='_blank' " +
+	'buttonOnClick={ null } />';

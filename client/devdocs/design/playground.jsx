@@ -1,0 +1,338 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import React from 'react';
+import PropTypes from 'prop-types';
+import page from 'page';
+import classnames from 'classnames';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
+import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
+import { keys } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+import DocumentHead from 'components/data/document-head';
+import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import SearchCard from 'components/search-card';
+import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
+import ComponentAdd from './component-add';
+
+/**
+ * Docs examples
+ */
+import ActionCard from 'components/action-card';
+import Accordion from 'components/accordion';
+import BackButton from 'components/back-button';
+import Badge from 'components/badge';
+import Banner from 'components/banner';
+import BulkSelect from 'components/bulk-select';
+import ButtonGroup from 'components/button-group';
+import Button from 'components/button';
+import Card from 'components/card';
+import CardHeading from 'components/card-heading';
+import Checklist from 'components/checklist';
+import ClipboardButtonInput from 'components/clipboard-button-input';
+import ClipboardButton from 'components/forms/clipboard-button';
+import Collection from 'devdocs/design/search-collection';
+import Count from 'components/count';
+import CountedTextarea from 'components/forms/counted-textarea';
+import DatePicker from 'components/date-picker';
+import DropZones from 'components/drop-zone';
+import EllipsisMenu from 'components/ellipsis-menu';
+import Emojify from 'components/emojify';
+import EmptyContent from 'components/empty-content';
+import ExternalLink from 'components/external-link';
+import FAQ from 'components/faq';
+import FeatureGate from 'components/feature-example';
+import FilePickers from 'components/file-picker';
+import FocusableExample from 'components/focusable';
+import FoldableCard from 'components/foldable-card';
+import FormattedHeader from 'components/formatted-header';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormCountrySelect from 'components/forms/form-country-select';
+import FormCurrencyInput from 'components/forms/form-currency-input';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormPhoneInput from 'components/forms/form-phone-input';
+import FormRadio from 'components/forms/form-radio';
+import FormRadioWithThumbnail from 'components/forms/form-radio-with-thumbnail';
+import FormRadiosBarExample from 'components/forms/form-radios-bar/docs/example';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormStateSelector from 'components/forms/us-state-selector';
+import FormTelInput from 'components/forms/form-tel-input';
+import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormToggle from 'components/forms/form-toggle';
+import Gauge from 'components/gauge';
+import GlobalNotices from 'components/global-notices';
+import Gravatar from 'components/gravatar';
+import HeaderButton from 'components/header-button';
+import ImagePreloader from 'components/image-preloader';
+import InfoPopover from 'components/info-popover';
+import InputChrono from 'components/input-chrono';
+import JetpackColophonExample from 'components/jetpack-colophon';
+import JetpackLogoExample from 'components/jetpack-logo';
+import LanguagePicker from 'components/language-picker';
+import ListEnd from 'components/list-end';
+import Notices from 'components/notice';
+import Pagination from 'components/pagination';
+import PaymentLogo from 'components/payment-logo';
+import PieChart from 'components/pie-chart';
+import Popovers from 'components/popover';
+import ProgressBar from 'components/progress-bar';
+import Ranges from 'components/forms/range';
+import Rating from 'components/rating';
+import Ribbon from 'components/ribbon';
+import ScreenReaderTextExample from 'components/screen-reader-text';
+import SearchDemo from 'components/search';
+import SectionHeader from 'components/section-header';
+import SectionNav from 'components/section-nav';
+import SegmentedControl from 'components/segmented-control';
+import SelectDropdown from 'components/select-dropdown';
+import ShareButton from 'components/share-button';
+import SiteTitleControl from 'components/site-title';
+import SocialLogos from 'social-logos/example';
+import Spinner from 'components/spinner';
+import SpinnerButton from 'components/spinner-button';
+import SpinnerLine from 'components/spinner-line';
+import SplitButton from 'components/split-button';
+import Suggestions from 'components/suggestions';
+import TextDiff from 'components/text-diff';
+import TileGrid from 'components/tile-grid';
+import TimeSince from 'components/time-since';
+import Timezone from 'components/timezone';
+import TokenFields from 'components/token-field';
+import Tooltip from 'components/tooltip';
+import Version from 'components/version';
+import VerticalMenu from 'components/vertical-menu';
+import Wizard from 'components/wizard';
+
+import { AccordionPlayground } from 'components/accordion/docs/example';
+import { ActionCardPlayground } from 'components/action-card/docs/example';
+import { BackButtonPlayground } from 'components/back-button/docs/example';
+import { CardHeadingPlayground } from 'components/card-heading/docs/example';
+
+const examples = {
+	Accordion: AccordionPlayground,
+	ActionCard: ActionCardPlayground,
+	BackButton: BackButtonPlayground,
+	CardHeading: CardHeadingPlayground,
+};
+
+class DesignAssets extends React.Component {
+	static displayName = 'DesignAssets';
+
+	componentWillMount() {
+		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
+			const { dispatchFetchComponentsUsageStats } = this.props;
+			dispatchFetchComponentsUsageStats();
+		}
+	}
+
+	backToComponents = () => {
+		page( '/devdocs/design/' );
+	};
+
+	add = Component => {
+		this.setState( {
+			code:
+				'<div>' +
+				this.state.code.replace( /(^<div>)/, '' ).replace( /(<\/div>$)/, '' ) +
+				'\n\t' +
+				Component +
+				'\n</div>',
+		} );
+	};
+
+	state = {
+		code: `<div>
+\t<Button primary onClick={function() {alert('World')}}><Gridicon icon="code" /> Hello </Button>
+\t<ActionCard
+\t\theaderText={ 'Header' }
+\t\tmainText={ 'Some text' }
+\t\tbuttonText={ 'Call to action!' }
+\t\tbuttonIcon="external"
+\t\tbuttonPrimary={ true }
+\t\tbuttonHref="https://wordpress.com"
+\t\tbuttonTarget="_blank"
+\t/>
+</div>`,
+	};
+
+	handleChange = code => {
+		this.setState( {
+			code: code,
+		} );
+	};
+
+	render() {
+		const className = classnames( 'devdocs', 'devdocs__components', {
+			'is-single': true,
+			'is-list': ! this.props.component,
+		} );
+		const scope = {
+			Accordion,
+			ActionCard,
+			BackButton,
+			Badge,
+			Banner,
+			BulkSelect,
+			Button,
+			ButtonGroup,
+			Card,
+			CardHeading,
+			Checklist,
+			ClipboardButton,
+			ClipboardButtonInput,
+			Collection,
+			Count,
+			CountedTextarea,
+			DatePicker,
+			DropZones,
+			EllipsisMenu,
+			Emojify,
+			EmptyContent,
+			ExternalLink,
+			FAQ,
+			FeatureGate,
+			FilePickers,
+			FocusableExample,
+			FoldableCard,
+			FormattedHeader,
+			FormButton,
+			FormButtonsBar,
+			FormCheckbox,
+			FormCountrySelect,
+			FormCurrencyInput,
+			FormFieldset,
+			FormInputValidation,
+			FormLabel,
+			FormLegend,
+			FormPasswordInput,
+			FormPhoneInput,
+			FormRadio,
+			FormRadiosBarExample,
+			FormRadioWithThumbnail,
+			FormSectionHeading,
+			FormSelect,
+			FormSettingExplanation,
+			FormStateSelector,
+			FormTelInput,
+			FormTextarea,
+			FormTextInput,
+			FormTextInputWithAction,
+			FormTextInputWithAffixes,
+			FormToggle,
+			Gauge,
+			GlobalNotices,
+			Gravatar,
+			Gridicon,
+			HeaderButton,
+			HeaderCake,
+			ImagePreloader,
+			InfoPopover,
+			InputChrono,
+			JetpackColophonExample,
+			JetpackLogoExample,
+			LanguagePicker,
+			ListEnd,
+			Notices,
+			Pagination,
+			PaymentLogo,
+			PieChart,
+			Popovers,
+			ProgressBar,
+			Ranges,
+			Rating,
+			Ribbon,
+			ScreenReaderTextExample,
+			SearchCard,
+			SearchDemo,
+			SectionHeader,
+			SectionNav,
+			SegmentedControl,
+			SelectDropdown,
+			ShareButton,
+			SiteTitleControl,
+			SocialLogos,
+			Spinner,
+			SpinnerButton,
+			SpinnerLine,
+			SplitButton,
+			Suggestions,
+			TextDiff,
+			TileGrid,
+			TimeSince,
+			Timezone,
+			TokenFields,
+			Tooltip,
+			Version,
+			VerticalMenu,
+			Wizard,
+		};
+
+		return (
+			<Main className={ className }>
+				<DocumentHead title="Playground" />
+				<h1>Playground</h1>
+				<LiveProvider code={ this.state.code } scope={ scope } mountStylesheet={ false }>
+					<div className="design__wrapper">
+						<div className="design__components">
+							{ keys( examples ).map( name => {
+								return <ComponentAdd add={ this.add } example={ examples[ name ] } name={ name } />;
+							} ) }
+						</div>
+						<LiveEditor onChange={ this.handleChange } />
+					</div>
+					<LiveError />
+					<DocsExampleWrapper unique={ true } name="Preview">
+						<LivePreview />
+					</DocsExampleWrapper>
+				</LiveProvider>
+			</Main>
+		);
+	}
+}
+
+if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
+	const mapStateToProps = state => {
+		const { componentsUsageStats } = state;
+
+		return componentsUsageStats;
+	};
+
+	const mapDispatchToProps = dispatch => {
+		return bindActionCreators(
+			{
+				dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
+			},
+			dispatch
+		);
+	};
+
+	DesignAssets.propTypes = {
+		componentsUsageStats: PropTypes.object,
+		isFetching: PropTypes.bool,
+		dispatchFetchComponentsUsageStats: PropTypes.func,
+	};
+
+	DesignAssets = connect( mapStateToProps, mapDispatchToProps )( DesignAssets );
+}
+
+export default DesignAssets;

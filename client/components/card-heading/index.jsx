@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import { preventWidows } from 'lib/formatting';
 
 const validTypeSizes = [ 54, 47, 36, 32, 24, 21, 16, 14, 11 ];
+const validTagNames = [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
 
 function CardHeading( { tagName = 'h1', size = 21, children } ) {
 	const classNameObject = {};
@@ -24,8 +25,8 @@ function CardHeading( { tagName = 'h1', size = 21, children } ) {
 }
 
 CardHeading.propTypes = {
-	tagName: PropTypes.string,
-	size: PropTypes.number,
+	tagName: PropTypes.oneOf( validTagNames ),
+	size: PropTypes.oneOf( validTypeSizes ),
 };
 
 export default CardHeading;

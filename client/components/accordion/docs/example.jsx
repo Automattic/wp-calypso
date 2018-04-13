@@ -67,9 +67,9 @@ export default class extends React.PureComponent {
 					<Accordion
 						title="Section Four"
 						subtitle={
-							this.state.showSubtitles ? (
-								'With a Very Long Subtitle to Demonstrate the Fade Effect'
-							) : null
+							this.state.showSubtitles
+								? 'With a Very Long Subtitle to Demonstrate the Fade Effect'
+								: null
 						}
 					>
 						Drumstick ham tongue flank doner pork chop picanha. Cow short ribs tail kevin capicola
@@ -104,3 +104,14 @@ export default class extends React.PureComponent {
 		);
 	}
 }
+
+export const AccordionPlayground =
+	'<Accordion ' +
+	'title="Accordion Title" ' +
+	'subtitle="With Subtitle and Icon" ' +
+	'icon={ <Gridicon icon="time" /> } >' +
+	'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at ' +
+	'pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, ' +
+	'lorem semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae ' +
+	'velit.' +
+	'</Accordion>';
