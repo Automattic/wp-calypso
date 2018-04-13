@@ -260,7 +260,7 @@ class DesignAssets extends React.Component {
 	<br /><hr /><br />
 	<ActionCard
 		headerText={ 'Change the code above' }
-		mainText={ 'The playground lets you drop in components and play with values. It's experimental and likely will break.' }
+		mainText={ 'The playground lets you drop in components and play with values. Its experiemental and likely will break.' }
 		buttonText={ 'WordPress' }
 		buttonIcon="external"
 		buttonPrimary={ false }
