@@ -8,7 +8,8 @@ This component renders a dataset as a pie chart. A separate `PieChartLegend` sub
 	* **value** - (required) (Number) Value of the datum
 	* **name** - (required) (String) Name to represent the datum
 	* **description** - (optional) (String) A longer description of the datum 
-* **title** — (optional) (String) Title for the chart
+* **title** — (optional) (String | Function) Title for the chart. If it is a function it will be called with the arguemetns
+`translate` and `dataTotal`. This is used to create titles that reference the data total
 
 ## Usage
 
@@ -24,6 +25,14 @@ import { translate } from 'i18n-calypso';
  */
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
+
+const titleFunc = ( translate, dataTotal ) => {
+	return translate( '%(dataTotal)d Total Searches', {
+		args: {
+			dataTotal,
+		},
+	} );
+}
 
 export default class Example extends Component {
 	render() {
@@ -54,13 +63,11 @@ export default class Example extends Component {
 			}
 		];
 
-		const total = data.reduce( ( result, datum ) => result + datum.value, 0 );
-
 		return (
 			<div>
 				<PieChart
 					data={ data }
-					title={ translate( '%(total)s Total Searches', { args: { total } } ) }
+					title={ titleFunc }
 				/>
 				<PieChartLegend data={ data } />
 			</div>

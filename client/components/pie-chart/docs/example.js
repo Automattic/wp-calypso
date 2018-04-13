@@ -12,6 +12,14 @@ import Card from 'components/card';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 
+const titleFunc = ( translate, dataTotal ) => {
+	return translate( '%(dataTotal)d Total Searches', {
+		args: {
+			dataTotal,
+		},
+	} );
+};
+
 class PieChartExample extends Component {
 	static displayName = 'PieChart';
 
@@ -38,18 +46,15 @@ class PieChartExample extends Component {
 			},
 		];
 
-		const dataTotal = data.reduce( ( result, datum ) => result + datum.value, 0 );
-
 		this.state = {
 			data,
-			title: `${ dataTotal } Total Searches`,
 		};
 	}
 
 	render() {
 		return (
 			<Card>
-				<PieChart data={ this.state.data } title={ this.state.title } />
+				<PieChart data={ this.state.data } title={ titleFunc } />
 				<PieChartLegend data={ this.state.data } />
 			</Card>
 		);
