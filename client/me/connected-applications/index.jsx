@@ -5,13 +5,11 @@
  */
 
 import createReactClass from 'create-react-class';
-import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:me:connected-applications' );
 
 /**
  * Internal dependencies
@@ -50,27 +48,16 @@ const ConnectedApplications = createReactClass( {
 		};
 	},
 
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component is unmounting.' );
-	},
-
 	revokeConnection: function( applicationID, callback ) {
 		const application = this.props.connectedAppsData.getApplication( applicationID );
 		if ( 'undefined' !== typeof application ) {
 			this.props.connectedAppsData.revoke(
 				parseInt( applicationID, 10 ),
 				function( error ) {
-					debug( 'API call to revoke application is completed.' );
 					if ( error ) {
-						debug( 'There was an error revoking an application.' );
 						notices.clearNotices( 'notices' );
 						callback( error );
 					} else {
-						debug( 'Application connection was successfully revoked.' );
 						this.props.successNotice(
 							this.props.translate(
 								'%(applicationTitle)s no longer has access to your WordPress.com account.',
