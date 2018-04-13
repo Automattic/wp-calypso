@@ -744,9 +744,7 @@ class RegisterDomainStep extends React.Component {
 
 		const timestamp = Date.now();
 
-		if ( this.props.isSignupStep ) {
-			searchVendor = 'group_2';
-		}
+		searchVendor = this.props.isSignupStep ? 'group_2' : 'group_1';
 
 		const domainSuggestions = Promise.all( [
 			this.checkDomainAvailability( domain, timestamp ),
