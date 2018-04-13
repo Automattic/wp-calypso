@@ -108,6 +108,13 @@ class GoogleMyBusinessStats extends Component {
 								'The Google services that customers use to find your business'
 							) }
 							statType="VIEWS"
+							activeTab={ { label: translate( 'Listings On Search' ), attr: 'searchListings' } }
+							activeCharts={ [ 'mapListings' ] }
+							availableCharts={ [ 'mapListings' ] }
+							tabs={ [
+								{ label: translate( 'Listings On Search' ), attr: 'searchListings' },
+								{ label: translate( 'Listings On Maps' ), attr: 'mapListings' },
+							] }
 						/>
 					</div>
 
@@ -118,6 +125,13 @@ class GoogleMyBusinessStats extends Component {
 								'The most common actions that customers take on your listing'
 							) }
 							statType="ACTIONS"
+							activeTab={ { label: translate( 'Visit your Website' ), attr: 'visitWebsite' } }
+							activeCharts={ [ 'requestDirections' ] }
+							availableCharts={ [ 'requestDirections' ] }
+							tabs={ [
+								{ label: translate( 'Visit your Website' ), attr: 'visitWebsite' },
+								{ label: translate( 'Request Directions' ), attr: 'requestDirections' },
+							] }
 						/>
 					</div>
 

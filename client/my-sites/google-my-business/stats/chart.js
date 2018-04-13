@@ -12,6 +12,7 @@ import React, { Component } from 'react';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import Chart from 'components/chart';
+import ChartLegend from 'components/chart/legend';
 import SectionHeader from 'components/section-header';
 import placeHolderDataFunction from './placeholder-data';
 
@@ -49,7 +50,15 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	render() {
-		const { title, description, statType } = this.props;
+		const {
+			title,
+			description,
+			statType,
+			activeTab,
+			activeCharts,
+			availableCharts,
+			tabs,
+		} = this.props;
 		const { interval } = this.state;
 		const data = placeHolderDataFunction( statType, interval );
 		return (
@@ -69,6 +78,12 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="quarter">{ 'Quarter' }</option>
 					</select>
 					<div className="gmb-stats__metric-chart">
+						<ChartLegend
+							activeTab={ activeTab }
+							activeCharts={ activeCharts }
+							availableCharts={ availableCharts }
+							tabs={ tabs }
+						/>
 						<Chart data={ this.transformData( data ) } />
 					</div>
 				</Card>
