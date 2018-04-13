@@ -108,7 +108,8 @@ class ActivityLogItem extends Component {
 
 		forEach( nextProps.pluginsToUpdate, ( plugin, key ) => {
 			if (
-				this.props.pluginsToUpdate[ key ].updateStatus.status === plugin.updateStatus.status ||
+				get( this.props.pluginsToUpdate, [ key, 'updateStatus', 'status' ], false ) ===
+					plugin.updateStatus.status ||
 				'inProgress' === plugin.updateStatus.status
 			) {
 				return;
@@ -231,6 +232,7 @@ class ActivityLogItem extends Component {
 					return null;
 				}
 				return (
+					plugin &&
 					plugin.update && (
 						<Button
 							primary

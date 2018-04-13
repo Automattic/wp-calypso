@@ -614,8 +614,8 @@ class ActivityLog extends Component {
 			<Main wideLayout>
 				<PageViewTracker path="/stats/activity/:site" title="Stats > Activity" />
 				<DocumentHead title={ translate( 'Stats' ) } />
-				<QueryRewindState siteId={ siteId } />
-				<QueryJetpackPlugins siteIds={ [ siteId ] } />
+				{ siteId && <QueryRewindState siteId={ siteId } /> }
+				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
 					: this.getActivityLog() }
