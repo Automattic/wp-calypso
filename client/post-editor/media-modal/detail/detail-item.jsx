@@ -31,42 +31,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { isPrivateSite, canCurrentUser } from 'state/selectors';
 
-/**
- * This function return true if the image editor can be
- * enabled/shown
- *
- * @param  {object} item - media item
- * @param  {object} site - current site
- * @return {boolean} `true` if the image-editor can be enabled.
- */
-const enableImageEditing = ( item, site ) => {
-	// do not allow if, for some reason, there isn't a valid item yet
-	if ( ! item ) {
-		return false;
-	}
-
-	// do not show if the feature flag isn't set
-	if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
-		return false;
-	}
-
-	// do not allow for private sites
-	if ( get( site, 'is_private' ) ) {
-		return false;
-	}
-
-	// do not allow for Jetpack site with a non-valid version
-	if (
-		get( site, 'jetpack', false ) &&
-		versionCompare( get( site, 'options.jetpack_version', '0.0' ), '4.7-alpha', '<' )
-	) {
-		return false;
-	}
-
-	return true;
-};
-
-class EditorMediaModalDetailItem extends Component {
+export class EditorMediaModalDetailItem extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		item: PropTypes.object,
@@ -114,6 +79,43 @@ class EditorMediaModalDetailItem extends Component {
 		return true;
 	}
 
+	/**
+	 * This function return true if the image editor can be
+	 * enabled/shown
+	 *
+	 * @param  {object} item - media item
+	 * @param  {object} site - current site
+	 * @return {boolean} `true` if the image-editor can be enabled.
+	 */
+	enableImageEditing( item, site ) {
+		const { isPrivate } = this.props;
+
+		// do not allow if, for some reason, there isn't a valid item yet
+		if ( ! item ) {
+			return false;
+		}
+
+		// do not show if the feature flag isn't set
+		if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
+			return false;
+		}
+
+		// do not allow for private sites
+		if ( isPrivate ) {
+			return false;
+		}
+
+		// do not allow for Jetpack site with a non-valid version
+		if (
+			get( site, 'jetpack', false ) &&
+			versionCompare( get( site, 'options.jetpack_version', '0.0' ), '4.7-alpha', '<' )
+		) {
+			return false;
+		}
+
+		return true;
+	}
+
 	renderEditButton() {
 		const { item, onEdit, translate, canUserUploadFiles } = this.props;
 
@@ -121,11 +123,11 @@ class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		if ( this.props.isPrivateSite ) {
+		const mimePrefix = getMimePrefix( item );
+
+		if ( 'image' === mimePrefix && this.props.isPrivateSite ) {
 			return null;
 		}
-
-		const mimePrefix = getMimePrefix( item );
 
 		if ( ! includes( [ 'image', 'video' ], mimePrefix ) ) {
 			return null;
@@ -186,9 +188,9 @@ class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderImageEditorButtons( classname ) {
-		const { site } = this.props;
+		const { item, site } = this.props;
 
-		if ( ! enableImageEditing( site ) ) {
+		if ( ! this.enableImageEditing( item, site ) ) {
 			return null;
 		}
 
@@ -324,7 +326,7 @@ const connectComponent = connect( state => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 		isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
-		isPrivateSite: isPrivateSite( state, siteId ),
+		isPrivate: isPrivateSite( state, siteId ),
 		siteId,
 		canUserUploadFiles,
 	};
