@@ -11,16 +11,16 @@ import React, { Component } from 'react';
  */
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
-import Chart from 'components/chart';
-import ChartLegend from 'components/chart/legend';
+import PieChart from 'components/pie-chart';
+import PieChartLegend from 'components/pie-chart/legend';
 import SectionHeader from 'components/section-header';
 import placeHolderDataFunction from './placeholder-data';
 
 class GoogleMyBusinessStatsChart extends Component {
 	static props = {
-		title: PropTypes.string.isRequired,
-		description: PropTypes.string.isRequired,
+		description: PropTypes.string,
 		statType: PropTypes.string.isRequired,
+		title: PropTypes.string.isRequired,
 	};
 
 	state = {
@@ -32,43 +32,31 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	transformData( data ) {
-		if ( 1 === data.length ) {
-			return data[ 0 ].dimensionalValues.map( datum => ( {
-				label: datum.time,
-				value: datum.value,
-			} ) );
-		} else if ( 1 < data.length ) {
-			return data[ 0 ].dimensionalValues.map( ( datum, index ) => {
-				const nestedDatum = data[ 1 ].dimensionalValues[ index ];
-				return {
-					label: datum.time,
-					value: datum.value,
-					nestedValue: nestedDatum.value,
-				};
-			} );
-		}
+		return data.map( value => {
+			return {
+				value: value.dimensionalValues.value,
+				description: '',
+				name: value.metric,
+			};
+		} );
 	}
 
 	render() {
-		const {
-			title,
-			description,
-			statType,
-			activeTab,
-			activeCharts,
-			availableCharts,
-			tabs,
-		} = this.props;
+		const { description, statType, title } = this.props;
 		const { interval } = this.state;
 		const data = placeHolderDataFunction( statType, interval );
 		return (
 			<div>
 				<SectionHeader label={ title } />
 				<Card>
-					<CardHeading tagName={ 'h2' } size={ 16 }>
-						{ description }
-					</CardHeading>
-					<hr className="gmb-stats__metric-hr" />
+					{ description && (
+						<div>
+							<CardHeading tagName={ 'h2' } size={ 16 }>
+								{ description }
+							</CardHeading>
+							<hr className="gmb-stats__metric-hr" />
+						</div>
+					) }
 					<select
 						value={ interval }
 						onChange={ event => this.setState( { interval: event.target.value } ) }
@@ -78,13 +66,8 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="quarter">{ 'Quarter' }</option>
 					</select>
 					<div className="gmb-stats__metric-chart">
-						<ChartLegend
-							activeTab={ activeTab }
-							activeCharts={ activeCharts }
-							availableCharts={ availableCharts }
-							tabs={ tabs }
-						/>
-						<Chart data={ this.transformData( data ) } />
+						<PieChart data={ this.transformData( data ) } title={ 'Placeholder Title' } />
+						<PieChartLegend data={ this.transformData( data ) } />
 					</div>
 				</Card>
 			</div>

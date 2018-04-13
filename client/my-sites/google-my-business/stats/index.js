@@ -13,17 +13,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import FakeData from './fake-data';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
-import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
+import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PieChart from 'components/pie-chart';
-import PieChartLegend from 'components/pie-chart/legend';
 import SearchDataType from './search-data-type';
 import SectionHeader from 'components/section-header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -47,7 +44,7 @@ class GoogleMyBusinessStats extends Component {
 	};
 
 	render() {
-		const { locationData, searchData, searchDataTotal, siteId, siteSlug, translate } = this.props;
+		const { locationData, siteId, siteSlug, translate } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -74,19 +71,11 @@ class GoogleMyBusinessStats extends Component {
 
 				<div className="gmb-stats__metrics">
 					<div className="gmb-stats__metric">
+						<GoogleMyBusinessStatsChart
+							title={ translate( 'How customers search for your business' ) }
+							statType="QUERIES"
+						/>
 						<SectionHeader label={ translate( 'How customers search for your business' ) } />
-						<Card>
-							<div className={ 'gmb-stats__metric-search' }>
-								<PieChart
-									data={ searchData }
-									title={ translate( '%(total)d Total Searches', {
-										args: { total: searchDataTotal },
-									} ) }
-									className={ 'gmb-stats__metric-search-chart' }
-								/>
-								<PieChartLegend data={ searchData } />
-							</div>
-						</Card>
 					</div>
 
 					<div className="gmb-stats__metric">
@@ -108,13 +97,6 @@ class GoogleMyBusinessStats extends Component {
 								'The Google services that customers use to find your business'
 							) }
 							statType="VIEWS"
-							activeTab={ { label: translate( 'Listings On Search' ), attr: 'searchListings' } }
-							activeCharts={ [ 'mapListings' ] }
-							availableCharts={ [ 'mapListings' ] }
-							tabs={ [
-								{ label: translate( 'Listings On Search' ), attr: 'searchListings' },
-								{ label: translate( 'Listings On Maps' ), attr: 'mapListings' },
-							] }
 						/>
 					</div>
 
@@ -125,13 +107,6 @@ class GoogleMyBusinessStats extends Component {
 								'The most common actions that customers take on your listing'
 							) }
 							statType="ACTIONS"
-							activeTab={ { label: translate( 'Visit your Website' ), attr: 'visitWebsite' } }
-							activeCharts={ [ 'requestDirections' ] }
-							availableCharts={ [ 'requestDirections' ] }
-							tabs={ [
-								{ label: translate( 'Visit your Website' ), attr: 'visitWebsite' },
-								{ label: translate( 'Request Directions' ), attr: 'requestDirections' },
-							] }
 						/>
 					</div>
 
@@ -167,8 +142,6 @@ class GoogleMyBusinessStats extends Component {
 export default connect(
 	state => ( {
 		locationData: FakeData.locationData,
-		searchData: FakeData.searchData,
-		searchDataTotal: FakeData.searchDataTotal,
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),

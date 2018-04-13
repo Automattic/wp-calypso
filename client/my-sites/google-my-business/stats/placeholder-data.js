@@ -40,12 +40,9 @@ const getStartDateFromPeriod = period => {
 
 const generatePlaceHolderDataForMetric = ( metric, period ) => {
 	const dimensionalValues = [];
+	const startDate = getStartDateFromPeriod( period );
 	const endDate = new Date();
-	for (
-		const iter = getStartDateFromPeriod( period );
-		iter <= endDate;
-		iter.setDate( iter.getDate() + 1 )
-	) {
+	for ( const iter = startDate; iter <= endDate; iter.setDate( iter.getDate() + 1 ) ) {
 		dimensionalValues.push( {
 			time: iter.toDateString(),
 			value: random( DATA_MIN, DATA_MAX ),
@@ -54,8 +51,12 @@ const generatePlaceHolderDataForMetric = ( metric, period ) => {
 
 	return {
 		metric,
-		metricOption: 'AGGREGATED_DAILY',
-		dimensionalValues,
+		metricOption: 'AGGREGATED_TOTAL',
+		dimensionalValues: {
+			startTime: startDate.toDateString(),
+			endTime: endDate.toDateString(),
+			value: dimensionalValues.reduce( ( result, value ) => result + value.value, 0 ),
+		},
 	};
 };
 
