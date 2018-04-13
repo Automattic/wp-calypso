@@ -8,12 +8,20 @@
 	position: relative;
 	display: inline-block;
 
-	&::after {
-		content: "*";
-		color: $gray-darken-20;
+	&::before, &::after {
+		z-index: 1;
+		width: 50px;
+		height: 35px;
+		content: ' ';
+		background-image: url("data:image/svg+xml,%3Csvg width='50' height='35' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke-width='2'%3E%3Cpath stroke='%2386A6BC' fill='%2386A6BC' d='M41.522 2.488L4.093 12.518l15.47 6.207-8.631 12.665 36.975-9.907z'/%3E%3Cpath stroke='%23151E26' fill='%23151E26' d='M27.882 10.606l19.199 9.832-3.883-14.49z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 		position: absolute;
-			top: -3px;
-			right: -10px;
+			bottom: -25px;
+			left: -25px;
+	}
+	&::after {
+		transform: scaleX(-1);
+		left: auto;
+		right: -25px;
 	}
 }
 .plan-footer__text {
@@ -24,16 +32,13 @@
 	position: relative;
 	padding: 5px 10px;
 	height: 23px;
-}
-.plan-footer__banner {
-	z-index: 1;
-	position: absolute;
-		bottom: -25px;
-		left: -25px;
-	&.is-right {
-		transform: scaleX(-1);
-		left: auto;
-		right: -25px;
+
+	&::after {
+		content: "*";
+		color: $gray-darken-20;
+		position: absolute;
+			top: -3px;
+			right: -10px;
 	}
 }
 .plan-footer__fineprint {
