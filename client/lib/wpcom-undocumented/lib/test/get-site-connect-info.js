@@ -27,10 +27,6 @@ const getSiteConnectInfo = undocumented.getSiteConnectInfo.bind( undocumented );
  * Handy constants
  */
 const apiPath = '/connect/site-info';
-const expectedParams = {
-	filters: undefined,
-	apiVersion: '1.1',
-};
 
 // Surface regressions
 test( 'should return expected output for a variety of inputs', () => {
@@ -72,17 +68,6 @@ test( 'should reject with no protocol', async () => {
 	await expect( getSiteConnectInfo( '//example.com' ) ).rejects.toMatchSnapshot();
 } );
 
-test( 'should pass filters as a query argument', () => {
-	const filters = [ 'a', 'b', 'c' ];
-	expect( getSiteConnectInfo( 'http://example.com/', filters ) ).toEqual( [
-		`${ apiPath }/http/example.com`,
-		{
-			...expectedParams,
-			filters,
-		},
-	] );
-} );
-
 test( 'should handle internationalized domain names (IDNs)', () => {
 	expect( getSiteConnectInfo( 'http://áèîøüñç.com/' )[ 0 ] ).toBe(
 		`${ apiPath }/http/xn--1camcyp5b2a.com`
@@ -98,13 +83,7 @@ test( 'should handle punyencoded IDNs', () => {
 test( 'should escape the site url', () => {
 	expect(
 		getSiteConnectInfo( 'http://example.com/this-is-a-tricky-path-%2F%3F%26%3D%3A' )[ 0 ]
-	).toBe( `${ apiPath }/http/example.com::this-is-a-tricky-path-%252F%253F%2526%253D%253A` );
-} );
-
-test( 'should translate / in paths to ::', () => {
-	expect( getSiteConnectInfo( 'http://example.com/a/multipart/path' )[ 0 ] ).toBe(
-		`${ apiPath }/http/example.com::a::multipart::path`
-	);
+	).toBe( `${ apiPath }/http/example.com%2Fthis-is-a-tricky-path-%252F%253F%2526%253D%253A` );
 } );
 
 test( 'should discard a query', () => {
