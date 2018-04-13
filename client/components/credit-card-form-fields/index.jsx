@@ -17,7 +17,8 @@ import CreditCardNumberInput from 'components/upgrades/credit-card-number-input'
 import PaymentCountrySelect from 'components/payment-country-select';
 import EbanxBrazilPaymentFields from 'my-sites/checkout/checkout/ebanx-brazil-payment-fields';
 import { Input } from 'my-sites/domains/components/form';
-import { maskField, unmaskField, getCreditCardType } from 'lib/credit-card-details';
+import { maskField, unmaskField } from 'lib/credit-card-details';
+import { getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalEbanxFields } from 'lib/checkout/ebanx';
 
 export class CreditCardFormFields extends React.Component {
@@ -139,7 +140,7 @@ export class CreditCardFormFields extends React.Component {
 						onCountrySelected: this.updateFieldValues,
 					} ) }
 
-					{ ebanxDetailsRequired &&
+					{ ebanxDetailsRequired && (
 						<EbanxBrazilPaymentFields
 							countryCode={ this.getFieldValue( 'country' ) }
 							countriesList={ countriesList }
@@ -148,7 +149,7 @@ export class CreditCardFormFields extends React.Component {
 							handleFieldChange={ this.updateFieldValues }
 							fieldClassName="credit-card-form-fields__field"
 						/>
-					}
+					) }
 
 					{ this.createField( 'postal-code', Input, {
 						label: translate( 'Postal Code', {

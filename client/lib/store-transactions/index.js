@@ -13,7 +13,7 @@ import inherits from 'inherits';
  * Internal dependencies
  */
 import paymentGatewayLoader from 'lib/payment-gateway-loader';
-import { validateCardDetails } from 'lib/credit-card-details';
+import { validatePaymentDetails } from 'lib/checkout';
 import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
@@ -91,7 +91,7 @@ TransactionFlow.prototype._paymentHandlers = {
 	WPCOM_Billing_MoneyPress_Paygate: function() {
 		const { newCardDetails } = this._initialData.payment,
 			{ successUrl, cancelUrl } = this._initialData,
-			validation = validateCardDetails( newCardDetails );
+			validation = validatePaymentDetails( newCardDetails );
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this._pushStep( {
