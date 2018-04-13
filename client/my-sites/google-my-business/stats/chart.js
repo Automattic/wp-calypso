@@ -5,6 +5,8 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,26 +17,31 @@ import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 import SectionHeader from 'components/section-header';
 import placeHolderDataFunction from './placeholder-data';
+import { changeGoogleMyBusinessStatsInterval } from 'state/google-my-business/stats/action';
+import { getInterval } from 'state/google-my-business/stats/selector';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class GoogleMyBusinessStatsChart extends Component {
 	static props = {
+		changeGoogleMyBusinessStatsInterval: PropTypes.func.isRequired,
+		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
+		data: PropTypes.array.isRequired,
+		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
+		interval: PropTypes.string.isRequired,
+		siteId: PropTypes.number.isRequired,
 		statType: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
-		dataSeriesInfo: PropTypes.object,
-		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
 	};
 
 	static defaultProps = {
 		dataSeriesInfo: {},
 	};
 
-	state = {
-		interval: 'week',
-	};
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		return this.state.interval !== nextState.interval;
+	shouldComponentUpdate( nextProps ) {
+		return (
+			this.props.interval !== nextProps.interval || ! isEqual( this.props.data, nextProps.data )
+		);
 	}
 
 	transformData( data ) {
@@ -53,10 +60,16 @@ class GoogleMyBusinessStatsChart extends Component {
 		} );
 	}
 
+	onIntervalChange = event =>
+		this.props.changeGoogleMyBusinessStatsInterval(
+			this.props.siteId,
+			this.props.statType,
+			event.target.value
+		);
+
 	render() {
-		const { chartTitle, description, statType, title } = this.props;
-		const { interval } = this.state;
-		const data = placeHolderDataFunction( statType, interval );
+		const { chartTitle, data, description, interval, title } = this.props;
+		const transformedData = this.transformData( data );
 		return (
 			<div>
 				<SectionHeader label={ title } />
@@ -69,17 +82,14 @@ class GoogleMyBusinessStatsChart extends Component {
 							<hr className="gmb-stats__metric-hr" />
 						</div>
 					) }
-					<select
-						value={ interval }
-						onChange={ event => this.setState( { interval: event.target.value } ) }
-					>
+					<select value={ interval } onChange={ this.onIntervalChange }>
 						<option value="week">{ 'Week' }</option>
 						<option value="month">{ 'Month' }</option>
 						<option value="quarter">{ 'Quarter' }</option>
 					</select>
 					<div className="gmb-stats__metric-chart">
-						<PieChart data={ this.transformData( data ) } title={ chartTitle } />
-						<PieChartLegend data={ this.transformData( data ) } />
+						<PieChart data={ transformedData } title={ chartTitle } />
+						<PieChartLegend data={ transformedData } />
 					</div>
 				</Card>
 			</div>
@@ -87,4 +97,17 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 }
 
-export default GoogleMyBusinessStatsChart;
+export default connect(
+	( state, ownProps ) => {
+		const siteId = getSelectedSiteId( state );
+		const interval = getInterval( state, siteId, ownProps.statType );
+		return {
+			siteId,
+			interval,
+			data: placeHolderDataFunction( ownProps.statType, interval ),
+		};
+	},
+	{
+		changeGoogleMyBusinessStatsInterval,
+	}
+)( GoogleMyBusinessStatsChart );
