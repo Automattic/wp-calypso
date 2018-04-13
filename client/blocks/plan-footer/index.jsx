@@ -13,15 +13,16 @@ import PaymentMethods from 'blocks/payment-methods';
 
 class PlanFooter extends Component {
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			showMoneyBackGuarantee: abtest( 'showMoneyBackGuarantee' ) === 'yes',
-		};
+	showTestVariant() {
+		// only in signup, and not for Jetpack plans.
+		if ( ! this.props.isInSignup || this.props.isJetpack ) {
+			return false;
+		}
+		return abtest( 'showMoneyBackGuarantee' ) === 'yes';
 	}
 
 	render() {
-		if ( ! this.props.isInSignup || ! this.state.showMoneyBackGuarantee ) {
+		if ( ! this.showTestVariant() ) {
 			return (
 				<PaymentMethods />
 			);
@@ -40,10 +41,12 @@ class PlanFooter extends Component {
 }
 PlanFooter.propTypes = {
 	isInSignup: PropTypes.bool,
+	isJetpack: PropTypes.bool,
 };
 
 PlanFooter.defaultProps = {
 	isInSignup: false,
+	isJetpack: false,
 };
 
 export default PlanFooter;

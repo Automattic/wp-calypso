@@ -184,7 +184,7 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
-				<PlanFooter isInSignup={ isInSignup } />
+				<PlanFooter isInSignup={ isInSignup } isJetpack={ displayJetpackPlans } />
 				{ faqs }
 				<div className="plans-features-main__bottom" />
 			</div>
