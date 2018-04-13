@@ -25,7 +25,10 @@ export default class Typography extends React.PureComponent {
 					<h1>Typography</h1>
 					<h2>Interface Typography</h2>
 
-					<p>We use system fonts for UI elements. System fonts improve the page-rendering speed.</p>
+					<p>
+						We use system fonts for UI elements, like banners, buttons, or navigation. System fonts
+						improve the page-rendering speed.
+					</p>
 					<p>
 						<code>
 							-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu",
