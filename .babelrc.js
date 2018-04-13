@@ -8,6 +8,7 @@ const isCalypso = isCalypsoClient || isCalypsoServer;
 
 const modules = isCalypsoClient ? false : 'commonjs'; // only calypso should keep es6 modules
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
+const isDev = require( './server/config' )( 'env' ) === 'development';
 
 const config = {
 	presets: [
@@ -16,7 +17,7 @@ const config = {
 			{
 				modules,
 				targets: {
-					browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ],
+					browsers: [ 'last 2 chrome versions', 'last 2 firefox versions' ],
 				},
 				exclude: [ 'transform-classes', 'transform-template-literals' ], // transform-classes is added manually later.
 			},
@@ -28,9 +29,9 @@ const config = {
 		// the two class transforms are to emulate exactly how babel 6 handled classes.
 		// it very slightly diverges from spec but also is more concise.
 		// see: http://new.babeljs.io/docs/en/next/v7-migration.html#babel-plugin-proposal-class-properties
-		[ '@babel/plugin-proposal-class-properties', { loose: true } ],
-		[ '@babel/plugin-transform-classes', { loose: false } ],
-		[ '@babel/plugin-transform-template-literals', { loose: true } ],
+		//[ '@babel/plugin-proposal-class-properties', { loose: true } ],
+		//[ '@babel/plugin-transform-classes', { loose: false } ],
+		//[ '@babel/plugin-transform-template-literals', { loose: true } ],
 		! isCalypso && 'add-module-exports',
 		isCalypso && [
 			path.join(
