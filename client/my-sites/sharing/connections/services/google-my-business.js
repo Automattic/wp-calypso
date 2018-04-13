@@ -99,6 +99,9 @@ export class GoogleMyBusiness extends SharingService {
 	}
 
 	getDisclamerText() {
+		if ( 1 === this.props.availableExternalAccounts.length ) {
+			return this.props.translate( 'Confirm this is the location you wish to connect to' );
+		}
 		return this.props.translate( 'Select the location you wish to connect your site to.' );
 	}
 
