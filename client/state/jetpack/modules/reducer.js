@@ -20,7 +20,7 @@ import {
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
 	JETPACK_MODULES_REQUEST_SUCCESS,
-	JETPACK_SETTINGS_RECEIVE,
+	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
@@ -102,7 +102,7 @@ export const items = createReducer(
 		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createItemsReducer( true ),
 		[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createItemsReducer( false ),
 		[ JETPACK_MODULES_RECEIVE ]: createItemsListReducer(),
-		[ JETPACK_SETTINGS_RECEIVE ]: createSettingsItemsReducer(),
+		[ JETPACK_ONBOARDING_SETTINGS_UPDATE ]: createSettingsItemsReducer(),
 		[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: createSettingsItemsReducer(),
 	}
 );
