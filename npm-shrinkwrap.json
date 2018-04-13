@@ -3045,8 +3045,8 @@
       }
     },
     "create-react-class": {
-      "version": "15.6.2",
-      "integrity": "sha1-zx7RXxKq1/FO9fLf4F5sQvke8Co=",
+      "version": "15.6.3",
+      "integrity": "sha512-M+/3Q6E6DLO6Yx3OwrWjwHBnvfXXYA7W+dFjt/ZDBemHO1DDZhsalX/NUtnTYclN6GfnBDRh4qRHjcDHmlJBJg==",
       "requires": {
         "fbjs": "0.8.16",
         "loose-envify": "1.3.1",
@@ -4104,7 +4104,7 @@
         "object.values": "1.0.4",
         "prop-types": "15.6.1",
         "react-reconciler": "0.7.0",
-        "react-test-renderer": "16.2.0"
+        "react-test-renderer": "16.3.1"
       },
       "dependencies": {
         "prop-types": {
@@ -7155,7 +7155,7 @@
       "requires": {
         "async": "1.5.2",
         "commander": "2.15.1",
-        "create-react-class": "15.6.2",
+        "create-react-class": "15.6.3",
         "debug": "2.2.0",
         "globby": "6.1.0",
         "interpolate-components": "1.1.1",
@@ -13560,6 +13560,11 @@
         }
       }
     },
+    "react-is": {
+      "version": "16.3.1",
+      "integrity": "sha512-3XpazGqS5DEOLiuR6JQ2Sg6URq/33d1BHJVaUvtMz579KRhd2D0pqabNEe5czv785yzKBPZimOf0UNIXa3jw1A==",
+      "dev": true
+    },
     "react-lazily-render": {
       "version": "1.0.1",
       "integrity": "sha512-qLGAqO04hoiALBDzRd82sLzZIeoRpUaLTbA9wxL8gfdlzyqQ25oj6uuaMe600UictgFxX395tYaRXsoBUGZXPQ==",
@@ -13622,13 +13627,14 @@
       }
     },
     "react-test-renderer": {
-      "version": "16.2.0",
-      "integrity": "sha512-Kd4gJFtpNziR9ElOE/C23LeflKLZPRpNQYWP3nQBY43SJ5a+xyEGSeMrm2zxNKXcnCbBS/q1UpD9gqd5Dv+rew==",
+      "version": "16.3.1",
+      "integrity": "sha512-emEcIPUowMjT5EQ+rrb0FAwVCzuJ+LKDweoYDh073v2/jHxrBDPUk8nzI5dofG3R+140+Bb9TMcT2Ez5OP6pQw==",
       "dev": true,
       "requires": {
         "fbjs": "0.8.16",
         "object-assign": "4.1.1",
-        "prop-types": "15.6.1"
+        "prop-types": "15.6.1",
+        "react-is": "16.3.1"
       },
       "dependencies": {
         "prop-types": {
