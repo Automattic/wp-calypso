@@ -2237,7 +2237,6 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 
 	return this.wpcom.req.get( `${ endpointUrl }`, {
 		apiVersion: '1.1',
-		lockImplementation: '1',
 	} );
 };
 
