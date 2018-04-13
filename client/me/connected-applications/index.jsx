@@ -122,7 +122,6 @@ const ConnectedApplications = createReactClass( {
 							connection={ connection }
 							key={ connection.ID }
 							connectedApplications={ this.props.connectedAppsData }
-							revoke={ this.revokeConnection }
 						/>
 					);
 				}, this )
