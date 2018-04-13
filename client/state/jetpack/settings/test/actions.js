@@ -11,10 +11,10 @@ import {
 	updateJetpackSettings,
 } from '../actions';
 import {
-	JETPACK_ONBOARDING_SETTINGS_REQUEST,
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
-	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
-	JETPACK_ONBOARDING_SETTINGS_UPDATE,
+	JETPACK_SETTINGS_REQUEST,
+	JETPACK_SETTINGS_SAVE,
+	JETPACK_SETTINGS_SAVE_SUCCESS,
+	JETPACK_SETTINGS_UPDATE,
 } from 'state/action-types';
 
 describe( 'actions', () => {
@@ -24,7 +24,7 @@ describe( 'actions', () => {
 			const action = requestJetpackSettings( siteId );
 
 			expect( action ).toEqual( {
-				type: JETPACK_ONBOARDING_SETTINGS_REQUEST,
+				type: JETPACK_SETTINGS_REQUEST,
 				siteId,
 				meta: {
 					dataLayer: {
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 			const action = saveJetpackSettings( siteId, settings );
 
 			expect( action ).toEqual( {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_SETTINGS_SAVE,
 				siteId,
 				settings,
 				meta: {
@@ -67,7 +67,7 @@ describe( 'actions', () => {
 			const action = saveJetpackSettingsSuccess( siteId, settings );
 
 			expect( action ).toEqual( {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+				type: JETPACK_SETTINGS_SAVE_SUCCESS,
 				siteId,
 				settings,
 			} );
@@ -84,7 +84,7 @@ describe( 'actions', () => {
 			const action = updateJetpackSettings( siteId, settings );
 
 			expect( action ).toEqual( {
-				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
+				type: JETPACK_SETTINGS_UPDATE,
 				siteId,
 				settings,
 			} );

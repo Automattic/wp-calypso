@@ -14,8 +14,8 @@ import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
-	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
-	JETPACK_ONBOARDING_SETTINGS_UPDATE,
+	JETPACK_SETTINGS_SAVE_SUCCESS,
+	JETPACK_SETTINGS_UPDATE,
 	SERIALIZE,
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -158,7 +158,7 @@ describe( 'reducer', () => {
 			const siteId = 12345678;
 			const initialState = deepFreeze( {} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
+				type: JETPACK_SETTINGS_UPDATE,
 				siteId,
 				settings,
 			} );
@@ -174,7 +174,7 @@ describe( 'reducer', () => {
 				[ 12345678 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
+				type: JETPACK_SETTINGS_UPDATE,
 				siteId,
 				settings,
 			} );
@@ -198,7 +198,7 @@ describe( 'reducer', () => {
 				[ 87654321 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
+				type: JETPACK_SETTINGS_UPDATE,
 				siteId,
 				settings: newSettings,
 			} );
@@ -219,7 +219,7 @@ describe( 'reducer', () => {
 				[ 87654321 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+				type: JETPACK_SETTINGS_SAVE_SUCCESS,
 				siteId,
 				settings: newSettings,
 			} );
@@ -240,7 +240,7 @@ describe( 'reducer', () => {
 				[ 87654321 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+				type: JETPACK_SETTINGS_SAVE_SUCCESS,
 				siteId,
 				settings: newSettings,
 			} );
@@ -262,7 +262,7 @@ describe( 'reducer', () => {
 				[ 87654321 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
+				type: JETPACK_SETTINGS_UPDATE,
 				siteId,
 				settings: newSettings,
 			} );

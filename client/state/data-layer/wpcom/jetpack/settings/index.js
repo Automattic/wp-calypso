@@ -12,10 +12,7 @@ import { translate } from 'i18n-calypso';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	JETPACK_ONBOARDING_SETTINGS_REQUEST,
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
-} from 'state/action-types';
+import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
 import { getJetpackSettings, getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	filterSettingsByActiveModules,
@@ -174,7 +171,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 };
 
 export default {
-	[ JETPACK_ONBOARDING_SETTINGS_REQUEST ]: [
+	[ JETPACK_SETTINGS_REQUEST ]: [
 		dispatchRequest(
 			requestJetpackSettings,
 			receiveJetpackOnboardingSettings,
@@ -184,7 +181,7 @@ export default {
 			}
 		),
 	],
-	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
+	[ JETPACK_SETTINGS_SAVE ]: [
 		dispatchRequest( saveJetpackSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
 	],
 };

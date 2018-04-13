@@ -15,8 +15,8 @@ import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
-	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
-	JETPACK_ONBOARDING_SETTINGS_UPDATE,
+	JETPACK_SETTINGS_SAVE_SUCCESS,
+	JETPACK_SETTINGS_UPDATE,
 } from 'state/action-types';
 
 export const settingsReducer = keyedReducer(
@@ -49,17 +49,13 @@ export const settingsReducer = keyedReducer(
 					...normalizeSettings( moduleSettings ),
 				};
 			},
-			[ JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS ]: (
-				state,
-				{ settings: { post_by_email_address } }
-			) => {
+			[ JETPACK_SETTINGS_SAVE_SUCCESS ]: ( state, { settings: { post_by_email_address } } ) => {
 				if ( post_by_email_address && post_by_email_address !== state.post_by_email_address ) {
 					return { ...state, post_by_email_address };
 				}
 				return state;
 			},
-			[ JETPACK_ONBOARDING_SETTINGS_UPDATE ]: ( state, { settings } ) =>
-				merge( {}, state, settings ),
+			[ JETPACK_SETTINGS_UPDATE ]: ( state, { settings } ) => merge( {}, state, settings ),
 		},
 		jetpackSettingsSchema
 	)
