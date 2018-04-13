@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
-import { connectGoogleMyBusinessLocation } from 'state/google-my-business/action';
+import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -41,10 +41,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 
 		return (
 			<GoogleMyBusinessLocation isCompact location={ location }>
-				<Button
-					href={ `/google-my-business/stats/${ siteSlug }` }
-					onClick={ this.connectLocation }
-				>
+				<Button href={ `/google-my-business/stats/${ siteSlug }` } onClick={ this.connectLocation }>
 					{ translate( 'Connect Location' ) }
 				</Button>
 			</GoogleMyBusinessLocation>
