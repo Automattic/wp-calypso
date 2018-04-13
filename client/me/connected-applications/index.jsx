@@ -7,8 +7,6 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,7 +17,6 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
-import notices from 'notices';
 /* eslint-disable no-restricted-imports */
 // FIXME: Remove use of this mixin
 import observe from 'lib/mixins/data-observe';
@@ -27,7 +24,6 @@ import observe from 'lib/mixins/data-observe';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import { successNotice } from 'state/notices/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /* eslint-disable react/prefer-es6-class */
@@ -46,32 +42,6 @@ const ConnectedApplications = createReactClass( {
 		return {
 			applicationID: 0,
 		};
-	},
-
-	revokeConnection: function( applicationID, callback ) {
-		const application = this.props.connectedAppsData.getApplication( applicationID );
-		if ( 'undefined' !== typeof application ) {
-			this.props.connectedAppsData.revoke(
-				parseInt( applicationID, 10 ),
-				function( error ) {
-					if ( error ) {
-						notices.clearNotices( 'notices' );
-						callback( error );
-					} else {
-						this.props.successNotice(
-							this.props.translate(
-								'%(applicationTitle)s no longer has access to your WordPress.com account.',
-								{
-									args: {
-										applicationTitle: application.title,
-									},
-								}
-							)
-						);
-					}
-				}.bind( this )
-			);
-		}
 	},
 
 	renderEmptyContent: function() {
@@ -165,6 +135,4 @@ const ConnectedApplications = createReactClass( {
 	},
 } );
 
-export default connect( null, dispatch => bindActionCreators( { successNotice }, dispatch ) )(
-	localize( ConnectedApplications )
-);
+export default localize( ConnectedApplications );
