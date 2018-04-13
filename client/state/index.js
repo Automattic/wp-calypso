@@ -32,6 +32,7 @@ import checklist from './checklist/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import concierge from './concierge/reducer';
+import connectedApplications from './connected-applications/reducer';
 import consoleDispatcher from './console-dispatch';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
@@ -119,6 +120,7 @@ const reducers = {
 	comments,
 	componentsUsageStats,
 	concierge,
+	connectedApplications,
 	countries,
 	countryStates,
 	currentUser,
