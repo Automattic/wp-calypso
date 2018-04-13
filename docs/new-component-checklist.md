@@ -1,6 +1,6 @@
 # New Component Checklist
 
-Component QA is used whenever someone wants to merge a new component to the system. The steps below are from Nathan Curtis’ [Component QA article](https://medium.com/eightshapes-llc/component-qa-in-design-systems-b18cb4decb9c) and work more as a guideline.
+This checklist is used whenever someone wants to merge a new component to the system. The steps below are edited from Nathan Curtis’ [Component QA article](https://medium.com/eightshapes-llc/component-qa-in-design-systems-b18cb4decb9c).
 
 ## Visual Quality
 
@@ -8,7 +8,7 @@ Does the component apply visual style — color, typography, icons, space, b
 
 ## Accessibility
 
-Has the design and implementation accounted for accessibility? Please use our [accessibility checklist](accessibility.md).
+Has the design and implementation accounted for accessibility? Please use our [accessibility checklist](accessibility-checklist.md).
 
 ## Responsiveness
 
