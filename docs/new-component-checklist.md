@@ -1,35 +1,35 @@
 # New Component Checklist
 
-Component QA is used whenever someone wants to merge a new component to the system. The steps below are from Nathan Curtis’ Component QA article and work more as a guideline.
+Component QA is used whenever someone wants to merge a new component to the system. The steps below are from Nathan Curtis’ [Component QA article](https://medium.com/eightshapes-llc/component-qa-in-design-systems-b18cb4decb9c) and work more as a guideline.
 
-1. Visual Quality
+## Visual Quality
 
 Does the component apply visual style — color, typography, icons, space, borders, and more — using appropriate variables, and does it meet our visual guidelines?
 
-2. Sufficient States & Variations
+## Accessibility
 
-Does it cover all the necessary variations (primary, secondary, flat, menu button) and states (default, hover, active, disabled), given intended scope?
+Has the design and implementation accounted for accessibility? Please use our [accessibility checklist](accessibility.md).
 
-3. Responsiveness
+## Responsiveness
 
-Does it incorporate responsive display patterns and behaviors as needed?
+Does it incorporate responsive display patterns and behaviors as needed? Is the component designed from a mobile-first perspective? Do all touch interactions work as expected?
 
-4. Content Resilience
+## Sufficient States & Variations
+
+Does it cover all the necessary variations (primary, secondary, compact, menu button) and states (default, hover, active, disabled), given intended scope?
+
+## Content Resilience
 
 Is each dynamic word or image element resilient to too much, too little, and no content at all, respectively? For tabs, how long can labels be, and what happens when you run out of space?
 
-5. Composability
+## Composability
 
 Does it fit well when placed next to or layered with other components to form a larger composition? For tabs, how can they be applied stacked with or on top of other components?
 
-6. Functionality
+## Functionality
 
-Do all behaviors – typically, JavaScript-driven – function as expected? For responsive tabs, are gestures (for sliding left and right) and menus (for overflow tabs) behaving correctly in varied device settings?
+Do all behaviors function as expected? For responsive tabs, are gestures (for sliding left and right) and menus (for overflow tabs) behaving correctly in varied device settings?
 
-7. Accessibility
+## Browser Support
 
-Has the design and implementation accounted for accessible?
-
-8. Browsers Compatibility
-
-Has the component visual quality and accuracy been assessed across Safari, Chrome, Firefox, IE and other browsers across relevant devices?
+Has the component visual quality and accuracy been assessed across Safari, Chrome, Firefox, IE and other browsers across relevant devices? Please adhere to our [browser support requirements](./README.md#browser-support).
