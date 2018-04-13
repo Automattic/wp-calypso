@@ -44,8 +44,36 @@ export function transformer( apiResponse ) {
  */
 export function processItem( item ) {
 	const { actor, object, published } = item;
-	const activityMeta =
-		'2' === get( item, [ 'object', 'error_code' ], '' ) ? { errorCode: 'bad_credentials' } : {};
+	const activityMeta = {};
+	switch ( item.name ) {
+		case 'rewind__backup_error':
+			if ( '2' === get( item.object, 'error_code', '' ) ) {
+				activityMeta.errorCode = 'bad_credentials';
+			}
+			break;
+
+		case 'plugin__update_available':
+			const pluginSlug = get( item, 'items.0.object_slug', '' );
+			if ( pluginSlug ) {
+				// Directory and main file: hello-dolly/hello
+				activityMeta.pluginId = pluginSlug.replace( /\.php$/, '' );
+				// Directory: hello-dolly
+				activityMeta.pluginSlug = activityMeta.pluginId.split( '/' )[ 0 ];
+			}
+			const pluginsToUpdate = get( item, 'items', [] );
+			if ( pluginsToUpdate ) {
+				activityMeta.pluginsToUpdate = map( pluginsToUpdate, plugin => {
+					const pluginId = plugin.object_slug.replace( /\.php$/, '' );
+					return {
+						// Directory and main file: hello-dolly/hello
+						pluginId,
+						// Directory: hello-dolly
+						pluginSlug: pluginId.split( '/' )[ 0 ],
+					};
+				} );
+			}
+			break;
+	}
 
 	return Object.assign(
 		{
