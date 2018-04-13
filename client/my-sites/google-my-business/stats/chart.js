@@ -22,6 +22,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		statType: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		dataSeriesInfo: PropTypes.object,
+		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
 	};
 
 	static defaultProps = {
@@ -53,7 +54,7 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	render() {
-		const { description, statType, title } = this.props;
+		const { chartTitle, description, statType, title } = this.props;
 		const { interval } = this.state;
 		const data = placeHolderDataFunction( statType, interval );
 		return (
@@ -77,7 +78,7 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="quarter">{ 'Quarter' }</option>
 					</select>
 					<div className="gmb-stats__metric-chart">
-						<PieChart data={ this.transformData( data ) } title={ 'Placeholder Title' } />
+						<PieChart data={ this.transformData( data ) } title={ chartTitle } />
 						<PieChartLegend data={ this.transformData( data ) } />
 					</div>
 				</Card>

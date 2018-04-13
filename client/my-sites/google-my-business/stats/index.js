@@ -27,6 +27,30 @@ import StatsNavigation from 'blocks/stats-navigation';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+const searchChartTitleFunc = ( translate, dataTotal ) => {
+	return translate( '%(dataTotal)d Total Searches', {
+		args: {
+			dataTotal,
+		},
+	} );
+};
+
+const viewChartTitleFunc = ( translate, dataTotal ) => {
+	return translate( '%(dataTotal)d Total Views', {
+		args: {
+			dataTotal,
+		},
+	} );
+};
+
+const actionChartTitleFunc = ( translate, dataTotal ) => {
+	return translate( '%(dataTotal)d Total Actions', {
+		args: {
+			dataTotal,
+		},
+	} );
+};
+
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
 		locationData: GoogleMyBusinessLocationType.isRequired,
@@ -71,6 +95,7 @@ class GoogleMyBusinessStats extends Component {
 						<GoogleMyBusinessStatsChart
 							title={ translate( 'How customers search for your business' ) }
 							statType="QUERIES"
+							chartTitle={ searchChartTitleFunc }
 							dataSeriesInfo={ {
 								QUERIES_DIRECT: {
 									name: translate( 'Direct' ),
@@ -108,6 +133,7 @@ class GoogleMyBusinessStats extends Component {
 								'The Google services that customers use to find your business'
 							) }
 							statType="VIEWS"
+							chartTitle={ viewChartTitleFunc }
 							dataSeriesInfo={ {
 								VIEWS_MAPS: {
 									name: translate( 'Listings On Maps' ),
@@ -126,6 +152,7 @@ class GoogleMyBusinessStats extends Component {
 								'The most common actions that customers take on your listing'
 							) }
 							statType="ACTIONS"
+							chartTitle={ actionChartTitleFunc }
 							dataSeriesInfo={ {
 								ACTIONS_WEBSITE: {
 									name: translate( 'Visit Your Website' ),
