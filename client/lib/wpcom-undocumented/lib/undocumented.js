@@ -2225,22 +2225,17 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
  * Check different info about WordPress and Jetpack status on a url
  *
  * @param {String} targetUrl - The url of the site to check
- * @param {String} filters - Comma separated string with the filters to run
  * @returns {Promise}  promise
  */
-Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
+Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 	const parsedUrl = url.parse( targetUrl );
 	let endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
-	let params = {
-		filters: filters,
-		apiVersion: '1.1',
-	};
 
 	if ( parsedUrl.path && parsedUrl.path !== '/' ) {
 		endpointUrl += parsedUrl.path.replace( /\//g, '::' );
 	}
 
-	return this.wpcom.req.get( `${ endpointUrl }`, params );
+	return this.wpcom.req.get( endpointUrl );
 };
 
 /**
