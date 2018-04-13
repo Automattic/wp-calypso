@@ -2205,14 +2205,12 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 		return Promise.reject( new Error( 'Received bad URL. Must use http or https protocol.' ) );
 	}
 
-	const protocolPart = 'https:' === protocol ? 'https' : 'http';
-
-	const siteUrlPart = host + ( pathname && pathname !== '/' ? pathname : '' );
+	const siteUrlPart = encodeURIComponent( host + ( pathname && pathname !== '/' ? pathname : '' ) );
 
 	const endpointUrl = [
 		'/connect/site-info',
-		protocolPart,
-		encodeURIComponent( siteUrlPart ).replace( /%3A%3A/g, '::' ),
+		'https:' === protocol ? 'https' : 'http',
+		siteUrlPart,
 	].join( '/' );
 
 	// @TODO(sirreal) drop encodeUrl when API is updated
