@@ -119,13 +119,10 @@ export class SimpleSiteRenameForm extends Component {
 	}
 
 	onSubmit = event => {
-		const { siteId } = this.props;
-		const { domainFieldValue } = this.state;
-
 		event.preventDefault();
 
 		if ( ! this.state.validationMessage ) {
-			this.props.requestSiteRename( siteId, domainFieldValue );
+			this.showConfirmationDialog();
 		}
 	};
 
