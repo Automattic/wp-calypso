@@ -294,10 +294,21 @@ class DesignAssets extends React.Component {
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Playground" />
-				<LiveProvider code={ code } scope={ scope } mountStylesheet={ false }>
-					<LiveEditor />
-					<LiveError />
-					<LivePreview />
+				<LiveProvider
+					code={ code }
+					scope={ scope }
+					mountStylesheet={ false }
+					className="design__playground"
+				>
+					<div className="design__editor">
+						<div className="design__error">
+							<LiveError />
+						</div>
+						<LiveEditor />
+					</div>
+					<div className="design__preview">
+						<LivePreview />
+					</div>
 				</LiveProvider>
 			</Main>
 		);
