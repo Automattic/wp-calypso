@@ -99,6 +99,10 @@ export class GoogleMyBusiness extends SharingService {
 		}
 	}
 
+	getDisclamerText() {
+		return this.props.translate( 'Select the location you wish to connect your site to.' );
+	}
+
 	renderLogo() {
 		// Render a custom logo here because Google My Business is not part of SocialLogos
 		return (

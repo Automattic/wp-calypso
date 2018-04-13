@@ -429,6 +429,7 @@ export class SharingService extends Component {
 					service={ this.props.service }
 					accounts={ accounts }
 					onAccountSelected={ this.addConnection }
+					disclaimerText={ this.getDisclamerText && this.getDisclamerText() }
 				/>
 				<FoldableCard
 					className={ classNames }
