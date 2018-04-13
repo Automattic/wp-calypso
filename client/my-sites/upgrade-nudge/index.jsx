@@ -69,20 +69,13 @@ class UpgradeNudge extends React.Component {
 	};
 
 	shouldDisplay() {
-		const {
-			feature,
-			jetpack,
-			planHasFeature,
-			shouldDisplay,
-			site,
-			canUserCanManageSite,
-		} = this.props;
+		const { feature, jetpack, planHasFeature, shouldDisplay, site, canManageSite } = this.props;
 
 		if ( shouldDisplay ) {
 			return shouldDisplay();
 		}
 
-		if ( ! canUserCanManageSite ) {
+		if ( ! canManageSite ) {
 			return false;
 		}
 
@@ -183,7 +176,7 @@ export default connect(
 		return {
 			site,
 			planHasFeature: hasFeature( state, siteId, ownProps.feature ),
-			canUserCanManageSite: canCurrentUser( state, siteId, 'manage_options' ),
+			canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		};
 	},
 	{ recordTracksEvent }
