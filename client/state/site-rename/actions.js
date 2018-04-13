@@ -25,7 +25,7 @@ import { requestSite } from 'state/sites/actions';
 
 // @TODO proper redux data layer stuff for the nonce
 function fetchNonce( siteId ) {
-	return wpcom.undocumented().getRequestSiteRenameNonce( siteId );
+	return wpcom.undocumented().getSiteAddressChangeNonce( siteId );
 }
 
 export const getErrorNotice = message =>
@@ -127,7 +127,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 		.then( nonce => {
 			wpcom
 				.undocumented()
-				.updateSiteName( siteId, newBlogName, discard, nonce )
+				.changeSiteAddress( siteId, newBlogName, discard, nonce )
 				.then( data => {
 					const newSlug = get( data, 'new_slug' );
 
