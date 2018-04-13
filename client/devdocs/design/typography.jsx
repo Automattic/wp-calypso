@@ -58,6 +58,34 @@ export default class Typography extends React.PureComponent {
 							there are some lowercase alphabets to which…
 						</p>
 					</Card>
+
+					<h2>Code Typography</h2>
+
+					<p>
+						We use the following font stack for code blocks, sized at <code>15px</code>:<br />
+						<code>
+							Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", "Courier 10 Pitch", Courier,
+							monospace
+						</code>
+					</p>
+
+					<Card className="design__typography-code-example">
+						<p>
+							“A man who would letterspace lower case would steal sheep,” Frederic Goudy liked to
+							say. The reason for not letterspacing lower case is that it hampers legibility. But
+							there are some lowercase alphabets to which…
+						</p>
+					</Card>
+
+					<h3>More resources</h3>
+
+					<ul>
+						<li>
+							<a href="https://wordpress.com/design-handbook/typography#typography-modularscale">
+								Typographic Modular Scale
+							</a>
+						</li>
+					</ul>
 				</div>
 			</Main>
 		);
