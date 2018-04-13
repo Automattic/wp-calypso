@@ -17,6 +17,7 @@ import {
 	isEmpty,
 	camelCase,
 	identity,
+	includes,
 } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -40,6 +41,10 @@ import GAppsFieldset from 'components/domains/contact-details-form-fields/custom
 import RegionAddressFieldsets from 'components/domains/contact-details-form-fields/custom-form-fieldsets/region-address-fieldsets';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
+import {
+	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
+	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
+} from 'components/domains/contact-details-form-fields/custom-form-fieldsets/constants';
 
 const CONTACT_DETAILS_FORM_FIELDS = [
 	'firstName',
@@ -144,8 +149,21 @@ export class ContactDetailsFormFields extends Component {
 
 	getMainFieldValues() {
 		const mainFieldValues = formState.getAllFieldValues( this.state.form );
+		const { countryCode, hasCountryStates } = this.props;
+		let state = mainFieldValues.state;
+
+		if (
+			! hasCountryStates &&
+			( includes( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ||
+				includes( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) )
+		) {
+			state = '';
+		}
+
 		return {
 			...mainFieldValues,
+			// domains registered according to ancient validation rules may have state set even though not required
+			state,
 			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
 		};
 	}
@@ -432,11 +450,14 @@ export class ContactDetailsFormFields extends Component {
 
 export default connect( ( state, props ) => {
 	const contactDetails = props.contactDetails;
+	const countryCode = contactDetails.countryCode;
+
 	const hasCountryStates =
 		contactDetails && contactDetails.countryCode
 			? ! isEmpty( getCountryStates( state, contactDetails.countryCode ) )
 			: false;
 	return {
+		countryCode,
 		hasCountryStates,
 	};
 } )( localize( ContactDetailsFormFields ) );
