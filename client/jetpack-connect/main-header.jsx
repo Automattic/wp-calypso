@@ -16,6 +16,10 @@ import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { retrievePlan } from './persistence-utils';
 
 class JetpackConnectMainHeader extends PureComponent {
+	static propTypes = {
+		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
+	};
+
 	getTexts() {
 		const { translate, type } = this.props;
 		const selectedPlan = retrievePlan();
@@ -87,9 +91,5 @@ class JetpackConnectMainHeader extends PureComponent {
 		return <FormattedHeader headerText={ title } subHeaderText={ subtitle } />;
 	}
 }
-
-JetpackConnectMainHeader.propTypes = {
-	type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
-};
 
 export default localize( JetpackConnectMainHeader );
