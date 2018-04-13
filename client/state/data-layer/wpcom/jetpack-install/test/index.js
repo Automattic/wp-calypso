@@ -29,7 +29,7 @@ describe( 'installJetpackPlugin', () => {
 describe( 'handleSuccess', () => {
 	test( 'should return jetpackRemoteInstallComplete', () => {
 		const result = handleSuccess( { url }, SUCCESS_RESPONSE );
-		expect( result ).toEqual( jetpackRemoteInstallComplete( url ) );
+		expect( result ).toEqual( expect.objectContaining( jetpackRemoteInstallComplete( url ) ) );
 	} );
 } );
 
