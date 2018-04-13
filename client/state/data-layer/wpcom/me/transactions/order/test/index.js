@@ -24,9 +24,12 @@ describe( 'wpcom-api', () => {
 				expect( fetchOrderTransaction( action ) ).toEqual(
 					http(
 						{
-							method: 'GET',
 							path: `/me/transactions/order/${ action.orderId }`,
+							method: 'GET',
 							apiNamespace: 'rest/v1',
+							query: {
+								http_envelope: 1,
+							},
 						},
 						action
 					)
