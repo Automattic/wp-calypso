@@ -47,32 +47,51 @@ class ActivityLogItem extends Component {
 	confirmRewind = () => this.props.confirmRewind( this.props.activity.rewindId );
 
 	renderHeader() {
-		const {
-			activityDescription,
-			activityTitle,
-			actorAvatarUrl,
-			actorName,
-			actorRole,
-			actorType,
-		} = this.props.activity;
+		const { activityTitle, actorAvatarUrl, actorName, actorRole, actorType } = this.props.activity;
 
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
 				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-content">
-						{ /* There is no great way to generate a more valid React key here
-						  * but the index is probably sufficient because these sub-items
-						  * shouldn't be changing.
-						  */ }
-						{ activityDescription.map( ( part, i ) => (
-							<FormattedBlock key={ i } content={ part } />
-						) ) }
+						{ this.getActivityDescription() }
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
 			</div>
 		);
+	}
+
+	/**
+	 * Returns formatted activity descriptions straight from ActivityStream or with updates performed here.
+	 * Since after logging an event in ActivityStream it's impossible to change it,
+	 * this updates the text for some specific events whose status might have changed after they were logged.
+	 * In this way we're not showing to the user incorrect facts that might be different now.
+	 *
+	 * @returns {object|string} Activity description, possibly with inserted markup.
+	 */
+	getActivityDescription() {
+		const {
+			activity: { activityName, activityDescription, activityMeta },
+			translate,
+			rewindIsActive,
+		} = this.props;
+
+		// If backup failed due to invalid credentials but Rewind is now active means it was fixed.
+		if (
+			'rewind__backup_error' === activityName &&
+			'bad_credentials' === activityMeta.errorCode &&
+			rewindIsActive
+		) {
+			return translate(
+				'Jetpack had some trouble connecting to your site, but that problem has been resolved.'
+			);
+		}
+
+		/* There is no great way to generate a more valid React key here
+		 * but the index is probably sufficient because these sub-items
+		 * shouldn't be changing. */
+		return activityDescription.map( ( part, i ) => <FormattedBlock key={ i } content={ part } /> );
 	}
 
 	renderItemAction() {
@@ -146,14 +165,17 @@ class ActivityLogItem extends Component {
 	 * @returns {Object} Get button to fix credentials.
 	 */
 	renderFixCredsAction = () => {
-		const { rewindState, siteId, siteSlug, trackFixCreds, translate } = this.props;
+		if ( this.props.rewindIsActive ) {
+			return null;
+		}
+		const { siteId, siteSlug, trackFixCreds, translate, canAutoconfigure } = this.props;
 		return (
 			<Button
 				className="activity-log-item__quick-action"
 				primary
 				compact
 				href={
-					rewindState.canAutoconfigure
+					canAutoconfigure
 						? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
 						: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }`
 				}
@@ -255,15 +277,19 @@ class ActivityLogItem extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { activityId, siteId } ) => ( {
-	activity: getActivityLog( state, siteId, activityId ),
-	gmtOffset: getSiteGmtOffset( state, siteId ),
-	mightBackup: activityId && activityId === getRequestedBackup( state, siteId ),
-	mightRewind: activityId && activityId === getRequestedRewind( state, siteId ),
-	timezone: getSiteTimezoneValue( state, siteId ),
-	siteSlug: getSiteSlug( state, siteId ),
-	rewindState: getRewindState( state, siteId ),
-} );
+const mapStateToProps = ( state, { activityId, siteId } ) => {
+	const rewindState = getRewindState( state, siteId );
+	return {
+		activity: getActivityLog( state, siteId, activityId ),
+		gmtOffset: getSiteGmtOffset( state, siteId ),
+		mightBackup: activityId && activityId === getRequestedBackup( state, siteId ),
+		mightRewind: activityId && activityId === getRequestedRewind( state, siteId ),
+		timezone: getSiteTimezoneValue( state, siteId ),
+		siteSlug: getSiteSlug( state, siteId ),
+		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
+		canAutoconfigure: rewindState.canAutoconfigure,
+	};
+};
 
 const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 	createBackup: () =>
