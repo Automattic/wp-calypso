@@ -2235,9 +2235,7 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 		endpointUrl += parsedUrl.path.replace( /\//g, '::' );
 	}
 
-	return this.wpcom.req.get( `${ endpointUrl }`, {
-		apiVersion: '1.1',
-	} );
+	return this.wpcom.req.get( endpointUrl );
 };
 
 /**
