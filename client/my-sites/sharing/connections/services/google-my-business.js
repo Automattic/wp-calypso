@@ -14,9 +14,12 @@ import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
-import { isRequestingSiteSettings } from 'state/site-settings/selectors';
+import { getSiteSettings, isRequestingSiteSettings } from 'state/site-settings/selectors';
 import { getGoogleMyBusinessConnectedLocation } from 'state/selectors';
-import { getSiteSettings } from '../../../../state/site-settings/selectors';
+import {
+	connectGoogleMyBusinessLocation,
+	disconnectGoogleMyBusinessLocation,
+} from 'state/google-my-business/actions';
 
 export class GoogleMyBusiness extends SharingService {
 	static propTypes = {
@@ -33,39 +36,28 @@ export class GoogleMyBusiness extends SharingService {
 	};
 
 	// override `createOrUpdateConnection` to ignore connection update, this is only useful for publicize services
-	createOrUpdateConnection = ( keyringConnectionId, externalUserId = 0 ) => {
+	createOrUpdateConnection = ( keyringConnectionId, externalUserId ) => {
 		this.props
-			.saveSiteSettings( this.props.siteId, {
-				google_my_business_keyring_id: keyringConnectionId,
-				google_my_business_location_id: externalUserId,
+			.connectGoogleMyBusinessLocation( this.props.siteId, keyringConnectionId, externalUserId )
+			.catch( () => {
+				this.props.failCreateConnection( {
+					message: this.props.translate( 'Error while linking your site to %(service)s.', {
+						args: { service: this.props.service.label },
+						context: 'Sharing: External connection error',
+					} ),
+				} );
 			} )
-			.then( ( { updated } ) => {
-				if (
-					! updated.hasOwnProperty( 'google_my_business_keyring_id' ) &&
-					! updated.hasOwnProperty( 'google_my_business_location_id' )
-				) {
-					this.props.failCreateConnection( {
-						message: this.props.translate( 'Error while linking your site to %(service)s.', {
-							args: { service: this.props.service.label },
-							context: 'Sharing: External connection error',
-						} ),
-					} );
-					this.setState( { isConnecting: false } );
-				}
+			.finally( () => {
+				this.setState( { isConnecting: false } );
 			} );
 	};
 
 	// override `removeConnection` to remove the keyring connection instead of the publicize one
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
-		this.props
-			.saveSiteSettings( this.props.siteId, {
-				google_my_business_keyring_id: null,
-				google_my_business_location_id: null,
-			} )
-			.then( () => {
-				this.setState( { isDisconnecting: false } );
-			} );
+		this.props.disconnectGoogleMyBusinessLocation( this.props.siteId ).finally( () => {
+			this.setState( { isDisconnecting: false } );
+		} );
 	};
 
 	componentWillMount() {
@@ -142,6 +134,8 @@ export default connectFor(
 		};
 	},
 	{
+		connectGoogleMyBusinessLocation,
+		disconnectGoogleMyBusinessLocation,
 		deleteStoredKeyringConnection,
 		requestSiteSettings,
 		saveSiteSettings,
