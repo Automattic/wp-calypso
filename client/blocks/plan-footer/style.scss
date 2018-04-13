@@ -32,6 +32,12 @@
 	position: relative;
 	padding: 5px 10px;
 	height: 23px;
+	line-height: 21px;
+	font-size: 12px;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 15px;
+	}
 
 	&::after {
 		content: "*";

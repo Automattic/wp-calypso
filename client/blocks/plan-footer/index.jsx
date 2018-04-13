@@ -30,7 +30,7 @@ class PlanFooter extends Component {
 		return (
 			<div className="plan-footer">
 				<div className="plan-footer__guarantee">
-					<div className="plan-footer__text">30 day money back guarantee</div>
+					<div className="plan-footer__text">30-day money back guarantee on all plans</div>
 				</div>
 				<div className="plan-footer__fineprint">
 					* Domains purchased with a plan are only refundable for 48 hours.
