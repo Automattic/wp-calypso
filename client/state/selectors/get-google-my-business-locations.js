@@ -14,13 +14,14 @@ function isConnected( keyringConnection, externalUser, siteSettings ) {
 }
 
 export default function getGoogleMyBusinessLocations( state, siteId ) {
-	const keyringConnections = getKeyringConnectionsByName( state, 'google_my_business' );
 	const siteSettings = getSiteSettings( state, siteId );
-	const locations = [];
 
 	if ( ! siteSettings ) {
 		return [];
 	}
+
+	const keyringConnections = getKeyringConnectionsByName( state, 'google_my_business' );
+	const locations = [];
 
 	keyringConnections.forEach( keyringConnection => {
 		if ( keyringConnection.additional_external_users ) {
