@@ -256,7 +256,9 @@ class ImportingPane extends React.PureComponent {
 
 const mapDispatchToProps = dispatch => ( {
 	mapAuthorFor: importerId => ( source, target ) =>
-		dispatch( mapAuthor( importerId, source, target ) ),
+		setTimeout( () => {
+			dispatch( mapAuthor( importerId, source, target ) );
+		}, 0 ),
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( localize( ImportingPane ) );
