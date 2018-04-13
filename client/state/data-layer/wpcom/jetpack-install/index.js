@@ -32,10 +32,7 @@ export const handleSuccess = ( { url }, data ) => {
 		} )
 	);
 
-	if ( data.status ) {
-		return logToTracks( jetpackRemoteInstallComplete( url ) );
-	}
-	return logToTracks( jetpackRemoteInstallUpdateError( url, 'UNKNOWN_ERROR' ) );
+	return logToTracks( jetpackRemoteInstallComplete( url ) );
 };
 
 export const handleError = ( { url }, error ) => {
