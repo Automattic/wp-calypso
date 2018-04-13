@@ -252,7 +252,7 @@ class DesignAssets extends React.Component {
     <HeaderCake actionText="Fun" actionIcon="status">Welcome to the Playground</HeaderCake>
 	<Button primary onClick={
 		function() {
-			alert( 'World' )
+			alert( 'World' );
 		}
 	}>
 		<Gridicon icon="code" /> Hello
@@ -260,7 +260,7 @@ class DesignAssets extends React.Component {
 	<br /><hr /><br />
 	<ActionCard
 		headerText={ 'Change the code above' }
-		mainText={ 'The playground lets you drop in components and play with values. Its experiemental and likely will break.' }
+		mainText={ 'The playground lets you drop in components and play with values. It is experimental and likely will break.' }
 		buttonText={ 'WordPress' }
 		buttonIcon="external"
 		buttonPrimary={ false }
