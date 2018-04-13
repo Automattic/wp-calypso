@@ -45,8 +45,8 @@ export const disconnectGoogleMyBusinessLocation = siteId => dispatch => {
 
 	return dispatch(
 		saveSiteSettings( siteId, {
-			google_my_business_keyring_id: null,
-			google_my_business_location_id: null,
+			google_my_business_keyring_id: false,
+			google_my_business_location_id: false,
 		} )
 	).then( ( { updated } ) => {
 		if (
