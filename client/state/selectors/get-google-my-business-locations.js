@@ -13,6 +13,15 @@ function isConnected( keyringConnection, externalUser, siteSettings ) {
 		externalUser.external_ID === siteSettings.google_my_business_location_id;
 }
 
+/**
+ * Returns a list of "external users" for the Google My Business keyring connection.
+ * Those external users are Business Locations associated with this Google account
+ * in this context
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Object} siteId The site ID
+ * @return {Object}        List of GMB locations
+ */
 export default function getGoogleMyBusinessLocations( state, siteId ) {
 	const siteSettings = getSiteSettings( state, siteId );
 
