@@ -40,6 +40,7 @@ import {
 	createAccount as createAccountAction,
 	createSocialAccount as createSocialAccountAction,
 } from 'state/jetpack-connect/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
@@ -205,9 +206,16 @@ export class JetpackSignup extends Component {
 		);
 	}
 	render() {
+		const { interval, locale } = this.props;
 		const { isCreatingAccount } = this.state;
 		return (
 			<MainWrapper>
+				<PageViewTracker
+					path={ `/jetpack/connect/authorize${ interval ? '/' + interval : '' }${
+						locale ? '/:locale' : ''
+					}` }
+					title="Jetpack Authorize"
+				/>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader authQuery={ this.props.authQuery } />

@@ -20,6 +20,7 @@ import WordPressLogo from 'components/wordpress-logo';
 import { cleanUrl } from '../utils';
 import { persistSession } from '../persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class JetpackNewSite extends Component {
 	constructor() {
@@ -60,6 +61,7 @@ class JetpackNewSite extends Component {
 	render() {
 		return (
 			<div>
+				<PageViewTracker path="/jetpack/new" title="Add a new site (Jetpack)" />
 				<BackButton onClick={ this.handleBack } />
 				<div className="jetpack-new-site__main jetpack-new-site">
 					<div className="jetpack-new-site__header">

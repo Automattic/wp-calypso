@@ -23,6 +23,7 @@ import { externalRedirect } from 'lib/route';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_INSTALL } from './constants';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class InstallInstructions extends Component {
 	static propTypes = {
@@ -81,6 +82,10 @@ class InstallInstructions extends Component {
 
 		return (
 			<MainWrapper isWide>
+				<PageViewTracker
+					path="/jetpack/connect/instructions"
+					title="Jetpack Manual Install Instructions"
+				/>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<FormattedHeader

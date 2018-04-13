@@ -7,7 +7,7 @@ import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { concat, flowRight, includes } from 'lodash';
+import { concat, flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -52,8 +52,16 @@ import {
 	OUTDATED_JETPACK,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const debug = debugModule( 'calypso:jetpack-connect:main' );
+
+const analyticsPageTitleByType = {
+	install: 'Jetpack Install',
+	personal: 'Jetpack Connect Personal',
+	premium: 'Jetpack Connect Premium',
+	pro: 'Jetpack Install Pro',
+};
 
 export class JetpackConnectMain extends Component {
 	static propTypes = {
@@ -414,10 +422,20 @@ export class JetpackConnectMain extends Component {
 		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
 	}
 
+	getAnalyticsPath = () => {
+		const { interval, locale, type } = this.props;
+		return `/jetpack/connect${ type ? '/' + type : '' }${ interval ? '/' + interval : '' }${
+			locale ? '/:locale' : ''
+		}`;
+	};
+
+	getAnalyticsTitle = () => get( analyticsPageTitleByType, this.props.type, 'Jetpack Connect' );
+
 	render() {
 		const status = this.getStatus();
 		return (
 			<MainWrapper>
+				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<FormattedHeader

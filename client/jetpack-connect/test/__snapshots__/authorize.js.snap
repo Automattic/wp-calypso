@@ -4,6 +4,10 @@ exports[`JetpackAuthorize renders as expected 1`] = `
 <JetpackConnectMainWrapper
   isWide={false}
 >
+  <Connect(PageViewTracker)
+    path="/jetpack/connect/authorize"
+    title="Jetpack Authorize"
+  />
   <div
     className="jetpack-connect__authorize-form"
   >

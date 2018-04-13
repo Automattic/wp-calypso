@@ -26,7 +26,7 @@ import OrgCredentialsForm from './remote-credentials';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
 import versionCompare from 'lib/version-compare';
-import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -52,12 +52,6 @@ import {
  * Module variables
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
-const analyticsPageTitleByType = {
-	install: 'Jetpack Install',
-	personal: 'Jetpack Connect Personal',
-	premium: 'Jetpack Connect Premium',
-	pro: 'Jetpack Install Pro',
-};
 
 const removeSidebar = context =>
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
@@ -122,7 +116,6 @@ export function maybeOnboard( { query, store }, next ) {
 }
 
 export function newSite( context, next ) {
-	analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
 	jetpackNewSiteSelector( context );
 	next();
 }
@@ -151,9 +144,8 @@ export function setMasterbar( context, next ) {
 }
 
 export function connect( context, next ) {
-	const { path, pathname, params, query } = context;
+	const { path, params, query } = context;
 	const { type = false, interval } = params;
-	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
 	debug( 'entered connect flow with params %o', params );
 
@@ -162,12 +154,11 @@ export function connect( context, next ) {
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
 	planSlug && storePlan( planSlug );
 
-	analytics.pageView.record( pathname, analyticsPageTitle );
-
 	removeSidebar( context );
 
 	context.primary = React.createElement( JetpackConnect, {
 		context,
+		interval,
 		locale: params.locale,
 		path,
 		type,
@@ -179,11 +170,6 @@ export function connect( context, next ) {
 }
 
 export function instructions( context, next ) {
-	analytics.pageView.record(
-		'jetpack/connect/instructions',
-		'Jetpack Manual Install Instructions'
-	);
-
 	const url = context.query.url;
 	if ( ! url ) {
 		return page.redirect( '/jetpack/connect' );
@@ -193,8 +179,6 @@ export function instructions( context, next ) {
 }
 
 export function signupForm( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
-
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
 		// Force login for mobile app flow. App will intercept this request and prompt native login.
@@ -239,9 +223,17 @@ export function credsForm( context, next ) {
 }
 
 export function authorizeForm( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
-
 	removeSidebar( context );
+
+	let interval = context.params.interval;
+	let locale = context.params.locale;
+	if ( context.params.localeOrInterval ) {
+		if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
+			interval = context.params.localeOrInterval;
+		} else {
+			locale = context.params.localeOrInterval;
+		}
+	}
 
 	const { query } = context;
 	const validQueryObject = validator( authorizeQueryDataSchema )( query );
@@ -249,7 +241,9 @@ export function authorizeForm( context, next ) {
 	if ( validQueryObject ) {
 		const transformedQuery = authQueryTransformer( query );
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
-		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
+		context.primary = (
+			<JetpackAuthorize authQuery={ transformedQuery } interval={ interval } locale={ locale } />
+		);
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}
@@ -257,12 +251,7 @@ export function authorizeForm( context, next ) {
 }
 
 export function sso( context, next ) {
-	const analyticsBasePath = '/jetpack/sso';
-	const analyticsPageTitle = 'Jetpack SSO';
-
 	removeSidebar( context );
-
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = React.createElement( JetpackSsoForm, {
 		path: context.path,
@@ -274,16 +263,11 @@ export function sso( context, next ) {
 }
 
 export function plansLanding( context, next ) {
-	const analyticsPageTitle = 'Plans';
-	const basePath = sectionify( context.path );
-	const analyticsBasePath = basePath + '/:site';
-
 	removeSidebar( context );
 
 	context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
 	analytics.tracks.recordEvent( 'calypso_plans_view' );
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
 		<PlansLanding
@@ -297,17 +281,12 @@ export function plansLanding( context, next ) {
 }
 
 export function plansSelection( context, next ) {
-	const analyticsPageTitle = 'Plans';
-	const basePath = sectionify( context.path );
-	const analyticsBasePath = basePath + '/:site';
-
 	removeSidebar( context );
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
 	analytics.tracks.recordEvent( 'calypso_plans_view' );
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
 		<CheckoutData>
