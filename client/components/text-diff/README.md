@@ -29,7 +29,7 @@ export default function RenamedTitle() {
 
 ## Props
 
-The following props are available to customize the accordion:
+The following props are available to customize the text-diff:
 
 - `operations`: An array of objects representing a content change, of shape:
   - `op`: The type of operation, addition ('add'), deletion ('del') or copy ('copy')

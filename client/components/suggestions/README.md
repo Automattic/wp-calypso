@@ -1,20 +1,18 @@
-/** @format */
+# Suggestions (JSX)
 
-/**
- * External dependencies
- */
+Suggestions is a component which works with `SearchCard` to display suggested search terms.
 
-import React, { Component } from 'react';
-import { noop } from 'lodash';
+## Usage
 
-/**
- * Internal dependencies
- */
+`Suggestions` is passed an array of `suggestions` which will display in a list. The way this is usually implemented is to supply a list of possible values in the parent class, and filter these using the query in `SearchCard`, passing the remaining suggestions to the `<Suggestions />` component.
+
+For example:
+
+```jsx
 import SearchCard from 'components/search-card';
 import Suggestions from 'components/suggestions';
 
 class SuggestionsExample extends Component {
-	static displayName = 'Suggestions';
 
 	static hints = [ 'Foo', 'Bar', 'Baz' ];
 
@@ -36,6 +34,14 @@ class SuggestionsExample extends Component {
 			.map( hint => ( { label: hint } ) );
 	}
 
+	suggestions = {
+		return [
+			{ label: 'Foo' },
+			{ label: 'Bar' },
+			{ label: 'Baz' },
+		]
+	};
+
 	render() {
 		return (
 			<div className="docs__suggestions-container">
@@ -44,12 +50,12 @@ class SuggestionsExample extends Component {
 					onSearch={ this.handleSearch }
 					onBlur={ this.hideSuggestions }
 					onKeyDown={ this.handleKeyDown }
-					placeholder="Type Foo, Bar or Baz..."
+					placeholder="Type something..."
 				/>
 				<Suggestions
 					ref={ this.setSuggestionsRef }
 					query={ this.state.query }
-					suggestions={ this.getSuggestions() }
+					suggestions={ this.suggestions }
 					suggest={ noop }
 				/>
 			</div>
@@ -57,4 +63,12 @@ class SuggestionsExample extends Component {
 	}
 }
 
-export default SuggestionsExample;
+```
+
+## Props
+
+The following props are available:
+
+- `query`: (string) The search query that the suggestions are based on. Will be highlighted in the suggestions.
+- `suggestions`: (arry) An array of possible suggestions that match the query, made of objects of the shape `{ label: 'Label' }
+- `suggest`: A function that is called when the suggestion is selected.
