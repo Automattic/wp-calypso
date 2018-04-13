@@ -33,7 +33,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
-		actionData: PropTypes.array.isRequired,
 		locationData: GoogleMyBusinessLocationType.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		searchData: PropTypes.arrayOf( SearchDataType ).isRequired,
@@ -41,7 +40,6 @@ class GoogleMyBusinessStats extends Component {
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		viewData: PropTypes.array.isRequired,
 	};
 
 	trackUpdateListingClick = () => {
@@ -49,16 +47,7 @@ class GoogleMyBusinessStats extends Component {
 	};
 
 	render() {
-		const {
-			actionData,
-			locationData,
-			searchData,
-			searchDataTotal,
-			siteId,
-			siteSlug,
-			translate,
-			viewData,
-		} = this.props;
+		const { locationData, searchData, searchDataTotal, siteId, siteSlug, translate } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -118,7 +107,7 @@ class GoogleMyBusinessStats extends Component {
 							description={ translate(
 								'The Google services that customers use to find your business'
 							) }
-							data={ viewData }
+							statType="VIEWS"
 						/>
 					</div>
 
@@ -128,7 +117,7 @@ class GoogleMyBusinessStats extends Component {
 							description={ translate(
 								'The most common actions that customers take on your listing'
 							) }
-							data={ actionData }
+							statType="ACTIONS"
 						/>
 					</div>
 
@@ -163,13 +152,11 @@ class GoogleMyBusinessStats extends Component {
 
 export default connect(
 	state => ( {
-		actionData: FakeData.actionData,
 		locationData: FakeData.locationData,
 		searchData: FakeData.searchData,
 		searchDataTotal: FakeData.searchDataTotal,
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
-		viewData: FakeData.viewData,
 	} ),
 	{
 		recordTracksEvent,
