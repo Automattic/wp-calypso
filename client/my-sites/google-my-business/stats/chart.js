@@ -21,6 +21,11 @@ class GoogleMyBusinessStatsChart extends Component {
 		description: PropTypes.string,
 		statType: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
+		dataSeriesInfo: PropTypes.object,
+	};
+
+	static defaultProps = {
+		dataSeriesInfo: {},
 	};
 
 	state = {
@@ -35,8 +40,14 @@ class GoogleMyBusinessStatsChart extends Component {
 		return data.map( value => {
 			return {
 				value: value.dimensionalValues.value,
-				description: '',
-				name: value.metric,
+				description:
+					this.props.dataSeriesInfo[ value.metric ] !== undefined
+						? this.props.dataSeriesInfo[ value.metric ].description
+						: '',
+				name:
+					this.props.dataSeriesInfo[ value.metric ] !== undefined
+						? this.props.dataSeriesInfo[ value.metric ].name
+						: value.metric,
 			};
 		} );
 	}

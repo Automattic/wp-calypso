@@ -21,7 +21,6 @@ import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart'
 import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SearchDataType from './search-data-type';
 import SectionHeader from 'components/section-header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -32,8 +31,6 @@ class GoogleMyBusinessStats extends Component {
 	static propTypes = {
 		locationData: GoogleMyBusinessLocationType.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
-		searchData: PropTypes.arrayOf( SearchDataType ).isRequired,
-		searchDataTotal: PropTypes.number.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -74,6 +71,20 @@ class GoogleMyBusinessStats extends Component {
 						<GoogleMyBusinessStatsChart
 							title={ translate( 'How customers search for your business' ) }
 							statType="QUERIES"
+							dataSeriesInfo={ {
+								QUERIES_DIRECT: {
+									name: translate( 'Direct' ),
+									description: translate(
+										'Customers who find your listing searching for you business name or address'
+									),
+								},
+								QUERIES_INDIRECT: {
+									name: translate( 'Discovery' ),
+									description: translate(
+										'Customers who find your listing searching for a category, product, or service'
+									),
+								},
+							} }
 						/>
 						<SectionHeader label={ translate( 'How customers search for your business' ) } />
 					</div>
@@ -97,6 +108,14 @@ class GoogleMyBusinessStats extends Component {
 								'The Google services that customers use to find your business'
 							) }
 							statType="VIEWS"
+							dataSeriesInfo={ {
+								VIEWS_MAPS: {
+									name: translate( 'Listings On Maps' ),
+								},
+								VIEWS_SEARCH: {
+									name: translate( 'Listings On Maps' ),
+								},
+							} }
 						/>
 					</div>
 
@@ -107,6 +126,17 @@ class GoogleMyBusinessStats extends Component {
 								'The most common actions that customers take on your listing'
 							) }
 							statType="ACTIONS"
+							dataSeriesInfo={ {
+								ACTIONS_WEBSITE: {
+									name: translate( 'Visit Your Website' ),
+								},
+								ACTIONS_DRIVING_DIRECTIONS: {
+									name: translate( 'Request Directions' ),
+								},
+								ACTIONS_PHONE: {
+									name: translate( 'Call You' ),
+								},
+							} }
 						/>
 					</div>
 
