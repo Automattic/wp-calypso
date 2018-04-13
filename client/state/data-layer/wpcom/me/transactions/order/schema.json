@@ -4,6 +4,7 @@
 	"properties": {
 		"order_id": { "type": "integer" },
 		"user_id": { "type": "integer" },
+		"receipt_id": { "type": "integer" },
 		"processing_status": { "type": "string" }
 	}
 }
