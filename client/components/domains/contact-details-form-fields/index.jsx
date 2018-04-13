@@ -152,6 +152,7 @@ export class ContactDetailsFormFields extends Component {
 		const { countryCode, hasCountryStates } = this.props;
 		let state = mainFieldValues.state;
 
+		// domains registered according to ancient validation rules may have state set even though not required
 		if (
 			! hasCountryStates &&
 			( includes( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ||
@@ -162,7 +163,6 @@ export class ContactDetailsFormFields extends Component {
 
 		return {
 			...mainFieldValues,
-			// domains registered according to ancient validation rules may have state set even though not required
 			state,
 			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
 		};
