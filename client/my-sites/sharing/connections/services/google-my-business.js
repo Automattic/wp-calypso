@@ -43,7 +43,6 @@ export class GoogleMyBusiness extends SharingService {
 				this.props.failCreateConnection( {
 					message: this.props.translate( 'Error while linking your site to %(service)s.', {
 						args: { service: this.props.service.label },
-						context: 'Sharing: External connection error',
 					} ),
 				} );
 			} )
