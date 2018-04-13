@@ -53,7 +53,7 @@ class CheckoutPending extends PureComponent {
 			const { processingStatus } = transaction;
 
 			if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
-				page( `/checkout/thank-you/${ siteSlug }` );
+				page( `/checkout/thank-you/${ siteSlug }/${ transaction.receiptId }` );
 
 				return;
 			}

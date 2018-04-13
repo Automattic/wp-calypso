@@ -13,12 +13,14 @@ describe( 'wpcom-api', () => {
 			const response = {
 				user_id: 123,
 				order_id: 456,
+				receipt_id: 123456,
 				processing_status: 'success',
 			};
 
 			const expectedOutput = {
 				userId: response.user_id,
 				orderId: response.order_id,
+				receiptId: response.receipt_id,
 				processingStatus: ORDER_TRANSACTION_STATUS.SUCCESS,
 			};
 

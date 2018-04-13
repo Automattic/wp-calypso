@@ -22,9 +22,10 @@ export const convertProcessingStatus = responseStatus => {
 	}
 };
 
-export const transform = ( { order_id, user_id, processing_status } ) => ( {
+export const transform = ( { order_id, user_id, receipt_id, processing_status } ) => ( {
 	orderId: order_id,
 	userId: user_id,
+	receiptId: receipt_id,
 	processingStatus: convertProcessingStatus( processing_status ),
 } );
 
