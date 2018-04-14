@@ -6,5 +6,5 @@
 import { get } from 'lodash';
 
 export function getInterval( state, siteId, statType ) {
-	return get( state.googleMyBusinessStats.statInterval, [ siteId, statType ], 'week' );
+	return get( state.googleMyBusiness, [ siteId, 'statInterval', statType ], 'week' );
 }

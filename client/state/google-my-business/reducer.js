@@ -7,6 +7,7 @@ import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
 	GOOGLE_MY_BUSINESS_CONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_DISCONNECT_LOCATION,
+	GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
 } from 'state/action-types';
 
 const location = createReducer(
@@ -21,4 +22,11 @@ const location = createReducer(
 	}
 );
 
-export default keyedReducer( 'siteId', combineReducers( { location } ) );
+const statInterval = createReducer( 'week', {
+	[ GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL ]: ( state, { interval } ) => interval,
+} );
+
+export default keyedReducer(
+	'siteId',
+	combineReducers( { location, statInterval: keyedReducer( 'statType', statInterval ) } )
+);
