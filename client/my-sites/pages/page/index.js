@@ -73,6 +73,8 @@ class Page extends Component {
 		recordMoreOptions: PropTypes.func.isRequired,
 		recordPageTitle: PropTypes.func.isRequired,
 		recordEditPage: PropTypes.func.isRequired,
+		// Adding new make homepage item
+		recordMakeHomepage: PropTypes.func.isRequired,
 		recordViewPage: PropTypes.func.isRequired,
 		recordStatsPage: PropTypes.func.isRequired,
 	};
@@ -199,6 +201,24 @@ class Page extends Component {
 			<PopoverMenuItem onClick={ this.editPage } onMouseOver={ preloadEditor }>
 				<Gridicon icon="pencil" size={ 18 } />
 				{ this.props.translate( 'Edit' ) }
+			</PopoverMenuItem>
+		);
+	}
+
+	// Inserting new Make Homepage item to popover menu.
+	getHomepageItem() {
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+			return null;
+		}
+
+		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
+			return null;
+		}
+
+		return (
+			<PopoverMenuItem onClick={ this.makeHomepage }>
+				<Gridicon icon="house" size={ 18 } />
+				{ this.props.translate( 'Make Homepage' ) }
 			</PopoverMenuItem>
 		);
 	}
@@ -344,6 +364,8 @@ class Page extends Component {
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
+		// Adding homepage item
+		const homepageItem = this.getHomepageItem();
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
 		const copyItem = this.getCopyItem();
@@ -353,6 +375,8 @@ class Page extends Component {
 			viewItem ||
 			publishItem ||
 			editItem ||
+			// Adding new homepage item
+			homepageItem ||
 			statsItem ||
 			restoreItem ||
 			sendToTrashItem ||
@@ -365,6 +389,7 @@ class Page extends Component {
 				onToggle={ this.handleMenuToggle }
 			>
 				{ editItem }
+				{ homepageItem }
 				{ publishItem }
 				{ viewItem }
 				{ statsItem }
@@ -605,6 +630,8 @@ const mapDispatch = {
 	recordMoreOptions: partial( recordEvent, 'Clicked More Options Menu' ),
 	recordPageTitle: partial( recordEvent, 'Clicked Page Title' ),
 	recordEditPage: partial( recordEvent, 'Clicked Edit Page' ),
+	// Adding homepage item
+	recordHomepage: partial( recordEvent, 'Clicked Make Homepage' ),
 	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 };
