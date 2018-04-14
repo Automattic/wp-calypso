@@ -127,7 +127,7 @@ class LabelItem extends Component {
 				}
 				{ label.returningLabelIndex == null ? (
 					<p className="shipping-label__item-actions">
-						{ label.showDetails ? this.renderReturn( label ) : null }
+						{ label.showDetails && this.renderReturn( label ) }
 					</p>
 				) : (
 					<p>
