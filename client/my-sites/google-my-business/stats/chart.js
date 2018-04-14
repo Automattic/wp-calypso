@@ -13,10 +13,10 @@ import { isEqual } from 'lodash';
  */
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
+import FakeData from './fake-data';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 import SectionHeader from 'components/section-header';
-import placeHolderDataFunction from './placeholder-data';
 import { changeGoogleMyBusinessStatsInterval } from 'state/google-my-business/stats/action';
 import { getInterval } from 'state/google-my-business/stats/selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -104,7 +104,7 @@ export default connect(
 		return {
 			siteId,
 			interval,
-			data: placeHolderDataFunction( ownProps.statType, interval ),
+			data: FakeData.statFunction( ownProps.statType, interval ),
 		};
 	},
 	{
