@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { set } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +17,17 @@ describe( '#getRatesErrors', () => {
 	};
 	const secondBoxSelectedValues = {
 		box_2: 'Express',
+	};
+
+	const getRatesErrorsFromState = ( rates ) => {
+		const siteId = 1, orderId = 1;
+		const state = set(
+			{},
+			// Path matches getShippingLabel selector
+			[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingLabel', orderId ],
+			{ form: { rates } }
+		);
+		return getRatesErrors( state, siteId, orderId );
 	};
 
 	// rates when there are no server errors, for each box
@@ -126,7 +138,7 @@ describe( '#getRatesErrors', () => {
 			},
 			available: firstBoxRatesWithError,
 		};
-		const result = getRatesErrors( rates );
+		const result = getRatesErrorsFromState( rates );
 
 		it( 'should return the server error and a form error', () => {
 			expect( result ).to.eql( {
@@ -144,7 +156,7 @@ describe( '#getRatesErrors', () => {
 			...rates,
 			available: firstBoxRatesWithUserMessageError,
 		};
-		const resultWithUserMessage = getRatesErrors( ratesWithUserMessage );
+		const resultWithUserMessage = getRatesErrorsFromState( ratesWithUserMessage );
 
 		it( 'should return the `userMessage` if it exists', () => {
 			expect( resultWithUserMessage.server ).to.eql( {
@@ -157,7 +169,7 @@ describe( '#getRatesErrors', () => {
 			...rates,
 			available: firstBoxRatesWithErrorButNoErrorMessage,
 		};
-		const resultWithErrorAndNoMessage = getRatesErrors( ratesWithNoMessage );
+		const resultWithErrorAndNoMessage = getRatesErrorsFromState( ratesWithNoMessage );
 
 		it( 'should return the the default error message if no error message sent', () => {
 			expect( resultWithErrorAndNoMessage.server ).to.eql( {
@@ -172,7 +184,7 @@ describe( '#getRatesErrors', () => {
 				},
 				available: firstBoxRatesWithMultipleErrors,
 			};
-			const resultWithMultipleErrors = getRatesErrors( ratesWithMultipleErrors );
+			const resultWithMultipleErrors = getRatesErrorsFromState( ratesWithMultipleErrors );
 
 			it( 'should return array with each server error', () => {
 				expect( resultWithMultipleErrors.server ).to.eql( {
@@ -193,7 +205,7 @@ describe( '#getRatesErrors', () => {
 				values: Object.assign( {}, firstBoxSelectedValues ),
 				available: firstBoxRatesWithNoServerErrors,
 			};
-			const result = getRatesErrors( rates );
+			const result = getRatesErrorsFromState( rates );
 
 			it( 'should return a null form error and no server errors', () => {
 				expect( result ).to.eql( {
@@ -214,7 +226,7 @@ describe( '#getRatesErrors', () => {
 				},
 				available: firstBoxRatesWithNoServerErrors,
 			};
-			const result = getRatesErrors( rates );
+			const result = getRatesErrorsFromState( rates );
 
 			it( 'should return a form error and no server errors', () => {
 				expect( result ).to.eql( {
@@ -241,7 +253,7 @@ describe( '#getRatesErrors', () => {
 					secondBoxRatesWithNoServerErrors
 				),
 			};
-			const result = getRatesErrors( rates );
+			const result = getRatesErrorsFromState( rates );
 
 			it( 'should return the server error for the first box', () => {
 				expect( result.server ).to.eql( {
@@ -269,7 +281,7 @@ describe( '#getRatesErrors', () => {
 					secondBoxRatesWithNoServerErrors
 				),
 			};
-			const result = getRatesErrors( rates );
+			const result = getRatesErrorsFromState( rates );
 
 			it( 'should return the server error for the first box', () => {
 				expect( result.server ).to.eql( {
