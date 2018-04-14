@@ -180,7 +180,7 @@ export class SimpleSiteRenameForm extends Component {
 		const serverValidationMessage = get( validationError, 'message' );
 
 		return isAvailable
-			? translate( 'Good news, this Site Address is available!' )
+			? translate( 'Good news, this site address is available!' )
 			: validationMessage || serverValidationMessage;
 	}
 
