@@ -7,6 +7,8 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -21,10 +23,13 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 // FIXME: Remove use of this mixin
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
+import QueryConnectedApplications from 'components/data/query-connected-applications';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getConnectedApplications, getRequest } from 'state/selectors';
+import { requestConnectedApplications } from 'state/connected-applications/actions';
 
 /* eslint-disable react/prefer-es6-class */
 // FIXME: Remove use of createReactClass
@@ -85,34 +90,27 @@ const ConnectedApplications = createReactClass( {
 	},
 
 	renderConnectedApps: function() {
-		return this.props.connectedAppsData.initialized
-			? this.props.connectedAppsData.get().map( function( connection ) {
-					return (
-						<ConnectedAppItem
-							connection={ connection }
-							key={ connection.ID }
-							connectedApplications={ this.props.connectedAppsData }
-						/>
-					);
-				}, this )
-			: this.renderPlaceholders();
+		const { apps } = this.props;
+
+		if ( ! apps.length ) {
+			return this.renderPlaceholders();
+		}
+
+		return apps.map( connection => (
+			<ConnectedAppItem connection={ connection } key={ connection.ID } />
+		) );
 	},
 
 	renderConnectedAppsList: function() {
-		let connectedApps;
-		const hasConnectedApps = this.props.connectedAppsData.get().length;
-
-		if ( this.props.connectedAppsData.initialized ) {
-			connectedApps = hasConnectedApps ? this.renderConnectedApps() : this.renderEmptyContent();
-		} else {
-			connectedApps = this.renderConnectedApps();
-		}
+		const { apps, isRequestingApps } = this.props;
 
 		return (
 			<div>
 				<SecuritySectionNav path={ this.props.path } />
 
-				{ connectedApps }
+				{ ! isRequestingApps && ! apps.length
+					? this.renderEmptyContent()
+					: this.renderConnectedApps() }
 			</div>
 		);
 	},
@@ -120,6 +118,8 @@ const ConnectedApplications = createReactClass( {
 	render: function() {
 		return (
 			<Main className="connected-applications">
+				<QueryConnectedApplications />
+
 				<PageViewTracker
 					path="/me/security/connected-applications"
 					title="Me > Connected Applications"
@@ -135,4 +135,7 @@ const ConnectedApplications = createReactClass( {
 	},
 } );
 
-export default localize( ConnectedApplications );
+export default connect( state => ( {
+	apps: getConnectedApplications( state ),
+	isRequestingApps: get( getRequest( state, requestConnectedApplications() ), 'isLoading', false ),
+} ) )( localize( ConnectedApplications ) );
