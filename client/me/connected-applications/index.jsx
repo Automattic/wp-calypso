@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, times } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -17,11 +17,11 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryConnectedApplications from 'components/data/query-connected-applications';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getConnectedApplications, getRequest } from 'state/selectors';
 import { requestConnectedApplications } from 'state/connected-applications/actions';
 
