@@ -8,7 +8,7 @@ This component renders a dataset as a pie chart. A separate `PieChartLegend` sub
 	* **value** - (required) (Number) Value of the datum
 	* **name** - (required) (String) Name to represent the datum
 	* **description** - (optional) (String) A longer description of the datum 
-* **title** — (optional) (String | Function) Title for the chart. If it is a function it will be called with the arguemetns
+* **title** — (optional) (String | Function) Title for the chart. If it is a function it will be called with the arguments
 `translate` and `dataTotal`. This is used to create titles that reference the data total
 
 ## Usage
