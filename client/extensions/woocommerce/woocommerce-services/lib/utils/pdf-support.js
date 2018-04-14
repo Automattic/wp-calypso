@@ -12,7 +12,13 @@ import { get, includes, memoize } from 'lodash';
  * no guarantee that they will respond to a DOM-like API. false if the browser can't display
  * PDFs at all.
  */
-export default memoize( () => {
+export default memoize( download => {
+	// If downloading, we can rely on the "native" download attribute if it's available, but if
+	// it isn't, proceed with the fallback strategy for manual downloading.
+	if ( download && 'download' in document.createElement( 'a' ) ) {
+		return 'native';
+	}
+
 	if ( get( window, 'navigator.msSaveOrOpenBlob' ) ) {
 		// IE & Edge, they don't support opening a Blob in an iframe/window
 		return 'ie';
@@ -31,7 +37,8 @@ export default memoize( () => {
 		return 'addon';
 	}
 
-	if ( navigator.mimeTypes[ 'application/pdf' ] ) {
+	// If printing, reaching this point means we can rely on native PDF support
+	if ( ! download && navigator.mimeTypes[ 'application/pdf' ] ) {
 		return 'native';
 	}
 

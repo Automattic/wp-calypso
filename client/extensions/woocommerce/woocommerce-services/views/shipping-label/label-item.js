@@ -61,8 +61,10 @@ class LabelItem extends Component {
 
 		return (
 			<span>
-				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'Reprint' ) }</a>
+				<ReprintDialog siteId={ siteId } orderId={ orderId } download={ label.returningLabelIndex != null } { ...label } />
+				<a href="#" onClick={ openDialog } >
+					{ label.returningLabelIndex ? translate( 'Download' ) : translate( 'Reprint' ) }
+				</a>
 			</span>
 		);
 	};

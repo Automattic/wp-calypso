@@ -55,13 +55,27 @@ const buildBlob = ( b64Content, mimeType ) => {
  * @returns {Promise} Promise that resolves if the printing dialog (or equivalent) was correctly
  * invoked, rejects otherwise.
  */
-export default ( { b64Content, mimeType }, fileName ) => {
+export default ( { b64Content, mimeType }, fileName, download = false ) => {
 	const blob = buildBlob( b64Content, mimeType );
-	const blobUrl = 'ie' !== getPDFSupport() ? URL.createObjectURL( blob ) : null; // IE has no use for "blob:" URLs
+	const blobUrl = 'ie' !== getPDFSupport( download ) ? URL.createObjectURL( blob ) : null; // IE has no use for "blob:" URLs
 
-	switch ( getPDFSupport() ) {
+	switch ( getPDFSupport( download ) ) {
 		case 'native':
-			// Happy case where everything can happen automatically. Supported in Chrome and Safari
+			// Browsers other than IE and Mobile Safari will prompt for download or start it automatically.
+			if ( download ) {
+				// Adapted from https://gist.github.com/rudiedirkx/2623261
+				const link = document.createElement( 'a' );
+				link.setAttribute( 'href', blobUrl );
+				link.setAttribute( 'download', fileName );
+
+				const event = document.createEvent( 'MouseEvents' );
+				event.initMouseEvent( 'click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null );
+				link.dispatchEvent( event );
+
+				return Promise.resolve();
+			}
+
+			// Happy case where loading and printing can happen automatically. Supported in Chrome and Safari
 			return loadDocumentInFrame( blobUrl )
 				.then( () => {
 					iframe.contentWindow.print();

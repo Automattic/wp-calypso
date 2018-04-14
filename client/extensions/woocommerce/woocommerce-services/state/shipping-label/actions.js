@@ -539,8 +539,8 @@ const handleLabelPurchaseError = ( orderId, siteId, dispatch, getState, error, i
 	tryGetLabelRates( orderId, siteId, dispatch, getState );
 };
 
-const getPDFFileName = ( orderId, isReprint = false ) => {
-	return `order-#${ orderId }-label` + ( isReprint ? '-reprint' : '' ) + '.pdf';
+const getPDFFileName = ( orderId, suffix = null ) => {
+	return `order-#${ orderId }-label` + ( suffix ? `-${ suffix }` : '' ) + '.pdf';
 };
 
 // retireves the single label status, and retries up to 3 times on timeout
@@ -667,7 +667,7 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels, isR
 				// If the browser has a PDF "addon", we need another user click to trigger opening it in a new tab
 				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, orderId, siteId, fileData, labels, isReturn } );
 			} else {
-				printDocument( fileData, getPDFFileName( orderId ) )
+				printDocument( fileData, getPDFFileName( orderId, state.returnDialog && 'return' ), state.returnDialog )
 					.then( () => {
 						showSuccessNotice();
 					} )
@@ -822,7 +822,7 @@ export const confirmPrintLabel = ( orderId, siteId ) => ( dispatch, getState ) =
 	const isReturn = state.returnDialog != null;
 	const formState = isReturn ? state.returnDialog : state.form;
 
-	printDocument( formState.fileData, getPDFFileName( orderId ) )
+	printDocument( formState.fileData, getPDFFileName( orderId, isReturn && 'return' ), isReturn )
 		.then( () => {
 			if ( isReturn ) {
 				dispatch( closeReturnDialog( orderId, siteId, true ) );
@@ -932,9 +932,12 @@ export const closeReprintDialog = ( orderId, siteId ) => {
 
 export const confirmReprint = ( orderId, siteId ) => ( dispatch, getState ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT, orderId, siteId } );
-	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
+	const state = getShippingLabel( getState(), orderId, siteId );
 
-	printDocument( shippingLabel.reprintDialog.fileData, getPDFFileName( orderId, true ) )
+	const label = find( state.labels, { label_id: state.reprintDialog.labelId } );
+	const isReturn = Boolean( label.returning_label_id );
+
+	printDocument( state.reprintDialog.fileData, getPDFFileName( orderId, isReturn ? 'return-reprint' : 'reprint' ), isReturn )
 		.catch( ( error ) => {
 			console.error( error );
 			dispatch( NoticeActions.errorNotice( error.toString() ) );
@@ -951,7 +954,7 @@ export const updatePaperSize = ( orderId, siteId, value ) => ( dispatch, getStat
 	} );
 
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
-	if ( shippingLabel.reprintDialog != null ) {
+	if ( shippingLabel.reprintDialog ) {
 		dispatch( openReprintDialog( orderId, siteId, shippingLabel.reprintDialog.labelId ) );
 	}
 };

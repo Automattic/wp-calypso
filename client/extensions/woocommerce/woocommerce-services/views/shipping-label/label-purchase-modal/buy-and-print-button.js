@@ -30,13 +30,14 @@ class BuyAndPrintButton extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		orderId: PropTypes.number.isRequired,
+		download: PropTypes.bool,
 	};
 
 	getPurchaseButtonLabel = () => {
-		const { form, ratesTotal, translate } = this.props;
+		const { form, ratesTotal, translate, download } = this.props;
 
 		if ( form.needsPrintConfirmation ) {
-			return translate( 'Print' );
+			return download ? translate( 'Download' ) : translate( 'Print' );
 		}
 
 		if ( form.isSubmitting ) {
@@ -46,18 +47,22 @@ class BuyAndPrintButton extends React.Component {
 		const noNativePDFSupport = 'addon' === getPDFSupport();
 
 		if ( this.props.canPurchase ) {
+			const translateOptions = { args: [ formatCurrency( ratesTotal, 'USD' ) ] };
+
 			if ( noNativePDFSupport ) {
-				return translate( 'Buy (%s)', { args: [ formatCurrency( ratesTotal, 'USD' ) ] } );
+				return translate( 'Buy (%s)', translateOptions );
 			}
 
-			return translate( 'Buy & Print (%s)', { args: [ formatCurrency( ratesTotal, 'USD' ) ] } );
+			return download
+				? translate( 'Buy & Download (%s)', translateOptions )
+				: translate( 'Buy & Print (%s)', translateOptions );
 		}
 
 		if ( noNativePDFSupport ) {
 			return translate( 'Buy' );
 		}
 
-		return translate( 'Buy & Print' );
+		return download ? translate( 'Buy & Download' ) : translate( 'Buy & Print' );
 	};
 
 	getPurchaseButtonAction = () => {

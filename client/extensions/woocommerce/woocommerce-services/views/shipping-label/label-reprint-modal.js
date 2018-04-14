@@ -18,7 +18,8 @@ import { closeReprintDialog, confirmReprint, updatePaperSize } from 'woocommerce
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const ReprintDialog = ( props ) => {
-	const { orderId, siteId, reprintDialog, paperSize, storeOptions, labelId, translate } = props;
+	const { orderId, siteId, reprintDialog, paperSize, storeOptions, labelId, translate, download } = props;
+	const { labelId: reprintLabelId, isFetching } = reprintDialog || {};
 
 	const onClose = () => props.closeReprintDialog( orderId, siteId );
 	const onConfirm = () => props.confirmReprint( orderId, siteId );
@@ -30,23 +31,26 @@ const ReprintDialog = ( props ) => {
 			action: 'confirm',
 			onClick: onConfirm,
 			isPrimary: true,
-			disabled: reprintDialog && reprintDialog.isFetching,
-			additionalClassNames: reprintDialog && reprintDialog.isFetching ? 'is-busy' : '',
-			label: translate( 'Print' ),
+			disabled: isFetching,
+			additionalClassNames: isFetching ? 'is-busy' : '',
+			label: download ? translate( 'Download' ) : translate( 'Print' ),
 		},
 	];
 
 	return (
 		<Dialog
-			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === labelId ) }
+			isVisible={ reprintLabelId === labelId }
 			onClose={ onClose }
 			buttons={ buttons }
 			additionalClassNames="label-reprint-modal woocommerce wcc-root">
 			<FormSectionHeading>
-				{ translate( 'Reprint shipping label' ) }
+				{ download ? translate( 'Download shipping label' ) : translate( 'Reprint shipping label' ) }
 			</FormSectionHeading>
 			<p>
-				{ translate( 'If there was a printing error when you purchased the label, you can print it again.' ) }
+				{ download
+					? translate( 'If there was a download error when you purchased the label, you can download it again.' )
+					: translate( 'If there was a printing error when you purchased the label, you can print it again.' )
+				}
 			</p>
 			<p className="shipping-label__reprint-modal-notice">
 				{ translate( 'NOTE: If you already used the label in a package, printing and using it again ' +
@@ -72,6 +76,7 @@ ReprintDialog.propTypes = {
 	closeReprintDialog: PropTypes.func.isRequired,
 	confirmReprint: PropTypes.func.isRequired,
 	updatePaperSize: PropTypes.func.isRequired,
+	download: PropTypes.bool,
 };
 
 const mapStateToProps = ( state, { orderId, siteId } ) => {
