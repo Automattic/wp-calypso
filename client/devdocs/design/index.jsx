@@ -27,6 +27,7 @@ import SearchCard from 'components/search-card';
  */
 import ActionCard from 'components/action-card/docs/example';
 import Accordions from 'components/accordion/docs/example';
+import Animate from 'components/animate/docs/example';
 import BackButton from 'components/back-button/docs/example';
 import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
@@ -35,6 +36,7 @@ import ButtonGroups from 'components/button-group/docs/example';
 import Buttons from 'components/button/docs/example';
 import Cards from 'components/card/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
+import Chart from 'components/chart/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
@@ -60,6 +62,7 @@ import GlobalNotices from 'components/global-notices/docs/example';
 import Gravatar from 'components/gravatar/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
+import HrWithText from 'components/hr-with-text/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
 import InfoPopover from 'components/info-popover/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
@@ -83,6 +86,7 @@ import SectionNav from 'components/section-nav/docs/example';
 import SegmentedControl from 'components/segmented-control/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
 import ShareButton from 'components/share-button/docs/example';
+import SignupForm from 'components/signup-form/docs/example';
 import SiteTitleControl from 'components/site-title/docs/example';
 import SocialLogos from 'social-logos/example';
 import Spinner from 'components/spinner/docs/example';
@@ -90,14 +94,17 @@ import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
+import TextareaAutosize from 'components/textarea-autosize/docs/example';
 import TextDiff from 'components/text-diff/docs/example';
 import TileGrid from 'components/tile-grid/docs/example';
 import TimeSince from 'components/time-since/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import TokenFields from 'components/token-field/docs/example';
 import Tooltip from 'components/tooltip/docs/example';
+import UserItem from 'components/user/docs/example';
 import Version from 'components/version/docs/example';
 import VerticalMenu from 'components/vertical-menu/docs/example';
+import VerticalNav from 'components/vertical-nav/docs/example';
 import Wizard from 'components/wizard/docs/example';
 
 class DesignAssets extends React.Component {
@@ -152,6 +159,7 @@ class DesignAssets extends React.Component {
 						componentUsageStats={ componentsUsageStats.accordion }
 						readmeFilePath="accordion"
 					/>
+					<Animate readmeFilePath="animate" />
 					<BackButton readmeFilePath="back-button" />
 					<Badge readmeFilePath="badge" />
 					<Banner readmeFilePath="banner" />
@@ -161,6 +169,7 @@ class DesignAssets extends React.Component {
 					<SplitButton readmeFilePath="split-button" />
 					<Cards readmeFilePath="card" />
 					<CardHeading readmeFilePath="card-heading" />
+					<Chart readmeFilePath="chart" />
 					<Checklist />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
 					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
@@ -186,6 +195,7 @@ class DesignAssets extends React.Component {
 					<Gridicons />
 					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
+					<HrWithText readmeFilePath="hr-with-text" />
 					<ImagePreloader readmeFilePath="image-preloader" />
 					<InfoPopover readmeFilePath="info-popover" />
 					<InputChrono readmeFilePath="input-chrono" />
@@ -209,19 +219,23 @@ class DesignAssets extends React.Component {
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
+					<SignupForm readmeFilePath="signup-form" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<Suggestions readmeFilePath="suggestions" />
+					<TextareaAutosize readmeFilePath="textarea-autosize" />
 					<TextDiff readmeFilePath="text-diff" />
 					<TileGrid readmeFilePath="tile-grid" />
 					<TimeSince readmeFilePath="time-since" />
 					<Timezone readmeFilePath="timezone" />
 					<TokenFields readmeFilePath="token-field" />
 					<Tooltip readmeFilePath="tooltip" />
+					<UserItem readmeFilePath="user" />
 					<VerticalMenu readmeFilePath="vertical-menu" />
+					<VerticalNav readmeFilePath="vertical-nav" />
 					<Version readmeFilePath="version" />
 					<Wizard readmeFilePath="wizard" />
 				</Collection>

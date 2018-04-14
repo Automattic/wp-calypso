@@ -1,8 +1,7 @@
 HR element with text over it
 ============================
 
-
-An [hr-like](https://developer.mozilla.org/en/docs/Web/HTML/Element/hr) line with text on top:
+This component renders an [hr-like](https://developer.mozilla.org/en/docs/Web/HTML/Element/hr) line with text on top:
 
 `------------------ text ---------------------`
 

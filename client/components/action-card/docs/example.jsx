@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 
 /**
@@ -12,7 +11,7 @@ import { noop } from 'lodash';
  */
 import ActionCard from '../index';
 
-function ActionCardExample( props ) {
+function ActionCardExample() {
 	return (
 		<ActionCard
 			headerText={ 'This is a header text' }
@@ -28,10 +27,6 @@ function ActionCardExample( props ) {
 		/>
 	);
 }
-
-ActionCardExample.propTypes = {
-	translate: PropTypes.func.isRequired,
-};
 
 ActionCardExample.displayName = 'ActionCard';
 
