@@ -161,9 +161,13 @@ export class SimpleSiteRenameForm extends Component {
 	}, VALIDATION_DEBOUNCE_MS );
 
 	debouncedValidationCheck = debounce( () => {
-		if ( ! isEmpty( this.state.domainFieldValue ) ) {
-			this.props.requestSiteAddressAvailability( this.props.siteId, this.state.domainFieldValue );
+		const { domainFieldValue } = this.state;
+
+		// Don't try and validate what we know is invalid
+		if ( isEmpty( domainFieldValue ) || domainFieldValue === this.getCurrentDomainPrefix() ) {
+			return;
 		}
+		this.props.requestSiteAddressAvailability( this.props.siteId, this.state.domainFieldValue );
 	}, VALIDATION_DEBOUNCE_MS );
 
 	shouldShowValidationMessage() {
@@ -172,6 +176,13 @@ export class SimpleSiteRenameForm extends Component {
 		const serverValidationMessage = get( validationError, 'message' );
 
 		return isAvailable || showValidationMessage || !! serverValidationMessage;
+	}
+
+	getCurrentDomainPrefix() {
+		const { currentDomain, currentDomainSuffix } = this.props;
+
+		const currentDomainName = get( currentDomain, 'name', '' );
+		return currentDomainName.replace( currentDomainSuffix, '' );
 	}
 
 	getValidationMessage() {
@@ -195,7 +206,7 @@ export class SimpleSiteRenameForm extends Component {
 		} = this.props;
 		const { domainFieldValue } = this.state;
 		const currentDomainName = get( currentDomain, 'name', '' );
-		const currentDomainPrefix = currentDomainName.replace( currentDomainSuffix, '' );
+		const currentDomainPrefix = this.getCurrentDomainPrefix();
 		const shouldShowValidationMessage = this.shouldShowValidationMessage();
 		const validationMessage = this.getValidationMessage();
 		const isBusy = isSiteRenameRequesting || isAvailabilityPending;
