@@ -160,6 +160,7 @@ export class SimpleSiteRenameForm extends Component {
 							onChange={ this.onFieldChange }
 							placeholder={ currentDomainPrefix }
 							isError={ !! domainFieldError }
+							className="simple-site-rename-form__address-field"
 						/>
 						{ domainFieldError && <FormInputValidation isError text={ domainFieldError } /> }
 						<div className="simple-site-rename-form__footer">
