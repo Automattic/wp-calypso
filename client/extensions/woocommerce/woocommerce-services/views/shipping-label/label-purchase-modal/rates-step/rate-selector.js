@@ -24,7 +24,7 @@ import {
 	getRatesErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-class RateSelector extends React.Component {
+export class RateSelector extends React.Component {
 	static propTypes = {
 		packageId: PropTypes.string.isRequired,
 		packageName: PropTypes.string,
