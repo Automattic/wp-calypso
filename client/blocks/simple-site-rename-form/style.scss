@@ -16,6 +16,9 @@
 
 .card.simple-site-rename-form__content {
 	margin-bottom: 0;
+	span.form-text-input-with-affixes__suffix {
+		position: static;
+	}
 }
 
 .simple-site-rename-form__info {
