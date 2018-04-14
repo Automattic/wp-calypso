@@ -3,12 +3,10 @@
 /**
  * External dependencies
  */
-
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,10 +17,6 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
-/* eslint-disable no-restricted-imports */
-// FIXME: Remove use of this mixin
-import observe from 'lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
 import QueryConnectedApplications from 'components/data/query-connected-applications';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
@@ -31,26 +25,14 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getConnectedApplications, getRequest } from 'state/selectors';
 import { requestConnectedApplications } from 'state/connected-applications/actions';
 
-/* eslint-disable react/prefer-es6-class */
-// FIXME: Remove use of createReactClass
-const ConnectedApplications = createReactClass( {
-	/* eslint-enable react/prefer-es6-class */
-	displayName: 'ConnectedApplications',
-
-	propTypes: {
+class ConnectedApplications extends PureComponent {
+	static propTypes = {
 		translate: PropTypes.func.isRequired,
-	},
+	};
 
-	mixins: [ observe( 'connectedAppsData' ) ],
-
-	getDefaultProps: function() {
-		return {
-			applicationID: 0,
-		};
-	},
-
-	renderEmptyContent: function() {
+	renderEmptyContent() {
 		const { translate } = this.props;
+
 		return (
 			<EmptyContent
 				title={ translate( "You haven't connected any apps yet." ) }
@@ -68,28 +50,24 @@ const ConnectedApplications = createReactClass( {
 				} ) }
 			/>
 		);
-	},
+	}
 
-	renderPlaceholders: function() {
-		const placeholders = [];
+	renderPlaceholders() {
+		const { translate } = this.props;
 
-		for ( let i = 0; i < 5; i++ ) {
-			placeholders.push(
-				<ConnectedAppItem
-					connection={ {
-						ID: i,
-						title: this.props.translate( 'Loading Connected Applications' ),
-					} }
-					key={ i }
-					isPlaceholder
-				/>
-			);
-		}
+		return times( 5, index => (
+			<ConnectedAppItem
+				connection={ {
+					ID: index,
+					title: translate( 'Loading Connected Applications' ),
+				} }
+				key={ index }
+				isPlaceholder
+			/>
+		) );
+	}
 
-		return placeholders;
-	},
-
-	renderConnectedApps: function() {
+	renderConnectedApps() {
 		const { apps } = this.props;
 
 		if ( ! apps.length ) {
@@ -99,23 +77,25 @@ const ConnectedApplications = createReactClass( {
 		return apps.map( connection => (
 			<ConnectedAppItem connection={ connection } key={ connection.ID } />
 		) );
-	},
+	}
 
-	renderConnectedAppsList: function() {
-		const { apps, isRequestingApps } = this.props;
+	renderConnectedAppsList() {
+		const { apps, isRequestingApps, path } = this.props;
 
 		return (
-			<div>
-				<SecuritySectionNav path={ this.props.path } />
+			<Fragment>
+				<SecuritySectionNav path={ path } />
 
 				{ ! isRequestingApps && ! apps.length
 					? this.renderEmptyContent()
 					: this.renderConnectedApps() }
-			</div>
+			</Fragment>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
+		const { translate } = this.props;
+
 		return (
 			<Main className="connected-applications">
 				<QueryConnectedApplications />
@@ -127,13 +107,13 @@ const ConnectedApplications = createReactClass( {
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />
 
-				<DocumentHead title={ this.props.translate( 'Connected Applications' ) } />
+				<DocumentHead title={ translate( 'Connected Applications' ) } />
 
 				{ this.renderConnectedAppsList() }
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => ( {
 	apps: getConnectedApplications( state ),
