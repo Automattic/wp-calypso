@@ -396,7 +396,7 @@ describe( 'selectors', () => {
 					carrierId: 'canada_post',
 					serviceName: 'Xpress',
 					receiptId: 12345,
-					returningLabelIndex: null,
+					returningLabelIndex: undefined,
 				},
 				{
 					key: 3,
@@ -425,7 +425,7 @@ describe( 'selectors', () => {
 					carrierId: 'usps',
 					serviceName: 'First Class',
 					receiptId: 12345,
-					returningLabelIndex: null,
+					returningLabelIndex: undefined,
 				},
 				{
 					key: 2,
@@ -454,7 +454,7 @@ describe( 'selectors', () => {
 					carrierId: 'canada_post',
 					serviceName: 'Xpress',
 					receiptId: 67890,
-					returningLabelIndex: null,
+					returningLabelIndex: undefined,
 				},
 				{
 					key: 1,
@@ -475,7 +475,7 @@ describe( 'selectors', () => {
 					carrierId: 'usps',
 					serviceName: 'First Class',
 					receiptId: 654321,
-					returningLabelIndex: null,
+					returningLabelIndex: undefined,
 				},
 			] );
 		} );
