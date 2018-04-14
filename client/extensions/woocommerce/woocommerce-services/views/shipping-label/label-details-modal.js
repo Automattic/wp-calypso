@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -67,12 +67,16 @@ const DetailsDialog = ( props ) => {
 				<dt>{ translate( 'Package' ) }</dt>
 				<dd>{ packageName }</dd>
 
-				<dt>{ translate( 'Items' ) }</dt>
-				<dd>
-					<ul>
-						{ productNames.map( ( productName, i ) => <li key={ i }>{ productName }</li> ) }
-					</ul>
-				</dd>
+				{ productNames && (
+					<Fragment>
+						<dt>{ translate( 'Items' ) }</dt>
+						<dd>
+							<ul>
+								{ productNames.map( ( productName, i ) => <li key={ i }>{ productName }</li> ) }
+							</ul>
+						</dd>
+					</Fragment>
+				) }
 			</dl>
 		</Dialog>
 	);
