@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 import { default as appConfig } from 'config';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
+import MasterbarShell from '../layout/masterbar/shell';
 import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
 
@@ -52,6 +53,7 @@ class Document extends React.Component {
 			feedbackURL,
 			inlineScriptNonce,
 			analyticsScriptNonce,
+			isLoggedIn,
 		} = this.props;
 
 		const inlineScript =
@@ -107,7 +109,7 @@ class Document extends React.Component {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 								} ) }
 							>
-								<div className="masterbar" />
+								{ isLoggedIn ? <MasterbarShell /> : <div className="masterbar" /> }
 								<div className="layout__content">
 									<WordPressLogo size={ 72 } className="wpcom-site__logo" />
 									{ hasSecondary && (
