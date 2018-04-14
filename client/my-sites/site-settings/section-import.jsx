@@ -43,6 +43,7 @@ class SiteSettingsImport extends Component {
 
 	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
+		this.updateFromAPI();
 	}
 
 	componentWillUnmount() {
