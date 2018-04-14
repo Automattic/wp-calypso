@@ -9,24 +9,15 @@
 	}
 }
 
-.gmb-stats__metric-hr {
-	width: 95%;
-	color: $gray-light;
-}
-
 .gmb-stats__metric {
 	display: inline-block;
 	margin-top: 1px; // Fixes shadow truncated at the top of the second column
 	width: 100%;
 }
 
-.gmb-stats__metric-search {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	:first-child {
-		margin-right: 15px;
-	}
+.gmb-stats__metric-hr {
+	width: 95%;
+	color: $gray-light;
 }
 
 .gmb-stats__tip-main {
