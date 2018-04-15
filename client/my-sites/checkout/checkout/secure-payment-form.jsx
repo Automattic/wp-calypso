@@ -43,6 +43,7 @@ const SecurePaymentForm = createReactClass( {
 
 	propTypes: {
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
+		handleCheckoutExternalRedirect: PropTypes.func.isRequired,
 		products: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
 	},

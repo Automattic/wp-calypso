@@ -215,6 +215,10 @@ function isPaymentMethodEnabled( cart, method ) {
 	);
 }
 
+function getLocationOrigin( l ) {
+	return l.protocol + '//' + l.hostname + ( l.port ? ':' + l.port : '' );
+}
+
 export {
 	applyCoupon,
 	canRemoveFromCart,
@@ -229,6 +233,7 @@ export {
 	isPaymentMethodEnabled,
 	paymentMethodClassName,
 	paymentMethodName,
+	getLocationOrigin,
 };
 
 export default {

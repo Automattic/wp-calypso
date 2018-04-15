@@ -18,6 +18,7 @@ import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
+	REDIRECTING_FOR_AUTHORIZATION,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
@@ -89,6 +90,7 @@ TransactionFlow.prototype._paymentHandlers = {
 
 	WPCOM_Billing_MoneyPress_Paygate: function() {
 		const { newCardDetails } = this._initialData.payment,
+			{ successUrl, cancelUrl } = this._initialData,
 			validation = validateCardDetails( newCardDetails );
 
 		if ( ! isEmpty( validation.errors ) ) {
@@ -114,6 +116,8 @@ TransactionFlow.prototype._paymentHandlers = {
 					name,
 					zip,
 					country,
+					successUrl,
+					cancelUrl,
 				};
 
 				if ( isEbanxEnabledForCountry( country ) ) {
@@ -170,12 +174,19 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	};
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
-
 	wpcom.transactions( 'POST', transaction, ( error, data ) => {
 		if ( error ) {
 			return this._pushStep( {
 				name: RECEIVED_WPCOM_RESPONSE,
 				error,
+				last: true,
+			} );
+		}
+
+		if ( data.redirect_url ) {
+			return this._pushStep( {
+				name: REDIRECTING_FOR_AUTHORIZATION,
+				data: data,
 				last: true,
 			} );
 		}
