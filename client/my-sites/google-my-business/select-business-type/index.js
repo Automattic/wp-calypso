@@ -23,7 +23,6 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
@@ -43,7 +42,6 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	trackOptimizeYourSEOClick = () => {
-		this.props.requestGoogleMyBusinessStats( 142713518, 'week', 'search' );
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_business_type_optimize_your_seo_button_click'
 		);
@@ -176,6 +174,5 @@ export default connect(
 	} ),
 	{
 		recordTracksEvent,
-		requestGoogleMyBusinessStats,
 	}
 )( localize( GoogleMyBusinessSelectBusinessType ) );
