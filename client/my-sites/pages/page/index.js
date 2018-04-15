@@ -35,6 +35,7 @@ import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 import { withoutNotice } from 'state/notices/actions';
+import { isEnabled } from 'config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -204,12 +205,20 @@ class Page extends Component {
 		);
 	}
 
+	setFrontPage() {
+		<PopoverMenuItem onClick={ alert( 'This feature is still being developed!' ) } />;
+	}
+
 	getFrontPageItem() {
 		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
 			return null;
 		}
 
 		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
+			return null;
+		}
+
+		if ( ! isEnabled( 'manage/pages/set-front-page' ) ) {
 			return null;
 		}
 
