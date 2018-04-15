@@ -77,11 +77,15 @@ export const requestGoogleMyBusinessStats = (
 	statName = 'search'
 ) => ( {
 	type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
+	siteId,
 	timeSpan,
 	statName,
 } );
 
-export const receiveGoogleMyBusinessStats = data => ( {
+export const receiveGoogleMyBusinessStats = ( siteId, timeSpan, statName, data ) => ( {
 	type: GOOGLE_MY_BUSINESS_STATS_SET_DATA,
+	siteId,
+	timeSpan,
+	statName,
 	data,
 } );

@@ -21,9 +21,8 @@ export const fetchGoogleMyBusinessStats = ( { dispatch }, action ) => {
 	dispatch(
 		http(
 			{
-				path: `/sites/${ siteId }/google-my-business/${ statName }`,
+				path: `/sites/${ siteId }/stats/google-my-business/${ statName }`,
 				method: 'GET',
-				apiNamespace: 'wp/v1',
 				query: {
 					time_span: timeSpan,
 				},
@@ -41,7 +40,8 @@ export const fetchGoogleMyBusinessStats = ( { dispatch }, action ) => {
  * @param {Array} data raw data from stats API
  */
 export const receiveStats = ( { dispatch }, action, data ) => {
-	dispatch( receiveGoogleMyBusinessStats( fromApi( data ) ) );
+	const { siteId, timeSpan, statName } = action;
+	dispatch( receiveGoogleMyBusinessStats( siteId, timeSpan, statName, fromApi( data ) ) );
 };
 
 export default {

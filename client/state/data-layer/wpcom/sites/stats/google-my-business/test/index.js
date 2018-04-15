@@ -30,9 +30,8 @@ describe( '#fetchGoogleMyBusinessStatsSearch', () => {
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
-					path: '/sites/12345/google-my-business/search',
+					path: '/sites/12345/stats/google-my-business/search',
 					method: 'GET',
-					apiNamespace: 'wp/v1',
 					query: {
 						time_span: 'week',
 					},
@@ -46,21 +45,27 @@ describe( '#fetchGoogleMyBusinessStatsSearch', () => {
 describe( '#receiveStats', () => {
 	test( 'should dispatch recieve stats action', () => {
 		const dispatch = sinon.spy();
-		receiveStats( { dispatch }, {}, { hello: 'world' } );
+		const action = { siteId: 123, statName: 'search', timeSpan: 'week' };
+		receiveStats( { dispatch }, action, { hello: 'world' } );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
-			receiveGoogleMyBusinessStats( { hello: 'world' } )
+			receiveGoogleMyBusinessStats( action.siteId, action.timeSpan, action.statName, {
+				hello: 'world',
+			} )
 		);
 	} );
 
 	test( 'should transform data snake_case to camelCase', () => {
 		const dispatch = sinon.spy();
-		receiveStats( { dispatch }, {}, { hello_world: 'hello' } );
+		const action = { siteId: 123, statName: 'search', timeSpan: 'week' };
+		receiveStats( { dispatch }, action, { hello_world: 'hello' } );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
-			receiveGoogleMyBusinessStats( { helloWorld: 'hello' } )
+			receiveGoogleMyBusinessStats( action.siteId, action.timeSpan, action.statName, {
+				helloWorld: 'hello',
+			} )
 		);
 	} );
 } );

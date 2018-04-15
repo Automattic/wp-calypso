@@ -23,6 +23,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
@@ -42,6 +43,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	trackOptimizeYourSEOClick = () => {
+		this.props.requestGoogleMyBusinessStats( 142713518, 'week', 'search' );
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_business_type_optimize_your_seo_button_click'
 		);
@@ -83,7 +85,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				} ) }
 				mainText={ translate(
 					'Your business has a physical location customers can visit, ' +
-					'or provides goods and services to local customers, or both.'
+						'or provides goods and services to local customers, or both.'
 				) }
 				buttonPrimary={ true }
 				buttonOnClick={ this.trackCreateYourListingClick }
@@ -135,7 +137,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 						<p>
 							{ translate(
 								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
-								'It works for businesses that have a physical location or serve a local area.',
+									'It works for businesses that have a physical location or serve a local area.',
 								{
 									components: {
 										link: (
@@ -174,5 +176,6 @@ export default connect(
 	} ),
 	{
 		recordTracksEvent,
+		requestGoogleMyBusinessStats,
 	}
 )( localize( GoogleMyBusinessSelectBusinessType ) );
