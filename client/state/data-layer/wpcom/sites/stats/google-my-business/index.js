@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 import { GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveGoogleMyBusinessStatsSearch } from 'state/users/actions';
+import { receiveGoogleMyBusinessStatsSearch } from 'state/google-my-business/actions';
 
 export const fetchGoogleMyBusinessStatsSearch = ( { dispatch }, action ) => {
 	const { siteId, timeSpan = 'week' } = action;
@@ -38,12 +38,12 @@ export const fetchGoogleMyBusinessStatsSearch = ( { dispatch }, action ) => {
  * @param {Object} action Redux action
  * @param {Array} data raw data from stats API
  */
-export const receiveSuccess = ( { dispatch }, action, data ) => {
-	console.log( data );
+export const receiveStatsSearch = ( { dispatch }, action, data ) => {
+	dispatch( receiveGoogleMyBusinessStatsSearch( data ) );
 };
 
 export default {
 	[ GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST ]: [
-		dispatchRequest( fetchGoogleMyBusinessStatsSearch, receiveSuccess, noop ),
+		dispatchRequest( fetchGoogleMyBusinessStatsSearch, receiveStatsSearch, noop ),
 	],
 };
