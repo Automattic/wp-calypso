@@ -9,6 +9,8 @@ import {
 	GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
 	GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
 	GOOGLE_MY_BUSINESS_STATS_SEARCH_SET_DATA,
+	GOOGLE_MY_BUSINESS_STATS_REQUEST,
+	GOOGLE_MY_BUSINESS_STATS_SET_DATA,
 } from 'state/action-types';
 import { saveSiteSettings } from 'state/site-settings/actions';
 
@@ -69,12 +71,17 @@ export const changeGoogleMyBusinessStatsInterval = ( siteId, statType, interval 
 	interval,
 } );
 
-export const requestGoogleMyBusinessStatsSearch = ( siteId, timeSpan = 'week' ) => ( {
-	type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
+export const requestGoogleMyBusinessStats = (
+	siteId,
+	timeSpan = 'week',
+	statName = 'search'
+) => ( {
+	type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 	timeSpan,
+	statName,
 } );
 
-export const receiveGoogleMyBusinessStatsSearch = data => ( {
-	type: GOOGLE_MY_BUSINESS_STATS_SEARCH_SET_DATA,
+export const receiveGoogleMyBusinessStats = data => ( {
+	type: GOOGLE_MY_BUSINESS_STATS_SET_DATA,
 	data,
 } );

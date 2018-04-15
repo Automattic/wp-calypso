@@ -4,22 +4,24 @@
  * External dependencies
  */
 
-import { noop } from 'lodash';
+import { noop, mapKeys, camelCase } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST } from 'state/action-types';
+import { GOOGLE_MY_BUSINESS_STATS_REQUEST } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveGoogleMyBusinessStatsSearch } from 'state/google-my-business/actions';
+import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 
-export const fetchGoogleMyBusinessStatsSearch = ( { dispatch }, action ) => {
-	const { siteId, timeSpan = 'week' } = action;
+export const fromApi = data => mapKeys( data, ( value, key ) => camelCase( key ) );
+
+export const fetchGoogleMyBusinessStats = ( { dispatch }, action ) => {
+	const { siteId, timeSpan = 'week', statName } = action;
 	dispatch(
 		http(
 			{
-				path: `/sites/${ siteId }/google-my-business/search`,
+				path: `/sites/${ siteId }/google-my-business/${ statName }`,
 				method: 'GET',
 				apiNamespace: 'wp/v1',
 				query: {
@@ -38,12 +40,12 @@ export const fetchGoogleMyBusinessStatsSearch = ( { dispatch }, action ) => {
  * @param {Object} action Redux action
  * @param {Array} data raw data from stats API
  */
-export const receiveStatsSearch = ( { dispatch }, action, data ) => {
-	dispatch( receiveGoogleMyBusinessStatsSearch( data ) );
+export const receiveStats = ( { dispatch }, action, data ) => {
+	dispatch( receiveGoogleMyBusinessStats( fromApi( data ) ) );
 };
 
 export default {
-	[ GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST ]: [
-		dispatchRequest( fetchGoogleMyBusinessStatsSearch, receiveStatsSearch, noop ),
+	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: [
+		dispatchRequest( fetchGoogleMyBusinessStats, receiveStats, noop ),
 	],
 };

@@ -10,8 +10,8 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST } from 'state/action-types';
-import { fetchGoogleMyBusinessStatsSearch, receiveStatsSearch } from '../';
-import { receiveGoogleMyBusinessStatsSearch } from 'state/google-my-business/actions';
+import { fetchGoogleMyBusinessStats, receiveStats } from '../';
+import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( '#fetchGoogleMyBusinessStatsSearch', () => {
@@ -20,10 +20,11 @@ describe( '#fetchGoogleMyBusinessStatsSearch', () => {
 			type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
 			timeSpan: 'week',
 			siteId: 12345,
+			statName: 'search',
 		};
 		const dispatch = sinon.spy();
 
-		fetchGoogleMyBusinessStatsSearch( { dispatch }, action );
+		fetchGoogleMyBusinessStats( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
@@ -42,24 +43,24 @@ describe( '#fetchGoogleMyBusinessStatsSearch', () => {
 	} );
 } );
 
-describe( '#receiveStatsSearch', () => {
-	test( 'should dispatch apropraite action', () => {
+describe( '#receiveStats', () => {
+	test( 'should dispatch recieve stats action', () => {
 		const dispatch = sinon.spy();
-		receiveStatsSearch( { dispatch }, {}, { hello: 'world' } );
+		receiveStats( { dispatch }, {}, { hello: 'world' } );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
-			receiveGoogleMyBusinessStatsSearch( { hello: 'world' } )
+			receiveGoogleMyBusinessStats( { hello: 'world' } )
 		);
 	} );
 
-	test( 'should transporm data snake_case to camelCase', () => {
+	test( 'should transform data snake_case to camelCase', () => {
 		const dispatch = sinon.spy();
-		receiveStatsSearch( { dispatch }, {}, { hello_world: 'hello' } );
+		receiveStats( { dispatch }, {}, { hello_world: 'hello' } );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
-			receiveGoogleMyBusinessStatsSearch( { helloWorld: 'world' } )
+			receiveGoogleMyBusinessStats( { helloWorld: 'hello' } )
 		);
 	} );
 } );
