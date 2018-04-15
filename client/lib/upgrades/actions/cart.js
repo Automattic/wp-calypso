@@ -130,8 +130,16 @@ export function applyCoupon( coupon ) {
 	} );
 }
 
+
 export function removeCoupon() {
 	Dispatcher.handleViewAction( {
 		type: CART_COUPON_REMOVE,
+	} );
+}
+
+export function applyInstallments( installments ) {
+	Dispatcher.handleViewAction({
+		type: ActionTypes.CART_INSTALLMENTS_APPLY,
+		installments,
 	} );
 }

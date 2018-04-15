@@ -101,6 +101,14 @@ function removeCoupon() {
 	};
 }
 
+function applyInstallments( installments ) {
+	return function( cart ) {
+		return update( cart, {
+			installments: { $set: installments },
+		} );
+	};
+}
+
 function canRemoveFromCart( cart, cartItem ) {
 	if ( productsValues.isCredits( cartItem ) ) {
 		return false;
@@ -298,6 +306,7 @@ function getLocationOrigin( l ) {
 export {
 	applyCoupon,
 	removeCoupon,
+	applyInstallments,
 	canRemoveFromCart,
 	cartItems,
 	emptyCart,
@@ -317,6 +326,7 @@ export {
 export default {
 	applyCoupon,
 	removeCoupon,
+	applyInstallments,
 	cartItems,
 	emptyCart,
 	isPaymentMethodEnabled,

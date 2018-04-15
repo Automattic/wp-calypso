@@ -379,14 +379,14 @@
 		}
 	}
 
-	// Term-picker rules
+	// Term-picker and installments plan picker rules
 	// -----------------------------------
 
-	.subscription-length-picker {
+	.subscription-length-picker, .installments-plan-picker {
 		margin-top: 15px;
 	}
 
-	&__subscription-length-picker-separator {
+	&__subscription-length-picker-separator, &__installments-plan-picker-seperator {
 		display: none;
 		position: relative;
 		// Parent overflow is hidden, so 80px here is an arbitrary number
@@ -399,7 +399,7 @@
 		background: $gray-lighten-30;
 	}
 
-	.subscription-length-picker + &__subscription-length-picker-separator {
+	.subscription-length-picker + &__subscription-length-picker-separator, .installments-plan-picker + &__installments-plan-picker-separator {
 		display: block;
 	}
 

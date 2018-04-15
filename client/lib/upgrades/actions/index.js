@@ -14,6 +14,7 @@ export {
 	addPrivacyToAllDomains,
 	applyCoupon,
 	removeCoupon,
+	applyInstallments,
 	closeCartPopup,
 	disableCart,
 	openCartPopup,

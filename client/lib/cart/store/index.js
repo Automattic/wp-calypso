@@ -10,6 +10,7 @@ import { assign, flow, flowRight, partialRight } from 'lodash';
 import {
 	CART_COUPON_APPLY,
 	CART_COUPON_REMOVE,
+	CART_INSTALLMENTS_APPLY,
 	CART_DISABLE,
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
@@ -25,7 +26,7 @@ import { recordEvents } from './cart-analytics';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';
-import { applyCoupon, removeCoupon, cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
+import { applyCoupon, removeCoupon, applyInstallments, cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
@@ -136,6 +137,10 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 
 		case CART_COUPON_REMOVE:
 			update( removeCoupon() );
+			break;
+
+		case CART_INSTALLMENTS_APPLY:
+			update( applyInstallments( action.installments ) );
 			break;
 
 		case CART_ITEM_REMOVE:

@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 import PayButton from './pay-button';
 import CreditCardSelector from './credit-card-selector';
 import TermsOfService from './terms-of-service';
-import cartValues from 'lib/cart-values';
+import cartValues, { isPaymentMethodEnabled } from 'lib/cart-values';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
@@ -27,10 +27,13 @@ import {
 } from 'lib/store-transactions/step-types';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import { planMatches } from 'lib/plans';
+import { getPlan, planMatches } from 'lib/plans';
 import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
+import InstallmentsPlanPicker from 'blocks/installments-plan-picker';
+import { applyInstallments } from 'lib/upgrades/actions';
+import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/ebanx';
 
 export class CreditCardPaymentBox extends React.Component {
 	static propTypes = {
@@ -179,6 +182,57 @@ export class CreditCardPaymentBox extends React.Component {
 		this.props.onSubmit( event );
 	};
 
+	getPlanProducts() {
+		return this.props.cart.products.filter( ( { product_slug } ) => getPlan( product_slug ) );
+	}
+
+	shouldRenderInstallmentsPlanPicker() {
+		const { cart, transaction } = this.props;
+
+		if ( ! isPaymentMethodEnabled( cart, 'ebanx' ) ) {
+			return false;
+		}
+
+		if ( typeof transaction.payment === 'undefined' ) {
+			return false;
+		}
+
+		return (
+			( typeof transaction.payment.storedCard !== 'undefined' &&
+				transaction.payment.storedCard.payment_partner === 'ebanx' ) ||
+			( isEbanxCreditCardProcessingEnabledForCountry( transaction.newCardFormFields.country ) &&
+				// TODO: if ebanx is enabled this should actually be ebanx. Look into it.
+				transaction.payment.paymentMethod === 'WPCOM_Billing_MoneyPress_Paygate' )
+		);
+	}
+
+	renderInstallmentsPlanPicker() {
+		const planInCart = this.getPlanProducts()[ 0 ];
+		if ( ! planInCart ) {
+			return false;
+		}
+
+		if ( ! this.props.cart.installments_plans ) {
+			return false;
+		}
+
+		if ( ! this.shouldRenderInstallmentsPlanPicker() ) {
+			return false;
+		}
+
+		return (
+			<React.Fragment>
+				<InstallmentsPlanPicker
+					plans={ this.props.cart.installments_plans }
+					initialValue={ this.props.cart.installments ? this.props.cart.installments : 1 }
+					onChange={ applyInstallments }
+					key="installments-plan-picker"
+				/>
+				<hr className="checkout__installments-plan-picker-separator" key="separator" />
+			</React.Fragment>
+		);
+	}
+
 	render = () => {
 		const { cart, cards, countriesList, initialCard, transaction } = this.props;
 
@@ -193,7 +247,7 @@ export class CreditCardPaymentBox extends React.Component {
 					/>
 
 					{ this.props.children }
-
+					{ this.renderInstallmentsPlanPicker() }
 					<TermsOfService
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 					/>
