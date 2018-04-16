@@ -103,8 +103,8 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			// product_id should be `Number`
-			const activePromotions = [ { product_id: '234234' } ];
+			// each entry should be `string`
+			const activePromotions = [ 1234 ];
 			const initialState = activePromotions;
 			const action = { type: 'DESERIALIZE' };
 			deepFreeze( initialState );
