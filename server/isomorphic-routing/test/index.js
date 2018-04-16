@@ -5,8 +5,6 @@
  */
 import { getNormalizedPath } from '..';
 
-jest.mock( 'redux-form/es/reducer', () => require( 'lodash' ).identity );
-
 describe( 'getNormalizedPath', () => {
 	test( 'should return pathname for routes with no query', () => {
 		const pathname = '/my/path';
