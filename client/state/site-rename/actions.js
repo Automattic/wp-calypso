@@ -4,6 +4,7 @@
  */
 import page from 'page';
 import { get } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -39,8 +40,8 @@ export const getErrorNotice = message =>
 const dispatchErrorNotice = ( dispatch, error ) =>
 	dispatch(
 		getErrorNotice(
-			// @TODO translate copy once finalised
-			error.message || 'Sorry, we were unable to complete your domain change. Please try again.'
+			error.message ||
+				translate( 'Sorry, we were unable to change your site address. Please try again.' )
 		)
 	);
 
@@ -139,8 +140,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 							page( domainManagementEdit( newAddress, newAddress ) );
 
 							dispatch(
-								// @TODO translate copy once finalised
-								successNotice( 'Your new domain name is ready to go!', {
+								successNotice( translate( 'Your new site address is ready to go!' ), {
 									id: 'siteRenameSuccessful',
 									duration: 5000,
 									showDismiss: true,
