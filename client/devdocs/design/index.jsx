@@ -36,6 +36,7 @@ import ButtonGroups from 'components/button-group/docs/example';
 import Buttons from 'components/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
 import Cards from 'components/card/docs/example';
+import Chart from 'components/chart/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
@@ -166,6 +167,7 @@ class DesignAssets extends React.Component {
 					<SplitButton readmeFilePath="split-button" />
 					<Cards readmeFilePath="card" />
 					<CardHeading readmeFilePath="card-heading" />
+					<Chart readmeFilePath="chart" />
 					<Checklist />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
 					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
