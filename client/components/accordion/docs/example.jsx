@@ -81,50 +81,45 @@ export default class extends React.PureComponent {
 						}
 						scope={ scope }
 					/>
-					<Accordion
-						title="Section Three"
-						subtitle={ this.state.showSubtitles ? 'With Subtitle' : null }
-					>
-						Suspendisse pellentesque diam in nisi pulvinar maximus. Integer feugiat feugiat justo ac
-						vehicula. Curabitur iaculis, risus suscipit sodales auctor, nisl urna elementum sem, non
-						vestibulum mauris ante et purus. Duis iaculis nisl neque, eget rutrum erat imperdiet
-						non.
-					</Accordion>
-					<Accordion
-						title="Section Four"
-						subtitle={
-							this.state.showSubtitles
+					<ComponentPlayground
+						code={
+							'<Accordion title="Section Four" subtitle="' +
+							( this.state.showSubtitles
 								? 'With a Very Long Subtitle to Demonstrate the Fade Effect'
-								: null
+								: null ) +
+							'">' +
+							'Drumstick ham tongue flank doner pork chop picanha. Cow short ribs tail kevin capicola ' +
+							'ball tip. Leberkas shankle landjaeger tenderloin, chuck cupim pastrami cow frankfurter. ' +
+							'Kielbasa bacon capicola shoulder porchetta, frankfurter rump short loin pig cupim. ' +
+							'</Accordion>'
 						}
-					>
-						Drumstick ham tongue flank doner pork chop picanha. Cow short ribs tail kevin capicola
-						ball tip. Leberkas shankle landjaeger tenderloin, chuck cupim pastrami cow frankfurter.
-						Kielbasa bacon capicola shoulder porchetta, frankfurter rump short loin pig cupim.
-					</Accordion>
-					<Accordion
-						title="Section Five"
-						subtitle={ this.state.showSubtitles ? 'With Subtitle and Icon' : null }
-						icon={ <Gridicon icon="time" /> }
-					>
-						Etiam dictum odio elit, id faucibus urna elementum ac. Mauris in est nec tortor luctus
-						auctor ut a velit. Suspendisse vulputate lectus arcu, sed condimentum risus rutrum
-						vitae. Nullam sagittis ultricies nisl. Duis accumsan libero vel arcu sodales venenatis.
-					</Accordion>
-					<Accordion
-						title="Section Six"
-						subtitle={ this.state.showSubtitles ? 'With Subtitle and Status' : null }
-						status={ {
-							type: 'warning',
-							text: 'Warning!',
-							url: '/devdocs/design',
-						} }
-					>
-						Suspendisse pellentesque diam in nisi pulvinar maximus. Integer feugiat feugiat justo ac
-						vehicula. Curabitur iaculis, risus suscipit sodales auctor, nisl urna elementum sem, non
-						vestibulum mauris ante et purus. Duis iaculis nisl neque, eget rutrum erat imperdiet
-						non.
-					</Accordion>
+						scope={ scope }
+					/>
+					<ComponentPlayground
+						code={
+							'<Accordion title="Section Five" subtitle="' +
+							( this.state.showSubtitles ? 'With Subtitle and Icon' : null ) +
+							'" icon={ <Gridicon icon="time" /> }>' +
+							'Etiam dictum odio elit, id faucibus urna elementum ac. Mauris in est nec tortor luctus ' +
+							'auctor ut a velit. Suspendisse vulputate lectus arcu, sed condimentum risus rutrum ' +
+							'vitae. Nullam sagittis ultricies nisl. Duis accumsan libero vel arcu sodales venenatis. ' +
+							'</Accordion>'
+						}
+						scope={ scope }
+					/>
+					<ComponentPlayground
+						code={
+							'<Accordion title="Section Six" subtitle="' +
+							( this.state.showSubtitles ? 'With Subtitle and Status' : null ) +
+							'" status={ { type: "warning", text: "Warning!", url: "/devdocs/design", }}>' +
+							'Suspendisse pellentesque diam in nisi pulvinar maximus. Integer feugiat feugiat justo ac ' +
+							'vehicula. Curabitur iaculis, risus suscipit sodales auctor, nisl urna elementum sem, non ' +
+							'vestibulum mauris ante et purus. Duis iaculis nisl neque, eget rutrum erat imperdiet ' +
+							'non.' +
+							'</Accordion>'
+						}
+						scope={ scope }
+					/>
 				</div>
 			</div>
 		);
