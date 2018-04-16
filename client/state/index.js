@@ -16,25 +16,13 @@ import form from 'redux-form/es/reducer';
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
-import actionLogger from './action-log';
-import activePromotions from './active-promotions/reducer';
-import activityLog from './activity-log/reducer';
-import analyticsTracking from './analytics/reducer';
-import applicationPasswords from './application-passwords/reducer';
-import navigationMiddleware from './navigation/middleware';
 import application from './application/reducer';
 import comments from './comments/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
 import preferences from './preferences/reducer';
-import privacyPolicy from './privacy-policy/reducer';
-import productsList from './products-list/reducer';
-import pushNotifications from './push-notifications/reducer';
-import purchases from './purchases/reducer';
-import media from './media/reducer';
-import notices from './notices/reducer';
-import preferences from './preferences/reducer';
 import reader from './reader/reducer';
+import posts from './posts/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import config from 'config';
@@ -51,6 +39,7 @@ const reducers = {
 	form,
 	preferences,
 	reader,
+	posts,
 	ui,
 	users,
 };
@@ -87,7 +76,6 @@ export function createReduxStore( initialState = {} ) {
 			config.isEnabled( 'restore-last-location' ) &&
 			require( './routing/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
-		navigationMiddleware,
 		isBrowser && require( './comments/middleware.js' ).default,
 	].filter( Boolean );
 

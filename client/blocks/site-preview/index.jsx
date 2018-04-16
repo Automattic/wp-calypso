@@ -5,11 +5,14 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import UrlPreview from 'blocks/url-preview';
+import { closePreview } from 'state/ui/preview/actions';
+import { getPreviewSite, getPreviewSiteId, getPreviewUrl } from 'state/ui/preview/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { addQueryArgs } from 'lib/route';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
@@ -70,7 +73,23 @@ class SitePreview extends Component {
 	}
 
 	render() {
-		return <UrlPreview showPreview={ this.props.showPreview } />;
+		if ( ! this.props.selectedSite || ! this.props.selectedSite.is_previewable ) {
+			debug( 'a preview is not available for this site' );
+			return null;
+		}
+
+		return (
+			<WebPreview
+				className={ this.props.className }
+				previewUrl={ this.getPreviewUrl() }
+				externalUrl={ this.getBasePreviewUrl() }
+				showExternal={ true }
+				showClose={ true }
+				showPreview={ this.props.showPreview }
+				onClose={ this.props.closePreview }
+				showSEO={ ! this.props.isDomainOnlySite }
+			/>
+		);
 	}
 }
 
