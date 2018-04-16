@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { groupBy } from 'lodash';
+import { get, uniqBy } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -29,21 +29,16 @@ function getTranslateArg( logs, sampleLog, typeFilter ) {
 		return log.status === typeFilter ? typeFilter : sampleLog.type;
 	} );
 
-	const groupedBySite = groupBy( filteredLogs, log => {
-		return log.site.ID;
-	} );
-
-	const groupedByPlugin = groupBy( filteredLogs, log => {
-		return log.plugin.slug;
-	} );
+	const numberOfSites = uniqBy( filteredLogs, 'site.ID' ).length;
+	const numberOfPlugins = uniqBy( filteredLogs, 'plugin.slug' ).length;
 
 	return {
-		plugin: sampleLog.plugin.name,
-		wp_admin_settings_page_url: sampleLog.plugin.wp_admin_settings_page_url,
-		numberOfPlugins: Object.keys( groupedByPlugin ).length,
-		site: sampleLog.site.title,
-		isMultiSite: sampleLog.site.is_multi_site,
-		numberOfSites: Object.keys( groupedBySite ).length,
+		plugin: get( sampleLog, 'plugin.name' ),
+		wp_admin_settings_page_url: get( sampleLog, 'plugin.wp_admin_settings_page_url' ),
+		numberOfPlugins,
+		site: get( sampleLog, 'site.title' ),
+		isMultiSite: get( sampleLog, 'site.is_multi_site' ),
+		numberOfSites,
 	};
 }
 
@@ -114,9 +109,9 @@ export default {
 						? logNotices.completed[ 0 ]
 						: logNotices.completed[ logNotices.completed.length - 1 ],
 				// the dismiss button would overlap the link to the settings page when activating
-				showDismiss = ! (
-					sampleLog.plugin.wp_admin_settings_page_url && 'ACTIVATE_PLUGIN' === sampleLog.action
-				);
+				showDismiss =
+					sampleLog.action !== 'ACTIVATE_PLUGIN' ||
+					! get( sampleLog, 'plugin.wp_admin_settings_page_url' );
 
 			notices.success( this.getMessage( logNotices.completed, this.successMessage, 'completed' ), {
 				button: this.getSuccessButton( logNotices.completed ),
@@ -1006,7 +1001,7 @@ export default {
 		}
 		log = log.length ? log[ 0 ] : log;
 
-		if ( log.action !== 'ACTIVATE_PLUGIN' || ! log.plugin.wp_admin_settings_page_url ) {
+		if ( log.action !== 'ACTIVATE_PLUGIN' || ! get( log, 'plugin.wp_admin_settings_page_url' ) ) {
 			return null;
 		}
 
@@ -1019,9 +1014,9 @@ export default {
 		}
 		log = log.length ? log[ 0 ] : log;
 
-		if ( log.action !== 'ACTIVATE_PLUGIN' && ! log.plugin.wp_admin_settings_page_url ) {
+		if ( log.action !== 'ACTIVATE_PLUGIN' || ! get( log, 'plugin.wp_admin_settings_page_url' ) ) {
 			return null;
 		}
-		return log.plugin.wp_admin_settings_page_url;
+		return get( log, 'plugin.wp_admin_settings_page_url' );
 	},
 };
