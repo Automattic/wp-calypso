@@ -1,4 +1,6 @@
-/** * External dependencies
+/** @format */
+/**
+ * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -42,37 +44,37 @@ function isCategorySelected( appliesTo, categoryId ) {
 	if ( ! appliesTo || ! appliesTo.productCategoryIds ) {
 		return false;
 	}
-	return ( -1 !== appliesTo.productCategoryIds.indexOf( categoryId ) );
+	return -1 !== appliesTo.productCategoryIds.indexOf( categoryId );
 }
 
 function isProductSelected( appliesTo, productId ) {
 	if ( ! appliesTo || ! appliesTo.productIds ) {
 		return false;
 	}
-	return ( -1 !== appliesTo.productIds.indexOf( productId ) );
+	return -1 !== appliesTo.productIds.indexOf( productId );
 }
 
 function addCategoryId( appliesTo, categoryId ) {
-	const categoryIds = ( appliesTo ? appliesTo.productCategoryIds : [] );
+	const categoryIds = appliesTo ? appliesTo.productCategoryIds : [];
 	const newCategoryIds = [ ...categoryIds, categoryId ];
 	return { ...appliesTo, productCategoryIds: newCategoryIds };
 }
 
 function removeCategoryId( appliesTo, categoryId ) {
-	const categoryIds = ( appliesTo ? appliesTo.productCategoryIds : [] );
-	const newCategoryIds = categoryIds.filter( ( id ) => id !== categoryId );
+	const categoryIds = appliesTo ? appliesTo.productCategoryIds : [];
+	const newCategoryIds = categoryIds.filter( id => id !== categoryId );
 	return { ...appliesTo, productCategoryIds: newCategoryIds };
 }
 
 function addProductId( appliesTo, productId ) {
-	const productIds = ( appliesTo ? appliesTo.productIds : [] );
+	const productIds = appliesTo ? appliesTo.productIds : [];
 	const newProductIds = [ ...productIds, productId ];
 	return { ...appliesTo, productIds: newProductIds };
 }
 
 function removeProductId( appliesTo, productId ) {
-	const productIds = ( appliesTo ? appliesTo.productIds : [] );
-	const newProductIds = productIds.filter( ( id ) => id !== productId );
+	const productIds = appliesTo ? appliesTo.productIds : [];
+	const newProductIds = productIds.filter( id => id !== productId );
 	return { ...appliesTo, productIds: newProductIds };
 }
 
@@ -81,11 +83,7 @@ function renderImage( imageSrc ) {
 		'is-thumb-placeholder': ! imageSrc,
 	} );
 
-	return (
-		<span className={ imageClasses }>
-			{ imageSrc && <img src={ imageSrc } /> }
-		</span>
-	);
+	return <span className={ imageClasses }>{ imageSrc && <img src={ imageSrc } alt="" /> }</span>;
 }
 
 function renderRow( component, rowText, rowValue, imageSrc, selected, onChange ) {
@@ -129,18 +127,20 @@ class AppliesToFilteredList extends React.Component {
 	}
 
 	getFilteredCategories() {
-		const { value, productCategories } = this.props;
+		const { productCategories, value } = this.props;
 		const { searchFilter } = this.state;
 
 		if ( 0 === searchFilter.length ) {
 			return productCategories;
 		}
 
-		return productCategories && productCategories.filter(
-			( category ) => {
-				return categoryContainsString( category, searchFilter ) ||
-					isCategorySelected( value, category.id );
-			}
+		return (
+			productCategories &&
+			productCategories.filter(
+				category =>
+					categoryContainsString( category, searchFilter ) ||
+					isCategorySelected( value, category.id )
+			)
 		);
 	}
 
@@ -152,11 +152,13 @@ class AppliesToFilteredList extends React.Component {
 			return products;
 		}
 
-		return products && products.filter(
-			( product ) => {
-				return productContainsString( product, searchFilter ) ||
-					isProductSelected( value, product.id );
-			}
+		return (
+			products &&
+			products.filter( product => {
+				return (
+					productContainsString( product, searchFilter ) || isProductSelected( value, product.id )
+				);
+			} )
 		);
 	}
 
@@ -165,9 +167,7 @@ class AppliesToFilteredList extends React.Component {
 			return null;
 		}
 
-		return (
-			<Search value={ searchFilter } onSearch={ this.onSearch } />
-		);
+		return <Search value={ searchFilter } onSearch={ this.onSearch } />;
 	}
 
 	renderList( appliesToType, singular ) {
@@ -199,28 +199,25 @@ class AppliesToFilteredList extends React.Component {
 
 	renderProductList( singular, currency ) {
 		const filteredProducts = this.getFilteredProducts() || [];
-		const renderFunc = ( singular
+		const renderFunc = singular
 			? this.renderProductRadio( currency )
-			: this.renderProductCheckbox( currency )
-		);
+			: this.renderProductCheckbox( currency );
 
 		return (
-			<div className="promotion-applies-to-field__list">
-				{ filteredProducts.map( renderFunc ) }
-			</div>
+			<div className="promotion-applies-to-field__list">{ filteredProducts.map( renderFunc ) }</div>
 		);
 	}
 
-	renderCategoryCheckbox = ( category ) => {
+	renderCategoryCheckbox = category => {
 		const { value } = this.props;
 		const { name, id, image } = category;
 		const selected = isCategorySelected( value, id );
 		const imageSrc = image && image.src;
 
 		return renderRow( FormCheckbox, name, id, imageSrc, selected, this.onCategoryCheckbox );
-	}
+	};
 
-	renderProductCheckbox = ( currency ) => ( product ) => {
+	renderProductCheckbox = currency => product => {
 		const { value } = this.props;
 		const { name, regular_price, id, images } = product;
 		const nameWithPrice = name + ' - ' + formatCurrency( regular_price, currency );
@@ -229,9 +226,9 @@ class AppliesToFilteredList extends React.Component {
 		const imageSrc = image && image.src;
 
 		return renderRow( FormCheckbox, nameWithPrice, id, imageSrc, selected, this.onProductCheckbox );
-	}
+	};
 
-	renderProductRadio = ( currency ) => ( product ) => {
+	renderProductRadio = currency => product => {
 		const { value } = this.props;
 		const { name, regular_price, id, images } = product;
 		const nameWithPrice = name + ' - ' + formatCurrency( regular_price, currency );
@@ -240,39 +237,37 @@ class AppliesToFilteredList extends React.Component {
 		const imageSrc = image && image.src;
 
 		return renderRow( FormRadio, nameWithPrice, id, imageSrc, selected, this.onProductRadio );
-	}
+	};
 
-	onSearch = ( searchFilter ) => {
+	onSearch = searchFilter => {
 		this.setState( () => ( { searchFilter } ) );
-	}
+	};
 
-	onCategoryCheckbox = ( e ) => {
+	onCategoryCheckbox = e => {
 		const { value, edit } = this.props;
 		const categoryId = Number( e.target.value );
 		const selected = isCategorySelected( value, categoryId );
-		const newValue = ( selected
+		const newValue = selected
 			? removeCategoryId( value, categoryId )
-			: addCategoryId( value, categoryId )
-		);
+			: addCategoryId( value, categoryId );
 		edit( 'appliesTo', newValue );
-	}
+	};
 
-	onProductCheckbox = ( e ) => {
+	onProductCheckbox = e => {
 		const { value, edit } = this.props;
 		const productId = Number( e.target.value );
 		const selected = isProductSelected( value, productId );
-		const newValue = ( selected
+		const newValue = selected
 			? removeProductId( value, productId )
-			: addProductId( value, productId )
-		);
+			: addProductId( value, productId );
 		edit( 'appliesTo', newValue );
-	}
+	};
 
-	onProductRadio = ( e ) => {
+	onProductRadio = e => {
 		const { edit } = this.props;
 		const productId = Number( e.target.value );
 		edit( 'appliesTo', { productIds: [ productId ] } );
-	}
+	};
 
 	render() {
 		const { appliesToType, singular } = this.props;
@@ -289,15 +284,14 @@ class AppliesToFilteredList extends React.Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const siteId = ( site ? site.ID : null );
+	const siteId = site ? site.ID : null;
 	const productsLoading = areProductsLoading( state, siteId );
-	const products = ( productsLoading ? null : getAllProducts( state, siteId ) );
+	const products = productsLoading ? null : getAllProducts( state, siteId );
 	const productCategories = getProductCategories( state, {}, siteId );
 
 	// TODO: This is temporary, as it's not used anymore.
-	const nonVariableProducts = ! productsLoading && products.filter(
-		( product ) => 'variable' !== product.type
-	);
+	const nonVariableProducts =
+		! productsLoading && products.filter( product => 'variable' !== product.type );
 
 	return {
 		products: nonVariableProducts,
