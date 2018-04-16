@@ -74,7 +74,6 @@ class Page extends Component {
 		recordMoreOptions: PropTypes.func.isRequired,
 		recordPageTitle: PropTypes.func.isRequired,
 		recordEditPage: PropTypes.func.isRequired,
-		recordSetFrontPage: PropTypes.func.isRequired,
 		recordViewPage: PropTypes.func.isRequired,
 		recordStatsPage: PropTypes.func.isRequired,
 	};
@@ -206,7 +205,9 @@ class Page extends Component {
 	}
 
 	setFrontPage() {
-		<PopoverMenuItem onClick={ alert( 'This feature is still being developed!' ) } />;
+		{
+			alert( 'This feature is still being developed!' );
+		}
 	}
 
 	getFrontPageItem() {
@@ -635,7 +636,6 @@ const mapDispatch = {
 	recordMoreOptions: partial( recordEvent, 'Clicked More Options Menu' ),
 	recordPageTitle: partial( recordEvent, 'Clicked Page Title' ),
 	recordEditPage: partial( recordEvent, 'Clicked Edit Page' ),
-	recordFrontPage: partial( recordEvent, 'Clicked Set as Front Page' ),
 	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 };
