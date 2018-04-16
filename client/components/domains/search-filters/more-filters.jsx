@@ -80,7 +80,7 @@ export class MoreFiltersControl extends Component {
 	handleFiltersReset = () => {
 		this.setState( { showOverallValidationError: false }, () => {
 			this.togglePopover();
-			this.props.onFiltersReset();
+			this.props.onFiltersReset( 'includeDashes', 'maxCharacters', 'showExactMatchesOnly' );
 		} );
 	};
 	handleFiltersSubmit = () => {
