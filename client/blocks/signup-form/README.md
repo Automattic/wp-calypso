@@ -1,7 +1,7 @@
 Signup Form
 ===========
 
-This component renders a Signup Form. It magically handles email, username, and password validation.
+This block renders a Signup Form. It magically handles email, username, and password validation.
 
 #### Usage:
 
@@ -12,7 +12,7 @@ disabled={ this.isDisabled() }
 submitting={ this.isSubmitting() }
 
 ```js
-import SignupForm from 'components/signup-form';
+import SignupForm from 'blocks/signup-form';
 
 render() {
 	return (
