@@ -68,6 +68,7 @@ export GlobalNotices from 'components/global-notices';
 export Gravatar from 'components/gravatar';
 export HeaderCake from 'components/header-cake';
 export HeaderButton from 'components/header-button';
+export HrWithText from 'components/hr-with-text';
 export ImagePreloader from 'components/image-preloader';
 export InfoPopover from 'components/info-popover';
 export InputChrono from 'components/input-chrono';

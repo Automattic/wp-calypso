@@ -62,6 +62,7 @@ import GlobalNotices from 'components/global-notices/docs/example';
 import Gravatar from 'components/gravatar/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
+import HrWithText from 'components/hr-with-text/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
 import InfoPopover from 'components/info-popover/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
@@ -196,6 +197,7 @@ class DesignAssets extends React.Component {
 					<Gridicons />
 					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
+					<HrWithText readmeFilePath="hr-with-text" />
 					<ImagePreloader readmeFilePath="image-preloader" />
 					<InfoPopover readmeFilePath="info-popover" />
 					<InputChrono readmeFilePath="input-chrono" />
