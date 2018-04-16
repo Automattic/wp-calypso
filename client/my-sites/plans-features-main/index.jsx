@@ -171,7 +171,7 @@ export class PlansFeaturesMain extends Component {
 		let faqs = null;
 
 		if ( ! isInSignup ) {
-			faqs = displayJetpackPlans ? <JetpackFAQ /> : <WpcomFAQ site={ site } />;
+			faqs = displayJetpackPlans ? <JetpackFAQ /> : <WpcomFAQ />;
 		}
 
 		return (

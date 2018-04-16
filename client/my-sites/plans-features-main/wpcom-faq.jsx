@@ -13,10 +13,11 @@ import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import HappychatButton from 'components/happychat/button';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { purchasesRoot } from 'me/purchases/paths';
 
-const WpcomFAQ = ( { isChatAvailable, site, translate } ) => {
+const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	const helpLink =
 		isEnabled( 'happychat' ) && isChatAvailable ? (
 			<HappychatButton className="plans-features-main__happychat-button" />
@@ -53,7 +54,7 @@ const WpcomFAQ = ( { isChatAvailable, site, translate } ) => {
 						' All plans already come with a custom set of plugins tailored just for them.' +
 						' {{a}}Check out all included plugins{{/a}}.',
 					{
-						components: { a: <a href={ `/plugins/${ site.slug }` } /> },
+						components: { a: <a href={ `/plugins/${ siteSlug }` } /> },
 					}
 				) }
 			/>
@@ -65,7 +66,7 @@ const WpcomFAQ = ( { isChatAvailable, site, translate } ) => {
 						' All plans give you access to our {{a}}directory of free and premium themes{{/a}}.' +
 						' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
 					{
-						components: { a: <a href={ `/themes/${ site.slug }` } /> },
+						components: { a: <a href={ `/themes/${ siteSlug }` } /> },
 					}
 				) }
 			/>
@@ -155,4 +156,5 @@ const WpcomFAQ = ( { isChatAvailable, site, translate } ) => {
 
 export default connect( state => ( {
 	isChatAvailable: isHappychatAvailable( state ),
+	siteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( WpcomFAQ ) );
