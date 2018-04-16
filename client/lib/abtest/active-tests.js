@@ -1,5 +1,15 @@
 /** @format */
 export default {
+	springSale30PercentOff: {
+		datestamp: '20180413',
+		variations: {
+			upsell: 50,
+			control: 50,
+		},
+		defaultVariation: 'upsell',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 	signupAtomicStoreVsPressable: {
 		datestamp: '20171101',
 		variations: {
