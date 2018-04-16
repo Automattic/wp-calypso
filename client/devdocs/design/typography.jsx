@@ -65,9 +65,9 @@ export default class Typography extends React.PureComponent {
 
 					<h2>Content Typography</h2>
 					<p>
-						We use <code>Noto Serif</code> for user-generated content, like post titles, post
-						content, and sometimes comments. <code>Noto Serif</code> helps to make the web more
-						beautiful across platforms for all languages.
+						We mostly use <code>Noto Serif</code> in reading and writing contexts, like the Reader
+						and the editor. Use your best judgment when using Noto Serif for a UI element. Does it
+						add valuable context for the person using our products?
 					</p>
 
 					<Card className="design__typography-content-example">
