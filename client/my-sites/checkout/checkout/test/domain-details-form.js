@@ -24,6 +24,7 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
+	translate: x => x,
 } ) );
 jest.mock( 'lib/wp', () => {
 	const wpcomMock = {

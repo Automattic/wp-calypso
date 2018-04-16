@@ -399,7 +399,7 @@ export class ContactDetailsFormFields extends Component {
 				} ) }
 
 				{ this.props.needsOnlyGoogleAppsDetails ? (
-					<GAppsFieldset getFieldProps={ this.getFieldProps } />
+					<GAppsFieldset countryCode={ countryCode } getFieldProps={ this.getFieldProps } />
 				) : (
 					this.renderContactDetailsFields()
 				) }
