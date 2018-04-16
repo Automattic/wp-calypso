@@ -99,7 +99,7 @@ export class MoreFiltersControl extends Component {
 		const { translate } = this.props;
 		const hasFilterValues = this.getFiltercounts() > 0;
 		return (
-			<div className="search-filters__more-filters">
+			<div className="search-filters__filter search-filters__more-filters">
 				<Button
 					primary={ hasFilterValues }
 					ref={ button => ( this.button = button ) } // eslint-disable-line react/jsx-no-bind

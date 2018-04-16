@@ -1,5 +1,16 @@
 /** @format */
 
+.search-filters {
+	display: flex;
+}
+
+.search-filters__filter {
+	margin-right: 1em;
+	&:last-child {
+		margin-right: 0;
+	}
+}
+
 .search-filters__popover {
 	width: 28em;
 
@@ -14,6 +25,10 @@
 
 	.form-fieldset {
 		text-align: left;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.validation-fieldset {
@@ -47,5 +62,44 @@
 
 	&:last-of-type {
 		margin-bottom: 0;
+	}
+}
+
+.search-filters__token-field-fieldset {
+	.token-field__token {
+		&:first-child {
+			margin-left: 0;
+		}
+	}
+	.token-field__token-text,
+	.token-field__remove-token {
+		background: $white;
+		color: $gray-darken-20;
+		border: 1px solid $gray-lighten-20;
+	}
+	.token-field__token-text {
+		border-right: none;
+	}
+	.token-field__remove-token {
+		border-left: none;
+
+		&:hover {
+			background: $gray-lighten-20;
+			color: $gray-darken-20;
+		}
+	}
+
+	.token-field__input-container {
+		margin-left: 0.4em;
+		margin-right: 0.4em;
+		border-bottom: 1px solid $gray-lighten-20;
+	}
+
+	input[type='text'].token-field__input {
+		margin-left: 0;
+	}
+
+	.token-field__suggestions-list.is-expanded {
+		border-top: none;
 	}
 }

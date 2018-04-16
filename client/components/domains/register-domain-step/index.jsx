@@ -16,6 +16,7 @@ import {
 	isEmpty,
 	mapKeys,
 	noop,
+	pick,
 	pickBy,
 	reject,
 	snakeCase,
@@ -34,7 +35,7 @@ import config from 'config';
 import wpcom from 'lib/wp';
 import Card from 'components/card';
 import Notice from 'components/notice';
-import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
+import { checkDomainAvailability, getFixedDomainSearch, getAvailableTlds } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
@@ -182,6 +183,7 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( suggestion );
 
 		return {
+			availableTlds: [],
 			clickedExampleSuggestion: false,
 			filters: this.getInitialFiltersState(),
 			lastQuery: suggestion,
@@ -203,6 +205,7 @@ class RegisterDomainStep extends React.Component {
 			includeDashes: false,
 			maxCharacters: '',
 			showExactMatchesOnly: false,
+			tlds: [],
 		};
 	}
 
@@ -270,6 +273,8 @@ class RegisterDomainStep extends React.Component {
 
 			this.setState( state );
 		}
+
+		this.getAvailableTlds();
 
 		this._isMounted = false;
 	}
@@ -353,6 +358,7 @@ class RegisterDomainStep extends React.Component {
 			isKrackenUi && (
 				<div className="register-domain-step__filter">
 					<SearchFilters
+						availableTlds={ this.state.availableTlds }
 						filters={ this.state.filters }
 						onChange={ this.onFiltersChange }
 						onFiltersReset={ this.onFiltersReset }
@@ -436,7 +442,10 @@ class RegisterDomainStep extends React.Component {
 		const { filters } = this.state;
 		return {
 			...mapKeys(
-				pickBy( filters, value => isNumberString( value ) || typeof value === 'boolean' ),
+				pickBy(
+					filters,
+					value => isNumberString( value ) || typeof value === 'boolean' || Array.isArray( value )
+				),
 				( value, key ) => snakeCase( key )
 			),
 		};
@@ -488,6 +497,12 @@ class RegisterDomainStep extends React.Component {
 			},
 			callback
 		);
+	};
+
+	getAvailableTlds = () => {
+		getAvailableTlds().then( availableTlds => {
+			this.setState( { availableTlds } );
+		} );
 	};
 
 	checkDomainAvailability = ( domain, timestamp ) => {
