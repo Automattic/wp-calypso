@@ -377,7 +377,7 @@ class JetpackSsoForm extends Component {
 		return (
 			<Main>
 				<EmptyContent
-					illustration="/calypso/images/illustrations/whoops.svg"
+					illustration="/calypso/images/illustrations/illustration-500.svg"
 					title={ translate( 'Oops, this URL should not be accessed directly' ) }
 					line={ translate(
 						'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
