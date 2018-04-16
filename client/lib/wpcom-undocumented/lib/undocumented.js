@@ -493,6 +493,17 @@ Undocumented.prototype.resendInboundTransferEmail = function( domain, fn ) {
 };
 
 /**
+ * Fetches a list of available top-level domain names ordered by popularity.
+ *
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.getAvailableTlds = function( fn ) {
+	return this.wpcom.req.get( '/domains/suggestions/tlds', fn );
+};
+
+/**
  * Determine whether a domain name can be used for Site Redirect
  *
  * @param {int|string} siteId The site ID
