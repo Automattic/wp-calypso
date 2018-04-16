@@ -191,6 +191,32 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 		} );
 }
 
+const getAnalyticsPathAndTitle = ( postType, postId, postToCopyId ) => {
+	const isPost = 'post' === postType;
+	const isPage = 'page' === postType;
+	const isNew = postToCopyId || ! postId;
+	const isEdit = !! postId;
+
+	if ( isPost && isNew ) {
+		return [ '/post/:site', 'Post > New' ];
+	}
+	if ( isPost && isEdit ) {
+		return [ '/post/:site/:post_id', 'Post > Edit' ];
+	}
+	if ( isPage && isNew ) {
+		return [ '/page/:site', 'Page > New' ];
+	}
+	if ( isPage && isEdit ) {
+		return [ '/page/:site/:post_id', 'Page > Edit' ];
+	}
+	if ( isNew ) {
+		return [ `/edit/${ postType }/:site`, 'Custom Post Type > New' ];
+	}
+	if ( isEdit ) {
+		return [ `/edit/${ postType }/:site/:post_id`, 'Custom Post Type > Edit' ];
+	}
+};
+
 export default {
 	post: function( context, next ) {
 		const postType = determinePostType( context );
@@ -260,29 +286,11 @@ export default {
 			unsubscribe = context.store.subscribe( startEditingOnSiteSelected );
 		}
 
-		let analyticsPath, analyticsTitle;
-		switch ( postType ) {
-			case 'post':
-				analyticsPath = '/post/:site';
-				analyticsTitle = 'Post > ';
-				break;
-			case 'page':
-				analyticsPath = '/page/:site';
-				analyticsTitle = 'Page > ';
-				break;
-			default:
-				analyticsPath = `/edit/${ postType }/:site`;
-				analyticsTitle = 'Custom Post Type > ';
-		}
-		if ( postToCopyId ) {
-			analyticsTitle += 'New';
-		} else if ( postID ) {
-			analyticsPath += '/:post_id';
-			analyticsTitle += 'Edit';
-		} else {
-			analyticsTitle += 'New';
-		}
-
+		const [ analyticsPath, analyticsTitle ] = getAnalyticsPathAndTitle(
+			postType,
+			postID,
+			postToCopyId
+		);
 		renderEditor( context, { analyticsPath, analyticsTitle } );
 
 		next();
