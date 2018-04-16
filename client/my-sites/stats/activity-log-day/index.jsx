@@ -14,8 +14,7 @@ import { isEmpty } from 'lodash';
 import ActivityLogItem from '../activity-log-item';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getActivityLog, getRequestedRewind, getRewindEvents } from 'state/selectors';
-import { ms, makeIsDiscarded } from 'state/activity-log/log/is-discarded';
+import { getRequestedRewind } from 'state/selectors';
 
 /**
  * Module constants
@@ -104,13 +103,11 @@ class ActivityLogDay extends Component {
 		const {
 			disableBackup,
 			disableRestore,
-			isDiscardedPerspective,
 			isRewindActive,
 			isToday,
 			logs,
 			requestedBackupId,
 			requestedRestoreId,
-			rewindEvents,
 			siteId,
 			tsEndOfSiteDay,
 		} = this.props;
@@ -123,9 +120,6 @@ class ActivityLogDay extends Component {
 				activityId === requestedActionId &&
 				( tsEndOfSiteDay <= activityTs && activityTs < tsEndOfSiteDay + DAY_IN_MILLISECONDS )
 		);
-
-		const isDiscarded =
-			isDiscardedPerspective && makeIsDiscarded( rewindEvents, isDiscardedPerspective );
 
 		return (
 			<FoldableCard
@@ -145,7 +139,6 @@ class ActivityLogDay extends Component {
 						disableRestore={ disableRestore }
 						disableBackup={ disableBackup }
 						hideRestore={ ! isRewindActive }
-						isDiscarded={ isDiscarded ? isDiscarded( log.activityTs ) : log.activityIsDiscarded }
 						siteId={ siteId }
 					/>
 				) ) }
@@ -158,15 +151,9 @@ export default localize(
 	connect(
 		( state, { logs, siteId } ) => {
 			const requestedRestoreId = getRequestedRewind( state, siteId );
-			const rewindEvents = getRewindEvents( state, siteId );
-			const isDiscardedPerspective = requestedRestoreId
-				? new Date( ms( getActivityLog( state, siteId, requestedRestoreId ).activityTs ) )
-				: undefined;
 
 			return {
 				logs,
-				rewindEvents,
-				isDiscardedPerspective,
 				requestedRestoreId,
 			};
 		},

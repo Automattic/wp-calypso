@@ -48,33 +48,6 @@
 	}
 }
 
-.activity-log-item .is-discarded {
-	margin-left: 80px;
-
-	@include breakpoint( '<480px' ) {
-		margin-left: 60px;
-	}
-
-	&:before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 33px;
-		height: 100%;
-		border-left: 2px dotted $gray-lighten-20;
-
-		@include breakpoint( '<480px' ) {
-			left: 22px;
-		}
-	}
-
-	&:last-of-type {
-		&:before {
-			display: none;
-		}
-	}
-}
-
 .activity-log-item__type {
 	align-self: flex-start;
 	background: $gray-light;
@@ -135,12 +108,6 @@
 	&.is-error {
 		background: $alert-red;
 	}
-
-	.is-discarded & {
-		color: $gray-text;
-		background: none;
-		border: 1px solid transparentize($gray-lighten-20, 0.5);
-	}
 }
 
 .activity-log-item__card {
@@ -159,11 +126,6 @@
 		padding: 16px;
 		font-size: 14px;
 		color: $gray-darken-20;
-	}
-
-	.is-discarded & {
-		background: none;
-		box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5);
 	}
 }
 
@@ -216,18 +178,6 @@
 			width: 24px;
 			height: 24px;
 			margin-right: 8px;
-		}
-	}
-
-	.gravatar {
-		.is-discarded & {
-			filter: grayscale(1);
-		}
-	}
-
-	.jetpack-logo {
-		.is-discarded & {
-			opacity: 0.75;
 		}
 	}
 }
