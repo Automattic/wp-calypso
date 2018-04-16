@@ -115,6 +115,12 @@ class ActivityLog extends Component {
 		this.findExistingRewind( this.props );
 	}
 
+	componentWillUpdate( nextProps ) {
+		if ( nextProps.siteId !== this.props.siteId ) {
+			this.setState( { currentPage: 1 } );
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.rewindState.rewind && this.props.rewindState.rewind ) {
 			this.findExistingRewind( this.props );
