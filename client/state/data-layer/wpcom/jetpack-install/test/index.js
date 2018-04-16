@@ -86,9 +86,10 @@ describe( 'handleError', () => {
 	} );
 
 	test( 'should trigger an error if max num retries reached', () => {
-		const installAction = Object.assign( {}, INSTALL_ACTION, {
+		const installAction = {
+			...INSTALL_ACTION,
 			meta: { dataLayer: { retryCount: JETPACK_REMOTE_INSTALL_RETRIES } },
-		} );
+		};
 		const result = handleError( installAction, TIMEOUT_RESPONSE );
 		expect( result ).toEqual(
 			expect.objectContaining( {
