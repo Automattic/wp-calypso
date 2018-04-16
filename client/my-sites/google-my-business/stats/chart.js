@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { isEqual, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,12 +17,10 @@ import LineChart from 'components/line-chart';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 import SectionHeader from 'components/section-header';
-import {
-	changeGoogleMyBusinessStatsInterval,
-	requestGoogleMyBusinessStats,
-} from 'state/google-my-business/actions';
+import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { getGoogleMyBusinessStats } from 'state/selectors';
-import { getInterval } from 'state/google-my-business/selectors';
+import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
+import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 function transformData( props ) {
@@ -78,19 +76,8 @@ class GoogleMyBusinessStatsChart extends Component {
 	};
 
 	state = {
-		data: null,
+		transformedData: this.transformData( this.props.data ),
 	};
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( nextProps.data !== prevState.data ) {
-			return {
-				data: nextProps.data,
-				transformedData: transformData( nextProps ),
-			};
-		}
-
-		return null;
-	}
 
 	componentDidMount() {
 		if ( this.props.siteId ) {
@@ -109,16 +96,25 @@ class GoogleMyBusinessStatsChart extends Component {
 		}
 	}
 
-	requestGoogleMyBusinessStats() {
-		this.props.requestGoogleMyBusinessStats(
-			this.props.siteId,
-			this.props.statType,
-			this.props.interval,
-			getAggregation( this.props )
+	shouldComponentUpdate( nextProps ) {
+		return (
+			this.props.interval !== nextProps.interval || ! isEqual( this.props.data, nextProps.data )
 		);
 	}
 
-	onIntervalChange = event =>
+	transformData( data ) {
+		if ( ! data ) {
+			return data;
+		}
+
+		return data.metricValues.map( value => ( {
+			value: value.totalValue.value,
+			description: get( this.props.dataSeriesInfo, `${ value.metric }.description`, '' ),
+			name: get( this.props.dataSeriesInfo, `${ value.metric }.name`, value.metric ),
+		} ) );
+	}
+
+	changeInterval = event =>
 		this.props.changeGoogleMyBusinessStatsInterval(
 			this.props.siteId,
 			this.props.statType,
@@ -168,8 +164,7 @@ class GoogleMyBusinessStatsChart extends Component {
 							<hr className="gmb-stats__metric-hr" />
 						</div>
 					) }
-
-					<select value={ interval } onChange={ this.onIntervalChange }>
+					<select value={ interval } onChange={ this.changeInterval }>
 						<option value="week">{ 'Week' }</option>
 						<option value="month">{ 'Month' }</option>
 						<option value="quarter">{ 'Quarter' }</option>
@@ -185,8 +180,7 @@ class GoogleMyBusinessStatsChart extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
-		const interval = getInterval( state, siteId, ownProps.statType );
-
+		const interval = getStatsInterval( state, siteId, ownProps.statType );
 		return {
 			siteId,
 			interval,

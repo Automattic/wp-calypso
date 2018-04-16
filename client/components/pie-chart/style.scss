@@ -1,9 +1,11 @@
+.pie-chart__placeholder,
 .pie-chart {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
 
+.pie-chart__placeholder-drawing,
 .pie-chart__chart-drawing {
 	max-width: 400px;
 	max-height: 400px;
@@ -30,6 +32,10 @@
 	fill: $blue-light;
 }
 
+.pie-chart__chart-drawing-empty {
+	fill: $gray;
+}
+
 .pie-chart__legend-item {
 	display: flex;
 	flex-direction: column;
@@ -46,6 +52,7 @@
 	font-size: 21px;
 }
 
+.pie-chart__placeholder-legend-drawing,
 .pie-chart__legend-item-title-sample-drawing {
 	height: 12px;
 	width: 12px;
@@ -63,4 +70,34 @@
 .pie-chart__legend-item-detail-description {
 	color: $gray-text-min;
 	font-size: 16px;
+}
+
+.pie-chart__placeholder-title {
+	@include placeholder();
+	margin-top: 15px;
+	font-size: 24px;
+	text-align: center;
+	width: 500px;
+	height: 45px;
+}
+
+.pie-chart__placeholder-drawing-element {
+	@include placeholder();
+	fill: lighten( $gray, 30% );
+}
+
+.pie-chart__placeholder-legend-item {
+	display: flex;
+	margin-top: 28px;
+}
+
+.pie-chart__placeholder-legend-item-detail {
+	flex: 0 0 100%;
+}
+
+.pie-chart__placeholder-legend-item-detail-element {
+	@include placeholder();
+	width: 90%;
+	height: 30px;
+	margin-bottom: 14px;
 }

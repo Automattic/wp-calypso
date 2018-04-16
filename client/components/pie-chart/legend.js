@@ -3,35 +3,42 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { isEqual, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import DataType from './data/type';
+import DataType from './data-type';
 import LegendItem from './legend-item';
-import { sortDataAndAssignSections, isDataEqual } from './data';
+
+const NUM_COLOR_SECTIONS = 3;
 
 class PieChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = this.processData( props.data );
-	}
+	state = this.processData( this.props.data );
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isDataEqual( this.props.data, nextProps.data ) ) {
+		if ( ! isEqual( this.props.data, nextProps.data ) ) {
 			this.setState( this.processData( nextProps.data ) );
 		}
 	}
 
+	sortDataAndAssignSections( data ) {
+		return sortBy( data, datum => datum.value )
+			.reverse()
+			.map( ( datum, index ) => ( {
+				...datum,
+				sectionNum: index % NUM_COLOR_SECTIONS,
+			} ) );
+	}
+
 	processData( data ) {
-		const sortedData = sortDataAndAssignSections( data );
+		const sortedData = this.sortDataAndAssignSections( data );
 
 		return {
 			data: sortedData,
@@ -43,14 +50,16 @@ class PieChartLegend extends Component {
 		const { data, dataTotal } = this.state;
 		return (
 			<div className={ 'pie-chart__legend' }>
-				{ data.map( ( datum, index ) => {
+				{ data.map( datum => {
 					return (
 						<LegendItem
-							key={ index.toString() }
+							key={ datum.name }
 							name={ datum.name }
 							value={ datum.value }
 							sectionNumber={ datum.sectionNum }
-							percent={ Math.round( datum.value / dataTotal * 100 ).toString() }
+							percent={
+								dataTotal > 0 ? Math.round( datum.value / dataTotal * 100 ).toString() : '0'
+							}
 							description={ datum.description }
 						/>
 					);

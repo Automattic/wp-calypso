@@ -5,16 +5,25 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { isEqualWith, isEqual, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
 
 /**
  * Internal dependencies
  */
-import DataType from './data/type';
-import { sortDataAndAssignSections, isDataEqual } from './data';
+import DataType from './data-type';
 
 const SVG_SIZE = 300;
+const NUM_COLOR_SECTIONS = 3;
+
+const customizer = ( previousData, newData ) => {
+	const reducer = datum => ( {
+		value: datum.value,
+		name: datum.name,
+	} );
+	return isEqual( previousData.map( reducer ), newData.map( reducer ) );
+};
 
 class PieChart extends Component {
 	static propTypes = {
@@ -23,25 +32,19 @@ class PieChart extends Component {
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = this.processData( props.data );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! isDataEqual( this.props.data, nextProps.data ) ) {
-			this.setState( this.processData( nextProps.data ) );
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		const newSortedData = PieChart.sortDataAndAssignSections( nextProps.data );
+		if ( ! isEqualWith( prevState.data, newSortedData, customizer ) ) {
+			return PieChart.processData( newSortedData );
 		}
+
+		return null;
 	}
 
-	processData( data ) {
-		const sortedData = sortDataAndAssignSections( data );
-
+	static processData( data ) {
 		const arcs = d3Pie()
-			.startAngle( Math.PI )
 			.startAngle( -Math.PI )
-			.value( datum => datum.value )( sortedData );
+			.value( datum => datum.value )( data );
 
 		const arcGen = d3Arc()
 			.innerRadius( 0 )
@@ -50,17 +53,47 @@ class PieChart extends Component {
 		const paths = arcs.map( arc => arcGen( arc ) );
 
 		return {
-			data: sortedData.map( ( datum, index ) => ( {
+			data: data.map( ( datum, index ) => ( {
 				...datum,
 				path: paths[ index ],
 			} ) ),
-			dataTotal: sortedData.reduce( ( total, datum ) => total + datum.value, 0 ),
+			dataTotal: data.reduce( ( total, datum ) => total + datum.value, 0 ),
 		};
+	}
+
+	static sortDataAndAssignSections( data ) {
+		return sortBy( data, datum => datum.value )
+			.reverse()
+			.map( ( datum, index ) => ( {
+				...datum,
+				sectionNum: index % NUM_COLOR_SECTIONS,
+			} ) );
+	}
+
+	state = PieChart.processData( PieChart.sortDataAndAssignSections( this.props.data ) );
+
+	renderPieChart() {
+		const { data } = this.state;
+		return data.map( datum => {
+			return (
+				<path
+					className={ `pie-chart__chart-section-${ datum.sectionNum }` }
+					key={ datum.name }
+					d={ datum.path }
+				/>
+			);
+		} );
+	}
+
+	renderEmptyChart() {
+		return (
+			<circle cx={ 0 } cy={ 0 } r={ SVG_SIZE / 2 } className="pie-chart__chart-drawing-empty" />
+		);
 	}
 
 	render() {
 		const { title, translate } = this.props;
-		const { data, dataTotal } = this.state;
+		const { dataTotal } = this.state;
 
 		return (
 			<div className={ 'pie-chart' }>
@@ -70,15 +103,7 @@ class PieChart extends Component {
 					preserveAspectRatio={ 'xMidYMid meet' }
 				>
 					<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
-						{ data.map( ( datum, index ) => {
-							return (
-								<path
-									className={ `pie-chart__chart-section-${ datum.sectionNum }` }
-									key={ index.toString() }
-									d={ datum.path }
-								/>
-							);
-						} ) }
+						{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }
 					</g>
 				</svg>
 				{ title && (

@@ -6,7 +6,6 @@
 import {
 	GOOGLE_MY_BUSINESS_CONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_DISCONNECT_LOCATION,
-	GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
@@ -61,13 +60,6 @@ export const disconnectGoogleMyBusinessLocation = siteId => dispatch => {
 		return Promise.resolve();
 	} );
 };
-
-export const changeGoogleMyBusinessStatsInterval = ( siteId, statType, interval ) => ( {
-	type: GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
-	siteId,
-	statType,
-	interval,
-} );
 
 export const requestGoogleMyBusinessStats = (
 	siteId,
