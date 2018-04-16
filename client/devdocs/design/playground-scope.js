@@ -11,6 +11,7 @@ export SocialLogo from 'social-logos';
  */
 export ActionCard from 'components/action-card';
 export Accordion from 'components/accordion';
+export Animate from 'components/animate';
 export BackButton from 'components/back-button';
 export Badge from 'components/badge';
 export Banner from 'components/banner';

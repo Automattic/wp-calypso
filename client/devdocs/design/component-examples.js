@@ -3,6 +3,7 @@
  */
 export ActionCard from 'components/action-card/docs/example';
 export Accordions from 'components/accordion/docs/example';
+export Animate from 'components/animate/docs/example';
 export BackButton from 'components/back-button/docs/example';
 export Badge from 'components/badge/docs/example';
 export Banner from 'components/banner/docs/example';
