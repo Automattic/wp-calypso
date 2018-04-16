@@ -102,6 +102,7 @@ class Plans extends React.Component {
 							intervalType={ this.props.intervalType }
 							selectedFeature={ this.props.selectedFeature }
 							selectedPlan={ this.props.selectedPlan }
+							withSaleInfo={ this.props.withSaleInfo }
 							site={ selectedSite }
 						/>
 					</div>

@@ -174,19 +174,17 @@ class PlanFeatures extends Component {
 			canPurchase,
 			hasPlaceholders,
 			translate,
+			withSaleInfo,
 			isEligibleForSpringDiscount: eligible,
 		} = this.props;
 		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
-		const comesFromSidebarNudge = window.location.search.indexOf( 'spring' ) !== -1;
 
-		if (
-			! eligible ||
-			! bannerContainer ||
-			! comesFromSidebarNudge ||
-			hasPlaceholders ||
-			! canPurchase
-		) {
-			return null;
+		if ( ! bannerContainer ) {
+			return false;
+		}
+
+		if ( ! eligible || ! withSaleInfo || hasPlaceholders || ! canPurchase ) {
+			return ReactDOM.createPortal( <div />, bannerContainer );
 		}
 
 		return ReactDOM.createPortal(
