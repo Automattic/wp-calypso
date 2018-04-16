@@ -15,7 +15,7 @@ import { isEmpty, noop } from 'lodash';
  */
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
 import PaymentCountrySelect from 'components/payment-country-select';
-import EbanxBrazilPaymentFields from 'my-sites/checkout/checkout/ebanx-brazil-payment-fields';
+import EbanxPaymentFields from 'my-sites/checkout/checkout/ebanx-payment-fields';
 import { Input } from 'my-sites/domains/components/form';
 import { maskField, unmaskField } from 'lib/credit-card-details';
 import { getCreditCardType } from 'lib/checkout';
@@ -90,13 +90,13 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
-	shouldRenderEbanx() {
+	shouldRenderEbanxFields() {
 		return shouldRenderAdditionalEbanxFields( this.getFieldValue( 'country' ) );
 	}
 
 	render() {
 		const { translate, countriesList, autoFocus } = this.props;
-		const ebanxDetailsRequired = this.shouldRenderEbanx();
+		const ebanxDetailsRequired = this.shouldRenderEbanxFields();
 		const creditCardFormFieldsExtrasClassNames = classNames( {
 			'credit-card-form-fields__extras': true,
 			'ebanx-details-required': ebanxDetailsRequired,
@@ -141,7 +141,7 @@ export class CreditCardFormFields extends React.Component {
 					} ) }
 
 					{ ebanxDetailsRequired && (
-						<EbanxBrazilPaymentFields
+						<EbanxPaymentFields
 							countryCode={ this.getFieldValue( 'country' ) }
 							countriesList={ countriesList }
 							getErrorMessage={ this.props.getErrorMessage }

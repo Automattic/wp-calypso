@@ -12,8 +12,9 @@ import { find, isEmpty } from 'lodash';
  */
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
+import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
 
-export class EbanxBrazilPaymentFields extends Component {
+export class EbanxPaymentFields extends Component {
 	static propTypes = {
 		countryCode: PropTypes.string.isRequired,
 		countriesList: PropTypes.object.isRequired,
@@ -34,24 +35,25 @@ export class EbanxBrazilPaymentFields extends Component {
 	createField = ( fieldName, componentClass, props ) => {
 		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
 		const isError = ! isEmpty( errorMessage );
-		return React.createElement(
-			componentClass,
-			Object.assign(
-				{},
-				{
-					additionalClasses: `checkout__form-field ${ this.props.fieldClassName }`,
-					isError,
-					errorMessage: errorMessage[ 0 ],
-					name: fieldName,
-					onBlur: this.onFieldChange,
-					onChange: this.onFieldChange,
-					value: this.props.getFieldValue( fieldName ),
-					autoComplete: 'off',
-					labelClass: 'checkout__form-label',
-				},
-				props
-			)
-		);
+
+		return PAYMENT_PROCESSOR_EBANX_COUNTRIES[ this.props.countryCode ].fields.indexOf( fieldName ) > -1
+			? React.createElement(
+				componentClass,
+				Object.assign(
+					{},
+					{
+						additionalClasses: `checkout__form-field ${ this.props.fieldClassName }`,
+						isError,
+						errorMessage: errorMessage[ 0 ],
+						name: fieldName,
+						onBlur: this.onFieldChange,
+						onChange: this.onFieldChange,
+						value: this.props.getFieldValue( fieldName ),
+						autoComplete: 'off',
+						labelClass: 'checkout__form-label',
+					},
+					props )
+			) : null;
 	};
 
 	handlePhoneFieldChange = ( { value, countryCode } ) => {
@@ -151,4 +153,4 @@ export class EbanxBrazilPaymentFields extends Component {
 	}
 }
 
-export default localize( EbanxBrazilPaymentFields );
+export default localize( EbanxPaymentFields );

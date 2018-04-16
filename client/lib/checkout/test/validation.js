@@ -17,14 +17,7 @@ import {
 	paymentFieldRules,
 	creditCardFieldRules,
 } from '../validation';
-import { isEbanxCreditCardProcessingEnabledForCountry, isValidCPF } from 'lib/checkout/ebanx';
-
-jest.mock( 'lib/checkout/ebanx', () => {
-	return {
-		isEbanxCreditCardProcessingEnabledForCountry: jest.fn( false ),
-		isValidCPF: jest.fn( false ),
-	};
-} );
+import * as ebanxMethods from '../ebanx';
 
 describe( 'validation', () => {
 	const validCard = {
@@ -126,8 +119,10 @@ describe( 'validation', () => {
 
 		describe( 'validate ebanx non-credit card details', () => {
 			beforeAll( () => {
-				isEbanxCreditCardProcessingEnabledForCountry.mockReturnValue( true );
-				isValidCPF.mockReturnValue( true );
+				ebanxMethods.isEbanxCreditCardProcessingEnabledForCountry = jest
+					.fn()
+					.mockImplementation( () => true );
+				ebanxMethods.isValidCPF = jest.fn().mockImplementation( () => true );
 			} );
 
 			test( 'should return no errors when details are valid', () => {
@@ -192,7 +187,7 @@ describe( 'validation', () => {
 			} );
 
 			test( 'should return error when CPF is invalid', () => {
-				isValidCPF.mockReturnValue( false );
+				ebanxMethods.isValidCPF = jest.fn().mockImplementation( () => false );
 				const invalidCPF = { ...validBrazilianEbanxCard, document: 'blah' };
 				const result = validatePaymentDetails( invalidCPF );
 				expect( result ).toEqual( {

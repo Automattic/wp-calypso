@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<EbanxBrazilPaymentFields /> should render 1`] = `
+exports[`<EbanxPaymentFields /> should render 1`] = `
 <React.Fragment>
   <span
     className="checkout__form-info-text"

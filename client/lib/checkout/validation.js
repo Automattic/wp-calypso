@@ -3,59 +3,17 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty, pick } from 'lodash';
+import { capitalize, compact, isArray, isEmpty } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { isEbanxCreditCardProcessingEnabledForCountry, isValidCPF } from 'lib/checkout/ebanx';
-import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
-
-/**
- * Returns ebanx validation rule set. Ebanx required fields may vary according to country
- * See: https://developers.ebanx.com/api-reference/full-api-documentation/ebanx-payment-2/ebanx-payment-guide/guide-create-a-payment/
- * @param {string} country two-letter country code to determine the required ebanx fields
- * @returns {object} the ruleset
- */
-function ebanxFieldRules( country ) {
-	const requiredFields = PAYMENT_PROCESSOR_EBANX_COUNTRIES[ country ].requiredFields || [];
-
-	return pick(
-		{
-			document: {
-				description: i18n.translate( 'Taxpayer Identification Number' ),
-				rules: [ 'validCPF' ],
-			},
-
-			'street-number': {
-				description: i18n.translate( 'Street Number' ),
-				rules: [ 'required' ],
-			},
-
-			'address-1': {
-				description: i18n.translate( 'Address' ),
-				rules: [ 'required' ],
-			},
-
-			state: {
-				description: i18n.translate( 'State' ),
-				rules: [ 'required' ],
-			},
-
-			city: {
-				description: i18n.translate( 'City' ),
-				rules: [ 'required' ],
-			},
-
-			'phone-number': {
-				description: i18n.translate( 'Phone Number' ),
-				rules: [ 'required' ],
-			},
-		},
-		requiredFields
-	);
-}
+import {
+	isEbanxCreditCardProcessingEnabledForCountry,
+	isValidCPF,
+	ebanxFieldRules,
+} from 'lib/checkout/ebanx';
 
 /**
  * Returns the credit card validation rule set

@@ -13,7 +13,7 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 
-import { EbanxBrazilPaymentFields } from '../ebanx-brazil-payment-fields';
+import { EbanxPaymentFields } from '../ebanx-payment-fields';
 
 const defaultProps = {
 	countryCode: 'BR',
@@ -27,14 +27,14 @@ const defaultProps = {
 	translate: identity,
 };
 
-describe( '<EbanxBrazilPaymentFields />', () => {
+describe( '<EbanxPaymentFields />', () => {
 	test( 'should render', () => {
-		const wrapper = shallow( <EbanxBrazilPaymentFields { ...defaultProps } /> );
+		const wrapper = shallow( <EbanxPaymentFields { ...defaultProps } /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
 	test( 'should call this.props.handleFieldChange when updating field', () => {
-		const wrapper = shallow( <EbanxBrazilPaymentFields { ...defaultProps } /> );
+		const wrapper = shallow( <EbanxPaymentFields { ...defaultProps } /> );
 		const documentInput = wrapper.find( '[name="document"]' );
 		const event = { target: { name: 'document', value: 'spam' } };
 		documentInput.simulate( 'change', event );
