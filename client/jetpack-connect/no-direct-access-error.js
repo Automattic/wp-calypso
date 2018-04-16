@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -17,7 +17,7 @@ import EmptyContent from 'components/empty-content';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 
-class NoDirectAccessError extends Component {
+class NoDirectAccessError extends PureComponent {
 	static propTypes = {
 		authorizationRemoteQueryData: PropTypes.object,
 		recordTracksEvent: PropTypes.func.isRequired,
