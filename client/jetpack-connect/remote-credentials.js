@@ -2,11 +2,13 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
+import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import config from 'config';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * External dependencies
@@ -19,18 +21,20 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormattedHeader from 'components/formatted-header';
 import FormPasswordInput from 'components/forms/form-password-input';
 import HelpButton from './help-button';
-import JetpackConnectNotices from './jetpack-connect-notices';
+import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs } from 'lib/route';
-import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
+import {
+	jetpackRemoteInstall,
+	jetpackRemoteInstallUpdateError,
+} from 'state/jetpack-remote-install/actions';
 import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { REMOTE_PATH_AUTH } from './constants';
-
 import {
 	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,
@@ -123,20 +127,33 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate } = this.props;
+		const { installError, translate } = this.props;
+		let subheader = translate(
+			'Add your WordPress administrator credentials ' +
+				'for this site. Your credentials will not be stored and are used for the purpose ' +
+				'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
+		);
 
+		switch ( this.getError( installError ) ) {
+			case LOGIN_FAILURE:
+				subheader = translate(
+					'We were unable to install Jetpack because your WordPress Administrator credentials were invalid. ' +
+						'Please try again with the correct credentials or try installing Jetpack manually.'
+				);
+				break;
+		}
 		return (
 			<span className="jetpack-connect__install-step jetpack-connect__creds-form">
-				{ translate(
-					'Add your WordPress administrator credentials ' +
-						'for this site. Your credentials will not be stored and are used for the purpose ' +
-						'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
-				) }
+				{ subheader }
 			</span>
 		);
 	}
 
 	getError( installError ) {
+		if ( installError === null ) {
+			return undefined;
+		}
+
 		if (
 			installError === 'ACTIVATION_FAILURE' ||
 			installError === 'ACTIVATION_ON_INSTALL_FAILURE'
@@ -158,31 +175,31 @@ export class OrgCredentialsForm extends Component {
 		return UNKNOWN_REMOTE_INSTALL_ERROR;
 	}
 
-	renderNotice() {
+	isInvalidCreds() {
 		const { installError } = this.props;
-		return (
-			<div className="jetpack-connect__notice">
-				{ installError ? (
-					<JetpackConnectNotices noticeType={ this.getError( installError ) } />
-				) : null }
-			</div>
-		);
+		return includes( [ LOGIN_FAILURE ], this.getError( installError ) );
 	}
 
 	formFields() {
 		const { translate } = this.props;
 		const { isSubmitting, password, username } = this.state;
 
+		const userClassName = classnames( 'jetpack-connect__credentials-form-input', {
+			'is-error': this.isInvalidCreds(),
+		} );
+		const passwordClassName = classnames( 'jetpack-connect__password-form-input', {
+			'is-error': this.isInvalidCreds(),
+		} );
+
 		return (
 			<Fragment>
-				{ this.renderNotice() }
 				<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="user" />
 					<FormTextInput
 						autoCapitalize="off"
 						autoCorrect="off"
-						className="jetpack-connect__credentials-form-input"
+						className={ userClassName }
 						disabled={ isSubmitting }
 						id="username"
 						name="username"
@@ -195,7 +212,7 @@ export class OrgCredentialsForm extends Component {
 					<div className="jetpack-connect__password-form">
 						<Gridicon size={ 24 } icon="lock" />
 						<FormPasswordInput
-							className="jetpack-connect__password-form-input"
+							className={ passwordClassName }
 							disabled={ isSubmitting }
 							id="password"
 							name="password"
@@ -239,12 +256,18 @@ export class OrgCredentialsForm extends Component {
 		);
 	}
 
-	onClickBack() {
+	onClickBack = () => {
+		const { installError, siteToConnect } = this.props;
+		if ( installError && ! this.isInvalidCreds() ) {
+			this.props.jetpackRemoteInstallUpdateError( siteToConnect, null, null );
+			return;
+		}
 		page.redirect( '/jetpack/connect' );
-	}
+	};
 
 	footerLink() {
-		const { siteToConnect, translate } = this.props;
+		const { installError, siteToConnect, translate } = this.props;
+		const isFormInNotice = includes( [ LOGIN_FAILURE ], this.getError( installError ) );
 		const manualInstallUrl = addQueryArgs(
 			{ url: siteToConnect },
 			'/jetpack/connect/instructions'
@@ -252,9 +275,11 @@ export class OrgCredentialsForm extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ manualInstallUrl }>
-					{ translate( 'Install Jetpack manually' ) }
-				</LoggedOutFormLinkItem>
+				{ ( isFormInNotice || ! installError ) && (
+					<LoggedOutFormLinkItem href={ manualInstallUrl }>
+						{ translate( 'Install Jetpack manually' ) }
+					</LoggedOutFormLinkItem>
+				) }
 				<HelpButton />
 				<div className="jetpack-connect__navigation">
 					<Button
@@ -281,15 +306,27 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	render() {
+		const { installError } = this.props;
+
 		return (
 			<MainWrapper>
-				{ this.renderHeadersText() }
-				<Card className="jetpack-connect__site-url-input-container">
-					<form onSubmit={ this.handleSubmit }>
-						{ this.formFields() }
-						{ this.formFooter() }
-					</form>
-				</Card>
+				{ ! this.isInvalidCreds() &&
+					installError && (
+						<div className="jetpack-connect__notice">
+							<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
+						</div>
+					) }
+				{ ( this.isInvalidCreds() || ! installError ) && (
+					<div>
+						{ this.renderHeadersText() }
+						<Card className="jetpack-connect__site-url-input-container">
+							<form onSubmit={ this.handleSubmit }>
+								{ this.formFields() }
+								{ this.formFooter() }
+							</form>
+						</Card>
+					</div>
+				) }
 				{ this.footerLink() }
 			</MainWrapper>
 		);
@@ -309,5 +346,8 @@ export default connect(
 			siteToConnect,
 		};
 	},
-	{ jetpackRemoteInstall }
+	{
+		jetpackRemoteInstall,
+		jetpackRemoteInstallUpdateError,
+	}
 )( localize( OrgCredentialsForm ) );
