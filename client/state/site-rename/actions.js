@@ -96,7 +96,7 @@ export const clearValidationError = siteId => dispatch => {
 	} );
 };
 
-export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch => {
+export const requestSiteRename = ( siteId, newBlogName, discard = true ) => dispatch => {
 	dispatch( {
 		type: SITE_RENAME_REQUEST,
 		siteId,
