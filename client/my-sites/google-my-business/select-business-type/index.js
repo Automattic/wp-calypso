@@ -67,7 +67,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 			};
 		} else {
 			buttonProps = {
-				buttonHref: 'https://www.google.com/business/',
+				buttonHref: 'https://business.google.com/create',
 				buttonIcon: 'external',
 				buttonTarget: '_blank',
 				buttonText: translate( 'Create Your Listing', {
