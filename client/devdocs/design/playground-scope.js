@@ -109,4 +109,6 @@ export TokenFields from 'components/token-field';
 export Tooltip from 'components/tooltip';
 export Version from 'components/version';
 export VerticalMenu from 'components/vertical-menu';
+export VerticalNav from 'components/vertical-nav';
+export VerticalNavItem from 'components/vertical-nav/item';
 export Wizard from 'components/wizard';

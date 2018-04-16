@@ -75,4 +75,5 @@ export TokenFields from 'components/token-field/docs/example';
 export Tooltip from 'components/tooltip/docs/example';
 export Version from 'components/version/docs/example';
 export VerticalMenu from 'components/vertical-menu/docs/example';
+export VerticalNav from 'components/vertical-nav/docs/example';
 export Wizard from 'components/wizard/docs/example';
