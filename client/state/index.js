@@ -18,6 +18,7 @@ import { mapValues } from 'lodash';
  */
 import { combineReducers } from 'state/utils';
 import actionLogger from './action-log';
+import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import applicationPasswords from './application-passwords/reducer';
@@ -110,6 +111,7 @@ const extensions = combineReducers(
 const reducers = {
 	analyticsTracking,
 	accountRecovery,
+	activePromotions,
 	activityLog,
 	application,
 	applicationPasswords,
