@@ -3,28 +3,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { first, get, groupBy, includes, isEmpty, isNull, last, range, sortBy } from 'lodash';
+import { get, includes, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActivityLogBanner from 'my-sites/stats/activity-log-banner';
-import ActivityLogDay from '../activity-log-day';
-import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
+import ActivityLogItem from '../activity-log-item';
 import ActivityLogSwitch from '../activity-log-switch';
 import Banner from 'components/banner';
-import DatePicker from 'my-sites/stats/stats-date-picker';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
+import FoldableCard from 'components/foldable-card';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import Pagination from 'components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -33,7 +32,6 @@ import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status'
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins/';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import UnavailabilityNotice from './unavailability-notice';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
@@ -63,129 +61,7 @@ import {
 	getOldestItemTs,
 } from 'state/selectors';
 
-const flushEmptyDays = days => [
-	days.length === 1 ? 'empty-day' : 'empty-range',
-	[ first( days ), last( days ) ],
-];
-
-/**
- * Takes a list of [ day, eventList ] pairs and produces
- * a list of [ type, [ start, end ], eventList? ] triplets
- *
- * We have three ways to represent any given day with
- * Activity Log events:
- *
- *  - The day has events
- *  - The day has no events
- *  - The day has no events _and_
- *    neither did the previous day
- *
- * When "empty days" follow other empty days then we
- * want to group them into "empty ranges" so that we
- * don't end up showing a bunch of needless empty
- * day visual components on the page.
- *
- * Note: although this is recursive, since we don't
- *       expect to ever be descending more than than
- *       31 times (in the worst case because there are
- *       no months with more than 31 days) we don't
- *       need to guard against stack overflow here, it
- *       just won't recurse that deeply.
- *
- * Example input:
- * [ [ moment( '2017-10-08 14:48:01' ), [] ]
- * , [ moment( '2017-10-09 03:13:48' ), [ event1, event2, … ] ]
- * , [ moment( … ), [] ]
- * , [ moment( … ), [] ]
- * , [ moment( … ), [ event3 ] ]
- * ]
- *
- * Example output:
- * [ [ 'empty-day', [ moment( … ) ] ]
- * , [ 'non-empty-day', [ moment( … ) ], [ event1, event2, … ] ]
- * , [ 'empty-range', [ moment( … ), moment( … ) ] ]
- * , [ 'non-empty-day', [ moment( …) ], [ event3 ] ]
- * ]
- *
- * Note: the days coming into this function must be sorted.
- *       it doesn't matter in which direction, but they must
- *       be sequential one way or the other
- *
- * @param {Array} remainingDays remaining _sorted_ days to process
- * @param {Array} groups final output data structure (see comment above)
- * @param {Array} emptyDays running track of empty days to group
- * @returns {Array} grouped days and events
- */
-const visualGroups = ( remainingDays, groups = [], emptyDays = [] ) => {
-	if ( ! remainingDays.length ) {
-		return emptyDays.length ? [ ...groups, flushEmptyDays( emptyDays ) ] : groups;
-	}
-
-	const [ nextDay, ...nextRemaining ] = remainingDays;
-	const [ day, events ] = nextDay;
-
-	// without activity we track the day in order to group empty days
-	if ( ! events.length ) {
-		return visualGroups( nextRemaining, groups, [ ...emptyDays, day ] );
-	}
-
-	// if we have activity but no previously-tracked empty days
-	// then just push out this day onto the output
-	if ( ! emptyDays.length ) {
-		return visualGroups(
-			nextRemaining,
-			[ ...groups, [ 'non-empty-day', [ day, day ], events ] ],
-			[]
-		);
-	}
-
-	// otherwise we want to flush out the tracked group into the output
-	// push this day out as well
-	// and restart without any tracked empty days
-	if ( emptyDays.length ) {
-		return visualGroups(
-			nextRemaining,
-			[ ...groups, flushEmptyDays( emptyDays ), [ 'non-empty-day', [ day, day ], events ] ],
-			[]
-		);
-	}
-};
-
-const daysInMonth = ( moment, startMoment, today ) => {
-	const endOfMonth = startMoment
-		.clone()
-		.endOf( 'month' )
-		.startOf( 'day' );
-	const startOfMonth = startMoment.clone().startOf( 'month' );
-	const startOfToday = today.clone().startOf( 'day' );
-	const endOfStream = moment.min( endOfMonth, startOfToday );
-
-	const asDayInMonth = n => startOfMonth.clone().add( n, 'day' );
-	return range( endOfStream.date() ).map( asDayInMonth );
-};
-
-const logsByDay = ( moment, logs, startMoment, applyOffset ) => {
-	const dayGroups = groupBy( sortBy( logs, [ 'activityDate', 'activityTs' ] ).reverse(), log =>
-		applyOffset( moment.utc( log.activityTs ) )
-			.endOf( 'day' )
-			.valueOf()
-	);
-
-	return daysInMonth( moment, startMoment, applyOffset( moment.utc() ) ).map( day => [
-		day,
-		get(
-			dayGroups,
-			day
-				.clone()
-				.endOf( 'day' )
-				.valueOf(),
-			[]
-		),
-	] );
-};
-
-// helper to separate out recursive part of algorithm
-const intoVisualGroups = ( ...args ) => visualGroups( logsByDay( ...args ) ).reverse();
+const PAGE_SIZE = 100;
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -228,9 +104,19 @@ class ActivityLog extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	state = {
+		currentPage: 1,
+	};
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 		this.findExistingRewind( this.props );
+	}
+
+	componentWillUpdate( nextProps ) {
+		if ( nextProps.siteId !== this.props.siteId ) {
+			this.setState( { currentPage: 1 } );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -249,15 +135,6 @@ class ActivityLog extends Component {
 		const { gmtOffset, startDate, timezone } = this.props;
 		return getStartMoment( { gmtOffset, startDate, timezone } );
 	}
-
-	handlePeriodChangeBottom = ( ...args ) => {
-		scrollTo( {
-			x: 0,
-			y: 0,
-			duration: 250,
-		} );
-		this.props.changePeriod( ...args );
-	};
 
 	/**
 	 * Close Restore, Backup, or Transfer confirmation dialog.
@@ -286,6 +163,8 @@ class ActivityLog extends Component {
 		const { timezone, gmtOffset } = this.props;
 		return adjustMoment( { timezone, gmtOffset, moment } );
 	};
+
+	changePage = currentPage => this.setState( { currentPage }, () => window.scrollTo( 0, 0 ) );
 
 	/**
 	 * Render a card showing the progress of a restore.
@@ -425,34 +304,6 @@ class ActivityLog extends Component {
 		);
 	}
 
-	renderMonthNavigation( position ) {
-		const { logs } = this.props;
-
-		if ( position === 'bottom' && ( ! isNull( logs ) && isEmpty( logs ) ) ) {
-			return null;
-		}
-
-		const { slug, changePeriod, oldestItemTs } = this.props;
-		const startOfMonth = this.getStartMoment().startOf( 'month' );
-		const monthStartTs = startOfMonth.clone().valueOf();
-		const query = {
-			period: 'month',
-			date: startOfMonth.format( 'YYYY-MM-DD' ),
-		};
-
-		return (
-			<StatsPeriodNavigation
-				date={ startOfMonth }
-				onPeriodChange={ position === 'bottom' ? this.handlePeriodChangeBottom : changePeriod }
-				period="month"
-				url={ `/stats/activity/${ slug }` }
-				hidePreviousArrow={ monthStartTs <= oldestItemTs }
-			>
-				<DatePicker isActivity={ true } period="month" date={ startOfMonth } query={ query } />
-			</StatsPeriodNavigation>
-		);
-	}
-
 	getActivityLog() {
 		const {
 			enableRewind,
@@ -466,13 +317,15 @@ class ActivityLog extends Component {
 			translate,
 		} = this.props;
 
+		const { currentPage } = this.state;
+
 		const disableRestore =
 			! enableRewind ||
 			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
-		const today = this.applySiteOffset( moment().utc() ).startOf( 'day' );
+		const theseLogs = logs.slice( ( currentPage - 1 ) * PAGE_SIZE, currentPage * PAGE_SIZE );
 
 		// Content shown when there are no logs.
 		// The network request either finished with no events or is still ongoing.
@@ -484,11 +337,39 @@ class ActivityLog extends Component {
 			/>
 		) : (
 			<section className="activity-log__wrapper">
-				<ActivityLogDayPlaceholder />
-				<ActivityLogDayPlaceholder />
-				<ActivityLogDayPlaceholder />
+				{ [ 1, 2, 3 ].map( i => (
+					<FoldableCard
+						key={ i }
+						className="activity-log-day__placeholder"
+						header={
+							<div>
+								<div className="activity-log-day__day" />
+								<div className="activity-log-day__events" />
+							</div>
+						}
+					/>
+				) ) }
 			</section>
 		);
+
+		const timePeriod = ( () => {
+			let last = null;
+
+			return ( { rewindId } ) => {
+				const ts = 1000 * rewindId;
+
+				if ( null === last || moment( ts ).format( 'D' ) !== moment( last ).format( 'D' ) ) {
+					last = ts;
+					return (
+						<h2 className="activity-log__time-period" key={ `time-period-${ ts }` }>
+							{ moment( ts ).format( 'LL' ) }
+						</h2>
+					);
+				}
+
+				return null;
+			};
+		} )();
 
 		return (
 			<div>
@@ -527,63 +408,37 @@ class ActivityLog extends Component {
 				) }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
-				{ this.renderMonthNavigation() }
 				{ isEmpty( logs ) ? (
 					noLogsContent
 				) : (
-					<section className="activity-log__wrapper">
-						{ intoVisualGroups( moment, logs, this.getStartMoment(), this.applySiteOffset ).map(
-							( [ type, [ start, end ], events ] ) => {
-								const isToday = today.isSame( end.clone().startOf( 'day' ) );
-
-								switch ( type ) {
-									case 'empty-day':
-										return (
-											<div key={ start.format() } className="activity-log__empty-day">
-												<div className="activity-log__empty-day-title">
-													{ start.format( 'LL' ) }
-													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
-												</div>
-												<div className="activity-log__empty-day-events">
-													{ translate( 'No activity' ) }
-												</div>
-											</div>
-										);
-
-									case 'empty-range':
-										return (
-											<div key={ start.format( 'LL' ) } className="activity-log__empty-day">
-												<div className="activity-log__empty-day-title">
-													{ `${ start.format( 'LL' ) } - ${ end.format( 'LL' ) }` }
-													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
-												</div>
-												<div className="activity-log__empty-day-events">
-													{ translate( 'No activity' ) }
-												</div>
-											</div>
-										);
-
-									case 'non-empty-day':
-										return (
-											<ActivityLogDay
-												key={ start.format() }
-												applySiteOffset={ this.applySiteOffset }
-												disableRestore={ disableRestore }
-												disableBackup={ disableBackup }
-												isRewindActive={ 'active' === rewindState.state }
-												logs={ events }
-												closeDialog={ this.handleCloseDialog }
-												siteId={ siteId }
-												tsEndOfSiteDay={ start.valueOf() }
-												isToday={ isToday }
-											/>
-										);
-								}
-							}
-						) }
-					</section>
+					<div>
+						<section className="activity-log__wrapper">
+							{ theseLogs.map( log => (
+								<Fragment key={ log.activityId }>
+									{ timePeriod( log ) }
+									<ActivityLogItem
+										key={ log.activityId }
+										activityId={ log.activityId }
+										disableRestore={ disableRestore }
+										disableBackup={ disableBackup }
+										hideRestore={ 'active' !== rewindState.state }
+										siteId={ siteId }
+									/>
+								</Fragment>
+							) ) }
+						</section>
+						<Pagination
+							className="activity-log__pagination"
+							key="activity-list-pagination"
+							nextLabel={ translate( 'Older' ) }
+							page={ this.state.currentPage }
+							pageClick={ this.changePage }
+							perPage={ PAGE_SIZE }
+							prevLabel={ translate( 'Newer' ) }
+							total={ logs.length }
+						/>
+					</div>
 				) }
-				{ this.renderMonthNavigation( 'bottom' ) }
 			</div>
 		);
 	}
