@@ -53,6 +53,30 @@ The tricky part is that not all icons need this `offset-adjust` hack, only some 
 - Only use 18px Gridicons if you really must, and don't use it in main navigation
 - Don't use Noticons or Dashicons (we want to phase them out)
 
+## Social Logos
+
+We have a `SocialLogos` component available for use in Calypso. Each logo was pulled from the official branding resource of each service. Branding guidelines were adhered to as much as possible.
+
+The icon grid is based on Gridicons and adheres to the same rules (see above). [View the repository on GitHub](https://github.com/Automattic/social-logos) for more information.
+
+### Usage
+
+Import the iconset and decide at run-time which icon to use:
+
+```
+import SocialLogo from 'social-logos';
+//...
+render() {
+    return <SocialLogo icon="twitter" size={ 48 } />;
+}
+```
+
+**Props**
+
+- `icon`: String - the icon name.
+- `size`: Number - (default: 24) set the size of the icon.
+- `onClick`: Function - (optional) if you need a click callback.
+
 
 ## App icons
 
