@@ -14,7 +14,7 @@ import { WPCOM_RESPONSE } from 'state/plans/test/fixture';
 describe( 'wpcom-api', () => {
 	describe( 'active promotions request', () => {
 		describe( '#requestActivePromotions', () => {
-			test( 'should return HTTP request to plans endpoint', () => {
+			test( 'should return HTTP request to active-promotions endpoint', () => {
 				const action = { type: 'DUMMY' };
 
 				expect( requestActivePromotions( action ) ).toEqual(
@@ -32,12 +32,12 @@ describe( 'wpcom-api', () => {
 
 		describe( '#receiveActivePromotions', () => {
 			test( 'should return active promotions', () => {
-				const plans = WPCOM_RESPONSE;
-				const action = activePromotionsReceiveAction( plans );
+				const activePromotions = WPCOM_RESPONSE;
+				const action = activePromotionsReceiveAction( activePromotions );
 
-				expect( receiveActivePromotions( action, plans ) ).toEqual( [
+				expect( receiveActivePromotions( action, activePromotions ) ).toEqual( [
 					activePromotionsRequestSuccessAction(),
-					activePromotionsReceiveAction( plans ),
+					activePromotionsReceiveAction( activePromotions ),
 				] );
 			} );
 		} );

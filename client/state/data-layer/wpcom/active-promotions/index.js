@@ -13,7 +13,7 @@ import {
 } from 'state/active-promotions/actions';
 
 /**
- * @module state/data-layer/wpcom/plans
+ * @module state/data-layer/wpcom/active-promotions
  */
 
 /**
