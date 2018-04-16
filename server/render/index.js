@@ -26,7 +26,7 @@ import { getCurrentLocaleSlug, getCurrentLocaleVariant } from 'state/selectors';
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
-import { getCacheKey } from 'isomorphic-routing';
+import { getNormalizedPath } from 'isomorphic-routing';
 import { logToLogstash } from 'state/logstash/actions';
 
 const debug = debugFactory( 'calypso:server-render' );
@@ -130,7 +130,8 @@ export function serverRender( req, res ) {
 		cacheKey = false;
 
 	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
-		cacheKey = getCacheKey( context );
+		const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
+		cacheKey = getNormalizedPath( context.pathname, cachedQueryParams );
 	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {

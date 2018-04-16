@@ -3,55 +3,39 @@
 /**
  * Internal dependencies
  */
-import { getCacheKey } from '..';
+import { getNormalizedPath } from '..';
 
 jest.mock( 'redux-form/es/reducer', () => require( 'lodash' ).identity );
 
-describe( 'getCacheKey', () => {
+describe( 'getNormalizedPath', () => {
 	test( 'should return pathname for routes with no query', () => {
-		const context = {
-			pathname: '/my/path',
-			query: {},
-		};
+		const pathname = '/my/path';
+		const query = {};
 
-		expect( getCacheKey( context ) ).toBe( '/my/path' );
+		expect( getNormalizedPath( pathname, query ) ).toBe( '/my/path' );
 	} );
 
 	test( 'should return cacheKey for a known query param', () => {
-		const context = {
-			pathname: '/my/path',
-			query: { cache_me: '1' },
-			cacheQueryKeys: [ 'cache_me' ],
-		};
+		const pathname = '/my/path';
+		const query = { cache_me: '1' };
 
-		expect( getCacheKey( context ) ).toBe( '/my/path?cache_me=1' );
+		expect( getNormalizedPath( pathname, query ) ).toBe( '/my/path?cache_me=1' );
 	} );
 
 	test( 'should return cacheKey for multiple known query params', () => {
-		const context = {
-			pathname: '/my/path',
-			query: { cache_me: '1', and_me: '2', me_too: '3' },
-			cacheQueryKeys: [ 'and_me', 'cache_me', 'me_too' ],
-		};
+		const pathname = '/my/path';
+		const query = { cache_me: '1', and_me: '2', me_too: '3' };
 
-		expect( getCacheKey( context ) ).toBe( '/my/path?and_me=2&cache_me=1&me_too=3' );
+		expect( getNormalizedPath( pathname, query ) ).toBe( '/my/path?and_me=2&cache_me=1&me_too=3' );
 	} );
 
 	test( 'should return a stable key pathname', () => {
-		const context = {
-			pathname: '/my/path',
-			query: { a: '1', b: '2' },
-		};
-		const querySwapped = {
-			pathname: '/my/path',
-			query: { b: '2', a: '1' },
-		};
-		const keysSwapped = {
-			pathname: '/my/path',
-			query: { a: '1', b: '2' },
-		};
+		const pathname = '/my/path';
+		const query = { a: '1', b: '2' };
+		const querySwapped = { b: '2', a: '1' };
 
-		expect( getCacheKey( context ) ).toEqual( getCacheKey( querySwapped ) );
-		expect( getCacheKey( context ) ).toEqual( getCacheKey( keysSwapped ) );
+		expect( getNormalizedPath( pathname, query ) ).toEqual(
+			getNormalizedPath( pathname, querySwapped )
+		);
 	} );
 } );
