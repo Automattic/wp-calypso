@@ -61,12 +61,18 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		if ( config.isEnabled( 'google-my-business' ) ) {
 			buttonProps = {
 				buttonHref: `/google-my-business/new/${ siteSlug }`,
+				buttonText: translate( 'Continue With Google', {
+					comment: 'Call to Action to connect to Google My Business',
+				} ),
 			};
 		} else {
 			buttonProps = {
 				buttonHref: 'https://www.google.com/business/',
 				buttonIcon: 'external',
 				buttonTarget: '_blank',
+				buttonText: translate( 'Create Your Listing', {
+					comment: 'Call to Action to add a business listing to Google My Business',
+				} ),
 			};
 		}
 
@@ -79,9 +85,6 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					'Your business has a physical location customers can visit, ' +
 					'or provides goods and services to local customers, or both.'
 				) }
-				buttonText={ translate( 'Create Your Listing', {
-					comment: 'Call to Action to add a business listing to Google My Business',
-				} ) }
 				buttonPrimary={ true }
 				buttonOnClick={ this.trackCreateYourListingClick }
 				{ ...buttonProps }
