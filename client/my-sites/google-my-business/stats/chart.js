@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
+import { isEqual, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,26 +38,35 @@ class GoogleMyBusinessStatsChart extends Component {
 		dataSeriesInfo: {},
 	};
 
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			transformedData: this.transformData( props.data ),
+		};
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.data !== nextProps.data ) {
+			this.setState( {
+				transformedData: this.transformData( nextProps.data ),
+			} );
+		}
+	}
+
 	shouldComponentUpdate( nextProps ) {
+		//@TODO: Once the data comes from redux, re-evaluate the need for deep equal
 		return (
 			this.props.interval !== nextProps.interval || ! isEqual( this.props.data, nextProps.data )
 		);
 	}
 
 	transformData( data ) {
-		return data.map( value => {
-			return {
-				value: value.dimensionalValues.value,
-				description:
-					this.props.dataSeriesInfo[ value.metric ] !== undefined
-						? this.props.dataSeriesInfo[ value.metric ].description
-						: '',
-				name:
-					this.props.dataSeriesInfo[ value.metric ] !== undefined
-						? this.props.dataSeriesInfo[ value.metric ].name
-						: value.metric,
-			};
-		} );
+		return data.map( value => ( {
+			value: value.dimensionalValues.value,
+			description: get( this.props.dataSeriesInfo, `${ value.metric }.description`, '' ),
+			name: get( this.props.dataSeriesInfo, `${ value.metric }.name`, value.metric ),
+		} ) );
 	}
 
 	onIntervalChange = event =>
@@ -68,8 +77,8 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 
 	render() {
-		const { chartTitle, data, description, interval, title } = this.props;
-		const transformedData = this.transformData( data );
+		const { chartTitle, description, interval, title } = this.props;
+		const { transformedData } = this.state;
 		return (
 			<div>
 				<SectionHeader label={ title } />
