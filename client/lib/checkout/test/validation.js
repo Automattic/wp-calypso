@@ -11,12 +11,17 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { validatePaymentDetails, getCreditCardType } from '../validation';
-import { isEbanxEnabledForCountry, isValidCPF } from 'lib/checkout/ebanx';
+import {
+	validatePaymentDetails,
+	getCreditCardType,
+	paymentFieldRules,
+	creditCardFieldRules,
+} from '../validation';
+import { isEbanxCreditCardProcessingEnabledForCountry, isValidCPF } from 'lib/checkout/ebanx';
 
 jest.mock( 'lib/checkout/ebanx', () => {
 	return {
-		isEbanxEnabledForCountry: jest.fn( false ),
+		isEbanxCreditCardProcessingEnabledForCountry: jest.fn( false ),
 		isValidCPF: jest.fn( false ),
 	};
 } );
@@ -121,7 +126,7 @@ describe( 'validation', () => {
 
 		describe( 'validate ebanx non-credit card details', () => {
 			beforeAll( () => {
-				isEbanxEnabledForCountry.mockReturnValue( true );
+				isEbanxCreditCardProcessingEnabledForCountry.mockReturnValue( true );
 				isValidCPF.mockReturnValue( true );
 			} );
 
@@ -198,6 +203,18 @@ describe( 'validation', () => {
 					},
 				} );
 			} );
+		} );
+	} );
+
+	describe( '#paymentFieldRules', () => {
+		test( 'should return null by default', () => {
+			const result = paymentFieldRules();
+			expect( result ).toBe( null );
+		} );
+
+		test( 'should return credit card field validation rules', () => {
+			const result = paymentFieldRules( {}, 'credit-card' );
+			expect( result ).toEqual( creditCardFieldRules() );
 		} );
 	} );
 

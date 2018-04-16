@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEbanxEnabledForCountry, isValidCPF } from 'lib/checkout/ebanx';
+import { isEbanxCreditCardProcessingEnabledForCountry, isValidCPF } from 'lib/checkout/ebanx';
 import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
 
 /**
@@ -62,7 +62,7 @@ function ebanxFieldRules( country ) {
  * @param {object} additionalFieldRules custom validation rules depending on jurisdiction or other variable
  * @returns {object} the ruleset
  */
-function creditCardFieldRules( additionalFieldRules = {} ) {
+export function creditCardFieldRules( additionalFieldRules = {} ) {
 	return Object.assign(
 		{
 			name: {
@@ -111,10 +111,8 @@ function creditCardFieldRules( additionalFieldRules = {} ) {
  * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef
  * @returns {object|null} the ruleset
  */
-function paymentFieldRules( paymentDetails, paymentType ) {
+export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
-		case 'tef':
-			return ebanxFieldRules( 'BR' );
 		case 'credit-card':
 			return creditCardFieldRules( getAdditionalFieldRules( paymentDetails ) );
 		default:
@@ -285,7 +283,7 @@ function getErrors( field, value, paymentDetails ) {
  * otherwise `null`
  */
 function getAdditionalFieldRules( { country } ) {
-	if ( isEbanxEnabledForCountry( country ) ) {
+	if ( country && isEbanxCreditCardProcessingEnabledForCountry( country ) ) {
 		return ebanxFieldRules( country );
 	}
 	return null;

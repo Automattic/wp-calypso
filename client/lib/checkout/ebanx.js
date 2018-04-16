@@ -15,11 +15,11 @@ import { isPaymentMethodEnabled } from 'lib/cart-values';
 import CartStore from 'lib/cart/store';
 
 /**
- *
+ * Returns whether we should Ebanx credit card processing for a particular country
  * @param {String} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {Boolean} Whether the country code requires ebanx payment processing
  */
-export function isEbanxEnabledForCountry( countryCode = '' ) {
+export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' ) {
 	return (
 		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
 		isPaymentMethodEnabled( CartStore.get(), 'ebanx' )

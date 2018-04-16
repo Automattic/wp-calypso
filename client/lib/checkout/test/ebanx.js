@@ -10,7 +10,11 @@
 /**
  * Internal dependencies
  */
-import { isEbanxEnabledForCountry, isValidCPF, shouldRenderAdditionalEbanxFields } from '../ebanx';
+import {
+	isEbanxCreditCardProcessingEnabledForCountry,
+	isValidCPF,
+	shouldRenderAdditionalEbanxFields,
+} from '../ebanx';
 import { isPaymentMethodEnabled } from 'lib/cart-values';
 
 jest.mock( 'lib/cart-values', () => {
@@ -22,7 +26,7 @@ jest.mock( 'lib/cart-values', () => {
 } );
 
 describe( 'Ebanx payment processing methods', () => {
-	describe( 'isEbanxEnabledForCountry', () => {
+	describe( 'isEbanxCreditCardProcessingEnabledForCountry', () => {
 		beforeAll( () => {
 			isPaymentMethodEnabled.mockReturnValue( true );
 		} );
@@ -31,10 +35,10 @@ describe( 'Ebanx payment processing methods', () => {
 		} );
 
 		test( 'should return false for non-ebanx country', () => {
-			expect( isEbanxEnabledForCountry( 'AU' ) ).toEqual( false );
+			expect( isEbanxCreditCardProcessingEnabledForCountry( 'AU' ) ).toEqual( false );
 		} );
 		test( 'should return true for ebanx country', () => {
-			expect( isEbanxEnabledForCountry( 'BR' ) ).toEqual( true );
+			expect( isEbanxCreditCardProcessingEnabledForCountry( 'BR' ) ).toEqual( true );
 		} );
 	} );
 
