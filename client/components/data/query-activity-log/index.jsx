@@ -2,20 +2,16 @@
 /**
  * External dependencies
  */
-import { PureComponent } from 'react';
+import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import {
-	activityLogRequest as activityLogRequestAction,
-	startWatching,
-	stopWatching,
-} from 'state/activity-log/actions';
+import { activityLogRequest } from 'state/activity-log/actions';
 
-class QueryActivityLog extends PureComponent {
+class QueryActivityLog extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 
@@ -32,21 +28,11 @@ class QueryActivityLog extends PureComponent {
 	};
 
 	componentWillMount() {
-		this.props.siteId && this.props.startWatching( this.props.siteId );
 		this.request( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.request( nextProps );
-
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.props.stopWatching( this.props.siteId );
-			this.props.startWatching( nextProps.siteId );
-		}
-	}
-
-	componentWillUnmount() {
-		this.props.stopWatching( this.props.siteId );
 	}
 
 	request( { dateEnd, dateStart, number, siteId } ) {
@@ -64,10 +50,4 @@ class QueryActivityLog extends PureComponent {
 	}
 }
 
-const mapDispatchToProps = {
-	activityLogRequest: activityLogRequestAction,
-	startWatching,
-	stopWatching,
-};
-
-export default connect( null, mapDispatchToProps )( QueryActivityLog );
+export default connect( null, { activityLogRequest } )( QueryActivityLog );
