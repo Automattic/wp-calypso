@@ -7,10 +7,6 @@ A module for managing activePromotions data.
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
-### `fetchWordPressActivePromotions()`
-
-Fetches active promotions
-
 ## Action creators
 
 > Action creators are exactly that—functions that create actions.
