@@ -414,7 +414,7 @@ class ActivityLog extends Component {
 					<div>
 						<section className="activity-log__wrapper">
 							{ theseLogs.map( log => (
-								<Fragment>
+								<Fragment key={ log.activityId }>
 									{ timePeriod( log ) }
 									<ActivityLogItem
 										key={ log.activityId }
