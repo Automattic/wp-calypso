@@ -26,8 +26,8 @@ export default class Typography extends React.PureComponent {
 					<h2>Interface Typography</h2>
 
 					<p>
-						We use system fonts for UI elements, like banners, buttons, or navigation. System fonts
-						improve the page-rendering speed.
+						We use sans-serif system fonts as the default for UI. This includes UI elements like
+						buttons, notices, and navigation. System fonts improve the page-rendering speed.
 					</p>
 					<p>
 						<code>
