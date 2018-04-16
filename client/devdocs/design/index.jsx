@@ -123,6 +123,7 @@ class DesignAssets extends React.Component {
 	render() {
 		const { componentsUsageStats = {}, component } = this.props;
 		const { filter } = this.state;
+		const showCode = Boolean( component );
 
 		const className = classnames( 'devdocs', 'devdocs__components', {
 			'is-single': this.props.component,
@@ -148,10 +149,11 @@ class DesignAssets extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter }>
-					<ActionCard readmeFilePath="action-card" />
+					<ActionCard readmeFilePath="action-card" showCode={ showCode } />
 					<Accordions
 						componentUsageStats={ componentsUsageStats.accordion }
 						readmeFilePath="accordion"
+						showCode={ showCode }
 					/>
 					<BackButton readmeFilePath="back-button" />
 					<Badge readmeFilePath="badge" />

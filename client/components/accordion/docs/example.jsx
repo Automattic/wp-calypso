@@ -44,6 +44,7 @@ export default class extends React.PureComponent {
 	};
 
 	render() {
+		const { showCode } = this.props;
 		return (
 			<div>
 				<div style={ { paddingBottom: '10px' } }>
@@ -68,6 +69,7 @@ export default class extends React.PureComponent {
 							'</Accordion>'
 						}
 						scope={ scope }
+						showCode={ showCode }
 					/>
 					<ComponentPlayground
 						code={
@@ -79,6 +81,7 @@ export default class extends React.PureComponent {
 							'</Accordion>'
 						}
 						scope={ scope }
+						showCode={ showCode }
 					/>
 					<ComponentPlayground
 						code={
@@ -92,6 +95,7 @@ export default class extends React.PureComponent {
 							'</Accordion>'
 						}
 						scope={ scope }
+						showCode={ showCode }
 					/>
 					<ComponentPlayground
 						code={
@@ -106,6 +110,7 @@ export default class extends React.PureComponent {
 							'</Accordion>'
 						}
 						scope={ scope }
+						showCode={ showCode }
 					/>
 					<ComponentPlayground
 						code={
@@ -118,6 +123,7 @@ export default class extends React.PureComponent {
 							'</Accordion>'
 						}
 						scope={ scope }
+						showCode={ showCode }
 					/>
 					<ComponentPlayground
 						code={
@@ -131,6 +137,7 @@ export default class extends React.PureComponent {
 							'</Accordion>'
 						}
 						scope={ scope }
+						showCode={ showCode }
 					/>
 					<ComponentPlayground code={ accordionCode } scope={ scope } />
 				</div>

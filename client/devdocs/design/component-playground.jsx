@@ -11,9 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import ClipboardButton from 'components/forms/clipboard-button';
-import Popover from 'components/popover';
 
 class ComponentPlayground extends Component {
 	static propTypes = {
@@ -26,55 +24,34 @@ class ComponentPlayground extends Component {
 		showCode: false,
 	};
 
-	state = {
-		showCode: this.props.showCode,
-		showPopover: false,
-	};
-
-	onClick = () => {
-		this.setState( { showPopover: ! this.state.showPopover } );
-	};
-
 	render() {
 		return (
-			<div className="design__component-playground">
-				<LiveProvider code={ this.props.code } scope={ this.props.scope } mountStylesheet={ false }>
-					<LivePreview />
-				</LiveProvider>
-				<div className="design__component-playground-button">
-					<Button ref="popoverButton" onClick={ this.onClick } borderless>
-						<Gridicon icon="code" />
-					</Button>
-				</div>
+			<LiveProvider
+				code={ this.props.code }
+				scope={ this.props.scope }
+				mountStylesheet={ false }
+				className="design__component-playground"
+			>
+				<LivePreview />
 
-				<Popover
-					context={ this.refs && this.refs.popoverButton }
-					isVisible={ this.state.showPopover }
-					onClose={ this.closePopover }
-					className="design__component-playground-popover"
-					position="left"
-				>
-					<ClipboardButton
-						text={ this.props.code }
-						borderless
-						onClick={ function() {
-							alert( 'Copied to clipboard!' );
-						} }
-						className="design__component-playground-clipboard"
-					>
-						<Gridicon icon="clipboard" />
-					</ClipboardButton>
+				{ this.props.showCode && (
+					<div className="design__component-playground-code">
+						<ClipboardButton
+							text={ this.props.code }
+							borderless
+							onClick={ function() {
+								alert( 'Copied to clipboard!' );
+							} }
+							className="design__component-playground-clipboard"
+						>
+							Copy code <Gridicon icon="clipboard" />
+						</ClipboardButton>
 
-					<LiveProvider
-						code={ this.props.code }
-						scope={ this.props.scope }
-						mountStylesheet={ false }
-					>
 						<LiveError />
 						<LiveEditor />
-					</LiveProvider>
-				</Popover>
-			</div>
+					</div>
+				) }
+			</LiveProvider>
 		);
 	}
 }

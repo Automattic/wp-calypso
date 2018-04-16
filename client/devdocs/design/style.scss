@@ -51,33 +51,13 @@
 	}
 }
 
-.design__component-playground {
+.design__component-playground-code {
 	position: relative;
-
-	.design__component-playground-button {
-		display: none;
-	}
-
-	&:hover {
-		.design__component-playground-button {
-			display: block;
-		}
-	}
-}
-
-.design__component-playground-button {
-	position: absolute;
-		right: -20px;
-		top: 0;
-}
-
-.design__component-playground-popover {
-	width: 200px;
 }
 
 .design__component-playground-clipboard {
 	padding: 0;
 	position: absolute;
-		left: 0;
+		right: 0;
 		top: 0;
 }
