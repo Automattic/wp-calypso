@@ -16,7 +16,7 @@ import { itemsSchema } from './schema';
 /**
  * ActivePromotions `Reducer` function
  * root state -> state.activePromotions.items =>
- * [ {}, {}, ... {} ]
+ * [ '', '', '', ... '' ]
  *
  * @param {Object} state - current state
  * @param {Object} action - activePromotions action
@@ -25,7 +25,7 @@ import { itemsSchema } from './schema';
 export const items = ( state = [], action ) => {
 	switch ( action.type ) {
 		case ACTIVE_PROMOTIONS_RECEIVE:
-			return action.activePromotions.slice( 0 );
+			return [ ...action.activePromotions ];
 	}
 
 	return state;
@@ -43,9 +43,11 @@ items.schema = itemsSchema;
 export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ACTIVE_PROMOTIONS_REQUEST:
+			return true;
+
 		case ACTIVE_PROMOTIONS_REQUEST_SUCCESS:
 		case ACTIVE_PROMOTIONS_REQUEST_FAILURE:
-			return action.type === ACTIVE_PROMOTIONS_REQUEST;
+			return false;
 	}
 
 	return state;
