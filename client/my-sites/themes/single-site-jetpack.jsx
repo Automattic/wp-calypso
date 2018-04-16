@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import config from 'config';
@@ -88,7 +87,6 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 	return (
 		<div>
 			<SidebarNavigation />
-			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans &&
 				! hasUnlimitedPremiumThemes && (
 					<Banner
