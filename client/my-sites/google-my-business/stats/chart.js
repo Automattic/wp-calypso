@@ -38,13 +38,9 @@ class GoogleMyBusinessStatsChart extends Component {
 		dataSeriesInfo: {},
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			transformedData: this.transformData( props.data ),
-		};
-	}
+	state = {
+		transformedData: this.transformData( this.props.data ),
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.data !== nextProps.data ) {
@@ -55,7 +51,6 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		//@TODO: Once the data comes from redux, re-evaluate the need for deep equal
 		return (
 			this.props.interval !== nextProps.interval || ! isEqual( this.props.data, nextProps.data )
 		);
@@ -69,7 +64,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		} ) );
 	}
 
-	onIntervalChange = event =>
+	changeInterval = event =>
 		this.props.changeGoogleMyBusinessStatsInterval(
 			this.props.siteId,
 			this.props.statType,
@@ -91,7 +86,7 @@ class GoogleMyBusinessStatsChart extends Component {
 							<hr className="gmb-stats__metric-hr" />
 						</div>
 					) }
-					<select value={ interval } onChange={ this.onIntervalChange }>
+					<select value={ interval } onChange={ this.changeInterval }>
 						<option value="week">{ 'Week' }</option>
 						<option value="month">{ 'Month' }</option>
 						<option value="quarter">{ 'Quarter' }</option>
