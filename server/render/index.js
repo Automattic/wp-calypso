@@ -130,7 +130,7 @@ export function serverRender( req, res ) {
 		cacheKey = false;
 
 	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
-		if ( ! context.query ) {
+		if ( isEmpty( context.query ) ) {
 			cacheKey = context.pathname;
 		} else {
 			// If we have query args, make sure we only cache if they're whitelisted
