@@ -112,6 +112,7 @@ export TimeSince from 'components/time-since';
 export Timezone from 'components/timezone';
 export TokenFields from 'components/token-field';
 export Tooltip from 'components/tooltip';
+export UserItem from 'components/user/docs/example';
 export Version from 'components/version';
 export VerticalMenu from 'components/vertical-menu';
 export VerticalNav from 'components/vertical-nav';

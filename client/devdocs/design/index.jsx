@@ -108,6 +108,7 @@ import TimeSince from 'components/time-since/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import TokenFields from 'components/token-field/docs/example';
 import Tooltip from 'components/tooltip/docs/example';
+import UserItem from 'components/user/docs/example';
 import Version from 'components/version/docs/example';
 import VerticalMenu from 'components/vertical-menu/docs/example';
 import VerticalNav from 'components/vertical-nav/docs/example';
@@ -249,6 +250,7 @@ class DesignAssets extends React.Component {
 					<Timezone readmeFilePath="timezone" />
 					<TokenFields readmeFilePath="token-field" />
 					<Tooltip readmeFilePath="tooltip" />
+					<UserItem readmeFilePath="user" />
 					<VerticalMenu readmeFilePath="vertical-menu" />
 					<VerticalNav readmeFilePath="vertical-nav" />
 					<Version readmeFilePath="version" />

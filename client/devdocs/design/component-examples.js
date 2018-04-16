@@ -80,6 +80,7 @@ export TimeSince from 'components/time-since/docs/example';
 export Timezone from 'components/timezone/docs/example';
 export TokenFields from 'components/token-field/docs/example';
 export Tooltip from 'components/tooltip/docs/example';
+export UserItem from 'components/user/docs/example';
 export Version from 'components/version/docs/example';
 export VerticalMenu from 'components/vertical-menu/docs/example';
 export VerticalNav from 'components/vertical-nav/docs/example';
