@@ -4,9 +4,27 @@ This document will cover how to use icons in Calypso, as well as how to create i
 
 ## Gridicons
 
-Gridicons is the brand new icon set designed from the bottom up for Calypso. It features a consistent style.
+[Gridicons](https://github.com/automattic/gridicons) is the brand new icon set designed from the bottom up for Calypso. It features a consistent style. There's a gallery with all the available icons in https://automattic.github.io/gridicons/.
 
 Gridicons are born with a 24px base grid. Strokes are 2px thick and icons are solid. If an icon is hollow, it generally means the "inactive" version of that icon. For example an outline bookmark icon becomes solid once clicked.
+
+### Usage
+
+Import the iconset and decide at run-time which icon to use:
+
+```
+import Gridicon from 'gridicons';
+//...
+render() {
+  return <Gridicon icon="add-image" />;
+}
+```
+
+**Props**
+
+- `icon`: String - the icon name. This is ignored when importing icons individually.
+- `size`: Number - (default: 24) set the size of the icon.
+- `onClick`: Function - (optional) if you need a click callback.
 
 Though Gridicons are vector graphics and theoretically infinitely scalable, in practice we have to work within the limitations of antialiasing so icons stay crisp. Since Gridicons are designed for 24px, they look perfect at that size. That's why by default, this is the size you should be using.
 
@@ -66,4 +84,3 @@ Finally, build the favicon. Only include 16 and 32px sizes directly in the .ico 
 
 - [Favicon Cheat Sheet](https://github.com/audreyr/favicon-cheat-sheet)
 - [Favicon Quiz](https://css-tricks.com/favicon-quiz/)
-
