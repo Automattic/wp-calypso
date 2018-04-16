@@ -3,8 +3,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
 
 /**
@@ -18,7 +19,8 @@ const SVG_SIZE = 300;
 class PieChart extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
-		title: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
 
 	constructor( props ) {
@@ -52,12 +54,13 @@ class PieChart extends Component {
 				...datum,
 				path: paths[ index ],
 			} ) ),
+			dataTotal: sortedData.reduce( ( total, datum ) => total + datum.value, 0 ),
 		};
 	}
 
 	render() {
-		const { title } = this.props;
-		const { data } = this.state;
+		const { title, translate } = this.props;
+		const { data, dataTotal } = this.state;
 
 		return (
 			<div className={ 'pie-chart' }>
@@ -78,10 +81,14 @@ class PieChart extends Component {
 						} ) }
 					</g>
 				</svg>
-				{ title && <h2 className={ 'pie-chart__title' }>{ title }</h2> }
+				{ title && (
+					<h2 className={ 'pie-chart__title' }>
+						{ 'string' === typeof title ? title : title( translate, dataTotal ) }
+					</h2>
+				) }
 			</div>
 		);
 	}
 }
 
-export default PieChart;
+export default localize( PieChart );
