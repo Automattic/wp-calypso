@@ -367,10 +367,6 @@ const analytics = {
 			return cookies.tk_ai;
 		},
 
-		setAnonymousUserId: function( anonId ) {
-			window._tkq.push( [ 'identifyAnonUser', anonId ] );
-		},
-
 		setOptOut: function( isOptingOut ) {
 			window._tkq.push( [ 'setOptOut', isOptingOut ] );
 		},
