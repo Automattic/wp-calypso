@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import { get } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -23,8 +22,6 @@ import {
 	SELECTED_SITE_SUBSCRIBE,
 	SELECTED_SITE_UNSUBSCRIBE,
 } from 'state/action-types';
-import analytics from 'lib/analytics';
-import cartStore from 'lib/cart/store';
 import userFactory from 'lib/user';
 import {
 	isNotificationsOpen,
@@ -32,7 +29,6 @@ import {
 	isFetchingAutomatedTransferStatus,
 } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
@@ -110,14 +106,7 @@ let sitesListeners = [];
  * @param {object}   action   - the dispatched action
  * @param {function} getState - redux getState function
  */
-const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	const user = getCurrentUser( state );
-	const siteCount = get( user, 'site_count', 0 );
-	analytics.setSelectedSite( selectedSite );
-	analytics.setSiteCount( siteCount );
-};
+const updateSelectedSiteForAnalytics = () => {};
 
 /**
  * Sets the selectedSiteId for lib/cart/store
@@ -125,9 +114,7 @@ const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
  * @param {function} dispatch - redux dispatch function
  * @param {number}   siteId   - the selected siteId
  */
-const updateSelectedSiteForCart = ( dispatch, { siteId } ) => {
-	cartStore.setSelectedSiteId( siteId );
-};
+const updateSelectedSiteForCart = ( dispatch, {} ) => {};
 
 /**
  * Sets the selectedSite for lib/keyboard-shortcuts/global

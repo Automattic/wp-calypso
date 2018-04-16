@@ -25,7 +25,6 @@ import { setupRoutes } from 'sections-middleware';
 import { getSections } from 'sections-helper';
 import { checkFormHandler } from 'lib/protect-form';
 import notices from 'notices';
-import authController from 'auth/controller';
 
 const debug = debugFactory( 'calypso' );
 
@@ -113,13 +112,6 @@ const loggedOutMiddleware = currentUser => {
 	} );
 };
 
-const oauthTokenMiddleware = () => {
-	if ( config.isEnabled( 'oauth' ) ) {
-		// Forces OAuth users to the /login page if no token is present
-		page( '*', authController.checkToken );
-	}
-};
-
 const setRouteMiddleware = () => {
 	page( '*', ( context, next ) => {
 		context.store.dispatch( setRouteAction( context.pathname, context.query ) );
@@ -200,7 +192,6 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
-	oauthTokenMiddleware();
 	loadSectionsMiddleware();
 	loggedOutMiddleware( currentUser );
 	setRouteMiddleware();

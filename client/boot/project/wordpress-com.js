@@ -14,24 +14,14 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import { getSavedVariations } from 'lib/abtest'; // used by error logger
-import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
-import { requestHappychatEligibility } from 'state/happychat/user/actions';
-import { getHappychatAuth } from 'state/happychat/utils';
-import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
-import analytics from 'lib/analytics';
 import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
-import superProps from 'lib/analytics/super-props';
-import translatorJumpstart from 'lib/translator-jumpstart';
 import emailVerification from 'components/email-verification';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
-import { pruneStaleRecords } from 'lib/wp/sync-handler';
-import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import Logger from 'lib/catch-js-errors';
-import setupMySitesRoute from 'my-sites';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import * as controller from 'controller';
 
@@ -51,17 +41,12 @@ function renderLayout( reduxStore ) {
 
 export function utils() {
 	debug( 'Executing WordPress.com utils.' );
-
 	// prune sync-handler records more than two days old
-	pruneStaleRecords( '2 days' );
-
-	translatorJumpstart.init();
 }
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing WordPress.com configure Redux store.' );
 
-	setSupportUserReduxStore( reduxStore );
 	setReduxBridgeReduxStore( reduxStore );
 
 	if ( currentUser.get() ) {
@@ -74,16 +59,6 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 
 export function setupMiddlewares( currentUser, reduxStore ) {
 	debug( 'Executing WordPress.com setup middlewares.' );
-
-	analytics.setDispatch( reduxStore.dispatch );
-
-	if ( currentUser.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( currentUser, superProps );
-	} else {
-		analytics.setSuperProps( superProps );
-	}
 
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
@@ -107,9 +82,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 				};
 			} );
 			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
-			analytics.on( 'record-event', ( eventName, eventProperties ) =>
-				errorLogger.saveExtraData( { lastTracksEvent: eventProperties } )
-			);
 			page( '*', function( context, next ) {
 				errorLogger.saveNewPath(
 					context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
@@ -155,9 +127,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			context.store.dispatch( activateNextLayoutFocus() );
 		}
 
-		// Bump general stat tracking overall Newdash usage
-		analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
-
 		next();
 	} );
 
@@ -194,16 +163,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 
 			next();
 		} );
-	}
-
-	setupMySitesRoute();
-
-	const state = reduxStore.getState();
-	if ( config.isEnabled( 'happychat' ) ) {
-		reduxStore.dispatch( requestHappychatEligibility() );
-	}
-	if ( wasHappychatRecentlyActive( state ) ) {
-		reduxStore.dispatch( initHappychatConnection( getHappychatAuth( state )() ) );
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {

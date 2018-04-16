@@ -18,11 +18,6 @@ import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 import { doNotTrack, isPiiUrl, shouldReportOmitBlogId } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
-import {
-	retarget,
-	recordAliasInFloodlight,
-	recordPageViewInFloodlight,
-} from 'lib/analytics/ad-tracking';
 import { statsdTimingUrl } from 'lib/analytics/statsd';
 
 /**
@@ -348,10 +343,10 @@ const analytics = {
 			analytics.tracks.recordEvent( 'calypso_page_view', eventProperties );
 
 			// Ensure every Calypso user is added to our retargeting audience via the AdWords retargeting tag
-			retarget();
+			// retarget();
 
 			// Track the page view with DCM Floodlight as well
-			recordPageViewInFloodlight( urlPath );
+			// recordPageViewInFloodlight( urlPath );
 		},
 
 		createRandomId,
@@ -510,7 +505,7 @@ const analytics = {
 		// Don't identify the user if we don't have one
 		if ( _user && _user.initialized ) {
 			if ( anonymousUserId ) {
-				recordAliasInFloodlight();
+				// recordAliasInFloodlight();
 			}
 
 			window._tkq.push( [ 'identifyUser', _user.get().ID, _user.get().username ] );

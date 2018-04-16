@@ -67,7 +67,7 @@ SiteIcon.defaultProps = {
 
 export default connect( ( state, { site, siteId, imgSize } ) => {
 	// Always prefer site from Redux state if available
-	const stateSite = getSite( state, get( site, 'ID', siteId ) );
+	const stateSite = null; //getSite( state, get( site, 'ID', siteId ) );
 
 	// Until all sites state is within Redux, we provide compatibility in cases
 	// where sites-list object is passed to use the icon.img property as URL.

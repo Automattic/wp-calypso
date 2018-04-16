@@ -19,8 +19,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
-import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 
 /**
@@ -136,9 +134,9 @@ class InlineHelp extends Component {
 }
 
 export default connect(
-	state => ( {
-		isHappychatButtonVisible: hasActiveHappychatSession( state ),
-		isHappychatOpen: isHappychatOpen( state ),
+	() => ( {
+		isHappychatButtonVisible: false,
+		isHappychatOpen: false,
 	} ),
 	{
 		recordTracksEvent,

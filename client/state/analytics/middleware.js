@@ -11,10 +11,6 @@ import { has, invoke, pick } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import {
-	trackCustomAdWordsRemarketingEvent,
-	trackCustomFacebookConversionEvent,
-} from 'lib/analytics/ad-tracking';
-import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
@@ -28,8 +24,8 @@ const eventServices = {
 	ga: ( { category, action, label, value } ) =>
 		analytics.ga.recordEvent( category, action, label, value ),
 	tracks: ( { name, properties } ) => analytics.tracks.recordEvent( name, properties ),
-	fb: ( { name, properties } ) => trackCustomFacebookConversionEvent( name, properties ),
-	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
+	fb: ( { name, properties } ) => null, // trackCustomFacebookConversionEvent( name, properties ),
+	adwords: ( { properties } ) => null, // trackCustomAdWordsRemarketingEvent( properties ),
 };
 
 // Whitelists specific parameters to avoid polluting page view events
