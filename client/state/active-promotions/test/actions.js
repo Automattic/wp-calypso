@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import {
@@ -28,21 +23,21 @@ describe( 'actions', () => {
 		test( '#activePromotionsReceiveAction()', () => {
 			const activePromotions = wpcomResponse;
 			const action = activePromotionsReceiveAction( activePromotions );
-			expect( action ).to.eql( ACTION_ACTIVE_PROMOTIONS_RECEIVE );
+			expect( action ).toEqual( ACTION_ACTIVE_PROMOTIONS_RECEIVE );
 		} );
 
 		test( '#activePromotionsRequestSuccessAction()', () => {
 			const action = activePromotionsRequestSuccessAction();
-			expect( action ).to.eql( ACTION_ACTIVE_PROMOTIONS_REQUEST_SUCCESS );
+			expect( action ).toEqual( ACTION_ACTIVE_PROMOTIONS_REQUEST_SUCCESS );
 		} );
 
 		test( '#activePromotionsRequestFailureAction()', () => {
 			const action = activePromotionsRequestFailureAction( errorResponse );
-			expect( action ).to.eql( ACTION_ACTIVE_PROMOTIONS_REQUEST_FAILURE );
+			expect( action ).toEqual( ACTION_ACTIVE_PROMOTIONS_REQUEST_FAILURE );
 		} );
 
 		test( '#requestActivePromotions()', () => {
-			expect( requestActivePromotions() ).to.eql( ACTION_ACTIVE_PROMOTIONS_REQUEST );
+			expect( requestActivePromotions() ).toEqual( ACTION_ACTIVE_PROMOTIONS_REQUEST );
 		} );
 	} );
 } );

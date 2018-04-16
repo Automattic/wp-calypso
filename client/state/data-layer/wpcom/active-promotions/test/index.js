@@ -9,7 +9,7 @@ import {
 	activePromotionsRequestFailureAction,
 	activePromotionsRequestSuccessAction,
 } from 'state/active-promotions/actions';
-import { WPCOM_RESPONSE } from 'state/plans/test/fixture';
+import { WPCOM_RESPONSE } from 'state/active-promotions/test/fixture';
 
 describe( 'wpcom-api', () => {
 	describe( 'active promotions request', () => {
@@ -35,7 +35,9 @@ describe( 'wpcom-api', () => {
 				const activePromotions = WPCOM_RESPONSE;
 				const action = activePromotionsReceiveAction( activePromotions );
 
-				expect( receiveActivePromotions( action, activePromotions ) ).toEqual( [
+				expect(
+					receiveActivePromotions( action, { active_promotions: activePromotions } )
+				).toEqual( [
 					activePromotionsRequestSuccessAction(),
 					activePromotionsReceiveAction( activePromotions ),
 				] );
