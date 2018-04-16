@@ -57,17 +57,18 @@ import {
 	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
+	getLocalizedLanguageNames,
 } from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
-import { getLanguage, isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QueryLanguageNames from 'components/data/query-language-names';
 
 /**
  * Module variables
  */
-const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
@@ -303,7 +304,7 @@ class HelpContact extends React.Component {
 
 	getContactFormPropsVariation = variationSlug => {
 		const { isSubmitting } = this.state;
-		const { currentUserLocale, hasMoreThanOneSite, translate } = this.props;
+		const { currentUserLocale, hasMoreThanOneSite, translate, defaultLanguage } = this.props;
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
@@ -582,6 +583,7 @@ class HelpContact extends React.Component {
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
+				<QueryLanguageNames />
 			</Fragment>
 		);
 		if ( this.props.compact ) {
@@ -595,12 +597,16 @@ export default connect(
 	state => {
 		const helpSelectedSiteId = getHelpSelectedSiteId( state );
 		const selectedSitePlan = getSitePlan( state, helpSelectedSiteId );
+		const localizedLanguageNames = getLocalizedLanguageNames( state );
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
 			getUserInfo: getHappychatUserInfo( state ),
 			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
+			defaultLanguage: localizedLanguageNames
+				? localizedLanguageNames[ config( 'i18n_default_locale_slug' ) ].localized
+				: localizedLanguageNames,
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
