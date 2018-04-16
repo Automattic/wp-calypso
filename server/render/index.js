@@ -7,7 +7,7 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { get, pick } from 'lodash';
+import { get, isEmpty, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -130,8 +130,15 @@ export function serverRender( req, res ) {
 		cacheKey = false;
 
 	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
-		const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
-		cacheKey = getNormalizedPath( context.pathname, cachedQueryParams );
+		if ( ! context.query ) {
+			cacheKey = context.pathname;
+		} else {
+			// If we have query args, make sure we only cache if they're whitelisted
+			const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
+			if ( ! isEmpty( cachedQueryParams ) ) {
+				cacheKey = getNormalizedPath( context.pathname, cachedQueryParams );
+			}
+		}
 	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {
