@@ -334,6 +334,7 @@ class Checkout extends React.Component {
 			this.props.isNewlyCreatedSite &&
 			! cartItems.hasGoogleApps( cart ) &&
 			cartItems.hasDomainRegistration( cart ) &&
+			receipt &&
 			isEmpty( receipt.failed_purchases )
 		) {
 			const domainsForGSuite = this.getEligibleDomainFromCart();
