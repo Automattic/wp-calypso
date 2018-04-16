@@ -28,7 +28,7 @@ import DropdownItem from 'components/select-dropdown/item';
  * Docs examples
  */
 import ActionCard from 'components/action-card';
-import Accordions from 'components/accordion';
+import Accordion from 'components/accordion';
 import BackButton from 'components/back-button';
 import Badge from 'components/badge';
 import Banner from 'components/banner';
@@ -125,10 +125,13 @@ import Version from 'components/version';
 import VerticalMenu from 'components/vertical-menu';
 import Wizard from 'components/wizard';
 
-
+import { actionCardCode } from 'components/action-card/docs/example';
+import { accordionCode } from 'components/accordion/docs/example';
 import { countCode } from 'components/count/docs/example';
 
 const examples = {
+	Accordion: accordionCode,
+	ActionCard: actionCardCode,
 	Count: countCode,
 };
 
@@ -229,7 +232,7 @@ class DesignAssets extends React.Component {
 		} );
 
 		const scope = {
-			Accordions,
+			Accordion,
 			ActionCard,
 			BackButton,
 			Badge,
