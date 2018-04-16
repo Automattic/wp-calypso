@@ -55,16 +55,7 @@ class Pagination extends Component {
 	};
 
 	render() {
-		const {
-			className,
-			compact,
-			nextLabel,
-			page,
-			pageClick,
-			perPage,
-			prevLabel,
-			total,
-		} = this.props;
+		const { compact, nextLabel, page, pageClick, perPage, prevLabel, total } = this.props;
 		const pageCount = Math.ceil( total / perPage );
 
 		if ( pageCount <= 1 ) {
@@ -88,7 +79,7 @@ class Pagination extends Component {
 		} );
 
 		return (
-			<div className={ classnames( 'pagination', className, { 'is-compact': compact } ) }>
+			<div className={ classnames( 'pagination', { 'is-compact': compact } ) }>
 				<ul className="pagination__list">{ pageListRendered }</ul>
 			</div>
 		);

@@ -68,8 +68,17 @@ export function getStartMoment( { gmtOffset, startDate, timezone } ) {
  * @param  {?string} _.gmtOffset Offset to apply if timezone isn't supplied.
  * @return {Object}              Start of period moment, adjusted according to timezone or gmtOffset if provided.
  */
-export function getActivityLogQuery() {
+export function getActivityLogQuery( { gmtOffset, startDate, timezone } ) {
+	const startMoment = getStartMoment( { gmtOffset, startDate, timezone } );
 	return {
+		dateEnd: startMoment
+			.clone()
+			.endOf( 'month' )
+			.valueOf(),
+		dateStart: startMoment
+			.clone()
+			.startOf( 'month' )
+			.valueOf(),
 		number: 1000,
 	};
 }
