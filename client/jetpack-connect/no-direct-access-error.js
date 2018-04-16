@@ -19,7 +19,6 @@ import JetpackConnectHappychatButton from './happychat-button';
 
 class NoDirectAccessError extends PureComponent {
 	static propTypes = {
-		authorizationRemoteQueryData: PropTypes.object,
 		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
