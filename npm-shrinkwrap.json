@@ -11204,8 +11204,8 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "2.1.8",
-      "integrity": "sha512-bpDlKzTtdE4Cc2yyygd3o+BLYj9Bc5EgICL+M8UV7yoNZCVEowGRPz7C3Q1MsOwKVBX5Mexi9ieJbKTe8KUl6A=="
+      "version": "2.1.9",
+      "integrity": "sha512-8bkVfKcMy9b2YNQ52oETkvDDe2tHf8L8xCi4LXVDxUhrjamzfWsHe2UkSFk9Hvau9K4mbtRz5D0KVZhwwUXGow=="
     },
     "npm-run-all": {
       "version": "4.0.2",
