@@ -173,7 +173,6 @@ class PlanFeatures extends Component {
 		const {
 			canPurchase,
 			hasPlaceholders,
-			translate,
 			withSaleInfo,
 			isEligibleForSpringDiscount: eligible,
 		} = this.props;
@@ -194,7 +193,8 @@ class PlanFeatures extends Component {
 				icon="info-outline"
 				status="is-success"
 			>
-				{ translate( 'Enter coupon code “SPRING30” during checkout to claim your 30% discount' ) }
+				{ /* no translate() since we're launching this just for EN audience */ }
+				{ 'Enter coupon code “SPRING30” during checkout to claim your 30% discount' }
 			</Notice>,
 			bannerContainer
 		);

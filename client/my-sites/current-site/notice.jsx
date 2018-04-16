@@ -120,7 +120,7 @@ class SiteNotice extends React.Component {
 				ctaText={ translate( 'Upgrade' ) }
 				href={ `/plans/${ site.slug }?sale` }
 				icon="info-outline"
-				text={ translate( '30% Off All Plans' ) }
+				text={ '30% Off All Plans' } // no translate() since we're launching this just for EN audience
 			/>
 		);
 	}
