@@ -32,6 +32,7 @@ render() {
 * `submitForm` function - Called when the form is submitted. It will receive the following parameters: `form`, `userData` and `analyticsData`
 * `submitButtonText` string: The text displayed inside the submit button
 * `getRedirectToAfterLoginUrl` string: Where the user should be redirected after being logged in
+* `suggestedUsername` string: A suggested username based on the domain name the user chose during signup
 * (optional) `save` function: Called `onBlur` of each field with `form` as parameter
 * (optional) `disabled` boolean: Sets the form as disabled
 * (optional) `submitting` boolean: Sets the state of the form as being submitted
