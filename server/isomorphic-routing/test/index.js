@@ -3,16 +3,23 @@
 /**
  * Internal dependencies
  */
-import { zip } from 'lodash';
 import { getNormalizedPath } from '..';
 
 describe( 'getNormalizedPath', () => {
 	test( 'should return expected results for a variety of inputs', () => {
-		const paths = [ '', '/', '/shortpath', '/a/longer/path' ];
-		const queries = [ {}, { a: 'query' }, { '': 'a=query' } ];
+		const pathnames = [ '', '/', '/shortpath', '/a/longer/path', '/specialchars/%2F%3F%26%3D%25' ];
+		const queries = [
+			{},
+			{ a: 'query' },
+			{ '?tricky=query': '' },
+			{ key: '=tricky&value=;)' },
+			{ emptyValue: '' },
+			{ nullValue: null },
+		];
 
-		zip( paths, queries ).forEach( ( [ pathname, query ] ) =>
-			expect( getNormalizedPath( pathname, query ) ).toMatchSnapshot()
+		// Cartesian product: paths * queries
+		pathnames.forEach( pathname =>
+			queries.forEach( query => expect( getNormalizedPath( pathname, query ) ).toMatchSnapshot() )
 		);
 	} );
 
@@ -51,16 +58,9 @@ describe( 'getNormalizedPath', () => {
 		expect( getNormalizedPath( '/', { empty: '' } ) ).toBe(
 			getNormalizedPath( '/', { empty: null } )
 		);
-		expect( getNormalizedPath( '/', { empty: '' } ) ).toBe(
-			getNormalizedPath( '/', { empty: undefined } )
-		);
 	} );
 
 	test( 'should produce unique results', () => {
-		expect( getNormalizedPath( '/?a=query', {} ) ).not.toBe(
-			getNormalizedPath( '/', { a: 'query' } )
-		);
-
 		expect( getNormalizedPath( '/', { key: 'val' } ) ).not.toBe(
 			getNormalizedPath( '/', { 'key=val': '' } )
 		);
