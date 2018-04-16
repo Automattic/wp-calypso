@@ -100,6 +100,7 @@ export SpinnerButton from 'components/spinner-button';
 export SpinnerLine from 'components/spinner-line';
 export SplitButton from 'components/split-button';
 export Suggestions from 'components/suggestions';
+export TextareaAutosize from 'components/textarea-autosize';
 export TextDiff from 'components/text-diff';
 export TileGrid from 'components/tile-grid';
 export TimeSince from 'components/time-since';

@@ -66,6 +66,7 @@ export SpinnerButton from 'components/spinner-button/docs/example';
 export SpinnerLine from 'components/spinner-line/docs/example';
 export SplitButton from 'components/split-button/docs/example';
 export Suggestions from 'components/suggestions/docs/example';
+export TextareaAutosize from 'components/textarea-autosize/docs/example';
 export TextDiff from 'components/text-diff/docs/example';
 export TileGrid from 'components/tile-grid/docs/example';
 export TimeSince from 'components/time-since/docs/example';
