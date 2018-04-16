@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 1`] = `""`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 2`] = `"/?a=query"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 3`] = `"/shortpath?=a%3Dquery"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 4`] = `"/a/longer/path"`;

@@ -3,9 +3,19 @@
 /**
  * Internal dependencies
  */
+import { zip } from 'lodash';
 import { getNormalizedPath } from '..';
 
 describe( 'getNormalizedPath', () => {
+	test( 'should return expected results for a variety of inputs', () => {
+		const paths = [ '', '/', '/shortpath', '/a/longer/path' ];
+		const queries = [ {}, { a: 'query' }, { '': 'a=query' } ];
+
+		zip( paths, queries ).forEach( ( [ pathname, query ] ) =>
+			expect( getNormalizedPath( pathname, query ) ).toMatchSnapshot()
+		);
+	} );
+
 	test( 'should return pathname for routes with no query', () => {
 		const pathname = '/my/path';
 		const query = {};
