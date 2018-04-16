@@ -72,14 +72,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	redesignedSidebarBanner: {
-		datestamp: '20180222',
-		variations: {
-			newBanner: 50,
-			oldBanner: 50,
-		},
-		defaultVariation: 'oldBanner',
-	},
 	mobilePlansTablesOnSignup: {
 		datestamp: '20180330',
 		variations: {

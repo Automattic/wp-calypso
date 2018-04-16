@@ -41,13 +41,7 @@ export class SidebarBanner extends Component {
 	render() {
 		const { className, ctaName, ctaText, href, icon, text } = this.props;
 		const variation = abtest( 'redesignedSidebarBanner' );
-		const classes = classnames(
-			{
-				'sidebar-banner': variation === 'oldBanner',
-				'sidebar-banner-new': variation === 'newBanner',
-			},
-			className
-		);
+		const classes = classnames( 'sidebar-banner', className );
 
 		return (
 			<div className={ classes }>
