@@ -22,13 +22,13 @@ import { getInterval } from 'state/google-my-business/selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class GoogleMyBusinessStatsChart extends Component {
-	static props = {
+	static propTypes = {
 		changeGoogleMyBusinessStatsInterval: PropTypes.func.isRequired,
 		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
 		data: PropTypes.array.isRequired,
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
-		interval: PropTypes.string.isRequired,
+		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
 		siteId: PropTypes.number.isRequired,
 		statType: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
