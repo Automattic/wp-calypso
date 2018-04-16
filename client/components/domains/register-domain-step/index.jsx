@@ -21,7 +21,6 @@ import {
 	snakeCase,
 	startsWith,
 	times,
-	uniqBy,
 } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
@@ -615,9 +614,14 @@ class RegisterDomainStep extends React.Component {
 
 		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
 
-		const suggestions = uniqBy( flatten( compact( results ) ), function( suggestion ) {
-			return suggestion.domain_name;
+		const suggestionMap = new Map();
+		flatten( compact( results ) ).forEach( result => {
+			const { domain_name: domainName } = result;
+			suggestionMap.has( domainName )
+				? suggestionMap.set( domainName, { ...suggestionMap.get( domainName ), ...result } )
+				: suggestionMap.set( domainName, result );
 		} );
+		const suggestions = [ ...suggestionMap.values() ];
 
 		const strippedDomainBase = getStrippedDomainBase( domain );
 		const exactMatchBeforeTld = suggestion =>
