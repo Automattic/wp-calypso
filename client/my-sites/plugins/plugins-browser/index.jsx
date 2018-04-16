@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, flow, get, flatMap, includes } from 'lodash';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -56,6 +57,14 @@ const visibleCategories = [ 'new', 'popular', 'featured' ];
 
 export class PluginsBrowser extends Component {
 	static displayName = 'PluginsBrowser';
+
+	static propTypes = {
+		trackPageView: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		trackPageViews: true,
+	};
 
 	state = this.getPluginsLists( this.props.search );
 
@@ -503,7 +512,7 @@ export class PluginsBrowser extends Component {
 	}
 
 	renderPageViewTracker() {
-		const { category, selectedSiteId } = this.props;
+		const { category, selectedSiteId, trackPageViews } = this.props;
 
 		const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
 		let analyticsPath = category ? `/plugins/${ category }` : '/plugins';
@@ -512,7 +521,11 @@ export class PluginsBrowser extends Component {
 			analyticsPath += '/:site';
 		}
 
-		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+		if ( trackPageViews ) {
+			return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+		}
+
+		return null;
 	}
 
 	render() {

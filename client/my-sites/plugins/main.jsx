@@ -287,11 +287,15 @@ export class PluginsMain extends Component {
 	}
 
 	renderPageViewTracking() {
-		const { selectedSiteId, filter } = this.props;
+		const { selectedSiteId, filter, selectedSiteIsJetpack } = this.props;
 
-		const analyticsPageTitle = filter ? 'Plugins > ' + capitalize( filter ) : 'Plugins';
+		const analyticsPageTitle = filter ? `Plugins > ${ capitalize( filter ) }` : 'Plugins';
 
 		const analyticsPath = selectedSiteId ? '/plugins/manage/:site' : '/plugins/manage';
+
+		if ( selectedSiteId && ! selectedSiteIsJetpack ) {
+			return null;
+		}
 
 		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
 	}
@@ -347,6 +351,7 @@ export class PluginsMain extends Component {
 				path={ this.props.context.path }
 				search={ search }
 				searchTitle={ searchTitle }
+				trackPageViews={ false }
 			/>
 		);
 

@@ -499,10 +499,6 @@ class PlansSetup extends React.Component {
 		);
 	};
 
-	renderPageViewTracker = () => {
-		return <PageViewTracker path="/plugins/setup/:site" title="Jetpack Plugins Setup" />;
-	};
-
 	render() {
 		const { sitesInitialized, translate } = this.props;
 		const site = this.props.selectedSite;
@@ -553,7 +549,7 @@ class PlansSetup extends React.Component {
 
 		return (
 			<div className="jetpack-plugins-setup">
-				{ this.renderPageViewTracker() }
+				<PageViewTracker path="/plugins/setup/:site" title="Jetpack Plugins Setup" />;
 				<QueryPluginKeys siteId={ site.ID } />
 				<h1 className="jetpack-plugins-setup__header">
 					{ translate( 'Setting up your %(plan)s Plan', {
