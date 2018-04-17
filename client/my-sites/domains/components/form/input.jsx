@@ -83,12 +83,16 @@ export default class extends React.Component {
 			this.props.classes
 		);
 
+		const validationId = `validation-field-${ this.props.name }`;
+
 		return (
 			<div className={ classes }>
 				<FormLabel htmlFor={ this.props.name } { ...this.props.labelProps }>
 					{ this.props.label }
 				</FormLabel>
 				<FormTextInput
+					aria-invalid={ this.props.isError }
+					aria-describedby={ validationId }
 					placeholder={ this.props.placeholder ? this.props.placeholder : this.props.label }
 					id={ this.props.name }
 					value={ this.props.value }
@@ -105,7 +109,7 @@ export default class extends React.Component {
 					inputRef={ this.props.inputRef }
 				/>
 				{ this.props.errorMessage && (
-					<FormInputValidation text={ this.props.errorMessage } isError />
+					<FormInputValidation id={ validationId } text={ this.props.errorMessage } isError />
 				) }
 			</div>
 		);

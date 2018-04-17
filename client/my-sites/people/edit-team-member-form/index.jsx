@@ -159,7 +159,7 @@ export class EditTeamMemberForm extends Component {
 	render() {
 		return (
 			<Main className="edit-team-member-form">
-				<PageViewTracker path="people/edit/:user_login/:site" title="View Team Member" />
+				<PageViewTracker path="people/edit/:site/:user" title="People > View Team Member" />
 				<HeaderCake onClick={ this.goBack } isCompact />
 				{ this.renderNotices() }
 				<Card className="edit-team-member-form__user-profile">

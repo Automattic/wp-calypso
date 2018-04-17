@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import { isEnabled } from 'config';
 import { find } from 'lodash';
 
 /**
@@ -20,8 +20,9 @@ import ImporterStore, { getState as getImporterState } from 'lib/importer/store'
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
+import SiteImporter from 'my-sites/importer/importer-site-importer';
 import { fetchState } from 'lib/importer/actions';
-import { appStates, WORDPRESS, MEDIUM } from 'state/imports/constants';
+import { appStates, WORDPRESS, MEDIUM, SITE_IMPORTER } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
@@ -42,6 +43,7 @@ class SiteSettingsImport extends Component {
 
 	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
+		this.updateFromAPI();
 	}
 
 	componentWillUnmount() {
@@ -109,12 +111,13 @@ class SiteSettingsImport extends Component {
 		);
 
 		const wpImports = this.getImports( WORDPRESS );
-		const mediumImports = config.isEnabled( 'manage/import/medium' )
-			? this.getImports( MEDIUM )
-			: [];
+		const mediumImports = isEnabled( 'manage/import/medium' ) ? this.getImports( MEDIUM ) : [];
+
+		const siteImporterImports = this.getImports( SITE_IMPORTER );
 
 		const hasWpActiveImports = hasActiveImports( wpImports );
 		const hasMediumActiveImports = hasActiveImports( mediumImports );
+		const hasSiteImporterActiveImports = hasActiveImports( siteImporterImports );
 
 		return (
 			<Main>
@@ -153,8 +156,13 @@ class SiteSettingsImport extends Component {
 								<MediumImporter { ...{ key, site, importerStatus } } />
 							) ) }
 
+						{ isEnabled( 'manage/import/site-importer' ) &&
+							siteImporterImports.map( ( importerStatus, key ) => (
+								<SiteImporter { ...{ key, site, importerStatus } } />
+							) ) }
 						{ ! hasWpActiveImports &&
-							! hasMediumActiveImports && (
+							! hasMediumActiveImports &&
+							! hasSiteImporterActiveImports && (
 								<CompactCard
 									href={ adminUrl + 'import.php' }
 									target="_blank"

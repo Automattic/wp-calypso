@@ -734,6 +734,7 @@ export const PLANS_LIST = {
 		term: TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Professional' ),
 		getAudience: () => i18n.translate( 'Best for organizations' ),
+		getStoreSlug: () => PLAN_JETPACK_BUSINESS,
 		getProductId: () => 2001,
 		availableFor: plan =>
 			includes(
@@ -797,6 +798,7 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for organizations' ),
 		getSubtitle: () => i18n.translate( 'Ultimate security and traffic tools.' ),
 		getProductId: () => 2004,
+		getStoreSlug: () => PLAN_JETPACK_BUSINESS_MONTHLY,
 		getPathSlug: () => 'professional-monthly',
 		availableFor: plan =>
 			includes(

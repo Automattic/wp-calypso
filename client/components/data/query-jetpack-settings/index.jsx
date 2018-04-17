@@ -3,22 +3,23 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { isRequestingJetpackSettings } from 'state/selectors';
-import { fetchSettings } from 'state/jetpack/settings/actions';
+import { requestJetpackSettings } from 'state/jetpack/settings/actions';
 
 class QueryJetpackSettings extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		query: PropTypes.object,
+		siteId: PropTypes.number,
+		// Connected props
 		requestingSettings: PropTypes.bool,
-		fetchSettings: PropTypes.func,
+		requestJetpackSettings: PropTypes.func,
 	};
 
 	componentWillMount() {
@@ -32,11 +33,11 @@ class QueryJetpackSettings extends Component {
 	}
 
 	request( props ) {
-		if ( props.requestingSettings ) {
+		if ( props.requestingSettings || ! props.siteId ) {
 			return;
 		}
 
-		props.fetchSettings( props.siteId );
+		props.requestJetpackSettings( props.siteId, props.query );
 	}
 
 	render() {
@@ -45,10 +46,8 @@ class QueryJetpackSettings extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingSettings: isRequestingJetpackSettings( state, ownProps.siteId ),
-		};
-	},
-	{ fetchSettings }
+	( state, { query, siteId } ) => ( {
+		requestingSettings: isRequestingJetpackSettings( state, siteId, query ),
+	} ),
+	{ requestJetpackSettings }
 )( QueryJetpackSettings );
