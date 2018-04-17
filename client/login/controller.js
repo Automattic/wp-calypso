@@ -4,10 +4,8 @@
  * External dependencies
  */
 import page from 'page';
-import { parse } from 'qs';
 import React from 'react';
-import { includes, map } from 'lodash';
-import { parse as parseUrl } from 'url';
+import { map, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,12 +16,9 @@ import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 const enhanceContextWithLogin = context => {
 	const { params: { flow, isJetpack, socialService, twoFactorAuthType }, path } = context;
-
-	context.cacheQueryKeys = [ 'client_id', 'signup_flow' ];
 
 	context.primary = (
 		<WPLogin
@@ -44,28 +39,9 @@ const enhanceContextWithLogin = context => {
 export const lang = `:lang(${ map( config( 'languages' ), 'langSlug' ).join( '|' ) })?`;
 
 export function login( context, next ) {
-	const { query: { client_id, redirect_to } } = context;
+	const { query: { client_id } } = context;
 
 	if ( client_id ) {
-		if ( ! redirect_to ) {
-			const error = new Error( 'The `redirect_to` query parameter is missing.' );
-			error.status = 401;
-			return next( error );
-		}
-
-		const parsedRedirectUrl = parseUrl( redirect_to );
-		const redirectQueryString = parse( parsedRedirectUrl.query );
-
-		if ( client_id !== redirectQueryString.client_id ) {
-			recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
-
-			const error = new Error(
-				'The `redirect_to` query parameter is invalid with the given `client_id`.'
-			);
-			error.status = 401;
-			return next( error );
-		}
-
 		context.store
 			.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
 			.then( () => {

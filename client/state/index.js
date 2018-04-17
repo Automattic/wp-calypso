@@ -10,6 +10,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 // library into the `build` chunk.
 // TODO: change this back to `from 'redux-form'` after upgrade to Webpack 4.0 and a version
 //       of Redux Form that uses the `sideEffects: false` flag
+//       Also update server/isomorphic-routing/test/index.js jest.mock accordingly.
 import form from 'redux-form/es/reducer';
 import { mapValues } from 'lodash';
 

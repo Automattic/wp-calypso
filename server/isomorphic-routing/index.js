@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-
+import deterministicStringify from 'json-stable-stringify';
 import { isEmpty, pick } from 'lodash';
 import { stringify } from 'qs';
 
@@ -35,6 +35,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			expressApp.get(
 				route,
 				setUpRoute,
+				enhanceContext( section ),
 				combineMiddlewares(
 					setSectionMiddlewareFactory( section ),
 					setRouteMiddleware,
@@ -54,23 +55,37 @@ function setRouteMiddleware( context, next ) {
 
 function combineMiddlewares( ...middlewares ) {
 	return function( req, res, next ) {
-		req.context = getEnhancedContext( req, res );
 		applyMiddlewares( req.context, next, ...middlewares, () => {
 			next();
 		} );
 	};
 }
 
-// TODO: Maybe merge into getDefaultContext().
-function getEnhancedContext( req, res ) {
+function enhanceContext( section ) {
+	return function( req, res, next ) {
+		req.context = getEnhancedContext( req, res, section );
+		next();
+	};
+}
+
+export function getEnhancedContext( req, res, section ) {
+	// Do not expose "non-cacheable" query parameters to the SSR engine otherwise sensitive
+	// information could leak into the cache
+	const cacheQueryKeys = section.cacheQueryKeys || [];
+	const query = pick( req.query, cacheQueryKeys );
+	const querystring = stringify( query );
+	const path = req.path + ( querystring ? '?' + querystring : '' );
+
 	return Object.assign( {}, req.context, {
 		isLoggedIn: req.cookies.wordpress_logged_in,
 		isServerSide: true,
-		originalUrl: req.originalUrl,
-		path: req.url,
+		originalUrl: path,
+		path: path,
 		pathname: req.path,
 		params: req.params,
-		query: req.query,
+		query: query,
+		protocol: req.protocol,
+		host: req.headers.host,
 		redirect: res.redirect.bind( res ),
 		res,
 	} );
@@ -93,15 +108,18 @@ function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => () => f( composed ), () => {} );
 }
 
-export function getCacheKey( context ) {
-	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
-		return context.pathname;
+/**
+ * Get a key used to cache SSR result for the request, or null to disable the cache.
+ *
+ * @param  {Object}        context                The request context
+ * @param  {string}        context.pathname       Request path
+ * @param  {Object}        context.query          Query parameters
+ * @return {?string}                              The cache key or null to disable cache
+ */
+export function getCacheKey( { pathname, query } ) {
+	if ( ! isEmpty( query ) ) {
+		return pathname + '?' + deterministicStringify( query );
 	}
 
-	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
-	return (
-		context.pathname +
-		'?' +
-		stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } )
-	);
+	return pathname;
 }
