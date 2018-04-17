@@ -79,8 +79,12 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	transformData( data ) {
-		return data.map( value => ( {
-			value: value.dimensionalValues.value,
+		if ( ! data ) {
+			return data;
+		}
+
+		return data.data.metricValues.map( value => ( {
+			value: value.total_value.value,
 			description: get( this.props.dataSeriesInfo, `${ value.metric }.description`, '' ),
 			name: get( this.props.dataSeriesInfo, `${ value.metric }.name`, value.metric ),
 		} ) );
@@ -130,13 +134,7 @@ export default connect(
 		return {
 			siteId,
 			interval,
-			data: getGoolgeMyBusinessSiteStats(
-				state,
-				ownProps.siteId,
-				ownProps.statType,
-				interval,
-				'total'
-			),
+			data: getGoolgeMyBusinessSiteStats( state, siteId, ownProps.statType, interval, 'total' ),
 		};
 	},
 	{
