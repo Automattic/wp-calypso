@@ -66,6 +66,7 @@ export class PlansFeaturesMain extends Component {
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
+			withSaleInfo,
 			site,
 		} = this.props;
 
@@ -84,6 +85,7 @@ export class PlansFeaturesMain extends Component {
 					plans={ this.getPlansForPlanFeatures() }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
+					withSaleInfo={ withSaleInfo }
 					site={ site }
 				/>
 			</div>
