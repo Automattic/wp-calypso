@@ -162,8 +162,7 @@ export function serverRender( req, res ) {
 		context.layout &&
 		! context.user &&
 		cacheKey &&
-		isDefaultLocale( context.lang ) &&
-		! context.query.email_address // Don't do SSR when PIIs are present at the request
+		isDefaultLocale( context.lang )
 	) {
 		context.renderedLayout = render(
 			context.layout,
