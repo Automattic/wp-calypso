@@ -5,6 +5,7 @@ This checklist is used whenever someone wants to merge a new component to the sy
 Before you complete the steps below, please consider the reusability of the component by using this [flowchart](https://coggle.it/diagram/WtUSrld3uAYZHsn-/t/-/992b38cbe685d897b4aec6d0dd93cc4b47c06e0d4484eeb0d7d9a47fb2c48d94):
 
 ![New Component Flowchart](https://cldup.com/a-vP702FC1.png)
+Credit: [original flowchart](https://coggle.it/diagram/V0hkiP976OIbGpy8/t/vanilla-pattern#e4f393) from the [Vanilla Framework](https://vanillaframework.io/).
 
 ## Visual Quality
 
