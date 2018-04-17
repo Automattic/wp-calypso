@@ -5,12 +5,12 @@
 import { keyBy } from 'lodash';
 
 const categories = [
-	{ id: 1, name: 'cat1', slug: 'cat-1' },
-	{ id: 2, name: 'cat2', slug: 'cat-2' },
-	{ id: 3, name: 'cat3', slug: 'cat-3' },
-	{ id: 4, name: 'cat4', slug: 'cat-4' },
-	{ id: 5, name: 'cat5', slug: 'cat-5' },
-	{ id: 6, name: 'cat6', slug: 'cat-6' },
+	{ id: 1, name: 'cat1', slug: 'cat-1', parent: 0 },
+	{ id: 2, name: 'cat2', slug: 'cat-2', parent: 0 },
+	{ id: 3, name: 'cat3', slug: 'cat-3', parent: 2 },
+	{ id: 4, name: 'cat4', slug: 'cat-4', parent: 3 },
+	{ id: 5, name: 'cat5', slug: 'cat-5', parent: 0 },
+	{ id: 6, name: 'cat6', slug: 'cat-6', parent: 0 },
 ];
 
 const site1 = {

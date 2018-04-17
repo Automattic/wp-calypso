@@ -90,7 +90,12 @@ export function areAnyProductCategoriesLoading(
  */
 export function getProductCategory( state, categoryId, siteId = getSelectedSiteId( state ) ) {
 	const categoryState = getRawCategoryState( state, siteId );
-	return ( categoryState.items && categoryState.items[ categoryId ] ) || null;
+	const category = categoryState.items && categoryState.items[ categoryId ];
+	if ( ! category ) {
+		return null;
+	}
+	const label = getProductCategoryLabel( state, categoryId, siteId );
+	return { ...category, label };
 }
 
 /**
@@ -175,4 +180,25 @@ export function getTotalProductCategories(
 	const serializedQuery = getSerializedProductCategoriesQuery( omit( query, 'page' ) );
 	const categoryState = getRawCategoryState( state, siteId );
 	return ( categoryState.total && categoryState.total[ serializedQuery ] ) || 0;
+}
+
+/*
+ * Get the label for a given product, recursively including parent names.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} categoryId ID of the starting category.
+ * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
+ * @return {String} Label of given category, with all parents included
+ */
+function getProductCategoryLabel( state, categoryId, siteId = getSelectedSiteId( state ) ) {
+	const categoryState = getRawCategoryState( state, siteId );
+	const categories = categoryState.items || {};
+	const category = categories[ categoryId ];
+	if ( ! category ) {
+		return '';
+	}
+	if ( ! Number( category.parent ) ) {
+		return category.name;
+	}
+	return getProductCategoryLabel( state, category.parent, siteId ) + ` - ${ category.name }`;
 }
