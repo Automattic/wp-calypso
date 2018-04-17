@@ -13,8 +13,7 @@ import { get } from 'lodash';
  */
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
-import PieChart from 'components/pie-chart';
-import PieChartLegend from 'components/pie-chart/legend';
+import LineChart from 'components/line-chart';
 import SectionHeader from 'components/section-header';
 import {
 	changeGoogleMyBusinessStatsInterval,
@@ -83,11 +82,20 @@ class GoogleMyBusinessStatsChart extends Component {
 			return data;
 		}
 
-		return data.metricValues.map( value => ( {
-			value: value.totalValue.value,
-			description: get( this.props.dataSeriesInfo, `${ value.metric }.description`, '' ),
-			name: get( this.props.dataSeriesInfo, `${ value.metric }.name`, value.metric ),
-		} ) );
+		//return data.metricValues.map( value => ( {
+		//	value: value.totalValue.value,
+		//	description: get( this.props.dataSeriesInfo, `${ value.metric }.description`, '' ),
+		//	name: get( this.props.dataSeriesInfo, `${ value.metric }.name`, value.metric ),
+		//} ) );
+
+		return data.map( dataSeries => {
+			return dataSeries.dimensionalValues.map( datum => {
+				return {
+					date: Date.parse( datum.time ),
+					value: datum.value,
+				};
+			} );
+		} );
 	}
 
 	onIntervalChange = event =>
@@ -123,8 +131,7 @@ class GoogleMyBusinessStatsChart extends Component {
 					</select>
 
 					<div className="gmb-stats__metric-chart">
-						<PieChart data={ transformedData } title={ chartTitle } />
-						<PieChartLegend data={ transformedData } />
+						<LineChart data={ transformedData } title={ chartTitle } />
 					</div>
 				</Card>
 			</div>

@@ -45,14 +45,19 @@ const generatePlaceHolderDataForMetric = ( metric, period, adjustment ) => {
 		} );
 	}
 
+	// return {
+	// 	metric,
+	// 	metricOption: 'AGGREGATED_TOTAL',
+	// 	dimensionalValues: {
+	// 		startTime: startDate.toDateString(),
+	// 		endTime: endDate.toDateString(),
+	// 		value: dimensionalValues.reduce( ( result, value ) => result + value.value, 0 ),
+	// 	},
+	// };
 	return {
 		metric,
 		metricOption: 'AGGREGATED_TOTAL',
-		dimensionalValues: {
-			startTime: startDate.toDateString(),
-			endTime: endDate.toDateString(),
-			value: dimensionalValues.reduce( ( result, value ) => result + value.value, 0 ),
-		},
+		dimensionalValues: dimensionalValues,
 	};
 };
 
