@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { assign, snakeCase, some, map } from 'lodash';
+import { assign, snakeCase, some, map, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import wpcom from 'lib/wp';
 import notices from 'notices';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
+import EbanxPaymentFields from 'my-sites/checkout/checkout/ebanx-payment-fields';
 import { planMatches } from 'lib/plans';
 import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
 
@@ -30,6 +31,7 @@ export class RedirectPaymentBox extends PureComponent {
 	static propTypes = {
 		paymentType: PropTypes.string.isRequired,
 		cart: PropTypes.object.isRequired,
+		countriesList: PropTypes.object.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
 	}
@@ -200,6 +202,14 @@ export class RedirectPaymentBox extends PureComponent {
 						>
 							{ this.renderBankOptions( 'tef' ) }
 						</FormSelect>
+						<EbanxPaymentFields
+							countryCode="BR"
+							countriesList={ this.props.countriesList }
+							getErrorMessage={ noop }
+							getFieldValue={ noop }
+							handleFieldChange={ noop }
+							fieldClassName="credit-card-form-fields__field"
+						/>
 					</div>
 				);
 		}

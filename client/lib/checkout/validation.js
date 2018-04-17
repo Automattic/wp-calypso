@@ -73,6 +73,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
 		case 'credit-card':
 			return creditCardFieldRules( getAdditionalFieldRules( paymentDetails ) );
+		case 'tef':
+			return ebanxFieldRules( 'BR' );
 		default:
 			return null;
 	}
