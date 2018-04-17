@@ -112,12 +112,12 @@ class SiteNotice extends React.Component {
 			return null;
 		}
 
-		const { site, translate } = this.props;
+		const { site } = this.props;
 
 		return (
 			<SidebarBanner
 				ctaName="free-to-paid-sidebar"
-				ctaText={ translate( 'Upgrade' ) }
+				ctaText={ 'Upgrade' }
 				href={ `/plans/${ site.slug }?sale` }
 				icon="info-outline"
 				text={ '30% Off All Plans' } // no translate() since we're launching this just for EN audience

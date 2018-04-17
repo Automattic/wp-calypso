@@ -6,9 +6,8 @@ export default {
 			upsell: 50,
 			control: 50,
 		},
-		defaultVariation: 'upsell',
+		defaultVariation: 'control',
 		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 	signupAtomicStoreVsPressable: {
 		datestamp: '20171101',
