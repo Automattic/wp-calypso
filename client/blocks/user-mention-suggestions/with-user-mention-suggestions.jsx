@@ -27,7 +27,6 @@ export default EnhancedComponent =>
 		render() {
 			return (
 				<div>
-					<strong>The following input will have @mention magic</strong>
 					<EnhancedComponent { ...this.props } onKeyPress={ this.handleKeyPress } />
 				</div>
 			);

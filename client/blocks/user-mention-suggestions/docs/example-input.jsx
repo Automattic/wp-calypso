@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -13,10 +12,8 @@ import { connect } from 'react-redux';
 import ExampleInput from './example-input';
 import withUserMentionSuggestions from '../with-user-mention-suggestions';
 
-class UserMentionSuggestionsExampleInput extends Component {
-	render() {
-		return <textarea onKeyPress={ this.props.onKeyPress } />;
-	}
-}
+const UserMentionSuggestionsExampleInput = ( { onKeyPress } ) => (
+	<textarea onKeyPress={ onKeyPress } />
+);
 
 export default withUserMentionSuggestions( UserMentionSuggestionsExampleInput );
