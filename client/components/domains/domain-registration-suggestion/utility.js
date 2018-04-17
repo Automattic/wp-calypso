@@ -5,6 +5,11 @@
  */
 import { includes } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import { getTld } from 'lib/domains';
+
 const newTlds = [
 	'.art',
 	'.bar',
@@ -60,4 +65,40 @@ export function isNewTld( tld ) {
 
 export function isTestTld( tld ) {
 	return includes( testTlds, tld );
+}
+
+// NOTE: This is actually a sorted list.
+export const VALID_MATCH_REASONS = [
+	'exact-match',
+	'similar-match',
+	'tld-exact',
+	'tld-similar',
+	'tld-common',
+];
+
+function sortMatchReasons( matchReasons ) {
+	return [ ...matchReasons ].sort(
+		( a, b ) => VALID_MATCH_REASONS.indexOf( a ) - VALID_MATCH_REASONS.indexOf( b )
+	);
+}
+
+function getMatchReasonPhrasesMap( tld ) {
+	return new Map( [
+		[ 'tld-exact', `Extension ".${ tld }" matches your query` ],
+		[ 'tld-similar', `Extension ".${ tld }" closely matches your query` ],
+		[ 'exact-match', 'Exact match' ],
+		[ 'similar-match', 'Close match' ],
+		[
+			'tld-common',
+			tld === 'com' ? `Most common extension, ".${ tld }"` : `Common extension, ".${ tld }"`,
+		],
+	] );
+}
+
+export function parseMatchReasons( domain, matchReasons ) {
+	const matchReasonsMap = getMatchReasonPhrasesMap( getTld( domain ) );
+
+	return sortMatchReasons( matchReasons )
+		.filter( matchReason => matchReasonsMap.has( matchReason ) )
+		.map( matchReason => matchReasonsMap.get( matchReason ) );
 }

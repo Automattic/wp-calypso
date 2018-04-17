@@ -29,7 +29,6 @@ import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
-import { abtest } from 'lib/abtest';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {
@@ -73,32 +72,10 @@ class DomainSearchResults extends React.Component {
 		const { MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
-		const testGroup = abtest( 'domainSuggestionKrakenV313' );
-		const showExactMatch = 'group_0' === testGroup;
 
 		let availabilityElement, domainSuggestionElement, offer;
 
-		if ( availableDomain && showExactMatch ) {
-			// should use real notice component or custom class
-			availabilityElement = (
-				<Notice status="is-success" showDismiss={ false }>
-					{ translate( '%(domain)s is available!', { args: { domain } } ) }
-				</Notice>
-			);
-
-			domainSuggestionElement = (
-				<DomainRegistrationSuggestion
-					suggestion={ availableDomain }
-					key={ availableDomain.domain_name }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					buttonContent={ this.props.buttonContent }
-					selectedSite={ this.props.selectedSite }
-					cart={ this.props.cart }
-					isSignupStep={ this.props.isSignupStep }
-					onButtonClick={ this.props.onClickResult }
-				/>
-			);
-		} else if (
+		if (
 			suggestions.length !== 0 &&
 			includes(
 				[ TRANSFERRABLE, MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, UNKNOWN ],

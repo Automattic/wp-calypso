@@ -6,7 +6,7 @@
 import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants';
 import { getJetpackOnboardingPendingSteps } from 'state/selectors';
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
-import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 
 describe( 'getJetpackOnboardingPendingSteps()', () => {
 	test( 'should return pending status for the contact form step', () => {

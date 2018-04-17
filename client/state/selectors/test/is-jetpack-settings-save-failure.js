@@ -8,50 +8,51 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 import { isJetpackSettingsSaveFailure } from 'state/selectors';
+import { saveJetpackSettings } from 'state/jetpack/settings/actions';
+import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
 
 describe( 'isJetpackSettingsSaveFailure()', () => {
+	const siteId = 12345678;
+	const settings = SETTINGS_FIXTURE[ siteId ];
+	const action = saveJetpackSettings( siteId, settings );
+
 	test( 'should return false if the site is not attached', () => {
 		const state = {
-			jetpack: {
-				settings: {
-					saveRequests: {
-						12345678: { saving: true, status: 'pending' },
-					},
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'failure',
 				},
 			},
 		};
-		const isFailure = isJetpackSettingsSaveFailure( state, 87654321 );
+		const isFailure = isJetpackSettingsSaveFailure( state, 87654321, settings );
 
 		expect( isFailure ).to.be.false;
 	} );
 
 	test( 'should return false if the save request status is success', () => {
 		const state = {
-			jetpack: {
-				settings: {
-					saveRequests: {
-						12345678: { saving: false, status: 'success' },
-					},
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'success',
 				},
 			},
 		};
-		const isFailure = isJetpackSettingsSaveFailure( state, 12345678 );
+		const isFailure = isJetpackSettingsSaveFailure( state, 12345678, settings );
 
 		expect( isFailure ).to.be.false;
 	} );
 
-	test( 'should return true if the save request status is error', () => {
+	test( 'should return true if the save request status is failure', () => {
 		const state = {
-			jetpack: {
-				settings: {
-					saveRequests: {
-						12345678: { saving: false, status: 'error' },
-					},
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'failure',
 				},
 			},
 		};
-		const isFailure = isJetpackSettingsSaveFailure( state, 12345678 );
+		const isFailure = isJetpackSettingsSaveFailure( state, 12345678, settings );
 
 		expect( isFailure ).to.be.true;
 	} );

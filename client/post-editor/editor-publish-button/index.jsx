@@ -62,13 +62,6 @@ export class EditorPublishButton extends Component {
 		isConfirmationSidebarEnabled: PropTypes.bool,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		// bound methods
-		this.onClick = this.onClick.bind( this );
-	}
-
 	trackClick() {
 		const postEvents = {
 			update: 'Clicked Update Post Button',
@@ -129,7 +122,7 @@ export class EditorPublishButton extends Component {
 		}
 	}
 
-	onClick() {
+	onClick = () => {
 		this.trackClick();
 
 		if (
@@ -144,7 +137,7 @@ export class EditorPublishButton extends Component {
 		}
 
 		return this.props.onSave( 'pending' );
-	}
+	};
 
 	isEnabled() {
 		return (

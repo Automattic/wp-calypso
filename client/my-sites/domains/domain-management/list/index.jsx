@@ -37,10 +37,10 @@ import {
 } from './constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import EmptyContent from 'components/empty-content';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { isDomainOnlySite, isSiteAutomatedTransfer } from 'state/selectors';
-
+import { canCurrentUser, isDomainOnlySite, isSiteAutomatedTransfer } from 'state/selectors';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
@@ -111,6 +111,18 @@ export class List extends React.Component {
 	}
 
 	render() {
+		if ( ! this.props.userCanManageOptions ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
+
 		if ( ! this.props.domains ) {
 			return null;
 		}
@@ -464,11 +476,13 @@ const undoChangePrimary = domain =>
 export default connect(
 	( state, ownProps ) => {
 		const siteId = get( ownProps, 'selectedSite.ID', null );
+		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 		return {
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			userCanManageOptions,
 		};
 	},
 	dispatch => {

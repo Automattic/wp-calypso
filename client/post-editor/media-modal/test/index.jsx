@@ -48,9 +48,6 @@ jest.mock( 'lib/media/actions', () => ( {
 	delete: () => {},
 	setLibrarySelectedItems: () => {},
 } ) );
-jest.mock( 'lib/posts/actions', () => ( {
-	blockSave: () => {},
-} ) );
 jest.mock( 'lib/posts/stats', () => ( {
 	recordEvent: () => {},
 	recordState: () => {},

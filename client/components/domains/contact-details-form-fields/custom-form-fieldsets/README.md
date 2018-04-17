@@ -66,7 +66,7 @@ Usage:
     };
     
     // render
-    <GAppsFieldset getFieldProps={ this.getFieldProps } />
+    <GAppsFieldset countryCode={ countryCode } getFieldProps={ this.getFieldProps } />
 ```
 
 #### Props
@@ -75,6 +75,11 @@ Usage:
 
 Returns an object of props expected by our form input components: `my-sites/domains/components/form`
 
+`countryCode` _{String}_ _Optional_
+
+The user's country code, for example: 'AU', 'GB', 'IT', 'US' and so on. Mainly used to determine the correct postcode label.
+
+Default: `'US'`. 
 
 
 

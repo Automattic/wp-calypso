@@ -29,6 +29,7 @@ import { getFeed, isRequestingFeed } from '../../../state/feeds/selectors';
 import { blocked, expires } from '../../../state/locks/selectors';
 import { getZone, isRequestingZones } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class Zone extends Component {
 	static propTypes = {
@@ -91,6 +92,11 @@ class Zone extends Component {
 
 		return (
 			<div>
+				<PageViewTracker
+					path="/extensions/zoninator/zone/:site/:zone"
+					title="WP Zone Manager > Edit Zone"
+				/>
+
 				{ showDeleteDialog && (
 					<DeleteZoneDialog
 						zoneName={ zone.name }
