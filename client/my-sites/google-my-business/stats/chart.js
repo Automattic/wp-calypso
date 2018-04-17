@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,28 +47,35 @@ class GoogleMyBusinessStatsChart extends Component {
 		this.state = {
 			transformedData: this.transformData( props.data ),
 		};
-		props.requestGoogleMyBusinessStats( props.siteId, props.statType, props.interval, 'total' );
+
+		if ( ! props.data ) {
+			props.requestGoogleMyBusinessStats( props.siteId, props.statType, props.interval, 'total' );
+		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.data !== nextProps.data ) {
+			this.setState( {
+				transformedData: this.transformData( nextProps.data ),
+			} );
+		}
+
+		if (
+			this.props.interval !== nextProps.interval ||
+			this.props.siteId !== nextProps.siteId ||
+			this.props.statType !== nextProps.statType
+		) {
 			nextProps.requestGoogleMyBusinessStats(
 				nextProps.siteId,
 				nextProps.statType,
 				nextProps.interval,
 				'total'
 			);
-			this.setState( {
-				transformedData: this.transformData( nextProps.data ),
-			} );
 		}
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		//@TODO: Once the data comes from redux, re-evaluate the need for deep equal
-		return (
-			this.props.interval !== nextProps.interval || ! isEqual( this.props.data, nextProps.data )
-		);
+		return this.props.interval !== nextProps.interval || this.props.data !== nextProps.data;
 	}
 
 	transformData( data ) {
