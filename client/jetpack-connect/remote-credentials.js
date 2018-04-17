@@ -61,7 +61,7 @@ export class OrgCredentialsForm extends Component {
 		}
 		this.setState( { isSubmitting: true } );
 
-		this.props.recordTracksEvent( 'calypso_jpc_remote_install_creds_submit', {
+		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_submit', {
 			url: siteToConnect,
 		} );
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
@@ -84,7 +84,7 @@ export class OrgCredentialsForm extends Component {
 			}
 		}
 
-		this.props.recordTracksEvent( 'calypso_jpc_remote_install_view', {
+		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_view', {
 			url: siteToConnect,
 		} );
 	}

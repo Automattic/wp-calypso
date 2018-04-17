@@ -31,11 +31,10 @@ export const installJetpackPlugin = action =>
 		action
 	);
 
-export const handleSuccess = ( { url }, data ) => {
+export const handleSuccess = ( { url } ) => {
 	const logToTracks = withAnalytics(
-		recordTracksEvent( 'calypso_jpc_remote_install_api_success', {
+		recordTracksEvent( 'calypso_jpc_remoteinstall_api_success', {
 			url,
-			data: JSON.stringify( data ),
 		} )
 	);
 
@@ -47,9 +46,11 @@ export const handleError = ( action, error ) => {
 	const { retryCount = 0 } = dataLayer;
 
 	const logToTracks = withAnalytics(
-		recordTracksEvent( 'calypso_jpc_remote_install_api_failure', {
+		recordTracksEvent( 'calypso_jpc_remoteinstall_api_fail', {
 			url: url,
-			data: JSON.stringify( error ),
+			error: error.error,
+			message: error.message,
+			status: error.status,
 		} )
 	);
 
