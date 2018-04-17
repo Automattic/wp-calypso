@@ -29,7 +29,7 @@
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
 	"support_locales": [ "en", "es", "pt-br" ],
 	"features": {
-		"activity-log-simple-sites": true,
+		"activity-log-wpcom-free": true,
 		"account-recovery": true,
 		"ad-tracking": false,
 		"automated-transfer": true,

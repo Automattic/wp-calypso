@@ -5,7 +5,7 @@
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { find, pick } from 'lodash';
+import { find, pick, get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -14,10 +14,12 @@ import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
 import analytics from 'lib/analytics';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { savePreference } from 'state/preferences/actions';
-import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
+import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isWpComFreePlan } from 'lib/plans';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 import FollowList from 'lib/follow-list';
 import StatsInsights from './stats-insights';
 import StatsOverview from './overview';
@@ -366,12 +368,14 @@ export default {
 	activityLog: function( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
+		const siteHasWpcomFreePlan = isWpComFreePlan(
+			get( getCurrentPlan( state, siteId ), 'productSlug' )
+		);
 		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
 			? context.query.startDate
 			: undefined;
 
-		if ( siteId && ! isJetpack && ! config.isEnabled( 'activity-log-simple-sites' ) ) {
+		if ( siteId && ! siteHasWpcomFreePlan && ! config.isEnabled( 'activity-log-wpcom-free' ) ) {
 			page.redirect( '/stats' );
 			return next();
 		}
