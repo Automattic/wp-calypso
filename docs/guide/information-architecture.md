@@ -1,6 +1,4 @@
-# Design Patterns
-
-## Information Architecture
+# Information Architecture
 
 Calypso's navigation model is based on two key pieces:
 
