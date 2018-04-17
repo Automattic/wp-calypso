@@ -25,7 +25,7 @@ import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import SignupForm from 'components/signup-form';
+import SignupForm from 'blocks/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
