@@ -127,9 +127,9 @@ export function render( element, key = JSON.stringify( element ), req ) {
  *
  * If any key in the query is not present in the whitelist, it is not cacheable.
  *
- * @param  {Object}        query                Query object
- * @param  {Array<string>} whitelistedQueryKeys Whitelisted keys
- * @return {boolean}                            True if all query keys are whitelisted
+ * @param  {Object}        [query={}]                Query object
+ * @param  {Array<string>} [whitelistedQueryKeys=[]] Whitelisted keys
+ * @return {boolean}                                 True if all query keys are whitelisted
  */
 export function isCacheableQuery( query = {}, whitelistedQueryKeys = [] ) {
 	const queryKeys = Object.keys( query );
