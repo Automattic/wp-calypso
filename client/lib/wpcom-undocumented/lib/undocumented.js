@@ -2446,13 +2446,13 @@ Undocumented.prototype.getFeaturedPlugins = function( fn ) {
 };
 
 /**
- * Fetch a nonce to use in the `updateSiteName` call
+ * Fetch a nonce to use in the `updateSiteAddress` call
  * @param {int}   siteId  The ID of the site for which to get a nonce.
  * @returns {Promise}     A promise
  */
-Undocumented.prototype.getRequestSiteRenameNonce = function( siteId ) {
+Undocumented.prototype.getRequestSiteAddressChangeNonce = function( siteId ) {
 	return this.wpcom.req.get( {
-		path: `/sites/${ siteId }/site-rename/nonce`,
+		path: `/sites/${ siteId }/site-address-change/nonce`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };
@@ -2460,14 +2460,14 @@ Undocumented.prototype.getRequestSiteRenameNonce = function( siteId ) {
 /**
  * Request server-side validation (including an availibility check) of the given site address.
  *
- * @param {int} [siteId] The siteId for which to rename
+ * @param {int} [siteId] The siteId for which to validate
  * @param {object} [siteAddress]	The site address to validate
  * @returns {Promise}  A promise
  */
 Undocumented.prototype.checkSiteAddressValidation = function( siteId, siteAddress ) {
 	return this.wpcom.req.post(
 		{
-			path: `/sites/${ siteId }/site-rename/validate`,
+			path: `/sites/${ siteId }/site-address-change/validate`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{},
@@ -2476,18 +2476,18 @@ Undocumented.prototype.checkSiteAddressValidation = function( siteId, siteAddres
 };
 
 /**
- * Request a new .wordpress.com site address change with the option to discard the current.
+ * Request a new .wordpress.com address for a site with the option to discard the current.
  *
- * @param {int} [siteId] The siteId for which to rename
+ * @param {int} [siteId] The siteId for which to change the address
  * @param {object} [blogname]	The desired new site address
  * @param {bool} [discard]			Should the old site address name be discarded?
  * @param {string} [nonce]		A nonce provided by the API
  * @returns {Promise}  A promise
  */
-Undocumented.prototype.updateSiteName = function( siteId, blogname, discard, nonce ) {
+Undocumented.prototype.updateSiteAddress = function( siteId, blogname, discard, nonce ) {
 	return this.wpcom.req.post(
 		{
-			path: `/sites/${ siteId }/site-rename`,
+			path: `/sites/${ siteId }/site-address-change`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{},
