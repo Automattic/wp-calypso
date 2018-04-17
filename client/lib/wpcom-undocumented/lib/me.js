@@ -78,36 +78,6 @@ UndocumentedMe.prototype.revokeApplicationConnection = function( connectionID, c
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.getApplicationPasswords = function( callback ) {
-	var args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/application-passwords',
-	};
-
-	return this.wpcom.req.get( args, callback );
-};
-
-UndocumentedMe.prototype.revokeApplicationPassword = function( passwordID, callback ) {
-	var args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/application-passwords/' + passwordID + '/delete',
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.createApplicationPassword = function( applicationName, callback ) {
-	var args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/application-passwords/new',
-		body: {
-			application_name: applicationName,
-		},
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
 UndocumentedMe.prototype.validatePassword = function( password, callback ) {
 	var args = {
 		apiVersion: '1.1',

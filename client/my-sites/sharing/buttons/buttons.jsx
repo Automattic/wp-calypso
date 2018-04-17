@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import ButtonsAppearance from './appearance';
 import ButtonsOptions from './options';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QuerySharingButtons from 'components/data/query-sharing-buttons';
@@ -137,6 +138,7 @@ class SharingButtons extends Component {
 				id="sharing-buttons"
 				className="sharing-settings sharing-buttons"
 			>
+				<PageViewTracker path="/sharing/buttons/:site" title="Sharing > Sharing Buttons" />
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySharingButtons siteId={ siteId } />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }

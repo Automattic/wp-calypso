@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { last, isEqual, memoize } from 'lodash';
+import { filter, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,10 +13,20 @@ import { last, isEqual, memoize } from 'lodash';
 import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
+import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
+import { getSiteSettings, isRequestingSiteSettings } from 'state/site-settings/selectors';
+import { getGoogleMyBusinessConnectedLocation } from 'state/selectors';
+import {
+	connectGoogleMyBusinessLocation,
+	disconnectGoogleMyBusinessLocation,
+} from 'state/google-my-business/actions';
 
 export class GoogleMyBusiness extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
+		saveSiteSettings: PropTypes.func,
+		saveRequests: PropTypes.object,
+		siteSettings: PropTypes.object,
 		deleteStoredKeyringConnection: PropTypes.func,
 	};
 
@@ -26,41 +36,73 @@ export class GoogleMyBusiness extends SharingService {
 	};
 
 	// override `createOrUpdateConnection` to ignore connection update, this is only useful for publicize services
-	createOrUpdateConnection = () => {};
+	createOrUpdateConnection = ( keyringConnectionId, externalUserId ) => {
+		this.props
+			.connectGoogleMyBusinessLocation( this.props.siteId, keyringConnectionId, externalUserId )
+			.catch( () => {
+				this.props.failCreateConnection( {
+					message: this.props.translate( 'Error while linking your site to %(service)s.', {
+						args: { service: this.props.service.label },
+					} ),
+				} );
+			} )
+			.finally( () => {
+				this.setState( { isConnecting: false } );
+			} );
+	};
 
 	// override `removeConnection` to remove the keyring connection instead of the publicize one
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
-		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
+		this.props.disconnectGoogleMyBusinessLocation( this.props.siteId ).finally( () => {
+			this.setState( { isDisconnecting: false } );
+		} );
 	};
 
-	componentWillReceiveProps( { availableExternalAccounts } ) {
-		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
+	componentWillMount() {
+		this.requestSettings( this.props );
+	}
+
+	requestSettings( props ) {
+		const { requestingSiteSettings, siteId } = props;
+		if ( ! requestingSiteSettings && siteId ) {
+			props.requestSiteSettings( siteId );
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.siteId && this.props.siteId !== nextProps.siteId ) {
+			this.requestSettings( nextProps );
+		}
+
+		if ( this.state.isAwaitingConnections ) {
+			this.setState( {
+				isAwaitingConnections: false,
+				isSelectingAccount: true,
+			} );
+			return;
+		}
+
+		if ( ! isEqual( this.props.brokenConnections, nextProps.brokenConnections ) ) {
+			this.setState( { isRefreshing: false } );
+		}
+
+		// do not use `availableExternalAccounts` as a datasource to know if a connection was successful
+		// because we allow the same location to be used on multiple sites in the case of GMB.
+		// Just check that a new connection is added
+		if ( ! isEqual( this.props.siteUserConnections, nextProps.siteUserConnections ) ) {
 			this.setState( {
 				isConnecting: false,
 				isDisconnecting: false,
 			} );
 		}
+	}
 
-		if ( ! this.state.isAwaitingConnections ) {
-			return;
+	getDisclamerText() {
+		if ( 1 === this.props.availableExternalAccounts.length ) {
+			return this.props.translate( 'Confirm this is the location you wish to connect to' );
 		}
-
-		this.setState( {
-			isAwaitingConnections: false,
-			isRefreshing: false,
-		} );
-
-		if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
-			this.setState( { isConnecting: false } );
-			this.props.successNotice(
-				this.props.translate( 'The %(service)s account was successfully connected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize connection confirmation',
-				} ),
-				{ id: 'publicize' }
-			);
-		}
+		return this.props.translate( 'Select the location you wish to connect your site to.' );
 	}
 
 	renderLogo() {
@@ -76,24 +118,32 @@ export class GoogleMyBusiness extends SharingService {
 	}
 }
 
-const addKeyringConnectionIdToConnections = memoize( connections =>
-	connections.map( connection => ( {
-		...connection,
-		keyring_connection_ID: connection.ID,
-	} ) )
-);
-
 export default connectFor(
 	GoogleMyBusiness,
 	( state, props ) => {
+		const connectedLocation = getGoogleMyBusinessConnectedLocation( state, props.siteId );
+
+		// only keep external connections (aka GMB locations) to choose from
+		const availableExternalAccounts = filter( props.availableExternalAccounts || [], {
+			isExternal: true,
+		} );
+
 		return {
 			...props,
+			availableExternalAccounts,
+			siteSettings: getSiteSettings( state, props.siteId ),
+			requestingSiteSettings: isRequestingSiteSettings( state, props.siteId ),
+			saveRequests: state.siteSettings.saveRequests,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: addKeyringConnectionIdToConnections( props.keyringConnections ),
+			siteUserConnections: connectedLocation ? [ connectedLocation ] : [],
 		};
 	},
 	{
+		connectGoogleMyBusinessLocation,
+		disconnectGoogleMyBusinessLocation,
 		deleteStoredKeyringConnection,
+		requestSiteSettings,
+		saveSiteSettings,
 	}
 );

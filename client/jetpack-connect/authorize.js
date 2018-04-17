@@ -18,6 +18,7 @@ import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
+import Disclaimer from './disclaimer';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
@@ -265,10 +266,6 @@ export class JetpackAuthorize extends Component {
 		// to wp-admin.
 		return partnerRedirectFlag ? partnerId && PRESSABLE_PARTNER_ID !== partnerId : partnerId;
 	}
-
-	handleClickDisclaimer = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
-	};
 
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
@@ -518,34 +515,6 @@ export class JetpackAuthorize extends Component {
 		}
 	}
 
-	getDisclaimerText() {
-		const { blogname } = this.props.authQuery;
-
-		const detailsLink = (
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				onClick={ this.handleClickDisclaimer }
-				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
-				className="jetpack-connect__sso-actions-modal-link"
-			/>
-		);
-
-		const text = this.props.translate(
-			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
-			{
-				components: {
-					detailsLink,
-				},
-				args: {
-					siteName: decodeEntities( blogname ),
-				},
-			}
-		);
-
-		return <p className="jetpack-connect__tos-link">{ text }</p>;
-	}
-
 	getUserText() {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
@@ -639,9 +608,12 @@ export class JetpackAuthorize extends Component {
 				</div>
 			);
 		}
+
+		const { blogname } = this.props.authQuery;
+
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				{ this.getDisclaimerText() }
+				<Disclaimer siteName={ decodeEntities( blogname ) } />
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }

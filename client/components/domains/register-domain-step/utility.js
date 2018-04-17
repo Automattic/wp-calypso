@@ -7,8 +7,12 @@
  */
 import { domainAvailability } from 'lib/domains/constants';
 
-export function isFreeOrUnknownSuggestion( suggestion ) {
-	return suggestion.is_free === true || suggestion.status === domainAvailability.UNKNOWN;
+export function isUnknownSuggestion( suggestion ) {
+	return suggestion.status === domainAvailability.UNKNOWN;
+}
+
+export function isFreeSuggestion( suggestion ) {
+	return suggestion.is_free === true;
 }
 
 export function getStrippedDomainBase( domain ) {

@@ -210,15 +210,9 @@ export function createSocialAccount( socialInfo ) {
 		dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount' ) );
 
 		try {
-			/**
-			 * @TODO (sirreal) update to `jetpack-connect` when D11099-code lands
-			 *
-			 * The signup flow is required and affects some post signup activity.
-			 * `account` should be safe until patch lands.
-			 */
 			const { username, bearer_token } = await wpcom.undocumented().usersSocialNew( {
 				...socialInfo,
-				signup_flow_name: 'account' /* 'jetpack-connect' */,
+				signup_flow_name: 'jetpack-connect',
 			} );
 			dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
 			return { username, bearerToken: bearer_token };

@@ -19,7 +19,9 @@ describe( 'getOrderTransaction()', () => {
 			getOrderTransaction(
 				{
 					orderTransactions: {
-						[ orderId ]: transaction,
+						items: {
+							[ orderId ]: transaction,
+						},
 					},
 				},
 				orderId

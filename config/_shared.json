@@ -86,7 +86,7 @@
         { "value": 474, "langSlug": "fr-ch", "name": "Français de Suisse", "wpLocale": "", "territories": [ "155" ] },
         { "value": 25, "langSlug": "fur", "name": "Friulian", "wpLocale": "fur", "territories": [ "039" ] },
         { "value": 26, "langSlug": "fy", "name": "Frysk", "wpLocale": "fy", "territories": [ "155" ] },
-        { "value": 27, "langSlug": "ga", "name": "Gaelige", "wpLocale": "ga", "territories": [ "154" ] },
+        { "value": 27, "langSlug": "ga", "name": "Gaeilge", "wpLocale": "ga", "territories": [ "154" ] },
         { "value": 476, "langSlug": "gd", "name": "Gàidhlig", "wpLocale": "gd", "territories": [ "154" ] },
         { "value": 457, "langSlug": "gl", "name": "Galego", "wpLocale": "gl_ES", "territories": [ "039" ] },
         { "value": 430, "langSlug": "gn", "name": "Avañe'ẽ", "wpLocale": "gn", "territories": [ "019" ] },

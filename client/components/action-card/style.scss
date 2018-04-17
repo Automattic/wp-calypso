@@ -1,8 +1,8 @@
 .card.action-card {
-	display: flex;
+	display: block;
 
-	@include breakpoint( '<960px' ) {
-		display: block;
+	@include breakpoint( '>960px' ) {
+		display: flex;
 	}
 }
 
@@ -16,9 +16,17 @@
 	margin-bottom: 16px;
 	text-align: left;
 
+	.button {
+		white-space: nowrap;
+	}
+
 	@include breakpoint( '>960px' ) {
 		margin-bottom: 0;
 		text-align: right;
+
+		.button {
+			margin-left: 8px;
+		}
 	}
 
 	@include breakpoint( '<480px' ) {

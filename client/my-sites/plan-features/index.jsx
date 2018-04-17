@@ -32,23 +32,13 @@ import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import {
+	planMatches,
 	applyTestFiltersToPlansList,
 	canUpgradeToPlan,
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
 } from 'lib/plans';
-import {
-	getPlanClass,
-	getPlanFeaturesObject,
-	isBestValue,
-	isMonthly,
-	isNew,
-	isPopular,
-	PLAN_BUSINESS,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-} from 'lib/plans/constants';
 import {
 	getPlanDiscountedRawPrice,
 	getPlansBySiteId,
@@ -60,6 +50,18 @@ import {
 	isCurrentPlanPaid,
 	isCurrentSitePlan,
 } from 'state/sites/selectors';
+import {
+	isBestValue,
+	isMonthly,
+	isNew,
+	isPopular,
+	getPlanFeaturesObject,
+	getPlanClass,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+	TYPE_BUSINESS,
+	GROUP_WPCOM,
+} from 'lib/plans/constants';
 
 class PlanFeatures extends Component {
 	componentDidMount() {
@@ -688,6 +690,12 @@ function getMaxCredits( planProperties, isJetpack ) {
 	);
 }
 
+export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
+	( planMatches( currentPlan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) &&
+		planMatches( plan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) ) ||
+	( planMatches( currentPlan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) &&
+		planMatches( plan, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) );
+
 export default connect(
 	( state, ownProps ) => {
 		const {
@@ -792,8 +800,7 @@ export default connect(
 					bestValue: bestValue,
 					hideMonthly: false,
 					primaryUpgrade:
-						( currentPlan === PLAN_PERSONAL && plan === PLAN_PREMIUM ) ||
-						( currentPlan === PLAN_PREMIUM && plan === PLAN_BUSINESS ) ||
+						isPrimaryUpgradeByPlanDelta( currentPlan, plan ) ||
 						popular ||
 						newPlan ||
 						bestValue ||

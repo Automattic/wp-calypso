@@ -6,7 +6,7 @@ import page from 'page';
 import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import { get, noop } from 'lodash';
+import { get, includes, map, noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -16,7 +16,7 @@ import { sectionify } from 'lib/route';
 import Main from 'components/main';
 import { addItem } from 'lib/upgrades/actions';
 import productsFactory from 'lib/products-list';
-import { canCurrentUser } from 'state/selectors';
+import { getSites } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import CartData from 'components/data/cart';
@@ -204,9 +204,10 @@ const redirectIfNoSite = redirectTo => {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
-		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+		const sites = getSites( state );
+		const siteIds = map( sites, 'ID' );
 
-		if ( ! userCanManageOptions ) {
+		if ( ! includes( siteIds, siteId ) ) {
 			const user = getCurrentUser( state );
 			const visibleSiteCount = get( user, 'visible_site_count', 0 );
 			//if only one site navigate to stats to avoid redirect loop
