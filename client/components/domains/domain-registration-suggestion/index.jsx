@@ -262,7 +262,6 @@ class DomainRegistrationSuggestion extends React.Component {
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
-				showExpandedPrice={ isFeatured }
 				{ ...this.getButtonProps() }
 			>
 				{ this.renderDomain() }
