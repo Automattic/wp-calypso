@@ -65,6 +65,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="ink"
+							label="Color"
+							link="https://dotcombrand.wordpress.com/color/"
+							selected={ this.isItemSelected( 'https://dotcombrand.wordpress.com/color/' ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="heading"
 							label="Typography"
 							link="/devdocs/typography"
