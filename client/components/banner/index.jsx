@@ -34,6 +34,7 @@ export class Banner extends Component {
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
+		e2eType: PropTypes.string,
 		event: PropTypes.string,
 		feature: PropTypes.oneOf( getValidFeatureKeys() ),
 		href: PropTypes.string,
@@ -188,6 +189,7 @@ export class Banner extends Component {
 			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
+			e2eType,
 			plan,
 		} = this.props;
 
@@ -208,6 +210,7 @@ export class Banner extends Component {
 					preferenceName={ dismissPreferenceName }
 					temporary={ dismissTemporary }
 					onClick={ this.handleDismiss }
+					data-e2e-type={ e2eType }
 				>
 					{ this.getIcon() }
 					{ this.getContent() }
@@ -220,6 +223,7 @@ export class Banner extends Component {
 				className={ classes }
 				href={ disableHref || callToAction ? null : this.getHref() }
 				onClick={ callToAction ? noop : this.handleClick }
+				data-e2e-type={ e2eType }
 			>
 				{ this.getIcon() }
 				{ this.getContent() }
