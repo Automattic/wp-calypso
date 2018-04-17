@@ -29,8 +29,6 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
@@ -51,6 +49,7 @@ import {
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
+	XMLRPC_ERROR,
 } from './connection-notice-types';
 import {
 	isCalypsoStartedConnection,
@@ -345,16 +344,7 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		return (
 			<div>
-				<div className="jetpack-connect__notices-container">
-					<Notice
-						icon="notice"
-						status="is-error"
-						text={ translate( 'We had trouble connecting.' ) }
-						showDismiss={ false }
-					>
-						<NoticeAction onClick={ this.handleResolve }>{ translate( 'Try again' ) }</NoticeAction>
-					</Notice>
-				</div>
+				<JetpackConnectNotices noticeType={ XMLRPC_ERROR } onActionClick={ this.handleResolve } />
 				<p>
 					{ translate(
 						'WordPress.com was unable to reach your site and approve the connection. ' +
