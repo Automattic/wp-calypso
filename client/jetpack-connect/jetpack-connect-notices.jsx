@@ -29,13 +29,16 @@ import {
 	SECRET_EXPIRED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
+	XMLRPC_ERROR,
 } from './connection-notice-types';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 export class JetpackConnectNotices extends Component {
 	static propTypes = {
 		// Supply a function that will be called for flow-ending error cases
 		// instead of showing a notice.
+		onActionClick: PropTypes.func,
 		onTerminalError: PropTypes.func,
 		noticeType: PropTypes.oneOf( [
 			ALREADY_CONNECTED,
@@ -57,6 +60,7 @@ export class JetpackConnectNotices extends Component {
 			SECRET_EXPIRED,
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
+			XMLRPC_ERROR,
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
@@ -183,7 +187,22 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
 				return noticeValues;
+
+			case XMLRPC_ERROR:
+				noticeValues.text = translate( 'We had trouble connecting.' );
+				return noticeValues;
 		}
+	}
+
+	getNoticeActionText() {
+		const { noticeType, translate } = this.props;
+
+		switch ( noticeType ) {
+			case XMLRPC_ERROR:
+				return translate( 'Try again' );
+		}
+
+		return null;
 	}
 
 	componentDidUpdate() {
@@ -203,6 +222,17 @@ export class JetpackConnectNotices extends Component {
 		return notice && ! notice.userCanRetry;
 	}
 
+	renderNoticeAction() {
+		const { onActionClick } = this.props;
+		const noticeActionText = this.getNoticeActionText();
+
+		if ( ! onActionClick || ! noticeActionText ) {
+			return null;
+		}
+
+		return <NoticeAction onClick={ onActionClick }>{ noticeActionText }</NoticeAction>;
+	}
+
 	render() {
 		const noticeValues = this.getNoticeValues();
 		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
@@ -211,7 +241,7 @@ export class JetpackConnectNotices extends Component {
 		if ( noticeValues ) {
 			return (
 				<div className="jetpack-connect__notices-container">
-					<Notice { ...noticeValues } />
+					<Notice { ...noticeValues }>{ this.renderNoticeAction() }</Notice>
 				</div>
 			);
 		}
