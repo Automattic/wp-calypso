@@ -85,6 +85,7 @@ import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/exampl
 import ConversationFollowButton from 'blocks/conversation-follow-button/docs/example';
 import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
 import SiteRenamer from 'blocks/simple-site-rename-form/docs/example';
+import UserMentionSuggestions from 'blocks/user-mention-suggestions/docs/example';
 
 export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
@@ -188,6 +189,7 @@ export default class AppComponents extends React.Component {
 					<ConversationFollowButton />
 					<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 					{ isEnabled( 'site-address-editor/devdocs' ) && <SiteRenamer /> }
+					{ isEnabled( 'reader/user-mention-suggestions' ) && <UserMentionSuggestions /> }
 				</Collection>
 			</Main>
 		);
