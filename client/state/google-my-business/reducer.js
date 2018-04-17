@@ -8,6 +8,7 @@ import {
 	GOOGLE_MY_BUSINESS_CONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_DISCONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
+	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 	GOOGLE_MY_BUSINESS_STATS_SET_DATA,
 } from 'state/action-types';
 
@@ -28,10 +29,13 @@ const statInterval = createReducer( 'week', {
 } );
 
 const stats = createReducer( null, {
-	[ GOOGLE_MY_BUSINESS_STATS_SET_DATA ]: ( state, { timeSpan, statName, data } ) => ( {
-		...state,
-		[ statName + '_' + timeSpan ]: data,
+	[ GOOGLE_MY_BUSINESS_STATS_SET_DATA ]: ( state, { statType, interval, aggregation, data } ) => ( {
+		statType,
+		interval,
+		aggregation,
+		data,
 	} ),
+	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: () => null,
 } );
 
 export default keyedReducer(
@@ -39,6 +43,9 @@ export default keyedReducer(
 	combineReducers( {
 		location,
 		statInterval: keyedReducer( 'statType', statInterval ),
-		stats,
+		stats: keyedReducer(
+			'statType',
+			keyedReducer( 'interval', keyedReducer( 'aggregation', stats ) )
+		),
 	} )
 );

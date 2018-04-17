@@ -9,5 +9,5 @@ export function getInterval( state, siteId, statType ) {
 	return get( state.googleMyBusiness, [ siteId, 'statInterval', statType ], 'week' );
 }
 
-export const getGoolgeMyBusinessSiteStats = ( state, siteId, statName, timeSpan ) =>
-	get( state, `googleMyBusiness[${ siteId }].stats[${ statName + '_' + timeSpan }]`, null );
+export const getGoolgeMyBusinessSiteStats = ( state, siteId, statType, interval, aggregation ) =>
+	get( state, [ 'googleMyBusiness', siteId, 'stats', statType, interval, aggregation ], null );
