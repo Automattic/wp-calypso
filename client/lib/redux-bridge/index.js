@@ -43,6 +43,10 @@ export function registerActionForward( actionName ) {
 	actionsToForward.add( actionName );
 }
 
+export function clearActionForwards() {
+	actionsToForward.clear();
+}
+
 function forwardAction( { action = {} } ) {
 	if ( actionsToForward.has( action.type ) ) {
 		reduxDispatch( markedFluxAction( action ) );
