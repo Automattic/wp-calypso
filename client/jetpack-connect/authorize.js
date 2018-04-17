@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
@@ -449,7 +449,7 @@ export class JetpackAuthorize extends Component {
 		}
 		if ( this.props.hasXmlrpcError ) {
 			return (
-				<div>
+				<Fragment>
 					<JetpackConnectNotices
 						noticeType={ XMLRPC_ERROR }
 						onActionClick={ this.handleResolve }
@@ -457,17 +457,17 @@ export class JetpackAuthorize extends Component {
 					/>
 					{ this.renderXmlrpcFeedback() }
 					{ this.renderErrorDetails() }
-				</div>
+				</Fragment>
 			);
 		}
 		return (
-			<div>
+			<Fragment>
 				<JetpackConnectNotices
 					noticeType={ DEFAULT_AUTHORIZE_ERROR }
 					onTerminalError={ redirectToMobileApp }
 				/>
 				{ this.renderErrorDetails() }
-			</div>
+			</Fragment>
 		);
 	}
 
