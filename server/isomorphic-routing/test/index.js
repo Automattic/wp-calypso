@@ -7,7 +7,7 @@ import { getNormalizedPath } from '..';
 
 describe( 'getNormalizedPath', () => {
 	test( 'should return expected results for a variety of inputs', () => {
-		const pathnames = [ '', '/', '/shortpath', '/a/longer/path', '/specialchars/%2F%3F%26%3D%25' ];
+		const pathnames = [ '/', '/shortpath', '/a/longer/path', '/specialchars/%2F%3F%26%3D%25' ];
 		const queries = [
 			{},
 			{ a: 'query' },
