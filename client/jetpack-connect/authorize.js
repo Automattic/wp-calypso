@@ -450,7 +450,11 @@ export class JetpackAuthorize extends Component {
 		if ( this.props.hasXmlrpcError ) {
 			return (
 				<div>
-					<JetpackConnectNotices noticeType={ XMLRPC_ERROR } onActionClick={ this.handleResolve } />
+					<JetpackConnectNotices
+						noticeType={ XMLRPC_ERROR }
+						onActionClick={ this.handleResolve }
+						onTerminalError={ redirectToMobileApp }
+					/>
 					{ this.renderXmlrpcFeedback() }
 					{ this.renderErrorDetails() }
 				</div>
