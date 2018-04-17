@@ -36,4 +36,4 @@ Do all behaviors function as expected? For responsive tabs, are menus (for overf
 
 ## Browser Support
 
-Has the component visual quality and accuracy been assessed across Safari, Chrome, Firefox, IE and other browsers across relevant devices? Please adhere to our [browser support requirements](../README.md).
+Has the component visual quality and accuracy been assessed across Safari, Chrome, Firefox, IE, and other browsers across relevant devices? Please adhere to our [browser support requirements](../README.md#browser-support).
