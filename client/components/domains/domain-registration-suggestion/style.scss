@@ -14,7 +14,7 @@
 	.domain-registration-suggestion__title,
 	.domain-registration-suggestion__progress-bar,
 	.domain-product-price {
-		width: 100%;
+		flex-shrink: 0;
 	}
 
 	.domain-registration-suggestion__title {
