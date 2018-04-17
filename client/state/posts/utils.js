@@ -117,16 +117,33 @@ export function getSerializedPostsQueryWithoutPage( query, siteId ) {
 }
 
 /**
- * Merges objects like Lodash `merge` but takes array values directly from the
- * source object rather than attempting to merge by index.  Used to ensure that
- * edits to post terms (especially term removals) are reflected correctly.
+ * Merges edits into a post object. Essentially performs a deep merge of two objects,
+ * except that arrays are treated as atomic values and overwritten rather than merged.
+ * That's important especially for term removals.
  *
- * @param  {Object}    object  Destination object for merge
- * @param  {...Object} sources Source objects for merge
- * @return {Object}            Merged object with values from all sources
+ * @param  {Object} post  Destination post for merge
+ * @param  {Object} edits Objects with edits
+ * @return {Object}       Merged post with applied edits
  */
-export function mergeIgnoringArrays( object, ...sources ) {
-	return mergeWith( object, ...sources, ( objValue, srcValue ) => {
+export function applyPostEdits( post, edits ) {
+	return mergeWith( cloneDeep( post ), edits, ( objValue, srcValue ) => {
+		if ( Array.isArray( srcValue ) ) {
+			return srcValue;
+		}
+	} );
+}
+
+/**
+ * Merges two post edits objects into one. Essentially performs a deep merge of two objects,
+ * except that arrays are treated as atomic values and overwritten rather than merged.
+ * That's important especially for term removals.
+ *
+ * @param  {Object} edits     Destination edits object for merge
+ * @param  {Object} nextEdits Edits object to be merged
+ * @return {Object}           Merged edits object with changes from both sources
+ */
+export function mergePostEdits( edits, nextEdits ) {
+	return mergeWith( cloneDeep( edits ), nextEdits, ( objValue, srcValue ) => {
 		if ( Array.isArray( srcValue ) ) {
 			return srcValue;
 		}

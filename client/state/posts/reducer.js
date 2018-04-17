@@ -50,7 +50,7 @@ import {
 	isAuthorEqual,
 	isDiscussionEqual,
 	isTermsEqual,
-	mergeIgnoringArrays,
+	mergePostEdits,
 	normalizePostForState,
 } from './utils';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
@@ -439,7 +439,7 @@ export function edits( state = {}, action ) {
 			const siteId = action.siteId;
 			const postId = action.postId || '';
 			const postEdits = get( state, [ siteId, postId ] );
-			const mergedEdits = mergeIgnoringArrays( {}, postEdits, action.post );
+			const mergedEdits = mergePostEdits( postEdits, action.post );
 
 			return {
 				...state,
