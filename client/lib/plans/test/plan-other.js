@@ -7,7 +7,7 @@
  * Internal dependencies
  */
 import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../constants';
-import { calculateMonthlyPrice, getBillingMonthsForTerm } from '../index';
+import { calculateMonthlyPrice, getBillingMonthsForTerm, getTermDuration } from '../index';
 
 describe( 'calculateMonthlyPrice', () => {
 	test( 'should return same number for monthly term', () => {
@@ -50,5 +50,20 @@ describe( 'getBillingMonthsForTerm', () => {
 	} );
 	test( 'should throw an error for unknown term', () => {
 		expect( () => getBillingMonthsForTerm( 'fake' ) ).toThrowError();
+	} );
+} );
+
+describe( 'getTermDuration', () => {
+	test( 'should 31 for monthly term', () => {
+		expect( getTermDuration( TERM_MONTHLY ) ).toBe( 31 );
+	} );
+	test( 'should 365 annual term', () => {
+		expect( getTermDuration( TERM_ANNUALLY ) ).toBe( 365 );
+	} );
+	test( 'should 730 for biennial term', () => {
+		expect( getTermDuration( TERM_BIENNIALLY ) ).toBe( 730 );
+	} );
+	test( 'should return undefined for unknown term', () => {
+		expect( getTermDuration( 'fake' ) ).toBeUndefined();
 	} );
 } );

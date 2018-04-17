@@ -19,6 +19,11 @@ import Dispatcher from 'dispatcher';
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
+
+jest.mock( 'lib/redux-bridge', () => ( {
+	reduxGetState: () => ( { ui: { editor: { saveBlockers: [] } } } ),
+} ) );
+
 const sampleSite = {
 	ID: 123,
 	jetpack: false,

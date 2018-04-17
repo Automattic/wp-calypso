@@ -37,6 +37,13 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
+		page(
+			'/devdocs/playground/:component?',
+			controller.sidebar,
+			controller.playground,
+			makeLayout,
+			clientRender
+		);
 		page( '/devdocs/app-components/:component?', context =>
 			page.redirect( '/devdocs/blocks/' + ( context.params.component || '' ) )
 		);

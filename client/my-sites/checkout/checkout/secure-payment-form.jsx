@@ -43,6 +43,7 @@ const SecurePaymentForm = createReactClass( {
 
 	propTypes: {
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
+		handleCheckoutExternalRedirect: PropTypes.func.isRequired,
 		products: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
 	},
@@ -166,7 +167,9 @@ const SecurePaymentForm = createReactClass( {
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
 				presaleChatAvailable={ this.props.presaleChatAvailable }
-			/>
+			>
+				{ this.props.children }
+			</CreditsPaymentBox>
 		);
 	},
 
@@ -211,7 +214,9 @@ const SecurePaymentForm = createReactClass( {
 					onSubmit={ this.handlePaymentBoxSubmit }
 					transactionStep={ this.props.transaction.step }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-				/>
+				>
+					{ this.props.children }
+				</CreditCardPaymentBox>
 			</PaymentBox>
 		);
 	},
@@ -232,7 +237,9 @@ const SecurePaymentForm = createReactClass( {
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-				/>
+				>
+					{ this.props.children }
+				</PayPalPaymentBox>
 			</PaymentBox>
 		);
 	},
@@ -253,7 +260,9 @@ const SecurePaymentForm = createReactClass( {
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-				/>
+				>
+					{ this.props.children }
+				</RedirectPaymentBox>
 			</PaymentBox>
 		);
 	},

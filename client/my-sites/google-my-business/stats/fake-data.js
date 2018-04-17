@@ -1,43 +1,68 @@
 /** @format */
 
-/**
- * External dependencies
- */
-import { random, range } from 'lodash';
-import { translate } from 'i18n-calypso';
+const FAKE_VALUES = [ 123, 45, 82, 99, 20, 5, 52 ];
 
-const dataSummer = ( prevResult, datum ) => prevResult + datum.value;
+const getMetricFromStatType = statType => {
+	switch ( statType ) {
+		case 'ACTIONS':
+			return [ 'ACTIONS_WEBSITE', 'ACTIONS_PHONE', 'ACTIONS_DRIVING_DIRECTIONS' ];
+		case 'VIEWS':
+			return [ 'VIEWS_MAPS', 'VIEWS_SEARCH' ];
+		default:
+		case 'QUERIES':
+			return [ 'QUERIES_DIRECT', 'QUERIES_INDIRECT' ];
+	}
+};
 
-const searchData = [
-	{
-		name: translate( 'Direct' ),
-		description: translate(
-			'Customers who find your listing searching for you business name or address'
-		),
-		value: random( 300, 500 ),
-	},
-	{
-		name: translate( 'Discovery' ),
-		description: translate(
-			'Customers who find your listing searching for a category, product, or service'
-		),
-		value: random( 200, 400 ),
-	},
-];
+const getStartDateFromPeriod = period => {
+	switch ( period ) {
+		case 'quarter':
+			const oneQuarterAgo = new Date();
+			oneQuarterAgo.setMonth( oneQuarterAgo.getMonth() - 3 );
+			return oneQuarterAgo;
+		case 'month':
+			const oneMonthAgo = new Date();
+			oneMonthAgo.setMonth( oneMonthAgo.getMonth() - 1 );
+			return oneMonthAgo;
+		default:
+		case 'week':
+			const oneWeekAgo = new Date();
+			oneWeekAgo.setDate( oneWeekAgo.getDate() - 7 );
+			return oneWeekAgo;
+	}
+};
 
-const searchDataTotal = searchData.reduce( dataSummer, 0 );
+const generatePlaceHolderDataForMetric = ( metric, period, adjustment ) => {
+	const dimensionalValues = [];
+	const startDate = getStartDateFromPeriod( period );
+	const endDate = new Date();
+	let counter = adjustment;
+	for ( const iter = startDate; iter <= endDate; iter.setDate( iter.getDate() + 1 ) ) {
+		counter = ( counter + 1 ) % FAKE_VALUES.length;
+		dimensionalValues.push( {
+			time: iter.toDateString(),
+			value: FAKE_VALUES[ counter ],
+		} );
+	}
 
-const viewData = range( 19, 30 ).map( day => ( {
-	value: random( 10, 90 ),
-	nestedValue: random( 5, 80 ),
-	label: `Mar ${ day }`,
-} ) );
+	return {
+		metric,
+		metricOption: 'AGGREGATED_TOTAL',
+		dimensionalValues: {
+			startTime: startDate.toDateString(),
+			endTime: endDate.toDateString(),
+			value: dimensionalValues.reduce( ( result, value ) => result + value.value, 0 ),
+		},
+	};
+};
 
-const actionData = range( 19, 30 ).map( day => ( {
-	value: random( 10, 90 ),
-	nestedValue: random( 5, 80 ),
-	label: `Mar ${ day }`,
-} ) );
+const statFunction = ( statType, period ) => {
+	const metrics = getMetricFromStatType( statType );
+
+	return metrics.map( ( metric, index ) =>
+		generatePlaceHolderDataForMetric( metric, period, index )
+	);
+};
 
 const locationData = {
 	id: 12345,
@@ -53,9 +78,6 @@ const locationData = {
 };
 
 export default {
-	actionData,
+	statFunction,
 	locationData,
-	searchData,
-	searchDataTotal,
-	viewData,
 };

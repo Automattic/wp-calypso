@@ -12,6 +12,7 @@ import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
@@ -56,6 +57,7 @@ describe( 'index', () => {
 			},
 		},
 		sitePlans: {},
+		userCanManageOptions: true,
 	} );
 
 	function renderWithProps( props = defaultProps ) {
@@ -207,6 +209,22 @@ describe( 'index', () => {
 				);
 				assert( button === null );
 			} );
+		} );
+	} );
+
+	describe( 'when user can not manage options', () => {
+		let wrapper;
+		beforeEach( () => {
+			const props = deepFreeze( {
+				...defaultProps,
+				userCanManageOptions: false,
+			} );
+
+			wrapper = shallow( <DomainList { ...props } /> );
+		} );
+
+		test( 'shows an EmptyContent view', () => {
+			assert.equal( wrapper.find( 'EmptyContent' ).length, 1 );
 		} );
 	} );
 } );

@@ -17,6 +17,7 @@ import EuAddressFieldset from '../eu-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
+	translate: x => x,
 } ) );
 
 describe( 'EU Address Fieldset', () => {

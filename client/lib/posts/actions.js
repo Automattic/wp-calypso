@@ -18,6 +18,8 @@ import versionCompare from 'lib/version-compare';
 import Dispatcher from 'dispatcher';
 import { recordSaveEvent } from './stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
+import { reduxGetState } from 'lib/redux-bridge';
+import { isEditorSaveBlocked } from 'state/ui/editor/selectors';
 
 var PostActions;
 
@@ -211,30 +213,6 @@ PostActions = {
 	},
 
 	/**
-	 * Prevents the post from being saved
-	 *
-	 * @param {String} key Unique identifier to sandbox block condition
-	 */
-	blockSave: function( key ) {
-		Dispatcher.handleViewAction( {
-			type: 'BLOCK_EDIT_POST_SAVE',
-			key: key,
-		} );
-	},
-
-	/**
-	 * Allows a post to be saved after having been blocked
-	 *
-	 * @param {String} key Unique identifier to sandbox block condition
-	 */
-	unblockSave: function( key ) {
-		Dispatcher.handleViewAction( {
-			type: 'UNBLOCK_EDIT_POST_SAVE',
-			key: key,
-		} );
-	},
-
-	/**
 	 * Edits attributes on a post
 	 *
 	 * @param {object} attributes to change
@@ -313,7 +291,7 @@ PostActions = {
 		}
 
 		// Prevent saving post if another module has blocked saving.
-		if ( PostEditStore.isSaveBlocked() ) {
+		if ( isEditorSaveBlocked( reduxGetState() ) ) {
 			defer( callback, new Error( 'SAVE_BLOCKED' ), post );
 			return;
 		}
