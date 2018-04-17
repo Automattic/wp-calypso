@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,7 +35,6 @@ import ImageThumb from 'woocommerce/components/image-thumb';
 const ITEM_HEIGHT = 70;
 
 class ProductCategories extends Component {
-
 	componentWillMount() {
 		this.catIds = map( this.props.categories, 'id' );
 	}
@@ -98,10 +98,14 @@ class ProductCategories extends Component {
 
 		return (
 			<div key={ 'product-category-' + itemId } className="product-categories__list-item">
-				<CompactCard key={ itemId } className="product-categories__list-item-card" onClick={ goToLink }>
+				<CompactCard
+					key={ itemId }
+					className="product-categories__list-item-card"
+					onClick={ goToLink }
+				>
 					<div className="product-categories__list-item-wrapper">
 						<div className="product-categories__list-thumb">
-							<ImageThumb src={ item.image && item.image.src || '' } alt="" />
+							<ImageThumb src={ ( item.image && item.image.src ) || '' } alt="" />
 						</div>
 						<span className="product-categories__list-item-info">
 							<a href={ link }>{ item.name }</a>
@@ -110,11 +114,11 @@ class ProductCategories extends Component {
 						</span>
 					</div>
 				</CompactCard>
-					{ children.length > 0 && (
-						<div className="product-categories__list-nested">
-							{ children.map( child => this.renderItem( child, true ) ) }
-						</div>
-					) }
+				{ children.length > 0 && (
+					<div className="product-categories__list-nested">
+						{ children.map( child => this.renderItem( child, true ) ) }
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -132,7 +136,7 @@ class ProductCategories extends Component {
 		const { loading, categories, lastPage, searchQuery } = this.props;
 		return (
 			<WindowScroller>
-				{( { height, scrollTop } ) => (
+				{ ( { height, scrollTop } ) => (
 					<VirtualList
 						items={ categories }
 						lastPage={ lastPage }
@@ -147,7 +151,7 @@ class ProductCategories extends Component {
 						height={ height }
 						scrollTop={ scrollTop }
 					/>
-				)}
+				) }
 			</WindowScroller>
 		);
 	}
@@ -164,7 +168,9 @@ class ProductCategories extends Component {
 					},
 				} );
 			}
-			return <EmptyContent title={ translate( 'No product categories found.' ) } line={ message } />;
+			return (
+				<EmptyContent title={ translate( 'No product categories found.' ) } line={ message } />
+			);
 		}
 
 		const classes = classNames( 'product-categories__list', className );
@@ -172,15 +178,13 @@ class ProductCategories extends Component {
 		return (
 			<div className="product-categories__list-container">
 				<div className={ classes }>
-					{
-						this.props.isInitialRequestLoaded && this.renderCategoryList() ||
+					{ ( this.props.isInitialRequestLoaded && this.renderCategoryList() ) || (
 						<div className="product-categories__list-placeholder" />
-					}
+					) }
 				</div>
 			</div>
 		);
 	}
-
 }
 
 function mapStateToProps( state, ownProps ) {
