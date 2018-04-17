@@ -3798,15 +3798,6 @@
         "sentence-case": "1.1.3"
       }
     },
-    "draft-js": {
-      "version": "0.10.4",
-      "integrity": "sha1-FHdBZCCXyBINjtwjLpUD6Lf7jTU=",
-      "requires": {
-        "fbjs": "0.8.16",
-        "immutable": "3.7.6",
-        "object-assign": "4.1.1"
-      }
-    },
     "duplexer": {
       "version": "0.1.1",
       "integrity": "sha1-rOb/gIwc5mtX0ev5eXessCM0z8E="

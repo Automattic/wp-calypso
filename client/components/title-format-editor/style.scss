@@ -78,15 +78,19 @@
 }
 
 .title-format-editor__token {
-	display: inline-block;
 	background-color: $gray-darken-20;
 	color: $white;
+	height: 18px;
 	border-radius: 4px;
+	padding: 4px;
+	margin: 0 2px;
+	border: 0;
 	cursor: pointer;
 	transition: all 0.3s ease;
 
 	&:hover {
 		background-color: $alert-red;
+		color: $white;
 	}
 }
 

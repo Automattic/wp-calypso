@@ -86,7 +86,7 @@ export class MetaTitleEditor extends Component {
 						key={ type.value }
 						disabled={ disabled }
 						onChange={ this.updateTitleFormat }
-						placeholder={ site && site.title }
+						initialValue={ site && site.title }
 						type={ type }
 						titleFormats={ get( titleFormats, type.value, [] ) }
 						tokens={ getTokensForType( type.value, translate ) }
