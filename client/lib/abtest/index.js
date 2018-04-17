@@ -5,9 +5,10 @@
  */
 
 import debugFactory from 'debug';
-import { every, get, includes, isArray, keys, map, reduce, some } from 'lodash';
+import { every, includes, isArray, keys, map, reduce, some } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
+import sha1 from 'hash.js/lib/hash/sha/1';
 
 /**
  * Internal dependencies
@@ -273,7 +274,7 @@ ABTest.prototype.assignVariation = function() {
 	let variationName, randomAllocationAmount;
 	let sum = 0;
 
-	const userId = get( user, 'data.ID' );
+	const userId = user.get().ID;
 	const allocationsTotal = reduce(
 		this.variationDetails,
 		( allocations, allocation ) => {
@@ -283,7 +284,7 @@ ABTest.prototype.assignVariation = function() {
 	);
 
 	if ( this.assignmentMethod === 'userId' && ! isNaN( +userId ) ) {
-		randomAllocationAmount = Number( user.data.ID ) % allocationsTotal;
+		randomAllocationAmount = this.assignVariationWithCrypto( userId ) * allocationsTotal;
 	} else {
 		randomAllocationAmount = Math.random() * allocationsTotal;
 	}
@@ -294,6 +295,16 @@ ABTest.prototype.assignVariation = function() {
 			return variationName;
 		}
 	}
+};
+
+ABTest.prototype.assignVariationWithCrypto = function( userId ) {
+	// Put userId and experimentId into sha1 hashing algo to randomly assign variation
+	// The returned value will be a float between 0 and 1.
+	const hash = sha1(); // Use the sha1 hashing algo
+	hash.update( String( userId ) + this.experimentId ); // Hash userId and experiment Id
+	const hash_digested = hash.digest( 'hex' ).slice( 0, 6 ); // Build the hashed data
+	const hash_slice = hash_digested.slice( 0, 6 ); // Only use first 6 chars
+	return parseInt( hash_slice, 16 ) / 0xffffff; // Divide by the largest 6 digit hex number
 };
 
 ABTest.prototype.recordVariation = function( variation ) {
