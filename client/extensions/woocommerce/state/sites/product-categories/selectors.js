@@ -56,75 +56,6 @@ export function areProductCategoriesLoading(
 }
 
 /**
- * Gets product categories from API data.
- *
- * @param {Object} state Global state tree
- * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
- * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
- * @return {Array} List of product categories
- */
-export function getProductCategories( state, query = {}, siteId = getSelectedSiteId( state ) ) {
-	if ( ! areProductCategoriesLoaded( state, query, siteId ) ) {
-		return [];
-	}
-	const serializedQuery = getSerializedProductCategoriesQuery( query );
-	const categoryState = getRawCategoryState( state, siteId );
-	const allCategories = categoryState.items || {};
-	const idsForQuery = categoryState.queries && categoryState.queries[ serializedQuery ];
-
-	if ( idsForQuery.length ) {
-		return idsForQuery.map( id => allCategories[ id ] );
-	}
-
-	return [];
-}
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Total number of product categories available for a query, or 0 if not loaded yet.
- */
-export function getTotalProductCategories(
-	state,
-	query = {},
-	siteId = getSelectedSiteId( state )
-) {
-	const serializedQuery = getSerializedProductCategoriesQuery( omit( query, 'page' ) );
-	const categoryState = getRawCategoryState( state, siteId );
-	return ( categoryState.total && categoryState.total[ serializedQuery ] ) || 0;
-}
-
-/**
- * Gets product category fetched from API data.
- *
- * @param {Object} state Global state tree
- * @param {Number} categoryId The id of the category sought
- * @param {Number} siteId wpcom site id
- * @return {Object|null} Product category if found, otherwise null.
- */
-export function getProductCategory( state, categoryId, siteId = getSelectedSiteId( state ) ) {
-	const categoryState = getRawCategoryState( state, siteId );
-	return ( categoryState.items && categoryState.items[ categoryId ] ) || null;
-}
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number|Null} Total number of pages available for a query, or null if not loaded yet.
- */
-export function getProductCategoriesLastPage(
-	state,
-	query = {},
-	siteId = getSelectedSiteId( state )
-) {
-	const serializedQuery = getSerializedProductCategoriesQuery( omit( query, 'page' ) );
-	const categoryState = getRawCategoryState( state, siteId );
-	return ( categoryState.totalPages && categoryState.totalPages[ serializedQuery ] ) || null;
-}
-
-/**
  * Returns true if currently requesting product categories for a query, excluding all known
  * queried pages, or false otherwise.
  *
@@ -150,6 +81,42 @@ export function areProductCategoriesLoadingIgnoringPage(
 }
 
 /**
+ * Gets product category fetched from API data.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} categoryId The id of the category sought
+ * @param {Number} siteId wpcom site id
+ * @return {Object|null} Product category if found, otherwise null.
+ */
+export function getProductCategory( state, categoryId, siteId = getSelectedSiteId( state ) ) {
+	const categoryState = getRawCategoryState( state, siteId );
+	return ( categoryState.items && categoryState.items[ categoryId ] ) || null;
+}
+
+/**
+ * Gets product categories from API data.
+ *
+ * @param {Object} state Global state tree
+ * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
+ * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
+ * @return {Array} List of product categories
+ */
+export function getProductCategories( state, query = {}, siteId = getSelectedSiteId( state ) ) {
+	if ( ! areProductCategoriesLoaded( state, query, siteId ) ) {
+		return [];
+	}
+	const serializedQuery = getSerializedProductCategoriesQuery( query );
+	const categoryState = getRawCategoryState( state, siteId );
+	const idsForQuery = categoryState.queries && categoryState.queries[ serializedQuery ];
+
+	if ( idsForQuery.length ) {
+		return idsForQuery.map( id => getProductCategory( state, id, siteId ) );
+	}
+
+	return [];
+}
+
+/**
  * Gets all product categories from API data for a query, ignoring pages.
  *
  * @param {Object} state Global state tree
@@ -162,24 +129,54 @@ export function getProductCategoriesIgnoringPage(
 	query = {},
 	siteId = getSelectedSiteId( state )
 ) {
+	const loading = areProductCategoriesLoadingIgnoringPage( state, query, siteId );
+	if ( loading ) {
+		return [];
+	}
+
 	const lastPage = getProductCategoriesLastPage( state, query, siteId );
 	if ( null === lastPage ) {
 		return [];
 	}
 
-	const categoryState = getRawCategoryState( state, siteId );
-	const categories = categoryState.items || {};
 	const result = [];
-
 	range( 1, lastPage + 1 ).some( page => {
 		const catQuery = { ...query, page };
-		const serializedQuery = getSerializedProductCategoriesQuery( catQuery );
-		const idsForQuery = ( categoryState.queries && categoryState.queries[ serializedQuery ] ) || [];
-
-		if ( idsForQuery.length ) {
-			idsForQuery.forEach( id => result.push( categories[ id ] ) );
-		}
+		const pageCategories = getProductCategories( state, catQuery, siteId );
+		result.push( ...pageCategories );
 	} );
 
 	return result;
+}
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number|Null} Total number of pages available for a query, or null if not loaded yet.
+ */
+export function getProductCategoriesLastPage(
+	state,
+	query = {},
+	siteId = getSelectedSiteId( state )
+) {
+	const serializedQuery = getSerializedProductCategoriesQuery( omit( query, 'page' ) );
+	const categoryState = getRawCategoryState( state, siteId );
+	return ( categoryState.totalPages && categoryState.totalPages[ serializedQuery ] ) || null;
+}
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number} Total number of product categories available for a query, or 0 if not loaded yet.
+ */
+export function getTotalProductCategories(
+	state,
+	query = {},
+	siteId = getSelectedSiteId( state )
+) {
+	const serializedQuery = getSerializedProductCategoriesQuery( omit( query, 'page' ) );
+	const categoryState = getRawCategoryState( state, siteId );
+	return ( categoryState.total && categoryState.total[ serializedQuery ] ) || 0;
 }
