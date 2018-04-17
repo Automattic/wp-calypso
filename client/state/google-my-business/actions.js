@@ -7,8 +7,6 @@ import {
 	GOOGLE_MY_BUSINESS_CONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_DISCONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
-	GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
-	GOOGLE_MY_BUSINESS_STATS_SEARCH_SET_DATA,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 	GOOGLE_MY_BUSINESS_STATS_SET_DATA,
 } from 'state/action-types';
@@ -73,19 +71,22 @@ export const changeGoogleMyBusinessStatsInterval = ( siteId, statType, interval 
 
 export const requestGoogleMyBusinessStats = (
 	siteId,
-	timeSpan = 'week',
-	statName = 'search'
+	statType,
+	interval = 'week',
+	aggregation = 'total'
 ) => ( {
 	type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 	siteId,
-	timeSpan,
-	statName,
+	statType,
+	interval,
+	aggregation,
 } );
 
-export const receiveGoogleMyBusinessStats = ( siteId, timeSpan, statName, data ) => ( {
+export const receiveGoogleMyBusinessStats = ( siteId, statType, interval, aggregation, data ) => ( {
 	type: GOOGLE_MY_BUSINESS_STATS_SET_DATA,
 	siteId,
-	timeSpan,
-	statName,
+	statType,
+	interval,
+	aggregation,
 	data,
 } );

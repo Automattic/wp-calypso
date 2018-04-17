@@ -15,12 +15,13 @@ import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( '#fetchGoogleMyBusinessStatsSearch', () => {
-	test( 'should dispatch HTTP request to users endpoint', () => {
+	test( 'should dispatch HTTP request to Google My Business stats endpoint', () => {
 		const action = {
 			type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
-			timeSpan: 'week',
+			interval: 'week',
+			aggregation: 'total',
 			siteId: 12345,
-			statName: 'search',
+			statType: 'searches',
 		};
 		const dispatch = sinon.spy();
 
@@ -30,10 +31,11 @@ describe( '#fetchGoogleMyBusinessStatsSearch', () => {
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
-					path: '/sites/12345/stats/google-my-business/search',
+					path: '/sites/12345/stats/google-my-business/searches',
 					method: 'GET',
 					query: {
-						time_span: 'week',
+						interval: 'week',
+						aggregation: 'total',
 					},
 				},
 				action
@@ -45,27 +47,51 @@ describe( '#fetchGoogleMyBusinessStatsSearch', () => {
 describe( '#receiveStats', () => {
 	test( 'should dispatch recieve stats action', () => {
 		const dispatch = sinon.spy();
-		const action = { siteId: 123, statName: 'search', timeSpan: 'week' };
+		const action = {
+			type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
+			interval: 'week',
+			aggregation: 'total',
+			siteId: 12345,
+			statType: 'searches',
+		};
 		receiveStats( { dispatch }, action, { hello: 'world' } );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
-			receiveGoogleMyBusinessStats( action.siteId, action.timeSpan, action.statName, {
-				hello: 'world',
-			} )
+			receiveGoogleMyBusinessStats(
+				action.siteId,
+				action.statType,
+				action.interval,
+				action.aggregation,
+				{
+					hello: 'world',
+				}
+			)
 		);
 	} );
 
 	test( 'should transform data snake_case to camelCase', () => {
 		const dispatch = sinon.spy();
-		const action = { siteId: 123, statName: 'search', timeSpan: 'week' };
+		const action = {
+			type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
+			interval: 'week',
+			aggregation: 'total',
+			siteId: 12345,
+			statType: 'searches',
+		};
 		receiveStats( { dispatch }, action, { hello_world: 'hello' } );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
-			receiveGoogleMyBusinessStats( action.siteId, action.timeSpan, action.statName, {
-				helloWorld: 'hello',
-			} )
+			receiveGoogleMyBusinessStats(
+				action.siteId,
+				action.statType,
+				action.interval,
+				action.aggregation,
+				{
+					helloWorld: 'hello',
+				}
+			)
 		);
 	} );
 } );

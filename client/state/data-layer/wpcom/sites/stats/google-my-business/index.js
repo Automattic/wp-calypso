@@ -17,14 +17,15 @@ import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 export const fromApi = data => mapKeys( data, ( value, key ) => camelCase( key ) );
 
 export const fetchGoogleMyBusinessStats = ( { dispatch }, action ) => {
-	const { siteId, timeSpan = 'week', statName } = action;
+	const { siteId, statType, interval = 'week', aggregation = 'total' } = action;
 	dispatch(
 		http(
 			{
-				path: `/sites/${ siteId }/stats/google-my-business/${ statName }`,
+				path: `/sites/${ siteId }/stats/google-my-business/${ statType }`,
 				method: 'GET',
 				query: {
-					time_span: timeSpan,
+					interval,
+					aggregation,
 				},
 			},
 			action
@@ -40,8 +41,10 @@ export const fetchGoogleMyBusinessStats = ( { dispatch }, action ) => {
  * @param {Array} data raw data from stats API
  */
 export const receiveStats = ( { dispatch }, action, data ) => {
-	const { siteId, timeSpan, statName } = action;
-	dispatch( receiveGoogleMyBusinessStats( siteId, timeSpan, statName, fromApi( data ) ) );
+	const { siteId, statType, interval, aggregation } = action;
+	dispatch(
+		receiveGoogleMyBusinessStats( siteId, statType, interval, aggregation, fromApi( data ) )
+	);
 };
 
 export default {
