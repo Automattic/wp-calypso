@@ -13,12 +13,14 @@ import { isEqual, get } from 'lodash';
  */
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
-import FakeData from './fake-data';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 import SectionHeader from 'components/section-header';
-import { changeGoogleMyBusinessStatsInterval } from 'state/google-my-business/actions';
-import { getInterval } from 'state/google-my-business/selectors';
+import {
+	changeGoogleMyBusinessStatsInterval,
+	requestGoogleMyBusinessStats,
+} from 'state/google-my-business/actions';
+import { getInterval, getGoolgeMyBusinessSiteStats } from 'state/google-my-business/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class GoogleMyBusinessStatsChart extends Component {
@@ -29,6 +31,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
+		requestGoogleMyBusinessStats: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		statType: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
@@ -44,10 +47,17 @@ class GoogleMyBusinessStatsChart extends Component {
 		this.state = {
 			transformedData: this.transformData( props.data ),
 		};
+		props.requestGoogleMyBusinessStats( props.siteId, props.statType, props.interval, 'total' );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.data !== nextProps.data ) {
+			nextProps.requestGoogleMyBusinessStats(
+				nextProps.siteId,
+				nextProps.statType,
+				nextProps.interval,
+				'total'
+			);
 			this.setState( {
 				transformedData: this.transformData( nextProps.data ),
 			} );
@@ -113,10 +123,17 @@ export default connect(
 		return {
 			siteId,
 			interval,
-			data: FakeData.statFunction( ownProps.statType, interval ),
+			data: getGoolgeMyBusinessSiteStats(
+				state,
+				ownProps.siteId,
+				ownProps.statType,
+				interval,
+				'total'
+			),
 		};
 	},
 	{
 		changeGoogleMyBusinessStatsInterval,
+		requestGoogleMyBusinessStats,
 	}
 )( GoogleMyBusinessStatsChart );
