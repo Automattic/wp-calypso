@@ -30,8 +30,10 @@ jest.mock( 'state/sites/selectors', () => ( {
 describe( 'siteHasBusinessPlan()', () => {
 	test( 'should return true if site has WP.com business plan', () => {
 		const plans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
+
 		plans.forEach( plan => {
 			selectors.getSitePlanSlug.mockImplementation( () => plan );
+
 			expect( siteHasBusinessPlan() ).toBe( true );
 		} );
 	} );
@@ -51,8 +53,10 @@ describe( 'siteHasBusinessPlan()', () => {
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 		];
+
 		plans.forEach( plan => {
 			selectors.getSitePlanSlug.mockImplementation( () => plan );
+
 			expect( siteHasBusinessPlan() ).toBe( false );
 		} );
 	} );

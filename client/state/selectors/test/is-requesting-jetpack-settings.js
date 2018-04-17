@@ -1,53 +1,87 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
+import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 import { isRequestingJetpackSettings } from 'state/selectors';
-import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-settings';
+import { requestJetpackSettings } from 'state/jetpack/settings/actions';
 
 describe( 'isRequestingJetpackSettings()', () => {
 	test( 'should return true if settings are currently being requested', () => {
-		const stateIn = {
-				jetpack: {
-					settings: {
-						requests: REQUESTS_FIXTURE,
-					},
+		const siteId = 87654321;
+		const action = requestJetpackSettings( siteId );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'pending',
 				},
 			},
-			siteId = 87654321;
-		const output = isRequestingJetpackSettings( stateIn, siteId );
-		expect( output ).to.be.true;
+		};
+
+		const output = isRequestingJetpackSettings( state, siteId );
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if settings are currently not being requested', () => {
-		const stateIn = {
-				jetpack: {
-					settings: {
-						requests: REQUESTS_FIXTURE,
-					},
+		const siteId = 87654321;
+		const action = requestJetpackSettings( siteId );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'success',
 				},
 			},
-			siteId = 12345678;
-		const output = isRequestingJetpackSettings( stateIn, siteId );
-		expect( output ).to.be.false;
+		};
+
+		const output = isRequestingJetpackSettings( state, siteId );
+		expect( output ).toBe( false );
 	} );
 
-	test( 'should return null if that site is not known', () => {
-		const stateIn = {
-				jetpack: {
-					settings: {
-						requests: REQUESTS_FIXTURE,
-					},
+	test( 'should return false if that site is not known', () => {
+		const siteId = 87654321;
+		const action = requestJetpackSettings( 12345678 );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'pending',
 				},
 			},
-			siteId = 88888888;
-		const output = isRequestingJetpackSettings( stateIn, siteId );
-		expect( output ).to.be.null;
+		};
+
+		const output = isRequestingJetpackSettings( state, siteId );
+		expect( output ).toBe( false );
+	} );
+
+	test( 'should return true if settings are currently being requested for a matching site ID and query', () => {
+		const siteId = 87654321;
+		const query = { foo: 'bar' };
+		const action = requestJetpackSettings( siteId, query );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'pending',
+				},
+			},
+		};
+
+		const output = isRequestingJetpackSettings( state, siteId, query );
+		expect( output ).toBe( true );
+	} );
+
+	test( 'should return false if settings are currently being requested for matching site ID and non-matching query', () => {
+		const siteId = 87654321;
+		const query = { foo: 'bar' };
+		const action = requestJetpackSettings( siteId, { foo: 'baz' } );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'pending',
+				},
+			},
+		};
+
+		const output = isRequestingJetpackSettings( state, siteId, query );
+		expect( output ).toBe( false );
 	} );
 } );

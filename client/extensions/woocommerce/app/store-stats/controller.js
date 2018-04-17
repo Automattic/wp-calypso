@@ -14,8 +14,6 @@ import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getQueryDate, getQueries } from './utils';
-import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import config from 'config';
 
@@ -39,11 +37,6 @@ export default function StatsController( context, next ) {
 	if ( ! isValidParameters( context ) ) {
 		page.redirect( `/store/stats/orders/day/${ context.params.site }` );
 	}
-
-	analytics.pageView.record(
-		`/store/stats/${ context.params.type }/${ context.params.unit }`,
-		`Store > Stats > ${ titlecase( context.params.type ) } > ${ titlecase( context.params.unit ) }`
-	);
 
 	const props = {
 		type: context.params.type,

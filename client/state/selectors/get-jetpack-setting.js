@@ -3,8 +3,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { getJetpackSettings } from 'state/selectors';
 
 /**
  * Returns a certain Jetpack setting on a specified site.
@@ -16,5 +20,5 @@ import { get } from 'lodash';
  * @return {*}                Value of the Jetpack setting
  */
 export default function getJetpackSetting( state, siteId, setting ) {
-	return get( state.jetpack.settings.items, [ siteId, setting ], null );
+	return get( getJetpackSettings( state, siteId ), [ setting ], null );
 }

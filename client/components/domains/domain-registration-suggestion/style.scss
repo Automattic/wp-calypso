@@ -2,11 +2,13 @@
 
 .featured-domain-suggestion {
 	flex-direction: column;
-	justify-content: flex-end;
 	width: 100%;
+	margin-top: 0;
 
 	.domain-suggestion__content {
 		flex-direction: column;
+		flex-grow: 2;
+		margin-top: 0;
 	}
 
 	.domain-registration-suggestion__title,
@@ -19,15 +21,24 @@
 		order: 0;
 		font-size: 2em;
 		font-weight: 600;
+		flex-grow: 0;
 	}
 
 	// .card used to increase specificity
 	&.card .domain-product-price {
 		align-items: left;
-		margin: 0 0 0.5em 0;
+		margin: 0;
+		padding: 0;
 		order: 1;
-		&.is-with-plans-only:not(.is-free-domain) {
-			flex-basis: auto;
+		flex-grow: 0;
+		flex-basis: auto;
+
+		&.is-with-plans-only,
+		&.is-free-domain {
+			font-size: 0.9em;
+			small {
+				font-size: 0.9em;
+			}
 		}
 	}
 
@@ -42,6 +53,22 @@
 		}
 	}
 
+	.domain-registration-suggestion__match-reasons {
+		order: 3;
+	}
+
+	.domain-registration-suggestion__match-reason {
+		color: $gray-text-min;
+		padding: 0.125em 0;
+		display: flex;
+		align-items: center;
+
+		.gridicon {
+			color: $alert-green;
+			margin-right: 0.25em;
+		}
+	}
+
 	// .card increases specificity
 	&.card .domain-suggestion__action {
 		margin-top: 1em;
@@ -49,8 +76,16 @@
 		// Increase specificity
 		&.button.is-primary {
 			width: 100%;
+			align-self: flex-start;
 			margin-left: 0;
 			flex-grow: 0;
 		}
+	}
+}
+
+.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
+	.domain-registration-suggestion__match-reasons {
+		order: 3;
+		flex-basis: 26px;
 	}
 }

@@ -44,7 +44,7 @@ class SuggestionsExample extends Component {
 					onSearch={ this.handleSearch }
 					onBlur={ this.hideSuggestions }
 					onKeyDown={ this.handleKeyDown }
-					placeholder="Type something..."
+					placeholder="Type Foo, Bar or Baz..."
 				/>
 				<Suggestions
 					ref={ this.setSuggestionsRef }

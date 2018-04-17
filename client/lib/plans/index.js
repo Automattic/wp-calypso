@@ -27,6 +27,9 @@ import {
 	TYPE_PREMIUM,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
 } from './constants';
 
 /**
@@ -404,4 +407,27 @@ export function applyTestFiltersToPlansList( planName, abtest ) {
 	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantList;
 
 	return filteredPlanConstantObj;
+}
+
+/**
+ * Return estimated duration of given PLAN_TERM in days
+ *
+ * @param {String} term TERM_ constant
+ * @return {Number} Term duration
+ */
+export function getTermDuration( term ) {
+	switch ( term ) {
+		case TERM_MONTHLY:
+			return PLAN_MONTHLY_PERIOD;
+
+		case TERM_ANNUALLY:
+			return PLAN_ANNUAL_PERIOD;
+
+		case TERM_BIENNIALLY:
+			return PLAN_BIENNIAL_PERIOD;
+	}
+
+	if ( process.env.NODE_ENV === 'development' ) {
+		console.error( `Unexpected argument ${ term }, expected one of TERM_ constants` ); // eslint-disable-line no-console
+	}
 }

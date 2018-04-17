@@ -2,15 +2,20 @@
 /**
  * External dependencies
  */
-import { every, find, keys } from 'lodash';
+import { every, find } from 'lodash';
 /**
  * Internal dependencies
  */
 import config from 'config';
 import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
-import { getRequiredPluginsList } from 'woocommerce/lib/get-required-plugins';
+import { getRequiredPluginsForCalypso } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteWithFallback } from '../sites/selectors';
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean|null} Whether the given site has woocommerce services installed & active
+ */
 export const isWcsEnabled = ( state, siteId = getSelectedSiteWithFallback( state ) ) => {
 	if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
 		return false;
@@ -26,6 +31,11 @@ export const isWcsEnabled = ( state, siteId = getSelectedSiteWithFallback( state
 	return Boolean( find( plugins, { slug: 'woocommerce-services' } ) );
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean|null} Whether the given site has all required plugins installed & active
+ */
 export const areAllRequiredPluginsActive = (
 	state,
 	siteId = getSelectedSiteWithFallback( state )
@@ -36,7 +46,7 @@ export const areAllRequiredPluginsActive = (
 		return null;
 	}
 
-	const requiredPlugins = keys( getRequiredPluginsList() );
+	const requiredPlugins = getRequiredPluginsForCalypso();
 	const plugins = getPlugins( state, siteIds, 'active' );
 
 	return every( requiredPlugins, slug => !! find( plugins, { slug } ) );
