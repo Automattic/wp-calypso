@@ -1,7 +1,5 @@
 /** @format */
 
-const FAKE_VALUES = [ 123, 45, 82, 99, 20, 5, 52 ];
-
 const getMetricFromStatType = statType => {
 	switch ( statType ) {
 		case 'ACTIONS':
@@ -36,12 +34,17 @@ const generatePlaceHolderDataForMetric = ( metric, period, adjustment ) => {
 	const dimensionalValues = [];
 	const startDate = getStartDateFromPeriod( period );
 	const endDate = new Date();
+	const fakeValues = metric.split( '' ).map( char => char.charCodeAt( 0 ) );
 	let counter = adjustment;
+	let repeatAdjustment = 0;
 	for ( const iter = startDate; iter <= endDate; iter.setDate( iter.getDate() + 1 ) ) {
-		counter = ( counter + 1 ) % FAKE_VALUES.length;
+		if ( fakeValues.length <= counter + 1 ) {
+			repeatAdjustment = repeatAdjustment + 2;
+		}
+		counter = ( counter + 1 ) % fakeValues.length;
 		dimensionalValues.push( {
 			time: iter.toDateString(),
-			value: FAKE_VALUES[ counter ],
+			value: fakeValues[ counter ] + ( counter % 2 === 1 ? 1 : -1 ) * repeatAdjustment,
 		} );
 	}
 
