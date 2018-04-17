@@ -25,7 +25,7 @@ import HeaderCake from 'components/header-cake';
 import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser, getGoogleMyBusinessLocations } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
@@ -40,9 +40,13 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	handleConnect = () => {
-		const { siteSlug } = this.props;
+		const { googleMyBusinessLocations, siteSlug } = this.props;
 
-		page.redirect( `/google-my-business/new/${ siteSlug }` );
+		if ( googleMyBusinessLocations.length === 0 ) {
+			page.redirect( `/google-my-business/new/${ siteSlug }` );
+		} else {
+			page.redirect( `/google-my-business/select-location/${ siteSlug }` );
+		}
 	};
 
 	trackCreateYourListingClick = () => {
@@ -188,10 +192,14 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 }
 
 export default connect(
-	state => ( {
-		canUserManageOptions: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	state => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			googleMyBusinessLocations: getGoogleMyBusinessLocations( state, siteId ),
+			canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	},
 	{
 		recordTracksEvent,
 	}
