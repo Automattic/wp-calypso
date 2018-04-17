@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { includes } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -84,13 +85,18 @@ function sortMatchReasons( matchReasons ) {
 
 function getMatchReasonPhrasesMap( tld ) {
 	return new Map( [
-		[ 'tld-exact', `Extension ".${ tld }" matches your query` ],
-		[ 'tld-similar', `Extension ".${ tld }" closely matches your query` ],
-		[ 'exact-match', 'Exact match' ],
-		[ 'similar-match', 'Close match' ],
+		[ 'tld-exact', translate( 'Extension ".%(tld)s" matches your query', { args: { tld } } ) ],
+		[
+			'tld-similar',
+			translate( 'Extension ".%(tld)s" closely matches your query', { args: { tld } } ),
+		],
+		[ 'exact-match', translate( 'Exact match' ) ],
+		[ 'similar-match', translate( 'Close match' ) ],
 		[
 			'tld-common',
-			tld === 'com' ? `Most common extension, ".${ tld }"` : `Common extension, ".${ tld }"`,
+			tld === 'com'
+				? translate( 'Most common extension, ".com"' )
+				: translate( 'Common extension, ".%(tld)s"', { args: { tld } } ),
 		],
 	] );
 }
