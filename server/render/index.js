@@ -7,7 +7,7 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { get, includes, isEmpty, pick } from 'lodash';
+import { every, get, includes, isEmpty, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -122,23 +122,36 @@ export function render( element, key = JSON.stringify( element ), req ) {
 	//todo: render an error?
 }
 
+/**
+ * Check a query object against an array of whitelisted keys.
+ *
+ * If any key in the query is not present in the whitelist, it is not cacheable.
+ *
+ * @param  {?Object}        query                Query object
+ * @param  {?Array<string>} whitelistedQueryKeys Whitelisted keys
+ * @return {boolean}                             True if all query keys are whitelisted
+ */
+export function isCacheableQuery( query = null, whitelistedQueryKeys = null ) {
+	if ( isEmpty( query ) ) {
+		return true;
+	}
+	return every( Object.keys( query ), key => includes( whitelistedQueryKeys, key ) );
+}
+
 export function serverRender( req, res ) {
 	const context = req.context;
-	const { cacheQueryKeys = [] } = context;
 
 	let title,
 		metas = [],
 		links = [],
 		cacheKey = false;
 
-	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
-		if ( isEmpty( context.query ) ) {
-			cacheKey = context.pathname;
-
-			// If we have query args, make sure we only cache if they're *all* whitelisted
-		} else if ( includes( cacheQueryKeys, Object.keys( context.query ) ) ) {
-			cacheKey = getNormalizedPath( context.pathname, context.query );
-		}
+	if (
+		isSectionIsomorphic( context.store.getState() ) &&
+		! context.user &&
+		isCacheableQuery( context.query, context.cacheQueryKeys )
+	) {
+		cacheKey = getNormalizedPath( context.pathname, context.query );
 	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {
