@@ -98,13 +98,11 @@ export default class PurchaseDetail extends PureComponent {
 					</div>
 				) }
 				<div className="purchase-detail__content">
-					{ this.renderIcon() }
-
 					<div className="purchase-detail__text">
 						<h3 className="purchase-detail__title">{ title }</h3>
 						<div className="purchase-detail__description">{ description }</div>
 					</div>
-
+					{ this.renderIcon() }
 					{ this.renderBody() }
 				</div>
 			</div>
