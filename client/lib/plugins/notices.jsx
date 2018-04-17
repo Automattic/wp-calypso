@@ -758,6 +758,10 @@ export default {
 						);
 				}
 				break;
+			case 'RECEIVE_PLUGINS':
+				return this.props.translate( 'Error fetching plugins on %(numberOfSites)d sites.', {
+					args: translateArg,
+				} );
 		}
 	},
 
@@ -965,6 +969,11 @@ export default {
 							}
 						);
 				}
+
+			case 'RECEIVE_PLUGINS':
+				return i18n.translate( 'Error fetching plugins on %(site)s.', {
+					args: translateArg,
+				} );
 		}
 	},
 

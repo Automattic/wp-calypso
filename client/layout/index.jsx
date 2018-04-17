@@ -26,7 +26,6 @@ import TranslatorLauncher from './community-translator/launcher';
 import GuidedTours from 'layout/guided-tours';
 import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
-import SitesListNotices from 'lib/sites-list/notices';
 import OfflineStatus from 'layout/offline-status';
 import QueryPreferences from 'components/data/query-preferences';
 
@@ -115,7 +114,6 @@ const Layout = createReactClass( {
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
-				<SitesListNotices />
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
 				<QueryPreferences />
