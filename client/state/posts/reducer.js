@@ -416,23 +416,21 @@ export function edits( state = {}, action ) {
 						memoState = merge( {}, state );
 					}
 
-					return set(
-						memoState,
-						[ post.site_ID, post.ID ],
-						omitBy( postEdits, ( value, key ) => {
-							switch ( key ) {
-								case 'author':
-									return isAuthorEqual( value, post[ key ] );
-								case 'discussion':
-									return isDiscussionEqual( value, post[ key ] );
-								case 'featured_image':
-									return value === getFeaturedImageId( post );
-								case 'terms':
-									return isTermsEqual( value, post[ key ] );
-							}
-							return isEqual( post[ key ], value );
-						} )
-					);
+					const unappliedPostEdits = omitBy( postEdits, ( value, key ) => {
+						switch ( key ) {
+							case 'author':
+								return isAuthorEqual( value, post[ key ] );
+							case 'discussion':
+								return isDiscussionEqual( value, post[ key ] );
+							case 'featured_image':
+								return value === getFeaturedImageId( post );
+							case 'terms':
+								return isTermsEqual( value, post[ key ] );
+						}
+						return isEqual( post[ key ], value );
+					} );
+
+					return set( memoState, [ post.site_ID, post.ID ], unappliedPostEdits );
 				},
 				state
 			);
