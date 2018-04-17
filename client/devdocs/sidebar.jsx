@@ -58,6 +58,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="multiple-users"
+							label="Accessibility"
+							link="/devdocs/docs/accessibility.md"
+							selected={ this.isItemSelected( '/devdocs/docs/accessibility.md' ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="heading"
 							label="Typography"
 							link="/devdocs/typography"
