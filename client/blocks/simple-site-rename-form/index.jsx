@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { get, flow, inRange, isEmpty } from 'lodash';
+import { debounce, get, flow, inRange, isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
@@ -19,12 +19,22 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import ConfirmationDialog from './dialog';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { requestSiteRename } from 'state/site-rename/actions';
-import { isRequestingSiteRename } from 'state/selectors';
+import {
+	requestSiteRename,
+	requestSiteAddressAvailability,
+	clearValidationError,
+} from 'state/site-rename/actions';
+import {
+	isRequestingSiteRename,
+	getSiteAddressAvailabilityPending,
+	getSiteAddressValidationError,
+} from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
+const ADDRESS_CHANGE_SUPPORT_URL = 'https://support.wordpress.com/changing-blog-address/';
+const VALIDATION_DEBOUNCE_MS = 800;
 
 export class SimpleSiteRenameForm extends Component {
 	static propTypes = {
@@ -44,8 +54,11 @@ export class SimpleSiteRenameForm extends Component {
 	state = {
 		showDialog: false,
 		domainFieldValue: '',
-		domainFieldError: '',
 	};
+
+	componentDidMount() {
+		this.props.clearValidationError( this.props.siteId );
+	}
 
 	onConfirm = () => {
 		const { selectedSiteId } = this.props;
@@ -55,31 +68,50 @@ export class SimpleSiteRenameForm extends Component {
 		this.props.requestSiteRename( selectedSiteId, this.state.domainFieldValue, discard );
 	};
 
-	getDomainValidationMessage( domain ) {
+	setValidationState = () => {
 		const { translate } = this.props;
+		const { domainFieldValue } = this.state;
 
-		if ( isEmpty( domain ) ) {
-			return '';
+		let validationProperties = {
+			showValidationMessage: false,
+			validationMessage: '',
+		};
+
+		if ( isEmpty( domainFieldValue ) ) {
+			this.setState( validationProperties );
+			return;
 		}
 
-		if ( domain.match( /[^a-z0-9]/i ) ) {
-			return translate( 'Your site address can only contain letters and numbers.' );
+		if ( domainFieldValue.match( /[^a-z0-9]/i ) ) {
+			validationProperties = {
+				showValidationMessage: true,
+				validationMessage: translate( 'Your site address can only contain letters and numbers.' ),
+			};
 		}
 
-		if ( ! inRange( domain.length, SUBDOMAIN_LENGTH_MINIMUM, SUBDOMAIN_LENGTH_MAXIMUM ) ) {
-			return translate(
-				'Your site address should be between %(minimumLength)s and %(maximumLength)s characters in length.',
-				{
-					args: {
-						minimumLength: SUBDOMAIN_LENGTH_MINIMUM,
-						maximumLength: SUBDOMAIN_LENGTH_MAXIMUM,
-					},
-				}
-			);
+		if (
+			! inRange( domainFieldValue.length, SUBDOMAIN_LENGTH_MINIMUM, SUBDOMAIN_LENGTH_MAXIMUM )
+		) {
+			validationProperties = {
+				showValidationMessage: domainFieldValue.length > SUBDOMAIN_LENGTH_MAXIMUM,
+				validationMessage: translate(
+					'Your site address should be between %(minimumLength)s and %(maximumLength)s characters in length.',
+					{
+						args: {
+							minimumLength: SUBDOMAIN_LENGTH_MINIMUM,
+							maximumLength: SUBDOMAIN_LENGTH_MAXIMUM,
+						},
+					}
+				),
+			};
 		}
 
-		return '';
-	}
+		this.setState( validationProperties, () => {
+			this.state.validationMessage
+				? this.debouncedShowValidationMessage()
+				: this.debouncedValidationCheck();
+		} );
+	};
 
 	showConfirmationDialog() {
 		this.setState( {
@@ -88,12 +120,11 @@ export class SimpleSiteRenameForm extends Component {
 	}
 
 	onSubmit = event => {
-		const domainFieldError = this.getDomainValidationMessage( this.state.domainFieldValue );
-
-		this.setState( { domainFieldError } );
-		! domainFieldError && this.showConfirmationDialog();
-
 		event.preventDefault();
+
+		if ( ! this.state.validationMessage ) {
+			this.showConfirmationDialog();
+		}
 	};
 
 	onDialogClose = () => {
@@ -103,24 +134,89 @@ export class SimpleSiteRenameForm extends Component {
 	};
 
 	onFieldChange = event => {
-		const domainFieldValue = get( event, 'target.value', '' ).toLowerCase();
-		const shouldUpdateError = ! isEmpty( this.state.domainFieldError );
+		if ( this.props.isAvailabilityPending || this.props.isSiteRenameRequesting ) {
+			return;
+		}
 
-		this.setState( {
-			domainFieldValue,
-			...( shouldUpdateError && {
-				domainFieldError: this.getDomainValidationMessage( domainFieldValue ),
-			} ),
-		} );
+		const domainFieldValue = get( event, 'target.value', '' ).toLowerCase();
+
+		this.debouncedValidationCheck.cancel();
+		this.debouncedShowValidationMessage.cancel();
+
+		this.props.clearValidationError( this.props.siteId );
+		this.setState(
+			{
+				domainFieldValue,
+			},
+			this.setValidationState
+		);
 	};
 
+	debouncedShowValidationMessage = debounce( () => {
+		if ( this.state.validationMessage ) {
+			this.setState( {
+				showValidationMessage: true,
+			} );
+		}
+	}, VALIDATION_DEBOUNCE_MS );
+
+	debouncedValidationCheck = debounce( () => {
+		if ( ! isEmpty( this.state.domainFieldValue ) ) {
+			this.props.requestSiteAddressAvailability( this.props.siteId, this.state.domainFieldValue );
+		}
+	}, VALIDATION_DEBOUNCE_MS );
+
+	shouldShowValidationMessage() {
+		const { isAvailable, validationError } = this.props;
+		const { showValidationMessage } = this.state;
+		const serverValidationMessage = get( validationError, 'message' );
+
+		return isAvailable || showValidationMessage || !! serverValidationMessage;
+	}
+
+	getValidationMessage() {
+		const { isAvailable, validationError, translate } = this.props;
+		const { validationMessage } = this.state;
+		const serverValidationMessage = get( validationError, 'message' );
+
+		return isAvailable
+			? translate( 'Good news, this site address is available!' )
+			: validationMessage || serverValidationMessage;
+	}
+
 	render() {
-		const { currentDomain, currentDomainSuffix, isSiteRenameRequesting, translate } = this.props;
+		const {
+			currentDomain,
+			currentDomainSuffix,
+			isAvailabilityPending,
+			isAvailable,
+			isSiteRenameRequesting,
+			translate,
+		} = this.props;
+		const { domainFieldValue } = this.state;
 		const currentDomainName = get( currentDomain, 'name', '' );
 		const currentDomainPrefix = currentDomainName.replace( currentDomainSuffix, '' );
-		const { domainFieldError, domainFieldValue } = this.state;
-		const isDisabled =
-			! domainFieldValue || !! domainFieldError || domainFieldValue === currentDomainPrefix;
+		const shouldShowValidationMessage = this.shouldShowValidationMessage();
+		const validationMessage = this.getValidationMessage();
+		const isBusy = isSiteRenameRequesting || isAvailabilityPending;
+		const isDisabled = domainFieldValue === currentDomainPrefix || ! isAvailable;
+
+		if ( ! currentDomain.currentUserCanManage ) {
+			return (
+				<div className="simple-site-rename-form simple-site-rename-form__only-owner-info">
+					<Gridicon icon="info-outline" />
+					{ isEmpty( currentDomain.owner )
+						? translate( 'Only the site owner can edit this domain name.' )
+						: translate(
+								'Only the site owner ({{strong}}%(ownerInfo)s{{/strong}}) can edit this domain name.',
+								{
+									args: { ownerInfo: currentDomain.owner },
+									components: { strong: <strong /> },
+								}
+							) }
+				</div>
+			);
+		}
 
 		return (
 			<div className="simple-site-rename-form">
@@ -137,26 +233,34 @@ export class SimpleSiteRenameForm extends Component {
 						<FormSectionHeading>{ translate( 'Change Site Address' ) }</FormSectionHeading>
 						<FormTextInputWithAffixes
 							type="text"
-							value={ this.state.domainFieldValue }
+							value={ domainFieldValue }
 							suffix={ currentDomainSuffix }
 							onChange={ this.onFieldChange }
 							placeholder={ currentDomainPrefix }
-							isError={ !! domainFieldError }
+							isError={ shouldShowValidationMessage && ! isAvailable }
 						/>
-						{ domainFieldError && <FormInputValidation isError text={ domainFieldError } /> }
+						{ shouldShowValidationMessage &&
+							validationMessage && (
+								<FormInputValidation isError={ ! isAvailable } text={ validationMessage } />
+							) }
 						<div className="simple-site-rename-form__footer">
 							<div className="simple-site-rename-form__info">
 								<Gridicon icon="info-outline" size={ 18 } />
 								<p>
 									{ translate(
-										'Once changed, the current site address %(currentDomainName)s will no longer be available.',
+										'Once you change your site address, %(currentDomainName)s will no longer be available.',
 										{
 											args: { currentDomainName },
 										}
-									) }
+									) }{' '}
+									<a href={ ADDRESS_CHANGE_SUPPORT_URL }>
+										{ translate(
+											'Before you confirm the change, please read this important information.'
+										) }
+									</a>
 								</p>
 							</div>
-							<FormButton disabled={ isDisabled } busy={ isSiteRenameRequesting } type="submit">
+							<FormButton disabled={ isDisabled } busy={ isBusy } type="submit">
 								{ translate( 'Change Site Address' ) }
 							</FormButton>
 						</div>
@@ -172,14 +276,21 @@ export default flow(
 	connect(
 		state => {
 			const siteId = getSelectedSiteId( state );
+			const isAvailable = get( state, [ 'siteRename', 'validation', siteId, 'isAvailable' ] );
 
 			return {
+				siteId,
 				selectedSiteId: siteId,
+				isAvailable,
 				isSiteRenameRequesting: isRequestingSiteRename( state, siteId ),
+				isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
+				validationError: getSiteAddressValidationError( state, siteId ),
 			};
 		},
 		{
 			requestSiteRename,
+			requestSiteAddressAvailability,
+			clearValidationError,
 		}
 	)
 )( SimpleSiteRenameForm );

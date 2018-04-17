@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -112,4 +112,18 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
  */
 export function isConfirmationSidebarEnabled( state, siteId ) {
 	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
+}
+
+/*
+ * Returns whether editor save is currently blocked for some reason identified by `key`.
+ * If `key` is not specified, returns whether save is blocked for any reason.
+ */
+export function isEditorSaveBlocked( state, key ) {
+	const { saveBlockers } = state.ui.editor;
+
+	if ( ! key ) {
+		return !! saveBlockers.length;
+	}
+
+	return includes( saveBlockers, key );
 }

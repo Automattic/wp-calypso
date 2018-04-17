@@ -174,6 +174,7 @@ export class Login extends React.Component {
 					<DocumentHead
 						title={ translate( 'Log In' ) }
 						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
+						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
 					/>
 
 					<div>
