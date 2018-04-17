@@ -37,14 +37,15 @@ function markedFluxAction( action ) {
 }
 
 // this is a Map<ActionType:string, transform:action=>action
-const forwardActionMap = new Map();
-forwardActionMap.set( 'RECEIVE_MEDIA_ITEM', markedFluxAction );
-forwardActionMap.set( 'RECEIVE_MEDIA_ITEMS', markedFluxAction );
+const actionsToForward = new Set();
+
+export function registerActionForward( actionName ) {
+	actionsToForward.add( actionName );
+}
 
 function forwardAction( { action = {} } ) {
-	const transform = forwardActionMap.get( action.type );
-	if ( transform ) {
-		reduxDispatch( transform( action ) );
+	if ( actionsToForward.has( action.type ) ) {
+		reduxDispatch( markedFluxAction( action ) );
 	}
 }
 

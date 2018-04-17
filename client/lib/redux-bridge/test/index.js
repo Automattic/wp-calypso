@@ -8,7 +8,7 @@
  * Internal Dependencies
  */
 import Dispatcher from 'dispatcher';
-import { setReduxStore } from '../';
+import { setReduxStore, registerActionForward } from '../';
 
 describe( 'redux-bridge', () => {
 	let fakeStore;
@@ -24,7 +24,8 @@ describe( 'redux-bridge', () => {
 		setReduxStore( null );
 	} );
 	test( 'flux actions that match the dispatch map get forwarded to the redux store', () => {
-		Dispatcher.handleServerAction( { type: 'RECEIVE_MEDIA_ITEM' } );
-		expect( fakeStore.dispatch ).toHaveBeenLastCalledWith( { type: 'FLUX_RECEIVE_MEDIA_ITEM' } );
+		registerActionForward( 'MY_ACTION' );
+		Dispatcher.handleServerAction( { type: 'MY_ACTION' } );
+		expect( fakeStore.dispatch ).toHaveBeenLastCalledWith( { type: 'FLUX_MY_ACTION' } );
 	} );
 } );
