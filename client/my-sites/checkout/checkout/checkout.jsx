@@ -294,6 +294,7 @@ class Checkout extends React.Component {
 			0
 		);
 
+		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
 		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
 
@@ -347,7 +348,7 @@ class Checkout extends React.Component {
 		}
 
 		// DO NOT assign the test here.
-		if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
+		if ( receipt && 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
 			return `/checklist/${ selectedSiteSlug }?d=paid`;
 		}
 
