@@ -69,6 +69,8 @@ import {
 	isRemoteSiteOnSitesList,
 } from 'state/jetpack-connect/selectors';
 
+import OptimisticPlans from './optimistic-plans';
+
 /**
  * Constants
  */
@@ -624,24 +626,36 @@ export class JetpackAuthorize extends Component {
 
 	render() {
 		return (
-			<MainWrapper>
-				<div className="jetpack-connect__authorize-form">
-					<div className="jetpack-connect__logged-in-form">
-						<QueryUserConnection
-							siteId={ this.props.authQuery.clientId }
-							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
-						/>
-						<AuthFormHeader authQuery={ this.props.authQuery } />
-						<Card>
-							<Gravatar user={ this.props.user } size={ 64 } />
-							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
-							{ this.renderNotices() }
-							{ this.renderStateAction() }
-						</Card>
-						{ this.renderFooterLinks() }
-					</div>
-				</div>
-			</MainWrapper>
+			<React.Fragment>
+				<QueryUserConnection
+					siteId={ this.props.authQuery.clientId }
+					siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
+				/>
+				{ ! this.props.isMobileAppFlow &&
+				( this.props.isFetchingAuthorizationSite ||
+					this.props.authorizationData.isAuthorizing ||
+					this.retryingAuth ||
+					this.props.authorizationData.authorizeSuccess ) ? (
+					<OptimisticPlans clientId={ this.props.authQuery.clientId } />
+				) : (
+					<MainWrapper>
+						<div className="jetpack-connect__authorize-form">
+							<div className="jetpack-connect__logged-in-form">
+								<AuthFormHeader authQuery={ this.props.authQuery } />
+								<Card>
+									<Gravatar user={ this.props.user } size={ 64 } />
+									<p className="jetpack-connect__logged-in-form-user-text">
+										{ this.getUserText() }
+									</p>
+									{ this.renderNotices() }
+									{ this.renderStateAction() }
+								</Card>
+								{ this.renderFooterLinks() }
+							</div>
+						</div>
+					</MainWrapper>
+				) }
+			</React.Fragment>
 		);
 	}
 }
