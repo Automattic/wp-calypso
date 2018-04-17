@@ -213,7 +213,7 @@ class DesignAssets extends React.Component {
 
 	listOfExamples() {
 		return (
-			<SelectDropdown>
+			<SelectDropdown selectedText="Add a component" className="design__playground-examples">
 				{ keys( examples ).map( name => {
 					return (
 						<DropdownItem key={ name } onClick={ this.addComponent( examples[ name ] ) }>
