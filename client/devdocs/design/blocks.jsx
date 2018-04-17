@@ -189,7 +189,7 @@ export default class AppComponents extends React.Component {
 					<ConversationFollowButton />
 					<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 					{ isEnabled( 'site-address-editor/devdocs' ) && <SiteRenamer /> }
-					<UserMentionSuggestions />
+					{ isEnabled( 'reader/user-mention-suggestions' ) && <UserMentionSuggestions /> }
 				</Collection>
 			</Main>
 		);
