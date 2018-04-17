@@ -22,6 +22,7 @@ import { warningNotice } from 'state/notices/actions';
 class AccountDialog extends Component {
 	static propTypes = {
 		accounts: PropTypes.arrayOf( PropTypes.object ),
+		disclaimerText: PropTypes.string,
 		isVisible: PropTypes.bool,
 		onAccountSelected: PropTypes.func,
 		service: PropTypes.object,
@@ -160,6 +161,10 @@ class AccountDialog extends Component {
 	}
 
 	getDisclaimerText() {
+		if ( this.props.disclaimerText ) {
+			return this.props.disclaimerText;
+		}
+
 		if ( 1 === this.props.accounts.length ) {
 			// If a single account is available, show a simple confirmation
 			// prompt to ask the user to confirm their connection.

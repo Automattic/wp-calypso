@@ -153,14 +153,14 @@ class DesignAssets extends React.Component {
 						readmeFilePath="accordion"
 					/>
 					<BackButton readmeFilePath="back-button" />
+					<Badge readmeFilePath="badge" />
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
 					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
 					<SplitButton readmeFilePath="split-button" />
-					<Badge />
 					<Cards readmeFilePath="card" />
-					<CardHeading />
+					<CardHeading readmeFilePath="card-heading" />
 					<Checklist />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
 					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
@@ -169,7 +169,7 @@ class DesignAssets extends React.Component {
 					<DatePicker readmeFilePath="date-picker" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
-					<EmbedDialog />
+					<EmbedDialog readmeFilePath="tinymce/plugins/embed" />
 					<EmojifyExample readmeFilePath="emojify" />
 					<EmptyContent readmeFilePath="empty-content" />
 					<ExternalLink readmeFilePath="external-link" />
@@ -181,20 +181,19 @@ class DesignAssets extends React.Component {
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
 					<Gauge readmeFilePath="gauge" />
-					<GlobalNotices />
+					<GlobalNotices readmeFilePath="global-notices" />
 					<Gravatar readmeFilePath="gravatar" />
 					<Gridicons />
-					<HeaderButton />
+					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
 					<InfoPopover readmeFilePath="info-popover" />
-					<Tooltip readmeFilePath="tooltip" />
 					<InputChrono readmeFilePath="input-chrono" />
-					<JetpackColophonExample />
-					<JetpackLogoExample />
+					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
+					<JetpackLogoExample readmeFilePath="jetpack-logo" />
 					<LanguagePicker readmeFilePath="language-picker" />
-					<ListEnd />
-					<Notices />
+					<ListEnd readmeFilePath="list-end" />
+					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
 					<PieChart readmeFilePath="pie-chart" />
@@ -202,28 +201,29 @@ class DesignAssets extends React.Component {
 					<ProgressBar readmeFilePath="progress-bar" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
-					<Ribbon />
-					<ScreenReaderTextExample />
+					<Ribbon readmeFilePath="ribbon" />
+					<ScreenReaderTextExample readmeFilePath="screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
-					<ShareButton />
+					<ShareButton readmeFilePath="share-button" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
-					<Suggestions />
-					<TextDiff />
-					<TileGrid />
-					<TimeSince />
+					<Suggestions readmeFilePath="suggestions" />
+					<TextDiff readmeFilePath="text-diff" />
+					<TileGrid readmeFilePath="tile-grid" />
+					<TimeSince readmeFilePath="time-since" />
 					<Timezone readmeFilePath="timezone" />
 					<TokenFields readmeFilePath="token-field" />
+					<Tooltip readmeFilePath="tooltip" />
 					<VerticalMenu readmeFilePath="vertical-menu" />
 					<Version readmeFilePath="version" />
-					<Wizard />
+					<Wizard readmeFilePath="wizard" />
 				</Collection>
 			</Main>
 		);

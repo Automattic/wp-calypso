@@ -17,6 +17,7 @@ import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
 import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
 import { connectDispatcher } from './dispatcher-converter';
+import SiteImporterPlaceholderLogo from './site-importer/placeholder-logo';
 
 /**
  * Module variables
@@ -82,22 +83,32 @@ class ImporterHeader extends React.PureComponent {
 		}
 	};
 
+	getLogo = icon => {
+		if ( includes( [ 'wordpress', 'medium' ], icon ) ) {
+			return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
+		}
+
+		if ( includes( [ 'site-importer' ], icon ) ) {
+			return <SiteImporterPlaceholderLogo />;
+		}
+		return (
+			<svg
+				className="importer__service-icon"
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+			/>
+		);
+	};
+
 	render() {
 		const { importerStatus: { importerState }, icon, isEnabled, title, description } = this.props;
 		const canCancel =
 			isEnabled && ! includes( [ appStates.UPLOADING, ...stopStates ], importerState );
 		const isScary = includes( [ ...cancelStates ], importerState );
+
 		return (
 			<header className="importer-service">
-				{ includes( [ 'wordpress', 'medium' ], icon ) ? (
-					<SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />
-				) : (
-					<svg
-						className="importer__service-icon"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-					/>
-				) }
+				{ this.getLogo( icon ) }
 				<Button
 					className="importer__master-control"
 					disabled={ ! canCancel }

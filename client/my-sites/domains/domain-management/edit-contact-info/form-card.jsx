@@ -350,7 +350,7 @@ class EditContactInfoFormCard extends React.Component {
 				<form>
 					<ContactDetailsFormFields
 						eventFormName="Edit Contact Info"
-						contactDetails={ this.contactFormFieldValues }
+						contactDetails={ this.state.newContactDetails || this.contactFormFieldValues }
 						needsFax={ this.needsFax() }
 						getIsFieldDisabled={ this.getIsFieldDisabled }
 						onContactDetailsChange={ this.handleContactDetailsChange }

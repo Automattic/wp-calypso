@@ -12,14 +12,13 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
+import GoogleMyBusinessSelectLocationButton from './button';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -43,14 +42,8 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
-	trackConnectLocationClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_location_connect_location_button_click'
-		);
-	};
-
 	render() {
-		const { locations, translate, siteSlug } = this.props;
+		const { locations, translate } = this.props;
 
 		return (
 			<Main className="gmb-select-location" wideLayout>
@@ -70,14 +63,10 @@ class GoogleMyBusinessSelectLocation extends Component {
 				</CompactCard>
 
 				{ locations.map( location => (
-					<GoogleMyBusinessLocation isCompact key={ location.id } location={ location }>
-						<Button
-							href={ `/google-my-business/stats/${ siteSlug }` }
-							onClick={ this.trackConnectLocationClick }
-						>
-							{ translate( 'Connect Location' ) }
-						</Button>
-					</GoogleMyBusinessLocation>
+					<GoogleMyBusinessSelectLocationButton
+						key={ location.id }
+						location={ location }
+					/>
 				) ) }
 
 				<Card className="gmb-select-location__add">

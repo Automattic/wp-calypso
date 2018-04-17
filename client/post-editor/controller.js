@@ -18,7 +18,6 @@ import { map, pick, reduce, startsWith } from 'lodash';
 import actions from 'lib/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import User from 'lib/user';
-import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
 import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
@@ -53,8 +52,8 @@ function determinePostType( context ) {
 	return context.params.type;
 }
 
-function renderEditor( context ) {
-	context.primary = React.createElement( PostEditor );
+function renderEditor( context, props ) {
+	context.primary = React.createElement( PostEditor, props );
 }
 
 function maybeRedirect( context ) {
@@ -192,6 +191,32 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 		} );
 }
 
+const getAnalyticsPathAndTitle = ( postType, postId, postToCopyId ) => {
+	const isPost = 'post' === postType;
+	const isPage = 'page' === postType;
+	const isNew = postToCopyId || ! postId;
+	const isEdit = !! postId;
+
+	if ( isPost && isNew ) {
+		return [ '/post/:site', 'Post > New' ];
+	}
+	if ( isPost && isEdit ) {
+		return [ '/post/:site/:post_id', 'Post > Edit' ];
+	}
+	if ( isPage && isNew ) {
+		return [ '/page/:site', 'Page > New' ];
+	}
+	if ( isPage && isEdit ) {
+		return [ '/page/:site/:post_id', 'Page > Edit' ];
+	}
+	if ( isNew ) {
+		return [ `/edit/${ postType }/:site`, 'Custom Post Type > New' ];
+	}
+	if ( isEdit ) {
+		return [ `/edit/${ postType }/:site/:post_id`, 'Custom Post Type > Edit' ];
+	}
+};
+
 export default {
 	post: function( context, next ) {
 		const postType = determinePostType( context );
@@ -207,28 +232,14 @@ export default {
 				return;
 			}
 
-			let gaTitle;
-			switch ( postType ) {
-				case 'post':
-					gaTitle = 'Post';
-					break;
-				case 'page':
-					gaTitle = 'Page';
-					break;
-				default:
-					gaTitle = 'Custom Post Type';
-			}
-
 			// We have everything we need to start loading the post for editing,
 			// so kick it off here to minimize time spent waiting for it to load
 			// in the view components
 			if ( postToCopyId ) {
 				startEditingPostCopy( site, postToCopyId, context );
-				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			} else if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingExisting( site, postID );
-				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
 				const postOptions = { type: postType };
 
@@ -244,7 +255,6 @@ export default {
 
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingNew( site, postOptions );
-				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			}
 		}
 
@@ -276,7 +286,12 @@ export default {
 			unsubscribe = context.store.subscribe( startEditingOnSiteSelected );
 		}
 
-		renderEditor( context );
+		const [ analyticsPath, analyticsTitle ] = getAnalyticsPathAndTitle(
+			postType,
+			postID,
+			postToCopyId
+		);
+		renderEditor( context, { analyticsPath, analyticsTitle } );
 
 		next();
 	},

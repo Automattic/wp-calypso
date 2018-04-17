@@ -163,12 +163,20 @@ class Document extends React.Component {
 					/>
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
-					<script
-						nonce={ inlineScriptNonce }
-						dangerouslySetInnerHTML={ {
-							__html: manifest,
-						} }
-					/>
+					{ /*
+						* inline manifest in production, but reference by url for development.
+						* this lets us have the performance benefit in prod, without breaking HMR in dev
+						* since the manifest needs to be updated on each save
+						*/ }
+					{ env === 'development' && <script src="/calypso/manifest.js" /> }
+					{ env !== 'development' && (
+						<script
+							nonce={ inlineScriptNonce }
+							dangerouslySetInnerHTML={ {
+								__html: manifest,
+							} }
+						/>
+					) }
 					{ entrypoint.map( asset => <script key={ asset } src={ asset } /> ) }
 					{ chunkFiles.map( chunk => <script key={ chunk } src={ chunk } /> ) }
 					<script nonce={ inlineScriptNonce } type="text/javascript">

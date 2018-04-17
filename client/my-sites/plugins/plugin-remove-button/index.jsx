@@ -45,9 +45,7 @@ class PluginRemoveButton extends React.Component {
 
 	processRemovalConfirmation = accepted => {
 		if ( accepted ) {
-			PluginsActions.removePluginsNotices(
-				this.props.notices.completed.concat( this.props.notices.errors )
-			);
+			PluginsActions.removePluginsNotices( 'completed', 'error' );
 			PluginsActions.removePlugin( this.props.site, this.props.plugin );
 
 			if ( this.props.isEmbed ) {

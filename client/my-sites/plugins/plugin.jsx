@@ -19,7 +19,6 @@ import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
 import { getPlugin, isFetched, isFetching } from 'state/plugins/wporg/selectors';
-import PluginsActions from 'lib/plugins/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import PluginNotices from 'lib/plugins/notices';
 import MainComponent from 'components/main';
@@ -104,10 +103,6 @@ const SinglePlugin = createReactClass( {
 			textOnly: true,
 			context: 'Page title: Plugin detail',
 		} );
-	},
-
-	removeNotice( error ) {
-		PluginsActions.removePluginsNotices( error );
 	},
 
 	recordEvent( eventAction ) {
@@ -266,7 +261,6 @@ const SinglePlugin = createReactClass( {
 					{ this.displayHeader() }
 					<PluginMeta
 						isPlaceholder
-						notices={ this.state.notices }
 						isInstalledOnSite={
 							this.isFetchingSites()
 								? null
@@ -305,7 +299,6 @@ const SinglePlugin = createReactClass( {
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
-						notices={ {} }
 						isInstalledOnSite={
 							!! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
 						}
@@ -369,7 +362,6 @@ const SinglePlugin = createReactClass( {
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
-						notices={ this.state.notices }
 						plugin={ plugin }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }

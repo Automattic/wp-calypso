@@ -97,12 +97,14 @@ export function saveSiteSettings( siteId, settings ) {
 		return wpcom
 			.undocumented()
 			.settings( siteId, 'post', settings )
-			.then( ( { updated } ) => {
-				dispatch( updateSiteSettings( siteId, normalizeSettings( updated ) ) );
+			.then( body => {
+				dispatch( updateSiteSettings( siteId, normalizeSettings( body.updated ) ) );
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
 					siteId,
 				} );
+
+				return body;
 			} )
 			.catch( error => {
 				dispatch( {
@@ -110,6 +112,8 @@ export function saveSiteSettings( siteId, settings ) {
 					siteId,
 					error,
 				} );
+
+				return error;
 			} );
 	};
 }
