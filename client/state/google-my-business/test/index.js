@@ -30,6 +30,7 @@ describe( 'reducer', () => {
 					location: {
 						id: null,
 					},
+					statInterval: {},
 					stats: {
 						actions_month: {
 							hello: 'world',
