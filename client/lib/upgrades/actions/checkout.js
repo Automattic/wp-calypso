@@ -35,12 +35,14 @@ export function setNewCreditCardDetails( options ) {
 	} );
 }
 
-export function submitTransaction( { cart, transaction }, onComplete ) {
+export function submitTransaction( { cart, transaction, successUrl, cancelUrl }, onComplete ) {
 	submit(
 		{
 			cart: cart,
 			payment: transaction.payment,
 			domainDetails: transaction.domainDetails,
+			successUrl,
+			cancelUrl,
 		},
 		// Execute every step handler in its own event loop tick, so that a complete React
 		// rendering cycle happens on each step and `componentWillReceiveProps` of objects

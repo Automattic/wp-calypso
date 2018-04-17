@@ -100,16 +100,13 @@ export default {
 
 		if ( logNotices.completed.length > 0 && logNotices.errors.length > 0 ) {
 			notices.warning( this.erroredAndCompletedMessage( logNotices ), {
-				onRemoveCallback: PluginsActions.removePluginsNotices.bind(
-					this,
-					logNotices.completed.concat( logNotices.errors )
-				),
+				onRemoveCallback: () => PluginsActions.removePluginsNotices( 'completed', 'error' ),
 			} );
 		} else if ( logNotices.errors.length > 0 ) {
-			notices.error( this.getMessage( logNotices.errors, this.errorMessage, 'errors' ), {
+			notices.error( this.getMessage( logNotices.errors, this.errorMessage, 'error' ), {
 				button: this.getErrorButton( logNotices.errors ),
 				href: this.getErrorHref( logNotices.errors ),
-				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.errors ),
+				onRemoveCallback: () => PluginsActions.removePluginsNotices( 'error' ),
 			} );
 		} else if ( logNotices.completed.length > 0 ) {
 			const sampleLog =
@@ -124,7 +121,7 @@ export default {
 			notices.success( this.getMessage( logNotices.completed, this.successMessage, 'completed' ), {
 				button: this.getSuccessButton( logNotices.completed ),
 				href: this.getSuccessHref( logNotices.completed ),
-				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.completed ),
+				onRemoveCallback: () => PluginsActions.removePluginsNotices( 'completed' ),
 				showDismiss,
 			} );
 		}
@@ -582,7 +579,7 @@ export default {
 				this.successMessage,
 				'completed'
 			),
-			errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'errors' );
+			errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'error' );
 		return ' ' + completedMessage + ' ' + errorMessage;
 	},
 

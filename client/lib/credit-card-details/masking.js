@@ -7,7 +7,7 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCreditCardType } from 'lib/credit-card-details';
+import { getCreditCardType } from 'lib/checkout';
 
 const fieldMasks = {};
 

@@ -33,9 +33,25 @@ export default function() {
 	}
 
 	page(
+		'/checkout/thank-you/no-site/pending/:orderId',
+		siteSelection,
+		checkoutController.checkoutPending,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/checkout/thank-you/no-site/:receiptId?',
 		noSite,
 		checkoutController.checkoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/thank-you/:site/pending/:orderId',
+		siteSelection,
+		checkoutController.checkoutPending,
 		makeLayout,
 		clientRender
 	);

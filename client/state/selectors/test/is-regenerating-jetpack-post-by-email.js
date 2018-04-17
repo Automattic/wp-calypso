@@ -8,46 +8,53 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 import { isRegeneratingJetpackPostByEmail } from 'state/selectors';
-import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-settings';
+import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
 
 describe( 'isRegeneratingJetpackPostByEmail()', () => {
 	test( 'should return true if post by email is currently being regenerated', () => {
-		const stateIn = {
-				jetpack: {
-					settings: {
-						requests: REQUESTS_FIXTURE,
-					},
+		const siteId = 87654321;
+		const action = regeneratePostByEmail( siteId );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'pending',
 				},
 			},
-			siteId = 12345678;
-		const output = isRegeneratingJetpackPostByEmail( stateIn, siteId );
+		};
+
+		const output = isRegeneratingJetpackPostByEmail( state, siteId );
 		expect( output ).to.be.true;
 	} );
 
 	test( 'should return false if post by email is currently not being regenerated', () => {
-		const stateIn = {
-				jetpack: {
-					settings: {
-						requests: REQUESTS_FIXTURE,
-					},
+		const siteId = 87654321;
+		const action = regeneratePostByEmail( siteId );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'success',
 				},
 			},
-			siteId = 87654321;
-		const output = isRegeneratingJetpackPostByEmail( stateIn, siteId );
+		};
+
+		const output = isRegeneratingJetpackPostByEmail( state, siteId );
 		expect( output ).to.be.false;
 	} );
 
-	test( 'should return null if that site is not known', () => {
-		const stateIn = {
-				jetpack: {
-					settings: {
-						requests: REQUESTS_FIXTURE,
-					},
+	test( 'should return false if that site is not known', () => {
+		const siteId = 87654321;
+		const action = regeneratePostByEmail( 12345678 );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'pending',
 				},
 			},
-			siteId = 88888888;
-		const output = isRegeneratingJetpackPostByEmail( stateIn, siteId );
-		expect( output ).to.be.null;
+		};
+
+		const output = isRegeneratingJetpackPostByEmail( state, siteId );
+		expect( output ).to.be.false;
 	} );
 } );

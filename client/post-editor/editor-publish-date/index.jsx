@@ -124,7 +124,7 @@ export class EditorPublishDate extends React.Component {
 				className="editor-publish-date__immediate"
 				onClick={ this.setImmediate }
 			>
-				{ this.props.translate( 'Publish Immediately' ) }
+				{ this.props.translate( 'Cancel scheduling' ) }
 			</Button>
 		);
 	}

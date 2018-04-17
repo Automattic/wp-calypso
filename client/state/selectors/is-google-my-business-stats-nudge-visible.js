@@ -5,8 +5,9 @@
  */
 import createSelector from 'lib/create-selector';
 import { getSiteOption, getSitePlanSlug } from 'state/sites/selectors';
-import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
+import { isGoogleMyBusinessLocationConnected } from 'state/selectors';
 import { planMatches } from 'lib/plans';
+import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
 
 const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 
@@ -20,6 +21,7 @@ const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 const siteHasPromoteGoal = createSelector(
 	( state, siteId ) => {
 		const siteGoals = ( getSiteOption( state, siteId, 'site_goals' ) || '' ).split( ',' );
+
 		return siteGoals.indexOf( 'promote' ) !== -1;
 	},
 	( state, siteId ) => [ getSiteOption( state, siteId, 'site_goals' ) ]
@@ -35,6 +37,7 @@ const siteHasPromoteGoal = createSelector(
 export const siteHasBusinessPlan = createSelector(
 	( state, siteId ) => {
 		const slug = getSitePlanSlug( state, siteId );
+
 		return planMatches( slug, { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
 	},
 	( state, siteId ) => [ getSitePlanSlug( state, siteId ) ]
@@ -51,16 +54,17 @@ export const siteHasBusinessPlan = createSelector(
  * @param  {String}  siteId The Site ID
  * @return {Boolean} True if we should show the nudge
  */
-const isGoogleMyBusinessStatsNudgeVisible = ( state, siteId ) => {
+export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
+	if ( isGoogleMyBusinessLocationConnected( state, siteId ) ) {
+		return false;
+	}
+
 	const createdAt = getSiteOption( state, siteId, 'created_at' );
-	const isWeekPassedSinceSiteCreation =
-		Date.parse( createdAt ) + WEEK_IN_SECONDS * 1000 < Date.now();
+	const isWeekPassedSinceSiteCreation = Date.parse( createdAt ) + WEEK_IN_SECONDS * 1000 < Date.now();
 
 	return (
 		isWeekPassedSinceSiteCreation &&
 		siteHasBusinessPlan( state, siteId ) &&
 		siteHasPromoteGoal( state, siteId )
 	);
-};
-
-export default isGoogleMyBusinessStatsNudgeVisible;
+}
