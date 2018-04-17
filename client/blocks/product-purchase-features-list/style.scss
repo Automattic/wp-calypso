@@ -1,16 +1,14 @@
 .product-purchase-features-list {
 	@include breakpoint( ">1040px" ) {
-		column-count: 2;
-		column-gap: 12px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
 	}
 }
 
 .product-purchase-features-list__item {
-	page-break-inside: avoid; // For Firefox
-	break-inside: avoid-column; // For IE
-	-webkit-column-break-inside: avoid; // For others
-
 	padding-top: 12px;
+	max-width: 49.5%;
 }
 
 .product-purchase-features-list__item .purchase-detail {
