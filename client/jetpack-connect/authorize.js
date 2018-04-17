@@ -342,29 +342,26 @@ export class JetpackAuthorize extends Component {
 
 	renderXmlrpcFeedback() {
 		const { translate } = this.props;
+
 		return (
-			<div>
-				<JetpackConnectNotices noticeType={ XMLRPC_ERROR } onActionClick={ this.handleResolve } />
-				<p>
-					{ translate(
-						'WordPress.com was unable to reach your site and approve the connection. ' +
-							'Try again by clicking the button above; ' +
-							"if that doesn't work you may need to {{link}}contact support{{/link}}.",
-						{
-							components: {
-								link: (
-									<a
-										href="https://jetpack.com/contact-support"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-				{ this.renderErrorDetails() }
-			</div>
+			<p>
+				{ translate(
+					'WordPress.com was unable to reach your site and approve the connection. ' +
+						'Try again by clicking the button above; ' +
+						"if that doesn't work you may need to {{link}}contact support{{/link}}.",
+					{
+						components: {
+							link: (
+								<a
+									href="https://jetpack.com/contact-support"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</p>
 		);
 	}
 
@@ -451,7 +448,13 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 		if ( this.props.hasXmlrpcError ) {
-			return this.renderXmlrpcFeedback();
+			return (
+				<div>
+					<JetpackConnectNotices noticeType={ XMLRPC_ERROR } onActionClick={ this.handleResolve } />
+					{ this.renderXmlrpcFeedback() }
+					{ this.renderErrorDetails() }
+				</div>
+			);
 		}
 		return (
 			<div>
