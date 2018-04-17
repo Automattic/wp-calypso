@@ -375,7 +375,7 @@ export default {
 			? context.query.startDate
 			: undefined;
 
-		if ( siteId && ! siteHasWpcomFreePlan && ! config.isEnabled( 'activity-log-wpcom-free' ) ) {
+		if ( siteId && siteHasWpcomFreePlan && ! config.isEnabled( 'activity-log-wpcom-free' ) ) {
 			page.redirect( '/stats' );
 			return next();
 		}
