@@ -19,7 +19,7 @@ class PlanPrice extends React.Component {
 		let rawPrice, formattedPrice, months;
 
 		if ( plan ) {
-			// the properties of a plan object from sites-list is snake_case
+			// the properties of a plan object from sites list is snake_case
 			// the properties of a plan object from the global state are camelCase
 			rawPrice = isUndefined( plan.rawPrice ) ? plan.raw_price : plan.rawPrice;
 			formattedPrice = isUndefined( plan.formattedPrice )

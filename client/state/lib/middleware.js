@@ -97,8 +97,8 @@ const removeSelectedSitesChangeListener = ( dispatch, action ) => {
 
 /*
  * Queue of functions waiting to be called once (and only once) when sites data
- * arrives (SITES_RECEIVE). Aims to reduce dependencies on ´lib/sites-list` by
- * providing an alternative to `sites.once()`.
+ * arrives (SITES_RECEIVE). Provides an alternative to `sites.once()` from the
+ * legacy Sites List.
  */
 let sitesListeners = [];
 

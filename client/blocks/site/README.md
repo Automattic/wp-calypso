@@ -1,7 +1,7 @@
 Site (JSX)
 ==========
 
-This component displays a Site item using the data structure provided by sites-list. It's used to display context and to render the picker.
+This component displays a Site item using the data structure provided by Redux sites list. It's used to display context and to render the picker.
 
 #### How to use:
 
