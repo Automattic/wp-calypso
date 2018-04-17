@@ -13,7 +13,7 @@ import inherits from 'inherits';
  * Internal dependencies
  */
 import paymentGatewayLoader from 'lib/payment-gateway-loader';
-import { validateCardDetails } from 'lib/credit-card-details';
+import { validatePaymentDetails } from 'lib/checkout';
 import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
@@ -23,7 +23,10 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
 import wp from 'lib/wp';
-import { isEbanxEnabledForCountry, translatedEbanxError } from 'lib/checkout/ebanx';
+import {
+	isEbanxCreditCardProcessingEnabledForCountry,
+	translatedEbanxError,
+} from 'lib/checkout/ebanx';
 
 const wpcom = wp.undocumented();
 
@@ -91,7 +94,7 @@ TransactionFlow.prototype._paymentHandlers = {
 	WPCOM_Billing_MoneyPress_Paygate: function() {
 		const { newCardDetails } = this._initialData.payment,
 			{ successUrl, cancelUrl } = this._initialData,
-			validation = validateCardDetails( newCardDetails );
+			validation = validatePaymentDetails( newCardDetails );
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this._pushStep( {
@@ -120,7 +123,7 @@ TransactionFlow.prototype._paymentHandlers = {
 					cancelUrl,
 				};
 
-				if ( isEbanxEnabledForCountry( country ) ) {
+				if ( isEbanxCreditCardProcessingEnabledForCountry( country ) ) {
 					const ebanxPaymentData = {
 						state: newCardDetails.state,
 						city: newCardDetails.city,
@@ -308,7 +311,7 @@ function getEbanxParameters( cardDetails ) {
 }
 
 export function createCardToken( requestType, cardDetails, callback ) {
-	if ( isEbanxEnabledForCountry( cardDetails.country ) ) {
+	if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetails.country ) ) {
 		return createEbanxToken( requestType, cardDetails, callback );
 	}
 

@@ -3,55 +3,24 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty, pick } from 'lodash';
+import { capitalize, compact, isArray, isEmpty } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { isEbanxEnabledForCountry, isValidCPF } from 'lib/checkout/ebanx';
-import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
+import {
+	isEbanxCreditCardProcessingEnabledForCountry,
+	isValidCPF,
+	ebanxFieldRules,
+} from 'lib/checkout/ebanx';
 
-function ebanxFieldRules( country ) {
-	const requiredFields = PAYMENT_PROCESSOR_EBANX_COUNTRIES[ country ].requiredFields || [];
-
-	return pick(
-		{
-			document: {
-				description: i18n.translate( 'Taxpayer Identification Number' ),
-				rules: [ 'validCPF' ],
-			},
-
-			'street-number': {
-				description: i18n.translate( 'Street Number' ),
-				rules: [ 'required' ],
-			},
-
-			'address-1': {
-				description: i18n.translate( 'Address' ),
-				rules: [ 'required' ],
-			},
-
-			state: {
-				description: i18n.translate( 'State' ),
-				rules: [ 'required' ],
-			},
-
-			city: {
-				description: i18n.translate( 'City' ),
-				rules: [ 'required' ],
-			},
-
-			'phone-number': {
-				description: i18n.translate( 'Phone Number' ),
-				rules: [ 'required' ],
-			},
-		},
-		requiredFields
-	);
-}
-
-function creditCardFieldRules( additionalFieldRules = {} ) {
+/**
+ * Returns the credit card validation rule set
+ * @param {object} additionalFieldRules custom validation rules depending on jurisdiction or other variable
+ * @returns {object} the ruleset
+ */
+export function creditCardFieldRules( additionalFieldRules = {} ) {
 	return Object.assign(
 		{
 			name: {
@@ -92,6 +61,21 @@ function creditCardFieldRules( additionalFieldRules = {} ) {
 		},
 		additionalFieldRules
 	);
+}
+
+/**
+ * Returns a validation ruleset to use for the given payment type
+ * @param {object} paymentDetails object containing fieldname/value keypairs
+ * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef
+ * @returns {object|null} the ruleset
+ */
+export function paymentFieldRules( paymentDetails, paymentType ) {
+	switch ( paymentType ) {
+		case 'credit-card':
+			return creditCardFieldRules( getAdditionalFieldRules( paymentDetails ) );
+		default:
+			return null;
+	}
 }
 
 function parseExpiration( value ) {
@@ -172,11 +156,20 @@ validators.validCPF = {
 	},
 };
 
-export function validateCardDetails( cardDetails ) {
-	const rules = creditCardFieldRules( getAdditionalFieldRules( cardDetails ) ),
+/**
+ * Runs payment fields through the relevant validation rules
+ * use these validation rules, for example, in <CreditCardForm />, <PayPalPaymentBox /> and <RedirectPaymentBox />
+ * @param {object} paymentDetails object containing fieldname/value keypairs
+ * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef
+ * @returns {object} validation errors, if any
+ */
+export function validatePaymentDetails( paymentDetails, paymentType = 'credit-card' ) {
+	const rules = paymentFieldRules( paymentDetails, paymentType );
+	let errors = [];
+	if ( rules ) {
 		errors = Object.keys( rules ).reduce( function( allErrors, fieldName ) {
 			const field = rules[ fieldName ],
-				newErrors = getErrors( field, cardDetails[ fieldName ], cardDetails );
+				newErrors = getErrors( field, paymentDetails[ fieldName ], paymentDetails );
 
 			if ( newErrors.length ) {
 				allErrors[ fieldName ] = newErrors;
@@ -184,8 +177,8 @@ export function validateCardDetails( cardDetails ) {
 
 			return allErrors;
 		}, {} );
-
-	return { errors: errors };
+	}
+	return { errors };
 }
 
 /**
@@ -221,12 +214,19 @@ export function getCreditCardType( number ) {
 	return null;
 }
 
-function getErrors( field, value, cardDetails ) {
+/**
+ *
+ * @param {string} field the name of the field
+ * @param {value} value the value of the field
+ * @param {object} paymentDetails object containing fieldname/value keypairs
+ * @returns {array} array of errors found, if any
+ */
+function getErrors( field, value, paymentDetails ) {
 	return compact(
 		field.rules.map( function( rule ) {
 			const validator = getValidator( rule );
 
-			if ( ! validator.isValid( value, cardDetails ) ) {
+			if ( ! validator.isValid( value, paymentDetails ) ) {
 				return validator.error( field.description );
 			}
 		} )
@@ -241,7 +241,7 @@ function getErrors( field, value, cardDetails ) {
  * otherwise `null`
  */
 function getAdditionalFieldRules( { country } ) {
-	if ( isEbanxEnabledForCountry( country ) ) {
+	if ( country && isEbanxCreditCardProcessingEnabledForCountry( country ) ) {
 		return ebanxFieldRules( country );
 	}
 	return null;

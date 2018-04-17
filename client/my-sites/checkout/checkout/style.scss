@@ -854,7 +854,7 @@
 		width: 100px;
 	}
 
-	.checkout__eps{
+	.checkout__eps {
 		width: 70px;
 		margin: -10px 0;
 	}
@@ -880,4 +880,19 @@
 			margin-top: 0;
 		}
 	}
+}
+
+.checkout__form-state-field {
+	flex-basis: calc( 100% );
+	@include breakpoint( '>480px' ) {
+		flex-basis: calc( 50% - 15px );
+	}
+}
+
+.checkout__form-info-text {
+	margin-left: 15px;
+	color: $gray-lighten-10;
+	display: block;
+	font-size: 12px;
+	font-style: italic;
 }
