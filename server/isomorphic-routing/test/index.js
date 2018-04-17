@@ -30,14 +30,14 @@ describe( 'getNormalizedPath', () => {
 		expect( getNormalizedPath( pathname, query ) ).toBe( '/my/path' );
 	} );
 
-	test( 'should return cacheKey for a known query param', () => {
+	test( 'should return normalized path for one query param', () => {
 		const pathname = '/';
 		const query = { cache_me: '1' };
 
 		expect( getNormalizedPath( pathname, query ) ).toBe( '/?cache_me=1' );
 	} );
 
-	test( 'should return cacheKey for multiple known query params', () => {
+	test( 'should return normalized pathname for multiple query params', () => {
 		const pathname = '/';
 		const query = { cache_me: '1', and_me: '2', me_too: '3' };
 
