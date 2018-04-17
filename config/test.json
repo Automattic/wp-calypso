@@ -37,6 +37,7 @@
 		"devdocs/components-usage-stats": false,
 		"google-my-business": false,
 		"help": true,
+		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
 		"jitms": true,
 		"login/native-login-links": true,
