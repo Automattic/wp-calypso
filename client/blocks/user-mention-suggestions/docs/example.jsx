@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,16 +11,12 @@ import { localize } from 'i18n-calypso';
  */
 import UserMentionSuggestionsExampleInput from './example-input';
 
-class UserMentionSuggestionsExample extends Component {
-	render() {
-		return (
-			<div className="docs__design-assets-group">
-				<p>{ this.props.translate( 'Try typing an @username into the text input below.' ) }</p>
-				<UserMentionSuggestionsExampleInput />
-			</div>
-		);
-	}
-}
+const UserMentionSuggestionsExample = ( { translate } ) => (
+	<div className="docs__design-assets-group">
+		<p>{ translate( 'Try typing an @username into the text input below.' ) }</p>
+		<UserMentionSuggestionsExampleInput />
+	</div>
+);
 
 const LocalizedUserMentionSuggestionsExample = localize( UserMentionSuggestionsExample );
 LocalizedUserMentionSuggestionsExample.displayName = 'UserMentionSuggestions';
