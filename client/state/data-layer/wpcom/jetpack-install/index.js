@@ -47,7 +47,7 @@ export const handleError = ( action, error ) => {
 
 	const logToTracks = withAnalytics(
 		recordTracksEvent( 'calypso_jpc_remoteinstall_api_fail', {
-			url: url,
+			url,
 			error: error.error,
 			message: error.message,
 			status: error.status,
