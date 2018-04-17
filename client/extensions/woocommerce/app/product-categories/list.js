@@ -14,9 +14,9 @@ import WindowScroller from 'react-virtualized/WindowScroller';
  * Internal dependencies
  */
 import {
-	areProductCategoriesLoadingIgnoringPage,
+	areAnyProductCategoriesLoading,
 	getProductCategoriesLastPage,
-	getProductCategoriesIgnoringPage,
+	getAllProductCategories,
 	areProductCategoriesLoaded,
 	getTotalProductCategories,
 } from 'woocommerce/state/sites/product-categories/selectors';
@@ -191,9 +191,9 @@ function mapStateToProps( state, ownProps ) {
 	}
 
 	const site = getSelectedSiteWithFallback( state );
-	const loading = areProductCategoriesLoadingIgnoringPage( state, query );
+	const loading = areAnyProductCategoriesLoading( state, query );
 	const isInitialRequestLoaded = areProductCategoriesLoaded( state, query ); // first page request
-	const categories = getProductCategoriesIgnoringPage( state, query );
+	const categories = getAllProductCategories( state, query );
 	const totalCategories = getTotalProductCategories( state, query );
 	const lastPage = getProductCategoriesLastPage( state, query );
 	return {

@@ -64,7 +64,7 @@ export function areProductCategoriesLoading(
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Boolean}       Returns true if currently requesting product categories for a query, excluding all known queried pages.
  */
-export function areProductCategoriesLoadingIgnoringPage(
+export function areAnyProductCategoriesLoading(
 	state,
 	query = {},
 	siteId = getSelectedSiteId( state )
@@ -124,12 +124,8 @@ export function getProductCategories( state, query = {}, siteId = getSelectedSit
  * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @return {Array} List of product categories
  */
-export function getProductCategoriesIgnoringPage(
-	state,
-	query = {},
-	siteId = getSelectedSiteId( state )
-) {
-	const loading = areProductCategoriesLoadingIgnoringPage( state, query, siteId );
+export function getAllProductCategories( state, query = {}, siteId = getSelectedSiteId( state ) ) {
+	const loading = areAnyProductCategoriesLoading( state, query, siteId );
 	if ( loading ) {
 		return [];
 	}

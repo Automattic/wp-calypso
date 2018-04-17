@@ -12,10 +12,10 @@ import { expect } from 'chai';
 import {
 	areProductCategoriesLoaded,
 	areProductCategoriesLoading,
-	areProductCategoriesLoadingIgnoringPage,
+	areAnyProductCategoriesLoading,
 	getProductCategory,
 	getProductCategories,
-	getProductCategoriesIgnoringPage,
+	getAllProductCategories,
 	getProductCategoriesLastPage,
 	getTotalProductCategories,
 } from '../selectors';
@@ -59,24 +59,23 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#areProductCategoriesLoadingIgnoringPage', () => {
+	describe( '#areAnyProductCategoriesLoading', () => {
 		test( 'should be false when state is not available.', () => {
-			expect( areProductCategoriesLoadingIgnoringPage( state, {}, 'site.one' ) ).to.be.false;
+			expect( areAnyProductCategoriesLoading( state, {}, 'site.one' ) ).to.be.false;
 		} );
 
 		test( 'should be true when any page of categories are currently being fetched.', () => {
 			// page 2 is currently being fetched, but this selector ignores page
-			expect( areProductCategoriesLoadingIgnoringPage( state, {}, 'site.two' ) ).to.be.true;
+			expect( areAnyProductCategoriesLoading( state, {}, 'site.two' ) ).to.be.true;
 		} );
 
 		test( 'should be true when categories are currently being fetched, and passed a page parameter.', () => {
 			// page 2 is currently being fetched, but this selector ignores page
-			expect( areProductCategoriesLoadingIgnoringPage( state, { page: 2 }, 'site.two' ) ).to.be
-				.true;
+			expect( areAnyProductCategoriesLoading( state, { page: 2 }, 'site.two' ) ).to.be.true;
 		} );
 
 		test( 'should be false when categories are loaded.', () => {
-			expect( areProductCategoriesLoadingIgnoringPage( state, {}, 'site.three' ) ).to.be.false;
+			expect( areAnyProductCategoriesLoading( state, {}, 'site.three' ) ).to.be.false;
 		} );
 	} );
 
@@ -122,18 +121,18 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getProductCategoriesIgnoringPage()', () => {
+	describe( '#getAllProductCategories()', () => {
 		test( 'should return an empty array if data is not available.', () => {
-			expect( getProductCategoriesIgnoringPage( state, {}, 'site.one' ) ).to.eql( [] );
+			expect( getAllProductCategories( state, {}, 'site.one' ) ).to.eql( [] );
 		} );
 
 		test( 'should return an empty array if data is still loading.', () => {
-			expect( getProductCategoriesIgnoringPage( state, {}, 'site.two' ) ).to.eql( [] );
+			expect( getAllProductCategories( state, {}, 'site.two' ) ).to.eql( [] );
 		} );
 
 		test( 'should get all product categories from specified site', () => {
-			expect( getProductCategoriesIgnoringPage( state, {}, 'site.three' ) ).to.have.lengthOf( 6 );
-			expect( getProductCategoriesIgnoringPage( state, {}, 'site.three' ) ).to.eql( [
+			expect( getAllProductCategories( state, {}, 'site.three' ) ).to.have.lengthOf( 6 );
+			expect( getAllProductCategories( state, {}, 'site.three' ) ).to.eql( [
 				{ id: 1, name: 'cat1', slug: 'cat-1' },
 				{ id: 2, name: 'cat2', slug: 'cat-2' },
 				{ id: 3, name: 'cat3', slug: 'cat-3' },
