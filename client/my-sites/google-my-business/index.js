@@ -9,7 +9,7 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import { makeLayout } from 'controller';
+import { makeLayout, redirectLoggedOut } from 'controller';
 import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
 
@@ -21,6 +21,7 @@ export default function( router ) {
 
 	router(
 		'/google-my-business/select-business-type',
+		redirectLoggedOut,
 		siteSelection,
 		sites,
 		makeLayout,
@@ -28,6 +29,7 @@ export default function( router ) {
 
 	router(
 		'/google-my-business/select-business-type/:site',
+		redirectLoggedOut,
 		siteSelection,
 		selectBusinessType,
 		navigation,
@@ -37,6 +39,7 @@ export default function( router ) {
 	if ( config.isEnabled( 'google-my-business' ) ) {
 		router(
 			'/google-my-business/new',
+			redirectLoggedOut,
 			siteSelection,
 			sites,
 			makeLayout,
@@ -44,6 +47,7 @@ export default function( router ) {
 
 		router(
 			'/google-my-business/new/:site',
+			redirectLoggedOut,
 			siteSelection,
 			newAccount,
 			navigation,
@@ -52,6 +56,7 @@ export default function( router ) {
 
 		router(
 			'/google-my-business/select-location',
+			redirectLoggedOut,
 			siteSelection,
 			sites,
 			makeLayout,
@@ -59,6 +64,7 @@ export default function( router ) {
 
 		router(
 			'/google-my-business/select-location/:site',
+			redirectLoggedOut,
 			siteSelection,
 			selectLocation,
 			navigation,
@@ -67,6 +73,7 @@ export default function( router ) {
 
 		router(
 			'/google-my-business/stats',
+			redirectLoggedOut,
 			siteSelection,
 			sites,
 			makeLayout,
@@ -74,6 +81,7 @@ export default function( router ) {
 
 		router(
 			'/google-my-business/stats/:site',
+			redirectLoggedOut,
 			siteSelection,
 			stats,
 			navigation,
