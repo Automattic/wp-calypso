@@ -1,4 +1,10 @@
 /** @format */
+
+/**
+ * Internal Dependencies
+ */
+import Dispatcher from 'dispatcher';
+
 let reduxStore = null;
 
 export function setReduxStore( store ) {
@@ -25,3 +31,21 @@ export function reduxDispatch( ...args ) {
 	}
 	reduxStore.dispatch( ...args );
 }
+
+function markedFluxAction( action ) {
+	return Object.assign( {}, action, { type: `FLUX_${ action.type }` } );
+}
+
+// this is a Map<ActionType:string, transform:action=>action
+const forwardActionMap = new Map();
+forwardActionMap.set( 'RECEIVE_MEDIA_ITEM', markedFluxAction );
+forwardActionMap.set( 'RECEIVE_MEDIA_ITEMS', markedFluxAction );
+
+function forwardAction( { action = {} } ) {
+	const transform = forwardActionMap.get( action.type );
+	if ( transform ) {
+		reduxDispatch( transform( action ) );
+	}
+}
+
+Dispatcher.register( forwardAction );
