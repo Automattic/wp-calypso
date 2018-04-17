@@ -435,12 +435,20 @@ export function edits( state = {}, action ) {
 				state
 			);
 
-		case POST_EDIT:
-			return mergeIgnoringArrays( {}, state, {
-				[ action.siteId ]: {
-					[ action.postId || '' ]: action.post,
+		case POST_EDIT: {
+			const siteId = action.siteId;
+			const postId = action.postId || '';
+			const postEdits = get( state, [ siteId, postId ] );
+			const mergedEdits = mergeIgnoringArrays( {}, postEdits, action.post );
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ postId ]: mergedEdits,
 				},
-			} );
+			};
+		}
 
 		case EDITOR_START:
 			return Object.assign( {}, state, {
