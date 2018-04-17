@@ -17,9 +17,10 @@ export default class extends React.Component {
 		isWarning: PropTypes.bool,
 		text: PropTypes.node,
 		icon: PropTypes.string,
+		id: PropTypes.string,
 	};
 
-	static defaultProps = { isError: false };
+	static defaultProps = { isError: false, id: null };
 
 	render() {
 		const classes = classNames( {
@@ -32,7 +33,7 @@ export default class extends React.Component {
 
 		return (
 			<div className={ classes } role="alert">
-				<span>
+				<span id={ this.props.id }>
 					<Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } />{' '}
 					{ this.props.text }
 				</span>

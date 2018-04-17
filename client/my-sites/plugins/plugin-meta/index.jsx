@@ -52,7 +52,6 @@ export class PluginMeta extends Component {
 	static propTypes = {
 		siteURL: PropTypes.string,
 		sites: PropTypes.array,
-		notices: PropTypes.object,
 		plugin: PropTypes.object.isRequired,
 		isInstalledOnSite: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
@@ -168,7 +167,6 @@ export class PluginMeta extends Component {
 					<PluginActivateToggle
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						isMock={ this.props.isMock }
 					/>
 				) }
@@ -176,7 +174,6 @@ export class PluginMeta extends Component {
 					<PluginAutoupdateToggle
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						wporg={ this.props.plugin.wporg }
 						isMock={ this.props.isMock }
 					/>
@@ -185,7 +182,6 @@ export class PluginMeta extends Component {
 					<PluginRemoveButton
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						isMock={ this.props.isMock }
 					/>
 				) }
@@ -517,9 +513,7 @@ export class PluginMeta extends Component {
 				plugin.update.new_version
 			) {
 				PluginsActions.updatePlugin( site, plugin );
-				PluginsActions.removePluginsNotices(
-					this.props.notices.completed.concat( this.props.notices.errors )
-				);
+				PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 				analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
 					site: site,

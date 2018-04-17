@@ -42,8 +42,8 @@ describe( 'auth promise', () => {
 			selectedSite.getHelpSelectedSite.mockReturnValue( null );
 		} );
 
-		test( 'should return a fulfilled Promise', () => {
-			expect( getHappychatAuth( state )() ).resolves.toMatchObject( {
+		test( 'should return a fulfilled Promise', async () => {
+			await expect( getHappychatAuth( state )() ).resolves.toMatchObject( {
 				url: config( 'happychat_url' ),
 				user: {
 					signer_user_id: state.users.items[ 3 ].ID,
@@ -68,14 +68,14 @@ describe( 'auth promise', () => {
 			selectedSite.getHelpSelectedSite.mockReturnValue( null );
 		} );
 
-		test( 'should return a rejected Promise', () => {
-			expect( getHappychatAuth( state )() ).rejects.toThrow(
+		test( 'should return a rejected Promise', async () => {
+			await expect( getHappychatAuth( state )() ).rejects.toThrow(
 				'Failed to start an authenticated Happychat session: failed request'
 			);
 		} );
 	} );
 
-	test( 'should return a rejected promise if there is no current user', () => {
+	test( 'should return a rejected promise if there is no current user', async () => {
 		const noUserState = {
 			currentUser: {},
 			users: {},
@@ -85,6 +85,6 @@ describe( 'auth promise', () => {
 				},
 			},
 		};
-		expect( getHappychatAuth( noUserState )() ).rejects.toThrow();
+		await expect( getHappychatAuth( noUserState )() ).rejects.toThrow();
 	} );
 } );

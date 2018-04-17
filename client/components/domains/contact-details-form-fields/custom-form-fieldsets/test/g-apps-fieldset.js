@@ -17,11 +17,11 @@ import GAppsFieldset from '../g-apps-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
+	translate: x => x,
 } ) );
 
 describe( 'Google Apps Address Fieldset', () => {
 	const defaultProps = {
-		countriesList: [ 'ES' ],
 		getFieldProps: name => ( { value: '', name } ),
 	};
 

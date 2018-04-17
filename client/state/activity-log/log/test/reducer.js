@@ -10,11 +10,10 @@ import deepFreeze from 'deep-freeze';
  */
 import { logItems } from '../reducer';
 import ActivityQueryManager from 'lib/query-manager/activity';
-import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const SITE_ID = 123456789;
-const ACTIVITY_ID = 'foobarbaz';
 const ACTIVITY_ITEM = deepFreeze( {
 	activityDate: '2017-08-27T00:00:59+00:00',
 	activityGroup: 'plugin',
@@ -61,57 +60,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				[ SITE_ID ]: populateQueryManager( data, {} ),
 			} );
-		} );
-
-		test( 'should persist state', () => {
-			const original = deepFreeze( {
-				[ SITE_ID ]: populateQueryManager( [ ACTIVITY_ITEM ], {} ),
-			} );
-			const state = logItems( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( original );
-		} );
-
-		test( 'should load valid persisted state', () => {
-			const original = deepFreeze( {
-				[ SITE_ID ]: {
-					data: {
-						items: {
-							[ ACTIVITY_ID ]: ACTIVITY_ITEM,
-						},
-						queries: {},
-					},
-					options: {
-						itemKey: 'activityId',
-					},
-				},
-			} );
-
-			const state = logItems( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( original );
-		} );
-
-		test( 'should not load invalid persisted state', () => {
-			const original = deepFreeze( {
-				[ SITE_ID ]: {
-					data: {
-						items: {
-							[ ACTIVITY_ID ]: {
-								...ACTIVITY_ITEM,
-								activityId: null,
-							},
-						},
-						queries: {},
-					},
-					options: {
-						itemKey: 'activityId',
-					},
-				},
-			} );
-			const state = logItems( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

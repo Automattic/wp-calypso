@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,8 @@ import {
 } from 'state/jetpack-remote-install/actions';
 import { JETPACK_REMOTE_INSTALL } from 'state/action-types';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+
+export const JETPACK_REMOTE_INSTALL_RETRIES = 3;
 
 export const installJetpackPlugin = action =>
 	http(
@@ -29,7 +31,7 @@ export const installJetpackPlugin = action =>
 		action
 	);
 
-export const handleResponse = ( { url }, data ) => {
+export const handleSuccess = ( { url }, data ) => {
 	const logToTracks = withAnalytics(
 		recordTracksEvent( 'calypso_jpc_remote_install_api_response', {
 			remote_site_url: url,
@@ -37,18 +39,46 @@ export const handleResponse = ( { url }, data ) => {
 		} )
 	);
 
-	if ( data.status ) {
-		return logToTracks( jetpackRemoteInstallComplete( url ) );
+	return logToTracks( jetpackRemoteInstallComplete( url ) );
+};
+
+export const handleError = ( action, error ) => {
+	const { url, user, password, meta: { dataLayer } } = action;
+	const { retryCount = 0 } = dataLayer;
+
+	const logToTracks = withAnalytics(
+		recordTracksEvent( 'calypso_jpc_remote_install_api_response', {
+			remote_site_url: url,
+			data: JSON.stringify( error ),
+		} )
+	);
+
+	if ( includes( error.message, 'timed out' ) ) {
+		if ( retryCount < JETPACK_REMOTE_INSTALL_RETRIES ) {
+			return {
+				type: JETPACK_REMOTE_INSTALL,
+				url,
+				user,
+				password,
+				meta: {
+					dataLayer: {
+						retryCount: retryCount + 1,
+						trackRequest: true,
+					},
+				},
+			};
+		}
 	}
-	return logToTracks( jetpackRemoteInstallUpdateError( url, data.error.code, data.error.message ) );
+
+	return logToTracks( jetpackRemoteInstallUpdateError( url, error.error, error.message ) );
 };
 
 export default {
 	[ JETPACK_REMOTE_INSTALL ]: [
 		dispatchRequestEx( {
 			fetch: installJetpackPlugin,
-			onSuccess: handleResponse,
-			onError: noop,
+			onSuccess: handleSuccess,
+			onError: handleError,
 		} ),
 	],
 };
