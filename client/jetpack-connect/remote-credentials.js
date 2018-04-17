@@ -34,6 +34,7 @@ import {
 } from 'state/jetpack-remote-install/actions';
 import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from './constants';
 import {
 	ACTIVATION_FAILURE,
@@ -60,6 +61,9 @@ export class OrgCredentialsForm extends Component {
 		}
 		this.setState( { isSubmitting: true } );
 
+		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_submit', {
+			url: siteToConnect,
+		} );
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
@@ -79,6 +83,10 @@ export class OrgCredentialsForm extends Component {
 				page.redirect( '/jetpack/connect' );
 			}
 		}
+
+		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_view', {
+			url: siteToConnect,
+		} );
 	}
 
 	componentDidUpdate() {
@@ -349,5 +357,6 @@ export default connect(
 	{
 		jetpackRemoteInstall,
 		jetpackRemoteInstallUpdateError,
+		recordTracksEvent,
 	}
 )( localize( OrgCredentialsForm ) );
