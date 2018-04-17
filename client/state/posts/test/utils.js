@@ -19,6 +19,7 @@ import {
 	getSerializedPostsQueryWithoutPage,
 	getTermIdsFromEdits,
 	isTermsEqual,
+	applyPostEdits,
 	mergePostEdits,
 } from '../utils';
 
@@ -405,6 +406,124 @@ describe( 'utils', () => {
 
 			expect( merged ).to.eql( {
 				discussion: { comments_open: false, pings_open: false },
+			} );
+		} );
+
+		test( 'should replace previous metadata edit', () => {
+			const merged = mergePostEdits(
+				deepFreeze( {
+					metadata: [ { key: 'geo_latitude', operation: 'delete' } ],
+				} ),
+				{
+					metadata: [ { key: 'geo_latitude', value: '20', operation: 'update' } ],
+				}
+			);
+
+			expect( merged ).to.eql( {
+				metadata: [ { key: 'geo_latitude', value: '20', operation: 'update' } ],
+			} );
+		} );
+
+		test( 'should add new metadata edit', () => {
+			const merged = mergePostEdits(
+				deepFreeze( {
+					metadata: [ { key: 'geo_latitude', value: '10', operation: 'update' } ],
+				} ),
+				{
+					metadata: [ { key: 'geo_longitude', value: '20', operation: 'update' } ],
+				}
+			);
+
+			expect( merged ).to.eql( {
+				metadata: [
+					{ key: 'geo_latitude', value: '10', operation: 'update' },
+					{ key: 'geo_longitude', value: '20', operation: 'update' },
+				],
+			} );
+		} );
+	} );
+
+	describe( 'applyPostEdits', () => {
+		test( 'should modify metadata', () => {
+			const edited = applyPostEdits(
+				deepFreeze( {
+					metadata: [ { key: 'geo_latitude', value: '10' } ],
+				} ),
+				{
+					metadata: [ { key: 'geo_latitude', value: '20', operation: 'update' } ],
+				}
+			);
+
+			expect( edited ).to.eql( {
+				metadata: [ { key: 'geo_latitude', value: '20' } ],
+			} );
+		} );
+
+		test( 'should add metadata', () => {
+			const edited = applyPostEdits(
+				deepFreeze( {
+					metadata: [ { key: 'geo_latitude', value: '10' } ],
+				} ),
+				{
+					metadata: [ { key: 'geo_longitude', value: '20', operation: 'update' } ],
+				}
+			);
+
+			expect( edited ).to.eql( {
+				metadata: [ { key: 'geo_latitude', value: '10' }, { key: 'geo_longitude', value: '20' } ],
+			} );
+		} );
+
+		test( 'should remove metadata', () => {
+			const edited = applyPostEdits(
+				deepFreeze( {
+					metadata: [ { key: 'geo_latitude', value: '10' }, { key: 'geo_longitude', value: '20' } ],
+				} ),
+				{
+					metadata: [ { key: 'geo_longitude', operation: 'delete' } ],
+				}
+			);
+
+			expect( edited ).to.eql( {
+				metadata: [ { key: 'geo_latitude', value: '10' } ],
+			} );
+		} );
+
+		test( 'should return unchanged object on noop update', () => {
+			const post = deepFreeze( {
+				metadata: [ { key: 'geo_latitude', value: '10' } ],
+			} );
+
+			const edited = applyPostEdits( post, {
+				metadata: [ { key: 'geo_latitude', value: '10', operation: 'update' } ],
+			} );
+
+			expect( edited ).to.eql( post );
+		} );
+
+		test( 'should return unchanged object on noop delete', () => {
+			const post = deepFreeze( {
+				metadata: [ { key: 'geo_latitude', value: '10' } ],
+			} );
+
+			const edited = applyPostEdits( post, {
+				metadata: [ { key: 'geo_longitude', value: '10', operation: 'delete' } ],
+			} );
+
+			expect( edited ).to.eql( post );
+		} );
+
+		test( 'should return metadata array after applying edits to a false value', () => {
+			const post = deepFreeze( {
+				metadata: false, // value returned by REST API for a new post
+			} );
+
+			const edited = applyPostEdits( post, {
+				metadata: [ { key: 'geo_latitude', value: '10', operation: 'update' } ],
+			} );
+
+			expect( edited ).to.eql( {
+				metadata: [ { key: 'geo_latitude', value: '10' } ],
 			} );
 		} );
 	} );

@@ -21,6 +21,8 @@ import {
 	deletePost,
 	restorePost,
 	addTermForPost,
+	updatePostMetadata,
+	deletePostMetadata,
 } from '../actions';
 import PostQueryManager from 'lib/query-manager/post';
 import {
@@ -560,7 +562,7 @@ describe( 'actions', () => {
 			};
 		};
 
-		test( 'should dispatch a EDIT_POST event with the new term', () => {
+		test( 'should dispatch a POST_EDIT event with the new term', () => {
 			addTermForPost( 2916284, 'jetpack-portfolio', { ID: 123, name: 'ribs' }, 841 )(
 				spy,
 				getState
@@ -598,6 +600,74 @@ describe( 'actions', () => {
 		test( 'should not dispatch anything if the term is temporary', () => {
 			addTermForPost( 2916284, 'jetpack-portfolio', { id: 'temporary' }, 841 )( spy, getState );
 			expect( spy ).not.to.have.been.called;
+		} );
+	} );
+
+	describe( '#updateMetadata()', () => {
+		const siteId = 1;
+		const postId = 2;
+
+		test( 'should dispatch a post edit with a new metadata value', () => {
+			const action = updatePostMetadata( siteId, postId, 'foo', 'bar' );
+
+			expect( action ).to.eql( {
+				type: 'POST_EDIT',
+				siteId,
+				postId,
+				post: {
+					metadata: [ { key: 'foo', value: 'bar', operation: 'update' } ],
+				},
+			} );
+		} );
+
+		test( 'accepts an object of key value pairs', () => {
+			const action = updatePostMetadata( siteId, postId, {
+				foo: 'bar',
+				baz: 'qux',
+			} );
+
+			expect( action ).to.eql( {
+				type: 'POST_EDIT',
+				siteId,
+				postId,
+				post: {
+					metadata: [
+						{ key: 'foo', value: 'bar', operation: 'update' },
+						{ key: 'baz', value: 'qux', operation: 'update' },
+					],
+				},
+			} );
+		} );
+	} );
+
+	describe( '#deleteMetadata()', () => {
+		const siteId = 1;
+		const postId = 2;
+
+		test( 'should dispatch a post edit with a deleted metadata', () => {
+			const action = deletePostMetadata( siteId, postId, 'foo' );
+
+			expect( action ).to.eql( {
+				type: 'POST_EDIT',
+				siteId,
+				postId,
+				post: {
+					metadata: [ { key: 'foo', operation: 'delete' } ],
+				},
+			} );
+		} );
+
+		test( 'should accept an array of metadata keys to delete', () => {
+			const action = deletePostMetadata( siteId, postId, [ 'foo', 'bar' ] );
+
+			expect( action ).to.eql( {
+				type: 'POST_EDIT',
+				siteId,
+				postId,
+				post: {
+					metadata: [ { key: 'foo', operation: 'delete' }, { key: 'bar', operation: 'delete' } ],
+				},
+			} );
 		} );
 	} );
 } );
