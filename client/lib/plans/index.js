@@ -375,14 +375,14 @@ export const isPlanFeaturesEnabled = () => {
 	return isEnabled( 'manage/plan-features' );
 };
 
-export function plansLink( url, site, intervalType ) {
+export function plansLink( url, siteSlug, intervalType ) {
 	const parsedUrl = urlParse( url );
 	if ( 'monthly' === intervalType ) {
 		parsedUrl.pathname += '/monthly';
 	}
 
-	if ( site && site.slug ) {
-		parsedUrl.pathname += '/' + site.slug;
+	if ( siteSlug ) {
+		parsedUrl.pathname += '/' + siteSlug;
 	}
 
 	return urlFormat( parsedUrl );
