@@ -18,7 +18,6 @@ import userModule from 'lib/user';
 import { loadScript as loadScriptCallback } from 'lib/load-script';
 import { shouldSkipAds } from 'lib/analytics/utils';
 import { promisify } from '../../utils';
-import { hasScriptElement } from 'lib/load-script/dom-operations';
 import { isGoogleAnalyticsAllowed } from 'lib/analytics';
 
 /**
@@ -259,27 +258,15 @@ function setupOutbrainGlobal() {
 const loadScript = promisify( loadScriptCallback );
 
 /**
- * Quick check to identify if Google Analytics is loaded.
+ * Loading Google analytics independently from the rest of the tracking scripts.
  *
- * Warning: this is not enough to verify if Google Analytics WILL load/is in progress of loading.
+ * Why? Because ad-tracking and google-analytics have two different switches and we
+ * would probably not want one to stop the other.
  *
- * @returns {boolean} True when the GA objects are already loaded in memory
+ * Moreover, analytics gets loaded with the page load, while the tracking is lazy-loaded
+ * during actions.
  */
-function isGoogleAnalyticsInitialized() {
-	return ( window._gat && window._gat._getTracker ) || window.urchinTracker;
-}
-
-/**
- * GA may be loaded both directly via a HTML script that is already rendered, or dynamically via the current file.
- *
- * First we check if the script is already loaded or planned to load, such that we don't add it twice.
- */
-async function loadGoogleAnalyticsIfNotLoaded() {
-	if ( isGoogleAnalyticsInitialized() || hasScriptElement( GOOGLE_ANALYTICS_SCRIPT_URL ) ) {
-		debug( 'GA script already loaded.' );
-		return;
-	}
-
+async function loadGoogleAnalytics() {
 	try {
 		await loadScript( GOOGLE_ANALYTICS_SCRIPT_URL );
 	} catch ( error ) {
@@ -289,8 +276,8 @@ async function loadGoogleAnalyticsIfNotLoaded() {
 
 if ( isGoogleAnalyticsAllowed() ) {
 	window.addEventListener
-		? window.addEventListener( 'load', loadGoogleAnalyticsIfNotLoaded, false )
-		: window.attachEvent( 'onload', loadGoogleAnalyticsIfNotLoaded );
+		? window.addEventListener( 'load', loadGoogleAnalytics, false )
+		: window.attachEvent( 'onload', loadGoogleAnalytics );
 }
 
 async function loadTrackingScripts( callback ) {

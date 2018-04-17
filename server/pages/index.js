@@ -390,8 +390,6 @@ function setUpCSP( req, res, next ) {
 	const originalUrlPathname = req.originalUrl.split( '?' )[ 0 ];
 
 	// We only setup CSP for /log-in* for now
-	// If you change this, please look at the usages of analyticsScriptNonce and see how the client-side rendering
-	// would be affected.
 	if ( ! /^\/log-in/.test( originalUrlPathname ) ) {
 		next();
 		return;
@@ -407,7 +405,6 @@ function setUpCSP( req, res, next ) {
 	];
 
 	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
-	req.context.analyticsScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
 
 	const policy = {
 		'default-src': [ "'self'" ],
@@ -420,7 +417,7 @@ function setUpCSP( req, res, next ) {
 			'*.wordpress.com',
 			'https://apis.google.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
-			`'nonce-${ req.context.analyticsScriptNonce }'`,
+			'www.google-analytics.com',
 			...inlineScripts.map( hash => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
