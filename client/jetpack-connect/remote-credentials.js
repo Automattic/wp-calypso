@@ -104,7 +104,7 @@ export class OrgCredentialsForm extends Component {
 		const form = document.createElement( 'form' );
 		form.setAttribute( 'method', 'post' );
 
-		const redirectUrl = addCalypsoEnvQueryArg( REMOTE_PATH_AUTH );
+		const redirectUrl = addCalypsoEnvQueryArg( siteToConnect + REMOTE_PATH_AUTH );
 		const actionUrl = addQueryArgs( { redirect_to: redirectUrl }, siteToConnect + '/wp-login.php' );
 		form.setAttribute( 'action', actionUrl );
 
