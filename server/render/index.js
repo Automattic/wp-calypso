@@ -7,7 +7,7 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { every, get, includes, isEmpty, pick } from 'lodash';
+import { get, intersection, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -127,15 +127,13 @@ export function render( element, key = JSON.stringify( element ), req ) {
  *
  * If any key in the query is not present in the whitelist, it is not cacheable.
  *
- * @param  {?Object}        query                Query object
- * @param  {?Array<string>} whitelistedQueryKeys Whitelisted keys
- * @return {boolean}                             True if all query keys are whitelisted
+ * @param  {Object}        query                Query object
+ * @param  {Array<string>} whitelistedQueryKeys Whitelisted keys
+ * @return {boolean}                            True if all query keys are whitelisted
  */
-export function isCacheableQuery( query = null, whitelistedQueryKeys = null ) {
-	if ( isEmpty( query ) ) {
-		return true;
-	}
-	return every( Object.keys( query ), key => includes( whitelistedQueryKeys, key ) );
+export function isCacheableQuery( query = {}, whitelistedQueryKeys = [] ) {
+	const queryKeys = Object.keys( query );
+	return queryKeys.length === intersection( queryKeys, whitelistedQueryKeys ).length;
 }
 
 export function serverRender( req, res ) {
