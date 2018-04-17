@@ -531,6 +531,15 @@ $devdocs-max-width: 720px;
 	}
 }
 
+.design__typography-code-example {
+	font-family: $code;
+	font-size: 15px;
+}
+
+.design__typography-modular-scale {
+	max-width: 150px;
+}
+
 // At the end of documentation and reademe's
 a.devdocs__doc-edit-link,
 a.docs-example__doc-edit-link {
