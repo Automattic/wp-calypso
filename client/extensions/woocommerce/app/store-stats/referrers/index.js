@@ -24,6 +24,8 @@ import SearchCard from 'components/search-card';
 import StoreStatsReferrerWidget from 'woocommerce/app/store-stats/store-stats-referrer-widget';
 import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
 import { getStoreReferrers } from 'state/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 const STAT_TYPE = 'statsStoreReferrers';
 const LIMIT = 10;
@@ -109,6 +111,10 @@ class Referrers extends Component {
 		}`;
 		return (
 			<Main className="referrers woocommerce" wideLayout>
+				<PageViewTracker
+					path={ `/store/stats/referrers/${ unit }/:site` }
+					title={ `Store > Stats > Referrers > ${ titlecase( unit ) }` }
+				/>
 				{ siteId && <QuerySiteStats statType={ STAT_TYPE } siteId={ siteId } query={ query } /> }
 				<StoreStatsPeriodNav
 					type="referrers"

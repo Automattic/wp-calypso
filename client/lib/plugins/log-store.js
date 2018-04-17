@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { clone, findIndex, indexOf, isArray, pullAt, reject } from 'lodash';
+import { clone, findIndex, indexOf, isArray, pullAt } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 
@@ -44,22 +44,19 @@ function addLog( status, action, site, plugin, error ) {
 	}
 }
 
-function removeLog( log ) {
-	debug( 'removing log:', log );
-	switch ( log.status ) {
+function clearLog( status ) {
+	debug( 'clearing log:', status );
+	switch ( status ) {
 		case 'error':
-			_errors = reject( _errors, log );
-			debug( 'current errors:', _errors );
+			_errors = [];
 			break;
 
 		case 'inProgress':
-			_inProgress = reject( _inProgress, log );
-			debug( 'current in progress:', _inProgress );
+			_inProgress = [];
 			break;
 
 		case 'completed':
-			_completed = reject( _completed, log );
-			debug( 'current completed:', _completed );
+			_completed = [];
 			break;
 	}
 }
@@ -136,7 +133,7 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 	debug( 'register event Type', action.type, payload );
 	switch ( action.type ) {
 		case 'REMOVE_PLUGINS_NOTICES':
-			action.logs.forEach( removeLog );
+			action.logs.forEach( clearLog );
 			LogStore.emitChange();
 			break;
 		case 'UPDATE_PLUGIN':

@@ -5,5 +5,45 @@
 
 	@include breakpoint( '<660px' ) {
 		flex-flow: wrap;
+
+		.featured-domain-suggestion .domain-suggestion__action.button.is-primary {
+			width: initial;
+		}
 	}
+}
+
+@include breakpoint( '>660px' ) {
+	.domain-registration-suggestion__title {
+		.featured-domain-suggestions--title-in-18em & {
+			font-size: 1.8em;
+		}
+		.featured-domain-suggestions--title-in-16em & {
+			font-size: 1.6em;
+		}
+		.featured-domain-suggestions--title-in-14em & {
+			font-size: 1.4em;
+		}
+		.featured-domain-suggestions--title-in-12em & {
+			font-size: 1.2em;
+		}
+		.featured-domain-suggestions--title-in-10em & {
+			font-size: 1em;
+		}
+	}
+
+	.featured-domain-suggestions--title-cases-overflow {
+		flex-wrap: wrap;
+
+		.featured-domain-suggestion {
+			margin-top: 0;
+		}
+
+		.featured-domain-suggestion .domain-suggestion__action.button.is-primary {
+			width: initial;
+		}
+	}
+}
+
+.main.domain-search-page-wrapper .featured-domain-suggestions {
+	flex-wrap: wrap;
 }

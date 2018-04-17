@@ -3,18 +3,45 @@
 .activity-log__wrapper {
 	position: relative;
 
-	&:before {
+	&:before,
+	&:after {
 		content: '';
 		position: absolute;
-			top: 0;
 			left: 33px;
-		height: 100%;
 		width: 2px;
-		background: $gray-lighten-20;
 
 		@include breakpoint( "<480px" ) {
 			left: 25px;
 		}
+	}
+
+	&:before {
+		top: 0;
+		height: 100%;
+		z-index: -2;
+		background: $gray-lighten-20;
+	}
+
+	&:after {
+		bottom: 0;
+		height: 16px;
+		z-index: -1;
+		background: blue;
+		background: linear-gradient(
+			transparentize( $gray-light, 1 ),
+			$gray-light
+		);
+	}
+}
+
+.activity-log__time-period {
+	background: $gray-light;
+	font-weight: 500;
+	margin: 16px 0 24px;
+	padding: 6px 0 8px;
+
+	@include breakpoint( "<660px" ) {
+		margin-left: 10px;
 	}
 }
 
@@ -46,4 +73,8 @@
 .activity-log__empty-day-events {
 	font-size: 12px;
 	color: $gray-text-min;
+}
+
+.activity-log__pagination {
+	margin: 14px 0 48px;
 }

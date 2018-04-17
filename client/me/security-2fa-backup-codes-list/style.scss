@@ -20,7 +20,7 @@
 	}
 }
 
-@media (max-width: 480px) {
+@include breakpoint( '<480px' ) {
 	.security-2fa-backup-codes-list__btn-group .button {
 		display: inline-block;
 	}

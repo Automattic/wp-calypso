@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
+import PlansExtendedInfo from './plans-extended-info';
 import PlansSkipButton from './plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
@@ -85,6 +87,12 @@ class PlansLanding extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
+	handleInfoButtonClick = info => () => {
+		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
+			help_type: info,
+		} );
+	};
+
 	render() {
 		const { interval, requestingSites, site, url } = this.props;
 
@@ -107,6 +115,7 @@ class PlansLanding extends Component {
 					onSelect={ this.storeSelectedPlan }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } />
+					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton eventName="calypso_jpc_planslanding_chat_initiated">
 							<HelpButton onClick={ this.handleHelpButtonClick } />
@@ -131,4 +140,4 @@ export default connect(
 	{
 		recordTracksEvent,
 	}
-)( PlansLanding );
+)( localize( PlansLanding ) );

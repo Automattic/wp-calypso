@@ -22,7 +22,6 @@ import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { getMimePrefix } from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
-import PostActions from 'lib/posts/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -32,6 +31,7 @@ import {
 	fieldUpdate,
 	settingsUpdate,
 } from 'state/ui/editor/contact-form/actions';
+import { blockSave } from 'state/ui/editor/save-blockers/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
@@ -476,7 +476,7 @@ export class EditorHtmlToolbar extends Component {
 			// For single image upload, insert into post content, blocking save
 			// until the image has finished upload
 			if ( selectedItems[ 0 ].transient ) {
-				PostActions.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
+				this.props.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
 			}
 
 			this.onInsertMedia( markup.get( site, selectedItems[ 0 ] ) );
@@ -699,6 +699,7 @@ const mapStateToProps = state => ( {
 } );
 
 const mapDispatchToProps = {
+	blockSave,
 	fieldAdd,
 	fieldRemove,
 	fieldUpdate,

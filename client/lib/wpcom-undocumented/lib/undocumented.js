@@ -2225,22 +2225,17 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
  * Check different info about WordPress and Jetpack status on a url
  *
  * @param {String} targetUrl - The url of the site to check
- * @param {String} filters - Comma separated string with the filters to run
  * @returns {Promise}  promise
  */
-Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
+Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 	const parsedUrl = url.parse( targetUrl );
 	let endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
-	let params = {
-		filters: filters,
-		apiVersion: '1.1',
-	};
 
 	if ( parsedUrl.path && parsedUrl.path !== '/' ) {
 		endpointUrl += parsedUrl.path.replace( /\//g, '::' );
 	}
 
-	return this.wpcom.req.get( `${ endpointUrl }`, params );
+	return this.wpcom.req.get( endpointUrl );
 };
 
 /**
@@ -2494,11 +2489,29 @@ Undocumented.prototype.getRequestSiteRenameNonce = function( siteId ) {
 };
 
 /**
- * Request a new .wordpress.com subdomain change with the option to discard the current.
+ * Request server-side validation (including an availibility check) of the given site address.
  *
  * @param {int} [siteId] The siteId for which to rename
- * @param {object} [blogname]	The desired new subdomain
- * @param {bool} [discard]			Should the old blog name be discarded?
+ * @param {object} [siteAddress]	The site address to validate
+ * @returns {Promise}  A promise
+ */
+Undocumented.prototype.checkSiteAddressValidation = function( siteId, siteAddress ) {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/site-rename/validate`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{},
+		{ blogname: siteAddress }
+	);
+};
+
+/**
+ * Request a new .wordpress.com site address change with the option to discard the current.
+ *
+ * @param {int} [siteId] The siteId for which to rename
+ * @param {object} [blogname]	The desired new site address
+ * @param {bool} [discard]			Should the old site address name be discarded?
  * @param {string} [nonce]		A nonce provided by the API
  * @returns {Promise}  A promise
  */
