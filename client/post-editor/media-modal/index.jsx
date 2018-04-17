@@ -99,7 +99,7 @@ export class EditorMediaModal extends Component {
 	};
 
 	constructor( props ) {
-		super( ...props );
+		super( props );
 		this.state = this.getDefaultState( props );
 	}
 
