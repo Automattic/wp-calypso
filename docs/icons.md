@@ -4,7 +4,7 @@ This document will cover how to use icons in Calypso, as well as how to create i
 
 ## Gridicons
 
-[Gridicons](https://github.com/automattic/gridicons) is the brand new icon set designed from the bottom up for Calypso. It features a consistent style. There's a gallery with all the available icons in https://automattic.github.io/gridicons/.
+[Gridicons](https://github.com/automattic/gridicons) is the icon set designed for Calypso. There's a gallery with all the available icons at https://automattic.github.io/gridicons/.
 
 Gridicons are born with a 24px base grid. Strokes are 2px thick and icons are solid. If an icon is hollow, it generally means the "inactive" version of that icon. For example an outline bookmark icon becomes solid once clicked.
 
