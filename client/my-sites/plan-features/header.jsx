@@ -345,12 +345,12 @@ export default connect( ( state, ownProps ) => {
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 	const isYearly = !! ownProps.relatedMonthlyPlan;
-	return Object.assign( {}, ownProps, {
+	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isYearly,
 		relatedYearlyPlan: isYearly
 			? null
 			: getPlanBySlug( state, getYearlyPlanByMonthly( ownProps.planType ) ),
-	} );
+	};
 } )( localize( PlanFeaturesHeader ) );
