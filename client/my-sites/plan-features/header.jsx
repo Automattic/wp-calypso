@@ -340,17 +340,14 @@ PlanFeaturesHeader.defaultProps = {
 	isSiteAT: false,
 };
 
-export default connect( ( state, ownProps ) => {
-	const { isInSignup } = ownProps;
+export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) => {
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-	const isYearly = !! ownProps.relatedMonthlyPlan;
+	const isYearly = !! relatedMonthlyPlan;
 	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isYearly,
-		relatedYearlyPlan: isYearly
-			? null
-			: getPlanBySlug( state, getYearlyPlanByMonthly( ownProps.planType ) ),
+		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 	};
 } )( localize( PlanFeaturesHeader ) );
