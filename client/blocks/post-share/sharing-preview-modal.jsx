@@ -15,7 +15,7 @@ const SharingPreviewModal = ( props ) => {
 	const {
 		isVisible,
 		onClose,
-		...previewProps,
+		...previewProps
 	} = props;
 
 	return (

@@ -14,11 +14,13 @@ import { localize } from 'i18n-calypso';
 import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import isEligibleForSpringDiscount from 'state/selectors/is-current-user-eligible-for-spring-discount';
 import { domainManagementList } from 'my-sites/domains/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { canCurrentUser, isDomainOnlySite, isEligibleForFreeToPaidUpsell } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
+import QueryActivePromotions from 'components/data/query-active-promotions';
 import {
 	isStarted as isJetpackPluginsStarted,
 	isFinished as isJetpackPluginsFinished,
@@ -105,6 +107,24 @@ class SiteNotice extends React.Component {
 		);
 	}
 
+	freeToPaidPlan30PercentOffNotice() {
+		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
+			return null;
+		}
+
+		const { site } = this.props;
+
+		return (
+			<SidebarBanner
+				ctaName="free-to-paid-sidebar"
+				ctaText={ 'Upgrade' }
+				href={ `/plans/${ site.slug }?sale` }
+				icon="info-outline"
+				text={ '30% Off All Plans' } // no translate() since we're launching this just for EN audience
+			/>
+		);
+	}
+
 	jetpackPluginsSetupNotice() {
 		if (
 			! this.props.pausedJetpackPluginsSetup ||
@@ -138,7 +158,10 @@ class SiteNotice extends React.Component {
 		}
 		return (
 			<div className="site__notices">
-				{ this.freeToPaidPlanNotice() }
+				<QueryActivePromotions />
+				{ this.props.isEligibleForSpringDiscount
+					? this.freeToPaidPlan30PercentOffNotice()
+					: this.freeToPaidPlanNotice() }
 				<DomainToPaidPlanNotice />
 				{ this.getSiteRedirectNotice( site ) }
 				<QuerySitePlans siteId={ site.ID } />
@@ -155,6 +178,7 @@ export default connect(
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
+			isEligibleForSpringDiscount: isEligibleForSpringDiscount( state, siteId ),
 			hasDomainCredit: hasDomainCredit( state, siteId ),
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 			pausedJetpackPluginsSetup:

@@ -37,6 +37,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/api-cache": true,
+		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,

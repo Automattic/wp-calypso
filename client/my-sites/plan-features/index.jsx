@@ -24,6 +24,7 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesSummary from './summary';
 import SpinnerLine from 'components/spinner-line';
+import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest, getABTestVariation } from 'lib/abtest';
 import { getCurrentUserCurrencyCode, getCurrentUserId } from 'state/current-user/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
@@ -31,6 +32,7 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
+import isEligibleForSpringDiscount from 'state/selectors/is-current-user-eligible-for-spring-discount';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
@@ -104,9 +106,11 @@ class PlanFeatures extends Component {
 
 		return (
 			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
+				<QueryActivePromotions />
 				{ showModifiedPricingDisplay && ! site.jetpack && this.renderCreditNotice() }
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
+					{ this.render30PercentOffNotice() }
 					<div className="plan-features__content">
 						{ mobileView }
 						<table className={ tableClasses }>
@@ -162,6 +166,37 @@ class PlanFeatures extends Component {
 						},
 					}
 				) }
+			</Notice>,
+			bannerContainer
+		);
+	}
+
+	render30PercentOffNotice() {
+		const {
+			canPurchase,
+			hasPlaceholders,
+			withSaleInfo,
+			isEligibleForSpringDiscount: eligible,
+		} = this.props;
+		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
+
+		if ( ! bannerContainer ) {
+			return false;
+		}
+
+		if ( ! eligible || ! withSaleInfo || hasPlaceholders || ! canPurchase ) {
+			return ReactDOM.createPortal( <div />, bannerContainer );
+		}
+
+		return ReactDOM.createPortal(
+			<Notice
+				className="plan-features__notice-credits"
+				showDismiss={ false }
+				icon="info-outline"
+				status="is-success"
+			>
+				{ /* no translate() since we're launching this just for EN audience */ }
+				{ 'Enter coupon code “SPRING30” during checkout to claim your 30% discount' }
 			</Notice>,
 			bannerContainer
 		);
@@ -830,6 +865,8 @@ export default connect(
 			showModifiedPricingDisplay,
 			sitePlan,
 			siteType,
+
+			isEligibleForSpringDiscount: isEligibleForSpringDiscount( state ),
 		};
 	},
 	{

@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 1`] = `"/"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 2`] = `"/?a=query"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 3`] = `"/?%3Ftricky%3Dquery="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 4`] = `"/?key=%3Dtricky%26value%3D%3B%29"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 5`] = `"/?emptyValue="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 6`] = `"/?nullValue="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 7`] = `"/shortpath"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 8`] = `"/shortpath?a=query"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 9`] = `"/shortpath?%3Ftricky%3Dquery="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 10`] = `"/shortpath?key=%3Dtricky%26value%3D%3B%29"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 11`] = `"/shortpath?emptyValue="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 12`] = `"/shortpath?nullValue="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 13`] = `"/a/longer/path"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 14`] = `"/a/longer/path?a=query"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 15`] = `"/a/longer/path?%3Ftricky%3Dquery="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 16`] = `"/a/longer/path?key=%3Dtricky%26value%3D%3B%29"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 17`] = `"/a/longer/path?emptyValue="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 18`] = `"/a/longer/path?nullValue="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 19`] = `"/specialchars/%2F%3F%26%3D%25"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 20`] = `"/specialchars/%2F%3F%26%3D%25?a=query"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 21`] = `"/specialchars/%2F%3F%26%3D%25?%3Ftricky%3Dquery="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 22`] = `"/specialchars/%2F%3F%26%3D%25?key=%3Dtricky%26value%3D%3B%29"`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 23`] = `"/specialchars/%2F%3F%26%3D%25?emptyValue="`;
+
+exports[`getNormalizedPath should return expected results for a variety of inputs 24`] = `"/specialchars/%2F%3F%26%3D%25?nullValue="`;
