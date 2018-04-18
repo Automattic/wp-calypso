@@ -35,10 +35,10 @@
 }
 
 .activity-log__time-period {
+	margin: 8px 0;
+	padding: 6px 0 4px;
 	background: $gray-light;
 	font-weight: 500;
-	margin: 16px 0 24px;
-	padding: 6px 0 8px;
 
 	@include breakpoint( "<660px" ) {
 		margin-left: 10px;
