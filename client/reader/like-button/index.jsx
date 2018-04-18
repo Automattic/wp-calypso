@@ -15,8 +15,6 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { getPostByKey } from 'state/reader/posts/selectors';
 
 class ReaderLikeButton extends React.Component {
-	state = { hello: 5 };
-
 	recordLikeToggle = liked => {
 		const post =
 			this.props.post ||
