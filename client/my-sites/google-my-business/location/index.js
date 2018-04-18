@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
-import LocationType from './location-type';
 
 function GoogleMyBusinessLocation( { children, isCompact, location, translate } ) {
 	const classes = classNames( 'gmb-location', { 'is-compact': isCompact } );
@@ -22,11 +21,11 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 	return (
 		<Card className={ classes }>
 			<div className="gmb-location__content">
-				{ location.photo ? (
+				{ location.picture ? (
 					<img
-						alt={ translate( 'Business profile photo' ) }
-						className="gmb-location__photo"
-						src={ location.photo }
+						alt={ translate( 'Business profile picture' ) }
+						className="gmb-location__picture"
+						src={ location.picture }
 					/>
 				) : (
 					<div className="gmb-location__logo">
@@ -43,7 +42,11 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 
 					{ location.verified && (
 						<div className="gmb-location__verified">
-							<Gridicon className="gmb-location__verified-icon" icon="checkmark-circle" size={ 18 } />{ ' ' }
+							<Gridicon
+								className="gmb-location__verified-icon"
+								icon="checkmark-circle"
+								size={ 18 }
+							/>{' '}
 							{ translate( 'Verified' ) }
 						</div>
 					) }
@@ -58,7 +61,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 GoogleMyBusinessLocation.propTypes = {
 	children: PropTypes.node,
 	isCompact: PropTypes.bool,
-	location: LocationType.isRequired,
+	location: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 

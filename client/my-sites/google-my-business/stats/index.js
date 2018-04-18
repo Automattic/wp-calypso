@@ -17,7 +17,6 @@ import DocumentHead from 'components/data/document-head';
 import FakeData from './fake-data';
 import Notice from 'components/notice';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
-import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
 import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import Main from 'components/main';
@@ -30,7 +29,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
-		locationData: GoogleMyBusinessLocationType.isRequired,
+		locationData: PropTypes.object.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
