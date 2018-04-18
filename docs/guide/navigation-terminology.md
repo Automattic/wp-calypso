@@ -1,8 +1,6 @@
-# Glossary of Terms
+# Navigation Terminology
 
-This is a glossary of terms used in Calypso, and what they mean.
-
-## Calypso Interface
+This is a glossary of navigation terminology used in Calypso.
 
 **Masterbar**
 

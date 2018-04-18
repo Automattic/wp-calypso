@@ -23,4 +23,4 @@ And this is how it translates on multiple platforms:
 
 It's exactly the same structure, with the ideal balance between platform standards and the WordPress.com brand.
 
-Previous: [The Technology Behind Calypso](tech-behind-calypso.md) Next: [Glossary of Terms](glossary.md)
+Previous: [The Technology Behind Calypso](tech-behind-calypso.md) Next: [Navigation Terminology](navigation-terminology.md)
