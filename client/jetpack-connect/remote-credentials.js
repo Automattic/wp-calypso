@@ -168,7 +168,7 @@ export class OrgCredentialsForm extends Component {
 		) {
 			return ACTIVATION_FAILURE;
 		}
-		if ( installError === 'LOGIN_FAILURE' ) {
+		if ( installError === 'LOGIN_FAILURE' || installError === 'INVALID_CREDENTIALS' ) {
 			return LOGIN_FAILURE;
 		}
 		if ( installError === 'ACTIVATION_RESPONSE_ERROR' ) {
