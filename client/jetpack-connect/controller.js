@@ -28,6 +28,7 @@ import PlansLanding from './plans-landing';
 import versionCompare from 'lib/version-compare';
 import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
 import { authorizeQueryDataSchema } from './schema';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import { authQueryTransformer } from './utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
@@ -204,19 +205,24 @@ export function signupForm( context, next ) {
 	removeSidebar( context );
 
 	const { query } = context;
-	const validQueryObject = validator( authorizeQueryDataSchema )( query );
+	let transformedQuery = null;
+	const parser = makeJsonSchemaParser( authorizeQueryDataSchema, {}, authQueryTransformer );
+	try {
+		transformedQuery = parser( query );
+	} catch ( error ) {
+		// The parser is expected to throw SchemaError or TransformerError on bad input.
+	}
 
-	if ( validQueryObject ) {
-		const transformedQuery = authQueryTransformer( query );
+	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
-		let interval = context.params.interval;
-		let locale = context.params.locale;
-		if ( context.params.localeOrInterval ) {
+		let { interval, locale } = context.params;
+		const { localeOrInterval } = context.params;
+		if ( localeOrInterval ) {
 			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
-				interval = context.params.localeOrInterval;
+				interval = localeOrInterval;
 			} else {
-				locale = context.params.localeOrInterval;
+				locale = localeOrInterval;
 			}
 		}
 		context.primary = (
@@ -244,10 +250,15 @@ export function authorizeForm( context, next ) {
 	removeSidebar( context );
 
 	const { query } = context;
-	const validQueryObject = validator( authorizeQueryDataSchema )( query );
+	let transformedQuery = null;
+	const parser = makeJsonSchemaParser( authorizeQueryDataSchema, {}, authQueryTransformer );
+	try {
+		transformedQuery = parser( query );
+	} catch ( error ) {
+		// The parser is expected to throw SchemaError or TransformerError on bad input.
+	}
 
-	if ( validQueryObject ) {
-		const transformedQuery = authQueryTransformer( query );
+	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
 	} else {
