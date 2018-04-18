@@ -12,6 +12,8 @@ if ( process.env.NODE_ENV === 'development' ) {
 import debugFactory from 'debug';
 import { invoke } from 'lodash';
 import page from 'page';
+import React from 'react';
+import measureWastedRenders from 'lib/performance/wasted-renders';
 
 /**
  * Internal dependencies
@@ -49,3 +51,8 @@ window.AppBoot = () => {
 		user.once( 'change', () => boot( user ) );
 	}
 };
+
+// measure wasted component renders
+if ( process.env.NODE_ENV !== 'production' ) {
+	measureWastedRenders( React );
+}
