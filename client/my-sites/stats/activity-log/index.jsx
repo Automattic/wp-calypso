@@ -363,7 +363,9 @@ class ActivityLog extends Component {
 					last = ts;
 					return (
 						<h2 className="activity-log__time-period" key={ `time-period-${ ts }` }>
-							{ ts.isSame( today, 'day' ) ? translate( 'Today' ) : ts.format( 'LL' ) }
+							{ ts.isSame( today, 'day' )
+								? ts.format( translate( 'LL[ — Today]' ) )
+								: ts.format( 'LL' ) }
 						</h2>
 					);
 				}
