@@ -5,7 +5,7 @@
  */
 
 import store from 'store';
-import { assign, clone, defer, fromPairs } from 'lodash';
+import { assign, clone, defer, fromPairs, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,40 +37,36 @@ var PostActions;
  *                                              or `delete`)
  */
 function handleMetadataOperation( key, value, operation ) {
-	var post = PostEditStore.get(),
-		metadata;
-
-	if ( 'string' === typeof key || Array.isArray( key ) ) {
-		// Normalize a string or array of string keys to an object of key value
-		// pairs. To accomodate both, we coerce the key into an array before
-		// mapping to pull the object pairs.
-		key = fromPairs( [].concat( key ).map( meta => [ meta, value ] ) );
+	// Normalize a string or array of string keys to an object of key value pairs.
+	if ( 'string' === typeof key ) {
+		// case of handleMetadataOperation( 'excerpt', 'text', 'update' )
+		key = { [ key ]: value };
+	} else if ( Array.isArray( key ) ) {
+		// case of handleMetadataOperation( [ 'geo_latitude', 'geo_longitude' ], null, 'delete' )
+		key = fromPairs( key.map( meta => [ meta, value ] ) );
 	}
 
-	// Overwrite duplicates based on key
-	metadata = ( post.metadata || [] ).filter( meta => ! key.hasOwnProperty( meta.key ) );
-
-	Object.keys( key ).forEach( function( objectKey ) {
+	const metadata = map( key, function( objectValue, objectKey ) {
 		// `update` is a sufficient operation for new metadata, as it will add
 		// the metadata if it does not already exist. Similarly, we're not
 		// concerned with deleting a key which was added during previous edits,
 		// since this will effectively noop.
-		var meta = {
+		const meta = {
 			key: objectKey,
-			operation: operation,
+			operation,
 		};
 
 		if ( 'delete' !== operation ) {
-			meta.value = key[ objectKey ];
+			meta.value = objectValue;
 		}
 
-		metadata.push( meta );
+		return meta;
 	} );
 
 	Dispatcher.handleViewAction( {
 		type: 'EDIT_POST',
 		post: {
-			metadata: metadata,
+			metadata,
 		},
 	} );
 }
