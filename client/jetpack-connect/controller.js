@@ -5,7 +5,7 @@
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import { get, includes, isEmpty, some } from 'lodash';
+import { get, isEmpty, some } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -232,13 +232,13 @@ export function signupForm( context, next ) {
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
-		let { interval, locale } = context.params;
-		const { localeOrInterval } = context.params;
-		if ( localeOrInterval ) {
-			if ( includes( [ 'monthly', 'yearly' ], localeOrInterval ) ) {
-				interval = localeOrInterval;
+		let interval = context.params.interval;
+		let locale = context.params.locale;
+		if ( context.params.localeOrInterval ) {
+			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
+				interval = context.params.localeOrInterval;
 			} else {
-				locale = localeOrInterval;
+				locale = context.params.localeOrInterval;
 			}
 		}
 		context.primary = (
