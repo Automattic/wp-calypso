@@ -52,7 +52,17 @@ export const items = createReducer(
 		} ),
 		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE ]: ( state, { siteId, products } ) => ( {
 			...state,
-			[ siteId ]: products,
+			[ siteId ]: ( state[ siteId ]
+				? state[ siteId ].filter( item => !! item.recurring )
+				: []
+			).concat( products ),
+		} ),
+		[ 'MEMBERSHIPS_PRODUCTS_RECEIVE' ]: ( state, { siteId, products } ) => ( {
+			...state,
+			[ siteId ]: ( state[ siteId ]
+				? state[ siteId ].filter( item => ! item.recurring )
+				: []
+			).concat( products ),
 		} ),
 		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE ]: ( state, { siteId, product } ) => ( {
 			...state,

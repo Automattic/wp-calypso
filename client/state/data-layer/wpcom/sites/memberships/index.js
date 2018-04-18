@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { has, noop } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import { has, noop } from 'lodash';
 import { SIMPLE_PAYMENTS_PRODUCTS_LIST } from 'state/action-types';
 
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx, TransformerError } from 'state/data-layer/wpcom-http/utils';
 
 export const handleMembershipsList = dispatchRequestEx( {
 	fetch: action =>
@@ -23,14 +23,32 @@ export const handleMembershipsList = dispatchRequestEx( {
 			},
 			action
 		),
-	onSuccess: function( endpointResponse ) {
-		if ( has( endpointResponse, 'meta.dataLayer.data.products' ) ) {
-			return {
-				type: 'MEMBERSHIPS_PRODUCTS_RECEIVE',
-				products: endpointResponse.meta.dataLayer.data.products,
-			};
+	fromApi: function( endpointResponse ) {
+		if ( ! endpointResponse.products ) {
+			throw new TransformerError(
+				'This is from Simple Payments response. We have to disregard it since' +
+					'for some reason data layer does not handle multiple handlers corretly.'
+			);
 		}
+		const products = endpointResponse.products.map( product => ( {
+			ID: product.id,
+			currency: product.currency,
+			description: product.description,
+			email: '',
+			featuredImageId: null,
+			formatted_price: product.price,
+			multiple: false,
+			price: product.price,
+			title: product.title,
+			recurring: true,
+		} ) );
+		return products;
 	},
+	onSuccess: ( { siteId }, products ) => ( {
+		type: 'MEMBERSHIPS_PRODUCTS_RECEIVE',
+		siteId,
+		products,
+	} ),
 	onError: noop,
 } );
 
