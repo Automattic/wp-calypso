@@ -240,7 +240,7 @@ class Help extends React.PureComponent {
 			<Main className="help">
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
-				<Notice status="is-error">
+				<Notice status="is-error" showDismiss={ false }>
 					{ translate(
 						'Some WordPress.com Business Sites are having connectivity problems. We are investigating the problem now.'
 					) }

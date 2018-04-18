@@ -82,7 +82,7 @@ class InlineHelpPopover extends Component {
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
-				<Notice status="is-error" isCompact={ true }>
+				<Notice status="is-error" isCompact={ true } showDismiss={ false }>
 					{ this.props.translate(
 						'Some WordPress.com Business Sites are having connectivity problems. We are investigating the problem now.'
 					) }
