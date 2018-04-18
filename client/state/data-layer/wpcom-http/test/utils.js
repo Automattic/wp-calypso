@@ -9,10 +9,10 @@ import {
 	getProgress,
 	dispatchRequest,
 	dispatchRequestEx,
-	makeParser,
 	reducer,
 	trackRequests,
 } from '../utils.js';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 
 describe( 'WPCOM HTTP Data Layer', () => {
 	const withData = data => ( { type: 'SLUGGER', meta: { dataLayer: { data } } } );
@@ -232,7 +232,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				properties: { count: { type: 'integer' } },
 			};
 
-			const fromApi = makeParser( schema );
+			const fromApi = makeJsonSchemaParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, success, data );
 
 			expect( initiator ).not.toHaveBeenCalled();
@@ -246,7 +246,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				properties: { count: { type: 'string' } },
 			};
 
-			const fromApi = makeParser( schema );
+			const fromApi = makeJsonSchemaParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, success, data );
 
 			expect( initiator ).not.toHaveBeenCalled();
@@ -263,7 +263,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const extra = { count: 15, is_active: true };
 			const action = { type: 'REFILL', meta: { dataLayer: { data: extra } } };
 
-			const fromApi = makeParser( schema );
+			const fromApi = makeJsonSchemaParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, extra );
 
 			expect( initiator ).not.toHaveBeenCalled();
@@ -280,7 +280,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const extra = { count: 15, is_active: true };
 			const action = { type: 'REFILL', meta: { dataLayer: { data: extra } } };
 
-			const fromApi = makeParser( schema );
+			const fromApi = makeJsonSchemaParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, extra );
 
 			expect( initiator ).not.toHaveBeenCalled();
@@ -300,7 +300,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 			const transformer = ( { count } ) => ( { tribbleCount: count * 2, haveTrouble: true } );
 
-			const fromApi = makeParser( schema, {}, transformer );
+			const fromApi = makeJsonSchemaParser( schema, {}, transformer );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, extra );
 
 			expect( initiator ).not.toHaveBeenCalled();
@@ -380,7 +380,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should validate response data', () => {
-			const fromApi = makeParser( {
+			const fromApi = makeJsonSchemaParser( {
 				type: 'object',
 				properties: { count: { type: 'integer' } },
 			} );
@@ -389,7 +389,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should fail-over on invalid response data', () => {
-			const fromApi = makeParser( {
+			const fromApi = makeJsonSchemaParser( {
 				type: 'object',
 				properties: { count: { type: 'string' } },
 			} );
@@ -402,7 +402,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should validate with additional fields', () => {
-			const fromApi = makeParser( {
+			const fromApi = makeJsonSchemaParser( {
 				type: 'object',
 				properties: { count: { type: 'integer' } },
 			} );
@@ -421,7 +421,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should filter out additional fields', () => {
-			const fromApi = makeParser( {
+			const fromApi = makeJsonSchemaParser( {
 				type: 'object',
 				properties: { count: { type: 'integer' } },
 			} );
@@ -441,7 +441,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				properties: { count: { type: 'integer' } },
 			};
 			const transformer = ( { count } ) => ( { tribbleCount: count * 2, haveTrouble: true } );
-			const fromApi = makeParser( schema, {}, transformer );
+			const fromApi = makeJsonSchemaParser( schema, {}, transformer );
 
 			const action = {
 				type: 'REFILL',
