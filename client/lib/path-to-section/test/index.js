@@ -27,6 +27,9 @@ describe( 'pathToSection', () => {
 		test( 'should handle deep paths', () => {
 			expect( wpcomImplementation( '/me/account' ) ).to.equal( 'account' );
 		} );
+		test( 'should return null if unsuccessful', () => {
+			expect( wpcomImplementation( '/a-nonexistent-path' ) ).to.equal( null );
+		} );
 	} );
 
 	describe( 'fallbackImplementation', () => {
