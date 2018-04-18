@@ -16,7 +16,6 @@ import {
 	recordGooglePageView,
 	recordTracksEvent,
 	recordPageView,
-	setTracksAnonymousUserId,
 	setTracksOptOut,
 } from '../actions';
 import { dispatcher as dispatch } from '../middleware.js';
@@ -95,12 +94,6 @@ describe( 'middleware', () => {
 			dispatch( withAnalytics( bumpStat( 'name', 'value' ), { type: 'TEST_ACTION' } ) );
 
 			expect( mockAnalytics ).to.have.been.calledWith( 'mc.bumpStat' );
-		} );
-
-		test( 'should call setTracksAnonymousUserId', () => {
-			dispatch( setTracksAnonymousUserId( 'abcd1234' ) );
-
-			expect( mockAnalytics ).to.have.been.calledWith( 'tracks.setAnonymousUserId' );
 		} );
 
 		test( 'should call `setOptOut`', () => {
