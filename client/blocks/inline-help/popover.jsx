@@ -84,9 +84,9 @@ class InlineHelpPopover extends Component {
 			>
 				<Notice status="is-error" isCompact={ true } showDismiss={ false }>
 					{ this.props.translate(
-						'Some WordPress.com Business Sites are having connectivity problems due to an issue with an infrastructure '
-						+ 'partner. They are actively working to resolve the problem. Please visit {{a}}automatticstatus.com{{/a}} '
-						+ 'for updates.',
+						'Some WordPress.com Business Sites are having connectivity problems due to an issue with an infrastructure ' +
+						'partner. They are actively working to resolve the problem. Please visit {{a}}automatticstatus.com{{/a}} ' +
+						'for updates.',
 						{
 						components: {
 							a: (

@@ -575,9 +575,9 @@ class HelpContact extends React.Component {
 				{ ! this.props.compact && (
 					<Notice status="is-error" showDismiss={ false }>
 						{ this.props.translate(
-						'Some WordPress.com Business Sites are having connectivity problems due to an issue with an infrastructure '
-						+ 'partner. They are actively working to resolve the problem. Please visit {{a}}automatticstatus.com{{/a}} '
-						+ 'for updates.',
+						'Some WordPress.com Business Sites are having connectivity problems due to an issue with an infrastructure ' +
+						'partner. They are actively working to resolve the problem. Please visit {{a}}automatticstatus.com{{/a}} ' +
+						'for updates.',
 						{
 						components: {
 							a: (
