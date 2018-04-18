@@ -72,7 +72,7 @@ Run the following command to create the file:
 touch client/my-sites/hello-world/index.js
 ```
 
-Here we'll require the `page` module, the My Sites controller and our own controller, and write our main route handler:
+Here we'll import the `page` module, the My Sites controller and our own controller, and write our main route handler:
 
 ```javascript
 /**
@@ -107,6 +107,8 @@ export default () => {
 * `helloWorld` is our newly created controller handler.
 * `makeLayout` creates `Layout` element which contains elements from `context.primary` and `context.secondary`.
 * `clientRender` renders `Layout` element into DOM.
+
+You can read more about ES6 modules from Axel Rauschmayer's "[_ECMAScript 6 modules: the final syntax_](http://2ality.com/2014/09/es6-modules-final.html)" as well from _MDN web docs_: [_export_](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export) & [_import_](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import).
 
 ### 5. Register section
 
