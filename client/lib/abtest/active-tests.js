@@ -73,8 +73,8 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	upgradePricingDisplayV2: {
-		datestamp: '20180305',
+	upgradePricingDisplayV3: {
+		datestamp: '20180402',
 		variations: {
 			original: 50,
 			modified: 50,

@@ -163,7 +163,7 @@ const WPComGetBillingTimeframe = abtest => {
 		return i18n.translate( '/month, billed annually or biennially' );
 	}
 
-	if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
+	if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
 		// Note: Don't make this translatable because it's only visible to English-language users
 		return '/month, billed annually';
 	}
@@ -635,7 +635,7 @@ export const PLANS_LIST = {
 				FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed monthly';
 			}
@@ -719,7 +719,7 @@ export const PLANS_LIST = {
 			FEATURE_ALL_FREE_FEATURES_JETPACK,
 		],
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed monthly';
 			}
@@ -848,7 +848,7 @@ export const PLANS_LIST = {
 				FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed monthly';
 			}
