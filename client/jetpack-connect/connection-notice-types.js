@@ -22,6 +22,7 @@ export const NOT_EXISTS = 'notExists';
 export const NOT_JETPACK = 'notJetpack';
 export const NOT_WORDPRESS = 'notWordPress';
 export const OUTDATED_JETPACK = 'outdatedJetpack';
+export const INVALID_CREDENTIALS = 'invalidCredentials';
 export const INVALID_PERMISSIONS = 'invalidPermissions';
 export const RETRY_AUTH = 'retryAuth';
 export const RETRYING_AUTH = 'retryingAuth';
