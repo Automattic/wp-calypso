@@ -51,6 +51,7 @@ import {
 	getSiteSlug,
 	isCurrentPlanPaid,
 	isCurrentSitePlan,
+	isJetpackSite,
 } from 'state/sites/selectors';
 import {
 	isBestValue,
@@ -78,7 +79,7 @@ class PlanFeatures extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, showModifiedPricingDisplay, site } = this.props;
+		const { isInSignup, isJetpack, planProperties, showModifiedPricingDisplay } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -107,7 +108,7 @@ class PlanFeatures extends Component {
 		return (
 			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
 				<QueryActivePromotions />
-				{ showModifiedPricingDisplay && ! site.jetpack && this.renderCreditNotice() }
+				{ showModifiedPricingDisplay && ! isJetpack && this.renderCreditNotice() }
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
 					{ this.render30PercentOffNotice() }
@@ -203,7 +204,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderCreditSummary() {
-		const { canPurchase, planProperties, site } = this.props;
+		const { canPurchase, isJetpack, planProperties } = this.props;
 
 		return map( planProperties, properties => {
 			const {
@@ -225,7 +226,7 @@ class PlanFeatures extends Component {
 						currencyCode={ currencyCode }
 						current={ current }
 						discountPrice={ discountPrice }
-						isJetpackSite={ site.jetpack }
+						isJetpackSite={ isJetpack }
 						planTitle={ planConstantObj.getTitle() }
 						planType={ planName }
 						rawPrice={ rawPrice }
@@ -673,6 +674,7 @@ PlanFeatures.propTypes = {
 	canPurchase: PropTypes.bool.isRequired,
 	displayJetpackPlans: PropTypes.bool,
 	isInSignup: PropTypes.bool,
+	isJetpack: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PropTypes.array,
@@ -686,6 +688,7 @@ PlanFeatures.defaultProps = {
 	basePlansPath: null,
 	displayJetpackPlans: false,
 	isInSignup: false,
+	isJetpack: false,
 	site: {},
 	onUpgradeClick: noop,
 };
@@ -738,6 +741,7 @@ export default connect(
 			displayJetpackPlans,
 		} = ownProps;
 		const selectedSiteId = site ? site.ID : null;
+		const isJetpack = isJetpackSite( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -799,8 +803,6 @@ export default connect(
 				}
 
 				return {
-					isPlaceholder,
-					isLandingPage,
 					available: available,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
@@ -808,6 +810,9 @@ export default connect(
 						isMonthly: showMonthlyPrice,
 					} ),
 					features: planFeatures,
+					isJetpack,
+					isLandingPage,
+					isPlaceholder,
 					onUpgradeClick: onUpgradeClick
 						? () => {
 								const planSlug = getPlanSlug( state, planProductId );
@@ -848,7 +853,7 @@ export default connect(
 			planProperties = reject( planProperties, filterFreePlan );
 		}
 
-		const maxCredits = getMaxCredits( planProperties, ownProps.site.jetpack );
+		const maxCredits = getMaxCredits( planProperties, isJetpack );
 		const showModifiedPricingDisplay =
 			! isInSignup &&
 			isPaid &&
