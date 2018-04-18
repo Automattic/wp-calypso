@@ -20,11 +20,11 @@ import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import Ribbon from 'components/ribbon';
 import PlanIcon from 'components/plans/plan-icon';
 import { TYPE_FREE, PLANS_LIST, getPlanClass } from 'lib/plans/constants';
-import { planMatches } from 'lib/plans';
+import { getYearlyPlanByMonthly, planMatches } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getYearlyPlanByMonthly } from 'lib/plans';
+import { getSiteSlug } from 'state/sites/selectors';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
 
@@ -278,6 +278,7 @@ export class PlanFeaturesHeader extends Component {
 			relatedMonthlyPlan,
 			relatedYearlyPlan,
 			site,
+			siteSlug,
 		} = this.props;
 		if ( site.jetpack ) {
 			const [ discountPrice, originalPrice ] = isYearly
@@ -293,7 +294,7 @@ export class PlanFeaturesHeader extends Component {
 						discountPrice={ discountPrice }
 						isYearly={ isYearly }
 						originalPrice={ originalPrice }
-						site={ site }
+						siteSlug={ siteSlug }
 					/>
 				)
 			);
@@ -318,6 +319,7 @@ PlanFeaturesHeader.propTypes = {
 	isPlaceholder: PropTypes.bool,
 	translate: PropTypes.func,
 	site: PropTypes.object,
+	siteSlug: PropTypes.string,
 	isInJetpackConnect: PropTypes.bool,
 	relatedMonthlyPlan: PropTypes.object,
 
@@ -335,22 +337,21 @@ PlanFeaturesHeader.defaultProps = {
 	bestValue: false,
 	isPlaceholder: false,
 	site: {},
+	siteSlug: '',
 	basePlansPath: null,
 	currentSitePlan: {},
 	isSiteAT: false,
 };
 
-export default connect( ( state, ownProps ) => {
-	const { isInSignup } = ownProps;
+export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) => {
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-	const isYearly = !! ownProps.relatedMonthlyPlan;
-	return Object.assign( {}, ownProps, {
+	const isYearly = !! relatedMonthlyPlan;
+	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isYearly,
-		relatedYearlyPlan: isYearly
-			? null
-			: getPlanBySlug( state, getYearlyPlanByMonthly( ownProps.planType ) ),
-	} );
+		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
+		siteSlug: getSiteSlug( state, selectedSiteId ),
+	};
 } )( localize( PlanFeaturesHeader ) );

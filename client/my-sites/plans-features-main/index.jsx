@@ -36,6 +36,7 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import PlanFooter from 'blocks/plan-footer';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { getSiteSlug } from 'state/sites/selectors';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
 export class PlansFeaturesMain extends Component {
@@ -129,13 +130,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	constructPath( plansUrl, intervalType ) {
-		const { selectedFeature, selectedPlan, site } = this.props;
+		const { selectedFeature, selectedPlan, siteSlug } = this.props;
 		return addQueryArgs(
 			{
 				feature: selectedFeature,
 				plan: selectedPlan,
 			},
-			plansLink( plansUrl, site, intervalType )
+			plansLink( plansUrl, siteSlug, intervalType )
 		);
 	}
 
@@ -205,6 +206,7 @@ PlansFeaturesMain.propTypes = {
 	selectedPlan: PropTypes.string,
 	showFAQ: PropTypes.bool,
 	site: PropTypes.object,
+	siteSlug: PropTypes.string,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -214,11 +216,13 @@ PlansFeaturesMain.defaultProps = {
 	isChatAvailable: false,
 	showFAQ: true,
 	site: {},
+	siteSlug: '',
 };
 
 export default connect(
-	state => ( {
+	( state, { site } ) => ( {
 		isChatAvailable: isHappychatAvailable( state ),
+		siteSlug: getSiteSlug( state, get( site, [ 'ID' ] ) ),
 	} ),
 	{ selectHappychatSiteId }
 )( localize( PlansFeaturesMain ) );
