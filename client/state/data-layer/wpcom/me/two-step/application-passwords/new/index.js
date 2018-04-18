@@ -45,9 +45,9 @@ export const addApplicationPassword = action =>
  * - a create application password success action
  * - a user application passwords receive action
  *
- * @param   {Object} action Redux action
- * @param   {Array}  data   Response from the endpoint
- * @returns {Array}         Dispatched actions
+ * @param   {Object} action      Redux action
+ * @param   {Array}  appPassword Response from the endpoint
+ * @returns {Array}              Dispatched actions
  */
 export const handleAddSuccess = ( action, appPassword ) => [
 	createApplicationPasswordSuccess( appPassword ),

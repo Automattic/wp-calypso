@@ -16,7 +16,7 @@ import warn from 'lib/warn';
  * Returns response data from an HTTP request success action if available
  *
  * @param {Object} action may contain HTTP response data
- * @returns {?*} response data if available
+ * @returns {*|undefined} response data if available
  */
 export const getData = action => get( action, 'meta.dataLayer.data', undefined );
 
@@ -24,30 +24,29 @@ export const getData = action => get( action, 'meta.dataLayer.data', undefined )
  * Returns error data from an HTTP request failure action if available
  *
  * @param {Object} action may contain HTTP response error data
- * @returns {?*} error data if available
+ * @returns {*|undefined} error data if available
  */
 export const getError = action => get( action, 'meta.dataLayer.error', undefined );
 
 /**
  * Returns (response) headers data from an HTTP request action if available
  *
- * @param {Object} action may contain HTTP response headers data
- * @returns {?*} headers data if available
+ * @param   {Object}      action Request action for which to retrieve HTTP response headers
+ * @returns {*|undefined}        Headers data if available
  */
 export const getHeaders = action => get( action, 'meta.dataLayer.headers', undefined );
 
 /**
  * @typedef {Object} ProgressData
- * @property {number} loaded number of bytes already transferred
- * @property {number} total total number of bytes to transfer
+ * @property {number} loaded Number of bytes already transferred
+ * @property {number} total  Total number of bytes to transfer
  */
 
 /**
  * Returns progress data from an HTTP request progress action if available
  *
- * @param {Object} action may contain HTTP progress data
- * @returns {Object|null} progress data if available
- * @returns {ProgressData}
+ * @param  {Object} action          may contain HTTP progress data
+ * @return {ProgressData|undefined} Progress data if available
  */
 export const getProgress = action => get( action, 'meta.dataLayer.progress', undefined );
 
