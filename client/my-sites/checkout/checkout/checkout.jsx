@@ -475,7 +475,11 @@ class Checkout extends React.Component {
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
 			return (
-				<DomainDetailsForm cart={ this.props.cart } productsList={ this.props.productsList } />
+				<DomainDetailsForm
+					cart={ this.props.cart }
+					productsList={ this.props.productsList }
+					userCountryCode={ this.props.userCountryCode }
+				/>
 			);
 		} else if ( this.isLoading() || this.props.cart.hasPendingServerUpdates ) {
 			// hasPendingServerUpdates is an important check here as the content we display is dependent on the content of the cart
