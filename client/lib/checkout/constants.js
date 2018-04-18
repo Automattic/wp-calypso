@@ -18,6 +18,7 @@ export const PAYMENT_PROCESSOR_EBANX_COUNTRIES = {
 			'state',
 			'city',
 			'phone-number',
+			'postal-code',
 		],
 	},
 	MX: {
