@@ -84,7 +84,7 @@ import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dia
 import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/example';
 import ConversationFollowButton from 'blocks/conversation-follow-button/docs/example';
 import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
-import UserMentionSuggestions from 'blocks/user-mention-suggestions/docs/example';
+import UserMentions from 'blocks/user-mentions/docs/example';
 
 export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
@@ -187,7 +187,7 @@ export default class AppComponents extends React.Component {
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
 					<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					{ isEnabled( 'reader/user-mention-suggestions' ) && <UserMentionSuggestions /> }
+					{ isEnabled( 'reader/user-mention-suggestions' ) && <UserMentions /> }
 				</Collection>
 			</Main>
 		);
