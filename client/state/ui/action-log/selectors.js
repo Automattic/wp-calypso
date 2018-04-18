@@ -40,6 +40,16 @@ export function getRouteHistory( state ) {
 }
 
 /**
+ * Returns the last ROUTE_SET action that had been dispatched for the current user.
+ *
+ * @param  {Object}   state      Global state tree
+ * @return {Object}              The last Redux action of type ROUTE_SET, with timestamp
+ */
+export function getLastRouteAction( state ) {
+	return last( getActionLog( state ).filter( action => action.type === ROUTE_SET ) );
+}
+
+/**
  * Returns the last item from the action log.
  *
  * @param  {Object}   state      Global state tree
