@@ -6,68 +6,61 @@ $avatar-margin: 10px;
 }
 
 .user-mentions__suggestions {
-	width: 70%;
-
 	.popover__arrow {
 		display: none;
 	}
-
-	@include breakpoint( ">480px" ) {
-		width: 20%;
-		min-width: 29em;
-	}
 }
 
-.user-mentions__suggestion {
-	padding: 8px 10px;
+// .user-mentions__suggestion {
+// 	padding: 8px 10px;
 
-	&.is-selected .user-mentions__highlight,
-	&:hover .user-mentions__highlight {
-		color: white;
-	}
+// 	&.is-selected .user-mentions__highlight,
+// 	&:hover .user-mentions__highlight {
+// 		color: white;
+// 	}
 
-	.rtl & {
-		direction: ltr; // Required to get the '@' on the correct side.
-	}
+// 	.rtl & {
+// 		direction: ltr; // Required to get the '@' on the correct side.
+// 	}
 
-	@include breakpoint( ">480px" ) {
-		line-height: 24px;
-	}
-}
+// 	@include breakpoint( ">480px" ) {
+// 		line-height: 24px;
+// 	}
+// }
 
-.user-mentions__avatar {
-	border-radius: 50%;
-	width: $avatar-size;
-	height: $avatar-size;
-	float: left;
-	margin: 0 $avatar-margin 0 0;
-}
+// .user-mentions__avatar {
+// 	border-radius: 50%;
+// 	width: $avatar-size;
+// 	height: $avatar-size;
+// 	float: left;
+// 	margin: 0 $avatar-margin 0 0;
+// }
 
-.user-mentions__username,
-.user-mentions__fullname {
-	float: left;
-	display: inline-block;
-	font-weight: 400;
-}
+// .user-mentions__username,
+// .user-mentions__fullname {
+// 	float: left;
+// 	display: inline-block;
+// 	font-weight: 400;
+// }
 
-.user-mentions__username {
-	padding-top: 10px;
-	margin: -10px 0 0 0;
-}
+// .user-mentions__username {
+// 	padding-top: 10px;
+// 	margin: -10px 0 0 0;
+// }
 
-.user-mentions__fullname {
-	clear: left;
-	margin-left: $avatar-size + $avatar-margin;
-	font-size: 11px;
+// .user-mentions__fullname {
+// 	clear: left;
+// 	margin-left: $avatar-size + $avatar-margin;
+// 	font-size: 11px;
 
-	@include breakpoint( ">480px" ) {
-		float: right;
-		clear: none;
-		margin-left: 0;
-	}
-}
+// 	@include breakpoint( ">480px" ) {
+// 		float: right;
+// 		clear: none;
+// 		margin-left: 0;
+// 	}
+// }
 
-.user-mentions__highlight {
-	font-weight: 400;
-	background: rgba( $blue-light, 0.25 );
-}
+// .user-mentions__highlight {
+// 	font-weight: 400;
+// 	background: rgba( $blue-light, 0.25 );
+// }
