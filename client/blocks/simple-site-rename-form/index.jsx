@@ -167,7 +167,7 @@ export class SimpleSiteRenameForm extends Component {
 		if ( isEmpty( domainFieldValue ) || domainFieldValue === this.getCurrentDomainPrefix() ) {
 			return;
 		}
-		this.props.requestSiteAddressAvailability( this.props.siteId, this.state.domainFieldValue );
+		this.props.requestSiteAddressAvailability( this.props.siteId, domainFieldValue );
 	}, VALIDATION_DEBOUNCE_MS );
 
 	shouldShowValidationMessage() {
