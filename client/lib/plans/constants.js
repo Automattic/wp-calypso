@@ -174,8 +174,10 @@ const WPComGetBillingTimeframe = abtest => {
 };
 
 const WPComGetBiennialBillingTimeframe = abtest => {
-	if ( isEnabled( 'upgrades/2-year-plans' ) ) {
-		return i18n.translate( '/month, billed biennially' );
+	if ( abtest ) {
+		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
+			return i18n.translate( '/month, billed biennially' );
+		}
 	}
 
 	return WPComGetBillingTimeframe( abtest );
