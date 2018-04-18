@@ -21,6 +21,7 @@ import InlineHelpSearchCard from './inline-help-search-card';
 import HelpContact from 'me/help/help-contact';
 import { getSearchQuery } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
+import Notice from 'components/notice';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -81,6 +82,11 @@ class InlineHelpPopover extends Component {
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
+				<Notice status="is-error" isCompact={ true } showDismiss={ false }>
+					{ this.props.translate(
+						'Some WordPress.com Business Sites are having connectivity problems. We are investigating the the issue now.'
+					) }
+				</Notice>
 				<div className="inline-help__search">
 					<InlineHelpSearchCard openResult={ this.openResult } query={ this.props.searchQuery } />
 					<InlineHelpSearchResults
