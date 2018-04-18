@@ -184,6 +184,11 @@ export class OrgCredentialsForm extends Component {
 		if ( installError === 'FORBIDDEN' ) {
 			return INVALID_PERMISSIONS;
 		}
+		if ( installError === 'LOGIN_FAILURE' ) {
+			// Non-credentials login failure. We don't know of any action that can be taken.
+			return UNKNOWN_REMOTE_INSTALL_ERROR;
+		}
+
 		return UNKNOWN_REMOTE_INSTALL_ERROR;
 	}
 
