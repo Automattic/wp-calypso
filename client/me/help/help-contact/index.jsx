@@ -572,11 +572,13 @@ class HelpContact extends React.Component {
 		const content = (
 			<Fragment>
 				<PageViewTracker path="/help/contact" title="Help > Contact" />
-				<Notice status="is-error" isCompact={ this.props.compact }>
-					{ this.props.translate(
-						'Some WordPress.com Business Sites are having connectivity problems. We are investigating the issue now.'
-					) }
-				</Notice>
+				{ ! this.props.compact && (
+					<Notice status="is-error">
+						{ this.props.translate(
+							'Some WordPress.com Business Sites are having connectivity problems. We are investigating the issue now.'
+						) }
+					</Notice>
+				) }
 				{ ! this.props.compact && (
 					<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
 						{ this.props.translate( 'Contact Us' ) }
