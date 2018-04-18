@@ -86,7 +86,7 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 				onClose={ this.onClose }
 			>
 				<TrackComponentView
-					eventName="calypso_siterename_areyousure_view"
+					eventName="calypso_siteaddresschange_areyousure_view"
 					eventProperties={ { new_domain: newDomainName } }
 				/>
 				<h1>{ translate( "Let's review…" ) }</h1>

@@ -109,7 +109,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 
 	const errorHandler = error => {
 		dispatch(
-			recordTracksEvent( 'calypso_siterename_error', {
+			recordTracksEvent( 'calypso_siteaddresschange_error', {
 				...eventProperties,
 				error_code: error.code,
 			} )
@@ -122,7 +122,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 		} );
 	};
 
-	dispatch( recordTracksEvent( 'calypso_siterename_request', eventProperties ) );
+	dispatch( recordTracksEvent( 'calypso_siteaddresschange_request', eventProperties ) );
 
 	return fetchNonce( siteId )
 		.then( nonce => {
@@ -133,7 +133,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 					const newSlug = get( data, 'new_slug' );
 
 					if ( newSlug ) {
-						dispatch( recordTracksEvent( 'calypso_siterename_success', eventProperties ) );
+						dispatch( recordTracksEvent( 'calypso_siteaddresschange_success', eventProperties ) );
 
 						const newAddress = newSlug + '.wordpress.com';
 						dispatch( requestSite( siteId ) ).then( () => {
