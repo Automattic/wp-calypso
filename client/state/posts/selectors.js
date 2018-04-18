@@ -17,7 +17,7 @@ import {
 	getSerializedPostsQueryWithoutPage,
 	isAuthorEqual,
 	isDiscussionEqual,
-	applyPostEdits,
+	mergePostEdits,
 	normalizePostForEditing,
 	normalizePostForDisplay,
 } from './utils';
@@ -331,7 +331,7 @@ export const getEditedPost = createSelector(
 			return post;
 		}
 
-		return applyPostEdits( post, edits );
+		return mergePostEdits( post, edits );
 	},
 	state => [ state.posts.items, state.posts.edits ]
 );
