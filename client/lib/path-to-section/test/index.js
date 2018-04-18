@@ -21,6 +21,8 @@ describe( 'pathToSection', () => {
 		test( 'should correctly associate paths that start with the same string', () => {
 			expect( wpcomImplementation( '/themes' ) ).to.equal( 'themes' );
 			expect( wpcomImplementation( '/theme' ) ).to.equal( 'theme' );
+			expect( wpcomImplementation( '/media' ) ).to.equal( 'media' );
+			expect( wpcomImplementation( '/me' ) ).to.equal( 'me' );
 		} );
 		test( 'should handle deep paths', () => {
 			expect( wpcomImplementation( '/me/account' ) ).to.equal( 'me' );
