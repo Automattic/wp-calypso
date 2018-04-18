@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import responseSchema from './schema';
 import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
 
@@ -29,4 +29,4 @@ export const transform = ( { order_id, user_id, receipt_id, processing_status } 
 	processingStatus: convertProcessingStatus( processing_status ),
 } );
 
-export default makeParser( responseSchema, {}, transform );
+export default makeJsonSchemaParser( responseSchema, {}, transform );

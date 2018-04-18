@@ -7,9 +7,9 @@ import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { parseBlock } from 'lib/notifications/note-block-parser';
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import apiResponseSchema from './schema';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import { parseBlock } from 'lib/notifications/note-block-parser';
 
 /**
  * Module constants
@@ -104,4 +104,4 @@ export function processItem( item ) {
 }
 
 // fromApi default export
-export default makeParser( apiResponseSchema, {}, transformer );
+export default makeJsonSchemaParser( apiResponseSchema, {}, transformer );

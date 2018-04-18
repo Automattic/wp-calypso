@@ -10,6 +10,7 @@ import { omit, pick } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
@@ -44,7 +45,6 @@ import {
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
 
 /**
  * Module constants
@@ -251,7 +251,7 @@ export function createAccount( userData ) {
 
 		try {
 			const data = await wpcom.undocumented().usersNew( userData );
-			const bearerToken = makeParser(
+			const bearerToken = makeJsonSchemaParser(
 				{
 					type: 'object',
 					required: [ 'bearer_token' ],
