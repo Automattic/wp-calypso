@@ -12,7 +12,7 @@ import Button from 'components/button';
 import Gridicon from 'gridicons';
 
 const PlansSkipButton = ( { onClick, isRtl, translate } ) => (
-	<div className="jetpack-connect__plans-nav-buttons">
+	<div className="plans-skip-button">
 		<Button onClick={ onClick }>
 			{ translate( 'Start with free' ) }
 			<Gridicon icon={ isRtl ? 'arrow-left' : 'arrow-right' } size={ 18 } />

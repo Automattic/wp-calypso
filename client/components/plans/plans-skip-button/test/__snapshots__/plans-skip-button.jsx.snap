@@ -2,7 +2,7 @@
 
 exports[`PlansSkipButton should render 1`] = `
 <div
-  className="jetpack-connect__plans-nav-buttons"
+  className="plans-skip-button"
 >
   <button
     className="button"
@@ -30,7 +30,7 @@ exports[`PlansSkipButton should render 1`] = `
 
 exports[`PlansSkipButton should render arrow-left in rtl mode 1`] = `
 <div
-  className="jetpack-connect__plans-nav-buttons"
+  className="plans-skip-button"
 >
   <button
     className="button"
