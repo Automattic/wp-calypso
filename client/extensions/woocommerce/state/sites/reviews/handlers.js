@@ -84,7 +84,7 @@ export function handleReviewsRequestError( { dispatch }, action, error ) {
 	} );
 }
 
-export function handleChangeReviewStatus( { dispatch, getState }, action ) {
+export function handleChangeReviewStatus( { dispatch }, action ) {
 	const { siteId, reviewId, newStatus } = action;
 	// @todo Update this to use reviews update endpoint when it supports status updating.
 	// https://github.com/woocommerce/wc-api-dev/issues/51
