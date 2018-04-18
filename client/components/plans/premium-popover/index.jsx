@@ -18,9 +18,10 @@ import Gridicon from 'gridicons';
 import Popover from 'components/popover';
 import PlanPrice from 'components/plans/plan-price';
 import { getSitePlan } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
+import { TYPE_PREMIUM } from 'lib/plans/constants';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryPlans from 'components/data/query-plans';
 
@@ -144,11 +145,17 @@ class PremiumPopover extends React.Component {
 	}
 }
 
-export default connect( state => {
+export const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSite = getSelectedSite( state );
+	const selectedPlanSlug = selectedSite.plan.product_slug;
+	const premiumPlanSlug = findFirstSimilarPlanKey( selectedPlanSlug, { type: TYPE_PREMIUM } );
+
 	return {
 		selectedSiteId,
-		premiumPlan: getPlanBySlug( state, PLAN_PREMIUM ),
-		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM ),
+		premiumPlan: getPlanBySlug( state, premiumPlanSlug ),
+		premiumSitePlan: getSitePlan( state, selectedSiteId, premiumPlanSlug ),
 	};
-} )( localize( PremiumPopover ) );
+};
+
+export default connect( mapStateToProps )( localize( PremiumPopover ) );
