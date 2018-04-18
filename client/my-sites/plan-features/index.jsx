@@ -225,11 +225,11 @@ class PlanFeatures extends Component {
 						currencyCode={ currencyCode }
 						current={ current }
 						discountPrice={ discountPrice }
+						isJetpackSite={ site.jetpack }
 						planTitle={ planConstantObj.getTitle() }
 						planType={ planName }
 						rawPrice={ rawPrice }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
-						site={ site }
 					/>
 				</td>
 			);
