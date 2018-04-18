@@ -239,7 +239,7 @@ export class SimpleSiteRenameForm extends Component {
 					onConfirm={ this.onConfirm }
 				/>
 				<form onSubmit={ this.onSubmit }>
-					<TrackComponentView eventName="calypso_siterename_form_view" />
+					<TrackComponentView eventName="calypso_siteaddresschange_form_view" />
 					<Card className="simple-site-rename-form__content">
 						<FormSectionHeading>{ translate( 'Change Site Address' ) }</FormSectionHeading>
 						<FormTextInputWithAffixes
