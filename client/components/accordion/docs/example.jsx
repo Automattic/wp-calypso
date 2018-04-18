@@ -106,7 +106,6 @@ export default class extends React.PureComponent {
 	}
 
 	render() {
-		console.log( jsxToString( <Gridicon /> ) );
 		const { showCode } = this.props;
 		return (
 			<div>
