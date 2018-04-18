@@ -62,7 +62,7 @@ render() {
 import PageViewTracker from 'analytics/page-view-tracker';
 
 render() {
-	const { postId, postTile } = this.props;
+	const { postId, postTitle } = this.props;
 
 	return (
 		<Main>
