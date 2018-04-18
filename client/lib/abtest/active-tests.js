@@ -1,5 +1,15 @@
 /** @format */
 export default {
+	multiyearSubscriptions: {
+		datestamp: '20180417',
+		variations: {
+			show: 10,
+			hide: 90,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 	springSale30PercentOff: {
 		datestamp: '20180413',
 		variations: {

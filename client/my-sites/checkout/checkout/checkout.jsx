@@ -499,7 +499,9 @@ class Checkout extends React.Component {
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
 			>
-				{ config.isEnabled( 'upgrades/2-year-plans' ) && this.renderSubscriptionLengthPicker() }
+				{ config.isEnabled( 'upgrades/2-year-plans' ) &&
+					abtest( 'multiyearSubscriptions' ) === 'show' &&
+					this.renderSubscriptionLengthPicker() }
 			</SecurePaymentForm>
 		);
 	}
