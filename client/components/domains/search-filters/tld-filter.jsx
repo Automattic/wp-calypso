@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -58,7 +59,11 @@ export class TldFilterControl extends Component {
 		const hasFilterValue = tlds.length > 0;
 		return (
 			<div className="search-filters__filter search-filters__tld-filter">
-				<Button primary={ hasFilterValue } onClick={ this.togglePopover } ref={ this.bindButton }>
+				<Button
+					className={ classNames( { 'is-active': hasFilterValue } ) }
+					onClick={ this.togglePopover }
+					ref={ this.bindButton }
+				>
 					{ translate( 'Extensions', {
 						context: 'Refers to top level domain name extension, such as ".com"',
 					} ) }

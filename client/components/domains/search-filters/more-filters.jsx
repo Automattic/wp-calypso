@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
@@ -101,7 +101,7 @@ export class MoreFiltersControl extends Component {
 		return (
 			<div className="search-filters__filter search-filters__more-filters">
 				<Button
-					primary={ hasFilterValues }
+					className={ classNames( { 'is-active': hasFilterValues } ) }
 					ref={ button => ( this.button = button ) } // eslint-disable-line react/jsx-no-bind
 					onClick={ this.togglePopover }
 				>
