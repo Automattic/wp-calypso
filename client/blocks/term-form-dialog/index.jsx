@@ -87,12 +87,14 @@ class TermFormDialog extends Component {
 	};
 
 	onTopLevelChange = () => {
+		// Only validate the form when **enabling** the top level toggle.
+		const performValidation = ! this.state.isTopLevel ? this.isValid : noop;
 		this.setState(
-			{
-				isTopLevel: ! this.state.isTopLevel,
+			( { isTopLevel } ) => ( {
+				isTopLevel: ! isTopLevel,
 				selectedParent: [],
-			},
-			this.isValid
+			} ),
+			performValidation
 		);
 	};
 
