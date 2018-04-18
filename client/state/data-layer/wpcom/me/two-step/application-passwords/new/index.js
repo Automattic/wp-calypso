@@ -10,9 +10,10 @@ import { translate } from 'i18n-calypso';
  */
 import schema from './schema';
 import { APPLICATION_PASSWORD_CREATE } from 'state/action-types';
-import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { makeParser } from 'lib/make-json-schema-parser';
 import {
 	createApplicationPasswordSuccess,
 	requestApplicationPasswords,

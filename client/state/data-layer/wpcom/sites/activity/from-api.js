@@ -8,8 +8,8 @@ import { get, map } from 'lodash';
  * Internal dependencies
  */
 import { parseBlock } from 'lib/notifications/note-block-parser';
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import apiResponseSchema from './schema';
+import { makeParser } from 'lib/make-json-schema-parser';
 
 /**
  * Module constants

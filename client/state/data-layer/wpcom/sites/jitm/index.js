@@ -12,10 +12,10 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { SECTION_SET, SELECTED_SITE_SET, JITM_DISMISS } from 'state/action-types';
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import schema from './schema.json';
 import { clearJITM, insertJITM } from 'state/jitm/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { makeParser } from 'lib/make-json-schema-parser';
 
 /**
  * Poor man's process manager

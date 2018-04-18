@@ -5,11 +5,6 @@
  */
 import deterministicStringify from 'json-stable-stringify';
 import { get, identity, merge, noop } from 'lodash';
-export {
-	makeJsonSchemaParser as makeParser,
-	SchemaError,
-	TransformerError,
-} from 'lib/make-json-schema-parser';
 
 /**
  * Internal dependencies

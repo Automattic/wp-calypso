@@ -3,8 +3,8 @@
 /**
  * Internal dependencies
  */
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import responseSchema from './schema';
+import { makeParser } from 'lib/make-json-schema-parser';
 import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
 
 export const convertProcessingStatus = responseStatus => {

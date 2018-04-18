@@ -3,8 +3,8 @@
 /**
  * Internal dependencies
  */
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import responseSchema from './schema';
+import { makeParser } from 'lib/make-json-schema-parser';
 
 export const convertToDate = timestampInSeconds => timestampInSeconds * 1000;
 

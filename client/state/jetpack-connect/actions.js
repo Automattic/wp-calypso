@@ -14,6 +14,7 @@ import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { clearPlan } from 'jetpack-connect/persistence-utils';
+import { makeParser } from 'lib/make-json-schema-parser';
 import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
@@ -44,7 +45,6 @@ import {
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
 
 /**
  * Module constants

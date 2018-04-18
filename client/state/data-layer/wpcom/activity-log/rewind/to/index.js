@@ -10,10 +10,11 @@ import { translate } from 'i18n-calypso';
 import { REWIND_RESTORE } from 'state/action-types';
 import { getRewindRestoreProgress } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { SchemaError, dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestRewindState } from 'state/rewind/actions';
+import { SchemaError } from 'lib/make-json-schema-parser';
 
 const fromApi = data => {
 	const restoreId = parseInt( data.restore_id, 10 );
