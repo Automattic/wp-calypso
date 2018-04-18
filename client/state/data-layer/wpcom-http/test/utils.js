@@ -12,7 +12,7 @@ import {
 	reducer,
 	trackRequests,
 } from '../utils.js';
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import { SchemaError } from 'lib/make-json-schema-parser';
 
 describe( 'WPCOM HTTP Data Layer', () => {
 	const withData = data => ( { type: 'SLUGGER', meta: { dataLayer: { data } } } );
@@ -227,26 +227,20 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should validate response data', () => {
-			const schema = {
-				type: 'object',
-				properties: { count: { type: 'integer' } },
-			};
+			const fromApi = jest.fn( input => input );
 
-			const fromApi = makeJsonSchemaParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, success, data );
 
+			expect( fromApi ).toHaveBeenCalledWith( data );
 			expect( initiator ).not.toHaveBeenCalled();
 			expect( onSuccess ).toHaveBeenCalled();
 			expect( onFailure ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should fail-over on invalid response data', () => {
-			const schema = {
-				type: 'object',
-				properties: { count: { type: 'string' } },
+			const fromApi = () => {
+				throw new SchemaError( 'Test schema error' );
 			};
-
-			const fromApi = makeJsonSchemaParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, success, data );
 
 			expect( initiator ).not.toHaveBeenCalled();
@@ -254,60 +248,14 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onFailure ).toHaveBeenCalled();
 		} );
 
-		test( 'should validate with additional fields', () => {
-			const schema = {
-				type: 'object',
-				properties: { count: { type: 'integer' } },
-			};
+		test( 'should return result of fromApi', () => {
+			const fromApi = () => 'fromApi result';
 
-			const extra = { count: 15, is_active: true };
-			const action = { type: 'REFILL', meta: { dataLayer: { data: extra } } };
-
-			const fromApi = makeJsonSchemaParser( schema );
-			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, extra );
+			const action = { type: 'REFILL', meta: { dataLayer: { data: {} } } };
+			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, {} );
 
 			expect( initiator ).not.toHaveBeenCalled();
-			expect( onSuccess ).toHaveBeenCalled();
-			expect( onFailure ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should filter out additional fields', () => {
-			const schema = {
-				type: 'object',
-				properties: { count: { type: 'integer' } },
-			};
-
-			const extra = { count: 15, is_active: true };
-			const action = { type: 'REFILL', meta: { dataLayer: { data: extra } } };
-
-			const fromApi = makeJsonSchemaParser( schema );
-			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, extra );
-
-			expect( initiator ).not.toHaveBeenCalled();
-			expect( onSuccess ).toHaveBeenCalled();
-			expect( onSuccess ).toHaveBeenCalledWith( store, action, { count: 15 } );
-			expect( onFailure ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should transform validated output', () => {
-			const schema = {
-				type: 'object',
-				properties: { count: { type: 'integer' } },
-			};
-
-			const extra = { count: 15, is_active: true };
-			const action = { type: 'REFILL', meta: { dataLayer: { data: extra } } };
-
-			const transformer = ( { count } ) => ( { tribbleCount: count * 2, haveTrouble: true } );
-
-			const fromApi = makeJsonSchemaParser( schema, {}, transformer );
-			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, extra );
-
-			expect( initiator ).not.toHaveBeenCalled();
-			expect( onSuccess ).toHaveBeenCalledWith( store, action, {
-				tribbleCount: 30,
-				haveTrouble: true,
-			} );
+			expect( onSuccess ).toHaveBeenCalledWith( store, action, 'fromApi result' );
 			expect( onFailure ).not.toHaveBeenCalled();
 		} );
 	} );
@@ -379,20 +327,17 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			} ).not.toThrow( TypeError );
 		} );
 
-		test( 'should validate response data', () => {
-			const fromApi = makeJsonSchemaParser( {
-				type: 'object',
-				properties: { count: { type: 'integer' } },
-			} );
+		test( 'should pass data to fromApi for validation', () => {
+			const fromApi = jest.fn( input => input );
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, successHttpAction );
+			expect( fromApi ).toHaveBeenCalledWith( successHttpAction.meta.dataLayer.data );
 			expect( dispatch ).toHaveBeenCalledWith( successAction );
 		} );
 
 		test( 'should fail-over on invalid response data', () => {
-			const fromApi = makeJsonSchemaParser( {
-				type: 'object',
-				properties: { count: { type: 'string' } },
-			} );
+			const fromApi = () => {
+				throw new SchemaError( 'Test schema error' );
+			};
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, successHttpAction );
 
 			const args = dispatch.mock.calls[ 0 ];
@@ -401,61 +346,18 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( args[ 0 ] ).toMatchObject( { type: 'FAILURE' } );
 		} );
 
-		test( 'should validate with additional fields', () => {
-			const fromApi = makeJsonSchemaParser( {
-				type: 'object',
-				properties: { count: { type: 'integer' } },
-			} );
-
+		test( 'should return result of fromApi', () => {
+			const fromApi = () => 'fromApi result';
 			const action = {
 				type: 'REFILL',
-				meta: { dataLayer: { data: { count: 15, is_active: true } } },
-			};
-
-			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
-
-			const args = dispatch.mock.calls[ 0 ];
-
-			expect( args.length ).toBe( 1 );
-			expect( args[ 0 ] ).toMatchObject( { type: 'SUCCESS' } );
-		} );
-
-		test( 'should filter out additional fields', () => {
-			const fromApi = makeJsonSchemaParser( {
-				type: 'object',
-				properties: { count: { type: 'integer' } },
-			} );
-
-			const action = {
-				type: 'REFILL',
-				meta: { dataLayer: { data: { count: 15, is_active: true } } },
-			};
-
-			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
-			expect( dispatch ).toHaveBeenCalledWith( { type: 'SUCCESS', data: { count: 15 } } );
-		} );
-
-		test( 'should transform validated output', () => {
-			const schema = {
-				type: 'object',
-				properties: { count: { type: 'integer' } },
-			};
-			const transformer = ( { count } ) => ( { tribbleCount: count * 2, haveTrouble: true } );
-			const fromApi = makeJsonSchemaParser( schema, {}, transformer );
-
-			const action = {
-				type: 'REFILL',
-				meta: { dataLayer: { data: { count: 15, is_active: true } } },
+				meta: { dataLayer: { data: {} } },
 			};
 
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
 
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: 'SUCCESS',
-				data: {
-					tribbleCount: 30,
-					haveTrouble: true,
-				},
+				data: 'fromApi result',
 			} );
 		} );
 	} );
