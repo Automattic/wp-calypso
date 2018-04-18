@@ -1,29 +1,26 @@
 /**
  * @format
- * @jest-environment jsdom
  */
 
 /**
  * External dependencies
  */
 import React from 'react';
-import renderer from 'react-test-renderer';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import PlansSkipButton from '../';
+import { PlansSkipButton } from '../';
 
 describe( 'PlansSkipButton', () => {
 	test( 'should render', () => {
-		const component = renderer.create( <PlansSkipButton /> );
-		const tree = component.toJSON();
-		expect( tree ).toMatchSnapshot();
+		const component = shallow( <PlansSkipButton /> );
+		expect( component ).toMatchSnapshot();
 	} );
 
 	test( 'should render arrow-left in rtl mode', () => {
-		const component = renderer.create( <PlansSkipButton isRtl /> );
-		const tree = component.toJSON();
-		expect( tree ).toMatchSnapshot();
+		const component = shallow( <PlansSkipButton isRtl /> );
+		expect( component ).toMatchSnapshot();
 	} );
 } );
