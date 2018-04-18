@@ -2,14 +2,14 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { transformApi } from './api-transformer';
 import { makeParser } from 'lib/make-json-schema-parser';
+import { mergeHandlers } from 'state/action-watchers/utils';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
 import { rewindStatus } from './schema';
+import { transformApi } from './api-transformer';
 
 import downloads from './downloads';
 

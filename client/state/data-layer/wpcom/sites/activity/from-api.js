@@ -7,9 +7,9 @@ import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { parseBlock } from 'lib/notifications/note-block-parser';
 import apiResponseSchema from './schema';
 import { makeParser } from 'lib/make-json-schema-parser';
+import { parseBlock } from 'lib/notifications/note-block-parser';
 
 /**
  * Module constants
