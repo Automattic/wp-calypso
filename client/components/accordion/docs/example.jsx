@@ -17,6 +17,8 @@ import ComponentPlayground from 'devdocs/design/component-playground';
 import Accordion from 'components/accordion';
 import Gridicon from 'gridicons';
 
+Gridicon.displayName = 'Gridicon';
+
 const scope = { Accordion, Gridicon };
 
 export const accordionCode =
