@@ -82,7 +82,7 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 
 		return (
 			<Dialog
-				className="simple-site-rename-form__dialog"
+				className="site-address-changer__dialog"
 				isVisible={ isVisible }
 				buttons={ buttons }
 				onClose={ this.onClose }
@@ -101,29 +101,27 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 							'this site address will no longer be available for future use.'
 					) }
 				</p>
-				<div className="simple-site-rename-form__confirmation-detail">
+				<div className="site-address-changer__confirmation-detail">
 					<Gridicon
 						icon="cross-circle"
 						size={ 18 }
-						className="simple-site-rename-form__copy-deletion"
+						className="site-address-changer__copy-deletion"
 					/>
-					<p className="simple-site-rename-form__confirmation-detail-copy">
-						<strong className="simple-site-rename-form__copy-deletion">
-							{ currentDomainName }
-						</strong>
+					<p className="site-address-changer__confirmation-detail-copy">
+						<strong className="site-address-changer__copy-deletion">{ currentDomainName }</strong>
 						{ currentDomainSuffix }
 						<br />
 						{ translate( 'Will be removed and unavailable for use.' ) }
 					</p>
 				</div>
-				<div className="simple-site-rename-form__confirmation-detail">
+				<div className="site-address-changer__confirmation-detail">
 					<Gridicon
 						icon="checkmark-circle"
 						size={ 18 }
-						className="simple-site-rename-form__copy-addition"
+						className="site-address-changer__copy-addition"
 					/>
-					<p className="simple-site-rename-form__confirmation-detail-copy">
-						<strong className="simple-site-rename-form__copy-addition">{ newDomainName }</strong>
+					<p className="site-address-changer__confirmation-detail-copy">
+						<strong className="site-address-changer__copy-addition">{ newDomainName }</strong>
 						{ newDomainSuffix }
 						<br />
 						{ translate( 'Will be your new site address.' ) }

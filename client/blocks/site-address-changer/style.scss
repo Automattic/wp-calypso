@@ -1,27 +1,27 @@
 /** @format */
 
-.simple-site-rename-form__dialog {
+.site-address-changer__dialog {
 	text-align: left;
 	max-width: 400px;
 	color: darken( $gray, 20% );
 }
 
-.simple-site-rename-form__copy-addition {
+.site-address-changer__copy-addition {
 	color: $alert-green;
 }
 
-.simple-site-rename-form__copy-deletion {
+.site-address-changer__copy-deletion {
 	color: $alert-red;
 }
 
-.card.simple-site-rename-form__content {
+.card.site-address-changer__content {
 	margin-bottom: 0;
 	span.form-text-input-with-affixes__suffix {
 		position: static;
 	}
 }
 
-.simple-site-rename-form__info {
+.site-address-changer__info {
 	color: $gray-text-min;
 	flex-shrink: 1;
 	margin: 5px 0 0 0;
@@ -52,7 +52,7 @@
 	}
 }
 
-.simple-site-rename-form__only-owner-info {
+.site-address-changer__only-owner-info {
 	margin: 0 auto 10px;
 	padding: 16px;
 
@@ -70,7 +70,7 @@
 	}
 }
 
-.simple-site-rename-form__footer {
+.site-address-changer__footer {
 	align-items: center;
 	border-top-color: $gray-light;
 	display: flex;
@@ -103,7 +103,7 @@
 	}
 }
 
-.simple-site-rename-form__confirmation-detail {
+.site-address-changer__confirmation-detail {
 	.gridicon {
 		float: left;
 
@@ -112,7 +112,7 @@
 		}
 	}
 
-	.simple-site-rename-form__confirmation-detail-copy {
+	.site-address-changer__confirmation-detail-copy {
 		word-break: break-word;
 
 		@include breakpoint( '>660px' ) {
