@@ -69,6 +69,7 @@ import QueryLanguageNames from 'components/data/query-language-names';
 /**
  * Module variables
  */
+const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
@@ -304,13 +305,13 @@ class HelpContact extends React.Component {
 
 	getContactFormPropsVariation = variationSlug => {
 		const { isSubmitting } = this.state;
-		const { currentUserLocale, hasMoreThanOneSite, translate, defaultLanguage } = this.props;
+		const { currentUserLocale, hasMoreThanOneSite, translate, localizedLanguageNames } = this.props;
+		let buttonLabel = translate( 'Chat with us' );
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
 				// TEMPORARY: to collect data about the customer preferences, context 1050-happychat-gh
 				// for non english customers check if we have full support in their language
-				let buttonLabel = translate( 'Chat with us' );
 				let additionalSupportOption = { enabled: false };
 
 				if ( ! isDefaultLocale( currentUserLocale ) && ! this.props.hasHappychatLocalizedSupport ) {
@@ -323,10 +324,14 @@ class HelpContact extends React.Component {
 						this.setState( { wasAdditionalSupportOptionShown: true } );
 					}
 
-					// override chat buttons
-					buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
-						args: { defaultLanguage },
-					} );
+					if ( localizedLanguageNames && localizedLanguageNames[ defaultLanguageSlug ] ) {
+						// override chat buttons
+						buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
+							args: {
+								defaultLanguage: localizedLanguageNames[ defaultLanguageSlug ].localized,
+							},
+						} );
+					}
 
 					// add additional support option
 					additionalSupportOption = {
@@ -597,22 +602,19 @@ export default connect(
 	state => {
 		const helpSelectedSiteId = getHelpSelectedSiteId( state );
 		const selectedSitePlan = getSitePlan( state, helpSelectedSiteId );
-		const localizedLanguageNames = getLocalizedLanguageNames( state );
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
 			getUserInfo: getHappychatUserInfo( state ),
 			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
-			defaultLanguage: localizedLanguageNames
-				? localizedLanguageNames[ config( 'i18n_default_locale_slug' ) ].localized
-				: localizedLanguageNames,
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
 			isHappychatUserEligible: isHappychatUserEligible( state ),
+			localizedLanguageNames: getLocalizedLanguageNames( state ),
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
