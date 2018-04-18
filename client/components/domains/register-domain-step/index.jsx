@@ -33,7 +33,9 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
+import Button from 'components/button';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
 import { checkDomainAvailability, getFixedDomainSearch, getAvailableTlds } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
@@ -186,6 +188,7 @@ class RegisterDomainStep extends React.Component {
 			availableTlds: [],
 			clickedExampleSuggestion: false,
 			filters: this.getInitialFiltersState(),
+			lastFilters: this.getInitialFiltersState(),
 			lastQuery: suggestion,
 			lastDomainSearched: null,
 			lastDomainStatus: null,
@@ -369,6 +372,25 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
+	renderTldButtons() {
+		const { availableTlds, lastFilters: { tlds: selectedTlds } } = this.state;
+		return (
+			<CompactCard className="register-domain-step__tld-buttons">
+				{ availableTlds.slice( 0, 8 ).map( tld => (
+					<Button
+						className={ classNames( { 'is-active': includes( selectedTlds, tld ) } ) }
+						data-selected={ includes( selectedTlds, tld ) }
+						key={ tld }
+						onClick={ this.toggleTldInFilter }
+						value={ tld }
+					>
+						.{ tld }
+					</Button>
+				) ) }
+			</CompactCard>
+		);
+	}
+
 	renderPaginationControls() {
 		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
 		if ( ! isKrackenUi || this.state.searchResults === null ) {
@@ -440,16 +462,37 @@ class RegisterDomainStep extends React.Component {
 
 	getActiveFiltersForAPI() {
 		const { filters } = this.state;
-		return {
-			...mapKeys(
-				pickBy(
-					filters,
-					value => isNumberString( value ) || typeof value === 'boolean' || Array.isArray( value )
-				),
-				( value, key ) => snakeCase( key )
+		return mapKeys(
+			pickBy(
+				filters,
+				value => isNumberString( value ) || value === true || Array.isArray( value )
 			),
-		};
+			( value, key ) => snakeCase( key )
+		);
 	}
+
+	toggleTldInFilter = event => {
+		const isCurrentlySelected = event.currentTarget.dataset.selected === 'true';
+		const newTld = event.currentTarget.value;
+
+		const tlds = new Set( [ ...this.state.filters.tlds, newTld ] );
+		if ( isCurrentlySelected ) {
+			tlds.delete( newTld );
+		}
+
+		this.setState(
+			{
+				filters: {
+					...this.state.filters,
+					tlds: [ ...tlds ],
+				},
+			},
+			() => {
+				this.save();
+				this.repeatSearch( { pageNumber: 1 } );
+			}
+		);
+	};
 
 	onFiltersChange = newFilters => {
 		this.setState( {
@@ -576,6 +619,7 @@ class RegisterDomainStep extends React.Component {
 			vertical: this.props.surveyVertical,
 			...this.getActiveFiltersForAPI(),
 		};
+		this.setState( { lastFilters: this.state.filters } );
 
 		debug( 'Fetching domains suggestions with the following query', query );
 
@@ -922,7 +966,9 @@ class RegisterDomainStep extends React.Component {
 				railcarSeed={ this.state.railcarSeed }
 				fetchAlgo={ fetchAlgo }
 				cart={ this.props.cart }
-			/>
+			>
+				{ this.renderTldButtons() }
+			</DomainSearchResults>
 		);
 	}
 

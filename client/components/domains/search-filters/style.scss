@@ -92,7 +92,6 @@
 	.token-field__input-container {
 		margin-left: 0.4em;
 		margin-right: 0.4em;
-		border-bottom: 1px solid $gray-lighten-20;
 	}
 
 	input[type='text'].token-field__input {
@@ -100,6 +99,7 @@
 	}
 
 	.token-field__suggestions-list.is-expanded {
-		border-top: none;
+		padding-top: 0;
+		overflow-y: scroll;
 	}
 }
