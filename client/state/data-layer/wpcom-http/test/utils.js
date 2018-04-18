@@ -247,14 +247,14 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onFailure ).toHaveBeenCalled();
 		} );
 
-		test( 'should return result of fromApi', () => {
-			const fromApi = () => 'fromApi result';
+		test( 'should return transformed result of fromApi', () => {
+			const fromApi = input => `Hello, ${ input }!`;
 
-			const action = { type: 'REFILL', meta: { dataLayer: { data: {} } } };
+			const action = { type: 'REFILL', meta: { dataLayer: { data: 'world' } } };
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, {} );
 
 			expect( initiator ).not.toHaveBeenCalled();
-			expect( onSuccess ).toHaveBeenCalledWith( store, action, 'fromApi result' );
+			expect( onSuccess ).toHaveBeenCalledWith( store, action, 'Hello, world!' );
 			expect( onFailure ).not.toHaveBeenCalled();
 		} );
 	} );
@@ -346,17 +346,17 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should return result of fromApi', () => {
-			const fromApi = () => 'fromApi result';
+			const fromApi = input => `Hello, ${ input }!`;
 			const action = {
 				type: 'REFILL',
-				meta: { dataLayer: { data: {} } },
+				meta: { dataLayer: { data: 'world' } },
 			};
 
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
 
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: 'SUCCESS',
-				data: 'fromApi result',
+				data: 'Hello, world!',
 			} );
 		} );
 	} );
