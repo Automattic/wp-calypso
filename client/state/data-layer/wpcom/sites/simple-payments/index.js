@@ -86,6 +86,13 @@ export function customPostToProduct( customPost ) {
  * @return {Array} validated and converted product list
  */
 export function customPostsToProducts( responseData ) {
+	if ( ! responseData.posts ) {
+		// This is to disregard the memberships response.
+		throw new TransformerError(
+			'This is from Memberships response. We have to disregard it since' +
+				'for some reason data layer does not handle multiple handlers corretly.'
+		);
+	}
 	const posts = get( responseData, 'posts', [] );
 	const validProducts = posts
 		.map( post => {

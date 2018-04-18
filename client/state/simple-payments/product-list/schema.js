@@ -1,7 +1,12 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import config from 'config';
+/**
  * These are the parameters kept in metadata (custom fields)
  */
+
 export const metadataSchema = {
 	currency: { type: 'string', metaKey: 'spay_currency' },
 	price: { type: 'string', metaKey: 'spay_price' },
@@ -9,6 +14,7 @@ export const metadataSchema = {
 	status: { type: 'string', metaKey: 'spay_status' },
 	email: { type: 'string', metaKey: 'spay_email' },
 	formatted_price: { type: 'string', metaKey: 'spay_formatted_price' },
+	...( config.isEnabled( 'memberships' ) && { recurring: { type: 'boolean' } } ),
 };
 
 /**
