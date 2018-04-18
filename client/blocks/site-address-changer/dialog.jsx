@@ -16,7 +16,7 @@ import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
-class SiteRenamerConfirmationDialog extends PureComponent {
+class SiteAddressChangerConfirmationDialog extends PureComponent {
 	static propTypes = {
 		currentDomainSuffix: PropTypes.string,
 		isVisible: PropTypes.bool,
@@ -144,4 +144,4 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 	}
 }
 
-export default localize( SiteRenamerConfirmationDialog );
+export default localize( SiteAddressChangerConfirmationDialog );

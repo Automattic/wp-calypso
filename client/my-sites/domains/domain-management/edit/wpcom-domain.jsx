@@ -20,7 +20,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestSiteRename } from 'state/site-rename/actions';
-import SiteRenamer from 'blocks/site-address-changer';
+import SiteAddressChanger from 'blocks/site-address-changer';
 import { type as domainTypes } from 'lib/domains/constants';
 
 const WpcomDomain = createReactClass( {
@@ -42,7 +42,7 @@ const WpcomDomain = createReactClass( {
 		}
 
 		if ( get( domain, 'type' ) === domainTypes.WPCOM ) {
-			return <SiteRenamer currentDomain={ domain } />;
+			return <SiteAddressChanger currentDomain={ domain } />;
 		}
 
 		return (
