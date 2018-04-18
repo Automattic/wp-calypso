@@ -10,8 +10,8 @@ import config from 'config';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import PaymentBox from './payment-box.jsx';
-import { abtest } from '../../../lib/abtest';
 
 const SecurePaymentFormPlaceholder = () => {
 	/*eslint-disable wpcalypso/jsx-classname-namespace */
