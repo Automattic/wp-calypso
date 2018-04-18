@@ -29,4 +29,4 @@ export const transform = ( { order_id, user_id, receipt_id, processing_status } 
 	processingStatus: convertProcessingStatus( processing_status ),
 } );
 
-export default makeJsonSchemaParser( responseSchema, {}, transform );
+export default makeJsonSchemaParser( responseSchema, transform );

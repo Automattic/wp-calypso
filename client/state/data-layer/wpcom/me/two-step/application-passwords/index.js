@@ -52,7 +52,7 @@ const requestHandler = {
 			fetch: requestApplicationPasswords,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
-			fromApi: makeJsonSchemaParser( schema, {}, apiTransformer ),
+			fromApi: makeJsonSchemaParser( schema, apiTransformer ),
 		} ),
 	],
 };

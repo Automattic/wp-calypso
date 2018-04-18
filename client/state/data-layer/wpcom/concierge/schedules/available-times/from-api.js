@@ -10,4 +10,4 @@ export const convertToDate = timestampInSeconds => timestampInSeconds * 1000;
 
 export const transform = response => response.map( convertToDate );
 
-export default makeJsonSchemaParser( responseSchema, {}, transform );
+export default makeJsonSchemaParser( responseSchema, transform );
