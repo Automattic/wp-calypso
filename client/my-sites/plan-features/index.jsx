@@ -258,7 +258,6 @@ class PlanFeatures extends Component {
 			isLandingPage,
 			planProperties,
 			selectedPlan,
-			site,
 			translate,
 		} = this.props;
 
@@ -311,7 +310,6 @@ class PlanFeatures extends Component {
 						billingTimeFrame={ planConstantObj.getBillingTimeFrame( getABTestVariation ) }
 						hideMonthly={ hideMonthly }
 						isPlaceholder={ isPlaceholder }
-						site={ site }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
@@ -356,7 +354,6 @@ class PlanFeatures extends Component {
 			isInSignup,
 			planProperties,
 			selectedPlan,
-			site,
 			siteType,
 			showModifiedPricingDisplay,
 		} = this.props;
@@ -419,7 +416,6 @@ class PlanFeatures extends Component {
 						popular={ popular }
 						rawPrice={ rawPrice }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
-						site={ site }
 						selectedPlan={ selectedPlan }
 						title={ planConstantObj.getTitle() }
 						showModifiedPricingDisplay={ showModifiedPricingDisplay }
