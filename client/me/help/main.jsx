@@ -31,6 +31,7 @@ import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import config from 'config';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import Notice from 'components/notice';
 
 /**
  * Module variables
@@ -229,7 +230,7 @@ class Help extends React.PureComponent {
 	};
 
 	render() {
-		const { isEmailVerified, userId, isLoading } = this.props;
+		const { isEmailVerified, userId, isLoading, translate } = this.props;
 
 		if ( isLoading ) {
 			return this.getPlaceholders();
@@ -239,6 +240,11 @@ class Help extends React.PureComponent {
 			<Main className="help">
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
+				<Notice status="is-error">
+					{ translate(
+						'Some WordPress.com Business Sites are having connectivity problems. We are investigating the problem now.'
+					) }
+				</Notice>
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
 				{ this.getCoursesTeaser() }
