@@ -453,7 +453,7 @@ class PlanFeatures extends Component {
 			isLandingPage,
 			planProperties,
 			selectedPlan,
-			site,
+			selectedSiteSlug,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -486,7 +486,7 @@ class PlanFeatures extends Component {
 						isPopular={ popular }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
-						manageHref={ `/plans/my-plan/${ site.slug }` }
+						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
 						onUpgradeClick={ onUpgradeClick }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
@@ -571,8 +571,8 @@ class PlanFeatures extends Component {
 			isInSignup,
 			isLandingPage,
 			planProperties,
-			site,
 			selectedPlan,
+			selectedSiteSlug,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -603,7 +603,7 @@ class PlanFeatures extends Component {
 						isLandingPage={ isLandingPage }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
-						manageHref={ `/plans/my-plan/${ site.slug }` }
+						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
@@ -621,8 +621,8 @@ class PlanFeatures extends Component {
 			isInSignup,
 			isLandingPage,
 			freePlanProperties,
-			site,
 			selectedPlan,
+			selectedSiteSlug,
 		} = this.props;
 		const {
 			available,
@@ -652,7 +652,7 @@ class PlanFeatures extends Component {
 					isLandingPage={ isLandingPage }
 					isPlaceholder={ isPlaceholder }
 					isPopular={ popular }
-					manageHref={ `/plans/my-plan/${ site.slug }` }
+					manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
 					planName={ planConstantObj.getTitle() }
 					planType={ planName }
 					primaryUpgrade={ primaryUpgrade }
@@ -681,6 +681,7 @@ PlanFeatures.propTypes = {
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
+	selectedSiteSlug: PropTypes.string,
 	site: PropTypes.object,
 };
 
@@ -689,6 +690,7 @@ PlanFeatures.defaultProps = {
 	displayJetpackPlans: false,
 	isInSignup: false,
 	isJetpack: false,
+	selectedSiteSlug: '',
 	site: {},
 	onUpgradeClick: noop,
 };
@@ -741,6 +743,7 @@ export default connect(
 			displayJetpackPlans,
 		} = ownProps;
 		const selectedSiteId = site ? site.ID : null;
+		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 		const isJetpack = isJetpackSite( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
@@ -824,7 +827,6 @@ export default connect(
 									return;
 								}
 
-								const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }` );
 							},
 					planConstantObj,
@@ -842,6 +844,7 @@ export default connect(
 						plans.length === 1,
 					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
 					relatedMonthlyPlan,
+					selectedSiteSlug,
 				};
 			} )
 		);
