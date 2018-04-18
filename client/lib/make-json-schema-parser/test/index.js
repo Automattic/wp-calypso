@@ -34,6 +34,22 @@ describe( 'makeJsonSchemaParser', () => {
 		expect( parser( 0 ) ).toBe( 1 );
 	} );
 
+	test( 'should validate with additional fields', () => {
+		const schema = {
+			type: 'object',
+			properties: {
+				include: { type: 'string' },
+			},
+		};
+		const parser = makeJsonSchemaParser( schema );
+		expect( () =>
+			parser( {
+				include: 'include',
+				exclude: 'exclude',
+			} )
+		).not.toThrow();
+	} );
+
 	test( 'should filter additional fields', () => {
 		const schema = {
 			type: 'object',
