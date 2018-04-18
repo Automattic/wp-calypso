@@ -110,6 +110,7 @@ class SimplePaymentsDialog extends Component {
 		multiple: false,
 		email: '',
 		featuredImageId: null,
+		recurring: false,
 	};
 
 	constructor( props ) {
@@ -431,7 +432,7 @@ class SimplePaymentsDialog extends Component {
 			);
 		}
 
-		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
+		if ( false && ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
 				<EmptyContent
 					illustration="/calypso/images/illustrations/type-e-commerce.svg"

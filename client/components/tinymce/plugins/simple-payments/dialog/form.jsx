@@ -7,8 +7,9 @@
 import React, { Component } from 'react';
 import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import emailValidator from 'email-validator';
-import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
+import { flowRight as compose, omit, padEnd, trimEnd, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
 import UploadImage from 'blocks/upload-image';
 import { getCurrencyDefaults } from 'lib/format-currency';
+import config from 'config';
 
 const REDUX_FORM_NAME = 'simplePaymentsForm';
 
@@ -204,24 +206,40 @@ class ProductForm extends Component {
 						label={ translate( 'Price' ) }
 						component={ renderPriceField }
 					/>
-					<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
-						{ translate( 'Allow people to buy more than one item at a time.' ) }
-					</ReduxFormFieldset>
-					<ReduxFormFieldset
-						name="email"
-						label={ translate( 'Email' ) }
-						explanation={ translate(
-							'This is where PayPal will send your money.' +
-								" To claim a payment, you'll need a {{paypalLink}}PayPal account{{/paypalLink}}" +
-								' connected to a bank account.',
-							{
-								components: {
-									paypalLink: <ExternalLink href="https://paypal.com" target="_blank" />,
-								},
-							}
-						) }
-						component={ FormTextInput }
-					/>
+					{ config.isEnabled( 'memberships' ) && (
+						<ReduxFormFieldset name="recurring" type="checkbox" component={ CompactFormToggle }>
+							{ translate( 'Make this product a recurring subscription.' ) }
+						</ReduxFormFieldset>
+					) }
+					{ ! this.props.isRecurringSubscription && (
+						<div>
+							<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
+								{ translate( 'Allow people to buy more than one item at a time.' ) }
+							</ReduxFormFieldset>
+							<ReduxFormFieldset
+								name="email"
+								label={ translate( 'Email' ) }
+								explanation={ translate(
+									'This is where PayPal will send your money.' +
+										" To claim a payment, you'll need a {{paypalLink}}PayPal account{{/paypalLink}}" +
+										' connected to a bank account.',
+									{
+										components: {
+											paypalLink: <ExternalLink href="https://paypal.com" target="_blank" />,
+										},
+									}
+								) }
+								component={ FormTextInput }
+							/>
+						</div>
+					) }
+					{ this.props.isRecurringSubscription && (
+						<div>
+							{ translate(
+								'TODO: Here we need Stripe account connection and renewal schedule of the plan.'
+							) }
+						</div>
+					) }
 				</div>
 			</form>
 		);
@@ -234,5 +252,10 @@ export default compose(
 		form: REDUX_FORM_NAME,
 		enableReinitialize: true,
 		validate,
+	} ),
+	connect( state => {
+		return {
+			isRecurringSubscription: get( state, [ 'form', REDUX_FORM_NAME, 'values', 'recurring' ] ),
+		};
 	} )
 )( ProductForm );
