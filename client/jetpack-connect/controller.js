@@ -5,7 +5,7 @@
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import { get, isEmpty, some } from 'lodash';
+import { get, includes, isEmpty, some } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -235,7 +235,7 @@ export function signupForm( context, next ) {
 		let { interval, locale } = context.params;
 		const { localeOrInterval } = context.params;
 		if ( localeOrInterval ) {
-			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
+			if ( includes( [ 'monthly', 'yearly' ], localeOrInterval ) ) {
 				interval = localeOrInterval;
 			} else {
 				locale = localeOrInterval;
