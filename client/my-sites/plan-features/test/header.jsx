@@ -54,7 +54,7 @@ const props = {
 	translate: x => x,
 	planType: PLAN_FREE,
 	currentSitePlan: { productSlug: PLAN_FREE },
-	site: {},
+	isSiteJetpack: null,
 };
 
 describe( 'PlanFeaturesHeader basic tests', () => {
@@ -106,7 +106,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		test( `Should render InfoPopover for free plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
-				site: { jetpack: true },
+				isSiteJetpack: true,
 				planType: productSlug,
 			} );
 			const tf = shallow( comp.getBillingTimeframe() );
@@ -119,7 +119,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 			test( `Should render InfoPopover for non-jetpack sites (${ productSlug })`, () => {
 				const comp = new PlanFeaturesHeader( {
 					...myProps,
-					site: { jetpack: false },
+					isSiteJetpack: false,
 					planType: productSlug,
 				} );
 				const tf = shallow( comp.getBillingTimeframe() );
@@ -129,7 +129,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 			test( `Should render InfoPopover for AT sites (${ productSlug })`, () => {
 				const comp = new PlanFeaturesHeader( {
 					...myProps,
-					site: { jetpack: true },
+					isSiteJetpack: true,
 					isSiteAT: true,
 					planType: productSlug,
 				} );
@@ -139,7 +139,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 			test( `Should render InfoPopover when hideMonthly is true (${ productSlug })`, () => {
 				const comp = new PlanFeaturesHeader( {
 					...myProps,
-					site: { jetpack: true },
+					isSiteJetpack: true,
 					hideMonthly: true,
 					planType: productSlug,
 				} );
@@ -166,7 +166,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		test( `Should not render InfoPopover for paid plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
-				site: { jetpack: true },
+				isSiteJetpack: true,
 				planType: productSlug,
 			} );
 			const tf = shallow( comp.getBillingTimeframe() );
