@@ -84,7 +84,7 @@ class InlineHelpPopover extends Component {
 			>
 				<Notice status="is-error" isCompact={ true } showDismiss={ false }>
 					{ this.props.translate(
-						'Some WordPress.com Business Sites are having connectivity problems. We are investigating the problem now.'
+						'Some WordPress.com Business Sites are having connectivity problems. We are investigating the the issue now.'
 					) }
 				</Notice>
 				<div className="inline-help__search">

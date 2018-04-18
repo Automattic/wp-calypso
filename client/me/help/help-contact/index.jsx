@@ -574,7 +574,7 @@ class HelpContact extends React.Component {
 				<PageViewTracker path="/help/contact" title="Help > Contact" />
 				<Notice status="is-error" isCompact={ this.props.compact }>
 					{ this.props.translate(
-						'Some WordPress.com Business Sites are having connectivity problems. We are investigating the problem now.'
+						'Some WordPress.com Business Sites are having connectivity problems. We are investigating the issue now.'
 					) }
 				</Notice>
 				{ ! this.props.compact && (
