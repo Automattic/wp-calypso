@@ -31,7 +31,7 @@ function fetchNonce( siteId ) {
 
 export const getErrorNotice = message =>
 	errorNotice( message, {
-		id: 'siteRenameUnsuccessful',
+		id: 'siteAddressChangeUnsuccessful',
 		duration: 5000,
 		showDismiss: true,
 		isPersistent: true,
@@ -96,7 +96,7 @@ export const clearValidationError = siteId => dispatch => {
 	} );
 };
 
-export const requestSiteRename = ( siteId, newBlogName, discard = true ) => dispatch => {
+export const requestSiteAddressChange = ( siteId, newBlogName, discard = true ) => dispatch => {
 	dispatch( {
 		type: SITE_RENAME_REQUEST,
 		siteId,
@@ -142,7 +142,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard = true ) => disp
 
 							dispatch(
 								successNotice( translate( 'Your new site address is ready to go!' ), {
-									id: 'siteRenameSuccessful',
+									id: 'siteAddressChangeSuccessful',
 									duration: 5000,
 									showDismiss: true,
 									isPersistent: true,
