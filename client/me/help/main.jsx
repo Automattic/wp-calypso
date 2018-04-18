@@ -31,7 +31,6 @@ import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import config from 'config';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Notice from 'components/notice';
 
 /**
  * Module variables
@@ -230,7 +229,7 @@ class Help extends React.PureComponent {
 	};
 
 	render() {
-		const { isEmailVerified, userId, isLoading, translate } = this.props;
+		const { isEmailVerified, userId, isLoading } = this.props;
 
 		if ( isLoading ) {
 			return this.getPlaceholders();
@@ -240,24 +239,6 @@ class Help extends React.PureComponent {
 			<Main className="help">
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
-				<Notice status="is-error" showDismiss={ false }>
-					{ translate(
-						'Some WordPress.com Business Sites are having connectivity problems due to an issue with an infrastructure ' +
-						'partner. They are actively working to resolve the problem. Please visit {{a}}automatticstatus.com{{/a}} ' +
-						'for updates.',
-						{
-						components: {
-							a: (
-								<a
-								href={ 'https://automatticstatus.com/' }
-								target="_blank"
-								rel="noopener noreferrer"
-								/>
-							),
-						},
-						}
-					) }
-				</Notice>
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
 				{ this.getCoursesTeaser() }
