@@ -32,7 +32,11 @@ import {
 	jetpackRemoteInstall,
 	jetpackRemoteInstallUpdateError,
 } from 'state/jetpack-remote-install/actions';
-import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
+import {
+	getJetpackRemoteInstallErrorCode,
+	getJetpackRemoteInstallErrorMessage,
+	isJetpackRemoteInstallComplete,
+} from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from './constants';
@@ -40,8 +44,8 @@ import {
 	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,
 	INSTALL_RESPONSE_ERROR,
+	INVALID_CREDENTIALS,
 	INVALID_PERMISSIONS,
-	LOGIN_FAILURE,
 	UNKNOWN_REMOTE_INSTALL_ERROR,
 } from './connection-notice-types';
 
@@ -143,7 +147,7 @@ export class OrgCredentialsForm extends Component {
 		);
 
 		switch ( this.getError( installError ) ) {
-			case LOGIN_FAILURE:
+			case INVALID_CREDENTIALS:
 				subheader = translate(
 					'We were unable to install Jetpack because your WordPress Administrator credentials were invalid. ' +
 						'Please try again with the correct credentials or try installing Jetpack manually.'
@@ -168,8 +172,8 @@ export class OrgCredentialsForm extends Component {
 		) {
 			return ACTIVATION_FAILURE;
 		}
-		if ( installError === 'LOGIN_FAILURE' || installError === 'INVALID_CREDENTIALS' ) {
-			return LOGIN_FAILURE;
+		if ( installError === 'INVALID_CREDENTIALS' ) {
+			return INVALID_CREDENTIALS;
 		}
 		if ( installError === 'ACTIVATION_RESPONSE_ERROR' ) {
 			return ACTIVATION_RESPONSE_ERROR;
@@ -180,12 +184,27 @@ export class OrgCredentialsForm extends Component {
 		if ( installError === 'FORBIDDEN' ) {
 			return INVALID_PERMISSIONS;
 		}
+		if ( installError === 'LOGIN_FAILURE' ) {
+			// Non-credentials login failure. We don't know of any action that can be taken.
+			return UNKNOWN_REMOTE_INSTALL_ERROR;
+		}
+
 		return UNKNOWN_REMOTE_INSTALL_ERROR;
 	}
 
 	isInvalidCreds() {
 		const { installError } = this.props;
-		return includes( [ LOGIN_FAILURE ], this.getError( installError ) );
+		return includes( [ INVALID_CREDENTIALS ], this.getError( installError ) );
+	}
+
+	isInvalidPassword() {
+		const { installErrorMessage } = this.props;
+		return this.isInvalidCreds() && installErrorMessage !== 'bad username';
+	}
+
+	isInvalidUsername() {
+		const { installErrorMessage } = this.props;
+		return this.isInvalidCreds() && installErrorMessage !== 'bad password';
 	}
 
 	formFields() {
@@ -193,10 +212,10 @@ export class OrgCredentialsForm extends Component {
 		const { isSubmitting, password, username } = this.state;
 
 		const userClassName = classnames( 'jetpack-connect__credentials-form-input', {
-			'is-error': this.isInvalidCreds(),
+			'is-error': this.isInvalidUsername(),
 		} );
 		const passwordClassName = classnames( 'jetpack-connect__password-form-input', {
-			'is-error': this.isInvalidCreds(),
+			'is-error': this.isInvalidPassword(),
 		} );
 
 		return (
@@ -275,7 +294,6 @@ export class OrgCredentialsForm extends Component {
 
 	footerLink() {
 		const { installError, siteToConnect, translate } = this.props;
-		const isFormInNotice = includes( [ LOGIN_FAILURE ], this.getError( installError ) );
 		const manualInstallUrl = addQueryArgs(
 			{ url: siteToConnect },
 			'/jetpack/connect/instructions'
@@ -283,7 +301,7 @@ export class OrgCredentialsForm extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				{ ( isFormInNotice || ! installError ) && (
+				{ ( this.isInvalidCreds() || ! installError ) && (
 					<LoggedOutFormLinkItem href={ manualInstallUrl }>
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
@@ -346,11 +364,11 @@ export default connect(
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteData = jetpackConnectSite.data || {};
 		const siteToConnect = siteData.urlAfterRedirects || jetpackConnectSite.url;
-		const installError = getJetpackRemoteInstallErrorCode( state, siteToConnect );
-		const isResponseCompleted = isJetpackRemoteInstallComplete( state, siteToConnect );
+
 		return {
-			installError,
-			isResponseCompleted,
+			installError: getJetpackRemoteInstallErrorCode( state, siteToConnect ),
+			installErrorMessage: getJetpackRemoteInstallErrorMessage( state, siteToConnect ),
+			isResponseCompleted: isJetpackRemoteInstallComplete( state, siteToConnect ),
 			siteToConnect,
 		};
 	},
