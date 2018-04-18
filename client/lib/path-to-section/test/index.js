@@ -25,7 +25,7 @@ describe( 'pathToSection', () => {
 			expect( wpcomImplementation( '/me' ) ).to.equal( 'me' );
 		} );
 		test( 'should handle deep paths', () => {
-			expect( wpcomImplementation( '/me/account' ) ).to.equal( 'me' );
+			expect( wpcomImplementation( '/me/account' ) ).to.equal( 'account' );
 		} );
 	} );
 
