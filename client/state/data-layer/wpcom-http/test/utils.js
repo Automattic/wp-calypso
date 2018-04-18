@@ -12,7 +12,6 @@ import {
 	reducer,
 	trackRequests,
 } from '../utils.js';
-import { SchemaError } from 'lib/make-json-schema-parser';
 
 describe( 'WPCOM HTTP Data Layer', () => {
 	const withData = data => ( { type: 'SLUGGER', meta: { dataLayer: { data } } } );
@@ -239,7 +238,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 		test( 'should fail-over on invalid response data', () => {
 			const fromApi = () => {
-				throw new SchemaError( 'Test schema error' );
+				throw new Error( 'Test schema error' );
 			};
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, success, data );
 
@@ -336,7 +335,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 		test( 'should fail-over on invalid response data', () => {
 			const fromApi = () => {
-				throw new SchemaError( 'Test schema error' );
+				throw new Error( 'Test schema error' );
 			};
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, successHttpAction );
 
