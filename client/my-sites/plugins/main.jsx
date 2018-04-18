@@ -291,7 +291,13 @@ export class PluginsMain extends Component {
 
 		const analyticsPageTitle = filter ? `Plugins > ${ capitalize( filter ) }` : 'Plugins';
 
-		const analyticsPath = selectedSiteId ? '/plugins/manage/:site' : '/plugins/manage';
+		// 'All' view corresponds to '/plugins/manage' path.
+		// Other filters appear unchanged in path (eg. Active -> /plugins/active)
+		const currentFilter = filter === 'all' ? 'manage' : filter;
+
+		const analyticsPath = selectedSiteId
+			? `/plugins/${ currentFilter }/:site`
+			: `/plugins/${ currentFilter }`;
 
 		if ( selectedSiteId && ! selectedSiteIsJetpack ) {
 			return null;
