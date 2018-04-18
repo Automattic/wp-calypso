@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import responseSchema from './schema';
-import { makeParser } from 'lib/make-json-schema-parser';
 
-export default makeParser( responseSchema, {} );
+export default makeJsonSchemaParser( responseSchema, {} );

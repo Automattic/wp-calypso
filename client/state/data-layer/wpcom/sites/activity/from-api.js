@@ -8,7 +8,7 @@ import { get, map } from 'lodash';
  * Internal dependencies
  */
 import apiResponseSchema from './schema';
-import { makeParser } from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import { parseBlock } from 'lib/notifications/note-block-parser';
 
 /**
@@ -104,4 +104,4 @@ export function processItem( item ) {
 }
 
 // fromApi default export
-export default makeParser( apiResponseSchema, {}, transformer );
+export default makeJsonSchemaParser( apiResponseSchema, {}, transformer );

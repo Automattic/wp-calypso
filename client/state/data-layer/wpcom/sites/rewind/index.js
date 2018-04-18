@@ -2,9 +2,9 @@
 /**
  * Internal dependencies
  */
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { makeParser } from 'lib/make-json-schema-parser';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
@@ -105,7 +105,7 @@ export default mergeHandlers( downloads, {
 			fetch: fetchRewindState,
 			onSuccess: updateRewindState,
 			onError: setUnknownState,
-			fromApi: makeParser( rewindStatus, {}, transformApi ),
+			fromApi: makeJsonSchemaParser( rewindStatus, {}, transformApi ),
 		} ),
 	],
 } );

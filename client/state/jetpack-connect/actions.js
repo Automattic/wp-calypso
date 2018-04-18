@@ -10,11 +10,11 @@ import { omit, pick } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { clearPlan } from 'jetpack-connect/persistence-utils';
-import { makeParser } from 'lib/make-json-schema-parser';
 import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
@@ -251,7 +251,7 @@ export function createAccount( userData ) {
 
 		try {
 			const data = await wpcom.undocumented().usersNew( userData );
-			const bearerToken = makeParser(
+			const bearerToken = makeJsonSchemaParser(
 				{
 					type: 'object',
 					required: [ 'bearer_token' ],

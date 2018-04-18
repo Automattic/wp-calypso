@@ -8,13 +8,13 @@ import { noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema.json';
 import { clearJITM, insertJITM } from 'state/jitm/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isJetpackSite } from 'state/sites/selectors';
-import { makeParser } from 'lib/make-json-schema-parser';
 import { SECTION_SET, SELECTED_SITE_SET, JITM_DISMISS } from 'state/action-types';
 
 /**
@@ -196,12 +196,12 @@ export const failedJITM = ( { dispatch }, { siteId, site_id, messagePath } ) =>
 export default {
 	[ SECTION_SET ]: [
 		dispatchRequest( handleRouteChange, receiveJITM, failedJITM, {
-			fromApi: makeParser( schema, {}, transformApiRequest ),
+			fromApi: makeJsonSchemaParser( schema, {}, transformApiRequest ),
 		} ),
 	],
 	[ SELECTED_SITE_SET ]: [
 		dispatchRequest( handleSiteSelection, receiveJITM, failedJITM, {
-			fromApi: makeParser( schema, {}, transformApiRequest ),
+			fromApi: makeJsonSchemaParser( schema, {}, transformApiRequest ),
 		} ),
 	],
 	[ JITM_DISMISS ]: [ dispatchRequest( doDismissJITM, noop, noop, {} ) ],

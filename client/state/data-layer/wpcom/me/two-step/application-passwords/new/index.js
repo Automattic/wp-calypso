@@ -8,12 +8,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema';
 import { APPLICATION_PASSWORD_CREATE } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { makeParser } from 'lib/make-json-schema-parser';
 import {
 	createApplicationPasswordSuccess,
 	requestApplicationPasswords,
@@ -73,7 +73,7 @@ export default {
 			fetch: addApplicationPassword,
 			onSuccess: handleAddSuccess,
 			onError: handleAddError,
-			fromApi: makeParser( schema, {}, apiTransformer ),
+			fromApi: makeJsonSchemaParser( schema, {}, apiTransformer ),
 		} ),
 	],
 };

@@ -9,12 +9,12 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import deleteHandler from './delete';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import newHandler from './new';
 import schema from './schema';
 import { APPLICATION_PASSWORDS_REQUEST } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { makeParser } from 'lib/make-json-schema-parser';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveApplicationPasswords } from 'state/application-passwords/actions';
 
@@ -52,7 +52,7 @@ const requestHandler = {
 			fetch: requestApplicationPasswords,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
-			fromApi: makeParser( schema, {}, apiTransformer ),
+			fromApi: makeJsonSchemaParser( schema, {}, apiTransformer ),
 		} ),
 	],
 };
