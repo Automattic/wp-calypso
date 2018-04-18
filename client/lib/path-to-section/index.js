@@ -5,7 +5,7 @@
  */
 
 import config from 'config';
-import { find, startsWith } from 'lodash';
+import { last, max, sortBy, startsWith } from 'lodash';
 
 /**
  * Conditional dependency
@@ -17,15 +17,19 @@ const sections = config( 'project' ) === 'wordpress-com' ? require( 'wordpress-c
  *
  *  f( '/' ) === 'reader"
  *  f( '/me' ) === 'me"
- *  f( '/me/account' ) === 'me"
+ *  f( '/me/account' ) === 'account"
  *  f( '/read' ) === 'reader'
  */
 export const wpcomImplementation = path => {
-	const match = find( sections, section =>
-		section.paths.some( sectionPath => startsWith( path, sectionPath ) )
+	// rank matches by the number of characters that match so e.g. /media won't map to /me
+	const rankedMatches = sortBy( sections, section =>
+		max(
+			section.paths.map(
+				sectionPath => ( startsWith( path, sectionPath ) ? sectionPath.length : 0 )
+			)
+		)
 	);
-
-	return match && match.name;
+	return rankedMatches && last( rankedMatches ) && last( rankedMatches ).name;
 };
 
 /*
