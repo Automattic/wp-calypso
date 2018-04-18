@@ -24,7 +24,7 @@ import { getYearlyPlanByMonthly, planMatches } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
 
@@ -100,10 +100,10 @@ export class PlanFeaturesHeader extends Component {
 		const {
 			available,
 			discountPrice,
-			site,
-			showModifiedPricingDisplay,
+			isSiteJetpack,
 			rawPrice,
 			relatedMonthlyPlan,
+			showModifiedPricingDisplay,
 		} = this.props;
 
 		if ( ! showModifiedPricingDisplay || ! available || this.isPlanCurrent() ) {
@@ -121,7 +121,7 @@ export class PlanFeaturesHeader extends Component {
 		// Note: Don't make this translatable because it's only visible to English-language users
 		return (
 			<span className="plan-features__header-credit-label">
-				{ site.jetpack ? 'Discount' : 'Credit available' }
+				{ isSiteJetpack ? 'Discount' : 'Credit available' }
 			</span>
 		);
 	}
@@ -146,8 +146,8 @@ export class PlanFeaturesHeader extends Component {
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
-			site,
 			isSiteAT,
+			isSiteJetpack,
 			hideMonthly,
 			isInSignup,
 		} = this.props;
@@ -168,7 +168,7 @@ export class PlanFeaturesHeader extends Component {
 
 		if (
 			isSiteAT ||
-			! site.jetpack ||
+			! isSiteJetpack ||
 			planMatches( this.props.planType, { type: TYPE_FREE } ) ||
 			hideMonthly
 		) {
@@ -205,19 +205,18 @@ export class PlanFeaturesHeader extends Component {
 		const {
 			currencyCode,
 			discountPrice,
-			rawPrice,
-			isPlaceholder,
-			relatedMonthlyPlan,
-			site,
 			isInSignup,
+			isPlaceholder,
+			isSiteJetpack,
+			rawPrice,
+			relatedMonthlyPlan,
 			showModifiedPricingDisplay,
 		} = this.props;
 
 		if ( isPlaceholder && ! isInSignup ) {
-			const isJetpackSite = !! site.jetpack;
 			const classes = classNames( 'is-placeholder', {
-				'plan-features__price': ! isJetpackSite,
-				'plan-features__price-jetpack': isJetpackSite,
+				'plan-features__price': ! isSiteJetpack,
+				'plan-features__price-jetpack': isSiteJetpack,
 			} );
 
 			return <div className={ classes } />;
@@ -273,14 +272,14 @@ export class PlanFeaturesHeader extends Component {
 		const {
 			basePlansPath,
 			currencyCode,
+			isSiteJetpack,
 			isYearly,
 			rawPrice,
 			relatedMonthlyPlan,
 			relatedYearlyPlan,
-			site,
 			siteSlug,
 		} = this.props;
-		if ( site.jetpack ) {
+		if ( isSiteJetpack ) {
 			const [ discountPrice, originalPrice ] = isYearly
 				? [ relatedMonthlyPlan.raw_price * 12, rawPrice ]
 				: [ rawPrice * 12, get( relatedYearlyPlan, 'raw_price' ) ];
@@ -318,7 +317,6 @@ PlanFeaturesHeader.propTypes = {
 	title: PropTypes.string.isRequired,
 	isPlaceholder: PropTypes.bool,
 	translate: PropTypes.func,
-	site: PropTypes.object,
 	siteSlug: PropTypes.string,
 	isInJetpackConnect: PropTypes.bool,
 	relatedMonthlyPlan: PropTypes.object,
@@ -326,6 +324,7 @@ PlanFeaturesHeader.propTypes = {
 	// Connected props
 	currentSitePlan: PropTypes.object,
 	isSiteAT: PropTypes.bool,
+	isSiteJetpack: PropTypes.bool,
 	relatedYearlyPlan: PropTypes.object,
 };
 
@@ -336,11 +335,11 @@ PlanFeaturesHeader.defaultProps = {
 	newPlan: false,
 	bestValue: false,
 	isPlaceholder: false,
-	site: {},
 	siteSlug: '',
 	basePlansPath: null,
 	currentSitePlan: {},
 	isSiteAT: false,
+	isSiteJetpack: false,
 };
 
 export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) => {
@@ -350,6 +349,7 @@ export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) 
 	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
+		isSiteJetpack: isJetpackSite( state, selectedSiteId ),
 		isYearly,
 		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
