@@ -58,13 +58,13 @@ class Plans extends React.Component {
 		return selectedSite && ! displayJetpackPlans && intervalType === 'monthly';
 	}
 
-	redirectIfNonJetpackMonthly = () => {
+	redirectIfNonJetpackMonthly() {
 		const { selectedSite } = this.props;
 
 		if ( this.isNonJetpackMonthly() ) {
 			page.redirect( '/plans/' + selectedSite.slug );
 		}
-	};
+	}
 
 	renderPlaceholder = () => {
 		return (
