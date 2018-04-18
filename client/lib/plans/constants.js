@@ -11,6 +11,7 @@ import { compact, includes } from 'lodash';
 /**
  * Internal dependencies
  */
+
 import { isEnabled } from 'config';
 import { isBusinessPlan, isFreePlan, isPersonalPlan, isPremiumPlan } from './index';
 
@@ -159,13 +160,15 @@ export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 
 const WPComGetBillingTimeframe = abtest => {
-	if ( isEnabled( 'upgrades/2-year-plans' ) ) {
-		return i18n.translate( '/month, billed annually or biennially' );
-	}
+	if ( abtest ) {
+		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
+			return i18n.translate( '/month, billed annually or biennially' );
+		}
 
-	if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
-		// Note: Don't make this translatable because it's only visible to English-language users
-		return '/month, billed annually';
+		if ( abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
+			// Note: Don't make this translatable because it's only visible to English-language users
+			return '/month, billed annually';
+		}
 	}
 	return i18n.translate( 'per month, billed yearly' );
 };
