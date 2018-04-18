@@ -25,7 +25,6 @@ class DomainProductPrice extends React.Component {
 		freeWithPlan: PropTypes.bool,
 		requiresPlan: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
-		showExpandedPrice: PropTypes.bool,
 	};
 
 	renderFreeWithPlan() {
@@ -63,14 +62,12 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderIncludedInPremium() {
-		const { translate, showExpandedPrice } = this.props;
+		const { translate } = this.props;
 
 		// TODO: When removing this flag, remember to remove PremiumPopover component
 		//       from the codebase.
 		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
-		const includedInPlanText = showExpandedPrice
-			? translate( 'Price included in paid plans' )
-			: translate( 'Included in paid plans' );
+		const includedInPlanText = translate( 'Included in paid plans' );
 
 		return (
 			<div className="domain-product-price is-with-plans-only">
