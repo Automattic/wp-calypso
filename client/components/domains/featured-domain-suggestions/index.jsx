@@ -12,6 +12,7 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import FeaturedDomainSuggestionsPlaceholder from 'components/domains/featured-domain-suggestions/placeholder';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 
 export class FeaturedDomainSuggestions extends Component {
@@ -19,6 +20,7 @@ export class FeaturedDomainSuggestions extends Component {
 		cart: PropTypes.object,
 		primarySuggestion: PropTypes.object,
 		secondarySuggestion: PropTypes.object,
+		showPlaceholders: PropTypes.bool,
 	};
 
 	getChildProps() {
@@ -85,6 +87,10 @@ export class FeaturedDomainSuggestions extends Component {
 		const { primarySuggestion, secondarySuggestion } = this.props;
 		const childProps = this.getChildProps();
 
+		if ( this.props.showPlaceholders ) {
+			return this.renderPlaceholders();
+		}
+
 		return (
 			<div className={ this.getClassNames() }>
 				{ primarySuggestion && (
@@ -101,6 +107,15 @@ export class FeaturedDomainSuggestions extends Component {
 						{ ...childProps }
 					/>
 				) }
+			</div>
+		);
+	}
+
+	renderPlaceholders() {
+		return (
+			<div className={ this.getClassNames() }>
+				<FeaturedDomainSuggestionsPlaceholder />
+				<FeaturedDomainSuggestionsPlaceholder />
 			</div>
 		);
 	}
