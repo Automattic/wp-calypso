@@ -7,8 +7,12 @@
  * External dependencies
  */
 import React from 'react';
-import PlansSkipButton from '../';
 import renderer from 'react-test-renderer';
+
+/**
+ * Internal dependencies
+ */
+import PlansSkipButton from '../';
 
 describe( 'PlansSkipButton', () => {
 	test( 'should render', () => {
