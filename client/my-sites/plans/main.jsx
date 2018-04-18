@@ -53,13 +53,18 @@ class Plans extends React.Component {
 		this.redirectIfNonJetpackMonthly();
 	}
 
-	redirectIfNonJetpackMonthly = () => {
+	isNonJetpackMonthly() {
 		const { displayJetpackPlans, intervalType, selectedSite } = this.props;
+		return selectedSite && ! displayJetpackPlans && intervalType === 'monthly';
+	}
 
-		if ( selectedSite && ! displayJetpackPlans && intervalType === 'monthly' ) {
+	redirectIfNonJetpackMonthly() {
+		const { selectedSite } = this.props;
+
+		if ( this.isNonJetpackMonthly() ) {
 			page.redirect( '/plans/' + selectedSite.slug );
 		}
-	};
+	}
 
 	renderPlaceholder = () => {
 		return (
@@ -77,7 +82,7 @@ class Plans extends React.Component {
 	render() {
 		const { selectedSite, translate, displayJetpackPlans } = this.props;
 
-		if ( ! selectedSite ) {
+		if ( ! selectedSite || this.isNonJetpackMonthly() ) {
 			return this.renderPlaceholder();
 		}
 
