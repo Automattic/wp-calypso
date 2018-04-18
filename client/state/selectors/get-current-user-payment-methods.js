@@ -51,7 +51,7 @@ export default function getCurrentUserPaymentMethods( state ) {
 
 	return (
 		paymentMethods.byLocale[ generatedLocale ] ||
-		paymentMethods.byCountry[ countryCode ] ||
+		paymentMethods.byCountry[ 'BR' ] ||
 		paymentMethods.byWpcomLang[ wpcomLang ] || [ ...DEFAULT_PAYMENT_METHODS ]
 	);
 }
