@@ -16,7 +16,7 @@
 	}
 
 	&.is-with-plans-only:not( .is-free-domain ) {
-		flex: 1 1 280px;
+		flex: 1 0 280px;
 
 		small {
 			font-size: 12px;
