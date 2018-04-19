@@ -51,7 +51,6 @@ class ThemesBanner extends PureComponent {
 		recordTracksEvent( 'calypso_showcase_banner_click', tracksData );
 	};
 
-	// eslint-disable-next-line no-undef
 	handleBannerClose = e => {
 		this.props.hideThemesBanner();
 		e.preventDefault();
