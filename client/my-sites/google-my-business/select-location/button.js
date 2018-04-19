@@ -40,7 +40,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 		);
 
 		this.props
-			.connectGoogleMyBusinessLocation( siteId, location.keyringConnectionId, location.id )
+			.connectGoogleMyBusinessLocation( siteId, location.keyringConnectionId, location.ID )
 			.then( () => {
 				onSelected( location );
 			} );

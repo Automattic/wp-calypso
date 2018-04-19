@@ -14,7 +14,6 @@ import { localize, moment } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
-import FakeData from './fake-data';
 import Notice from 'components/notice';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
@@ -26,10 +25,13 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getGoogleMyBusinessConnectedLocation } from 'state/selectors';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
 
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
-		locationData: PropTypes.object.isRequired,
+		locationData: PropTypes.object,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
@@ -80,8 +82,8 @@ class GoogleMyBusinessStats extends Component {
 		);
 	};
 
-	render() {
-		const { locationData, siteId, siteSlug, translate } = this.props;
+	renderPlaceholder() {
+		const { siteId, siteSlug, translate } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -95,6 +97,39 @@ class GoogleMyBusinessStats extends Component {
 				<SidebarNavigation />
 
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
+
+				<QuerySiteSettings siteId={ siteId } />
+				<QueryKeyringConnections />
+
+				<div className="gmb-stats__metrics">
+					<div className="gmb-stats__metric" />
+				</div>
+			</Main>
+		);
+	}
+
+	render() {
+		const { locationData, siteId, siteSlug, translate } = this.props;
+
+		if ( ! locationData ) {
+			return this.renderPlaceholder();
+		}
+
+		return (
+			<Main wideLayout>
+				<PageViewTracker
+					path="/google-my-business/stats/:site"
+					title="Google My Business > Stats"
+				/>
+
+				<DocumentHead title={ translate( 'Stats' ) } />
+
+				<SidebarNavigation />
+
+				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
+
+				<QuerySiteSettings siteId={ siteId } />
+				<QueryKeyringConnections />
 
 				{ /* remove this notice once we stop using fake data */ }
 				<Notice
@@ -222,11 +257,15 @@ class GoogleMyBusinessStats extends Component {
 }
 
 export default connect(
-	state => ( {
-		locationData: FakeData.locationData,
-		siteId: getSelectedSiteId( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const locationData = getGoogleMyBusinessConnectedLocation( state, siteId );
+		return {
+			locationData,
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	},
 	{
 		recordTracksEvent,
 	}

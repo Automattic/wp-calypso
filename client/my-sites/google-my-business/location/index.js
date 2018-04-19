@@ -37,7 +37,9 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 					<h2 className="gmb-location__name">{ location.name }</h2>
 
 					<div className="gmb-location__address">
-						{ location.address.map( ( line, index ) => <p key={ index }>{ line }</p> ) }
+						{ location.description
+							.split( ', ' )
+							.map( ( line, index ) => <p key={ index }>{ line }</p> ) }
 					</div>
 
 					{ location.verified && (

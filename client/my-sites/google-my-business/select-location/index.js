@@ -76,7 +76,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 				</CompactCard>
 
 				{ locations.map( location => (
-					<GoogleMyBusinessLocation key={ location.id } location={ location } isCompact>
+					<GoogleMyBusinessLocation key={ location.ID } location={ location } isCompact>
 						<GoogleMyBusinessSelectLocationButton
 							location={ location }
 							onSelected={ this.handleLocationSelected }
@@ -106,24 +106,10 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	}
 }
-
-function formatLocations( locationsFromKeyring ) {
-	return locationsFromKeyring.map( location => {
-		return {
-			...location, // see client/state/sharing/selectors.js for default attributes
-			id: location.ID,
-			name: location.name,
-			address: location.description.split( ', ' ),
-			connected: location.isConnected,
-			verified: true,
-		};
-	} );
-}
-
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const locations = formatLocations( getGoogleMyBusinessLocations( state, siteId ) );
+		const locations = getGoogleMyBusinessLocations( state, siteId );
 
 		return {
 			locations,
