@@ -20,7 +20,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getActiveTheme, getThemeDetailsUrl } from 'state/themes/selectors';
 import { isThemesBannerVisible } from 'state/themes/themes-ui/selectors';
-import { hideThemesBanner } from 'state/themes/themes-ui/actions';
+import { hideThemesBanner as hideThemesBannerAction } from 'state/themes/themes-ui/actions';
 
 class ThemesBanner extends PureComponent {
 	static propTypes = {
@@ -52,8 +52,8 @@ class ThemesBanner extends PureComponent {
 	};
 
 	// eslint-disable-next-line no-undef
-	onBannerCloseClick = e => {
-		this.props.onBannerClose();
+	handlerBannerClose = e => {
+		this.props.hideThemesBanner();
 		e.preventDefault();
 	};
 
@@ -87,9 +87,9 @@ class ThemesBanner extends PureComponent {
 				<Button className="themes-banner__cta" compact primary>
 					{ translate( 'See the theme' ) }
 				</Button>
-				<button className="themes-banner__close" type="button" onClick={ this.onBannerCloseClick }>
+				<Button className="themes-banner__close" onClick={ this.handlerBannerClose }>
 					<Gridicon icon="cross-small" size={ 18 } />
-				</button>
+				</Button>
 				{ image && (
 					<img
 						alt={ translate( '%(themeName)s Theme', {
@@ -119,9 +119,7 @@ const mapStateToProps = ( state, { themeId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+export default connect( mapStateToProps, {
 	recordTracksEvent: recordTracksEventAction,
-	onBannerClose: () => dispatch( hideThemesBanner ),
-} );
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemesBanner ) );
+	hideThemesBanner: hideThemesBannerAction,
+} )( localize( ThemesBanner ) );
