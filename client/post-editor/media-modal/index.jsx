@@ -129,10 +129,11 @@ export class EditorMediaModal extends Component {
 	}
 
 	componentWillMount() {
-		const { view, mediaLibrarySelectedItems, site } = this.props;
-		if ( ! isEmpty( mediaLibrarySelectedItems ) && view === ModalViews.LIST ) {
+		const { view, mediaLibrarySelectedItems, site, single } = this.props;
+		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );
 		}
+
 	}
 
 	componentWillUnmount() {
