@@ -17,6 +17,7 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
+import PlansExtendedInfo from './plans-extended-info';
 import PlansSkipButton from './plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -98,9 +99,9 @@ class Plans extends Component {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
 		if ( selectedSiteSlug && canPurchasePlans ) {
-			// Redirect to "My Plan" page with the "Main Tour" guided tour enabled.
+			// Redirect to "My Plan" page with the "Jetpack Basic Tour" guided tour enabled.
 			// For more details about guided tours, see layout/guided-tours/README.md
-			return this.redirect( CALYPSO_MY_PLAN_PAGE, { tour: 'main' } );
+			return this.redirect( CALYPSO_MY_PLAN_PAGE, { tour: 'jetpack' } );
 		}
 
 		return this.redirect( CALYPSO_REDIRECTION_PAGE );
@@ -188,6 +189,12 @@ class Plans extends Component {
 		);
 	}
 
+	handleInfoButtonClick = info => () => {
+		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
+			help_type: info,
+		} );
+	};
+
 	render() {
 		const { interval, isRtlLayout, selectedSite, translate } = this.props;
 
@@ -207,7 +214,7 @@ class Plans extends Component {
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
-					basePlansPath={ '/jetpack/connect/plans' }
+					basePlansPath={ this.props.basePlansPath }
 					onSelect={ this.selectPlan }
 					hideFreePlan={ true }
 					isLanding={ false }
@@ -215,6 +222,7 @@ class Plans extends Component {
 					selectedSite={ selectedSite }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
+					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
 							label={ helpButtonLabel }

@@ -7,13 +7,16 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flowRight, noop } from 'lodash';
+import { flowRight, get, isNumber, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { getSiteFragment } from 'lib/route';
 import { recordPageView } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Module variables
@@ -27,6 +30,8 @@ export class PageViewTracker extends React.Component {
 		delay: PropTypes.number,
 		path: PropTypes.string.isRequired,
 		recorder: PropTypes.func,
+		hasSelectedSiteLoaded: PropTypes.bool,
+		selectedSiteId: PropTypes.number,
 		title: PropTypes.string.isRequired,
 	};
 
@@ -44,12 +49,21 @@ export class PageViewTracker extends React.Component {
 		clearTimeout( this.state.timer );
 	}
 
+	componentDidUpdate( prevProps ) {
+		if (
+			prevProps.path !== this.props.path ||
+			prevProps.selectedSiteId !== this.props.selectedSiteId
+		) {
+			this.queuePageView();
+		}
+	}
+
 	queuePageView = () => {
-		const { delay = 0, path, recorder = noop, title } = this.props;
+		const { delay = 0, path, recorder = noop, hasSelectedSiteLoaded, title } = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
-		if ( this.state.timer ) {
+		if ( ! hasSelectedSiteLoaded || this.state.timer ) {
 			return;
 		}
 
@@ -67,8 +81,25 @@ export class PageViewTracker extends React.Component {
 	}
 }
 
+const mapStateToProps = state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
+	const currentSlug =
+		typeof window === 'undefined' ? '' : getSiteFragment( get( window, 'location.pathname', '' ) );
+
+	const hasSelectedSiteLoaded =
+		! currentSlug ||
+		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
+		currentSlug === selectedSiteSlug;
+
+	return {
+		hasSelectedSiteLoaded,
+		selectedSiteId,
+	};
+};
+
 const mapDispatchToProps = dispatch => ( {
 	recorder: flowRight( dispatch, recordPageView ),
 } );
 
-export default connect( null, mapDispatchToProps )( PageViewTracker );
+export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );

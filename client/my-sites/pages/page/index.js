@@ -26,7 +26,7 @@ import * as utils from 'lib/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';
@@ -337,7 +337,7 @@ class Page extends Component {
 
 	render() {
 		const { page, site = {}, shadowStatus, translate } = this.props;
-		const title = page.title || translate( '(no title)' );
+		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page );
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
 
@@ -382,6 +382,7 @@ class Page extends Component {
 		const cardClasses = {
 			page: true,
 			'is-indented': this.props.hierarchical && this.props.hierarchyLevel > 0,
+			'is-untitled': ! page.title,
 		};
 
 		const hierarchyIndentClasses = {

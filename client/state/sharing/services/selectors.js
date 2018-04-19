@@ -9,6 +9,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { canCurrentUser } from 'state/selectors';
 import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
 
@@ -89,6 +90,15 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 
 		// Omit if Publicize service and user cannot publish
 		if ( 'publicize' === service.type && ! canCurrentUser( state, siteId, 'publish_posts' ) ) {
+			return false;
+		}
+
+		// Omit if service is settings-oriented and user cannot manage
+		if (
+			'google_my_business' === service.ID &&
+			( ! canCurrentUser( state, siteId, 'manage_options' ) ||
+				! config.isEnabled( 'google-my-business' ) )
+		) {
 			return false;
 		}
 

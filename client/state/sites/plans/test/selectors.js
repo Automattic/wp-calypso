@@ -261,206 +261,147 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getPlanRawPrice()', () => {
-		test( 'should return a plan price', () => {
-			const plans = {
-				data: [
-					{
-						currentPlan: false,
-						productSlug: 'gold',
-						rawPrice: 299,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: false,
-						productSlug: 'silver',
-						rawPrice: 199,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: true,
-						productSlug: 'bronze',
-						rawPrice: 99,
-						rawDiscount: 100,
-					},
-				],
-			};
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans,
-					},
+		const plans = {
+			data: [
+				{
+					currentPlan: false,
+					productSlug: 'business-bundle',
+					rawPrice: 299,
+					rawDiscount: 0,
 				},
-			};
-			const rawPrice = getSitePlanRawPrice( state, 77203074, 'bronze' );
+				{
+					currentPlan: false,
+					productSlug: 'value_bundle',
+					rawPrice: 199,
+					rawDiscount: 0,
+				},
+				{
+					currentPlan: true,
+					productSlug: 'personal-bundle',
+					rawPrice: 99,
+					rawDiscount: 100,
+				},
+				{
+					currentPlan: false,
+					productSlug: 'value_bundle-2y',
+					rawPrice: 240,
+					rawDiscount: 24,
+				},
+				{
+					currentPlan: false,
+					productSlug: 'jetpack_premium_monthly',
+					rawPrice: 30,
+					rawDiscount: 10,
+				},
+			],
+		};
+		const state = {
+			sites: {
+				plans: {
+					77203074: plans,
+				},
+			},
+		};
+		test( 'should return a plan price', () => {
+			const rawPrice = getSitePlanRawPrice( state, 77203074, 'personal-bundle' );
 			expect( rawPrice ).to.equal( 199 );
 		} );
-		test( 'should return a monthly price', () => {
-			const plans = {
-				data: [
-					{
-						currentPlan: false,
-						productSlug: 'gold',
-						rawPrice: 299,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: false,
-						productSlug: 'silver',
-						rawPrice: 199,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: true,
-						productSlug: 'bronze',
-						rawPrice: 99,
-						rawDiscount: 100,
-					},
-				],
-			};
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans,
-					},
-				},
-			};
-			const rawPrice = getSitePlanRawPrice( state, 77203074, 'bronze', { isMonthly: true } );
+		test( 'should return a monthly price - annual term', () => {
+			const rawPrice = getSitePlanRawPrice( state, 77203074, 'personal-bundle', {
+				isMonthly: true,
+			} );
 			expect( rawPrice ).to.equal( 16.58 );
 		} );
+		test( 'should return a monthly price - biennial term', () => {
+			const rawPrice = getSitePlanRawPrice( state, 77203074, 'value_bundle-2y', {
+				isMonthly: true,
+			} );
+			expect( rawPrice ).to.equal( 11 );
+		} );
+		test( 'should return a monthly price - monthly term', () => {
+			const rawPrice = getSitePlanRawPrice( state, 77203074, 'jetpack_premium_monthly', {
+				isMonthly: true,
+			} );
+			expect( rawPrice ).to.equal( 40 );
+		} );
 		test( 'should return raw price, if no discount is available', () => {
-			const plans = {
-				data: [
-					{
-						currentPlan: false,
-						productSlug: 'gold',
-						rawPrice: 299,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: false,
-						productSlug: 'silver',
-						rawPrice: 199,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: true,
-						productSlug: 'bronze',
-						rawPrice: 99,
-						rawDiscount: 100,
-					},
-				],
-			};
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans,
-					},
-				},
-			};
-			const rawPrice = getSitePlanRawPrice( state, 77203074, 'silver', { isMonthly: false } );
+			const rawPrice = getSitePlanRawPrice( state, 77203074, 'value_bundle', { isMonthly: false } );
 			expect( rawPrice ).to.equal( 199 );
 		} );
 	} );
 	describe( '#getPlanDiscountedRawPrice()', () => {
-		test( 'should return a discount price', () => {
-			const plans = {
-				data: [
-					{
-						currentPlan: false,
-						productSlug: 'gold',
-						rawPrice: 299,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: false,
-						productSlug: 'silver',
-						rawPrice: 199,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: true,
-						productSlug: 'bronze',
-						rawPrice: 99,
-						rawDiscount: 100,
-					},
-				],
-			};
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans,
-					},
+		const plans = {
+			data: [
+				{
+					currentPlan: false,
+					productSlug: 'business-bundle',
+					rawPrice: 299,
+					rawDiscount: 0,
 				},
-			};
-			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze' );
+				{
+					currentPlan: false,
+					productSlug: 'value_bundle',
+					rawPrice: 199,
+					rawDiscount: 0,
+				},
+				{
+					currentPlan: true,
+					productSlug: 'personal-bundle',
+					rawPrice: 99,
+					rawDiscount: 100,
+				},
+				{
+					currentPlan: false,
+					productSlug: 'value_bundle-2y',
+					rawPrice: 240,
+					rawDiscount: 24,
+				},
+				{
+					currentPlan: false,
+					productSlug: 'jetpack_premium_monthly',
+					rawPrice: 30,
+					rawDiscount: 10,
+				},
+			],
+		};
+		const state = {
+			sites: {
+				plans: {
+					77203074: plans,
+				},
+			},
+		};
+
+		test( 'should return a discount price', () => {
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'personal-bundle' );
 			expect( discountPrice ).to.equal( 99 );
 		} );
-		test( 'should return a monthly discount price', () => {
-			const plans = {
-				data: [
-					{
-						currentPlan: false,
-						productSlug: 'gold',
-						rawPrice: 299,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: false,
-						productSlug: 'silver',
-						rawPrice: 199,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: true,
-						productSlug: 'bronze',
-						rawPrice: 99,
-						rawDiscount: 100,
-					},
-				],
-			};
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans,
-					},
-				},
-			};
-			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze', {
+		test( 'should return a monthly discount price - annual term', () => {
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'personal-bundle', {
 				isMonthly: true,
 			} );
 			expect( discountPrice ).to.equal( 8.25 );
 		} );
+		test( 'should return a monthly discount price - biennial term', () => {
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'value_bundle-2y', {
+				isMonthly: true,
+			} );
+			expect( discountPrice ).to.equal( 10 );
+		} );
+		test( 'should return a monthly discount price - monthly term (isMonthly: true)', () => {
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'jetpack_premium_monthly', {
+				isMonthly: true,
+			} );
+			expect( discountPrice ).to.equal( 30 );
+		} );
+		test( 'should return a monthly discount price - monthly term (isMonthly: false)', () => {
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'jetpack_premium_monthly', {
+				isMonthly: false,
+			} );
+			expect( discountPrice ).to.equal( 30 );
+		} );
 		test( 'should return null, if no discount is available', () => {
-			const plans = {
-				data: [
-					{
-						currentPlan: false,
-						productSlug: 'gold',
-						rawPrice: 299,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: false,
-						productSlug: 'silver',
-						rawPrice: 199,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: true,
-						productSlug: 'bronze',
-						rawPrice: 99,
-						rawDiscount: 100,
-					},
-				],
-			};
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans,
-					},
-				},
-			};
-			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'silver', {
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'value_bundle', {
 				isMonthly: true,
 			} );
 			expect( discountPrice ).to.equal( null );
@@ -468,114 +409,78 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getPlanRawDiscount()', () => {
-		test( 'should return a raw discount', () => {
-			const plans = {
-				data: [
-					{
-						currentPlan: false,
-						productSlug: 'gold',
-						rawPrice: 299,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: false,
-						productSlug: 'silver',
-						rawPrice: 199,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: true,
-						productSlug: 'bronze',
-						rawPrice: 99,
-						rawDiscount: 100,
-					},
-				],
-			};
-
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans,
-					},
+		const plans = {
+			data: [
+				{
+					currentPlan: false,
+					productSlug: 'business-bundle',
+					rawPrice: 299,
+					rawDiscount: 0,
 				},
-			};
+				{
+					currentPlan: false,
+					productSlug: 'value_bundle',
+					rawPrice: 199,
+					rawDiscount: 0,
+				},
+				{
+					currentPlan: true,
+					productSlug: 'personal-bundle',
+					rawPrice: 99,
+					rawDiscount: 100,
+				},
+				{
+					currentPlan: false,
+					productSlug: 'value_bundle-2y',
+					rawPrice: 240,
+					rawDiscount: 240,
+				},
+				{
+					currentPlan: false,
+					productSlug: 'jetpack_premium_monthly',
+					rawPrice: 30,
+					rawDiscount: 240,
+				},
+			],
+		};
 
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'bronze' );
-
+		const state = {
+			sites: {
+				plans: {
+					77203074: plans,
+				},
+			},
+		};
+		test( 'should return a raw discount', () => {
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'personal-bundle' );
 			expect( planRawDiscount ).to.equal( 100 );
 		} );
 
-		test( 'should return a monthly raw discount', () => {
-			const plans = {
-				data: [
-					{
-						currentPlan: false,
-						productSlug: 'gold',
-						rawPrice: 299,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: false,
-						productSlug: 'silver',
-						rawPrice: 199,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: true,
-						productSlug: 'bronze',
-						rawPrice: 99,
-						rawDiscount: 100,
-					},
-				],
-			};
-
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans,
-					},
-				},
-			};
-
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'bronze', { isMonthly: true } );
-
+		test( 'should return a monthly raw discount - annual term', () => {
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'personal-bundle', {
+				isMonthly: true,
+			} );
 			expect( planRawDiscount ).to.equal( 8.33 );
 		} );
 
+		test( 'should return a monthly raw discount - biennial term', () => {
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'value_bundle-2y', {
+				isMonthly: true,
+			} );
+			expect( planRawDiscount ).to.equal( 10 );
+		} );
+
+		test( 'should return a monthly raw discount - monthly term', () => {
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'jetpack_premium_monthly', {
+				isMonthly: true,
+			} );
+			expect( planRawDiscount ).to.equal( 240 );
+		} );
+
 		test( 'should return null, if no raw discount is available', () => {
-			const plans = {
-				data: [
-					{
-						currentPlan: false,
-						productSlug: 'gold',
-						rawPrice: 299,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: false,
-						productSlug: 'silver',
-						rawPrice: 199,
-						rawDiscount: 0,
-					},
-					{
-						currentPlan: true,
-						productSlug: 'bronze',
-						rawPrice: 99,
-						rawDiscount: 100,
-					},
-				],
-			};
-
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans,
-					},
-				},
-			};
-
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'silver', { isMonthly: true } );
-
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'value_bundle', {
+				isMonthly: true,
+			} );
 			expect( planRawDiscount ).to.equal( null );
 		} );
 	} );

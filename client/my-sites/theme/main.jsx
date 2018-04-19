@@ -16,6 +16,8 @@ import i18n from 'i18n-calypso';
 import classNames from 'classnames';
 import titlecase from 'to-title-case';
 import Gridicon from 'gridicons';
+import { head, split } from 'lodash';
+import photon from 'photon';
 
 /**
  * Internal dependencies
@@ -47,6 +49,7 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
+	getCanonicalTheme,
 	getPremiumThemePrice,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
@@ -56,7 +59,6 @@ import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getCanonicalTheme } from 'state/themes/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -191,12 +193,14 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
-	getFullLengthScreenshot = () => {
+	getFullLengthScreenshot() {
 		if ( this.isLoaded() ) {
-			return this.props.screenshots[ 0 ];
+			// Results are being returned with photon params like `?w=…`. This makes the photon
+			// module abort and return null. Strip query string.
+			return head( split( head( this.props.screenshots ), '?', 1 ) );
 		}
 		return null;
-	};
+	}
 
 	previewAction = event => {
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
@@ -209,7 +213,7 @@ class ThemeSheet extends React.Component {
 		return preview.action( this.props.id );
 	};
 
-	renderPreviewButton = demo_uri => {
+	renderPreviewButton( demo_uri ) {
 		return (
 			<a
 				className="theme__sheet-preview-link"
@@ -225,13 +229,23 @@ class ThemeSheet extends React.Component {
 				</span>
 			</a>
 		);
-	};
+	}
 
-	renderScreenshot = () => {
-		const { demo_uri, retired, isActive, isWpcomTheme } = this.props;
+	renderScreenshot() {
+		const { demo_uri, retired, isActive, isWpcomTheme, name: themeName } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
+		const width = 735;
+		// Photon may return null, allow fallbacks
+		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
 		const img = screenshotFull && (
-			<img className="theme__sheet-img" src={ screenshotFull + '?w=680' } />
+			<img
+				alt={ i18n.translate( 'Screenshot of the %(themeName)s theme', {
+					args: { themeName },
+				} ) }
+				className="theme__sheet-img"
+				src={ photonSrc || screenshotFull }
+				srcSet={ photonSrc && `${ photon( screenshotFull, { width, zoom: 2 } ) } 2x` }
+			/>
 		);
 
 		if ( demo_uri && ! retired ) {
@@ -244,7 +258,7 @@ class ThemeSheet extends React.Component {
 		}
 
 		return <div className="theme__sheet-screenshot">{ img }</div>;
-	};
+	}
 
 	renderSectionNav = currentSection => {
 		const filterStrings = {
@@ -534,10 +548,10 @@ class ThemeSheet extends React.Component {
 
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
-		const { siteId, retired } = this.props;
+		const { id, siteId, retired } = this.props;
 
-		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${
-			siteId ? '/:site_id' : ''
+		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
+			siteId ? '/:site' : ''
 		}`;
 		const analyticsPageTitle = `Themes > Details Sheet${
 			section ? ' > ' + titlecase( section ) : ''

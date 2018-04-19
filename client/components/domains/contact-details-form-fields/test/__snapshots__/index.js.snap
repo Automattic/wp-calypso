@@ -18,6 +18,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       label="First Name"
       labelClass="contact-details-form-fields__label"
       name="first-name"
+      onBlur={[Function]}
       onChange={[Function]}
       value="Osso"
     />
@@ -36,6 +37,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       label="Last Name"
       labelClass="contact-details-form-fields__label"
       name="last-name"
+      onBlur={[Function]}
       onChange={[Function]}
       value="Buco"
     />
@@ -56,6 +58,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         label="Organization"
         labelClass="contact-details-form-fields__label"
         name="organization"
+        onBlur={[Function]}
         onChange={[Function]}
         text="+ Add organization name"
         value="Il pagliaccio del comune"
@@ -75,6 +78,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         label="Email"
         labelClass="contact-details-form-fields__label"
         name="email"
+        onBlur={[Function]}
         onChange={[Function]}
         value="osso@buco.com"
       />
@@ -98,6 +102,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         label="Phone"
         labelClass="contact-details-form-fields__label"
         name="phone"
+        onBlur={[Function]}
         onChange={[Function]}
         value="+3398067382"
       />
@@ -121,6 +126,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         label="Country"
         labelClass="contact-details-form-fields__label"
         name="country-code"
+        onBlur={[Function]}
         onChange={[Function]}
         value="IT"
       />

@@ -13,7 +13,7 @@ import { requestPage as requestPageAction, receivePage } from 'state/reader/stre
 import { errorNotice } from 'state/notices/actions';
 
 describe( 'streams', () => {
-	const action = deepfreeze( requestPageAction( { streamId: 'following', page: 2 } ) );
+	const action = deepfreeze( requestPageAction( { streamKey: 'following', page: 2 } ) );
 
 	describe( 'requestPage', () => {
 		it( 'should return an http request', () => {
@@ -154,7 +154,7 @@ describe( 'streams', () => {
 				},
 			].forEach( testCase => {
 				it( testCase.stream + ' should pass the expected params', () => {
-					const pageAction = requestPageAction( { streamId: testCase.stream } );
+					const pageAction = requestPageAction( { streamKey: testCase.stream } );
 					const expected = {
 						onSuccess: pageAction,
 						onFailure: pageAction,
@@ -170,9 +170,9 @@ describe( 'streams', () => {
 		const data = deepfreeze( { posts: [] } );
 
 		it( 'should return a receivePage action', () => {
-			const { streamId, query } = action.payload;
+			const { streamKey, query } = action.payload;
 			expect( handlePage( action, fromApi( data ) ) ).toEqual(
-				receivePage( { streamId, query, posts: data.posts } )
+				receivePage( { streamKey, query, posts: data.posts } )
 			);
 		} );
 	} );

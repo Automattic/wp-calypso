@@ -89,10 +89,12 @@
 	.jetpack-logo {
 		display: block;
 		margin: 20px auto;
+	}
 
-		.jetpack-logo__icon {
-			fill: $green-jetpack;
-		}
+	.steps__summary-illustration {
+		display: block;
+		margin: 20px auto;
+		max-width: 300px;
 	}
 }
 

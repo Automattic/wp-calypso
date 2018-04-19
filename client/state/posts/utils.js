@@ -5,6 +5,7 @@
  */
 
 import {
+	get,
 	isEmpty,
 	isPlainObject,
 	flow,
@@ -282,6 +283,30 @@ export function isTermsEqual( localTermEdits, savedTerms ) {
 		const normalizedSavedTerms = map( savedTerms[ taxonomy ], normalizedKey );
 		return ! xor( normalizedEditedTerms, normalizedSavedTerms ).length;
 	} );
+}
+
+/**
+ * Returns true if the modified properties in the local edit of the `discussion` object (the edited
+ * properties are a subset of the full object) are equal to the values in the saved post.
+ *
+ * @param  {Object}  localDiscussionEdits local state of discussion edits
+ * @param  {Object}  savedDiscussion      discussion property returned from API POST
+ * @return {Boolean}                      are there differences in local edits vs saved values?
+ */
+export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
+	return every( localDiscussionEdits, ( value, key ) => get( savedDiscussion, [ key ] ) === value );
+}
+
+/**
+ * Returns true if the locally edited author ID is equal to the saved post author's ID. Other
+ * properties of the `author` object are irrelevant.
+ *
+ * @param  {Object}  localAuthorEdit locally edited author object
+ * @param  {Object}  savedAuthor     author property returned from API POST
+ * @return {Boolean}                 are the locally edited and saved values equal?
+ */
+export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
+	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );
 }
 
 /**

@@ -16,7 +16,6 @@ import { current as currentPage } from 'page';
  * Internal dependencies
  */
 import QueryPostTypes from 'components/data/query-post-types';
-import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import QuerySitePlans from 'components/data/query-site-plans';
 import Button from 'components/button';
@@ -52,10 +51,8 @@ import Notice from 'components/notice';
 import {
 	hasFeature,
 	isRequestingSitePlans as siteIsRequestingPlans,
-	getSitePlanRawPrice,
-	getPlanDiscountedRawPrice,
 } from 'state/sites/plans/selectors';
-import { FEATURE_REPUBLICIZE, PLAN_PREMIUM, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
+import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
 import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
@@ -567,7 +564,6 @@ class PostShare extends Component {
 					{ this.renderConnectionsWarning() }
 					{ this.renderPrimarySection() }
 				</div>
-				<QueryPosts { ...{ siteId, postId } } />
 				<SharingPreviewModal
 					siteId={ siteId }
 					postId={ postId }
@@ -579,10 +575,6 @@ class PostShare extends Component {
 		);
 	}
 }
-
-const getDiscountedOrRegularPrice = ( state, siteId, plan ) =>
-	getPlanDiscountedRawPrice( state, siteId, plan, { isMonthly: true } ) ||
-	getSitePlanRawPrice( state, siteId, plan, { isMonthly: true } );
 
 export default connect(
 	( state, props ) => {
@@ -609,8 +601,6 @@ export default connect(
 			failed: sharePostFailure( state, siteId, postId ),
 			success: sharePostSuccessMessage( state, siteId, postId ),
 			scheduledAt: getScheduledPublicizeShareActionTime( state, siteId, postId ),
-			premiumPrice: getDiscountedOrRegularPrice( state, siteId, PLAN_PREMIUM ),
-			jetpackPremiumPrice: getDiscountedOrRegularPrice( state, siteId, PLAN_JETPACK_PREMIUM ),
 			userCurrency: getCurrentUserCurrencyCode( state ),
 			scheduledActions: getPostShareScheduledActions( state, siteId, postId ),
 			publishedActions: getPostSharePublishedActions( state, siteId, postId ),

@@ -15,38 +15,17 @@ import Button from 'components/button';
 import Card from 'components/card';
 import HappinessSupport from 'components/happiness-support';
 import PlanIcon from 'components/plans/plan-icon';
-import {
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_PERSONAL,
-} from 'lib/plans/constants';
+import { PLANS_LIST, TYPE_FREE, TYPE_BUSINESS, GROUP_JETPACK } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
 import { managePurchase } from 'me/purchases/paths';
 
-class CurrentPlanHeader extends Component {
+export class CurrentPlanHeader extends Component {
 	static propTypes = {
 		selectedSite: PropTypes.object,
 		title: PropTypes.string,
 		tagLine: PropTypes.string,
 		isPlaceholder: PropTypes.bool,
-		currentPlanSlug: PropTypes.oneOf( [
-			PLAN_PREMIUM,
-			PLAN_BUSINESS,
-			PLAN_JETPACK_FREE,
-			PLAN_JETPACK_BUSINESS,
-			PLAN_JETPACK_BUSINESS_MONTHLY,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PERSONAL_MONTHLY,
-			PLAN_PERSONAL,
-		] ).isRequired,
+		currentPlanSlug: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
 		translate: PropTypes.func,
@@ -55,13 +34,13 @@ class CurrentPlanHeader extends Component {
 
 	isEligibleForLiveChat = () => {
 		const { currentPlanSlug: planSlug } = this.props;
-		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
+		return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
 	};
 
 	renderPurchaseInfo() {
-		const { currentPlan, currentPlanSlug, selectedSite, isExpiring, translate } = this.props;
+		const { currentPlan, selectedSite, isExpiring, translate } = this.props;
 
-		if ( ! currentPlan || currentPlanSlug === PLAN_JETPACK_FREE ) {
+		if ( ! currentPlan || this.isJetpackFreePlan() ) {
 			return null;
 		}
 
@@ -144,7 +123,7 @@ class CurrentPlanHeader extends Component {
 					<div className="current-plan__header-item-content">
 						<HappinessSupport
 							isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-							isJetpackFreePlan={ currentPlanSlug === PLAN_JETPACK_FREE }
+							isJetpackFreePlan={ this.isJetpackFreePlan() }
 							isPlaceholder={ isPlaceholder }
 							showLiveChatButton={ this.isEligibleForLiveChat() }
 							liveChatButtonEventName="calypso_plans_current_plan_chat_initiated"
@@ -153,6 +132,10 @@ class CurrentPlanHeader extends Component {
 				</div>
 			</div>
 		);
+	}
+
+	isJetpackFreePlan() {
+		return planMatches( this.props.currentPlanSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
 	}
 }
 

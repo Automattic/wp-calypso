@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import FormattedHeader from 'components/formatted-header';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 import {
 	getJetpackOnboardingCompletedSteps,
@@ -34,7 +33,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	};
 
 	render() {
-		const { basePath, getForwardUrl, stepsCompleted, stepsPending, translate } = this.props;
+		const { getForwardUrl, stepsCompleted, stepsPending, translate } = this.props;
 		const headerText = translate( 'Are you looking to sell online?' );
 		const subHeaderText = translate(
 			"We'll set you up with WooCommerce for all of your online selling needs."
@@ -45,11 +44,6 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<PageViewTracker
-					path={ [ basePath, STEPS.WOOCOMMERCE, ':site' ].join( '/' ) }
-					title="WooCommerce ‹ Jetpack Start"
-				/>
-
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<div className="steps__button-group">

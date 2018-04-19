@@ -2,35 +2,31 @@
 	margin-bottom: 0;
 }
 
-.credentials-configured__header {
-	width: 85%;
+.credentials-configured__info {
+	align-items: center;
+	display: flex;
 }
 
-.credentials-configured__header-gridicon {
+.credentials-configured__info-gridicon {
 	display: inline-block;
-	vertical-align: middle;
+	flex-shrink: 0;
 	margin-right: 10px;
 }
 
-.credentials-configured__header-configured-text,
-.credentials-configured__header-text {
+.credentials-configured__info-text {
 	display: inline-block;
-	vertical-align: middle;
-	width: 85%;
-	color: $gray-dark;
 }
 
-.credentials-configured__header-gridicon {
+.credentials-configured__info-gridicon {
 	color: $alert-green;
 }
 
-.credentials-configured__header-protocol {
+.credentials-configured__info-protocol {
 	font-weight: bold;
 	font-size: 1.5rem;
 }
 
-.credentials-configured__header-description {
-	width: 500px;
+.credentials-configured__info-description {
 	color: $gray;
 	font-size: 1.3rem;
 }
@@ -39,13 +35,21 @@
 	text-align: right;
 }
 
+.credentials-configured__revoke-icon {
+	color: $alert-red;
+	margin-right: .5rem;
+}
+
 .credentials-configured__revoke-button.is-borderless {
 	margin-right: 2rem;
 	position: relative;
 	top: -5px;
-}
 
-.credentials-configured__revoke-icon {
-	color: $alert-red;
-	margin-right: .5rem;
+	&:hover .credentials-configured__revoke-icon {
+		color: darken( $alert-red, 20% );
+	}
+
+	&:disabled .credentials-configured__revoke-icon {
+		color: lighten( $alert-red, 30% );
+	}
 }

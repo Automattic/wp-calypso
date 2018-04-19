@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import cartValues from 'lib/cart-values';
+import cartValues, { getLocationOrigin } from 'lib/cart-values';
 import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
 import PaymentCountrySelect from 'components/payment-country-select';
@@ -21,13 +21,14 @@ import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
+import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
-class PaypalPaymentBox extends React.Component {
+export class PaypalPaymentBox extends React.Component {
 	static displayName = 'PaypalPaymentBox';
 
 	state = {
@@ -58,15 +59,11 @@ class PaypalPaymentBox extends React.Component {
 		} );
 	};
 
-	getLocationOrigin = l => {
-		return l.protocol + '//' + l.hostname + ( l.port ? ':' + l.port : '' );
-	};
-
 	redirectToPayPal = event => {
 		var cart,
 			transaction,
 			dataForApi,
-			origin = this.getLocationOrigin( window.location );
+			origin = getLocationOrigin( window.location );
 		event.preventDefault();
 
 		cart = this.props.cart;
@@ -138,9 +135,12 @@ class PaypalPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const hasBusinessPlanInCart = some( this.props.cart.products, {
-			product_slug: PLAN_BUSINESS,
-		} );
+		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
+			planMatches( product_slug, {
+				type: TYPE_BUSINESS,
+				group: GROUP_WPCOM,
+			} )
+		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';
 
@@ -167,6 +167,8 @@ class PaypalPaymentBox extends React.Component {
 						/>
 					</div>
 				</div>
+
+				{ this.props.children }
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(

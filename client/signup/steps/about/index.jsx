@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey, shuffle } from 'lodash';
+import { invoke, noop, findKey } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -16,12 +16,9 @@ import SignupActions from 'lib/signup/actions';
 import formState from 'lib/form-state';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
-import { setDomainSearchPrefill } from 'state/signup/steps/domains/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { setSiteGoalsArray } from 'state/signup/steps/site-goals-array/actions';
-import { getSiteGoalsArray } from 'state/signup/steps/site-goals-array/selectors';
 import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -79,28 +76,6 @@ class AboutStep extends Component {
 		} );
 
 		this.setFormState( this.formStateController.getInitialState() );
-	}
-
-	componentDidMount() {
-		if ( this.props.siteGoalsArray.length === 0 ) {
-			const localStorageOptions = localStorage.getItem( 'setSiteGoalsArray' );
-			let arrayValues = [
-				'shareOption',
-				'promoteOption',
-				'educateOption',
-				'sellOption',
-				'showcaseOption',
-			];
-
-			if ( abtest( 'siteGoalsShuffle' ) === 'variant' ) {
-				arrayValues = shuffle( arrayValues );
-			}
-
-			const optionsArray = localStorageOptions ? localStorageOptions.split( ',' ) : arrayValues;
-
-			localStorage.setItem( 'setSiteGoalsArray', optionsArray );
-			this.props.setSiteGoalsArray( optionsArray );
-		}
 	}
 
 	setFormState = state => {
@@ -281,26 +256,21 @@ class AboutStep extends Component {
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 
+		const eventAttributes = {};
+
 		//Site Title
 		if ( siteTitleInput !== '' ) {
 			siteTitleValue = siteTitleInput;
 			this.props.setSiteTitle( siteTitleValue );
-			this.props.setDomainSearchPrefill( siteTitleValue );
 		}
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-			field: 'Site title',
-			value: siteTitleInput || 'N/A',
-		} );
+		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		//Site Topic
 		const englishSiteTopicInput =
 			findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-			field: 'Site topic',
-			value: englishSiteTopicInput || 'N/A',
-		} );
+		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
 
 		this.props.setSurvey( {
 			vertical: englishSiteTopicInput,
@@ -314,16 +284,10 @@ class AboutStep extends Component {
 		designType = getSiteTypeForSiteGoals( siteGoalsInput, this.props.flowName );
 
 		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
-			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-				field: 'Site goals',
-				value: siteGoalsArray[ i ],
-			} );
+			eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
 		}
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-			field: 'Site goal selections',
-			value: siteGoalsGroup,
-		} );
+		eventAttributes.site_goal_selections = siteGoalsGroup;
 
 		//SET SITETYPE
 		this.props.setDesignType( designType );
@@ -334,12 +298,10 @@ class AboutStep extends Component {
 		//User Experience
 		if ( ! user.get() && userExperienceInput !== '' ) {
 			this.props.setUserExperience( userExperienceInput );
-
-			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-				field: 'User Experience',
-				value: userExperienceInput,
-			} );
+			eventAttributes.user_experience = userExperienceInput;
 		}
+
+		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
 
 		//Store
 		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
@@ -379,7 +341,9 @@ class AboutStep extends Component {
 	};
 
 	renderGoalCheckboxes() {
-		const { translate, siteGoalsArray } = this.props;
+		const { translate } = this.props;
+		// Note that the key attributes will be used in the name of a tracks event attribute so can not
+		// contain whitespace.
 		const options = {
 			shareOption: {
 				key: 'share',
@@ -404,6 +368,14 @@ class AboutStep extends Component {
 				formLabel: translate( 'Showcase your portfolio' ),
 			},
 		};
+
+		const siteGoalsArray = [
+			'shareOption',
+			'promoteOption',
+			'educateOption',
+			'sellOption',
+			'showcaseOption',
+		];
 
 		return (
 			<div className="about__checkboxes">
@@ -620,16 +592,13 @@ export default connect(
 	state => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
-		siteGoalsArray: getSiteGoalsArray( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
 	} ),
 	{
 		setSiteTitle,
 		setDesignType,
-		setDomainSearchPrefill,
 		setSiteGoals,
-		setSiteGoalsArray,
 		setSurvey,
 		setUserExperience,
 		recordTracksEvent,

@@ -17,7 +17,7 @@ import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
 import config from 'config';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import ResumeEditing from 'my-sites/resume-editing';
 import { getPrimarySiteId, isDomainOnlySite, isNotificationsOpen } from 'state/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';

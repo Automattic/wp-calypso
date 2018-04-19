@@ -17,6 +17,8 @@ import JetpackLogo from 'components/jetpack-logo';
 import BackButton from 'components/back-button';
 import SiteUrlInput from '../site-url-input';
 import WordPressLogo from 'components/wordpress-logo';
+import { cleanUrl } from '../utils';
+import { persistSession } from '../persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackNewSite extends Component {
@@ -32,7 +34,7 @@ class JetpackNewSite extends Component {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
 	}
 
-	handleJetpackUrlChange = event => this.setState( { jetpackUrl: event.target.value } );
+	handleJetpackUrlChange = event => this.setState( { jetpackUrl: cleanUrl( event.target.value ) } );
 
 	getNewWpcomSiteUrl() {
 		return config( 'signup_url' ) + '?ref=calypso-selector';
@@ -40,6 +42,8 @@ class JetpackNewSite extends Component {
 
 	handleJetpackSubmit = () => {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_connect_click' );
+		// Track that connection was started by button-click, so we can auto-approve at auth step.
+		persistSession( this.state.jetpackUrl );
 		page( '/jetpack/connect?url=' + this.state.jetpackUrl );
 	};
 

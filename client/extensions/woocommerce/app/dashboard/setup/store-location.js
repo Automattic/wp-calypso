@@ -27,7 +27,7 @@ import {
 	areLocationsLoaded,
 	getAllCountries,
 	getCountriesWithStates,
-} from 'woocommerce/state/sites/locations/selectors';
+} from 'woocommerce/state/sites/data/locations/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './footer';

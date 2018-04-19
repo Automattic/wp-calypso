@@ -14,16 +14,17 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import { CreditCardFormFields } from '../';
-import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
+import { shouldRenderAdditionalEbanxFields } from 'lib/checkout/ebanx';
+
 import mockCountriesList from './mocks/mock-countries-list';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
 } ) );
 
-jest.mock( 'lib/credit-card-details/ebanx', () => {
+jest.mock( 'lib/checkout/ebanx', () => {
 	return {
-		isEbanxEnabledForCountry: jest.fn( false ),
+		shouldRenderAdditionalEbanxFields: jest.fn( false ),
 	};
 } );
 
@@ -44,17 +45,16 @@ describe( 'CreditCardFormFields', () => {
 
 	describe( 'with ebanx activated', () => {
 		beforeAll( () => {
-			isEbanxEnabledForCountry.mockReturnValue( true );
+			shouldRenderAdditionalEbanxFields.mockReturnValue( true );
 		} );
 		afterAll( () => {
-			isEbanxEnabledForCountry.mockReturnValue( false );
+			shouldRenderAdditionalEbanxFields.mockReturnValue( false );
 		} );
 
 		test( 'should display Ebanx fields when an Ebanx payment country is selected', () => {
 			const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
 			wrapper.setProps( { card: { country: 'BR' } } );
-			expect( wrapper.find( '.ebanx-details-required' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.credit-card-form-fields__info-text' ) ).toHaveLength( 1 );
+			expect( wrapper.find( 'EbanxPaymentFields' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

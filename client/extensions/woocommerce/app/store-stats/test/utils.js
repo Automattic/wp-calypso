@@ -21,6 +21,7 @@ import {
 	getStartPeriod,
 	getQueryDate,
 	getUnitPeriod,
+	getWidgetPath,
 } from '../utils';
 
 describe( 'calculateDelta', () => {
@@ -455,5 +456,27 @@ describe( 'getConversionRateData', () => {
 				conversionRate: 0,
 			},
 		] );
+	} );
+} );
+
+describe( 'getWidgetPath', () => {
+	test( 'should return a string', () => {
+		const widgetPath = getWidgetPath( 'unit', 'slug', {} );
+		assert.isString( widgetPath );
+	} );
+
+	test( 'should return a correct string', () => {
+		const widgetPath = getWidgetPath( 'unit', 'slug', {} );
+		assert.strictEqual( '/unit/slug', widgetPath );
+	} );
+
+	test( 'should return a correct string with one query param', () => {
+		const widgetPath = getWidgetPath( 'unit', 'slug', { param1: 1 } );
+		assert.strictEqual( '/unit/slug?param1=1', widgetPath );
+	} );
+
+	test( 'should return a correct string with two query params', () => {
+		const widgetPath = getWidgetPath( 'unit', 'slug', { param1: 1, param2: 2 } );
+		assert.strictEqual( '/unit/slug?param1=1&param2=2', widgetPath );
 	} );
 } );

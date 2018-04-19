@@ -1,10 +1,19 @@
 /** @format */
 
-export const itemsSchema = {
+export default {
 	type: 'object',
 	patternProperties: {
 		'(\\w|\\d)+': {
-			type: 'array',
+			type: 'object',
+			properties: {
+				items: { type: 'array' },
+				selected: { type: 'object' },
+				pendingItems: { type: 'array' },
+				lastPage: { type: 'boolean' },
+				isRequesting: { type: 'boolean' },
+				pageHandle: { type: 'string' },
+			},
+			additionalProperties: false,
 		},
 	},
 	additionalProperties: false,

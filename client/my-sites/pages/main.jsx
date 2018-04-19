@@ -9,18 +9,21 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import debugFactory from 'debug';
+import titlecase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import notices from 'notices';
 import urlSearch from 'lib/url-search';
 import Main from 'components/main';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import PageList from './page-list';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -32,7 +35,8 @@ class PagesMain extends React.Component {
 	static displayName = 'Pages';
 
 	static propTypes = {
-		trackScrollPage: PropTypes.func.isRequired,
+		status: PropTypes.string,
+		search: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -51,9 +55,39 @@ class PagesMain extends React.Component {
 		this._setWarning( this.props.site );
 	}
 
+	getAnalyticsPath() {
+		const { status, siteId } = this.props;
+		const basePath = '/pages';
+
+		if ( siteId && status ) {
+			return `${ basePath }/${ status }/:site`;
+		}
+
+		if ( status ) {
+			return `${ basePath }/${ status }`;
+		}
+
+		if ( siteId ) {
+			return `${ basePath }/:site`;
+		}
+
+		return basePath;
+	}
+
+	getAnalyticsTitle() {
+		const { status } = this.props;
+
+		if ( status && status.length ) {
+			return `Pages > ${ titlecase( status ) }`;
+		}
+
+		return 'Pages > Published';
+	}
+
 	render() {
 		const { doSearch, search, translate } = this.props;
 		const status = this.props.status || 'published';
+
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
 			drafts: translate( 'Drafts', { context: 'Filter label for pages list' } ),
@@ -80,6 +114,8 @@ class PagesMain extends React.Component {
 		};
 		return (
 			<Main classname="pages">
+				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
+				<DocumentHead title={ translate( 'Site Pages' ) } />
 				<SidebarNavigation />
 				<SectionNav selectedText={ filterStrings[ status ] }>
 					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>

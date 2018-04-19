@@ -52,7 +52,7 @@ export class CommentView extends Component {
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<Main className="comments" wideLayout>
-				<PageViewTracker path="/comment/:site" title="Comments" />
+				<PageViewTracker path="/comment/:site/:commentId" title="Comments" />
 				<QuerySiteCommentsTree siteId={ siteId } status={ 'all' } />
 				<DocumentHead title={ translate( 'Comment' ) } />
 				{ canModerateComments && (

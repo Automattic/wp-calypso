@@ -119,7 +119,7 @@
 
 .guided-tours__choice-button-row, .guided-tours__single-button-row {
 	.button {
-		width: 48%;
+		min-width: 48%;
 	}
 	.guided-tours__button-link {
 		text-align: center;

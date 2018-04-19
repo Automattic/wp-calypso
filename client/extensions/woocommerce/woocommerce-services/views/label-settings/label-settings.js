@@ -22,6 +22,7 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import {
@@ -36,6 +37,7 @@ import {
 	getMasterUserInfo,
 	getPaperSize,
 	getPaymentMethods,
+	getPaymentMethodsWarning,
 	getSelectedPaymentMethodId,
 	isPristine,
 	userCanEditSettings,
@@ -111,6 +113,23 @@ class ShippingLabels extends Component {
 		);
 	};
 
+	refetchSettings = () => {
+		this.props.fetchSettings( this.props.siteId );
+	};
+
+	renderPaymentWarningNotice = () => {
+		const { paymentMethodsWarning, translate } = this.props;
+		if ( ! paymentMethodsWarning ) {
+			return;
+		}
+
+		return (
+			<Notice status="is-warning" showDismiss={ false } text={ paymentMethodsWarning }>
+				<NoticeAction onClick={ this.refetchSettings }>{ translate( 'Retry' ) }</NoticeAction>
+			</Notice>
+		);
+	};
+
 	renderSettingsPermissionNotice = () => {
 		const { canEditSettings, masterUserName, masterUserLogin, translate } = this.props;
 		if ( canEditSettings ) {
@@ -135,7 +154,7 @@ class ShippingLabels extends Component {
 
 	onVisibilityChange = () => {
 		if ( ! document.hidden ) {
-			this.props.fetchSettings( this.props.siteId );
+			this.refetchSettings();
 		}
 		if ( this.addCreditCardWindow && this.addCreditCardWindow.closed ) {
 			document.removeEventListener( 'visibilitychange', this.onVisibilityChange );
@@ -235,6 +254,7 @@ class ShippingLabels extends Component {
 			<div>
 				{ this.renderPaymentPermissionNotice() }
 				<p className="label-settings__credit-card-description">{ description }</p>
+				{ ! isReloading && this.renderPaymentWarningNotice() }
 
 				<QueryStoredCards />
 				{ isReloading ? (
@@ -359,6 +379,7 @@ export default connect(
 			isReloading: areSettingsFetching( state, siteId ) && areSettingsLoaded( state, siteId ),
 			pristine: isPristine( state, siteId ),
 			paymentMethods: getPaymentMethods( state, siteId ),
+			paymentMethodsWarning: getPaymentMethodsWarning( state, siteId ),
 			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
 			paperSize: getPaperSize( state, siteId ),
 			storeOptions: getLabelSettingsStoreOptions( state, siteId ),

@@ -44,6 +44,8 @@ exports[`JetpackSignup should render 1`] = `
           />
         </LoggedOutFormLinks>
       }
+      handleSocialResponse={[Function]}
+      isSocialSignupEnabled={true}
       redirectToAfterLoginUrl="https://example.com/?auth_approved=true"
       submitButtonText="Create your account"
       submitForm={[Function]}
@@ -102,6 +104,8 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           />
         </LoggedOutFormLinks>
       }
+      handleSocialResponse={[Function]}
+      isSocialSignupEnabled={true}
       locale="es"
       redirectToAfterLoginUrl="https://example.com/?auth_approved=true"
       submitButtonText="Create your account"

@@ -16,7 +16,7 @@ import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } fr
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { doNotTrack, isPiiUrl, shouldReportOmitBlogId } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import {
 	retarget,
@@ -268,14 +268,32 @@ const analytics = {
 			eventProperties = eventProperties || {};
 
 			if ( process.env.NODE_ENV !== 'production' ) {
+				if ( ! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) ) {
+					//eslint-disable-next-line no-console
+					console.error(
+						'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,}$/. ' +
+							'Please use a compliant event name.',
+						eventName
+					);
+				}
+
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
 						const errorMessage =
-							`Unable to record event "${ eventName }" because nested` +
+							`Tracks: Unable to record event "${ eventName }" because nested ` +
 							`properties are not supported by Tracks. Check '${ key }' on`;
 						console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
 
 						return;
+					}
+
+					if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
+						//eslint-disable-next-line no-console
+						console.error(
+							'Tracks: Event property `%s` will be ignored because it does not match /^[a-z_][a-z0-9_]*$/. ' +
+								'Please use a compliant property name.',
+							key
+						);
 					}
 				}
 			}
@@ -289,7 +307,8 @@ const analytics = {
 
 			if ( _superProps ) {
 				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				superProperties = _superProps.getAll( _selectedSite, _siteCount );
+				const site = shouldReportOmitBlogId( eventProperties.path ) ? null : _selectedSite;
+				superProperties = _superProps.getAll( site, _siteCount );
 				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
 			}
 
@@ -346,10 +365,6 @@ const analytics = {
 			const cookies = cookie.parse( document.cookie );
 
 			return cookies.tk_ai;
-		},
-
-		setAnonymousUserId: function( anonId ) {
-			window._tkq.push( [ 'identifyAnonUser', anonId ] );
 		},
 
 		setOptOut: function( isOptingOut ) {

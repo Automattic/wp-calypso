@@ -33,7 +33,8 @@ export function getSelectedResult( state ) {
  * @return {Boolean}        Whether search results are being requested
  */
 export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery ) {
-	return !! get( state, 'inlineHelpSearchResults.requesting.' + searchQuery );
+	const allRequesting = get( state, 'inlineHelpSearchResults.requesting' );
+	return !! get( allRequesting, [ searchQuery ] );
 }
 
 /**
@@ -45,11 +46,8 @@ export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery 
  * @return {?Array}         List of results for a given search query
  */
 export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
-	const searchResults = get( state, 'inlineHelpSearchResults.search.items.' + searchQuery );
-	if ( ! searchResults ) {
-		return null;
-	}
-	return searchResults;
+	const allResults = get( state, 'inlineHelpSearchResults.search.items' );
+	return get( allResults, [ searchQuery ], null );
 }
 
 /**

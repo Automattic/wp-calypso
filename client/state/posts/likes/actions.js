@@ -35,10 +35,11 @@ export function requestPostLikes( siteId, postId ) {
  * @param {Number} postId Post ID
  * @returns {Object} The like action
  */
-export const like = ( siteId, postId ) => ( {
+export const like = ( siteId, postId, { source } = {} ) => ( {
 	type: POST_LIKE,
 	siteId,
 	postId,
+	source,
 } );
 
 /**
@@ -48,10 +49,11 @@ export const like = ( siteId, postId ) => ( {
  * @param {Number} postId Post ID
  * @returns {Object} The unlike action
  */
-export const unlike = ( siteId, postId ) => ( {
+export const unlike = ( siteId, postId, { source } = {} ) => ( {
 	type: POST_UNLIKE,
 	siteId,
 	postId,
+	source,
 } );
 
 export const receiveLikes = ( siteId, postId, { likes, iLike, found } ) => ( {

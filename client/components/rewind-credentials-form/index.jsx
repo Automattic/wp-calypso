@@ -181,7 +181,7 @@ export class RewindCredentialsForm extends Component {
 					</FormFieldset>
 				</div>
 
-				<div className="rewind-credentials-form__row">
+				<div className="rewind-credentials-form__row rewind-credentials-form__user-pass">
 					<FormFieldset className="rewind-credentials-form__username">
 						<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
 						<FormTextInput

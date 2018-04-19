@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
@@ -18,6 +18,7 @@ import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
+import Disclaimer from './disclaimer';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
@@ -28,8 +29,6 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
@@ -50,6 +49,7 @@ import {
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
+	XMLRPC_ERROR,
 } from './connection-notice-types';
 import {
 	isCalypsoStartedConnection,
@@ -220,10 +220,6 @@ export class JetpackAuthorize extends Component {
 	}
 
 	shouldAutoAuthorize() {
-		if ( this.props.isMobileAppFlow ) {
-			return false;
-		}
-
 		const { alreadyAuthorized, authApproved } = this.props.authQuery;
 
 		return (
@@ -269,10 +265,6 @@ export class JetpackAuthorize extends Component {
 		// to wp-admin.
 		return partnerRedirectFlag ? partnerId && PRESSABLE_PARTNER_ID !== partnerId : partnerId;
 	}
-
-	handleClickDisclaimer = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
-	};
 
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
@@ -350,38 +342,26 @@ export class JetpackAuthorize extends Component {
 
 	renderXmlrpcFeedback() {
 		const { translate } = this.props;
+
 		return (
-			<div>
-				<div className="jetpack-connect__notices-container">
-					<Notice
-						icon="notice"
-						status="is-error"
-						text={ translate( 'We had trouble connecting.' ) }
-						showDismiss={ false }
-					>
-						<NoticeAction onClick={ this.handleResolve }>{ translate( 'Try again' ) }</NoticeAction>
-					</Notice>
-				</div>
-				<p>
-					{ translate(
-						'WordPress.com was unable to reach your site and approve the connection. ' +
-							'Try again by clicking the button above; ' +
-							"if that doesn't work you may need to {{link}}contact support{{/link}}.",
-						{
-							components: {
-								link: (
-									<a
-										href="https://jetpack.com/contact-support"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-				{ this.renderErrorDetails() }
-			</div>
+			<p>
+				{ translate(
+					'WordPress.com was unable to reach your site and approve the connection. ' +
+						'Try again by clicking the button above; ' +
+						"if that doesn't work you may need to {{link}}contact support{{/link}}.",
+					{
+						components: {
+							link: (
+								<a
+									href="https://jetpack.com/contact-support"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</p>
 		);
 	}
 
@@ -468,16 +448,26 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 		if ( this.props.hasXmlrpcError ) {
-			return this.renderXmlrpcFeedback();
+			return (
+				<Fragment>
+					<JetpackConnectNotices
+						noticeType={ XMLRPC_ERROR }
+						onActionClick={ this.handleResolve }
+						onTerminalError={ redirectToMobileApp }
+					/>
+					{ this.renderXmlrpcFeedback() }
+					{ this.renderErrorDetails() }
+				</Fragment>
+			);
 		}
 		return (
-			<div>
+			<Fragment>
 				<JetpackConnectNotices
 					noticeType={ DEFAULT_AUTHORIZE_ERROR }
 					onTerminalError={ redirectToMobileApp }
 				/>
 				{ this.renderErrorDetails() }
-			</div>
+			</Fragment>
 		);
 	}
 
@@ -520,34 +510,6 @@ export class JetpackAuthorize extends Component {
 		if ( ! this.retryingAuth ) {
 			return translate( 'Approve' );
 		}
-	}
-
-	getDisclaimerText() {
-		const { blogname } = this.props.authQuery;
-
-		const detailsLink = (
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				onClick={ this.handleClickDisclaimer }
-				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
-				className="jetpack-connect__sso-actions-modal-link"
-			/>
-		);
-
-		const text = this.props.translate(
-			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
-			{
-				components: {
-					detailsLink,
-				},
-				args: {
-					siteName: decodeEntities( blogname ),
-				},
-			}
-		);
-
-		return <p className="jetpack-connect__tos-link">{ text }</p>;
 	}
 
 	getUserText() {
@@ -643,9 +605,12 @@ export class JetpackAuthorize extends Component {
 				</div>
 			);
 		}
+
+		const { blogname } = this.props.authQuery;
+
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				{ this.getDisclaimerText() }
+				<Disclaimer siteName={ decodeEntities( blogname ) } />
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }

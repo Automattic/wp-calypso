@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import PostActions from 'lib/posts/actions';
 import MediaDropZone from 'my-sites/media-library/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
@@ -21,6 +20,7 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaValidationStore from 'lib/media/validation-store';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite } from 'state/ui/selectors';
+import { blockSave } from 'state/ui/editor/save-blockers/actions';
 
 class TinyMCEDropZone extends React.Component {
 	static propTypes = {
@@ -108,7 +108,7 @@ class TinyMCEDropZone extends React.Component {
 			// For single image upload, insert into post content, blocking save
 			// until the image has finished upload
 			if ( selectedItems[ 0 ].transient ) {
-				PostActions.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
+				this.props.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
 			}
 
 			onInsertMedia( markup.get( site, selectedItems[ 0 ] ) );
@@ -139,6 +139,9 @@ class TinyMCEDropZone extends React.Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-} ) )( TinyMCEDropZone );
+export default connect(
+	state => ( {
+		site: getSelectedSite( state ),
+	} ),
+	{ blockSave }
+)( TinyMCEDropZone );

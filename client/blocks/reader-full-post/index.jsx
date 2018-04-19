@@ -43,8 +43,7 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts';
 import { getStreamUrlFromPost } from 'reader/route';
-import { likePost, unlikePost } from 'lib/like-store/actions';
-import LikeStore from 'lib/like-store/like-store';
+import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
 import FeaturedImage from 'blocks/reader-full-post/featured-image';
 import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';
@@ -65,6 +64,8 @@ import config from 'config';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
 import { READER_FULL_POST } from 'reader/follow-sources';
 import { getPostByKey } from 'state/reader/posts/selectors';
+import isLikedPost from 'state/selectors/is-liked-post';
+import QueryPostLikes from 'components/data/query-post-likes';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -146,14 +147,19 @@ export class FullPostView extends React.Component {
 	};
 
 	handleLike = () => {
-		const { site_ID: siteId, ID: postId } = this.props.post;
-		let liked;
+		// cannot like posts backed by rss feeds
+		if ( ! this.props.post || this.props.post.is_external ) {
+			return;
+		}
 
-		if ( LikeStore.isPostLikedByCurrentUser( siteId, postId ) ) {
-			unlikePost( siteId, postId );
+		const { site_ID: siteId, ID: postId } = this.props.post;
+		let liked = this.props.liked;
+
+		if ( liked ) {
+			this.props.unlikePost( siteId, postId, { source: 'reader' } );
 			liked = false;
 		} else {
-			likePost( siteId, postId );
+			this.props.likePost( siteId, postId, { source: 'reader' } );
 			liked = true;
 		}
 
@@ -284,7 +290,7 @@ export class FullPostView extends React.Component {
 	render() {
 		const { post, site, feed, referralPost, referral, blogId, feedId, postId } = this.props;
 
-		if ( post._state === 'error' ) {
+		if ( post.is_error ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
 		}
 
@@ -319,6 +325,7 @@ export class FullPostView extends React.Component {
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			<ReaderMain className={ classNames( classes ) }>
+				{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 				{ ! post || post._state === 'pending' ? (
 					<DocumentHead title={ translate( 'Loading' ) } />
 				) : (
@@ -376,6 +383,7 @@ export class FullPostView extends React.Component {
 									postId={ +post.ID }
 									fullPost={ true }
 									tagName="div"
+									likeSource={ 'reader' }
 								/>
 							) }
 						</div>
@@ -487,7 +495,10 @@ export default connect(
 
 		const { site_ID: siteId, is_external: isExternal } = post;
 
-		const props = { post };
+		const props = {
+			post,
+			liked: isLikedPost( state, siteId, post.ID ),
+		};
 
 		if ( ! isExternal && siteId ) {
 			props.site = getSite( state, siteId );
@@ -501,5 +512,5 @@ export default connect(
 
 		return props;
 	},
-	{ markPostSeen }
+	{ markPostSeen, likePost, unlikePost }
 )( FullPostView );

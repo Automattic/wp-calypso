@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, filter, get, isEqual, pickBy, without, omit } from 'lodash';
+import { assign, filter, get, isEqual, pickBy } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:posts:post-edit-store' );
 import emitter from 'lib/mixins/emitter';
@@ -14,6 +14,8 @@ import emitter from 'lib/mixins/emitter';
 import Dispatcher from 'dispatcher';
 import { decodeEntities } from 'lib/formatting';
 import * as utils from './utils';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { resetSaveBlockers } from 'state/ui/editor/save-blockers/actions';
 
 /**
  * Module variables
@@ -24,7 +26,6 @@ var REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/,
 var _initialRawContent = null,
 	_isAutosaving = false,
 	_isLoading = false,
-	_saveBlockers = [],
 	_isNew = false,
 	_loadingError = null,
 	_post = null,
@@ -37,10 +38,10 @@ var _initialRawContent = null,
 
 function resetState() {
 	debug( 'Reset state' );
+	reduxDispatch( resetSaveBlockers() );
 	_initialRawContent = null;
 	_isAutosaving = false;
 	_isLoading = false;
-	_saveBlockers = [];
 	_isNew = false;
 	_loadingError = null;
 	_post = null;
@@ -134,13 +135,6 @@ function set( attributes ) {
 	}
 
 	updatedPost = assign( {}, _post, attributes );
-
-	// This prevents an unsaved changes dialogue from appearing
-	// on a new post when only the featured image is added then removed.
-	// See #17701 for context.
-	if ( updatedPost.featured_image === '' && ! _savedPost.featured_image && _post.featured_image ) {
-		updatedPost = omit( updatedPost, 'featured_image' );
-	}
 
 	updatedPost = normalize( updatedPost );
 
@@ -242,18 +236,6 @@ function dispatcherCallback( payload ) {
 			} else {
 				startEditing( action.site, action.post );
 			}
-			PostEditStore.emit( 'change' );
-			break;
-
-		case 'BLOCK_EDIT_POST_SAVE':
-			if ( -1 === _saveBlockers.indexOf( action.key ) ) {
-				_saveBlockers.push( action.key );
-				PostEditStore.emit( 'change' );
-			}
-			break;
-
-		case 'UNBLOCK_EDIT_POST_SAVE':
-			_saveBlockers = without( _saveBlockers, action.key );
 			PostEditStore.emit( 'change' );
 			break;
 
@@ -377,14 +359,6 @@ PostEditStore = {
 
 	isAutosaving: function() {
 		return _isAutosaving;
-	},
-
-	isSaveBlocked: function( key ) {
-		if ( ! key ) {
-			return !! _saveBlockers.length;
-		}
-
-		return -1 !== _saveBlockers.indexOf( key );
 	},
 
 	getPreviewUrl: function() {

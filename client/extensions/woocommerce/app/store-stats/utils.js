@@ -7,6 +7,7 @@
 import { find, includes, forEach, findIndex, round } from 'lodash';
 import classnames from 'classnames';
 import { moment, translate } from 'i18n-calypso';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -278,4 +279,23 @@ export function getQueries( unit, baseDate, overrides = {} ) {
 		topListQuery,
 		visitorQuery,
 	};
+}
+
+/**
+ * Create the common Store Stats url ending used for links to widgets and lists. Url query parameters
+ * persist from view to view (ie, startDate) and should be reflected in the url.
+ * Url's have this basic shape:
+ *
+ * /store/stats/<page>/<unit>/<slug>?param1=1&param2=2
+ *
+ * this util is for constructing the /<unit>/<slug>?param1=1&param2=2
+ *
+ * @param {string} unit - day, week, month, or year
+ * @param {string} slug - site slug
+ * @param {Object} urlQuery - url query params represented as an object
+ * @return {string} - widget path url portion
+ */
+export function getWidgetPath( unit, slug, urlQuery ) {
+	const query = qs.stringify( urlQuery, { addQueryPrefix: true } );
+	return `/${ unit }/${ slug }${ query }`;
 }

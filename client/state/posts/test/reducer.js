@@ -1117,6 +1117,166 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove discussion edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							title: 'Hello World',
+							type: 'post',
+							discussion: {
+								comment_status: 'open',
+								ping_status: 'open',
+							},
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							title: 'Hello',
+							discussion: {
+								comment_status: 'open',
+								comments_open: true,
+								ping_status: 'open',
+								pings_open: true,
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+					},
+				},
+			} );
+		} );
+
+		test( 'should keep discussion edits if they are not yet present in the saved post', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							title: 'Hello World',
+							type: 'post',
+							discussion: {
+								comment_status: 'closed',
+								ping_status: 'open',
+							},
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							title: 'Hello',
+							discussion: {
+								comment_status: 'open',
+								comments_open: true,
+								ping_status: 'open',
+								pings_open: true,
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+						discussion: {
+							comment_status: 'closed',
+							ping_status: 'open',
+						},
+					},
+				},
+			} );
+		} );
+
+		test( 'should remove author edit after it is saved and user IDs are equal', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							title: 'Hello World',
+							type: 'post',
+							author: {
+								ID: 123,
+								name: 'Robert Trujillo',
+							},
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							title: 'Hello',
+							author: {
+								ID: 123,
+								name: 'Bob Trujillo',
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+					},
+				},
+			} );
+		} );
+
+		test( 'should remove featured image edit after it is saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							featured_image: 123,
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							featured_image: 'https://example.files.wordpress.com/2018/02/img_4879.jpg',
+							post_thumbnail: {
+								ID: 123,
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {},
+				},
+			} );
+		} );
+
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {

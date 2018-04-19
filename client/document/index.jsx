@@ -22,14 +22,15 @@ class Document extends React.Component {
 	render() {
 		const {
 			app,
-			chunk,
+			chunkFiles,
 			commitSha,
 			faviconURL,
 			head,
 			i18nLocaleScript,
 			initialReduxState,
 			isRTL,
-			jsFile,
+			entrypoint,
+			manifest,
 			lang,
 			renderedLayout,
 			user,
@@ -162,12 +163,27 @@ class Document extends React.Component {
 					/>
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
-					<script src={ urls.manifest } />
-					<script src={ urls.vendor } />
-					<script src={ urls[ jsFile ] } />
-					{ chunk && <script src={ urls[ chunk ] } /> }
-					<script type="text/javascript">window.AppBoot();</script>
+					{ /*
+						* inline manifest in production, but reference by url for development.
+						* this lets us have the performance benefit in prod, without breaking HMR in dev
+						* since the manifest needs to be updated on each save
+						*/ }
+					{ env === 'development' && <script src="/calypso/manifest.js" /> }
+					{ env !== 'development' && (
+						<script
+							nonce={ inlineScriptNonce }
+							dangerouslySetInnerHTML={ {
+								__html: manifest,
+							} }
+						/>
+					) }
+					{ entrypoint.map( asset => <script key={ asset } src={ asset } /> ) }
+					{ chunkFiles.map( chunk => <script key={ chunk } src={ chunk } /> ) }
+					<script nonce={ inlineScriptNonce } type="text/javascript">
+						window.AppBoot();
+					</script>
 					<script
+						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {
 							__html: `
 						 (function() {

@@ -15,9 +15,7 @@ describe( 'getJetpackSetting()', () => {
 	test( 'should return a certain setting for a known site', () => {
 		const stateIn = {
 				jetpack: {
-					settings: {
-						items: SETTINGS_FIXTURE,
-					},
+					settings: SETTINGS_FIXTURE,
 				},
 			},
 			siteId = 12345678,
@@ -30,9 +28,7 @@ describe( 'getJetpackSetting()', () => {
 		const stateIn = {
 				jetpack: {
 					settings: {
-						items: {
-							654321: SETTINGS_FIXTURE[ 12345678 ],
-						},
+						654321: SETTINGS_FIXTURE[ 12345678 ],
 					},
 				},
 			},
@@ -46,9 +42,7 @@ describe( 'getJetpackSetting()', () => {
 		const stateIn = {
 				jetpack: {
 					settings: {
-						items: {
-							654321: SETTINGS_FIXTURE[ 12345678 ],
-						},
+						654321: SETTINGS_FIXTURE[ 12345678 ],
 					},
 				},
 			},

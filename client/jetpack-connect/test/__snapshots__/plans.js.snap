@@ -151,6 +151,9 @@ exports[`Plans should render plans 1`] = `
       isRtl={false}
       onClick={[Function]}
     />
+    <Localized(PlansExtendedInfo)
+      recordTracks={[Function]}
+    />
     <LoggedOutFormLinks>
       <Connect(Localized(JetpackConnectHappychatButton))
         eventName="calypso_jpc_plans_chat_initiated"

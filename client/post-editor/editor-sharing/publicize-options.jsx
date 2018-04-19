@@ -94,7 +94,8 @@ class EditorSharingPublicizeOptions extends React.Component {
 					)
 				: [],
 			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
-			acceptableLength = requireCount ? 280 - 23 - 23 : null;
+			acceptableLength = requireCount ? 280 - 23 - 23 : null,
+			preFilledMessage = this.props.post ? this.props.post.title : '';
 
 		if ( ! this.hasConnections() ) {
 			return;
@@ -105,6 +106,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 				message={ PostMetadata.publicizeMessage( this.props.post ) || '' }
 				requireCount={ requireCount }
 				acceptableLength={ acceptableLength }
+				preFilledMessage={ preFilledMessage }
 			/>
 		);
 	};

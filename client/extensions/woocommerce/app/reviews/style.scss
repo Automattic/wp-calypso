@@ -9,6 +9,11 @@
 	.section-nav {
 		margin-top: 8px;
 	}
+
+	.search,
+	.search .search__open-icon {
+		z-index: initial;
+	}
 }
 
 .reviews__list {

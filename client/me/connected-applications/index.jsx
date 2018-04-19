@@ -30,6 +30,7 @@ import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { successNotice } from 'state/notices/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /* eslint-disable react/prefer-es6-class */
 // FIXME: Remove use of createReactClass
@@ -163,6 +164,10 @@ const ConnectedApplications = createReactClass( {
 	render: function() {
 		return (
 			<Main className="connected-applications">
+				<PageViewTracker
+					path="/me/security/connected-applications"
+					title="Me > Connected Applications"
+				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />
 

@@ -10,7 +10,7 @@ import { find, get, includes } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { getSections } from 'sections-middleware';
+import { getSections } from 'sections-helper';
 
 export function getExtensionSettingsPath( plugin ) {
 	const pluginSlug = get( plugin, 'slug', '' );

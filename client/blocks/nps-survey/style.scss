@@ -9,9 +9,11 @@
 
 .nps-survey__question {
 	padding: 16px;
+	padding-right: 36px;
 
 	@include breakpoint( ">480px" ) {
 		padding: 24px;
+		padding-right: 48px;
 	}
 }
 
@@ -101,4 +103,13 @@
 	clear: both;
 	margin-left: 0;
 	text-align: center;
+}
+
+.nps-survey__close-button {
+	position: absolute;
+	right: 5px;
+	top: 0;
+}
+.nps-survey__close-button.button.is-borderless {
+	color: $gray-lighten-10;
 }

@@ -3,20 +3,12 @@
 /**
  * External dependencies
  */
-
 import { find, flatten, includes, map, startsWith } from 'lodash';
 import debugFactory from 'debug';
-import { countries, dialCodeMap } from './data';
+import { countries, dialCodeMap } from 'components/phone-input/data';
 
 /**
  * Internal Dependencies
- */
-
-/**
- * @typedef {object} countryMetadata
- * @property {string} isoCode
- * @property {string} dialCode
- * @property {string} nationalPrefix
  */
 
 const debug = debugFactory( 'phone-input:metadata' );

@@ -20,13 +20,6 @@ const sections = [
 		secondary: true,
 	},
 	{
-		name: 'paladin',
-		paths: [ '/paladin' ],
-		module: 'my-sites/paladin',
-		group: 'sites',
-		secondary: true,
-	},
-	{
 		name: 'me',
 		paths: [ '/me' ],
 		module: 'me',
@@ -113,7 +106,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies' ],
+		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
 		module: 'my-sites/site-settings/settings-writing',
 		secondary: true,
 		group: 'sites',
@@ -201,6 +194,7 @@ const sections = [
 		module: 'my-sites/google-my-business',
 		secondary: true,
 		group: 'sites',
+		css: 'google-my-business',
 	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
@@ -237,6 +231,7 @@ const sections = [
 		module: 'my-sites/checkout',
 		secondary: true,
 		group: 'sites',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'plans',

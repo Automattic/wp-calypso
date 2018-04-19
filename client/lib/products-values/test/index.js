@@ -3,12 +3,11 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { isJetpackPlan } from '..';
+import { isJetpackPlan, isMonthly, isYearly, isBiennially } from '..';
 import {
 	JETPACK_PLANS,
 	PLAN_BUSINESS,
@@ -27,8 +26,8 @@ const makeProductFromSlug = product_slug => ( { product_slug } );
 
 describe( 'isJetpackPlan', () => {
 	test( 'should return true for Jetpack products', () => {
-		JETPACK_PLANS.map( makeProductFromSlug ).forEach(
-			product => expect( isJetpackPlan( product ) ).to.be.true
+		JETPACK_PLANS.map( makeProductFromSlug ).forEach( product =>
+			expect( isJetpackPlan( product ) ).toBe( true )
 		);
 	} );
 
@@ -37,6 +36,39 @@ describe( 'isJetpackPlan', () => {
 
 		nonJetpackPlans
 			.map( makeProductFromSlug )
-			.forEach( product => expect( isJetpackPlan( product ) ).to.be.false );
+			.forEach( product => expect( isJetpackPlan( product ) ).toBe( false ) );
+	} );
+} );
+
+describe( 'isMonthly', () => {
+	test( 'should return true for monthly products', () => {
+		expect( isMonthly( { bill_period: 31 } ) ).toBe( true );
+	} );
+	test( 'should return true for other products', () => {
+		expect( isMonthly( { bill_period: 30 } ) ).toBe( false );
+		expect( isMonthly( { bill_period: 32 } ) ).toBe( false );
+		expect( isMonthly( { bill_period: 365 } ) ).toBe( false );
+	} );
+} );
+
+describe( 'isYearly', () => {
+	test( 'should return true for yearly products', () => {
+		expect( isYearly( { bill_period: 365 } ) ).toBe( true );
+	} );
+	test( 'should return true for other products', () => {
+		expect( isYearly( { bill_period: 700 } ) ).toBe( false );
+		expect( isYearly( { bill_period: 31 } ) ).toBe( false );
+		expect( isYearly( { bill_period: 364 } ) ).toBe( false );
+	} );
+} );
+
+describe( 'isBiennially', () => {
+	test( 'should return true for biennial products', () => {
+		expect( isBiennially( { bill_period: 730 } ) ).toBe( true );
+	} );
+	test( 'should return true for other products', () => {
+		expect( isBiennially( { bill_period: 365 } ) ).toBe( false );
+		expect( isBiennially( { bill_period: 31 } ) ).toBe( false );
+		expect( isBiennially( { bill_period: 731 } ) ).toBe( false );
 	} );
 } );

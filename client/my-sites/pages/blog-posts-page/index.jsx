@@ -35,9 +35,15 @@ class BlogPostsPage extends React.Component {
 			.shift();
 	}
 
-	getPageTitle = pageId =>
-		this.getPageProperty( { pageId, property: 'title' } ) ||
-		`#${ pageId } ${ this.props.translate( '(no title)' ) }`;
+	getPageTitle = pageId => {
+		const pageTitle = this.getPageProperty( { pageId, property: 'title' } );
+		if ( pageTitle ) {
+			return pageTitle;
+		}
+		return pageId
+			? `${ this.props.translate( 'Untitled' ) } (#${ pageId })`
+			: this.props.translate( 'Untitled' );
+	};
 
 	getPostsPageLink( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) {
 		if ( isStaticHomePageWithNoPostsPage ) {

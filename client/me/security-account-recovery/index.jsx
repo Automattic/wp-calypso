@@ -32,7 +32,6 @@ import {
 	resendAccountRecoveryPhoneValidation,
 	validateAccountRecoveryPhone,
 } from 'state/account-recovery/settings/actions';
-
 import {
 	getAccountRecoveryEmail,
 	getAccountRecoveryPhone,
@@ -46,11 +45,12 @@ import {
 	shouldPromptAccountRecoveryEmailValidationNotice,
 	shouldPromptAccountRecoveryPhoneValidationNotice,
 } from 'state/account-recovery/settings/selectors';
-
 import { getCurrentUserEmail } from 'state/current-user/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const SecurityAccountRecovery = props => (
 	<Main className="security-account-recovery">
+		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
 		<QueryAccountRecoverySettings />
 
 		<MeSidebarNavigation />

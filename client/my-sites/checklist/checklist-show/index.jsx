@@ -140,7 +140,7 @@ class ChecklistShow extends PureComponent {
 		let path = '/checklist/:site';
 		if ( displayMode ) {
 			title = 'Thank You';
-			path += `/${ displayMode }`;
+			path += `?d=${ displayMode }`;
 		}
 
 		return (

@@ -14,25 +14,25 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
-import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
+import MainHeader from './main-header';
 import MainWrapper from './main-wrapper';
 import page from 'page';
 import SiteUrlInput from './site-url-input';
 import versionCompare from 'lib/version-compare';
-import { addCalypsoEnvQueryArg } from './utils';
-import { addQueryArgs, externalRedirect, untrailingslashit } from 'lib/route';
+import { addCalypsoEnvQueryArg, cleanUrl } from './utils';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
+import { persistSession, retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { retrieveMobileRedirect, retrievePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
 import {
 	JPC_PATH_PLANS,
@@ -66,7 +66,7 @@ export class JetpackConnectMain extends Component {
 	/* eslint-disable indent */
 	state = this.props.url
 		? {
-				currentUrl: this.cleanUrl( this.props.url ),
+				currentUrl: cleanUrl( this.props.url ),
 				shownUrl: this.props.url,
 				waitingForSites: false,
 			}
@@ -79,7 +79,7 @@ export class JetpackConnectMain extends Component {
 
 	componentWillMount() {
 		if ( this.props.url ) {
-			this.checkUrl( this.cleanUrl( this.props.url ) );
+			this.checkUrl( cleanUrl( this.props.url ) );
 		}
 	}
 
@@ -106,6 +106,8 @@ export class JetpackConnectMain extends Component {
 	}
 
 	componentDidUpdate() {
+		const { isMobileAppFlow } = this.props;
+
 		if (
 			this.getStatus() === NOT_CONNECTED_JETPACK &&
 			this.isCurrentUrlFetched() &&
@@ -114,7 +116,7 @@ export class JetpackConnectMain extends Component {
 			return this.goToRemoteAuth( this.state.currentUrl );
 		}
 		if ( this.getStatus() === ALREADY_OWNED && ! this.state.redirecting ) {
-			if ( this.props.isMobileAppFlow ) {
+			if ( isMobileAppFlow ) {
 				return this.redirectToMobileApp( 'already-connected' );
 			}
 			return this.goToPlans( this.state.currentUrl );
@@ -127,7 +129,7 @@ export class JetpackConnectMain extends Component {
 		}
 
 		if ( includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], this.getStatus() ) ) {
-			if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
+			if ( config.isEnabled( 'jetpack/connect/remote-install' ) && ! isMobileAppFlow ) {
 				this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
 			} else {
 				this.goToInstallInstructions( '/jetpack/connect/instructions' );
@@ -206,19 +208,10 @@ export class JetpackConnectMain extends Component {
 	handleUrlChange = event => {
 		const url = event.target.value;
 		this.setState( {
-			currentUrl: this.cleanUrl( url ),
+			currentUrl: cleanUrl( url ),
 			shownUrl: url,
 		} );
 	};
-
-	cleanUrl( inputUrl ) {
-		let url = inputUrl.trim().toLowerCase();
-		if ( url && url.substr( 0, 4 ) !== 'http' ) {
-			url = 'http://' + url;
-		}
-		url = url.replace( /wp-admin\/?$/, '' );
-		return untrailingslashit( url );
-	}
 
 	checkUrl( url ) {
 		return this.props.checkUrl( url, !! this.props.getJetpackSiteByUrl( url ) );
@@ -228,6 +221,9 @@ export class JetpackConnectMain extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl,
 		} );
+		// Track that connection was started by button-click, so we can auto-approve at auth step.
+		persistSession( this.state.currentUrl );
+
 		if ( this.props.isRequestingSites ) {
 			this.setState( { waitingForSites: true } );
 		} else {
@@ -302,68 +298,6 @@ export class JetpackConnectMain extends Component {
 
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
-	getTexts() {
-		const { type, translate } = this.props;
-		const selectedPlan = retrievePlan();
-
-		if (
-			type === 'pro' ||
-			selectedPlan === 'jetpack_business' ||
-			selectedPlan === 'jetpack_business_monthly'
-		) {
-			return {
-				headerTitle: translate( 'Get Jetpack Professional' ),
-				headerSubtitle: translate(
-					'WordPress sites from start to finish: unlimited premium themes, ' +
-						'business class security, and marketing automation.'
-				),
-			};
-		}
-		if (
-			type === 'premium' ||
-			selectedPlan === 'jetpack_premium' ||
-			selectedPlan === 'jetpack_premium_monthly'
-		) {
-			return {
-				headerTitle: translate( 'Get Jetpack Premium' ),
-				headerSubtitle: translate(
-					'Automated backups and malware scanning, expert priority support, ' +
-						'marketing automation, and more.'
-				),
-			};
-		}
-		if (
-			type === 'personal' ||
-			selectedPlan === 'jetpack_personal' ||
-			selectedPlan === 'jetpack_personal_monthly'
-		) {
-			return {
-				headerTitle: translate( 'Get Jetpack Personal' ),
-				headerSubtitle: translate(
-					'Security essentials for your WordPress site ' +
-						'including automated backups and priority support.'
-				),
-			};
-		}
-
-		if ( type === 'install' ) {
-			return {
-				headerTitle: translate( 'Install Jetpack' ),
-				headerSubtitle: translate(
-					'Jetpack brings free themes, security services, and essential marketing tools ' +
-						'to your self-hosted WordPress site.'
-				),
-			};
-		}
-		return {
-			headerTitle: translate( 'Connect a self-hosted WordPress' ),
-			headerSubtitle: translate(
-				"We'll be installing the Jetpack plugin so WordPress.com can connect to " +
-					'your self-hosted WordPress site.'
-			),
-		};
-	}
-
 	isInstall() {
 		return includes( FLOW_TYPES, this.props.type );
 	}
@@ -420,32 +354,18 @@ export class JetpackConnectMain extends Component {
 
 	render() {
 		const status = this.getStatus();
+		const { type } = this.props;
+
 		return (
 			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
-					<FormattedHeader
-						headerText={ this.getTexts().headerTitle }
-						subHeaderText={ this.getTexts().headerSubtitle }
-					/>
+					<MainHeader type={ type } />
 
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
 				</div>
 			</MainWrapper>
-		);
-	}
-
-	renderNotJetpackButton() {
-		const { translate } = this.props;
-		return (
-			<a
-				className="jetpack-connect__no-jetpack-button"
-				href="#"
-				onClick={ this.confirmJetpackNotInstalled }
-			>
-				{ translate( "Don't have jetpack installed?" ) }
-			</a>
 		);
 	}
 }

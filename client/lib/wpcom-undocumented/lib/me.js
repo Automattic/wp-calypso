@@ -47,12 +47,12 @@ UndocumentedMe.prototype.billingHistoryEmailReceipt = function( receiptId, callb
 	return this.wpcom.req.get( args, callback );
 };
 
-UndocumentedMe.prototype.getReceipt = function( receiptId, fn ) {
+UndocumentedMe.prototype.getReceipt = function( receiptId, queryOrCallback ) {
 	return this.wpcom.req.get(
 		{
 			path: `/me/billing-history/receipt/${ receiptId }`,
 		},
-		fn
+		queryOrCallback
 	);
 };
 
@@ -73,36 +73,6 @@ UndocumentedMe.prototype.revokeApplicationConnection = function( connectionID, c
 	var args = {
 		apiVersion: '1.1',
 		path: '/me/connected-applications/' + connectionID + '/delete',
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.getApplicationPasswords = function( callback ) {
-	var args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/application-passwords',
-	};
-
-	return this.wpcom.req.get( args, callback );
-};
-
-UndocumentedMe.prototype.revokeApplicationPassword = function( passwordID, callback ) {
-	var args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/application-passwords/' + passwordID + '/delete',
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.createApplicationPassword = function( applicationName, callback ) {
-	var args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/application-passwords/new',
-		body: {
-			application_name: applicationName,
-		},
 	};
 
 	return this.wpcom.req.post( args, callback );

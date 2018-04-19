@@ -58,6 +58,20 @@ export default class DevdocsSidebar extends React.PureComponent {
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="multiple-users"
+							label="Accessibility"
+							link="/devdocs/docs/accessibility.md"
+							selected={ this.isItemSelected( '/devdocs/docs/accessibility.md' ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="ink"
+							label="Color"
+							link="https://dotcombrand.wordpress.com/color/"
+							selected={ this.isItemSelected( 'https://dotcombrand.wordpress.com/color/' ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="heading"
 							label="Typography"
 							link="/devdocs/typography"
@@ -95,6 +109,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 							label="State Selectors"
 							link="/devdocs/selectors"
 							selected={ this.isItemSelected( '/devdocs/selectors', false ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="code"
+							label="Playground"
+							link="/devdocs/playground"
+							selected={ this.isItemSelected( '/devdocs/playground', false ) }
 						/>
 					</ul>
 				</SidebarMenu>

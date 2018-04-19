@@ -66,7 +66,7 @@ class SearchStream extends React.Component {
 			title: this.getTitle( props ),
 		};
 		if ( newState.title !== this.state.title ) {
-			this.setState( newState );
+			this.setState( newState || props.translate( 'Search' ) );
 		}
 	};
 
@@ -131,7 +131,7 @@ class SearchStream extends React.Component {
 		}
 
 		const documentTitle = translate( '%s ‹ Reader', {
-			args: this.state.title || this.props.translate( 'Search' ),
+			args: this.state.title,
 		} );
 
 		const TEXT_RELEVANCE_SORT = translate( 'Relevance', {

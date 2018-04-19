@@ -36,7 +36,8 @@ import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer'
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
 import Banner from 'components/banner';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
@@ -45,13 +46,12 @@ import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/select
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 
-class PluginMeta extends Component {
+export class PluginMeta extends Component {
 	static OUT_OF_DATE_YEARS = 2;
 
 	static propTypes = {
 		siteURL: PropTypes.string,
 		sites: PropTypes.array,
-		notices: PropTypes.object,
 		plugin: PropTypes.object.isRequired,
 		isInstalledOnSite: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
@@ -95,6 +95,13 @@ class PluginMeta extends Component {
 		return (
 			isBusiness( this.props.selectedSite.plan ) || isEnterprise( this.props.selectedSite.plan )
 		);
+	}
+
+	getPlan() {
+		if ( ! this.props.selectedSite ) {
+			return false;
+		}
+		return this.props.selectedSite.plan();
 	}
 
 	isWpcomPreinstalled = () => {
@@ -160,7 +167,6 @@ class PluginMeta extends Component {
 					<PluginActivateToggle
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						isMock={ this.props.isMock }
 					/>
 				) }
@@ -168,7 +174,6 @@ class PluginMeta extends Component {
 					<PluginAutoupdateToggle
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						wporg={ this.props.plugin.wporg }
 						isMock={ this.props.isMock }
 					/>
@@ -177,7 +182,6 @@ class PluginMeta extends Component {
 					<PluginRemoveButton
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						isMock={ this.props.isMock }
 					/>
 				) }
@@ -223,16 +227,64 @@ class PluginMeta extends Component {
 		// Pressable prevents installation of some plugins, so we need to disable AT for them.
 		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
 		const unsupportedPlugins = [
-			'nginx-helper',
-			'w3-total-cache',
-			'wp-rocket',
-			'wp-super-cache',
-			'bwp-minify',
-			'wordpress-database-reset',
-			'wordpress-reset',
-			'wp-reset',
+			// "reset" - break/interfere with provided functionality
+			'advanced-database-cleaner',
 			'advanced-reset-wp',
 			'advanced-wp-reset',
+			'better-wp-security',
+			'duplicator',
+			'file-manager-advanced',
+			'file-manager',
+			'reset-wp',
+			'wordpress-database-reset',
+			'wordpress-reset',
+			'wp-clone-by-wp-academy',
+			'wp-prefix-changer',
+			'wp-reset',
+			'wpmu-database-reset',
+			'z-inventory-manager',
+
+			// backup
+			'backup-wd',
+			'backupwordpress',
+			'backwpup',
+			'updraftplus',
+			'wp-db-backup',
+
+			// caching
+			'comet-cache',
+			'quick-cache',
+			'w3-total-cache',
+			'wp-cache',
+			'wp-fastest-cache',
+			'wp-rocket',
+			'wp-super-cache',
+
+			// sql heavy
+			'another-wordpress-classifieds-plugin',
+			'native-ads-adnow',
+			'page-visit-counter',
+			'post-views-counter',
+			'tokenad',
+			'wp-postviews',
+			'wp-statistics',
+
+			// security
+			'wordfence',
+
+			// spam
+			'e-mail-broadcasting',
+			'mailit',
+			'send-email-from-admin',
+
+			// cloning/staging
+			'wp-staging',
+
+			// misc
+			'automatic-video-posts',
+			'bwp-minify',
+			'nginx-helper',
+			'video-importer',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
@@ -461,9 +513,7 @@ class PluginMeta extends Component {
 				plugin.update.new_version
 			) {
 				PluginsActions.updatePlugin( site, plugin );
-				PluginsActions.removePluginsNotices(
-					this.props.notices.completed.concat( this.props.notices.errors )
-				);
+				PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 				analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
 					site: site,
@@ -549,6 +599,7 @@ class PluginMeta extends Component {
 					this.isWpcomPreinstalled() ) && <div style={ { marginBottom: 16 } } /> }
 
 				{ this.props.selectedSite &&
+					this.props.selectedSite.plan &&
 					! get( this.props.selectedSite, 'jetpack' ) &&
 					! this.hasBusinessPlan() &&
 					! this.isWpcomPreinstalled() && (
@@ -556,7 +607,9 @@ class PluginMeta extends Component {
 							<Banner
 								feature={ FEATURE_UPLOAD_PLUGINS }
 								event={ 'calypso_plugin_detail_page_upgrade_nudge' }
-								plan={ PLAN_BUSINESS }
+								plan={ findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
+									type: TYPE_BUSINESS,
+								} ) }
 								title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
 							/>
 						</div>

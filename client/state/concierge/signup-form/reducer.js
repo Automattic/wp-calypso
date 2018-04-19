@@ -19,6 +19,10 @@ export const timezone = createReducer( moment.tz.guess(), {
 	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.timezone,
 } );
 
+export const isRebrandCitiesSite = createReducer( false, {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.isRebrandCitiesSite,
+} );
+
 export const firstname = createReducer( '', {
 	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.firstname,
 } );
@@ -37,4 +41,5 @@ export default combineReducers( {
 	message,
 	timezone,
 	status,
+	isRebrandCitiesSite,
 } );

@@ -42,8 +42,8 @@ class InlineHelpSearchCard extends Component {
 	};
 
 	onKeyDown = event => {
-		// ignore keyboard access when manipulating a text selection in input
-		if ( event.getModifierState() ) {
+		// ignore keyboard access when manipulating a text selection in input etc.
+		if ( event.getModifierState( 'Shift' ) ) {
 			return;
 		}
 		// take over control if and only if it's one of our keys
@@ -61,7 +61,7 @@ class InlineHelpSearchCard extends Component {
 				this.props.selectNextResult();
 				break;
 			case 'Enter':
-				this.props.openResult( this.props.selectedLink );
+				this.props.openResult( event, this.props.selectedLink );
 				break;
 		}
 	};

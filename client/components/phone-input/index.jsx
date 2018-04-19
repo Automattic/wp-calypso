@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { find, identity, noop } from 'lodash';
 import classnames from 'classnames';
@@ -19,9 +18,9 @@ import {
 	findCountryFromNumber,
 	processNumber,
 	MIN_LENGTH_TO_FORMAT,
-} from './phone-number';
-import CountryFlag from './country-flag';
-import { countries } from './data';
+} from 'components/phone-input/phone-number';
+import CountryFlag from 'components/phone-input/country-flag';
+import { countries } from 'components/phone-input/data';
 
 class PhoneInput extends React.PureComponent {
 	static propTypes = {

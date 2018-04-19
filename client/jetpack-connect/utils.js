@@ -4,8 +4,12 @@
  */
 import config from 'config';
 import PropTypes from 'prop-types';
-import { addQueryArgs } from 'lib/route';
 import { head, includes, isEmpty, split } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { addQueryArgs, untrailingslashit } from 'lib/route';
 
 export function authQueryTransformer( queryObject ) {
 	return {
@@ -62,6 +66,21 @@ export const authQueryPropTypes = PropTypes.shape( {
 
 export function addCalypsoEnvQueryArg( url ) {
 	return addQueryArgs( { calypso_env: config( 'env_id' ) }, url );
+}
+
+/**
+ * Sanitize a user-supplied URL so we can use it for network requests.
+ *
+ * @param {string} inputUrl User-supplied URL
+ * @return {string} Sanitized URL
+ */
+export function cleanUrl( inputUrl ) {
+	let url = inputUrl.trim().toLowerCase();
+	if ( url && url.substr( 0, 4 ) !== 'http' ) {
+		url = 'http://' + url;
+	}
+	url = url.replace( /wp-admin\/?$/, '' );
+	return untrailingslashit( url );
 }
 
 /**

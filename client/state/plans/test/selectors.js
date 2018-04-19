@@ -1,5 +1,31 @@
 /** @format */
 
+jest.mock( 'lib/plans/constants', () => ( {
+	GROUP_WPCOM: 'GROUP_WPCOM',
+	GROUP_JETPACK: 'GROUP_JETPACK',
+
+	TERM_MONTHLY: 'TERM_MONTHLY',
+	TERM_ANNUALLY: 'TERM_ANNUALLY',
+	TERM_BIENNIALLY: 'TERM_BIENNIALLY',
+
+	TYPE_FREE: 'TYPE_FREE',
+	TYPE_PERSONAL: 'TYPE_PERSONAL',
+	TYPE_PREMIUM: 'TYPE_PREMIUM',
+	TYPE_BUSINESS: 'TYPE_BUSINESS',
+
+	PLANS_LIST: {
+		jetpack_premium_monthly: {
+			term: 'TERM_MONTHLY',
+		},
+		value_bundle: {
+			term: 'TERM_ANNUALLY',
+		},
+		'personal-bundle-2y': {
+			term: 'TERM_BIENNIALLY',
+		},
+	},
+} ) );
+
 /**
  * External dependencies
  */
@@ -48,6 +74,7 @@ describe( 'selectors', () => {
 					items: [
 						{
 							product_id: 1003,
+							product_slug: 'value_bundle',
 							raw_price: 99,
 						},
 					],
@@ -62,6 +89,7 @@ describe( 'selectors', () => {
 					items: [
 						{
 							product_id: 1003,
+							product_slug: 'value_bundle',
 							raw_price: 99,
 						},
 					],
@@ -76,6 +104,7 @@ describe( 'selectors', () => {
 					items: [
 						{
 							product_id: 1003,
+							product_slug: 'value_bundle',
 							raw_price: 0,
 						},
 					],
@@ -84,12 +113,43 @@ describe( 'selectors', () => {
 			const price = getPlanRawPrice( state, 1003, true );
 			expect( price ).to.eql( 0 );
 		} );
+		test( 'should return monthly price plan object when term is biennial', () => {
+			const state = deepFreeze( {
+				plans: {
+					items: [
+						{
+							product_id: 1029,
+							product_slug: 'personal-bundle-2y',
+							raw_price: 240,
+						},
+					],
+				},
+			} );
+			const price = getPlanRawPrice( state, 1029, true );
+			expect( price ).to.eql( 10 );
+		} );
+		test( 'should return monthly price plan object when term is monthly', () => {
+			const state = deepFreeze( {
+				plans: {
+					items: [
+						{
+							product_id: 2003,
+							product_slug: 'jetpack_premium_monthly',
+							raw_price: 24,
+						},
+					],
+				},
+			} );
+			const price = getPlanRawPrice( state, 2003, true );
+			expect( price ).to.eql( 24 );
+		} );
 		test( 'should return null when raw price is missing', () => {
 			const state = deepFreeze( {
 				plans: {
 					items: [
 						{
 							product_id: 1003,
+							product_slug: 'value_bundle',
 						},
 					],
 				},
@@ -103,6 +163,7 @@ describe( 'selectors', () => {
 					items: [
 						{
 							product_id: 1003,
+							product_slug: 'value_bundle',
 							raw_price: 99,
 						},
 					],

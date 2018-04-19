@@ -10,7 +10,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, forEach, intersection, snakeCase } from 'lodash';
+import { get, includes, pick, flatten, forEach, intersection, snakeCase } from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -21,7 +21,7 @@ import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
-import { serverRouter, getCacheKey } from 'isomorphic-routing';
+import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
 import { serverRender, serverRenderError, renderJsx } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
@@ -79,6 +79,34 @@ const getAssets = ( () => {
 	};
 } )();
 
+const getFilesForChunk = chunkName => {
+	const assets = getAssets();
+
+	function getChunkByName( _chunkName ) {
+		return assets.chunks.find( chunk => chunk.names.some( name => name === _chunkName ) );
+	}
+
+	function getChunkById( chunkId ) {
+		return assets.chunks.find( chunk => chunk.id === chunkId );
+	}
+
+	const chunk = getChunkByName( chunkName );
+	if ( ! chunk ) {
+		console.warn( 'cannot find the chunk ' + chunkName );
+		console.warn( 'available chunks:' );
+		assets.chunks.forEach( c => {
+			console.log( '    ' + c.id + ': ' + c.names.join( ',' ) );
+		} );
+		return [];
+	}
+
+	const allTheFiles = chunk.files.concat(
+		flatten( chunk.siblings.map( sibling => getChunkById( sibling ).files ) )
+	);
+
+	return allTheFiles;
+};
+
 /**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
@@ -87,10 +115,10 @@ const getAssets = ( () => {
  **/
 function generateStaticUrls() {
 	const urls = { ...staticFilesUrls };
-	const assets = getAssets();
+	const assets = getAssets().assetsByChunkName;
 
 	forEach( assets, ( asset, name ) => {
-		urls[ name ] = asset.js;
+		urls[ name ] = asset;
 	} );
 
 	return urls;
@@ -146,7 +174,11 @@ function getAcceptedLanguagesFromHeader( header ) {
 function getDefaultContext( request ) {
 	let initialServerState = {};
 	const bodyClasses = [];
-	const cacheKey = getCacheKey( request );
+	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
+	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
+	// called before route-specific middleware, so it's up to the cache *writes* in server
+	// render to make sure that Redux state and markup are only cached for whitelisted query args.
+	const cacheKey = getNormalizedPath( request.pathname, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
 	let sectionCss;
@@ -183,7 +215,10 @@ function getDefaultContext( request ) {
 		isDebug,
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
-		jsFile: 'build',
+		entrypoint: getAssets().entrypoints.build.assets.filter(
+			asset => ! asset.startsWith( 'manifest' )
+		),
+		manifest: getAssets().manifests.manifest,
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
@@ -379,6 +414,8 @@ function setUpCSP( req, res, next ) {
 			"'report-sample'",
 			"'unsafe-eval'",
 			'stats.wp.com',
+			'https://widgets.wp.com',
+			'*.wordpress.com',
 			'https://apis.google.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			`'nonce-${ req.context.analyticsScriptNonce }'`,
@@ -388,7 +425,16 @@ function setUpCSP( req, res, next ) {
 		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
 		'form-action': [ "'self'" ],
 		'object-src': [ "'none'" ],
-		'img-src': [ "'self'", '*.wp.com', 'https://www.google-analytics.com' ],
+		'img-src': [
+			"'self'",
+			'data',
+			'*.wp.com',
+			'*.files.wordpress.com',
+			'*.gravatar.com',
+			'https://www.google-analytics.com',
+			'https://amplifypixel.outbrain.com',
+			'https://img.youtube.com',
+		],
 		'frame-src': [ "'self'", 'https://public-api.wordpress.com', 'https://accounts.google.com/' ],
 		'font-src': [
 			"'self'",
@@ -397,7 +443,7 @@ function setUpCSP( req, res, next ) {
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
-		'connect-src': [ "'self'", 'https://wordpress.com/' ],
+		'connect-src': [ "'self'", 'https://*.wordpress.com/', 'https://*.wp.com' ],
 		'report-uri': [ '/cspreport' ],
 	};
 
@@ -537,7 +583,7 @@ module.exports = function() {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
 
 					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context.chunk = section.name;
+						req.context.chunkFiles = getFilesForChunk( section.name );
 					}
 
 					if ( section.secondary && req.context ) {

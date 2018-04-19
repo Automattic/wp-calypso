@@ -62,13 +62,24 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderIncludedInPremium() {
-		const textLabel = config.isEnabled( 'domains/kracken-ui' )
-			? this.props.translate( 'Included in Paid Plans' )
-			: this.props.translate( 'Included in WordPress.com Premium' );
+		const { translate } = this.props;
+
+		// TODO: When removing this flag, remember to remove PremiumPopover component
+		//       from the codebase.
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
+		const includedInPlanText = translate( 'Included in paid plans' );
+
 		return (
 			<div className="domain-product-price is-with-plans-only">
 				<small className="domain-product-price__premium-text" ref="subMessage">
-					<PremiumPopover position="bottom left" textLabel={ textLabel } />
+					{ isKrackenUi ? (
+						includedInPlanText
+					) : (
+						<PremiumPopover
+							position="bottom left"
+							textLabel={ translate( 'Included in WordPress.com Premium' ) }
+						/>
+					) }
 				</small>
 			</div>
 		);

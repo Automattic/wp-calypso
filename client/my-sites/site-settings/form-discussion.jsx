@@ -395,15 +395,10 @@ class SiteSettingsFormDiscussion extends Component {
 		const {
 			fields,
 			handleAutosavingToggle,
-			isJetpack,
 			isRequestingSettings,
 			isSavingSettings,
 			translate,
 		} = this.props;
-		// follows are not supported on Jetpack sites
-		if ( isJetpack ) {
-			return null;
-		}
 
 		return (
 			<CompactFormToggle

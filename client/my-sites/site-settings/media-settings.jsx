@@ -39,7 +39,6 @@ import {
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
-import { updateSettings } from 'state/jetpack/settings/actions';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import PlanStorageBar from 'blocks/plan-storage/bar';
@@ -83,8 +82,13 @@ class MediaSettings extends Component {
 				<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
 					<div className="site-settings__info-link-container">
 						<InfoPopover position="left">
-							<ExternalLink target="_blank" icon href="https://jetpack.com/support/videopress/">
-								{ translate( 'Learn more about VideoPress.' ) }
+							{ translate( 'Hosts your video files on the global WordPress.com servers.' ) }{' '}
+							<ExternalLink
+								target="_blank"
+								icon={ false }
+								href="https://jetpack.com/support/videopress/"
+							>
+								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>
@@ -198,7 +202,12 @@ class MediaSettings extends Component {
 						<FormFieldset>
 							<div className="site-settings__info-link-container">
 								<InfoPopover position="left">
-									<ExternalLink target="_blank" icon href="https://jetpack.com/support/photon">
+									{ translate( 'Hosts your image files on the global WordPress.com servers.' ) }{' '}
+									<ExternalLink
+										target="_blank"
+										icon={ false }
+										href="https://jetpack.com/support/photon"
+									>
 										{ translate( 'Learn more' ) }
 									</ExternalLink>
 								</InfoPopover>
@@ -215,8 +224,16 @@ class MediaSettings extends Component {
 					<FormFieldset className={ carouselFieldsetClasses }>
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
-								<ExternalLink target="_blank" icon href="https://jetpack.com/support/carousel">
-									{ translate( 'Learn more about Carousel.' ) }
+								{ translate(
+									'Replaces the standard WordPress galleries with a ' +
+										'full-screen photo browsing experience, including comments and EXIF metadata.'
+								) }{' '}
+								<ExternalLink
+									target="_blank"
+									icon={ false }
+									href="https://jetpack.com/support/carousel"
+								>
+									{ translate( 'Learn more' ) }
 								</ExternalLink>
 							</InfoPopover>
 						</div>
@@ -263,34 +280,29 @@ class MediaSettings extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			selectedSiteId,
-			'photon'
-		);
-		const isVideoPressAvailable =
-			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
-			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
-			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'photon'
+	);
+	const isVideoPressAvailable =
+		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
+		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
+		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
 
-		return {
-			carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
-			isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
-			isVideoPressAvailable,
-			mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
-			mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
-			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			selectedSiteId,
-			sitePlanSlug,
-			siteSlug: getSiteSlug( state, selectedSiteId ),
-		};
-	},
-	{
-		updateSettings,
-	}
-)( localize( MediaSettings ) );
+	return {
+		carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
+		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
+		isVideoPressAvailable,
+		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
+		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
+		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		selectedSiteId,
+		sitePlanSlug,
+		siteSlug: getSiteSlug( state, selectedSiteId ),
+	};
+} )( localize( MediaSettings ) );

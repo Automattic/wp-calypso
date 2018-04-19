@@ -12,7 +12,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import App from './app';
 import Dashboard from './app/dashboard';
 import EmptyContent from 'components/empty-content';
@@ -189,6 +188,27 @@ const getStorePages = () => {
 	return pages;
 };
 
+function getAnalyticsPath( path, params ) {
+	if ( '/store/settings/:site' === path ) {
+		return '/store/settings/payments/:site';
+	}
+
+	if ( '/store/settings/email/:site/:setup?' === path ) {
+		return !! params.setup ? '/store/settings/email/:site/:setup' : '/store/settings/email/:site';
+	}
+
+	if ( '/store/settings/shipping/zone/:site/:zone?' === path ) {
+		return !! params.zone
+			? '/store/settings/shipping/zone/:site/:zone'
+			: '/store/settings/shipping/zone/:site';
+	}
+
+	return path
+		.replace( '?', '' )
+		.replace( ':filter', params.filter )
+		.replace( ':productId', ':product_id' );
+}
+
 function addStorePage( storePage, storeNavigation ) {
 	page(
 		storePage.path,
@@ -196,23 +216,18 @@ function addStorePage( storePage, storeNavigation ) {
 		storeNavigation,
 		( context, next ) => {
 			const component = React.createElement( storePage.container, { params: context.params } );
-			const appProps =
-				( storePage.documentTitle && { documentTitle: storePage.documentTitle } ) || {};
-
-			let analyticsPath = storePage.path;
-			const { filter } = context.params;
-			if ( filter ) {
-				analyticsPath = analyticsPath.replace( ':filter', filter );
-			}
-
-			let analyticsPageTitle = 'Store';
+			const appProps = {
+				isDashboard: '/store/:site' === storePage.path,
+			};
 			if ( storePage.documentTitle ) {
-				analyticsPageTitle += ` > ${ storePage.documentTitle }`;
-			} else {
-				analyticsPageTitle += ' > Dashboard';
+				appProps.documentTitle = storePage.documentTitle;
 			}
 
-			analytics.pageView.record( analyticsPath, analyticsPageTitle );
+			appProps.analyticsPath = getAnalyticsPath( storePage.path, context.params );
+
+			appProps.analyticsTitle = `Store > ${
+				storePage.documentTitle ? storePage.documentTitle : 'Dashboard'
+			}`;
 
 			context.primary = React.createElement( App, appProps, component );
 			next();
@@ -249,6 +264,8 @@ function addTracksContext( context, next ) {
 }
 
 export default function() {
+	page( '/store', siteSelection, sites, makeLayout, clientRender );
+
 	// Add pages that use the store navigation
 	getStorePages().forEach( function( storePage ) {
 		if ( config.isEnabled( storePage.configKey ) ) {

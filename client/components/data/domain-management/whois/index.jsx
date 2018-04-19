@@ -14,6 +14,7 @@ import DomainsStore from 'lib/domains/store';
 import StoreConnection from 'components/data/store-connection';
 import { fetchDomains, fetchWhois } from 'lib/upgrades/actions';
 import WhoisStore from 'lib/domains/whois/store';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const stores = [ DomainsStore, WhoisStore ];
 
@@ -35,6 +36,8 @@ function getStateFromStores( props ) {
 
 class WhoisData extends Component {
 	static propTypes = {
+		analyticsPath: PropTypes.string,
+		analyticsTitle: PropTypes.string,
 		component: PropTypes.func.isRequired,
 		context: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -66,14 +69,17 @@ class WhoisData extends Component {
 
 	render() {
 		return (
-			<StoreConnection
-				component={ this.props.component }
-				stores={ stores }
-				getStateFromStores={ getStateFromStores }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.selectedSite }
-				context={ this.props.context }
-			/>
+			<div>
+				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+				<StoreConnection
+					component={ this.props.component }
+					stores={ stores }
+					getStateFromStores={ getStateFromStores }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.selectedSite }
+					context={ this.props.context }
+				/>
+			</div>
 		);
 	}
 }

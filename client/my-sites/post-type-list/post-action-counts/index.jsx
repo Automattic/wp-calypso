@@ -30,7 +30,7 @@ class PostActionCounts extends PureComponent {
 
 		record( 'calypso_post_list_action_click', {
 			action,
-			postType: type,
+			post_type: type,
 			context: 'action_counts',
 		} );
 	};

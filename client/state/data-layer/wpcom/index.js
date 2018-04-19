@@ -6,6 +6,7 @@
 
 import { mergeHandlers } from 'state/action-watchers/utils';
 import accountRecovery from './account-recovery';
+import activePromotions from './active-promotions';
 import activityLog from './activity-log';
 import checklist from './checklist';
 import comments from './comments';
@@ -27,12 +28,12 @@ import read from './read';
 import sites from './sites';
 import themeFilters from './theme-filters';
 import timezones from './timezones';
-import users from './users';
 import usersAuthOptions from './users/auth-options';
 import videos from './videos';
 
 export const handlers = mergeHandlers(
 	accountRecovery,
+	activePromotions,
 	activityLog,
 	checklist,
 	comments,
@@ -54,7 +55,6 @@ export const handlers = mergeHandlers(
 	sites,
 	themeFilters,
 	timezones,
-	users,
 	usersAuthOptions,
 	videos
 );

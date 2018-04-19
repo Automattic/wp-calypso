@@ -154,6 +154,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				// TODO: Currently we only store the names of the items & packages, we need to store more data to show dimensions etc
 				productNames: label.product_names,
 				packageName: label.package_name,
+				receiptId: label.main_receipt_id,
 				serviceName: label.service_name,
 				tracking: label.tracking,
 				carrierId: label.carrier_id,

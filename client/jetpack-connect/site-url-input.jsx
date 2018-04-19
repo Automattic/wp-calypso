@@ -60,11 +60,11 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		const { translate } = this.props;
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
-				return translate( 'Connect Now' );
+				return translate( 'Continue' );
 			}
 			return translate( 'Start Installation' );
 		}
-		return translate( 'Connecting…' );
+		return translate( 'Setting up…' );
 	}
 
 	getTermsOfJetpackSyncUrl() {
@@ -79,7 +79,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		return (
 			<p className="jetpack-connect__tos-link">
 				{ this.props.translate(
-					'By connecting you agree to our fascinating {{tosLinkText}}Terms of Service{{/tosLinkText}} ' +
+					'By setting up Jetpack you agree to our fascinating {{tosLinkText}}Terms of Service{{/tosLinkText}} ' +
 						'and to sync {{syncLinkText}}certain data and settings{{/syncLinkText}} to WordPress.com',
 					{
 						components: {

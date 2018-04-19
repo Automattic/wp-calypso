@@ -30,33 +30,38 @@ import {
 	topCategories,
 	topCoupons,
 } from 'woocommerce/app/store-stats/constants';
-import { getUnitPeriod, getEndPeriod, getQueries } from './utils';
+import { getUnitPeriod, getEndPeriod, getQueries, getWidgetPath } from './utils';
 import QuerySiteStats from 'components/data/query-site-stats';
 import config from 'config';
 import StoreStatsReferrerWidget from './store-stats-referrer-widget';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 class StoreStats extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		queryDate: PropTypes.string,
-		querystring: PropTypes.string,
+		queryParams: PropTypes.object.isRequired,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
 		unit: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
+		const { path, queryDate, selectedDate, siteId, slug, unit, queryParams } = this.props;
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const { orderQuery, referrerQuery } = getQueries( unit, queryDate );
 		const { topListQuery } = getQueries( unit, selectedDate );
 		const topWidgets = [ topProducts, topCategories, topCoupons ];
-		const slugAndQuery = `/${ slug }${ querystring ? '?' + querystring : '' }`;
-		const widgetPath = `/${ unit }${ slugAndQuery }`;
+		const widgetPath = getWidgetPath( unit, slug, queryParams );
 
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
+				<PageViewTracker
+					path={ `/store/stats/orders/${ unit }/:site` }
+					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
+				/>
 				{ siteId && (
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
@@ -118,11 +123,15 @@ class StoreStats extends Component {
 							}
 						>
 							<StoreStatsReferrerWidget
+								unit={ unit }
+								queryParams={ queryParams }
+								slug={ slug }
 								siteId={ siteId }
 								query={ referrerQuery }
 								statType="statsStoreReferrers"
-								selectedDate={ unitSelectedDate }
-								slugAndQuery={ slugAndQuery }
+								unitSelectedDate={ unitSelectedDate }
+								limit={ 5 }
+								pageType="orders"
 							/>
 						</Module>
 					</div>

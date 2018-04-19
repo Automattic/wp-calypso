@@ -6,7 +6,7 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
+import { defer, findLast, noop, times, identity, map } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -24,9 +24,9 @@ import {
 	showUpdates,
 	shufflePosts,
 } from 'lib/feed-stream-store/actions';
-import LikeStore from 'lib/like-store/like-store';
-import { likePost, unlikePost } from 'lib/like-store/actions';
 import LikeHelper from 'reader/like-helper';
+import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
+import isLikedPost from 'state/selectors/is-liked-post';
 import ListEnd from 'components/list-end';
 import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
@@ -41,35 +41,17 @@ import getBlockedSites from 'state/selectors/get-blocked-sites';
 import { getReaderFollows } from 'state/selectors';
 import { keysAreEqual, keyToString, keyForPost } from 'reader/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
-import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
+import {
+	combineCards,
+	injectRecommendations,
+	RECS_PER_BLOCK,
+	getDistanceBetweenRecs,
+} from './utils';
 import { reduxGetState } from 'lib/redux-bridge';
 import { getPostByKey } from 'state/reader/posts/selectors';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
-
-const MIN_DISTANCE_BETWEEN_RECS = 4; // page size is 7, so one in the middle of every page and one on page boundries, sometimes
-const MAX_DISTANCE_BETWEEN_RECS = 30;
-
-function getDistanceBetweenRecs( totalSubs ) {
-	// the distance between recs changes based on how many subscriptions the user has.
-	// We cap it at MAX_DISTANCE_BETWEEN_RECS.
-	// It grows at the natural log of the number of subs, times a multiplier, offset by a constant.
-	// This lets the distance between recs grow quickly as you add subs early on, and slow down as you
-	// become a common user of the reader.
-	if ( totalSubs <= 0 ) {
-		// 0 means either we don't know yet, or the user actually has zero subs.
-		// if a user has zero subs, we don't show posts at all, so just treat 0 as 'unknown' and
-		// push recs to the max.
-		return MAX_DISTANCE_BETWEEN_RECS;
-	}
-	const distance = clamp(
-		Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 6 ),
-		MIN_DISTANCE_BETWEEN_RECS,
-		MAX_DISTANCE_BETWEEN_RECS
-	);
-	return distance;
-}
 
 class ReaderStream extends React.Component {
 	static propTypes = {
@@ -279,14 +261,14 @@ class ReaderStream extends React.Component {
 	};
 
 	toggleLikeAction( siteId, postId ) {
-		const liked = LikeStore.isPostLikedByCurrentUser( siteId, postId );
+		const liked = isLikedPost( reduxGetState(), siteId, postId );
 		if ( liked === null ) {
 			// unknown... ignore for now
 			return;
 		}
 
-		const toggler = liked ? unlikePost : likePost;
-		toggler( siteId, postId );
+		const toggler = liked ? this.props.unlikePost : this.props.likePost;
+		toggler( siteId, postId, { source: 'reader' } );
 	}
 
 	isPostFullScreen() {
@@ -518,6 +500,6 @@ export default localize(
 			blockedSites: getBlockedSites( state ),
 			totalSubs: getReaderFollows( state ).length,
 		} ),
-		{ resetCardExpansions }
+		{ resetCardExpansions, likePost, unlikePost }
 	)( ReaderStream )
 );

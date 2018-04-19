@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -14,10 +15,13 @@ import PaginationPage from './pagination-page';
 
 class Pagination extends Component {
 	static propTypes = {
+		compact: PropTypes.bool,
+		nextLabel: PropTypes.string,
 		page: PropTypes.number.isRequired,
-		perPage: PropTypes.number.isRequired,
-		total: PropTypes.number,
 		pageClick: PropTypes.func.isRequired,
+		perPage: PropTypes.number.isRequired,
+		prevLabel: PropTypes.string,
+		total: PropTypes.number,
 	};
 
 	getPageList = ( page, pageCount ) => {
@@ -51,7 +55,16 @@ class Pagination extends Component {
 	};
 
 	render() {
-		const { page, pageClick, perPage, total } = this.props;
+		const {
+			className,
+			compact,
+			nextLabel,
+			page,
+			pageClick,
+			perPage,
+			prevLabel,
+			total,
+		} = this.props;
 		const pageCount = Math.ceil( total / perPage );
 
 		if ( pageCount <= 1 ) {
@@ -63,16 +76,19 @@ class Pagination extends Component {
 			return (
 				<PaginationPage
 					key={ index }
-					pageNumber={ pageNumber }
+					compact={ compact }
 					currentPage={ page }
-					totalPages={ pageCount }
+					nextLabel={ nextLabel }
 					pageClick={ pageClick }
+					pageNumber={ pageNumber }
+					prevLabel={ prevLabel }
+					totalPages={ pageCount }
 				/>
 			);
 		} );
 
 		return (
-			<div className="pagination">
+			<div className={ classnames( 'pagination', className, { 'is-compact': compact } ) }>
 				<ul className="pagination__list">{ pageListRendered }</ul>
 			</div>
 		);

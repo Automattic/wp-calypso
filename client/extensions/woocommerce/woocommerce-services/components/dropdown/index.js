@@ -36,7 +36,7 @@ const Dropdown = ( { id, valuesMap, title, description, value, updateValue, erro
 					);
 				} ) }
 			</FormSelect>
-			{ error && <FieldError text={ error } /> }
+			{ error && typeof error === 'string' && <FieldError text={ error } /> }
 			{ ! error && description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
 		</FormFieldset>
 	);

@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -22,6 +23,7 @@ import ChartTabs from './stats-chart-tabs';
 import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsFirstView from './stats-first-view';
 import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
@@ -132,6 +134,11 @@ class StatsSite extends Component {
 
 		return (
 			<Main wideLayout={ true }>
+				<DocumentHead title={ translate( 'Stats' ) } />
+				<PageViewTracker
+					path={ `/stats/${ period }/:site` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
 				<PrivacyPolicyBanner />
 				<StatsFirstView />
 				<SidebarNavigation />
@@ -143,10 +150,9 @@ class StatsSite extends Component {
 				/>
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
-					{ config.isEnabled( 'google-my-business' ) &&
-						isGoogleMyBusinessStatsNudgeVisible && (
-							<GoogleMyBusinessStatsNudge siteSlug={ slug } siteId={ siteId } />
-						) }
+					{ isGoogleMyBusinessStatsNudgeVisible && (
+						<GoogleMyBusinessStatsNudge siteSlug={ slug } siteId={ siteId } />
+					) }
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
@@ -240,7 +246,12 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			isJetpack,
-			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
+			hasPodcasts:
+				// Podcasting category slug
+				// TODO: remove when settings API is updated for new option
+				!! getSiteOption( state, siteId, 'podcasting_archive' ) ||
+				// Podcasting category ID
+				!! getSiteOption( state, siteId, 'podcasting_category_id' ),
 			isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
 				state,
 				siteId

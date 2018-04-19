@@ -16,6 +16,9 @@
 
 .card.simple-site-rename-form__content {
 	margin-bottom: 0;
+	span.form-text-input-with-affixes__suffix {
+		position: static;
+	}
 }
 
 .simple-site-rename-form__info {
@@ -46,6 +49,24 @@
 
 		@include breakpoint( '<660px' ) {
 			display: none;
+		}
+	}
+}
+
+.simple-site-rename-form__only-owner-info {
+	margin: 0 auto 10px;
+	padding: 16px;
+
+	@include breakpoint( '<660px' ) {
+		margin: 0;
+	}
+
+	.gridicon {
+		float: left;
+		margin: auto 12px auto 10px;
+
+		@include breakpoint( '<660px' ) {
+			margin: auto 6px auto 4px;
 		}
 	}
 }

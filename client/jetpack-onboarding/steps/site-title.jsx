@@ -15,9 +15,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import JetpackOnboardingDisclaimer from '../disclaimer';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SiteTitle from 'components/site-title';
-import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
@@ -62,16 +60,11 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	};
 
 	render() {
-		const { basePath, isRequestingSettings, isRequestingWhetherConnected, translate } = this.props;
+		const { isRequestingSettings, isRequestingWhetherConnected, translate } = this.props;
 		const headerText = translate( 'Welcome to WordPress!' );
 
 		return (
 			<div className="steps__main">
-				<PageViewTracker
-					path={ [ basePath, STEPS.SITE_TITLE, ':site' ].join( '/' ) }
-					title="Site Title ‹ Jetpack Start"
-				/>
-
 				<FormattedHeader headerText={ headerText } />
 
 				<Card className="steps__form">

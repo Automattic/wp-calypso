@@ -19,7 +19,7 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostPreviewUrl } from 'state/posts/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewType, setPreviewUrl } from 'state/ui/preview/actions';
+import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setUrlScheme } from 'lib/url';
 
 class PostCard extends Component {
@@ -48,7 +48,6 @@ class PostCard extends Component {
 			return window.open( previewUrl );
 		}
 
-		dispatch( setPreviewType( 'site-preview' ) );
 		dispatch( setPreviewUrl( setUrlScheme( previewUrl, 'https' ) ) );
 		dispatch( setLayoutFocus( 'preview' ) );
 	};

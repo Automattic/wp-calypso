@@ -1954,6 +1954,159 @@ describe( 'selectors', () => {
 
 			expect( isDirty ).to.be.false;
 		} );
+
+		test( 'should return true if discussion options change', () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										discussion: {
+											comment_status: 'open',
+											comments_open: true,
+											ping_status: 'open',
+											pings_open: true,
+										},
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									discussion: {
+										comment_status: 'closed',
+										ping_status: 'open',
+									},
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.true;
+		} );
+
+		test( "should return false if discussion options didn't change", () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										discussion: {
+											comment_status: 'open',
+											comments_open: true,
+											ping_status: 'open',
+											pings_open: true,
+										},
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									discussion: {
+										comment_status: 'open',
+										ping_status: 'open',
+									},
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		test( "should return false if author ID didn't change", () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										author: {
+											ID: 123,
+											name: 'Robert Trujillo',
+										},
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									author: {
+										ID: 123,
+										name: 'Bob Trujillo',
+									},
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		test( "should return false if featured image ID didn't change", () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										featured_image: 'https://example.files.wordpress.com/2018/02/img_4879.jpg',
+										post_thumbnail: {
+											ID: 123,
+										},
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									featured_image: 123,
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.false;
+		} );
 	} );
 
 	describe( 'getPostPreviewUrl()', () => {

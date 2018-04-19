@@ -14,5 +14,5 @@ import { get } from 'lodash';
  * @return {?Object}          An object containing the onboarding credentials of the site.
  */
 export default function getUnconnectedSite( state, siteId ) {
-	return get( state.jetpackOnboarding.credentials, siteId, null );
+	return get( state.jetpack.onboarding.credentials, siteId, null );
 }

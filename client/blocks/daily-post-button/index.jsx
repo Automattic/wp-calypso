@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { translate } from 'i18n-calypso';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import SitesPopover from 'components/sites-popover';
 import Button from 'components/button';
 import { markPostSeen } from 'state/reader/posts/actions';

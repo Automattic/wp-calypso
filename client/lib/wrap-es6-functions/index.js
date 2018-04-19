@@ -11,11 +11,15 @@ import { isFunction, partial } from 'lodash';
 
 function wrapFnWithWarning( fn, name ) {
 	const consoleFn = ( console.error || console.log ).bind( console );
+	const hasWarned = new Set();
 	return function() {
-		const err = new Error(
-			`${ name } is not supported on all browsers. You must use a replacement method from lodash.`
-		);
-		consoleFn( err );
+		if ( ! hasWarned.has( name ) ) {
+			const err = new Error(
+				`${ name } is not supported on all browsers. You must use a replacement method from lodash.`
+			);
+			consoleFn( err );
+			hasWarned.add( name );
+		}
 		return fn.apply( this, arguments );
 	};
 }

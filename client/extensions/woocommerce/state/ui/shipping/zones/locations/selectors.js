@@ -23,7 +23,7 @@ import {
 	getCountryName,
 	getStates,
 	hasStates,
-} from 'woocommerce/state/sites/locations/selectors';
+} from 'woocommerce/state/sites/data/locations/selectors';
 import { JOURNAL_ACTIONS } from './reducer';
 import { mergeLocationEdits } from './helpers';
 import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';

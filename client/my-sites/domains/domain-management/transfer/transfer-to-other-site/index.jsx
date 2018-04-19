@@ -27,12 +27,12 @@ import SectionHeader from 'components/section-header';
 import TransferConfirmationDialog from './confirmation-dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import wp from 'lib/wp';
-import { PLAN_FREE } from 'lib/plans/constants';
+import { isWpComFreePlan } from 'lib/plans';
 import { requestSites } from 'state/sites/actions';
 
 const wpcom = wp.undocumented();
 
-class TransferToOtherSite extends React.Component {
+export class TransferToOtherSite extends React.Component {
 	static propTypes = {
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.object.isRequired,
@@ -51,11 +51,16 @@ class TransferToOtherSite extends React.Component {
 	}
 
 	isSiteEligible = site => {
+		// check if it's an Atomic site from the site options
+		const isAtomic = get( site, 'options.is_automated_transfer', false );
+
 		return (
 			site.capabilities.manage_options &&
-			! site.jetpack &&
+			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
 			! get( site, 'options.is_domain_only', false ) &&
-			! ( this.props.domainsWithPlansOnly && get( site, 'plan.product_slug' ) === PLAN_FREE ) &&
+			! (
+				this.props.domainsWithPlansOnly && isWpComFreePlan( get( site, 'plan.product_slug' ) )
+			) &&
 			site.ID !== this.props.selectedSite.ID
 		);
 	};

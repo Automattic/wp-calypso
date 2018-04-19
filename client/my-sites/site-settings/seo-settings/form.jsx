@@ -45,9 +45,10 @@ import { getPlugins } from 'state/plugins/installed/selectors';
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_BUSINESS,
+	TYPE_BUSINESS,
+	TERM_ANNUALLY,
 } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -362,14 +363,19 @@ export class SeoForm extends React.Component {
 				) }
 
 				{ ! this.props.hasSeoPreviewFeature &&
-					! this.props.hasAdvancedSEOFeature && (
+					! this.props.hasAdvancedSEOFeature &&
+					site &&
+					site.plan && (
 						<Banner
 							description={ translate(
 								'Get tools to optimize your site for improved performance in search engine results.'
 							) }
 							event={ 'calypso_seo_settings_upgrade_nudge' }
 							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
-							plan={ siteIsJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
+							plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
+								type: TYPE_BUSINESS,
+								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
+							} ) }
 							title={ nudgeTitle }
 						/>
 					) }

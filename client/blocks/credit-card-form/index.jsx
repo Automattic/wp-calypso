@@ -18,7 +18,7 @@ import { forPayments as countriesList } from 'lib/countries-list';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import notices from 'notices';
-import { validateCardDetails } from 'lib/credit-card-details';
+import { validatePaymentDetails } from 'lib/checkout';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
@@ -36,6 +36,7 @@ class CreditCardForm extends Component {
 		saveStoredCard: PropTypes.func,
 		successCallback: PropTypes.func.isRequired,
 		showUsedForExistingPurchasesInfo: PropTypes.bool,
+		autoFocus: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -43,6 +44,7 @@ class CreditCardForm extends Component {
 		initialValues: {},
 		saveStoredCard: null,
 		showUsedForExistingPurchasesInfo: false,
+		autoFocus: true,
 	};
 
 	state = {
@@ -214,7 +216,7 @@ class CreditCardForm extends Component {
 	}
 
 	getValidationErrors() {
-		const validationResult = validateCardDetails( this.getCardDetails() );
+		const validationResult = validatePaymentDetails( this.getCardDetails() );
 
 		// Maps keys from credit card validator to work with formState.
 		return mapKeys( validationResult.errors, ( value, key ) => {
@@ -230,7 +232,7 @@ class CreditCardForm extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, autoFocus } = this.props;
 		return (
 			<form onSubmit={ this.onSubmit } ref={ this.storeForm }>
 				<Card className="credit-card-form__content">
@@ -240,6 +242,11 @@ class CreditCardForm extends Component {
 						eventFormName="Edit Card Details Form"
 						onFieldChange={ this.onFieldChange }
 						getErrorMessage={ this.getErrorMessage }
+						// "This prop can reduce usability and accessibility",
+						// but it's already enabled by default and this just
+						// provides a way to disable it, so...
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus={ autoFocus }
 					/>
 					<div className="credit-card-form__card-terms">
 						<Gridicon icon="info-outline" size={ 18 } />

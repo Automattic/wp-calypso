@@ -144,37 +144,6 @@ Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, f
 	);
 };
 
-/*
- * Retrieve all Jetpack settings of a site with id siteId
- *
- * @param {int} [siteId]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.fetchJetpackSettings = function( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/settings/' },
-		fn
-	);
-};
-
-/*
- * Update any Jetpack settings on the site with id siteId to the specified settings
- *
- * @param {int} [siteId]
- * @param {object} [settings]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) {
-	return this.wpcom.req.post(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/settings/', body: JSON.stringify( settings ), json: true },
-		fn
-	);
-};
-
 /**
  * Fetches settings for the Monitor module.
  *
@@ -759,6 +728,7 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 		{
 			path: '/sites/' + siteDomain + '/plans',
 			method: 'get',
+			apiVersion: config.isEnabled( 'upgrades/2-year-plans' ) ? '1.3' : '1.1',
 		},
 		fn
 	);
@@ -1234,12 +1204,6 @@ Undocumented.prototype.readA8cConversations = function( query, fn ) {
 		apiVersion: '1.2',
 	};
 	return this.wpcom.req.get( '/read/conversations', params, fn );
-};
-
-Undocumented.prototype.readFeed = function( query, fn ) {
-	var params = omit( query, 'ID' );
-	debug( '/read/feed' );
-	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.ID ), params, fn );
 };
 
 Undocumented.prototype.discoverFeed = function( query, fn ) {
@@ -2230,22 +2194,17 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
  * Check different info about WordPress and Jetpack status on a url
  *
  * @param {String} targetUrl - The url of the site to check
- * @param {String} filters - Comma separated string with the filters to run
  * @returns {Promise}  promise
  */
-Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
+Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 	const parsedUrl = url.parse( targetUrl );
 	let endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
-	let params = {
-		filters: filters,
-		apiVersion: '1.1',
-	};
 
 	if ( parsedUrl.path && parsedUrl.path !== '/' ) {
 		endpointUrl += parsedUrl.path.replace( /\//g, '::' );
 	}
 
-	return this.wpcom.req.get( `${ endpointUrl }`, params );
+	return this.wpcom.req.get( endpointUrl );
 };
 
 /**
@@ -2448,6 +2407,22 @@ Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
 };
 
 /**
+ * Send the optional feedback for the NPS Survey.
+ * @param {string}   surveyName   The name of the NPS survey being submitted
+ * @param {string}   feedback     The content
+ * @param {Function} fn           The callback function
+ * @returns {Promise} A promise
+ */
+Undocumented.prototype.sendNPSSurveyFeedback = function( surveyName, feedback, fn ) {
+	return this.wpcom.req.post(
+		{ path: `/nps/${ surveyName }` },
+		{ apiVersion: '1.2' },
+		{ feedback },
+		fn
+	);
+};
+
+/**
  * Get OAuth2 Client data for a given client ID
  * @param {string}     clientId       The client ID
  * @param {Function}   fn             The callback function
@@ -2471,30 +2446,48 @@ Undocumented.prototype.getFeaturedPlugins = function( fn ) {
 };
 
 /**
- * Fetch a nonce to use in the `updateSiteName` call
+ * Fetch a nonce to use in the `updateSiteAddress` call
  * @param {int}   siteId  The ID of the site for which to get a nonce.
  * @returns {Promise}     A promise
  */
-Undocumented.prototype.getRequestSiteRenameNonce = function( siteId ) {
+Undocumented.prototype.getRequestSiteAddressChangeNonce = function( siteId ) {
 	return this.wpcom.req.get( {
-		path: `/sites/${ siteId }/site-rename/nonce`,
+		path: `/sites/${ siteId }/site-address-change/nonce`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };
 
 /**
- * Request a new .wordpress.com subdomain change with the option to discard the current.
+ * Request server-side validation (including an availibility check) of the given site address.
  *
- * @param {int} [siteId] The siteId for which to rename
- * @param {object} [blogname]	The desired new subdomain
- * @param {bool} [discard]			Should the old blog name be discarded?
+ * @param {int} [siteId] The siteId for which to validate
+ * @param {object} [siteAddress]	The site address to validate
+ * @returns {Promise}  A promise
+ */
+Undocumented.prototype.checkSiteAddressValidation = function( siteId, siteAddress ) {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/site-address-change/validate`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{},
+		{ blogname: siteAddress }
+	);
+};
+
+/**
+ * Request a new .wordpress.com address for a site with the option to discard the current.
+ *
+ * @param {int} [siteId] The siteId for which to change the address
+ * @param {object} [blogname]	The desired new site address
+ * @param {bool} [discard]			Should the old site address name be discarded?
  * @param {string} [nonce]		A nonce provided by the API
  * @returns {Promise}  A promise
  */
-Undocumented.prototype.updateSiteName = function( siteId, blogname, discard, nonce ) {
+Undocumented.prototype.updateSiteAddress = function( siteId, blogname, discard, nonce ) {
 	return this.wpcom.req.post(
 		{
-			path: `/sites/${ siteId }/site-rename`,
+			path: `/sites/${ siteId }/site-address-change`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{},

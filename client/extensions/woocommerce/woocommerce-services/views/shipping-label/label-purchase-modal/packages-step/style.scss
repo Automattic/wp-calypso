@@ -10,12 +10,23 @@
 .packages-step__contents {
 	display: flex;
 	padding-bottom: 24px;
+	flex-direction: column;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
 }
 
 .packages-step__list {
-	width: 35%;
-	padding: 0 24px 0 0;
+	width: auto;
+	padding: 0 0 24px 0;
 	flex-shrink: 0;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+		width: 35%;
+		padding: 0 24px 0 0;
+	}
 }
 
 .packages-step__list-header {
@@ -112,11 +123,24 @@
 }
 
 .packages-step__package-weight {
-	display: inline-block;
-	width: 140px;
-	margin-bottom: 0;
+	width: 180px;
+	margin-bottom: 10px;
+	float: left;
+	margin-right: 15px;
+}
+
+@-moz-document url-prefix() { /* fix the width in Firefox */
+	.packages-step__package-weight {
+		width: 135px;
+		margin-right: 65px;
+	}
 }
 
 .packages-step__package-weight-unit {
 	margin-left: 8px;
+}
+
+.packages-step__package-signature {
+	width: 180px;
+	float: left;
 }

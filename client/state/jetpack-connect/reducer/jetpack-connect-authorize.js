@@ -2,7 +2,7 @@
 /**
  * External dependencis
  */
-import { get, isEmpty, omit } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,8 +18,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_COMPLETE_FLOW,
-	JETPACK_CONNECT_CREATE_ACCOUNT,
-	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SITE_REQUEST_FAILURE,
@@ -28,7 +26,7 @@ import {
 function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_AUTHORIZE:
-			return Object.assign( omit( state, 'userData', 'bearerToken' ), {
+			return Object.assign( {}, state, {
 				isAuthorizing: true,
 				authorizeSuccess: false,
 				authorizeError: false,
@@ -68,29 +66,6 @@ function jetpackConnectAuthorize( state = {}, action ) {
 				timestamp: action.timestamp,
 				userAlreadyConnected: false,
 			};
-
-		case JETPACK_CONNECT_CREATE_ACCOUNT:
-			return Object.assign( {}, state, {
-				isAuthorizing: true,
-				authorizeSuccess: false,
-				authorizeError: false,
-			} );
-
-		case JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE:
-			if ( ! isEmpty( action.error ) ) {
-				return Object.assign( {}, state, {
-					isAuthorizing: false,
-					authorizeSuccess: false,
-					authorizeError: true,
-				} );
-			}
-			return Object.assign( {}, state, {
-				isAuthorizing: true,
-				authorizeSuccess: false,
-				authorizeError: false,
-				userData: action.userData,
-				bearerToken: get( action, [ 'data', 'bearer_token' ] ),
-			} );
 
 		case SITE_REQUEST_FAILURE:
 			if ( state.clientId === action.siteId ) {

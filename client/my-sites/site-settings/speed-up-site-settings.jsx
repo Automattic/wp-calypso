@@ -20,7 +20,6 @@ import {
 	isJetpackSiteInDevelopmentMode,
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { updateSettings } from 'state/jetpack/settings/actions';
 import { getSiteSlug } from 'state/sites/selectors';
 import InfoPopover from 'components/info-popover';
 
@@ -54,7 +53,12 @@ class SpeedUpSiteSettings extends Component {
 					<FormFieldset className="site-settings__formfieldset">
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
-								<ExternalLink target="_blank" icon href="https://jetpack.com/support/photon">
+								{ translate( 'Hosts your image files on the global WordPress.com servers.' ) }{' '}
+								<ExternalLink
+									target="_blank"
+									icon={ false }
+									href="https://jetpack.com/support/photon"
+								>
 									{ translate( 'Learn more' ) }
 								</ExternalLink>
 							</InfoPopover>
@@ -76,7 +80,14 @@ class SpeedUpSiteSettings extends Component {
 						<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
 							<div className="site-settings__info-link-container">
 								<InfoPopover position="left">
-									<ExternalLink target="_blank" icon href="https://jetpack.com/support/lazy-images">
+									{ translate(
+										"Delays the loading of images until they are visible in the visitor's browser."
+									) }{' '}
+									<ExternalLink
+										target="_blank"
+										icon={ false }
+										href="https://jetpack.com/support/lazy-images"
+									>
 										{ translate( 'Learn more' ) }
 									</ExternalLink>
 								</InfoPopover>
@@ -100,23 +111,18 @@ class SpeedUpSiteSettings extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			selectedSiteId,
-			'photon'
-		);
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'photon'
+	);
 
-		return {
-			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			selectedSiteId,
-			siteSlug: getSiteSlug( state, selectedSiteId ),
-		};
-	},
-	{
-		updateSettings,
-	}
-)( localize( SpeedUpSiteSettings ) );
+	return {
+		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		selectedSiteId,
+		siteSlug: getSiteSlug( state, selectedSiteId ),
+	};
+} )( localize( SpeedUpSiteSettings ) );

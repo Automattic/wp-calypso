@@ -17,6 +17,7 @@ import { ContactDetailsFormFields } from '../';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
+	translate: x => x,
 } ) );
 
 describe( 'ContactDetailsFormFields', () => {
@@ -149,6 +150,72 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should render cancel button when `onCancel` method prop passed', () => {
 			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } onCancel={ noop } /> );
 			expect( wrapper.find( '.contact-details-form-fields__cancel-button' ) ).toHaveLength( 1 );
+		} );
+	} );
+
+	describe( 'Addresses with no province/state', () => {
+		test( 'should return province/state value when the country has states', () => {
+			const onContactDetailsChange = jest.fn();
+			const wrapper = shallow(
+				<ContactDetailsFormFields
+					{ ...defaultProps }
+					onContactDetailsChange={ onContactDetailsChange }
+				/>
+			);
+			wrapper.setProps( { hasCountryStates: true } );
+			expect( wrapper.instance().getMainFieldValues().state ).toEqual(
+				defaultProps.contactDetails.state
+			);
+		} );
+		test( 'should return province/state value when the country does not have states', () => {
+			const onContactDetailsChange = jest.fn();
+			const wrapper = shallow(
+				<ContactDetailsFormFields
+					{ ...defaultProps }
+					onContactDetailsChange={ onContactDetailsChange }
+				/>
+			);
+			wrapper.setProps( { hasCountryStates: false } );
+			expect( wrapper.instance().getMainFieldValues().state ).toEqual(
+				defaultProps.contactDetails.state
+			);
+		} );
+	} );
+
+	describe( 'Setting phone input country', () => {
+		test( 'should user address country if available', () => {
+			const newProps = {
+				...defaultProps,
+				countryCode: 'JP',
+				userCountryCode: 'NZ',
+			};
+			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			expect( wrapper.find( 'FormPhoneMediaInput' ).props().countryCode ).toEqual( 'JP' );
+		} );
+
+		test( 'should set phone country using geo location when country code not available in contact details', () => {
+			const newProps = {
+				contactDetails: {
+					...defaultProps.contactDetails,
+					countryCode: '',
+				},
+				onSubmit: noop,
+				userCountryCode: 'FR',
+			};
+			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			expect( wrapper.find( 'FormPhoneMediaInput' ).props().countryCode ).toEqual( 'FR' );
+		} );
+
+		test( 'should use US as fallback', () => {
+			const newProps = {
+				contactDetails: {
+					...defaultProps.contactDetails,
+					countryCode: '',
+				},
+				onSubmit: noop,
+			};
+			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			expect( wrapper.find( 'FormPhoneMediaInput' ).props().countryCode ).toEqual( 'US' );
 		} );
 	} );
 } );

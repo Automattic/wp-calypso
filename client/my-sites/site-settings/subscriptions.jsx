@@ -45,8 +45,16 @@ const Subscriptions = ( {
 				<FormFieldset>
 					<div className="subscriptions__info-link-container site-settings__info-link-container">
 						<InfoPopover position="left">
-							<ExternalLink href="https://jetpack.com/support/subscriptions" icon target="_blank">
-								{ translate( 'Learn more about Subscriptions.' ) }
+							{ translate(
+								'Allows readers to subscribe to your posts or comments, ' +
+									'and receive notifications of new content by email.'
+							) }{' '}
+							<ExternalLink
+								href="https://jetpack.com/support/subscriptions"
+								icon={ false }
+								target="_blank"
+							>
+								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>

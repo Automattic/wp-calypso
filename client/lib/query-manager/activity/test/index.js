@@ -1,8 +1,8 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -44,7 +44,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true if activity is after the specified time', () => {
@@ -55,7 +55,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return false if activity is before the specified time', () => {
@@ -66,7 +66,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 		} );
 
@@ -79,7 +79,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return false if activity is after the specified time', () => {
@@ -90,7 +90,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if activity is before the specified time', () => {
@@ -101,7 +101,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -115,7 +115,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return false if activity is before a range of dates', () => {
@@ -127,7 +127,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false if activity is after a range of dates', () => {
@@ -139,7 +139,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should be impossible to match if dateStart is after dateEnd', () => {
@@ -151,7 +151,7 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 		} );
 	} );
@@ -162,7 +162,7 @@ describe( 'ActivityQueryManager', () => {
 			const activityA = { activityId: 'a', activityTs: 100000 };
 			const activityB = { activityId: 'b', activityTs: 200000 };
 
-			expect( [ activityA, activityB ].sort( sortFunc ) ).to.eql( [ activityB, activityA ] );
+			expect( [ activityA, activityB ].sort( sortFunc ) ).toEqual( [ activityB, activityA ] );
 		} );
 
 		test( 'should include simultaneous events (in any order, sort is unstable)', () => {
@@ -170,10 +170,9 @@ describe( 'ActivityQueryManager', () => {
 			const activityA = { activityId: 'a', activityTs: 100000 };
 			const activityB = { activityId: 'b', activityTs: 100000 };
 
-			expect( [ activityA, activityB ].sort( sortFunc ) ).to.include.members( [
-				activityA,
-				activityB,
-			] );
+			expect( [ activityA, activityB ].sort( sortFunc ) ).toEqual(
+				expect.arrayContaining( [ activityA, activityB ] )
+			);
 		} );
 	} );
 } );

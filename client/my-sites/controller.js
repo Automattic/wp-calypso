@@ -56,14 +56,11 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'my-sites/domains/paths';
 import SitesComponent from 'my-sites/sites';
-import { isATEnabled } from 'lib/automated-transfer';
 import { warningNotice } from 'state/notices/actions';
 import { makeLayout, render as clientRender } from 'controller';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import EmptyContentComponent from 'components/empty-content';
 import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
-import Main from 'components/main';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -315,14 +312,17 @@ export function siteSelection( context, next ) {
 
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
-		return analytics.pageView.record( basePath, sitesPageTitleForAnalytics + ' > No Sites' );
+		return analytics.pageView.record( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
+			base_path: basePath,
+		} );
 	}
 
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
 		return analytics.pageView.record(
-			basePath,
-			`${ sitesPageTitleForAnalytics } > All Sites Hidden`
+			'/no-sites',
+			`${ sitesPageTitleForAnalytics } > All Sites Hidden`,
+			{ base_path: basePath }
 		);
 	}
 
@@ -439,24 +439,6 @@ export function navigation( context, next ) {
 	// Render the My Sites navigation in #secondary
 	context.secondary = createNavigation( context );
 	next();
-}
-
-export function jetPackWarning( context, next ) {
-	const { getState } = getStore( context );
-	const basePath = sectionify( context.path );
-	const selectedSite = getSelectedSite( getState() );
-
-	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
-		context.primary = (
-			<Main>
-				<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={ selectedSite.ID } />
-			</Main>
-		);
-
-		analytics.pageView.record( basePath, '> No Domains On Jetpack' );
-	} else {
-		next();
-	}
 }
 
 /**

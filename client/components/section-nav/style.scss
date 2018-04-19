@@ -291,10 +291,9 @@
 	}
 
 	.is-external & {
-		&:after {
-			@include noticon('\f442');
-			font-size: 18px;
-			padding-left: 2px;
+		.gridicons-external {
+			vertical-align: text-bottom;
+			margin-left: 3px;
 		}
 	}
 

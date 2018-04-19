@@ -73,8 +73,8 @@ When you’re first starting out, your natural instinct when creating a new feat
 
 Once you know what the first small piece of your feature will be, follow this general process while working:
 
-1. Create a new branch, using [the branch naming scheme](../docs/git-workflow.md#branch-naming-scheme), _e.g._ `add/video-preview` or `fix/1337-language-too-geeky`.
-2. Make your first commit: any will do even if empty or trivial, but we need something in order to create the initial pull request. Create the pull request and prefix the name with the section of the product, _e.g._ _Posts: Prepare store for desktop app_. Don’t worry too much if there’s no obvious prefix.
+1. [Fork](https://help.github.com/articles/fork-a-repo/) the project and create a new branch, using [the branch naming scheme](../docs/git-workflow.md#branch-naming-scheme), _e.g._ `add/video-preview` or `fix/1337-language-too-geeky`.
+2. Make your first commit: any will do even if empty or trivial, but we need something in order to create the initial pull request. [Create the pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/) and prefix the name with the section of the product, _e.g._ _Posts: Prepare store for desktop app_. Don’t worry too much if there’s no obvious prefix.
   - Write a detailed description of the problem you are solving, the part of Calypso it affects, and how you plan on going about solving it.
   - If you have write access, add the **<span class="label status-in-progress">[Status] In Progress</span>** label or wait until somebody adds it. This indicates that the pull request isn’t ready for a review and may still be incomplete. On the other hand, it welcomes early feedback and encourages collaboration during the development process.
 3. Start developing and pushing out commits to your new branch.
@@ -96,6 +96,9 @@ Whether somebody is reviewing your code or you are reviewing somebody else’s c
 
 If you feel yourself waiting for someone to review a PR, don’t hesitate to personally ask for someone to review it or to mention them on GitHub. _The PR author is responsible for pushing the change through._
 
+### Adding A New Component
+
+If you'd like to add a new component to Calypso, please review our [new component checklist](../docs/new-component-checklist.md).
 
 ### We’re Here To Help
 

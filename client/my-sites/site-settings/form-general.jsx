@@ -25,7 +25,6 @@ import config from 'config';
 import notices from 'notices';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
@@ -34,13 +33,14 @@ import Timezone from 'components/timezone';
 import SiteIconSetting from './site-icon-setting';
 import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
-import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
+import { FEATURE_NO_BRANDING, TYPE_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 
-class SiteSettingsFormGeneral extends Component {
+export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
 		this._showWarning( this.props.site );
 	}
@@ -238,7 +238,7 @@ class SiteSettingsFormGeneral extends Component {
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 				/>
 				<FormSettingExplanation>
-					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
+					{ translate( "The site's primary language." ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
@@ -311,46 +311,6 @@ class SiteSettingsFormGeneral extends Component {
 						</FormSettingExplanation>
 					</div>
 				) }
-			</FormFieldset>
-		);
-	}
-
-	holidaySnowOption() {
-		// Note that years and months below are zero indexed
-		const {
-				fields,
-				handleToggle,
-				isRequestingSettings,
-				moment,
-				supportsHolidaySnowOption,
-				translate,
-			} = this.props,
-			today = moment(),
-			startDate = moment( { year: today.year(), month: 11, day: 1 } ),
-			endDate = moment( { year: today.year(), month: 0, day: 4 } );
-
-		if ( ! supportsHolidaySnowOption ) {
-			return null;
-		}
-
-		if ( today.isBefore( startDate, 'day' ) && today.isAfter( endDate, 'day' ) ) {
-			return null;
-		}
-
-		return (
-			<FormFieldset>
-				<FormLegend>{ translate( 'Holiday Snow' ) }</FormLegend>
-				<ul>
-					<li>
-						<CompactFormToggle
-							checked={ !! fields.holidaysnow }
-							disabled={ isRequestingSettings }
-							onChange={ handleToggle( 'holidaysnow' ) }
-						>
-							{ translate( 'Show falling snow on my blog until January 4th.' ) }
-						</CompactFormToggle>
-					</li>
-				</ul>
 			</FormFieldset>
 		);
 	}
@@ -513,7 +473,6 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.Timezone() }
-						{ this.holidaySnowOption() }
 					</form>
 				</Card>
 
@@ -557,7 +516,7 @@ class SiteSettingsFormGeneral extends Component {
 							! isBusiness( site.plan ) && (
 								<Banner
 									feature={ FEATURE_NO_BRANDING }
-									plan={ PLAN_BUSINESS }
+									plan={ findFirstSimilarPlanKey( site.plan, { type: TYPE_BUSINESS } ) }
 									title={ translate(
 										'Remove the footer credit entirely with WordPress.com Business'
 									) }
@@ -601,7 +560,6 @@ const connectComponent = connect(
 			siteSlug: getSelectedSiteSlug( state ),
 			supportsLanguageSelection:
 				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.9-alpha' ),
-			supportsHolidaySnowOption: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.0' ),
 		};
 	},
 	null,
@@ -617,7 +575,6 @@ const getFormSettings = settings => {
 		timezone_string: '',
 		blog_public: '',
 		admin_url: '',
-		holidaysnow: false,
 		net_neutrality: false,
 	};
 
@@ -632,8 +589,6 @@ const getFormSettings = settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
-
-		holidaysnow: !! settings.holidaysnow,
 
 		net_neutrality: settings.net_neutrality,
 	};

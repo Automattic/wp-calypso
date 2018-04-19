@@ -8,40 +8,36 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
-import userFactory from 'lib/user';
 import AuthorSelector from 'blocks/author-selector';
-import PostActions from 'lib/posts/actions';
 import { hasTouch } from 'lib/touch-detect';
 import * as stats from 'lib/posts/stats';
-import { getSelectedSite } from 'state/ui/selectors';
-
-/**
- * Module dependencies
- */
-const user = userFactory();
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSite } from 'state/sites/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { editPost } from 'state/posts/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export class EditorAuthor extends Component {
 	static propTypes = {
 		post: PropTypes.object,
 		isNew: PropTypes.bool,
-		postAuthor: PropTypes.object,
 	};
 
 	render() {
-		// if it's not a new post and we are still loading
-		// show a placeholder component
-		const { post, translate, site, postAuthor } = this.props;
+		const { post, author, translate, site } = this.props;
 
+		// if it's not a new post and we are still loading, show a placeholder component
 		if ( ! post && ! this.props.isNew ) {
 			return this.renderPlaceholder();
 		}
 
-		const author = post && postAuthor ? postAuthor : user.get();
 		const name = author.display_name || author.name;
 		const Wrapper = this.userCanAssignAuthor() ? AuthorSelector : 'div';
 		const popoverPosition = hasTouch() ? 'bottom right' : 'bottom left';
@@ -77,8 +73,10 @@ export class EditorAuthor extends Component {
 	onSelect = author => {
 		stats.recordStat( 'advanced_author_changed' );
 		stats.recordEvent( 'Changed Author' );
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( { author: author } );
+
+		const siteId = get( this.props.site, 'ID', null );
+		const postId = get( this.props.post, 'ID', null );
+		this.props.editPost( siteId, postId, { author } );
 	};
 
 	userCanAssignAuthor() {
@@ -97,6 +95,16 @@ export class EditorAuthor extends Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-} ) )( localize( EditorAuthor ) );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+
+		const site = getSite( state, siteId );
+		const post = getEditedPost( state, siteId, postId );
+		const author = get( post, 'author', getCurrentUser( state ) );
+
+		return { site, post, author };
+	},
+	{ editPost }
+)( localize( EditorAuthor ) );

@@ -15,6 +15,8 @@ import {
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
+	isAuthorEqual,
+	isDiscussionEqual,
 	mergeIgnoringArrays,
 	normalizePostForEditing,
 	normalizePostForDisplay,
@@ -23,6 +25,7 @@ import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import { addQueryArgs } from 'lib/route';
+import { getFeaturedImageId } from 'lib/posts/utils';
 
 /**
  * Returns the PostsQueryManager from the state tree for a given site ID (or
@@ -410,8 +413,17 @@ export const isEditedPostDirty = createSelector(
 
 			if ( post ) {
 				switch ( key ) {
+					case 'author': {
+						return ! isAuthorEqual( value, post.author );
+					}
 					case 'date': {
 						return ! moment( value ).isSame( post.date );
+					}
+					case 'discussion': {
+						return ! isDiscussionEqual( value, post.discussion );
+					}
+					case 'featured_image': {
+						return value !== getFeaturedImageId( post );
 					}
 					case 'parent': {
 						return get( post, 'parent.ID', 0 ) !== value;

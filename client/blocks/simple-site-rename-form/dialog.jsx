@@ -86,14 +86,14 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 				onClose={ this.onClose }
 			>
 				<TrackComponentView
-					eventName="calypso_siterename_areyousure_view"
+					eventName="calypso_siteaddresschange_areyousure_view"
 					eventProperties={ { new_domain: newDomainName } }
 				/>
-				<h1>{ translate( "Let's Review" ) }</h1>
+				<h1>{ translate( "Let's review…" ) }</h1>
 				<p>
 					{ translate(
-						'You are about to change your site address. Once changed, ' +
-							'your previous site address will be unavailable for you or anyone else.'
+						"You're about to change your site address. Once you confirm the change, " +
+							'this site address will no longer be available for future use.'
 					) }
 				</p>
 				<div className="simple-site-rename-form__confirmation-detail">
@@ -130,7 +130,11 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 						checked={ this.state.isConfirmationChecked }
 						onChange={ this.toggleConfirmationChecked }
 					/>
-					<span>{ translate( "I've double-checked and understand there is no undo." ) }</span>
+					<span>
+						{ translate(
+							"I understand that I won't be able to undo this change to my site address."
+						) }
+					</span>
 				</FormLabel>
 			</Dialog>
 		);

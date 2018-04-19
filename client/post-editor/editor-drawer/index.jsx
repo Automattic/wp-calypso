@@ -149,7 +149,6 @@ class EditorDrawer extends Component {
 		return (
 			<AsyncLoad
 				require="post-editor/editor-post-formats/accordion"
-				post={ this.props.post }
 				className="editor-drawer__accordion"
 			/>
 		);
@@ -170,9 +169,7 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return (
-			<AsyncLoad require="./featured-image" site={ this.props.site } post={ this.props.post } />
-		);
+		return <AsyncLoad require="./featured-image" />;
 	}
 
 	renderExcerpt() {
@@ -237,12 +234,7 @@ class EditorDrawer extends Component {
 
 		return (
 			<AccordionSection>
-				<AsyncLoad
-					require="post-editor/editor-discussion"
-					site={ this.props.site }
-					post={ this.props.post }
-					isNew={ this.props.isNew }
-				/>
+				<AsyncLoad require="post-editor/editor-discussion" isNew={ this.props.isNew } />
 			</AccordionSection>
 		);
 	}

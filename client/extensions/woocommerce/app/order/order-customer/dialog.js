@@ -14,14 +14,17 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import { areLocationsLoaded, getAllCountries } from 'woocommerce/state/sites/locations/selectors';
+import {
+	areLocationsLoaded,
+	getAllCountries,
+} from 'woocommerce/state/sites/data/locations/selectors';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
+import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';

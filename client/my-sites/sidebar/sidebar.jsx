@@ -227,6 +227,7 @@ export class MySitesSidebar extends Component {
 					onClick={ this.trackSidebarButtonClick( 'customize' ) }
 					href={ this.props.customizeUrl }
 					preloadSectionName="customize"
+					forceTargetInternal
 				>
 					{ this.props.translate( 'Customize' ) }
 				</SidebarButton>
@@ -532,11 +533,6 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		// Ignore Jetpack sites as they've opted into this interface.
-		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
-			return null;
-		}
-
 		if ( ! this.useWPAdminFlows() && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
@@ -685,7 +681,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<Sidebar>
 				<SidebarRegion>
-					<CurrentSite allSitesPath={ this.props.allSitesPath } />
+					<CurrentSite />
 					{ this.renderSidebarMenus() }
 				</SidebarRegion>
 				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>

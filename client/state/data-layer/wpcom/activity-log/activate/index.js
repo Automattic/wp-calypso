@@ -18,16 +18,15 @@ import { errorNotice } from 'state/notices/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
 const activateRewind = ( { dispatch }, action ) => {
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				path: `/activity-log/${ action.siteId }/rewind/activate`,
-				apiVersion: '1',
-			},
-			action
-		)
-	);
+	const params = {
+		method: 'POST',
+		path: `/activity-log/${ action.siteId }/rewind/activate`,
+		apiVersion: '1',
+	};
+	if ( action.isVpMigrate ) {
+		params.body = { rewindOptIn: true };
+	}
+	dispatch( http( params, action ) );
 };
 
 export const activateSucceeded = ( { dispatch }, action ) => {

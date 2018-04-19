@@ -4,6 +4,12 @@
 
 	.logged-out-form__links {
 		max-width: 100%;
+
+		/* Move up to the Card above */
+		margin-top: -10px;
+		@include breakpoint( '>480px' ) {
+			margin-top: -16px;
+		}
 	}
 
 	.formatted-header {
@@ -44,10 +50,6 @@
 
 .jetpack-connect__main-logo {
 	text-align: center;
-
-	.jetpack-logo__icon {
-		fill: $green-jetpack;
-	}
 
 	@include breakpoint( '<660px' ) {
 		margin-top: 20px;
@@ -146,6 +148,10 @@
 
 .jetpack-connect__back-button {
 	margin-top: 16px;
+}
+
+.jetpack-connect__install {
+	margin-bottom: 16px;
 }
 
 .jetpack-connect__install-steps {
@@ -626,7 +632,6 @@
 }
 
 .jetpack-connect__credentials-submit {
-	margin-bottom: 20px;
 	transition: none;
 
 	&.is-error,
@@ -648,8 +653,14 @@
 	.spinner {
 		z-index: z-index(
 			'root',
-			'.jetpack-connect__password-container .jetpack-connect__creds-form-spinner'
+			'.jetpack-connect__creds-form-footer .jetpack-connect__creds-form-spinner'
 		);
+	}
+}
+
+.jetpack-connect__creds-form-footer {
+	.button {
+		margin-top: 22px;
 	}
 }
 
@@ -666,7 +677,9 @@
 }
 
 .jetpack-connect__password-form-input {
-	text-indent: 27px;
+	&[type='password'] {
+		padding-left: 40px;
+	}
 }
 
 .jetpack-connect__creds-form-spinner {
@@ -684,4 +697,26 @@
 		padding-left: 32px;
 		padding-right: 319px;
 	}
+}
+
+.jetpack-connect__plan-info {
+	text-align: center;
+	max-width: 500px;
+	margin-top: 20px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+.jetpack-connect__plan-info-illustration {
+	max-width: 200px;
+}
+
+.jetpack-connect__plan-info-buttons {
+	.button + .button {
+		margin-left: 10px;
+	}
+}
+
+.jetpack-connect__connect-button {
+	text-align: center;
 }

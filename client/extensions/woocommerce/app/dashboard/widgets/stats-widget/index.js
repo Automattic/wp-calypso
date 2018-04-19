@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
-import { sortBy, find } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +36,7 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { savePreference } from 'state/preferences/actions';
 import SelectDropdown from 'components/select-dropdown';
+import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
 import Stat from './stat';
 import { withAnalytics } from 'state/analytics/actions';
 
@@ -148,6 +149,7 @@ class StatsWidget extends Component {
 				data={ ( orderData && orderData.data ) || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				type="number"
 			/>
 		);
@@ -167,6 +169,7 @@ class StatsWidget extends Component {
 				data={ ( orderData && orderData.data ) || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				type="currency"
 			/>
 		);
@@ -183,6 +186,7 @@ class StatsWidget extends Component {
 				data={ visitorData || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				statType="statsVisits"
 				query={ queries.visitorQuery }
 				attribute="visitors"
@@ -200,9 +204,13 @@ class StatsWidget extends Component {
 			<Stat
 				site={ site }
 				label={ translate( 'Conversion rate' ) }
+				labelToolTip={ translate( 'Number of orders by unique visitors', {
+					context: 'Conversion rate tooltip',
+				} ) }
 				data={ data || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				statType="statsOrders"
 				query={ queries.orderQuery }
 				attribute="conversionRate"
@@ -215,9 +223,8 @@ class StatsWidget extends Component {
 		const { site, translate, unit, referrerData, queries, viewStats } = this.props;
 		const { referrerQuery } = queries;
 
-		const row = find( referrerData, d => d.date === referrerQuery.date );
-		const fetchedData =
-			( row && sortBy( row.data, r => -r.sales ).slice( 0, dashboardListLimit ) ) || [];
+		const selectedData = find( referrerData, d => d.date === referrerQuery.date ) || { data: [] };
+		const sortedData = sortBySales( selectedData.data, dashboardListLimit );
 
 		const values = [
 			{ key: 'referrer', title: translate( 'Referrer' ), format: 'text' },
@@ -246,7 +253,7 @@ class StatsWidget extends Component {
 				viewText={ translate( 'View referrers' ) }
 				viewLink={ viewLink }
 				onViewClick={ viewStats }
-				fetchedData={ fetchedData }
+				fetchedData={ sortedData }
 				emptyMessage={ emptyMessage }
 			/>
 		);

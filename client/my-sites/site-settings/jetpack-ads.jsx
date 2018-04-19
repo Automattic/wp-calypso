@@ -83,8 +83,9 @@ class JetpackAds extends Component {
 			<div>
 				<div className="site-settings__info-link-container">
 					<InfoPopover position="left">
-						<ExternalLink href="https://jetpack.com/support/ads" icon target="_blank">
-							{ translate( 'Learn more about Ads.' ) }
+						{ translate( 'Displays high-quality ads on your site that allow you to earn income.' ) }{' '}
+						<ExternalLink href="https://jetpack.com/support/ads" icon={ false } target="_blank">
+							{ translate( 'Learn more' ) }
 						</ExternalLink>
 					</InfoPopover>
 				</div>

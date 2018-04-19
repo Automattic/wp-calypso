@@ -14,6 +14,7 @@ import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
+import formatCurrency from 'lib/format-currency';
 
 const GOOGLE_APPS_INVALID_TLDS = [ 'in' ],
 	GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
@@ -260,11 +261,22 @@ function getDomainProductSlug( domain ) {
 	return `dot${ tldSlug }_domain`;
 }
 
+function getDomainPrice( slug, productsList, currencyCode ) {
+	let price = get( productsList, [ slug, 'cost' ], null );
+	if ( price ) {
+		price += get( productsList, [ 'domain_map', 'cost' ], 0 );
+		price = formatCurrency( price, currencyCode );
+	}
+
+	return price;
+}
+
 export {
 	canAddGoogleApps,
 	canRedirect,
 	checkDomainAvailability,
 	checkInboundTransferStatus,
+	getDomainPrice,
 	getDomainProductSlug,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,

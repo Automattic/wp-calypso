@@ -13,7 +13,6 @@ const analyticsMocks = [
 	'pageView.record',
 	'tracks.recordEvent',
 	'tracks.recordPageView',
-	'tracks.setAnonymousUserId',
 	'tracks.setOptOut',
 ];
 

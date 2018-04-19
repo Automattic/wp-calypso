@@ -52,8 +52,11 @@ class Search extends Component {
 		return (
 			<div className="search__info-link-container site-settings__info-link-container">
 				<InfoPopover position="left">
-					<ExternalLink href={ url } icon target="_blank">
-						{ translate( 'Learn more about Search.' ) }
+					{ translate(
+						'Replaces the default WordPress search with a faster, filterable search experience.'
+					) }{' '}
+					<ExternalLink href={ url } icon={ false } target="_blank">
+						{ translate( 'Learn more' ) }
 					</ExternalLink>
 				</InfoPopover>
 			</div>

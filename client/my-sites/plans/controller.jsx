@@ -13,7 +13,7 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import { isValidFeatureKey } from 'lib/plans';
-import Plans from 'my-sites/plans/main';
+import Plans from './plans';
 import CheckoutData from 'components/data/checkout';
 
 export default {
@@ -26,6 +26,7 @@ export default {
 					destinationType={ context.params.destinationType }
 					selectedFeature={ context.query.feature }
 					selectedPlan={ context.query.plan }
+					withSaleInfo={ 'sale' in context.query }
 				/>
 			</CheckoutData>
 		);

@@ -241,7 +241,7 @@ class StatsListItem extends React.Component {
 							event.shiftKey ||
 							event.altKey;
 						recordTrack( 'calypso_reader_stats_module_site_stream_link_click', {
-							siteId,
+							site_id: siteId,
 							module_name: this.props.moduleName,
 							modifier_pressed: modifierPressed,
 						} );

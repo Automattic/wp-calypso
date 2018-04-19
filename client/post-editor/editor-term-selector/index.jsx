@@ -67,7 +67,7 @@ class EditorTermSelector extends Component {
 	}
 
 	render() {
-		const { siteId, taxonomyName, canEditTerms, compact } = this.props;
+		const { taxonomyName, canEditTerms, compact } = this.props;
 
 		return (
 			<div>
@@ -76,7 +76,6 @@ class EditorTermSelector extends Component {
 					onChange={ this.boundOnTermsChange }
 					selected={ this.getSelectedTermIds() }
 					taxonomy={ taxonomyName }
-					siteId={ siteId }
 					multiple={ true }
 					compact={ compact }
 				/>

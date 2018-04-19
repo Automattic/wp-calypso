@@ -11,6 +11,7 @@ import { compact, includes } from 'lodash';
 /**
  * Internal dependencies
  */
+
 import { isEnabled } from 'config';
 import { isBusinessPlan, isFreePlan, isPersonalPlan, isPremiumPlan } from './index';
 
@@ -53,6 +54,7 @@ export const JETPACK_MONTHLY_PLANS = [
 
 export const PLAN_MONTHLY_PERIOD = 31;
 export const PLAN_ANNUAL_PERIOD = 365;
+export const PLAN_BIENNIAL_PERIOD = 730;
 
 // features constants
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
@@ -157,6 +159,20 @@ export const TYPE_PERSONAL = 'TYPE_PERSONAL';
 export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 
+const WPComGetBillingTimeframe = abtest => {
+	if ( abtest ) {
+		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
+			return i18n.translate( '/month, billed annually or biennially' );
+		}
+
+		if ( abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
+			// Note: Don't make this translatable because it's only visible to English-language users
+			return '/month, billed annually';
+		}
+	}
+	return i18n.translate( 'per month, billed yearly' );
+};
+
 const getPlanPersonalDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
@@ -203,13 +219,7 @@ const getPlanPersonalDetails = () => ( {
 		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		FEATURE_ALL_FREE_FEATURES,
 	],
-	getBillingTimeFrame: abtest => {
-		if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return '/month, billed annually';
-		}
-		return i18n.translate( 'per month, billed yearly' );
-	},
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -270,13 +280,7 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_PREMIUM_THEMES,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
-	getBillingTimeFrame: abtest => {
-		if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return '/month, billed annually';
-		}
-		return i18n.translate( 'per month, billed yearly' );
-	},
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -365,13 +369,7 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_UNLIMITED_STORAGE_SIGNUP,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
-	getBillingTimeFrame: abtest => {
-		if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return '/month, billed annually';
-		}
-		return i18n.translate( 'per month, billed yearly' );
-	},
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -640,7 +638,7 @@ export const PLANS_LIST = {
 				FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed monthly';
 			}
@@ -724,7 +722,7 @@ export const PLANS_LIST = {
 			FEATURE_ALL_FREE_FEATURES_JETPACK,
 		],
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed monthly';
 			}
@@ -739,6 +737,7 @@ export const PLANS_LIST = {
 		term: TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Professional' ),
 		getAudience: () => i18n.translate( 'Best for organizations' ),
+		getStoreSlug: () => PLAN_JETPACK_BUSINESS,
 		getProductId: () => 2001,
 		availableFor: plan =>
 			includes(
@@ -802,6 +801,7 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for organizations' ),
 		getSubtitle: () => i18n.translate( 'Ultimate security and traffic tools.' ),
 		getProductId: () => 2004,
+		getStoreSlug: () => PLAN_JETPACK_BUSINESS_MONTHLY,
 		getPathSlug: () => 'professional-monthly',
 		availableFor: plan =>
 			includes(
@@ -851,7 +851,7 @@ export const PLANS_LIST = {
 				FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed monthly';
 			}
@@ -1325,7 +1325,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Standard Security Tools' ),
 		getDescription: () =>
 			i18n.translate(
-				'Brute force protection, uptime monitoring, secure sign on, ' +
+				'Brute force protection, downtime monitoring, secure sign on, ' +
 					'and automatic updates for your plugins.'
 			),
 	},

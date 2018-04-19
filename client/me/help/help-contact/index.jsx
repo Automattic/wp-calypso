@@ -57,16 +57,19 @@ import {
 	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
+	getLocalizedLanguageNames,
 } from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
-import { getLanguage, isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QueryLanguageNames from 'components/data/query-language-names';
 
 /**
  * Module variables
  */
-const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
+const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
@@ -75,10 +78,8 @@ const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
 const SUPPORT_TICKET = 'SUPPORT_TICKET';
 const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
-const startShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Sun, 17 Dec 2017 00:00:00 +0000' );
-const stopShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Tue, 26 Dec 2017 00:00:00 +0000' );
-const startShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Fri, 29 Dec 2017 00:00:00 +0000' );
-const stopShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Tue, 2 Jan 2018 00:00:00 +0000' );
+const startShowingEaster2018ClosureNoticeAt = i18n.moment( 'Thu, 29 Mar 2018 00:00:00 +0000' );
+const stopShowingEaster2018ClosureNoticeAt = i18n.moment( 'Mon, 2 Apr 2018 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
 	static propTypes = {
@@ -304,13 +305,13 @@ class HelpContact extends React.Component {
 
 	getContactFormPropsVariation = variationSlug => {
 		const { isSubmitting } = this.state;
-		const { currentUserLocale, hasMoreThanOneSite, translate } = this.props;
+		const { currentUserLocale, hasMoreThanOneSite, translate, localizedLanguageNames } = this.props;
+		let buttonLabel = translate( 'Chat with us' );
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
 				// TEMPORARY: to collect data about the customer preferences, context 1050-happychat-gh
 				// for non english customers check if we have full support in their language
-				let buttonLabel = translate( 'Chat with us' );
 				let additionalSupportOption = { enabled: false };
 
 				if ( ! isDefaultLocale( currentUserLocale ) && ! this.props.hasHappychatLocalizedSupport ) {
@@ -323,10 +324,14 @@ class HelpContact extends React.Component {
 						this.setState( { wasAdditionalSupportOptionShown: true } );
 					}
 
-					// override chat buttons
-					buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
-						args: { defaultLanguage },
-					} );
+					if ( localizedLanguageNames && localizedLanguageNames[ defaultLanguageSlug ] ) {
+						// override chat buttons
+						buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
+							args: {
+								defaultLanguage: localizedLanguageNames[ defaultLanguageSlug ].localized,
+							},
+						} );
+					}
 
 					// add additional support option
 					additionalSupportOption = {
@@ -486,7 +491,7 @@ class HelpContact extends React.Component {
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
-		const { translate, selectedSitePlanSlug } = this.props;
+		const { compact, translate, selectedSitePlanSlug } = this.props;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -538,25 +543,22 @@ class HelpContact extends React.Component {
 
 		const currentDate = i18n.moment();
 
-		// Customers sent to Directly and Forum are not affected by the Christmas closures
-		const isUserAffectedByChristmas2017Closure =
+		// Customers sent to Directly and Forum are not affected by live chat closures
+		const isUserAffectedByLiveChatClosure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
-		const isClosureNoticeInEffect =
-			currentDate.isBetween(
-				startShowingChristmas2017ClosureNoticeAt,
-				stopShowingChristmas2017ClosureNoticeAt
-			) ||
-			currentDate.isBetween(
-				startShowingNewYear2018ClosureNoticeAt,
-				stopShowingNewYear2018ClosureNoticeAt
-			);
+		const isClosureNoticeInEffect = currentDate.isBetween(
+			startShowingEaster2018ClosureNoticeAt,
+			stopShowingEaster2018ClosureNoticeAt
+		);
 
-		const shouldShowClosureNotice = isUserAffectedByChristmas2017Closure && isClosureNoticeInEffect;
+		const shouldShowClosureNotice = isUserAffectedByLiveChatClosure && isClosureNoticeInEffect;
 
 		return (
 			<div>
-				{ shouldShowClosureNotice && <HelpContactClosed sitePlanSlug={ selectedSitePlanSlug } /> }
+				{ shouldShowClosureNotice && (
+					<HelpContactClosed compact={ compact } sitePlanSlug={ selectedSitePlanSlug } />
+				) }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice
 						status="is-warning"
@@ -575,6 +577,7 @@ class HelpContact extends React.Component {
 	render() {
 		const content = (
 			<Fragment>
+				<PageViewTracker path="/help/contact" title="Help > Contact" />
 				{ ! this.props.compact && (
 					<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
 						{ this.props.translate( 'Contact Us' ) }
@@ -585,6 +588,7 @@ class HelpContact extends React.Component {
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
+				<QueryLanguageNames />
 			</Fragment>
 		);
 		if ( this.props.compact ) {
@@ -610,6 +614,7 @@ export default connect(
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
 			isHappychatUserEligible: isHappychatUserEligible( state ),
+			localizedLanguageNames: getLocalizedLanguageNames( state ),
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),

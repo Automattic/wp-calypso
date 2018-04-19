@@ -112,15 +112,25 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 	} : null;
 };
 
-const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized, ignoreValidation }, countriesData ) => {
-	if ( isNormalized && ! normalized ) {
+const getAddressErrors = ( {
+	values,
+	isNormalized,
+	normalized: normalizedValues,
+	selectNormalized,
+	ignoreValidation,
+	fieldErrors,
+}, countriesData ) => {
+	if ( isNormalized && ! normalizedValues && fieldErrors ) {
+		return fieldErrors;
+	} else if ( isNormalized && ! normalizedValues ) {
 		// If the address is normalized but the server didn't return a normalized address, then it's
 		// invalid and must register as an error
 		return {
 			address: translate( 'This address is not recognized. Please try another.' ),
 		};
 	}
-	const { postcode, state, country } = ( isNormalized && selectNormalized ) ? normalized : values;
+
+	const { postcode, state, country } = ( isNormalized && selectNormalized ) ? normalizedValues : values;
 	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
 	requiredFields.forEach( ( field ) => {

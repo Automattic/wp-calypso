@@ -14,8 +14,6 @@ import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getQueryDate, getQueries } from './utils';
-import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import config from 'config';
 
@@ -40,18 +38,13 @@ export default function StatsController( context, next ) {
 		page.redirect( `/store/stats/orders/day/${ context.params.site }` );
 	}
 
-	analytics.pageView.record(
-		`/store/stats/${ context.params.type }/${ context.params.unit }`,
-		`Store > Stats > ${ titlecase( context.params.type ) } > ${ titlecase( context.params.unit ) }`
-	);
-
 	const props = {
-		querystring: context.querystring,
 		type: context.params.type,
 		unit: context.params.unit,
 		path: context.pathname,
 		queryDate: getQueryDate( context ),
 		selectedDate: context.query.startDate || moment().format( 'YYYY-MM-DD' ),
+		queryParams: context.query || {},
 	};
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
