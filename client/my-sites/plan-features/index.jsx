@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, filter, map, noop, reduce, reject } from 'lodash';
+import { compact, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -645,10 +645,6 @@ PlanFeatures.defaultProps = {
 	onUpgradeClick: noop,
 };
 
-function filterFreePlan( { planName } ) {
-	return isFreePlan( planName );
-}
-
 function getMaxCredits( planProperties, isJetpack ) {
 	return planProperties.reduce(
 		( prev, prop ) => {
@@ -701,9 +697,8 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
-		const isLoggedIn = !! getCurrentUserId( state );
-		let freePlanProperties = null;
-		let planProperties = compact(
+
+		const planProperties = compact(
 			map( plans, plan => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
@@ -797,13 +792,6 @@ export default connect(
 			} )
 		);
 
-		// Minimize the free plan for the unsigned users
-		if ( isInSignup && ! isLoggedIn ) {
-			freePlanProperties = filter( planProperties, filterFreePlan );
-			freePlanProperties = freePlanProperties[ 0 ] || null;
-			planProperties = reject( planProperties, filterFreePlan );
-		}
-
 		const maxCredits = getMaxCredits( planProperties, isJetpack );
 		const showModifiedPricingDisplay =
 			! isInSignup &&
@@ -813,7 +801,6 @@ export default connect(
 
 		return {
 			canPurchase,
-			freePlanProperties,
 			isJetpack,
 			maxCredits,
 			planProperties,
