@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  */
 import Dialog from 'components/dialog';
 import Button from 'components/button';
-import TranslatableField from './translatable-field';
+import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
 import { getTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';
 
@@ -126,7 +126,7 @@ export class Translatable extends Component {
 			this.state.originalData.comment && (
 				<p key="translationComment">{ this.state.originalData.comment }</p>
 			),
-			<TranslatableField
+			<TranslatableTextarea
 				key="translatedSingular"
 				originalString={ this.props.singular }
 				title="Singular"
@@ -137,7 +137,7 @@ export class Translatable extends Component {
 			/>,
 
 			this.state.formState.translatedPlural && (
-				<TranslatableField
+				<TranslatableTextarea
 					key="translatedPlural"
 					originalString={ this.props.plural }
 					title="Plural"

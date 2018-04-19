@@ -4,7 +4,14 @@
  */
 import React from 'react';
 
-const TranslatableField = ( { originalString, title, fieldName, onChange, value, disabled } ) => (
+const TranslatableTextarea = ( {
+	originalString,
+	title,
+	fieldName,
+	onChange,
+	value,
+	disabled,
+} ) => (
 	<label className="community-translator__string-container" htmlFor={ fieldName }>
 		<span className="community-translator__string-description">{ title }</span>
 		<span>
@@ -19,4 +26,4 @@ const TranslatableField = ( { originalString, title, fieldName, onChange, value,
 		</span>
 	</label>
 );
-export default TranslatableField;
+export default TranslatableTextarea;
