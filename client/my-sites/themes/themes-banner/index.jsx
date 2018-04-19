@@ -52,7 +52,7 @@ class ThemesBanner extends PureComponent {
 	};
 
 	// eslint-disable-next-line no-undef
-	handlerBannerClose = e => {
+	handleBannerClose = e => {
 		this.props.hideThemesBanner();
 		e.preventDefault();
 	};
@@ -87,7 +87,7 @@ class ThemesBanner extends PureComponent {
 				<Button className="themes-banner__cta" compact primary>
 					{ translate( 'See the theme' ) }
 				</Button>
-				<Button className="themes-banner__close" onClick={ this.handlerBannerClose }>
+				<Button className="themes-banner__close" onClick={ this.handleBannerClose }>
 					<Gridicon icon="cross-small" size={ 18 } />
 				</Button>
 				{ image && (
