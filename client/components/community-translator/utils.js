@@ -4,6 +4,7 @@
  * External dependencies
  */
 import request from 'superagent';
+import { translate } from 'i18n-calypso';
 import { head, find, get } from 'lodash';
 
 /**
@@ -29,12 +30,12 @@ export function canDisplayCommunityTranslator(
 		return false;
 	}
 
-	// disable for locales
+	// disable for locales with no official GP translation sets.
 	if ( ! locale || ! hasTranslationSet( locale ) ) {
 		return false;
 	}
 
-	// disable for locale variants with no official GP translation sets
+	// likewise, disable for locale variants with no official GP translation sets
 	if ( localeVariant && ! hasTranslationSet( localeVariant ) ) {
 		return false;
 	}
@@ -157,7 +158,7 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
 		};
 	}
 	return {
-		error: "Sorry, we couldn't find the translation information for this string.",
+		error: translate( "Sorry, we couldn't find the translation information for this string." ),
 	};
 }
 

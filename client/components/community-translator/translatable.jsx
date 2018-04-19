@@ -88,9 +88,11 @@ export class Translatable extends Component {
 	};
 
 	getDialogButtons = () => {
+		const { translate } = this.props;
+
 		const buttons = [
 			<Button primary onClick={ this.closeDialog }>
-				{ this.props.translate( 'Close', { textOnly: true } ) }
+				{ translate( 'Close', { textOnly: true } ) }
 			</Button>,
 		];
 		! this.state.submissionSuccess &&
@@ -105,7 +107,7 @@ export class Translatable extends Component {
 						! this.state.submitting
 					}
 				>
-					Submit a new translation
+					{ translate( 'Submit a new translation' ) }
 				</Button>
 			);
 		return buttons;

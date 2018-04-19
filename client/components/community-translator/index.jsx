@@ -56,10 +56,6 @@ class CommunityTranslator extends Component {
 		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );
 	}
 
-	/**
-	 * TODO: expand jsdoc comment
-	 *
-	 */
 	refresh = () => {
 		if ( this.initialized ) {
 			return;

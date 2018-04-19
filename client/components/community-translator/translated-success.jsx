@@ -3,17 +3,20 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
-const TranslatedSuccess = ( { translationUrl } ) => (
+const TranslatedSuccess = ( { translationUrl, translate } ) => (
 	<div className="community-translator__success">
-		<p>Thanks for contributing!</p>
-		<p>
-			Your translation has been submitted. You can view it on{' '}
-			<a href={ translationUrl } target="_blank">
-				translate.wordpress.com
-			</a>.
-		</p>
+		<p>{ translate( 'Thanks for contributing!' ) }</p>
+		{ translationUrl && (
+			<p>
+				{ translate( 'Your translation has been submitted. You can view it on' ) }
+				<a href={ translationUrl } target="_blank" rel="noopener noreferrer">
+					translate.wordpress.com
+				</a>.
+			</p>
+		) }
 	</div>
 );
 
-export default TranslatedSuccess;
+export default localize( TranslatedSuccess );
