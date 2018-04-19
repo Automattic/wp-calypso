@@ -14,6 +14,7 @@ const analyticsMocks = [
 	'tracks.recordEvent',
 	'tracks.recordPageView',
 	'tracks.setOptOut',
+	'hotjar.addHotJarScript',
 ];
 
 const adTrackingMocks = [
@@ -21,7 +22,7 @@ const adTrackingMocks = [
 	'trackCustomFacebookConversionEvent',
 ];
 
-const mockIt = spy => mock => set( {}, mock, () => spy( mock ) );
+const mockIt = spy => mock => set( {}, mock, ( ...args ) => spy( mock, ...args ) );
 
 export const moduleMock = moduleMocks => spy =>
 	moduleMocks.map( mockIt( spy ) ).reduce( ( mocks, mock ) => merge( mocks, mock ), {} );

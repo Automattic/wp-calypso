@@ -72,7 +72,7 @@ export const loadTrackingTool = trackingTool => ( {
 		analytics: [
 			{
 				type: ANALYTICS_TRACKING_ON,
-				payload: trackingTool,
+				payload: { trackingTool },
 			},
 		],
 	},
@@ -84,7 +84,7 @@ export const setTracksOptOut = isOptingOut => ( {
 		analytics: [
 			{
 				type: ANALYTICS_TRACKS_OPT_OUT,
-				payload: isOptingOut,
+				payload: { isOptingOut },
 			},
 		],
 	},
@@ -102,7 +102,7 @@ export const recordCustomFacebookConversionEvent = ( name, properties ) =>
 export const recordCustomAdWordsRemarketingEvent = properties =>
 	recordEvent( 'adwords', { properties } );
 
-export const recordPageView = ( url, title, service ) => ( {
+export const recordPageView = ( url, title, service, properties = {} ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,
 	meta: {
 		analytics: [
@@ -112,6 +112,7 @@ export const recordPageView = ( url, title, service ) => ( {
 					service,
 					url,
 					title,
+					...properties,
 				},
 			},
 		],
