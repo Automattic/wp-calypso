@@ -107,7 +107,7 @@ class CommunityTranslator extends Component {
 			return displayedTranslationFromPage;
 		}
 
-		if ( 'boolean' === typeof optionsFromPage.textOnly && optionsFromPage.textOnly ) {
+		if ( optionsFromPage.textOnly ) {
 			debug( `respecting textOnly for string "${ originalFromPage }"` );
 			return displayedTranslationFromPage;
 		}
