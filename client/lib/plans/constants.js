@@ -173,6 +173,16 @@ const WPComGetBillingTimeframe = abtest => {
 	return i18n.translate( 'per month, billed yearly' );
 };
 
+const WPComGetBiennialBillingTimeframe = abtest => {
+	if ( abtest ) {
+		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
+			return i18n.translate( '/month, billed biennially' );
+		}
+	}
+
+	return WPComGetBillingTimeframe( abtest );
+};
+
 const getPlanPersonalDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
@@ -219,7 +229,6 @@ const getPlanPersonalDetails = () => ( {
 		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		FEATURE_ALL_FREE_FEATURES,
 	],
-	getBillingTimeFrame: WPComGetBillingTimeframe,
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -280,7 +289,6 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_PREMIUM_THEMES,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
-	getBillingTimeFrame: WPComGetBillingTimeframe,
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -369,7 +377,6 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_UNLIMITED_STORAGE_SIGNUP,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
-	getBillingTimeFrame: WPComGetBillingTimeframe,
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -422,6 +429,7 @@ export const PLANS_LIST = {
 	[ PLAN_PERSONAL ]: {
 		...getPlanPersonalDetails(),
 		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: plan => includes( [ PLAN_FREE ], plan ),
 		getProductId: () => 1009,
 		getStoreSlug: () => PLAN_PERSONAL,
@@ -431,6 +439,7 @@ export const PLANS_LIST = {
 	[ PLAN_PERSONAL_2_YEARS ]: {
 		...getPlanPersonalDetails(),
 		term: TERM_BIENNIALLY,
+		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		availableFor: plan => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
 		getProductId: () => 1029,
 		getStoreSlug: () => PLAN_PERSONAL_2_YEARS,
@@ -440,6 +449,7 @@ export const PLANS_LIST = {
 	[ PLAN_PREMIUM ]: {
 		...getPlanPremiumDetails(),
 		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: plan => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS ], plan ),
 		getProductId: () => 1003,
 		getStoreSlug: () => PLAN_PREMIUM,
@@ -450,6 +460,7 @@ export const PLANS_LIST = {
 	[ PLAN_PREMIUM_2_YEARS ]: {
 		...getPlanPremiumDetails(),
 		term: TERM_BIENNIALLY,
+		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		availableFor: plan =>
 			includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM ], plan ),
 		getProductId: () => 1023,
@@ -461,6 +472,7 @@ export const PLANS_LIST = {
 	[ PLAN_BUSINESS ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: plan =>
 			includes(
 				[ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ],
@@ -475,6 +487,7 @@ export const PLANS_LIST = {
 	[ PLAN_BUSINESS_2_YEARS ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_BIENNIALLY,
+		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		availableFor: plan =>
 			includes(
 				[
