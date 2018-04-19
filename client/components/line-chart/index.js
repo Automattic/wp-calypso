@@ -5,11 +5,11 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { min as d3Min, max as d3Max, extent as d3Extent } from 'd3-array';
+import { extent as d3Extent } from 'd3-array';
 import { line as d3Line, curveNatural as d3NaturalCurve } from 'd3-shape';
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
-import { concat, first, last } from 'lodash';
+import { concat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +17,9 @@ import { concat, first, last } from 'lodash';
 import D3Base from 'components/d3-base';
 
 const POINT_SIZE = 3;
+const END_POINT_SIZE = 1;
 const MAX_DRAW_POINTS_SIZE = 10;
+const CHART_MARGIN = 0.05;
 
 class LineChart extends Component {
 	static propTypes = {
@@ -37,12 +39,12 @@ class LineChart extends Component {
 	};
 
 	drawAxes = ( svg, params ) => {
-		const { yScale, xTimeScale, height } = params;
+		const { yScale, xScale, height } = params;
 		const { margin } = this.props;
 
 		const axisLeft = d3AxisLeft( yScale );
-		const bottomAxis = d3AxisBottom( xTimeScale );
-		bottomAxis.ticks( 5 );
+		const bottomAxis = d3AxisBottom( xScale );
+		bottomAxis.ticks( 6 );
 
 		svg
 			.append( 'g' )
@@ -60,7 +62,7 @@ class LineChart extends Component {
 		const { data } = this.props;
 
 		const line = d3Line()
-			.x( ( datum, index ) => xScale( index ) )
+			.x( datum => xScale( datum.date ) )
 			.y( datum => yScale( datum.value ) )
 			.curve( d3NaturalCurve );
 
@@ -82,18 +84,18 @@ class LineChart extends Component {
 			const drawFullSeries = dataSeries.length < MAX_DRAW_POINTS_SIZE;
 			const colorNum = dataSeriesIndex % 3;
 			dataSeries.forEach( ( datum, datumIndex ) => {
-				if ( datumIndex === 0 || datumIndex === dataSeries.length - 1 ) {
+				if ( ! drawFullSeries && ( datumIndex === 0 || datumIndex === dataSeries.length - 1 ) ) {
 					svg
 						.append( 'circle' )
 						.attr( 'class', `line-chart__line-end-point-${ colorNum }` )
-						.attr( 'cx', xScale( datumIndex ) )
+						.attr( 'cx', xScale( datum.date ) )
 						.attr( 'cy', yScale( datum.value ) )
-						.attr( 'r', POINT_SIZE );
+						.attr( 'r', END_POINT_SIZE );
 				} else if ( drawFullSeries ) {
 					svg
 						.append( 'circle' )
 						.attr( 'class', `line-chart__line-point-${ colorNum }` )
-						.attr( 'cx', xScale( datumIndex ) )
+						.attr( 'cx', xScale( datum.date ) )
 						.attr( 'cy', yScale( datum.value ) )
 						.attr( 'r', POINT_SIZE );
 				}
@@ -112,21 +114,29 @@ class LineChart extends Component {
 		const newWidth = node.offsetWidth;
 		const newHeight = newWidth / aspectRatio;
 
+		const concatData = concat( ...data );
+
+		const timeExtent = d3Extent( concatData, d => d.date );
+		const timeDomainAdjustment = ( timeExtent[ 1 ] - timeExtent[ 0 ] ) * CHART_MARGIN;
+		const valueExtent = d3Extent( concatData, d => d.value );
+		const valueDomainAdjustment = ( valueExtent[ 1 ] - valueExtent[ 0 ] ) * CHART_MARGIN;
+
 		return {
 			height: newHeight,
 			width: newWidth,
-			xScale: d3ScaleLinear()
-				.domain( d3Extent( first( data ), ( d, i ) => i ) )
+			xScale: d3TimeScale()
+				.domain( [
+					timeExtent[ 0 ] - timeDomainAdjustment,
+					timeExtent[ 1 ] + timeDomainAdjustment,
+				] )
 				.range( [ margin.left, newWidth - margin.right ] ),
 			yScale: d3ScaleLinear()
 				.domain( [
-					d3Min( concat( ...data ), d => d.value ) - 5,
-					d3Max( concat( ...data ), d => d.value ) + 5,
+					valueExtent[ 0 ] - valueDomainAdjustment,
+					valueExtent[ 1 ] + valueDomainAdjustment,
 				] )
-				.range( [ newHeight - margin.bottom, margin.top ] ),
-			xTimeScale: d3TimeScale()
-				.domain( [ first( first( data ) ).date, last( first( data ) ).date ] )
-				.range( [ margin.left, newWidth - margin.right ] ),
+				.range( [ newHeight - margin.bottom, margin.top ] )
+				.nice(),
 		};
 	};
 
