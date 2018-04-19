@@ -55,16 +55,19 @@ export default class D3Base extends Component {
 		const { className } = this.props;
 		const { width, height } = this.state;
 
-		d3Select( this.chartRef.current )
-			.selectAll( 'svg' )
-			.remove();
+		const div = d3Select( this.chartRef.current );
 
-		return d3Select( this.chartRef.current )
-			.append( 'svg' )
-			.attr( 'class', `${ className }__viewbox` )
+		div.selectAll( 'svg' ).remove();
+
+		const svg = div.append( 'svg' )
 			.attr( 'viewBox', `0 0 ${ width } ${ height }` )
-			.attr( 'preserveAspectRatio', 'xMidYMid meet' )
-			.append( 'g' );
+			.attr( 'preserveAspectRatio', 'xMidYMid meet' );
+
+		if ( className ) {
+			svg.attr( 'class', `${ className }__viewbox` );
+		}
+
+		return svg.append( 'g' );
 	}
 
 	render() {
