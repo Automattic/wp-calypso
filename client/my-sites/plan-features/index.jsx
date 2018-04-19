@@ -19,7 +19,6 @@ import FoldableCard from 'components/foldable-card';
 import formatCurrency from 'lib/format-currency';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
-import PlanFeaturesBottom from './bottom';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesSummary from './summary';
@@ -126,7 +125,6 @@ class PlanFeatures extends Component {
 						</table>
 					</div>
 				</div>
-				{ isInSignup && this.renderFarBottomAction() }
 			</div>
 		);
 	}
@@ -613,54 +611,6 @@ class PlanFeatures extends Component {
 				</td>
 			);
 		} );
-	}
-
-	renderFarBottomAction() {
-		const {
-			canPurchase,
-			isInSignup,
-			isLandingPage,
-			freePlanProperties,
-			selectedPlan,
-			selectedSiteSlug,
-		} = this.props;
-		const {
-			available,
-			current,
-			onUpgradeClick,
-			planName,
-			primaryUpgrade,
-			isPlaceholder,
-			planConstantObj,
-			popular,
-		} =
-			freePlanProperties || {};
-
-		if ( ! freePlanProperties ) {
-			return null;
-		}
-
-		return (
-			<PlanFeaturesBottom>
-				<PlanFeaturesActions
-					available={ available }
-					canPurchase={ canPurchase }
-					className={ getPlanClass( planName ) }
-					current={ current }
-					freePlan={ isFreePlan( planName ) }
-					isInSignup={ isInSignup }
-					isLandingPage={ isLandingPage }
-					isPlaceholder={ isPlaceholder }
-					isPopular={ popular }
-					manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
-					planName={ planConstantObj.getTitle() }
-					planType={ planName }
-					primaryUpgrade={ primaryUpgrade }
-					onUpgradeClick={ onUpgradeClick }
-					selectedPlan={ selectedPlan }
-				/>
-			</PlanFeaturesBottom>
-		);
 	}
 
 	componentWillMount() {

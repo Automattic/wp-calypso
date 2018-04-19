@@ -27,6 +27,7 @@ import {
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
+import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
@@ -169,6 +170,10 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
+	handleFreePlanButtonClick = () => {
+		this.props.onUpgradeClick( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
+	};
+
 	render() {
 		const { site, displayJetpackPlans, isInSignup } = this.props;
 		let faqs = null;
@@ -187,7 +192,7 @@ export class PlansFeaturesMain extends Component {
 				{ this.getPlanFeatures() }
 				<PlanFooter isInSignup={ isInSignup } isJetpack={ displayJetpackPlans } />
 				{ faqs }
-				<div className="plans-features-main__bottom" />
+				{ isInSignup && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
 			</div>
 		);
 	}
