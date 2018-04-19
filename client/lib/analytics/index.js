@@ -112,14 +112,14 @@ loadScript( '//stats.wp.com/w.js?56', function( error ) {
  *
  * This function returns false if:
  *
- * 1. `google_analytics_enabled` is disabled
+ * 1. `google-analytics` feature is disabled
  * 2. `Do Not Track` is enabled
  * 3. `document.location.href` may contain personally identifiable information
  *
  * @returns {Boolean} true if GA is allowed.
  */
 function isGoogleAnalyticsAllowed() {
-	return config( 'google_analytics_enabled' ) && ! doNotTrack() && ! isPiiUrl();
+	return config.isEnabled( 'google-analytics' ) && ! doNotTrack() && ! isPiiUrl();
 }
 
 function buildQuerystring( group, name ) {
@@ -521,6 +521,23 @@ const analytics = {
 		window._tkq.push( [ 'clearIdentity' ] );
 	},
 };
+
+/**
+ * Loading Google analytics independently from the rest of the tracking scripts.
+ *
+ * Why? Because ad-tracking and google-analytics have two different switches and we
+ * would probably not want one to stop the other.
+ *
+ * Moreover, analytics gets loaded with the page load, while the tracking is lazy-loaded
+ * during actions.
+ */
+if ( isGoogleAnalyticsAllowed() ) {
+	try {
+		loadScript( 'https://www.google-analytics.com/analytics.js' );
+	} catch ( error ) {
+		debug( 'GA script failed to load properly: ', error );
+	}
+}
 
 /**
  * Wrap Google Analytics with debugging, possible analytics supression, and initialization
