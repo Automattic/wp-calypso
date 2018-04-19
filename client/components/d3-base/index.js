@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { select as d3Select } from 'd3-selection';
 
 export default class D3Base extends Component {
@@ -19,6 +19,7 @@ export default class D3Base extends Component {
 
 	componentDidMount() {
 		window.addEventListener( 'resize', this.updateParams );
+
 		this.updateParams();
 	}
 
@@ -54,14 +55,12 @@ export default class D3Base extends Component {
 			.selectAll( 'svg' )
 			.remove();
 
-		const newNode = d3Select( this.node )
+		return d3Select( this.node )
 			.append( 'svg' )
 			.attr( 'class', `${ className }__viewbox` )
 			.attr( 'viewBox', `0 0 ${ width } ${ height }` )
 			.attr( 'preserveAspectRatio', 'xMidYMid meet' )
 			.append( 'g' );
-
-		return newNode;
 	}
 
 	setNodeRef = node => {
