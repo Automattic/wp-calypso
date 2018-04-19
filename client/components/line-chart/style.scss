@@ -15,3 +15,39 @@
 	stroke: $blue-light;
 	stroke-width: 3px;
 }
+
+.line-chart__line-point-0 {
+	fill: $white;
+	stroke: $blue-dark;
+	stroke-width: 3px;
+}
+
+.line-chart__line-point-1 {
+	fill: $white;
+	stroke: $blue-medium;
+	stroke-width: 3px;
+}
+
+.line-chart__line-point-2 {
+	fill: $white;
+	stroke: $blue-light;
+	stroke-width: 3px;
+}
+
+.line-chart__line-end-point-0 {
+	fill: $blue-dark;
+	stroke: $blue-dark;
+	stroke-width: 3px;
+}
+
+.line-chart__line-end-point-1 {
+	fill: $blue-medium;
+	stroke: $blue-medium;
+	stroke-width: 3px;
+}
+
+.line-chart__line-end-point-2 {
+	fill: $blue-light;
+	stroke: $blue-light;
+	stroke-width: 3px;
+}
