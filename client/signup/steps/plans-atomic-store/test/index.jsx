@@ -86,8 +86,8 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		...props,
 		signupDependencies: {
 			...props.signupDependencies,
-			designType: 'store',
 		},
+		designType: 'store',
 	};
 
 	test( 'Should call goToNextStep', () => {
