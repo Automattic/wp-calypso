@@ -1,7 +1,7 @@
 .community-translator__element {
 	display: inline-block;
 	cursor: pointer;
-	z-index: 100;
+	z-index: z-index( 'root', '.popover' );
 	&.is-untranslated {
 		text-shadow: 0 0 10px #f00, 0 0 2px #dd3d36 !important;
 	}
