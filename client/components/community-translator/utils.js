@@ -13,7 +13,7 @@ import { head, find, get } from 'lodash';
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
 import { GP_PROJECT, GP_BASE_URL, GP_PROJECT_TRANSLATION_SET_SLUGS } from './constants';
-import { hasTranslationSet } from 'lib/i18n-utils';
+import { canBeTranslated } from 'lib/i18n-utils';
 
 /**
  * Checks whether the CT can be displayed, that is, if the chosen locale and device allow it
@@ -31,12 +31,12 @@ export function canDisplayCommunityTranslator(
 	}
 
 	// disable for locales with no official GP translation sets.
-	if ( ! locale || ! hasTranslationSet( locale ) ) {
+	if ( ! locale || ! canBeTranslated( locale ) ) {
 		return false;
 	}
 
 	// likewise, disable for locale variants with no official GP translation sets
-	if ( localeVariant && ! hasTranslationSet( localeVariant ) ) {
+	if ( localeVariant && ! canBeTranslated( localeVariant ) ) {
 		return false;
 	}
 
