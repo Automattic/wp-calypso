@@ -35,48 +35,7 @@ class InlineHelpSearchResults extends Component {
 		searchQuery: '',
 	};
 
-	getContextResults = () => {
-		// going without context for now -- let's just provide the top x recommended links
-		// copied from client/me/help/main for now
-		const helpfulResults = [
-			{
-				link: 'https://en.support.wordpress.com/business-plan/',
-				title: this.props.translate( 'Uploading custom plugins and themes' ),
-				description: this.props.translate(
-					'Learn more about installing a custom theme or plugin using the Business plan.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/all-about-domains/',
-				title: this.props.translate( 'All About Domains' ),
-				description: this.props.translate(
-					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/start/',
-				title: this.props.translate( 'Get Started' ),
-				description: this.props.translate(
-					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/settings/privacy-settings/',
-				title: this.props.translate( 'Privacy Settings' ),
-				description: this.props.translate(
-					'Limit your site’s visibility or make it completely private.'
-				),
-			},
-		];
-		return helpfulResults;
-	};
-
 	renderSearchResults() {
-		if ( isEmpty( this.props.searchQuery ) ) {
-			// not searching
-			return this.renderContextHelp();
-		}
-
 		if ( this.props.isSearching ) {
 			// search, but no results so far
 			return <PlaceholderLines />;
@@ -87,7 +46,6 @@ class InlineHelpSearchResults extends Component {
 			return (
 				<div>
 					<p className="inline-help__empty-results">No results.</p>
-					{ this.renderContextHelp() }
 				</div>
 			);
 		}
@@ -99,29 +57,18 @@ class InlineHelpSearchResults extends Component {
 		);
 	}
 
-	renderContextHelp() {
-		const links = this.getContextResults();
-		return (
-			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-		);
-	}
-
 	getSelectedUrl = () => {
 		if ( this.props.selectedResult === -1 ) {
 			return false;
 		}
 
-		const links = this.props.searchResults || this.getContextResults();
+		const links = this.props.searchResults;
 		const selectedLink = links[ this.props.selectedResult ];
 		if ( ! selectedLink || ! selectedLink.link ) {
 			return false;
 		}
 		return selectedLink.link;
 	};
-
-	componentDidMount() {
-		this.props.setSearchResults( '', this.getContextResults() );
-	}
 
 	onHelpLinkClick = event => {
 		this.props.openResult( event, event.target.href );
@@ -145,6 +92,7 @@ class InlineHelpSearchResults extends Component {
 	render() {
 		return (
 			<div>
+				<h2>Search Results</h2>
 				<QueryInlineHelpSearch
 					query={ this.props.searchQuery }
 					requesting={ this.props.isSearching }

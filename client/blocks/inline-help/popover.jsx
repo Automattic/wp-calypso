@@ -18,6 +18,7 @@ import Button from 'components/button';
 import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
+import InlineHelpSuggestions from './inline-help-suggestions';
 import HelpContact from 'me/help/help-contact';
 import { getSearchQuery } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
@@ -73,6 +74,8 @@ class InlineHelpPopover extends Component {
 		const { showContactForm } = this.state;
 		const popoverClasses = { 'is-help-active': showContactForm };
 
+		console.log( 'InlineHelpPopover.render -- this.props.searchQuery:', this.props.searchQuery );
+
 		return (
 			<Popover
 				isVisible
@@ -83,10 +86,13 @@ class InlineHelpPopover extends Component {
 			>
 				<div className="inline-help__search">
 					<InlineHelpSearchCard openResult={ this.openResult } query={ this.props.searchQuery } />
-					<InlineHelpSearchResults
-						openResult={ this.openResult }
-						searchQuery={ this.props.searchQuery }
-					/>
+					{ this.props.searchQuery && (
+						<InlineHelpSearchResults
+							openResult={ this.openResult }
+							searchQuery={ this.props.searchQuery }
+						/>
+					) }
+					{ ! this.props.searchQuery && <InlineHelpSuggestions openResult={ this.openResult } /> }
 				</div>
 
 				<div className="inline-help__contact">
