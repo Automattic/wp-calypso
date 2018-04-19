@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormattedHeader from 'components/formatted-header';
@@ -197,14 +198,12 @@ export class OrgCredentialsForm extends Component {
 		return includes( [ INVALID_CREDENTIALS ], this.getError( installError ) );
 	}
 
-	isInvalidPassword() {
-		const { installErrorMessage } = this.props;
-		return this.isInvalidCreds() && installErrorMessage !== 'bad username';
+	isInvalidUsername() {
+		return this.props.installErrorMessage === 'bad username';
 	}
 
-	isInvalidUsername() {
-		const { installErrorMessage } = this.props;
-		return this.isInvalidCreds() && installErrorMessage !== 'bad password';
+	isInvalidPassword() {
+		return this.props.installErrorMessage === 'bad password';
 	}
 
 	formFields() {
@@ -233,6 +232,12 @@ export class OrgCredentialsForm extends Component {
 						onChange={ this.getChangeHandler( 'username' ) }
 						value={ username || '' }
 					/>
+					{ this.isInvalidUsername() && (
+						<FormInputValidation
+							isError
+							text={ translate( 'Username does not exist. Please try again.' ) }
+						/>
+					) }
 				</div>
 				<div className="jetpack-connect__password-container">
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
@@ -246,6 +251,12 @@ export class OrgCredentialsForm extends Component {
 							onChange={ this.getChangeHandler( 'password' ) }
 							value={ password || '' }
 						/>
+						{ this.isInvalidPassword() && (
+							<FormInputValidation
+								isError
+								text={ translate( 'Incorrect password. Please try again.' ) }
+							/>
+						) }
 					</div>
 				</div>
 			</Fragment>
