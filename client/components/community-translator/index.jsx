@@ -122,6 +122,8 @@ class CommunityTranslator extends Component {
 		// Has Context
 		if ( 'string' === typeof optionsFromPage.context ) {
 			props.context = optionsFromPage.context;
+
+			// see how Jed defines \u0004 as the delimiter here: https://messageformat.github.io/Jed/
 			key = `${ optionsFromPage.context }\u0004${ originalFromPage }`;
 		}
 
