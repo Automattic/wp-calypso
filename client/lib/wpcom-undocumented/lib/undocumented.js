@@ -3,11 +3,9 @@
 /**
  * External dependencies
  */
-
-import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 import url from 'url';
+import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies.
@@ -18,6 +16,8 @@ import MailingList from './mailing-list';
 import config from 'config';
 import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
+
+const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets
@@ -2205,12 +2205,9 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
 		return Promise.reject( new Error( 'Received bad URL. Must use http or https protocol.' ) );
 	}
 
-	const protocolPart = 'https:' === protocol ? 'https' : 'http';
-	const siteUrlPart = encodeURIComponent( host + ( pathname && pathname !== '/' ? pathname : '' ) );
-
-	return this.wpcom.req.get( `/connect/site-info/${ protocolPart }/${ siteUrlPart }`, {
-		// @TODO(sirreal) drop encodeUrl when API is updated
-		encodeUrl: 1,
+	// @TODO(sirreal) drop /x/x when API is updated
+	return this.wpcom.req.get( '/connect/site-info/x/x', {
+		url: url.format( { host, pathname, protocol } ),
 	} );
 };
 
