@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { last, isEqual, some } from 'lodash';
+import { isEqual, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -45,15 +45,14 @@ class KeyringConnectButton extends Component {
 		this.state = {
 			isOpen: false, // The service is visually opened
 			isConnecting: false, // A pending connection is awaiting authorization
-			isDisconnecting: false, // A pending disconnection is awaiting completion
 			isRefreshing: false, // A pending refresh is awaiting completion
 			isAwaitingConnections: false, // Waiting for Keyring Connections request to finish
 		};
 	}
 
 	onClick = () => {
-		this.performAction();
 		this.props.onClick();
+		this.performAction();
 	};
 
 	/**
@@ -83,30 +82,13 @@ class KeyringConnectButton extends Component {
 		return status;
 	}
 
-	/**
-	 * Checks whether any connection can be removed.
-	 *
-	 * @return {boolean} true if there's any removable; otherwise, false.
-	 */
-	canRemoveConnection = () => {
-		return this.props.keyringConnections.length > 0;
-	};
-
-	/**
-	 * Deletes the last connection.
-	 */
-	removeConnection = () => {
-		this.setState( { isDisconnecting: true } );
-		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
-	};
-
 	performAction = () => {
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
-		if ( 'connected' === connectionStatus && this.canRemoveConnection() ) {
-			this.removeConnection();
+		if ( 'connected' === connectionStatus ) {
+			this.props.onConnect();
 		} else {
 			this.addConnection();
 		}
@@ -138,7 +120,6 @@ class KeyringConnectButton extends Component {
 		if ( ! isEqual( this.props.keyringConnections, nextProps.keyringConnections ) ) {
 			this.setState( {
 				isConnecting: false,
-				isDisconnecting: false,
 			} );
 		}
 
@@ -178,25 +159,21 @@ class KeyringConnectButton extends Component {
 
 	render() {
 		const { service, translate } = this.props;
-		const { isConnecting, isRefreshing, isDisconnecting } = this.state;
+		const { isConnecting, isRefreshing } = this.state;
 		const status = service ? this.getConnectionStatus( service.ID ) : 'unknown';
 		let primary = false,
 			warning = false,
 			label;
 
-		const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
+		const isPending = 'unknown' === status || isRefreshing || isConnecting;
 
 		if ( 'unknown' === status ) {
 			label = translate( 'Loading…' );
-		} else if ( isDisconnecting ) {
-			label = translate( 'Disconnecting…' );
 		} else if ( isRefreshing ) {
 			label = translate( 'Reconnecting…' );
 			warning = true;
 		} else if ( isConnecting ) {
 			label = translate( 'Connecting…' );
-		} else if ( 'connected' === status ) {
-			label = translate( 'Disconnect' );
 		} else {
 			label = this.props.children;
 			primary = true;

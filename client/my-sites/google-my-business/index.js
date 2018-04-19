@@ -72,6 +72,11 @@ export default function( router ) {
 				const hasAuthenticated =
 					getKeyringConnectionsByName( state, 'google-my-business' ).length > 0;
 
+				if ( ! config.isEnabled( 'google-my-business' ) ) {
+					page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
+					return;
+				}
+
 				if ( hasConnectedLocation ) {
 					page.redirect( `/google-my-business/stats/${ context.params.site }` );
 				} else if ( hasLocationsAvailable ) {
