@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { noop, mapKeys, camelCase } from 'lodash';
 
 /**

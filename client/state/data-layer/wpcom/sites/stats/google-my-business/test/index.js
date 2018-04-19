@@ -45,7 +45,7 @@ describe( '#fetchGoogleMyBusinessStatsSearch', () => {
 } );
 
 describe( '#receiveStats', () => {
-	test( 'should dispatch recieve stats action', () => {
+	test( 'should dispatch receive stats action', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,

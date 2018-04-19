@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import googleMyBusinessReducer from '../reducer';
-import { getGoolgeMyBusinessSiteStats } from '../selectors';
+import { getGoogleMyBusinessSiteStats } from '../selectors';
 import {
 	GOOGLE_MY_BUSINESS_STATS_SET_DATA,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
@@ -82,7 +82,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect(
-				getGoolgeMyBusinessSiteStats(
+				getGoogleMyBusinessSiteStats(
 					{ googleMyBusiness: newState },
 					123,
 					'actions',
@@ -123,9 +123,9 @@ describe( 'reducer', () => {
 
 			const fullNewState = { googleMyBusiness: newState };
 
-			expect( getGoolgeMyBusinessSiteStats( fullNewState, 123, 'actions', 'month', 'total' ) ).to.be
+			expect( getGoogleMyBusinessSiteStats( fullNewState, 123, 'actions', 'month', 'total' ) ).to.be
 				.null;
-			expect( getGoolgeMyBusinessSiteStats( fullNewState, 1234, 'actions', 'month', 'total' ) ).eql(
+			expect( getGoogleMyBusinessSiteStats( fullNewState, 1234, 'actions', 'month', 'total' ) ).eql(
 				siteData.stats.actions.month.total
 			);
 		} );
@@ -166,9 +166,9 @@ describe( 'reducer', () => {
 
 			const fullNewState = { googleMyBusiness: newState };
 
-			expect( getGoolgeMyBusinessSiteStats( fullNewState, 123, 'actions', 'month', 'total' ) ).to.be
+			expect( getGoogleMyBusinessSiteStats( fullNewState, 123, 'actions', 'month', 'total' ) ).to.be
 				.null;
-			expect( getGoolgeMyBusinessSiteStats( fullNewState, 123, 'actions', 'month', 'daily' ) ).eql(
+			expect( getGoogleMyBusinessSiteStats( fullNewState, 123, 'actions', 'month', 'daily' ) ).eql(
 				siteData.stats.actions.month.daily
 			);
 		} );
@@ -176,9 +176,9 @@ describe( 'reducer', () => {
 } );
 
 describe( 'selectors', () => {
-	describe( '#getGoolgeMyBusinessSiteStats', () => {
-		test( 'should get null if data not availible', () => {
-			expect( getGoolgeMyBusinessSiteStats( {}, 123, 'actions', 'month' ) ).to.be.null;
+	describe( '#getGoogleMyBusinessSiteStats', () => {
+		test( 'should get null if data not available', () => {
+			expect( getGoogleMyBusinessSiteStats( {}, 123, 'actions', 'month' ) ).to.be.null;
 		} );
 
 		test( 'should get stats data', () => {
@@ -204,7 +204,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGoolgeMyBusinessSiteStats( state, 123, 'actions', 'month', 'total' ) ).to.eql( {
+			expect( getGoogleMyBusinessSiteStats( state, 123, 'actions', 'month', 'total' ) ).to.eql( {
 				interval: 'month',
 				statType: 'actions',
 				aggregation: 'total',
