@@ -106,19 +106,6 @@ class InlineHelpSearchResults extends Component {
 		);
 	}
 
-	getSelectedUrl = () => {
-		if ( this.props.selectedResult === -1 ) {
-			return false;
-		}
-
-		const links = this.props.searchResults || this.getContextResults();
-		const selectedLink = links[ this.props.selectedResult ];
-		if ( ! selectedLink || ! selectedLink.link ) {
-			return false;
-		}
-		return selectedLink.link;
-	};
-
 	componentDidMount() {
 		this.props.setSearchResults( '', this.getContextResults() );
 	}
