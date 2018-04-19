@@ -94,8 +94,8 @@ export default {
 	mobilePlansTablesOnSignup: {
 		datestamp: '20180330',
 		variations: {
-			original: 60,
-			vertical: 40,
+			original: 70,
+			vertical: 30,
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true,
