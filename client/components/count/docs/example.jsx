@@ -9,20 +9,18 @@ import React from 'react';
  * Internal dependencies
  */
 import Count from 'components/count';
-import ComponentPlayground from 'devdocs/design/component-playground';
 
-export const countCode = '<Count primary count={ 65366 } />';
-const code = `<div>
+const count = () => {
+	/* Because Count is wrapped in Localize we have to store the example in a string */
+};
 
-
-</div>`;
-const scope = { Count };
-const count = () => (
-	<div>
-		<ComponentPlayground code={ '<Count count={ 65365 } />' } scope={ scope } />
-		<ComponentPlayground code={ countCode } scope={ scope } />
-	</div>
-);
+count.defaultProps = {
+	exampleCode:
+		'<div>' +
+		'\n\t<Count count={ 65365 } />' +
+		'\n\t<Count primary count={ 65366 } />' +
+		'\n</div>',
+};
 
 count.displayName = 'Count';
 

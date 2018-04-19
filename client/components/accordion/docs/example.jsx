@@ -13,7 +13,6 @@ import jsxToString from 'jsx-to-string';
 /**
  * Internal dependencies
  */
-import ComponentPlayground from 'devdocs/design/component-playground';
 import Accordion from 'components/accordion';
 import Gridicon from 'gridicons';
 
@@ -34,20 +33,10 @@ export const accordionCode =
 	'\n\t</Accordion>';
 
 export default class extends React.PureComponent {
-	static displayName = 'AccordionExample';
+	static displayName = 'Accordion';
 
-	state = {
-		showSubtitles: true,
-	};
-
-	_toggleShowSubtitles = () => {
-		this.setState( {
-			showSubtitles: ! this.state.showSubtitles,
-		} );
-	};
-
-	exmapleCode() {
-		return jsxToString(
+	static defaultProps = {
+		exampleCode: (
 			<div>
 				<Accordion title="Section One">
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at
@@ -62,10 +51,7 @@ export default class extends React.PureComponent {
 					amet.
 				</Accordion>
 
-				<Accordion
-					title="Section Three"
-					subtitle={ this.state.showSubtitles ? 'With Subtitle' : null }
-				>
+				<Accordion title="Section Three" subtitle="With Subtitle">
 					Suspendisse pellentesque diam in nisi pulvinar maximus. Integer feugiat feugiat justo ac
 					vehicula. Curabitur iaculis, risus suscipit sodales auctor, nisl urna elementum sem, non
 					vestibulum mauris ante et purus. Duis iaculis nisl neque, eget rutrum erat imperdiet non.
@@ -73,11 +59,7 @@ export default class extends React.PureComponent {
 
 				<Accordion
 					title="Section Four"
-					subtitle={
-						this.state.showSubtitles
-							? 'With a Very Long Subtitle to Demonstrate the Fade Effect'
-							: null
-					}
+					subtitle="With a Very Long Subtitle to Demonstrate the Fade Effect"
 				>
 					Drumstick ham tongue flank doner pork chop picanha. Cow short ribs tail kevin capicola
 					ball tip. Leberkas shankle landjaeger tenderloin, chuck cupim pastrami cow frankfurter.
@@ -86,7 +68,7 @@ export default class extends React.PureComponent {
 
 				<Accordion
 					title="Section Five"
-					subtitle={ this.state.showSubtitles ? 'With Subtitle and Icon' : null }
+					subtitle="With Subtitle and Icon"
 					icon={ <Gridicon icon="time" /> }
 				>
 					Etiam dictum odio elit, id faucibus urna elementum ac. Mauris in est nec tortor luctus
@@ -96,7 +78,7 @@ export default class extends React.PureComponent {
 
 				<Accordion
 					title="Section Six"
-					subtitle={ this.state.showSubtitles ? 'With Subtitle and Status' : null }
+					subtitle="With Subtitle and Status"
 					status={ { type: 'warning', text: 'Warning!', url: '/devdocs/design' } }
 				>
 					Suspendisse pellentesque diam in nisi pulvinar maximus. Integer feugiat feugiat justo ac
@@ -104,26 +86,10 @@ export default class extends React.PureComponent {
 					vestibulum mauris ante et purus. Duis iaculis nisl neque, eget rutrum erat imperdiet non.
 				</Accordion>
 			</div>
-		);
-	}
+		),
+	};
 
 	render() {
-		const { showCode } = this.props;
-		return (
-			<div>
-				<div style={ { paddingBottom: '10px' } }>
-					<label>
-						<input
-							type="checkbox"
-							checked={ this.state.showSubtitles }
-							onChange={ this._toggleShowSubtitles }
-						/>
-						<span>Show subtitles</span>
-					</label>
-				</div>
-
-				<ComponentPlayground code={ this.exmapleCode() } scope={ scope } showCode={ showCode } />
-			</div>
-		);
+		return this.props.exampleCode;
 	}
 }
