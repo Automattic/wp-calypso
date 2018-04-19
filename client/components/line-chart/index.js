@@ -42,30 +42,31 @@ class LineChart extends Component {
 
 		this.props.data.forEach( ( dataSeries, index ) => {
 			const colorNum = index % 3;
+
 			svg
 				.append( 'path' )
 				.attr( 'class', `line-chart__line-${ colorNum }` )
 				.attr( 'd', line( dataSeries ) );
 		} );
-		return svg;
 	};
 
 	drawAxes = ( svg, params ) => {
 		const { yScale, xTimeScale, height } = params;
 		const { margin } = this.props;
+
 		const axisLeft = d3AxisLeft( yScale );
 		const bottomAxis = d3AxisBottom( xTimeScale );
 		bottomAxis.ticks( 5 );
+
 		svg
 			.append( 'g' )
 			.attr( 'transform', `translate(${ margin.left },0)` )
 			.call( axisLeft );
+
 		svg
 			.append( 'g' )
 			.attr( 'transform', `translate(0,${ height - margin.bottom })` )
 			.call( bottomAxis );
-
-		return svg;
 	};
 
 	drawChart = ( svg, params ) => {
