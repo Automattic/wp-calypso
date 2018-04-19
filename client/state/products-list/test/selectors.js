@@ -136,9 +136,11 @@ describe( 'selectors', () => {
 			getPlanDiscountedRawPrice.mockImplementation(
 				( a, b, c, { isMonthly } ) => ( isMonthly ? 10 : 120 )
 			);
+			getPlanRawPrice.mockImplementation( () => 150 );
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan ) ).toEqual( {
+				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceMonthly: 10,
 			} );
@@ -163,7 +165,7 @@ describe( 'selectors', () => {
 		};
 
 		beforeEach( () => {
-			getPlanRawPrice.mockImplementation( () => 0 );
+			getPlanRawPrice.mockImplementation( () => 150 );
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, storeSlug, { isMonthly } ) => {
 				if ( storeSlug === 'abc' ) {
 					return isMonthly ? 10 : 120;
@@ -175,7 +177,7 @@ describe( 'selectors', () => {
 			getPlan.mockImplementation( slug => plans[ slug ] );
 		} );
 
-		test( 'Should return list of shapes { priceFull, priceMonthly, plan, product, planSlug }', () => {
+		test( 'Should return list of shapes { priceFull, priceFullBeforeDiscount, priceMonthly, plan, product, planSlug }', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -190,6 +192,7 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: plans.plan1,
 					product: state.productsList.items.plan1,
+					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
 				},
@@ -197,6 +200,7 @@ describe( 'selectors', () => {
 					planSlug: 'plan2',
 					plan: plans.plan2,
 					product: state.productsList.items.plan2,
+					priceFullBeforeDiscount: 150,
 					priceFull: 240,
 					priceMonthly: 20,
 				},
@@ -218,6 +222,7 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: plans.plan1,
 					product: state.productsList.items.plan1,
+					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
 				},
@@ -238,6 +243,7 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: plans.plan1,
 					product: state.productsList.items.plan1,
+					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
 				},
@@ -248,6 +254,11 @@ describe( 'selectors', () => {
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, storeSlug, { isMonthly } ) => {
 				if ( storeSlug === 'abc' ) {
 					return isMonthly ? 10 : 120;
+				}
+			} );
+			getPlanRawPrice.mockImplementation( ( a, productId ) => {
+				if ( productId === 'def' ) {
+					return 150;
 				}
 			} );
 
@@ -265,6 +276,7 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: plans.plan1,
 					product: state.productsList.items.plan1,
+					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
 				},
