@@ -17,6 +17,10 @@ export default class D3Base extends Component {
 
 	state = {};
 
+	constructor( props ) {
+		super( props );
+		this.chartRef = React.createRef();
+	}
 	componentDidMount() {
 		window.addEventListener( 'resize', this.updateParams );
 
@@ -34,13 +38,13 @@ export default class D3Base extends Component {
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.updateParams );
 
-		delete this.node;
+		delete this.chartRef.current;
 	}
 
 	updateParams = ( nextProps ) => {
 		const getParams = ( nextProps && nextProps.getParams ) || this.props.getParams;
 
-		this.setState( getParams( this.node ), this.draw );
+		this.setState( getParams( this.chartRef.current ), this.draw );
 	};
 
 	draw() {
@@ -51,11 +55,11 @@ export default class D3Base extends Component {
 		const { className } = this.props;
 		const { width, height } = this.state;
 
-		d3Select( this.node )
+		d3Select( this.chartRef.current )
 			.selectAll( 'svg' )
 			.remove();
 
-		return d3Select( this.node )
+		return d3Select( this.chartRef.current )
 			.append( 'svg' )
 			.attr( 'class', `${ className }__viewbox` )
 			.attr( 'viewBox', `0 0 ${ width } ${ height }` )
@@ -63,13 +67,9 @@ export default class D3Base extends Component {
 			.append( 'g' );
 	}
 
-	setNodeRef = node => {
-		this.node = node;
-	};
-
 	render() {
 		return (
-			<div className={ classNames( 'd3-base', this.props.className ) } ref={ this.setNodeRef } />
+			<div className={ classNames( 'd3-base', this.props.className ) } ref={ this.chartRef } />
 		);
 	}
 }
