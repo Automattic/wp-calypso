@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { map, filter, reduce, includes } from 'lodash';
-import page from 'page';
 import WindowScroller from 'react-virtualized/WindowScroller';
 
 /**
@@ -89,20 +88,11 @@ class ProductCategories extends Component {
 		const children = this.getChildren( item.id );
 		const itemId = item.id;
 		const link = getLink( '/store/products/category/:site/' + itemId, site );
-
-		const goToLink = () => {
-			page( link );
-		};
-
 		const description = decodeEntities( stripHTML( item.description ) );
 
 		return (
 			<div key={ 'product-category-' + itemId } className="product-categories__list-item">
-				<CompactCard
-					key={ itemId }
-					className="product-categories__list-item-card"
-					onClick={ goToLink }
-				>
+				<CompactCard key={ itemId } className="product-categories__list-item-card" href={ link }>
 					<div className="product-categories__list-item-wrapper">
 						<div className="product-categories__list-thumb">
 							<ImageThumb src={ ( item.image && item.image.src ) || '' } alt="" />
