@@ -36,7 +36,7 @@ const requestRestore = action =>
 		action
 	);
 
-export const receiveRestoreSuccess = ( { siteId, timestamp }, restoreId ) => [
+export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [
 	getRewindRestoreProgress( siteId, restoreId ),
 	requestRewindState( siteId ),
 ];
