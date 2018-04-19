@@ -72,7 +72,9 @@ export function postRequest( glotPressUrl, postFormData ) {
 		.withCredentials()
 		.send( postFormData )
 		.then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
-		.catch( error => normalizeDetailsFromTranslationData( error ) );
+		.catch( error => {
+			throw normalizeDetailsFromTranslationData( error );
+		} );
 }
 
 /**
