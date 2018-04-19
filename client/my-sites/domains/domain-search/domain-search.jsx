@@ -120,7 +120,7 @@ class DomainSearch extends Component {
 		if ( ! this.state.domainRegistrationAvailable ) {
 			content = (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/illustration-500.svg"
+					illustration="/calypso/images/illustrations/error.svg"
 					title={ translate( 'Domain registration is unavailable' ) }
 					line={ translate( "We're hard at work on the issue. Please check back shortly." ) }
 					action={ translate( 'Back to Plans' ) }
