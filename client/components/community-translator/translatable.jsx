@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -90,7 +90,7 @@ export class Translatable extends Component {
 	getDialogButtons = () => {
 		const buttons = [
 			<Button primary onClick={ this.closeDialog }>
-				{ translate( 'Close', { textOnly: true } ) }
+				{ this.props.translate( 'Close', { textOnly: true } ) }
 			</Button>,
 		];
 		! this.state.submissionSuccess &&
@@ -151,16 +151,22 @@ export class Translatable extends Component {
 	}
 
 	renderDialogContent() {
+		const { translate } = this.props;
+
 		return (
 			<div className="community-translator__dialog-content">
 				<header className="community-translator__dialog-header">
-					<h2>Translate to { this.props.locale.name }</h2>
+					<h2>
+						{ translate( 'Translate to %(localeName)s', {
+							args: { localeName: this.props.locale.name },
+						} ) }
+					</h2>
 					<nav>
 						{ this.state.translationUrl && (
 							<a
 								target="_blank"
 								rel="noopener noreferrer"
-								title="Open this translation in translate.wordpress.com"
+								title={ translate( 'Open this translation in translate.wordpress.com' ) }
 								href={ this.state.translationUrl }
 								className="community-translator__nav-link"
 							>
@@ -211,4 +217,4 @@ export class Translatable extends Component {
 	}
 }
 
-export default Translatable;
+export default localize( Translatable );
