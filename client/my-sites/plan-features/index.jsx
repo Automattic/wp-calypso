@@ -25,7 +25,7 @@ import PlanFeaturesSummary from './summary';
 import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest, getABTestVariation } from 'lib/abtest';
-import { getCurrentUserCurrencyCode, getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
