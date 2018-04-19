@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -15,11 +14,6 @@ export default class D3Base extends Component {
 		drawChart: PropTypes.func.isRequired,
 		getParams: PropTypes.func.isRequired,
 	};
-
-	constructor( props ) {
-		super( props );
-		this.updateParams = this.updateParams.bind( this );
-	}
 
 	state = {};
 
@@ -38,13 +32,15 @@ export default class D3Base extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.updateParams );
+
 		delete this.node;
 	}
 
-	updateParams( nextProps ) {
+	updateParams = ( nextProps ) => {
 		const getParams = ( nextProps && nextProps.getParams ) || this.props.getParams;
+
 		this.setState( getParams( this.node ), this.draw );
-	}
+	};
 
 	draw() {
 		this.props.drawChart( this.createNewContext(), this.state );
@@ -57,12 +53,14 @@ export default class D3Base extends Component {
 		d3Select( this.node )
 			.selectAll( 'svg' )
 			.remove();
+
 		const newNode = d3Select( this.node )
 			.append( 'svg' )
 			.attr( 'class', `${ className }__viewbox` )
 			.attr( 'viewBox', `0 0 ${ width } ${ height }` )
 			.attr( 'preserveAspectRatio', 'xMidYMid meet' )
 			.append( 'g' );
+
 		return newNode;
 	}
 
