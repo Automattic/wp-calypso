@@ -188,7 +188,7 @@ export default class AppComponents extends React.Component {
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
 					<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					{ isEnabled( 'site-address-editor/devdocs' ) && <SiteRenamer /> }
+					<SiteRenamer />
 					{ isEnabled( 'reader/user-mention-suggestions' ) && <UserMentionSuggestions /> }
 				</Collection>
 			</Main>
