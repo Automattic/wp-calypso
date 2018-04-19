@@ -105,7 +105,7 @@ export default mergeHandlers( downloads, {
 			fetch: fetchRewindState,
 			onSuccess: updateRewindState,
 			onError: setUnknownState,
-			fromApi: makeJsonSchemaParser( rewindStatus, {}, transformApi ),
+			fromApi: makeJsonSchemaParser( rewindStatus, transformApi ),
 		} ),
 	],
 } );

@@ -73,7 +73,7 @@ export default {
 			fetch: addApplicationPassword,
 			onSuccess: handleAddSuccess,
 			onError: handleAddError,
-			fromApi: makeJsonSchemaParser( schema, {}, apiTransformer ),
+			fromApi: makeJsonSchemaParser( schema, apiTransformer ),
 		} ),
 	],
 };

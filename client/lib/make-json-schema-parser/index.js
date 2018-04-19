@@ -33,12 +33,12 @@ export class TransformerError extends Error {
  * Create a parser to validate and transform data
  *
  * @param {Object}   schema               JSON schema
- * @param {Object}   schemaOptions={}     Options to pass to schema validator
  * @param {Function} transformer=identity Transformer function
+ * @param {Object}   schemaOptions={}     Options to pass to schema validator
  *
  * @return {Parser}                       Function to validate and transform data
  */
-export function makeJsonSchemaParser( schema, schemaOptions = {}, transformer = identity ) {
+export function makeJsonSchemaParser( schema, transformer = identity, schemaOptions = {} ) {
 	let transform;
 	let validate;
 

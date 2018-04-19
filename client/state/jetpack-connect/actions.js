@@ -259,7 +259,6 @@ export function createAccount( userData ) {
 						bearer_token: { type: 'string' },
 					},
 				},
-				{},
 				( { bearer_token } ) => bearer_token
 			)( data );
 
