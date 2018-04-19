@@ -6,7 +6,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { map } from 'lodash';
 import classNames from 'classnames';
 import request from 'superagent';
 
@@ -48,8 +47,6 @@ class SiteImporterSitePreview extends React.Component {
 
 		this.setState( { previewRetries: this.state.previewRetries + 1 } );
 
-		// todo loader
-		// disable yes
 		request
 			.get( this.state.siteURL )
 			.responseType( 'blob' )
@@ -70,9 +67,8 @@ class SiteImporterSitePreview extends React.Component {
 					fReader.readAsDataURL( res.xhr.response );
 				}
 			} )
-			.catch( ( err, res ) => {
-				// todo error or retry?
-				debugger;
+			.catch( () => {
+				// todo error or retry? - test with possible 4xx, 5xx errors
 			} );
 	};
 
