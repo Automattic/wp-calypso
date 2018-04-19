@@ -4,126 +4,135 @@ exports[`should reject with no protocol 1`] = `[Error: Received bad URL. Must us
 
 exports[`should return expected output for a variety of inputs 1`] = `
 Array [
-  "/connect/site-info/http/example.com",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 2`] = `
 Array [
-  "/connect/site-info/https/example.com",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "https://example.com/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 3`] = `
 Array [
-  "/connect/site-info/http/www.example.com",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://www.example.com/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 4`] = `
 Array [
-  "/connect/site-info/http/example.com",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 5`] = `
 Array [
-  "/connect/site-info/https/example.com",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "https://example.com/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 6`] = `
 Array [
-  "/connect/site-info/http/example.com%2Fa%2Fpath",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com/a/path",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 7`] = `
 Array [
-  "/connect/site-info/http/example.com%2Fa%2Fpath",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com/a/path",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 8`] = `
 Array [
-  "/connect/site-info/http/example.com",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 9`] = `
 Array [
-  "/connect/site-info/http/example.com%3A12345",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com:12345/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 10`] = `
 Array [
-  "/connect/site-info/http/example.com%3A12345",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com:12345/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 11`] = `
 Array [
-  "/connect/site-info/http/example.com%3A12345%2Fa%2Fpath",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com:12345/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 12`] = `
 Array [
-  "/connect/site-info/http/example.com%3A12345",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com:12345/a/path",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 13`] = `
 Array [
-  "/connect/site-info/http/example.com%2Fthis-is-a-tricky-path-%252F%253F%2526%253D%253A",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com:12345/",
   },
 ]
 `;
 
 exports[`should return expected output for a variety of inputs 14`] = `
 Array [
-  "/connect/site-info/http/xn--1camcyp5b2a.com",
+  "/connect/site-info/x/x",
   Object {
-    "encodeUrl": 1,
+    "url": "http://example.com/this-is-a-tricky-path-%2F%3F%26%3D%3A",
+  },
+]
+`;
+
+exports[`should return expected output for a variety of inputs 15`] = `
+Array [
+  "/connect/site-info/x/x",
+  Object {
+    "url": "http://xn--1camcyp5b2a.com/",
   },
 ]
 `;

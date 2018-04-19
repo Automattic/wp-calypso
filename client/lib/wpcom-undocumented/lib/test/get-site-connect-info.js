@@ -23,11 +23,6 @@ const undocumented = new Undocumented( {
 } );
 const getSiteConnectInfo = undocumented.getSiteConnectInfo.bind( undocumented );
 
-/**
- * Handy constants
- */
-const apiPath = '/connect/site-info';
-
 // Surface regressions
 test( 'should return expected output for a variety of inputs', () => {
 	[
@@ -41,6 +36,7 @@ test( 'should return expected output for a variety of inputs', () => {
 		'http://example.com?query=args',
 		'http://example.com:12345',
 		'http://example.com:12345/',
+		'http://example.com:12345/#fragment',
 		'http://example.com:12345/a/path?query=args',
 		'http://example.com:12345?query=args',
 		'http://example.com/this-is-a-tricky-path-%2F%3F%26%3D%3A',
@@ -49,19 +45,13 @@ test( 'should return expected output for a variety of inputs', () => {
 } );
 
 test( 'should correctly handle a simple URL', () => {
-	expect( getSiteConnectInfo( 'http://example.com/' )[ 0 ] ).toBe(
-		`${ apiPath }/http/example.com`
-	);
-} );
+	expect( getSiteConnectInfo( 'http://example.com/' )[ 1 ] ).toEqual( {
+		url: 'http://example.com/',
+	} );
 
-test( 'should handle http and https', () => {
-	expect( getSiteConnectInfo( 'http://example.com/' )[ 0 ] ).toBe(
-		`${ apiPath }/http/example.com`
-	);
-
-	expect( getSiteConnectInfo( 'https://example.com/' )[ 0 ] ).toBe(
-		`${ apiPath }/https/example.com`
-	);
+	expect( getSiteConnectInfo( 'https://example.com/' )[ 1 ] ).toEqual( {
+		url: 'https://example.com/',
+	} );
 } );
 
 test( 'should reject with no protocol', async () => {
@@ -69,25 +59,25 @@ test( 'should reject with no protocol', async () => {
 } );
 
 test( 'should handle internationalized domain names (IDNs)', () => {
-	expect( getSiteConnectInfo( 'http://áèîøüñç.com/' )[ 0 ] ).toBe(
-		`${ apiPath }/http/xn--1camcyp5b2a.com`
-	);
+	expect( getSiteConnectInfo( 'http://áèîøüñç.com/' )[ 1 ] ).toEqual( {
+		url: 'http://xn--1camcyp5b2a.com/',
+	} );
 } );
 
 test( 'should handle punyencoded IDNs', () => {
-	expect( getSiteConnectInfo( 'http://xn--1caosm8aya.com' )[ 0 ] ).toBe(
-		`${ apiPath }/http/xn--1caosm8aya.com`
-	);
-} );
-
-test( 'should escape the site url', () => {
-	expect(
-		getSiteConnectInfo( 'http://example.com/this-is-a-tricky-path-%2F%3F%26%3D%3A' )[ 0 ]
-	).toBe( `${ apiPath }/http/example.com%2Fthis-is-a-tricky-path-%252F%253F%2526%253D%253A` );
+	expect( getSiteConnectInfo( 'http://xn--1caosm8aya.com' )[ 1 ] ).toEqual( {
+		url: 'http://xn--1caosm8aya.com/',
+	} );
 } );
 
 test( 'should discard a query', () => {
-	expect( getSiteConnectInfo( 'http://example.com/?a=query' )[ 0 ] ).toBe(
-		`${ apiPath }/http/example.com`
-	);
+	expect( getSiteConnectInfo( 'http://example.com/?a=query' )[ 1 ] ).toEqual( {
+		url: 'http://example.com/',
+	} );
+} );
+
+test( 'should discard a fragment', () => {
+	expect( getSiteConnectInfo( 'http://example.com/#fragment' )[ 1 ] ).toEqual( {
+		url: 'http://example.com/',
+	} );
 } );
