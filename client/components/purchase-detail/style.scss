@@ -89,6 +89,13 @@
 	color: $white;
 	margin: 0 auto 10px;
 	padding: 16px;
+	width: 100%;
+	flex-shrink: 0;
+
+	@include breakpoint( ">660px" ) {
+		order: 2;
+		width: 178px;
+	}
 
 	.purchase-detail__notice-icon.gridicon {
 		fill: $alert-yellow;
@@ -106,12 +113,13 @@
 
 .purchase-detail__icon,
 .purchase-detail__icon .gridicon {
-	height: 48px;
-	width: 48px;
+	width: 36px;
+	height: auto;
+	margin-top: 0;
 
-	@include breakpoint( "<660px" ) {
-		height: 36px;
-		width: 36px;
+	@include breakpoint( ">660px" ) {
+		width: 48px;
+		height: 48px;
 	}
 }
 
