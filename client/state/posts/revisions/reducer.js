@@ -18,6 +18,8 @@ import {
 	POST_REVISIONS_SELECT,
 	POST_REVISIONS_DIALOG_CLOSE,
 	POST_REVISIONS_DIALOG_OPEN,
+	POST_REVISIONS_DIFF_SPLIT_VIEW,
+	POST_REVISIONS_DIFF_UNIFY_VIEW,
 	SELECTED_SITE_SET,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
@@ -112,6 +114,10 @@ export function ui( state = {}, action ) {
 			return { ...state, isDialogVisible: false };
 		case POST_REVISIONS_DIALOG_OPEN:
 			return { ...state, isDialogVisible: true };
+		case POST_REVISIONS_DIFF_SPLIT_VIEW:
+			return { ...state, diffView: 'split' };
+		case POST_REVISIONS_DIFF_UNIFY_VIEW:
+			return { ...state, diffView: 'unified' };
 		default:
 			return state;
 	}
