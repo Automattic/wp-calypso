@@ -74,8 +74,9 @@ const debug = debugFactory( 'calypso:domains:register-domain-step' );
 const domains = wpcom.domains();
 
 // max amount of domain suggestions we should fetch/display
-const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
+const PAGE_SIZE = 10;
+const MAX_PAGES = 3;
 
 let searchVendor = 'group_1';
 const fetchAlgo = searchVendor + '/v1';
@@ -86,6 +87,15 @@ let lastSearchTimestamp = null;
 let searchCount = 0;
 let recordSearchFormSubmitWithDispatch;
 
+function getSuggestionFetchQuantity() {
+	const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
+
+	if ( isKrackenUi ) {
+		return PAGE_SIZE * MAX_PAGES;
+	}
+	return PAGE_SIZE;
+}
+
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
@@ -93,7 +103,7 @@ function getQueryObject( props ) {
 
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
-		quantity: SUGGESTION_QUANTITY,
+		quantity: getSuggestionFetchQuantity(),
 		vendor: searchVendor,
 		includeSubdomain: props.includeWordPressDotCom,
 		surveyVertical: props.surveyVertical,
@@ -190,7 +200,6 @@ class RegisterDomainStep extends React.Component {
 			lastDomainIsTransferrable: false,
 			loadingResults,
 			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
-			loadingNextPageResults: false,
 			notice: null,
 			pageNumber: 1,
 			searchResults: null,
@@ -365,11 +374,19 @@ class RegisterDomainStep extends React.Component {
 
 	renderPaginationControls() {
 		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
-		if ( ! isKrackenUi || this.state.searchResults === null ) {
+		if ( ! isKrackenUi ) {
 			return null;
 		}
 
-		const isLoading = this.state.loadingResults || this.state.loadingNextPageResults;
+		if ( this.state.searchResults === null ) {
+			return null;
+		}
+
+		if ( this.state.pageNumber >= MAX_PAGES ) {
+			return null;
+		}
+
+		const isLoading = this.state.loadingResults;
 		const className = classNames( 'button', 'register-domain-step__next-page', {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
@@ -536,15 +553,14 @@ class RegisterDomainStep extends React.Component {
 	getDomainsSuggestions = ( domain, timestamp ) => {
 		const suggestionQuantity =
 			this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
-				? SUGGESTION_QUANTITY - 1
-				: SUGGESTION_QUANTITY;
+				? getSuggestionFetchQuantity() - 1
+				: getSuggestionFetchQuantity();
 
 		const query = {
 			query: domain,
 			quantity: suggestionQuantity,
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
-			page_number: this.state.pageNumber,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: searchVendor,
 			vertical: this.props.surveyVertical,
@@ -567,14 +583,6 @@ class RegisterDomainStep extends React.Component {
 					domainSuggestions.length,
 					this.props.analyticsSection
 				);
-
-				// If page number is greater than 1, then we assume the user has advanced
-				// to the next page. Given our "load more" pagination design, this means
-				// we'd want to combine the existing suggestions with the new suggestions
-				if ( this.state.pageNumber > 1 ) {
-					this.setState( { loadingNextPageResults: false } );
-					return [ ...this.state.searchResults, ...domainSuggestions ];
-				}
 
 				return domainSuggestions;
 			} )
@@ -770,15 +778,7 @@ class RegisterDomainStep extends React.Component {
 	showNextPage = () => {
 		debug( 'showNextPage was triggered' );
 
-		this.repeatSearch(
-			{
-				loadingNextPageResults: true,
-				loadingResults: false,
-				loadingSubdomainResults: false,
-				pageNumber: this.state.pageNumber + 1,
-			},
-			{ shouldQuerySubdomains: false }
-		);
+		this.setState( { pageNumber: this.state.pageNumber + 1 } );
 	};
 
 	initialSuggestions() {
@@ -845,7 +845,9 @@ class RegisterDomainStep extends React.Component {
 			lastDomainIsTransferrable,
 			lastDomainSearched,
 			lastDomainStatus,
+			pageNumber,
 		} = this.state;
+
 		const matchesSearchedDomain = suggestion => suggestion.domain_name === exactMatchDomain;
 		const availableDomain =
 			lastDomainStatus === domainAvailability.AVAILABLE &&
@@ -853,7 +855,15 @@ class RegisterDomainStep extends React.Component {
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
 		const searchResults = this.state.searchResults || [];
-		let suggestions = [ ...searchResults ];
+
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
+
+		let suggestions;
+		if ( isKrackenUi ) {
+			suggestions = searchResults.slice( 0, pageNumber * PAGE_SIZE );
+		} else {
+			suggestions = [ ...searchResults ];
+		}
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
@@ -891,7 +901,7 @@ class RegisterDomainStep extends React.Component {
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerUnavailableOption={ this.props.offerUnavailableOption }
-				placeholderQuantity={ SUGGESTION_QUANTITY }
+				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
 				railcarSeed={ this.state.railcarSeed }
 				fetchAlgo={ fetchAlgo }
