@@ -93,10 +93,10 @@
 .importer__upload-content {
 	position: absolute;
 	top: 50%;
-		left: 0;
-		right: 0;
+	left: 0;
+	right: 0;
 	text-align: center;
-	transform: translateY( -50% );
+	transform: translateY(-50%);
 }
 
 .importer__upload-progress,
@@ -114,8 +114,8 @@
 
 .importer__import-spinner {
 	position: absolute;
-		left: 50%;
-	transform: translateX( -50% );
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 .importer__start {
@@ -219,16 +219,16 @@
 		}
 	}
 
-
-
 	& .site-importer__site-importer-confirm-site-pane-container {
 		display: flex;
-		flex-direction: row;
 		align-content: center;
-		justify-content: flex-end;
+		justify-content: center;
 		width: 100%;
-		margin-bottom: 10px;
+		margin: 10px 0 10px 0;
 
+		& .site-importer__site-importer-confirm-site-label {
+			flex-grow: 1;
+		}
 		& .site-importer__site-importer-confirm-site-pane-container-text {
 			margin: inherit;
 		}
@@ -244,13 +244,15 @@
 		color: red;
 	}
 }
+
 .site-importer__site-preview-overlay-container {
 	position: relative;
 
 	& .site-importer__site-preview-container {
 		& .site-importer__site-preview-favicon {
-			margin-left: 10px;
 			vertical-align: middle;
+			border-top: 50px grey;
+			border-radius: 50px;
 		}
 
 		& .site-importer__site-preview-siteurl {
