@@ -44,8 +44,6 @@ const loadTrackingTool = ( { trackingTool }, state ) => {
 
 const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
 
-const setAnonymousUserId = ( { anonId } ) => analytics.tracks.setAnonymousUserId( anonId );
-
 const setOptOut = ( { isOptingOut } ) => analytics.tracks.setOptOut( isOptingOut );
 
 export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
