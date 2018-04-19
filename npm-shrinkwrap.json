@@ -3835,7 +3835,7 @@
         "cipher-base": "1.0.4",
         "inherits": "2.0.1",
         "md5.js": "1.3.4",
-        "ripemd160": "2.0.1",
+        "ripemd160": "2.0.2",
         "sha.js": "2.4.11"
       }
     },
@@ -3846,7 +3846,7 @@
         "cipher-base": "1.0.4",
         "create-hash": "1.2.0",
         "inherits": "2.0.1",
-        "ripemd160": "2.0.1",
+        "ripemd160": "2.0.2",
         "safe-buffer": "5.1.1",
         "sha.js": "2.4.11"
       }
@@ -4737,8 +4737,8 @@
       "integrity": "sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0="
     },
     "ejs": {
-      "version": "2.5.8",
-      "integrity": "sha512-QIDZL54fyV8MDcAsO91BMH1ft2qGGaHIJsJIA/+t+7uvXol1dm413fPcUgUb4k8F/9457rx4/KFE4XfDifrQxQ=="
+      "version": "2.5.9",
+      "integrity": "sha512-GJCAeDBKfREgkBtgrYSf9hQy9kTb3helv0zGdzqhM7iAkW8FA/ZF97VQDbwFiwIT8MQLLOe5VlPZOEvZAqtUAQ=="
     },
     "electron-to-chromium": {
       "version": "1.3.42",
@@ -5326,8 +5326,8 @@
       "dev": true
     },
     "eslint-eslines": {
-      "version": "0.0.6",
-      "integrity": "sha1-9MXWe+pmYx6cXgnK/ZMsbMMAdcM=",
+      "version": "1.0.0",
+      "integrity": "sha1-nOGpWjO6E/8rOTwFu6wlmMdFNVg=",
       "dev": true
     },
     "eslint-import-resolver-node": {
@@ -11170,7 +11170,7 @@
       "requires": {
         "commondir": "1.0.1",
         "deep-extend": "0.4.2",
-        "ejs": "2.5.8",
+        "ejs": "2.5.9",
         "glob": "7.1.2",
         "globby": "6.1.0",
         "mkdirp": "0.5.1",
@@ -12638,7 +12638,7 @@
       "requires": {
         "create-hash": "1.2.0",
         "create-hmac": "1.1.7",
-        "ripemd160": "2.0.1",
+        "ripemd160": "2.0.2",
         "safe-buffer": "5.1.1",
         "sha.js": "2.4.11"
       }
@@ -15095,20 +15095,11 @@
       }
     },
     "ripemd160": {
-      "version": "2.0.1",
-      "integrity": "sha1-D0WEKVxTo2KK9+bXmsohzlfRxuc=",
+      "version": "2.0.2",
+      "integrity": "sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==",
       "requires": {
-        "hash-base": "2.0.2",
+        "hash-base": "3.0.4",
         "inherits": "2.0.1"
-      },
-      "dependencies": {
-        "hash-base": {
-          "version": "2.0.2",
-          "integrity": "sha1-ZuodhW206KVHDK32/OI65SRO8uE=",
-          "requires": {
-            "inherits": "2.0.1"
-          }
-        }
       }
     },
     "rst-selector-parser": {
@@ -18934,7 +18925,7 @@
         "bfj-node4": "5.3.1",
         "chalk": "2.4.0",
         "commander": "2.15.1",
-        "ejs": "2.5.8",
+        "ejs": "2.5.9",
         "express": "4.16.3",
         "filesize": "3.6.1",
         "gzip-size": "4.1.0",

@@ -254,7 +254,7 @@
     "eslines": "1.1.0",
     "eslint": "4.19.1",
     "eslint-config-wpcalypso": "2.0.0",
-    "eslint-eslines": "0.0.6",
+    "eslint-eslines": "1.0.0",
     "eslint-plugin-import": "2.9.0",
     "eslint-plugin-jest": "21.2.0",
     "eslint-plugin-jsx-a11y": "6.0.3",
