@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,8 +12,8 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
 
-const PlansSkipButton = ( { onClick, isRtl, translate } ) => (
-	<div className="jetpack-connect__plans-nav-buttons">
+export const PlansSkipButton = ( { onClick, isRtl, translate = identity } ) => (
+	<div className="plans-skip-button">
 		<Button onClick={ onClick }>
 			{ translate( 'Start with free' ) }
 			<Gridicon icon={ isRtl ? 'arrow-left' : 'arrow-right' } size={ 18 } />
