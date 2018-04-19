@@ -16,12 +16,8 @@ import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
-import FormTextarea from 'components/forms/form-textarea';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import PostMetadata from 'lib/post-metadata';
-import TrackInputChanges from 'components/track-input-changes';
-import actions from 'lib/posts/actions';
-import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryPostTypes from 'components/data/query-post-types';
@@ -43,6 +39,7 @@ import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
 import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
 import EditPostStatus from 'post-editor/edit-post-status';
+import EditorExcerpt from 'post-editor/editor-excerpt';
 import { getFirstConflictingPlugin } from 'lib/seo';
 
 /**
@@ -91,11 +88,6 @@ class EditorDrawer extends Component {
 		confirmationSidebarStatus: PropTypes.string,
 	};
 
-	onExcerptChange( event ) {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( { excerpt: event.target.value } );
-	}
-
 	currentPostTypeSupports( feature ) {
 		const { typeObject, type } = this.props;
 
@@ -110,11 +102,6 @@ class EditorDrawer extends Component {
 
 		// Default to true until post types are known
 		return true;
-	}
-
-	recordExcerptChangeStats() {
-		recordStat( 'excerpt_changed' );
-		recordEvent( 'Changed Excerpt' );
 	}
 
 	// Categories & Tags
@@ -179,8 +166,6 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		const excerpt = get( this.props.post, 'excerpt' );
-
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel
@@ -190,16 +175,7 @@ class EditorDrawer extends Component {
 							"Some themes show excerpts alongside post titles on your site's homepage and archive pages."
 					) }
 				>
-					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
-						<FormTextarea
-							id="excerpt"
-							name="excerpt"
-							onChange={ this.onExcerptChange }
-							value={ excerpt }
-							placeholder={ translate( 'Write an excerpt…' ) }
-							aria-label={ translate( 'Write an excerpt…' ) }
-						/>
-					</TrackInputChanges>
+					<EditorExcerpt />
 				</EditorDrawerLabel>
 			</AccordionSection>
 		);
