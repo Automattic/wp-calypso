@@ -15,6 +15,7 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { DEFAULT_QUERY } from './utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import {
 	getReviewsCurrentPage,
@@ -131,6 +132,7 @@ export function handleChangeReviewStatusSuccess( { dispatch, getState }, action 
 	};
 	const defaultMessage = translate( 'Review status updated' );
 
+	dispatch( fetchCounts( siteId ) );
 	dispatch(
 		successNotice( get( message, newStatus, defaultMessage ), {
 			duration: 5000,
