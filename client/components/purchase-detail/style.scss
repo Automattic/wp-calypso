@@ -153,6 +153,13 @@
 	width: 100%;
 }
 
+.purchase-detail__button {
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-word;
+	hyphens: auto;
+}
+
 .purchase-detail__info {
 	margin-left: 8px;
 	margin-top: 8px;
