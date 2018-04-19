@@ -124,4 +124,16 @@ describe( 'RedirectPaymentBox', () => {
 			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 0 );
 		} );
 	} );
+
+	describe( 'TEF payments', () => {
+		test( 'should render fields required for TEF', () => {
+			const props = {
+				...defaultProps,
+				paymentType: 'tef',
+			};
+			const wrapper = shallow( <RedirectPaymentBox { ...props } /> );
+			expect( wrapper.find( '[name="tef-bank"]' ) ).toHaveLength( 1 );
+			expect( wrapper.find( 'EbanxPaymentFields' ) ).toHaveLength( 1 );
+		} );
+	} );
 } );
