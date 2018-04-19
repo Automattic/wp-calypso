@@ -14,13 +14,15 @@ import request from 'superagent';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
-import { retry } from '../../../layout/error';
+import Button from 'components/forms/form-button';
 
 class SiteImporterSitePreview extends React.Component {
 	static propTypes = {
 		siteURL: PropTypes.string.isRequired,
 		importData: PropTypes.object,
 		isLoading: PropTypes.bool,
+		startImport: PropTypes.func,
+		resetImport: PropTypes.func,
 	};
 
 	state = {
@@ -28,9 +30,11 @@ class SiteImporterSitePreview extends React.Component {
 		siteURL: `https://s0.wp.com/mshots/v1/${ this.props.siteURL }${ Math.random() }`, // TODO remove before going to prod
 		sitePreviewImage: '',
 		sitePreviewFailed: false,
+		loadingPreviewImage: false,
 	};
 
 	componentDidMount() {
+		this.setState( { loadingPreviewImage: true } );
 		this.loadSitePreview();
 	}
 
@@ -58,7 +62,10 @@ class SiteImporterSitePreview extends React.Component {
 					// const blob = new Blob( [ ], { type: 'image/jpeg' } )
 					const fReader = new FileReader();
 					fReader.onload = ev => {
-						this.setState( { sitePreviewImage: ev.target.result } );
+						this.setState( {
+							sitePreviewImage: ev.target.result,
+							loadingPreviewImage: false,
+						} );
 					};
 					fReader.readAsDataURL( res.xhr.response );
 				}
@@ -70,40 +77,45 @@ class SiteImporterSitePreview extends React.Component {
 	};
 
 	render = () => {
+		const isLoading = this.props.isLoading || this.state.loadingPreviewImage;
+
 		const containerClass = classNames( 'site-importer__site-preview-overlay-container', {
-			isLoading: this.props.isLoading,
+			isLoading,
 		} );
 
 		return (
-			<div className={ containerClass }>
-				<div className="site-importer__site-preview-container">
-					<div className="site-importer__site-preview-site-meta">
-						<p>
-							<img
-								className="site-importer__site-preview-favicon"
-								src={ this.state.sitePreviewImage }
-								alt="Site favicon"
-							/>
-						</p>
-						<div style={ { display: 'none' } }>
-							<p>Importing:</p>
-							{ this.props.importData.supported &&
-								this.props.importData.supported.length && (
-									<ul>
-										{ map( this.props.importData.supported, ( suppApp, idx ) => (
-											<li key={ idx }>{ suppApp }</li>
-										) ) }
-										<li>Basic pages</li>
-									</ul>
-								) }
+			<div>
+				<div className="site-importer__site-importer-confirm-site-pane-container">
+					<p className="site-importer__site-importer-confirm-site-label">
+						{ this.props.translate( 'Is this your site?' ) }
+					</p>
+					<Button disabled={ isLoading } onClick={ this.props.startImport }>
+						{ this.props.translate( 'Yes! Start import' ) }
+					</Button>
+					<Button disabled={ isLoading } isPrimary={ false } onClick={ this.props.resetImport }>
+						{ this.props.translate( 'No' ) }
+					</Button>
+				</div>
+				<div className={ containerClass }>
+					<div className="site-importer__site-preview-container">
+						<div className="site-importer__site-preview-site-meta">
+							{ this.state.sitePreviewImage && (
+								<p>
+									<img
+										className="site-importer__site-preview-favicon"
+										src={ this.state.sitePreviewImage }
+										alt="Site favicon"
+									/>
+								</p>
+							) }
 						</div>
 					</div>
+					{ isLoading && (
+						<div className="site-importer__site-preview-loading-overlay">
+							<Spinner />
+						</div>
+					) }
 				</div>
-				{ this.props.isLoading && (
-					<div className="site-importer__site-preview-loading-overlay">
-						<Spinner />
-					</div>
-				) }
 			</div>
 		);
 	};

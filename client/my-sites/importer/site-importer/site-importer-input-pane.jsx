@@ -206,25 +206,12 @@ class SiteImporterInputPane extends React.Component {
 				) }
 				{ this.state.importStage === 'importable' && (
 					<div className="site-importer__site-importer-confirm-site-pane">
-						<div className="site-importer__site-importer-confirm-site-pane-container">
-							<p className="site-importer__site-importer-confirm-site-label">
-								{ this.props.translate( 'Is this your site?' ) }
-							</p>
-							<Button disabled={ this.state.loading } onClick={ this.importSite }>
-								{ this.props.translate( 'Yes! Start import' ) }
-							</Button>
-							<Button
-								disabled={ this.state.loading }
-								isPrimary={ false }
-								onClick={ this.resetImport }
-							>
-								{ this.props.translate( 'No' ) }
-							</Button>
-						</div>
 						<SiteImporterSitePreview
 							siteURL={ this.state.importSiteURL }
 							importData={ this.state.importData }
 							isLoading={ this.state.loading }
+							resetImport={ this.resetImport }
+							startImport={ this.importSite }
 						/>
 					</div>
 				) }
