@@ -20,20 +20,18 @@ import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
 import JetpackSsoForm from './sso';
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
 import versionCompare from 'lib/version-compare';
 import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
-import { authorizeQueryDataSchema } from './schema';
-import { authQueryTransformer } from './utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
+import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack/onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
@@ -87,30 +85,6 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 
 	return get( planSlugs, [ interval, type ], '' );
 };
-
-/**
- * !! Private !!
- *
- * Lazy initialized authorization query parser.
- */
-let _authQueryParser = null;
-/**
- * Parse an authorization query
- *
- * @param  {Object}  query Authorization query
- * @return {?Object}       Query after transformation. Null if invalid or errored during transform.
- */
-function parseAuthorizationQuery( query ) {
-	if ( null === _authQueryParser ) {
-		_authQueryParser = makeJsonSchemaParser( authorizeQueryDataSchema, {}, authQueryTransformer );
-	}
-	try {
-		return _authQueryParser( query );
-	} catch ( error ) {
-		// The parser is expected to throw SchemaError or TransformerError on bad input.
-	}
-	return null;
-}
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );

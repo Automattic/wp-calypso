@@ -3,7 +3,9 @@
  * External dependencies
  */
 import config from 'config';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import PropTypes from 'prop-types';
+import { authorizeQueryDataSchema } from './schema';
 import { head, includes, isEmpty, split } from 'lodash';
 
 /**
@@ -99,6 +101,28 @@ export function getRoleFromScope( scope ) {
 	const role = head( split( scope, ':', 1 ) );
 	if ( ! isEmpty( role ) ) {
 		return role;
+	}
+	return null;
+}
+
+/**
+ * Parse an authorization query
+ *
+ * @property {Function} parser Lazy-instatiated parser
+ * @param  {Object}     query  Authorization query
+ * @return {?Object}           Query after transformation. Null if invalid or errored during transform.
+ */
+export function parseAuthorizationQuery( query ) {
+	if ( ! parseAuthorizationQuery.parser ) {
+		parseAuthorizationQuery.parser = makeJsonSchemaParser(
+			authorizeQueryDataSchema,
+			authQueryTransformer
+		);
+	}
+	try {
+		return parseAuthorizationQuery.parser( query );
+	} catch ( error ) {
+		// The parser is expected to throw SchemaError or TransformerError on bad input.
 	}
 	return null;
 }
