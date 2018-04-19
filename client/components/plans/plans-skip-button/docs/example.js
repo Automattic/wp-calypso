@@ -8,8 +8,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import PlansSkipButton from '..';
+import PlansSkipButton from 'components/plans/plans-skip-button';
 
 class PlansSkipButtonExample extends PureComponent {
 	static displayName = 'PlansSkipButton';
@@ -19,11 +18,7 @@ class PlansSkipButtonExample extends PureComponent {
 	};
 
 	render() {
-		return (
-			<Card>
-				<PlansSkipButton onClick={ this.handleClick } />
-			</Card>
-		);
+		return <PlansSkipButton onClick={ this.handleClick } />;
 	}
 }
 
