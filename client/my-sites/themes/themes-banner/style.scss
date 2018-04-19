@@ -68,6 +68,28 @@
 		margin-top: 1em;
 	}
 
+	.themes-banner__close {
+		display: block;
+		position: absolute;
+		background: rgba( white, 0.66 );
+		padding: 1px 0;
+		width: 1.7em;
+		line-height: 0.9;
+		z-index: 4;
+		top: 0;
+		right: 0;
+
+		&:hover {
+			cursor: pointer;
+		}
+
+		svg {
+			position: relative;
+			fill: black;
+			top: 0.06em;
+		}
+	}
+
 	@media(min-width:769px) {
 		display: block;
 	}
