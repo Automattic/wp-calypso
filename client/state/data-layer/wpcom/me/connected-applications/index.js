@@ -9,9 +9,10 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import deleteHandler from './delete';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema';
 import { CONNECTED_APPLICATIONS_REQUEST } from 'state/action-types';
-import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveConnectedApplications } from 'state/connected-applications/actions';
@@ -49,7 +50,7 @@ const requestHandler = {
 			fetch: requestConnectedApplications,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
-			fromApi: makeParser( schema, {}, apiTransformer ),
+			fromApi: makeJsonSchemaParser( schema, apiTransformer, {} ),
 		} ),
 	],
 };
