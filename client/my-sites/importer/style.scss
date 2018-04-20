@@ -43,6 +43,10 @@
 		background-color: #00AB6C;
 	}
 
+	&.blogger-alt {
+		background-color: #ff5722;
+	}
+
 	@include breakpoint(">960px") {
 		width: 56px;
 		height: 56px;

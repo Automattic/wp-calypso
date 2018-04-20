@@ -37,7 +37,7 @@ class ImporterBlogger extends React.PureComponent {
 
 	importerData = {
 		title: importerName,
-		icon: 'blogger',
+		icon: 'blogger-alt',
 		description: this.props.translate(
 			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
 			{
