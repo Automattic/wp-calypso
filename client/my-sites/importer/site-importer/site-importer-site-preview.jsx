@@ -83,9 +83,9 @@ class SiteImporterSitePreview extends React.Component {
 		return (
 			<div>
 				<div className="site-importer__site-importer-confirm-site-pane-container">
-					<p className="site-importer__site-importer-confirm-site-label">
+					<div className="site-importer__site-importer-confirm-site-label">
 						{ this.props.translate( 'Is this your site?' ) }
-					</p>
+					</div>
 					<Button disabled={ isLoading } onClick={ this.props.startImport }>
 						{ this.props.translate( 'Yes! Start import' ) }
 					</Button>

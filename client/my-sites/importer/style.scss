@@ -228,6 +228,9 @@
 
 		& .site-importer__site-importer-confirm-site-label {
 			flex-grow: 1;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
 		}
 		& .site-importer__site-importer-confirm-site-pane-container-text {
 			margin: inherit;
