@@ -63,5 +63,5 @@ General guidelines should be a list of tips and best practices. Example:
 This is an unordered list of components that are related in some way. Components are linked to the detail page of that component. Example:
 
 * To group buttons together, use the [ButtonGroup](./button-group) component.
-* To use a button with a secondary popover menu, use the [SplitButton](../split-button) component.
-* To display a loading spinner with a button, use the [SpinnerButton](./design/spinner-button) component.
+* To use a button with a secondary popover menu, use the [SplitButton](./split-button) component.
+* To display a loading spinner with a button, use the [SpinnerButton](../design/spinner-button) component.
