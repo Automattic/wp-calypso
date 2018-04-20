@@ -25,9 +25,4 @@
 	background-color: $white;
 	border-radius: 0;
 	margin: 0;
-
-	// Chrome bug wraps shadow into next column.
-	// Remove when fixed
-	// @see https://github.com/Automattic/wp-calypso/pull/23181#issuecomment-377649871
-	margin-bottom: 1px;
 }
