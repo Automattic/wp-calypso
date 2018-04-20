@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { castArray, intersection, merge, pickBy } from 'lodash';
+import { intersection, merge, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,10 +56,10 @@ function mediaItemsReducer( state, { siteId, data } ) {
 		return state;
 	}
 
-	if ( ! ( data && data.media ) ) {
+	if ( ! data ) {
 		return state;
 	}
-	const media = castArray( data.media );
+	const media = Array.isArray( data.media ) ? data.media : [ data ];
 	const updatedIds = media.map( item => String( item.ID ) );
 
 	return {

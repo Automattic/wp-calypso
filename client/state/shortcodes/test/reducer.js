@@ -362,9 +362,7 @@ describe( 'reducer', () => {
 					type: 'FLUX_RECEIVE_MEDIA_ITEM',
 					siteId: 87654321,
 					data: {
-						media: {
-							ID: 1,
-						},
+						ID: 1,
 					},
 				}
 			);
@@ -375,26 +373,6 @@ describe( 'reducer', () => {
 				},
 				87654321: {},
 			} );
-		} );
-
-		test( 'a MEDIA ITEM with falsey media should have no effect', () => {
-			const initialState = deepFreeze( {
-				12345678: {
-					test_shortcode: shortcodeData,
-				},
-				87654321: {
-					test_shortcode: { ...shortcodeData, result: '<html></html>' },
-				},
-			} );
-			const state = items( initialState, {
-				type: 'FLUX_RECEIVE_MEDIA_ITEM',
-				siteId: 87654321,
-				data: {
-					media: undefined,
-				},
-			} );
-
-			expect( state ).to.equal( initialState );
 		} );
 
 		test( 'should forget gallery shortcodes when receiving MEDIA ITEMS the ids match', () => {
