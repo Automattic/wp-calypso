@@ -40,7 +40,7 @@ const Shortcode = props => {
 	);
 };
 
-Shortcode.PropTypes = {
+Shortcode.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	children: PropTypes.string.isRequired,
 	filterRenderResult: PropTypes.func,

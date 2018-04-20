@@ -56,6 +56,9 @@ function mediaItemsReducer( state, { siteId, data } ) {
 		return state;
 	}
 
+	if ( ! ( data && data.media ) ) {
+		return state;
+	}
 	const media = castArray( data.media );
 	const updatedIds = media.map( item => String( item.ID ) );
 
