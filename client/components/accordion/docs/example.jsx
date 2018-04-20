@@ -8,31 +8,17 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 import jsxToString from 'jsx-to-string';
+
+Gridicon.displayName = 'Gridicon';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-import Gridicon from 'gridicons';
 
-Gridicon.displayName = 'Gridicon';
-
-const scope = { Accordion, Gridicon };
-
-export const accordionCode =
-	'<Accordion ' +
-	'\n\t\ttitle="Section Seven" ' +
-	'\n\t\tsubtitle="With Subtitle, Status and Icon" ' +
-	'\n\t\ticon={ <Gridicon icon="time" /> } ' +
-	'\n\t\tstatus={ { type: "warning", text: "Warning!", url: "/devdocs/design", }}>' +
-	'\n\t\t\tSuspendisse pellentesque diam in nisi pulvinar maximus. Integer feugiat feugiat justo ac ' +
-	'\n\t\t\tvehicula. Curabitur iaculis, risus suscipit sodales auctor, nisl urna elementum sem, non ' +
-	'\n\t\t\tvestibulum mauris ante et purus. Duis iaculis nisl neque, eget rutrum erat imperdiet ' +
-	'\n\t\t\tnon.' +
-	'\n\t</Accordion>';
-
-export default class extends React.PureComponent {
+export default class extends React.Component {
 	static displayName = 'Accordion';
 
 	static defaultProps = {
