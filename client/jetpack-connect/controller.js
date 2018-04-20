@@ -64,9 +64,7 @@ const removeSidebar = context =>
 
 const jetpackNewSiteSelector = context => {
 	removeSidebar( context );
-	context.primary = (
-		<JetpackNewSite path={ context.path } context={ context } locale={ context.params.locale } />
-	);
+	context.primary = <JetpackNewSite path={ context.path } locale={ context.params.locale } />;
 };
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
@@ -166,7 +164,6 @@ export function connect( context, next ) {
 
 	context.primary = (
 		<JetpackConnect
-			context={ context }
 			locale={ params.locale }
 			path={ path }
 			type={ type }
