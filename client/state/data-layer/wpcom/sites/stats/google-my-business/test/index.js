@@ -9,7 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST } from 'state/action-types';
+import { GOOGLE_MY_BUSINESS_STATS_REQUEST } from 'state/action-types';
 import { fetchGoogleMyBusinessStats, receiveStats } from '../';
 import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -17,7 +17,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 describe( '#fetchGoogleMyBusinessStatsSearch', () => {
 	test( 'should dispatch HTTP request to Google My Business stats endpoint', () => {
 		const action = {
-			type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
+			type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 			interval: 'week',
 			aggregation: 'total',
 			siteId: 12345,
@@ -48,7 +48,7 @@ describe( '#receiveStats', () => {
 	test( 'should dispatch receive stats action', () => {
 		const dispatch = sinon.spy();
 		const action = {
-			type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
+			type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 			interval: 'week',
 			aggregation: 'total',
 			siteId: 12345,
@@ -73,7 +73,7 @@ describe( '#receiveStats', () => {
 	test( 'should transform data snake_case to camelCase', () => {
 		const dispatch = sinon.spy();
 		const action = {
-			type: GOOGLE_MY_BUSINESS_STATS_SEARCH_REQUEST,
+			type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 			interval: 'week',
 			aggregation: 'total',
 			siteId: 12345,
