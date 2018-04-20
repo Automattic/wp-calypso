@@ -372,15 +372,20 @@ class RegisterDomainStep extends React.Component {
 			return null;
 		}
 
-		if ( this.state.searchResults === null ) {
+		const { searchResults, pageNumber, loadingResults: isLoading } = this.state;
+
+		if ( searchResults === null ) {
 			return null;
 		}
 
-		if ( this.state.pageNumber >= MAX_PAGES ) {
+		if ( pageNumber >= MAX_PAGES ) {
 			return null;
 		}
 
-		const isLoading = this.state.loadingResults;
+		if ( searchResults.length <= pageNumber * PAGE_SIZE ) {
+			return null;
+		}
+
 		const className = classNames( 'button', 'register-domain-step__next-page', {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
