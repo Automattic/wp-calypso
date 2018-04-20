@@ -16,7 +16,7 @@ import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 
 export const fromApi = data => convertToCamelCase( data );
 
-export const fetchGoogleMyBusinessStats = ( { dispatch }, action ) => {
+export const fetchStats = ( { dispatch }, action ) => {
 	const { siteId, statType, interval = 'week', aggregation = 'total' } = action;
 
 	dispatch(
@@ -51,6 +51,6 @@ export const receiveStats = ( { dispatch }, action, data ) => {
 
 export default {
 	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: [
-		dispatchRequest( fetchGoogleMyBusinessStats, receiveStats, noop ),
+		dispatchRequest( fetchStats, receiveStats, noop ),
 	],
 };

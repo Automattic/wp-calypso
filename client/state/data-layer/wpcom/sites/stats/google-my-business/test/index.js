@@ -9,11 +9,11 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchGoogleMyBusinessStats, receiveStats } from '../';
+import { fetchStats, receiveStats } from '..';
 import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( '#fetchGoogleMyBusinessStatsSearch', () => {
+describe( '#fetchStats', () => {
 	test( 'should dispatch HTTP request to Google My Business stats endpoint', () => {
 		const dispatch = sinon.spy();
 		const action = {
@@ -21,7 +21,7 @@ describe( '#fetchGoogleMyBusinessStatsSearch', () => {
 			statType: 'queries',
 		};
 
-		fetchGoogleMyBusinessStats( { dispatch }, action );
+		fetchStats( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
