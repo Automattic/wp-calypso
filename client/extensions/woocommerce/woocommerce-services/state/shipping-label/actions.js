@@ -665,7 +665,14 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels, isR
 			if ( 'addon' === getPDFSupport() ) {
 				showSuccessNotice();
 				// If the browser has a PDF "addon", we need another user click to trigger opening it in a new tab
-				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, orderId, siteId, fileData, labels, isReturn } );
+				dispatch( {
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION,
+					orderId,
+					siteId,
+					fileData,
+					labels,
+					isReturn,
+				} );
 			} else {
 				printDocument( fileData, getPDFFileName( orderId, state.returnDialog && 'return' ), state.returnDialog )
 					.then( () => {
