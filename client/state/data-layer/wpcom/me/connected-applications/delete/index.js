@@ -31,7 +31,7 @@ export const removeConnectedApplication = action =>
 	);
 
 /**
- * Dispatches a user connected application removal success action when the request succeeded.
+ * Dispatches a user connected application removal success action and notice when the request succeeded.
  *
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched user connected applications add action
