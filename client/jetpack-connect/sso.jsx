@@ -379,12 +379,12 @@ class JetpackSsoForm extends Component {
 		if ( ! ssoNonce || ! siteId || validationError ) {
 			return (
 				<NoDirectAccessError
+					action={ translate( 'Read Single Sign-On Documentation' ) }
+					actionURL="https://jetpack.com/support/sso/"
 					line={ translate(
 						'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
 						{ components: { em: <em /> } }
 					) }
-					action={ translate( 'Read Single Sign-On Documentation' ) }
-					actionURL="https://jetpack.com/support/sso/"
 				/>
 			);
 		}
