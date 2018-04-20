@@ -35,6 +35,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		siteId: PropTypes.number.isRequired,
 		statType: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
+		renderTooltipForDatanum: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -131,7 +132,10 @@ class GoogleMyBusinessStatsChart extends Component {
 					</select>
 
 					<div className="gmb-stats__metric-chart">
-						<LineChart data={ transformedData } />
+						<LineChart
+							data={ transformedData }
+							renderTooltipForDatanum={ this.props.renderTooltipForDatanum }
+						/>
 					</div>
 				</Card>
 			</div>

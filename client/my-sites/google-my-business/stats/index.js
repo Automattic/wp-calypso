@@ -7,7 +7,7 @@ import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -65,6 +65,22 @@ class GoogleMyBusinessStats extends Component {
 		} );
 	};
 
+	renderSearchTooltipForDatanum = datanum => {
+		const { value: searchCount, date } = datanum;
+		return this.props.translate(
+			'%(searches)d search on %(day)s',
+			'%(searches)d searches on %(day)s',
+			{
+				count: searchCount,
+				args: {
+					searches: searchCount,
+					day: moment( date ).format( 'D MMMM YYYY' ),
+				},
+				comment: 'How many searches per day for a Google My Business location.',
+			}
+		);
+	};
+
 	render() {
 		const { locationData, siteId, siteSlug, translate } = this.props;
 
@@ -118,6 +134,7 @@ class GoogleMyBusinessStats extends Component {
 									),
 								},
 							} }
+							renderTooltipForDatanum={ this.renderSearchTooltipForDatanum }
 						/>
 						<SectionHeader label={ translate( 'How customers search for your business' ) } />
 					</div>

@@ -6,15 +6,17 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { extent as d3Extent } from 'd3-array';
-import { line as d3Line, curveNatural as d3NaturalCurve } from 'd3-shape';
+import { line as d3Line, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
+import { select as d3Select } from 'd3-selection';
 import { concat } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import D3Base from 'components/d3-base';
+import Tooltip from 'components/tooltip';
 
 const POINT_SIZE = 3;
 const END_POINT_SIZE = 1;
@@ -26,6 +28,7 @@ class LineChart extends Component {
 		data: PropTypes.array.isRequired,
 		margin: PropTypes.object,
 		aspectRatio: PropTypes.number,
+		renderTooltipForDatanum: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -36,6 +39,11 @@ class LineChart extends Component {
 			bottom: 30,
 			left: 30,
 		},
+		renderTooltipForDatanum: datum => datum.value,
+	};
+
+	state = {
+		pointHovered: null,
 	};
 
 	drawAxes = ( svg, params ) => {
@@ -64,7 +72,7 @@ class LineChart extends Component {
 		const line = d3Line()
 			.x( datum => xScale( datum.date ) )
 			.y( datum => yScale( datum.value ) )
-			.curve( d3NaturalCurve );
+			.curve( d3MonotoneXCurve );
 
 		data.forEach( ( dataSeries, index ) => {
 			const colorNum = index % 3;
@@ -84,29 +92,56 @@ class LineChart extends Component {
 			const drawFullSeries = dataSeries.length < MAX_DRAW_POINTS_SIZE;
 			const colorNum = dataSeriesIndex % 3;
 			dataSeries.forEach( ( datum, datumIndex ) => {
+				let pointSize, className;
 				if ( ! drawFullSeries && ( datumIndex === 0 || datumIndex === dataSeries.length - 1 ) ) {
-					svg
-						.append( 'circle' )
-						.attr( 'class', `line-chart__line-end-point-${ colorNum }` )
-						.attr( 'cx', xScale( datum.date ) )
-						.attr( 'cy', yScale( datum.value ) )
-						.attr( 'r', END_POINT_SIZE );
-				} else if ( drawFullSeries ) {
-					svg
-						.append( 'circle' )
-						.attr( 'class', `line-chart__line-point-${ colorNum }` )
-						.attr( 'cx', xScale( datum.date ) )
-						.attr( 'cy', yScale( datum.value ) )
-						.attr( 'r', POINT_SIZE );
+					pointSize = END_POINT_SIZE;
+					className = `line-chart__line-point line-chart__line-end-point-${ colorNum }`;
 				}
+				if ( drawFullSeries ) {
+					pointSize = POINT_SIZE;
+					className = `line-chart__line-point line-chart__line-point-${ colorNum }`;
+				} else {
+					return;
+				}
+
+				svg
+					.append( 'circle' )
+					.attr( 'class', className )
+					.attr( 'cx', xScale( datum.date ) )
+					.attr( 'cy', yScale( datum.value ) )
+					.attr( 'r', pointSize )
+					.datum( datum );
 			} );
 		} );
+	};
+
+	bindEvents = svg => {
+		const self = this;
+		svg
+			.selectAll( 'circle' )
+			.on( 'mouseenter', function( point, index ) {
+				self.handleMouseEnterPoint( this, index );
+			} )
+			.on( 'mouseout', function( point, index ) {
+				self.handleMouseOutPoint( this, index );
+			} );
 	};
 
 	drawChart = ( svg, params ) => {
 		this.drawLines( svg, params );
 		this.drawPoints( svg, params );
 		this.drawAxes( svg, params );
+		this.bindEvents( svg, params );
+	};
+
+	handleMouseEnterPoint = point => {
+		d3Select( point ).attr( 'r', Math.floor( POINT_SIZE * 1.5 ) );
+		this.setState( { pointHovered: point } );
+	};
+
+	handleMouseOutPoint = point => {
+		d3Select( point ).attr( 'r', POINT_SIZE );
+		this.setState( { pointHovered: null } );
 	};
 
 	getParams = node => {
@@ -140,16 +175,42 @@ class LineChart extends Component {
 		};
 	};
 
-	render() {
-		const { data } = this.props;
+	getTooltipContent = () => {
+		const { pointHovered } = this.state;
+		if ( ! pointHovered ) {
+			return null;
+		}
+
+		const circle = d3Select( pointHovered );
+		const datum = circle.datum();
 
 		return (
-			<D3Base
-				className={ 'line-chart' }
-				drawChart={ this.drawChart }
-				getParams={ this.getParams }
-				data={ data }
-			/>
+			<span className="line-chart__tooltip">{ this.props.renderTooltipForDatanum( datum ) }</span>
+		);
+	};
+
+	render() {
+		const { data } = this.props;
+		const { pointHovered } = this.state;
+
+		return (
+			<div>
+				<D3Base
+					className="line-chart__base"
+					drawChart={ this.drawChart }
+					getParams={ this.getParams }
+					data={ data }
+				/>
+				<Tooltip
+					className="line-chart__tooltip is-streak"
+					id="popover__line-chart"
+					context={ pointHovered }
+					isVisible={ !! pointHovered }
+					position="top"
+				>
+					{ this.getTooltipContent() }
+				</Tooltip>
+			</div>
 		);
 	}
 }
