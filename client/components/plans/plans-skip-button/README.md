@@ -1,6 +1,6 @@
-# Plans Skip Button.
+# Plans Skip Button
 
-Render a button that allows a user to forego (paid) plans selection during creation of a new site, and use the Free plan instead.
+Render a button that is labeled 'Start with Free', allowing a user to forego (paid) plans selection during creation of a new site, and use the Free plan instead. Note that it's up to the consuming component to pass an `onClick` event handler to actually provide the desired behavior.
 
 ## Props 
 
