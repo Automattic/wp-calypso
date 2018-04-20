@@ -16,11 +16,6 @@ import {
 	PLANS_LIST,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_FREE,
-	PLAN_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_PREMIUM,
 	TYPE_PERSONAL,
@@ -62,7 +57,7 @@ export class ProductPurchaseFeaturesList extends Component {
 	};
 
 	getBusinessFeatures() {
-		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
+		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
 		return [
 			<HappinessSupportCard
 				isPlaceholder={ isPlaceholder }
@@ -90,17 +85,13 @@ export class ProductPurchaseFeaturesList extends Component {
 			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
 			<AdvertisingRemoved isBusinessPlan key="advertisingRemovedFeature" />,
 			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
-			<VideoAudioPosts
-				selectedSite={ selectedSite }
-				key="videoAudioPostsFeature"
-				plan={ PLAN_BUSINESS }
-			/>,
+			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" plan={ plan } />,
 			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
 		];
 	}
 
 	getPremiumFeatures() {
-		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
+		const { isPlaceholder, planHasDomainCredit, plan, selectedSite } = this.props;
 
 		return [
 			<HappinessSupportCard isPlaceholder={ isPlaceholder } />,
@@ -112,11 +103,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
 			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
 			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
-			<VideoAudioPosts
-				selectedSite={ selectedSite }
-				key="videoAudioPostsFeature"
-				plan={ PLAN_PREMIUM }
-			/>,
+			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" plan={ plan } />,
 			isWordadsInstantActivationEligible( selectedSite ) ? (
 				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
 			) : null,
