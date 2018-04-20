@@ -9,7 +9,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import googleMyBusinessReducer from '../reducer';
-import { getGoogleMyBusinessSiteStats } from '../selectors';
 import {
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
@@ -63,23 +62,13 @@ describe( 'reducer', () => {
 				},
 			};
 
-			const newState = googleMyBusinessReducer( state, {
+			expect( googleMyBusinessReducer( state, {
 				type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 				siteId: 123,
 				interval: 'month',
 				statType: 'actions',
 				aggregation: 'total',
-			} );
-
-			expect(
-				getGoogleMyBusinessSiteStats(
-					{ googleMyBusiness: newState },
-					123,
-					'actions',
-					'month',
-					'total'
-				)
-			).to.be.null;
+			} ) ).to.be.empty;
 		} );
 
 		test( 'should reset data only for specific site', () => {
@@ -98,84 +87,59 @@ describe( 'reducer', () => {
 				1234: siteData,
 			};
 
-			const newState = googleMyBusinessReducer( state, {
+			expect( googleMyBusinessReducer( state, {
 				type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 				siteId: 123,
 				interval: 'month',
 				statType: 'actions',
 				aggregation: 'total',
-			} );
-
-			const fullNewState = { googleMyBusiness: newState };
-
-			expect( getGoogleMyBusinessSiteStats( fullNewState, 123, 'actions', 'month', 'total' ) ).to.be
-				.null;
-			expect( getGoogleMyBusinessSiteStats( fullNewState, 1234, 'actions', 'month', 'total' ) ).eql(
-				siteData.stats.actions.month.total
-			);
-		} );
-
-		test( 'should reset data only for specific stat', () => {
-			const siteData = {
-				stats: {
-					actions: {
-						month: {
-							total: { hello: 'world' },
-							daily: { hello: 'world' },
+			} ) ).to.eql( {
+				1234: {
+					stats: {
+						actions: {
+							month: {
+								total: { hello: 'world' },
+							},
 						},
 					},
 				},
-			};
-
-			const state = {
-				123: siteData,
-			};
-
-			const newState = googleMyBusinessReducer( state, {
-				type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
-				siteId: 123,
-				interval: 'month',
-				statType: 'actions',
-				aggregation: 'total',
 			} );
-
-			const fullNewState = { googleMyBusiness: newState };
-
-			expect( getGoogleMyBusinessSiteStats( fullNewState, 123, 'actions', 'month', 'total' ) ).to.be
-				.null;
-			expect( getGoogleMyBusinessSiteStats( fullNewState, 123, 'actions', 'month', 'daily' ) ).eql(
-				siteData.stats.actions.month.daily
-			);
-		} );
-	} );
-} );
-
-describe( 'selectors', () => {
-	describe( '#getGoogleMyBusinessSiteStats', () => {
-		test( 'should get null if data not available', () => {
-			expect( getGoogleMyBusinessSiteStats( {}, 123, 'actions', 'month' ) ).to.be.null;
 		} );
 
-		test( 'should get stats data', () => {
+		test( 'should reset data only for specific stat', () => {
 			const state = {
-				googleMyBusiness: {
-					123: {
-						location: {
-							id: null,
-						},
-						stats: {
-							actions: {
-								month: {
-									total: { hello: 'world' },
-								},
+				123: {
+					stats: {
+						actions: {
+							month: {
+								total: { hello: 'world' },
+								daily: { hello: 'world' },
 							},
 						},
 					},
 				},
 			};
 
-			expect( getGoogleMyBusinessSiteStats( state, 123, 'actions', 'month', 'total' ) ).to.eql( {
-				hello: 'world',
+			expect( googleMyBusinessReducer( state, {
+				type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
+				siteId: 123,
+				interval: 'month',
+				statType: 'actions',
+				aggregation: 'total',
+			} ) ).to.eql( {
+				123: {
+					location: {
+						id: null,
+					},
+					statInterval: {},
+					stats: {
+						actions: {
+							month: {
+								daily: { hello: 'world' },
+							},
+						},
+					},
+				},
 			} );
 		} );
 	} );

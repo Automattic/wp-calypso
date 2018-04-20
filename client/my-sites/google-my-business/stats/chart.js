@@ -20,7 +20,8 @@ import {
 	changeGoogleMyBusinessStatsInterval,
 	requestGoogleMyBusinessStats,
 } from 'state/google-my-business/actions';
-import { getInterval, getGoogleMyBusinessSiteStats } from 'state/google-my-business/selectors';
+import { getGoogleMyBusinessStats } from 'state/selectors';
+import { getInterval } from 'state/google-my-business/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class GoogleMyBusinessStatsChart extends Component {
@@ -139,7 +140,7 @@ export default connect(
 		return {
 			siteId,
 			interval,
-			data: getGoogleMyBusinessSiteStats( state, siteId, ownProps.statType, interval, 'total' ),
+			data: getGoogleMyBusinessStats( state, siteId, ownProps.statType, interval, 'total' ),
 		};
 	},
 	{
