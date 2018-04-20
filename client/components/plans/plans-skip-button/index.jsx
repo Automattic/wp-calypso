@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Gridicon from 'gridicons';
-import isRtlSelector from 'state/selectors/is-rtl';
+import { isRtl as isRtlSelector } from 'state/selectors';
 
 export const PlansSkipButton = ( { onClick, isRtl, translate = identity } ) => (
 	<div className="plans-skip-button">
