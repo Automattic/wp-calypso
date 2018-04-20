@@ -9,7 +9,7 @@ jest.mock( 'i18n-calypso', () => {
 	moment.now = () => new Date( 2018, 4, 24 ); //May 24, 2018
 	return {
 		translate: str => str,
-		moment: moment,
+		moment,
 	};
 } );
 

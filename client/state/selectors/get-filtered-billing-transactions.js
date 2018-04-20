@@ -4,6 +4,7 @@
  */
 import { moment } from 'i18n-calypso';
 import { flatten, isDate, omit, slice, some, values, without } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -113,7 +114,6 @@ export default createSelector(
 		const filters = getBillingTransactionFilters( state, transactionType );
 
 		return [
-			transactionType,
 			'upcoming' === transactionType
 				? getUpcomingBillingTransactions( state )
 				: getPastBillingTransactions( state ),

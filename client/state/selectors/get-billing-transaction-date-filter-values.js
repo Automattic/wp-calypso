@@ -2,8 +2,9 @@
 /**
  * External dependencies
  */
-import { translate, moment } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 import { forEach, orderBy, range } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -62,7 +63,6 @@ export default createSelector(
 		return orderBy( result, 'key', 'desc' );
 	},
 	( state, transactionType ) => [
-		transactionType,
 		'upcoming' === transactionType
 			? getUpcomingBillingTransactions( state )
 			: getPastBillingTransactions( state ),

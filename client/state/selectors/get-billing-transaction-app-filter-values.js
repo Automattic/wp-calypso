@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { groupBy, map } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -35,7 +36,6 @@ export default createSelector(
 		} ) );
 	},
 	( state, transactionType ) => [
-		transactionType,
 		'upcoming' === transactionType
 			? getUpcomingBillingTransactions( state )
 			: getPastBillingTransactions( state ),

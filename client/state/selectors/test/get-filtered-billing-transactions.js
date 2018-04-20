@@ -4,6 +4,7 @@
  */
 import { moment } from 'i18n-calypso';
 import { cloneDeep, slice } from 'lodash';
+
 /**
  * Internal dependencies
  */
