@@ -219,10 +219,7 @@ class Plans extends Component {
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
-						<JetpackConnectHappychatButton
-							label={ helpButtonLabel }
-							eventName="calypso_jpc_plans_chat_initiated"
-						>
+						<JetpackConnectHappychatButton label={ helpButtonLabel }>
 							<HelpButton label={ helpButtonLabel } />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>

@@ -581,7 +581,7 @@ export class JetpackAuthorize extends Component {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ translate( 'Create a new account' ) }
 				</LoggedOutFormLinkItem>
-				<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
+				<JetpackConnectHappychatButton>
 					<HelpButton />
 				</JetpackConnectHappychatButton>
 			</LoggedOutFormLinks>

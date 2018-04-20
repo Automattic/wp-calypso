@@ -35,7 +35,7 @@ class NoDirectAccessError extends PureComponent {
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
-					<JetpackConnectHappychatButton eventName="calypso_jpc_noqueryarguments_chat_initiated">
+					<JetpackConnectHappychatButton>
 						<HelpButton />
 					</JetpackConnectHappychatButton>
 				</LoggedOutFormLinks>
