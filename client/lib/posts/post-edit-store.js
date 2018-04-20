@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, filter, find, get, isEqual, pickBy } from 'lodash';
+import { assign, filter, get, isEqual, pickBy } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:posts:post-edit-store' );
 import emitter from 'lib/mixins/emitter';
@@ -122,14 +122,9 @@ function setLoadingError( error ) {
 	_isLoading = false;
 }
 
-function mergeMetadataEdits( metadata, edits ) {
-	// remove existing metadata that get updated in `edits`
-	const newMetadata = filter( metadata, meta => ! find( edits, { key: meta.key } ) );
-	// append the new edits at the end
-	return newMetadata.concat( edits );
-}
-
 function set( attributes ) {
+	var updatedPost;
+
 	if ( ! _post ) {
 		// ignore since post isn't currently being edited
 		return false;
@@ -139,15 +134,7 @@ function set( attributes ) {
 		_queue.push( attributes );
 	}
 
-	let updatedPost = {
-		..._post,
-		...attributes,
-	};
-
-	// merge metadata with a custom function
-	if ( attributes.metadata ) {
-		updatedPost.metadata = mergeMetadataEdits( _post.metadata, attributes.metadata );
-	}
+	updatedPost = assign( {}, _post, attributes );
 
 	updatedPost = normalize( updatedPost );
 
