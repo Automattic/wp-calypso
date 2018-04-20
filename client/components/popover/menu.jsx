@@ -5,7 +5,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
-import { over } from 'lodash';
+import { over, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +22,7 @@ class PopoverMenu extends React.Component {
 		rootClassName: PropTypes.string,
 		popoverComponent: PropTypes.func,
 		popoverTitle: PropTypes.string, // used by ReaderPopover
+		customPosition: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -38,18 +39,18 @@ class PopoverMenu extends React.Component {
 	render() {
 		const children = React.Children.map( this.props.children, this._setPropsOnChild, this );
 		const PopoverComponent = this.props.popoverComponent;
+		const popoverProps = pick( this.props, [
+			'isVisible',
+			'context',
+			'autoPosition',
+			'position',
+			'className',
+			'rootClassName',
+			'popoverTitle',
+			'customPosition',
+		] );
 		return (
-			<PopoverComponent
-				isVisible={ this.props.isVisible }
-				context={ this.props.context }
-				autoPosition={ this.props.autoPosition }
-				position={ this.props.position }
-				onClose={ this._onClose }
-				onShow={ this._onShow }
-				className={ this.props.className }
-				rootClassName={ this.props.rootClassName }
-				popoverTitle={ this.props.popoverTitle }
-			>
+			<PopoverComponent onClose={ this._onClose } onShow={ this._onShow } { ...popoverProps }>
 				<div
 					ref="menu"
 					role="menu"
