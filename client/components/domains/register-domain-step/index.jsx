@@ -357,8 +357,13 @@ class RegisterDomainStep extends React.Component {
 
 	renderSearchFilters() {
 		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
+		const isRenderingInitialSuggestions =
+			! Array.isArray( this.state.searchResults ) &&
+			! this.state.loadingResults &&
+			! this.props.showExampleSuggestions;
 		return (
-			isKrackenUi && (
+			isKrackenUi &&
+			! isRenderingInitialSuggestions && (
 				<div className="register-domain-step__filter">
 					<SearchFilters
 						availableTlds={ this.state.availableTlds }
