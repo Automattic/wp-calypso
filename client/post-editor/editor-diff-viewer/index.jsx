@@ -15,10 +15,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getPostRevision } from 'state/selectors';
+import { getPostRevision, getPostRevisionsDiffView } from 'state/selectors';
 import TextDiff from 'components/text-diff';
 import scrollTo from 'lib/scroll-to';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getWindowInnerWidth } from 'lib/viewport';
 
 const getCenterOffset = node => get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
 
@@ -32,6 +33,7 @@ class EditorDiffViewer extends PureComponent {
 			post_title: PropTypes.array,
 			totals: PropTypes.object,
 		} ).isRequired,
+		diffView: PropTypes.string,
 
 		// connected to dispatch
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -46,10 +48,13 @@ class EditorDiffViewer extends PureComponent {
 		viewportHeight: 0,
 	};
 
+	windowWidth = 0;
+
 	componentDidMount() {
 		this.tryScrollingToFirstChangeOrTop();
 		if ( typeof window !== 'undefined' ) {
 			window.addEventListener( 'resize', this.debouncedRecomputeChanges );
+			this.windowWidth = getWindowInnerWidth();
 		}
 	}
 
@@ -66,6 +71,9 @@ class EditorDiffViewer extends PureComponent {
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selectedRevisionId !== this.props.selectedRevisionId ) {
 			this.setState( { changeOffsets: [] } );
+		}
+		if ( nextProps.diffView !== this.props.diffView ) {
+			this.recomputeChanges( null );
 		}
 	}
 
@@ -88,7 +96,13 @@ class EditorDiffViewer extends PureComponent {
 	};
 
 	recomputeChanges = callback => {
-		const diffNodes = this.node.querySelectorAll( '.text-diff__additions, .text-diff__deletions' );
+		let selectors = '.text-diff__additions, .text-diff__deletions';
+		if ( this.windowWidth > 1040 && this.props.diffView === 'split' ) {
+			selectors =
+				'.editor-diff-viewer__secondary-pane .text-diff__additions,' +
+				' .editor-diff-viewer__main-pane .text-diff__deletions';
+		}
+		const diffNodes = this.node.querySelectorAll( selectors );
 		this.setState(
 			{
 				changeOffsets: map( diffNodes, getCenterOffset ),
@@ -99,7 +113,10 @@ class EditorDiffViewer extends PureComponent {
 		);
 	};
 
-	debouncedRecomputeChanges = debounce( partial( this.recomputeChanges, null ), 500 );
+	debouncedRecomputeChanges = debounce( () => {
+		this.windowWidth = getWindowInnerWidth();
+		partial( this.recomputeChanges, null )();
+	}, 500 );
 
 	centerScrollingOnOffset = ( offset, animated = true ) => {
 		const nextScrollTop = Math.max( 0, offset - this.state.viewportHeight / 2 );
@@ -149,9 +166,10 @@ class EditorDiffViewer extends PureComponent {
 	};
 
 	render() {
-		const { diff } = this.props;
+		const { diff, diffView } = this.props;
 		const classes = classNames( 'editor-diff-viewer', {
 			'is-loading': ! has( diff, 'post_content' ) && ! has( diff, 'post_title' ),
+			'is-split': diffView === 'split',
 		} );
 
 		const bottomBoundary = this.state.scrollTop + this.state.viewportHeight;
@@ -173,12 +191,24 @@ class EditorDiffViewer extends PureComponent {
 		return (
 			<div className={ classes }>
 				<div className="editor-diff-viewer__scrollable" ref={ this.handleScrollableRef }>
-					<h1 className="editor-diff-viewer__title">
-						<TextDiff operations={ diff.post_title } />
-					</h1>
-					<pre className="editor-diff-viewer__content">
-						<TextDiff operations={ diff.post_content } splitLines />
-					</pre>
+					<div className="editor-diff-viewer__main-pane">
+						<h1 className="editor-diff-viewer__title">
+							<TextDiff operations={ diff.post_title } />
+						</h1>
+						<pre className="editor-diff-viewer__content">
+							<TextDiff operations={ diff.post_content } splitLines />
+						</pre>
+					</div>
+					{ diffView === 'split' && (
+						<div className="editor-diff-viewer__secondary-pane">
+							<h1 className="editor-diff-viewer__title">
+								<TextDiff operations={ diff.post_title } />
+							</h1>
+							<pre className="editor-diff-viewer__content">
+								<TextDiff operations={ diff.post_content } splitLines />
+							</pre>
+						</div>
+					) }
 				</div>
 				{ showHints &&
 					countAbove > 0 && (
@@ -210,6 +240,7 @@ export default flow(
 	connect(
 		( state, { siteId, postId, selectedRevisionId } ) => ( {
 			revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
+			diffView: getPostRevisionsDiffView( state ),
 		} ),
 		{ recordTracksEvent }
 	)
