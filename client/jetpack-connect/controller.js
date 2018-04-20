@@ -243,7 +243,7 @@ export function authorizeForm( context, next ) {
 
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
-	const interval = context.params.localeOrInterval;
+	const interval = context.params.localeOrInterval || context.params.interval || 'yearly';
 
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
