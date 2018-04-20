@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -12,7 +13,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/route';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -20,7 +20,6 @@ import CompactCard from 'components/card/compact';
 import config from 'config';
 import Dialog from 'components/dialog';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import EmptyContent from 'components/empty-content';
 import FormattedHeader from 'components/formatted-header';
 import Gravatar from 'components/gravatar';
 import HelpButton from './help-button';
@@ -28,12 +27,13 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
-import Main from 'components/main';
 import MainWrapper from './main-wrapper';
+import NoDirectAccessError from './no-direct-access-error';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
+import { addQueryArgs } from 'lib/route';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSSO } from 'state/jetpack-connect/selectors';
@@ -375,22 +375,18 @@ class JetpackSsoForm extends Component {
 	renderBadPathArgsError() {
 		const { translate } = this.props;
 		return (
-			<Main>
-				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate( 'Oops, this URL should not be accessed directly' ) }
-					line={ translate(
-						'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
-						{
-							components: {
-								em: <em />,
-							},
-						}
-					) }
-					action={ translate( 'Read Single Sign-On Documentation' ) }
-					actionURL="https://jetpack.com/support/sso/"
-				/>
-			</Main>
+			<NoDirectAccessError
+				line={ translate(
+					'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
+				) }
+				action={ translate( 'Read Single Sign-On Documentation' ) }
+				actionURL="https://jetpack.com/support/sso/"
+			/>
 		);
 	}
 
