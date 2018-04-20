@@ -11,6 +11,8 @@ import PropTypes from 'prop-types';
  */
 import ActionCard from '../index';
 
+ActionCard.displayName = 'ActionCard';
+
 function ActionCardExample( props ) {
 	return props.exampleCode;
 }
