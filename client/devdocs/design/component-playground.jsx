@@ -20,6 +20,10 @@ class ComponentPlayground extends Component {
 		code: PropTypes.string,
 	};
 
+	handleClick() {
+		alert( 'Copied to clipboard!' );
+	}
+
 	render() {
 		return (
 			<LiveProvider
@@ -41,9 +45,7 @@ class ComponentPlayground extends Component {
 						<ClipboardButton
 							text={ this.props.code }
 							borderless
-							onClick={ function() {
-								alert( 'Copied to clipboard!' );
-							} }
+							onClick={ this.handleClick }
 							className="design__component-playground-clipboard"
 						>
 							<Gridicon icon="clipboard" />
