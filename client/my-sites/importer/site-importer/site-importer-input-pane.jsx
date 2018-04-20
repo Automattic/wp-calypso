@@ -8,11 +8,13 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { noop, every, has, defer, get } from 'lodash';
+import request from 'superagent';
 
 /**
  * Internal dependencies
  */
 import wpLib from 'lib/wp';
+
 const wpcom = wpLib.undocumented();
 
 import { toApi, fromApi } from 'lib/importer/common';
@@ -111,6 +113,11 @@ class SiteImporterInputPane extends React.Component {
 		const siteURL = this.state.siteURLInput;
 
 		this.setState( { loading: true }, this.resetErrors );
+
+		request
+			.get( `https://s0.wp.com/mshots/v1/${ siteURL }?${ Math.random() }` )
+			.then( noop )
+			.catch( noop );
 
 		wpcom.wpcom.req
 			.get( {

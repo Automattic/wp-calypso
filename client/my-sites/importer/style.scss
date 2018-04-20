@@ -224,7 +224,7 @@
 		align-content: center;
 		justify-content: center;
 		width: 100%;
-		margin: 10px 0 10px 0;
+		margin-bottom: 18px;
 
 		& .site-importer__site-importer-confirm-site-label {
 			flex-grow: 1;
@@ -247,16 +247,34 @@
 
 .site-importer__site-preview-overlay-container {
 	position: relative;
+	display: flex;
+	flex-direction: column;
 
 	& .site-importer__site-preview-container {
+		& .site-importer__site-preview-browser-chrome {
+			flex-grow: 0;
+			flex-shrink: 0;
+
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+
+			background-color: #c6d7e2;
+			color: #9daeb8;
+			height: 35px;
+
+			padding-left: 12px;
+
+			font-size: 14px;
+			letter-spacing: 2px;
+
+
+			/* Used to center the dots vertically */
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
 		& .site-importer__site-preview-favicon {
 			vertical-align: middle;
-			border-top: 50px grey;
-			border-radius: 50px;
-		}
-
-		& .site-importer__site-preview-siteurl {
-			margin-left: 10px;
 		}
 	}
 }

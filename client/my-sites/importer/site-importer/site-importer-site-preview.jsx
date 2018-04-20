@@ -26,18 +26,19 @@ class SiteImporterSitePreview extends React.Component {
 
 	state = {
 		previewRetries: 0,
-		siteURL: `https://s0.wp.com/mshots/v1/${ this.props.siteURL }${ Math.random() }`, // TODO remove before going to prod
+		siteURL: `https://s0.wp.com/mshots/v1/${ this.props.siteURL }?${ Math.random() }`, // TODO remove before going to prod
 		sitePreviewImage: '',
 		sitePreviewFailed: false,
-		loadingPreviewImage: false,
+		loadingPreviewImage: true,
 	};
 
 	componentDidMount() {
-		this.setState( { loadingPreviewImage: true } );
 		this.loadSitePreview();
 	}
 
 	loadSitePreview = () => {
+		this.setState( { loadingPreviewImage: true } );
+
 		const maxRetries = 40;
 		const retryTimeout = 1500;
 		if ( this.state.previewRetries > maxRetries ) {
@@ -93,19 +94,20 @@ class SiteImporterSitePreview extends React.Component {
 					</Button>
 				</div>
 				<div className={ containerClass }>
-					<div className="site-importer__site-preview-container">
-						<div className="site-importer__site-preview-site-meta">
-							{ this.state.sitePreviewImage && (
-								<p>
-									<img
-										className="site-importer__site-preview-favicon"
-										src={ this.state.sitePreviewImage }
-										alt="Site favicon"
-									/>
-								</p>
-							) }
+					{ this.state.sitePreviewImage && (
+						<div className="site-importer__site-preview-container">
+							<div className="site-importer__site-preview-browser-chrome">
+								<span>● ● ●</span>
+							</div>
+							<div className="site-importer__site-preview-image">
+								<img
+									className="site-importer__site-preview-favicon"
+									src={ this.state.sitePreviewImage }
+									alt="Site favicon"
+								/>
+							</div>
 						</div>
-					</div>
+					) }
 					{ isLoading && (
 						<div className="site-importer__site-preview-loading-overlay">
 							<Spinner />
