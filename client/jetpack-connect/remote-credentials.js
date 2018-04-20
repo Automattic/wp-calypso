@@ -22,6 +22,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormattedHeader from 'components/formatted-header';
 import FormPasswordInput from 'components/forms/form-password-input';
 import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
 import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
@@ -140,21 +141,12 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	getSubHeaderText() {
-		const { installError, translate } = this.props;
-		let subheader = translate(
+		const { translate } = this.props;
+		const subheader = translate(
 			'Add your WordPress administrator credentials ' +
 				'for this site. Your credentials will not be stored and are used for the purpose ' +
 				'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
 		);
-
-		switch ( this.getError( installError ) ) {
-			case INVALID_CREDENTIALS:
-				subheader = translate(
-					'We were unable to install Jetpack because your WordPress Administrator credentials were invalid. ' +
-						'Please try again with the correct credentials or try installing Jetpack manually.'
-				);
-				break;
-		}
 		return (
 			<span className="jetpack-connect__install-step jetpack-connect__creds-form">
 				{ subheader }
@@ -357,6 +349,9 @@ export class OrgCredentialsForm extends Component {
 					<div>
 						{ this.renderHeadersText() }
 						<Card className="jetpack-connect__site-url-input-container">
+							{ this.isInvalidCreds() && (
+								<JetpackConnectNotices noticeType={ this.getError( installError ) } />
+							) }
 							<form onSubmit={ this.handleSubmit }>
 								{ this.formFields() }
 								{ this.formFooter() }
