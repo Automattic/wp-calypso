@@ -227,6 +227,7 @@ class TermFormDialog extends Component {
 		if ( matchingTerm ) {
 			errors.name = this.props.translate( 'Name already exists', {
 				context: 'Terms: Add term error message - duplicate term name exists',
+				comment: 'Term here refers to a hierarchical taxonomy, e.g. "Category"',
 				textOnly: true,
 			} );
 		}
@@ -235,6 +236,7 @@ class TermFormDialog extends Component {
 		if ( this.props.isHierarchical && ! this.state.isTopLevel && ! values.parent ) {
 			errors.parent = this.props.translate( 'Parent item required when "Top level" is unchecked', {
 				context: 'Terms: Add term error message',
+				comment: 'Term here refers to a hierarchical taxonomy, e.g. "Category"',
 				textOnly: true,
 			} );
 		}
@@ -272,12 +274,16 @@ class TermFormDialog extends Component {
 						{ translate( 'Top level %(term)s', {
 							args: { term: labels.singular_name },
 							context: 'Terms: New term being created is top level',
+							comment:
+								'term is the singular_name label of a hierarchical taxonomy, e.g. "Category"',
 						} ) }
 					</span>
 					{ isTopLevel && (
 						<span className="term-form-dialog__top-level-description">
 							{ translate( 'Disable to select a %(parentTerm)s', {
 								args: { parentTerm: labels.parent_item },
+								comment:
+									'parentTerm is the parent_item label of a hierarchical taxonomy, e.g. "Parent Category"',
 							} ) }
 						</span>
 					) }
@@ -287,6 +293,8 @@ class TermFormDialog extends Component {
 						<FormLegend>
 							{ translate( 'Choose a %(parentTerm)s', {
 								args: { parentTerm: labels.parent_item },
+								comment:
+									'parentTerm is the parent_item label of a hierarchical taxonomy, e.g. "Parent Category"',
 							} ) }
 						</FormLegend>
 						<TermTreeSelectorTerms
@@ -358,7 +366,10 @@ class TermFormDialog extends Component {
 				{ showDescriptionInput && (
 					<FormFieldset>
 						<FormLegend>
-							{ translate( 'Description', { context: 'Terms: Term description label' } ) }
+							{ translate( 'Description', {
+								context: 'Terms: Term description label',
+								comment: 'Term here refers to a hierarchical taxonomy, e.g. "Category"',
+							} ) }
 						</FormLegend>
 						<FormTextarea
 							ref="termDescription"
