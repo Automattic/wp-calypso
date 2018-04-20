@@ -77,6 +77,9 @@ const domains = wpcom.domains();
 const INITIAL_SUGGESTION_QUANTITY = 2;
 const PAGE_SIZE = 10;
 const MAX_PAGES = 3;
+const SUGGESTION_QUANTITY = config.isEnabled( 'domains/kracken-ui/pagination' )
+	? PAGE_SIZE * MAX_PAGES
+	: PAGE_SIZE;
 
 let searchVendor = 'group_1';
 const fetchAlgo = searchVendor + '/v1';
@@ -87,15 +90,6 @@ let lastSearchTimestamp = null;
 let searchCount = 0;
 let recordSearchFormSubmitWithDispatch;
 
-function getSuggestionFetchQuantity() {
-	const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
-
-	if ( isKrackenUi ) {
-		return PAGE_SIZE * MAX_PAGES;
-	}
-	return PAGE_SIZE;
-}
-
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
@@ -103,7 +97,7 @@ function getQueryObject( props ) {
 
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
-		quantity: getSuggestionFetchQuantity(),
+		quantity: SUGGESTION_QUANTITY,
 		vendor: searchVendor,
 		includeSubdomain: props.includeWordPressDotCom,
 		surveyVertical: props.surveyVertical,
@@ -553,8 +547,8 @@ class RegisterDomainStep extends React.Component {
 	getDomainsSuggestions = ( domain, timestamp ) => {
 		const suggestionQuantity =
 			this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
-				? getSuggestionFetchQuantity() - 1
-				: getSuggestionFetchQuantity();
+				? SUGGESTION_QUANTITY - 1
+				: SUGGESTION_QUANTITY;
 
 		const query = {
 			query: domain,
