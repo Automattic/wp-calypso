@@ -98,7 +98,7 @@ class ProductCategories extends Component {
 							<ImageThumb src={ ( item.image && item.image.src ) || '' } alt="" />
 						</div>
 						<span className="product-categories__list-item-info">
-							<a href={ link }>{ item.name }</a>
+							<span className="product-categories__list-item-name">{ item.name }</span>
 							<Count count={ item.count } />
 							<span className="product-categories__list-item-description">{ description }</span>
 						</span>

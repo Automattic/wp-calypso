@@ -48,6 +48,9 @@
 		margin: 18px 0px 0px 16px;
 	}
 
+	.product-categories__list-item-name {
+		color: $blue-wordpress;
+	}
 
 	&:hover {
 		background: lighten( $gray, 35% );
