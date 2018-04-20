@@ -38,12 +38,7 @@ describe( 'reducer', () => {
 					stats: {
 						actions: {
 							month: {
-								total: {
-									interval: 'month',
-									statType: 'actions',
-									aggregation: 'total',
-									data: { hello: 'world' },
-								},
+								total: { hello: 'world' },
 							},
 						},
 					},
@@ -61,12 +56,7 @@ describe( 'reducer', () => {
 					stats: {
 						actions: {
 							month: {
-								total: {
-									interval: 'month',
-									statType: 'actions',
-									aggregation: 'total',
-									data: { hello: 'world' },
-								},
+								total: { hello: 'world' },
 							},
 						},
 					},
@@ -97,12 +87,7 @@ describe( 'reducer', () => {
 				stats: {
 					actions: {
 						month: {
-							total: {
-								interval: 'month',
-								statType: 'actions',
-								aggregation: 'total',
-								data: { hello: 'world' },
-							},
+							total: { hello: 'world' },
 						},
 					},
 				},
@@ -135,18 +120,8 @@ describe( 'reducer', () => {
 				stats: {
 					actions: {
 						month: {
-							total: {
-								interval: 'month',
-								statType: 'actions',
-								aggregation: 'total',
-								data: { hello: 'world' },
-							},
-							daily: {
-								interval: 'daily',
-								statType: 'actions',
-								aggregation: 'total',
-								data: { hello: 'world' },
-							},
+							total: { hello: 'world' },
+							daily: { hello: 'world' },
 						},
 					},
 				},
@@ -191,12 +166,7 @@ describe( 'selectors', () => {
 						stats: {
 							actions: {
 								month: {
-									total: {
-										interval: 'month',
-										statType: 'actions',
-										aggregation: 'total',
-										data: { hello: 'world' },
-									},
+									total: { hello: 'world' },
 								},
 							},
 						},
@@ -205,10 +175,7 @@ describe( 'selectors', () => {
 			};
 
 			expect( getGoogleMyBusinessSiteStats( state, 123, 'actions', 'month', 'total' ) ).to.eql( {
-				interval: 'month',
-				statType: 'actions',
-				aggregation: 'total',
-				data: { hello: 'world' },
+				hello: 'world',
 			} );
 		} );
 	} );

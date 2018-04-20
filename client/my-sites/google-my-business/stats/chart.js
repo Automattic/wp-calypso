@@ -82,7 +82,7 @@ class GoogleMyBusinessStatsChart extends Component {
 			return data;
 		}
 
-		return data.data.metricValues.map( value => ( {
+		return data.metricValues.map( value => ( {
 			value: value.totalValue.value,
 			description: get( this.props.dataSeriesInfo, `${ value.metric }.description`, '' ),
 			name: get( this.props.dataSeriesInfo, `${ value.metric }.name`, value.metric ),

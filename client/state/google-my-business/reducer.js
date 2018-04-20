@@ -29,12 +29,7 @@ const statInterval = createReducer( 'week', {
 } );
 
 const stats = createReducer( null, {
-	[ GOOGLE_MY_BUSINESS_STATS_SET_DATA ]: ( state, { statType, interval, aggregation, data } ) => ( {
-		statType,
-		interval,
-		aggregation,
-		data,
-	} ),
+	[ GOOGLE_MY_BUSINESS_STATS_SET_DATA ]: ( state, { data } ) => data,
 	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: () => null,
 } );
 
@@ -43,9 +38,7 @@ export default keyedReducer(
 	combineReducers( {
 		location,
 		statInterval: keyedReducer( 'statType', statInterval ),
-		stats: keyedReducer(
-			'statType',
-			keyedReducer( 'interval', keyedReducer( 'aggregation', stats ) )
+		stats: keyedReducer( 'statType', keyedReducer( 'interval', keyedReducer( 'aggregation', stats ) )
 		),
 	} )
 );
