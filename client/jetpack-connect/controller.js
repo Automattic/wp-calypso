@@ -62,11 +62,6 @@ const analyticsPageTitleByType = {
 const removeSidebar = context =>
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
-const jetpackNewSiteSelector = context => {
-	removeSidebar( context );
-	context.primary = <JetpackNewSite path={ context.path } locale={ context.params.locale } />;
-};
-
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
 		yearly: {
@@ -119,7 +114,8 @@ export function maybeOnboard( { query, store }, next ) {
 
 export function newSite( context, next ) {
 	analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
-	jetpackNewSiteSelector( context );
+	removeSidebar( context );
+	context.primary = <JetpackNewSite path={ context.path } locale={ context.params.locale } />;
 	next();
 }
 
