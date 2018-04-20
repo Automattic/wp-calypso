@@ -1,3 +1,5 @@
+/** @format */
+
 .facebook-share-preview {
 	background-color: $white;
 	border: 1px solid;
@@ -22,12 +24,27 @@
 .facebook-share-preview__profile-picture-part {
 	flex: 0 0 40px;
 	margin-right: 8px;
+	position: relative;
 	width: 40px;
+	&:after {
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		border-radius: 50%;
+		bottom: 0;
+		content: '';
+		left: 0;
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
 }
 
 .facebook-share-preview__profile-picture,
 .facebook-share-preview__image {
 	display: block;
+}
+
+.facebook-share-preview__profile-picture {
+	border-radius: 50%;
 }
 
 .facebook-share-preview__profile-line,
