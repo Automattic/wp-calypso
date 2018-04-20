@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import googleMyBusinessReducer from '../reducer';
 import { getGoogleMyBusinessSiteStats } from '../selectors';
 import {
-	GOOGLE_MY_BUSINESS_STATS_SET_DATA,
+	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
 
@@ -19,7 +19,7 @@ describe( 'reducer', () => {
 	describe( '#stats', () => {
 		test( 'should save data', () => {
 			const state = googleMyBusinessReducer( undefined, {
-				type: GOOGLE_MY_BUSINESS_STATS_SET_DATA,
+				type: GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 				siteId: 123,
 				interval: 'month',
 				statType: 'actions',

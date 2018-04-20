@@ -7,8 +7,8 @@ import {
 	GOOGLE_MY_BUSINESS_CONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_DISCONNECT_LOCATION,
 	GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
+	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
-	GOOGLE_MY_BUSINESS_STATS_SET_DATA,
 } from 'state/action-types';
 import { saveSiteSettings } from 'state/site-settings/actions';
 
@@ -83,7 +83,7 @@ export const requestGoogleMyBusinessStats = (
 } );
 
 export const receiveGoogleMyBusinessStats = ( siteId, statType, interval, aggregation, data ) => ( {
-	type: GOOGLE_MY_BUSINESS_STATS_SET_DATA,
+	type: GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	siteId,
 	statType,
 	interval,
