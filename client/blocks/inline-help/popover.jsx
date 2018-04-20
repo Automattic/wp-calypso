@@ -32,7 +32,8 @@ class InlineHelpPopover extends Component {
 	};
 
 	state = {
-		showContactForm: false,
+		showSecondaryView: false,
+		activeSecondaryView: '',
 	};
 
 	openResult = ( event, href ) => {
@@ -59,19 +60,21 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
 	};
 
-	toggleContactForm = () => {
-		if ( this.state.showContactForm ) {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_hide' );
+	toggleSecondaryView = secondaryView => () => {
+		if ( this.state.activeSecondaryView ) {
+			this.props.recordTracksEvent( 'calypso_inlinehelp_' + secondaryView + '_hide' );
+			this.setState( { activeSecondaryView: '' } );
 		} else {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_show' );
+			this.props.recordTracksEvent( 'calypso_inlinehelp_' + secondaryView + '_show' );
+			this.setState( { activeSecondaryView: secondaryView } );
 		}
-		this.setState( { showContactForm: ! this.state.showContactForm } );
+		this.setState( { showSecondaryView: ! this.state.showSecondaryView } );
 	};
 
 	render() {
 		const { translate } = this.props;
-		const { showContactForm } = this.state;
-		const popoverClasses = { 'is-help-active': showContactForm };
+		const { showSecondaryView } = this.state;
+		const popoverClasses = { 'is-secondary-view-active': showSecondaryView };
 
 		return (
 			<Popover
@@ -89,7 +92,7 @@ class InlineHelpPopover extends Component {
 					/>
 				</div>
 
-				<div className="inline-help__contact">
+				<div className="inline-help__secondary-view inline-help__contact">
 					<HelpContact compact={ true } selectedSite={ this.props.selectedSite } />
 				</div>
 
@@ -105,7 +108,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 
 					<Button
-						onClick={ this.toggleContactForm }
+						onClick={ this.toggleSecondaryView( 'contact' ) }
 						className="inline-help__contact-button"
 						borderless
 					>
@@ -115,7 +118,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 
 					<Button
-						onClick={ this.toggleContactForm }
+						onClick={ this.toggleSecondaryView( 'contact' ) }
 						className="inline-help__cancel-button"
 						borderless
 					>
