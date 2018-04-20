@@ -35,15 +35,15 @@ describe( 'handleRemoveSuccess()', () => {
 		const actions = handleRemoveSuccess( { appId } );
 
 		expect( actions ).toHaveLength( 2 );
-		expect( actions[ 0 ] ).toEqual( deleteConnectedApplicationSuccess( appId ) ),
-			expect( actions[ 1 ] ).toMatchObject( {
-				notice: expect.objectContaining( {
-					duration: 8000,
-					noticeId: `connected-app-notice-success-${ appId }`,
-					status: 'is-success',
-					text: 'This application no longer has access to your WordPress.com account.',
-				} ),
-			} );
+		expect( actions[ 0 ] ).toEqual( deleteConnectedApplicationSuccess( appId ) );
+		expect( actions[ 1 ] ).toMatchObject( {
+			notice: expect.objectContaining( {
+				duration: 8000,
+				noticeId: `connected-app-notice-success-${ appId }`,
+				status: 'is-success',
+				text: 'This application no longer has access to your WordPress.com account.',
+			} ),
+		} );
 	} );
 } );
 
