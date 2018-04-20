@@ -13,14 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import FileImporter from './file-importer';
 
-/**
- * Module variables
- */
-const importerData = {
-	title: 'Blogger.com',
-	icon: 'blogger',
-};
-
 class ImporterBlogger extends React.PureComponent {
 	static displayName = 'ImporterBlogger';
 
@@ -41,14 +33,14 @@ class ImporterBlogger extends React.PureComponent {
 		} ),
 	};
 
-	render() {
-		importerData.description = this.props.translate(
-			'Import posts, pages, comments, tags and images ' + 'from a Blogger.com export file.'
-		);
-
-		importerData.uploadDescription = this.props.translate(
-			'Upload a {{b}}Blogger.com export file{{/b}} to start ' +
-				'importing into {{b2}}%(title)s{{/b2}}.',
+	importerData = {
+		title: 'Blogger.com',
+		icon: 'blogger',
+		description: this.props.translate(
+			'Import posts, pages, comments, tags, and images from a Blogger.com export file.'
+		),
+		uploadDescription: this.props.translate(
+			'Upload a {{b}}Blogger.com export file{{/b}} to start importing into {{b2}}%(title)s{{/b2}}.',
 			{
 				args: { title: this.props.site.title },
 				components: {
@@ -56,8 +48,11 @@ class ImporterBlogger extends React.PureComponent {
 					b2: <strong />,
 				},
 			}
-		);
-		return <FileImporter importerData={ importerData } { ...this.props } />;
+		),
+	};
+
+	render() {
+		return <FileImporter importerData={ this.importerData } { ...this.props } />;
 	}
 }
 
