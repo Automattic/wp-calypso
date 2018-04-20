@@ -772,7 +772,7 @@ class RegisterDomainStep extends React.Component {
 	showNextPage = () => {
 		debug( 'showNextPage was triggered' );
 
-		this.setState( { pageNumber: this.state.pageNumber + 1 } );
+		this.setState( { pageNumber: this.state.pageNumber + 1 }, this.save );
 	};
 
 	initialSuggestions() {
