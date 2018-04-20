@@ -4,7 +4,6 @@ Render a button that is labeled 'Start with Free', allowing a user to forego (pa
 
 ## Props 
 
-* **isRtl** — (optional) Whether the button should be rendered for a Right-to-Left locale.
 * **onClick** — (required) Function that will be called on button click.
 
 ## Usage
