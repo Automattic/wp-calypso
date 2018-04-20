@@ -25,6 +25,7 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Pagination from 'components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
+import RewindAlerts from './rewind-alerts';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
@@ -382,6 +383,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
+				<RewindAlerts siteId={ siteId } />
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (
