@@ -45,7 +45,7 @@ export class FacebookSharePreview extends PureComponent {
 									{ externalDisplay }
 								</a>
 								<span>
-									{ translate( 'published an article on {{a}}WordPress{{/a}}', {
+									{ translate( 'published an article on {{a}}WordPress{{/a}}.', {
 										components: {
 											a: <a href="#" />,
 										},
@@ -53,6 +53,8 @@ export class FacebookSharePreview extends PureComponent {
 								</span>
 							</div>
 							<div className="facebook-share-preview__meta-line">
+								{ translate( 'Now' ) }
+								<span> &middot; </span>
 								<a href="https://wordpress.com">{ translate( 'WordPress' ) }</a>
 							</div>
 						</div>
