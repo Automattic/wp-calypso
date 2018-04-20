@@ -17,6 +17,12 @@ import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
 import { getTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';
 
+/**
+ * Module varialbles
+ */
+const TRANSLATION_FETCH_ERROR = 'translation-fetch-error';
+const TRANSLATION_SUBMIT_ERROR = 'tranlsation-submit-error';
+
 export class Translatable extends Component {
 	state = {
 		showDialog: false,
@@ -25,7 +31,7 @@ export class Translatable extends Component {
 	};
 
 	hasDataLoaded() {
-		return ! isEmpty( this.state.originalData );
+		return ! isEmpty( this.state.originalData ) || ! isEmpty( this.state.error );
 	}
 
 	handleTranslationChange = event => {
@@ -55,36 +61,45 @@ export class Translatable extends Component {
 		this.setState( { showDialog: true } );
 
 		const { singular, context, plural, locale } = this.props;
-		! this.hasDataLoaded() &&
-			getTranslationData( locale, { singular, context, plural } ).then( originalData =>
-				this.setState( {
-					error: originalData.error,
-					originalData,
-					translationUrl: getTranslationPermaLink( originalData.originalId, locale ),
-					formState: {
-						translatedSingular: originalData.translatedSingular,
-						translatedPlural: originalData.translatedPlural,
-					},
-				} )
-			);
+
+		if ( ! this.hasDataLoaded() ) {
+			getTranslationData( locale, { singular, context, plural } )
+				.then( originalData =>
+					this.setState( {
+						originalData,
+						translationUrl: getTranslationPermaLink( originalData.originalId, locale ),
+						formState: {
+							translatedSingular: originalData.translatedSingular,
+							translatedPlural: originalData.translatedPlural,
+						},
+					} )
+				)
+				.catch( () => {
+					this.setState( {
+						error: TRANSLATION_FETCH_ERROR,
+					} );
+				} );
+		}
 	};
 
 	submitForm = () => {
 		this.setState( {
 			submitting: true,
 		} );
-		submitTranslation(
-			this.state.originalData.originalId,
-			this.state.formState,
-			this.props.locale
-		).then( originalData => {
-			this.setState( {
-				error: originalData.error,
-				originalData,
-				submitting: false,
-				submissionSuccess: true,
+		submitTranslation( this.state.originalData.originalId, this.state.formState, this.props.locale )
+			.then( originalData => {
+				this.setState( {
+					error: originalData.error,
+					originalData,
+					submitting: false,
+					submissionSuccess: true,
+				} );
+			} )
+			.catch( () => {
+				this.setState( {
+					error: TRANSLATION_SUBMIT_ERROR,
+				} );
 			} );
-		} );
 	};
 
 	getDialogButtons = () => {
@@ -95,7 +110,8 @@ export class Translatable extends Component {
 				{ translate( 'Close', { textOnly: true } ) }
 			</Button>,
 		];
-		! this.state.submissionSuccess &&
+
+		if ( ! this.state.submissionSuccess ) {
 			buttons.push(
 				<Button
 					primary
@@ -110,32 +126,59 @@ export class Translatable extends Component {
 					{ translate( 'Submit a new translation' ) }
 				</Button>
 			);
+		}
+
 		return buttons;
 	};
 
-	renderTranslatableContent() {
-		if ( this.state.submissionSuccess ) {
-			return <TranslatedSuccess translationUrl={ this.state.translationUrl } />;
-		}
+	renderPlaceholder() {
+		return (
+			<div className="community-translator__string-container placeholder">
+				<span className="community-translator__string-description" />
+				<span />
+			</div>
+		);
+	}
 
-		if ( this.state.originalData.error ) {
+	getErrorMessage( errorType ) {
+		const { translate } = this.props;
+
+		switch ( errorType ) {
+			case TRANSLATION_FETCH_ERROR:
+				return translate( "Sorry, we couldn't find the translation for this string." );
+			case TRANSLATION_SUBMIT_ERROR:
+				return translate( "Sorry, we couldn't submit the translation for this string." );
+			default:
+				return translate( "Sorry, we've encountered an error." );
+		}
+	}
+
+	renderTranslatableContent() {
+		const { error, submissionSuccess, originalData, submitting, formState } = this.state;
+
+		if ( error ) {
 			return (
-				<p className="community-translator__string-container">{ this.state.originalData.error }</p>
+				<p className="community-translator__string-container">
+					{ this.getErrorMessage( this.state.error ) }
+				</p>
 			);
 		}
 
+		if ( submissionSuccess ) {
+			return <TranslatedSuccess translationUrl={ this.state.translationUrl } />;
+		}
+
 		return [
-			this.state.originalData.comment && (
-				<p key="translationComment">{ this.state.originalData.comment }</p>
-			),
+			originalData.comment && <p key="translationComment">{ originalData.comment }</p>,
+
 			<TranslatableTextarea
 				key="translatedSingular"
 				originalString={ this.props.singular }
 				title="Singular"
 				fieldName="translatedSingular"
 				onChange={ this.handleTranslationChange }
-				disabled={ this.state.submitting }
-				value={ this.state.formState.translatedSingular }
+				disabled={ submitting }
+				value={ formState.translatedSingular }
 			/>,
 
 			this.state.formState.translatedPlural && (
@@ -145,8 +188,8 @@ export class Translatable extends Component {
 					title="Plural"
 					fieldName="translatedPlural"
 					onChange={ this.handleTranslationChange }
-					disabled={ this.state.submitting }
-					value={ this.state.formState.translatedPlural }
+					disabled={ submitting }
+					value={ formState.translatedPlural }
 				/>
 			),
 		];
@@ -180,14 +223,7 @@ export class Translatable extends Component {
 				</header>
 				<section className="community-translator__dialog-body">
 					<fieldset>
-						{ this.hasDataLoaded() ? (
-							this.renderTranslatableContent()
-						) : (
-							<div className="community-translator__string-container placeholder">
-								<span className="community-translator__string-description" />
-								<span />
-							</div>
-						) }
+						{ this.hasDataLoaded() ? this.renderTranslatableContent() : this.renderPlaceholder() }
 					</fieldset>
 				</section>
 			</div>

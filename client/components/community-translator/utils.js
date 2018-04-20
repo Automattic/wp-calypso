@@ -4,7 +4,6 @@
  * External dependencies
  */
 import request from 'superagent';
-import { translate } from 'i18n-calypso';
 import { head, find, get } from 'lodash';
 
 /**
@@ -74,7 +73,7 @@ export function postRequest( glotPressUrl, postFormData ) {
 		.send( postFormData )
 		.then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
 		.catch( error => {
-			throw normalizeDetailsFromTranslationData( error );
+			throw error; // pass on the error so the call sites can handle it accordingly.
 		} );
 }
 
@@ -141,24 +140,19 @@ export function submitTranslation(
 /**
  * Normalizes raw data from GP API
  * @param {Object} glotPressData raw API response
- * @returns {Object} normalized data or error object
+ * @returns {Object} normalized data
  */
 export function normalizeDetailsFromTranslationData( glotPressData ) {
-	if ( glotPressData && ! glotPressData.originals_not_found ) {
-		const translationDetails = find( glotPressData.translations, {
-			original_id: glotPressData.original_id,
-		} );
+	const translationDetails = find( glotPressData.translations, {
+		original_id: glotPressData.original_id,
+	} );
 
-		return {
-			originalId: glotPressData.original_id,
-			comment: glotPressData.original_comment,
-			translatedSingular: get( translationDetails, 'translation_0', '' ),
-			translatedPlural: get( translationDetails, 'translation_1', '' ),
-			lastModified: get( translationDetails, 'date_modified', '' ),
-		};
-	}
 	return {
-		error: translate( "Sorry, we couldn't find the translation information for this string." ),
+		originalId: glotPressData.original_id,
+		comment: glotPressData.original_comment,
+		translatedSingular: get( translationDetails, 'translation_0', '' ),
+		translatedPlural: get( translationDetails, 'translation_1', '' ),
+		lastModified: get( translationDetails, 'date_modified', '' ),
 	};
 }
 
