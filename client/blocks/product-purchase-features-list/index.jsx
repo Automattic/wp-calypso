@@ -63,12 +63,10 @@ export class ProductPurchaseFeaturesList extends Component {
 					onClick={ this.props.recordBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
 				/>
-				{ isEnabled( 'manage/plugins/upload' ) ? (
-					<UploadPlugins selectedSite={ selectedSite } />
-				) : null }
-				{ isWordadsInstantActivationEligible( selectedSite ) ? (
+				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
+				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
-				) : null }
+				) }
 				<JetpackSearch selectedSite={ selectedSite } />
 				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
@@ -90,9 +88,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleVouchers selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				{ isWordadsInstantActivationEligible( selectedSite ) ? (
+				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
-				) : null }
+				) }
 			</Fragment>
 		);
 	}
