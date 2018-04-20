@@ -2,11 +2,11 @@
 /**
  * Internal dependencies
  */
-import { REWIND_ALERT_UPDATE, REWIND_STATE_UPDATE } from 'state/action-types';
+import { REWIND_ALERTS_UPDATE, REWIND_STATE_UPDATE } from 'state/action-types';
 import { keyedReducer } from 'state/utils';
 
 export const rewindAlertsItem = ( state = null, { type, alerts } ) =>
-	type === REWIND_ALERT_UPDATE ? alerts : state;
+	type === REWIND_ALERTS_UPDATE ? alerts : state;
 
 export const rewindAlerts = keyedReducer( 'siteId', rewindAlertsItem );
 
