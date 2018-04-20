@@ -166,7 +166,7 @@ describe( 'selectors', () => {
 			expect( getTotalProductCategories( state, {}, 'site.four' ) ).to.eql( 0 );
 		} );
 
-		test( 'should be 2, the set total, if the categories are loaded.', () => {
+		test( 'should be 6, the set total, if the categories are loaded.', () => {
 			expect( getTotalProductCategories( state, {}, 'site.three' ) ).to.eql( 6 );
 		} );
 	} );
