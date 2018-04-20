@@ -164,15 +164,17 @@ export function connect( context, next ) {
 
 	removeSidebar( context );
 
-	context.primary = React.createElement( JetpackConnect, {
-		context,
-		locale: params.locale,
-		path,
-		type,
-		url: query.url,
-		ctaId: query.cta_id, // origin tracking params
-		ctaFrom: query.cta_from,
-	} );
+	context.primary = (
+		<JetpackConnect
+			context={ context }
+			locale={ params.locale }
+			path={ path }
+			type={ type }
+			url={ query.url }
+			ctaId={ query.cta_id /* origin tracking params */ }
+			ctaFrom={ query.cta_from }
+		/>
+	);
 	next();
 }
 
