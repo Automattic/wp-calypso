@@ -19,8 +19,18 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class NoDirectAccessError extends PureComponent {
 	static propTypes = {
+		action: PropTypes.string,
+		actionURL: PropTypes.string,
+		illustration: PropTypes.string,
 		recordTracksEvent: PropTypes.func.isRequired,
+		title: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		line: PropTypes.string,
+	};
+
+	static defaultProps = {
+		illustration: '/calypso/images/illustrations/error.svg',
+		actionURL: '/jetpack/connect',
 	};
 
 	render() {
@@ -29,10 +39,13 @@ class NoDirectAccessError extends PureComponent {
 		return (
 			<Main className="jetpack-connect__main-error">
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate( 'Oops, this URL should not be accessed directly' ) }
-					action={ translate( 'Get back to Jetpack Connect screen' ) }
-					actionURL="/jetpack/connect"
+					action={ this.props.action || translate( 'Go back to Jetpack Connect screen' ) }
+					actionURL={ this.props.actionURL }
+					illustration={ this.props.illustration }
+					line={ this.props.line }
+					title={
+						this.props.title || translate( 'Oops, this URL should not be accessed directly' )
+					}
 				/>
 				<LoggedOutFormLinks>
 					<JetpackConnectHappychatButton>
