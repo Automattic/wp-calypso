@@ -1,7 +1,7 @@
 Component Name
 ===
 
-_Use this template when documenting components. If you are creating a new component, you can copy and paste this entire document as a starting point._
+_Use this template when documenting components. If you are creating a new component, you can copy and paste this entire document as a starting point. See the [Button documentation](../design/buttons) for a good example._
 
 Write a short, high-level explanation of the component with a focus on what problem it solves in the interface. Do not include any technical information in this description.
 Example:
