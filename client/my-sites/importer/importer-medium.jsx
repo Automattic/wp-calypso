@@ -13,14 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import FileImporter from './file-importer';
 
-/**
- * Module variables
- */
-const importerData = {
-	title: 'Medium',
-	icon: 'medium',
-};
-
 class ImporterMedium extends React.PureComponent {
 	static displayName = 'ImporterMedium';
 
@@ -41,13 +33,14 @@ class ImporterMedium extends React.PureComponent {
 		} ),
 	};
 
-	render() {
-		importerData.description = this.props.translate(
-			'Import posts, tags, images, and videos ' + 'from a Medium export file.'
-		);
-
-		importerData.uploadDescription = this.props.translate(
-			'Upload a {{b}}Medium export file{{/b}} to start ' + 'importing into {{b2}}%(title)s{{/b2}}.',
+	importerData = {
+		title: 'Medium',
+		icon: 'medium',
+		description: this.props.translate(
+			'Import posts, tags, images, and videos from a Medium export file.'
+		),
+		uploadDescription: this.props.translate(
+			'Upload a {{b}}Medium export file{{/b}} to start importing into {{b2}}%(title)s{{/b2}}.',
 			{
 				args: { title: this.props.site.title },
 				components: {
@@ -55,9 +48,11 @@ class ImporterMedium extends React.PureComponent {
 					b2: <strong />,
 				},
 			}
-		);
+		),
+	};
 
-		return <FileImporter importerData={ importerData } { ...this.props } />;
+	render() {
+		return <FileImporter importerData={ this.importerData } { ...this.props } />;
 	}
 }
 
