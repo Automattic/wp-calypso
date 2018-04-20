@@ -18,6 +18,8 @@ Gridicon.displayName = 'Gridicon';
  */
 import Accordion from 'components/accordion';
 
+Accordion.displayName = 'Accordion';
+
 export default class extends React.Component {
 	static displayName = 'Accordion';
 
