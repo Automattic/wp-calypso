@@ -38,7 +38,6 @@ class ThemesBanner extends PureComponent {
 		themeUrl: PropTypes.string,
 		activeThemeId: PropTypes.string,
 		isBannerVisible: PropTypes.bool,
-		onBannerClose: PropTypes.func,
 	};
 
 	recordEvent = () => {
