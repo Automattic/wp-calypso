@@ -57,6 +57,12 @@ jest.mock( '../payment-chat-button', () => {
 const defaultProps = {
 	cart: {},
 	translate: identity,
+	countriesList: {
+		get: jest.fn( false ),
+	},
+	paymentType: 'default',
+	transaction: identity,
+	redirectTo: 'http://here',
 };
 
 describe( 'RedirectPaymentBox', () => {
