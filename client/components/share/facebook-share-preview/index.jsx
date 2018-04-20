@@ -53,7 +53,9 @@ export class FacebookSharePreview extends PureComponent {
 								</span>
 							</div>
 							<div className="facebook-share-preview__meta-line">
-								{ translate( 'Now' ) }
+								{ translate( 'Just now', {
+									comment: 'Facebook relative time for just published posts.',
+								} ) }
 								<span> &middot; </span>
 								<a href="https://wordpress.com">{ translate( 'WordPress' ) }</a>
 							</div>
