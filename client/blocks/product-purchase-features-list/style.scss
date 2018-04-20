@@ -1,5 +1,7 @@
+/** @format */
+
 .product-purchase-features-list {
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		column-count: 2;
 		column-gap: 12px;
 	}
@@ -11,6 +13,10 @@
 	-webkit-column-break-inside: avoid; // For others
 
 	padding-top: 12px;
+
+	&:empty {
+		display: none;
+	}
 }
 
 .product-purchase-features-list__item .purchase-detail {
