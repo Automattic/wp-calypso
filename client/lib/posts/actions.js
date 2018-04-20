@@ -272,6 +272,8 @@ PostActions = {
 	saveEdited: function( site, attributes, context, callback, options ) {
 		var post, postHandle, query, changedAttributes, rawContent, mode, isNew;
 
+		// TODO: skip this edit if `attributes` are `null`. That means
+		// we don't want to do any additional edit before saving.
 		Dispatcher.handleViewAction( {
 			type: 'EDIT_POST',
 			post: attributes,

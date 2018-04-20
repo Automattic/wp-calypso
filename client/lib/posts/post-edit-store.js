@@ -145,7 +145,7 @@ function set( attributes ) {
 	};
 
 	// merge metadata with a custom function
-	if ( attributes.metadata ) {
+	if ( attributes && attributes.metadata ) {
 		updatedPost.metadata = mergeMetadataEdits( _post.metadata, attributes.metadata );
 	}
 
