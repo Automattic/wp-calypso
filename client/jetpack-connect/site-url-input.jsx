@@ -75,6 +75,13 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		return 'https://' + getLocaleSlug() + '.wordpress.com/tos/';
 	}
 
+	isFormSubmitDisabled() {
+		const { isError, isFetching, url } = this.props;
+		const hasError = isError && 'notExists' !== isError;
+
+		return ! url || isFetching || hasError;
+	}
+
 	renderTermsOfServiceLink() {
 		return (
 			<p className="jetpack-connect__tos-link">
@@ -109,8 +116,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	render() {
-		const { isError, isFetching, onChange, onSubmit, translate, url, autoFocus } = this.props;
-		const hasError = isError && 'notExists' !== isError;
+		const { isFetching, onChange, onSubmit, translate, url, autoFocus } = this.props;
 
 		return (
 			<div>
@@ -135,7 +141,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 					<Button
 						className="jetpack-connect__connect-button"
 						primary
-						disabled={ ! url || isFetching || hasError }
+						disabled={ this.isFormSubmitDisabled() }
 						onClick={ onSubmit }
 					>
 						{ this.renderButtonLabel() }
