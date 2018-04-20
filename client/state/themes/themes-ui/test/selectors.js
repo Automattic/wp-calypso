@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getBackPath } from '../selectors';
+import { getBackPath, isThemesBannerVisible } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getBackPath', () => {
@@ -66,6 +66,19 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( getBackPath( state ) ).to.eql( '/themes/example.wordpress.com' );
+		} );
+	} );
+
+	describe( '#isThemesBannerVisible', () => {
+		test( 'Should return the showcase banner visible state', () => {
+			const state = {
+				themes: {
+					themesUI: {
+						themesBannerVisible: false,
+					},
+				},
+			};
+			expect( isThemesBannerVisible( state ) ).to.eql( false );
 		} );
 	} );
 } );
