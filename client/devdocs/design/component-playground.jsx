@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  */
 import ClipboardButton from 'components/forms/clipboard-button';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
-import playgroundScope from 'devdocs/design/playground-scope';
+import * as playgroundScope from 'devdocs/design/playground-scope';
 
 class ComponentPlayground extends Component {
 	static propTypes = {

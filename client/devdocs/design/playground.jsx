@@ -16,12 +16,12 @@ import jsxToString from 'jsx-to-string';
  * Internal dependencies
  */
 import config from 'config';
-import componentExamples from 'devdocs/design/component-examples';
+import * as componentExamples from 'devdocs/design/component-examples';
 import DocumentHead from 'components/data/document-head';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import Main from 'components/main';
 import DropdownItem from 'components/select-dropdown/item';
-import playgroundScope from 'devdocs/design/playground-scope';
+import * as playgroundScope from 'devdocs/design/playground-scope';
 import SelectDropdown from 'components/select-dropdown';
 
 class DesignAssets extends React.Component {

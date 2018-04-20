@@ -1,154 +1,77 @@
 /**
  * Internal dependencies
  */
-import ActionCard from 'components/action-card/docs/example';
-import Accordions from 'components/accordion/docs/example';
-import BackButton from 'components/back-button/docs/example';
-import Badge from 'components/badge/docs/example';
-import Banner from 'components/banner/docs/example';
-import BulkSelect from 'components/bulk-select/docs/example';
-import ButtonGroups from 'components/button-group/docs/example';
-import Buttons from 'components/button/docs/example';
-import Cards from 'components/card/docs/example';
-import CardHeading from 'components/card-heading/docs/example';
-import Checklist from 'components/checklist/docs/example';
-import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
-import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
-import Collection from 'devdocs/design/search-collection';
-import Count from 'components/count/docs/example';
-import CountedTextareas from 'components/forms/counted-textarea/docs/example';
-import DatePicker from 'components/date-picker/docs/example';
-import DropZones from 'components/drop-zone/docs/example';
-import EllipsisMenu from 'components/ellipsis-menu/docs/example';
-import EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
-import EmojifyExample from 'components/emojify/docs/example';
-import EmptyContent from 'components/empty-content/docs/example';
-import ExternalLink from 'components/external-link/docs/example';
-import FAQ from 'components/faq/docs/example';
-import FeatureGate from 'components/feature-example/docs/example';
-import FilePickers from 'components/file-picker/docs/example';
-import FocusableExample from 'components/focusable/docs/example';
-import FoldableCard from 'components/foldable-card/docs/example';
-import FormattedHeader from 'components/formatted-header/docs/example';
-import FormFields from 'components/forms/docs/example';
-import Gauge from 'components/gauge/docs/example';
-import GlobalNotices from 'components/global-notices/docs/example';
-import Gravatar from 'components/gravatar/docs/example';
-import HeaderButton from 'components/header-button/docs/example';
-import Headers from 'components/header-cake/docs/example';
-import ImagePreloader from 'components/image-preloader/docs/example';
-import InfoPopover from 'components/info-popover/docs/example';
-import InputChrono from 'components/input-chrono/docs/example';
-import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
-import JetpackLogoExample from 'components/jetpack-logo/docs/example';
-import LanguagePicker from 'components/language-picker/docs/example';
-import ListEnd from 'components/list-end/docs/example';
-import Notices from 'components/notice/docs/example';
-import PaginationExample from 'components/pagination/docs/example';
-import PaymentLogo from 'components/payment-logo/docs/example';
-import PieChart from 'components/pie-chart/docs/example';
-import Popovers from 'components/popover/docs/example';
-import ProgressBar from 'components/progress-bar/docs/example';
-import Ranges from 'components/forms/range/docs/example';
-import Rating from 'components/rating/docs/example';
-import Ribbon from 'components/ribbon/docs/example';
-import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
-import SearchDemo from 'components/search/docs/example';
-import SectionHeader from 'components/section-header/docs/example';
-import SectionNav from 'components/section-nav/docs/example';
-import SegmentedControl from 'components/segmented-control/docs/example';
-import SelectDropdown from 'components/select-dropdown/docs/example';
-import ShareButton from 'components/share-button/docs/example';
-import SiteTitleControl from 'components/site-title/docs/example';
-import SocialLogos from 'social-logos/example';
-import Spinner from 'components/spinner/docs/example';
-import SpinnerButton from 'components/spinner-button/docs/example';
-import SpinnerLine from 'components/spinner-line/docs/example';
-import SplitButton from 'components/split-button/docs/example';
-import Suggestions from 'components/suggestions/docs/example';
-import TextDiff from 'components/text-diff/docs/example';
-import TileGrid from 'components/tile-grid/docs/example';
-import TimeSince from 'components/time-since/docs/example';
-import Timezone from 'components/timezone/docs/example';
-import TokenFields from 'components/token-field/docs/example';
-import Tooltip from 'components/tooltip/docs/example';
-import Version from 'components/version/docs/example';
-import VerticalMenu from 'components/vertical-menu/docs/example';
-import Wizard from 'components/wizard/docs/example';
-
-export default {
-	ActionCard,
-	Accordions,
-	BackButton,
-	Badge,
-	Banner,
-	BulkSelect,
-	ButtonGroups,
-	Buttons,
-	Cards,
-	CardHeading,
-	Checklist,
-	ClipboardButtonInput,
-	ClipboardButtons,
-	Collection,
-	Count,
-	CountedTextareas,
-	DatePicker,
-	DropZones,
-	EllipsisMenu,
-	EmbedDialog,
-	EmojifyExample,
-	EmptyContent,
-	ExternalLink,
-	FAQ,
-	FeatureGate,
-	FilePickers,
-	FocusableExample,
-	FoldableCard,
-	FormattedHeader,
-	FormFields,
-	Gauge,
-	GlobalNotices,
-	Gravatar,
-	HeaderButton,
-	Headers,
-	ImagePreloader,
-	InfoPopover,
-	InputChrono,
-	JetpackColophonExample,
-	JetpackLogoExample,
-	LanguagePicker,
-	ListEnd,
-	Notices,
-	PaginationExample,
-	PaymentLogo,
-	PieChart,
-	Popovers,
-	ProgressBar,
-	Ranges,
-	Rating,
-	Ribbon,
-	ScreenReaderTextExample,
-	SearchDemo,
-	SectionHeader,
-	SectionNav,
-	SegmentedControl,
-	SelectDropdown,
-	ShareButton,
-	SiteTitleControl,
-	SocialLogos,
-	Spinner,
-	SpinnerButton,
-	SpinnerLine,
-	SplitButton,
-	Suggestions,
-	TextDiff,
-	TileGrid,
-	TimeSince,
-	Timezone,
-	TokenFields,
-	Tooltip,
-	Version,
-	VerticalMenu,
-	Wizard,
-};
+export ActionCard from 'components/action-card/docs/example';
+export Accordions from 'components/accordion/docs/example';
+export BackButton from 'components/back-button/docs/example';
+export Badge from 'components/badge/docs/example';
+export Banner from 'components/banner/docs/example';
+export BulkSelect from 'components/bulk-select/docs/example';
+export ButtonGroups from 'components/button-group/docs/example';
+export Buttons from 'components/button/docs/example';
+export Cards from 'components/card/docs/example';
+export CardHeading from 'components/card-heading/docs/example';
+export Checklist from 'components/checklist/docs/example';
+export ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
+export ClipboardButtons from 'components/forms/clipboard-button/docs/example';
+export Collection from 'devdocs/design/search-collection';
+export Count from 'components/count/docs/example';
+export CountedTextareas from 'components/forms/counted-textarea/docs/example';
+export DatePicker from 'components/date-picker/docs/example';
+export DropZones from 'components/drop-zone/docs/example';
+export EllipsisMenu from 'components/ellipsis-menu/docs/example';
+export EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
+export EmojifyExample from 'components/emojify/docs/example';
+export EmptyContent from 'components/empty-content/docs/example';
+export ExternalLink from 'components/external-link/docs/example';
+export FAQ from 'components/faq/docs/example';
+export FeatureGate from 'components/feature-example/docs/example';
+export FilePickers from 'components/file-picker/docs/example';
+export FocusableExample from 'components/focusable/docs/example';
+export FoldableCard from 'components/foldable-card/docs/example';
+export FormattedHeader from 'components/formatted-header/docs/example';
+export FormFields from 'components/forms/docs/example';
+export Gauge from 'components/gauge/docs/example';
+export GlobalNotices from 'components/global-notices/docs/example';
+export Gravatar from 'components/gravatar/docs/example';
+export HeaderButton from 'components/header-button/docs/example';
+export Headers from 'components/header-cake/docs/example';
+export ImagePreloader from 'components/image-preloader/docs/example';
+export InfoPopover from 'components/info-popover/docs/example';
+export InputChrono from 'components/input-chrono/docs/example';
+export JetpackColophonExample from 'components/jetpack-colophon/docs/example';
+export JetpackLogoExample from 'components/jetpack-logo/docs/example';
+export LanguagePicker from 'components/language-picker/docs/example';
+export ListEnd from 'components/list-end/docs/example';
+export Notices from 'components/notice/docs/example';
+export PaginationExample from 'components/pagination/docs/example';
+export PaymentLogo from 'components/payment-logo/docs/example';
+export PieChart from 'components/pie-chart/docs/example';
+export Popovers from 'components/popover/docs/example';
+export ProgressBar from 'components/progress-bar/docs/example';
+export Ranges from 'components/forms/range/docs/example';
+export Rating from 'components/rating/docs/example';
+export Ribbon from 'components/ribbon/docs/example';
+export ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
+export SearchDemo from 'components/search/docs/example';
+export SectionHeader from 'components/section-header/docs/example';
+export SectionNav from 'components/section-nav/docs/example';
+export SegmentedControl from 'components/segmented-control/docs/example';
+export SelectDropdown from 'components/select-dropdown/docs/example';
+export ShareButton from 'components/share-button/docs/example';
+export SiteTitleControl from 'components/site-title/docs/example';
+export SocialLogos from 'social-logos/example';
+export Spinner from 'components/spinner/docs/example';
+export SpinnerButton from 'components/spinner-button/docs/example';
+export SpinnerLine from 'components/spinner-line/docs/example';
+export SplitButton from 'components/split-button/docs/example';
+export Suggestions from 'components/suggestions/docs/example';
+export TextDiff from 'components/text-diff/docs/example';
+export TileGrid from 'components/tile-grid/docs/example';
+export TimeSince from 'components/time-since/docs/example';
+export Timezone from 'components/timezone/docs/example';
+export TokenFields from 'components/token-field/docs/example';
+export Tooltip from 'components/tooltip/docs/example';
+export Version from 'components/version/docs/example';
+export VerticalMenu from 'components/vertical-menu/docs/example';
+export Wizard from 'components/wizard/docs/example';
