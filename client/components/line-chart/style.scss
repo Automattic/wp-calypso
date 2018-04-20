@@ -16,6 +16,21 @@
 	stroke-width: 3px;
 }
 
+.line-chart__area-0 {
+	fill: $blue-dark;
+	opacity: 0.6;
+}
+
+.line-chart__area-1 {
+	fill: $blue-medium;
+	opacity: 0.3;
+}
+
+.line-chart__area-2 {
+	fill: $blue-light;
+	opacity: 0.1;
+}
+
 .line-chart__line-point-0 {
 	fill: $white;
 	stroke: $blue-dark;

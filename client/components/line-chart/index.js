@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { extent as d3Extent } from 'd3-array';
-import { line as d3Line, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
+import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
 import { select as d3Select } from 'd3-selection';
@@ -29,6 +29,8 @@ class LineChart extends Component {
 		margin: PropTypes.object,
 		aspectRatio: PropTypes.number,
 		renderTooltipForDatanum: PropTypes.func,
+		yAxisMode: PropTypes.oneOf( [ 'relative', 'absolute' ] ),
+		fillArea: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -40,6 +42,8 @@ class LineChart extends Component {
 			left: 30,
 		},
 		renderTooltipForDatanum: datum => datum.value,
+		yAxisMode: 'absolute',
+		fillArea: false,
 	};
 
 	state = {
@@ -82,6 +86,23 @@ class LineChart extends Component {
 				.attr( 'class', `line-chart__line-${ colorNum }` )
 				.attr( 'd', line( dataSeries ) );
 		} );
+
+		if ( this.props.fillArea ) {
+			const area = d3Area()
+				.x( datum => xScale( datum.date ) )
+				.y0( yScale( 0 ) )
+				.y1( datum => yScale( datum.value ) )
+				.curve( d3MonotoneXCurve );
+
+			data.forEach( ( dataSeries, index ) => {
+				const colorNum = index % 3;
+
+				svg
+					.append( 'path' )
+					.attr( 'class', `line-chart__area-${ colorNum }` )
+					.attr( 'd', area( dataSeries ) );
+			} );
+		}
 	};
 
 	drawPoints = ( svg, params ) => {
@@ -145,7 +166,7 @@ class LineChart extends Component {
 	};
 
 	getParams = node => {
-		const { aspectRatio, margin, data } = this.props;
+		const { aspectRatio, margin, data, yAxisMode } = this.props;
 		const newWidth = node.offsetWidth;
 		const newHeight = newWidth / aspectRatio;
 
@@ -167,7 +188,7 @@ class LineChart extends Component {
 				.range( [ margin.left, newWidth - margin.right ] ),
 			yScale: d3ScaleLinear()
 				.domain( [
-					valueExtent[ 0 ] - valueDomainAdjustment,
+					yAxisMode === 'relative' ? valueExtent[ 0 ] - valueDomainAdjustment : 0,
 					valueExtent[ 1 ] + valueDomainAdjustment,
 				] )
 				.range( [ newHeight - margin.bottom, margin.top ] )
