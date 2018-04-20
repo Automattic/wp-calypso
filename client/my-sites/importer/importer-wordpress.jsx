@@ -25,6 +25,9 @@ class ImporterWordPress extends React.PureComponent {
 	static displayName = 'ImporterWordPress';
 
 	static propTypes = {
+		site: PropTypes.shape( {
+			title: PropTypes.string.isRequired,
+		} ).isRequired,
 		importerStatus: PropTypes.shape( {
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,

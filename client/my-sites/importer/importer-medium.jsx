@@ -4,6 +4,7 @@
  * External dependencies
  */
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -22,6 +23,23 @@ const importerData = {
 
 class ImporterMedium extends React.PureComponent {
 	static displayName = 'ImporterMedium';
+
+	static propTypes = {
+		site: PropTypes.shape( {
+			title: PropTypes.string.isRequired,
+		} ).isRequired,
+		importerStatus: PropTypes.shape( {
+			filename: PropTypes.string,
+			importerState: PropTypes.string.isRequired,
+			errorData: PropTypes.shape( {
+				type: PropTypes.string.isRequired,
+				description: PropTypes.string.isRequired,
+			} ),
+			percentComplete: PropTypes.number,
+			siteTitle: PropTypes.string.isRequired,
+			statusMessage: PropTypes.string,
+		} ),
+	};
 
 	render() {
 		importerData.description = this.props.translate(
