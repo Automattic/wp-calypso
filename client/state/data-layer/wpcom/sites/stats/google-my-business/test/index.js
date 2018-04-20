@@ -90,26 +90,26 @@ describe( '#receiveStats', () => {
 					timeZone: 'Europe/London',
 					metricValues: [ {
 						metric: 'QUERIES_DIRECT',
-						total_value: {
-							time_dimension: {
+						totalValue: {
+							timeDimension: {
 								timeRange: {
 									endTime: '2018-04-19T23:59:59.900Z',
 									startTime: '2018-04-13T00:00:00Z',
 								},
 							},
-							metric_option: 'AGGREGATED_TOTAL',
+							metricOption: 'AGGREGATED_TOTAL',
 							value: 0,
 						},
 					}, {
 						metric: 'QUERIES_INDIRECT',
-						total_value: {
-							time_dimension: {
+						totalValue: {
+							timeDimension: {
 								timeRange: {
 									endTime: '2018-04-19T23:59:59.900Z',
 									startTime: '2018-04-13T00:00:00Z',
 								},
 							},
-							metric_option: 'AGGREGATED_TOTAL',
+							metricOption: 'AGGREGATED_TOTAL',
 							value: 1,
 						},
 					} ],

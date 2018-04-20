@@ -3,20 +3,22 @@
 /**
  * External dependencies
  */
-import { noop, mapKeys, camelCase } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { GOOGLE_MY_BUSINESS_STATS_REQUEST } from 'state/action-types';
+import { convertToCamelCase } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { GOOGLE_MY_BUSINESS_STATS_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 
-export const fromApi = data => mapKeys( data, ( value, key ) => camelCase( key ) );
+export const fromApi = data => convertToCamelCase( data );
 
 export const fetchGoogleMyBusinessStats = ( { dispatch }, action ) => {
 	const { siteId, statType, interval = 'week', aggregation = 'total' } = action;
+
 	dispatch(
 		http(
 			{
@@ -41,6 +43,7 @@ export const fetchGoogleMyBusinessStats = ( { dispatch }, action ) => {
  */
 export const receiveStats = ( { dispatch }, action, data ) => {
 	const { siteId, statType, interval, aggregation } = action;
+
 	dispatch(
 		receiveGoogleMyBusinessStats( siteId, statType, interval, aggregation, fromApi( data ) )
 	);
