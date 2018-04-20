@@ -251,12 +251,14 @@ export function sso( context, next ) {
 
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-	context.primary = React.createElement( JetpackSsoForm, {
-		path: context.path,
-		locale: context.params.locale,
-		siteId: context.params.siteId,
-		ssoNonce: context.params.ssoNonce,
-	} );
+	context.primary = (
+		<JetpackSsoForm
+			path={ context.path }
+			locale={ context.params.locale }
+			siteId={ context.params.siteId }
+			ssoNonce={ context.params.ssoNonce }
+		/>
+	);
 	next();
 }
 
