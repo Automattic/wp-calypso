@@ -40,12 +40,11 @@ class ImporterMedium extends React.PureComponent {
 			'Import posts, tags, images, and videos from a Medium export file.'
 		),
 		uploadDescription: this.props.translate(
-			'Upload a {{b}}Medium export file{{/b}} to start importing into {{b2}}%(title)s{{/b2}}.',
+			'Upload a {{b}}Medium export file{{/b}} to start importing into {{b}}%(title)s{{/b}}.',
 			{
 				args: { title: this.props.site.title },
 				components: {
 					b: <strong />,
-					b2: <strong />,
 				},
 			}
 		),

@@ -41,14 +41,13 @@ class ImporterWordPress extends React.PureComponent {
 		),
 		uploadDescription: this.props.translate(
 			'Upload a {{b}}WordPress export file{{/b}} to start ' +
-				'importing into {{b2}}%(title)s{{/b2}}. Check out our ' +
+				'importing into {{b}}%(title)s{{/b}}. Check out our ' +
 				'{{a}}WordPress export guide{{/a}} if you need ' +
 				'help exporting the file.',
 			{
 				args: { title: this.props.site.title },
 				components: {
 					b: <strong />,
-					b2: <strong />,
 					a: <a href="https://en.support.wordpress.com/export/" />,
 				},
 			}
