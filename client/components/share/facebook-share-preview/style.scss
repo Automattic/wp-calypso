@@ -88,4 +88,14 @@
 
 .facebook-share-preview__image-wrapper {
 	margin-top: 10px;
+	position: relative;
+	&:after {
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		bottom: 0;
+		content: '';
+		left: 0;
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
 }
