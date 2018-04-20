@@ -64,11 +64,9 @@ const removeSidebar = context =>
 
 const jetpackNewSiteSelector = context => {
 	removeSidebar( context );
-	context.primary = React.createElement( JetpackNewSite, {
-		path: context.path,
-		context: context,
-		locale: context.params.locale,
-	} );
+	context.primary = (
+		<JetpackNewSite path={ context.path } context={ context } locale={ context.params.locale } />
+	);
 };
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
