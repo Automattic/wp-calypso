@@ -4,7 +4,7 @@
  * @format
  */
 
-export const fallbackLinks = [
+const fallbackLinks = [
 	{
 		link: 'https://en.support.wordpress.com/business-plan/',
 		title: 'Uploading custom plugins and themes',
@@ -28,7 +28,7 @@ export const fallbackLinks = [
 	},
 ];
 
-export const contextLinksForSection = {
+const contextLinksForSection = {
 	stats: [
 		{
 			link: 'http://en.support.wordpress.com/stats/',
@@ -658,3 +658,10 @@ export const contextLinksForSection = {
 		},
 	],
 };
+
+export function getContextResults( section ) {
+	if ( contextLinksForSection[ section ] ) {
+		return contextLinksForSection[ section ];
+	}
+	return fallbackLinks;
+}

@@ -24,7 +24,7 @@ import {
 } from 'state/inline-help/selectors';
 import { getLastRouteAction } from 'state/ui/action-log/selectors';
 import { setSearchResults } from 'state/inline-help/actions';
-import { fallbackLinks, contextLinksForSection } from './contextual-help';
+import { getContextResults } from './contextual-help';
 
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
@@ -36,14 +36,6 @@ class InlineHelpSearchResults extends Component {
 	static defaultProps = {
 		translate: identity,
 		searchQuery: '',
-	};
-
-	getContextResults = () => {
-		const section = pathToSection( this.props.lastRoute.path );
-		if ( contextLinksForSection[ section ] ) {
-			return contextLinksForSection[ section ];
-		}
-		return fallbackLinks;
 	};
 
 	renderSearchResults() {
@@ -75,14 +67,16 @@ class InlineHelpSearchResults extends Component {
 	}
 
 	renderContextHelp() {
-		const links = this.getContextResults();
+		const section = pathToSection( this.props.lastRoute.path );
+		const links = getContextResults( section );
 		return (
 			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
 		);
 	}
 
 	componentDidMount() {
-		this.props.setSearchResults( '', this.getContextResults() );
+		const section = pathToSection( this.props.lastRoute.path );
+		this.props.setSearchResults( '', getContextResults( section ) );
 	}
 
 	onHelpLinkClick = event => {
