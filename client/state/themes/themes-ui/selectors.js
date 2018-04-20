@@ -24,5 +24,5 @@ export function getBackPath( state ) {
 
 //  Returns true if the theme showcase banner is currently visible
 export function isThemesBannerVisible( state ) {
-	return true === state.themes.themesUI.themesBannerVisibility;
+	return true === state.themes.themesUI.themesBannerVisible;
 }

@@ -9,6 +9,5 @@ import { THEMES_BANNER_HIDE } from 'state/action-types';
 export function hideThemesBanner() {
 	return {
 		type: THEMES_BANNER_HIDE,
-		showing: false,
 	};
 }

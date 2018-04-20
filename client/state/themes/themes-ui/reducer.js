@@ -16,12 +16,12 @@ function backPath( state = '/themes', action ) {
 	return state;
 }
 
-function themesBannerVisibility( state = true, action ) {
+function themesBannerVisible( state = true, action ) {
 	switch ( action.type ) {
 		case THEMES_BANNER_HIDE:
-			return action.showing !== undefined ? action.showing : state;
+			return false;
 	}
 	return state;
 }
 
-export default combineReducers( { backPath, themesBannerVisibility } );
+export default combineReducers( { backPath, themesBannerVisible } );
