@@ -49,7 +49,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		};
 
 		if ( ! props.data ) {
-			props.requestGoogleMyBusinessStats( props.siteId, props.statType, props.interval, 'total' );
+			props.requestGoogleMyBusinessStats( props.siteId, props.statType, props.interval );
 		}
 	}
 
@@ -69,7 +69,6 @@ class GoogleMyBusinessStatsChart extends Component {
 				nextProps.siteId,
 				nextProps.statType,
 				nextProps.interval,
-				'total'
 			);
 		}
 	}
