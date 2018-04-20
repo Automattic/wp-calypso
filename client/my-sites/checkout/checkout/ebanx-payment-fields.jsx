@@ -39,26 +39,24 @@ export class EbanxPaymentFields extends Component {
 	createField = ( fieldName, componentClass, props ) => {
 		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
 		const isError = ! isEmpty( errorMessage );
+		const fieldProps = Object.assign(
+			{},
+			{
+				additionalClasses: `checkout__checkout-field ${ this.props.fieldClassName }`,
+				isError,
+				errorMessage: errorMessage[ 0 ],
+				name: fieldName,
+				onBlur: this.onFieldChange,
+				onChange: this.onFieldChange,
+				value: this.props.getFieldValue( fieldName ),
+				autoComplete: 'off',
+				labelClass: 'checkout__form-label',
+			},
+			props
+		);
 
 		return includes( this.state.fields, fieldName )
-			? React.createElement(
-					componentClass,
-					Object.assign(
-						{},
-						{
-							additionalClasses: `checkout__checkout-field ${ this.props.fieldClassName }`,
-							isError,
-							errorMessage: errorMessage[ 0 ],
-							name: fieldName,
-							onBlur: this.onFieldChange,
-							onChange: this.onFieldChange,
-							value: this.props.getFieldValue( fieldName ),
-							autoComplete: 'off',
-							labelClass: 'checkout__form-label',
-						},
-						props
-					)
-				)
+			? React.createElement( componentClass, fieldProps )
 			: null;
 	};
 
