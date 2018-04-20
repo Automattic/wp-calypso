@@ -372,30 +372,21 @@ class JetpackSsoForm extends Component {
 		);
 	}
 
-	renderBadPathArgsError() {
-		const { translate } = this.props;
-		return (
-			<NoDirectAccessError
-				line={ translate(
-					'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-				) }
-				action={ translate( 'Read Single Sign-On Documentation' ) }
-				actionURL="https://jetpack.com/support/sso/"
-			/>
-		);
-	}
-
 	render() {
 		const { currentUser } = this.props;
 		const { ssoNonce, siteId, validationError, translate } = this.props;
 
 		if ( ! ssoNonce || ! siteId || validationError ) {
-			return this.renderBadPathArgsError();
+			return (
+				<NoDirectAccessError
+					line={ translate(
+						'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
+						{ components: { em: <em /> } }
+					) }
+					action={ translate( 'Read Single Sign-On Documentation' ) }
+					actionURL="https://jetpack.com/support/sso/"
+				/>
+			);
 		}
 
 		return (
