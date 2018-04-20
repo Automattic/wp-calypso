@@ -1,4 +1,4 @@
-Component Name
+Component Documentation Template
 ===
 
 _Use this template when documenting components. If you are creating a new component, you can copy and paste this entire document as a starting point. See the [Button documentation](../design/buttons) for a good example._
