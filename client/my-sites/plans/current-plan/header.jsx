@@ -14,7 +14,7 @@ import { invoke } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import PlanIcon from 'components/plans/plan-icon';
-import { PLANS_LIST, TYPE_FREE, TYPE_BUSINESS, GROUP_JETPACK } from 'lib/plans/constants';
+import { PLANS_LIST, TYPE_FREE, GROUP_JETPACK } from 'lib/plans/constants';
 import { planMatches } from 'lib/plans';
 import { managePurchase } from 'me/purchases/paths';
 
