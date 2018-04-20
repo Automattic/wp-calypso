@@ -7,12 +7,14 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { select as d3Select } from 'd3-selection';
+import { isEqual } from 'lodash';
 
 export default class D3Base extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		drawChart: PropTypes.func.isRequired,
 		getParams: PropTypes.func.isRequired,
+		data: PropTypes.any, // required to detect changes in data
 	};
 
 	state = {};
@@ -28,7 +30,16 @@ export default class D3Base extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		this.updateParams( nextProps );
+		// make sure we don't update the state when the props have not changed
+		// it would cause the svg component to be re-created, thus losing any bound events one could have set
+		if ( ! isEqual( this.props, nextProps ) ) {
+			this.updateParams( nextProps );
+		}
+	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		// make sure we don't re-render if the state has not changed
+		return ! isEqual( this.state, nextState );
 	}
 
 	componentDidUpdate() {
@@ -41,7 +52,7 @@ export default class D3Base extends Component {
 		delete this.chartRef.current;
 	}
 
-	updateParams = ( nextProps ) => {
+	updateParams = nextProps => {
 		const getParams = ( nextProps && nextProps.getParams ) || this.props.getParams;
 
 		this.setState( getParams( this.chartRef.current ), this.draw );
@@ -59,7 +70,8 @@ export default class D3Base extends Component {
 
 		div.selectAll( 'svg' ).remove();
 
-		const svg = div.append( 'svg' )
+		const svg = div
+			.append( 'svg' )
 			.attr( 'viewBox', `0 0 ${ width } ${ height }` )
 			.attr( 'preserveAspectRatio', 'xMidYMid meet' );
 

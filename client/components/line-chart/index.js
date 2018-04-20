@@ -141,11 +141,14 @@ class LineChart extends Component {
 	};
 
 	render() {
+		const { data } = this.props;
+
 		return (
 			<D3Base
 				className={ 'line-chart' }
 				drawChart={ this.drawChart }
 				getParams={ this.getParams }
+				data={ data }
 			/>
 		);
 	}
