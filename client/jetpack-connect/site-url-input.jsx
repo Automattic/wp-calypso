@@ -51,7 +51,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	handleKeyPress = event => {
-		if ( 13 === event.keyCode ) {
+		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() ) {
 			this.props.onSubmit();
 		}
 	};
