@@ -47,10 +47,14 @@ class GoogleMyBusinessStatsChart extends Component {
 		this.state = {
 			transformedData: this.transformData( props.data ),
 		};
+	}
 
-		if ( ! props.data ) {
-			props.requestGoogleMyBusinessStats( props.siteId, props.statType, props.interval );
-		}
+	componentDidMount() {
+		this.props.requestGoogleMyBusinessStats(
+			this.props.siteId,
+			this.props.statType,
+			this.props.interval
+		);
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -95,23 +99,28 @@ class GoogleMyBusinessStatsChart extends Component {
 	render() {
 		const { chartTitle, description, interval, title } = this.props;
 		const { transformedData } = this.state;
+
 		return (
 			<div>
 				<SectionHeader label={ title } />
+
 				<Card>
 					{ description && (
 						<div>
 							<CardHeading tagName={ 'h2' } size={ 16 }>
 								{ description }
 							</CardHeading>
+
 							<hr className="gmb-stats__metric-hr" />
 						</div>
 					) }
+
 					<select value={ interval } onChange={ this.onIntervalChange }>
 						<option value="week">{ 'Week' }</option>
 						<option value="month">{ 'Month' }</option>
 						<option value="quarter">{ 'Quarter' }</option>
 					</select>
+
 					<div className="gmb-stats__metric-chart">
 						<PieChart data={ transformedData } title={ chartTitle } />
 						<PieChartLegend data={ transformedData } />
@@ -126,6 +135,7 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const interval = getInterval( state, siteId, ownProps.statType );
+
 		return {
 			siteId,
 			interval,
