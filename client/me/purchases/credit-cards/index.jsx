@@ -16,6 +16,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
 import CreditCardDelete from './credit-card-delete';
+import CreditCard from 'components/credit-card';
 import {
 	getStoredCards,
 	hasLoadedStoredCardsFromServer,
@@ -39,13 +40,13 @@ class CreditCards extends Component {
 			);
 		}
 
-		return this.props.cards.map( function( card ) {
+		return this.props.cards.map( card => {
 			return (
-				<div className="credit-cards__single-card" key={ card.stored_details_id }>
+				<CreditCard key={ card.stored_details_id }>
 					<CreditCardDelete card={ card } />
-				</div>
+				</CreditCard>
 			);
-		}, this );
+		} );
 	}
 
 	goToAddCreditCard() {
