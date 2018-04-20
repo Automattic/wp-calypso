@@ -74,10 +74,6 @@ class GoogleMyBusinessStatsChart extends Component {
 		}
 	}
 
-	shouldComponentUpdate( nextProps ) {
-		return this.props.interval !== nextProps.interval || this.props.data !== nextProps.data;
-	}
-
 	transformData( data ) {
 		if ( ! data ) {
 			return data;
