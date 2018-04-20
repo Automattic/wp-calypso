@@ -3,6 +3,7 @@
 /**
  * Internal dependencies
  */
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { handleRemoveError, handleRemoveSuccess, removeConnectedApplication } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
@@ -36,14 +37,12 @@ describe( 'handleRemoveSuccess()', () => {
 
 		expect( actions ).toHaveLength( 2 );
 		expect( actions[ 0 ] ).toEqual( deleteConnectedApplicationSuccess( appId ) );
-		expect( actions[ 1 ] ).toMatchObject( {
-			notice: expect.objectContaining( {
+		expect( actions[ 1 ] ).toMatchObject(
+			successNotice( 'This application no longer has access to your WordPress.com account.', {
 				duration: 8000,
-				noticeId: `connected-app-notice-success-${ appId }`,
-				status: 'is-success',
-				text: 'This application no longer has access to your WordPress.com account.',
-			} ),
-		} );
+				id: `connected-app-notice-success-${ appId }`,
+			} )
+		);
 	} );
 } );
 
@@ -51,13 +50,11 @@ describe( 'handleRemoveError()', () => {
 	test( 'should return a connected application remove failure action', () => {
 		const action = handleRemoveError();
 
-		expect( action ).toMatchObject( {
-			notice: expect.objectContaining( {
+		expect( action ).toMatchObject(
+			errorNotice( 'The connected application was not disconnected. Please try again.', {
 				duration: 8000,
-				noticeId: 'connected-app-notice-error',
-				status: 'is-error',
-				text: 'The connected application was not disconnected. Please try again.',
-			} ),
-		} );
+				id: 'connected-app-notice-error',
+			} )
+		);
 	} );
 } );
