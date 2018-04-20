@@ -5,6 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,10 +24,12 @@ class PlansStatic extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string,
 		interval: PropTypes.string,
+		onPlanSelect: PropTypes.func,
 	};
 
 	static defaultProps = {
 		basePlansPath: '/jetpack/connect/store',
+		onPlanSelect: noop,
 	};
 
 	storeSelectedPlan = cartItem => {
@@ -35,6 +38,10 @@ class PlansStatic extends Component {
 		} );
 
 		storePlan( cartItem ? cartItem.product_slug : PLAN_JETPACK_FREE );
+
+		setTimeout( () => {
+			this.props.onPlanSelect();
+		}, 100 );
 	};
 
 	handleSkipButtonClick = () => {

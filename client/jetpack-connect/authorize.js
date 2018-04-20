@@ -56,6 +56,7 @@ import {
 	isCalypsoStartedConnection,
 	isSsoApproved,
 	retrieveMobileRedirect,
+	retrievePlan,
 } from './persistence-utils';
 import {
 	authorize as authorizeAction,
@@ -553,6 +554,11 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
+	onPlanSelect = () => {
+		// Hack: we're storing selected plan in a cookie, and this needs to force re-render.
+		this.forceUpdate();
+	};
+
 	renderFooterLinks() {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
@@ -625,10 +631,16 @@ export class JetpackAuthorize extends Component {
 
 	render() {
 		const { authorizeSuccess } = this.props.authorizationData;
-		const { interval } = this.props;
+		const { interval, selectedPlan } = this.props;
 
-		if ( this.isAuthorizing() || authorizeSuccess ) {
-			return <PlansStatic interval={ interval } basePlansPath={ '/jetpack/connect/authorize' } />;
+		if ( ! selectedPlan && ( this.isAuthorizing() || authorizeSuccess ) ) {
+			return (
+				<PlansStatic
+					basePlansPath={ '/jetpack/connect/authorize' }
+					interval={ interval }
+					onPlanSelect={ this.onPlanSelect }
+				/>
+			);
 		}
 
 		return (
@@ -660,6 +672,7 @@ export default connect(
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
+		const selectedPlan = retrievePlan();
 
 		return {
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
@@ -672,6 +685,7 @@ export default connect(
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
 			mobileAppRedirect,
+			selectedPlan,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
