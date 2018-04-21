@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { moment } from 'i18n-calypso';
-import { flatten, isDate, omit, slice, some, values, without } from 'lodash';
+import { compact, flatten, isDate, omit, slice, some, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,9 +19,7 @@ const PAGE_SIZE = 5;
  * @param {Date} date date to be formatted
  * @returns {String}  formatted date
  */
-const formatDate = date => {
-	return moment( date ).format( 'll' );
-};
+const formatDate = date => moment( date ).format( 'll' );
 
 /**
  * Utility function extracting searchable strings from a single transaction
@@ -33,7 +31,7 @@ const getSearchableStrings = transaction => {
 		transactionItems = transaction.items || [],
 		itemStrings = flatten( transactionItems.map( values ) );
 
-	return without( rootStrings.concat( itemStrings ), null, undefined );
+	return compact( rootStrings.concat( itemStrings ) );
 };
 
 /**
@@ -42,9 +40,9 @@ const getSearchableStrings = transaction => {
  * @param {String} searchQuery search query
  * @returns {Array}            search result
  */
-const search = ( transactions, searchQuery ) => {
-	return transactions.filter( function( transaction ) {
-		return some( getSearchableStrings( transaction ), function( val ) {
+const search = ( transactions, searchQuery ) =>
+	transactions.filter( transaction =>
+		some( getSearchableStrings( transaction ), val => {
 			if ( isDate( val ) ) {
 				val = formatDate( val );
 			}
@@ -53,9 +51,8 @@ const search = ( transactions, searchQuery ) => {
 			const needle = searchQuery.toLowerCase();
 
 			return haystack.indexOf( needle ) !== -1;
-		} );
-	} );
-};
+		} )
+	);
 
 /**
  * Returns the billing transactions filtered by the filters defined in state.billingTransactions.transactionFilters tree
@@ -76,9 +73,9 @@ export default createSelector(
 		}
 
 		const { app, date, page, query } = getBillingTransactionFilters( state, transactionType );
-		let results = search( transactions, query );
+		let results = query ? search( transactions, query ) : transactions;
 		if ( date && date.month && date.operator ) {
-			results = results.filter( function( transaction ) {
+			results = results.filter( transaction => {
 				const transactionDate = moment( transaction.date );
 
 				if ( 'equal' === date.operator ) {
@@ -90,9 +87,7 @@ export default createSelector(
 		}
 
 		if ( app && app !== 'all' ) {
-			results = results.filter( function( transaction ) {
-				return transaction.service === app;
-			} );
+			results = results.filter( transaction => transaction.service === app );
 		}
 
 		const total = results.length;
@@ -106,15 +101,8 @@ export default createSelector(
 			pageSize: PAGE_SIZE,
 		};
 	},
-	( state, transactionType ) => {
-		const filters = getBillingTransactionFilters( state, transactionType );
-
-		return [
-			getBillingTransactionsByType( state, transactionType ),
-			filters.app,
-			filters.date,
-			filters.page,
-			filters.query,
-		];
-	}
+	( state, transactionType ) => [
+		getBillingTransactionsByType( state, transactionType ),
+		...values( getBillingTransactionFilters( state, transactionType ) ),
+	]
 );

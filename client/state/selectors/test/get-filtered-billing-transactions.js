@@ -4,6 +4,7 @@
  */
 import { moment } from 'i18n-calypso';
 import { cloneDeep, slice } from 'lodash';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -176,7 +177,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.ui.billingTransactions.past = {
 				date: { month: null, operator: null },
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result ).toEqual( {
 				pageSize: PAGE_SIZE,
 				total: 10,
@@ -194,7 +195,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.ui.billingTransactions.past = {
 				date: { month: '2018-03', operator: 'equal' },
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 3 );
 			expect( result.transactions.length ).toEqual( 3 );
 			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 2 );
@@ -207,7 +208,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.ui.billingTransactions.past = {
 				date: { month: '2017-12', operator: 'before' },
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 2 );
 			expect( result.transactions.length ).toEqual( 2 );
 			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 10 );
@@ -217,7 +218,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 	describe( 'app filter', () => {
 		test( 'returns the first page of all transactions when the filter is empty', () => {
-			const result = getFilteredBillingTransactions( state, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( state ), 'past' );
 			expect( result ).toEqual( {
 				pageSize: PAGE_SIZE,
 				total: 10,
@@ -235,7 +236,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.ui.billingTransactions.past = {
 				app: 'Store Services',
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 5 );
 			expect( result.transactions.length ).toEqual( 5 );
 			result.transactions.forEach( transaction => {
@@ -246,7 +247,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 	describe( 'search query', () => {
 		test( 'returns all transactions when the filter is empty', () => {
-			const result = getFilteredBillingTransactions( state, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( state ), 'past' );
 			expect( result ).toEqual( {
 				pageSize: PAGE_SIZE,
 				total: 10,
@@ -264,7 +265,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.ui.billingTransactions.past = {
 				query: 'mastercard',
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 4 );
 			expect( result.transactions.length ).toEqual( 4 );
 			result.transactions.forEach( transaction => {
@@ -277,7 +278,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.ui.billingTransactions.past = {
 				query: '$3.50',
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 3 );
 			expect( result.transactions.length ).toEqual( 3 );
 			expect( result.transactions[ 0 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
@@ -296,7 +297,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				date: { month: '2018-03', operator: 'equal' },
 				app: 'Store Services',
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 2 );
 			expect( result.transactions.length ).toEqual( 2 );
 			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 2 );
@@ -311,7 +312,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				app: 'Store Services',
 				query: '$3.50',
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 1 );
 			expect( result.transactions.length ).toEqual( 1 );
 			expect( result.transactions[ 0 ].items ).toMatchObject( [
@@ -327,7 +328,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				date: { month: '2018-05', operator: 'equal' },
 				query: '$3.50',
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 1 );
 			expect( result.transactions.length ).toEqual( 1 );
 			expect( result.transactions[ 0 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
@@ -341,7 +342,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				query: 'visa',
 				app: 'WordPress.com',
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 1 );
 			expect( result.transactions.length ).toEqual( 1 );
 			expect( result.transactions[ 0 ].cc_type ).toEqual( 'visa' );
@@ -356,7 +357,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.ui.billingTransactions.past = {
 				date: { month: '2019-01', operator: 'equal' },
 			};
-			const result = getFilteredBillingTransactions( testState, 'past' );
+			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result ).toEqual( {
 				total: 0,
 				pageSize: PAGE_SIZE,
