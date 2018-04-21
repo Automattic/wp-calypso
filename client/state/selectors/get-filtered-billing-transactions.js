@@ -9,8 +9,7 @@ import { flatten, isDate, omit, slice, some, values, without } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getPastBillingTransactions from './get-past-billing-transactions';
-import getUpcomingBillingTransactions from './get-upcoming-billing-transactions';
+import getBillingTransactionsByType from './get-billing-transactions-by-type';
 import getBillingTransactionFilters from './get-billing-transaction-filters';
 
 const PAGE_SIZE = 5;
@@ -67,10 +66,7 @@ const search = ( transactions, searchQuery ) => {
  */
 export default createSelector(
 	( state, transactionType ) => {
-		const transactions =
-			'upcoming' === transactionType
-				? getUpcomingBillingTransactions( state )
-				: getPastBillingTransactions( state );
+		const transactions = getBillingTransactionsByType( state, transactionType );
 		if ( ! transactions ) {
 			return {
 				transactions,
@@ -114,9 +110,7 @@ export default createSelector(
 		const filters = getBillingTransactionFilters( state, transactionType );
 
 		return [
-			'upcoming' === transactionType
-				? getUpcomingBillingTransactions( state )
-				: getPastBillingTransactions( state ),
+			getBillingTransactionsByType( state, transactionType ),
 			filters.app,
 			filters.date,
 			filters.page,

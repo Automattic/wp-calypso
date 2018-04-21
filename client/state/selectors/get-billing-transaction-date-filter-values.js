@@ -9,8 +9,7 @@ import { forEach, orderBy, range } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getPastBillingTransactions from './get-past-billing-transactions';
-import getUpcomingBillingTransactions from './get-upcoming-billing-transactions';
+import getBillingTransactionsByType from './get-billing-transactions-by-type';
 
 /**
  * Based on the transactions list, returns metadata for rendering the date filters with counts
@@ -21,10 +20,7 @@ import getUpcomingBillingTransactions from './get-upcoming-billing-transactions'
  */
 export default createSelector(
 	( state, transactionType ) => {
-		const transactions =
-			'upcoming' === transactionType
-				? getUpcomingBillingTransactions( state )
-				: getPastBillingTransactions( state );
+		const transactions = getBillingTransactionsByType( state, transactionType );
 
 		if ( ! transactions ) {
 			return [];
@@ -62,9 +58,5 @@ export default createSelector(
 
 		return orderBy( result, 'key', 'desc' );
 	},
-	( state, transactionType ) => [
-		'upcoming' === transactionType
-			? getUpcomingBillingTransactions( state )
-			: getPastBillingTransactions( state ),
-	]
+	( state, transactionType ) => [ getBillingTransactionsByType( state, transactionType ) ]
 );
