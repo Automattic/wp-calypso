@@ -58,7 +58,6 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 		expect( result ).toEqual( [
 			{
 				count: 1,
-				key: '2018-05',
 				title: 'May 2018',
 				value: {
 					month: '2018-05',
@@ -67,7 +66,6 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 1,
-				key: '2018-04',
 				title: 'Apr 2018',
 				value: {
 					month: '2018-04',
@@ -76,7 +74,6 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 3,
-				key: '2018-03',
 				title: 'Mar 2018',
 				value: {
 					month: '2018-03',
@@ -85,7 +82,6 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 0,
-				key: '2018-02',
 				title: 'Feb 2018',
 				value: {
 					month: '2018-02',
@@ -94,7 +90,6 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 1,
-				key: '2018-01',
 				title: 'Jan 2018',
 				value: {
 					month: '2018-01',
@@ -103,7 +98,6 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 2,
-				key: '2017-12',
 				title: 'Dec 2017',
 				value: {
 					month: '2017-12',
@@ -112,10 +106,9 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			{
 				count: 2,
-				key: '2017-11',
 				title: 'Older',
 				value: {
-					month: '2017-11',
+					month: '2017-12',
 					operator: 'before',
 				},
 			},

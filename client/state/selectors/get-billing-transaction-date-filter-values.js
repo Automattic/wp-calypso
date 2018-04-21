@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { moment, translate } from 'i18n-calypso';
-import { forEach, orderBy, range } from 'lodash';
+import { find, forEach, last, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,37 +26,32 @@ export default createSelector(
 			return [];
 		}
 
-		const result = range( 6 ).reduce( function( accumulator, n ) {
+		const result = times( 6, n => {
 			const month = moment().subtract( n, 'months' );
-			const key = month.format( 'YYYY-MM' );
-			accumulator[ key ] = {
+			return {
 				title: month.format( 'MMM YYYY' ),
-				value: { month: key, operator: 'equal' },
+				value: { month: month.format( 'YYYY-MM' ), operator: 'equal' },
 				count: 0,
-				key,
 			};
-			return accumulator;
-		}, {} );
-		const olderDate = moment()
-			.subtract( 6, 'months' )
-			.format( 'YYYY-MM' );
-		result.older = {
+		} );
+		const lastMonth = last( result ).value.month;
+		result.push( {
 			title: translate( 'Older' ),
-			value: { month: olderDate, operator: 'before' },
+			value: { month: lastMonth, operator: 'before' },
 			count: 0,
-			key: olderDate,
-		};
+		} );
 
 		forEach( transactions, transaction => {
-			const transactionDate = moment( transaction.date ).format( 'YYYY-MM' );
-			if ( result[ transactionDate ] ) {
-				result[ transactionDate ].count++;
+			const transactionMonth = moment( transaction.date ).format( 'MMM YYYY' );
+			const found = find( result, { title: transactionMonth } );
+			if ( found ) {
+				found.count++;
 			} else {
-				result.older.count++;
+				last( result ).count++;
 			}
 		} );
 
-		return orderBy( result, 'key', 'desc' );
+		return result;
 	},
 	( state, transactionType ) => [ getBillingTransactionsByType( state, transactionType ) ]
 );
