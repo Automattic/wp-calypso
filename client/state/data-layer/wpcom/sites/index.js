@@ -20,6 +20,7 @@ import posts from './posts';
 import rewind from './rewind';
 import simplePayments from './simple-payments';
 import users from './users';
+import statsGoogleMyBusiness from './stats/google-my-business';
 
 export default mergeHandlers(
 	activity,
@@ -35,5 +36,6 @@ export default mergeHandlers(
 	posts,
 	rewind,
 	simplePayments,
-	users
+	users,
+	statsGoogleMyBusiness
 );
