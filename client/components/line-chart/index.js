@@ -25,16 +25,17 @@ const CHART_MARGIN = 0.05;
 
 class LineChart extends Component {
 	static propTypes = {
-		data: PropTypes.array.isRequired,
-		margin: PropTypes.object,
 		aspectRatio: PropTypes.number,
+		data: PropTypes.array.isRequired,
+		fillArea: PropTypes.bool,
+		margin: PropTypes.object,
 		renderTooltipForDatanum: PropTypes.func,
 		yAxisMode: PropTypes.oneOf( [ 'relative', 'absolute' ] ),
-		fillArea: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		aspectRatio: 2,
+		fillArea: false,
 		margin: {
 			top: 30,
 			right: 30,
@@ -43,7 +44,6 @@ class LineChart extends Component {
 		},
 		renderTooltipForDatanum: datum => datum.value,
 		yAxisMode: 'absolute',
-		fillArea: false,
 	};
 
 	state = {
@@ -112,12 +112,15 @@ class LineChart extends Component {
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
 			const drawFullSeries = dataSeries.length < MAX_DRAW_POINTS_SIZE;
 			const colorNum = dataSeriesIndex % 3;
+
 			dataSeries.forEach( ( datum, datumIndex ) => {
 				let pointSize, className;
+
 				if ( ! drawFullSeries && ( datumIndex === 0 || datumIndex === dataSeries.length - 1 ) ) {
 					pointSize = END_POINT_SIZE;
 					className = `line-chart__line-point line-chart__line-end-point-${ colorNum }`;
 				}
+
 				if ( drawFullSeries ) {
 					pointSize = POINT_SIZE;
 					className = `line-chart__line-point line-chart__line-point-${ colorNum }`;
@@ -138,6 +141,7 @@ class LineChart extends Component {
 
 	bindEvents = svg => {
 		const self = this;
+
 		svg
 			.selectAll( 'circle' )
 			.on( 'mouseenter', function( point, index ) {
@@ -157,11 +161,13 @@ class LineChart extends Component {
 
 	handleMouseEnterPoint = point => {
 		d3Select( point ).attr( 'r', Math.floor( POINT_SIZE * 1.5 ) );
+
 		this.setState( { pointHovered: point } );
 	};
 
 	handleMouseOutPoint = point => {
 		d3Select( point ).attr( 'r', POINT_SIZE );
+
 		this.setState( { pointHovered: null } );
 	};
 
@@ -198,6 +204,7 @@ class LineChart extends Component {
 
 	getTooltipContent = () => {
 		const { pointHovered } = this.state;
+
 		if ( ! pointHovered ) {
 			return null;
 		}
@@ -206,7 +213,9 @@ class LineChart extends Component {
 		const datum = circle.datum();
 
 		return (
-			<span className="line-chart__tooltip">{ this.props.renderTooltipForDatanum( datum ) }</span>
+			<span className="line-chart__tooltip">
+				{ this.props.renderTooltipForDatanum( datum ) }
+			</span>
 		);
 	};
 

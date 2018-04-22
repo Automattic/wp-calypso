@@ -31,11 +31,11 @@ class GoogleMyBusinessStatsChart extends Component {
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
+		renderTooltipForDatanum: PropTypes.func,
 		requestGoogleMyBusinessStats: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		statType: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
-		renderTooltipForDatanum: PropTypes.func,
 	};
 
 	static defaultProps = {

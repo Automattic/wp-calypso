@@ -6,21 +6,22 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { select as d3Select } from 'd3-selection';
 import { isEqual } from 'lodash';
+import { select as d3Select } from 'd3-selection';
 
 export default class D3Base extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		data: PropTypes.any, // required to detect changes in data
 		drawChart: PropTypes.func.isRequired,
 		getParams: PropTypes.func.isRequired,
-		data: PropTypes.any, // required to detect changes in data
 	};
 
 	state = {};
 
 	constructor( props ) {
 		super( props );
+
 		this.chartRef = React.createRef();
 	}
 	componentDidMount() {

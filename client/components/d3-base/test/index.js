@@ -6,15 +6,15 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-import { shallow, mount } from 'enzyme';
 import React from 'react';
+import { assert } from 'chai';
 import { noop } from 'lodash';
+import { shallow, mount } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import D3Base from '../index';
+import D3Base from '..';
 
 describe( 'D3base', () => {
 	const shallowWithoutLifecycle = arg => shallow( arg, { disableLifecycleMethods: true } );
