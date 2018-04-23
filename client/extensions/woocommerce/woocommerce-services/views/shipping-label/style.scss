@@ -72,6 +72,12 @@
 		}
 	}
 
+	.shipping-label__item-return-for {
+		padding-top: 8px;
+		margin-bottom: 0;
+		font-size: 12px;
+	}
+
 	.shipping-label__purchase-error {
 		color: $alert-red;
 		cursor: help;

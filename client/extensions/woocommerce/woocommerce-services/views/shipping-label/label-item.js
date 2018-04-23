@@ -134,7 +134,7 @@ class LabelItem extends Component {
 						{ label.showDetails && this.renderReturn() }
 					</p>
 				) : (
-					<p>
+					<p className="shipping-label__item-return-for">
 						{ translate( 'Return for Label #%(labelIndex)s', {
 							args: { labelIndex: label.returningLabelIndex + 1 },
 						} ) }
