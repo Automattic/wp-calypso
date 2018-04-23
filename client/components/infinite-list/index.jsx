@@ -15,9 +15,7 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import detectHistoryNavigation from 'lib/detect-history-navigation';
-import InfiniteListActions from 'lib/infinite-list/actions';
-import InfiniteListPositionsStore from 'lib/infinite-list/positions-store';
-import InfiniteListScrollStore from 'lib/infinite-list/scroll-store';
+import ScrollStore from './scroll-store';
 import ScrollHelper from './scroll-helper';
 import scrollTo from 'lib/scroll-to';
 import smartSetState from 'lib/react-smart-set-state';
@@ -53,16 +51,16 @@ export default class InfiniteList extends React.Component {
 
 	componentWillMount() {
 		const url = page.current;
-		let newState, scrollPosition;
+		let newState, scrollTop;
 
 		if ( detectHistoryNavigation.loadedViaHistory() ) {
-			newState = InfiniteListPositionsStore.get( url );
-			scrollPosition = InfiniteListScrollStore.get( url );
+			newState = ScrollStore.getPositions( url );
+			scrollTop = ScrollStore.getScrollTop( url );
 		}
 
-		if ( newState && scrollPosition ) {
-			debug( 'overriding scrollTop:', scrollPosition );
-			newState.scrollTop = scrollPosition;
+		if ( newState && scrollTop ) {
+			debug( 'overriding scrollTop:', scrollTop );
+			newState.scrollTop = scrollTop;
 		}
 
 		this.scrollHelper = new ScrollHelper( this.boundsForRef );
@@ -262,7 +260,7 @@ export default class InfiniteList extends React.Component {
 		}
 
 		this.lastScrollTop = this.getCurrentScrollTop();
-		InfiniteListActions.storeScroll( url, this.lastScrollTop );
+		ScrollStore.storeScrollTop( url, this.lastScrollTop );
 		this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
 		this.scrollHelper.scrollPosition = this.lastScrollTop;
 		this.scrollHelper.triggeredByScroll = options.triggeredByScroll;
@@ -285,7 +283,7 @@ export default class InfiniteList extends React.Component {
 
 			debug( 'new scroll positions', newState, this.state );
 			this.smartSetState( newState );
-			InfiniteListActions.storePositions( url, newState );
+			ScrollStore.storePositions( url, newState );
 		}
 
 		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
