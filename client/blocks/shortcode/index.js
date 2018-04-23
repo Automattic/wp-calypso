@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-import { omit } from 'lodash';
+import { identity, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,9 +43,13 @@ const Shortcode = props => {
 Shortcode.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	children: PropTypes.string.isRequired,
-	filterRenderResult: PropTypes.func,
+	filterRenderResult: PropTypes.func.isRequired,
 	className: PropTypes.string,
 	shortcode: PropTypes.object,
+};
+
+Shortcode.defaultProps = {
+	filterRenderResult: identity,
 };
 
 export default connect(
