@@ -609,8 +609,8 @@ export class Checkout extends React.Component {
 
 	render() {
 		const { plan, product, purchaseId, selectedFeature, selectedSiteSlug } = this.props;
-		let analyticsPath;
-		let analyticsProps;
+		let analyticsPath = '';
+		let analyticsProps = {};
 		if ( purchaseId && product ) {
 			analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
 			analyticsProps = { product, purchaseId, site: selectedSiteSlug };
@@ -623,9 +623,11 @@ export class Checkout extends React.Component {
 		} else if ( product && ! purchaseId ) {
 			analyticsPath = '/checkout/:site/:product';
 			analyticsProps = { product, site: selectedSiteSlug };
-		} else {
+		} else if ( selectedSiteSlug ) {
 			analyticsPath = '/checkout/:site';
 			analyticsProps = { site: selectedSiteSlug };
+		} else {
+			analyticsPath = '/checkout/no-site';
 		}
 
 		return (
