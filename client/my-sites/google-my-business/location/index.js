@@ -38,7 +38,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 
 					<div className="gmb-location__address">
 						{ location.description
-							.split( ', ' )
+							.split( '\n' )
 							.map( ( line, index ) => <p key={ index }>{ line }</p> ) }
 					</div>
 
