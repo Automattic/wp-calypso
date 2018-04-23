@@ -5,13 +5,10 @@
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { isEmpty } from 'lodash';
-import { Route } from 'page';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
-import { sectionifyWithRoutes } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
@@ -23,11 +20,6 @@ import CartData from 'components/data/cart';
 import SecondaryCart from './cart/secondary-cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
-
-const checkoutGSuiteNudgeRoutes = [
-	new Route( '/checkout/:site/with-gsuite/:domain/:receipt' ),
-	new Route( '/checkout/:site/with-gsuite/:domain' ),
-];
 
 export default {
 	checkout: function( context, next ) {
@@ -156,10 +148,6 @@ export default {
 	},
 
 	gsuiteNudge( context, next ) {
-		const { routePath, routeParams } = sectionifyWithRoutes(
-			context.path,
-			checkoutGSuiteNudgeRoutes
-		);
 		const { domain, site, receiptId } = context.params;
 		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
 
@@ -170,8 +158,6 @@ export default {
 		if ( ! selectedSite ) {
 			return null;
 		}
-
-		analytics.pageView.record( routePath, 'G Suite Upsell', routeParams );
 
 		context.primary = (
 			<CartData>

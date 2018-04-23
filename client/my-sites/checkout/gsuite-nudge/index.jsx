@@ -21,6 +21,7 @@ import { addItem, removeItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import { isDotComPlan } from 'lib/products-values';
 import { getABTestVariation } from 'lib/abtest';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class GsuiteNudge extends React.Component {
 	static propTypes = {
@@ -62,10 +63,19 @@ export class GsuiteNudge extends React.Component {
 	}
 
 	render() {
-		const { selectedSiteId, siteTitle, translate } = this.props;
+		const { domain, receiptId, selectedSiteId, siteSlug, siteTitle, translate } = this.props;
 
 		return (
 			<Main className="gsuite-nudge">
+				<PageViewTracker
+					path={
+						receiptId
+							? '/checkout/:site/with-gsuite/:domain/:receipt_id'
+							: '/checkout/:site/with-gsuite/:domain'
+					}
+					title="G Suite Upsell"
+					properties={ { site: siteSlug, domain, ...( receiptId && { receiptId } ) } }
+				/>
 				<DocumentHead
 					title={ translate( 'Add G Suite < %(siteTitle)s', {
 						args: { siteTitle },
