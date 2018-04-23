@@ -128,7 +128,7 @@ class PayButton extends React.Component {
 	recalculating = () => {
 		return {
 			disabled: true,
-			text: this.props.translate( 'Recalculating' ),
+			text: this.props.translate( 'Calculating price' ),
 		};
 	};
 
