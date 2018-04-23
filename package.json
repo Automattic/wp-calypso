@@ -104,7 +104,6 @@
     "keymaster": "1.6.2",
     "localforage": "1.4.3",
     "lodash": "4.17.5",
-    "lodash-humps": "3.1.2",
     "lru": "3.1.0",
     "lunr": "0.5.7",
     "markdown-loader": "2.0.1",
