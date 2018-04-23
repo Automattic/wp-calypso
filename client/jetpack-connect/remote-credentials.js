@@ -246,7 +246,7 @@ export class OrgCredentialsForm extends Component {
 						{ this.isInvalidPassword() && (
 							<FormInputValidation
 								isError
-								text={ translate( 'Incorrect password. Please try again.' ) }
+								text={ translate( 'Your password is incorrect, please try again' ) }
 							/>
 						) }
 					</div>
