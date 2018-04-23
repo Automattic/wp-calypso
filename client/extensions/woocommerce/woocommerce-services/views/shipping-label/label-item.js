@@ -41,7 +41,7 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ this.openRefundDialog }>{ translate( 'Request refund' ) }</a>
+				<button onClick={ this.openRefundDialog }>{ translate( 'Request refund' ) }</button>
 			</span>
 		);
 	};
@@ -64,9 +64,9 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<ReprintDialog siteId={ siteId } orderId={ orderId } download={ label.returningLabelIndex != null } { ...label } />
-				<a href="#" onClick={ this.openReprintDialog }>
+				<button onClick={ this.openReprintDialog }>
 					{ label.returningLabelIndex == null ? translate( 'Reprint' ) : translate( 'Download' ) }
-				</a>
+				</button>
 			</span>
 		);
 	};
@@ -82,7 +82,7 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ this.openDetailsDialog } >{ translate( 'View details' ) }</a>
+				<button onClick={ this.openDetailsDialog } >{ translate( 'View details' ) }</button>
 			</span>
 		);
 	};
@@ -98,7 +98,7 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<ReturnDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" type="button" onClick={ this.openReturnDialog } >{ translate( 'Create return label' ) }</a>
+				<button type="button" onClick={ this.openReturnDialog } >{ translate( 'Create return label' ) }</button>
 			</span>
 		);
 	};

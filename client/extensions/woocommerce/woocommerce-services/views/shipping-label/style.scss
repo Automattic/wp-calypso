@@ -19,6 +19,21 @@
 		}
 	}
 
+	button {
+		cursor: pointer;
+		text-decoration: underline;
+		color: $blue-wordpress;
+		font-style: inherit;
+		font-weight: 400;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $link-highlight;
+			box-shadow: none;
+		}
+	}
+
 	.shipping-label__new-label-button {
 		width: 100%;
 		margin-top: 16px;
@@ -28,13 +43,13 @@
 		display: flex;
 		justify-content: space-between;
 
-		a {
+		button {
 			display: inline-block;
 			font-size: 12px;
 		}
 
 		span svg,
-		a svg {
+		button svg {
 			position: relative;
 			top: 2px;
 			margin-right: 2px;
@@ -44,7 +59,7 @@
 	.shipping-label__item-detail {
 		margin-bottom: 6px;
 
-		a {
+		button {
 			vertical-align: text-top;
 		}
 	}
@@ -52,7 +67,7 @@
 	.shipping-label__item-actions {
 		margin-bottom: 0;
 
-		a {
+		button {
 			margin-top: 10px;
 		}
 	}
