@@ -42,3 +42,13 @@ Has the component visual quality and accuracy been assessed across Safari, Chrom
 ## Documentation
 
 Please use the [documentation template](component-readme-template.md) for documenting the new component.
+
+## Playground
+
+Components will appear in the [Playground](/devdocs/playground) if they have the following requirements satisfied:
+- An example Component in /components/component-name/docs/example.jsx
+- An exampleCode property on the example Component
+- An `export ComponentName from components/component-name` statement in `playground-scope.js`
+- An `export ComponentName from components/component-name/docs/example.jsx` statement in `component-examples.jsx`
+
+Components which satisfy these requirements will also have a playground appear in [Devdocs Design](/devdocs/design).
