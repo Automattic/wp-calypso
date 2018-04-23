@@ -5,8 +5,9 @@
 import config from 'config';
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import PropTypes from 'prop-types';
+import { format as formatUrl, parse as parseUrl } from 'url';
 import { authorizeQueryDataSchema } from './schema';
-import { head, includes, isEmpty, split } from 'lodash';
+import { head, includes, isEmpty, split, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -77,12 +78,17 @@ export function addCalypsoEnvQueryArg( url ) {
  * @return {string} Sanitized URL
  */
 export function cleanUrl( inputUrl ) {
-	let url = inputUrl.trim().toLowerCase();
-	if ( url && url.substr( 0, 4 ) !== 'http' ) {
-		url = 'http://' + url;
-	}
-	url = url.replace( /wp-admin\/?$/, '' );
-	return untrailingslashit( url );
+	const { host, pathname, protocol = 'http' } = parseUrl( inputUrl );
+
+	const noWpAdminPathname = startsWith( pathname, '/wp-admin' ) ? '/' : pathname;
+
+	return untrailingslashit(
+		formatUrl( {
+			host,
+			pathname: noWpAdminPathname,
+			protocol,
+		} )
+	);
 }
 
 /**
