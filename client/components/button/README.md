@@ -22,12 +22,12 @@ export default function RockOnButton() {
 
 Name | Type | Default | Description
 --- | --- | --- | ---
-`compact` | `bool` |  | Decreases the size of the button
-`primary` | `bool` |  | Provides extra visual weight and identifies the primary action in a set of buttons
-`borderless` | `bool` |  | Renders a button without borders
-`scary` | `bool` |  | Indicates a dangerous or potentially negative action
-`busy` | `bool` |  | Indicates activity while a background action is being performed
-`href` | `string` |  | If provided, renders `a` instead of `button`
+`compact` | `bool` | false | Decreases the size of the button
+`primary` | `bool` | false | Provides extra visual weight and identifies the primary action in a set of buttons
+`borderless` | `bool` | false | Renders a button without borders
+`scary` | `bool` | false | Indicates a dangerous or potentially negative action
+`busy` | `bool` | false | Indicates activity while a background action is being performed
+`href` | `string` | null | If provided, renders `a` instead of `button`
 
 ### Button types
 
