@@ -34,7 +34,7 @@ class KeyringConnectButton extends Component {
 			PropTypes.bool,
 		] ),
 		isFetching: PropTypes.bool,
-		keyringConnections: PropTypes.array,
+		keyringConnections: PropTypes.array, // Those required to be filtered to serivce.ID keyring connections
 		siteId: PropTypes.number,
 		onClick: PropTypes.func,
 		onConnect: PropTypes.func,
@@ -65,16 +65,16 @@ class KeyringConnectButton extends Component {
 	 * Given a service name and optional site ID, returns the current status of the
 	 * service's connection.
 	 *
-	 * @param {string} service The name of the service to check
 	 * @return {string} Connection status.
 	 */
-	getConnectionStatus( service ) {
+	getConnectionStatus() {
 		if ( this.props.isFetching ) {
 			// When connections are still loading, we don't know the status
 			return 'unknown';
 		}
 
-		if ( ! some( this.props.keyringConnections, { service } ) ) {
+		// keyringConnections are already filtered for this.props.service.ID
+		if ( this.props.keyringConnections.length > 0 ) {
 			// If no connections exist, the service isn't connected
 			return 'not-connected';
 		}
@@ -89,7 +89,7 @@ class KeyringConnectButton extends Component {
 	}
 
 	performAction = () => {
-		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const connectionStatus = this.getConnectionStatus();
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
@@ -166,7 +166,7 @@ class KeyringConnectButton extends Component {
 	render() {
 		const { service, translate } = this.props;
 		const { isConnecting, isRefreshing } = this.state;
-		const status = service ? this.getConnectionStatus( service.ID ) : 'unknown';
+		const status = service ? this.getConnectionStatus() : 'unknown';
 		let primary = false,
 			warning = false,
 			label;
