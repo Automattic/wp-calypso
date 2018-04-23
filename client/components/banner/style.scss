@@ -29,6 +29,9 @@
 	&.is-upgrade-business {
 		@include banner-color( $alert-purple );
 	}
+	&.is-jetpack {
+		@include banner-color( $green-jetpack );
+	}
 
 	.card__link-indicator {
 		align-items: center;
@@ -89,6 +92,15 @@
 		.banner__icon-circle {
 			display: flex;
 		}
+	}
+}
+
+.banner__icon-jetpack {
+	display: flex;
+	margin-right: 16px;
+
+	@include breakpoint( ">480px" ) {
+		align-items: center;
 	}
 }
 

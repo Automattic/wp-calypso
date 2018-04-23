@@ -14,13 +14,13 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
+import { getValidFeatureKeys, isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getValidFeatureKeys } from 'lib/plans';
 import Button from 'components/button';
 import Card from 'components/card';
+import JetpackLogo from 'components/jetpack-logo';
 import DismissibleCard from 'blocks/dismissible-card';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
@@ -38,6 +38,7 @@ export class Banner extends Component {
 		feature: PropTypes.oneOf( getValidFeatureKeys() ),
 		href: PropTypes.string,
 		icon: PropTypes.string,
+		isJetpack: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
@@ -102,7 +103,15 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, plan } = this.props;
+		const { icon, isJetpack, plan } = this.props;
+
+		if ( isJetpack && ! icon ) {
+			return (
+				<div className="banner__icon-jetpack">
+					<JetpackLogo size={ 32 } />
+				</div>
+			);
+		}
 
 		if ( plan && ! icon ) {
 			return (
@@ -188,6 +197,7 @@ export class Banner extends Component {
 			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
+			isJetpack,
 			plan,
 		} = this.props;
 
@@ -195,9 +205,10 @@ export class Banner extends Component {
 			'banner',
 			className,
 			{ 'has-call-to-action': callToAction },
-			{ 'is-upgrade-personal': plan && isPersonalPlan( plan ) },
-			{ 'is-upgrade-premium': plan && isPremiumPlan( plan ) },
-			{ 'is-upgrade-business': plan && isBusinessPlan( plan ) },
+			{ 'is-jetpack': isJetpack },
+			{ 'is-upgrade-personal': ! isJetpack && plan && isPersonalPlan( plan ) },
+			{ 'is-upgrade-premium': ! isJetpack && plan && isPremiumPlan( plan ) },
+			{ 'is-upgrade-business': ! isJetpack && plan && isBusinessPlan( plan ) },
 			{ 'is-dismissible': dismissPreferenceName }
 		);
 
