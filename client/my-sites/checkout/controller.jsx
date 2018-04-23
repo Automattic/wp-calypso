@@ -23,14 +23,7 @@ import CartData from 'components/data/cart';
 import SecondaryCart from './cart/secondary-cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
-
-const checkoutRoutes = [
-	new Route( '/checkout/features/:feature/:site/:plan' ),
-	new Route( '/checkout/features/:feature/:site' ),
-	new Route( '/checkout/:product/renew/:purchase/:site' ),
-	new Route( '/checkout/:site/:product' ),
-	new Route( '/checkout/:site' ),
-];
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const checkoutGSuiteNudgeRoutes = [
 	new Route( '/checkout/:site/with-gsuite/:domain/:receipt' ),
@@ -55,9 +48,7 @@ const checkoutThankYouRoutes = [
 
 export default {
 	checkout: function( context, next ) {
-		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
-		const { params } = context;
-		const { feature, product } = params;
+		const { domain, feature, plan, product, purchase } = context.params;
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
@@ -66,13 +57,31 @@ export default {
 			return;
 		}
 
-		analytics.pageView.record( routePath, 'Checkout', routeParams );
+		let analyticsPath;
+		let analyticsProps;
+		if ( purchase && product ) {
+			analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
+			analyticsProps = { product, purchaseId: purchase, site: domain };
+		} else if ( feature && plan ) {
+			analyticsPath = '/checkout/features/:feature/:site/:plan';
+			analyticsProps = { feature, plan, site: domain };
+		} else if ( feature && ! plan ) {
+			analyticsPath = '/checkout/features/:feature/:site';
+			analyticsProps = { feature, site: domain };
+		} else if ( product && ! purchase ) {
+			analyticsPath = '/checkout/:site/:product';
+			analyticsProps = { product, site: domain };
+		} else {
+			analyticsPath = '/checkout/:site';
+			analyticsProps = { site: domain };
+		}
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 		context.primary = (
 			<CheckoutData>
+				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 				<Checkout
 					product={ product }
 					purchaseId={ context.params.purchaseId }
