@@ -42,10 +42,13 @@ export class RateSelector extends React.Component {
 		return translate( 'Choose rate: %(pckg)s', { args: { pckg: packageName } } );
 	};
 
+	onRateUpdate = value => {
+		const { orderId, siteId, packageId, isReturn } = this.props;
+		this.props.updateRate( orderId, siteId, packageId, value, isReturn );
+	};
+
 	render() {
 		const {
-			orderId,
-			siteId,
 			isLoading,
 			packageId,
 			packageName,
@@ -53,7 +56,6 @@ export class RateSelector extends React.Component {
 			selectedRate,
 			packageRates,
 			errors,
-			isReturn,
 			translate,
 		} = this.props;
 
@@ -66,8 +68,6 @@ export class RateSelector extends React.Component {
 				rateObject.title + ' (' + formatCurrency( rateObject.rate, 'USD' ) + ')';
 		} );
 
-		const onRateUpdate = value =>
-			this.props.updateRate( orderId, siteId, packageId, value, isReturn );
 		return (
 			<div
 				className={ classNames(
@@ -85,7 +85,7 @@ export class RateSelector extends React.Component {
 						valuesMap={ valuesMap }
 						title={ this.getTitle() }
 						value={ selectedRate }
-						updateValue={ onRateUpdate }
+						updateValue={ this.onRateUpdate }
 						error={ formError }
 					/>
 				) }
