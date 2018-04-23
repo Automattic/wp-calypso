@@ -6,6 +6,7 @@
 
 import inherits from 'inherits';
 import { includes, find, get, replace, some } from 'lodash';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
 import formatCurrency from 'lib/format-currency';
+import userFactory from 'lib/user';
 
 const GOOGLE_APPS_INVALID_TLDS = [ 'in' ],
 	GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
@@ -271,6 +273,35 @@ function getDomainPrice( slug, productsList, currencyCode ) {
 	return price;
 }
 
+function clientMatchesLocales( localeTargets ) {
+	const client = typeof navigator !== 'undefined' ? navigator : {};
+	const clientLanguage = client.language || client.userLanguage || 'en';
+	const clientLanguagesPrimary =
+		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
+	const localeFromSession = i18n.getLocaleSlug() || 'en';
+
+	if ( localeTargets ) {
+		const user = userFactory();
+		const isUserSignedIn = user.get() !== false;
+		const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
+		const userLocale = user.get().localeSlug || 'en';
+
+		if ( isUserSignedIn && ! userLocale.match( localeMatcher ) ) {
+			return false;
+		}
+		if ( ! isUserSignedIn && ! clientLanguage.match( localeMatcher ) ) {
+			return false;
+		}
+		if ( ! isUserSignedIn && ! clientLanguagesPrimary.match( localeMatcher ) ) {
+			return false;
+		}
+		if ( ! isUserSignedIn && ! localeFromSession.match( localeMatcher ) ) {
+			return false;
+		}
+	}
+	return true;
+}
+
 export {
 	canAddGoogleApps,
 	canRedirect,
@@ -297,4 +328,5 @@ export {
 	resendInboundTransferEmail,
 	restartInboundTransfer,
 	startInboundTransfer,
+	clientMatchesLocales,
 };

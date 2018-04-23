@@ -34,7 +34,7 @@ import config from 'config';
 import wpcom from 'lib/wp';
 import Card from 'components/card';
 import Notice from 'components/notice';
-import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
+import { checkDomainAvailability, getFixedDomainSearch, clientMatchesLocales } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
@@ -755,7 +755,8 @@ class RegisterDomainStep extends React.Component {
 
 		const timestamp = Date.now();
 
-		searchVendor = this.props.isSignupStep ? 'group_2' : 'group_1';
+		searchVendor =
+			this.props.isSignupStep && clientMatchesLocales( [ 'en' ] ) ? 'group_2' : 'group_1';
 
 		const domainSuggestions = Promise.all( [
 			this.checkDomainAvailability( domain, timestamp ),
