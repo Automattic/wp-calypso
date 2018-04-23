@@ -69,23 +69,23 @@ class KeyringConnectButton extends Component {
 	 * @return {string} Connection status.
 	 */
 	getConnectionStatus( service ) {
-		let status;
-
 		if ( this.props.isFetching ) {
 			// When connections are still loading, we don't know the status
-			status = 'unknown';
-		} else if ( ! some( this.props.keyringConnections, { service } ) ) {
-			// If no connections exist, the service isn't connected
-			status = 'not-connected';
-		} else if ( some( this.props.keyringConnections, { status: 'broken' } ) ) {
-			// A problematic connection exists
-			status = 'reconnect';
-		} else {
-			// If all else passes, assume service is connected
-			status = 'connected';
+			return 'unknown';
 		}
 
-		return status;
+		if ( ! some( this.props.keyringConnections, { service } ) ) {
+			// If no connections exist, the service isn't connected
+			return 'not-connected';
+		}
+
+		if ( some( this.props.keyringConnections, { status: 'broken' } ) ) {
+			// A problematic connection exists
+			return 'reconnect';
+		}
+
+		// If all else passes, assume service is connected
+		return 'connected';
 	}
 
 	performAction = () => {
