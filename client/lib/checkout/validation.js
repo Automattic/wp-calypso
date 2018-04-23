@@ -64,6 +64,28 @@ export function creditCardFieldRules( additionalFieldRules = {} ) {
 }
 
 /**
+ * Returns the tef payment validation rule set
+ * See: client/my-sites/checkout/checkout/redirect-payment-box.jsx
+ * @returns {object} the ruleset
+ */
+export function tefPaymentFieldRules() {
+	return Object.assign(
+		{
+			name: {
+				description: i18n.translate( 'Your Name' ),
+				rules: [ 'required' ],
+			},
+
+			'tef-bank': {
+				description: i18n.translate( 'Bank' ),
+				rules: [ 'required' ],
+			},
+		},
+		ebanxFieldRules( 'BR' )
+	);
+}
+
+/**
  * Returns a validation ruleset to use for the given payment type
  * @param {object} paymentDetails object containing fieldname/value keypairs
  * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef
@@ -73,6 +95,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
 		case 'credit-card':
 			return creditCardFieldRules( getAdditionalFieldRules( paymentDetails ) );
+		case 'tef':
+			return tefPaymentFieldRules();
 		default:
 			return null;
 	}
