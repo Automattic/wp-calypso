@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -16,10 +15,6 @@ ActionCard.displayName = 'ActionCard';
 function ActionCardExample( props ) {
 	return props.exampleCode;
 }
-
-ActionCardExample.propTypes = {
-	translate: PropTypes.func.isRequired,
-};
 
 ActionCardExample.displayName = 'ActionCard';
 
