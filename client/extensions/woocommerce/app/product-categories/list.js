@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,16 +8,15 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { map, filter, reduce, includes } from 'lodash';
-import page from 'page';
 import WindowScroller from 'react-virtualized/WindowScroller';
 
 /**
  * Internal dependencies
  */
 import {
-	areProductCategoriesLoadingIgnoringPage,
+	areAnyProductCategoriesLoading,
 	getProductCategoriesLastPage,
-	getProductCategoriesIgnoringPage,
+	getAllProductCategories,
 	areProductCategoriesLoaded,
 	getTotalProductCategories,
 } from 'woocommerce/state/sites/product-categories/selectors';
@@ -34,7 +34,6 @@ import ImageThumb from 'woocommerce/components/image-thumb';
 const ITEM_HEIGHT = 70;
 
 class ProductCategories extends Component {
-
 	componentWillMount() {
 		this.catIds = map( this.props.categories, 'id' );
 	}
@@ -89,32 +88,27 @@ class ProductCategories extends Component {
 		const children = this.getChildren( item.id );
 		const itemId = item.id;
 		const link = getLink( '/store/products/category/:site/' + itemId, site );
-
-		const goToLink = () => {
-			page( link );
-		};
-
 		const description = decodeEntities( stripHTML( item.description ) );
 
 		return (
 			<div key={ 'product-category-' + itemId } className="product-categories__list-item">
-				<CompactCard key={ itemId } className="product-categories__list-item-card" onClick={ goToLink }>
+				<CompactCard key={ itemId } className="product-categories__list-item-card" href={ link }>
 					<div className="product-categories__list-item-wrapper">
 						<div className="product-categories__list-thumb">
-							<ImageThumb src={ item.image && item.image.src || '' } alt="" />
+							<ImageThumb src={ ( item.image && item.image.src ) || '' } alt="" />
 						</div>
 						<span className="product-categories__list-item-info">
-							<a href={ link }>{ item.name }</a>
+							<span className="product-categories__list-item-name">{ item.name }</span>
 							<Count count={ item.count } />
 							<span className="product-categories__list-item-description">{ description }</span>
 						</span>
 					</div>
 				</CompactCard>
-					{ children.length > 0 && (
-						<div className="product-categories__list-nested">
-							{ children.map( child => this.renderItem( child, true ) ) }
-						</div>
-					) }
+				{ children.length > 0 && (
+					<div className="product-categories__list-nested">
+						{ children.map( child => this.renderItem( child, true ) ) }
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -132,7 +126,7 @@ class ProductCategories extends Component {
 		const { loading, categories, lastPage, searchQuery } = this.props;
 		return (
 			<WindowScroller>
-				{( { height, scrollTop } ) => (
+				{ ( { height, scrollTop } ) => (
 					<VirtualList
 						items={ categories }
 						lastPage={ lastPage }
@@ -147,7 +141,7 @@ class ProductCategories extends Component {
 						height={ height }
 						scrollTop={ scrollTop }
 					/>
-				)}
+				) }
 			</WindowScroller>
 		);
 	}
@@ -164,7 +158,9 @@ class ProductCategories extends Component {
 					},
 				} );
 			}
-			return <EmptyContent title={ translate( 'No product categories found.' ) } line={ message } />;
+			return (
+				<EmptyContent title={ translate( 'No product categories found.' ) } line={ message } />
+			);
 		}
 
 		const classes = classNames( 'product-categories__list', className );
@@ -172,15 +168,13 @@ class ProductCategories extends Component {
 		return (
 			<div className="product-categories__list-container">
 				<div className={ classes }>
-					{
-						this.props.isInitialRequestLoaded && this.renderCategoryList() ||
+					{ ( this.props.isInitialRequestLoaded && this.renderCategoryList() ) || (
 						<div className="product-categories__list-placeholder" />
-					}
+					) }
 				</div>
 			</div>
 		);
 	}
-
 }
 
 function mapStateToProps( state, ownProps ) {
@@ -191,9 +185,9 @@ function mapStateToProps( state, ownProps ) {
 	}
 
 	const site = getSelectedSiteWithFallback( state );
-	const loading = areProductCategoriesLoadingIgnoringPage( state, query );
+	const loading = areAnyProductCategoriesLoading( state, query );
 	const isInitialRequestLoaded = areProductCategoriesLoaded( state, query ); // first page request
-	const categories = getProductCategoriesIgnoringPage( state, query );
+	const categories = getAllProductCategories( state, query );
 	const totalCategories = getTotalProductCategories( state, query );
 	const lastPage = getProductCategoriesLastPage( state, query );
 	return {
