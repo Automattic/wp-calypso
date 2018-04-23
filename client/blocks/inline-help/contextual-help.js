@@ -1,9 +1,12 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import { compact, get, sample } from 'lodash';
+
 /**
  * Module variables
- *
- * @format
  */
-
 const fallbackLinks = [
 	{
 		link: 'https://en.support.wordpress.com/business-plan/',
@@ -659,9 +662,33 @@ const contextLinksForSection = {
 	],
 };
 
+const videosForSection = {
+	sharing: [
+		{
+			link: 'https://www.youtube.com/watch?v=YVelWG3hf3o',
+			title: 'Add Social Sharing Buttons to Your Website',
+			description:
+				'Find out how to add social sharing buttons to your WordPress.com site, which you can also ' +
+				'do with a Jetpack-enabled WordPress site. Our step-by-step video will walk you through it, ' +
+				"and it's easier than you'd think!",
+		},
+	],
+};
+const toursForSection = {
+	media: [
+		{
+			tour: 'mediaBasicsTour',
+			key: 'tour:mediaBasicsTour',
+			title: 'Learn Media Library Basics',
+			description:
+				'The Media Library is a useful tool to help you manage, search, and edit your photos, videos, documents, and other media.',
+		},
+	],
+};
+
 export function getContextResults( section ) {
-	if ( contextLinksForSection[ section ] ) {
-		return contextLinksForSection[ section ];
-	}
-	return fallbackLinks;
+	const video = sample( get( videosForSection, section ) );
+	const tour = sample( get( toursForSection, section ) );
+	const links = get( contextLinksForSection, section ) || fallbackLinks;
+	return compact( [ tour, video, ...links ] );
 }

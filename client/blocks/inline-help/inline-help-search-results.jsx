@@ -87,7 +87,10 @@ class InlineHelpSearchResults extends Component {
 	renderHelpLink = ( link, index ) => {
 		const classes = { 'is-selected': this.props.selectedResultIndex === index };
 		return (
-			<li key={ link.link } className={ classNames( 'inline-help__results-item', classes ) }>
+			<li
+				key={ link.link ? link.link : link.key }
+				className={ classNames( 'inline-help__results-item', classes ) }
+			>
 				<a
 					href={ link.link }
 					onClick={ this.onHelpLinkClick( index ) }
