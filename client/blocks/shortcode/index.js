@@ -45,6 +45,7 @@ Shortcode.propTypes = {
 	children: PropTypes.string.isRequired,
 	filterRenderResult: PropTypes.func,
 	className: PropTypes.string,
+	shortcode: PropTypes.string,
 };
 
 export default connect(
