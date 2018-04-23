@@ -21,6 +21,7 @@ import { errorNotice } from 'state/notices/actions';
 import QueryOrderTransaction from 'components/data/query-order-transaction';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class CheckoutPending extends PureComponent {
 	static propTypes = {
@@ -96,11 +97,20 @@ class CheckoutPending extends PureComponent {
 	}
 
 	render() {
-		const { orderId, translate } = this.props;
+		const { orderId, siteSlug, translate } = this.props;
 
 		return (
 			<Main className="checkout-thank-you__pending">
 				<QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } />
+				<PageViewTracker
+					path={
+						siteSlug
+							? '/checkout/thank-you/:site/pending/:order_id'
+							: '/checkout/thank-you/no-site/pending/:order_id'
+					}
+					title="Checkout Pending"
+					properties={ { orderId, ...( siteSlug && { site: siteSlug } ) } }
+				/>
 				<EmptyContent
 					illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
 					illustrationWidth={ 500 }

@@ -29,11 +29,6 @@ const checkoutGSuiteNudgeRoutes = [
 	new Route( '/checkout/:site/with-gsuite/:domain' ),
 ];
 
-const checkoutPendingRoutes = [
-	new Route( '/checkout/thank-you/no-site/pending/:orderId' ),
-	new Route( '/checkout/thank-you/:site/pending/:orderId' ),
-];
-
 const checkoutThankYouRoutes = [
 	new Route( '/checkout/thank-you/no-site/:receipt' ),
 	new Route( '/checkout/thank-you/no-site' ),
@@ -98,11 +93,9 @@ export default {
 	},
 
 	checkoutPending: function( context, next ) {
-		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutPendingRoutes );
 		const orderId = Number( context.params.orderId );
 		const siteSlug = context.params.site;
 
-		analytics.pageView.record( routePath, 'Checkout Pending', routeParams );
 		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
 		context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
