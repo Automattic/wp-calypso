@@ -24,6 +24,10 @@ jest.mock( 'lib/redux-bridge', () => ( {
 	reduxGetState: () => ( { ui: { editor: { saveBlockers: [] } } } ),
 } ) );
 
+jest.mock( 'lib/user-settings', () => ( {
+	getSettings: () => [],
+} ) );
+
 const sampleSite = {
 	ID: 123,
 	jetpack: false,

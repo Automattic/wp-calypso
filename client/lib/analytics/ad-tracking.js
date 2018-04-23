@@ -15,6 +15,7 @@ import { v4 as uuid } from 'uuid';
 import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
+import userSettings from 'lib/user-settings';
 import { loadScript as loadScriptCallback } from 'lib/load-script';
 import { shouldSkipAds } from 'lib/analytics/utils';
 import { promisify } from '../../utils';
@@ -324,7 +325,7 @@ async function loadTrackingScripts( callback ) {
 
 	// init Facebook
 	if ( isFacebookEnabled ) {
-		window.fbq( 'init', TRACKING_IDS.facebookInit );
+		initFacebook();
 	}
 
 	// init Bing
@@ -1239,6 +1240,70 @@ function costToUSD( cost, currency ) {
  */
 function isSupportedCurrency( currency ) {
 	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;
+}
+
+/**
+ * Initializes the Facebook pixel. When the user is logged in, additional hashed data is being forwarded.
+ */
+function initFacebook() {
+	const currentUser = user.get();
+	if ( ! currentUser ) {
+		window.fbq( 'init', TRACKING_IDS.facebookInit ); // simple data set, no advanced matching
+		return;
+	}
+
+	// advanced matching setup
+	if ( userSettings.initialized ) {
+		initFacebookAdvancedMatching();
+	} else {
+		// wait for the necessary data to be fetched, then initialize Advanced Matching
+		userSettings.on( 'postInit', function() {
+			initFacebookAdvancedMatching();
+		} );
+	}
+}
+
+/**
+ * See https://developers.facebook.com/docs/facebook-pixel/pixel-with-ads/conversion-tracking#advanced_match
+ *
+ * userSettings and user must be initialized before this is called.
+ */
+function initFacebookAdvancedMatching() {
+	if ( ! userSettings.initialized ) {
+		debug( 'FB Advanced Matching: Unexpected call before the necessary data is loaded ' );
+		return;
+	}
+
+	// All data must be in lowercase. Remove all spaces.
+	const fbRequirementsFormatter = function( str ) {
+		return str.toLowerCase().replace( / /g, '' );
+	};
+
+	const currentUser = user.get();
+
+	// build the necessary object by excluding empty fields
+	let advancedMatching = {
+		em: fbRequirementsFormatter( currentUser.email ),
+	};
+
+	const userFirstName = userSettings.getSetting( 'first_name' );
+	const userLastName = userSettings.getSetting( 'last_name' );
+
+	if ( userFirstName ) {
+		advancedMatching = Object.assign( advancedMatching, {
+			fn: fbRequirementsFormatter( userFirstName ),
+		} );
+	}
+
+	if ( userLastName ) {
+		advancedMatching = Object.assign( advancedMatching, {
+			ln: fbRequirementsFormatter( userLastName ),
+		} );
+	}
+
+	debug( 'FB Advanced Matching', advancedMatching );
+
+	window.fbq( 'init', TRACKING_IDS.facebookInit, advancedMatching );
 }
 
 /**
