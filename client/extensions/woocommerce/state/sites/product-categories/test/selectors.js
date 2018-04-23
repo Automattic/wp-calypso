@@ -95,8 +95,8 @@ describe( 'selectors', () => {
 
 		test( 'should return categories that exist in fetched state', () => {
 			const categories = [
-				{ id: 1, name: 'cat1', slug: 'cat-1' },
-				{ id: 2, name: 'cat2', slug: 'cat-2' },
+				{ id: 1, label: 'cat1', name: 'cat1', slug: 'cat-1', parent: 0 },
+				{ id: 2, label: 'cat2', name: 'cat2', slug: 'cat-2', parent: 0 },
 			];
 
 			expect( getProductCategory( state, 1, 'site.three' ) ).to.eql( categories[ 0 ] );
@@ -116,7 +116,7 @@ describe( 'selectors', () => {
 		test( 'should give product categories from specified site', () => {
 			expect( getProductCategories( state, {}, 'site.three' ) ).to.have.lengthOf( 5 );
 			expect( getProductCategories( state, { page: 2 }, 'site.three' ) ).to.eql( [
-				{ id: 6, name: 'cat6', slug: 'cat-6' },
+				{ id: 6, label: 'cat6', name: 'cat6', slug: 'cat-6', parent: 0 },
 			] );
 		} );
 	} );
@@ -133,12 +133,12 @@ describe( 'selectors', () => {
 		test( 'should get all product categories from specified site', () => {
 			expect( getAllProductCategories( state, {}, 'site.three' ) ).to.have.lengthOf( 6 );
 			expect( getAllProductCategories( state, {}, 'site.three' ) ).to.eql( [
-				{ id: 1, name: 'cat1', slug: 'cat-1' },
-				{ id: 2, name: 'cat2', slug: 'cat-2' },
-				{ id: 3, name: 'cat3', slug: 'cat-3' },
-				{ id: 4, name: 'cat4', slug: 'cat-4' },
-				{ id: 5, name: 'cat5', slug: 'cat-5' },
-				{ id: 6, name: 'cat6', slug: 'cat-6' },
+				{ id: 1, label: 'cat1', name: 'cat1', slug: 'cat-1', parent: 0 },
+				{ id: 2, label: 'cat2', name: 'cat2', slug: 'cat-2', parent: 0 },
+				{ id: 3, label: 'cat2 - cat3', name: 'cat3', slug: 'cat-3', parent: 2 },
+				{ id: 4, label: 'cat2 - cat3 - cat4', name: 'cat4', slug: 'cat-4', parent: 3 },
+				{ id: 5, label: 'cat5', name: 'cat5', slug: 'cat-5', parent: 0 },
+				{ id: 6, label: 'cat6', name: 'cat6', slug: 'cat-6', parent: 0 },
 			] );
 		} );
 	} );

@@ -6,6 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { sortBy } from 'lodash';
 import warn from 'lib/warn';
 
 /**
@@ -131,17 +132,18 @@ class AppliesToFilteredList extends React.Component {
 		const { searchFilter } = this.state;
 
 		if ( 0 === searchFilter.length ) {
-			return productCategories;
+			return sortBy( productCategories, 'label' );
 		}
 
-		return (
+		const filteredCategories =
 			productCategories &&
 			productCategories.filter(
 				category =>
 					categoryContainsString( category, searchFilter ) ||
 					isCategorySelected( value, category.id )
-			)
-		);
+			);
+
+		return sortBy( filteredCategories, 'label' );
 	}
 
 	getFilteredProducts() {
@@ -210,11 +212,11 @@ class AppliesToFilteredList extends React.Component {
 
 	renderCategoryCheckbox = category => {
 		const { value } = this.props;
-		const { name, id, image } = category;
+		const { label, id, image } = category;
 		const selected = isCategorySelected( value, id );
 		const imageSrc = image && image.src;
 
-		return renderRow( FormCheckbox, name, id, imageSrc, selected, this.onCategoryCheckbox );
+		return renderRow( FormCheckbox, label, id, imageSrc, selected, this.onCategoryCheckbox );
 	};
 
 	renderProductCheckbox = currency => product => {
