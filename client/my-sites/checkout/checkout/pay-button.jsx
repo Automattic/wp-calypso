@@ -21,7 +21,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 
-class PayButton extends React.Component {
+export class PayButton extends React.Component {
 	buttonState = () => {
 		if ( this.isRecalculatingCart() ) {
 			return this.recalculating();
