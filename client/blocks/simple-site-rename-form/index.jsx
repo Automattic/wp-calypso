@@ -202,8 +202,10 @@ export class SimpleSiteRenameForm extends Component {
 			isAvailabilityPending,
 			isAvailable,
 			isSiteRenameRequesting,
+			siteId,
 			translate,
 		} = this.props;
+
 		const { domainFieldValue } = this.state;
 		const currentDomainName = get( currentDomain, 'name', '' );
 		const currentDomainPrefix = this.getCurrentDomainPrefix();
@@ -237,9 +239,13 @@ export class SimpleSiteRenameForm extends Component {
 					newDomainName={ domainFieldValue }
 					currentDomainName={ currentDomainPrefix }
 					onConfirm={ this.onConfirm }
+					siteId={ siteId }
 				/>
 				<form onSubmit={ this.onSubmit }>
-					<TrackComponentView eventName="calypso_siteaddresschange_form_view" />
+					<TrackComponentView
+						eventName="calypso_siteaddresschange_form_view"
+						eventProperties={ { blog_id: siteId } }
+					/>
 					<Card className="simple-site-rename-form__content">
 						<FormSectionHeading>{ translate( 'Change Site Address' ) }</FormSectionHeading>
 						<FormTextInputWithAffixes
