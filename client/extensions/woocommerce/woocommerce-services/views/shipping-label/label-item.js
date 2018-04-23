@@ -23,8 +23,14 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 class LabelItem extends Component {
-	renderRefund = ( label ) => {
-		const { orderId, siteId, translate } = this.props;
+	openRefundDialog = ( e ) => {
+		const { orderId, siteId, label } = this.props;
+		e.preventDefault();
+		this.props.openRefundDialog( orderId, siteId, label.labelId );
+	};
+
+	renderRefund = () => {
+		const { orderId, siteId, label, translate } = this.props;
 
 		const today = new Date();
 		const thirtyDaysAgo = new Date().setDate( today.getDate() - 30 );
@@ -32,71 +38,67 @@ class LabelItem extends Component {
 			return null;
 		}
 
-		const openDialog = ( e ) => {
-			e.preventDefault();
-			this.props.openRefundDialog( orderId, siteId, label.labelId );
-		};
-
 		return (
 			<span>
 				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'Request refund' ) }</a>
+				<a href="#" onClick={ this.openRefundDialog }>{ translate( 'Request refund' ) }</a>
 			</span>
 		);
 	};
 
-	renderReprint = ( label ) => {
+	openReprintDialog = ( e ) => {
+		const { orderId, siteId, label } = this.props;
+		e.preventDefault();
+		this.props.openReprintDialog( orderId, siteId, label.labelId );
+	};
+
+	renderReprint = () => {
+		const { orderId, siteId, label, translate } = this.props;
+
 		const todayTime = new Date().getTime();
 		if ( label.usedDate ||
 			( label.expiryDate && label.expiryDate < todayTime ) ) {
 			return null;
 		}
 
-		const { orderId, siteId, translate } = this.props;
-
-		const openDialog = ( e ) => {
-			e.preventDefault();
-			this.props.openReprintDialog( orderId, siteId, label.labelId );
-		};
-
 		return (
 			<span>
 				<ReprintDialog siteId={ siteId } orderId={ orderId } download={ label.returningLabelIndex != null } { ...label } />
-				<a href="#" onClick={ openDialog } >
+				<a href="#" onClick={ this.openReprintDialog }>
 					{ label.returningLabelIndex == null ? translate( 'Reprint' ) : translate( 'Download' ) }
 				</a>
 			</span>
 		);
 	};
 
-	renderLabelDetails = ( label ) => {
-		const { orderId, siteId, translate } = this.props;
+	openDetailsDialog = ( e ) => {
+		const { orderId, siteId, label } = this.props;
+		e.preventDefault();
+		this.props.openDetailsDialog( orderId, siteId, label.labelId );
+	};
 
-		const openDialog = ( e ) => {
-			e.preventDefault();
-			this.props.openDetailsDialog( orderId, siteId, label.labelId );
-		};
-
+	renderLabelDetails = () => {
+		const { orderId, siteId, label, translate } = this.props;
 		return (
 			<span>
 				<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'View details' ) }</a>
+				<a href="#" onClick={ this.openDetailsDialog } >{ translate( 'View details' ) }</a>
 			</span>
 		);
 	};
 
-	renderReturn = ( label ) => {
-		const { orderId, siteId, translate } = this.props;
+	openReturnDialog = ( e ) => {
+		const { orderId, siteId, label } = this.props;
+		e.preventDefault();
+		this.props.openReturnDialog( orderId, siteId, label.labelId );
+	};
 
-		const openDialog = ( e ) => {
-			e.preventDefault();
-			this.props.openReturnDialog( orderId, siteId, label.labelId );
-		};
-
+	renderReturn = () => {
+		const { orderId, siteId, label, translate } = this.props;
 		return (
 			<span>
 				<ReturnDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'Create return label' ) }</a>
+				<a href="#" type="button" onClick={ this.openReturnDialog } >{ translate( 'Create return label' ) }</a>
 			</span>
 		);
 	};
@@ -114,7 +116,7 @@ class LabelItem extends Component {
 							},
 						} ) }
 					</span>
-					{ label.showDetails && this.renderLabelDetails( label ) }
+					{ label.showDetails && this.renderLabelDetails() }
 				</p>
 				{ label.showDetails &&
 					<p className="shipping-label__item-tracking">
@@ -123,13 +125,13 @@ class LabelItem extends Component {
 				}
 				{ label.showDetails &&
 					<p className="shipping-label__item-actions">
-						{ this.renderRefund( label ) }
-						{ this.renderReprint( label ) }
+						{ this.renderRefund() }
+						{ this.renderReprint() }
 					</p>
 				}
 				{ label.returningLabelIndex == null ? (
 					<p className="shipping-label__item-actions">
-						{ label.showDetails && this.renderReturn( label ) }
+						{ label.showDetails && this.renderReturn() }
 					</p>
 				) : (
 					<p>
