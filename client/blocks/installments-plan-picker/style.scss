@@ -1,51 +1,56 @@
 .installments-plan-picker {
-  &__header {
-    margin-bottom: 10px;
-    flex-basis: 100%;
-    font-size: 16px;
-  }
+	&__header {
+		margin-bottom: 10px;
+		flex-basis: 100%;
+		font-size: 16px;
+	}
 
-  &__options {
-    display: flex;
-    align-items: flex-start;
-    flex-flow: row wrap;
-    justify-content: space-between;
-  }
+	&__options {
+		display: flex;
+		align-items: flex-start;
+		flex-flow: column wrap;
+		max-height: 200px;
 
-  &__option-container {
-    flex-basis: calc(50% - 10px);
+		@include breakpoint('<960px') {
+			max-height: unset;
+		}
 
-    @include breakpoint('<960px') {
-      flex-basis: calc(100%);
-      &:not(:first-child) {
-        margin-top: 6px;
-      }
-    }
-  }
+	}
+
+	&__option-container {
+		width: calc(50% - 10px);
+
+		@include breakpoint('<960px') {
+			width: calc(100%);
+			&:not(:first-child) {
+				margin-top: 6px;
+			}
+		}
+	}
 }
 
 .installments-plan-picker__option {
-  $padding-size: 12px;
+	$padding-size: 12px;
 
-  display: flex;
-  width: 100%;
-  cursor: pointer;
+	display: flex;
+	width: 100%;
+	cursor: pointer;
 
-  padding: $padding-size;
-  border-radius: 5px;
+	padding: $padding-size;
+	border-radius: 5px;
 
-  background: $white;
+	background: $white;
 
-  .installments-plan-picker__option-header {
-    width: 100%;
-  }
+	.installments-plan-picker__option-header {
+		width: 100%;
+	}
 
-  &:not( .is-active ) {
-    border: 1px solid $gray;
-    padding: $padding-size + 2px;
-  }
+	&:not( .is-active ) {
+		border: 1px solid $gray;
+		padding: $padding-size + 2px;
+	}
 
-  &.is-active {
-    border: 3px solid $alert-green;
-  }
+	&.is-active {
+		border: 3px solid $alert-green;
+	}
 }
