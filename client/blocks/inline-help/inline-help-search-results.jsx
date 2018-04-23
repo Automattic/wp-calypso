@@ -23,7 +23,7 @@ import {
 	isRequestingInlineHelpSearchResultsForQuery,
 } from 'state/inline-help/selectors';
 import { getLastRouteAction } from 'state/ui/action-log/selectors';
-import { setSearchResults } from 'state/inline-help/actions';
+import { setSearchResults, selectResult } from 'state/inline-help/actions';
 import { getContextResults } from './contextual-help';
 
 class InlineHelpSearchResults extends Component {
@@ -79,8 +79,9 @@ class InlineHelpSearchResults extends Component {
 		this.props.setSearchResults( '', getContextResults( section ) );
 	}
 
-	onHelpLinkClick = event => {
-		this.props.openResult( event, event.target.href );
+	onHelpLinkClick = selectionIndex => event => {
+		this.props.selectResult( selectionIndex );
+		this.props.openResult( event );
 	};
 
 	renderHelpLink = ( link, index ) => {
@@ -89,7 +90,7 @@ class InlineHelpSearchResults extends Component {
 			<li key={ link.link } className={ classNames( 'inline-help__results-item', classes ) }>
 				<a
 					href={ link.link }
-					onClick={ this.onHelpLinkClick }
+					onClick={ this.onHelpLinkClick( index ) }
 					title={ decodeEntities( link.description ) }
 				>
 					{ preventWidows( decodeEntities( link.title ) ) }
@@ -120,6 +121,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 const mapDispatchToProps = {
 	recordTracksEvent,
 	setSearchResults,
+	selectResult,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )(

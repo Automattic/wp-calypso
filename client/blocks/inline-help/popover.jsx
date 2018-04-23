@@ -14,12 +14,14 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
+import { selectResult } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
+import InlineHelpRichResult from './inline-help-rich-result';
 import HelpContact from 'me/help/help-contact';
-import { getSearchQuery } from 'state/inline-help/selectors';
+import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 
 class InlineHelpPopover extends Component {
@@ -36,23 +38,9 @@ class InlineHelpPopover extends Component {
 		activeSecondaryView: '',
 	};
 
-	openResult = ( event, href ) => {
-		if ( ! href ) {
-			return;
-		}
-
-		this.props.recordTracksEvent( 'calypso_inlinehelp_link_open', {
-			search_query: this.props.searchQuery,
-			result_url: href,
-		} );
-
-		if ( ! event.metaKey ) {
-			event.preventDefault();
-			window.location = href;
-		} else if ( event.key === 'Enter' ) {
-			event.preventDefault();
-			window.open( href, '_blank' );
-		}
+	openResult = event => {
+		event.preventDefault();
+		this.toggleSecondaryView( 'richresult' );
 	};
 
 	moreHelpClicked = () => {
@@ -60,15 +48,37 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
 	};
 
-	toggleSecondaryView = secondaryView => () => {
+	toggleSecondaryView = secondaryView => {
 		if ( this.state.activeSecondaryView ) {
 			this.props.recordTracksEvent( 'calypso_inlinehelp_' + secondaryView + '_hide' );
+			this.props.selectResult( -1 );
 			this.setState( { activeSecondaryView: '' } );
 		} else {
 			this.props.recordTracksEvent( 'calypso_inlinehelp_' + secondaryView + '_show' );
 			this.setState( { activeSecondaryView: secondaryView } );
 		}
 		this.setState( { showSecondaryView: ! this.state.showSecondaryView } );
+	};
+
+	buttonClicked = secondaryView => () => {
+		this.toggleSecondaryView( secondaryView );
+	};
+
+	renderSecondaryView = () => {
+		const classes = classNames(
+			'inline-help__secondary-view',
+			`inline-help__${ this.state.activeSecondaryView }`
+		);
+		return (
+			<div className={ classes }>
+				{
+					{
+						contact: <HelpContact compact={ true } selectedSite={ this.props.selectedSite } />,
+						richresult: <InlineHelpRichResult result={ this.props.selectedResult } />,
+					}[ this.state.activeSecondaryView ]
+				}
+			</div>
+		);
 	};
 
 	render() {
@@ -92,9 +102,7 @@ class InlineHelpPopover extends Component {
 					/>
 				</div>
 
-				<div className="inline-help__secondary-view inline-help__contact">
-					<HelpContact compact={ true } selectedSite={ this.props.selectedSite } />
-				</div>
+				{ this.renderSecondaryView() }
 
 				<div className="inline-help__footer">
 					<Button
@@ -108,7 +116,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 
 					<Button
-						onClick={ this.toggleSecondaryView( 'contact' ) }
+						onClick={ this.buttonClicked( 'contact' ) }
 						className="inline-help__contact-button"
 						borderless
 					>
@@ -118,7 +126,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 
 					<Button
-						onClick={ this.toggleSecondaryView( 'contact' ) }
+						onClick={ this.buttonClicked( 'contact' ) }
 						className="inline-help__cancel-button"
 						borderless
 					>
@@ -135,8 +143,10 @@ export default connect(
 	state => ( {
 		searchQuery: getSearchQuery( state ),
 		selectedSite: getHelpSelectedSite( state ),
+		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 	} ),
 	{
 		recordTracksEvent,
+		selectResult,
 	}
 )( localize( InlineHelpPopover ) );

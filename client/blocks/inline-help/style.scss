@@ -189,25 +189,38 @@
 .inline-help__secondary-view {
 	display: none;
 
-	overflow-y: auto;
+	box-sizing: border-box;
 	max-height: 70vh;
+	min-height: 206px;
+	overflow-y: auto;
+	padding: 16px;
 
 	.is-secondary-view-active & {
 		display: block;
+	}
+
+	.button {
+		width: 100%;
+		text-align: center;
+	}
+}
+
+.inline-help__richresult {
+	text-align: left;
+
+	.inline-help__richresult__title {
+		display: block;
+		font-size: 14px;
+		font-weight: 600;
+		margin-bottom: 5px;
 	}
 }
 
 .inline-help__contact {
 
-	.help-contact-form {
-		button {
-			width: 100%;
-		}
-	}
-
 	.help-contact__form {
 		margin: 0;
-		padding: 16px;
+		padding: 0;
 		box-shadow: none;
 		text-align: left;
 		border-radius: 4px 4px 0 0;
