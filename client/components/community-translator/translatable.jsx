@@ -121,7 +121,7 @@ export class Translatable extends Component {
 						! this.state.submitting
 					}
 				>
-					{ translate( 'Submit a new translation' ) }
+					{ translate( 'Submit translation' ) }
 				</Button>
 			);
 		}
