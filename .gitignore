@@ -51,3 +51,6 @@ cover.html
 .test.log
 
 cached-requests.json
+*.br
+*.gz
+
