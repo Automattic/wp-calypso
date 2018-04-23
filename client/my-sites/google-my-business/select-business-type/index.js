@@ -88,7 +88,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 			connectButton = (
 				<Button
 					primary
-					href="https://www.google.com/business/"
+					href="https://business.google.com/create"
 					target="_blank"
 					onClick={ this.trackCreateMyListingClick }
 				>
