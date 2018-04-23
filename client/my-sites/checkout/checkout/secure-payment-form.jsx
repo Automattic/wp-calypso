@@ -256,6 +256,7 @@ const SecurePaymentForm = createReactClass( {
 				<RedirectPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
+					countriesList={ countriesListForPayments }
 					selectedSite={ this.props.selectedSite }
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
