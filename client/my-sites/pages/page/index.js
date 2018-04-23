@@ -206,7 +206,7 @@ class Page extends Component {
 
 	setFrontPage() {
 		{
-			alert( 'This feature is still being developed!' );
+			alert( 'This feature is still being developed.' );
 		}
 	}
 
@@ -223,12 +223,13 @@ class Page extends Component {
 			return null;
 		}
 
-		return (
-			<PopoverMenuItem onClick={ this.setFrontPage }>
+		return [
+			<MenuSeparator key="separator" />,
+			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
 				<Gridicon icon="house" size={ 18 } />
 				{ this.props.translate( 'Set as Front Page' ) }
-			</PopoverMenuItem>
-		);
+			</PopoverMenuItem>,
+		];
 	}
 
 	getSendToTrashItem() {
@@ -382,9 +383,9 @@ class Page extends Component {
 			viewItem ||
 			publishItem ||
 			editItem ||
-			frontPageItem ||
 			statsItem ||
 			restoreItem ||
+			frontPageItem ||
 			sendToTrashItem ||
 			moreInfoItem;
 
@@ -395,12 +396,12 @@ class Page extends Component {
 				onToggle={ this.handleMenuToggle }
 			>
 				{ editItem }
-				{ frontPageItem }
 				{ publishItem }
 				{ viewItem }
 				{ statsItem }
 				{ copyItem }
 				{ restoreItem }
+				{ frontPageItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
 			</EllipsisMenu>
