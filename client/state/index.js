@@ -84,7 +84,7 @@ import simplePayments from './simple-payments/reducer';
 import sites from './sites/reducer';
 import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
-import siteAddressChange from './site-rename/reducer';
+import siteAddressChange from './site-address-change/reducer';
 import siteSettings from './site-settings/reducer';
 import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';

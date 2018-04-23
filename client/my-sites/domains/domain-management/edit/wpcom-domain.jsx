@@ -19,7 +19,7 @@ import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestSiteAddressChange } from 'state/site-rename/actions';
+import { requestSiteAddressChange } from 'state/site-address-change/actions';
 import SiteAddressChanger from 'blocks/site-address-changer';
 import { type as domainTypes } from 'lib/domains/constants';
 
