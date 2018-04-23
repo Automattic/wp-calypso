@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -27,47 +27,58 @@ import {
 import RateSelector from './label-purchase-modal/rates-step/rate-selector';
 import BuyAndPrintButton from './label-purchase-modal/buy-and-print-button';
 
-const ReturnDialog = props => {
-	const { orderId, siteId, returnDialog, paperSize, storeOptions, labelId, translate } = props;
+class ReturnDialog extends Component {
+	onClose = () => this.props.closeReturnDialog( this.props.orderId, this.props.siteId, false );
+	onPaperSizeChange = value =>
+		this.props.updatePaperSize( this.props.orderId, this.props.siteId, value );
 
-	const onClose = () => props.closeReturnDialog( orderId, siteId, false );
-	const onPaperSizeChange = value => props.updatePaperSize( orderId, siteId, value );
+	render() {
+		const {
+			orderId,
+			siteId,
+			returnDialog,
+			paperSize,
+			storeOptions,
+			labelId,
+			translate,
+		} = this.props;
 
-	const buttons = [
-		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
-		<BuyAndPrintButton key="purchase" siteId={ props.siteId } orderId={ props.orderId } download />,
-	];
+		const buttons = [
+			{ action: 'cancel', label: translate( 'Cancel' ), onClick: this.onClose },
+			<BuyAndPrintButton key="purchase" siteId={ siteId } orderId={ orderId } download />,
+		];
 
-	return (
-		<Dialog
-			isVisible={ Boolean( returnDialog && returnDialog.labelId === labelId ) }
-			onClose={ onClose }
-			buttons={ buttons }
-			additionalClassNames="label-return-modal woocommerce wcc-root"
-		>
-			<FormSectionHeading>{ translate( 'Create return shipping label' ) }</FormSectionHeading>
-			<p>
-				{ translate(
-					'Purchase a return label for this package so your customers can easily return the item(s) purchased from you. ' +
-						'Once created, you can send the label to your customer, where they can print it out and mail the package back.'
-				) }
-			</p>
-			<RateSelector
-				id={ 'return_rates' }
-				siteId={ siteId }
-				orderId={ orderId }
-				packageId={ 'return' }
-			/>
-			<Dropdown
-				id={ 'paper_size' }
-				valuesMap={ getPaperSizes( storeOptions.origin_country ) }
-				title={ translate( 'Paper size' ) }
-				value={ paperSize }
-				updateValue={ onPaperSizeChange }
-			/>
-		</Dialog>
-	);
-};
+		return (
+			<Dialog
+				isVisible={ Boolean( returnDialog && returnDialog.labelId === labelId ) }
+				onClose={ this.onClose }
+				buttons={ buttons }
+				additionalClassNames="label-return-modal woocommerce wcc-root"
+			>
+				<FormSectionHeading>{ translate( 'Create return shipping label' ) }</FormSectionHeading>
+				<p>
+					{ translate(
+						'Purchase a return label for this package so your customers can easily return the item(s) purchased from you. ' +
+							'Once created, you can send the label to your customer, where they can print it out and mail the package back.'
+					) }
+				</p>
+				<RateSelector
+					id={ 'return_rates' }
+					siteId={ siteId }
+					orderId={ orderId }
+					packageId={ 'return' }
+				/>
+				<Dropdown
+					id={ 'paper_size' }
+					valuesMap={ getPaperSizes( storeOptions.origin_country ) }
+					title={ translate( 'Paper size' ) }
+					value={ paperSize }
+					updateValue={ this.onPaperSizeChange }
+				/>
+			</Dialog>
+		);
+	}
+}
 
 ReturnDialog.propTypes = {
 	siteId: PropTypes.number.isRequired,

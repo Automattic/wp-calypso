@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,70 +17,71 @@ import { userCanManagePayments } from 'woocommerce/woocommerce-services/state/la
 import { closeDetailsDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const DetailsDialog = ( props ) => {
-	const {
-		orderId,
-		siteId,
-		isVisible,
-		labelIndex,
-		serviceName,
-		packageName,
-		productNames,
-		canManagePayments,
-		receiptId,
-		translate,
-	} = props;
+class DetailsDialog extends Component {
+	onClose = () => this.props.closeDetailsDialog( this.props.orderId, this.props.siteId );
 
-	const onClose = () => props.closeDetailsDialog( orderId, siteId );
-	const buttons = [
-		{ action: 'close', label: translate( 'Close' ), onClick: onClose },
-	];
+	render() {
+		const {
+			isVisible,
+			labelIndex,
+			serviceName,
+			packageName,
+			productNames,
+			canManagePayments,
+			receiptId,
+			translate,
+		} = this.props;
 
-	const renderReceiptLink = () => {
-		if ( ! canManagePayments || ! receiptId ) {
-			return null;
-		}
+		const buttons = [
+			{ action: 'close', label: translate( 'Close' ), onClick: this.onClose },
+		];
 
-		return <a
-			href={ `${ getOrigin() }/me/purchases/billing/${ receiptId }` }
-			target="_blank">
-			{ translate( 'Receipt' ) }
-		</a>;
-	};
+		const renderReceiptLink = () => {
+			if ( ! canManagePayments || ! receiptId ) {
+				return null;
+			}
 
-	return (
-		<Dialog
-			additionalClassNames="label-details-modal woocommerce wcc-root"
-			isVisible={ isVisible }
-			onClose={ onClose }
-			buttons={ buttons }>
-			<FormSectionHeading className="shipping-label__label-details-modal-heading">
-				<span className="shipping-label__label-details-modal-heading-title">
-					{ translate( 'Label #%(labelIndex)s details', { args: { labelIndex: labelIndex + 1 } } ) }
-				</span>
-				{ renderReceiptLink() }
-			</FormSectionHeading>
-			<dl>
-				<dt>{ translate( 'Service' ) }</dt>
-				<dd>{ serviceName }</dd>
+			return <a
+				href={ `${ getOrigin() }/me/purchases/billing/${ receiptId }` }
+				target="_blank">
+				{ translate( 'Receipt' ) }
+			</a>;
+		};
 
-				<dt>{ translate( 'Package' ) }</dt>
-				<dd>{ packageName }</dd>
+		return (
+			<Dialog
+				additionalClassNames="label-details-modal woocommerce wcc-root"
+				isVisible={ isVisible }
+				onClose={ this.onClose }
+				buttons={ buttons }>
+				<FormSectionHeading className="shipping-label__label-details-modal-heading">
+					<span className="shipping-label__label-details-modal-heading-title">
+						{ translate( 'Label #%(labelIndex)s details', { args: { labelIndex: labelIndex + 1 } } ) }
+					</span>
+					{ renderReceiptLink() }
+				</FormSectionHeading>
+				<dl>
+					<dt>{ translate( 'Service' ) }</dt>
+					<dd>{ serviceName }</dd>
 
-				{ productNames && (
-					<Fragment>
-						<dt>{ translate( 'Items' ) }</dt>
-						<dd>
-							<ul>
-								{ productNames.map( ( productName, i ) => <li key={ i }>{ productName }</li> ) }
-							</ul>
-						</dd>
-					</Fragment>
-				) }
-			</dl>
-		</Dialog>
-	);
-};
+					<dt>{ translate( 'Package' ) }</dt>
+					<dd>{ packageName }</dd>
+
+					{ productNames && (
+						<Fragment>
+							<dt>{ translate( 'Items' ) }</dt>
+							<dd>
+								<ul>
+									{ productNames.map( ( productName, i ) => <li key={ i }>{ productName }</li> ) }
+								</ul>
+							</dd>
+						</Fragment>
+					) }
+				</dl>
+			</Dialog>
+		);
+	}
+}
 
 DetailsDialog.propTypes = {
 	siteId: PropTypes.number.isRequired,

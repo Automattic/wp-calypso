@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,51 +16,53 @@ import { closeRefundDialog, confirmRefund } from 'woocommerce/woocommerce-servic
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import formatCurrency from 'lib/format-currency';
 
-const RefundDialog = ( props ) => {
-	const { orderId, siteId, refundDialog, createdDate, refundableAmount, currency, labelId, translate, moment } = props;
+class RefundDialog extends Component {
+	onClose = () => this.props.closeRefundDialog( this.props.orderId, this.props.siteId );
+	onConfirm = () => this.props.confirmRefund( this.props.orderId, this.props.siteId );
 
-	const getRefundableAmount = () => {
-		return formatCurrency( refundableAmount, currency );
-	};
+	render() {
+		const { refundDialog, createdDate, refundableAmount, currency, labelId, translate, moment } = this.props;
 
-	const onClose = () => props.closeRefundDialog( orderId, siteId );
-	const onConfirm = () => props.confirmRefund( orderId, siteId );
+		const getRefundableAmount = () => {
+			return formatCurrency( refundableAmount, currency );
+		};
 
-	const buttons = [
-		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
-		{
-			action: 'confirm',
-			onClick: onConfirm,
-			isPrimary: true,
-			disabled: refundDialog && refundDialog.isSubmitting,
-			additionalClassNames: refundDialog && refundDialog.isSubmitting ? 'is-busy' : '',
-			label: translate( 'Refund label (-%(amount)s)', { args: { amount: getRefundableAmount() } } ),
-		},
-	];
+		const buttons = [
+			{ action: 'cancel', label: translate( 'Cancel' ), onClick: this.onClose },
+			{
+				action: 'confirm',
+				onClick: this.onConfirm,
+				isPrimary: true,
+				disabled: refundDialog && refundDialog.isSubmitting,
+				additionalClassNames: refundDialog && refundDialog.isSubmitting ? 'is-busy' : '',
+				label: translate( 'Refund label (-%(amount)s)', { args: { amount: getRefundableAmount() } } ),
+			},
+		];
 
-	return (
-		<Dialog
-			additionalClassNames="label-refund-modal woocommerce wcc-root"
-			isVisible={ Boolean( refundDialog && refundDialog.labelId === labelId ) }
-			onClose={ onClose }
-			buttons={ buttons }>
-			<FormSectionHeading>
-				{ translate( 'Request a refund' ) }
-			</FormSectionHeading>
-			<p>
-				{ translate( 'You can request a refund for a shipping label that has not been used to ship a package. ' +
-					'It will take at least 14 days to process.' ) }
-			</p>
-			<dl>
-				<dt>{ translate( 'Purchase date' ) }</dt>
-				<dd>{ moment( createdDate ).format( 'MMMM Do YYYY, h:mm a' ) }</dd>
+		return (
+			<Dialog
+				additionalClassNames="label-refund-modal woocommerce wcc-root"
+				isVisible={ Boolean( refundDialog && refundDialog.labelId === labelId ) }
+				onClose={ this.onClose }
+				buttons={ buttons }>
+				<FormSectionHeading>
+					{ translate( 'Request a refund' ) }
+				</FormSectionHeading>
+				<p>
+					{ translate( 'You can request a refund for a shipping label that has not been used to ship a package. ' +
+						'It will take at least 14 days to process.' ) }
+				</p>
+				<dl>
+					<dt>{ translate( 'Purchase date' ) }</dt>
+					<dd>{ moment( createdDate ).format( 'MMMM Do YYYY, h:mm a' ) }</dd>
 
-				<dt>{ translate( 'Amount eligible for refund' ) }</dt>
-				<dd>{ getRefundableAmount() }</dd>
-			</dl>
-		</Dialog>
-	);
-};
+					<dt>{ translate( 'Amount eligible for refund' ) }</dt>
+					<dd>{ getRefundableAmount() }</dd>
+				</dl>
+			</Dialog>
+		);
+	}
+}
 
 RefundDialog.propTypes = {
 	siteId: PropTypes.number.isRequired,
