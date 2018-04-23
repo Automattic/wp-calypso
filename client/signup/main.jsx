@@ -14,6 +14,7 @@ import {
 	delay,
 	filter,
 	find,
+	get,
 	indexOf,
 	isEmpty,
 	last,
@@ -54,6 +55,7 @@ import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-trac
 import { disableCart } from 'lib/upgrades/actions';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { affiliateReferral } from 'state/refer/actions';
+import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 
 /**
  * Constants
@@ -456,11 +458,19 @@ class Signup extends React.Component {
 	};
 
 	currentStep = () => {
+		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
-			flow = flows.getFlow( this.props.flowName );
+			flow = flows.getFlow( this.props.flowName ),
+			hideFreePlan = !! (
+				this.state.plans ||
+				( ( isDomainRegistration( domainItem ) ||
+					isDomainTransfer( domainItem ) ||
+					isDomainMapping( domainItem ) ) &&
+					this.props.domainsWithPlansOnly )
+			);
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -490,7 +500,7 @@ class Signup extends React.Component {
 						signupDependencies={ this.props.signupDependencies }
 						stepSectionName={ this.props.stepSectionName }
 						positionInFlow={ this.positionInFlow() }
-						hideFreePlan={ true }
+						hideFreePlan={ hideFreePlan }
 						{ ...propsFromConfig }
 					/>
 				) }
