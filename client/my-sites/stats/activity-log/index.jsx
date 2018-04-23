@@ -384,7 +384,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ config.isEnabled( 'rewind-alerts' ) && <RewindAlerts siteId={ siteId } /> }
+				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (
