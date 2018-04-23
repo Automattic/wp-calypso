@@ -29,17 +29,6 @@ const checkoutGSuiteNudgeRoutes = [
 	new Route( '/checkout/:site/with-gsuite/:domain' ),
 ];
 
-const checkoutThankYouRoutes = [
-	new Route( '/checkout/thank-you/no-site/:receipt' ),
-	new Route( '/checkout/thank-you/no-site' ),
-	new Route( '/checkout/thank-you/:site/:receipt' ),
-	new Route( '/checkout/thank-you/:site' ),
-	new Route( '/checkout/thank-you/:site/:receipt/with-gsuite/:gsuiteReceipt' ),
-	new Route( '/checkout/thank-you/:site/:receipt/with-gsuite' ),
-	new Route( '/checkout/thank-you/features/:feature/:site/:receipt' ),
-	new Route( '/checkout/thank-you/features/:feature/:site' ),
-];
-
 export default {
 	checkout: function( context, next ) {
 		const { feature, plan, product } = context.params;
@@ -104,22 +93,57 @@ export default {
 	},
 
 	checkoutThankYou: function( context, next ) {
-		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutThankYouRoutes );
 		const receiptId = Number( context.params.receiptId );
 		const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
+		const { feature } = context.params;
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
-
-		analytics.pageView.record( routePath, 'Checkout Thank You', routeParams );
 
 		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
 
+		let analyticsPath = '';
+		let analyticsProps = {};
+		if ( gsuiteReceiptId ) {
+			analyticsPath = '/checkout/thank-you/:site/:receipt_id/with-gsuite/:gsuite_receipt_id';
+			analyticsProps = {
+				gsuiteReceiptId: gsuiteReceiptId,
+				receiptId,
+				site: selectedSite.slug,
+			};
+		} else if ( feature && receiptId ) {
+			analyticsPath = '/checkout/thank-you/features/:feature/:site/:receipt_id';
+			analyticsProps = {
+				feature,
+				receiptId,
+				site: selectedSite.slug,
+			};
+		} else if ( feature && ! receiptId ) {
+			analyticsPath = '/checkout/thank-you/features/:feature/:site';
+			analyticsProps = {
+				feature,
+				site: selectedSite.slug,
+			};
+		} else if ( receiptId && selectedSite ) {
+			analyticsPath = '/checkout/thank-you/:site/:receipt_id';
+			analyticsProps = { receiptId, site: selectedSite.slug };
+		} else if ( receiptId && ! selectedSite ) {
+			analyticsPath = '/checkout/thank-you/no-site/:receipt_id';
+			analyticsProps = { receiptId };
+		} else if ( selectedSite ) {
+			analyticsPath = '/checkout/thank-you/:site';
+			analyticsProps = { site: selectedSite.slug };
+		} else {
+			analyticsPath = '/checkout/thank-you/no-site';
+		}
+
 		context.primary = (
 			<CheckoutThankYouComponent
+				analyticsPath={ analyticsPath }
+				analyticsProps={ analyticsProps }
 				receiptId={ receiptId }
 				gsuiteReceiptId={ gsuiteReceiptId }
 				domainOnlySiteFlow={ isEmpty( context.params.site ) }

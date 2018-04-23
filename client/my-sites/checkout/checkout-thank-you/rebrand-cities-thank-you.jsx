@@ -12,6 +12,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import ThankYouCard from 'components/thank-you-card';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class RebrandCitiesThankYou extends Component {
 	renderLogo() {
@@ -19,11 +20,16 @@ class RebrandCitiesThankYou extends Component {
 	}
 
 	render() {
-		const { receipt, translate } = this.props;
+		const { analyticsPath, analyticsProps, receipt, translate } = this.props;
 		const displayPrice = get( receipt, 'data.displayPrice' );
 
 		return (
 			<div className="plan-thank-you-card checkout-thank-you__rebrand-cities">
+				<PageViewTracker
+					path={ analyticsPath }
+					title="Checkout Thank You"
+					properties={ analyticsProps }
+				/>
 				<ThankYouCard
 					name={ translate( 'Rebrand Cities package' ) }
 					price={ displayPrice }
