@@ -70,6 +70,7 @@ import { getProductsList, isProductsListFetching } from 'state/products-list/sel
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class Checkout extends React.Component {
 	static propTypes = {
@@ -607,6 +608,26 @@ export class Checkout extends React.Component {
 	}
 
 	render() {
+		const { plan, product, purchaseId, selectedFeature, selectedSiteSlug } = this.props;
+		let analyticsPath;
+		let analyticsProps;
+		if ( purchaseId && product ) {
+			analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
+			analyticsProps = { product, purchaseId, site: selectedSiteSlug };
+		} else if ( selectedFeature && plan ) {
+			analyticsPath = '/checkout/features/:feature/:site/:plan';
+			analyticsProps = { feature: selectedFeature, plan, site: selectedSiteSlug };
+		} else if ( selectedFeature && ! plan ) {
+			analyticsPath = '/checkout/features/:feature/:site';
+			analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
+		} else if ( product && ! purchaseId ) {
+			analyticsPath = '/checkout/:site/:product';
+			analyticsProps = { product, site: selectedSiteSlug };
+		} else {
+			analyticsPath = '/checkout/:site';
+			analyticsProps = { site: selectedSiteSlug };
+		}
+
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
@@ -615,6 +636,8 @@ export class Checkout extends React.Component {
 					<QueryProducts />
 					<QueryContactDetailsCache />
 					<QueryStoredCards />
+
+					<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 
 					{ this.content() }
 				</div>
