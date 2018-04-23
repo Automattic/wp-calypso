@@ -7,6 +7,8 @@ import { compact, first, get } from 'lodash';
 /**
  * Module variables
  */
+export const RESULT_TOUR = 'tour',
+	RESULT_VIDEO = 'video';
 const fallbackLinks = [
 	{
 		link: 'https://en.support.wordpress.com/business-plan/',
@@ -665,6 +667,7 @@ const contextLinksForSection = {
 const videosForSection = {
 	sharing: [
 		{
+			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/watch?v=YVelWG3hf3o',
 			title: 'Add Social Sharing Buttons to Your Website',
 			description:
@@ -677,6 +680,7 @@ const videosForSection = {
 const toursForSection = {
 	media: [
 		{
+			type: RESULT_TOUR,
 			tour: 'mediaBasicsTour',
 			key: 'tour:mediaBasicsTour',
 			title: 'Learn Media Library Basics',
