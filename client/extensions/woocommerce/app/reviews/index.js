@@ -33,7 +33,7 @@ class Reviews extends Component {
 			<Main className={ classes } wideLayout>
 				<ActionHeader breadcrumbs={ <span>{ translate( 'Reviews' ) }</span> } />
 				<ReviewsList
-					productId={ params && params.productId && Number( params.productId ) }
+					productId={ params && params.product_id && Number( params.product_id ) }
 					currentStatus={ params && params.filter }
 				/>
 			</Main>
