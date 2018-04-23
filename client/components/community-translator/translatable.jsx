@@ -106,9 +106,7 @@ export class Translatable extends Component {
 		const { translate } = this.props;
 
 		const buttons = [
-			<Button primary onClick={ this.closeDialog }>
-				{ translate( 'Close', { textOnly: true } ) }
-			</Button>,
+			<Button onClick={ this.closeDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
 		];
 
 		if ( ! this.state.submissionSuccess ) {
