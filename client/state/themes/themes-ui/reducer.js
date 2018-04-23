@@ -9,7 +9,7 @@ import { themesBannerVisibleSchema } from '../schema';
 import { combineReducers, createReducer } from 'state/utils';
 
 // Destination for 'back' button on theme sheet
-function backPath( state = '/themes', action ) {
+export function backPath( state = '/themes', action ) {
 	switch ( action.type ) {
 		case THEME_BACK_PATH_SET:
 			return action.path !== undefined ? action.path : state;
@@ -18,7 +18,7 @@ function backPath( state = '/themes', action ) {
 }
 
 // Determines if the theme showcase banner is currently visible
-const themesBannerVisible = createReducer(
+export const themesBannerVisible = createReducer(
 	true,
 	{
 		[ THEMES_BANNER_HIDE ]: () => false,
