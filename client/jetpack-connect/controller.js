@@ -115,7 +115,7 @@ export function maybeOnboard( { query, store }, next ) {
 export function newSite( context, next ) {
 	analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
 	removeSidebar( context );
-	context.primary = <JetpackNewSite path={ context.path } locale={ context.params.locale } />;
+	context.primary = <JetpackNewSite locale={ context.params.locale } path={ context.path } />;
 	next();
 }
 
