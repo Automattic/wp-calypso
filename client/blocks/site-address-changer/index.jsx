@@ -23,7 +23,7 @@ import {
 	requestSiteAddressChange,
 	requestSiteAddressAvailability,
 	clearValidationError,
-} from 'state/site-rename/actions';
+} from 'state/site-address-change/actions';
 import {
 	isRequestingSiteAddressChange,
 	getSiteAddressAvailabilityPending,
