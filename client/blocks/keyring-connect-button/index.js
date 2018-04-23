@@ -26,7 +26,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 class KeyringConnectButton extends Component {
 	static propTypes = {
-		service: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		service: PropTypes.oneOfType( [
+			PropTypes.shape( {
+				ID: PropTypes.string.isRequired,
+				connect_URL: PropTypes.string.isRequired,
+			} ),
+			PropTypes.bool,
+		] ),
 		isFetching: PropTypes.bool,
 		keyringConnections: PropTypes.array,
 		siteId: PropTypes.number,
