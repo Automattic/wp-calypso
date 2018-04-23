@@ -172,6 +172,7 @@ export function connect( context, next ) {
 		url: query.url,
 		ctaId: query.cta_id, // origin tracking params
 		ctaFrom: query.cta_from,
+		interval,
 	} );
 	next();
 }
@@ -203,12 +204,26 @@ export function signupForm( context, next ) {
 
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
+
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
-		const { locale } = context.params;
+		let interval = context.params.interval;
+		let locale = context.params.locale;
+		if ( context.params.localeOrInterval ) {
+			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
+				interval = context.params.localeOrInterval;
+			} else {
+				locale = context.params.localeOrInterval;
+			}
+		}
 		context.primary = (
-			<JetpackSignup path={ context.path } locale={ locale } authQuery={ transformedQuery } />
+			<JetpackSignup
+				path={ context.path }
+				interval={ interval }
+				locale={ locale }
+				authQuery={ transformedQuery }
+			/>
 		);
 	} else {
 		context.primary = <NoDirectAccessError />;
@@ -228,9 +243,11 @@ export function authorizeForm( context, next ) {
 
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
+	const interval = context.params.localeOrInterval || context.params.interval || 'yearly';
+
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
-		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
+		context.primary = <JetpackAuthorize authQuery={ transformedQuery } interval={ interval } />;
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}
