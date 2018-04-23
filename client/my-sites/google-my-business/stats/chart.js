@@ -14,6 +14,8 @@ import { get } from 'lodash';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import LineChart from 'components/line-chart';
+import PieChart from 'components/pie-chart';
+import PieChartLegend from 'components/pie-chart/legend';
 import SectionHeader from 'components/section-header';
 import {
 	changeGoogleMyBusinessStatsInterval,
@@ -23,11 +25,16 @@ import { getGoogleMyBusinessStats } from 'state/selectors';
 import { getInterval } from 'state/google-my-business/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+function getAggregation( props ) {
+	return props.chartType === 'pie' ? 'total' : 'daily';
+}
+
 class GoogleMyBusinessStatsChart extends Component {
 	static propTypes = {
 		changeGoogleMyBusinessStatsInterval: PropTypes.func.isRequired,
 		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
-		data: PropTypes.array.isRequired,
+		chartType: PropTypes.oneOf( [ 'pie', 'line' ] ),
+		data: PropTypes.object,
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
@@ -39,6 +46,7 @@ class GoogleMyBusinessStatsChart extends Component {
 	};
 
 	static defaultProps = {
+		chartType: 'line',
 		dataSeriesInfo: {},
 	};
 
@@ -51,31 +59,35 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	componentDidMount() {
-		this.props.requestGoogleMyBusinessStats(
-			this.props.siteId,
-			this.props.statType,
-			this.props.interval
-		);
+		if ( this.props.siteId ) {
+			this.requestGoogleMyBusinessStats();
+		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.data !== nextProps.data ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.data !== prevProps.data ) {
 			this.setState( {
-				transformedData: this.transformData( nextProps.data ),
+				transformedData: this.transformData( this.props.data ),
 			} );
 		}
 
 		if (
-			this.props.interval !== nextProps.interval ||
-			this.props.siteId !== nextProps.siteId ||
-			this.props.statType !== nextProps.statType
+			this.props.chartType !== prevProps.chartType ||
+			this.props.interval !== prevProps.interval ||
+			this.props.siteId !== prevProps.siteId ||
+			this.props.statType !== prevProps.statType
 		) {
-			nextProps.requestGoogleMyBusinessStats(
-				nextProps.siteId,
-				nextProps.statType,
-				nextProps.interval,
-			);
+			this.requestGoogleMyBusinessStats();
 		}
+	}
+
+	requestGoogleMyBusinessStats() {
+		this.props.requestGoogleMyBusinessStats(
+			this.props.siteId,
+			this.props.statType,
+			this.props.interval,
+			getAggregation( this.props )
+		);
 	}
 
 	transformData( data ) {
@@ -83,14 +95,18 @@ class GoogleMyBusinessStatsChart extends Component {
 			return data;
 		}
 
-		//return data.metricValues.map( value => ( {
-		//	value: value.totalValue.value,
-		//	description: get( this.props.dataSeriesInfo, `${ value.metric }.description`, '' ),
-		//	name: get( this.props.dataSeriesInfo, `${ value.metric }.name`, value.metric ),
-		//} ) );
+		const aggregation = getAggregation( this.props );
 
-		return data.map( dataSeries => {
-			return dataSeries.dimensionalValues.map( datum => {
+		if ( aggregation === 'total' ) {
+			return data.metricValues.map( metric => ( {
+				value: metric.totalValue.value,
+				description: get( this.props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
+				name: get( this.props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
+			} ) );
+		}
+
+		return data.metricValues.map( metric => {
+			return metric.dimensionalValues.map( datum => {
 				return {
 					date: Date.parse( datum.time ),
 					value: datum.value,
@@ -107,7 +123,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 
 	render() {
-		const { chartTitle, description, interval, title } = this.props;
+		const { chartTitle, chartType, description, interval, title } = this.props;
 		const { transformedData } = this.state;
 
 		return (
@@ -132,11 +148,18 @@ class GoogleMyBusinessStatsChart extends Component {
 					</select>
 
 					<div className="gmb-stats__metric-chart">
-						<LineChart
-							fillArea
-							data={ transformedData }
-							renderTooltipForDatanum={ this.props.renderTooltipForDatanum }
-						/>
+						{ chartType === 'pie' ? (
+							<div>
+								<PieChart data={ transformedData } title={ chartTitle } />
+								<PieChartLegend data={ transformedData } />
+							</div>
+						) : (
+							<LineChart
+								fillArea
+								data={ transformedData }
+								renderTooltipForDatanum={ this.props.renderTooltipForDatanum }
+							/>
+						) }
 					</div>
 				</Card>
 			</div>
@@ -152,7 +175,7 @@ export default connect(
 		return {
 			siteId,
 			interval,
-			data: getGoogleMyBusinessStats( state, siteId, ownProps.statType, interval, 'total' ),
+			data: getGoogleMyBusinessStats( state, siteId, ownProps.statType, interval, getAggregation( ownProps ) ),
 		};
 	},
 	{

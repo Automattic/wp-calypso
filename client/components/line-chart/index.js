@@ -223,6 +223,10 @@ class LineChart extends Component {
 		const { data } = this.props;
 		const { pointHovered } = this.state;
 
+		if ( ! data ) {
+			return null;
+		}
+
 		return (
 			<div>
 				<D3Base
@@ -231,6 +235,7 @@ class LineChart extends Component {
 					getParams={ this.getParams }
 					data={ data }
 				/>
+
 				<Tooltip
 					className="line-chart__tooltip is-streak"
 					id="popover__line-chart"

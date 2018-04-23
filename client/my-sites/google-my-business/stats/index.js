@@ -120,6 +120,7 @@ class GoogleMyBusinessStats extends Component {
 							title={ translate( 'How customers search for your business' ) }
 							statType="queries"
 							chartTitle={ this.searchChartTitleFunc }
+							chartType="pie"
 							dataSeriesInfo={ {
 								QUERIES_DIRECT: {
 									name: translate( 'Direct' ),
