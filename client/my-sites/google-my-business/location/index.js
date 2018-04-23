@@ -63,7 +63,13 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 GoogleMyBusinessLocation.propTypes = {
 	children: PropTypes.node,
 	isCompact: PropTypes.bool,
-	location: PropTypes.object.isRequired,
+	location: PropTypes.shape( {
+		ID: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+		description: PropTypes.string.isRequired,
+		picture: PropTypes.string.isRequired,
+		verified: PropTypes.bool.isRequired,
+	} ).isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
