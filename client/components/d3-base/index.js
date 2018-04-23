@@ -50,7 +50,9 @@ export default class D3Base extends Component {
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.updateParams );
 
-		delete this.chartRef.current;
+		const div = d3Select( this.chartRef.current );
+
+		div.selectAll( 'svg' ).remove();
 	}
 
 	updateParams = nextProps => {
