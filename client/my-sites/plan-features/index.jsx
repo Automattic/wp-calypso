@@ -813,7 +813,6 @@ export default connect(
 						isMonthly: showMonthlyPrice,
 					} ),
 					features: planFeatures,
-					isJetpack,
 					isLandingPage,
 					isPlaceholder,
 					onUpgradeClick: onUpgradeClick
@@ -844,7 +843,6 @@ export default connect(
 						plans.length === 1,
 					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
 					relatedMonthlyPlan,
-					selectedSiteSlug,
 				};
 			} )
 		);
@@ -866,8 +864,10 @@ export default connect(
 		return {
 			canPurchase,
 			freePlanProperties,
+			isJetpack,
 			maxCredits,
 			planProperties,
+			selectedSiteSlug,
 			showModifiedPricingDisplay,
 			sitePlan,
 			siteType,
