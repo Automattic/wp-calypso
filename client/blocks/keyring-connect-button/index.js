@@ -62,8 +62,7 @@ class KeyringConnectButton extends Component {
 	};
 
 	/**
-	 * Given a service name and optional site ID, returns the current status of the
-	 * service's connection.
+	 * Returns the current status of the service's connection.
 	 *
 	 * @return {string} Connection status.
 	 */
@@ -145,10 +144,10 @@ class KeyringConnectButton extends Component {
 	}
 
 	/**
-	 * Given a service name and optional site ID, returns whether the Keyring
-	 * authorization attempt succeeded in creating new Keyring account options.
+	 * Returns whether the Keyring authorization attempt succeeded
+	 * in creating new Keyring account options.
 	 *
-	 * @param {Array} keyringConnections Props to check on if a keyring connection succeeded.
+	 * @param {Array} keyringConnections props to check on if a keyring connection succeeded.
 	 * @return {Boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( keyringConnections ) {
