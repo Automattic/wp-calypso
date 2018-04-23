@@ -20,7 +20,7 @@ export function getSearchQuery( state ) {
  * @param  {Object}  state  Global state tree
  * @return {Integer}        The index of the currently selected search result
  */
-export function getSelectedResult( state ) {
+export function getSelectedResultIndex( state ) {
 	return get( state, 'inlineHelpSearchResults.search.selectedResult', -1 );
 }
 
@@ -58,6 +58,6 @@ export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
 export function getInlineHelpCurrentlySelectedLink( state ) {
 	const query = getSearchQuery( state );
 	const results = getInlineHelpSearchResultsForQuery( state, query );
-	const result = get( results, getSelectedResult( state ), null );
+	const result = get( results, getSelectedResultIndex( state ), null );
 	return get( result, 'link', '' );
 }

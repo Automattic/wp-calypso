@@ -19,7 +19,7 @@ import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import {
 	getInlineHelpSearchResultsForQuery,
-	getSelectedResult,
+	getSelectedResultIndex,
 	isRequestingInlineHelpSearchResultsForQuery,
 } from 'state/inline-help/selectors';
 import { getLastRouteAction } from 'state/ui/action-log/selectors';
@@ -84,7 +84,7 @@ class InlineHelpSearchResults extends Component {
 	};
 
 	renderHelpLink = ( link, index ) => {
-		const classes = { 'is-selected': this.props.selectedResult === index };
+		const classes = { 'is-selected': this.props.selectedResultIndex === index };
 		return (
 			<li key={ link.link } className={ classNames( 'inline-help__results-item', classes ) }>
 				<a
@@ -115,7 +115,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	lastRoute: getLastRouteAction( state ),
 	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	selectedResult: getSelectedResult( state ),
+	selectedResultIndex: getSelectedResultIndex( state ),
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,
