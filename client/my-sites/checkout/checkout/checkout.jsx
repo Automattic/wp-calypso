@@ -483,9 +483,7 @@ class Checkout extends React.Component {
 					userCountryCode={ this.props.userCountryCode }
 				/>
 			);
-		} else if ( this.isLoading() || this.props.cart.hasPendingServerUpdates ) {
-			// hasPendingServerUpdates is an important check here as the content we display is dependent on the content of the cart
-
+		} else if ( this.isLoading() ) {
 			return <SecurePaymentFormPlaceholder />;
 		}
 
