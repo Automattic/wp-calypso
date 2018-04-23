@@ -20,6 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 
 /**
@@ -139,6 +140,8 @@ class DesignAssets extends React.Component {
 		return (
 			<Main className={ className }>
 				<DocumentHead title="UI Components" />
+
+				<ReadmeViewer readmeFilePath="components" />
 
 				{ component ? (
 					<HeaderCake onClick={ this.backToComponents } backText="All Components">

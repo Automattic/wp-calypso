@@ -14,7 +14,7 @@ import ComponentPlayground from 'devdocs/design/component-playground';
 import LazyRender from 'react-lazily-render';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
-import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
+import ReadmeViewer from 'components/readme-viewer';
 import Placeholder from 'devdocs/devdocs-async-load/placeholder';
 import { getExampleCodeFromComponent } from './playground-utils';
 
@@ -53,6 +53,8 @@ const Collection = ( {
 
 		const exampleName = getComponentName( example );
 		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
+		const readmeFilePath =
+			( section === 'blocks' ? 'blocks' : 'components' ) + '/' + example.props.readmeFilePath;
 
 		showCounter++;
 
@@ -75,9 +77,7 @@ const Collection = ( {
 						url={ exampleLink }
 						component={ component }
 					/>
-					{ component && (
-						<ReadmeViewer section={ section } readmeFilePath={ example.props.readmeFilePath } />
-					) }
+					{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
 				</div>
 			);
 		}
@@ -87,9 +87,7 @@ const Collection = ( {
 				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
 					{ example }
 				</DocsExampleWrapper>
-				{ component && (
-					<ReadmeViewer section={ section } readmeFilePath={ example.props.readmeFilePath } />
-				) }
+				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
 			</div>
 		);
 	} );
