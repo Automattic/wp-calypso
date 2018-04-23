@@ -10,7 +10,7 @@ Example:
 
 ## Usage
 
-First, display a `jsx` code block to show an example of usage, including import and render.
+First, display a `jsx` code block to show an example of usage, including import statements and a React component.
 
 ```jsx
 import Gridicon from 'gridicons';
