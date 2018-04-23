@@ -50,11 +50,11 @@ class InlineHelpPopover extends Component {
 
 	toggleSecondaryView = secondaryView => {
 		if ( this.state.activeSecondaryView ) {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_' + secondaryView + '_hide' );
+			this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryView }_hide` );
 			this.props.selectResult( -1 );
 			this.setState( { activeSecondaryView: '' } );
 		} else {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_' + secondaryView + '_show' );
+			this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryView }_show` );
 			this.setState( { activeSecondaryView: secondaryView } );
 		}
 		this.setState( { showSecondaryView: ! this.state.showSecondaryView } );
@@ -126,7 +126,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 
 					<Button
-						onClick={ this.buttonClicked( 'contact' ) }
+						onClick={ this.buttonClicked( this.state.activeSecondaryView ) }
 						className="inline-help__cancel-button"
 						borderless
 					>
