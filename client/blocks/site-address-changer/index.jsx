@@ -24,9 +24,11 @@ import {
 	requestSiteAddressAvailability,
 	clearValidationError,
 } from 'state/site-rename/actions';
-import getSiteAddressAvailabilityPending from 'state/selectors/get-site-address-availability-pending';
-import getSiteAddressValidationError from 'state/selectors/get-site-address-validation-error';
-import isRequestingSiteRename from 'state/selectors/is-requesting-site-rename';
+import {
+	isRequestingSiteAddressChange,
+	getSiteAddressAvailabilityPending,
+	getSiteAddressValidationError,
+} from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
@@ -40,7 +42,7 @@ export class SiteAddressChanger extends Component {
 		currentDomain: PropTypes.object.isRequired,
 
 		// `connect`ed
-		isSiteRenameRequesting: PropTypes.bool,
+		isSiteAddressChangeRequesting: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 	};
 
@@ -130,7 +132,7 @@ export class SiteAddressChanger extends Component {
 	};
 
 	onFieldChange = event => {
-		if ( this.props.isAvailabilityPending || this.props.isSiteRenameRequesting ) {
+		if ( this.props.isAvailabilityPending || this.props.isSiteAddressChangeRequesting ) {
 			return;
 		}
 
@@ -197,7 +199,7 @@ export class SiteAddressChanger extends Component {
 			currentDomainSuffix,
 			isAvailabilityPending,
 			isAvailable,
-			isSiteRenameRequesting,
+			isSiteAddressChangeRequesting,
 			siteId,
 			translate,
 		} = this.props;
@@ -207,7 +209,7 @@ export class SiteAddressChanger extends Component {
 		const currentDomainPrefix = this.getCurrentDomainPrefix();
 		const shouldShowValidationMessage = this.shouldShowValidationMessage();
 		const validationMessage = this.getValidationMessage();
-		const isBusy = isSiteRenameRequesting || isAvailabilityPending;
+		const isBusy = isSiteAddressChangeRequesting || isAvailabilityPending;
 		const isDisabled = domainFieldValue === currentDomainPrefix || ! isAvailable;
 
 		if ( ! currentDomain.currentUserCanManage ) {
@@ -296,7 +298,7 @@ export default flow(
 				siteId,
 				selectedSiteId: siteId,
 				isAvailable,
-				isSiteRenameRequesting: isRequestingSiteRename( state, siteId ),
+				isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 				isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
 				validationError: getSiteAddressValidationError( state, siteId ),
 			};
