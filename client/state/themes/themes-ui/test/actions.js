@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { hideThemesBanner } from '../actions';
@@ -15,7 +10,7 @@ describe( 'actions', () => {
 	describe( 'hideThemesBanner()', () => {
 		test( 'Should return the expected action object', () => {
 			const action = hideThemesBanner();
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: THEMES_BANNER_HIDE,
 			} );
 		} );
