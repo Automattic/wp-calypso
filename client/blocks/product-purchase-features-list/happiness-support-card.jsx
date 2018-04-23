@@ -10,7 +10,7 @@ import React from 'react';
  */
 import HappinessSupport from 'components/happiness-support';
 
-export default ( {
+export const HappinessSupportCard = ( {
 	isFeatureCard,
 	isJetpack,
 	isJetpackFreePlan,
@@ -29,3 +29,5 @@ export default ( {
 		/>
 	</div>
 );
+
+export default HappinessSupportCard;
