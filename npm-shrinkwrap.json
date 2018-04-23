@@ -10669,15 +10669,8 @@
       "integrity": "sha512-svL3uiZf1RwhH+cWrfZn3A4+U58wbP0tGVTLQPbjplZxZ8ROD9VLuNgsRniTlLe7OlSqR79RUehXgpBW/s0IQw=="
     },
     "lodash-es": {
-      "version": "4.17.8",
-      "integrity": "sha512-I9mjAxengFAleSThFhhAhvba6fsO0hunb9/0sQ6qQihSZsJRBofv2rYH58WXaOb/O++eUmYpCLywSQ22GfU+sA=="
-    },
-    "lodash-humps": {
-      "version": "3.1.2",
-      "integrity": "sha512-gOaZwNZk4J++Sep2KpoqnFBZe1aK8WvDUWtqyNvZIMEbjN+EUo0DdwNhoJAASeS7FESIdW0yTjtr5FwxJIUd4w==",
-      "requires": {
-        "lodash": "4.17.5"
-      }
+      "version": "4.17.9",
+      "integrity": "sha512-5GfcrT3VfNx20lcIiQAsx2LGr/EFi+hV7NqQA2pLuAQsC3b0/Tr/E3OM5GOQct3lRSwzXjvv+2tx4ydqrC/Ohw=="
     },
     "lodash._arraycopy": {
       "version": "3.0.0",
@@ -14477,7 +14470,7 @@
         "hoist-non-react-statics": "2.5.0",
         "invariant": "2.2.4",
         "lodash": "4.17.5",
-        "lodash-es": "4.17.8",
+        "lodash-es": "4.17.9",
         "loose-envify": "1.3.1",
         "prop-types": "15.6.1"
       },
@@ -14741,7 +14734,7 @@
         "invariant": "2.2.4",
         "is-promise": "2.1.0",
         "lodash": "4.17.5",
-        "lodash-es": "4.17.8",
+        "lodash-es": "4.17.9",
         "prop-types": "15.5.10"
       },
       "dependencies": {
