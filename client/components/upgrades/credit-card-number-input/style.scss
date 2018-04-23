@@ -9,7 +9,6 @@
 
 	$cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
 
-
 	@each $brand in $cc-brands {
 		.#{$brand} input {
 			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
