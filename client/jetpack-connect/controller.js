@@ -246,8 +246,8 @@ export function sso( context, next ) {
 
 	context.primary = (
 		<JetpackSsoForm
-			path={ context.path }
 			locale={ context.params.locale }
+			path={ context.path }
 			siteId={ context.params.siteId }
 			ssoNonce={ context.params.ssoNonce }
 		/>
