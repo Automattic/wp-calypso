@@ -15,9 +15,9 @@ import {
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
 	SITE_ADDRESS_AVAILABILITY_ERROR,
 	SITE_ADDRESS_AVAILABILITY_ERROR_CLEAR,
-	SITE_RENAME_REQUEST,
-	SITE_RENAME_REQUEST_FAILURE,
-	SITE_RENAME_REQUEST_SUCCESS,
+	SITE_ADDRESS_CHANGE_REQUEST,
+	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
+	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -98,7 +98,7 @@ export const clearValidationError = siteId => dispatch => {
 
 export const requestSiteAddressChange = ( siteId, newBlogName, discard = true ) => dispatch => {
 	dispatch( {
-		type: SITE_RENAME_REQUEST,
+		type: SITE_ADDRESS_CHANGE_REQUEST,
 		siteId,
 	} );
 
@@ -117,7 +117,7 @@ export const requestSiteAddressChange = ( siteId, newBlogName, discard = true ) 
 		);
 		dispatchErrorNotice( dispatch, error );
 		dispatch( {
-			type: SITE_RENAME_REQUEST_FAILURE,
+			type: SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 			error: error.message,
 			siteId,
 		} );
@@ -152,7 +152,7 @@ export const requestSiteAddressChange = ( siteId, newBlogName, discard = true ) 
 					}
 
 					dispatch( {
-						type: SITE_RENAME_REQUEST_SUCCESS,
+						type: SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 						newSlug,
 						siteId,
 					} );

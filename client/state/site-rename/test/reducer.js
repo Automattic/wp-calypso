@@ -9,9 +9,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	SITE_RENAME_REQUEST,
-	SITE_RENAME_REQUEST_SUCCESS,
-	SITE_RENAME_REQUEST_FAILURE,
+	SITE_ADDRESS_CHANGE_REQUEST,
+	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
+	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 } from 'state/action-types';
 import { status, requesting } from '../reducer';
 
@@ -25,10 +25,10 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		describe( 'when a SITE_RENAME_REQUEST action is dispatched', () => {
+		describe( 'when a SITE_ADDRESS_CHANGE_REQUEST action is dispatched', () => {
 			test( 'it will be true', () => {
 				const state = requesting( undefined, {
-					type: SITE_RENAME_REQUEST,
+					type: SITE_ADDRESS_CHANGE_REQUEST,
 					siteId,
 				} );
 
@@ -38,10 +38,10 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		describe( 'when a SITE_RENAME_REQUEST_SUCCESS action is dispatched', () => {
+		describe( 'when a SITE_ADDRESS_CHANGE_REQUEST_SUCCESS action is dispatched', () => {
 			test( 'it will be false', () => {
 				const state = requesting( undefined, {
-					type: SITE_RENAME_REQUEST_SUCCESS,
+					type: SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 					siteId,
 				} );
 
@@ -51,10 +51,10 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		describe( 'when a SITE_RENAME_REQUEST_FAILURE action is dispatched', () => {
+		describe( 'when a SITE_ADDRESS_CHANGE_REQUEST_FAILURE action is dispatched', () => {
 			test( 'it will be false', () => {
 				const state = requesting( undefined, {
-					type: SITE_RENAME_REQUEST_FAILURE,
+					type: SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 					siteId,
 				} );
 
@@ -72,10 +72,10 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		describe( 'when a SITE_RENAME_REQUEST action is dispatched', () => {
+		describe( 'when a SITE_ADDRESS_CHANGE_REQUEST action is dispatched', () => {
 			test( 'it will have a status property of "pending"', () => {
 				const state = status( undefined, {
-					type: SITE_RENAME_REQUEST,
+					type: SITE_ADDRESS_CHANGE_REQUEST,
 					siteId,
 				} );
 				const siteState = state[ siteId ];
@@ -85,7 +85,7 @@ describe( 'reducer', () => {
 
 			test( 'it will have an error property of "false"', () => {
 				const state = status( undefined, {
-					type: SITE_RENAME_REQUEST,
+					type: SITE_ADDRESS_CHANGE_REQUEST,
 					siteId,
 				} );
 				const siteState = state[ siteId ];
@@ -94,10 +94,10 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		describe( 'when a SITE_RENAME_REQUEST_SUCCESS action is dispatched', () => {
+		describe( 'when a SITE_ADDRESS_CHANGE_REQUEST_SUCCESS action is dispatched', () => {
 			test( 'it will have a status property of "success"', () => {
 				const state = status( undefined, {
-					type: SITE_RENAME_REQUEST_SUCCESS,
+					type: SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 					siteId,
 				} );
 				const siteState = state[ siteId ];
@@ -107,7 +107,7 @@ describe( 'reducer', () => {
 
 			test( 'it will have a status property of "success"', () => {
 				const state = status( undefined, {
-					type: SITE_RENAME_REQUEST_SUCCESS,
+					type: SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 					siteId,
 				} );
 				const siteState = state[ siteId ];
@@ -116,10 +116,10 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		describe( 'when a SITE_RENAME_REQUEST_FAILURE action is dispatched', () => {
+		describe( 'when a SITE_ADDRESS_CHANGE_REQUEST_FAILURE action is dispatched', () => {
 			test( 'it will have a status property of "error"', () => {
 				const state = status( undefined, {
-					type: SITE_RENAME_REQUEST_FAILURE,
+					type: SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 					siteId,
 				} );
 				const siteState = state[ siteId ];
@@ -130,7 +130,7 @@ describe( 'reducer', () => {
 			test( 'it will have a error property with the value of the passed error', () => {
 				const error = 'some-error';
 				const state = status( undefined, {
-					type: SITE_RENAME_REQUEST_FAILURE,
+					type: SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 					siteId,
 					error,
 				} );
