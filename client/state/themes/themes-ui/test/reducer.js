@@ -62,6 +62,7 @@ describe( '#themesBannerVisible', () => {
 	} );
 
 	test( "doesn't load invalid persisted state", () => {
+		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		const state = themesBannerVisible( 'wtf', {
 			type: DESERIALIZE,
 		} );
