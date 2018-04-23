@@ -292,7 +292,12 @@ export default flow(
 	connect(
 		state => {
 			const siteId = getSelectedSiteId( state );
-			const isAvailable = get( state, [ 'siteRename', 'validation', siteId, 'isAvailable' ] );
+			const isAvailable = get( state, [
+				'siteAddressChange',
+				'validation',
+				siteId,
+				'isAvailable',
+			] );
 
 			return {
 				siteId,

@@ -9,4 +9,5 @@ import { get } from 'lodash';
  * @param {Number} siteId - site ID
  * @return {Boolean} Signals whether or not there is currently a request in progress for the given siteId
  */
-export default ( state, siteId ) => get( state, [ 'siteRename', 'requesting', siteId ], null );
+export default ( state, siteId ) =>
+	get( state, [ 'siteAddressChange', 'requesting', siteId ], null );
