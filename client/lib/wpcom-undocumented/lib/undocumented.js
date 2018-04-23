@@ -4,7 +4,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import url from 'url';
 import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 
 /**
@@ -2193,22 +2192,11 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 /**
  * Check different info about WordPress and Jetpack status on a url
  *
- * @param  {string}  targetUrl The url of the site to check. Must use http or https protocol.
- * @return {Promise} promise
+ * @param  {string}  inputUrl The url of the site to check. Must use http or https protocol.
+ * @return {Promise} promise  Request promise
  */
-Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
-	const { host, pathname, protocol } = url.parse( targetUrl );
-
-	// Protocol-less URLs confuse the url parsing and it becomes unreliable.
-	// We expect Jetpack sites to be http[s]
-	if ( 'http:' !== protocol && 'https:' !== protocol ) {
-		return Promise.reject( new Error( 'Received bad URL. Must use http or https protocol.' ) );
-	}
-
-	// @TODO(sirreal) drop /x/x when API is updated
-	return this.wpcom.req.get( '/connect/site-info/x/x', {
-		url: url.format( { host, pathname, protocol } ),
-	} );
+Undocumented.prototype.getSiteConnectInfo = function( inputUrl ) {
+	return this.wpcom.req.get( '/connect/site-info', { url: inputUrl } );
 };
 
 /**
