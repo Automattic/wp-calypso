@@ -34,6 +34,7 @@ import QueryContactDetailsCache from 'components/data/query-contact-details-cach
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryGeo from 'components/data/query-geo';
 import QuerySitePlans from 'components/data/query-site-plans';
+import QueryPlans from 'components/data/query-plans';
 import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
 import { AUTO_RENEWAL } from 'lib/url/support';
@@ -591,6 +592,7 @@ class Checkout extends React.Component {
 			<div className="main main-column" role="main">
 				<div className="checkout">
 					<QuerySitePlans siteId={ this.props.selectedSiteId } />
+					<QueryPlans />
 					<QueryProducts />
 					<QueryContactDetailsCache />
 					<QueryStoredCards />
