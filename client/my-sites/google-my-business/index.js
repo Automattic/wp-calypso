@@ -24,21 +24,25 @@ import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 export default function( router ) {
 	router( '/google-my-business', siteSelection, sites, navigation, makeLayout );
 
-	router(
-		'/google-my-business/select-business-type/:site',
-		redirectLoggedOut,
-		siteSelection,
-		selectBusinessType,
-		navigation,
-		makeLayout
-	);
-
 	if ( config.isEnabled( 'google-my-business' ) ) {
 		router( '/google-my-business/new', redirectLoggedOut, siteSelection, sites, makeLayout );
 
-		router( '/google-my-business/new/:site', redirectLoggedOut, siteSelection, newAccount, navigation, makeLayout );
+		router(
+			'/google-my-business/new/:site',
+			redirectLoggedOut,
+			siteSelection,
+			newAccount,
+			navigation,
+			makeLayout
+		);
 
-		router( '/google-my-business/select-location', redirectLoggedOut, siteSelection, sites, makeLayout );
+		router(
+			'/google-my-business/select-location',
+			redirectLoggedOut,
+			siteSelection,
+			sites,
+			makeLayout
+		);
 
 		router(
 			'/google-my-business/select-location/:site',
@@ -51,7 +55,14 @@ export default function( router ) {
 
 		router( '/google-my-business/stats', redirectLoggedOut, siteSelection, sites, makeLayout );
 
-		router( '/google-my-business/stats/:site', redirectLoggedOut, siteSelection, stats, navigation, makeLayout );
+		router(
+			'/google-my-business/stats/:site',
+			redirectLoggedOut,
+			siteSelection,
+			stats,
+			navigation,
+			makeLayout
+		);
 
 		router(
 			'/google-my-business/:site',
@@ -89,4 +100,13 @@ export default function( router ) {
 			}
 		);
 	}
+
+	router(
+		'/google-my-business/select-business-type/:site',
+		redirectLoggedOut,
+		siteSelection,
+		selectBusinessType,
+		navigation,
+		makeLayout
+	);
 }
