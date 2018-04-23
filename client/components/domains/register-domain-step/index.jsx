@@ -235,10 +235,13 @@ class RegisterDomainStep extends React.Component {
 		const error = nextProps.defaultSuggestionsError;
 
 		if ( ! error ) {
-			return nextProps.onDomainsAvailabilityChange( true );
+			return nextProps.onDomainsAvailabilityChange( true, 0 );
 		}
 		if ( error && error.statusCode === 503 ) {
-			return nextProps.onDomainsAvailabilityChange( false );
+			return nextProps.onDomainsAvailabilityChange(
+				false,
+				get( nextProps, 'defaultSuggestionsError.data.maintenance_end_time', 0 )
+			);
 		}
 
 		if ( error && error.error ) {
@@ -528,11 +531,10 @@ class RegisterDomainStep extends React.Component {
 					if ( isDomainAvailable ) {
 						this.setState( { notice: null } );
 					} else {
-						this.showValidationErrorMessage(
-							domain,
-							status,
-							get( result, 'other_site_domain', null )
-						);
+						this.showValidationErrorMessage( domain, status, {
+							site: get( result, 'other_site_domain', null ),
+							maintenanceEndTime: get( result, 'maintenance_end_time', null ),
+						} );
 					}
 
 					this.props.recordDomainAvailabilityReceive(
@@ -542,7 +544,7 @@ class RegisterDomainStep extends React.Component {
 						this.props.analyticsSection
 					);
 
-					this.props.onDomainsAvailabilityChange( true );
+					this.props.onDomainsAvailabilityChange( true, 0 );
 					resolve( isDomainAvailable ? result : null );
 				}
 			);
@@ -571,7 +573,7 @@ class RegisterDomainStep extends React.Component {
 		return domains
 			.suggestions( query )
 			.then( domainSuggestions => {
-				this.props.onDomainsAvailabilityChange( true );
+				this.props.onDomainsAvailabilityChange( true, 0 );
 				const timeDiff = Date.now() - timestamp;
 				const analyticsResults = domainSuggestions.map( suggestion => suggestion.domain_name );
 
@@ -587,9 +589,8 @@ class RegisterDomainStep extends React.Component {
 			} )
 			.catch( error => {
 				const timeDiff = Date.now() - timestamp;
-
 				if ( error && error.statusCode === 503 ) {
-					this.props.onDomainsAvailabilityChange( false );
+					this.props.onDomainsAvailabilityChange( false, 0 );
 				} else if ( error && error.error ) {
 					this.showValidationErrorMessage( domain, error.error );
 				}
@@ -687,7 +688,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	handleSubdomainSuggestions = ( domain, timestamp ) => subdomainSuggestions => {
-		this.props.onDomainsAvailabilityChange( true );
+		this.props.onDomainsAvailabilityChange( true, 0 );
 		const timeDiff = Date.now() - timestamp;
 		const analyticsResults = subdomainSuggestions.map( suggestion => suggestion.domain_name );
 
@@ -712,7 +713,7 @@ class RegisterDomainStep extends React.Component {
 		const timeDiff = Date.now() - timestamp;
 
 		if ( error && error.statusCode === 503 ) {
-			this.props.onDomainsAvailabilityChange( false );
+			this.props.onDomainsAvailabilityChange( false, 0 );
 		} else if ( error && error.error ) {
 			this.showValidationErrorMessage( domain, error.error );
 		}
@@ -957,17 +958,18 @@ class RegisterDomainStep extends React.Component {
 		page( this.getTransferDomainUrl() );
 	};
 
-	showValidationErrorMessage( domain, error, site ) {
+	showValidationErrorMessage( domain, error, errorData ) {
 		const { TRANSFERRABLE } = domainAvailability;
 		if ( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) {
 			return;
 		}
 
+		let site = get( errorData, 'site', null );
 		if ( ! site ) {
 			site = get( this.props, 'selectedSite.slug', null );
 		}
 
-		const { message, severity } = getAvailabilityNotice( domain, error, site );
+		const { message, severity } = getAvailabilityNotice( domain, error, errorData );
 		this.setState( { notice: message, noticeSeverity: severity } );
 	}
 }

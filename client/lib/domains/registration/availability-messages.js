@@ -5,6 +5,8 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
+import { get } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -22,11 +24,14 @@ import {
 	domainTransferIn,
 } from 'my-sites/domains/paths';
 
-function getAvailabilityNotice( domain, error, site ) {
+function getAvailabilityNotice( domain, error, errorData ) {
 	let message,
 		severity = 'error';
 
 	const tld = getTld( domain );
+
+	const site = get( errorData, 'site', null );
+	const maintenanceEndTime = get( errorData, 'maintenanceEndTime', null );
 
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
@@ -146,10 +151,20 @@ function getAvailabilityNotice( domain, error, site ) {
 			break;
 		case domainAvailability.MAINTENANCE:
 			if ( tld ) {
+				let maintenanceEnd = translate( 'shortly', {
+					context: 'If a specific maintenance end time is unavailable, we will show this instead.',
+				} );
+				if ( maintenanceEndTime ) {
+					maintenanceEnd = moment.unix( maintenanceEndTime ).fromNow();
+				}
+
 				message = translate(
-					'Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing maintenance. Please check back shortly.',
+					'Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing maintenance. Please check back %(maintenanceEnd)s.',
 					{
-						args: { tld },
+						args: {
+							tld,
+							maintenanceEnd,
+						},
 						components: {
 							strong: <strong />,
 						},
