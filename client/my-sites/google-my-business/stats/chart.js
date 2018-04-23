@@ -25,6 +25,33 @@ import { getGoogleMyBusinessStats } from 'state/selectors';
 import { getInterval } from 'state/google-my-business/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+function transformData( props ) {
+	const { data } = props;
+
+	if ( ! data ) {
+		return data;
+	}
+
+	const aggregation = getAggregation( props );
+
+	if ( aggregation === 'total' ) {
+		return data.metricValues.map( metric => ( {
+			value: metric.totalValue.value,
+			description: get( props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
+			name: get( props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
+		} ) );
+	}
+
+	return data.metricValues.map( metric => {
+		return metric.dimensionalValues.map( datum => {
+			return {
+				date: Date.parse( datum.time ),
+				value: datum.value,
+			};
+		} );
+	} );
+}
+
 function getAggregation( props ) {
 	return props.chartType === 'pie' ? 'total' : 'daily';
 }
@@ -50,12 +77,19 @@ class GoogleMyBusinessStatsChart extends Component {
 		dataSeriesInfo: {},
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {
+		data: null,
+	};
 
-		this.state = {
-			transformedData: this.transformData( props.data ),
-		};
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.data !== prevState.data ) {
+			return {
+				data: nextProps.data,
+				transformedData: transformData( nextProps ),
+			};
+		}
+
+		return null;
 	}
 
 	componentDidMount() {
@@ -65,12 +99,6 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.data !== prevProps.data ) {
-			this.setState( {
-				transformedData: this.transformData( this.props.data ),
-			} );
-		}
-
 		if (
 			this.props.chartType !== prevProps.chartType ||
 			this.props.interval !== prevProps.interval ||
@@ -88,31 +116,6 @@ class GoogleMyBusinessStatsChart extends Component {
 			this.props.interval,
 			getAggregation( this.props )
 		);
-	}
-
-	transformData( data ) {
-		if ( ! data ) {
-			return data;
-		}
-
-		const aggregation = getAggregation( this.props );
-
-		if ( aggregation === 'total' ) {
-			return data.metricValues.map( metric => ( {
-				value: metric.totalValue.value,
-				description: get( this.props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
-				name: get( this.props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
-			} ) );
-		}
-
-		return data.metricValues.map( metric => {
-			return metric.dimensionalValues.map( datum => {
-				return {
-					date: Date.parse( datum.time ),
-					value: datum.value,
-				};
-			} );
-		} );
 	}
 
 	onIntervalChange = event =>
