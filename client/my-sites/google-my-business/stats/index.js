@@ -14,7 +14,6 @@ import { localize, moment } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
-import Notice from 'components/notice';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
 import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
@@ -130,13 +129,6 @@ class GoogleMyBusinessStats extends Component {
 
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryKeyringConnections />
-
-				{ /* remove this notice once we stop using fake data */ }
-				<Notice
-					status="is-error"
-					showDismiss={ false }
-					text="All data on this page is a placeholder used for development only!"
-				/>
 
 				<GoogleMyBusinessLocation location={ locationData }>
 					<Button
