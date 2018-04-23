@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { compact, get, sample } from 'lodash';
+import { compact, first, get } from 'lodash';
 
 /**
  * Module variables
@@ -687,8 +687,10 @@ const toursForSection = {
 };
 
 export function getContextResults( section ) {
-	const video = sample( get( videosForSection, section ) );
-	const tour = sample( get( toursForSection, section ) );
+	// make sure editorially to show at most one tour and one video at once
+	// `first` is a safe-guard in case that fails
+	const video = first( get( videosForSection, section ) );
+	const tour = first( get( toursForSection, section ) );
 	const links = get( contextLinksForSection, section ) || fallbackLinks;
 	return compact( [ tour, video, ...links ] );
 }
