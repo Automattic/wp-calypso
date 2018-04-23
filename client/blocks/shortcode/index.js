@@ -6,7 +6,7 @@
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { omit } from 'lodash';
 
 /**
@@ -29,14 +29,14 @@ const Shortcode = props => {
 		filteredShortcode = filterRenderResult( omit( shortcode, 'shortcode' ) );
 	}
 	return (
-		<div>
+		<Fragment>
 			<QueryShortcode siteId={ siteId } shortcode={ children } />
 			<ShortcodeFrame
 				{ ...omit( props, 'siteId', 'filterRenderResult', 'shortcode', 'dispatch' ) }
 				{ ...filteredShortcode }
 				className={ classes }
 			/>
-		</div>
+		</Fragment>
 	);
 };
 
@@ -45,7 +45,7 @@ Shortcode.propTypes = {
 	children: PropTypes.string.isRequired,
 	filterRenderResult: PropTypes.func,
 	className: PropTypes.string,
-	shortcode: PropTypes.string,
+	shortcode: PropTypes.object,
 };
 
 export default connect(
