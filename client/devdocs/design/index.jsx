@@ -27,6 +27,7 @@ import SearchCard from 'components/search-card';
  */
 import Accordions from 'components/accordion/docs/example';
 import ActionCard from 'components/action-card/docs/example';
+import Animate from 'components/animate/docs/example';
 import BackButton from 'components/back-button/docs/example';
 import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
@@ -155,6 +156,7 @@ class DesignAssets extends React.Component {
 						componentUsageStats={ componentsUsageStats.accordion }
 						readmeFilePath="accordion"
 					/>
+					<Animate readmeFilePath="animate" />
 					<BackButton readmeFilePath="back-button" />
 					<Badge readmeFilePath="badge" />
 					<Banner readmeFilePath="banner" />
