@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,28 +15,30 @@ import Notice from 'components/notice';
 import RateSelector from './rate-selector';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
 
-const renderRateNotice = ( translate ) => {
+const renderRateNotice = translate => {
 	return (
 		<Notice
 			className="rates-step__notice"
 			icon="info-outline"
 			showDismiss={ false }
-			text={ translate( 'The service and rate chosen by the customer at checkout is not available. Please choose another.' ) }
+			text={ translate(
+				'The service and rate chosen by the customer at checkout is not available. Please choose another.'
+			) }
 		/>
 	);
 };
 
 export const ShippingRates = ( {
-		siteId,
-		orderId,
-		id,
-		selectedPackages,
-		allPackages,
-		shouldShowRateNotice,
-		translate,
-	} ) => {
+	siteId,
+	orderId,
+	id,
+	selectedPackages,
+	allPackages,
+	shouldShowRateNotice,
+	translate,
+} ) => {
 	const packageNames = getPackageDescriptions( selectedPackages, allPackages, true );
-	const hasSinglePackage = ( 1 === Object.keys( selectedPackages ).length );
+	const hasSinglePackage = 1 === Object.keys( selectedPackages ).length;
 
 	return (
 		<div>
