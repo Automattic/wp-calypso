@@ -160,12 +160,12 @@ export function connect( context, next ) {
 
 	context.primary = (
 		<JetpackConnect
+			ctaFrom={ query.cta_from /* origin tracking params */ }
+			ctaId={ query.cta_id /* origin tracking params */ }
 			locale={ params.locale }
 			path={ path }
 			type={ type }
 			url={ query.url }
-			ctaId={ query.cta_id /* origin tracking params */ }
-			ctaFrom={ query.cta_from }
 		/>
 	);
 	next();
