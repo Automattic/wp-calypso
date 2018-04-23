@@ -51,6 +51,18 @@ export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
 }
 
 /**
+ * Returns the selected search result item
+ * @param  {Object}  state  Global state tree
+ * @return {Object}         The selected search result
+ */
+export function getInlineHelpCurrentlySelectedResult( state ) {
+	const query = getSearchQuery( state );
+	const results = getInlineHelpSearchResultsForQuery( state, query );
+	const result = get( results, getSelectedResultIndex( state ), null );
+	return result;
+}
+
+/**
  * Returns the link / href of the selected search result item
  * @param  {Object}  state  Global state tree
  * @return {String}         The href of the selected link target

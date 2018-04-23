@@ -7,6 +7,7 @@ import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
 } from 'state/action-types';
@@ -44,6 +45,16 @@ export const search = createReducer(
 					...state.items,
 					[ action.searchQuery ]: action.searchResults,
 				},
+			} );
+		},
+		[ INLINE_HELP_SELECT_RESULT ]: ( state, action ) => {
+			if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
+				return Object.assign( {}, state, {
+					selectedResult: action.resultIndex,
+				} );
+			}
+			return Object.assign( {}, state, {
+				selectedResult: -1,
 			} );
 		},
 		[ INLINE_HELP_SELECT_NEXT_RESULT ]: state => {
