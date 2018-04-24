@@ -51,13 +51,9 @@ export function interpretIMJVError( error, schema ) {
 	}
 
 	// use field from error
-	const inferredPath = replace( error.field, /^data\./, '' );
+	const path = explicitPath || replace( error.field, /^data\./, '' );
 
-	return {
-		errorMessage,
-		errorCode: errorCode || error.message,
-		path: explicitPath || inferredPath,
-	};
+	return { errorMessage, errorCode, path };
 }
 
 /*
