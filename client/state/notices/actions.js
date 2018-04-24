@@ -28,6 +28,7 @@ export function createNotice( status, text, options = {} ) {
 		showDismiss,
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,
+		icon: options.icon,
 		status: status,
 		text: text,
 		button: options.button,
