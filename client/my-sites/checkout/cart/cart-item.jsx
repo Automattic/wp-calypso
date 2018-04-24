@@ -11,6 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { isEnabled } from 'config';
 import { canRemoveFromCart, cartItems } from 'lib/cart-values';
 import {
 	isCredits,
@@ -21,6 +22,7 @@ import {
 	isBiennially,
 	isPlan,
 	isBundled,
+	isDomainProduct,
 } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -197,6 +199,15 @@ export class CartItem extends React.Component {
 
 	getSubscriptionLength() {
 		const { cartItem, translate } = this.props;
+		if (
+			isEnabled( 'upgrades/2-year-plans' ) &&
+			isDomainProduct( cartItem ) &&
+			isBundled( cartItem ) &&
+			cartItem.cost === 0
+		) {
+			return false;
+		}
+
 		const hasBillPeriod = cartItem.bill_period && parseInt( cartItem.bill_period ) !== -1;
 		if ( ! hasBillPeriod ) {
 			return false;
