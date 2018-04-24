@@ -21,10 +21,11 @@ export function removeNotice( noticeId ) {
 }
 
 export function createNotice( status, text, options = {} ) {
+	const showDismiss = typeof options.showDismiss === 'boolean' ? options.showDismiss : true;
 	const notice = {
 		noticeId: options.id || uniqueId(),
 		duration: options.duration,
-		showDismiss: typeof options.showDismiss === 'boolean' ? options.showDismiss : true,
+		showDismiss,
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,
 		status: status,
@@ -33,6 +34,9 @@ export function createNotice( status, text, options = {} ) {
 		href: options.href,
 		onClick: options.onClick,
 	};
+	if ( showDismiss && typeof options.onDismissClick === 'function' ) {
+		notice.onDismissClick = options.onDismissClick;
+	}
 
 	return {
 		type: NOTICE_CREATE,
