@@ -28,5 +28,13 @@ const stats = createReducer( null, {
 	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: () => null,
 } );
 
-export default keyedReducer( 'siteId', combineReducers( { location, stats } ) );
-
+export default keyedReducer(
+	'siteId',
+	combineReducers( {
+		location,
+		stats: keyedReducer(
+			'statType',
+			keyedReducer( 'interval', keyedReducer( 'aggregation', stats ) )
+		),
+	} )
+);
