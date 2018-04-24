@@ -75,7 +75,9 @@ export class ProductPurchaseFeaturesList extends Component {
 					onClick={ this.props.recordBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
 				/>
-				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
+				{ isEnabled( 'manage/plugins/upload' ) && (
+					<UploadPlugins isButtonPrimary={ false } selectedSite={ selectedSite } />
+				) }
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite isButtonPrimary={ false } selectedSite={ selectedSite } />
 				) }
