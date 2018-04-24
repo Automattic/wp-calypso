@@ -15,7 +15,7 @@ import { noop, every, has, defer, get } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
 
-import { toApi, fromApi } from 'lib/importer/common';
+import { toApi, fromApi } from 'state/imports/utils';
 
 import { startMappingAuthors, startImporting, mapAuthor, finishUpload } from 'lib/importer/actions';
 import user from 'lib/user';
