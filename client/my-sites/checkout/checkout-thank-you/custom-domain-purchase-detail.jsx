@@ -37,10 +37,9 @@ const CustomDomainPurchaseDetail = ( {
 		const actionButton = {};
 		actionButton.buttonText = translate( 'Manage my domains' );
 		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
-		actionButton.primary = { isButtonPrimary };
 		return (
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
+				icon={ <img src="/calypso/images/upgrades/custom-domain.svg" alt="" /> }
 				title={ translate( 'Custom Domain' ) }
 				description={ translate(
 					'Your plan includes the custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.',
@@ -49,6 +48,7 @@ const CustomDomainPurchaseDetail = ( {
 						components: { em: <em /> },
 					}
 				) }
+				primary={ isButtonPrimary }
 				{ ...actionButton }
 			/>
 		);
@@ -57,8 +57,9 @@ const CustomDomainPurchaseDetail = ( {
 };
 
 CustomDomainPurchaseDetail.propTypes = {
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 	hasDomainCredit: PropTypes.bool,
+	isButtonPrimary: PropTypes.bool,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 };
 
 export default localize( CustomDomainPurchaseDetail );

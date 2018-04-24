@@ -12,7 +12,7 @@ import CustomDomainPurchaseDetail from 'my-sites/checkout/checkout-thank-you/cus
 
 export default function CustomDomainPurchaseDetailItem( {
 	hasDomainCredit,
-	isButtonPrimary,
+	isButtonPrimary = true,
 	selectedSite,
 } ) {
 	return (
