@@ -23,17 +23,17 @@ export function removeNotice( noticeId ) {
 export function createNotice( status, text, options = {} ) {
 	const showDismiss = typeof options.showDismiss === 'boolean' ? options.showDismiss : true;
 	const notice = {
-		noticeId: options.id || uniqueId(),
-		duration: options.duration,
-		showDismiss,
-		isPersistent: options.isPersistent || false,
+		button: options.button,
 		displayOnNextPage: options.displayOnNextPage || false,
+		duration: options.duration,
+		href: options.href,
 		icon: options.icon,
+		isPersistent: options.isPersistent || false,
+		noticeId: options.id || uniqueId(),
+		onClick: options.onClick,
+		showDismiss,
 		status: status,
 		text: text,
-		button: options.button,
-		href: options.href,
-		onClick: options.onClick,
 	};
 	if ( showDismiss && typeof options.onDismissClick === 'function' ) {
 		notice.onDismissClick = options.onDismissClick;
