@@ -49,7 +49,7 @@ export const handleError = ( action, error ) => {
 		recordTracksEvent( 'calypso_jpc_remoteinstall_api_fail', {
 			url,
 			error: error.error,
-			message: error.message,
+			error_message: error.message,
 			status: error.status,
 		} )
 	);
