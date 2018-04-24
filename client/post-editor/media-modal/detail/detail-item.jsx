@@ -58,7 +58,7 @@ export class EditorMediaModalDetailItem extends Component {
 	 * @param  {Object}  item Media item
 	 * @return {Boolean} Whether the video editor can be enabled
 	 */
-	enableVideoEditing( item ) {
+	shouldShowVideoEditingButtons( item ) {
 		const { isJetpack, isVideoPressEnabled, isVideoPressModuleActive } = this.props;
 
 		// Not a VideoPress video
@@ -87,7 +87,7 @@ export class EditorMediaModalDetailItem extends Component {
 	 * @param  {object} site - current site
 	 * @return {boolean} `true` if the image-editor can be enabled.
 	 */
-	enableImageEditing( item, site ) {
+	shouldShowImageEditingButtons( item, site ) {
 		const { isSitePrivate } = this.props;
 
 		// do not allow if, for some reason, there isn't a valid item yet
@@ -190,7 +190,7 @@ export class EditorMediaModalDetailItem extends Component {
 	renderImageEditorButtons( classname ) {
 		const { item, site } = this.props;
 
-		if ( ! this.enableImageEditing( item, site ) ) {
+		if ( ! this.shouldShowImageEditingButtons( item, site ) ) {
 			return null;
 		}
 
@@ -205,7 +205,7 @@ export class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderVideoEditorButtons( item, classname ) {
-		if ( ! this.enableVideoEditing( item ) ) {
+		if ( ! this.shouldShowVideoEditingButtons( item ) ) {
 			return null;
 		}
 
