@@ -95,6 +95,7 @@ const NoticesList = createReactClass( {
 						showDismiss={ notice.showDismiss }
 						onDismissClick={ this.removeReduxNotice( notice ) }
 						text={ notice.text }
+						icon={ notice.icon }
 					>
 						{ notice.button && (
 							<NoticeAction href={ notice.href } onClick={ notice.onClick }>
