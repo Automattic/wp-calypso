@@ -38,6 +38,19 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		expect( output ).to.be.false;
 	} );
 
+	test( 'should return false if the site is not in development mode with isActive: 0', () => {
+		const stateIn = {
+				jetpack: {
+					connection: {
+						items: ITEMS_FIXTURE,
+					},
+				},
+			},
+			siteId = 987654321;
+		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );
+		expect( output ).to.be.false;
+	} );
+
 	test( 'should return null if the site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
