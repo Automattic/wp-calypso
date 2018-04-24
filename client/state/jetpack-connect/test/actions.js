@@ -6,6 +6,7 @@
  * Internal dependencies
  */
 import * as actions from '../actions';
+import * as analyticsActions from 'state/analytics/actions';
 import useNock from 'test/helpers/use-nock';
 import wpcom from 'lib/wp';
 import {
@@ -26,6 +27,8 @@ import {
 } from 'state/action-types';
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
+
+beforeEach( jest.restoreAllMocks );
 
 describe( '#confirmJetpackInstallStatus()', () => {
 	test( 'should dispatch confirm status action when called', () => {
@@ -53,6 +56,7 @@ describe( '#dismissUrl()', () => {
 
 describe( '#retryAuth()', () => {
 	test( 'should dispatch redirect action when called', () => {
+		jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 		const spy = jest.fn();
 		const { retryAuth } = actions;
 		const url = 'http://example.com';
@@ -115,6 +119,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch authorize request action when thunk triggered', () => {
+			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorize } = actions;
 
@@ -156,6 +161,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch sites receive action when request completes', async () => {
+			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorize } = actions;
 
@@ -167,6 +173,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch authorize receive site list action when request completes', async () => {
+			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorize } = actions;
 
@@ -199,6 +206,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch authorize receive action when request completes', async () => {
+			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorize } = actions;
 
@@ -275,6 +283,7 @@ describe( '#validateSSONonce()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
+			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { validateSSONonce } = actions;
 
@@ -306,6 +315,7 @@ describe( '#validateSSONonce()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
+			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { validateSSONonce } = actions;
 
@@ -349,6 +359,7 @@ describe( '#authorizeSSO()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
+			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorizeSSO } = actions;
 
@@ -375,6 +386,7 @@ describe( '#authorizeSSO()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
+			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorizeSSO } = actions;
 
@@ -393,8 +405,6 @@ describe( '#authorizeSSO()', () => {
 
 describe( '#createAccount()', () => {
 	const { createAccount } = actions;
-
-	beforeEach( jest.restoreAllMocks );
 
 	test( 'should resolve with the username and bearer token', async () => {
 		const userData = { username: 'happyuser' };
@@ -426,8 +436,6 @@ describe( '#createAccount()', () => {
 
 describe( '#createSocialAccount()', () => {
 	const { createSocialAccount } = actions;
-
-	beforeEach( jest.restoreAllMocks );
 
 	test( 'should reject with the error', async () => {
 		const error = {
