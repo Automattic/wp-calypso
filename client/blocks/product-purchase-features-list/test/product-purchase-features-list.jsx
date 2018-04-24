@@ -1,26 +1,6 @@
 /** @format */
-
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
-jest.mock( '../google-vouchers', () => ( {} ) );
-jest.mock( '../video-audio-posts', () => {
-	const React = require( 'react' );
-	return class VideoAudioPosts extends React.Component {};
-} );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
+jest.mock( '../google-vouchers', () => 'GoogleVouchers' );
+jest.mock( '../video-audio-posts', () => 'VideoAudioPosts' );
 
 /**
  * External dependencies
