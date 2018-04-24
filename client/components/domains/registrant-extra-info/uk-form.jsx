@@ -171,8 +171,15 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		);
 	}
 
-	renderValidationError = errorMessage => {
-		return <FormInputValidation isError key={ errorMessage } text={ errorMessage } />;
+	renderValidationError = ( { errorCode, errorMessage } ) => {
+		const { translate } = this.props;
+		return (
+			<FormInputValidation
+				isError
+				key={ errorCode }
+				text={ errorMessage || translate( 'There was a problem with this field.' ) }
+			/>
+		);
 	};
 
 	render() {

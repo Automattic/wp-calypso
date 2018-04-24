@@ -28,7 +28,7 @@ describe( 'uk-form', () => {
 				validationErrors: {
 					extra: {
 						uk: {
-							registrationNumber: [ 'Test error message.' ],
+							registrationNumber: [ { errorMessage: 'Test error message.' } ],
 						},
 					},
 				},
@@ -46,8 +46,11 @@ describe( 'uk-form', () => {
 				validationErrors: {
 					extra: {
 						uk: {
-							registrationNumber: [ 'testErrorCode', 'testErrorCode' ],
-							tradingName: [ 'testErrorCode' ],
+							registrationNumber: [
+								{ errorMessage: 'Test error message 1.' },
+								{ errorMessage: 'Test error message 2.' },
+							],
+							tradingName: [ { errorMessage: 'Test Error Message 3.' } ],
 						},
 					},
 				},

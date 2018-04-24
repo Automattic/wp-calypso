@@ -8,9 +8,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import validatorFactory from 'is-my-json-valid';
-import { castArray, get, isEmpty, map, once, reduce, replace, set } from 'lodash';
+import { castArray, get, isEmpty, map, once, reduce, replace } from 'lodash';
+import { update } from 'lodash/fp';
 import debugFactory from 'debug';
-import { translate } from 'i18n-calypso';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 
 /**
@@ -33,6 +33,15 @@ export function disableSubmitButton( children ) {
 	);
 }
 
+/*
+ * Lookup error in schema to produce { path, errorMessage, errorCode } format.
+ *
+ * e.g {
+ *     path: "extra.uk.registrationNumber",
+ *     errorMessage: "A registration number is required for this registrant type.",
+ *     errorCode: "dotukRegistrantTypeRequiresRegistrationNumber",
+ * }
+ */
 export function interpretIMJVError( error, schema ) {
 	let explicitPath, errorCode, errorMessage;
 
@@ -40,6 +49,8 @@ export function interpretIMJVError( error, schema ) {
 		// Search up the schema for an explicit errorField & message
 		const path = [ ...castArray( error.schemaPath ) ];
 
+		// The errorCode is primary because messages are localized, so without
+		// the code consumers couldn't do anything other than display errors.
 		do {
 			const node = get( schema, path, {} );
 			if ( ! errorCode && node.errorCode ) {
@@ -57,23 +68,20 @@ export function interpretIMJVError( error, schema ) {
 }
 
 /*
- * @returns errors by field, like: { 'extra.field: name, errors: [ string ] }
+ * @returns errors by field, like: { extra: { tld: { fieldName: [ errors ] } } }
  */
 export function formatIMJVErrors( errors, schema ) {
 	return reduce(
 		errors,
-		( accumulatedErrors, error ) => {
+		( accumulatedErrors, rawError ) => {
 			// Compare the error to the schema and try to find an appropriate
 			// error message
-			const details = interpretIMJVError( error, schema );
-
-			const { path, errorMessage } = details;
-
-			const message = errorMessage || translate( 'There was a problem with this field.' );
-
-			const previousErrorsForField = get( accumulatedErrors, path, [] );
-
-			return set( accumulatedErrors, path, [ ...previousErrorsForField, message ] );
+			const error = interpretIMJVError( rawError, schema );
+			return update(
+				error.path,
+				errorsForField => [ ...( errorsForField || [] ), error ],
+				accumulatedErrors
+			);
 		},
 		{}
 	);
