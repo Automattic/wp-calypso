@@ -35,7 +35,7 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
-import Checklist from 'components/checklist';
+import Checklist from 'blocks/checklist';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import ClipboardButton from 'components/forms/clipboard-button';
 import Collection from 'devdocs/design/search-collection';
