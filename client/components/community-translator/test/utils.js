@@ -113,10 +113,6 @@ describe( 'Community Translator', () => {
 	} );
 
 	describe( 'normalizeDetailsFromTranslationData()', () => {
-		test( 'should return error by default', () => {
-			expect( normalizeDetailsFromTranslationData().error ).toBeDefined();
-		} );
-
 		test( 'should return valid url with correct params for root language', () => {
 			expect( normalizeDetailsFromTranslationData( mockGpApiResponseItem ) ).toEqual( {
 				originalId: '149708',
