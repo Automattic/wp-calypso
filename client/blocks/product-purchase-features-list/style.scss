@@ -12,6 +12,7 @@
 	page-break-inside: avoid; // For Firefox
 	break-inside: avoid-column; // For IE
 	-webkit-column-break-inside: avoid; // For others
+
 	padding-top: 12px;
 	max-width: 150%;
 
@@ -28,8 +29,7 @@
 }
 
 .product-purchase-features-list__item .happiness-support {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
 	box-sizing: border-box;
 	color: $gray-text-min;
 	padding: 32px;
