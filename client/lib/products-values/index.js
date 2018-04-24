@@ -26,12 +26,9 @@ import {
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
 
-import { isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'lib/plans';
-
+import { planMatches, isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'lib/plans';
 import { domainProductSlugs } from 'lib/domains/constants';
-
 import schema from './schema.json';
-import { planMatches } from '../plans';
 
 const productDependencies = {
 	domain: {
