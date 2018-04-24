@@ -15,8 +15,10 @@ import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 
+Button.displayName = 'Button';
+
 class Buttons extends React.PureComponent {
-	static displayName = 'Buttons';
+	static displayName = 'Button';
 
 	static defaultProps = {
 		exampleCode: (
