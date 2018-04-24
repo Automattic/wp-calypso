@@ -4,7 +4,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { omit, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { clearPlan } from 'jetpack-connect/persistence-utils';
-import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
+import { receiveDeletedSite, requestSite } from 'state/sites/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
@@ -41,9 +41,6 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SITE_RECEIVE,
-	SITE_REQUEST,
-	SITE_REQUEST_FAILURE,
-	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -277,43 +274,24 @@ export function createAccount( userData ) {
 }
 
 export function isUserConnected( siteId, siteIsOnSitesList ) {
-	let accessibleSite;
 	return dispatch => {
-		dispatch( {
-			type: SITE_REQUEST,
-			siteId,
-		} );
 		debug( 'checking that site is accessible', siteId );
-		return wpcom
-			.site( siteId )
-			.get()
+		return requestSite( siteId )( dispatch )
 			.then( site => {
-				accessibleSite = site;
-				debug( 'site is accessible! checking that user is connected', siteId );
-				return wpcom.undocumented().jetpackIsUserConnected( siteId );
-			} )
-			.then( () => {
-				debug( 'user is connected to site.', accessibleSite );
-				dispatch( {
-					type: SITE_REQUEST_SUCCESS,
-					siteId,
-				} );
-				dispatch( {
-					type: JETPACK_CONNECT_USER_ALREADY_CONNECTED,
-				} );
-				if ( ! siteIsOnSitesList ) {
-					debug( 'adding site to sites list' );
-					dispatch( receiveSite( omit( accessibleSite, '_headers' ) ) );
-				} else {
-					debug( 'site is already on sites list' );
+				if ( site ) {
+					debug( 'site is accessible! checking that user is connected', siteId );
+					return wpcom
+						.undocumented()
+						.jetpackIsUserConnected( siteId )
+						.then( () => site );
 				}
+				return Promise.reject( 'no site found' );
+			} )
+			.then( site => {
+				debug( 'user is connected to site.', site );
+				dispatch( { type: JETPACK_CONNECT_USER_ALREADY_CONNECTED } );
 			} )
 			.catch( error => {
-				dispatch( {
-					type: SITE_REQUEST_FAILURE,
-					siteId,
-					error,
-				} );
 				debug( 'user is not connected from', error );
 				if ( siteIsOnSitesList ) {
 					debug( 'removing site from sites list', siteId );
