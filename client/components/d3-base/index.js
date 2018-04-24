@@ -6,9 +6,20 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { isEqual } from 'lodash';
+import { isEmpty } from 'lodash';
 import { select as d3Select } from 'd3-selection';
 
+/**
+ * Provides foundation to use D3 within React.
+ *
+ * React is responsible for determining when a chart should be updated (e.g. whenever data changes or the browser is
+ * resized), while D3 is responsible for the actual rendering of the chart (which is performed via DOM operations that
+ * happen outside of React's control).
+ *
+ * This component makes use of new lifecycle methods that come with React 16.3. Thus, while this component (i.e. the
+ * container of the chart) is rendered during the 'render phase' the chart itself is only rendered during the 'commit
+ * phase' (i.e. in 'componentDidMount' and 'componentDidUpdate' methods).
+ */
 export default class D3Base extends Component {
 	static propTypes = {
 		className: PropTypes.string,
@@ -17,31 +28,50 @@ export default class D3Base extends Component {
 		getParams: PropTypes.func.isRequired,
 	};
 
-	state = {};
+	state = {
+		data: null,
+		params: null,
+		drawChart: null,
+		getParams: null,
+	};
 
-	constructor( props ) {
-		super( props );
+	chartRef = React.createRef();
 
-		this.chartRef = React.createRef();
+	/**
+	 * Determines if new props were provided, and updates the local state accordingly. This basically stores any new
+	 * prop in the local state (so it can be used for comparison in future calls), and resets the list of params in that
+	 * case (in order to indicate that the chart should be drawn again).
+	 */
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		let state = {};
+
+		if ( nextProps.data !== prevState.data ) {
+			state = { ...state, data: nextProps.data };
+		}
+
+		if ( nextProps.drawChart !== prevState.drawChart ) {
+			state = { ...state, drawChart: nextProps.drawChart };
+		}
+
+		if ( nextProps.getParams !== prevState.getParams ) {
+			state = { ...state, getParams: nextProps.getParams };
+		}
+
+		if ( ! isEmpty( state ) ) {
+			return { ...state, params: null };
+		}
+
+		return null;
 	}
 
 	componentDidMount() {
 		window.addEventListener( 'resize', this.updateParams );
 
-		this.updateParams();
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		// make sure we don't update the state when the props have not changed
-		// it would cause the svg component to be re-created, thus losing any bound events one could have set
-		if ( ! isEqual( this.props, nextProps ) ) {
-			this.updateParams( nextProps );
-		}
+		this.drawChart();
 	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		// make sure we don't re-render if the state has not changed
-		return ! isEqual( this.state, nextState );
+		return nextState.params !== null && this.state.params !== nextState.params;
 	}
 
 	componentDidUpdate() {
@@ -54,25 +84,26 @@ export default class D3Base extends Component {
 		this.deleteChart();
 	}
 
-	updateParams = nextProps => {
-		const getParams = ( nextProps && nextProps.getParams ) || this.props.getParams;
-
-		this.setState( getParams( this.chartRef.current ), this.drawChart );
-	};
-
 	deleteChart() {
-		const div = d3Select( this.chartRef.current );
-
-		div.selectAll( 'svg' ).remove();
+		d3Select( this.chartRef.current ).selectAll( 'svg' ).remove();
 	}
 
+	/**
+	 * Renders the chart, or triggers a rendering by updating the list of params.
+	 */
 	drawChart() {
-		this.props.drawChart( this.createNewContext(), this.state );
+		if ( this.state.params === null ) {
+			this.updateParams();
+		} else {
+			const svg = this.drawContainer();
+
+			this.props.drawChart( svg, this.state.params );
+		}
 	}
 
-	createNewContext() {
+	drawContainer() {
 		const { className } = this.props;
-		const { width, height } = this.state;
+		const { width, height } = this.state.params;
 
 		this.deleteChart();
 
@@ -87,6 +118,10 @@ export default class D3Base extends Component {
 
 		return svg.append( 'g' );
 	}
+
+	updateParams = () => {
+		this.setState( { params: this.state.getParams( this.chartRef.current ) } );
+	};
 
 	render() {
 		return (

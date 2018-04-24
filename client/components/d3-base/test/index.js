@@ -19,13 +19,17 @@ import D3Base from '..';
 describe( 'D3base', () => {
 	const shallowWithoutLifecycle = arg => shallow( arg, { disableLifecycleMethods: true } );
 
-	test( 'should have d3Base class', () => {
+	test( 'should have d3-base CSS class', () => {
 		const base = shallowWithoutLifecycle( <D3Base drawChart={ noop } getParams={ noop } /> );
+
 		assert.lengthOf( base.find( '.d3-base' ), 1 );
 	} );
 
 	test( 'should render an svg', () => {
-		const base = mount( <D3Base drawChart={ noop } getParams={ noop } /> );
+		const getParams = () => ( { width: 100, height: 100 } );
+
+		const base = mount( <D3Base drawChart={ noop } getParams={ getParams } /> );
+
 		assert.lengthOf( base.render().find( 'svg' ), 1 );
 	} );
 
@@ -33,18 +37,28 @@ describe( 'D3base', () => {
 		const drawChart = svg => {
 			return svg.append( 'circle' );
 		};
-		const base = mount( <D3Base drawChart={ drawChart } getParams={ noop } /> );
+
+		const getParams = () => ( {
+			width: 100,
+			height: 100,
+		} );
+
+		const base = mount( <D3Base drawChart={ drawChart } getParams={ getParams } /> );
+
 		assert.lengthOf( base.render().find( 'circle' ), 1 );
 	} );
 
 	test( 'should pass a property of getParams output to drawChart function', () => {
-		const getParams = () => ( {
-			tagName: 'circle',
-		} );
 		const drawChart = ( svg, params ) => {
 			return svg.append( params.tagName );
 		};
+
+		const getParams = () => ( {
+			tagName: 'circle',
+		} );
+
 		const base = mount( <D3Base drawChart={ drawChart } getParams={ getParams } /> );
+
 		assert.lengthOf( base.render().find( 'circle' ), 1 );
 	} );
 } );
