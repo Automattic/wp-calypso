@@ -52,8 +52,6 @@ class EditorVisibility extends React.Component {
 		passwordIsValid: true,
 	};
 
-	showingAcceptDialog = false;
-
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.password === nextProps.password ) {
 			return;
@@ -168,8 +166,6 @@ class EditorVisibility extends React.Component {
 			return;
 		}
 
-		this.showingAcceptDialog = true;
-
 		let message;
 
 		if ( this.props.type === 'page' ) {
@@ -187,7 +183,6 @@ class EditorVisibility extends React.Component {
 		accept(
 			message,
 			accepted => {
-				this.showingAcceptDialog = false;
 				if ( accepted ) {
 					this.onPrivatePublish();
 				}
