@@ -60,15 +60,6 @@ const analyticsPageTitleByType = {
 const removeSidebar = context =>
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
-const jetpackNewSiteSelector = context => {
-	removeSidebar( context );
-	context.primary = React.createElement( JetpackNewSite, {
-		path: context.path,
-		context: context,
-		locale: context.params.locale,
-	} );
-};
-
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
 		yearly: {
@@ -121,7 +112,8 @@ export function maybeOnboard( { query, store }, next ) {
 
 export function newSite( context, next ) {
 	analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
-	jetpackNewSiteSelector( context );
+	removeSidebar( context );
+	context.primary = <JetpackNewSite locale={ context.params.locale } path={ context.path } />;
 	next();
 }
 
@@ -164,15 +156,16 @@ export function connect( context, next ) {
 
 	removeSidebar( context );
 
-	context.primary = React.createElement( JetpackConnect, {
-		context,
-		locale: params.locale,
-		path,
-		type,
-		url: query.url,
-		ctaId: query.cta_id, // origin tracking params
-		ctaFrom: query.cta_from,
-	} );
+	context.primary = (
+		<JetpackConnect
+			ctaFrom={ query.cta_from /* origin tracking params */ }
+			ctaId={ query.cta_id /* origin tracking params */ }
+			locale={ params.locale }
+			path={ path }
+			type={ type }
+			url={ query.url }
+		/>
+	);
 	next();
 }
 
@@ -245,12 +238,14 @@ export function sso( context, next ) {
 
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-	context.primary = React.createElement( JetpackSsoForm, {
-		path: context.path,
-		locale: context.params.locale,
-		siteId: context.params.siteId,
-		ssoNonce: context.params.ssoNonce,
-	} );
+	context.primary = (
+		<JetpackSsoForm
+			locale={ context.params.locale }
+			path={ context.path }
+			siteId={ context.params.siteId }
+			ssoNonce={ context.params.ssoNonce }
+		/>
+	);
 	next();
 }
 
