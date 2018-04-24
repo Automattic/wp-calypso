@@ -34,6 +34,7 @@ class ProductFormVariationsRow extends Component {
 		editProductVariation: PropTypes.func.isRequired,
 		onUploadStart: PropTypes.func.isRequired,
 		onUploadFinish: PropTypes.func.isRequired,
+		storeIsManagingStock: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -182,7 +183,9 @@ class ProductFormVariationsRow extends Component {
 	};
 
 	render() {
-		const { variation, translate } = this.props;
+		const { variation, translate, storeIsManagingStock } = this.props;
+		const stockDisabled = 'no' === storeIsManagingStock ? true : false;
+
 		return (
 			<tr className="products__product-form-variation-row">
 				<td className="products__product-id">
@@ -205,6 +208,7 @@ class ProductFormVariationsRow extends Component {
 							type="number"
 							onChange={ this.setStockQuantity }
 							placeholder={ translate( 'Quantity' ) }
+							disabled={ stockDisabled ? 'disabled' : '' }
 						/>
 					</div>
 				</td>

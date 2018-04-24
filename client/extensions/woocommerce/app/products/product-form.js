@@ -5,21 +5,27 @@
  */
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
+import { getProductsSettingValue } from 'woocommerce/state/sites/settings/products/selectors';
 import ProductFormAdditionalDetailsCard from './product-form-additional-details-card';
 import ProductFormCategoriesCard from './product-form-categories-card';
 import ProductFormDetailsCard from './product-form-details-card';
 import ProductFormSimpleCard from './product-form-simple-card';
 import ProductFormVariationsCard from './product-form-variations-card';
+import QuerySettingsProducts from 'woocommerce/components/query-settings-products';
 
-export default class ProductForm extends Component {
+class ProductForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		site: PropTypes.shape( {
+			slug: PropTypes.string,
+		} ),
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
@@ -34,6 +40,7 @@ export default class ProductForm extends Component {
 		editProductVariation: PropTypes.func.isRequired,
 		onUploadStart: PropTypes.func.isRequired,
 		onUploadFinish: PropTypes.func.isRequired,
+		storeIsManagingStock: PropTypes.string,
 	};
 
 	renderPlaceholder() {
@@ -48,7 +55,14 @@ export default class ProductForm extends Component {
 	}
 
 	render() {
-		const { siteId, product, productCategories, variations } = this.props;
+		const {
+			site,
+			siteId,
+			product,
+			productCategories,
+			variations,
+			storeIsManagingStock,
+		} = this.props;
 		const {
 			editProduct,
 			editProductCategory,
@@ -57,12 +71,13 @@ export default class ProductForm extends Component {
 		} = this.props;
 		const type = product.type || 'simple';
 
-		if ( ! siteId ) {
+		if ( ! siteId || ! site ) {
 			return this.renderPlaceholder();
 		}
 
 		return (
 			<div className={ classNames( 'products__form', this.props.className ) }>
+				<QuerySettingsProducts siteId={ siteId } />
 				<ProductFormDetailsCard
 					siteId={ siteId }
 					product={ product }
@@ -84,6 +99,7 @@ export default class ProductForm extends Component {
 					editProductCategory={ editProductCategory }
 				/>
 				<ProductFormVariationsCard
+					site={ site }
 					siteId={ siteId }
 					product={ product }
 					variations={ variations }
@@ -93,14 +109,17 @@ export default class ProductForm extends Component {
 					editProductVariation={ editProductVariation }
 					onUploadStart={ this.props.onUploadStart }
 					onUploadFinish={ this.props.onUploadFinish }
+					storeIsManagingStock={ storeIsManagingStock }
 				/>
 
 				{ 'simple' === type && (
 					<div className="products__product-simple-cards">
 						<ProductFormSimpleCard
+							site={ site }
 							siteId={ siteId }
 							product={ product }
 							editProduct={ this.props.editProduct }
+							storeIsManagingStock={ storeIsManagingStock }
 						/>
 					</div>
 				) }
@@ -108,3 +127,7 @@ export default class ProductForm extends Component {
 		);
 	}
 }
+
+export default connect( state => ( {
+	storeIsManagingStock: getProductsSettingValue( state, 'woocommerce_manage_stock' ),
+} ) )( ProductForm );

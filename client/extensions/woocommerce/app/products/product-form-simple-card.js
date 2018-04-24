@@ -21,9 +21,17 @@ import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import PriceInput from 'woocommerce/components/price-input';
 
-const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) => {
+const ProductFormSimpleCard = ( {
+	site,
+	siteId,
+	product,
+	editProduct,
+	translate,
+	storeIsManagingStock,
+} ) => {
 	const setDimension = e => {
 		const dimensions = { ...product.dimensions, [ e.target.name ]: e.target.value };
 		editProduct( siteId, product, { dimensions } );
@@ -99,6 +107,12 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 	const { stock_quantity } = product;
 	const quantity = isNull( stock_quantity ) || isUndefined( stock_quantity ) ? '' : stock_quantity;
 
+	const stockDisabled = 'no' === storeIsManagingStock ? true : false;
+	const inventorySettingsUrl = getLink(
+		'https://:site/wp-admin/admin.php?page=wc-settings&tab=products&section=inventory',
+		site
+	);
+
 	const renderStock = () => (
 		<Card className={ stockClasses }>
 			<div className="products__product-stock-options-wrapper">
@@ -111,6 +125,7 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 						min="0"
 						onChange={ setStockQuantity }
 						placeholder={ translate( 'Quantity' ) }
+						disabled={ stockDisabled ? 'disabled' : '' }
 					/>
 				</div>
 				{ product.manage_stock && (
@@ -133,6 +148,19 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 						</FormSettingExplanation>
 					</div>
 				) }
+				{ stockDisabled && (
+					<FormSettingExplanation>
+						{ translate(
+							'Inventory management has been disabled for this store. ' +
+								'You can enable it under your {{managementLink}}inventory settings{{/managementLink}}.',
+							{
+								components: {
+									managementLink: <a href={ inventorySettingsUrl } target="_blank" />,
+								},
+							}
+						) }
+					</FormSettingExplanation>
+				) }
 			</div>
 		</Card>
 	);
@@ -147,6 +175,9 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 };
 
 ProductFormSimpleCard.propTypes = {
+	site: PropTypes.shape( {
+		slug: PropTypes.string,
+	} ),
 	siteId: PropTypes.number,
 	product: PropTypes.shape( {
 		dimensions: PropTypes.object,
@@ -157,6 +188,7 @@ ProductFormSimpleCard.propTypes = {
 		backorders: PropTypes.string,
 	} ),
 	editProduct: PropTypes.func.isRequired,
+	storeIsManagingStock: PropTypes.string,
 };
 
 export default localize( ProductFormSimpleCard );

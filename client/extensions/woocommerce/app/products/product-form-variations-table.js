@@ -28,6 +28,7 @@ class ProductFormVariationsTable extends React.Component {
 		editProductVariation: PropTypes.func.isRequired,
 		onUploadStart: PropTypes.func.isRequired,
 		onUploadFinish: PropTypes.func.isRequired,
+		storeIsManagingStock: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -116,7 +117,7 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	renderVariationRow = ( variation, index ) => {
-		const { siteId, product, variations, editProductVariation } = this.props;
+		const { siteId, product, variations, editProductVariation, storeIsManagingStock } = this.props;
 		const manageStock = find( variations, v => v.manage_stock ) ? true : false;
 		return (
 			<ProductFormVariationsRow
@@ -129,12 +130,13 @@ class ProductFormVariationsTable extends React.Component {
 				onShowDialog={ this.onShowDialog }
 				onUploadStart={ this.props.onUploadStart }
 				onUploadFinish={ this.props.onUploadFinish }
+				storeIsManagingStock={ storeIsManagingStock }
 			/>
 		);
 	};
 
 	renderBulkRow() {
-		const { translate } = this.props;
+		const { translate, storeIsManagingStock } = this.props;
 		const { regular_price, dimensions, weight, stock_quantity } = this.state;
 
 		return (
@@ -150,6 +152,7 @@ class ProductFormVariationsTable extends React.Component {
 							type="number"
 							onChange={ this.setStockQuantity }
 							placeholder={ translate( 'Quantity' ) }
+							disabled={ 'no' === storeIsManagingStock ? 'disabled' : '' }
 						/>
 					</div>
 				</td>

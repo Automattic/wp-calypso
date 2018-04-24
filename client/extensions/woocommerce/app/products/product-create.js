@@ -210,6 +210,7 @@ class ProductCreate extends React.Component {
 				/>
 				<ProtectFormGuard isChanged={ hasEdits } />
 				<ProductForm
+					site={ site }
 					siteId={ site && site.ID }
 					product={ product || { type: 'simple' } }
 					variations={ variations }
