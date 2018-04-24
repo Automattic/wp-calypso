@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { find } from 'lodash';
@@ -76,16 +75,6 @@ class EditorVisibility extends React.Component {
 		}
 
 		return 'public';
-	};
-
-	isPasswordValid = () => {
-		if ( 'password' !== this.getVisibility() ) {
-			return true;
-		}
-
-		const password = ReactDom.findDOMNode( this.refs.postPassword ).value.trim();
-
-		return password.length;
 	};
 
 	updatePostStatus = () => {
@@ -204,7 +193,7 @@ class EditorVisibility extends React.Component {
 		this.props.editPost( siteId, postId, { password: newPassword } );
 	};
 
-	renderPasswordInput = () => {
+	renderPasswordInput() {
 		const value = this.props.password ? this.props.password.trim() : null;
 		const isError = ! this.state.passwordIsValid;
 		const errorMessage = this.props.translate( 'Password is empty.', {
@@ -215,12 +204,10 @@ class EditorVisibility extends React.Component {
 			<div>
 				<FormTextInput
 					autoFocus
-					onKeyUp={ this.onKey }
 					onChange={ this.onPasswordChange }
 					onBlur={ this.onPasswordChange }
 					value={ value }
 					isError={ isError }
-					ref="postPassword"
 					placeholder={ this.props.translate( 'Create password', {
 						context: 'Editor: Create password for post',
 					} ) }
@@ -229,7 +216,7 @@ class EditorVisibility extends React.Component {
 				{ isError ? <FormInputValidation isError={ true } text={ errorMessage } /> : null }
 			</div>
 		);
-	};
+	}
 
 	renderPrivacyDropdown = visibility => {
 		const publicLabelPublicSite = this.props.translate( 'Public', {
