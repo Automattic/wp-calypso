@@ -24,6 +24,7 @@ export default class D3Base extends Component {
 
 		this.chartRef = React.createRef();
 	}
+
 	componentDidMount() {
 		window.addEventListener( 'resize', this.updateParams );
 
@@ -44,24 +45,28 @@ export default class D3Base extends Component {
 	}
 
 	componentDidUpdate() {
-		this.draw();
+		this.drawChart();
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.updateParams );
 
-		const div = d3Select( this.chartRef.current );
-
-		div.selectAll( 'svg' ).remove();
+		this.deleteChart();
 	}
 
 	updateParams = nextProps => {
 		const getParams = ( nextProps && nextProps.getParams ) || this.props.getParams;
 
-		this.setState( getParams( this.chartRef.current ), this.draw );
+		this.setState( getParams( this.chartRef.current ), this.drawChart );
 	};
 
-	draw() {
+	deleteChart() {
+		const div = d3Select( this.chartRef.current );
+
+		div.selectAll( 'svg' ).remove();
+	}
+
+	drawChart() {
 		this.props.drawChart( this.createNewContext(), this.state );
 	}
 
@@ -69,11 +74,9 @@ export default class D3Base extends Component {
 		const { className } = this.props;
 		const { width, height } = this.state;
 
-		const div = d3Select( this.chartRef.current );
+		this.deleteChart();
 
-		div.selectAll( 'svg' ).remove();
-
-		const svg = div
+		const svg = d3Select( this.chartRef.current )
 			.append( 'svg' )
 			.attr( 'viewBox', `0 0 ${ width } ${ height }` )
 			.attr( 'preserveAspectRatio', 'xMidYMid meet' );
