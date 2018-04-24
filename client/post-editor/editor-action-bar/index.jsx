@@ -26,7 +26,6 @@ import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
 class EditorActionBar extends Component {
 	static propTypes = {
 		isNew: PropTypes.bool,
-		onPrivatePublish: PropTypes.func,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
 		site: PropTypes.object,
