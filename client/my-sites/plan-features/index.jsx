@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, filter, map, noop, reduce, reject } from 'lodash';
+import { compact, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -19,14 +19,13 @@ import FoldableCard from 'components/foldable-card';
 import formatCurrency from 'lib/format-currency';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
-import PlanFeaturesBottom from './bottom';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesSummary from './summary';
 import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest, getABTestVariation } from 'lib/abtest';
-import { getCurrentUserCurrencyCode, getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
@@ -126,7 +125,6 @@ class PlanFeatures extends Component {
 						</table>
 					</div>
 				</div>
-				{ isInSignup && this.renderFarBottomAction() }
 			</div>
 		);
 	}
@@ -615,54 +613,6 @@ class PlanFeatures extends Component {
 		} );
 	}
 
-	renderFarBottomAction() {
-		const {
-			canPurchase,
-			isInSignup,
-			isLandingPage,
-			freePlanProperties,
-			selectedPlan,
-			selectedSiteSlug,
-		} = this.props;
-		const {
-			available,
-			current,
-			onUpgradeClick,
-			planName,
-			primaryUpgrade,
-			isPlaceholder,
-			planConstantObj,
-			popular,
-		} =
-			freePlanProperties || {};
-
-		if ( ! freePlanProperties ) {
-			return null;
-		}
-
-		return (
-			<PlanFeaturesBottom>
-				<PlanFeaturesActions
-					available={ available }
-					canPurchase={ canPurchase }
-					className={ getPlanClass( planName ) }
-					current={ current }
-					freePlan={ isFreePlan( planName ) }
-					isInSignup={ isInSignup }
-					isLandingPage={ isLandingPage }
-					isPlaceholder={ isPlaceholder }
-					isPopular={ popular }
-					manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
-					planName={ planConstantObj.getTitle() }
-					planType={ planName }
-					primaryUpgrade={ primaryUpgrade }
-					onUpgradeClick={ onUpgradeClick }
-					selectedPlan={ selectedPlan }
-				/>
-			</PlanFeaturesBottom>
-		);
-	}
-
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -694,10 +644,6 @@ PlanFeatures.defaultProps = {
 	site: {},
 	onUpgradeClick: noop,
 };
-
-function filterFreePlan( { planName } ) {
-	return isFreePlan( planName );
-}
 
 function getMaxCredits( planProperties, isJetpack ) {
 	return planProperties.reduce(
@@ -751,9 +697,8 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
-		const isLoggedIn = !! getCurrentUserId( state );
-		let freePlanProperties = null;
-		let planProperties = compact(
+
+		const planProperties = compact(
 			map( plans, plan => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
@@ -847,13 +792,6 @@ export default connect(
 			} )
 		);
 
-		// Minimize the free plan for the unsigned users
-		if ( isInSignup && ! isLoggedIn ) {
-			freePlanProperties = filter( planProperties, filterFreePlan );
-			freePlanProperties = freePlanProperties[ 0 ] || null;
-			planProperties = reject( planProperties, filterFreePlan );
-		}
-
 		const maxCredits = getMaxCredits( planProperties, isJetpack );
 		const showModifiedPricingDisplay =
 			! isInSignup &&
@@ -863,7 +801,6 @@ export default connect(
 
 		return {
 			canPurchase,
-			freePlanProperties,
 			isJetpack,
 			maxCredits,
 			planProperties,

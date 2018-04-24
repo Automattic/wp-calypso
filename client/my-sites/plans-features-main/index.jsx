@@ -27,6 +27,7 @@ import {
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
+import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
@@ -36,6 +37,7 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import PlanFooter from 'blocks/plan-footer';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
@@ -169,8 +171,12 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
+	handleFreePlanButtonClick = () => {
+		this.props.onUpgradeClick( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
+	};
+
 	render() {
-		const { site, displayJetpackPlans, isInSignup } = this.props;
+		const { site, displayJetpackPlans, isInSignup, isLoggedIn } = this.props;
 		let faqs = null;
 
 		if ( ! isInSignup ) {
@@ -187,7 +193,8 @@ export class PlansFeaturesMain extends Component {
 				{ this.getPlanFeatures() }
 				<PlanFooter isInSignup={ isInSignup } isJetpack={ displayJetpackPlans } />
 				{ faqs }
-				<div className="plans-features-main__bottom" />
+				{ isInSignup &&
+					! isLoggedIn && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
 			</div>
 		);
 	}
@@ -201,6 +208,7 @@ PlansFeaturesMain.propTypes = {
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
+	isLoggedIn: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
@@ -214,6 +222,7 @@ PlansFeaturesMain.defaultProps = {
 	hideFreePlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
+	isLoggedIn: false,
 	showFAQ: true,
 	site: {},
 	siteSlug: '',
@@ -222,6 +231,7 @@ PlansFeaturesMain.defaultProps = {
 export default connect(
 	( state, { site } ) => ( {
 		isChatAvailable: isHappychatAvailable( state ),
+		isLoggedIn: !! getCurrentUserId( state ),
 		siteSlug: getSiteSlug( state, get( site, [ 'ID' ] ) ),
 	} ),
 	{ selectHappychatSiteId }
