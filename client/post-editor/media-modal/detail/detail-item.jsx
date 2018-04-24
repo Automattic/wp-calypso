@@ -88,7 +88,7 @@ export class EditorMediaModalDetailItem extends Component {
 	 * @return {boolean} `true` if the image-editor can be enabled.
 	 */
 	enableImageEditing( item, site ) {
-		const { isPrivate } = this.props;
+		const { isSitePrivate } = this.props;
 
 		// do not allow if, for some reason, there isn't a valid item yet
 		if ( ! item ) {
@@ -101,7 +101,7 @@ export class EditorMediaModalDetailItem extends Component {
 		}
 
 		// do not allow for private sites
-		if ( isPrivate ) {
+		if ( isSitePrivate ) {
 			return false;
 		}
 
@@ -125,7 +125,7 @@ export class EditorMediaModalDetailItem extends Component {
 
 		const mimePrefix = getMimePrefix( item );
 
-		if ( 'image' === mimePrefix && this.props.isPrivateSite ) {
+		if ( 'image' === mimePrefix && this.props.isSitePrivate ) {
 			return null;
 		}
 
@@ -326,7 +326,7 @@ const connectComponent = connect( state => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 		isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
-		isPrivate: isPrivateSite( state, siteId ),
+		isSitePrivate: isPrivateSite( state, siteId ),
 		siteId,
 		canUserUploadFiles,
 	};

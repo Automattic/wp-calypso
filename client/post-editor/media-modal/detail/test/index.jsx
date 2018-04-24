@@ -77,7 +77,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 			<DetailItem
 				item={ DUMMY_VIDEO_MEDIA }
 				isVideoPressEnabled={ isVideoPressEnabled }
-				isPrivateSite={ true }
+				isSitePrivate={ true }
 				{ ...SHARED_PROPS }
 			/>
 		);
@@ -97,7 +97,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 
 	test( 'should not display edit button for an image on a private site', () => {
 		const tree = shallow(
-			<DetailItem item={ DUMMY_IMAGE_MEDIA } isPrivateSite={ true } { ...SHARED_PROPS } />
+			<DetailItem item={ DUMMY_IMAGE_MEDIA } isSitePrivate={ true } { ...SHARED_PROPS } />
 		);
 
 		const editButton = tree.find( '.editor-media-modal-detail__edit' );
