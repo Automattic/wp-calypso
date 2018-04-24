@@ -20,6 +20,7 @@ import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 
 class PlansStep extends Component {
@@ -94,6 +95,16 @@ class PlansStep extends Component {
 					displayJetpackPlans={ false }
 					domainName={ this.getDomainName() }
 				/>
+				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
+				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
+				   * unless we've already selected an option that implies a paid plan.
+				   * This is in particular true for domain names. */
+				hideFreePlan &&
+					! this.getDomainName() && (
+						<PlansSkipButton
+							onClick={ this.onSelectPlan } // Called with no args, selects the Free Plan
+						/>
+					) }
 			</div>
 		);
 	}
