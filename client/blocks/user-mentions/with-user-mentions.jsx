@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import UserMentionSuggestionList from './suggestion-list';
+//import UserMentionSuggestionList from './suggestion-list';
 
 /**
  * withUserMentionSuggestions is a higher-order component that adds user mention support to whatever input it wraps.
@@ -35,19 +35,16 @@ export default EnhancedComponent =>
 		};
 
 		render() {
-			const suggestions = [
-				{
-					ID: 1,
-					user_login: 'testuser',
-				},
-			];
-			const cursorComponent = this.state.showPopover && (
-				<UserMentionSuggestionList suggestions={ suggestions } />
-			);
+			// const suggestions = [
+			// 	{
+			// 		ID: 1,
+			// 		user_login: 'testuser',
+			// 	},
+			// ];
+
 			return (
 				<div>
 					<EnhancedComponent { ...this.props } onKeyPress={ this.handleKeyPress } />
-					{ cursorComponent }
 				</div>
 			);
 		}
