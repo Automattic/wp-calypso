@@ -40,7 +40,7 @@ Name | Type | Default | Description
 
 #### Icon buttons
 
-To use an icon button, insert a Gridicon so that it displays to the left of the text (displaying the `external` icon to the right of the text is the exception). Wrap the text in a `span` with the `button-text` class. You may also create a button without text, but use sparingly because it may reduce clarity.
+To use an icon button, insert a Gridicon so that it displays to the left of the text (displaying the `external` icon to the right of the text is the exception). Wrap the text in a `span` or some other element for spacing purposes. You may also create an icon button without text, but use sparingly because it may reduce clarity.
 
 ```jsx
 import Gridicon from 'gridicons';
@@ -50,7 +50,7 @@ export default function RockOnButton() {
 	return (
 		<Button>
 			<Gridicon icon="trash" />
-			<span className="button-text">Button with icon</span>
+			<span>Button with icon</span>
 		</Button>
 	);
 }
