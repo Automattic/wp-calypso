@@ -12,10 +12,6 @@ import ActivityIcon from '../activity-log-item/activity-icon';
 import FoldableCard from 'components/foldable-card';
 
 export class ThreatAlert extends Component {
-	state = {
-		isExpanded: false,
-	};
-
 	render() {
 		const { moment, threat, translate } = this.props;
 
