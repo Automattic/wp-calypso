@@ -80,7 +80,7 @@ export class EditorMediaModalDetailItem extends Component {
 	}
 
 	/**
-	 * This function return true if the image editor can be
+	 * This function returns true if the image editor can be
 	 * enabled/shown
 	 *
 	 * @param  {object} item - media item
