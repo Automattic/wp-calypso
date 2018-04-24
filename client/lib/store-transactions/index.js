@@ -132,6 +132,7 @@ TransactionFlow.prototype._paymentHandlers = {
 						street_number: newCardDetails[ 'street-number' ],
 						phone_number: newCardDetails[ 'phone-number' ],
 						document: newCardDetails.document,
+						device_id: gatewayData.deviceId,
 					};
 
 					paymentData = { ...paymentData, ...ebanxPaymentData };
@@ -268,7 +269,12 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 					Ebanx.config.setCountry( cardDetails.country.toLowerCase() );
 
 					const parameters = getEbanxParameters( cardDetails );
-					Ebanx.card.createToken( parameters, createTokenCallback );
+					Ebanx.card.createToken( parameters, function( ebanxResponse ) {
+						Ebanx.deviceFingerprint.setup( function( deviceId ) {
+							ebanxResponse.data.deviceId = deviceId;
+							createTokenCallback( ebanxResponse );
+						} );
+					} );
 				} )
 				.catch( loaderError => {
 					callback( loaderError );
