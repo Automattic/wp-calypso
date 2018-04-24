@@ -176,7 +176,7 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	render() {
-		const { site, displayJetpackPlans, isInSignup, isLoggedIn } = this.props;
+		const { domainName, site, displayJetpackPlans, isInSignup, isLoggedIn } = this.props;
 		let faqs = null;
 
 		if ( ! isInSignup ) {
@@ -194,7 +194,8 @@ export class PlansFeaturesMain extends Component {
 				<PlanFooter isInSignup={ isInSignup } isJetpack={ displayJetpackPlans } />
 				{ faqs }
 				{ isInSignup &&
-					! isLoggedIn && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
+					! isLoggedIn &&
+					! domainName && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
 			</div>
 		);
 	}
