@@ -29,12 +29,9 @@ import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
+import { isPrivateSite as isPrivateSiteSelector } from 'state/selectors';
 
 class EditorVisibility extends React.Component {
-	static defaultProps = {
-		isPrivateSite: false,
-	};
-
 	static propTypes = {
 		context: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
@@ -314,10 +311,12 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
+		const isPrivateSite = isPrivateSiteSelector( state, siteId );
 
 		return {
 			siteId,
 			postId,
+			isPrivateSite,
 		};
 	},
 	{ editPost }

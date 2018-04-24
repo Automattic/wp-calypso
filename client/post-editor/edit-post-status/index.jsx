@@ -160,13 +160,11 @@ export class EditPostStatus extends Component {
 		}
 
 		const { password, type } = this.props.post || {};
-		const isPrivateSite = this.props.site && this.props.site.is_private;
 		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
 		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
 		const props = {
 			status: this.props.status,
 			onPrivatePublish: this.props.onPrivatePublish,
-			isPrivateSite,
 			type,
 			password,
 			savedStatus,
