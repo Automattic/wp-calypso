@@ -23,35 +23,16 @@ import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business
 import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-function transformData( props ) {
-	const { data } = props;
-
+function transformData( data, dataSeriesInfo ) {
 	if ( ! data ) {
 		return data;
 	}
 
-	const aggregation = getAggregation( props );
-
-	if ( aggregation === 'total' ) {
-		return data.metricValues.map( metric => ( {
-			value: metric.totalValue.value,
-			description: get( props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
-			name: get( props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
-		} ) );
-	}
-
-	return data.metricValues.map( metric => {
-		return metric.dimensionalValues.map( datum => {
-			return {
-				date: Date.parse( datum.time ),
-				value: datum.value,
-			};
-		} );
-	} );
-}
-
-function getAggregation( props ) {
-	return props.chartType === 'pie' ? 'total' : 'daily';
+	return data.metricValues.map( value => ( {
+		value: value.totalValue.value,
+		description: get( dataSeriesInfo, `${ value.metric }.description`, '' ),
+		name: get( dataSeriesInfo, `${ value.metric }.name`, value.metric ),
+	} ) );
 }
 
 class GoogleMyBusinessStatsChart extends Component {
@@ -75,43 +56,42 @@ class GoogleMyBusinessStatsChart extends Component {
 		dataSeriesInfo: {},
 	};
 
-	state = {
-		transformedData: this.transformData( this.props.data ),
-	};
+	state = {};
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.data === prevState.data ) {
+			return null;
+		}
+
+		return {
+			data: nextProps.data,
+			transformedData: transformData( nextProps.data, nextProps.dataSeriesInfo ),
+		};
+	}
 
 	componentDidMount() {
-		if ( this.props.siteId ) {
-			this.requestGoogleMyBusinessStats();
-		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if (
-			this.props.chartType !== prevProps.chartType ||
-			this.props.interval !== prevProps.interval ||
-			this.props.siteId !== prevProps.siteId ||
-			this.props.statType !== prevProps.statType
-		) {
-			this.requestGoogleMyBusinessStats();
-		}
-	}
-
-	shouldComponentUpdate( nextProps ) {
-		return (
-			this.props.interval !== nextProps.interval || ! isEqual( this.props.data, nextProps.data )
+		this.props.requestGoogleMyBusinessStats(
+			this.props.siteId,
+			this.props.statType,
+			this.props.interval
 		);
 	}
 
-	transformData( data ) {
-		if ( ! data ) {
-			return data;
-		}
+	shouldComponentUpdate( nextProps, nextState ) {
+		return (
+			this.props.interval !== nextProps.interval ||
+			this.props.siteId !== nextProps.siteId ||
+			this.props.statType !== nextProps.statType ||
+			! isEqual( this.state.data, nextState.data )
+		);
+	}
 
-		return data.metricValues.map( value => ( {
-			value: value.totalValue.value,
-			description: get( this.props.dataSeriesInfo, `${ value.metric }.description`, '' ),
-			name: get( this.props.dataSeriesInfo, `${ value.metric }.name`, value.metric ),
-		} ) );
+	componentDidUpdate() {
+		this.props.requestGoogleMyBusinessStats(
+			this.props.siteId,
+			this.props.statType,
+			this.props.interval
+		);
 	}
 
 	changeInterval = event =>
