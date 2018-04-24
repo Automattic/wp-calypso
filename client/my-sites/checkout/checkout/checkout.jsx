@@ -70,6 +70,8 @@ import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
+import { isRequestingSitePlans } from 'state/sites/plans/selectors';
+import { isRequestingPlans } from 'state/plans/selectors';
 
 class Checkout extends React.Component {
 	static propTypes = {
@@ -483,9 +485,7 @@ class Checkout extends React.Component {
 					userCountryCode={ this.props.userCountryCode }
 				/>
 			);
-		} else if ( this.isLoading() || this.props.cart.hasPendingServerUpdates ) {
-			// hasPendingServerUpdates is an important check here as the content we display is dependent on the content of the cart
-
+		} else if ( this.isLoading() ) {
 			return <SecurePaymentFormPlaceholder />;
 		}
 
@@ -566,8 +566,10 @@ class Checkout extends React.Component {
 	isLoading() {
 		const isLoadingCart = ! this.props.cart.hasLoadedFromServer;
 		const isLoadingProducts = this.props.isProductsListFetching;
+		const isLoadingPlans = this.props.isPlansListFetching;
+		const isLoadingSitePlans = this.props.isSitePlansListFetching;
 
-		return isLoadingCart || isLoadingProducts;
+		return isLoadingCart || isLoadingProducts || isLoadingPlans || isLoadingSitePlans;
 	}
 
 	needsDomainDetails() {
@@ -626,6 +628,8 @@ export default connect(
 			),
 			productsList: getProductsList( state ),
 			isProductsListFetching: isProductsListFetching( state ),
+			isPlansListFetching: isRequestingPlans( state ),
+			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 		};
 	},
 	{
