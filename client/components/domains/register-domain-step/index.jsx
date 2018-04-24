@@ -541,7 +541,6 @@ class RegisterDomainStep extends React.Component {
 				pageNumber: 1,
 				searchResults: null,
 				subdomainSearchResults: null,
-				...( loadingResults ? { filters: this.getInitialFiltersState() } : {} ),
 			},
 			callback
 		);
