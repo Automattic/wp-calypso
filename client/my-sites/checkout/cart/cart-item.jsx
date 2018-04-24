@@ -215,7 +215,7 @@ export class CartItem extends React.Component {
 		} else if ( isYearly( cartItem ) ) {
 			return translate( 'annual subscription' );
 		} else if ( isBiennially( cartItem ) ) {
-			return translate( 'biennial subscription' );
+			return translate( 'two year subscription' );
 		}
 
 		return false;

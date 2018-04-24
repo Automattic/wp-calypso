@@ -162,7 +162,7 @@ export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 const WPComGetBillingTimeframe = abtest => {
 	if ( abtest ) {
 		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
-			return i18n.translate( '/month, billed annually or biennially' );
+			return i18n.translate( '/month, billed annually or two yearly' );
 		}
 
 		if ( abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
@@ -176,7 +176,7 @@ const WPComGetBillingTimeframe = abtest => {
 const WPComGetBiennialBillingTimeframe = abtest => {
 	if ( abtest ) {
 		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
-			return i18n.translate( '/month, billed biennially' );
+			return i18n.translate( '/month, billed two yearly' );
 		}
 	}
 
