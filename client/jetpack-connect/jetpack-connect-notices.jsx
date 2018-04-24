@@ -65,7 +65,6 @@ export class JetpackConnectNotices extends Component {
 			XMLRPC_ERROR,
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
-		url: PropTypes.string,
 	};
 
 	getNoticeValues() {
