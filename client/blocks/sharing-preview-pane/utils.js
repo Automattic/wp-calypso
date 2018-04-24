@@ -56,3 +56,19 @@ export const getExcerptForPost = post => {
 		)
 	);
 };
+
+export const getSummaryForPost = ( post, translate, maxWords = 60 ) => {
+	if ( ! post ) {
+		return null;
+	}
+
+	const content = trim( striptags( formatExcerpt( post.content ) ) );
+	const words = content.split( ' ' );
+
+	return (
+		words.slice( 0, maxWords ).join( ' ' ) +
+		( words.length > maxWords
+			? ' ' + translate( '[ more ]', { comment: 'Truncation of post content in a FB share.' } )
+			: '' )
+	);
+};

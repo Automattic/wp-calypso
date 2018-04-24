@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 
 export class FacebookSharePreview extends PureComponent {
 	static propTypes = {
+		articleSummary: PropTypes.string,
 		articleUrl: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
 		externalProfileUrl: PropTypes.string,
@@ -27,6 +28,7 @@ export class FacebookSharePreview extends PureComponent {
 
 	render() {
 		const {
+			articleSummary,
 			articleUrl,
 			externalProfilePicture,
 			externalProfileUrl,
@@ -73,7 +75,9 @@ export class FacebookSharePreview extends PureComponent {
 						</div>
 					</div>
 					<div className="facebook-share-preview__body">
-						<div className="facebook-share-preview__message">{ message }</div>
+						<div className="facebook-share-preview__message">
+							{ message ? message : articleSummary }
+						</div>
 						<div className="facebook-share-preview__article-url-line">
 							<a className="facebook-share-preview__article-url" href={ articleUrl }>
 								{ articleUrl }

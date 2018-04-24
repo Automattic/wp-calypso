@@ -13,7 +13,7 @@ import { get, find, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostImage, getExcerptForPost } from './utils';
+import { getPostImage, getExcerptForPost, getSummaryForPost } from './utils';
 import FacebookSharePreview from 'components/share/facebook-share-preview';
 import GooglePlusSharePreview from 'components/share/google-plus-share-preview';
 import LinkedinSharePreview from 'components/share/linkedin-share-preview';
@@ -22,8 +22,7 @@ import TumblrSharePreview from 'components/share/tumblr-share-preview';
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getSitePost } from 'state/posts/selectors';
-import { getSeoTitle, getSiteSlug } from 'state/sites/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSeoTitle, getSite, getSiteSlug } from 'state/sites/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import Notice from 'components/notice';
@@ -90,6 +89,7 @@ class SharingPreviewPane extends PureComponent {
 		const articleUrl = get( post, 'URL', '' );
 		const articleTitle = get( post, 'title', '' );
 		const articleContent = getExcerptForPost( post );
+		const articleSummary = getSummaryForPost( post, translate );
 		const siteDomain = get( site, 'domain', '' );
 		const imageUrl = getPostImage( post );
 		const {
@@ -103,6 +103,7 @@ class SharingPreviewPane extends PureComponent {
 			articleUrl,
 			articleTitle,
 			articleContent,
+			articleSummary,
 			externalDisplay,
 			externalName,
 			externalProfileURL,
