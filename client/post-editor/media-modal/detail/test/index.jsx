@@ -58,7 +58,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 		isVideoPressEnabled = sandbox.stub().returns( true );
 	} );
 
-	test( 'should display edit button for a VideoPress video on a public site', () => {
+	test( 'should display at least one edit button for a VideoPress video on a public site', () => {
 		const tree = shallow(
 			<DetailItem
 				item={ DUMMY_VIDEO_MEDIA }
@@ -69,13 +69,10 @@ describe( 'EditorMediaModalDetailItem', () => {
 
 		const editButton = tree.find( '.editor-media-modal-detail__edit' );
 
-		// 2 Edit buttons are rendered. It's recommended te have exact value tests.
-		// Not sure whethur to change this to
-		// expect( editButton ).to.have.length(2);
 		expect( editButton ).to.have.length.at.least( 1 );
 	} );
 
-	test( 'should display edit button for a VideoPress video on a private site', () => {
+	test( 'should display at least one edit button for a VideoPress video on a private site', () => {
 		const tree = shallow(
 			<DetailItem
 				item={ DUMMY_VIDEO_MEDIA }
@@ -90,7 +87,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 		expect( editButton ).to.have.length.at.least( 1 );
 	} );
 
-	test( 'should display edit button for an image on a public site', () => {
+	test( 'should display at least one edit button for an image on a public site', () => {
 		const tree = shallow( <DetailItem item={ DUMMY_IMAGE_MEDIA } { ...SHARED_PROPS } /> );
 
 		const editButton = tree.find( '.editor-media-modal-detail__edit' );
