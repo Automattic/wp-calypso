@@ -1,4 +1,5 @@
 /** @format */
+/* eslint-disable jsx-a11y/alt-text, jsx-a11y/anchor-is-valid */
 
 /**
  * External dependencies
@@ -18,6 +19,12 @@ export class FacebookSharePreview extends PureComponent {
 		message: PropTypes.string,
 	};
 
+	state = {
+		isProfileImageBroken: false,
+	};
+
+	setBrokenProfileImage = () => this.setState( { isProfileImageBroken: true } );
+
 	render() {
 		const {
 			articleUrl,
@@ -28,15 +35,19 @@ export class FacebookSharePreview extends PureComponent {
 			message,
 			translate,
 		} = this.props;
+		const { isProfileImageBroken } = this.state;
 		return (
 			<div className="facebook-share-preview">
 				<div className="facebook-share-preview__content">
 					<div className="facebook-share-preview__header">
 						<div className="facebook-share-preview__profile-picture-part">
-							<img
-								className="facebook-share-preview__profile-picture"
-								src={ externalProfilePicture }
-							/>
+							{ ! isProfileImageBroken && (
+								<img
+									className="facebook-share-preview__profile-picture"
+									src={ externalProfilePicture }
+									onError={ this.setBrokenProfileImage }
+								/>
+							) }
 						</div>
 
 						<div className="facebook-share-preview__profile-line-part">
