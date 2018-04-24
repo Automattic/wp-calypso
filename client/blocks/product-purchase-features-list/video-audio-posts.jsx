@@ -29,15 +29,16 @@ function getDescription( plan, translate ) {
 	return '';
 }
 
-export const VideoAudioPosts = ( { selectedSite, plan, translate } ) => {
+export const VideoAudioPosts = ( { isButtonPrimary = true, selectedSite, plan, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/upgrades/media-post.svg" /> }
-				title={ translate( 'Video and audio posts' ) }
-				description={ getDescription( plan, translate ) }
 				buttonText={ translate( 'Start a new post' ) }
+				description={ getDescription( plan, translate ) }
 				href={ newPost( selectedSite ) }
+				icon={ <img alt="" src="/calypso/images/upgrades/media-post.svg" /> }
+				primary={ isButtonPrimary }
+				title={ translate( 'Video and audio posts' ) }
 			/>
 		</div>
 	);

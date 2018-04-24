@@ -84,7 +84,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleAnalyticsStats isButtonPrimary={ false } selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan isButtonPrimary={ false } />
 				<CustomizeTheme isButtonPrimary={ false } selectedSite={ selectedSite } />
-				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				<VideoAudioPosts isButtonPrimary={ false } selectedSite={ selectedSite } plan={ plan } />
 				<FindNewTheme isButtonPrimary={ false } selectedSite={ selectedSite } />
 			</Fragment>
 		);
@@ -104,7 +104,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<AdvertisingRemoved isBusinessPlan={ false } isButtonPrimary={ false } />
 				<GoogleVouchers isButtonPrimary={ false } selectedSite={ selectedSite } />
 				<CustomizeTheme isButtonPrimary={ false } selectedSite={ selectedSite } />
-				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				<VideoAudioPosts isButtonPrimary={ false } selectedSite={ selectedSite } plan={ plan } />
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite isButtonPrimary={ false } selectedSite={ selectedSite } />
 				) }
