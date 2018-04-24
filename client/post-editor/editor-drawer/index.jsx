@@ -336,7 +336,6 @@ class EditorDrawer extends Component {
 					onTrashingPost={ this.props.onTrashingPost }
 					onPrivatePublish={ this.props.onPrivatePublish }
 					setPostDate={ this.props.setPostDate }
-					site={ this.props.site }
 					status={ postStatus }
 					type={ type }
 					isPostPrivate={ this.props.isPostPrivate }
