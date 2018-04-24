@@ -125,10 +125,6 @@ export class EditorMediaModalDetailItem extends Component {
 
 		const mimePrefix = getMimePrefix( item );
 
-		if ( 'image' === mimePrefix && this.props.isSitePrivate ) {
-			return null;
-		}
-
 		if ( ! includes( [ 'image', 'video' ], mimePrefix ) ) {
 			return null;
 		}
