@@ -1793,14 +1793,10 @@ Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
 };
 
 Undocumented.prototype.requestTransferCode = function( options, fn ) {
-	const { domainName, unlock, disablePrivacy } = options,
+	const { domainName } = options,
 		data = {
 			domainStatus: JSON.stringify( {
 				command: 'send-code',
-				payload: {
-					unlock,
-					disable_privacy: disablePrivacy,
-				},
 			} ),
 		};
 
