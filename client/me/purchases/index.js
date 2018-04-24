@@ -14,12 +14,13 @@ import meController from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 
 export default function( router ) {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
 		router(
 			paths.addCreditCard,
+			redirectLoggedOut,
 			meController.sidebar,
 			controller.addCreditCard,
 			makeLayout,
@@ -32,6 +33,7 @@ export default function( router ) {
 
 	router(
 		paths.billingHistory,
+		redirectLoggedOut,
 		meController.sidebar,
 		billingController.billingHistory,
 		makeLayout,
@@ -40,6 +42,7 @@ export default function( router ) {
 
 	router(
 		paths.billingHistoryReceipt(),
+		redirectLoggedOut,
 		meController.sidebar,
 		billingController.transaction,
 		makeLayout,
@@ -50,6 +53,7 @@ export default function( router ) {
 
 	router(
 		paths.managePurchase(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.managePurchase,
@@ -59,6 +63,7 @@ export default function( router ) {
 
 	router(
 		paths.cancelPurchase(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.cancelPurchase,
@@ -68,6 +73,7 @@ export default function( router ) {
 
 	router(
 		paths.cancelPrivacyProtection(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.cancelPrivacyProtection,
@@ -77,6 +83,7 @@ export default function( router ) {
 
 	router(
 		paths.confirmCancelDomain(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.confirmCancelDomain,
@@ -86,6 +93,7 @@ export default function( router ) {
 
 	router(
 		paths.addCardDetails(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.addCardDetails,
@@ -95,6 +103,7 @@ export default function( router ) {
 
 	router(
 		paths.editCardDetails(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.editCardDetails,
