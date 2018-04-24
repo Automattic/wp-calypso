@@ -120,10 +120,8 @@ const NoticesList = createReactClass( {
 } );
 
 export default connect(
-	state => {
-		return {
-			storeNotices: getNotices( state ),
-		};
-	},
+	state => ( {
+		storeNotices: getNotices( state ),
+	} ),
 	{ removeNotice }
 )( NoticesList );
