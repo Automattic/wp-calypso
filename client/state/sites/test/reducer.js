@@ -234,40 +234,6 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should strip invalid keys on the received site object', () => {
-			const state = items( undefined, {
-				type: SITE_RECEIVE,
-				site: {
-					ID: 2916284,
-					name: 'WordPress.com Example Blog',
-					slug: 'example.wordpress.com',
-					updateComputedAttributes() {},
-				},
-			} );
-
-			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
-			} );
-		} );
-
-		test( 'should strip invalid keys on the received site objects', () => {
-			const state = items( undefined, {
-				type: SITES_RECEIVE,
-				sites: [
-					{
-						ID: 2916284,
-						name: 'WordPress.com Example Blog',
-						slug: 'example.wordpress.com',
-						updateComputedAttributes() {},
-					},
-				],
-			} );
-
-			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
-			} );
-		} );
-
 		test( 'should update properties when wordads is activated', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { foo: 'bar' } },

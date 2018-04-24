@@ -67,7 +67,7 @@ const getStorePages = () => {
 			container: ProductUpdate,
 			configKey: 'woocommerce/extension-products',
 			documentTitle: translate( 'Edit Product' ),
-			path: '/store/product/:site/:product',
+			path: '/store/product/:site/:product_id',
 		},
 		{
 			container: ProductCategories,
@@ -79,7 +79,7 @@ const getStorePages = () => {
 			container: ProductCategoryUpdate,
 			configKey: 'woocommerce/extension-product-categories',
 			documentTitle: translate( 'Edit Product Category' ),
-			path: '/store/products/category/:site/:category',
+			path: '/store/products/category/:site/:category_id',
 		},
 		{
 			container: ProductCategoryCreate,
@@ -103,7 +103,7 @@ const getStorePages = () => {
 			container: Order,
 			configKey: 'woocommerce/extension-orders',
 			documentTitle: translate( 'Order Details' ),
-			path: '/store/order/:site/:order',
+			path: '/store/order/:site/:order_id',
 		},
 		{
 			container: OrderCreate,
@@ -127,7 +127,7 @@ const getStorePages = () => {
 			container: PromotionUpdate,
 			configKey: 'woocommerce/extension-promotions',
 			documentTitle: translate( 'Edit Promotion' ),
-			path: '/store/promotion/:site/:promotion',
+			path: '/store/promotion/:site/:promotion_id',
 		},
 		{
 			container: Reviews,
@@ -145,7 +145,7 @@ const getStorePages = () => {
 			container: Reviews,
 			configKey: 'woocommerce/extension-reviews',
 			documentTitle: translate( 'Reviews' ),
-			path: '/store/reviews/:productId/:filter/:site',
+			path: '/store/reviews/:product_id/:filter/:site',
 		},
 		{
 			container: SettingsPayments,
@@ -203,10 +203,7 @@ function getAnalyticsPath( path, params ) {
 			: '/store/settings/shipping/zone/:site';
 	}
 
-	return path
-		.replace( '?', '' )
-		.replace( ':filter', params.filter )
-		.replace( ':productId', ':product_id' );
+	return path.replace( '?', '' ).replace( ':filter', params.filter );
 }
 
 function addStorePage( storePage, storeNavigation ) {
@@ -217,14 +214,10 @@ function addStorePage( storePage, storeNavigation ) {
 		( context, next ) => {
 			const component = React.createElement( storePage.container, { params: context.params } );
 			const appProps = {
+				documentTitle: storePage.documentTitle || null,
 				isDashboard: '/store/:site' === storePage.path,
 			};
-			if ( storePage.documentTitle ) {
-				appProps.documentTitle = storePage.documentTitle;
-			}
-
 			appProps.analyticsPath = getAnalyticsPath( storePage.path, context.params );
-
 			appProps.analyticsTitle = `Store > ${
 				storePage.documentTitle ? storePage.documentTitle : 'Dashboard'
 			}`;

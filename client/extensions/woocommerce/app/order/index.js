@@ -88,7 +88,7 @@ export default connect(
 	( state, props ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
-		const orderId = parseInt( props.params.order );
+		const orderId = parseInt( props.params.order_id );
 		const isEditing = isCurrentlyEditingOrder( state );
 		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, orderId );
 		const hasOrder = ! isEmpty( order );

@@ -50,7 +50,7 @@ import {
 	isAuthorEqual,
 	isDiscussionEqual,
 	isTermsEqual,
-	mergeIgnoringArrays,
+	mergePostEdits,
 	normalizePostForState,
 } from './utils';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
@@ -409,40 +409,56 @@ export function edits( state = {}, action ) {
 			return reduce(
 				action.posts,
 				( memoState, post ) => {
+					// Receive a new version of a post object, in most cases returned in the POST
+					// response after a successful save. Removes the edits that have been applied
+					// and leaves only the ones that are not noops.
 					const postEdits = get( memoState, [ post.site_ID, post.ID ] );
+
 					if ( ! postEdits ) {
 						return memoState;
-					} else if ( memoState === state ) {
+					}
+
+					if ( memoState === state ) {
 						memoState = merge( {}, state );
 					}
 
-					return set(
-						memoState,
-						[ post.site_ID, post.ID ],
-						omitBy( postEdits, ( value, key ) => {
-							switch ( key ) {
-								case 'author':
-									return isAuthorEqual( value, post[ key ] );
-								case 'discussion':
-									return isDiscussionEqual( value, post[ key ] );
-								case 'featured_image':
-									return value === getFeaturedImageId( post );
-								case 'terms':
-									return isTermsEqual( value, post[ key ] );
-							}
-							return isEqual( post[ key ], value );
-						} )
-					);
+					// remove the edits that try to set an attribute to a value it already has.
+					// For most attributes, it's a simple `isEqual` deep comparison, but a few
+					// properties are more complicated than that.
+					const unappliedPostEdits = omitBy( postEdits, ( value, key ) => {
+						switch ( key ) {
+							case 'author':
+								return isAuthorEqual( value, post[ key ] );
+							case 'discussion':
+								return isDiscussionEqual( value, post[ key ] );
+							case 'featured_image':
+								return value === getFeaturedImageId( post );
+							case 'terms':
+								return isTermsEqual( value, post[ key ] );
+						}
+						return isEqual( post[ key ], value );
+					} );
+
+					return set( memoState, [ post.site_ID, post.ID ], unappliedPostEdits );
 				},
 				state
 			);
 
-		case POST_EDIT:
-			return mergeIgnoringArrays( {}, state, {
-				[ action.siteId ]: {
-					[ action.postId || '' ]: action.post,
+		case POST_EDIT: {
+			// process new edit for a post: merge it into the existing edits
+			const siteId = action.siteId;
+			const postId = action.postId || '';
+			const postEdits = get( state, [ siteId, postId ] );
+			const mergedEdits = mergePostEdits( postEdits, action.post );
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ postId ]: mergedEdits,
 				},
-			} );
+			};
+		}
 
 		case EDITOR_START:
 			return Object.assign( {}, state, {
@@ -467,7 +483,8 @@ export function edits( state = {}, action ) {
 			}
 			const { siteId, savedPost } = action;
 
-			// if postId is null, copy over any edits
+			// a new post (edited with a transient postId of '') has been just saved and assigned
+			// a real numeric ID. Rewrite the state key with the new postId.
 			return {
 				...state,
 				[ siteId ]: mapKeys(

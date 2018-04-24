@@ -102,7 +102,7 @@ class GoogleMyBusinessStats extends Component {
 					<div className="gmb-stats__metric">
 						<GoogleMyBusinessStatsChart
 							title={ translate( 'How customers search for your business' ) }
-							statType="QUERIES"
+							statType="queries"
 							chartTitle={ this.searchChartTitleFunc }
 							dataSeriesInfo={ {
 								QUERIES_DIRECT: {
@@ -140,7 +140,7 @@ class GoogleMyBusinessStats extends Component {
 							description={ translate(
 								'The Google services that customers use to find your business'
 							) }
-							statType="VIEWS"
+							statType="views"
 							chartTitle={ this.viewChartTitleFunc }
 							dataSeriesInfo={ {
 								VIEWS_MAPS: {
@@ -159,7 +159,7 @@ class GoogleMyBusinessStats extends Component {
 							description={ translate(
 								'The most common actions that customers take on your listing'
 							) }
-							statType="ACTIONS"
+							statType="actions"
 							chartTitle={ this.actionChartTitleFunc }
 							dataSeriesInfo={ {
 								ACTIONS_WEBSITE: {

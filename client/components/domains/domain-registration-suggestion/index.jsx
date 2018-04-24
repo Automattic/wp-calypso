@@ -86,6 +86,10 @@ class DomainRegistrationSuggestion extends React.Component {
 	};
 
 	getDomainFlags() {
+		// TODO: Remove this entire function and isNewTld/isTestTld from utility.js
+		if ( config.isEnabled( 'domains/kracken-ui' ) ) {
+			return null;
+		}
 		const { suggestion, translate } = this.props;
 		const domain = suggestion.domain_name;
 		const domainFlags = [];
@@ -117,25 +121,23 @@ class DomainRegistrationSuggestion extends React.Component {
 			}
 		}
 
-		if ( ! config.isEnabled( 'domains/kracken-ui' ) ) {
-			if ( suggestion.isRecommended ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-recommended` }
-						content={ translate( 'Recommended' ) }
-						status="success"
-					/>
-				);
-			}
+		if ( suggestion.isRecommended ) {
+			domainFlags.push(
+				<DomainSuggestionFlag
+					key={ `${ domain }-recommended` }
+					content={ translate( 'Recommended' ) }
+					status="success"
+				/>
+			);
+		}
 
-			if ( suggestion.isBestAlternative ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-best-alternative` }
-						content={ translate( 'Best Alternative' ) }
-					/>
-				);
-			}
+		if ( suggestion.isBestAlternative ) {
+			domainFlags.push(
+				<DomainSuggestionFlag
+					key={ `${ domain }-best-alternative` }
+					content={ translate( 'Best Alternative' ) }
+				/>
+			);
 		}
 
 		return domainFlags;

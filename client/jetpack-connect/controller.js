@@ -5,7 +5,6 @@
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import validator from 'is-my-json-valid';
 import { get, isEmpty, some } from 'lodash';
 import { translate } from 'i18n-calypso';
 
@@ -27,13 +26,12 @@ import Plans from './plans';
 import PlansLanding from './plans-landing';
 import versionCompare from 'lib/version-compare';
 import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
-import { authorizeQueryDataSchema } from './schema';
-import { authQueryTransformer } from './utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
+import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack/onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
@@ -204,28 +202,13 @@ export function signupForm( context, next ) {
 	removeSidebar( context );
 
 	const { query } = context;
-	const validQueryObject = validator( authorizeQueryDataSchema )( query );
-
-	if ( validQueryObject ) {
-		const transformedQuery = authQueryTransformer( query );
+	const transformedQuery = parseAuthorizationQuery( query );
+	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
-		let interval = context.params.interval;
-		let locale = context.params.locale;
-		if ( context.params.localeOrInterval ) {
-			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
-				interval = context.params.localeOrInterval;
-			} else {
-				locale = context.params.localeOrInterval;
-			}
-		}
+		const { locale } = context.params;
 		context.primary = (
-			<JetpackSignup
-				path={ context.path }
-				interval={ interval }
-				locale={ locale }
-				authQuery={ transformedQuery }
-			/>
+			<JetpackSignup path={ context.path } locale={ locale } authQuery={ transformedQuery } />
 		);
 	} else {
 		context.primary = <NoDirectAccessError />;
@@ -244,10 +227,8 @@ export function authorizeForm( context, next ) {
 	removeSidebar( context );
 
 	const { query } = context;
-	const validQueryObject = validator( authorizeQueryDataSchema )( query );
-
-	if ( validQueryObject ) {
-		const transformedQuery = authQueryTransformer( query );
+	const transformedQuery = parseAuthorizationQuery( query );
+	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
 	} else {

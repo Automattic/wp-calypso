@@ -318,6 +318,7 @@
 		.payment-box-section.selected:not( .no-stored-cards ) {
 			.payment-box-section-inner {
 				border-left: 3px solid $alert-green;
+				padding-top: 15px;
 			}
 			.checkout__new-card-fields {
 				background-color: #fafdf6;
@@ -347,7 +348,6 @@
 		.payment-box-section.selected .checkout__new-card-fields {
 			max-height: 100%;
 			margin-bottom: 0;
-			padding-top: 15px;
 		}
 
 		.checkout__new-card-toggle {
@@ -882,10 +882,51 @@
 	}
 }
 
-.checkout__form-state-field {
-	flex-basis: calc( 100% );
+// Ebanx checkout fields
+// -----------------------------------
+.checkout__ebanx-payment-fields {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin: 15px 0 0 -15px;
+	.checkout__checkout-field,
+	.checkout__form-state-field {
+		flex-basis: calc( 100% - 15px );
+		flex-grow: 1;
+		flex-shrink: 0;
+		margin-left: 15px;
+	}
+	.checkout__form-state-field {
+		margin-left: 0;
+	}
 	@include breakpoint( '>480px' ) {
-		flex-basis: calc( 50% - 15px );
+		.address-2,
+		.city {
+			flex-basis: calc( 100% - 15px );
+		}
+
+		.street-number {
+			flex-basis: calc( 33% - 15px);
+		}
+
+		.address-1 {
+			flex-basis: calc( 66% - 15px);
+		}
+
+		.document,
+		.phone,
+		.postal-code,
+		.checkout__form-state-field {
+			flex-basis: calc( 50% - 15px );
+		}
+	}
+	.form__hidden-input a {
+		display: block;
+		font-size:  12px;
+		margin-left: 15px;
+	}
+	select {
+		width: 100%;
 	}
 }
 

@@ -3,9 +3,8 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { partial } from 'lodash';
 
@@ -57,123 +56,120 @@ export class ProductPurchaseFeaturesList extends Component {
 
 	getBusinessFeatures() {
 		const { selectedSite, plan, planHasDomainCredit } = this.props;
-		return [
-			<CustomDomain
-				selectedSite={ selectedSite }
-				hasDomainCredit={ planHasDomainCredit }
-				key="customDomainFeature"
-			/>,
-			<BusinessOnboarding
-				key="businessOnboarding"
-				onClick={ this.props.recordBusinessOnboardingClick }
-				link={ `/me/concierge/${ selectedSite.slug }/book` }
-			/>,
-			isEnabled( 'manage/plugins/upload' ) ? (
-				<UploadPlugins selectedSite={ selectedSite } key="uploadPluginsFeature" />
-			) : null,
-			isWordadsInstantActivationEligible( selectedSite ) ? (
-				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
-			) : null,
-			<JetpackSearch selectedSite={ selectedSite } key="jetpackSearch" />,
-			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
-			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
-			<AdvertisingRemoved isBusinessPlan key="advertisingRemovedFeature" />,
-			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
-			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" plan={ plan } />,
-			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
-		];
+		return (
+			<Fragment>
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<BusinessOnboarding
+					onClick={ this.props.recordBusinessOnboardingClick }
+					link={ `/me/concierge/${ selectedSite.slug }/book` }
+				/>
+				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
+				{ isWordadsInstantActivationEligible( selectedSite ) && (
+					<MonetizeSite selectedSite={ selectedSite } />
+				) }
+				<JetpackSearch selectedSite={ selectedSite } />
+				<GoogleVouchers selectedSite={ selectedSite } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<AdvertisingRemoved isBusinessPlan />
+				<CustomizeTheme selectedSite={ selectedSite } />
+				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				<FindNewTheme selectedSite={ selectedSite } />
+			</Fragment>
+		);
 	}
 
 	getPremiumFeatures() {
 		const { selectedSite, plan, planHasDomainCredit } = this.props;
 
-		return [
-			<CustomDomain
-				selectedSite={ selectedSite }
-				hasDomainCredit={ planHasDomainCredit }
-				key="customDomainFeature"
-			/>,
-			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
-			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
-			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
-			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" plan={ plan } />,
-			isWordadsInstantActivationEligible( selectedSite ) ? (
-				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
-			) : null,
-		];
+		return (
+			<Fragment>
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<AdvertisingRemoved isBusinessPlan={ false } />
+				<GoogleVouchers selectedSite={ selectedSite } />
+				<CustomizeTheme selectedSite={ selectedSite } />
+				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				{ isWordadsInstantActivationEligible( selectedSite ) && (
+					<MonetizeSite selectedSite={ selectedSite } />
+				) }
+			</Fragment>
+		);
 	}
 
 	getPersonalFeatures() {
 		const { selectedSite, planHasDomainCredit } = this.props;
 
-		return [
-			<CustomDomain
-				selectedSite={ selectedSite }
-				hasDomainCredit={ planHasDomainCredit }
-				key="customDomainFeature"
-			/>,
-			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
-		];
+		return (
+			<Fragment>
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<AdvertisingRemoved isBusinessPlan={ false } />
+			</Fragment>
+		);
 	}
 
 	getJetpackFreeFeatures() {
 		const { selectedSite } = this.props;
 
-		return [
-			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
-			<JetpackReturnToDashboard
-				onClick={ this.props.recordReturnToDashboardClick }
-				selectedSite={ selectedSite }
-				key="jetpackReturnToDashboard"
-			/>,
-		];
+		return (
+			<Fragment>
+				<JetpackWordPressCom selectedSite={ selectedSite } />
+				<JetpackReturnToDashboard
+					onClick={ this.props.recordReturnToDashboardClick }
+					selectedSite={ selectedSite }
+				/>
+			</Fragment>
+		);
 	}
 
 	getJetpackPremiumFeatures() {
 		const { selectedSite } = this.props;
 
-		return [
-			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
-			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
-			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
-			<JetpackAntiSpam key="jetpackAntiSpam" />,
-			<JetpackPublicize key="jetpackPublicize" />,
-			<JetpackVideo key="jetpackVideo" />,
-			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
-		];
+		return (
+			<Fragment>
+				<MonetizeSite selectedSite={ selectedSite } />
+				<JetpackWordPressCom selectedSite={ selectedSite } />
+				<JetpackBackupSecurity />
+				<JetpackAntiSpam />
+				<JetpackPublicize />
+				<JetpackVideo />
+				<JetpackReturnToDashboard selectedSite={ selectedSite } />
+			</Fragment>
+		);
 	}
 
 	getJetpackPersonalFeatures() {
 		const { selectedSite } = this.props;
 
-		return [
-			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
-			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
-			<JetpackAntiSpam key="jetpackAntiSpam" />,
-			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
-		];
+		return (
+			<Fragment>
+				<JetpackWordPressCom selectedSite={ selectedSite } />
+				<JetpackBackupSecurity />
+				<JetpackAntiSpam />
+				<JetpackReturnToDashboard selectedSite={ selectedSite } />
+			</Fragment>
+		);
 	}
 
 	getJetpackBusinessFeatures() {
 		const { selectedSite } = this.props;
 
-		return [
-			<BusinessOnboarding
-				key="businessOnboarding"
-				onClick={ this.props.recordBusinessOnboardingClick }
-				link="https://calendly.com/jetpack/concierge"
-			/>,
-			<JetpackSearch selectedSite={ selectedSite } key="jetpackSearch" />,
-			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
-			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
-			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
-			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
-			<JetpackVideo key="jetpackVideo" />,
-			<JetpackPublicize key="jetpackPublicize" />,
-			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
-			<JetpackAntiSpam key="jetpackAntiSpam" />,
-			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
-		];
+		return (
+			<Fragment>
+				<BusinessOnboarding
+					onClick={ this.props.recordBusinessOnboardingClick }
+					link="https://calendly.com/jetpack/concierge"
+				/>
+				<JetpackSearch selectedSite={ selectedSite } />
+				<MonetizeSite selectedSite={ selectedSite } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<JetpackWordPressCom selectedSite={ selectedSite } />
+				<FindNewTheme selectedSite={ selectedSite } />
+				<JetpackVideo />
+				<JetpackPublicize />
+				<JetpackBackupSecurity />
+				<JetpackAntiSpam />
+				<JetpackReturnToDashboard selectedSite={ selectedSite } />
+			</Fragment>
+		);
 	}
 
 	getFeatures() {

@@ -15,7 +15,7 @@ import { hasActivePromotion } from 'state/active-promotions/selectors';
 export default state => {
 	// This is not super reliable but is fine for purposes of this test - display the
 	// upsell until we hit a certain point in time
-	const pastPromo = new Date() > new Date( Date.UTC( 2018, 3, 20, 23, 59, 59 ) );
+	const pastPromo = new Date() > new Date( Date.UTC( 2018, 3, 21, 5, 59, 59 ) );
 	if ( pastPromo ) {
 		return false;
 	}

@@ -15,6 +15,7 @@ import {
 	ALREADY_OWNED,
 	DEFAULT_AUTHORIZE_ERROR,
 	INSTALL_RESPONSE_ERROR,
+	INVALID_CREDENTIALS,
 	IS_DOT_COM,
 	JETPACK_IS_DISCONNECTED,
 	JETPACK_IS_VALID,
@@ -46,6 +47,7 @@ export class JetpackConnectNotices extends Component {
 			ALREADY_OWNED,
 			DEFAULT_AUTHORIZE_ERROR,
 			INSTALL_RESPONSE_ERROR,
+			INVALID_CREDENTIALS,
 			IS_DOT_COM,
 			JETPACK_IS_DISCONNECTED,
 			JETPACK_IS_VALID,
@@ -190,6 +192,14 @@ export class JetpackConnectNotices extends Component {
 
 			case XMLRPC_ERROR:
 				noticeValues.text = translate( 'We had trouble connecting.' );
+				return noticeValues;
+
+			case INVALID_CREDENTIALS:
+				noticeValues.text = translate(
+					'Oops, the credentials you entered were invalid. Please try again'
+				);
+				noticeValues.status = 'is-error';
+				noticeValues.icon = 'notice';
 				return noticeValues;
 		}
 	}

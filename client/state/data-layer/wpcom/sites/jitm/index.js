@@ -196,12 +196,12 @@ export const failedJITM = ( { dispatch }, { siteId, site_id, messagePath } ) =>
 export default {
 	[ SECTION_SET ]: [
 		dispatchRequest( handleRouteChange, receiveJITM, failedJITM, {
-			fromApi: makeJsonSchemaParser( schema, {}, transformApiRequest ),
+			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
 		} ),
 	],
 	[ SELECTED_SITE_SET ]: [
 		dispatchRequest( handleSiteSelection, receiveJITM, failedJITM, {
-			fromApi: makeJsonSchemaParser( schema, {}, transformApiRequest ),
+			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
 		} ),
 	],
 	[ JITM_DISMISS ]: [ dispatchRequest( doDismissJITM, noop, noop, {} ) ],

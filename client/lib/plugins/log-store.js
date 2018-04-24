@@ -175,6 +175,12 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 			LogStore.emitChange();
 			break;
+		case 'RECEIVE_PLUGINS':
+			if ( action.error ) {
+				addLog( 'error', action.action, action.site, null, action.error );
+				LogStore.emitChange();
+			}
+			break;
 	}
 } );
 
