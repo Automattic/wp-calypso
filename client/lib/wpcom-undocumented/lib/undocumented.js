@@ -3,11 +3,8 @@
 /**
  * External dependencies
  */
-
-import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
-import url from 'url';
+import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies.
@@ -18,6 +15,8 @@ import MailingList from './mailing-list';
 import config from 'config';
 import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
+
+const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets
@@ -2193,18 +2192,11 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 /**
  * Check different info about WordPress and Jetpack status on a url
  *
- * @param {String} targetUrl - The url of the site to check
- * @returns {Promise}  promise
+ * @param  {string}  inputUrl The url of the site to check. Must use http or https protocol.
+ * @return {Promise} promise  Request promise
  */
-Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
-	const parsedUrl = url.parse( targetUrl );
-	let endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
-
-	if ( parsedUrl.path && parsedUrl.path !== '/' ) {
-		endpointUrl += parsedUrl.path.replace( /\//g, '::' );
-	}
-
-	return this.wpcom.req.get( endpointUrl );
+Undocumented.prototype.getSiteConnectInfo = function( inputUrl ) {
+	return this.wpcom.req.get( '/connect/site-info', { url: inputUrl } );
 };
 
 /**
@@ -2212,7 +2204,8 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl ) {
  * A JSON object is returned with the XML given as a String
  * in the `opml` field.
  *
- * @param {Function} fn           The callback function
+ * @param  {Function} fn      The callback function
+ * @return {Promise}  promise
  */
 Undocumented.prototype.exportReaderFeed = function( fn ) {
 	debug( '/read/following/mine/export' );
