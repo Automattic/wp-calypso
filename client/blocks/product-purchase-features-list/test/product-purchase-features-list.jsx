@@ -1,6 +1,4 @@
 /** @format */
-jest.mock( '../google-vouchers', () => 'GoogleVouchers' );
-jest.mock( '../video-audio-posts', () => 'VideoAudioPosts' );
 
 /**
  * External dependencies
@@ -28,6 +26,9 @@ import {
  * Internal dependencies
  */
 import { ProductPurchaseFeaturesList } from '../index';
+
+jest.mock( 'blocks/product-purchase-features-list/google-vouchers', () => 'GoogleVouchers' );
+jest.mock( 'blocks/product-purchase-features-list/video-audio-posts', () => 'VideoAudioPosts' );
 
 describe( 'ProductPurchaseFeaturesList basic tests', () => {
 	const props = {
