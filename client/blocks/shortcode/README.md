@@ -11,7 +11,7 @@ Simply pass a site ID and a shortcode string child. The component will automatic
 
 ```jsx
 import React from 'react';
-import Shortcode from 'components/shortcode';
+import Shortcode from 'blocks/shortcode';
 
 export default class extends React.Component {
 	static displayName = 'MyComponent';
