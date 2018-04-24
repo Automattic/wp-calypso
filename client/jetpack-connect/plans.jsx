@@ -74,24 +74,23 @@ class Plans extends Component {
 
 	maybeRedirect() {
 		if ( this.props.isAutomatedTransfer ) {
-			externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			return externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 		if ( this.props.selectedPlan ) {
-			this.selectPlan( this.props.selectedPlan );
+			return this.selectPlan( this.props.selectedPlan );
 		}
 		if ( this.props.hasPlan || this.props.notJetpack ) {
-			this.redirect( CALYPSO_PLANS_PAGE );
+			return this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
 			// Invalid site
-			this.redirect( JPC_PATH_PLANS );
+			return this.redirect( JPC_PATH_PLANS );
 		}
 		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.calypsoStartedConnection ) {
-				this.redirectToCalypso();
-			} else {
-				this.redirectToWpAdmin();
+				return this.redirectToCalypso();
 			}
+			return this.redirectToWpAdmin();
 		}
 	}
 
