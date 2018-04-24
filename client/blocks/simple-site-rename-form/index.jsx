@@ -254,10 +254,11 @@ export class SimpleSiteRenameForm extends Component {
 							placeholder={ currentDomainPrefix }
 							isError={ shouldShowValidationMessage && ! isAvailable }
 						/>
-						{ shouldShowValidationMessage &&
-							validationMessage && (
-								<FormInputValidation isError={ ! isAvailable } text={ validationMessage } />
-							) }
+						<FormInputValidation
+							isHidden={ ! shouldShowValidationMessage }
+							isError={ ! isAvailable }
+							text={ validationMessage || '\u00A0' }
+						/>
 						<div className="simple-site-rename-form__footer">
 							<div className="simple-site-rename-form__info">
 								<Gridicon icon="info-outline" size={ 18 } />
