@@ -45,16 +45,18 @@ export class InstallmentsPlanPicker extends React.Component {
 	}
 
 	handleInstallmentsInput = event => {
+		const installments = parseInt( event.target.value );
+
 		this.setState( {
 			userChangedInstallments: true,
-			installmentsInputValue: event.target.value,
+			installmentsInputValue: installments,
 		} );
 
 		analytics.tracks.recordEvent( 'calypso_checkout_installments_submit', {
 			installments: this.state.installmentsInputValue,
 		} );
 
-		this.props.onChange( event.target.value );
+		this.props.onChange( installments );
 
 		this.setState( {
 			userChangedInstallments: false,
@@ -63,7 +65,6 @@ export class InstallmentsPlanPicker extends React.Component {
 
 	render() {
 		const installmentPlans = this.formatPlans();
-
 		return (
 			<div className="installments-plan-picker">
 				<div className="installments-plan-picker__header">
