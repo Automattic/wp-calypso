@@ -104,4 +104,4 @@ export function processItem( item ) {
 }
 
 // fromApi default export
-export default makeJsonSchemaParser( apiResponseSchema, {}, transformer );
+export default makeJsonSchemaParser( apiResponseSchema, transformer );

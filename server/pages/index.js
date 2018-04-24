@@ -405,7 +405,6 @@ function setUpCSP( req, res, next ) {
 	];
 
 	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
-	req.context.analyticsScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
 
 	const policy = {
 		'default-src': [ "'self'" ],
@@ -418,7 +417,7 @@ function setUpCSP( req, res, next ) {
 			'*.wordpress.com',
 			'https://apis.google.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
-			`'nonce-${ req.context.analyticsScriptNonce }'`,
+			'www.google-analytics.com',
 			...inlineScripts.map( hash => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],

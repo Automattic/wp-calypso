@@ -76,7 +76,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 							components: {
 								link: (
 									<ExternalLink
-										href="https://www.google.com/business/"
+										href="https://business.google.com/create"
 										target="_blank"
 										rel="noopener noreferrer"
 										icon={ true }

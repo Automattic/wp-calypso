@@ -353,16 +353,19 @@ class ActivityLog extends Component {
 		);
 
 		const timePeriod = ( () => {
+			const today = this.applySiteOffset( moment.utc( Date.now() ) );
 			let last = null;
 
 			return ( { rewindId } ) => {
-				const ts = 1000 * rewindId;
+				const ts = this.applySiteOffset( moment.utc( rewindId * 1000 ) );
 
-				if ( null === last || moment( ts ).format( 'D' ) !== moment( last ).format( 'D' ) ) {
+				if ( null === last || ! ts.isSame( last, 'day' ) ) {
 					last = ts;
 					return (
 						<h2 className="activity-log__time-period" key={ `time-period-${ ts }` }>
-							{ moment( ts ).format( 'LL' ) }
+							{ ts.isSame( today, 'day' )
+								? ts.format( translate( 'LL[ — Today]', { context: 'moment format string' } ) )
+								: ts.format( 'LL' ) }
 						</h2>
 					);
 				}

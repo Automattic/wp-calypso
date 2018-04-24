@@ -8,17 +8,18 @@ import page from 'page';
 import classnames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
-import SocialLogo from 'social-logos';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
+import { keys } from 'lodash';
+import jsxToString from 'jsx-to-string';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import * as componentExamples from 'devdocs/design/component-examples';
+import * as playgroundScope from 'devdocs/design/playground-scope';
 import DocumentHead from 'components/data/document-head';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
-import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
 
@@ -105,23 +106,8 @@ import NavTabs from 'components/section-nav/tabs';
 import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
 import SegmentedControl from 'components/segmented-control';
+import DropdownItem from 'components/select-dropdown/item';
 import SelectDropdown from 'components/select-dropdown';
-import ShareButton from 'components/share-button';
-import SiteTitleControl from 'components/site-title';
-import Spinner from 'components/spinner';
-import SpinnerButton from 'components/spinner-button';
-import SpinnerLine from 'components/spinner-line';
-import SplitButton from 'components/split-button';
-import Suggestions from 'components/suggestions';
-import TextDiff from 'components/text-diff';
-import TileGrid from 'components/tile-grid';
-import TimeSince from 'components/time-since';
-import Timezone from 'components/timezone';
-import TokenFields from 'components/token-field';
-import Tooltip from 'components/tooltip';
-import Version from 'components/version';
-import VerticalMenu from 'components/vertical-menu';
-import Wizard from 'components/wizard';
 
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
@@ -133,9 +119,101 @@ class DesignAssets extends React.Component {
 		}
 	}
 
+	state = {
+		code: `<Main>
+    <HeaderCake actionText="Fun" actionIcon="status">Welcome to the Playground</HeaderCake>
+  	<Button primary onClick={
+  		function() {
+  			alert( 'World' )
+  		}
+  	}>
+  		<Gridicon icon="code" /> Hello
+  	</Button>
+  	<br /><hr /><br />
+  	<ActionCard
+  		headerText={ 'Change the code above' }
+  		mainText={ "The playground lets you drop in components and play with values. It's experiemental and likely will break." }
+  		buttonText={ 'WordPress' }
+  		buttonIcon="external"
+  		buttonPrimary={ false }
+  		buttonHref="https://wordpress.com"
+  		buttonTarget="_blank"
+  	/>
+  	<br /><hr /><br />
+  	<JetpackLogo />
+    <SectionNav >
+      <NavTabs label="Status" selectedText="Published">
+          <NavItem path="/posts" selected={ true }>Published</NavItem>
+          <NavItem path="/posts/drafts" selected={ false }>Drafts</NavItem>
+          <NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
+          <NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
+      </NavTabs>
+
+      <NavSegmented label="Author">
+          <NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
+          <NavItem path="/posts" selected={ true }>Everyone</NavItem>
+      </NavSegmented>
+
+      <Search
+          pinned
+          fitsContainer
+          placeholder="Search Published..."
+          delaySearch={ true }
+      />
+    </SectionNav>
+</Main>`,
+	};
+
 	backToComponents = () => {
 		page( '/devdocs/design/' );
 	};
+
+	addComponent = exampleCode => () => {
+		this.setState( {
+			code:
+				'<Main>' +
+				this.state.code.replace( /(^<Main>)/, '' ).replace( /(<\/Main>$)/, '' ) +
+				'\n\t' +
+				exampleCode +
+				'\n</Main>',
+		} );
+	};
+
+	handleChange = code => {
+		this.setState( {
+			code: code,
+		} );
+	};
+
+	getExampleCodeFromComponent( Component ) {
+		const exampleComponent = <Component />;
+		if ( ! exampleComponent.props.exampleCode ) {
+			return null;
+		}
+
+		if ( typeof exampleComponent.props.exampleCode === 'string' ) {
+			return exampleComponent.props.exampleCode;
+		}
+
+		return jsxToString( exampleComponent.props.exampleCode );
+	}
+
+	listOfExamples() {
+		return (
+			<SelectDropdown selectedText="Add a component" className="design__playground-examples">
+				{ keys( componentExamples ).map( name => {
+					const exampleCode = this.getExampleCodeFromComponent( componentExamples[ name ] );
+					return (
+						exampleCode && (
+							<DropdownItem key={ name } onClick={ this.addComponent( exampleCode ) }>
+								{ name }
+							</DropdownItem>
+						)
+					);
+				} ) }
+			</SelectDropdown>
+		);
+	}
 
 	render() {
 		const className = classnames( 'devdocs', 'devdocs__components', {
@@ -143,160 +221,12 @@ class DesignAssets extends React.Component {
 			'is-list': ! this.props.component,
 		} );
 
-		const scope = {
-			Accordions,
-			ActionCard,
-			BackButton,
-			Badge,
-			Banner,
-			BulkSelect,
-			Button,
-			ButtonGroup,
-			Card,
-			CardHeading,
-			Checklist,
-			ClipboardButton,
-			ClipboardButtonInput,
-			Collection,
-			Count,
-			CountedTextarea,
-			DatePicker,
-			DropZones,
-			EllipsisMenu,
-			Emojify,
-			EmptyContent,
-			ExternalLink,
-			FAQ,
-			FeatureGate,
-			FilePickers,
-			Focusable,
-			FoldableCard,
-			FormattedHeader,
-			FormButton,
-			FormButtonsBar,
-			FormCheckbox,
-			FormCountrySelect,
-			FormCurrencyInput,
-			FormFieldset,
-			FormInputValidation,
-			FormLabel,
-			FormLegend,
-			FormPasswordInput,
-			FormPhoneInput,
-			FormRadio,
-			FormRadiosBarExample,
-			FormRadioWithThumbnail,
-			FormSectionHeading,
-			FormSelect,
-			FormSettingExplanation,
-			FormStateSelector,
-			FormTelInput,
-			FormTextarea,
-			FormTextInput,
-			FormTextInputWithAction,
-			FormTextInputWithAffixes,
-			FormToggle,
-			Gauge,
-			GlobalNotices,
-			Gravatar,
-			Gridicon,
-			HeaderButton,
-			HeaderCake,
-			ImagePreloader,
-			InfoPopover,
-			InputChrono,
-			JetpackColophon,
-			JetpackLogo,
-			LanguagePicker,
-			ListEnd,
-			Notices,
-			Main,
-			Pagination,
-			PaymentLogo,
-			PieChart,
-			Popovers,
-			ProgressBar,
-			Ranges,
-			Rating,
-			Ribbon,
-			ScreenReaderText,
-			SearchCard,
-			Search,
-			SectionHeader,
-			SectionNav,
-			NavTabs,
-			NavSegmented,
-			NavItem,
-			SegmentedControl,
-			SelectDropdown,
-			ShareButton,
-			SiteTitleControl,
-			SocialLogo,
-			Spinner,
-			SpinnerButton,
-			SpinnerLine,
-			SplitButton,
-			Suggestions,
-			TextDiff,
-			TileGrid,
-			TimeSince,
-			Timezone,
-			TokenFields,
-			Tooltip,
-			Version,
-			VerticalMenu,
-			Wizard,
-		};
-
-		const code = `<Main>
-    <HeaderCake actionText="Fun" actionIcon="status">Welcome to the Playground</HeaderCake>
-	<Button primary onClick={
-		function() {
-			alert( 'World' );
-		}
-	}>
-		<Gridicon icon="code" /> Hello
-	</Button>
-	<br /><hr /><br />
-	<ActionCard
-		headerText={ 'Change the code above' }
-		mainText={ 'The playground lets you drop in components and play with values. It is experimental and likely will break.' }
-		buttonText={ 'WordPress' }
-		buttonIcon="external"
-		buttonPrimary={ false }
-		buttonHref="https://wordpress.com"
-		buttonTarget="_blank"
-	/>
-	<br /><hr /><br />
-	<JetpackLogo />
-  <SectionNav >
-    <NavTabs label="Status" selectedText="Published">
-        <NavItem path="/posts" selected={ true }>Published</NavItem>
-        <NavItem path="/posts/drafts" selected={ false }>Drafts</NavItem>
-        <NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
-        <NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
-    </NavTabs>
-
-    <NavSegmented label="Author">
-        <NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
-        <NavItem path="/posts" selected={ true }>Everyone</NavItem>
-    </NavSegmented>
-
-    <Search
-        pinned
-        fitsContainer
-        placeholder="Search Published..."
-        delaySearch={ true }
-    />
-  </SectionNav>
-</Main>`;
-
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Playground" />
 				<LiveProvider
-					code={ code }
-					scope={ scope }
+					code={ this.state.code }
+					scope={ playgroundScope }
 					mountStylesheet={ false }
 					className="design__playground"
 				>
@@ -307,6 +237,7 @@ class DesignAssets extends React.Component {
 						<LiveEditor />
 					</div>
 					<div className="design__preview">
+						{ this.listOfExamples() }
 						<LivePreview />
 					</div>
 				</LiveProvider>

@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<EbanxPaymentFields /> should render 1`] = `
-<React.Fragment>
+<div
+  className="checkout__ebanx-payment-fields"
+>
   <span
     className="checkout__form-info-text"
     key="ebanx-required-fields"
@@ -9,11 +11,10 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     The following fields are also required for payments in %(countryName)s
   </span>
   <Input
-    additionalClasses="checkout__form-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field ebanx-brazil"
     autoComplete="off"
     autoFocus={false}
     isError={false}
-    key="document"
     label="Taxpayer Identification Number"
     labelClass="checkout__form-label"
     name="document"
@@ -21,7 +22,7 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     onChange={[Function]}
   />
   <FormPhoneMediaInput
-    additionalClasses="checkout__form-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field ebanx-brazil"
     autoComplete="off"
     countriesList={
       Object {
@@ -30,7 +31,6 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     }
     countryCode="BR"
     isError={false}
-    key="phone-number"
     label="Phone"
     labelClass="checkout__form-label"
     name="phone-number"
@@ -38,11 +38,10 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     onChange={[Function]}
   />
   <Input
-    additionalClasses="checkout__form-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field ebanx-brazil"
     autoComplete="off"
     autoFocus={false}
     isError={false}
-    key="address-1"
     label="Address"
     labelClass="checkout__form-label"
     maxLength={40}
@@ -51,12 +50,11 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     onChange={[Function]}
   />
   <Input
-    additionalClasses="checkout__form-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field ebanx-brazil"
     autoComplete="off"
     autoFocus={false}
     inputMode="numeric"
     isError={false}
-    key="street-number"
     label="Street Number"
     labelClass="checkout__form-label"
     name="street-number"
@@ -64,10 +62,9 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     onChange={[Function]}
   />
   <HiddenInput
-    additionalClasses="checkout__form-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field ebanx-brazil"
     autoComplete="off"
     isError={false}
-    key="address-2"
     label="Address Line 2"
     labelClass="checkout__form-label"
     maxLength={40}
@@ -77,11 +74,10 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     text="+ Add Address Line 2"
   />
   <Input
-    additionalClasses="checkout__form-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field ebanx-brazil"
     autoComplete="off"
     autoFocus={false}
     isError={false}
-    key="city"
     label="City"
     labelClass="checkout__form-label"
     name="city"
@@ -90,10 +86,9 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
   />
   <div
     className="checkout__form-state-field"
-    key="state"
   >
     <Connect(Localized(StateSelect))
-      additionalClasses="checkout__form-field ebanx-brazil"
+      additionalClasses="checkout__checkout-field ebanx-brazil"
       autoComplete="off"
       countryCode="BR"
       isError={false}
@@ -104,5 +99,16 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
       onChange={[Function]}
     />
   </div>
-</React.Fragment>
+  <Input
+    additionalClasses="checkout__checkout-field ebanx-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    isError={false}
+    label="Postal Code"
+    labelClass="checkout__form-label"
+    name="postal-code"
+    onBlur={[Function]}
+    onChange={[Function]}
+  />
+</div>
 `;

@@ -19,7 +19,7 @@ describe( 'makeJsonSchemaParser', () => {
 		const transformer = () => {
 			throw Error( 'Testing error during transform' );
 		};
-		const parser = makeJsonSchemaParser( {}, {}, transformer );
+		const parser = makeJsonSchemaParser( {}, transformer );
 		expect( () => parser( 0 ) ).toThrow( TransformerError );
 	} );
 
@@ -30,7 +30,7 @@ describe( 'makeJsonSchemaParser', () => {
 
 	test( 'should return the result of transformation', () => {
 		const transformer = a => a + 1;
-		const parser = makeJsonSchemaParser( { type: 'integer' }, {}, transformer );
+		const parser = makeJsonSchemaParser( { type: 'integer' }, transformer );
 		expect( parser( 0 ) ).toBe( 1 );
 	} );
 

@@ -13,4 +13,4 @@ export const transform = ( { begin_timestamp, end_timestamp, schedule_id, ...res
 	...rest,
 } );
 
-export default makeJsonSchemaParser( responseSchema, {}, transform );
+export default makeJsonSchemaParser( responseSchema, transform );

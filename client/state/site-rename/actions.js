@@ -103,6 +103,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 	} );
 
 	const eventProperties = {
+		blog_id: siteId,
 		new_domain: newBlogName,
 		discard,
 	};

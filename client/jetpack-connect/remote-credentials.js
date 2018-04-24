@@ -16,11 +16,13 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormattedHeader from 'components/formatted-header';
 import FormPasswordInput from 'components/forms/form-password-input';
 import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
 import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
@@ -139,21 +141,12 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	getSubHeaderText() {
-		const { installError, translate } = this.props;
-		let subheader = translate(
+		const { translate } = this.props;
+		const subheader = translate(
 			'Add your WordPress administrator credentials ' +
 				'for this site. Your credentials will not be stored and are used for the purpose ' +
 				'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
 		);
-
-		switch ( this.getError( installError ) ) {
-			case INVALID_CREDENTIALS:
-				subheader = translate(
-					'We were unable to install Jetpack because your WordPress Administrator credentials were invalid. ' +
-						'Please try again with the correct credentials or try installing Jetpack manually.'
-				);
-				break;
-		}
 		return (
 			<span className="jetpack-connect__install-step jetpack-connect__creds-form">
 				{ subheader }
@@ -197,14 +190,12 @@ export class OrgCredentialsForm extends Component {
 		return includes( [ INVALID_CREDENTIALS ], this.getError( installError ) );
 	}
 
-	isInvalidPassword() {
-		const { installErrorMessage } = this.props;
-		return this.isInvalidCreds() && installErrorMessage !== 'bad username';
+	isInvalidUsername() {
+		return this.props.installErrorMessage === 'bad username';
 	}
 
-	isInvalidUsername() {
-		const { installErrorMessage } = this.props;
-		return this.isInvalidCreds() && installErrorMessage !== 'bad password';
+	isInvalidPassword() {
+		return this.props.installErrorMessage === 'bad password';
 	}
 
 	formFields() {
@@ -233,6 +224,12 @@ export class OrgCredentialsForm extends Component {
 						onChange={ this.getChangeHandler( 'username' ) }
 						value={ username || '' }
 					/>
+					{ this.isInvalidUsername() && (
+						<FormInputValidation
+							isError
+							text={ translate( 'Username does not exist. Please try again.' ) }
+						/>
+					) }
 				</div>
 				<div className="jetpack-connect__password-container">
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
@@ -246,6 +243,12 @@ export class OrgCredentialsForm extends Component {
 							onChange={ this.getChangeHandler( 'password' ) }
 							value={ password || '' }
 						/>
+						{ this.isInvalidPassword() && (
+							<FormInputValidation
+								isError
+								text={ translate( 'Your password is incorrect, please try again' ) }
+							/>
+						) }
 					</div>
 				</div>
 			</Fragment>
@@ -346,6 +349,9 @@ export class OrgCredentialsForm extends Component {
 					<div>
 						{ this.renderHeadersText() }
 						<Card className="jetpack-connect__site-url-input-container">
+							{ this.isInvalidCreds() && (
+								<JetpackConnectNotices noticeType={ this.getError( installError ) } />
+							) }
 							<form onSubmit={ this.handleSubmit }>
 								{ this.formFields() }
 								{ this.formFooter() }

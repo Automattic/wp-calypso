@@ -1,7 +1,10 @@
+/** @format */
+
 .product-purchase-features-list {
-	@include breakpoint( ">1040px" ) {
-		column-count: 2;
-		column-gap: 12px;
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
 	}
 }
 
@@ -11,6 +14,11 @@
 	-webkit-column-break-inside: avoid; // For others
 
 	padding-top: 12px;
+	max-width: 150%;
+
+	@include breakpoint( '>1040px' ) {
+		max-width: 49.5%;
+	}
 }
 
 .product-purchase-features-list__item .purchase-detail {
