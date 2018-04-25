@@ -267,7 +267,7 @@ describe( '<HappinessSupportCard isJetpackFreePlan', () => {
 	test( 'Should set isJetpackFreePlan for free plan', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
 		const happinessSupport = comp.find( 'HappinessSupportCard' );
-		expect( happinessSupport.props().isJetpackFreePlan ).toBe( true );
+		expect( happinessSupport.prop( 'isJetpackFreePlan' ) ).toBe( true );
 	} );
 } );
 
@@ -288,7 +288,7 @@ describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
 		test( `Should be eligible for live chat for ${ plan }`, () => {
 			const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
 			const happinessSupport = comp.find( 'HappinessSupportCard' );
-			expect( happinessSupport.props().showLiveChatButton ).toBe( true );
+			expect( happinessSupport.prop( 'showLiveChatButton' ) ).toBe( true );
 		} );
 	} );
 } );
