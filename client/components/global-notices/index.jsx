@@ -43,7 +43,7 @@ const NoticesList = createReactClass( {
 		debug( 'Mounting Global Notices React component.' );
 	},
 
-	removeNoticeStoreNotice: notice => {
+	removeNoticeStoreNotice: notice => () => {
 		if ( notice ) {
 			notices.removeNotice( notice );
 		}
