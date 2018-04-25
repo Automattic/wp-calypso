@@ -15,7 +15,6 @@ import classnames from 'classnames';
  */
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import analytics from 'lib/analytics';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import formatCurrency from 'lib/format-currency';
 import { CURRENCIES } from 'lib/format-currency/currencies';
@@ -50,10 +49,6 @@ export class InstallmentsPlanPicker extends React.Component {
 		this.setState( {
 			userChangedInstallments: true,
 			installmentsInputValue: installments,
-		} );
-
-		analytics.tracks.recordEvent( 'calypso_checkout_installments_submit', {
-			installments: this.state.installmentsInputValue,
 		} );
 
 		this.props.onChange( installments );
