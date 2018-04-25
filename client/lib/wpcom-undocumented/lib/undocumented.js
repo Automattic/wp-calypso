@@ -1487,12 +1487,7 @@ Undocumented.prototype.usersSocialNew = function( query, fn ) {
 	// This API call is restricted to these OAuth keys
 	restrictByOauthKeys( query );
 
-	const args = {
-		path: '/users/social/new?locale=' + encodeURIComponent( getLocaleSlug() ),
-		body: query,
-	};
-
-	return this.wpcom.req.post( args, fn );
+	return this.wpcom.req.post( '/users/social/new', { locale: getLocaleSlug() }, query, fn );
 };
 
 /**
