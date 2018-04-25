@@ -48,7 +48,6 @@
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
 		"domains/cctlds/uk": true,
-		"domains/kracken-ui": true,
 		"domains/kracken-ui/filters": true,
 		"domains/kracken-ui/pagination": true,
 		"external-media": true,
