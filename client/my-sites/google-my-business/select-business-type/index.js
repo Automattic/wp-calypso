@@ -31,7 +31,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string.isRequired,
+		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 

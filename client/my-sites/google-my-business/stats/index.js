@@ -32,8 +32,8 @@ class GoogleMyBusinessStats extends Component {
 	static propTypes = {
 		locationData: PropTypes.object,
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
-		siteSlug: PropTypes.string.isRequired,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -82,7 +82,11 @@ class GoogleMyBusinessStats extends Component {
 	};
 
 	renderStats() {
-		const { translate } = this.props;
+		const { siteId, translate } = this.props;
+
+		if ( ! siteId ) {
+			return null;
+		}
 
 		return (
 			<div className="gmb-stats__metrics">
@@ -207,7 +211,7 @@ class GoogleMyBusinessStats extends Component {
 
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 
-				<QuerySiteSettings siteId={ siteId } />
+				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 				<QueryKeyringConnections />
 
 				<GoogleMyBusinessLocation location={ locationData }>
