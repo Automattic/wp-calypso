@@ -20,9 +20,10 @@ import {
 import { getKeyringServiceByName } from 'state/sharing/services/selectors';
 import QueryKeyringServices from 'components/data/query-keyring-services';
 import requestExternalAccess from 'lib/sharing';
-import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
-import { isFetchingConnections } from 'state/sharing/publicize/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getKeyringConnectionsByName,
+	isKeyringConnectionsFetching,
+} from 'state/sharing/keyring/selectors';
 
 class KeyringConnectButton extends Component {
 	static propTypes = {
@@ -34,8 +35,7 @@ class KeyringConnectButton extends Component {
 			PropTypes.bool,
 		] ),
 		isFetching: PropTypes.bool,
-		keyringConnections: PropTypes.array, // Those required to be filtered to serivce.ID keyring connections
-		siteId: PropTypes.number,
+		keyringConnections: PropTypes.array,
 		onClick: PropTypes.func,
 		onConnect: PropTypes.func,
 	};
@@ -202,16 +202,14 @@ class KeyringConnectButton extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = getSelectedSiteId( state );
 		const service = getKeyringServiceByName( state, ownProps.serviceId );
 		const keyringConnections = service ? getKeyringConnectionsByName( state, service.ID ) : [];
-		const isFetching = isFetchingConnections( state, siteId );
+		const isFetching = isKeyringConnectionsFetching( state );
 
 		return {
 			service,
 			isFetching,
 			keyringConnections,
-			siteId,
 		};
 	},
 	{
