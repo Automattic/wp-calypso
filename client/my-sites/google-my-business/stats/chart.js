@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,15 +15,16 @@ import { get } from 'lodash';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import LineChart from 'components/line-chart';
+import LineChartPlaceholder from 'components/line-chart/placeholder';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
+import PieChartPlaceholder from 'components/pie-chart/placeholder';
+import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
 import SectionHeader from 'components/section-header';
-import {
-	changeGoogleMyBusinessStatsInterval,
-	requestGoogleMyBusinessStats,
-} from 'state/google-my-business/actions';
+import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { getGoogleMyBusinessStats } from 'state/selectors';
-import { getInterval } from 'state/google-my-business/selectors';
+import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
+import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 function transformData( props ) {
@@ -118,41 +120,59 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 	}
 
-	onIntervalChange = event =>
+	handleIntervalChange = event =>
 		this.props.changeGoogleMyBusinessStatsInterval(
 			this.props.siteId,
 			this.props.statType,
 			event.target.value
 		);
 
-	renderChart() {
-		const { chartTitle, chartType } = this.props;
+	renderPieChart() {
+		const { chartTitle, dataSeriesInfo } = this.props;
 		const { transformedData } = this.state;
 
 		if ( ! transformedData ) {
-			return null;
-		}
-
-		if ( chartType === 'pie' ) {
 			return (
 				<Fragment>
-					<PieChart data={ transformedData } title={ chartTitle } />
-					<PieChartLegend data={ transformedData } />
+					<PieChartPlaceholder title={ !! chartTitle } />
+					<PieChartLegendPlaceholder numLegendElements={ Object.keys( dataSeriesInfo ).length } />
 				</Fragment>
 			);
+		}
+
+		return (
+			<Fragment>
+				<PieChart data={ transformedData } title={ chartTitle } />
+				<PieChartLegend data={ transformedData } />
+			</Fragment>
+		);
+	}
+
+	renderLineChart() {
+		const { renderTooltipForDatanum } = this.props;
+		const { transformedData } = this.state;
+
+		if ( ! transformedData ) {
+			return <LineChartPlaceholder />;
 		}
 
 		return (
 			<LineChart
 				fillArea
 				data={ transformedData }
-				renderTooltipForDatanum={ this.props.renderTooltipForDatanum }
+				renderTooltipForDatanum={ renderTooltipForDatanum }
 			/>
 		);
 	}
 
+	renderChart() {
+		const { chartType } = this.props;
+
+		return chartType === 'pie' ? this.renderPieChart() : this.renderLineChart();
+	}
+
 	render() {
-		const { description, interval, title } = this.props;
+		const { description, interval, title, translate } = this.props;
 
 		return (
 			<div>
@@ -168,11 +188,10 @@ class GoogleMyBusinessStatsChart extends Component {
 							<hr className="gmb-stats__metric-hr" />
 						</div>
 					) }
-
-					<select value={ interval } onChange={ this.onIntervalChange }>
-						<option value="week">{ 'Week' }</option>
-						<option value="month">{ 'Month' }</option>
-						<option value="quarter">{ 'Quarter' }</option>
+					<select value={ interval } onChange={ this.handleIntervalChange }>
+						<option value="week">{ translate( 'Week' ) }</option>
+						<option value="month">{ translate( 'Month' ) }</option>
+						<option value="quarter">{ translate( 'Quarter' ) }</option>
 					</select>
 
 					<div className="gmb-stats__metric-chart">{ this.renderChart() }</div>
@@ -185,8 +204,7 @@ class GoogleMyBusinessStatsChart extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
-		const interval = getInterval( state, siteId, ownProps.statType );
-
+		const interval = getStatsInterval( state, siteId, ownProps.statType );
 		return {
 			siteId,
 			interval,
@@ -203,4 +221,4 @@ export default connect(
 		changeGoogleMyBusinessStatsInterval,
 		requestGoogleMyBusinessStats,
 	}
-)( GoogleMyBusinessStatsChart );
+)( localize( GoogleMyBusinessStatsChart ) );
