@@ -470,10 +470,9 @@ export class PostEditor extends React.Component {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( {
 			content: revision.content,
-			excerpt: revision.excerpt,
-			title: revision.title,
 		} );
 		this.props.editPost( this.props.siteId, this.props.postId, {
+			excerpt: revision.excerpt,
 			title: revision.title,
 		} );
 	};
