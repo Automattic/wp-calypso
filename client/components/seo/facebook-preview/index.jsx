@@ -13,6 +13,7 @@ const TITLE_LENGTH = 80;
 const DESCRIPTION_LENGTH = 270;
 
 const baseDomain = url =>
+	url &&
 	url
 		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol
 		.replace( /\/.*$/, '' ); // strip everything after the domain

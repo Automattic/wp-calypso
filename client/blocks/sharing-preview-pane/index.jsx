@@ -27,6 +27,7 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { getSiteIconUrl } from 'state/selectors';
 
 const serviceNames = {
 	facebook: 'Facebook',
@@ -69,7 +70,16 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const { post, site, message, connections, translate, siteSlug } = this.props;
+		const {
+			post,
+			site,
+			message,
+			connections,
+			translate,
+			seoTitle,
+			siteSlug,
+			siteIcon,
+		} = this.props;
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {
@@ -110,7 +120,9 @@ class SharingPreviewPane extends PureComponent {
 			externalProfilePicture,
 			message,
 			imageUrl,
+			seoTitle,
 			siteDomain,
+			siteIcon,
 		};
 
 		switch ( selectedService ) {
@@ -166,6 +178,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const currentUserId = getCurrentUserId( state );
 	const connections = getSiteUserConnections( state, siteId, currentUserId );
 	const siteSlug = getSiteSlug( state, siteId );
+	const siteIcon = getSiteIconUrl( state, siteId );
 
 	return {
 		site,
@@ -173,6 +186,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		seoTitle,
 		connections,
 		siteSlug,
+		siteIcon,
 	};
 };
 

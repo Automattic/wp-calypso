@@ -10,17 +10,23 @@ import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import { isNull } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import FacebookPreview from 'components/seo/facebook-preview';
+
 export class FacebookSharePreview extends PureComponent {
 	static propTypes = {
 		articleContent: PropTypes.string,
 		articleSummary: PropTypes.string,
-		articleTitle: PropTypes.string,
 		articleUrl: PropTypes.string,
 		externalName: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
 		externalProfileUrl: PropTypes.string,
 		imageUrl: PropTypes.string,
 		message: PropTypes.string,
+		seoTitle: PropTypes.string,
+		siteIcon: PropTypes.string,
 	};
 
 	state = {
@@ -31,13 +37,16 @@ export class FacebookSharePreview extends PureComponent {
 
 	render() {
 		const {
+			articleContent,
 			articleSummary,
 			articleUrl,
+			externalDisplay,
 			externalProfilePicture,
 			externalProfileUrl,
-			externalDisplay,
 			imageUrl,
 			message,
+			seoTitle,
+			siteIcon,
 			translate,
 		} = this.props;
 		const { isProfileImageBroken } = this.state;
@@ -78,21 +87,34 @@ export class FacebookSharePreview extends PureComponent {
 						</div>
 					</div>
 
-					{ ! isNull( imageUrl ) && (
-						<div className="facebook-share-preview__body">
-							<div className="facebook-share-preview__message">
-								{ message ? message : articleSummary }
-							</div>
-							<div className="facebook-share-preview__article-url-line">
-								<a className="facebook-share-preview__article-url" href={ articleUrl }>
-									{ articleUrl }
-								</a>
-							</div>
+					<div className="facebook-share-preview__body">
+						<div className="facebook-share-preview__message">
+							{ message ? message : articleSummary }
+						</div>
+						<div className="facebook-share-preview__article-url-line">
+							<a className="facebook-share-preview__article-url" href={ articleUrl }>
+								{ articleUrl }
+							</a>
+						</div>
+
+						{ ! isNull( imageUrl ) && (
 							<div className="facebook-share-preview__image-wrapper">
 								<img className="facebook-share-preview__image" src={ imageUrl } />
 							</div>
-						</div>
-					) }
+						) }
+
+						{ isNull( imageUrl ) && (
+							<div className="facebook-share-preview__card-wrapper">
+								<FacebookPreview
+									title={ seoTitle }
+									type="website"
+									description={ articleContent }
+									image={ siteIcon }
+									author="WORDPRESS"
+								/>
+							</div>
+						) }
+					</div>
 				</div>
 			</div>
 		);
