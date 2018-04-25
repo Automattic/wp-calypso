@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -126,49 +127,45 @@ class GoogleMyBusinessStatsChart extends Component {
 			event.target.value
 		);
 
-	renderChart() {
-		const { chartTitle, chartType, dataSeriesInfo, renderTooltipForDatanum } = this.props;
+	renderPieChart() {
+		const { chartTitle, dataSeriesInfo } = this.props;
 		const { transformedData } = this.state;
 
-		if ( ! transformedData ) {
-			if ( chartType === 'pie' ) {
-				return (
-					<Fragment>
-						<div>
-							<PieChartPlaceholder title={ !! chartTitle } />
-							<PieChartLegendPlaceholder
-								numLegendElements={ Object.keys( dataSeriesInfo ).length }
-							/>
-						</div>
-					</Fragment>
-				);
-			} else {
-				return (
-					<LineChartPlaceholder/>
-				);
-			}
-		}
-
-		if ( chartType === 'pie' ) {
-			return (
-				<Fragment>
-					<PieChart data={ transformedData } title={ chartTitle } />
-					<PieChartLegend data={ transformedData } />
-				</Fragment>
-			);
-		}
-
-		return (
-			<LineChart
-				fillArea
-				data={ transformedData }
-				renderTooltipForDatanum={ renderTooltipForDatanum }
-			/>
+		return !! transformData ? (
+			<Fragment>
+				<PieChart data={ transformedData } title={ chartTitle } />
+				<PieChartLegend data={ transformedData } />
+			</Fragment>
+		) : (
+			<Fragment>
+				<PieChartPlaceholder title={ !! chartTitle } />
+				<PieChartLegendPlaceholder numLegendElements={ Object.keys( dataSeriesInfo ).length } />
+			</Fragment>
 		);
 	}
 
+	renderLineChart() {
+		const { transformedData } = this.state;
+
+		return !! transformedData ? (
+			<LineChart
+				fillArea
+				data={ transformedData }
+				renderTooltipForDatanum={ this.props.renderTooltipForDatanum }
+			/>
+		) : (
+			<LineChartPlaceholder />
+		);
+	}
+
+	renderChart() {
+		const { chartType } = this.props;
+
+		return chartType === 'pie' ? this.renderPieChart() : this.renderLineChart();
+	}
+
 	render() {
-		const { description, interval, title } = this.props;
+		const { description, interval, title, translate } = this.props;
 
 		return (
 			<div>
@@ -185,9 +182,9 @@ class GoogleMyBusinessStatsChart extends Component {
 						</div>
 					) }
 					<select value={ interval } onChange={ this.changeInterval }>
-						<option value="week">{ 'Week' }</option>
-						<option value="month">{ 'Month' }</option>
-						<option value="quarter">{ 'Quarter' }</option>
+						<option value="week">{ translate( 'Week' ) }</option>
+						<option value="month">{ translate( 'Month' ) }</option>
+						<option value="quarter">{ translate( 'Quarter' ) }</option>
 					</select>
 
 					<div className="gmb-stats__metric-chart">{ this.renderChart() }</div>
@@ -217,4 +214,4 @@ export default connect(
 		changeGoogleMyBusinessStatsInterval,
 		requestGoogleMyBusinessStats,
 	}
-)( GoogleMyBusinessStatsChart );
+)( localize( GoogleMyBusinessStatsChart ) );
