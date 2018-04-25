@@ -695,6 +695,6 @@ export function getContextResults( section ) {
 	// `first` is a safe-guard in case that fails
 	const video = first( get( videosForSection, section ) );
 	const tour = first( get( toursForSection, section ) );
-	const links = get( contextLinksForSection, section ) || fallbackLinks;
+	const links = get( contextLinksForSection, section, fallbackLinks );
 	return compact( [ tour, video, ...links ] );
 }

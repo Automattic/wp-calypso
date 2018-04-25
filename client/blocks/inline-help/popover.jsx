@@ -73,7 +73,7 @@ class InlineHelpPopover extends Component {
 			<div className={ classes }>
 				{
 					{
-						contact: <HelpContact compact={ true } selectedSite={ this.props.selectedSite } />,
+						contact: <HelpContact compact selectedSite={ this.props.selectedSite } />,
 						richresult: <InlineHelpRichResult result={ this.props.selectedResult } />,
 					}[ this.state.activeSecondaryView ]
 				}
