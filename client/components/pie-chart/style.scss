@@ -78,7 +78,7 @@
 	font-size: 24px;
 	text-align: center;
 	width: 80%;
-	height: 45px;
+	height: 35px;
 }
 
 .pie-chart__placeholder-drawing-element {
@@ -88,7 +88,7 @@
 
 .pie-chart__placeholder-legend-item {
 	display: flex;
-	margin-top: 28px;
+	margin-top: 22px;
 }
 
 .pie-chart__placeholder-legend-item-detail {
@@ -98,6 +98,6 @@
 .pie-chart__placeholder-legend-item-detail-element {
 	@include placeholder();
 	width: 90%;
-	height: 30px;
+	height: 20px;
 	margin-bottom: 14px;
 }
