@@ -107,7 +107,7 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
 export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const order = getOrder( state, orderId, siteId );
 	const events = getOrderNotes( state, orderId, siteId ).map( note => ( {
-		key: `n-${ note.id }`,
+		key: note.id,
 		type: note.customer_note ? EVENT_TYPES.CUSTOMER_NOTE : EVENT_TYPES.INTERNAL_NOTE,
 		timestamp: new Date( note.date_created_gmt + 'Z' ).getTime(),
 		content: note.note,
@@ -115,7 +115,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 
 	getOrderRefunds( state, orderId, siteId ).forEach( refund => {
 		events.push( {
-			key: `r-${ refund.id }`,
+			key: refund.id,
 			type: EVENT_TYPES.REFUND_NOTE,
 			timestamp: new Date( refund.date_created_gmt + 'Z' ).getTime(),
 			amount: refund.amount,
@@ -133,7 +133,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				switch ( label.refund.status ) {
 					case 'complete':
 						events.push( {
-							key: `l-${ label.label_id }`,
+							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_COMPLETED,
 							timestamp: label.refund.refund_date,
 							labelIndex,
@@ -143,7 +143,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 						break;
 					case 'rejected':
 						events.push( {
-							key: `l-${ label.label_id }`,
+							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REJECTED,
 							timestamp: label.refund.refund_date,
 							labelIndex,
@@ -152,7 +152,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 					default:
 						// Only render the "refund requested" event if the refund hasn't yet completed/rejected
 						events.push( {
-							key: `l-${ label.label_id }`,
+							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REQUESTED,
 							timestamp: label.refund.request_date,
 							labelIndex,
@@ -162,7 +162,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				}
 			}
 			events.push( {
-				key: `l-${ label.label_id }`,
+				key: label.label_id,
 				type: EVENT_TYPES.LABEL_PURCHASED,
 				timestamp: label.created_date,
 				createdDate: label.created_date,
