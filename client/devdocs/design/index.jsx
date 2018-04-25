@@ -68,6 +68,7 @@ import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
 import JetpackLogoExample from 'components/jetpack-logo/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
 import ListEnd from 'components/list-end/docs/example';
+import MarkedLinesExample from 'components/marked-lines/docs/example';
 import Notices from 'components/notice/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
@@ -198,6 +199,7 @@ class DesignAssets extends React.Component {
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<ListEnd readmeFilePath="list-end" />
+					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />

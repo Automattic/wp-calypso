@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import FoldableCard from 'components/foldable-card';
+import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
 
 export class ThreatAlert extends Component {
@@ -61,6 +62,7 @@ export class ThreatAlert extends Component {
 								/>
 							</div>
 							<p className="activity-log__threat-alert-dirpath">{ file.dirpath }</p>
+							{ file.context && <MarkedLines context={ file.context } /> }
 							{ file.diff && (
 								<Fragment>
 									<pre>
