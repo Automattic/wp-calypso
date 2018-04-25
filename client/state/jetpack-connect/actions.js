@@ -5,6 +5,7 @@
  */
 import debugFactory from 'debug';
 import { omit, pick } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,7 +21,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
 import { urlToSlug } from 'lib/url';
-import { withoutNotice } from 'state/notices/actions';
+import { infoNotice, removeNotice, withoutNotice } from 'state/notices/actions';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
@@ -335,15 +336,24 @@ export function authorize( queryObject ) {
 			secret,
 			state,
 		} = queryObject;
+		const noticeId = `jpc-setup__${ client_id }`;
 		debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
 		dispatch( recordTracksEvent( 'calypso_jpc_authorize', { from, site: client_id } ) );
 		dispatch( {
 			type: JETPACK_CONNECT_AUTHORIZE,
 			queryObject: queryObject,
 		} );
+		dispatch(
+			infoNotice( translate( 'Setting up Jetpack…' ), {
+				id: noticeId,
+				isPersistent: true,
+				showDismiss: false,
+			} )
+		);
 		return wpcom
 			.undocumented()
 			.jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
+
 			.then( data => {
 				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );
 				dispatch( {
@@ -354,7 +364,9 @@ export function authorize( queryObject ) {
 					.undocumented()
 					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version );
 			} )
+
 			.then( data => {
+				dispatch( removeNotice( noticeId ) );
 				debug( 'Jetpack authorize complete. Updating sites list.', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -373,7 +385,9 @@ export function authorize( queryObject ) {
 					options: SITE_REQUEST_OPTIONS,
 				} );
 			} )
+
 			.then( data => {
+				dispatch( removeNotice( noticeId ) );
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_auth_sitesrefresh', {
 						site: client_id,
@@ -388,7 +402,9 @@ export function authorize( queryObject ) {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 				} );
 			} )
+
 			.then( () => {
+				dispatch( removeNotice( noticeId ) );
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_authorize_success', {
 						site: client_id,
@@ -396,6 +412,7 @@ export function authorize( queryObject ) {
 					} )
 				);
 			} )
+
 			.catch( error => {
 				debug( 'Authorize error', error );
 				dispatch(
@@ -415,6 +432,7 @@ export function authorize( queryObject ) {
 					data: null,
 					error: pick( error, [ 'error', 'status', 'message' ] ),
 				} );
+				dispatch( removeNotice( noticeId ) );
 			} );
 	};
 }

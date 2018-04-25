@@ -2,13 +2,15 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { createNotice as createNoticeAction } from 'state/notices/actions';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
@@ -32,8 +34,6 @@ import {
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 
 export class JetpackConnectNotices extends Component {
 	static propTypes = {
@@ -65,7 +65,6 @@ export class JetpackConnectNotices extends Component {
 			XMLRPC_ERROR,
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
-		url: PropTypes.string,
 	};
 
 	getNoticeValues() {
@@ -215,9 +214,11 @@ export class JetpackConnectNotices extends Component {
 		return null;
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps ) {
 		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
 			this.props.onTerminalError( this.props.noticeType );
+		} else if ( prevProps.noticeType !== this.props.noticeType ) {
+			this.registerNotice();
 		}
 	}
 
@@ -225,6 +226,7 @@ export class JetpackConnectNotices extends Component {
 		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
 			this.props.onTerminalError( this.props.noticeType );
 		}
+		this.registerNotice();
 	}
 
 	errorIsTerminal() {
@@ -232,31 +234,29 @@ export class JetpackConnectNotices extends Component {
 		return notice && ! notice.userCanRetry;
 	}
 
-	renderNoticeAction() {
-		const { onActionClick } = this.props;
-		const noticeActionText = this.getNoticeActionText();
-
-		if ( ! onActionClick || ! noticeActionText ) {
-			return null;
-		}
-
-		return <NoticeAction onClick={ onActionClick }>{ noticeActionText }</NoticeAction>;
-	}
-
-	render() {
-		const noticeValues = this.getNoticeValues();
+	registerNotice() {
 		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
 			return null;
 		}
+		const noticeValues = this.getNoticeValues();
 		if ( noticeValues ) {
-			return (
-				<div className="jetpack-connect__notices-container">
-					<Notice { ...noticeValues }>{ this.renderNoticeAction() }</Notice>
-				</div>
-			);
+			const { createNotice, onActionClick } = this.props;
+			const { status, text, icon, showDismiss, onDismissClick } = noticeValues;
+			createNotice( status, text, {
+				button: onActionClick && this.getNoticeActionText(),
+				icon,
+				onClick: onActionClick,
+				onDismissClick,
+				showDismiss,
+			} );
 		}
+	}
+
+	render() {
 		return null;
 	}
 }
 
-export default localize( JetpackConnectNotices );
+export default connect( null, { createNotice: createNoticeAction } )(
+	localize( JetpackConnectNotices )
+);

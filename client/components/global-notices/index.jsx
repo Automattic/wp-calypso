@@ -43,10 +43,21 @@ const NoticesList = createReactClass( {
 		debug( 'Mounting Global Notices React component.' );
 	},
 
-	removeNotice( notice ) {
+	removeNoticeStoreNotice: notice => {
 		if ( notice ) {
 			notices.removeNotice( notice );
 		}
+	},
+
+	// Auto-bound by createReactClass.
+	// Migrate to arrow => when using class extends React.Component
+	removeReduxNotice( notice ) {
+		return e => {
+			if ( notice.onDismissClick ) {
+				notice.onDismissClick( e );
+			}
+			this.props.removeNotice( notice.noticeId );
+		};
 	},
 
 	render() {
@@ -59,7 +70,7 @@ const NoticesList = createReactClass( {
 					duration={ notice.duration || null }
 					text={ notice.text }
 					isCompact={ notice.isCompact }
-					onDismissClick={ this.removeNotice.bind( this, notice ) }
+					onDismissClick={ this.removeNoticeStoreNotice( notice ) }
 					showDismiss={ notice.showDismiss }
 				>
 					{ notice.button && (
@@ -82,8 +93,9 @@ const NoticesList = createReactClass( {
 						status={ notice.status }
 						duration={ notice.duration || null }
 						showDismiss={ notice.showDismiss }
-						onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
+						onDismissClick={ this.removeReduxNotice( notice ) }
 						text={ notice.text }
+						icon={ notice.icon }
 					>
 						{ notice.button && (
 							<NoticeAction href={ notice.href } onClick={ notice.onClick }>
@@ -108,10 +120,8 @@ const NoticesList = createReactClass( {
 } );
 
 export default connect(
-	state => {
-		return {
-			storeNotices: getNotices( state ),
-		};
-	},
+	state => ( {
+		storeNotices: getNotices( state ),
+	} ),
 	{ removeNotice }
 )( NoticesList );
