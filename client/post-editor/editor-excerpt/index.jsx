@@ -31,6 +31,7 @@ class EditorExcerpt extends React.Component {
 
 	render() {
 		const { excerpt, translate } = this.props;
+		const placeholder = translate( 'Write an excerpt…' );
 
 		return (
 			<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
@@ -39,8 +40,8 @@ class EditorExcerpt extends React.Component {
 					name="excerpt"
 					onChange={ this.onExcerptChange }
 					value={ excerpt }
-					placeholder={ translate( 'Write an excerpt…' ) }
-					aria-label={ translate( 'Write an excerpt…' ) }
+					placeholder={ placeholder }
+					aria-label={ placeholder }
 				/>
 			</TrackInputChanges>
 		);
