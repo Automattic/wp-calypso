@@ -112,9 +112,12 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	renderInitialStep() {
+		const { isButtonPrimary } = this.props;
+
 		return (
 			<div className="google-voucher__initial-step">
 				<PurchaseButton
+					primary={ isButtonPrimary }
 					onClick={ this.onGenerateCode }
 					text={ this.props.translate( 'Generate code' ) }
 				/>
@@ -169,7 +172,9 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	renderCodeRedeemed() {
+		const { isButtonPrimary } = this.props;
 		const { code } = this.getVoucher();
+
 		return (
 			<div className="google-voucher">
 				<ClipboardButtonInput value={ code } disabled={ ! code } />
@@ -196,6 +201,7 @@ class GoogleVoucherDetails extends Component {
 					<PurchaseButton
 						className="google-voucher-code__setup-google-adwords"
 						href="https://www.google.com/adwords/"
+						primary={ isButtonPrimary }
 						target="_blank"
 						rel="noopener noreferrer"
 						onClick={ this.onSetupGoogleAdWordsLink }
@@ -214,7 +220,7 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	render() {
-		const { selectedSite, translate } = this.props;
+		const { isButtonPrimary, selectedSite, translate } = this.props;
 		const { step } = this.state;
 		let body;
 
@@ -235,12 +241,13 @@ class GoogleVoucherDetails extends Component {
 				<QuerySiteVouchers siteId={ selectedSite.ID } />
 				<PurchaseDetails
 					id="google-credits"
-					icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
+					icon={ <img src="/calypso/images/upgrades/adwords.svg" alt="" /> }
 					title={ translate( 'Google AdWords credit' ) }
 					description={ translate(
 						'Use a $100 credit with Google to bring traffic to your most important Posts and Pages.'
 					) }
 					body={ body }
+					primary={ isButtonPrimary }
 				/>
 			</div>
 		);
@@ -248,8 +255,13 @@ class GoogleVoucherDetails extends Component {
 }
 
 GoogleVoucherDetails.propTypes = {
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 	googleAdCredits: PropTypes.array,
+	isButtonPrimary: PropTypes.bool,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
+};
+
+GoogleVoucherDetails.defaultProps = {
+	isButtonPrimary: true,
 };
 
 export default connect(

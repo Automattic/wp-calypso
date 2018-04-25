@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { selectedSite, translate } ) => {
+export default localize( ( { isButtonPrimary = true, selectedSite, translate } ) => {
 	const adSettingsUrl = selectedSite.jetpack
 		? '/settings/traffic/' + selectedSite.slug
 		: '/ads/settings/' + selectedSite.slug;
@@ -26,6 +26,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				) }
 				buttonText={ translate( 'Start earning' ) }
 				href={ adSettingsUrl }
+				primary={ isButtonPrimary }
 			/>
 		</div>
 	);

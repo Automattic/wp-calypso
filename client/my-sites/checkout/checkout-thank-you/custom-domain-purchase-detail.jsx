@@ -14,7 +14,12 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 import { hasCustomDomain } from 'lib/site/utils';
 
-const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate } ) => {
+const CustomDomainPurchaseDetail = ( {
+	isButtonPrimary = true,
+	selectedSite,
+	hasDomainCredit,
+	translate,
+} ) => {
 	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
 		return (
 			<PurchaseDetail
@@ -25,6 +30,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 				) }
 				buttonText={ translate( 'Claim your free domain' ) }
 				href={ `/domains/add/${ selectedSite.slug }` }
+				primary={ isButtonPrimary }
 			/>
 		);
 	} else if ( ! hasDomainCredit && hasCustomDomain( selectedSite ) ) {
@@ -33,7 +39,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
 		return (
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
+				icon={ <img src="/calypso/images/upgrades/custom-domain.svg" alt="" /> }
 				title={ translate( 'Custom Domain' ) }
 				description={ translate(
 					'Your plan includes the custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.',
@@ -42,17 +48,18 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 						components: { em: <em /> },
 					}
 				) }
+				primary={ isButtonPrimary }
 				{ ...actionButton }
 			/>
 		);
-	} else {
-		return null;
 	}
+	return null;
 };
 
 CustomDomainPurchaseDetail.propTypes = {
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 	hasDomainCredit: PropTypes.bool,
+	isButtonPrimary: PropTypes.bool,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 };
 
 export default localize( CustomDomainPurchaseDetail );

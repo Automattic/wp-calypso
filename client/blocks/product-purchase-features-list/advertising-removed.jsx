@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { isBusinessPlan, translate } ) => {
+export default localize( ( { isButtonPrimary = true, isBusinessPlan, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -26,6 +26,7 @@ export default localize( ( { isBusinessPlan, translate } ) => {
 									'Upgrade to remove the WordPress.com footer credit.'
 							)
 				}
+				primary={ isButtonPrimary }
 			/>
 		</div>
 	);

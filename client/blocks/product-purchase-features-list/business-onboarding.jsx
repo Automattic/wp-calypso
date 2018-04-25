@@ -13,7 +13,7 @@ import { noop } from 'lodash';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { translate, link, onClick = noop } ) => {
+export default localize( ( { isButtonPrimary = true, translate, link, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -26,6 +26,7 @@ export default localize( ( { translate, link, onClick = noop } ) => {
 				buttonText={ translate( 'Schedule a session' ) }
 				href={ link }
 				onClick={ onClick }
+				primary={ isButtonPrimary }
 			/>
 		</div>
 	);

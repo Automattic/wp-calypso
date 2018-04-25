@@ -65,22 +65,29 @@ export class ProductPurchaseFeaturesList extends Component {
 					showLiveChatButton
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_business' }
 				/>
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<CustomDomain
+					isButtonPrimary={ false }
+					selectedSite={ selectedSite }
+					hasDomainCredit={ planHasDomainCredit }
+				/>
 				<BusinessOnboarding
+					isButtonPrimary={ false }
 					onClick={ this.props.recordBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
 				/>
-				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
-				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
+				{ isEnabled( 'manage/plugins/upload' ) && (
+					<UploadPlugins isButtonPrimary={ false } selectedSite={ selectedSite } />
 				) }
-				<JetpackSearch selectedSite={ selectedSite } />
-				<GoogleVouchers selectedSite={ selectedSite } />
-				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<AdvertisingRemoved isBusinessPlan />
-				<CustomizeTheme selectedSite={ selectedSite } />
-				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				<FindNewTheme selectedSite={ selectedSite } />
+				{ isWordadsInstantActivationEligible( selectedSite ) && (
+					<MonetizeSite isButtonPrimary={ false } selectedSite={ selectedSite } />
+				) }
+				<JetpackSearch isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<GoogleVouchers isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<GoogleAnalyticsStats isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<AdvertisingRemoved isBusinessPlan isButtonPrimary={ false } />
+				<CustomizeTheme isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<VideoAudioPosts isButtonPrimary={ false } selectedSite={ selectedSite } plan={ plan } />
+				<FindNewTheme isButtonPrimary={ false } selectedSite={ selectedSite } />
 			</Fragment>
 		);
 	}
@@ -91,13 +98,17 @@ export class ProductPurchaseFeaturesList extends Component {
 		return (
 			<Fragment>
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<AdvertisingRemoved isBusinessPlan={ false } />
-				<GoogleVouchers selectedSite={ selectedSite } />
-				<CustomizeTheme selectedSite={ selectedSite } />
-				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				<CustomDomain
+					isButtonPrimary={ false }
+					selectedSite={ selectedSite }
+					hasDomainCredit={ planHasDomainCredit }
+				/>
+				<AdvertisingRemoved isBusinessPlan={ false } isButtonPrimary={ false } />
+				<GoogleVouchers isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<CustomizeTheme isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<VideoAudioPosts isButtonPrimary={ false } selectedSite={ selectedSite } plan={ plan } />
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
+					<MonetizeSite isButtonPrimary={ false } selectedSite={ selectedSite } />
 				) }
 			</Fragment>
 		);
@@ -109,8 +120,12 @@ export class ProductPurchaseFeaturesList extends Component {
 		return (
 			<Fragment>
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<AdvertisingRemoved isBusinessPlan={ false } />
+				<CustomDomain
+					isButtonPrimary={ false }
+					selectedSite={ selectedSite }
+					hasDomainCredit={ planHasDomainCredit }
+				/>
+				<AdvertisingRemoved isBusinessPlan={ false } isButtonPrimary={ false } />
 			</Fragment>
 		);
 	}
@@ -124,8 +139,9 @@ export class ProductPurchaseFeaturesList extends Component {
 					isJetpackFreePlan
 					isPlaceholder={ isPlaceholder }
 				/>
-				<JetpackWordPressCom selectedSite={ selectedSite } />
+				<JetpackWordPressCom isButtonPrimary={ false } selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard
+					isButtonPrimary={ false }
 					onClick={ this.props.recordReturnToDashboardClick }
 					selectedSite={ selectedSite }
 				/>
@@ -141,13 +157,13 @@ export class ProductPurchaseFeaturesList extends Component {
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 				/>
-				<MonetizeSite selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
-				<JetpackBackupSecurity />
+				<MonetizeSite isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<JetpackWordPressCom isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<JetpackBackupSecurity isButtonPrimary={ false } />
 				<JetpackAntiSpam />
 				<JetpackPublicize />
 				<JetpackVideo />
-				<JetpackReturnToDashboard selectedSite={ selectedSite } />
+				<JetpackReturnToDashboard isButtonPrimary={ false } selectedSite={ selectedSite } />
 			</Fragment>
 		);
 	}
@@ -161,10 +177,10 @@ export class ProductPurchaseFeaturesList extends Component {
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 				/>
-				<JetpackWordPressCom selectedSite={ selectedSite } />
-				<JetpackBackupSecurity />
+				<JetpackWordPressCom isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<JetpackBackupSecurity isButtonPrimary={ false } />
 				<JetpackAntiSpam />
-				<JetpackReturnToDashboard selectedSite={ selectedSite } />
+				<JetpackReturnToDashboard isButtonPrimary={ false } selectedSite={ selectedSite } />
 			</Fragment>
 		);
 	}
@@ -180,19 +196,20 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_professsional' }
 				/>
 				<BusinessOnboarding
+					isButtonPrimary={ false }
 					onClick={ this.props.recordBusinessOnboardingClick }
 					link="https://calendly.com/jetpack/concierge"
 				/>
-				<JetpackSearch selectedSite={ selectedSite } />
-				<MonetizeSite selectedSite={ selectedSite } />
-				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
+				<JetpackSearch isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<MonetizeSite isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<GoogleAnalyticsStats isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<JetpackWordPressCom isButtonPrimary={ false } selectedSite={ selectedSite } />
+				<FindNewTheme isButtonPrimary={ false } selectedSite={ selectedSite } />
 				<JetpackVideo />
 				<JetpackPublicize />
-				<JetpackBackupSecurity />
+				<JetpackBackupSecurity isButtonPrimary={ false } />
 				<JetpackAntiSpam />
-				<JetpackReturnToDashboard selectedSite={ selectedSite } />
+				<JetpackReturnToDashboard isButtonPrimary={ false } selectedSite={ selectedSite } />
 			</Fragment>
 		);
 	}

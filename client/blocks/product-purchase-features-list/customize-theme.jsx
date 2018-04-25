@@ -25,11 +25,12 @@ function getCustomizeLink( selectedSite ) {
 	return isCustomizeEnabled() ? '/customize/' + selectedSite.slug : customizerInAdmin;
 }
 
-export default localize( ( { selectedSite, translate } ) => {
+export default localize( ( { isButtonPrimary = true, selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon={ <img alt="" src="/calypso/images/upgrades/customize-theme.svg" /> }
+				primary={ isButtonPrimary }
 				title={ translate( 'Advanced customization' ) }
 				description={ translate(
 					"Change your site's appearance in a few clicks, with an expanded " +
