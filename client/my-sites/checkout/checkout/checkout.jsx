@@ -73,7 +73,7 @@ import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 
-class Checkout extends React.Component {
+export class Checkout extends React.Component {
 	static propTypes = {
 		cards: PropTypes.array.isRequired,
 		couponCode: PropTypes.string,
@@ -82,6 +82,7 @@ class Checkout extends React.Component {
 
 	state = {
 		previousCart: null,
+		cartSettled: false,
 	};
 
 	componentWillMount() {
@@ -113,6 +114,12 @@ class Checkout extends React.Component {
 			}
 
 			this.trackPageView();
+		}
+
+		if ( ! this.state.cartSettled && ! nextProps.cart.hasPendingServerUpdates ) {
+			this.setState( {
+				cartSettled: true,
+			} );
 		}
 	}
 
@@ -570,8 +577,11 @@ class Checkout extends React.Component {
 		const isLoadingProducts = this.props.isProductsListFetching;
 		const isLoadingPlans = this.props.isPlansListFetching;
 		const isLoadingSitePlans = this.props.isSitePlansListFetching;
+		const isCartSettled = this.state.cartSettled;
 
-		return isLoadingCart || isLoadingProducts || isLoadingPlans || isLoadingSitePlans;
+		return (
+			isLoadingCart || isLoadingProducts || isLoadingPlans || isLoadingSitePlans || ! isCartSettled
+		);
 	}
 
 	needsDomainDetails() {
