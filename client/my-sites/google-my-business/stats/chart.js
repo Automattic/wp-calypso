@@ -131,41 +131,42 @@ class GoogleMyBusinessStatsChart extends Component {
 		const { chartTitle, dataSeriesInfo } = this.props;
 		const { transformedData } = this.state;
 
-		return !! transformedData ? (
+		if ( ! transformedData ) {
+			return (
+				<Fragment>
+					<PieChartPlaceholder title={ !! chartTitle } />
+					<PieChartLegendPlaceholder numLegendElements={ Object.keys( dataSeriesInfo ).length } />
+				</Fragment>
+			);
+		}
+
+		return (
 			<Fragment>
 				<PieChart data={ transformedData } title={ chartTitle } />
 				<PieChartLegend data={ transformedData } />
-			</Fragment>
-		) : (
-			<Fragment>
-				<PieChartPlaceholder title={ !! chartTitle } />
-				<PieChartLegendPlaceholder numLegendElements={ Object.keys( dataSeriesInfo ).length } />
 			</Fragment>
 		);
 	}
 
 	renderLineChart() {
+		const { renderTooltipForDatanum } = this.props;
 		const { transformedData } = this.state;
 
-		return !! transformedData ? (
+		if ( ! transformedData ) {
+			return <LineChartPlaceholder />;
+		}
+
+		return (
 			<LineChart
 				fillArea
 				data={ transformedData }
-				renderTooltipForDatanum={ this.props.renderTooltipForDatanum }
+				renderTooltipForDatanum={ renderTooltipForDatanum }
 			/>
-		) : (
-			<LineChartPlaceholder />
 		);
 	}
 
-	renderChart() {
-		const { chartType } = this.props;
-
-		return chartType === 'pie' ? this.renderPieChart() : this.renderLineChart();
-	}
-
 	render() {
-		const { description, interval, title, translate } = this.props;
+		const { chartType, description, interval, title } = this.props;
 
 		return (
 			<div>
@@ -187,7 +188,9 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
 					</select>
 
-					<div className="gmb-stats__metric-chart">{ this.renderChart() }</div>
+					<div className="gmb-stats__metric-chart">
+						{ chartType === 'pie' ? this.renderPieChart() : this.renderLineChart() }
+					</div>
 				</Card>
 			</div>
 		);
