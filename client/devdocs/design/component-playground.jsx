@@ -11,6 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import ClipboardButton from 'components/forms/clipboard-button';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 import * as playgroundScope from 'devdocs/design/playground-scope';
@@ -20,9 +21,19 @@ class ComponentPlayground extends Component {
 		code: PropTypes.string,
 	};
 
+	state = {
+		showCode: false,
+	};
+
 	handleClick() {
 		alert( 'Copied to clipboard!' );
 	}
+
+	showCode = () => {
+		this.setState( {
+			showCode: true,
+		} );
+	};
 
 	render() {
 		return (
@@ -40,21 +51,31 @@ class ComponentPlayground extends Component {
 					<LivePreview />
 				</DocsExampleWrapper>
 
-				{ this.props.component && (
-					<div className="design__component-playground-code">
-						<ClipboardButton
-							text={ this.props.code }
-							borderless
-							onClick={ this.handleClick }
-							className="design__component-playground-clipboard"
-						>
-							<Gridicon icon="clipboard" />
-						</ClipboardButton>
+				{ this.props.component &&
+					! this.state.showCode && (
+						<div className="design__component-playground-show-code">
+							<Button borderless onClick={ this.showCode }>
+								Show code <Gridicon icon="code" />
+							</Button>
+						</div>
+					) }
 
-						<LiveError />
-						<LiveEditor />
-					</div>
-				) }
+				{ this.props.component &&
+					this.state.showCode && (
+						<div className="design__component-playground-code">
+							<ClipboardButton
+								text={ this.props.code }
+								borderless
+								onClick={ this.handleClick }
+								className="design__component-playground-clipboard"
+							>
+								<Gridicon icon="clipboard" />
+							</ClipboardButton>
+
+							<LiveError />
+							<LiveEditor />
+						</div>
+					) }
 			</LiveProvider>
 		);
 	}
