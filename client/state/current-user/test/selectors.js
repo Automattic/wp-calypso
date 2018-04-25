@@ -14,6 +14,7 @@ import {
 	getCurrentUserLocale,
 	getCurrentUserLocaleVariant,
 	getCurrentUserDate,
+	isUserLoggedIn,
 	isValidCapability,
 	getCurrentUserCurrencyCode,
 	getCurrentUserEmail,
@@ -32,6 +33,23 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( 'isUserLoggedIn', () => {
+		test( 'should return true if we have a non-null user id', () => {
+			expect(
+				isUserLoggedIn( {
+					currentUser: { id: 1234 },
+				} )
+			).to.be.true;
+		} );
+
+		test( 'should return false if we have a null user id', () => {
+			expect(
+				isUserLoggedIn( {
+					currentUser: { id: null },
+				} )
+			).to.be.false;
+		} );
+	} );
 	describe( '#getCurrentUser()', () => {
 		test( 'should return null if no current user', () => {
 			const selected = getCurrentUser( {
