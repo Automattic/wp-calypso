@@ -26,7 +26,7 @@ function version_compare( v1, v2, operator ) {
 	//        returns 4: 1
 
 	// Important: compare must be initialized at 0.
-	var i = 0,
+	let i = 0,
 		x = 0,
 		compare = 0,
 		// vm maps textual PHP versions to negatives so they're less than 0.
@@ -66,7 +66,7 @@ function version_compare( v1, v2, operator ) {
 	// Empty component becomes 0.
 	// Non-numerical component becomes a negative number.
 	// Numerical component becomes itself as an integer.
-	var numVersion = function( v ) {
+	const numVersion = function( v ) {
 		return ! v ? 0 : isNaN( v ) ? vm[ v ] || -7 : parseInt( v, 10 );
 	};
 	v1 = prepVersion( v1 );

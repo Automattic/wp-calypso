@@ -39,7 +39,7 @@ Emitter( ProductsList.prototype );
  * @api public
  */
 ProductsList.prototype.get = function() {
-	var data;
+	let data;
 
 	if ( ! this.data ) {
 		debug( 'First time loading ProductsList, check store' );
@@ -76,7 +76,7 @@ ProductsList.prototype.fetch = function() {
 
 	wpcom.undocumented().getProducts(
 		function( error, data ) {
-			var productsList;
+			let productsList;
 
 			if ( error ) {
 				debug( 'error fetching ProductsList from api', error );
@@ -122,7 +122,7 @@ ProductsList.prototype.hasLoadedFromServer = function() {
 	return this.initialized;
 };
 
-var productsList = new ProductsList();
+const productsList = new ProductsList();
 
 export default function() {
 	if ( ! productsList.hasLoadedFromServer() && ! productsList.isFetching ) {

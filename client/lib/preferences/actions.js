@@ -27,7 +27,7 @@ function getLocalStorage() {
 }
 
 PreferencesActions.mergePreferencesToLocalStorage = function( preferences ) {
-	var storage = getLocalStorage() || {};
+	const storage = getLocalStorage() || {};
 
 	forOwn( preferences, function( value, key ) {
 		if ( null === value ) {
@@ -41,7 +41,7 @@ PreferencesActions.mergePreferencesToLocalStorage = function( preferences ) {
 };
 
 PreferencesActions.fetch = function() {
-	var localStorage = getLocalStorage();
+	const localStorage = getLocalStorage();
 
 	if ( ! userUtils.isLoggedIn() ) {
 		return;
@@ -77,7 +77,7 @@ PreferencesActions.fetch = function() {
 };
 
 PreferencesActions.set = function( key, value ) {
-	var preferences = {},
+	let preferences = {},
 		settings = {};
 
 	preferences[ key ] = value;

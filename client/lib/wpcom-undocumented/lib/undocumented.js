@@ -563,7 +563,7 @@ Undocumented.prototype.getDomainContactInformation = function( fn ) {
 			method: 'get',
 		},
 		function( error, data ) {
-			var newData;
+			let newData;
 
 			if ( error ) {
 				return fn( error );
@@ -622,7 +622,7 @@ Undocumented.prototype.getSmsSupportedCountries = function( fn ) {
 
 function mapKeysRecursively( object, fn ) {
 	return Object.keys( object ).reduce( function( mapped, key ) {
-		var value = object[ key ];
+		let value = object[ key ];
 		if ( isPlainObject( value ) ) {
 			value = mapKeysRecursively( value, fn );
 		}
@@ -645,7 +645,7 @@ Undocumented.prototype.validateDomainContactInformation = function(
 	domainNames,
 	fn
 ) {
-	var data = {
+	let data = {
 		contactInformation: contactInformation,
 		domainNames: domainNames,
 	};
@@ -657,7 +657,7 @@ Undocumented.prototype.validateDomainContactInformation = function(
 		error,
 		successData
 	) {
-		var newData;
+		let newData;
 
 		if ( error ) {
 			return fn( error );
@@ -957,7 +957,7 @@ Undocumented.prototype.createConnection = function(
 	options,
 	fn
 ) {
-	var body, path;
+	let body, path;
 
 	// Method overloading: Optional `options`
 	if ( 'undefined' === typeof fn && 'function' === typeof options ) {
@@ -1017,7 +1017,7 @@ Undocumented.prototype.publicizePost = function( siteId, postId, message, skippe
  * @return {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.updateConnection = function( siteId, connectionId, data, fn ) {
-	var path;
+	let path;
 
 	if ( siteId ) {
 		debug( '/sites/:site_id:/publicize-connections/:connection_id: query' );
@@ -1222,7 +1222,7 @@ Undocumented.prototype.discoverFeed = function( query, fn ) {
 };
 
 Undocumented.prototype.readFeedPosts = function( query, fn ) {
-	var params = omit( query, 'ID' );
+	const params = omit( query, 'ID' );
 	debug( '/read/feed/' + query.ID + '/posts' );
 	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
@@ -1235,7 +1235,7 @@ Undocumented.prototype.readFeedPosts = function( query, fn ) {
 };
 
 Undocumented.prototype.readFeedPost = function( query, fn ) {
-	var params = omit( query, [ 'feedId', 'postId' ] );
+	const params = omit( query, [ 'feedId', 'postId' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
 	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
@@ -1258,7 +1258,7 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 };
 
 Undocumented.prototype.readTagPosts = function( query, fn ) {
-	var params = omit( query, 'tag' );
+	const params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
 	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
@@ -1289,7 +1289,7 @@ Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
 };
 
 Undocumented.prototype.readLiked = function( query, fn ) {
-	var params = clone( query );
+	const params = clone( query );
 	debug( '/read/liked' );
 	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
@@ -1297,14 +1297,14 @@ Undocumented.prototype.readLiked = function( query, fn ) {
 };
 
 Undocumented.prototype.readList = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/list' );
 	params.apiVersion = '1.2';
 	return this.wpcom.req.get( '/read/lists/' + query.owner + '/' + query.slug, params, fn );
 };
 
 Undocumented.prototype.readListPosts = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/list/:list/posts' );
 	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
@@ -1326,7 +1326,7 @@ Undocumented.prototype.readListsNew = function( title, fn ) {
 };
 
 Undocumented.prototype.readListsUpdate = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:list/update' );
 	return this.wpcom.req.post(
 		'/read/lists/' +
@@ -1341,7 +1341,7 @@ Undocumented.prototype.readListsUpdate = function( query, fn ) {
 };
 
 Undocumented.prototype.followList = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:owner/:slug/follow' );
 	return this.wpcom.req.post(
 		'/read/lists/' +
@@ -1356,7 +1356,7 @@ Undocumented.prototype.followList = function( query, fn ) {
 };
 
 Undocumented.prototype.unfollowList = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:owner/:slug/unfollow' );
 	return this.wpcom.req.post(
 		'/read/lists/' +
@@ -1371,20 +1371,20 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 };
 
 Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
-	var params = omit( query, [ 'before', 'after' ] );
+	const params = omit( query, [ 'before', 'after' ] );
 	debug( '/read/sites/:site/featured' );
 	return this.wpcom.req.get( '/read/sites/' + siteId + '/featured', params, fn );
 };
 
 Undocumented.prototype.readSitePosts = function( query, fn ) {
-	var params = omit( query, 'site' );
+	const params = omit( query, 'site' );
 	debug( '/read/sites/:site/posts' );
 	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts', params, fn );
 };
 
 Undocumented.prototype.readSitePost = function( query, fn ) {
-	var params = omit( query, [ 'site', 'postId' ] );
+	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
 	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
@@ -1434,7 +1434,7 @@ Undocumented.prototype.saveABTestData = function( name, variation, callback ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersNew = function( query, fn ) {
-	var args;
+	let args;
 	debug( '/users/new' );
 
 	// This API call is restricted to these OAuth keys
@@ -1535,7 +1535,7 @@ Undocumented.prototype.sitesNew = function( query, fn ) {
 };
 
 Undocumented.prototype.themes = function( siteId, query, fn ) {
-	var path = siteId ? '/sites/' + siteId + '/themes' : '/themes';
+	const path = siteId ? '/sites/' + siteId + '/themes' : '/themes';
 	debug( path );
 	return this.wpcom.req.get( path, query, fn );
 };
@@ -1747,7 +1747,7 @@ Undocumented.prototype.fetchDns = function( domainName, fn ) {
 };
 
 Undocumented.prototype.updateDns = function( domain, records, fn ) {
-	var filtered = reject( records, 'isBeingDeleted' ),
+	let filtered = reject( records, 'isBeingDeleted' ),
 		body = { dns: JSON.stringify( filtered ) };
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
@@ -1837,7 +1837,7 @@ Undocumented.prototype.cancelTransferRequest = function(
 };
 
 Undocumented.prototype.enablePrivacyProtection = function( domainName, fn ) {
-	var data = {
+	const data = {
 		domainStatus: JSON.stringify( { command: 'enable-privacy' } ),
 	};
 
@@ -1845,7 +1845,7 @@ Undocumented.prototype.enablePrivacyProtection = function( domainName, fn ) {
 };
 
 Undocumented.prototype.acceptTransfer = function( domainName, fn ) {
-	var data = {
+	const data = {
 		domainStatus: JSON.stringify( { command: 'accept-transfer' } ),
 	};
 
@@ -1853,7 +1853,7 @@ Undocumented.prototype.acceptTransfer = function( domainName, fn ) {
 };
 
 Undocumented.prototype.declineTransfer = function( domainName, fn ) {
-	var data = {
+	const data = {
 		domainStatus: JSON.stringify( { command: 'deny-transfer' } ),
 	};
 
