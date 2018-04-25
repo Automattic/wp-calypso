@@ -26,8 +26,20 @@ import {
 } from 'lib/plans/constants';
 
 describe( 'canUpgradeToPlan', () => {
-	const makeSite = productSlug => ( {
-		plan: { product_slug: productSlug },
+	const siteId = 1234567;
+	const makeState = ( s, productSlug ) => ( {
+		sites: {
+			plans: {
+				[ s ]: {
+					data: [
+						{
+							currentPlan: true,
+							productSlug,
+						},
+					],
+				},
+			},
+		},
 	} );
 
 	test( 'should return true from lower-tier plans to higher-tier plans', () => {
@@ -70,7 +82,8 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS ],
 		].forEach(
 			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( planToPurchase, makeSite( planOwned ) ) ).to.be.true
+				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
+					.true
 		);
 	} );
 
@@ -81,7 +94,8 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_BUSINESS ],
 		].forEach(
 			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( planToPurchase, makeSite( planOwned ) ) ).to.be.true
+				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
+					.true
 		);
 	} );
 
@@ -92,7 +106,8 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ],
 		].forEach(
 			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( planToPurchase, makeSite( planOwned ) ) ).to.be.false
+				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
+					.false
 		);
 	} );
 
@@ -103,7 +118,8 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ],
 		].forEach(
 			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( planToPurchase, makeSite( planOwned ) ) ).to.be.true
+				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
+					.true
 		);
 	} );
 
@@ -114,7 +130,8 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_BUSINESS_2_YEARS, PLAN_BUSINESS ],
 		].forEach(
 			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( planToPurchase, makeSite( planOwned ) ) ).to.be.false
+				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
+					.false
 		);
 	} );
 
@@ -155,21 +172,36 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL_2_YEARS ],
 		].forEach(
 			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( planToPurchase, makeSite( planOwned ) ) ).to.be.false
+				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
+					.false
 		);
 	} );
 
 	test( 'should return true from high-tier expired plans to lower-tier plans', () => {
-		const makeComplexSite = ( productSlug, isJetpack, isAtomic ) => ( {
-			jetpack: isJetpack || isAtomic,
-			options: {
-				is_automated_transfer: isAtomic,
-			},
-			plan: {
-				product_slug: productSlug,
-				expired: true,
+		const makeComplexState = ( s, productSlug, isJetpack, isAtomic ) => ( {
+			sites: {
+				items: {
+					[ s ]: {
+						jetpack: isJetpack || isAtomic,
+						options: {
+							is_automated_transfer: isAtomic,
+						},
+					},
+				},
+				plans: {
+					[ s ]: {
+						data: [
+							{
+								currentPlan: true,
+								expired: true,
+								productSlug,
+							},
+						],
+					},
+				},
 			},
 		} );
+
 		[
 			[ PLAN_BUSINESS, PLAN_PERSONAL, false, false ],
 			[ PLAN_BUSINESS, PLAN_PERSONAL, false, true ],
@@ -201,11 +233,14 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL, false, true ],
 			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL_2_YEARS, false, false ],
 			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL_2_YEARS, false, true ],
-		].forEach(
-			( [ planOwned, planToPurchase, isJetpack, isAtomic ] ) =>
-				expect(
-					canUpgradeToPlan( planToPurchase, makeComplexSite( planOwned, isJetpack, isAtomic ) )
-				).to.be.true
-		);
+		].forEach( ( [ planOwned, planToPurchase, isJetpack, isAtomic ] ) => {
+			expect(
+				canUpgradeToPlan(
+					makeComplexState( siteId, planOwned, isJetpack, isAtomic ),
+					siteId,
+					planToPurchase
+				)
+			).to.be.true;
+		} );
 	} );
 } );
