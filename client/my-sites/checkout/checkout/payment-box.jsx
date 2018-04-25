@@ -56,7 +56,6 @@ export class PaymentBox extends PureComponent {
 				labelAdditionalText = paymentMethodName( method );
 				break;
 			case 'tef':
-				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
 				labelAdditionalText = paymentMethodName( method );
 				break;
 		}

@@ -181,7 +181,7 @@ function paymentMethodName( method ) {
 		ideal: 'iDEAL',
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
-		tef: 'TEF - Transferência bancária',
+		tef: 'Transferência bancária',
 	};
 
 	return paymentMethodsNames[ method ] || method;
