@@ -1,8 +1,4 @@
 /** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -80,10 +76,10 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_PREMIUM, PLAN_BUSINESS_2_YEARS ],
 			[ PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS ],
 			[ PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS ],
-		].forEach(
-			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
-					.true
+		].forEach( ( [ planOwned, planToPurchase ] ) =>
+			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
+				true
+			)
 		);
 	} );
 
@@ -92,10 +88,10 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PERSONAL ],
 			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PREMIUM ],
 			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_BUSINESS ],
-		].forEach(
-			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
-					.true
+		].forEach( ( [ planOwned, planToPurchase ] ) =>
+			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
+				true
+			)
 		);
 	} );
 
@@ -104,10 +100,10 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ],
 			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ],
-		].forEach(
-			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
-					.false
+		].forEach( ( [ planOwned, planToPurchase ] ) =>
+			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
+				false
+			)
 		);
 	} );
 
@@ -116,10 +112,10 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS ],
 			[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ],
 			[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ],
-		].forEach(
-			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
-					.true
+		].forEach( ( [ planOwned, planToPurchase ] ) =>
+			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
+				true
+			)
 		);
 	} );
 
@@ -128,10 +124,10 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_PERSONAL_2_YEARS, PLAN_PERSONAL ],
 			[ PLAN_PREMIUM_2_YEARS, PLAN_PREMIUM ],
 			[ PLAN_BUSINESS_2_YEARS, PLAN_BUSINESS ],
-		].forEach(
-			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
-					.false
+		].forEach( ( [ planOwned, planToPurchase ] ) =>
+			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
+				false
+			)
 		);
 	} );
 
@@ -170,10 +166,10 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_PREMIUM_2_YEARS, PLAN_FREE ],
 			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL ],
 			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL_2_YEARS ],
-		].forEach(
-			( [ planOwned, planToPurchase ] ) =>
-				expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).to.be
-					.false
+		].forEach( ( [ planOwned, planToPurchase ] ) =>
+			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
+				false
+			)
 		);
 	} );
 
@@ -240,7 +236,7 @@ describe( 'canUpgradeToPlan', () => {
 					siteId,
 					planToPurchase
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 	} );
 } );
