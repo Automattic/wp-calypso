@@ -4,7 +4,6 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -63,7 +62,7 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should return an updated action thunk, merging data on dispatch', () => {
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const action = extendAction(
 				thunkDispatch =>
 					thunkDispatch( {
@@ -80,7 +79,7 @@ describe( 'utils', () => {
 			);
 
 			action( dispatch );
-			expect( dispatch ).to.have.been.calledWithExactly( {
+			jestExpect( dispatch ).toHaveBeenCalledWith( {
 				type: 'ACTION_TEST',
 				meta: {
 					preserve: true,
@@ -90,7 +89,7 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should return an updated action thunk, accepting also getState', () => {
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const getState = () => ( { selectedSiteId: 42 } );
 
 			const action = extendAction(
@@ -110,7 +109,7 @@ describe( 'utils', () => {
 			);
 
 			action( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWithExactly( {
+			jestExpect( dispatch ).toHaveBeenCalledWith( {
 				type: 'ACTION_TEST',
 				siteId: 42,
 				meta: {
@@ -121,7 +120,7 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should return an updated nested action thunk, merging data on dispatch', () => {
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const action = extendAction(
 				thunkDispatch =>
 					thunkDispatch( nestedThunkDispatch =>
@@ -140,8 +139,8 @@ describe( 'utils', () => {
 			);
 
 			action( dispatch );
-			dispatch.getCall( 0 ).args[ 0 ]( dispatch );
-			expect( dispatch ).to.have.been.calledWithExactly( {
+			dispatch.mock.calls[ 0 ][ 0 ]( dispatch );
+			jestExpect( dispatch ).toHaveBeenCalledWith( {
 				type: 'ACTION_TEST',
 				meta: {
 					preserve: true,
@@ -819,7 +818,6 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#cachingActionCreatorFactory', () => {
-		let passThrough;
 		let dispatch;
 		let successfulWorker;
 		let failingWorker;
@@ -832,22 +830,20 @@ describe( 'utils', () => {
 		let connectedFailureActionCreator;
 
 		beforeEach( () => {
-			passThrough = pass => pass;
+			dispatch = jest.fn( identity => identity );
+			successfulWorker = jest.fn( () => Promise.resolve( 'success_data' ) );
+			failingWorker = jest.fn( () => Promise.reject( 'error_data' ) );
 
-			dispatch = spy( passThrough );
-			successfulWorker = spy( () => Promise.resolve( 'success_data' ) );
-			failingWorker = spy( () => Promise.reject( 'error_data' ) );
-
-			loadingActionCreator = spy( () => dispatch( { type: 'loading' } ) );
-			successActionCreator = spy( () => dispatch( { type: 'success' } ) );
-			failureActionCreator = spy( () => dispatch( { type: 'failure' } ) );
+			loadingActionCreator = jest.fn( () => dispatch( { type: 'loading' } ) );
+			successActionCreator = jest.fn( () => dispatch( { type: 'success' } ) );
+			failureActionCreator = jest.fn( () => dispatch( { type: 'failure' } ) );
 
 			connectedLoadingActionCreator = () => loadingActionCreator;
 			connectedSuccessActionCreator = () => successActionCreator;
 			connectedFailureActionCreator = () => failureActionCreator;
 		} );
 
-		test( 'should call apropriate action creators on success', () => {
+		test( 'should call apropriate action creators on success', async () => {
 			const actionCreator = cachingActionCreatorFactory(
 				successfulWorker,
 				connectedLoadingActionCreator,
@@ -855,16 +851,13 @@ describe( 'utils', () => {
 				connectedFailureActionCreator
 			);
 
-			const dispatchResult = actionCreator( 123 )( dispatch );
-			expect( loadingActionCreator ).to.be.calledWith( 123 );
-
-			return dispatchResult.then( () => {
-				expect( successActionCreator ).to.be.calledWith( 'success_data' );
-				expect( failureActionCreator ).not.to.be.called;
-			} );
+			await actionCreator( 123 )( dispatch );
+			jestExpect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
+			jestExpect( successActionCreator ).toHaveBeenCalledWith( 'success_data' );
+			jestExpect( failureActionCreator ).not.toHaveBeenCalledWith();
 		} );
 
-		test( 'should call apropriate action creators on failure', () => {
+		test( 'should call apropriate action creators on failure', async () => {
 			const actionCreator = cachingActionCreatorFactory(
 				failingWorker,
 				connectedLoadingActionCreator,
@@ -872,16 +865,13 @@ describe( 'utils', () => {
 				connectedFailureActionCreator
 			);
 
-			const dispatchResult = actionCreator( 123 )( dispatch );
-			expect( loadingActionCreator ).to.be.calledWith( 123 );
-
-			return dispatchResult.then( () => {
-				expect( failureActionCreator ).to.be.calledWith( 'error_data' );
-				expect( successActionCreator ).not.to.be.called;
-			} );
+			await actionCreator( 123 )( dispatch );
+			jestExpect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
+			jestExpect( failureActionCreator ).toHaveBeenCalledWith( 'error_data' );
+			jestExpect( successActionCreator ).not.toHaveBeenCalled();
 		} );
 
-		test( 'should cache same parameters successful call', () => {
+		test( 'should cache same parameters successful call', async () => {
 			const actionCreator = cachingActionCreatorFactory(
 				successfulWorker,
 				connectedLoadingActionCreator,
@@ -889,13 +879,15 @@ describe( 'utils', () => {
 				connectedFailureActionCreator
 			);
 
-			const firstCall = actionCreator( 123 )( dispatch );
-			const secondCall = firstCall.then( () => actionCreator( 123 )( dispatch ) );
+			const callActionCreator = () => actionCreator( 123 )( dispatch );
 
-			return secondCall.then( () => expect( successfulWorker ).to.be.calledOnce );
+			await callActionCreator();
+			await callActionCreator();
+
+			jestExpect( successfulWorker ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		test( 'should not cache same parameters failed call', () => {
+		test( 'should not cache same parameters failed call', async () => {
 			const actionCreator = cachingActionCreatorFactory(
 				failingWorker,
 				connectedLoadingActionCreator,
@@ -905,12 +897,10 @@ describe( 'utils', () => {
 
 			const callActionCreator = () => actionCreator( 123 )( dispatch );
 
-			const firstCall = callActionCreator();
-			const secondCall = firstCall.then( callActionCreator, callActionCreator );
+			await callActionCreator();
+			await callActionCreator();
 
-			return Promise.all( [ firstCall, secondCall ] ).then(
-				() => expect( failingWorker ).to.be.calledTwice
-			);
+			jestExpect( failingWorker ).toHaveBeenCalledTimes( 2 );
 		} );
 	} );
 } );
