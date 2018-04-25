@@ -131,7 +131,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		const { chartTitle, dataSeriesInfo } = this.props;
 		const { transformedData } = this.state;
 
-		return !! transformData ? (
+		return !! transformedData ? (
 			<Fragment>
 				<PieChart data={ transformedData } title={ chartTitle } />
 				<PieChartLegend data={ transformedData } />
