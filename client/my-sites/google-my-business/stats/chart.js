@@ -4,7 +4,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
@@ -125,9 +125,34 @@ class GoogleMyBusinessStatsChart extends Component {
 			event.target.value
 		);
 
-	render() {
-		const { chartTitle, chartType, description, interval, title } = this.props;
+	renderChart() {
+		const { chartTitle, chartType } = this.props;
 		const { transformedData } = this.state;
+
+		if ( ! transformedData ) {
+			return null;
+		}
+
+		if ( chartType === 'pie' ) {
+			return (
+				<Fragment>
+					<PieChart data={ transformedData } title={ chartTitle } />
+					<PieChartLegend data={ transformedData } />
+				</Fragment>
+			);
+		}
+
+		return (
+			<LineChart
+				fillArea
+				data={ transformedData }
+				renderTooltipForDatanum={ this.props.renderTooltipForDatanum }
+			/>
+		);
+	}
+
+	render() {
+		const { description, interval, title } = this.props;
 
 		return (
 			<div>
@@ -150,20 +175,7 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="quarter">{ 'Quarter' }</option>
 					</select>
 
-					<div className="gmb-stats__metric-chart">
-						{ chartType === 'pie' ? (
-							<div>
-								<PieChart data={ transformedData } title={ chartTitle } />
-								<PieChartLegend data={ transformedData } />
-							</div>
-						) : (
-							<LineChart
-								fillArea
-								data={ transformedData }
-								renderTooltipForDatanum={ this.props.renderTooltipForDatanum }
-							/>
-						) }
-					</div>
+					<div className="gmb-stats__metric-chart">{ this.renderChart() }</div>
 				</Card>
 			</div>
 		);
@@ -178,7 +190,13 @@ export default connect(
 		return {
 			siteId,
 			interval,
-			data: getGoogleMyBusinessStats( state, siteId, ownProps.statType, interval, getAggregation( ownProps ) ),
+			data: getGoogleMyBusinessStats(
+				state,
+				siteId,
+				ownProps.statType,
+				interval,
+				getAggregation( ownProps )
+			),
 		};
 	},
 	{
