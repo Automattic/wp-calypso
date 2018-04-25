@@ -166,7 +166,7 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	render() {
-		const { chartType, description, interval, title } = this.props;
+		const { chartType, description, interval, title, translate } = this.props;
 
 		return (
 			<div>
