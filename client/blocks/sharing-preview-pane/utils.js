@@ -61,13 +61,11 @@ export const getSummaryForPost = ( post, translate, maxWords = 60 ) => {
 	if ( ! post ) {
 		return null;
 	}
-
-	const content = trim( striptags( formatExcerpt( post.content ) ) );
+	const content = trim( striptags( post.content ) );
 	const words = content.split( ' ' );
-
 	return (
-		words.slice( 0, maxWords ).join( ' ' ) +
-		( words.length > maxWords
+		words.slice( 0, maxWords - 1 ).join( ' ' ) +
+		( words.length > maxWords - 1
 			? ' ' + translate( '[ more ]', { comment: 'Truncation of post content in a FB share.' } )
 			: '' )
 	);
