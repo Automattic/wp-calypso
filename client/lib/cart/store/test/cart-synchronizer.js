@@ -21,12 +21,13 @@ const poller = {
 };
 
 describe( 'cart-synchronizer', () => {
-	let applyCoupon, emptyCart;
+	let applyCoupon, applyInstallments, emptyCart;
 
 	beforeAll( () => {
 		const cartValues = require( 'lib/cart-values' );
 
 		applyCoupon = cartValues.applyCoupon;
+		applyInstallments = cartValues.applyInstallments;
 		emptyCart = cartValues.emptyCart;
 	} );
 
@@ -47,6 +48,7 @@ describe( 'cart-synchronizer', () => {
 
 			synchronizer.fetch();
 			synchronizer.update( applyCoupon( 'foo' ) );
+			synchronizer.update( applyInstallments( 3 ) );
 
 			assert.throws( () => {
 				synchronizer.getLatestValue();
@@ -56,9 +58,13 @@ describe( 'cart-synchronizer', () => {
 			assert.equal( synchronizer.getLatestValue().coupon, 'foo' );
 			assert.equal( wpcom.getRequest( 1 ).method, 'POST' );
 			assert.equal( wpcom.getRequest( 1 ).cart.coupon, 'foo' );
+			assert.equal( wpcom.getRequest( 1 ).cart.installments, 3 );
 
 			wpcom.resolveRequest( 1, applyCoupon( 'bar' )( serverCart ) );
 			assert.equal( synchronizer.getLatestValue().coupon, 'bar' );
+
+			wpcom.resolveRequest( 1, applyInstallments( 10 )( serverCart ) );
+			assert.equal( synchronizer.getLatestValue().installments, 10 );
 		} );
 	} );
 
