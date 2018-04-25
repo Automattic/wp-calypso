@@ -34,12 +34,17 @@ export function items( state = [], action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDER_REFUNDS_REQUEST_SUCCESS:
 			return action.refunds;
+		case WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS:
+			return [ ...state, action.refund ];
 		default:
 			return state;
 	}
 }
 
-export default keyedReducer( 'orderId', combineReducers( {
-	isSaving,
-	items,
-} ) );
+export default keyedReducer(
+	'orderId',
+	combineReducers( {
+		isSaving,
+		items,
+	} )
+);

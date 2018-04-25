@@ -9,7 +9,6 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import order from '../../test/fixtures/order';
 import reducer from '../reducer';
 import { refunds } from './fixtures/refunds';
 import {
@@ -48,7 +47,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 				siteId: 123,
 				orderId: 42,
-				order,
+				refund: refunds[ 0 ],
 			};
 			const newState = reducer(
 				{
@@ -62,7 +61,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( {
 				42: {
 					isSaving: false,
-					items: [],
+					items: [ refunds[ 0 ] ],
 				},
 			} );
 		} );
