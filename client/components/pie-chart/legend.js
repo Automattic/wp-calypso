@@ -5,7 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { isEqual, sortBy } from 'lodash';
+import { sortBy, sumBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,42 +15,42 @@ import LegendItem from './legend-item';
 
 const NUM_COLOR_SECTIONS = 3;
 
+function transformData( data ) {
+	return sortBy( data, datum => datum.value )
+		.reverse()
+		.map( ( datum, index ) => ( {
+			...datum,
+			sectionNum: index % NUM_COLOR_SECTIONS,
+		} ) );
+}
+
 class PieChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
 	};
 
-	state = this.processData( this.props.data );
+	state = {
+		data: null,
+		dataTotal: 0,
+	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props.data, nextProps.data ) ) {
-			this.setState( this.processData( nextProps.data ) );
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.data !== prevState.data ) {
+			return {
+				data: nextProps.data,
+				dataTotal: sumBy( nextProps.data, datum => datum.value ),
+				transformedData: transformData( nextProps.data ),
+			};
 		}
-	}
 
-	sortDataAndAssignSections( data ) {
-		return sortBy( data, datum => datum.value )
-			.reverse()
-			.map( ( datum, index ) => ( {
-				...datum,
-				sectionNum: index % NUM_COLOR_SECTIONS,
-			} ) );
-	}
-
-	processData( data ) {
-		const sortedData = this.sortDataAndAssignSections( data );
-
-		return {
-			data: sortedData,
-			dataTotal: sortedData.reduce( ( total, datum ) => total + datum.value, 0 ),
-		};
+		return null;
 	}
 
 	render() {
-		const { data, dataTotal } = this.state;
+		const { transformedData, dataTotal } = this.state;
 		return (
 			<div className={ 'pie-chart__legend' }>
-				{ data.map( datum => {
+				{ transformedData.map( datum => {
 					return (
 						<LegendItem
 							key={ datum.name }
