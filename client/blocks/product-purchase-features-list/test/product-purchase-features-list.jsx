@@ -256,3 +256,39 @@ describe( 'ProductPurchaseFeaturesList feature functions', () => {
 		assert.equal( audioPosts.props().plan, PLAN_PREMIUM );
 	} );
 } );
+
+describe( '<HappinessSupportCard isJetpackFreePlan', () => {
+	const props = {
+		plan: PLAN_JETPACK_FREE,
+		selectedSite: {
+			plan: PLAN_JETPACK_FREE,
+		},
+	};
+	test( 'Should set isJetpackFreePlan for free plan', () => {
+		const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
+		const happinessSupport = comp.find( 'HappinessSupportCard' );
+		expect( happinessSupport.prop( 'isJetpackFreePlan' ) ).toBe( true );
+	} );
+} );
+
+describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
+	[
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_JETPACK_BUSINESS,
+		PLAN_JETPACK_BUSINESS_MONTHLY,
+	].forEach( plan => {
+		const props = {
+			plan: plan,
+			isPlaceholder: false,
+			selectedSite: {
+				plan,
+			},
+		};
+		test( `Should be eligible for live chat for ${ plan }`, () => {
+			const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
+			const happinessSupport = comp.find( 'HappinessSupportCard' );
+			expect( happinessSupport.prop( 'showLiveChatButton' ) ).toBe( true );
+		} );
+	} );
+} );
