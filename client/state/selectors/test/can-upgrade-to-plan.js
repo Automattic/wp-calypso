@@ -7,7 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { canUpgradeToPlan } from '..';
+import { canUpgradeToPlan } from 'state/selectors';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -23,7 +23,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
-} from '../constants';
+} from 'lib/plans/constants';
 
 describe( 'canUpgradeToPlan', () => {
 	const makeSite = productSlug => ( {
