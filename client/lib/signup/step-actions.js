@@ -16,7 +16,7 @@ import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 const user = userFactory();
 import { getSavedVariations } from 'lib/abtest';
-import SignupCart from 'lib/signup/cart';
+import * as SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { cartItems } from 'lib/cart-values';
@@ -27,9 +27,9 @@ import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/
 import { getSiteId } from 'state/selectors';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
+import { getProductsList } from 'state/products-list/selectors';
 import { requestSites } from 'state/sites/actions';
 import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
-import { getProductsList } from 'state/products-list/selectors';
 import { promisify } from '../../utils';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -61,7 +61,9 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			}
 		}
 
-		SignupCart.createCart( cartKey, domainChoiceCart, error =>
+		const productsList = getProductsList( reduxStore.getState() );
+
+		SignupCart.createCart( cartKey, domainChoiceCart, productsList, error =>
 			callback( error, providedDependencies )
 		);
 	} else if ( designType === 'existing-site' ) {
@@ -69,10 +71,12 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			siteId,
 			siteSlug,
 		};
+		const productsList = getProductsList( reduxStore.getState() );
 
 		SignupCart.createCart(
 			siteId,
 			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
+			productsList,
 			error => {
 				callback( error, providedDependencies );
 				page.redirect( `/checkout/${ siteSlug }` );
@@ -182,9 +186,10 @@ export function createSiteWithCart(
 					themeItem,
 					privacyItem,
 				].filter( item => item );
+				const productsList = getProductsList( reduxStore.getState() );
 
 				if ( newCartItems.length ) {
-					SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
+					SignupCart.addToCart( siteId, newCartItems, productsList, function( cartError ) {
 						callback( cartError, providedDependencies );
 					} );
 				} else {
@@ -310,7 +315,7 @@ export function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
-export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
+export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem }, reduxStore ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		defer( callback );
@@ -319,8 +324,9 @@ export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } )
 	}
 
 	const newCartItems = [ cartItem, privacyItem ].filter( item => item );
+	const productsList = getProductsList( reduxStore.getState() );
 
-	SignupCart.addToCart( siteId, newCartItems, error =>
+	SignupCart.addToCart( siteId, newCartItems, productsList, error =>
 		callback( error, { cartItem, privacyItem } )
 	);
 }

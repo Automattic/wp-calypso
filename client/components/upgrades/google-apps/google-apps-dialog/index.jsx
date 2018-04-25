@@ -17,6 +17,7 @@ import { get } from 'lodash';
 import Button from 'components/button';
 import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
+import QueryProducts from 'components/data/query-products-list';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
 import {
@@ -26,7 +27,6 @@ import {
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import QueryProducts from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
 
 class GoogleAppsDialog extends React.Component {

@@ -20,10 +20,10 @@ class MyComponent extends React.Component {
 		return (
 			<EmailData
 				component={ MyChildComponent }
-				productsList={ productsList }
 				selectedDomainName={ selectedDomainName }
 				context={ context }
-				sites={ sites } />
+				sites={ sites }
+			/>
 		);
 	}
 }
@@ -35,7 +35,6 @@ The component expects to receive all listed props:
 
 * `component` - mentioned above
 * `context` - a request context
-* `productsList` - a collection of all the products users can have on WordPress.com
 * `selectedDomainName` - the domain name currently selected 
 * `sites` - a list of user sites 
 

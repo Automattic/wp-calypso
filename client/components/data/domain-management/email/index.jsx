@@ -54,7 +54,6 @@ class EmailData extends React.Component {
 		analyticsTitle: PropTypes.string,
 		component: PropTypes.func.isRequired,
 		context: PropTypes.object.isRequired,
-		productsList: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.object.isRequired,
 		sitePlans: PropTypes.object.isRequired,

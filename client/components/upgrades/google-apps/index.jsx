@@ -22,7 +22,6 @@ class GoogleApps extends Component {
 		cart: PropTypes.object,
 		domain: PropTypes.string.isRequired,
 		onGoBack: PropTypes.func.isRequired,
-		productsList: PropTypes.object.isRequired,
 		onAddGoogleApps: PropTypes.func.isRequired,
 		onClickSkip: PropTypes.func.isRequired,
 		onSave: PropTypes.func,
@@ -63,7 +62,6 @@ class GoogleApps extends Component {
 
 				<GoogleAppsDialog
 					domain={ this.props.domain }
-					productsList={ this.props.productsList }
 					onClickSkip={ this.props.onClickSkip }
 					onGoBack={ this.props.onGoBack }
 					onAddGoogleApps={ this.props.onAddGoogleApps }

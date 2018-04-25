@@ -7,7 +7,7 @@ import { flatten, filter, find, get, isEmpty, isEqual, reduce, startsWith } from
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -73,7 +73,7 @@ import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 
-class Checkout extends React.Component {
+export class Checkout extends Component {
 	static propTypes = {
 		cards: PropTypes.array.isRequired,
 		couponCode: PropTypes.string,
@@ -164,6 +164,7 @@ class Checkout extends React.Component {
 	}
 
 	getPlanProducts() {
+		// TODO: props.cart.products isn't defined in propTypes and is unsafely accessed, fix this.
 		return this.props.cart.products.filter( ( { product_slug } ) => getPlan( product_slug ) );
 	}
 
@@ -566,7 +567,7 @@ class Checkout extends React.Component {
 	}
 
 	isLoading() {
-		const isLoadingCart = ! this.props.cart.hasLoadedFromServer;
+		const isLoadingCart = ! this.props.cart.hasLoadedFromServer; //@TODO is this a function? Should it be invoked for a bool?
 		const isLoadingProducts = this.props.isProductsListFetching;
 		const isLoadingPlans = this.props.isPlansListFetching;
 		const isLoadingSitePlans = this.props.isSitePlansListFetching;
