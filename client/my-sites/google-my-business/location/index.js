@@ -67,7 +67,7 @@ GoogleMyBusinessLocation.propTypes = {
 		ID: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired,
 		description: PropTypes.string.isRequired,
-		picture: PropTypes.string.isRequired,
+		picture: PropTypes.string,
 		verified: PropTypes.bool.isRequired,
 	} ).isRequired,
 	translate: PropTypes.func.isRequired,
