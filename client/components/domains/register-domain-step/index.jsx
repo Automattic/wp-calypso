@@ -33,7 +33,6 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
@@ -49,6 +48,7 @@ import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import DropdownFilters from 'components/domains/search-filters/dropdown-filters';
 import FilterResetNotice from 'components/domains/search-filters/filter-reset-notice';
+import TldFilterBar from 'components/domains/search-filters/tld-filter-bar';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
@@ -387,28 +387,6 @@ class RegisterDomainStep extends React.Component {
 					onReset={ this.onFiltersReset }
 					onSubmit={ this.onFiltersSubmit }
 				/>
-			)
-		);
-	}
-
-	renderTldButtons() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
-		const { availableTlds, lastFilters: { tlds: selectedTlds } } = this.state;
-		return (
-			isKrackenUi && (
-				<CompactCard className="register-domain-step__tld-buttons">
-					{ availableTlds.slice( 0, 8 ).map( tld => (
-						<Button
-							className={ classNames( { 'is-active': includes( selectedTlds, tld ) } ) }
-							data-selected={ includes( selectedTlds, tld ) }
-							key={ tld }
-							onClick={ this.toggleTldInFilter }
-							value={ tld }
-						>
-							.{ tld }
-						</Button>
-					) ) }
-				</CompactCard>
 			)
 		);
 	}
@@ -1020,7 +998,18 @@ class RegisterDomainStep extends React.Component {
 				fetchAlgo={ fetchAlgo }
 				cart={ this.props.cart }
 			>
-				{ this.renderTldButtons() }
+				{ config.isEnabled( 'domains/kracken-ui/filters' ) && (
+					<TldFilterBar
+						availableTlds={ this.state.availableTlds }
+						filters={ this.state.filters }
+						isSignupStep={ this.props.isSignupStep }
+						lastFilters={ this.state.lastFilters }
+						onChange={ this.onFiltersChange }
+						onReset={ this.onFiltersReset }
+						onSubmit={ this.onFiltersSubmit }
+						showPlaceholder={ this.state.loadingResults || ! suggestions }
+					/>
+				) }
 			</DomainSearchResults>
 		);
 	}

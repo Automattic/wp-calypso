@@ -113,20 +113,6 @@
 	}
 }
 
-.register-domain-step__tld-buttons {
-	display: flex;
-	justify-content: space-between;
-
-	.button {
-		flex-grow: 1;
-		margin-right: 1em;
-
-		&:last-child {
-			margin-right: 0;
-		}
-	}
-}
-
 .register-domain-step {
 	.button.is-active {
 		background: $gray-lighten-30;

@@ -70,14 +70,58 @@
 
 .search-filters__buttons {
 	display: flex;
+	flex-flow: row wrap;
 	justify-content: space-between;
 
 	.button {
 		flex: 1 0 auto;
-		padding: 0.5em 3em 0.5em 3em;
 		margin-right: 1em;
 		&:last-child {
 			margin-right: 0;
+		}
+
+		&.search-filters__button--is-placeholder {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: $gray-lighten-30;
+			color: transparent;
+			height: 40px;
+		}
+	}
+
+	&.search-filters__tld-filter-bar--is-domain-management
+		.search-filters__tld-button:nth-child(n + 6) {
+		display: none;
+	}
+
+	@include breakpoint( '<960px' ) {
+		&.is-compact {
+			padding-bottom: 0.5em;
+		}
+
+		.button {
+			margin-bottom: 0.5em;
+		}
+
+		.search-filters__tld-button:nth-child(n + 7) {
+			display: none;
+		}
+	}
+
+	@include breakpoint( '<800px' ) {
+		.search-filters__tld-button:nth-child(n + 5) {
+			display: none;
+		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		.search-filters__tld-button:nth-child(n + 4) {
+			display: none;
+		}
+	}
+
+	@include breakpoint( '<480px' ) {
+		.search-filters__tld-button:nth-child(n + 2) {
+			display: none;
 		}
 	}
 }
