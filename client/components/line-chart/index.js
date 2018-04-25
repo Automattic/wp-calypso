@@ -10,7 +10,7 @@ import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } fr
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
 import { select as d3Select } from 'd3-selection';
-import { concat } from 'lodash';
+import { concat, first, last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ import Tooltip from 'components/tooltip';
 const POINT_SIZE = 3;
 const END_POINT_SIZE = 1;
 const MAX_DRAW_POINTS_SIZE = 10;
-const CHART_MARGIN = 0.05;
+const CHART_MARGIN = 0.01;
 
 class LineChart extends Component {
 	static propTypes = {
@@ -113,29 +113,22 @@ class LineChart extends Component {
 			const drawFullSeries = dataSeries.length < MAX_DRAW_POINTS_SIZE;
 			const colorNum = dataSeriesIndex % 3;
 
-			dataSeries.forEach( ( datum, datumIndex ) => {
-				let pointSize, className;
-
-				if ( ! drawFullSeries && ( datumIndex === 0 || datumIndex === dataSeries.length - 1 ) ) {
-					pointSize = END_POINT_SIZE;
-					className = `line-chart__line-point line-chart__line-end-point-${ colorNum }`;
+			( drawFullSeries ? dataSeries : [ first( dataSeries ), last( dataSeries ) ] ).forEach(
+				datum => {
+					svg
+						.append( 'circle' )
+						.attr(
+							'class',
+							`line-chart__line-point line-chart__line${
+								drawFullSeries ? '' : '-end'
+							}-point-${ colorNum }`
+						)
+						.attr( 'cx', xScale( datum.date ) )
+						.attr( 'cy', yScale( datum.value ) )
+						.attr( 'r', drawFullSeries ? POINT_SIZE : END_POINT_SIZE )
+						.datum( datum );
 				}
-
-				if ( drawFullSeries ) {
-					pointSize = POINT_SIZE;
-					className = `line-chart__line-point line-chart__line-point-${ colorNum }`;
-				} else {
-					return;
-				}
-
-				svg
-					.append( 'circle' )
-					.attr( 'class', className )
-					.attr( 'cx', xScale( datum.date ) )
-					.attr( 'cy', yScale( datum.value ) )
-					.attr( 'r', pointSize )
-					.datum( datum );
-			} );
+			);
 		} );
 	};
 
@@ -213,9 +206,7 @@ class LineChart extends Component {
 		const datum = circle.datum();
 
 		return (
-			<span className="line-chart__tooltip">
-				{ this.props.renderTooltipForDatanum( datum ) }
-			</span>
+			<span className="line-chart__tooltip">{ this.props.renderTooltipForDatanum( datum ) }</span>
 		);
 	};
 

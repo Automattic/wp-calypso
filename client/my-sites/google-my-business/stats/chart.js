@@ -14,8 +14,11 @@ import { get } from 'lodash';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import LineChart from 'components/line-chart';
+import LineChartPlaceholder from 'components/line-chart/placeholder';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
+import PieChartPlaceholder from 'components/pie-chart/placeholder';
+import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
 import SectionHeader from 'components/section-header';
 import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { getGoogleMyBusinessStats } from 'state/selectors';
@@ -124,11 +127,26 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 
 	renderChart() {
-		const { chartTitle, chartType } = this.props;
+		const { chartTitle, chartType, dataSeriesInfo, renderTooltipForDatanum } = this.props;
 		const { transformedData } = this.state;
 
 		if ( ! transformedData ) {
-			return null;
+			if ( chartType === 'pie' ) {
+				return (
+					<Fragment>
+						<div>
+							<PieChartPlaceholder title={ !! chartTitle } />
+							<PieChartLegendPlaceholder
+								numLegendElements={ Object.keys( dataSeriesInfo ).length }
+							/>
+						</div>
+					</Fragment>
+				);
+			} else {
+				return (
+					<LineChartPlaceholder/>
+				);
+			}
 		}
 
 		if ( chartType === 'pie' ) {
@@ -144,7 +162,7 @@ class GoogleMyBusinessStatsChart extends Component {
 			<LineChart
 				fillArea
 				data={ transformedData }
-				renderTooltipForDatanum={ this.props.renderTooltipForDatanum }
+				renderTooltipForDatanum={ renderTooltipForDatanum }
 			/>
 		);
 	}

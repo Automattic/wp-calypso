@@ -67,3 +67,8 @@
 	fill: $blue-light;
 	stroke: $blue-light;
 }
+
+.line-chart__placeholder {
+	@include placeholder();
+	padding-bottom: 50%;
+ }
