@@ -205,21 +205,19 @@ class Page extends Component {
 	}
 
 	setFrontPage() {
-		{
-			alert( 'This feature is still being developed.' );
-		}
+		alert( 'This feature is still being developed.' );
 	}
 
 	getFrontPageItem() {
+		if ( ! isEnabled( 'manage/pages/set-front-page' ) ) {
+			return null;
+		}
+
 		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
 			return null;
 		}
 
 		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
-			return null;
-		}
-
-		if ( ! isEnabled( 'manage/pages/set-front-page' ) ) {
 			return null;
 		}
 
