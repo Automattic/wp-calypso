@@ -8,6 +8,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { get, startsWith } from 'lodash';
 
 /**
@@ -75,6 +76,10 @@ export class FullPostView extends React.Component {
 		referralStream: PropTypes.string,
 	};
 
+	state = {
+		showFocusMode: false,
+	};
+
 	hasScrolledToCommentAnchor = false;
 
 	componentDidMount() {
@@ -137,6 +142,21 @@ export class FullPostView extends React.Component {
 		recordTrackForPost( 'calypso_reader_article_closed', this.props.post );
 
 		this.props.onClose && this.props.onClose();
+	};
+
+	toggleFocusMode = () => {
+		this.setState( { showFocusMode: ! this.state.showFocusMode } );
+
+		//cutting corners as it's a prototype only for now
+		//TODO reduxify to use showFocusMode at layout level
+		document.documentElement.querySelectorAll( '.layout' )[ 0 ].classList.toggle( 'is-focus-mode' );
+	};
+
+	handleResizeKeyPress = event => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			this.toggleFocusMode();
+		}
 	};
 
 	handleCommentClick = () => {
@@ -295,7 +315,7 @@ export class FullPostView extends React.Component {
 		}
 
 		const siteName = getSiteName( { site, post } );
-		const classes = { 'reader-full-post': true };
+		const classes = { 'reader-full-post': true, 'is-focus-mode': this.state.showFocusMode };
 		const showRelatedPosts = post && ! post.is_external && post.site_ID;
 		const relatedPostsFromOtherSitesTitle = translate(
 			'More on {{wpLink}}WordPress.com{{/wpLink}}',
@@ -385,6 +405,17 @@ export class FullPostView extends React.Component {
 									tagName="div"
 									likeSource={ 'reader' }
 								/>
+							) }
+							{ ! isLoading && (
+								<div
+									className="reader-full-post__resize-button"
+									onClick={ this.toggleFocusMode }
+									onKeyPress={ this.handleResizeKeyPress }
+									role="button"
+									tabIndex="0"
+								>
+									<Gridicon icon={ this.state.showFocusMode ? 'fullscreen-exit' : 'fullscreen' } />
+								</div>
 							) }
 						</div>
 					</div>
