@@ -17,6 +17,7 @@ import {
 	trackUpdatesLoaded,
 	trackScrollPage,
 	setPageTitle,
+	getStartDate,
 } from './controller-helper';
 import FeedError from 'reader/feed-error';
 import StreamComponent from 'reader/following/main';
@@ -128,6 +129,7 @@ const exported = {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
 		const mcKey = 'following';
+		const startDate = getStartDate( context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_following_loaded' );
@@ -139,6 +141,7 @@ const exported = {
 			key: 'following',
 			listName: i18n.translate( 'Followed Sites' ),
 			streamKey: 'following',
+			startDate,
 			recsStreamKey: 'custom_recs_posts_with_images',
 			showPrimaryFollowButtonOnCards: false,
 			trackScrollPage: trackScrollPage.bind(

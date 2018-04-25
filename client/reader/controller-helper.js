@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import i18n from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal Dependencies
@@ -17,6 +18,15 @@ export function trackPageLoad( path, title, readerView ) {
 		'reader_views',
 		readerView === 'full_post' ? readerView : readerView + '_load'
 	);
+}
+
+export function getStartDate( context ) {
+	if ( context.query && context.query.at ) {
+		const startDate = moment( context.query.at );
+		return startDate.isValid() ? startDate.toISOString() : null;
+	}
+
+	return null;
 }
 
 export function trackScrollPage( path, title, category, readerView, pageNum ) {

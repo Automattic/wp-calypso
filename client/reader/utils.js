@@ -9,8 +9,6 @@ import { every } from 'lodash';
  * Internal Dependencies
  */
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
-import { fillGap } from 'lib/feed-stream-store/actions';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { reduxGetState } from 'lib/redux-bridge';
 import { getPostByKey } from 'state/reader/posts/selectors';
 
@@ -26,13 +24,9 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-export function showSelectedPost( { store, replaceHistory, postKey, comments } ) {
+export function showSelectedPost( { replaceHistory, postKey, comments } ) {
 	if ( ! postKey ) {
 		return;
-	}
-
-	if ( postKey.isGap === true ) {
-		return handleGapClicked( postKey, store.id );
 	}
 
 	// rec block
@@ -80,17 +74,6 @@ export function showFullXPost( xMetadata ) {
 	} else {
 		window.open( xMetadata.postURL );
 	}
-}
-
-export function handleGapClicked( postKey, storeId ) {
-	if ( ! postKey || ! postKey.isGap || ! storeId ) {
-		return;
-	}
-
-	fillGap( storeId, postKey );
-	recordAction( 'fill_gap' );
-	recordGaEvent( 'Clicked Fill Gap' );
-	recordTrack( 'calypso_reader_filled_gap', { stream: storeId } );
 }
 
 export function showFullPost( { post, replaceHistory, comments } ) {

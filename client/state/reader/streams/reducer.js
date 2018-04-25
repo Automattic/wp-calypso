@@ -3,7 +3,8 @@
 /**
  * External dependencies
  */
-import { findIndex, uniqBy, some } from 'lodash';
+import { findIndex, uniqBy } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import {
 	READER_STREAMS_UPDATES_RECEIVE,
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
+	READER_STREAMS_SHOW_UPDATES,
 } from 'state/action-types';
 import { keyToString, keyForPost, keysAreEqual } from 'reader/post-key';
 
@@ -34,32 +36,60 @@ export const items = ( state = [], action ) => {
 			if ( newState.length > state.length ) {
 				return newState;
 			}
+			return state;
+		case READER_STREAMS_SHOW_UPDATES:
+			return [ ...action.payload.items, ...state ];
 	}
 	return state;
 };
 
+export const PENDING_ITEMS_DEFAULT = { lastUpdated: null, items: [] };
 /*
  * Contains new items in the stream that we've learned about since initial render
  * but don't want to display just yet.
  * This is the data backing the orange "${number} new posts" pill.
-
- * Note: this functionality is likley unused and therefore probably will need some modifications
- * before it can be utilized well.
  */
-export const pendingItems = ( state = [], action ) => {
+export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
+	let posts, moments, maxDate;
 	switch ( action.type ) {
+		case READER_STREAMS_PAGE_RECEIVE:
+			posts = action.payload.posts;
+			moments = posts.map( p => p.date ).map( date => moment( date ) );
+			maxDate = moment.max( moments );
+
+			if ( ! state.lastUpdated || state.lastUpdated < maxDate ) {
+				return { ...state, lastUpdated: maxDate };
+			}
+			return state;
 		case READER_STREAMS_UPDATES_RECEIVE:
-			const { posts } = action.payload;
+			posts = action.payload.posts;
+			// only retain posts that are newer than ones we already have
+			if ( state.lastUpdated ) {
+				posts = posts.filter( p => moment( p.date ) > state.lastUpdated );
+				if ( posts.length === 0 ) {
+					return state;
+				}
+			}
+
 			const postKeys = posts.map( keyForPost );
 
-			const newState = uniqBy( postKeys, keyToString );
-			if ( newState.length !== state.length ) {
-				return newState;
+			const newItems = uniqBy( postKeys, keyToString );
+			moments = posts.map( p => p.date ).map( date => moment( date ) );
+			maxDate = moment.max( moments );
+
+			// there might be a gap if we didn't have to filter something out
+			if ( posts.length === action.payload.posts.length ) {
+				const minDate = moment.min( moments );
+				newItems.push( {
+					isGap: true,
+					from: state.lastUpdated,
+					to: minDate,
+				} );
 			}
-			const hasChanges = some( newState, ( key, idx ) => ! keysAreEqual( key, state[ idx ] ) );
-			if ( hasChanges ) {
-				return newState;
-			}
+
+			return { lastUpdated: maxDate, items: newItems };
+		case READER_STREAMS_SHOW_UPDATES:
+			return { ...state, items: [] };
 	}
 	return state;
 };

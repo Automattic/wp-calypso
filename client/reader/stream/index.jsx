@@ -288,20 +288,20 @@ class ReaderStream extends React.Component {
 		}
 	};
 
-	poll() {
+	poll = () => {
 		const { streamKey } = this.props;
 		this.props.requestPage( { streamKey, isPoll: true } );
-	}
+	};
 
 	fetchNextPage = options => {
-		const { streamKey, stream } = this.props;
+		const { streamKey, stream, startDate } = this.props;
 		if ( options.triggeredByScroll ) {
 			// this.props.trackScrollPage( this.props.postsStore.getPage() + 1 );
 		}
 
 		const pageHandle = includes( streamKey, 'rec' ) // recs api requires offsets
 			? { offset: stream.items.length }
-			: stream.pageHandle;
+			: stream.pageHandle || { before: startDate };
 		this.props.requestPage( { streamKey, pageHandle } );
 	};
 
@@ -309,12 +309,13 @@ class ReaderStream extends React.Component {
 		const { streamKey } = this.props;
 		this.props.onUpdatesShown();
 		this.props.showUpdates( { streamKey } );
+		// @todo: do we need to shuffle?
 		// if ( this.props.recommendationsStore ) {
 		// 	shufflePosts( this.props.recommendationsStore.id );
 		// }
-		// if ( this._list ) {
-		// 	this._list.scrollToTop();
-		// }
+		if ( this._list ) {
+			this._list.scrollToTop();
+		}
 	};
 
 	renderLoadingPlaceholders = () => {
@@ -409,7 +410,7 @@ class ReaderStream extends React.Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
-				<Interval onTick={ this.poll } period={ EVERY_MINUTE } />
+				<Interval onTick={ this.poll } period={ 10000 } />
 				{ this.props.isMain &&
 					this.props.showMobileBackToSidebar && (
 						<MobileBackToSidebar>
@@ -419,7 +420,7 @@ class ReaderStream extends React.Component {
 
 				<UpdateNotice
 					count={ updateCount }
-					onClick={ this.props.showUpdates }
+					onClick={ this.showUpdates }
 					pendingPostKeys={ pendingItems }
 				/>
 				{ this.props.children }
@@ -444,8 +445,8 @@ export default connect(
 			} ),
 			stream,
 			recsStream: getStream( state, recsStreamKey ),
-			pendingItems: stream.pendingItems,
-			updateCount: stream.pendingItems.length,
+			pendingItems: stream.pendingItems.items,
+			updateCount: stream.pendingItems.items.length,
 			selectedPostKey: stream.selected,
 			selectedPost: getPostByKey( state, stream.selected ),
 			lastPage: stream.lastPage,

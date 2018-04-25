@@ -68,9 +68,14 @@ class PostLifecycle extends React.Component {
 			return <EmptySearchRecommendedPost post={ post } site={ postKey } />;
 		} else if ( postKey.isGap ) {
 			return (
-				<ListGap gap={ postKey } selected={ isSelected } handleClick={ this.props.handleClick } />
+				<ListGap
+					gap={ postKey }
+					selected={ isSelected }
+					handleClick={ this.props.handleClick }
+					streamKey={ streamKey }
+				/>
 			);
-		} else if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
+		} else if ( ! post ) {
 			return (
 				<Fragment>
 					<QueryReaderPost postKey={ postKey } />
@@ -86,13 +91,10 @@ class PostLifecycle extends React.Component {
 			return <PostBlocked post={ post } />;
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
-			// const xPostedTo = this.props.postsStore.getSitesCrossPostedTo(
-			// 	xMetadata.commentURL || xMetadata.postURL
-			// );
+			// @TODO: xposts don't dedupe. we need to add that to redux.
 			return (
 				<CrossPost
 					{ ...omit( this.props, 'store' ) }
-					// xPostedTo={ xPostedTo }
 					xMetadata={ xMetadata }
 					post={ post }
 					postKey={ postKey }
@@ -100,8 +102,7 @@ class PostLifecycle extends React.Component {
 			);
 		}
 
-		// const xPostedTo = this.props.postsStore.getSitesCrossPostedTo( post.URL );
-		return <Post { ...this.props } /* xPostedTo={ xPostedTo }  */ />;
+		return <Post { ...this.props } />;
 	}
 }
 

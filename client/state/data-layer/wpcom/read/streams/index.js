@@ -14,7 +14,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import warn from 'lib/warn';
 import { READER_STREAMS_PAGE_REQUEST } from 'state/action-types';
-import { receivePage } from 'state/reader/streams/actions';
+import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
 import { errorNotice } from 'state/notices/actions';
 import { receivePosts } from 'state/reader/posts/actions';
 
@@ -40,7 +40,8 @@ function streamKeySuffix( streamKey ) {
 	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
 }
 
-const PER_PAGE = 6;
+const PER_RECS = 6;
+const PER_POLL = 5;
 
 export const getQueryString = ( extras = {} ) => {
 	const meta = [ 'post', 'discover_original_post' ].join( ',' );
@@ -48,12 +49,33 @@ export const getQueryString = ( extras = {} ) => {
 };
 const defaultQueryFn = getQueryString;
 
-function getQueryStringForPoll( extras ) {
+const SITE_LIMITER_FIELDS = [ 'ID', 'site_ID', 'date', 'feed_ID', 'feed_item_ID', 'global_ID' ];
+function getQueryStringForPoll( extraFields = [], extraQueryParams = {} ) {
 	return {
 		orderBy: 'date',
-		fields: [ 'ID', 'site_ID', 'date', 'feed_ID', 'feed_item_ID', 'global_ID' ].join( ',' ),
+		number: PER_POLL,
+		fields: [ SITE_LIMITER_FIELDS, ...extraFields ].join( ',' ),
+		...extraQueryParams,
 	};
 }
+
+// function trainTracksProxyForStream( stream, callback ) {
+// 	return function( err, response ) {
+// 		const eventName = 'calypso_traintracks_render';
+// 		if ( response && response.algorithm ) {
+// 			stream.algorithm = response.algorithm;
+// 		}
+// 		forEach( response && response.posts, post => {
+// 			if ( post.railcar ) {
+// 				if ( stream.isQuerySuggestion ) {
+// 					post.railcar.rec_result = 'suggestion';
+// 				}
+// 				analytics.tracks.recordEvent( eventName, post.railcar );
+// 			}
+// 		} );
+// 		callback( err, response );
+// 	};
+// }
 
 // Each object is a composed of:
 //   path: a function that given the action, returns The API path to hit
@@ -61,6 +83,7 @@ function getQueryStringForPoll( extras ) {
 const streamApis = {
 	following: {
 		path: () => '/read/following',
+		pollQuery: getQueryStringForPoll,
 	},
 	search: {
 		path: () => '/read/search',
@@ -71,25 +94,32 @@ const streamApis = {
 	},
 	feed: {
 		path: ( { streamKey } ) => `/read/feed/${ streamKeySuffix( streamKey ) }/posts`,
+		pollQuery: getQueryStringForPoll,
 	},
 	site: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/posts`,
+		pollQuery: getQueryStringForPoll,
 	},
 	conversations: {
 		path: () => '/read/conversations',
+		pollQuery: () => getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ] ),
 	},
 	featured: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/featured`,
 	},
 	a8c: {
 		path: () => '/read/a8c',
+		pollQuery: getQueryStringForPoll,
 	},
 	'conversations-a8c': {
 		path: () => '/read/conversations',
 		query: extras => getQueryString( { ...extras, index: 'a8c' } ),
+		pollQuery: () =>
+			getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], { index: 'a8c' } ),
 	},
 	likes: {
 		path: () => '/read/liked',
+		pollQuery: () => getQueryStringForPoll( [ 'date_liked' ] ),
 	},
 	recommendations_posts: {
 		path: () => '/read/recommendations/posts',
@@ -108,7 +138,7 @@ const streamApis = {
 				...extras,
 				meta: 'post,discover_original_post',
 				content_width: 675,
-				number: PER_PAGE,
+				number: PER_RECS,
 				orderBy: 'date',
 				seed: random( 0, 1000 ),
 				// algorithm: 'read:recommendations:posts/es/7',
@@ -118,6 +148,7 @@ const streamApis = {
 	},
 	tag: {
 		path: () => '/read/tags/:tag/posts',
+		pollQuery: () => getQueryStringForPoll( [ 'tagged_on' ] ),
 	},
 	list: {
 		path: ( { streamKey } ) => {
@@ -133,7 +164,7 @@ const streamApis = {
  * @returns {object} http action for data-layer to dispatch
  */
 export function requestPage( action ) {
-	const { payload: { streamKey, streamType, pageHandle } } = action;
+	const { payload: { streamKey, streamType, pageHandle, isPoll } } = action;
 	const api = streamApis[ streamType ];
 
 	if ( ! api ) {
@@ -141,13 +172,18 @@ export function requestPage( action ) {
 		return;
 	}
 
-	const { apiVersion = '1.2', path, query = defaultQueryFn } = api;
+	const {
+		apiVersion = '1.2',
+		path,
+		query = defaultQueryFn,
+		pollQuery = getQueryStringForPoll,
+	} = api;
 
 	return http( {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
-		query: query( { ...pageHandle }, action.payload ),
+		query: isPoll ? pollQuery() : query( { ...pageHandle }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );
@@ -160,7 +196,7 @@ export function fromApi( data ) {
 
 export function handlePage( action, data ) {
 	const { posts, date_range, meta, next_page } = data;
-	const { streamKey, query } = action.payload;
+	const { streamKey, query, isPoll } = action.payload;
 	let pageHandle = {};
 
 	if ( meta && meta.next_page ) {
@@ -178,8 +214,15 @@ export function handlePage( action, data ) {
 		const { after } = date_range;
 		pageHandle = { before: after };
 	}
+	const actions = [];
+	if ( isPoll ) {
+		actions.push( receiveUpdates( { streamKey, posts, query } ) );
+	} else {
+		actions.push( receivePage( { streamKey, query, posts, pageHandle } ) );
+		actions.push( receivePosts( posts ) );
+	}
 
-	return [ receivePosts( posts ), receivePage( { streamKey, query, posts, pageHandle } ) ];
+	return actions;
 }
 
 export function handleError() {

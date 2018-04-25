@@ -15,6 +15,7 @@ import {
 	READER_STREAMS_DISMISS_POST,
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'state/action-types';
+import { getReaderStream as getStream } from 'state/selectors';
 
 /**
  * Fetch posts into a stream
@@ -26,9 +27,10 @@ import {
  * @param  {object} query    The query for posts. Parameters vary by stream type.
  * @return {object}          The action object
  */
-export function requestPage( { streamKey, pageHandle, isPoll } ) {
+export function requestPage( { streamKey, pageHandle, isPoll = false, isGap = false } ) {
 	const indexOfColon = streamKey.indexOf( ':' );
 	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
+
 	return {
 		type: READER_STREAMS_PAGE_REQUEST,
 		payload: {
@@ -36,6 +38,7 @@ export function requestPage( { streamKey, pageHandle, isPoll } ) {
 			pageHandle,
 			streamType,
 			isPoll,
+			isGap,
 		},
 	};
 }
@@ -51,12 +54,13 @@ export function receivePage( { streamKey, pageHandle, posts } ) {
 	};
 }
 
-export function showUpdates( { streamKey } ) {
-	return {
+export const showUpdates = ( { streamKey } ) => ( dispatch, getState ) => {
+	const items = getStream( getState(), streamKey ).pendingItems.items;
+	return dispatch( {
 		type: READER_STREAMS_SHOW_UPDATES,
-		payload: { streamKey },
-	};
-}
+		payload: { streamKey, items },
+	} );
+};
 
 export function receiveUpdates( { streamKey, posts } ) {
 	return {
@@ -94,10 +98,11 @@ export function selectPrevItem( { streamKey, items } ) {
 }
 
 export function fillGap( { streamKey, gap } ) {
-	return {
-		type: READER_STREAMS_FILL_GAP,
-		payload: { streamKey, gap },
-	};
+	return requestPage( {
+		streamKey,
+		pageHandle: { before: gap.to.toISOString(), after: gap.from.toISOString() },
+		isGap: true,
+	} );
 }
 
 export function dismissPost( { streamKey, postId } ) {
