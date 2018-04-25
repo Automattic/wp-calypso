@@ -4,7 +4,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
@@ -135,10 +135,10 @@ class GoogleMyBusinessStatsChart extends Component {
 
 		if ( chartType === 'pie' ) {
 			return (
-				<div>
+				<Fragment>
 					<PieChart data={ transformedData } title={ chartTitle } />
 					<PieChartLegend data={ transformedData } />
-				</div>
+				</Fragment>
 			);
 		}
 
