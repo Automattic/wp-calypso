@@ -22,6 +22,6 @@ export const PAYMENT_PROCESSOR_EBANX_COUNTRIES = {
 		],
 	},
 	MX: {
-		fields: [],
+		fields: [ 'phone-number' ],
 	},
 };
