@@ -69,7 +69,7 @@ class KeyringConnectButton extends Component {
 		}
 
 		// keyringConnections are already filtered for this.props.service.ID
-		if ( this.props.keyringConnections.length > 0 ) {
+		if ( this.props.keyringConnections.length === 0 ) {
 			// If no connections exist, the service isn't connected
 			return 'not-connected';
 		}
