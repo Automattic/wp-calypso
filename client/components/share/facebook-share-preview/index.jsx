@@ -8,14 +8,17 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
+import { isNull } from 'lodash';
 
 export class FacebookSharePreview extends PureComponent {
 	static propTypes = {
+		articleContent: PropTypes.string,
 		articleSummary: PropTypes.string,
+		articleTitle: PropTypes.string,
 		articleUrl: PropTypes.string,
+		externalName: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
 		externalProfileUrl: PropTypes.string,
-		externalName: PropTypes.string,
 		imageUrl: PropTypes.string,
 		message: PropTypes.string,
 	};
@@ -74,21 +77,22 @@ export class FacebookSharePreview extends PureComponent {
 							</div>
 						</div>
 					</div>
-					<div className="facebook-share-preview__body">
-						<div className="facebook-share-preview__message">
-							{ message ? message : articleSummary }
-						</div>
-						<div className="facebook-share-preview__article-url-line">
-							<a className="facebook-share-preview__article-url" href={ articleUrl }>
-								{ articleUrl }
-							</a>
-						</div>
-						{ imageUrl && (
+
+					{ ! isNull( imageUrl ) && (
+						<div className="facebook-share-preview__body">
+							<div className="facebook-share-preview__message">
+								{ message ? message : articleSummary }
+							</div>
+							<div className="facebook-share-preview__article-url-line">
+								<a className="facebook-share-preview__article-url" href={ articleUrl }>
+									{ articleUrl }
+								</a>
+							</div>
 							<div className="facebook-share-preview__image-wrapper">
 								<img className="facebook-share-preview__image" src={ imageUrl } />
 							</div>
-						) }
-					</div>
+						</div>
+					) }
 				</div>
 			</div>
 		);
