@@ -64,15 +64,15 @@ const AddressSummary = ( { values, originalValues, countriesData, expandStateNam
 };
 
 const AddressSuggestion = ( {
-		values,
-		normalized,
-		selectNormalized,
-		selectNormalizedAddress,
-		editAddress,
-		confirmAddressSuggestion,
-		countriesData,
-		translate,
-	} ) => {
+	values,
+	normalized,
+	selectNormalized,
+	selectNormalizedAddress,
+	editAddress,
+	confirmAddressSuggestion,
+	countriesData,
+	translate,
+} ) => {
 	const onToggleSelectNormalizedAddress = ( value ) => () => selectNormalizedAddress( value );
 	const errorClass = 'error-notice';
 	return (

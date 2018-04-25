@@ -53,7 +53,7 @@ class PriceSummary extends Component {
 					className="label-purchase-modal__price-item-tooltip is-dialog-visible"
 					isVisible={ this.state.tooltipVisible }
 					context={ this.state.tooltipContext } >
-				{ translate( 'WooCommerce Services gives you access to USPS ' +
+					{ translate( 'WooCommerce Services gives you access to USPS ' +
 					'Commercial Pricing, which is discounted over Retail rates.' ) }
 				</Tooltip>
 			</div>

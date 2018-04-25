@@ -152,7 +152,7 @@ MediaValidationStore.hasErrors = function( siteId, itemId ) {
 };
 
 MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		items,
 		errors;
 
@@ -164,7 +164,7 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 			items = Array.isArray( action.data.media ) ? action.data.media : [ action.data ];
 			errors = items.reduce( function( memo, item ) {
-				var itemErrors;
+				let itemErrors;
 
 				MediaValidationStore.validateItem( action.site, item );
 

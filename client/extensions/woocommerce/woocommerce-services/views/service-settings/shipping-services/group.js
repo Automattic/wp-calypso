@@ -97,11 +97,11 @@ const ShippingServiceGroup = ( props ) => {
 				{ services.map( ( service, idx ) => {
 					const onUpdate = ( key, val ) => updateValue( [ service.id ].concat( key ), val );
 					return <ShippingServiceEntry
-							{ ...props }
-							{ ...{ service } }
-							updateValue={ onUpdate }
-							key={ idx }
-						/>;
+						{ ...props }
+						{ ...{ service } }
+						updateValue={ onUpdate }
+						key={ idx }
+					/>;
 				} ) }
 			</FoldableCard>
 		</div>

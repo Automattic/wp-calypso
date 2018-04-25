@@ -44,7 +44,7 @@ function updateDomainState( state, siteId, domainName, attributes ) {
 }
 
 function reducer( state, payload ) {
-	var { action } = payload,
+	let { action } = payload,
 		{ type, siteId } = action,
 		domainData,
 		privateDomain;

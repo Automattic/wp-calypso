@@ -27,8 +27,8 @@ export const fetchChecklist = action =>
 
 export const receiveChecklistSuccess = ( action, checklist ) =>
 	receiveSiteChecklist(
-			action.siteId,
-			checklist
+		action.siteId,
+		checklist
 	);
 
 const dispatchChecklistRequest = dispatchRequestEx( {

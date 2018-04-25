@@ -26,14 +26,14 @@ describe( 'observe()', () => {
 
 	describe( 'componentDidMount()', () => {
 		test( 'should call .on() on the props with the names as arguments', () => {
-			var mixin = observe( 'baba', 'dyado' ),
+			let mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado', 'pancho' );
 			mixin.componentDidMount.call( context );
 			assert.deepEqual( [ 'baba', 'dyado' ], context.onCalls );
 			assert.deepEqual( [], context.offCalls );
 		} );
 		test( 'should not call .on() if the props are missing', () => {
-			var mixin = observe( 'baba', 'dyado' ),
+			let mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'wink', 'blurp', 'foo' );
 			mixin.componentDidMount.call( context );
 			assert.deepEqual( [], context.onCalls );
@@ -43,14 +43,14 @@ describe( 'observe()', () => {
 
 	describe( 'componentWillUnmount', () => {
 		test( 'should call .off() on the props with the names as arguments', () => {
-			var mixin = observe( 'baba', 'dyado' ),
+			let mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'non-existant' );
 			mixin.componentWillUnmount.call( context );
 			assert.deepEqual( [], context.onCalls );
 			assert.deepEqual( [ 'baba' ], context.offCalls );
 		} );
 		test( 'should not call .off() on the props if the props are missing', () => {
-			var mixin = observe( 'baba', 'dyado' ),
+			let mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'non-existant' );
 			mixin.componentWillUnmount.call( context );
 			assert.deepEqual( [], context.onCalls );
@@ -60,14 +60,14 @@ describe( 'observe()', () => {
 
 	describe( 'componentWillReceiveProps', () => {
 		test( 'should not do anything if props did not change', () => {
-			var mixin = observe( 'baba', 'dyado' ),
+			let mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado', 'wink' );
 			mixin.componentWillReceiveProps.call( context, context.props );
 			assert.deepEqual( [], context.onCalls );
 			assert.deepEqual( [], context.offCalls );
 		} );
 		test( 'should re-bind the event handlers if the props reference changed', () => {
-			var mixin = observe( 'baba', 'dyado' ),
+			let mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado' );
 			mixin.componentWillReceiveProps.call( context, {
 				baba: context.props.baba,
@@ -77,14 +77,14 @@ describe( 'observe()', () => {
 			assert.deepEqual( [ 'dyado' ], context.offCalls );
 		} );
 		test( 'should only unbind the event if the prop goes missing, but not bind it', () => {
-			var mixin = observe( 'baba', 'dyado' ),
+			let mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado' );
 			mixin.componentWillReceiveProps.call( context, { baba: context.props.baba } );
 			assert.deepEqual( [], context.onCalls );
 			assert.deepEqual( [ 'dyado' ], context.offCalls );
 		} );
 		test( 'should only bind the event if the prop appears, but not unbind it', () => {
-			var mixin = observe( 'baba', 'dyado' ),
+			let mixin = observe( 'baba', 'dyado' ),
 				context = mockContext();
 			mixin.componentWillReceiveProps.call( context, {
 				baba: mockEventEmitter( context, 'baba' ),
@@ -96,7 +96,7 @@ describe( 'observe()', () => {
 } );
 
 function mockContext() {
-	var propNames = Array.prototype.slice.call( arguments ),
+	let propNames = Array.prototype.slice.call( arguments ),
 		context = {
 			onCalls: [],
 			offCalls: [],
