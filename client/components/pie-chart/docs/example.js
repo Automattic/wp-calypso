@@ -49,7 +49,6 @@ class PieChartExample extends Component {
 	};
 
 	changeShow = event => {
-		console.log( event );
 		this.setState( {
 			[ event.target.name ]: {
 				name: this.state[ event.target.name ].name,
