@@ -42,13 +42,7 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import {
-	addItem,
-	removeItem,
-	applyCoupon,
-	resetTransaction,
-	setDomainDetails,
-} from 'lib/upgrades/actions';
+import { addItem, applyCoupon, resetTransaction, setDomainDetails } from 'lib/upgrades/actions';
 import {
 	getContactDetailsCache,
 	getCurrentUserPaymentMethods,
@@ -545,9 +539,10 @@ class Checkout extends React.Component {
 	}
 
 	handleTermChange = ( { value: planSlug } ) => {
-		this.getPlanProducts().forEach( removeItem );
-
-		const cartItem = getCartItemForPlan( planSlug );
+		const products = this.getPlanProducts();
+		const cartItem = getCartItemForPlan( planSlug, {
+			domainToBundle: get( products, '[0].extra.domain_to_bundle', '' ),
+		} );
 		analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
 			product_slug: cartItem.product_slug,
 			free_trial: cartItem.free_trial,
