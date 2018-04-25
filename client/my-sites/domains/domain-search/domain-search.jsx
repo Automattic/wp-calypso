@@ -125,7 +125,7 @@ class DomainSearch extends Component {
 
 		if ( ! this.state.domainRegistrationAvailable ) {
 			let maintenanceEndTime = translate( 'shortly', {
-				context: 'If a specific maintenance end time is unavailable, we will show this instead.',
+				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
 			} );
 			if ( domainRegistrationMaintenanceEndTime ) {
 				maintenanceEndTime = moment.unix( domainRegistrationMaintenanceEndTime ).fromNow();

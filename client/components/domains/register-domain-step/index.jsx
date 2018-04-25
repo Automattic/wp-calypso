@@ -589,10 +589,13 @@ class RegisterDomainStep extends React.Component {
 			} )
 			.catch( error => {
 				const timeDiff = Date.now() - timestamp;
-				if ( error && error.statusCode === 503 ) {
-					this.props.onDomainsAvailabilityChange( false, 0 );
+				if ( error && error.statusCode === 503 && ! this.props.isSignupStep ) {
+					const maintenanceEndTime = get( error, 'data.maintenance_end_time', 0 );
+					this.props.onDomainsAvailabilityChange( false, maintenanceEndTime );
 				} else if ( error && error.error ) {
-					this.showValidationErrorMessage( domain, error.error );
+					this.showValidationErrorMessage( domain, error.error, {
+						maintenanceEndTime: get( error, 'data.maintenance_end_time', null ),
+					} );
 				}
 
 				const analyticsResults = [

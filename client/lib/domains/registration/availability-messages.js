@@ -5,7 +5,6 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -30,8 +29,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 
 	const tld = getTld( domain );
 
-	const site = get( errorData, 'site', null );
-	const maintenanceEndTime = get( errorData, 'maintenanceEndTime', null );
+	const { site, maintenanceEndTime } = errorData;
 
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
@@ -152,7 +150,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.MAINTENANCE:
 			if ( tld ) {
 				let maintenanceEnd = translate( 'shortly', {
-					context: 'If a specific maintenance end time is unavailable, we will show this instead.',
+					comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
 				} );
 				if ( maintenanceEndTime ) {
 					maintenanceEnd = moment.unix( maintenanceEndTime ).fromNow();
@@ -173,9 +171,26 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				severity = 'info';
 			}
 			break;
+		case domainAvailability.PURCHASES_DISABLED:
+			let maintenanceEnd = translate( 'shortly', {
+				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
+			} );
+			if ( maintenanceEndTime ) {
+				maintenanceEnd = moment.unix( maintenanceEndTime ).fromNow();
+			}
+
+			message = translate(
+				'Domains registration is unavailable at this time. Please select a free WordPress.com ' +
+					'domain or check back %(maintenanceEnd)s.',
+				{
+					args: { maintenanceEnd },
+				}
+			);
+			severity = 'info';
+			break;
+
 		case domainAvailability.MAPPABLE:
 		case domainAvailability.AVAILABLE:
-		case domainAvailability.PURCHASES_DISABLED:
 		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.UNKNOWN:
 		case domainAvailability.EMPTY_RESULTS:
