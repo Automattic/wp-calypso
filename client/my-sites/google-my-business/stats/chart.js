@@ -165,8 +165,14 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 	}
 
+	renderChart() {
+		const { chartType } = this.props;
+
+		return chartType === 'pie' ? this.renderPieChart() : this.renderLineChart();
+	}
+
 	render() {
-		const { chartType, description, interval, title, translate } = this.props;
+		const { description, interval, title, translate } = this.props;
 
 		return (
 			<div>
@@ -188,9 +194,7 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
 					</select>
 
-					<div className="gmb-stats__metric-chart">
-						{ chartType === 'pie' ? this.renderPieChart() : this.renderLineChart() }
-					</div>
+					<div className="gmb-stats__metric-chart">{ this.renderChart() }</div>
 				</Card>
 			</div>
 		);
