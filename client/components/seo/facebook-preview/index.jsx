@@ -10,7 +10,7 @@ import { compact } from 'lodash';
 import { firstValid, hardTruncation, shortEnough } from '../helpers';
 
 const TITLE_LENGTH = 80;
-const DESCRIPTION_LENGTH = 270;
+const DESCRIPTION_LENGTH = 200;
 
 const baseDomain = url =>
 	url &&
