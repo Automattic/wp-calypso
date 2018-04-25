@@ -14,6 +14,8 @@ import { omitBy, isUndefined } from 'lodash';
  */
 
 import Button from 'components/button';
+import Dialog from 'components/dialog';
+import ResizableIframe from 'components/resizable-iframe';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSearchQuery } from 'state/inline-help/selectors';
@@ -26,6 +28,7 @@ class InlineHelpRichResult extends Component {
 
 	state = {
 		type: this.props.result.type || 'article',
+		showDialog: false,
 	};
 
 	handleClick = event => {
@@ -47,7 +50,11 @@ class InlineHelpRichResult extends Component {
 		if ( type === 'tour' ) {
 			this.props.requestGuidedTour( tour );
 		} else if ( type === 'video' ) {
-			//here be dragons
+			if ( event.metaKey ) {
+				window.open( href, '_blank' );
+			} else {
+				this.setState( { showDialog: ! this.state.showDialog } );
+			}
 		} else {
 			if ( ! href ) {
 				return;
@@ -60,7 +67,38 @@ class InlineHelpRichResult extends Component {
 		}
 	};
 
+	onCancel = () => {
+		this.setState( { showDialog: ! this.state.showDialog } );
+	};
+
+	renderDialog = () => {
+		const { showDialog } = this.state;
+		const { link } = this.props.result;
+		const iframeClasses = classNames( 'inline-help__richresult__dialog__video' );
+		return (
+			<Dialog
+				additionalClassNames="inline-help__richresult__dialog"
+				isVisible={ showDialog }
+				onCancel={ this.onCancel }
+				onClose={ this.onCancel }
+			>
+				<div className={ iframeClasses }>
+					<ResizableIframe
+						src={ link + '?rel=0&amp;showinfo=0&amp;autoplay=1' }
+						frameBorder="0"
+						seamless
+						allowFullScreen
+						autoPlay
+						width="640"
+						height="360"
+					/>
+				</div>
+			</Dialog>
+		);
+	};
+
 	render() {
+		const { type } = this.state;
 		const { translate, result } = this.props;
 		const { title, description, link } = result;
 		const classes = classNames( 'inline-help__richresult__title' );
@@ -71,12 +109,13 @@ class InlineHelpRichResult extends Component {
 				<Button primary onClick={ this.handleClick } href={ link }>
 					{
 						{
-							article: translate( 'Read More' ),
-							video: translate( 'Watch Video' ),
-							tour: translate( 'Start Tour' ),
-						}[ this.state.type ]
+							article: translate( 'Read more' ),
+							video: translate( 'Watch a video' ),
+							tour: translate( 'Start a tour' ),
+						}[ type ]
 					}
 				</Button>
+				{ type === 'video' && this.renderDialog() }
 			</div>
 		);
 	}

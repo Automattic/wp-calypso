@@ -668,7 +668,7 @@ const videosForSection = {
 	sharing: [
 		{
 			type: RESULT_VIDEO,
-			link: 'https://www.youtube.com/watch?v=YVelWG3hf3o',
+			link: 'https://www.youtube.com/embed/YVelWG3hf3o',
 			title: 'Add Social Sharing Buttons to Your Website',
 			description:
 				'Find out how to add social sharing buttons to your WordPress.com site, which you can also ' +
