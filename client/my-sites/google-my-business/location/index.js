@@ -15,7 +15,29 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 
+function GoogleMyBusinessLocationPlaceholder( { isCompact } ) {
+	const classes = classNames( 'gmb-location', 'is-loading', { 'is-compact': isCompact } );
+
+	return (
+		<Card className={ classes }>
+			<div className="gmb-location__content">
+				<div className="gmb-location__logo">
+					<GoogleMyBusinessLogo height="30" width="30" />
+				</div>
+				<div className="gmb-location__description">
+					<div className="gmb-location__name" />
+					<div className="gmb-location__address" />
+				</div>
+			</div>
+		</Card>
+	);
+}
+
 function GoogleMyBusinessLocation( { children, isCompact, location, translate } ) {
+	if ( ! location ) {
+		return <GoogleMyBusinessLocationPlaceholder isCompact={ isCompact } />;
+	}
+
 	const classes = classNames( 'gmb-location', { 'is-compact': isCompact } );
 
 	return (
@@ -67,9 +89,9 @@ GoogleMyBusinessLocation.propTypes = {
 		ID: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired,
 		description: PropTypes.string.isRequired,
-		picture: PropTypes.string,
+		picture: PropTypes.string.isRequired,
 		verified: PropTypes.bool.isRequired,
-	} ).isRequired,
+	} ),
 	translate: PropTypes.func.isRequired,
 };
 

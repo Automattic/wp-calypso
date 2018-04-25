@@ -81,38 +81,118 @@ class GoogleMyBusinessStats extends Component {
 		);
 	};
 
-	renderPlaceholder() {
-		const { siteId, siteSlug, translate } = this.props;
+	renderStats() {
+		const { translate } = this.props;
 
 		return (
-			<Main wideLayout>
-				<PageViewTracker
-					path="/google-my-business/stats/:site"
-					title="Google My Business > Stats"
-				/>
-
-				<DocumentHead title={ translate( 'Stats' ) } />
-
-				<SidebarNavigation />
-
-				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
-
-				<QuerySiteSettings siteId={ siteId } />
-				<QueryKeyringConnections />
-
-				<div className="gmb-stats__metrics">
-					<div className="gmb-stats__metric" />
+			<div className="gmb-stats__metrics">
+				<div className="gmb-stats__metric">
+					<GoogleMyBusinessStatsChart
+						title={ translate( 'How customers search for your business' ) }
+						statType="queries"
+						chartTitle={ this.searchChartTitleFunc }
+						chartType="pie"
+						dataSeriesInfo={ {
+							QUERIES_DIRECT: {
+								name: translate( 'Direct' ),
+								description: translate(
+									'Customers who find your listing searching for you business name or address'
+								),
+							},
+							QUERIES_INDIRECT: {
+								name: translate( 'Discovery' ),
+								description: translate(
+									'Customers who find your listing searching for a category, product, or service'
+								),
+							},
+						} }
+						renderTooltipForDatanum={ this.renderSearchTooltipForDatanum }
+					/>
+					<SectionHeader label={ translate( 'How customers search for your business' ) } />
 				</div>
-			</Main>
+
+				<div className="gmb-stats__metric">
+					<GoogleMyBusinessStatsTip
+						buttonHref="https://business.google.com/"
+						buttonText={ translate( 'Post Photos' ) }
+						eventName="'calypso_google_my_business_stats_post_photos_button_click'"
+						illustration="reviews"
+						text={ translate(
+							'Listings with recent photos typically drive more view to their business websites.'
+						) }
+					/>
+				</div>
+
+				<div className="gmb-stats__metric">
+					<GoogleMyBusinessStatsChart
+						title={ translate( 'Where your customers view your business on Google' ) }
+						description={ translate(
+							'The Google services that customers use to find your business'
+						) }
+						statType="views"
+						chartTitle={ this.viewChartTitleFunc }
+						dataSeriesInfo={ {
+							VIEWS_MAPS: {
+								name: translate( 'Listings On Maps' ),
+							},
+							VIEWS_SEARCH: {
+								name: translate( 'Listings On Search' ),
+							},
+						} }
+					/>
+				</div>
+
+				<div className="gmb-stats__metric">
+					<GoogleMyBusinessStatsChart
+						title={ translate( 'Customer Actions' ) }
+						description={ translate(
+							'The most common actions that customers take on your listing'
+						) }
+						statType="actions"
+						chartTitle={ this.actionChartTitleFunc }
+						dataSeriesInfo={ {
+							ACTIONS_WEBSITE: {
+								name: translate( 'Visit Your Website' ),
+							},
+							ACTIONS_DRIVING_DIRECTIONS: {
+								name: translate( 'Request Directions' ),
+							},
+							ACTIONS_PHONE: {
+								name: translate( 'Call You' ),
+							},
+						} }
+					/>
+				</div>
+
+				<div className="gmb-stats__metric">
+					<GoogleMyBusinessStatsTip
+						buttonHref="https://business.google.com/"
+						buttonText={ translate( 'Complete Your Listing' ) }
+						eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
+						illustration="complete-listing"
+						text={ translate(
+							'Complete business listings get on average 7x more clicks than empty listings.'
+						) }
+					/>
+				</div>
+
+				<div className="gmb-stats__metric">
+					<GoogleMyBusinessStatsTip
+						buttonHref="https://business.google.com/"
+						buttonText={ translate( 'Complete Your Listing' ) }
+						eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
+						illustration="compare"
+						text={ translate(
+							'Customers compare business listings on Google to make decisions. Make your listing count.'
+						) }
+					/>
+				</div>
+			</div>
 		);
 	}
 
 	render() {
 		const { locationData, siteId, siteSlug, translate } = this.props;
-
-		if ( ! locationData ) {
-			return this.renderPlaceholder();
-		}
 
 		return (
 			<Main wideLayout>
@@ -140,109 +220,7 @@ class GoogleMyBusinessStats extends Component {
 					</Button>
 				</GoogleMyBusinessLocation>
 
-				<div className="gmb-stats__metrics">
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsChart
-							title={ translate( 'How customers search for your business' ) }
-							statType="queries"
-							chartTitle={ this.searchChartTitleFunc }
-							chartType="pie"
-							dataSeriesInfo={ {
-								QUERIES_DIRECT: {
-									name: translate( 'Direct' ),
-									description: translate(
-										'Customers who find your listing searching for you business name or address'
-									),
-								},
-								QUERIES_INDIRECT: {
-									name: translate( 'Discovery' ),
-									description: translate(
-										'Customers who find your listing searching for a category, product, or service'
-									),
-								},
-							} }
-							renderTooltipForDatanum={ this.renderSearchTooltipForDatanum }
-						/>
-						<SectionHeader label={ translate( 'How customers search for your business' ) } />
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsTip
-							buttonHref="https://business.google.com/"
-							buttonText={ translate( 'Post Photos' ) }
-							eventName="'calypso_google_my_business_stats_post_photos_button_click'"
-							illustration="reviews"
-							text={ translate(
-								'Listings with recent photos typically drive more view to their business websites.'
-							) }
-						/>
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsChart
-							title={ translate( 'Where your customers view your business on Google' ) }
-							description={ translate(
-								'The Google services that customers use to find your business'
-							) }
-							statType="views"
-							chartTitle={ this.viewChartTitleFunc }
-							dataSeriesInfo={ {
-								VIEWS_MAPS: {
-									name: translate( 'Listings On Maps' ),
-								},
-								VIEWS_SEARCH: {
-									name: translate( 'Listings On Search' ),
-								},
-							} }
-						/>
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsChart
-							title={ translate( 'Customer Actions' ) }
-							description={ translate(
-								'The most common actions that customers take on your listing'
-							) }
-							statType="actions"
-							chartTitle={ this.actionChartTitleFunc }
-							dataSeriesInfo={ {
-								ACTIONS_WEBSITE: {
-									name: translate( 'Visit Your Website' ),
-								},
-								ACTIONS_DRIVING_DIRECTIONS: {
-									name: translate( 'Request Directions' ),
-								},
-								ACTIONS_PHONE: {
-									name: translate( 'Call You' ),
-								},
-							} }
-						/>
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsTip
-							buttonHref="https://business.google.com/"
-							buttonText={ translate( 'Complete Your Listing' ) }
-							eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
-							illustration="complete-listing"
-							text={ translate(
-								'Complete business listings get on average 7x more clicks than empty listings.'
-							) }
-						/>
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsTip
-							buttonHref="https://business.google.com/"
-							buttonText={ translate( 'Complete Your Listing' ) }
-							eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
-							illustration="compare"
-							text={ translate(
-								'Customers compare business listings on Google to make decisions. Make your listing count.'
-							) }
-						/>
-					</div>
-				</div>
+				{ this.renderStats() }
 			</Main>
 		);
 	}
