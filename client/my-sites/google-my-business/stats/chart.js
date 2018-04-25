@@ -120,7 +120,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 	}
 
-	changeInterval = event =>
+	handleIntervalChange = event =>
 		this.props.changeGoogleMyBusinessStatsInterval(
 			this.props.siteId,
 			this.props.statType,
@@ -188,7 +188,7 @@ class GoogleMyBusinessStatsChart extends Component {
 							<hr className="gmb-stats__metric-hr" />
 						</div>
 					) }
-					<select value={ interval } onChange={ this.changeInterval }>
+					<select value={ interval } onChange={ this.handleIntervalChange }>
 						<option value="week">{ translate( 'Week' ) }</option>
 						<option value="month">{ translate( 'Month' ) }</option>
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
