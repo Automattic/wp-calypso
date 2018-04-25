@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { isEqual, some } from 'lodash';
+import { isEqual, noop, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -41,20 +41,16 @@ class KeyringConnectButton extends Component {
 	};
 
 	static defaultProps = {
-		onClick: () => {},
-		onConnect: () => {},
+		onClick: noop,
+		onConnect: noop,
 	};
 
-	constructor() {
-		super( ...arguments );
-
-		this.state = {
-			isOpen: false, // The service is visually opened
-			isConnecting: false, // A pending connection is awaiting authorization
-			isRefreshing: false, // A pending refresh is awaiting completion
-			isAwaitingConnections: false, // Waiting for Keyring Connections request to finish
-		};
-	}
+	state = {
+		isOpen: false, // The service is visually opened
+		isConnecting: false, // A pending connection is awaiting authorization
+		isRefreshing: false, // A pending refresh is awaiting completion
+		isAwaitingConnections: false, // Waiting for Keyring Connections request to finish
+	};
 
 	onClick = () => {
 		this.props.onClick();
