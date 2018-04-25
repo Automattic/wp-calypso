@@ -1,3 +1,8 @@
+### v3.0.0 (2018-04-25)
+- Breaking: removed the react/jsx-no-bind rule. We now allow bound functions by default.
+- Updated to react/jsx-tag-spacing from react/jsx-space-before-closing, which was deprecated
+- now allow spaces in async arrow functions
+
 #### v2.0.0 (2018-01-24)
 
 - Breaking: Removed the `react-a11y` ruleset. Consumers can use upstream's `plugin:jsx-a11y/recommended` ruleset instead.
