@@ -1,9 +1,9 @@
 Back Button
-===========
+===
 
-Simple back button.
+Simple back button, usually used in a HeaderCake to go back to the previous screen.
 
-#### How to use:
+## Usage
 
 ```jsx
 import BackButton from 'components/back-button';
@@ -15,6 +15,8 @@ render() {
 }
 ```
 
-#### Props
+### Props
 
-* `onClick`: a click handler function.
+Name | Type | Default | Description
+--- | --- | --- | ---
+`onClick`* | `function` | null | Called when the button is clicked
