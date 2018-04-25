@@ -26,11 +26,10 @@ import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
-import userFactory from 'lib/user';
-const user = userFactory();
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
+import { isUserLoggedIn } from 'state/current-user/selectors';
 
 //Form components
 import Card from 'components/card';
@@ -296,7 +295,7 @@ class AboutStep extends Component {
 		} );
 
 		//User Experience
-		if ( ! user.get() && userExperienceInput !== '' ) {
+		if ( ! this.props.isLoggedIn && userExperienceInput !== '' ) {
 			this.props.setUserExperience( userExperienceInput );
 			eventAttributes.user_experience = userExperienceInput;
 		}
@@ -409,9 +408,9 @@ class AboutStep extends Component {
 	}
 
 	renderExperienceOptions() {
-		const { translate } = this.props;
+		const { translate, isLoggedIn } = this.props;
 
-		if ( user.get() ) {
+		if ( isLoggedIn ) {
 			return null;
 		}
 
@@ -594,6 +593,7 @@ export default connect(
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		setSiteTitle,
