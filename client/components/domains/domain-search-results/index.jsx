@@ -16,7 +16,6 @@ import { endsWith, get, includes, times, first } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
@@ -190,10 +189,9 @@ class DomainSearchResults extends React.Component {
 				</div>
 			);
 
-			const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
 			let regularSuggestions = suggestions;
 
-			if ( isKrackenUI && this.props.isSignupStep ) {
+			if ( this.props.isSignupStep ) {
 				regularSuggestions = suggestions.filter(
 					suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
 				);
@@ -249,8 +247,9 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 		} else {
-			featuredSuggestionElement = config.isEnabled( 'domains/kracken-ui' ) &&
-				this.props.isSignupStep && <FeaturedDomainSuggestions showPlaceholders />;
+			featuredSuggestionElement = this.props.isSignupStep && (
+				<FeaturedDomainSuggestions showPlaceholders />
+			);
 			suggestionElements = this.renderPlaceholders();
 		}
 
