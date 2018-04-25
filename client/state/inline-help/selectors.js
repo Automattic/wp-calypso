@@ -58,7 +58,7 @@ export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
 export function getInlineHelpCurrentlySelectedResult( state ) {
 	const query = getSearchQuery( state );
 	const results = getInlineHelpSearchResultsForQuery( state, query );
-	const result = get( results, getSelectedResultIndex( state ), null );
+	const result = get( results, getSelectedResultIndex( state ), {} );
 	return result;
 }
 
