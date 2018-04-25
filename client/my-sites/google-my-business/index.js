@@ -63,42 +63,6 @@ export default function( router ) {
 			navigation,
 			makeLayout
 		);
-
-		router(
-			'/google-my-business/:site',
-			siteSelection,
-			( context, next ) => {
-				const state = context.store.getState();
-				const siteId = getSelectedSiteId( state );
-				Promise.all( [
-					context.store.dispatch( requestKeyringConnections() ),
-					context.store.dispatch( requestSiteSettings( siteId ) ),
-				] ).then( next );
-			},
-			context => {
-				const state = context.store.getState();
-				const siteId = getSelectedSiteId( state );
-				const hasConnectedLocation = !! getGoogleMyBusinessConnectedLocation( state, siteId );
-				const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
-				const hasAuthenticated =
-					getKeyringConnectionsByName( state, 'google-my-business' ).length > 0;
-
-				if ( ! config.isEnabled( 'google-my-business' ) ) {
-					page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
-					return;
-				}
-
-				if ( hasConnectedLocation ) {
-					page.redirect( `/google-my-business/stats/${ context.params.site }` );
-				} else if ( hasLocationsAvailable ) {
-					page.redirect( `/google-my-business/select-location/${ context.params.site }` );
-				} else if ( hasAuthenticated ) {
-					page.redirect( `/google-my-business/new/${ context.params.site }` );
-				} else {
-					page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
-				}
-			}
-		);
 	}
 
 	router(
@@ -108,5 +72,41 @@ export default function( router ) {
 		selectBusinessType,
 		navigation,
 		makeLayout
+	);
+
+	router(
+		'/google-my-business/:site',
+		siteSelection,
+		( context, next ) => {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+			Promise.all( [
+				context.store.dispatch( requestKeyringConnections() ),
+				context.store.dispatch( requestSiteSettings( siteId ) ),
+			] ).then( next );
+		},
+		context => {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+			const hasConnectedLocation = !! getGoogleMyBusinessConnectedLocation( state, siteId );
+			const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
+			const hasAuthenticated =
+				getKeyringConnectionsByName( state, 'google-my-business' ).length > 0;
+
+			if ( ! config.isEnabled( 'google-my-business' ) ) {
+				page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
+				return;
+			}
+
+			if ( hasConnectedLocation ) {
+				page.redirect( `/google-my-business/stats/${ context.params.site }` );
+			} else if ( hasLocationsAvailable ) {
+				page.redirect( `/google-my-business/select-location/${ context.params.site }` );
+			} else if ( hasAuthenticated ) {
+				page.redirect( `/google-my-business/new/${ context.params.site }` );
+			} else {
+				page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
+			}
+		}
 	);
 }
