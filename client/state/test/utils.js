@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -21,8 +20,6 @@ import {
 	withoutPersistence,
 } from 'state/utils';
 import warn from 'lib/warn';
-
-const jestExpect = global.expect;
 
 jest.mock( 'lib/warn', () => jest.fn() );
 
@@ -52,7 +49,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: 'ACTION_TEST',
 				meta: {
 					preserve: true,
@@ -79,7 +76,7 @@ describe( 'utils', () => {
 			);
 
 			action( dispatch );
-			jestExpect( dispatch ).toHaveBeenCalledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: 'ACTION_TEST',
 				meta: {
 					preserve: true,
@@ -109,7 +106,7 @@ describe( 'utils', () => {
 			);
 
 			action( dispatch, getState );
-			jestExpect( dispatch ).toHaveBeenCalledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: 'ACTION_TEST',
 				siteId: 42,
 				meta: {
@@ -140,7 +137,7 @@ describe( 'utils', () => {
 
 			action( dispatch );
 			dispatch.mock.calls[ 0 ][ 0 ]( dispatch );
-			jestExpect( dispatch ).toHaveBeenCalledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: 'ACTION_TEST',
 				meta: {
 					preserve: true,
@@ -157,33 +154,33 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should return a function', () => {
-				expect( reducer ).to.be.a.function;
+				expect( typeof reducer ).toBe( 'function' );
 			} );
 
 			test( 'should return initial state when hydration action passed', () => {
-				expect( reducer( undefined, { type: '@@calypso/INIT' } ) ).to.be.null;
+				expect( reducer( undefined, { type: '@@calypso/INIT' } ) ).toBeNull();
 			} );
 
 			test( 'should return identical state when invalid action passed', () => {
 				const invalidAction = {};
-				expect( reducer( currentState, invalidAction ) ).to.equal( currentState );
+				expect( reducer( currentState, invalidAction ) ).toBe( currentState );
 			} );
 
 			test( 'should return identical state when unknown action type passed', () => {
 				const unknownAction = { type: 'UNKNOWN' };
-				expect( reducer( currentState, unknownAction ) ).to.equal( currentState );
+				expect( reducer( currentState, unknownAction ) ).toBe( currentState );
 			} );
 
 			test( 'should return undefined when serialize action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).to.be.undefined;
+				expect( reducer( currentState, actionSerialize ) ).toBeUndefined();
 			} );
 
 			test( 'should return default null state when deserialize action type passed', () => {
-				expect( reducer( currentState, actionDeserialize ) ).to.be.null;
+				expect( reducer( currentState, actionDeserialize ) ).toBeNull();
 			} );
 
 			test( 'should throw an error when passed an undefined type', () => {
-				expect( () => reducer( undefined, { type: undefined } ) ).to.throw;
+				expect( () => reducer( undefined, { type: undefined } ) ).toThrow();
 			} );
 		} );
 
@@ -202,11 +199,11 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should return undefined state when SERIALIZE action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).to.be.undefined;
+				expect( reducer( currentState, actionSerialize ) ).toBeUndefined();
 			} );
 
 			test( 'should return default {} state when DESERIALIZE action type passed', () => {
-				expect( reducer( currentState, actionDeserialize ) ).to.be.equal( initialState );
+				expect( reducer( currentState, actionDeserialize ) ).toBe( initialState );
 			} );
 
 			test( 'should add new value to test array when acc action passed', () => {
@@ -217,8 +214,8 @@ describe( 'utils', () => {
 
 				const newState = reducer( currentState, addAction );
 
-				expect( newState ).to.not.equal( currentState );
-				expect( newState ).to.be.eql( {
+				expect( newState ).not.toBe( currentState );
+				expect( newState ).toEqual( {
 					test: [ 'one', 'two', 'three', 'four' ],
 				} );
 			} );
@@ -232,17 +229,15 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should return current state when serialize action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).to.be.deep.equal( currentState );
+				expect( reducer( currentState, actionSerialize ) ).toBe( currentState );
 			} );
 
 			test( 'should return initial state when valid initial state and deserialize action type passed', () => {
-				expect( reducer( currentState, actionDeserialize ) ).to.be.deep.equal( currentState );
+				expect( reducer( currentState, actionDeserialize ) ).toBe( currentState );
 			} );
 
 			test( 'should return default state when invalid initial state and deserialize action type passed', () => {
-				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).to.be.deep.equal(
-					initialState
-				);
+				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).toBe( initialState );
 			} );
 		} );
 
@@ -257,11 +252,11 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should return overridden state when serialize action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).to.be.deep.equal( overriddenState );
+				expect( reducer( currentState, actionSerialize ) ).toBe( overriddenState );
 			} );
 
 			test( 'should return overridden state when deserialize action type passed', () => {
-				expect( reducer( currentState, actionDeserialize ) ).to.be.deep.equal( overriddenState );
+				expect( reducer( currentState, actionDeserialize ) ).toBe( overriddenState );
 			} );
 		} );
 	} );
@@ -286,33 +281,33 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should only accept string-type key names', () => {
-			expect( () => keyedReducer( null, age ) ).to.throw( TypeError );
-			expect( () => keyedReducer( undefined, age ) ).to.throw( TypeError );
-			expect( () => keyedReducer( [], age ) ).to.throw( TypeError );
-			expect( () => keyedReducer( {}, age ) ).to.throw( TypeError );
-			expect( () => keyedReducer( true, age ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 10, age ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 15.4, age ) ).to.throw( TypeError );
-			expect( () => keyedReducer( '', age ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key', age ) ).to.not.throw( TypeError );
+			expect( () => keyedReducer( null, age ) ).toThrow( TypeError );
+			expect( () => keyedReducer( undefined, age ) ).toThrow( TypeError );
+			expect( () => keyedReducer( [], age ) ).toThrow( TypeError );
+			expect( () => keyedReducer( {}, age ) ).toThrow( TypeError );
+			expect( () => keyedReducer( true, age ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 10, age ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 15.4, age ) ).toThrow( TypeError );
+			expect( () => keyedReducer( '', age ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key', age ) ).not.toThrow( TypeError );
 		} );
 
 		test( 'should only accept a function as the reducer argument', () => {
-			expect( () => keyedReducer( 'key', null ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key', undefined ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key', [] ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key', {} ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key', true ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key', 10 ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key', 15.4 ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key', '' ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key' ) ).to.throw( TypeError );
-			expect( () => keyedReducer( 'key', () => {} ).to.not.throw( TypeError ) );
+			expect( () => keyedReducer( 'key', null ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key', undefined ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key', [] ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key', {} ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key', true ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key', 10 ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key', 15.4 ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key', '' ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key' ) ).toThrow( TypeError );
+			expect( () => keyedReducer( 'key', () => {} ).not.toThrow( TypeError ) );
 		} );
 
 		test( 'should create keyed state given simple reducers', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( undefined, grow( 'Calypso' ) ) ).to.eql( {
+			expect( keyed( undefined, grow( 'Calypso' ) ) ).toEqual( {
 				Calypso: 1,
 			} );
 		} );
@@ -320,14 +315,14 @@ describe( 'utils', () => {
 		test( 'should handle keyNames referencing nested keys', () => {
 			const keyed = keyedReducer( 'person.name', age );
 			const action = { type: 'GROW', person: { name: 'Calypso' } };
-			expect( keyed( undefined, action ) ).to.eql( {
+			expect( keyed( undefined, action ) ).toEqual( {
 				Calypso: 1,
 			} );
 		} );
 
 		test( 'should only affect the keyed item in a collection', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( prevState, grow( 'Calypso' ) ) ).to.eql( {
+			expect( keyed( prevState, grow( 'Calypso' ) ) ).toEqual( {
 				Bonobo: 13,
 				Calypso: 1,
 			} );
@@ -335,40 +330,40 @@ describe( 'utils', () => {
 
 		test( 'should skip if no key is provided in the action', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( prevState, { type: 'GROW' } ) ).to.equal( prevState );
+			expect( keyed( prevState, { type: 'GROW' } ) ).toBe( prevState );
 		} );
 
 		test( 'should handle falsey keys', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( { [ 0 ]: 10 }, grow( 0 ) ) ).to.eql( { 0: 11 } );
+			expect( keyed( { [ 0 ]: 10 }, grow( 0 ) ) ).toEqual( { 0: 11 } );
 		} );
 
 		test( 'should handle coerced-to-string keys', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( { 10: 10 }, grow( '10' ) ) ).to.eql( { 10: 11 } );
-			expect( keyed( { [ 10 ]: 10 }, grow( '10' ) ) ).to.eql( { 10: 11 } );
-			expect( keyed( { [ 10 ]: 10 }, grow( 10 ) ) ).to.eql( { 10: 11 } );
-			expect( keyed( { 10: 10 }, grow( 10 ) ) ).to.eql( { 10: 11 } );
+			expect( keyed( { 10: 10 }, grow( '10' ) ) ).toEqual( { 10: 11 } );
+			expect( keyed( { [ 10 ]: 10 }, grow( '10' ) ) ).toEqual( { 10: 11 } );
+			expect( keyed( { [ 10 ]: 10 }, grow( 10 ) ) ).toEqual( { 10: 11 } );
+			expect( keyed( { 10: 10 }, grow( 10 ) ) ).toEqual( { 10: 11 } );
 		} );
 
 		test( 'should return without changes if no actual changes occur', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( prevState, { type: 'STAY', name: 'Bonobo' } ) ).to.equal( prevState );
+			expect( keyed( prevState, { type: 'STAY', name: 'Bonobo' } ) ).toBe( prevState );
 		} );
 
 		test( 'should not initialize a state if no changes and not keyed (simple state)', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( prevState, { type: 'STAY', name: 'Calypso' } ) ).to.equal( prevState );
+			expect( keyed( prevState, { type: 'STAY', name: 'Calypso' } ) ).toBe( prevState );
 		} );
 
 		test( 'should remove keys if set back to initialState', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( { 10: 10 }, reset( '10' ) ) ).to.eql( {} );
+			expect( keyed( { 10: 10 }, reset( '10' ) ) ).toEqual( {} );
 		} );
 
 		test( 'should remove keys if set to undefined', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( { 10: 10 }, remove( '10' ) ) ).to.eql( {} );
+			expect( keyed( { 10: 10 }, remove( '10' ) ) ).toEqual( {} );
 		} );
 
 		test( 'should apply global actions to every item', () => {
@@ -386,8 +381,8 @@ describe( 'utils', () => {
 
 			const prev = { 14: 5, 23: 19 };
 
-			expect( keyed( prev, { type: 'INC', id: 14 } ) ).to.eql( { 14: 6, 23: 19 } );
-			expect( keyed( prev, { type: 'INC_ALL' } ) ).to.eql( { 14: 6, 23: 20 } );
+			expect( keyed( prev, { type: 'INC', id: 14 } ) ).toEqual( { 14: 6, 23: 19 } );
+			expect( keyed( prev, { type: 'INC_ALL' } ) ).toEqual( { 14: 6, 23: 20 } );
 		} );
 
 		test( 'should have SERIALIZE and DESERIALIZE as default global actions', () => {
@@ -407,12 +402,12 @@ describe( 'utils', () => {
 			const keyed = keyedReducer( 'id', chickenReducer );
 			const prev = { 1: 'chicken' };
 
-			expect( keyed( prev, { type: 'SET_CHICKEN', id: 2 } ) ).to.eql( {
+			expect( keyed( prev, { type: 'SET_CHICKEN', id: 2 } ) ).toEqual( {
 				1: 'chicken',
 				2: 'chicken',
 			} );
-			expect( keyed( prev, { type: 'SERIALIZE' } ) ).to.eql( { 1: 'serialized chicken' } );
-			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).to.eql( { 1: 'deserialized chicken' } );
+			expect( keyed( prev, { type: 'SERIALIZE' } ) ).toEqual( { 1: 'serialized chicken' } );
+			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).toEqual( { 1: 'deserialized chicken' } );
 		} );
 
 		test( 'should not apply global actions if not whitelisted', () => {
@@ -433,9 +428,9 @@ describe( 'utils', () => {
 
 			const prev = { 14: 5, 23: 19 };
 
-			expect( keyed( prev, { type: 'INC', id: 14 } ) ).to.eql( { 14: 6, 23: 19 } );
-			expect( keyed( prev, { type: 'SERIALIZE' } ) ).to.equal( prev );
-			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).to.equal( prev );
+			expect( keyed( prev, { type: 'INC', id: 14 } ) ).toEqual( { 14: 6, 23: 19 } );
+			expect( keyed( prev, { type: 'SERIALIZE' } ) ).toBe( prev );
+			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).toBe( prev );
 		} );
 
 		test( 'should prune items after global actions are applied', () => {
@@ -454,24 +449,24 @@ describe( 'utils', () => {
 
 			const prev = { 14: 5, 23: 19 };
 
-			expect( keyed( prev, { type: 'PURGE' } ) ).to.eql( { 14: 5 } );
+			expect( keyed( prev, { type: 'PURGE' } ) ).toEqual( { 14: 5 } );
 		} );
 	} );
 
 	describe( '#isValidStateWithSchema', () => {
 		test( 'should return true for valid state', () => {
 			const result = isValidStateWithSchema( 'a string', { type: 'string' } );
-			jestExpect( result ).toBe( true );
+			expect( result ).toBe( true );
 		} );
 
 		test( 'should return false for invalid state', () => {
 			const result = isValidStateWithSchema( 'a string', { type: 'null' } );
-			jestExpect( result ).toBe( false );
+			expect( result ).toBe( false );
 		} );
 
 		test( 'should warn for invalid state', () => {
 			isValidStateWithSchema( 'a string', { type: 'null' } );
-			jestExpect( warn ).toHaveBeenCalledTimes( 1 );
+			expect( warn ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
@@ -506,24 +501,24 @@ describe( 'utils', () => {
 		test( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );
 
-			expect( validated( -5, load ) ).to.equal( 0 );
+			expect( validated( -5, load ) ).toBe( 0 );
 		} );
 
 		test( 'should not invalidate normal state', () => {
 			const validated = withSchemaValidation( schema, age );
 
-			expect( validated( -5, normal ) ).to.equal( -5 );
+			expect( validated( -5, normal ) ).toBe( -5 );
 		} );
 
 		test( 'should validate initial state', () => {
 			const validated = withSchemaValidation( schema, age );
 
-			expect( validated( 5, load ) ).to.equal( 5 );
+			expect( validated( 5, load ) ).toBe( 5 );
 		} );
 
 		test( 'actions work as expected with schema', () => {
 			const validated = withSchemaValidation( schema, age );
-			expect( validated( 5, grow ) ).to.equal( 6 );
+			expect( validated( 5, grow ) ).toBe( 6 );
 		} );
 	} );
 
@@ -575,37 +570,37 @@ describe( 'utils', () => {
 
 		test( 'should return initial state on init', () => {
 			const state = reducers( undefined, { type: '@@calypso/INIT' } );
-			expect( state ).to.eql( { age: 0, height: 160 } );
+			expect( state ).toEqual( { age: 0, height: 160 } );
 		} );
 
 		test( 'should return initial state on DESERIALIZE', () => {
 			const state = reducers( undefined, load );
-			expect( state ).to.eql( { age: 0, height: 160 } );
+			expect( state ).toEqual( { age: 0, height: 160 } );
 		} );
 
 		test( 'should not persist height, because it is missing a schema', () => {
 			const state = reducers( appState, write );
-			expect( state ).to.eql( { age: 20 } );
+			expect( state ).toEqual( { age: 20 } );
 		} );
 
 		test( 'should not load height, because it is missing a schema', () => {
 			const state = reducers( appState, load );
-			expect( state ).to.eql( { age: 20, height: 160 } );
+			expect( state ).toEqual( { age: 20, height: 160 } );
 		} );
 
 		test( 'should validate age', () => {
 			const state = reducers( { age: -5 }, load );
-			expect( state ).to.eql( { age: 0, height: 160 } );
+			expect( state ).toEqual( { age: 0, height: 160 } );
 		} );
 
 		test( 'actions work as expected', () => {
 			const state = reducers( appState, grow );
-			expect( state ).to.eql( { age: 21, height: 172 } );
+			expect( state ).toEqual( { age: 21, height: 172 } );
 		} );
 
 		test( 'undefined or missing state is not serialized and does not cause errors', () => {
 			const empty = reducers( undefined, write );
-			expect( empty ).to.be.undefined;
+			expect( empty ).toBeUndefined();
 
 			const nested = combineReducers( {
 				person: reducers,
@@ -613,7 +608,7 @@ describe( 'utils', () => {
 			} );
 
 			const missingPerson = nested( { date: new Date( 100 ) }, write );
-			expect( missingPerson ).to.eql( { date: 100 } );
+			expect( missingPerson ).toEqual( { date: 100 } );
 		} );
 
 		test( 'nested reducers work on load', () => {
@@ -627,13 +622,13 @@ describe( 'utils', () => {
 				count,
 			} );
 			const valid = nested( { person: { age: 22, date: 224 } }, load );
-			expect( valid ).to.eql( {
+			expect( valid ).toEqual( {
 				person: { age: 22, height: 160, date: new Date( 224 ) },
 				count: 1,
 			} );
 
 			const invalid = nested( { person: { age: -5, height: 100, date: -5 } }, load );
-			expect( invalid ).to.eql( {
+			expect( invalid ).toEqual( {
 				person: { age: 0, height: 160, date: new Date( 0 ) },
 				count: 1,
 			} );
@@ -650,10 +645,10 @@ describe( 'utils', () => {
 				count,
 			} );
 			const valid = nested( { person: { age: 22, date: new Date( 224 ) } }, write );
-			expect( valid ).to.eql( { person: { age: 22, date: 224 } } );
+			expect( valid ).toEqual( { person: { age: 22, date: 224 } } );
 
 			const invalid = nested( { person: { age: -5, height: 100, date: new Date( -500 ) } }, write );
-			expect( invalid ).to.eql( { person: { age: -5, date: -500 } } );
+			expect( invalid ).toEqual( { person: { age: -5, date: -500 } } );
 		} );
 
 		test( 'nested reducers leave out a state slice where none of the children is persisted', () => {
@@ -676,7 +671,7 @@ describe( 'utils', () => {
 				},
 				write
 			);
-			expect( stored ).to.eql( { age: 40 } );
+			expect( stored ).toEqual( { age: 40 } );
 		} );
 
 		test( 'deeply nested reducers work on load', () => {
@@ -693,7 +688,7 @@ describe( 'utils', () => {
 				count,
 			} );
 			const valid = veryNested( { bob: { person: { age: 22, date: 224 } }, count: 122 }, load );
-			expect( valid ).to.eql( {
+			expect( valid ).toEqual( {
 				bob: { person: { age: 22, height: 160, date: new Date( 224 ) } },
 				count: 1,
 			} );
@@ -702,7 +697,7 @@ describe( 'utils', () => {
 				{ bob: { person: { age: -5, height: 22, date: -500 } }, count: 123 },
 				load
 			);
-			expect( invalid ).to.eql( {
+			expect( invalid ).toEqual( {
 				bob: { person: { age: 0, height: 160, date: new Date( 0 ) } },
 				count: 1,
 			} );
@@ -725,13 +720,13 @@ describe( 'utils', () => {
 				{ bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 },
 				write
 			);
-			expect( valid ).to.eql( { bob: { person: { age: 22, date: 234 } } } );
+			expect( valid ).toEqual( { bob: { person: { age: 22, date: 234 } } } );
 
 			const invalid = veryNested(
 				{ bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 },
 				write
 			);
-			expect( invalid ).to.eql( { bob: { person: { age: -5, date: -5 } } } );
+			expect( invalid ).toEqual( { bob: { person: { age: -5, date: -5 } } } );
 		} );
 
 		test( 'deeply nested reducers work with reducer with a custom handler', () => {
@@ -747,13 +742,13 @@ describe( 'utils', () => {
 				count,
 			} );
 			const valid = veryNested( { bob: { person: { date: new Date( 234 ) } }, count: 122 }, write );
-			expect( valid ).to.eql( { bob: { person: { date: 234 } } } );
+			expect( valid ).toEqual( { bob: { person: { date: 234 } } } );
 
 			const invalid = veryNested(
 				{ bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 },
 				write
 			);
-			expect( invalid ).to.eql( { bob: { person: { date: -5 } } } );
+			expect( invalid ).toEqual( { bob: { person: { date: -5 } } } );
 		} );
 
 		test( 'uses the provided validation from withSchemaValidation', () => {
@@ -763,10 +758,10 @@ describe( 'utils', () => {
 			} );
 
 			const valid = reducers( { height: 22, count: 44 }, write );
-			expect( valid ).to.eql( { height: 22 } );
+			expect( valid ).toEqual( { height: 22 } );
 
 			const invalid = reducers( { height: -1, count: 44 }, load );
-			expect( invalid ).to.eql( { height: 160, count: 1 } );
+			expect( invalid ).toEqual( { height: 160, count: 1 } );
 		} );
 
 		test( 'uses the provided validation from createReducer', () => {
@@ -776,10 +771,10 @@ describe( 'utils', () => {
 			} );
 
 			const valid = reducers( { height: 22, count: 44 }, write );
-			expect( valid ).to.eql( { height: 22 } );
+			expect( valid ).toEqual( { height: 22 } );
 
 			const invalid = reducers( { height: -1, count: 44 }, load );
-			expect( invalid ).to.eql( { height: 160, count: 1 } );
+			expect( invalid ).toEqual( { height: 160, count: 1 } );
 		} );
 	} );
 
@@ -804,16 +799,16 @@ describe( 'utils', () => {
 		beforeAll( () => ( wrapped = withoutPersistence( age ) ) );
 
 		test( 'should pass through normal actions', () => {
-			expect( wrapped( 10, { type: 'GROW' } ) ).to.equal( 11 );
-			expect( wrapped( 10, { type: 'FADE' } ) ).to.equal( 10 );
+			expect( wrapped( 10, { type: 'GROW' } ) ).toBe( 11 );
+			expect( wrapped( 10, { type: 'FADE' } ) ).toBe( 10 );
 		} );
 
 		test( 'should DESERIALIZE to `initialState`', () => {
-			expect( wrapped( 10, { type: DESERIALIZE } ) ).to.equal( 0 );
+			expect( wrapped( 10, { type: DESERIALIZE } ) ).toBe( 0 );
 		} );
 
 		test( 'should SERIALIZE to `undefined`', () => {
-			expect( wrapped( 10, { type: SERIALIZE } ) ).to.be.undefined;
+			expect( wrapped( 10, { type: SERIALIZE } ) ).toBeUndefined();
 		} );
 	} );
 
@@ -852,9 +847,9 @@ describe( 'utils', () => {
 			);
 
 			await actionCreator( 123 )( dispatch );
-			jestExpect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
-			jestExpect( successActionCreator ).toHaveBeenCalledWith( 'success_data' );
-			jestExpect( failureActionCreator ).not.toHaveBeenCalledWith();
+			expect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
+			expect( successActionCreator ).toHaveBeenCalledWith( 'success_data' );
+			expect( failureActionCreator ).not.toHaveBeenCalledWith();
 		} );
 
 		test( 'should call apropriate action creators on failure', async () => {
@@ -866,9 +861,9 @@ describe( 'utils', () => {
 			);
 
 			await actionCreator( 123 )( dispatch );
-			jestExpect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
-			jestExpect( failureActionCreator ).toHaveBeenCalledWith( 'error_data' );
-			jestExpect( successActionCreator ).not.toHaveBeenCalled();
+			expect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
+			expect( failureActionCreator ).toHaveBeenCalledWith( 'error_data' );
+			expect( successActionCreator ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should cache same parameters successful call', async () => {
@@ -884,7 +879,7 @@ describe( 'utils', () => {
 			await callActionCreator();
 			await callActionCreator();
 
-			jestExpect( successfulWorker ).toHaveBeenCalledTimes( 1 );
+			expect( successfulWorker ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'should not cache same parameters failed call', async () => {
@@ -900,7 +895,7 @@ describe( 'utils', () => {
 			await callActionCreator();
 			await callActionCreator();
 
-			jestExpect( failingWorker ).toHaveBeenCalledTimes( 2 );
+			expect( failingWorker ).toHaveBeenCalledTimes( 2 );
 		} );
 	} );
 } );
