@@ -183,7 +183,9 @@ export class CreditCardPaymentBox extends React.Component {
 	};
 
 	getPlanProducts() {
-		return this.props.cart.products.filter( ( { product_slug } ) => getPlan( product_slug ) );
+		return this.props.cart.products
+			? this.props.cart.products.filter( ( { product_slug } ) => getPlan( product_slug ) )
+			: false;
 	}
 
 	shouldRenderInstallmentsPlanPicker() {
