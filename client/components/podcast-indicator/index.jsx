@@ -41,9 +41,7 @@ class PodcastIndicator extends React.Component {
 	};
 
 	setTooltipContext = tooltipContext => {
-		if ( tooltipContext ) {
-			this.setState( { tooltipContext } );
-		}
+		this.setState( { tooltipContext } );
 	};
 
 	render() {
