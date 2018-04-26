@@ -8,18 +8,18 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
-import { flowRight, includes, noop } from 'lodash';
+import { connect } from 'react-redux';
+import { includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { startMappingAuthors, startUpload } from 'lib/importer/actions';
+import { startMappingAuthors, startUpload } from 'state/imports/actions';
 import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
-import { connectDispatcher } from './dispatcher-converter';
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
@@ -31,6 +31,8 @@ class UploadingPane extends React.PureComponent {
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 		} ),
+		startMappingAuthors: PropTypes.func.isRequired,
+		startUpload: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = { description: null };
@@ -73,10 +75,7 @@ class UploadingPane extends React.PureComponent {
 				return (
 					<div>
 						<p>{ this.props.translate( 'Success! File uploaded.' ) }</p>
-						<Button
-							className="importer__start"
-							onClick={ () => startMappingAuthors( this.props.importerStatus.importerId ) }
-						>
+						<Button className="importer__start" onClick={ this.startMappingAuthors }>
 							{ this.props.translate( 'Continue' ) }
 						</Button>
 					</div>
@@ -116,6 +115,10 @@ class UploadingPane extends React.PureComponent {
 		startUpload( this.props.importerStatus, file );
 	};
 
+	startMappingAuthors = () => {
+		this.props.startMappingAuthors( this.props.importerStatus.importerId );
+	};
+
 	render() {
 		return (
 			<div>
@@ -143,8 +146,7 @@ class UploadingPane extends React.PureComponent {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	startUpload: flowRight( dispatch, startUpload ),
-} );
-
-export default connectDispatcher( null, mapDispatchToProps )( localize( UploadingPane ) );
+export default connect( null, {
+	startUpload,
+	startMappingAuthors,
+} )( localize( UploadingPane ) );

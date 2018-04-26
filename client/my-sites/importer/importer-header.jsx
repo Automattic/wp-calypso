@@ -7,7 +7,8 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { flowRight, includes } from 'lodash';
+import { connect } from 'react-redux';
+import { includes } from 'lodash';
 import SocialLogo from 'social-logos';
 
 /**
@@ -15,8 +16,7 @@ import SocialLogo from 'social-logos';
  */
 import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
-import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
-import { connectDispatcher } from './dispatcher-converter';
+import { cancelImport, resetImport, startImport } from 'state/imports/actions';
 import SiteImporterPlaceholderLogo from './site-importer/placeholder-logo';
 
 /**
@@ -45,21 +45,23 @@ class ImporterHeader extends React.PureComponent {
 		icon: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
+		startImport: PropTypes.func.isRequired,
+		cancelImport: PropTypes.func.isRequired,
+		resetImport: PropTypes.func.isRequired,
 	};
 
 	controlButtonClicked = () => {
 		const {
 			importerStatus: { importerId, importerState, type },
 			site: { ID: siteId },
-			startImport,
 		} = this.props;
 
 		if ( includes( [ ...cancelStates, ...stopStates ], importerState ) ) {
-			cancelImport( siteId, importerId );
+			this.props.cancelImport( siteId, importerId );
 		} else if ( includes( startStates, importerState ) ) {
-			startImport( siteId, type );
+			this.props.startImport( siteId, type );
 		} else if ( includes( doneStates, importerState ) ) {
-			resetImport( siteId, importerId );
+			this.props.resetImport( siteId, importerId );
 		}
 	};
 
@@ -127,8 +129,8 @@ class ImporterHeader extends React.PureComponent {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	startImport: flowRight( dispatch, startImport ),
-} );
-
-export default connectDispatcher( null, mapDispatchToProps )( localize( ImporterHeader ) );
+export default connect( null, {
+	startImport,
+	cancelImport,
+	resetImport,
+} )( localize( ImporterHeader ) );
