@@ -43,6 +43,7 @@ export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId
 					keyring_connection_ID: keyringConnection.ID,
 					external_ID: externalUser.external_ID,
 					external_display: externalUser.external_name,
+					external_profile_picture: externalUser.external_profile_picture,
 					isConnected: isConnected( keyringConnection, externalUser, siteSettings ),
 				} );
 			} );

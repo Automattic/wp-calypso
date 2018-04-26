@@ -8,6 +8,7 @@ import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,6 +39,8 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 		return <GoogleMyBusinessLocationPlaceholder isCompact={ isCompact } />;
 	}
 
+	const isLocationVerified = get( location, 'meta.state.isVerified', false );
+
 	const classes = classNames( 'gmb-location', { 'is-compact': isCompact } );
 
 	return (
@@ -64,7 +67,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 							.map( ( line, index ) => <p key={ index }>{ line }</p> ) }
 					</div>
 
-					{ location.verified && (
+					{ isLocationVerified && (
 						<div className="gmb-location__verified">
 							<Gridicon
 								className="gmb-location__verified-icon"
