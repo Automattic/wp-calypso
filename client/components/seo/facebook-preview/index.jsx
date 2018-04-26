@@ -1,4 +1,5 @@
 /** @format */
+/* eslint-disable jsx-a11y/alt-text */
 
 /**
  * External dependencies
@@ -32,11 +33,7 @@ export class FacebookPreview extends PureComponent {
 		return (
 			<div className={ `facebook-preview facebook-preview__${ type }` }>
 				<div className="facebook-preview__content">
-					{ image && (
-						<div className="facebook-preview__image">
-							<img src={ image } />
-						</div>
-					) }
+					<div className="facebook-preview__image">{ image && <img src={ image } /> }</div>
 					<div className="facebook-preview__body">
 						<div className="facebook-preview__title">{ facebookTitle( title || '' ) }</div>
 						<div className="facebook-preview__description">
