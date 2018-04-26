@@ -126,3 +126,30 @@ export function parseAuthorizationQuery( query ) {
 	}
 	return null;
 }
+
+export function getPartnerSlug( authQuery ) {
+	if ( ! authQuery || 'object' !== typeof authQuery ) {
+		return '';
+	}
+
+	const { partnerId } = authQuery;
+
+	switch ( partnerId ) {
+		case 51945:
+		case 51946:
+			return 'dreamhost';
+		case 49615:
+		case 49640:
+			return 'pressable';
+		case 57152:
+		case 57733:
+			return 'milesweb';
+		case 41986:
+		case 42000:
+			return 'bluehost';
+		case 51652: // Clients used for testing.
+			return 'dreamhost';
+		default:
+			return '';
+	}
+}

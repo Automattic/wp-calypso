@@ -5,6 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,17 +13,74 @@ import classNames from 'classnames';
 import JetpackLogo from 'components/jetpack-logo';
 import Main from 'components/main';
 import { retrieveMobileRedirect } from './persistence-utils';
+import { getPartnerSlug } from './utils';
 
-const JetpackConnectMainWrapper = ( { isWide, className, children } ) => {
+const JetpackConnectMainWrapper = ( { isWide, className, children, authQuery, translate } ) => {
 	const wrapperClassName = classNames( 'jetpack-connect__main', {
 		'is-wide': isWide,
 		'is-mobile-app-flow': !! retrieveMobileRedirect(),
 	} );
+
+	const getHeaderImage = () => {
+		const partnerSlug = getPartnerSlug( authQuery );
+		const baseCobrandedAttributes = {
+			width: '662.5',
+			height: '85',
+			className: 'jetpack-connect__main-partner-logo',
+		};
+
+		let image = null;
+		if ( partnerSlug ) {
+			switch ( partnerSlug ) {
+				case 'dreamhost':
+					image = (
+						<img
+							{ ...baseCobrandedAttributes }
+							src="/calypso/images/jetpack/jetpack-dreamhost-connection.png"
+							alt={ translate( 'Co-branded Jetpack and DreamHost logo' ) }
+						/>
+					);
+					break;
+				case 'pressable':
+					image = (
+						<img
+							{ ...baseCobrandedAttributes }
+							src="/calypso/images/jetpack/jetpack-pressable-connection.png"
+							alt={ translate( 'Co-branded Jetpack and Pressable logo' ) }
+						/>
+					);
+					break;
+				case 'milesweb':
+					image = (
+						<img
+							{ ...baseCobrandedAttributes }
+							src="/calypso/images/jetpack/jetpack-milesweb-connection.png"
+							alt={ translate( 'Co-branded Jetpack and MilesWeb logo' ) }
+						/>
+					);
+					break;
+				case 'bluehost':
+					image = (
+						<img
+							{ ...baseCobrandedAttributes }
+							src="/calypso/images/jetpack/jetpack-bluehost-connection.png"
+							alt={ translate( 'Co-branded Jetpack and Bluehost logo' ) }
+						/>
+					);
+					break;
+			}
+		}
+
+		return (
+			<div className="jetpack-connect__main-logo">
+				{ image || <JetpackLogo full size={ 45 } /> }
+			</div>
+		);
+	};
+
 	return (
 		<Main className={ classNames( className, wrapperClassName ) }>
-			<div className="jetpack-connect__main-logo">
-				<JetpackLogo full size={ 45 } />
-			</div>
+			{ getHeaderImage() }
 			{ children }
 		</Main>
 	);
@@ -36,4 +94,4 @@ JetpackConnectMainWrapper.defaultProps = {
 	isWide: false,
 };
 
-export default JetpackConnectMainWrapper;
+export default localize( JetpackConnectMainWrapper );

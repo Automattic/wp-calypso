@@ -624,7 +624,7 @@ export class JetpackAuthorize extends Component {
 
 	render() {
 		return (
-			<MainWrapper>
+			<MainWrapper authQuery={ this.props.authQuery }>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection
