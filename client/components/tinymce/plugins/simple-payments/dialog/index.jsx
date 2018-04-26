@@ -32,6 +32,7 @@ import {
 	customPostToProduct,
 	productToCustomPost,
 } from 'state/data-layer/wpcom/sites/simple-payments/index.js';
+import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/memberships/index.js';
 import {
 	receiveUpdateProduct,
 	receiveDeleteProduct,
@@ -43,6 +44,7 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
+import config from 'config';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -50,6 +52,25 @@ const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
 // Selector to get the form values and convert them to a custom post data structure
 // ready to be passed to `wpcom` API.
 const productFormToCustomPost = state => productToCustomPost( getProductFormValues( state ) );
+
+const createMembershipButton = siteId => ( dispatch, getState ) => {
+	// This is a memberships submission.
+	const values = get( getState(), [ 'form', 'simplePaymentsForm', 'values' ], {} );
+	return wpcom.req
+		.post( `/sites/${ siteId }/memberships/product`, {
+			title: values.title,
+			description: values.description,
+			connected_destination_account_id: values.stripe_account,
+			interval: values.renewal_schedule,
+			price: values.price,
+			currency: values.currency,
+		} )
+		.then( newProduct => {
+			const product = membershipProductFromApi( newProduct.product );
+			dispatch( receiveUpdateProduct( siteId, product ) );
+			return product;
+		} );
+};
 
 // Thunk action creator to create a new button
 const createPaymentButton = siteId => ( dispatch, getState ) => {
@@ -251,6 +272,21 @@ class SimplePaymentsDialog extends Component {
 
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
+		} else if (
+			config.isEnabled( 'memberships' ) &&
+			this.props.newlyCreatedIsMembershipSubscription
+		) {
+			// This is memberships business.
+			productId = dispatch( createMembershipButton( siteId ) ).then( newProduct => {
+				dispatch(
+					recordTracksEvent( 'calypso_memberships_button_create', {
+						price: newProduct.price,
+						currency: newProduct.currency,
+						id: newProduct.ID,
+					} )
+				);
+				return newProduct.ID;
+			} );
 		} else {
 			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => {
 				dispatch(
@@ -265,9 +301,14 @@ class SimplePaymentsDialog extends Component {
 		}
 
 		productId
-			.then( id => {
-				this.props.onInsert( { id } );
-				dispatch( recordTracksEvent( 'calypso_simple_payments_button_insert', { id } ) );
+			.then( id =>
+				dispatch( ( d, getState ) => getSimplePayments( getState(), this.props.siteId, id ) )
+			)
+			.then( product => {
+				this.props.onInsert( { id: product.ID, isMembership: !! product.recurring } );
+				dispatch(
+					recordTracksEvent( 'calypso_simple_payments_button_insert', { id: product.ID } )
+				);
 			} )
 			.catch( () => this.showError( translate( 'The payment button could not be inserted.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
@@ -513,6 +554,11 @@ export default connect( ( state, { siteId } ) => {
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
+		newlyCreatedIsMembershipSubscription: get(
+			state,
+			[ 'form', 'simplePaymentsForm', 'values', 'recurring' ],
+			false
+		),
 		isJetpackNotSupported:
 			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),

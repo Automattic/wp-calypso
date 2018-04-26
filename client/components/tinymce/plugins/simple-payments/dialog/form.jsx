@@ -133,6 +133,16 @@ const validate = ( values, props ) => {
 		errors.featuredImageId = 'uploading';
 	}
 
+	// Checks for 'Memberships' only
+	if ( props.isRecurringSubscription ) {
+		if ( ! values.renewal_schedule ) {
+			errors.renewal_schedule = 'Please choose a renewal schedule';
+		}
+
+		if ( ! values.stripe_account ) {
+			errors.stripe_account = 'Choose or connect a new Stripe Account.';
+		}
+	}
 	return errors;
 };
 
