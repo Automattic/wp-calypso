@@ -636,7 +636,6 @@ PlanFeatures.propTypes = {
 };
 
 PlanFeatures.defaultProps = {
-	basePlansPath: null,
 	displayJetpackPlans: false,
 	isInSignup: false,
 	isJetpack: false,

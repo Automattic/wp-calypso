@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 
 /**
@@ -131,39 +130,35 @@ export class PlansFeaturesMain extends Component {
 		return plans;
 	}
 
-	constructPath( plansUrl, intervalType ) {
-		const { selectedFeature, selectedPlan, siteSlug } = this.props;
+	getIntervalPath = interval => {
+		const { basePlansPath, selectedFeature, selectedPlan, siteSlug } = this.props;
 		return addQueryArgs(
 			{
 				feature: selectedFeature,
 				plan: selectedPlan,
 			},
-			plansLink( plansUrl, siteSlug, intervalType )
+			plansLink( basePlansPath, siteSlug, interval )
 		);
-	}
+	};
 
 	getIntervalTypeToggle() {
-		const { basePlansPath, intervalType, translate } = this.props;
-		const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle' );
-
-		let plansUrl = '/plans';
-
-		if ( basePlansPath ) {
-			plansUrl = basePlansPath;
-		}
-
+		const { intervalType, onIntervalChange, translate } = this.props;
 		return (
-			<SegmentedControl compact className={ segmentClasses } primary={ true }>
+			<SegmentedControl compact className="plan-features__interval-type price-toggle" primary>
 				<SegmentedControlItem
+					data-interval="monthly"
+					onClick={ onIntervalChange }
+					path={ this.getIntervalPath( 'monthly' ) }
 					selected={ intervalType === 'monthly' }
-					path={ this.constructPath( plansUrl, 'monthly' ) }
 				>
 					{ translate( 'Monthly billing' ) }
 				</SegmentedControlItem>
 
 				<SegmentedControlItem
+					data-interval="yearly"
+					onClick={ onIntervalChange }
+					path={ this.getIntervalPath( 'yearly' ) }
 					selected={ intervalType === 'yearly' }
-					path={ this.constructPath( plansUrl, 'yearly' ) }
 				>
 					{ translate( 'Yearly billing' ) }
 				</SegmentedControlItem>
@@ -187,7 +182,7 @@ export class PlansFeaturesMain extends Component {
 			<div className="plans-features-main">
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
-				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
+				{ displayJetpackPlans && this.getIntervalTypeToggle() }
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
@@ -210,6 +205,7 @@ PlansFeaturesMain.propTypes = {
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	isLoggedIn: PropTypes.bool,
+	onIntervalChange: PropTypes.func,
 	onUpgradeClick: PropTypes.func,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
@@ -219,7 +215,7 @@ PlansFeaturesMain.propTypes = {
 };
 
 PlansFeaturesMain.defaultProps = {
-	basePlansPath: null,
+	basePlansPath: '/plans',
 	hideFreePlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
