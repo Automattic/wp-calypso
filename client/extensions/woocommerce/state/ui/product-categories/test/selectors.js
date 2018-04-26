@@ -1,10 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
+import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
-import { set, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,60 +15,33 @@ import {
 	getCurrentlyEditingProductCategory,
 	getCurrentlyEditingId,
 } from '../selectors';
-import {
-	getProductCategory,
-	getProductCategories,
-} from 'woocommerce/state/sites/product-categories/selectors';
+import wooState from './fixtures/state';
+const state = deepFreeze( wooState );
 
-const siteId = 123;
+/*
+ * state.extensions.woocommerce.sites has four sites:
+ *  - site.one: Has one update to ID 2
+ *  - site.two: Has a new category to be created
+ *  - site.three: no local edits
+ */
 
 describe( 'selectors', () => {
-	let state;
-
-	beforeEach( () => {
-		state = {
-			ui: { selectedSiteId: siteId },
-			extensions: {
-				woocommerce: {
-					sites: {
-						[ siteId ]: {
-							productCategories: {
-								items: {
-									1: { id: 1, name: 'cat 1', slug: 'cat-1' },
-									2: { id: 2, name: 'cat 2', slug: 'cat-2' },
-									3: { id: 3, name: 'cat 3', slug: 'cat-3' },
-								},
-								queries: {
-									'{}': [ 1, 2, 3 ],
-								},
-							},
-						},
-					},
-					ui: {
-						productCategories: {
-							[ siteId ]: {},
-						},
-					},
-				},
-			},
-		};
-	} );
-
 	describe( '#getProductCategoryEdits', () => {
 		test( 'should get a category from "creates"', () => {
-			const newCategory = { id: { index: 0 }, name: 'New Category' };
-			const uiProductCategories = state.extensions.woocommerce.ui.productCategories;
-			set( uiProductCategories, [ siteId, 'edits', 'creates' ], [ newCategory ] );
-
-			expect( getProductCategoryEdits( state, newCategory.id ) ).to.equal( newCategory );
+			const cat = {
+				id: { placeholder: 'productCategory_1' },
+				label: 'test1',
+				name: 'test1',
+			};
+			expect( getProductCategoryEdits( state, cat.id, 'site.two' ) ).to.eql( cat );
 		} );
 
 		test( 'should get a category from "updates"', () => {
-			const categoryUpdate = { id: 1, name: 'Existing Category' };
-			const uiProductCategories = state.extensions.woocommerce.ui.productCategories;
-			set( uiProductCategories, [ siteId, 'edits', 'updates' ], [ categoryUpdate ] );
-
-			expect( getProductCategoryEdits( state, categoryUpdate.id ) ).to.equal( categoryUpdate );
+			const cat = {
+				id: 2,
+				name: 'new name',
+			};
+			expect( getProductCategoryEdits( state, cat.id, 'site.one' ) ).to.eql( cat );
 		} );
 
 		test( 'should return undefined if no edits are found for category id', () => {
@@ -80,26 +52,33 @@ describe( 'selectors', () => {
 
 	describe( '#getProductCategoryWithLocalEdits', () => {
 		test( 'should get just edits for a category in "creates"', () => {
-			const newCategory = { id: { index: 0 }, name: 'New Category' };
-			const uiProductCategories = state.extensions.woocommerce.ui.productCategories;
-			set( uiProductCategories, [ siteId, 'edits', 'creates' ], [ newCategory ] );
+			const cat = {
+				id: { placeholder: 'productCategory_1' },
+				label: 'test1',
+				name: 'test1',
+			};
 
-			expect( getProductCategoryWithLocalEdits( state, newCategory.id ) ).to.eql( newCategory );
+			expect( getProductCategoryWithLocalEdits( state, cat.id, 'site.two' ) ).to.eql( cat );
 		} );
 
 		test( 'should get just fetched data for a category that has no edits', () => {
-			const fetchedCategory2 = getProductCategory( state, 2 );
-			expect( getProductCategoryWithLocalEdits( state, 2 ) ).to.eql( fetchedCategory2 );
+			expect( getProductCategoryWithLocalEdits( state, 1, 'site.one' ) ).to.eql( {
+				id: 1,
+				name: 'cat1',
+				slug: 'cat-1',
+				label: 'cat1',
+				parent: 0,
+			} );
 		} );
 
 		test( 'should get both fetched data and edits for a category in "updates"', () => {
-			const fetchedCategory2 = getProductCategory( state, 2 );
-			const categoryUpdate = { id: 2, name: 'Existing Category' };
-			const uiProductCategories = state.extensions.woocommerce.ui.productCategories;
-			set( uiProductCategories, [ siteId, 'edits', 'updates' ], [ categoryUpdate ] );
-
-			const combinedCategory = { ...fetchedCategory2, ...categoryUpdate };
-			expect( getProductCategoryWithLocalEdits( state, 2 ) ).to.eql( combinedCategory );
+			expect( getProductCategoryWithLocalEdits( state, 2, 'site.one' ) ).to.eql( {
+				id: 2,
+				name: 'new name',
+				slug: 'cat-2',
+				label: 'cat2',
+				parent: 0,
+			} );
 		} );
 
 		test( 'should return undefined if no category is found for category id', () => {
@@ -110,68 +89,65 @@ describe( 'selectors', () => {
 
 	describe( '#getProductCategoriesWithLocalEdits', () => {
 		test( 'should match fetched data when there have been no edits', () => {
-			const fetchedCategories = getProductCategories( state );
-			expect( getProductCategoriesWithLocalEdits( state ) ).to.eql( fetchedCategories );
+			expect( getProductCategoriesWithLocalEdits( state, 'site.three' ) ).to.eql( [
+				{ id: 1, label: 'cat1', name: 'cat1', slug: 'cat-1', parent: 0 },
+				{ id: 2, label: 'cat2', name: 'cat2', slug: 'cat-2', parent: 0 },
+				{ id: 3, label: 'cat2 - cat3', name: 'cat3', slug: 'cat-3', parent: 2 },
+				{ id: 4, label: 'cat2 - cat3 - cat4', name: 'cat4', slug: 'cat-4', parent: 3 },
+				{ id: 5, label: 'cat5', name: 'cat5', slug: 'cat-5', parent: 0 },
+				{ id: 6, label: 'cat6', name: 'cat6', slug: 'cat-6', parent: 0 },
+			] );
 		} );
 
 		test( 'should contain categories in "creates"', () => {
-			const newCategory1 = { id: { index: 0 }, name: 'New Category 1' };
-			const newCategory2 = { id: { index: 1 }, name: 'New Category 2' };
-			const uiProductCategories = state.extensions.woocommerce.ui.productCategories;
-			set( uiProductCategories, [ siteId, 'edits', 'creates' ], [ newCategory1, newCategory2 ] );
-
-			const combinedCategories = getProductCategoriesWithLocalEdits( state );
-			expect( find( combinedCategories, c => newCategory1.id === c.id ) ).to.equal( newCategory1 );
-			expect( find( combinedCategories, c => newCategory2.id === c.id ) ).to.equal( newCategory2 );
+			expect( getProductCategoriesWithLocalEdits( state, 'site.two' ) ).to.eql( [
+				{
+					id: { placeholder: 'productCategory_1' },
+					label: 'test1',
+					name: 'test1',
+				},
+				{ id: 5, name: 'cat5', label: 'cat5', slug: 'cat-5', parent: 0 },
+				{ id: 6, name: 'cat6', label: 'cat6', slug: 'cat-6', parent: 0 },
+			] );
 		} );
 
 		test( 'should contain combined categories from fetched data with "updates" overlaid', () => {
-			const fetchedCategory1 = getProductCategory( state, 1 );
-			const fetchedCategory2 = getProductCategory( state, 2 );
-			const categoryUpdate1 = { id: 1, name: 'Updated Category 1' };
-			const categoryUpdate2 = { id: 2, name: 'Updated Category 2' };
-			const uiProductCategories = state.extensions.woocommerce.ui.productCategories;
-			set(
-				uiProductCategories,
-				[ siteId, 'edits', 'updates' ],
-				[ categoryUpdate1, categoryUpdate2 ]
-			);
-
-			const combinedCategories = getProductCategoriesWithLocalEdits( state );
-			const combinedCategory1 = find( combinedCategories, c => categoryUpdate1.id === c.id );
-			const combinedCategory2 = find( combinedCategories, c => categoryUpdate2.id === c.id );
-			expect( combinedCategory1 ).to.eql( { ...fetchedCategory1, ...categoryUpdate1 } );
-			expect( combinedCategory2 ).to.eql( { ...fetchedCategory2, ...categoryUpdate2 } );
+			expect( getProductCategoriesWithLocalEdits( state, 'site.one' ) ).to.eql( [
+				{ id: 1, name: 'cat1', label: 'cat1', slug: 'cat-1', parent: 0 },
+				{ id: 2, name: 'new name', label: 'cat2', slug: 'cat-2', parent: 0 },
+			] );
 		} );
 	} );
 
 	describe( '#getCurrentlyEditingProductCategory', () => {
 		test( 'should return undefined if there are no edits', () => {
-			expect( getCurrentlyEditingProductCategory( state ) ).to.not.exist;
+			expect( getCurrentlyEditingProductCategory( state, 'site.three' ) ).to.not.exist;
 		} );
 
 		test( 'should get the last edited category', () => {
-			const newCategory = { id: { index: 0 }, name: 'New Category' };
-			const uiProductCategories = state.extensions.woocommerce.ui.productCategories;
-			set( uiProductCategories, [ siteId, 'edits', 'creates' ], [ newCategory ] );
-			set( uiProductCategories, [ siteId, 'edits', 'currentlyEditingId' ], newCategory.id );
-
-			expect( getCurrentlyEditingProductCategory( state ) ).to.eql( newCategory );
+			expect( getCurrentlyEditingProductCategory( state ) ).to.eql( {
+				id: 2,
+				name: 'new name',
+				label: 'cat2',
+				slug: 'cat-2',
+				parent: 0,
+			} );
 		} );
 	} );
 
 	describe( '#getCurrentlyEditingId', () => {
 		test( 'should return undefined if there are no edits', () => {
-			expect( getCurrentlyEditingId( state ) ).to.not.exist;
+			expect( getCurrentlyEditingId( state, 'site.three' ) ).to.not.exist;
 		} );
 
-		test( 'should get the last edited category id', () => {
-			const newCategory = { id: { index: 0 }, name: 'New Category' };
-			const uiProductCategories = state.extensions.woocommerce.ui.productCategories;
-			set( uiProductCategories, [ siteId, 'edits', 'creates' ], [ newCategory ] );
-			set( uiProductCategories, [ siteId, 'edits', 'currentlyEditingId' ], newCategory.id );
+		test( 'should get the last edited category id for updates', () => {
+			expect( getCurrentlyEditingId( state ) ).to.eql( 2 );
+		} );
 
-			expect( getCurrentlyEditingId( state ) ).to.eql( newCategory.id );
+		test( 'should get the last edited category id for creates', () => {
+			expect( getCurrentlyEditingId( state, 'site.two' ) ).to.eql( {
+				placeholder: 'productCategory_1',
+			} );
 		} );
 	} );
 } );

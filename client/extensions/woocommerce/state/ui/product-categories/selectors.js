@@ -12,20 +12,20 @@ import { get, find, isNumber } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getProductCategory,
-	getProductCategories,
+	getAllProductCategories,
 } from 'woocommerce/state/sites/product-categories/selectors';
 import { getBucket } from '../helpers';
 
 /**
  * Gets all edits for product categories.
  *
- * @param {Object} rootState Global state tree
+ * @param {Object} state Global state tree
  * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {Object} All product category edits in the form of { creates: [], updates: [] }
  */
-export function getAllProductCategoryEdits( rootState, siteId = getSelectedSiteId( rootState ) ) {
+export function getAllProductCategoryEdits( state, siteId = getSelectedSiteId( state ) ) {
 	return get(
-		rootState,
+		state,
 		[ 'extensions', 'woocommerce', 'ui', 'productCategories', siteId, 'edits' ],
 		{}
 	);
@@ -34,13 +34,13 @@ export function getAllProductCategoryEdits( rootState, siteId = getSelectedSiteI
 /**
  * Gets the accumulated edits for a category, if any.
  *
- * @param {Object} rootState Global state tree
+ * @param {Object} state Global state tree
  * @param {Number|Object} categoryId The id of the product category (or { index: # } if pending create)
  * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {Object} The current accumulated edits
  */
-export function getProductCategoryEdits( rootState, categoryId, siteId ) {
-	const edits = getAllProductCategoryEdits( rootState, siteId );
+export function getProductCategoryEdits( state, categoryId, siteId = getSelectedSiteId( state ) ) {
+	const edits = getAllProductCategoryEdits( state, siteId );
 	const bucket = getBucket( { id: categoryId } );
 	const array = get( edits, bucket, [] );
 
@@ -50,16 +50,20 @@ export function getProductCategoryEdits( rootState, categoryId, siteId ) {
 /**
  * Gets a category with local edits overlayed on top of fetched data.
  *
- * @param {Object} rootState Global state tree
+ * @param {Object} state Global state tree
  * @param {Number|Object} categoryId The id of the product category (or { index: # } if pending create)
  * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {Object} The category data merged between the fetched data and edits
  */
-export function getProductCategoryWithLocalEdits( rootState, categoryId, siteId ) {
+export function getProductCategoryWithLocalEdits(
+	state,
+	categoryId,
+	siteId = getSelectedSiteId( state )
+) {
 	const existing = isNumber( categoryId );
 
-	const category = existing && getProductCategory( rootState, categoryId, siteId );
-	const categoryEdits = getProductCategoryEdits( rootState, categoryId, siteId );
+	const category = existing && getProductCategory( state, categoryId, siteId );
+	const categoryEdits = getProductCategoryEdits( state, categoryId, siteId );
 
 	return category || categoryEdits ? { ...category, ...categoryEdits } : undefined;
 }
@@ -70,30 +74,31 @@ export function getProductCategoryWithLocalEdits( rootState, categoryId, siteId 
  * This returns a list of all fetched categories overlaid with updates (if any) and
  * all categories in the creates list as well.
  *
- * @param {Object} rootState Global state tree
+ * @param {Object} state Global state tree
  * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {Object} The category list merged between the fetched data, edits, and creates
  */
-export function getProductCategoriesWithLocalEdits( rootState, siteId ) {
-	const categoryCreates = getAllProductCategoryEdits( rootState, siteId ).creates || [];
-	const fetchedCategoriesWithUpdates = getProductCategories( rootState, {}, siteId ).map( c =>
-		getProductCategoryWithLocalEdits( rootState, c.id, siteId )
+export function getProductCategoriesWithLocalEdits( state, siteId = getSelectedSiteId( state ) ) {
+	const categoryCreates = getAllProductCategoryEdits( state, siteId ).creates || [];
+	const fetchedCategories = getAllProductCategories( state, {}, siteId );
+	const categoriesWithUpdates = fetchedCategories.map( c =>
+		getProductCategoryWithLocalEdits( state, c.id, siteId )
 	);
 
-	return [ ...categoryCreates, ...fetchedCategoriesWithUpdates ];
+	return [ ...categoryCreates, ...categoriesWithUpdates ];
 }
 
 /**
  * Gets the product category last edited in the UI.
  *
- * @param {Object} rootState Global state tree
+ * @param {Object} state Global state tree
  * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
  * @return {Object} The category data merged between the fetched data and edits
  */
-export function getCurrentlyEditingProductCategory( rootState, siteId ) {
-	const { currentlyEditingId } = getAllProductCategoryEdits( rootState, siteId );
+export function getCurrentlyEditingProductCategory( state, siteId = getSelectedSiteId( state ) ) {
+	const { currentlyEditingId } = getAllProductCategoryEdits( state, siteId );
 
-	return getProductCategoryWithLocalEdits( rootState, currentlyEditingId, siteId );
+	return getProductCategoryWithLocalEdits( state, currentlyEditingId, siteId );
 }
 
 /**

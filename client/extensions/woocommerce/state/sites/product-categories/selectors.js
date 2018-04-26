@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, isArray, omit, range } from 'lodash';
+import { get, isArray, omit, range, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -140,14 +140,9 @@ export function getAllProductCategories( state, query = {}, siteId = getSelected
 		return [];
 	}
 
-	const result = [];
-	range( 1, lastPage + 1 ).some( page => {
-		const catQuery = { ...query, page };
-		const pageCategories = getProductCategories( state, catQuery, siteId );
-		result.push( ...pageCategories );
-	} );
-
-	return result;
+	const categoryState = getRawCategoryState( state, siteId );
+	const items = values( categoryState.items ) || [];
+	return items.map( cat => getProductCategory( state, cat.id, siteId ) );
 }
 
 /**

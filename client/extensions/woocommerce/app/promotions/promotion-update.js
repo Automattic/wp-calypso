@@ -78,7 +78,7 @@ class PromotionUpdate extends React.Component {
 		const { site } = this.props;
 
 		if ( site && site.ID ) {
-			this.props.fetchProductCategories( site.ID );
+			this.props.fetchProductCategories( site.ID, { offset: 0 } );
 			this.props.fetchPromotions( site.ID );
 			this.props.fetchSettingsGeneral( site.ID );
 		}
@@ -89,7 +89,7 @@ class PromotionUpdate extends React.Component {
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchProductCategories( newSiteId );
+			this.props.fetchProductCategories( newSiteId, { offset: 0 } );
 			this.props.fetchPromotions( newSiteId );
 			this.props.fetchSettingsGeneral( newSiteId );
 		}

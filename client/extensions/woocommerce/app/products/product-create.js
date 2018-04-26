@@ -75,7 +75,7 @@ class ProductCreate extends React.Component {
 
 		if ( site && site.ID ) {
 			this.props.editProduct( site.ID, null, {} );
-			this.props.fetchProductCategories( site.ID );
+			this.props.fetchProductCategories( site.ID, { offset: 0 } );
 		}
 	}
 
@@ -85,7 +85,7 @@ class ProductCreate extends React.Component {
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
 			this.props.editProduct( newSiteId, null, {} );
-			this.props.fetchProductCategories( newSiteId );
+			this.props.fetchProductCategories( newSiteId, { offset: 0 } );
 		}
 	}
 

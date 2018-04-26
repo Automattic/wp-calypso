@@ -13,7 +13,10 @@ import { stringify } from 'qs';
 import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { post, put, del } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
-import { productCategoryUpdated } from 'woocommerce/state/sites/product-categories/actions';
+import {
+	fetchProductCategories,
+	productCategoryUpdated,
+} from 'woocommerce/state/sites/product-categories/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
@@ -159,6 +162,14 @@ export function handleProductCategoriesSuccess( { dispatch }, action, { data } )
 		totalPages,
 		query,
 	} );
+
+	if ( undefined !== query.offset ) {
+		const remainder = total - query.offset - body.length;
+		if ( remainder ) {
+			const offset = query.offset + body.length;
+			dispatch( fetchProductCategories( siteId, { ...query, offset } ) );
+		}
+	}
 }
 
 export function handleProductCategoriesError( { dispatch }, action, error ) {
