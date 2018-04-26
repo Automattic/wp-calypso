@@ -53,6 +53,7 @@ export function getAvailableExternalAccounts( state, service ) {
 						name: externalUser.external_name,
 						description: externalUser.external_description,
 						picture: externalUser.external_profile_picture,
+						meta: externalUser.external_meta,
 						keyringConnectionId: keyringConnection.ID,
 						isConnected: isConnected( keyringConnection.ID, externalUser.external_ID ),
 						isExternal: true,
