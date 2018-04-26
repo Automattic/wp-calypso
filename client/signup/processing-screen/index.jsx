@@ -28,7 +28,7 @@ export class SignupProcessingScreen extends Component {
 		hasCartItems: PropTypes.bool.isRequired,
 		loginHandler: PropTypes.func,
 		steps: PropTypes.array.isRequired,
-		user: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		user: PropTypes.object,
 		signupProgress: PropTypes.array,
 		flowSteps: PropTypes.array,
 		useOAuth2Layout: PropTypes.bool.isRequired,
@@ -370,5 +370,5 @@ export class SignupProcessingScreen extends Component {
 
 export default connect( state => ( {
 	useOAuth2Layout: showOAuth2Layout( state ),
-	user: getCurrentUser( state ) || false,
+	user: getCurrentUser( state ),
 } ) )( localize( SignupProcessingScreen ) );
