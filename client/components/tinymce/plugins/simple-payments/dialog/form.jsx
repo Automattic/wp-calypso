@@ -25,6 +25,8 @@ import UploadImage from 'blocks/upload-image';
 import { getCurrencyDefaults } from 'lib/format-currency';
 import QueryMembershipsConnectedAccounts from 'components/data/query-memberships-connected-accounts';
 import config from 'config';
+import Button from 'components/button';
+import { authorizeStripeAccount } from 'state/memberships/connected-accounts/actions';
 
 const REDUX_FORM_NAME = 'simplePaymentsForm';
 
@@ -255,12 +257,24 @@ class ProductForm extends Component {
 								) }
 								label={ translate( 'Stripe Account' ) }
 								component={ FormSelect }
-								children={ Object.values( this.props.membershipsConnectedAccounts ).map( acct => (
-									<option value={ acct.connected_destination_account_id }>
-										{ acct.payment_partner_account_id }
-									</option>
-								) ) }
+								children={ Object.values( this.props.membershipsConnectedAccounts )
+									.map( acct => (
+										<option value={ acct.connected_destination_account_id }>
+											{ acct.payment_partner_account_id }
+										</option>
+									) )
+									.concat( [
+										<option value="create">{ translate( 'Create Stripe Account for me' ) }</option>,
+										<option value="authorize">
+											{ translate( 'I already have a Stripe account' ) }
+										</option>,
+									] ) }
 							/>
+							{ this.props.isChoosingToAuthorizeStripeAccount && (
+								<Button onClick={ this.props.authorizeStripeAccount }>
+									{ translate( 'Authorize Stripe Account' ) }
+								</Button>
+							) }
 							<ReduxFormFieldset
 								name="renewal_schedule"
 								explanation={ translate( 'After what time should the subscription renew?' ) }
@@ -286,14 +300,19 @@ export default compose(
 		enableReinitialize: true,
 		validate,
 	} ),
-	connect( state => {
-		return {
-			isRecurringSubscription: get( state, [ 'form', REDUX_FORM_NAME, 'values', 'recurring' ] ),
-			membershipsConnectedAccounts: get(
-				state,
-				[ 'memberships', 'connectedAccounts', 'accounts' ],
-				{}
-			),
-		};
-	} )
+	connect(
+		state => {
+			return {
+				isRecurringSubscription: get( state, [ 'form', REDUX_FORM_NAME, 'values', 'recurring' ] ),
+				isChoosingToAuthorizeStripeAccount:
+					get( state, [ 'form', REDUX_FORM_NAME, 'values', 'stripe_account' ], '' ) === 'authorize',
+				membershipsConnectedAccounts: get(
+					state,
+					[ 'memberships', 'connectedAccounts', 'accounts' ],
+					{}
+				),
+			};
+		},
+		{ authorizeStripeAccount }
+	)
 )( ProductForm );
