@@ -10,19 +10,41 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import FoldableCard from 'components/foldable-card';
+import TimeSince from 'components/time-since';
 
 export class ThreatAlert extends Component {
 	render() {
-		const { moment, threat, translate } = this.props;
+		const { threat, translate } = this.props;
+		const earliestDetection =
+			threat.files &&
+			threat.files.reduce(
+				( earliest, { firstDetected } ) => ( firstDetected < earliest ? firstDetected : earliest ),
+				Infinity
+			);
 
 		return (
 			<FoldableCard
+				className="activity-log__threat-alert"
 				clickableHeader
 				compact
 				header={
 					<Fragment>
-						<ActivityIcon activityIcon="notice" activityStatus="error" />
-						<span>{ translate( 'Malware code detected' ) }</span>
+						<ActivityIcon activityIcon="notice-outline" activityStatus="error" />
+						<div className="activity-log__threat-alert-header">
+							<div>
+								<span className="activity-log__threat-alert-title">
+									{ translate( 'Thread found' ) }
+								</span>
+								{ threat.files && (
+									<TimeSince
+										className="activity-log__threat-alert-time-since"
+										date={ earliestDetection }
+										dateFormat="ll"
+									/>
+								) }
+							</div>
+							<span>{ translate( 'Malware code detected' ) }</span>
+						</div>
 					</Fragment>
 				}
 			>
@@ -30,13 +52,15 @@ export class ThreatAlert extends Component {
 				{ threat.files &&
 					threat.files.map( file => (
 						<Fragment key={ file.name }>
-							<p>{ file.name }</p>
-							<p>{ file.dirpath }</p>
-							<p>
-								{ moment
-									.duration( moment( file.firstDetected ).diff( moment() ) )
-									.humanize( true ) }
-							</p>
+							<div className="activity-log__threat-alert-file-header">
+								<span className="activity-log__threat-alert-filename">{ file.name }</span>
+								<TimeSince
+									className="activity-log__threat-alert-time-since"
+									date={ file.firstDetected }
+									dateFormat="ll"
+								/>
+							</div>
+							<p className="activity-log__threat-alert-dirpath">{ file.dirpath }</p>
 							{ file.diff && (
 								<Fragment>
 									<pre>
