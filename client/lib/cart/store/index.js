@@ -17,7 +17,10 @@ import { applyCoupon, cartItems, fillInAllCartItemAttributes } from 'lib/cart-va
 import wp from 'lib/wp';
 import { reduxGetState, reduxDispatch } from 'lib/redux-bridge';
 import { requestProductsList } from 'state/products-list/actions';
-import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
+import {
+	getProductsList,
+	shouldRequestProductsListFromServer,
+} from 'state/products-list/selectors';
 
 const wpcom = wp.undocumented();
 
@@ -73,17 +76,11 @@ function emitChange() {
 
 function update( changeFunction ) {
 	const reduxState = reduxGetState();
-	const isFetchingProductsList = isProductsListFetching( reduxState );
 	const productsList = getProductsList( reduxState );
+	const shouldRequest = ! shouldRequestProductsListFromServer( reduxState );
 
-	if ( ! productsList ) {
-		if ( ! isFetchingProductsList ) {
-			reduxDispatch( requestProductsList );
-		}
-
-		setTimeout( () => update( changeFunction ), 300 );
-
-		return;
+	if ( shouldRequest ) {
+		reduxDispatch( requestProductsList() );
 	}
 
 	const wrappedFunction = flowRight(
