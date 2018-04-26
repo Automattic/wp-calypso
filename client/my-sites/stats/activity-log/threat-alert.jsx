@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import FoldableCard from 'components/foldable-card';
-import DetectionTime from './detection-time';
+import TimeSince from 'components/time-since';
 
 export class ThreatAlert extends Component {
 	render() {
@@ -35,7 +35,13 @@ export class ThreatAlert extends Component {
 								<span className="activity-log__threat-alert-title">
 									{ translate( 'Thread found' ) }
 								</span>
-								{ threat.files && <DetectionTime date={ earliestDetection } /> }
+								{ threat.files && (
+									<TimeSince
+										className="activity-log__threat-alert-time-since"
+										date={ earliestDetection }
+										dateFormat="ll"
+									/>
+								) }
 							</div>
 							<span>{ translate( 'Malware code detected' ) }</span>
 						</div>
@@ -48,7 +54,11 @@ export class ThreatAlert extends Component {
 						<Fragment key={ file.name }>
 							<div className="activity-log__threat-alert-file-header">
 								<span className="activity-log__threat-alert-filename">{ file.name }</span>
-								<DetectionTime date={ file.firstDetected } />
+								<TimeSince
+									className="activity-log__threat-alert-time-since"
+									date={ file.firstDetected }
+									dateFormat="ll"
+								/>
 							</div>
 							<p className="activity-log__threat-alert-dirpath">{ file.dirpath }</p>
 							{ file.diff && (

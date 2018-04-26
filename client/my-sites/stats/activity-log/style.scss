@@ -90,16 +90,6 @@
 	.activity-log__threat-alert-title {
 		color: black;
 	}
-
-	.activity-log__detection-time {
-		margin-left: 2px;
-		padding-left: 4px;
-
-		&::before {
-			// cdot three-per-em-space
-			content: '\00b7\2004';
-		}
-	}
 }
 
 .activity-log__threat-alert-file-header {
@@ -110,16 +100,16 @@
 		color: black;
 		font-weight: 500;
 	}
+}
 
-	.activity-log__detection-time {
-		margin-left: 2px;
-		padding-left: 4px;
-		color: $gray;
+.activity-log__threat-alert-time-since {
+	margin-left: 2px;
+	padding-left: 4px;
+	color: $gray;
 
-		&::before {
-			// cdot three-per-em-space
-			content: '\00b7\2004';
-		}
+	&::before {
+		// cdot three-per-em-space
+		content: '\00b7\2004';
 	}
 }
 
