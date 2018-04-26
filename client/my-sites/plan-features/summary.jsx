@@ -18,7 +18,7 @@ class PlanFeaturesSummary extends Component {
 		available: PropTypes.bool.isRequired,
 		currencyCode: PropTypes.string,
 		current: PropTypes.bool,
-		isJetpackSite: PropTypes.bool.isRequired,
+		isJetpack: PropTypes.bool.isRequired,
 		planTitle: PropTypes.string.isRequired,
 		rawPrice: PropTypes.number,
 		relatedMonthlyPlan: PropTypes.object,
@@ -97,13 +97,13 @@ class PlanFeaturesSummary extends Component {
 	}
 
 	render() {
-		const { available, current, isJetpackSite } = this.props;
+		const { available, current, isJetpack } = this.props;
 
 		if ( current || ! available ) {
 			return null;
 		}
 
-		const summary = isJetpackSite ? this.renderJetpackSummary() : this.renderWPCOMSummary();
+		const summary = isJetpack ? this.renderJetpackSummary() : this.renderWPCOMSummary();
 		if ( ! summary ) {
 			return null;
 		}

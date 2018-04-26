@@ -224,7 +224,7 @@ class PlanFeatures extends Component {
 						currencyCode={ currencyCode }
 						current={ current }
 						discountPrice={ discountPrice }
-						isJetpackSite={ isJetpack }
+						isJetpack={ isJetpack }
 						planTitle={ planConstantObj.getTitle() }
 						planType={ planName }
 						rawPrice={ rawPrice }
@@ -300,7 +300,7 @@ class PlanFeatures extends Component {
 						available={ available }
 						current={ current }
 						currencyCode={ currencyCode }
-						isSiteJetpack={ isJetpack }
+						isJetpack={ isJetpack }
 						popular={ popular }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
@@ -411,7 +411,7 @@ class PlanFeatures extends Component {
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
 						isInSignup={ isInSignup }
-						isSiteJetpack={ isJetpack }
+						isJetpack={ isJetpack }
 						isPlaceholder={ isPlaceholder }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
