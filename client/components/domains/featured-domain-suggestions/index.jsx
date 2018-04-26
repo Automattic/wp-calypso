@@ -40,7 +40,9 @@ export class FeaturedDomainSuggestions extends Component {
 		const { domain_name: primaryDomainName = '' } = primarySuggestion;
 		const { domain_name: secondaryDomainName = '' } = secondarySuggestion;
 		const longestDomainName =
-			primaryDomainName.length >= secondaryDomainName ? primaryDomainName : secondaryDomainName;
+			primaryDomainName.length >= secondaryDomainName.length
+				? primaryDomainName
+				: secondaryDomainName;
 		return longestDomainName.length;
 	}
 
