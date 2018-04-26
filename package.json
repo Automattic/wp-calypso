@@ -255,7 +255,7 @@
     "enzyme-to-json": "3.3.0",
     "eslines": "1.1.0",
     "eslint": "4.19.1",
-    "eslint-config-wpcalypso": "2.0.0",
+    "eslint-config-wpcalypso": "3.0.0",
     "eslint-eslines": "1.0.0",
     "eslint-plugin-import": "2.9.0",
     "eslint-plugin-jest": "21.2.0",
