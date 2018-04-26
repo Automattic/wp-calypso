@@ -38,9 +38,9 @@ class InlineHelpPopover extends Component {
 		activeSecondaryView: '',
 	};
 
-	openResult = event => {
+	openResultView = event => {
 		event.preventDefault();
-		this.toggleSecondaryView( 'richresult' );
+		this.openSecondaryView( 'richresult' );
 	};
 
 	moreHelpClicked = () => {
@@ -48,20 +48,29 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
 	};
 
-	toggleSecondaryView = secondaryView => {
-		if ( this.state.activeSecondaryView ) {
-			this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryView }_hide` );
-			this.props.selectResult( -1 );
-			this.setState( { activeSecondaryView: '' } );
-		} else {
-			this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryView }_show` );
-			this.setState( { activeSecondaryView: secondaryView } );
-		}
-		this.setState( { showSecondaryView: ! this.state.showSecondaryView } );
+	setSecondaryViewKey = secondaryViewKey => {
+		this.setState( { activeSecondaryView: secondaryViewKey } );
 	};
 
-	buttonClicked = secondaryView => () => {
-		this.toggleSecondaryView( secondaryView );
+	openSecondaryView = secondaryViewKey => {
+		this.setSecondaryViewKey( secondaryViewKey );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show` );
+		this.setState( { showSecondaryView: true } );
+	};
+
+	closeSecondaryView = secondaryViewKey => {
+		this.setSecondaryViewKey( '' );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_hide` );
+		this.props.selectResult( -1 );
+		this.setState( { showSecondaryView: false } );
+	};
+
+	openContactView = () => {
+		this.openSecondaryView( 'contact' );
+	};
+
+	handleCloseSecondaryViewButton = () => {
+		this.closeSecondaryView( this.state.activeSecondaryView );
 	};
 
 	renderSecondaryView = () => {
@@ -95,9 +104,12 @@ class InlineHelpPopover extends Component {
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
 				<div className="inline-help__search">
-					<InlineHelpSearchCard openResult={ this.openResult } query={ this.props.searchQuery } />
+					<InlineHelpSearchCard
+						openResult={ this.openResultView }
+						query={ this.props.searchQuery }
+					/>
 					<InlineHelpSearchResults
-						openResult={ this.openResult }
+						openResult={ this.openResultView }
 						searchQuery={ this.props.searchQuery }
 					/>
 				</div>
@@ -116,7 +128,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 
 					<Button
-						onClick={ this.buttonClicked( 'contact' ) }
+						onClick={ this.openContactView }
 						className="inline-help__contact-button"
 						borderless
 					>
@@ -126,7 +138,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 
 					<Button
-						onClick={ this.buttonClicked( this.state.activeSecondaryView ) }
+						onClick={ this.handleCloseSecondaryViewButton }
 						className="inline-help__cancel-button"
 						borderless
 					>

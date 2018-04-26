@@ -111,7 +111,7 @@ class InlineHelpRichResult extends Component {
 						{
 							article: translate( 'Read more' ),
 							video: translate( 'Watch a video' ),
-							tour: translate( 'Start a tour' ),
+							tour: translate( 'Start tour' ),
 						}[ type ]
 					}
 				</Button>
