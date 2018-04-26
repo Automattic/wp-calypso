@@ -154,8 +154,8 @@ export default EnhancedComponent =>
 			const nodeRect = node.getBoundingClientRect();
 			const caretPosition = getCaretCoordinates( node, node.selectionEnd );
 			const position = {
-				left: nodeRect.left + caretPosition.left + 8,
-				top: nodeRect.top + caretPosition.top + 10,
+				left: nodeRect.left + caretPosition.left,
+				top: nodeRect.top + caretPosition.top + 28,
 			};
 
 			console.log( position ); // eslint-disable-line no-console
@@ -256,6 +256,11 @@ export default EnhancedComponent =>
 			const selectedSuggestionId =
 				this.state.selectedSuggestionId || get( head( this.matchingSuggestions ), 'ID' );
 
+			const popoverPosition = {
+				left: this.popoverPositionLeft,
+				top: this.popoverPositionTop,
+			};
+
 			return (
 				<div>
 					<EnhancedComponent
@@ -271,8 +276,7 @@ export default EnhancedComponent =>
 								suggestions={ this.matchingSuggestions }
 								selectedSuggestionId={ selectedSuggestionId }
 								popoverContext={ this.textInput.current }
-								popoverPositionLeft={ this.popoverPositionLeft }
-								popoverPositionTop={ this.popoverPositionTop }
+								popoverPosition={ popoverPosition }
 								onClick={ this.insertSuggestion }
 								onClose={ this.hidePopover }
 							/>

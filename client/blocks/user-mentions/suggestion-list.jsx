@@ -33,8 +33,7 @@ class UserMentionSuggestionList extends Component {
 				autoPosition={ false }
 				position="bottom right"
 				onClose={ onClose }
-				popoverPositionLeft={ this.props.popoverPositionLeft }
-				popoverPositionTop={ this.props.popoverPositionTop }
+				customPosition={ this.props.popoverPosition }
 			>
 				{ suggestions.map( suggestion => (
 					<PopoverMenuItem
