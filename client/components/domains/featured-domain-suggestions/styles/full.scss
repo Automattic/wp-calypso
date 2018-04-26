@@ -1,0 +1,129 @@
+/** @format */
+
+.featured-domain-suggestions--full .featured-domain-suggestion {
+	flex-direction: column;
+	width: 100%;
+	margin-top: 0;
+
+	.domain-suggestion__content {
+		flex-flow: row wrap;
+		flex-grow: 0;
+		margin-top: 0;
+	}
+
+	.domain-suggestion__spacer {
+		flex-grow: 2;
+	}
+
+	.domain-registration-suggestion__title,
+	.domain-registration-suggestion__progress-bar,
+	.domain-product-price,
+	.domain-registration-suggestion__match-reasons {
+		flex: 0 0 100%;
+		align-self: flex-start;
+	}
+
+	.domain-registration-suggestion__title {
+		flex-grow: 0;
+		font-size: 2em;
+		font-weight: 600;
+		line-height: 1.2;
+		margin-bottom: 0.25em;
+		order: 0;
+	}
+
+	// .card used to increase specificity
+	&.card .domain-product-price {
+		align-items: left;
+		margin: 0;
+		padding: 0;
+		order: 1;
+		flex-grow: 0;
+		flex-basis: auto;
+
+		&.is-with-plans-only,
+		&.is-free-domain {
+			font-size: 0.9em;
+			small {
+				font-size: 0.9em;
+			}
+		}
+	}
+
+	.domain-registration-suggestion__progress-bar {
+		order: 2;
+	}
+
+	.domain-registration-suggestion__match-reasons {
+		order: 3;
+	}
+
+	.domain-registration-suggestion__match-reason {
+		color: $gray-text-min;
+		padding: 0.125em 0;
+		display: flex;
+		align-items: center;
+
+		.gridicon {
+			color: $alert-green;
+			margin-right: 0.25em;
+		}
+	}
+
+	// .card increases specificity
+	&.card .domain-suggestion__action {
+		margin-top: 1em;
+
+		// Increase specificity
+		&.button.is-primary {
+			width: 100%;
+			align-self: flex-start;
+			margin-left: 0;
+			flex-grow: 0;
+		}
+	}
+}
+
+@include breakpoint( '<660px' ) {
+	.featured-domain-suggestions--full {
+		flex-flow: wrap;
+
+		.featured-domain-suggestion .domain-suggestion__action.button.is-primary {
+			width: initial;
+		}
+	}
+}
+
+@include breakpoint( '>660px' ) {
+	.featured-domain-suggestions--full {
+		.domain-registration-suggestion__title {
+			.featured-domain-suggestions--title-in-18em & {
+				font-size: 1.8em;
+			}
+			.featured-domain-suggestions--title-in-16em & {
+				font-size: 1.6em;
+			}
+			.featured-domain-suggestions--title-in-14em & {
+				font-size: 1.4em;
+			}
+			.featured-domain-suggestions--title-in-12em & {
+				font-size: 1.2em;
+			}
+			.featured-domain-suggestions--title-in-10em & {
+				font-size: 1em;
+			}
+		}
+
+		.featured-domain-suggestions--title-causes-overflow {
+			flex-wrap: wrap;
+
+			.featured-domain-suggestion {
+				margin-top: 0;
+			}
+		}
+
+		.featured-domain-suggestion .domain-suggestion__action.button.is-primary {
+			width: initial;
+		}
+	}
+}

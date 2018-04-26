@@ -24,6 +24,7 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import ProgressBar from 'components/progress-bar';
 import { parseMatchReasons, VALID_MATCH_REASONS } from './utility';
+import MatchReasonsTooltip from './match-reasons-tooltip';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -117,12 +118,22 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderDomain() {
-		const { suggestion: { domain_name: domain } } = this.props;
-		return <h3 className="domain-registration-suggestion__title">{ domain }</h3>;
+		const { suggestion: { domain_name: domain }, isFeatured } = this.props;
+		return (
+			<h3 className="domain-registration-suggestion__title-container">
+				<div className="domain-registration-suggestion__title">{ domain }</div>
+				{ isFeatured && this.renderProgressBar( { includeMatchReasons: true } ) }
+			</h3>
+		);
 	}
 
-	renderProgressBar() {
-		const { suggestion: { isRecommended, isBestAlternative }, translate, isFeatured } = this.props;
+	renderProgressBar( { includeMatchReasons = false } = {} ) {
+		const {
+			suggestion: { domain_name: domain, isRecommended, isBestAlternative },
+			translate,
+			isFeatured,
+		} = this.props;
+		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
 
 		if ( ! isFeatured ) {
 			return null;
@@ -150,7 +161,10 @@ class DomainRegistrationSuggestion extends React.Component {
 			return (
 				<div className="domain-registration-suggestion__progress-bar">
 					<ProgressBar { ...progressBarProps } />
-					<span className="domain-registration-suggestion__progress-bar-text">{ title }</span>
+					<span className="domain-registration-suggestion__progress-bar-text">
+						{ title }
+						{ includeMatchReasons && <MatchReasonsTooltip matchReasons={ matchReasons } /> }
+					</span>
 				</div>
 			);
 		}
