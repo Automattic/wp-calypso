@@ -54,9 +54,7 @@ class EditorActionBar extends Component {
 	};
 
 	setViewLinkTooltipContext = viewLinkTooltipContext => {
-		if ( viewLinkTooltipContext ) {
-			this.setState( { viewLinkTooltipContext } );
-		}
+		this.setState( { viewLinkTooltipContext } );
 	};
 
 	render() {
