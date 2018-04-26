@@ -27,14 +27,13 @@ class InlineHelpRichResult extends Component {
 	};
 
 	state = {
-		type: this.props.result.type || RESULT_ARTICLE,
 		showDialog: false,
 	};
 
 	handleClick = event => {
 		event.preventDefault();
 		const { href } = event.target;
-		const { type } = this.state;
+		const { type } = this.props;
 		const { tour } = this.props.result;
 		const tracksData = omitBy(
 			{
@@ -98,7 +97,7 @@ class InlineHelpRichResult extends Component {
 	};
 
 	render() {
-		const { type } = this.state;
+		const { type } = this.props;
 		const { translate, result } = this.props;
 		const { title, description, link } = result;
 		const classes = classNames( 'inline-help__richresult__title' );
@@ -121,12 +120,13 @@ class InlineHelpRichResult extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		searchQuery: getSearchQuery( state ),
-	} ),
-	{
-		recordTracksEvent,
-		requestGuidedTour,
-	}
-)( localize( InlineHelpRichResult ) );
+const mapStateToProps = ( state, ownProps ) => ( {
+	searchQuery: getSearchQuery( state ),
+	type: ownProps.result.type || RESULT_ARTICLE,
+} );
+const mapDispatchToProps = {
+	recordTracksEvent,
+	requestGuidedTour,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );
