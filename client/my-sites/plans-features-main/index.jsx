@@ -131,7 +131,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getIntervalPath = interval => {
-		const { basePlansPath = '/plans', selectedFeature, selectedPlan, siteSlug } = this.props;
+		const { basePlansPath, selectedFeature, selectedPlan, siteSlug } = this.props;
 		return addQueryArgs(
 			{
 				feature: selectedFeature,
@@ -210,7 +210,7 @@ PlansFeaturesMain.propTypes = {
 };
 
 PlansFeaturesMain.defaultProps = {
-	basePlansPath: null,
+	basePlansPath: '/plans',
 	hideFreePlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,

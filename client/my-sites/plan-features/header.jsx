@@ -304,6 +304,7 @@ export class PlanFeaturesHeader extends Component {
 
 PlanFeaturesHeader.propTypes = {
 	available: PropTypes.bool,
+	basePlansPath: PropTypes.string,
 	billingTimeFrame: PropTypes.string.isRequired,
 	current: PropTypes.bool,
 	onClick: PropTypes.func,
@@ -336,7 +337,6 @@ PlanFeaturesHeader.defaultProps = {
 	bestValue: false,
 	isPlaceholder: false,
 	siteSlug: '',
-	basePlansPath: null,
 	currentSitePlan: {},
 	isSiteAT: false,
 	isSiteJetpack: false,
