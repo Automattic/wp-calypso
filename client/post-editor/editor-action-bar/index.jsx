@@ -85,7 +85,7 @@ class EditorActionBar extends Component {
 						<PodcastIndicator
 							className="editor-action-bar__podcasting-indicator"
 							size={ 24 }
-							hasTooltip={ true }
+							tooltipType="episode"
 						/>
 					) }
 					{ utils.isPublished( this.props.savedPost ) && (

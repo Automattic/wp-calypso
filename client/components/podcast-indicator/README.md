@@ -6,10 +6,13 @@ PodcastIndicator
 ```js
 import PodcastIndicator from 'components/podcast-indicator';
 
-<PodcastIndicator size{ 24 } hasTooltip={ true } />
+<PodcastIndicator size={ 24 } />
 ```
 
 ## Props
 
 * `size` **(Number) (optional)** Determines Gridicon size. Defaults to `18`.
-* `hasTooltip` **(Boolean) (optional)** Determines if Tooltip is shown. Defaults to `true`.
+* `tooltipType` **(String) (optional)**
+   * Set to `'category'` to show a tooltip explaining the presence of this indicator in a list of categories (this is the default value).
+   * Set to `'episode'` to show a tooltip explaining the presence of this indicator for an individual post.
+   * Set to `null` to not show a tooltip at all.

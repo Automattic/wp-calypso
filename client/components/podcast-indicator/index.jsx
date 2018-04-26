@@ -17,12 +17,12 @@ import Tooltip from 'components/tooltip';
 class PodcastIndicator extends React.Component {
 	static propTypes = {
 		size: PropTypes.number,
-		hasTooltip: PropTypes.bool,
+		tooltipType: PropTypes.oneOf( [ 'category', 'episode', null ] ),
 	};
 
 	static defaultProps = {
 		size: 18,
-		hasTooltip: true,
+		tooltipType: 'category',
 	};
 
 	constructor( props ) {
@@ -47,7 +47,17 @@ class PodcastIndicator extends React.Component {
 	};
 
 	render() {
-		const { size, hasTooltip, translate } = this.props;
+		const { size, tooltipType, translate } = this.props;
+
+		let tooltipMessage = null;
+		switch ( tooltipType ) {
+			case 'category':
+				tooltipMessage = translate( 'Posts in this category are included in your Podcast feed' );
+				break;
+			case 'episode':
+				tooltipMessage = translate( 'Included in your Podcast feed' );
+				break;
+		}
 
 		const classes = classNames( 'podcast-indicator', this.props.className, {
 			'is-compact': this.props.isCompact,
@@ -62,14 +72,14 @@ class PodcastIndicator extends React.Component {
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }
 				/>
-				{ hasTooltip && (
+				{ tooltipMessage && (
 					<Tooltip
 						className="podcast-indicator__tooltip"
 						context={ this.state.tooltipContext }
 						isVisible={ this.state.tooltipVisible }
 						position="bottom left"
 					>
-						{ translate( 'Included in your Podcast feed' ) }
+						{ tooltipMessage }
 					</Tooltip>
 				) }
 			</span>

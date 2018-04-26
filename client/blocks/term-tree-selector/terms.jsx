@@ -357,7 +357,7 @@ class TermTreeSelectorList extends Component {
 					{ input }
 					<span className="term-tree-selector__label">
 						{ name }
-						{ isPodcastingCategory && <PodcastIndicator size={ 18 } hasTooltip={ false } /> }
+						{ isPodcastingCategory && <PodcastIndicator size={ 18 } /> }
 					</span>
 				</label>
 				{ children.length > 0 && (
