@@ -31,11 +31,13 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import isEligibleForSpringDiscount from 'state/selectors/is-current-user-eligible-for-spring-discount';
+import {
+	canUpgradeToPlan,
+	isCurrentUserEligibleForSpringDiscount as isEligibleForSpringDiscount,
+} from 'state/selectors';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
-	canUpgradeToPlan,
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
@@ -711,7 +713,9 @@ export default connect(
 				const planObject = getPlan( state, planProductId );
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
-				const available = isInSignup ? true : canUpgradeToPlan( plan, site ) && canPurchase;
+				const available = isInSignup
+					? true
+					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
