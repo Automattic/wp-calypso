@@ -8,7 +8,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -125,8 +124,11 @@ export default connect( state => {
 	const podcastingCategoryId = getPodcastingCategoryId( state, siteId );
 	let isPodcastEpisode = false;
 	if ( podcastingCategoryId ) {
-		const postCategories = getEditedPostValue( state, siteId, postId, 'categories' );
-		isPodcastEpisode = find( postCategories, { ID: podcastingCategoryId } ) !== undefined;
+		const postTerms = getEditedPostValue( state, siteId, postId, 'terms' );
+		const postCategories = postTerms && postTerms.category;
+		if ( Array.isArray( postCategories ) && postCategories.some( cat => cat.ID === podcastingCategoryId ) ) {
+			isPodcastEpisode = true;
+		}
 	}
 
 	return {
