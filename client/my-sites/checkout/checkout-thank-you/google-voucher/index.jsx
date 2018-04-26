@@ -116,6 +116,7 @@ class GoogleVoucherDetails extends Component {
 			<div className="google-voucher__initial-step">
 				<PurchaseButton
 					onClick={ this.onGenerateCode }
+					primary={ false }
 					text={ this.props.translate( 'Generate code' ) }
 				/>
 
@@ -199,6 +200,7 @@ class GoogleVoucherDetails extends Component {
 						target="_blank"
 						rel="noopener noreferrer"
 						onClick={ this.onSetupGoogleAdWordsLink }
+						primary={ false }
 						text={ this.props.translate( 'Setup Google AdWords' ) }
 					/>
 				</div>
