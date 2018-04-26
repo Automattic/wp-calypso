@@ -305,7 +305,7 @@ const analytics = {
 					if ( TRACKS_SPECIAL_PROPS_NAMES.indexOf( key ) !== -1 ) {
 						//eslint-disable-next-line no-console
 						console.error(
-							"Tracks: Event property `%s` will be overwritten because it uses one of Tracks' internal prop name: %s " +
+							"Tracks: Event property `%s` will be overwritten because it uses one of Tracks' internal prop name: %s. " +
 								'Please use another property name.',
 							key,
 							TRACKS_SPECIAL_PROPS_NAMES.join( ', ' )
