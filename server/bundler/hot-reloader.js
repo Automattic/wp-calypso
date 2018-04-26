@@ -6,11 +6,11 @@
 /**
  * External dependencies
  */
-var socketio = require( 'socket.io' );
-var debug = require( 'debug' )( 'calypso:bundler:hot-reloader' );
-var cssHotReloader = require( './css-hot-reload' );
+const socketio = require( 'socket.io' );
+const debug = require( 'debug' )( 'calypso:bundler:hot-reloader' );
+const cssHotReloader = require( './css-hot-reload' );
 
-var io = null,
+let io = null,
 	_stats = null,
 	hotReloader;
 
