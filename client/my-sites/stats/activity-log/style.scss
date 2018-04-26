@@ -1,3 +1,5 @@
+/** @format */
+
 // Activity Log
 
 .activity-log__wrapper {
@@ -7,10 +9,10 @@
 	&:after {
 		content: '';
 		position: absolute;
-			left: 33px;
+		left: 33px;
 		width: 2px;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			left: 25px;
 		}
 	}
@@ -27,10 +29,7 @@
 		height: 16px;
 		z-index: -1;
 		background: blue;
-		background: linear-gradient(
-			transparentize( $gray-light, 1 ),
-			$gray-light
-		);
+		background: linear-gradient(transparentize($gray-light, 1), $gray-light);
 	}
 }
 
@@ -40,7 +39,7 @@
 	background: $gray-light;
 	font-weight: 500;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-left: 10px;
 	}
 }
@@ -77,4 +76,54 @@
 
 .activity-log__pagination {
 	margin: 14px 0 48px;
+}
+
+.activity-log__threat-alert {
+	& .activity-log-item__activity-icon {
+	}
+}
+
+.activity-log__threat-alert-header {
+	margin-left: 8px;
+	color: $gray;
+
+	.activity-log__threat-alert-title {
+		color: black;
+	}
+
+	.activity-log__detection-time {
+		margin-left: 2px;
+		padding-left: 4px;
+
+		&::before {
+			// cdot three-per-em-space
+			content: '\00b7\2004';
+		}
+	}
+}
+
+.activity-log__threat-alert-file-header {
+	margin-top: 1em;
+	margin-bottom: 4px;
+
+	.activity-log__threat-alert-filename {
+		color: black;
+		font-weight: 500;
+	}
+
+	.activity-log__detection-time {
+		margin-left: 2px;
+		padding-left: 4px;
+		color: $gray;
+
+		&::before {
+			// cdot three-per-em-space
+			content: '\00b7\2004';
+		}
+	}
+}
+
+.activity-log__threat-alert-dirpath {
+	margin-top: 0;
+	color: $gray;
 }
