@@ -11,26 +11,18 @@ import page from 'page';
 import config from 'config';
 import { makeLayout, redirectLoggedOut } from 'controller';
 import { navigation, sites, siteSelection } from 'my-sites/controller';
-import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
+import {
+	newAccount,
+	selectBusinessType,
+	selectLocation,
+	stats,
+	redirectToStatsIfLocationConnected,
+} from './controller';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 import { isGoogleMyBusinessLocationConnected, getGoogleMyBusinessLocations } from 'state/selectors';
 import { requestSiteSettings } from 'state/site-settings/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
-
-const redirectToStatsIfLocationConnected = ( context, next ) => {
-	const siteId = getSelectedSiteId( context.store.getState() );
-	context.store
-		.dispatch( requestSiteSettings( siteId ) )
-		.then( () => {
-			if ( isGoogleMyBusinessLocationConnected( context.store.getState(), siteId ) ) {
-				page.redirect( `/google-my-business/stats/${ context.params.site }` );
-			} else {
-				next();
-			}
-		} )
-		.catch( next ); // on error, try to move forward
-};
 
 export default function( router ) {
 	router( '/google-my-business', siteSelection, sites, navigation, makeLayout );
