@@ -45,6 +45,7 @@ import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shippin
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
+import { isEnabled } from 'config';
 
 class OrderFulfillment extends Component {
 	static propTypes = {
@@ -142,18 +143,47 @@ class OrderFulfillment extends Component {
 		}
 	};
 
-	isAddressValidForLabels( address ) {
-		return includes( USPS_COUNTRIES, address.country );
+	isAddressValidForLabels( address, type ) {
+		if ( isEnabled( 'woocommerce/extension-wcservices/international-labels' ) ) {
+			return 'destination' === type || includes( USPS_COUNTRIES, address.country );
+		}
+
+		const { labelCountriesData } = this.props;
+		if ( ! labelCountriesData ) {
+			return false;
+		}
+
+		const countryData = labelCountriesData[ address.country ];
+
+		//country not supported
+		if ( ! countryData ) {
+			return false;
+		}
+
+		//supported country doesn't have states data
+		if ( ! countryData.states ) {
+			return true;
+		}
+
+		//check if the address state is supported
+		return Boolean( countryData.states[ address.state ] );
 	}
 
 	shouldShowLabels() {
-		const { labelsLoaded, labelsEnabled, storeAddress, hasLabelsPaymentMethod } = this.props;
+		const { labelsLoaded, labelsEnabled, storeAddress, order, hasLabelsPaymentMethod } = this.props;
 
 		if ( ! labelsLoaded ) {
 			return false;
 		}
 
-		return labelsEnabled && hasLabelsPaymentMethod && this.isAddressValidForLabels( storeAddress );
+		const { shipping } = order;
+
+		return (
+			labelsEnabled &&
+			hasLabelsPaymentMethod &&
+			this.isAddressValidForLabels( storeAddress, 'origin' ) &&
+			this.isAddressValidForLabels( shipping, 'destination' )
+		);
 	}
 
 	renderFulfillmentAction() {

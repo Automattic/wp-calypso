@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flatten, find, get, includes, isEmpty, isEqual, isFinite, map, mapValues, pick, round, some, sumBy, uniq } from 'lodash';
+import { flatten, find, get, includes, isEmpty, isEqual, isFinite, map, mapValues, omit, pick, round, some, sumBy, uniq } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import {
 	isLoaded as arePackagesLoaded,
 	isFetchError as arePackagesErrored,
 } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import { isEnabled as flagIsEnabled } from 'config';
 
 // "Countries" from when USPS can ship a package
 export const USPS_COUNTRIES = [ 'US', 'AS', 'PR', 'VI', 'GU', 'MP', 'UM', 'FM', 'MH' ];
@@ -418,5 +419,16 @@ export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( st
 	}
 
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	return shippingLabel.storeOptions.countriesData;
+	const { countriesData } = shippingLabel.storeOptions;
+	if ( flagIsEnabled( 'woocommerce/extension-wcservices/international-labels' ) || ! countriesData ) {
+		return countriesData;
+	}
+
+	return {
+		...pick( countriesData, [ 'PR', 'VI' ] ),
+		US: {
+			...countriesData.US,
+			states: omit( countriesData.US.states, [ 'AA', 'AE', 'AP' ] ), // Exclude military addresses
+		},
+	};
 };
