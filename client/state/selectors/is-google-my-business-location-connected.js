@@ -10,5 +10,5 @@ const getGoogleMyBusinessLocationId = ( state, siteId ) => {
 };
 
 export default function isGoogleMyBusinessLocationConnected( state, siteId ) {
-	return getGoogleMyBusinessLocationId( state, siteId ) !== null;
+	return !! getGoogleMyBusinessLocationId( state, siteId );
 }
