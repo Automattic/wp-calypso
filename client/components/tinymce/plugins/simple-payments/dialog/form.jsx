@@ -20,8 +20,10 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
+import FormSelect from 'components/forms/form-select';
 import UploadImage from 'blocks/upload-image';
 import { getCurrencyDefaults } from 'lib/format-currency';
+import QueryMembershipsConnectedAccounts from 'components/data/query-memberships-connected-accounts';
 import config from 'config';
 
 const REDUX_FORM_NAME = 'simplePaymentsForm';
@@ -235,9 +237,30 @@ class ProductForm extends Component {
 					) }
 					{ this.props.isRecurringSubscription && (
 						<div>
-							{ translate(
-								'TODO: Here we need Stripe account connection and renewal schedule of the plan.'
-							) }
+							<QueryMembershipsConnectedAccounts />
+							<ReduxFormFieldset
+								name="stripe_account"
+								explanation={ translate(
+									'This is the Stripe Account where the funds will end up.'
+								) }
+								label={ translate( 'Stripe Account' ) }
+								component={ FormSelect }
+								children={ Object.values( this.props.membershipsConnectedAccounts ).map( acct => (
+									<option value={ acct.connected_destination_account_id }>
+										{ acct.payment_partner_account_id }
+									</option>
+								) ) }
+							/>
+							<ReduxFormFieldset
+								name="renewal_schedule"
+								explanation={ translate( 'After what time should the subscription renew?' ) }
+								label={ translate( 'Renewal Schedule' ) }
+								component={ FormSelect }
+							>
+								<option value="1 week">{ translate( '1 Week' ) }</option>
+								<option value="1 month">{ translate( '1 Month' ) }</option>
+								<option value="1 year">{ translate( '1 Year' ) }</option>
+							</ReduxFormFieldset>
 						</div>
 					) }
 				</div>
@@ -256,6 +279,11 @@ export default compose(
 	connect( state => {
 		return {
 			isRecurringSubscription: get( state, [ 'form', REDUX_FORM_NAME, 'values', 'recurring' ] ),
+			membershipsConnectedAccounts: get(
+				state,
+				[ 'memberships', 'connectedAccounts', 'accounts' ],
+				{}
+			),
 		};
 	} )
 )( ProductForm );
