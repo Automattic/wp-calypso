@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import * as postUtils from 'lib/posts/utils';
-import { isEnabled } from 'config';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 
@@ -59,8 +58,7 @@ const QuickSaveButtons = ( {
 
 	const showingStatusLabel = isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
 	const showingSaveStatus = isSaveAvailable || showingStatusLabel;
-	const hasRevisions =
-		showRevisions && isEnabled( 'post-editor/revisions' ) && get( post, 'revisions.length' );
+	const hasRevisions = showRevisions && get( post, 'revisions.length' );
 
 	if ( ! ( showingSaveStatus || hasRevisions ) ) {
 		return null;
