@@ -43,6 +43,7 @@ import Collection from 'devdocs/design/search-collection';
 import Count from 'components/count/docs/example';
 import CountedTextareas from 'components/forms/counted-textarea/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
+import DiffViewerExample from 'components/diff-viewer/docs/example';
 import DropZones from 'components/drop-zone/docs/example';
 import EllipsisMenu from 'components/ellipsis-menu/docs/example';
 import EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
@@ -173,6 +174,7 @@ class DesignAssets extends React.Component {
 					<Count readmeFilePath="count" />
 					<CountedTextareas readmeFilePath="forms/counted-textarea" />
 					<DatePicker readmeFilePath="date-picker" />
+					<DiffViewerExample readmeFilePath="diff-viewer" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmbedDialog readmeFilePath="tinymce/plugins/embed" />
