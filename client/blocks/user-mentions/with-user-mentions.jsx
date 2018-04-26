@@ -57,12 +57,17 @@ export default EnhancedComponent =>
 
 			// Update position of popover if cursor has moved to a new line.
 			if ( nextState.showPopover ) {
-				const { top, left } = this.getPosition();
-				const isLineBefore = this.top > top && this.left < left;
-				const isLineAfter = this.top < top && this.left > left;
+				const currentTop = this.state.popoverPosition && this.state.popoverPosition.top;
+				const currentLeft = this.state.popoverPosition && this.state.popoverPosition.left;
 
-				if ( isLineBefore || isLineAfter ) {
-					this.updatePosition( nextState, { top, left } );
+				if ( currentTop && currentLeft ) {
+					const { top, left } = this.getPosition();
+					const isLineBefore = currentTop > top && currentTop < left;
+					const isLineAfter = currentTop < top && currentLeft > left;
+
+					if ( isLineBefore || isLineAfter ) {
+						this.updatePosition( nextState, { top, left } );
+					}
 				}
 			}
 		}
