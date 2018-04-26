@@ -55,9 +55,13 @@ export class AuthFormHeader extends Component {
 		if ( partnerSlug ) {
 			switch ( partnerSlug ) {
 				case 'dreamhost':
-					return translate( 'In partnership with Dreamhost' );
+					return translate( 'Jetpack, in partnership with Dreamhost' );
 				case 'pressable':
-					return translate( 'In partnership with Pressable' );
+					return translate( 'Jetpack, in partnership with Pressable' );
+				case 'milesweb':
+					return translate( 'Jetpack, in partnership with MilesWeb' );
+				case 'bluehost':
+					return translate( 'Jetpack, in partnership with Bluehost' );
 				default:
 					return translate( 'Completing set up' );
 			}
