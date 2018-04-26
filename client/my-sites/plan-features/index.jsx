@@ -694,7 +694,8 @@ export default connect(
 		} = ownProps;
 		const selectedSiteId = site ? site.ID : null;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-		const isJetpack = isJetpackSite( state, selectedSiteId );
+		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
+		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
