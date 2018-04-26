@@ -11,8 +11,7 @@ const debug = require( 'debug' )( 'calypso:bundler:hot-reloader' );
 const cssHotReloader = require( './css-hot-reload' );
 
 let io = null,
-	_stats = null,
-	hotReloader;
+	_stats = null;
 
 function invalidPlugin() {
 	if ( io ) {
@@ -40,7 +39,7 @@ function sendStats( socket, stats, force ) {
 	}
 }
 
-hotReloader = {
+const hotReloader = {
 	listen: function( server, webpackCompiler ) {
 		io = socketio.listen( server, { 'log level': 1 } );
 		io.sockets.on( 'connection', function( socket ) {

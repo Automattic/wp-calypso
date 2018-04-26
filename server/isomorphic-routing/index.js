@@ -86,6 +86,7 @@ function applyMiddlewares( context, expressNext, ...middlewares ) {
 			}
 		} )
 	 );
+
 	compose( ...liftedMiddlewares )();
 }
 
