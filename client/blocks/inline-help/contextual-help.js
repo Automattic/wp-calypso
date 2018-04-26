@@ -5,10 +5,13 @@
 import { compact, first, get } from 'lodash';
 
 /**
+ * Internal Dependencies
+ */
+import { RESULT_TOUR, RESULT_VIDEO } from './constants';
+
+/**
  * Module variables
  */
-export const RESULT_TOUR = 'tour',
-	RESULT_VIDEO = 'video';
 const fallbackLinks = [
 	{
 		link: 'https://en.support.wordpress.com/business-plan/',

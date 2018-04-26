@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
+import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { selectResult } from 'state/inline-help/actions';
 import Button from 'components/button';
@@ -40,7 +41,7 @@ class InlineHelpPopover extends Component {
 
 	openResultView = event => {
 		event.preventDefault();
-		this.openSecondaryView( 'richresult' );
+		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
 
 	moreHelpClicked = () => {
@@ -66,7 +67,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	openContactView = () => {
-		this.openSecondaryView( 'contact' );
+		this.openSecondaryView( VIEW_CONTACT );
 	};
 
 	handleCloseSecondaryViewButton = () => {

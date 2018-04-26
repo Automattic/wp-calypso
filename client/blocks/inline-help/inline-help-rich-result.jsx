@@ -12,7 +12,7 @@ import { omitBy, isUndefined } from 'lodash';
 /**
  * Internal Dependencies
  */
-
+import { RESULT_ARTICLE, RESULT_TOUR, RESULT_VIDEO } from './constants';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import ResizableIframe from 'components/resizable-iframe';
@@ -27,7 +27,7 @@ class InlineHelpRichResult extends Component {
 	};
 
 	state = {
-		type: this.props.result.type || 'article',
+		type: this.props.result.type || RESULT_ARTICLE,
 		showDialog: false,
 	};
 
@@ -47,9 +47,9 @@ class InlineHelpRichResult extends Component {
 
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData );
 
-		if ( type === 'tour' ) {
+		if ( type === RESULT_TOUR ) {
 			this.props.requestGuidedTour( tour );
-		} else if ( type === 'video' ) {
+		} else if ( type === RESULT_VIDEO ) {
 			if ( event.metaKey ) {
 				window.open( href, '_blank' );
 			} else {
@@ -111,11 +111,11 @@ class InlineHelpRichResult extends Component {
 						{
 							article: translate( 'Read more' ),
 							video: translate( 'Watch a video' ),
-							tour: translate( 'Start tour' ),
+							tour: translate( 'Start Tour' ),
 						}[ type ]
 					}
 				</Button>
-				{ type === 'video' && this.renderDialog() }
+				{ type === RESULT_VIDEO && this.renderDialog() }
 			</div>
 		);
 	}
