@@ -22,11 +22,8 @@ import {
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	parseMatchReasons,
-	VALID_MATCH_REASONS,
-} from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
+import { parseMatchReasons, VALID_MATCH_REASONS } from './utility';
 
 const NOTICE_GREEN = '#4ab866';
 

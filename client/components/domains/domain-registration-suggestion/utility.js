@@ -19,7 +19,7 @@ export const VALID_MATCH_REASONS = [
 	'tld-common',
 ];
 
-function sortMatchReasons( matchReasons ) {
+function sortMatchReasons( matchReasons = [] ) {
 	return [ ...matchReasons ].sort(
 		( a, b ) => VALID_MATCH_REASONS.indexOf( a ) - VALID_MATCH_REASONS.indexOf( b )
 	);
