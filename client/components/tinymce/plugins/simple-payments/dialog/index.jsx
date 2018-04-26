@@ -101,6 +101,25 @@ const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
 		} );
 };
 
+const updateMembershipButton = ( siteId, productId ) => ( dispatch, getState ) => {
+	// This is a memberships submission.
+	const values = get( getState(), [ 'form', 'simplePaymentsForm', 'values' ], {} );
+	return wpcom.req
+		.post( `/sites/${ siteId }/memberships/product/${ productId }`, {
+			title: values.title,
+			description: values.description,
+			connected_destination_account_id: values.stripe_account,
+			interval: values.renewal_schedule,
+			price: values.price,
+			currency: values.currency,
+		} )
+		.then( newProduct => {
+			const product = membershipProductFromApi( newProduct.product );
+			dispatch( receiveUpdateProduct( siteId, product ) );
+			return product;
+		} );
+};
+
 // Thunk action creator to delete a button
 const trashPaymentButton = ( siteId, paymentId ) => dispatch => {
 	// TODO: Replace double-delete with single-delete call after server-side shortcode renderer
@@ -322,7 +341,13 @@ class SimplePaymentsDialog extends Component {
 
 		// On successful update, finish the edit (by going back to list or closing the dialog).
 		// On save error, show error notice and keep the form displayed.
-		dispatch( updatePaymentButton( siteId, editedPaymentId ) )
+		let updateAction = null;
+		if ( config.isEnabled( 'memberships' ) && this.props.currentlyEditedIsMembershipSubscription ) {
+			updateAction = updateMembershipButton( siteId, editedPaymentId );
+		} else {
+			updateAction = updatePaymentButton( siteId, editedPaymentId );
+		}
+		dispatch( updateAction )
 			.then( this.handleFormClose )
 			.catch( () => this.showError( translate( 'The payment button could not be updated.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
@@ -554,7 +579,7 @@ export default connect( ( state, { siteId } ) => {
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
-		newlyCreatedIsMembershipSubscription: get(
+		currentlyEditedIsMembershipSubscription: get(
 			state,
 			[ 'form', 'simplePaymentsForm', 'values', 'recurring' ],
 			false
