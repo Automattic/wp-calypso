@@ -2,7 +2,7 @@
 
 exports[`<EbanxPaymentFields /> should render 1`] = `
 <div
-  className="checkout__ebanx-payment-fields"
+  className="checkout__ebanx-payment-fields checkout__ebanx-br"
 >
   <span
     className="checkout__form-info-text"

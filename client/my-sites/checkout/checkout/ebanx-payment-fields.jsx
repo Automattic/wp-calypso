@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, isEmpty, includes, get } from 'lodash';
 
@@ -39,7 +40,6 @@ export class EbanxPaymentFields extends Component {
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.countryCode !== this.props.countryCode ) {
 			this.setFieldsState( this.props.countryCode );
-			return true;
 		}
 	}
 
@@ -85,9 +85,13 @@ export class EbanxPaymentFields extends Component {
 		const { userSelectedPhoneCountryCode } = this.state;
 		const countryData = find( countriesList.get(), { code: countryCode } );
 		const countryName = countryData && countryData.name ? countryData.name : '';
+		const containerClassName = classNames(
+			'checkout__ebanx-payment-fields',
+			`checkout__ebanx-${ countryCode.toLowerCase() }`
+		);
 
 		return (
-			<div className="checkout__ebanx-payment-fields">
+			<div className={ containerClassName }>
 				<span key="ebanx-required-fields" className="checkout__form-info-text">
 					{ countryName &&
 						translate( 'The following fields are also required for payments in %(countryName)s', {
