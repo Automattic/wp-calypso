@@ -157,7 +157,8 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				}
 
 				message = translate(
-					'Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing maintenance. Please check back %(maintenanceEnd)s.',
+					'Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing maintenance. Please ' +
+						'try a different extension or check back %(maintenanceEnd)s.',
 					{
 						args: {
 							tld,
