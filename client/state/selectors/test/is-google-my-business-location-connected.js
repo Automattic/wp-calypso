@@ -5,10 +5,6 @@
  */
 import isGoogleMyBusinessLocationConnected from '../is-google-my-business-location-connected';
 
-jest.mock( 'state/sites/selectors', () => ( {
-	getSitePlanSlug: jest.fn(),
-} ) );
-
 describe( 'isGoogleMyBusinessLocationConnected()', () => {
 	test( 'should return false if location not connected', () => {
 		const state = {
