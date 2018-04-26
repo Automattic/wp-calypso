@@ -142,19 +142,23 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	getIntervalTypeToggle() {
-		const { intervalType, translate } = this.props;
+		const { intervalType, onIntervalChange, translate } = this.props;
 		return (
 			<SegmentedControl compact className="plan-features__interval-type price-toggle" primary>
 				<SegmentedControlItem
-					selected={ intervalType === 'monthly' }
+					data-interval="monthly"
+					onClick={ onIntervalChange }
 					path={ this.getIntervalPath( 'monthly' ) }
+					selected={ intervalType === 'monthly' }
 				>
 					{ translate( 'Monthly billing' ) }
 				</SegmentedControlItem>
 
 				<SegmentedControlItem
-					selected={ intervalType === 'yearly' }
+					data-interval="yearly"
+					onClick={ onIntervalChange }
 					path={ this.getIntervalPath( 'yearly' ) }
+					selected={ intervalType === 'yearly' }
 				>
 					{ translate( 'Yearly billing' ) }
 				</SegmentedControlItem>
@@ -201,6 +205,7 @@ PlansFeaturesMain.propTypes = {
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	isLoggedIn: PropTypes.bool,
+	onIntervalChange: PropTypes.func,
 	onUpgradeClick: PropTypes.func,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
