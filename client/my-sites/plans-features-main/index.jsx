@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 
 /**
@@ -131,39 +130,31 @@ export class PlansFeaturesMain extends Component {
 		return plans;
 	}
 
-	constructPath( plansUrl, intervalType ) {
-		const { selectedFeature, selectedPlan, siteSlug } = this.props;
+	getIntervalPath = interval => {
+		const { basePlansPath = '/plans', selectedFeature, selectedPlan, siteSlug } = this.props;
 		return addQueryArgs(
 			{
 				feature: selectedFeature,
 				plan: selectedPlan,
 			},
-			plansLink( plansUrl, siteSlug, intervalType )
+			plansLink( basePlansPath, siteSlug, interval )
 		);
-	}
+	};
 
 	getIntervalTypeToggle() {
-		const { basePlansPath, intervalType, translate } = this.props;
-		const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle' );
-
-		let plansUrl = '/plans';
-
-		if ( basePlansPath ) {
-			plansUrl = basePlansPath;
-		}
-
+		const { intervalType, translate } = this.props;
 		return (
-			<SegmentedControl compact className={ segmentClasses } primary={ true }>
+			<SegmentedControl compact className="plan-features__interval-type price-toggle" primary>
 				<SegmentedControlItem
 					selected={ intervalType === 'monthly' }
-					path={ this.constructPath( plansUrl, 'monthly' ) }
+					path={ this.getIntervalPath( 'monthly' ) }
 				>
 					{ translate( 'Monthly billing' ) }
 				</SegmentedControlItem>
 
 				<SegmentedControlItem
 					selected={ intervalType === 'yearly' }
-					path={ this.constructPath( plansUrl, 'yearly' ) }
+					path={ this.getIntervalPath( 'yearly' ) }
 				>
 					{ translate( 'Yearly billing' ) }
 				</SegmentedControlItem>
@@ -187,7 +178,7 @@ export class PlansFeaturesMain extends Component {
 			<div className="plans-features-main">
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
-				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
+				{ displayJetpackPlans && this.getIntervalTypeToggle() }
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
