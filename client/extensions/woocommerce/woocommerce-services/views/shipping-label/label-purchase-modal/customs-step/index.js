@@ -4,13 +4,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
+import PackageRow from './package-row';
 import StepContainer from '../step-container';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import { toggleStep, confirmCustoms } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
@@ -18,38 +17,45 @@ import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
+	isCustomsFormStepSubmitted,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import StepConfirmationButton from '../step-confirmation-button';
+import getPackageDescriptions from '../packages-step/get-package-descriptions';
+import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 const CustomsStep = ( props ) => {
 	const {
 		siteId,
 		orderId,
-		dummyField,
 		errors,
 		expanded,
 		translate,
+		packages,
+		isSubmitted,
+		packageDescriptions,
 	} = props;
-	const summary = hasNonEmptyLeaves( errors ) ? 'Errors here' : 'Customs form looks good';
-	const toggleStepHandler = () => props.toggleStep( orderId, siteId, 'customs' );
-	const confirmCustomsHandler = () => props.confirmCustoms( orderId, siteId );
-	const toggleDummyFieldHandler = () => props.toggleDummyField( orderId, siteId, ! dummyField );
+	const summary = hasNonEmptyLeaves( errors ) ? translate( 'Customs information incomplete' ) : translate( 'Customs information valid' );
 
 	return (
 		<StepContainer
 			title={ translate( 'Customs' ) }
-			summary={ summary }
+			summary={ isSubmitted ? summary : '' }
 			expanded={ expanded }
-			toggleStep={ toggleStepHandler }
-			isSuccess={ ! hasNonEmptyLeaves( errors ) }
-			isError={ hasNonEmptyLeaves( errors ) } >
-			<label>
-				<Checkbox checked={ Boolean( dummyField ) } onChange={ toggleDummyFieldHandler } />
-				Check this to make validation pass
-			</label>
+			toggleStep={ props.toggleStep }
+			isSuccess={ isSubmitted && ! hasNonEmptyLeaves( errors ) }
+			isError={ isSubmitted && hasNonEmptyLeaves( errors ) } >
+			{ Object.keys( packages ).map( ( packageId ) =>
+				<div className="customs-step__package-container" key={ packageId }>
+					<p className="customs-step__package-name">{ packageDescriptions[ packageId ] }</p>
+					<PackageRow
+						packageId={ packageId }
+						siteId={ siteId }
+						orderId={ orderId } />
+				</div>
+			) }
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) }
-				onClick={ confirmCustomsHandler } >
+				onClick={ props.confirmCustoms } >
 				{ translate( 'Confirm' ) }
 			</StepConfirmationButton>
 		</StepContainer>
@@ -64,24 +70,20 @@ CustomsStep.propTypes = {
 const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const packages = shippingLabel.form.packages.selected;
 
 	return {
-		...shippingLabel.form.customs,
-		errors: loaded && getFormErrors( state, orderId, siteId ).customs,
+		packages,
+		packageDescriptions: getPackageDescriptions( packages, getAllPackageDefinitions( state, siteId ), true ),
+		expanded: shippingLabel.form.customs.expanded,
+		isSubmitted: isCustomsFormStepSubmitted( state, orderId, siteId ),
+		errors: loaded ? getFormErrors( state, orderId, siteId ).customs : {},
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
-	return bindActionCreators( {
-		toggleStep,
-		confirmCustoms,
-		toggleDummyField: ( orderId, siteId, value ) => ( {
-			type: 'WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CUSTOMS_TOGGLE_DUMMY_FIELD',
-			siteId,
-			orderId,
-			value,
-		} ),
-	}, dispatch );
-};
+const mapDispatchToProps = ( dispatch, { orderId, siteId } ) => ( {
+	toggleStep: () => dispatch( toggleStep( orderId, siteId, 'customs' ) ),
+	confirmCustoms: () => dispatch( confirmCustoms( orderId, siteId ) ),
+} );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CustomsStep ) );

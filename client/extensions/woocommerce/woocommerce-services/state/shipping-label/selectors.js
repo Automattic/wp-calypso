@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, includes, isEmpty, isEqual, isFinite, mapValues, round, some } from 'lodash';
+import { flatten, find, get, includes, isEmpty, isEqual, isFinite, map, mapValues, pick, round, some, sumBy, uniq } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
+import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import { areSettingsLoaded, areSettingsErrored } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import {
 	isLoaded as arePackagesLoaded,
@@ -149,6 +150,26 @@ export const needsCustomsForm = createSelector(
 	]
 );
 
+export const getProductValueFromOrder = createSelector(
+	( state, productId, orderId, siteId = getSelectedSiteId( state ) ) => {
+		const order = getOrder( state, orderId, siteId );
+		if ( ! order ) {
+			return 0;
+		}
+		for ( let i = 0; i < order.line_items.length; i++ ) {
+			const item = order.line_items[ i ];
+			const id = item.variation_id || item.product_id;
+			if ( id === productId ) {
+				return round( item.total / item.quantity, 2 );
+			}
+		}
+		return 0;
+	},
+	( state, productId, orderId, siteId = getSelectedSiteId( state ) ) => [
+		getOrder( state, orderId, siteId ),
+	]
+);
+
 const getAddressErrors = ( {
 	values,
 	isNormalized,
@@ -224,8 +245,39 @@ const getPackagesErrors = ( values ) => mapValues( values, ( pckg ) => {
 	return errors;
 } );
 
-export const getCustomsErrors = ( customs ) => {
-	return customs.dummyField ? {} : { dummyField: 'Dummy error' };
+export const getCustomsErrors = ( packages, customs ) => {
+	const usedProductIds = uniq( flatten( map( packages, pckg => map( pckg.items, 'product_id' ) ) ) );
+	return {
+		packages: mapValues( packages, ( pckg ) => {
+			const errors = {};
+
+			if ( 'other' === pckg.contentsType && ! pckg.contentsExplanation ) {
+				errors.contentsExplanation = translate( 'Please describe what kind of goods this package contains' );
+			}
+
+			if ( 'other' === pckg.restrictionType && ! pckg.restrictionExplanation ) {
+				errors.restrictionExplanation = translate( 'Please describe what kind of restrictions this package must have' );
+			}
+
+			const totalValue = sumBy( pckg.items, ( { quantity, product_id } ) => quantity * customs.items[ product_id ].value );
+			if ( totalValue > 2500 && ! pckg.itn ) {
+				errors.itn = translate( 'ITN is required for shipments over $2,500' );
+			}
+
+			return errors;
+		} ),
+
+		items: mapValues( pick( customs.items, usedProductIds ), ( itemData, productId ) => {
+			const itemErrors = {};
+			if ( ! itemData.description ) {
+				itemErrors.description = translate( 'This field is required' );
+			}
+			if ( ! customs.ignoreTariffNumberValidation[ productId ] && 6 !== itemData.tariffNumber.length ) {
+				itemErrors.tariffNumber = translate( 'The tariff code must be 6 digits long' );
+			}
+			return itemErrors;
+		} ),
+	};
 };
 
 export const getRatesErrors = ( { values: selectedRates, available: allRates } ) => {
@@ -269,7 +321,7 @@ export const getFormErrors = createSelector(
 			origin: getAddressErrors( form.origin, countriesData ),
 			destination: getAddressErrors( form.destination, countriesData ),
 			packages: getPackagesErrors( form.packages.selected ),
-			customs: getCustomsErrors( form.customs ),
+			customs: getCustomsErrors( form.packages.selected, form.customs ),
 			rates: getRatesErrors( form.rates ),
 			sidebar: getSidebarErrors( paperSize ),
 		};
@@ -278,6 +330,16 @@ export const getFormErrors = createSelector(
 		getShippingLabel( state, orderId, siteId ),
 	]
 );
+
+export const isCustomsFormStepSubmitted = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const form = getForm( state, orderId, siteId );
+	if ( ! form ) {
+		return false;
+	}
+
+	const usedProductIds = uniq( flatten( map( form.packages.selected, pckg => map( pckg.items, 'product_id' ) ) ) );
+	return ! some( usedProductIds.map( productId => form.customs.ignoreTariffNumberValidation[ productId ] ) );
+};
 
 /**
  * Checks the form for errors and returns a step with an error in it or null
@@ -311,7 +373,8 @@ export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteI
 		return 'packages';
 	}
 
-	if ( needsCustomsForm( state, orderId, siteId ) && hasNonEmptyLeaves( errors.customs ) ) {
+	if ( needsCustomsForm( state, orderId, siteId ) &&
+		( hasNonEmptyLeaves( errors.customs ) || ! isCustomsFormStepSubmitted( state, orderId, siteId ) ) ) {
 		return 'customs';
 	}
 
