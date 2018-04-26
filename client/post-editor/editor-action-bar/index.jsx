@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -126,7 +125,12 @@ export default connect( state => {
 	if ( podcastingCategoryId ) {
 		const postTerms = getEditedPostValue( state, siteId, postId, 'terms' );
 		const postCategories = postTerms && postTerms.category;
-		if ( Array.isArray( postCategories ) && postCategories.some( cat => cat.ID === podcastingCategoryId ) ) {
+		if (
+			Array.isArray( postCategories ) &&
+			// This is not a bound selector...
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			postCategories.some( cat => cat.ID === podcastingCategoryId )
+		) {
 			isPodcastEpisode = true;
 		}
 	}

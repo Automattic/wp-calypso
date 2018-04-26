@@ -130,7 +130,14 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const { canSetAsDefault, isDefault, onClick, term, isPodcastingCategory, translate } = this.props;
+		const {
+			canSetAsDefault,
+			isDefault,
+			onClick,
+			term,
+			isPodcastingCategory,
+			translate,
+		} = this.props;
 		const name = this.getName();
 		const hasPosts = get( term, 'post_count', 0 ) > 0;
 		const className = classNames( 'taxonomy-manager__item', {
@@ -146,6 +153,8 @@ class TaxonomyManagerListItem extends Component {
 				<span className="taxonomy-manager__icon" onClick={ onClick }>
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
+				{ /* FIXME: jsx-a11y issues */ }
+				{ /* eslint-disable-next-line */ }
 				<span className="taxonomy-manager__label" onClick={ onClick }>
 					<span>{ name }</span>
 					{ isDefault && (
@@ -153,7 +162,9 @@ class TaxonomyManagerListItem extends Component {
 							{ translate( 'default', { context: 'label for terms marked as default' } ) }
 						</span>
 					) }
-					{ isPodcastingCategory && <PodcastIndicator className="taxonomy-manager__podcast-indicator" /> }
+					{ isPodcastingCategory && (
+						<PodcastIndicator className="taxonomy-manager__podcast-indicator" />
+					) }
 				</span>
 				{ ! isUndefined( term.post_count ) && (
 					<Count
@@ -219,7 +230,8 @@ export default connect(
 		const isPreviewable = get( site, 'is_previewable' );
 		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
-		const isPodcastingCategory = taxonomy === 'category' && getPodcastingCategoryId( state, siteId ) === term.ID;
+		const isPodcastingCategory =
+			taxonomy === 'category' && getPodcastingCategoryId( state, siteId ) === term.ID;
 
 		return {
 			canSetAsDefault,

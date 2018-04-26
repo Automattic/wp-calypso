@@ -417,16 +417,7 @@ class TermTreeSelectorList extends Component {
 		const showSearch =
 			( searchLength > 0 || ! isSmall ) &&
 			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
-		const {
-			className,
-			isError,
-			loading,
-			siteId,
-			taxonomy,
-			query,
-			height,
-			width,
-		} = this.props;
+		const { className, isError, loading, siteId, taxonomy, query, height, width } = this.props;
 		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,
 			'is-small': isSmall,
