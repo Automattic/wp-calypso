@@ -330,10 +330,11 @@ class TermTreeSelectorList extends Component {
 			defaultTermId,
 			translate,
 			selected,
-			podcastingId,
+			taxonomy,
+			podcastingCategoryId,
 		} = this.props;
 		const itemId = item.ID;
-		const isPodcasting = podcastingId === itemId;
+		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const checked = includes( selected, itemId );
 		const inputType = multiple ? 'checkbox' : 'radio';
@@ -356,7 +357,7 @@ class TermTreeSelectorList extends Component {
 					{ input }
 					<span className="term-tree-selector__label">
 						{ name }
-						{ isPodcasting && <PodcastIndicator size={ 18 } hasTooltip={ false } /> }
+						{ isPodcastingCategory && <PodcastIndicator size={ 18 } hasTooltip={ false } /> }
 					</span>
 				</label>
 				{ children.length > 0 && (
@@ -443,7 +444,7 @@ class TermTreeSelectorList extends Component {
 						query={ { ...query, page } }
 					/>
 				) ) }
-				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+				{ taxonomy === 'category' && siteId && <QuerySiteSettings siteId={ siteId } /> }
 
 				{ showSearch && <Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> }
 				<List
@@ -473,6 +474,6 @@ export default connect( ( state, ownProps ) => {
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		query,
-		podcastingId: getPodcastingCategoryId( state, siteId ),
+		podcastingCategoryId: taxonomy === 'category' && getPodcastingCategoryId( state, siteId ),
 	};
 } )( localize( TermTreeSelectorList ) );
