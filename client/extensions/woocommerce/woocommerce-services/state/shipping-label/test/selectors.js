@@ -319,7 +319,10 @@ describe( 'Shipping label selectors', () => {
 			storeOptions: {
 				countriesData: {
 					US: {
-						CA: 'California',
+						name: 'US of A',
+						states: {
+							CA: 'California',
+						},
 					},
 				},
 			},
@@ -327,7 +330,10 @@ describe( 'Shipping label selectors', () => {
 		const result = getCountriesData( state, orderId, siteId );
 		expect( result ).to.eql( {
 			US: {
-				CA: 'California',
+				name: 'US of A',
+				states: {
+					CA: 'California',
+				},
 			},
 		} );
 	} );
