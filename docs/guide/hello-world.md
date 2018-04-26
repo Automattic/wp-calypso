@@ -57,8 +57,6 @@ export const helloWorld = ( context, next ) => {
 	console.log( 'Hello, world?' );
 	next();
 };
-
-export default helloWorld;
 ```
 
 ### 4. Set up the route
