@@ -339,7 +339,7 @@ class DomainsStep extends React.Component {
 
 		return (
 			<Fragment>
-				<QueryProducts />,
+				<QueryProducts />
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
