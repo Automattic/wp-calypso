@@ -197,7 +197,6 @@ class PodcastingDetails extends Component {
 								addTerm={ true }
 								onAddTermSuccess={ this.onCategorySelected }
 								height={ 200 }
-								hasPodcastingIndicator={ false }
 							/>
 							{ isPodcastingEnabled && (
 								<Button onClick={ this.onCategoryCleared } scary>

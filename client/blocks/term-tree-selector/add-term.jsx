@@ -28,7 +28,6 @@ class TermSelectorAddTerm extends Component {
 		taxonomy: PropTypes.string,
 		terms: PropTypes.array,
 		postType: PropTypes.string,
-		hasPodcastIndicator: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -70,7 +69,6 @@ class TermSelectorAddTerm extends Component {
 					postType={ postType }
 					taxonomy={ taxonomy }
 					onSuccess={ onSuccess }
-					hasPodcastIndicator
 				/>
 			</div>
 		);

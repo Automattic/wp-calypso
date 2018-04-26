@@ -63,7 +63,6 @@ class TermTreeSelectorList extends Component {
 		isError: PropTypes.bool,
 		height: PropTypes.number,
 		width: PropTypes.number,
-		hasPodcastIndicator: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -75,7 +74,6 @@ class TermTreeSelectorList extends Component {
 		onChange: () => {},
 		onNextPage: () => {},
 		height: 300,
-		hasPodcastIndicator: true,
 	};
 
 	// initialState is also used to reset state when a the taxonomy prop changes
@@ -332,11 +330,10 @@ class TermTreeSelectorList extends Component {
 			defaultTermId,
 			translate,
 			selected,
-			hasPodcastIndicator,
 			podcastingId,
 		} = this.props;
 		const itemId = item.ID;
-		const isPodcasting = hasPodcastIndicator && podcastingId === itemId;
+		const isPodcasting = podcastingId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const checked = includes( selected, itemId );
 		const inputType = multiple ? 'checkbox' : 'radio';
@@ -359,8 +356,7 @@ class TermTreeSelectorList extends Component {
 					{ input }
 					<span className="term-tree-selector__label">
 						{ name }
-						{ hasPodcastIndicator &&
-							isPodcasting && <PodcastIndicator size={ 18 } hasTooltip={ false } /> }
+						{ isPodcasting && <PodcastIndicator size={ 18 } hasTooltip={ false } /> }
 					</span>
 				</label>
 				{ children.length > 0 && (
@@ -429,7 +425,6 @@ class TermTreeSelectorList extends Component {
 			query,
 			height,
 			width,
-			hasPodcastIndicator,
 		} = this.props;
 		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,
@@ -448,7 +443,7 @@ class TermTreeSelectorList extends Component {
 						query={ { ...query, page } }
 					/>
 				) ) }
-				{ hasPodcastIndicator && siteId && <QuerySiteSettings siteId={ siteId } /> }
+				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 
 				{ showSearch && <Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> }
 				<List
@@ -478,6 +473,6 @@ export default connect( ( state, ownProps ) => {
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		query,
-		podcastingId: ownProps.hasPodcastIndicator && getPodcastingCategoryId( state, siteId ),
+		podcastingId: getPodcastingCategoryId( state, siteId ),
 	};
 } )( localize( TermTreeSelectorList ) );

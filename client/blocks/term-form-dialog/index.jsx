@@ -56,7 +56,6 @@ class TermFormDialog extends Component {
 		translate: PropTypes.func,
 		recordGoogleEvent: PropTypes.func,
 		bumpStat: PropTypes.func,
-		hasPodcastIndicator: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -285,7 +284,6 @@ class TermFormDialog extends Component {
 					query={ query }
 					selected={ selectedParent }
 					hideTermAndChildren={ hideTermAndChildren }
-					hasPodcastIndicator
 				/>
 				{ isError && <FormInputValidation isError text={ this.state.errors.parent } /> }
 			</FormFieldset>
