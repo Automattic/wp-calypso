@@ -631,9 +631,9 @@ export class JetpackAuthorize extends Component {
 
 	render() {
 		const { authorizeSuccess } = this.props.authorizationData;
-		const { interval, selectedPlan } = this.props;
+		const { interval, isMobileAppFlow, selectedPlan } = this.props;
 
-		if ( ! selectedPlan && ( this.isAuthorizing() || authorizeSuccess ) ) {
+		if ( ! isMobileAppFlow && ! selectedPlan && ( this.isAuthorizing() || authorizeSuccess ) ) {
 			return (
 				<PlansStatic
 					basePlansPath={ '/jetpack/connect/authorize' }
