@@ -52,6 +52,7 @@ const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) =>
 };
 
 const dateToAbsoluteMonth = date => date.getYear() * 12 + date.getMonth();
+const NUM_SERIES = 3;
 
 class LineChart extends Component {
 	static propTypes = {
@@ -145,7 +146,7 @@ class LineChart extends Component {
 			.curve( d3MonotoneXCurve );
 
 		data.forEach( ( dataSeries, index ) => {
-			const colorNum = index % 3;
+			const colorNum = index % NUM_SERIES;
 
 			svg
 				.append( 'path' )
@@ -161,7 +162,7 @@ class LineChart extends Component {
 				.curve( d3MonotoneXCurve );
 
 			data.forEach( ( dataSeries, index ) => {
-				const colorNum = index % 3;
+				const colorNum = index % NUM_SERIES;
 
 				svg
 					.append( 'path' )
@@ -177,7 +178,7 @@ class LineChart extends Component {
 
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
 			const drawFullSeries = dataSeries.length < POINTS_MAX;
-			const colorNum = dataSeriesIndex % 3;
+			const colorNum = dataSeriesIndex % NUM_SERIES;
 
 			( drawFullSeries ? dataSeries : [ first( dataSeries ), last( dataSeries ) ] ).forEach(
 				datum => {
