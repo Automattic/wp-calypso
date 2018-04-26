@@ -30,9 +30,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				123: {
-					location: {
-						id: null,
-					},
 					stats: {
 						actions: {
 							month: {
@@ -47,9 +44,6 @@ describe( 'reducer', () => {
 		test( 'should reset data on request to server', () => {
 			const state = {
 				123: {
-					location: {
-						id: null,
-					},
 					stats: {
 						actions: {
 							month: {
@@ -132,9 +126,6 @@ describe( 'reducer', () => {
 				} )
 			).to.eql( {
 				123: {
-					location: {
-						id: null,
-					},
 					stats: {
 						actions: {
 							month: {

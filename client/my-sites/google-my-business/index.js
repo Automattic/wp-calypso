@@ -14,10 +14,7 @@ import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
-import {
-	getGoogleMyBusinessConnectedLocation,
-	getGoogleMyBusinessLocations,
-} from 'state/selectors';
+import { isGoogleMyBusinessLocationConnected, getGoogleMyBusinessLocations } from 'state/selectors';
 import { requestSiteSettings } from 'state/site-settings/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
@@ -88,7 +85,7 @@ export default function( router ) {
 		context => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
-			const hasConnectedLocation = !! getGoogleMyBusinessConnectedLocation( state, siteId );
+			const hasConnectedLocation = isGoogleMyBusinessLocationConnected( state, siteId );
 			const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
 			const hasAuthenticated =
 				getKeyringConnectionsByName( state, 'google-my-business' ).length > 0;
