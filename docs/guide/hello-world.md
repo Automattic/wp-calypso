@@ -53,14 +53,10 @@ touch client/my-sites/hello-world/controller.js
 There you'll write your controller with a function called `helloWorld`:
 
 ```javascript
-const Controller = {
-	helloWorld( context, next ) {
-		console.log( 'Hello, world?' );
-		next();
-	},
+export const helloWorld = ( context, next ) => {
+	console.log( 'Hello, world?' );
+	next();
 };
-
-export default Controller;
 ```
 
 ### 4. Set up the route
@@ -251,10 +247,10 @@ import HelloWorld from 'my-sites/hello-world/main';
 Then remove the `console.log` call and enter the following instead:
 
 ```jsx
-helloWorld( context, next ) {
+export const helloWorld = ( context, next ) => {
 	context.primary = <HelloWorld />;
 	next();
-},
+};
 ```
 
 In the `Main` constant we are getting our main jsx file for our section. We then place `HelloWorld` element in `context.primary` property, which will be eventually get placed in DOM inside `#primary` div element in `Layout` element.
