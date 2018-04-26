@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import getCaretCoordinates from 'textarea-caret';
-import { escapeRegExp, findIndex, get, head, includes, throttle } from 'lodash';
+import { escapeRegExp, findIndex, get, head, includes, throttle, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +32,7 @@ export default EnhancedComponent =>
 		state = {
 			showPopover: false,
 			popoverContext: null,
+			popoverPosition: null,
 			query: '',
 		};
 
@@ -39,16 +40,9 @@ export default EnhancedComponent =>
 			super( props );
 			// create a ref to store the textarea DOM element
 			this.textInput = React.createRef();
-			this.popoverStyles = {};
 		}
 
 		componentDidMount() {
-			const { left, top, height } = this.getPosition();
-
-			this.left = left;
-			this.top = top;
-			this.height = height;
-
 			if ( typeof window !== 'undefined' ) {
 				window.addEventListener( 'resize', this.throttledUpdatePosition );
 			}
@@ -212,18 +206,7 @@ export default EnhancedComponent =>
 				newPosition = this.getPosition( state );
 			}
 
-			//console.log( 'updatePosition' );
-			//console.log( this.state );
-
-			const { left, top, height } = newPosition;
-
-			this.left = left;
-			this.top = top;
-			this.height = height;
-
-			this.popoverPositionLeft = `${ this.left }px`;
-			// 10 is the top position of .popover__inner, which hasn't rendered yet.
-			this.popoverPositionTop = `${ this.top }px`;
+			this.setState( { popoverPosition: newPosition } );
 		};
 
 		throttledUpdatePosition = throttle( this.updatePosition, 100 );
@@ -256,10 +239,7 @@ export default EnhancedComponent =>
 			const selectedSuggestionId =
 				this.state.selectedSuggestionId || get( head( this.matchingSuggestions ), 'ID' );
 
-			const popoverPosition = {
-				left: this.popoverPositionLeft,
-				top: this.popoverPositionTop,
-			};
+			const popoverPosition = pick( this.state.popoverPosition, [ 'top', 'left' ] );
 
 			return (
 				<div>
