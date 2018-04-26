@@ -9,6 +9,7 @@ import React from 'react';
 import { debounce, isEqual, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -32,6 +33,7 @@ import HelpResults from 'me/help/help-results';
 import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { generateSubjectFromMessage } from './utils';
+import { decodeEntities, preventWidows } from 'lib/formatting';
 
 /**
  * Module variables
@@ -96,6 +98,7 @@ export class HelpContactForm extends React.PureComponent {
 		subject: '',
 		sibylClicked: false,
 		qanda: [],
+		showingQandAStep: false,
 	};
 
 	componentDidMount() {
@@ -284,6 +287,24 @@ export class HelpContactForm extends React.PureComponent {
 		} );
 	};
 
+	toggleShowQandAStep = () => {
+		this.setState( { showingQandAStep: ! this.state.showingQandAStep } );
+	};
+
+	renderCompactQandAResults = () => {
+		return (
+			<ul>
+				{ this.state.qanda.map( link => (
+					<li key={ link.link }>
+						<a href={ link.link } title={ decodeEntities( link.description ) }>
+							{ preventWidows( decodeEntities( link.title ) ) }
+						</a>
+					</li>
+				) ) }
+			</ul>
+		);
+	};
+
 	/**
 	 * Render the contact form
 	 * @return {object} ReactJS JSX object
@@ -301,6 +322,9 @@ export class HelpContactForm extends React.PureComponent {
 			showHelpLanguagePrompt,
 			translate,
 		} = this.props;
+		const { showingQandAStep } = this.state;
+		const hasQASuggestions = this.state.qanda.length > 0;
+
 		const howCanWeHelpOptions = [
 			{
 				value: 'gettingStarted',
@@ -326,6 +350,23 @@ export class HelpContactForm extends React.PureComponent {
 			{ value: 'upset', label: translate( 'Upset' ) },
 			{ value: 'panicked', label: translate( 'Panicked' ) },
 		];
+
+		if ( showingQandAStep ) {
+			return (
+				<div className="help-contact-form">
+					<p>{ translate( 'Did you want the answer to any of these questions?' ) }</p>
+					{ this.renderCompactQandAResults() }
+					<FormButton onClick={ this.toggleShowQandAStep }>
+						<Gridicon icon="chevron-left" />
+						Edit my message
+					</FormButton>
+					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
+						{ buttonLabel }
+						<Gridicon icon="chevron-right" />
+					</FormButton>
+				</div>
+			);
+		}
 
 		return (
 			<div className="help-contact-form">
@@ -397,9 +438,18 @@ export class HelpContactForm extends React.PureComponent {
 					/>
 				) }
 
-				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
-					{ buttonLabel }
-				</FormButton>
+				{ ! showQASuggestions &&
+					hasQASuggestions && (
+						<FormButton type="button" onClick={ this.toggleShowQandAStep }>
+							{ translate( 'Continue' ) }
+						</FormButton>
+					) }
+
+				{ ( showQASuggestions || ( ! showQASuggestions && ! hasQASuggestions ) ) && (
+					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
+						{ buttonLabel }
+					</FormButton>
+				) }
 
 				{ additionalSupportOption &&
 					additionalSupportOption.enabled && (
