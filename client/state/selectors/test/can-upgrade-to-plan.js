@@ -3,6 +3,11 @@
 /**
  * Internal dependencies
  */
+import { includes } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import { canUpgradeToPlan } from 'state/selectors';
 import {
 	PLAN_BUSINESS,
@@ -174,13 +179,13 @@ describe( 'canUpgradeToPlan', () => {
 	} );
 
 	test( 'should return true from high-tier expired plans to lower-tier plans', () => {
-		const makeComplexState = ( s, productSlug, isJetpack, isAtomic ) => ( {
+		const makeComplexState = ( s, productSlug, siteType ) => ( {
 			sites: {
 				items: {
 					[ s ]: {
-						jetpack: isJetpack || isAtomic,
+						jetpack: includes( [ 'jetpack', 'atomic' ], siteType ),
 						options: {
-							is_automated_transfer: isAtomic,
+							is_automated_transfer: siteType === 'atomic',
 						},
 					},
 				},
@@ -199,43 +204,39 @@ describe( 'canUpgradeToPlan', () => {
 		} );
 
 		[
-			[ PLAN_BUSINESS, PLAN_PERSONAL, false, false ],
-			[ PLAN_BUSINESS, PLAN_PERSONAL, false, true ],
-			[ PLAN_BUSINESS, PLAN_PREMIUM, false, false ],
-			[ PLAN_BUSINESS, PLAN_PREMIUM, false, true ],
-			[ PLAN_BUSINESS_2_YEARS, PLAN_PERSONAL, false, false ],
-			[ PLAN_BUSINESS_2_YEARS, PLAN_PERSONAL, false, true ],
-			[ PLAN_BUSINESS_2_YEARS, PLAN_PERSONAL_2_YEARS, false, false ],
-			[ PLAN_BUSINESS_2_YEARS, PLAN_PERSONAL_2_YEARS, false, true ],
-			[ PLAN_BUSINESS_2_YEARS, PLAN_PREMIUM, false, false ],
-			[ PLAN_BUSINESS_2_YEARS, PLAN_PREMIUM, false, true ],
-			[ PLAN_BUSINESS_2_YEARS, PLAN_PREMIUM_2_YEARS, false, false ],
-			[ PLAN_BUSINESS_2_YEARS, PLAN_PREMIUM_2_YEARS, false, true ],
-			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PERSONAL, true, false ],
-			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PERSONAL_MONTHLY, true, false ],
-			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PREMIUM, true, false ],
-			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PREMIUM_MONTHLY, true, false ],
-			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL, true, false ],
-			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL_MONTHLY, true, false ],
-			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PREMIUM, true, false ],
-			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY, true, false ],
-			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PERSONAL, true, false ],
-			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PERSONAL_MONTHLY, true, false ],
-			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL, true, false ],
-			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL_MONTHLY, true, false ],
-			[ PLAN_PREMIUM, PLAN_PERSONAL, false, false ],
-			[ PLAN_PREMIUM, PLAN_PERSONAL, false, true ],
-			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL, false, false ],
-			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL, false, true ],
-			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL_2_YEARS, false, false ],
-			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL_2_YEARS, false, true ],
-		].forEach( ( [ planOwned, planToPurchase, isJetpack, isAtomic ] ) => {
+			[ PLAN_BUSINESS, PLAN_PERSONAL, 'simple' ],
+			[ PLAN_BUSINESS, PLAN_PERSONAL, 'atomic' ],
+			[ PLAN_BUSINESS, PLAN_PREMIUM, 'simple' ],
+			[ PLAN_BUSINESS, PLAN_PREMIUM, 'atomic' ],
+			[ PLAN_BUSINESS_2_YEARS, PLAN_PERSONAL, 'simple' ],
+			[ PLAN_BUSINESS_2_YEARS, PLAN_PERSONAL, 'atomic' ],
+			[ PLAN_BUSINESS_2_YEARS, PLAN_PERSONAL_2_YEARS, 'simple' ],
+			[ PLAN_BUSINESS_2_YEARS, PLAN_PERSONAL_2_YEARS, 'atomic' ],
+			[ PLAN_BUSINESS_2_YEARS, PLAN_PREMIUM, 'simple' ],
+			[ PLAN_BUSINESS_2_YEARS, PLAN_PREMIUM, 'atomic' ],
+			[ PLAN_BUSINESS_2_YEARS, PLAN_PREMIUM_2_YEARS, 'simple' ],
+			[ PLAN_BUSINESS_2_YEARS, PLAN_PREMIUM_2_YEARS, 'atomic' ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PERSONAL, 'jetpack' ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PERSONAL_MONTHLY, 'jetpack' ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PREMIUM, 'jetpack' ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PREMIUM_MONTHLY, 'jetpack' ],
+			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL, 'jetpack' ],
+			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL_MONTHLY, 'jetpack' ],
+			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PREMIUM, 'jetpack' ],
+			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY, 'jetpack' ],
+			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PERSONAL, 'jetpack' ],
+			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PERSONAL_MONTHLY, 'jetpack' ],
+			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL, 'jetpack' ],
+			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL_MONTHLY, 'jetpack' ],
+			[ PLAN_PREMIUM, PLAN_PERSONAL, 'simple' ],
+			[ PLAN_PREMIUM, PLAN_PERSONAL, 'atomic' ],
+			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL, 'simple' ],
+			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL, 'atomic' ],
+			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL_2_YEARS, 'simple' ],
+			[ PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL_2_YEARS, 'atomic' ],
+		].forEach( ( [ planOwned, planToPurchase, siteType ] ) => {
 			expect(
-				canUpgradeToPlan(
-					makeComplexState( siteId, planOwned, isJetpack, isAtomic ),
-					siteId,
-					planToPurchase
-				)
+				canUpgradeToPlan( makeComplexState( siteId, planOwned, siteType ), siteId, planToPurchase )
 			).toBe( true );
 		} );
 	} );
