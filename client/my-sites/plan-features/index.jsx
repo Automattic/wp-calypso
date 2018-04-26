@@ -255,6 +255,7 @@ class PlanFeatures extends Component {
 			canPurchase,
 			isInSignup,
 			isLandingPage,
+			isJetpack,
 			planProperties,
 			selectedPlan,
 			translate,
@@ -299,6 +300,7 @@ class PlanFeatures extends Component {
 						available={ available }
 						current={ current }
 						currencyCode={ currencyCode }
+						isSiteJetpack={ isJetpack }
 						popular={ popular }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
@@ -351,6 +353,7 @@ class PlanFeatures extends Component {
 			basePlansPath,
 			displayJetpackPlans,
 			isInSignup,
+			isJetpack,
 			planProperties,
 			selectedPlan,
 			siteType,
@@ -408,6 +411,7 @@ class PlanFeatures extends Component {
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
 						isInSignup={ isInSignup }
+						isSiteJetpack={ isJetpack }
 						isPlaceholder={ isPlaceholder }
 						newPlan={ newPlan }
 						bestValue={ bestValue }

@@ -24,7 +24,7 @@ import { getYearlyPlanByMonthly, planMatches } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
 
@@ -320,11 +320,11 @@ PlanFeaturesHeader.propTypes = {
 	siteSlug: PropTypes.string,
 	isInJetpackConnect: PropTypes.bool,
 	relatedMonthlyPlan: PropTypes.object,
+	isSiteJetpack: PropTypes.bool,
 
 	// Connected props
 	currentSitePlan: PropTypes.object,
 	isSiteAT: PropTypes.bool,
-	isSiteJetpack: PropTypes.bool,
 	relatedYearlyPlan: PropTypes.object,
 };
 
@@ -349,7 +349,6 @@ export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) 
 	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
-		isSiteJetpack: isJetpackSite( state, selectedSiteId ),
 		isYearly,
 		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
