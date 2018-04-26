@@ -21,7 +21,9 @@ export default function( state, siteId, planKey ) {
 			? PLAN_JETPACK_FREE
 			: PLAN_FREE;
 	const plan = getCurrentPlan( state, siteId );
-	const planSlug = get( plan, 'expired', false ) ? freePlan : get( plan, 'productSlug', freePlan );
+	const planSlug = get( plan, [ 'expired' ], false )
+		? freePlan
+		: get( plan, [ 'productSlug' ], freePlan );
 
-	return get( getPlan( planKey ), 'availableFor', () => false )( planSlug );
+	return get( getPlan( planKey ), [ 'availableFor' ], () => false )( planSlug );
 }
