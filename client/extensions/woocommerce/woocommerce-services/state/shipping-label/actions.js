@@ -156,9 +156,7 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	const erroneousStep = getFirstErroneousStep( state, orderId, siteId );
 	if ( erroneousStep && 'rates' !== erroneousStep ) {
 		expandFirstErroneousStep( orderId, siteId, dispatch, getState );
-		if ( 'customs' !== erroneousStep ) {
-			return;
-		}
+		return;
 	}
 
 	const formState = getShippingLabel( state, orderId, siteId ).form;
@@ -476,8 +474,9 @@ export const saveCustoms = ( orderId, siteId ) => {
 };
 
 export const confirmCustoms = ( orderId, siteId ) => ( dispatch, getState ) => {
+	dispatch( toggleStep( orderId, siteId, 'customs' ) );
 	dispatch( saveCustoms( orderId, siteId ) );
-	dispatch( submitStep( orderId, siteId, 'customs' ) );
+	tryGetLabelRates( orderId, siteId, dispatch, getState );
 };
 
 export const updateRate = ( orderId, siteId, packageId, value ) => {
