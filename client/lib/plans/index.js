@@ -5,7 +5,7 @@
  */
 import moment from 'moment';
 import { format as urlFormat, parse as urlParse } from 'url';
-import { difference, find, get, includes, invoke, pick, values } from 'lodash';
+import { difference, get, includes, invoke, pick, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,14 +76,6 @@ export function canUpgradeToPlan( planKey, site ) {
 		? freePlan
 		: get( site, [ 'plan', 'product_slug' ], freePlan );
 	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
-}
-
-export function getUpgradePlanSlugFromPath( path, site ) {
-	return find(
-		Object.keys( PLANS_LIST ),
-		planKey =>
-			( planKey === path || getPlanPath( planKey ) === path ) && canUpgradeToPlan( planKey, site )
-	);
 }
 
 export function getPlanPath( plan ) {
