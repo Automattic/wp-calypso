@@ -36,6 +36,19 @@ export class EbanxPaymentFields extends Component {
 		};
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.countryCode !== this.props.countryCode ) {
+			this.setFieldsState( this.props.countryCode );
+			return true;
+		}
+	}
+
+	setFieldsState( countryCode ) {
+		this.setState( {
+			fields: get( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ], 'fields', null ),
+		} );
+	}
+
 	createField = ( fieldName, componentClass, props ) => {
 		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
 		const isError = ! isEmpty( errorMessage );
@@ -48,7 +61,7 @@ export class EbanxPaymentFields extends Component {
 				name: fieldName,
 				onBlur: this.onFieldChange,
 				onChange: this.onFieldChange,
-				value: this.props.getFieldValue( fieldName ),
+				value: this.props.getFieldValue( fieldName ) || '',
 				autoComplete: 'off',
 				labelClass: 'checkout__form-label',
 			},
@@ -61,12 +74,8 @@ export class EbanxPaymentFields extends Component {
 	};
 
 	handlePhoneFieldChange = ( { value, countryCode } ) => {
-		this.setState(
-			{
-				userSelectedPhoneCountryCode: countryCode,
-			},
-			() => this.props.handleFieldChange( 'phone-number', value )
-		);
+		this.props.handleFieldChange( 'phone-number', value );
+		this.setState( { userSelectedPhoneCountryCode: countryCode } );
 	};
 
 	onFieldChange = event => this.props.handleFieldChange( event.target.name, event.target.value );
@@ -77,21 +86,15 @@ export class EbanxPaymentFields extends Component {
 		const countryData = find( countriesList.get(), { code: countryCode } );
 		const countryName = countryData && countryData.name ? countryData.name : '';
 
-		let ebanxMessage = '';
-		if ( countryName ) {
-			ebanxMessage = translate(
-				'The following fields are also required for payments in %(countryName)s',
-				{
-					args: {
-						countryName,
-					},
-				}
-			);
-		}
 		return (
 			<div className="checkout__ebanx-payment-fields">
 				<span key="ebanx-required-fields" className="checkout__form-info-text">
-					{ ebanxMessage }
+					{ countryName &&
+						translate( 'The following fields are also required for payments in %(countryName)s', {
+							args: {
+								countryName,
+							},
+						} ) }
 				</span>
 
 				{ this.createField( 'document', Input, {
@@ -136,7 +139,7 @@ export class EbanxPaymentFields extends Component {
 
 				<div className="checkout__form-state-field">
 					{ this.createField( 'state', StateSelect, {
-						countryCode: countryCode,
+						countryCode,
 						label: translate( 'State' ),
 					} ) }
 				</div>
