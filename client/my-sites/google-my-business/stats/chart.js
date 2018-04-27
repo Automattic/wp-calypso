@@ -18,14 +18,15 @@ import LineChart from 'components/line-chart';
 import LineChartPlaceholder from 'components/line-chart/placeholder';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
-import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
+import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import SectionHeader from 'components/section-header';
-import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
-import { getGoogleMyBusinessStats } from 'state/selectors';
 import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
-import { getStatsInterval } from 'state/ui/google-my-business/selectors';
+import { getGoogleMyBusinessStats } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getStatsInterval } from 'state/ui/google-my-business/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 
 function transformData( props ) {
 	const { data } = props;
@@ -67,6 +68,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
+		recordTracksEvent: PropTypes.func.isRequired,
 		renderTooltipForDatanum: PropTypes.func,
 		requestGoogleMyBusinessStats: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -120,12 +122,17 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 	}
 
-	handleIntervalChange = event =>
-		this.props.changeGoogleMyBusinessStatsInterval(
-			this.props.siteId,
-			this.props.statType,
-			event.target.value
-		);
+	handleIntervalChange = event => {
+		const { interval, statType, siteId } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_google_my_business_stats_chart_interval_change', {
+			previous_interval: interval,
+			new_interval: event.target.value,
+			stat_type: statType,
+		} );
+
+		this.props.changeGoogleMyBusinessStatsInterval( siteId, statType, event.target.value );
+	};
 
 	renderPieChart() {
 		const { chartTitle, dataSeriesInfo } = this.props;
@@ -219,6 +226,7 @@ export default connect(
 	},
 	{
 		changeGoogleMyBusinessStatsInterval,
+		recordTracksEvent,
 		requestGoogleMyBusinessStats,
 	}
 )( localize( GoogleMyBusinessStatsChart ) );
