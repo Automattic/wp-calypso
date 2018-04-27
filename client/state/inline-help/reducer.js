@@ -51,16 +51,10 @@ export const search = createReducer(
 				},
 			} );
 		},
-		[ INLINE_HELP_SELECT_RESULT ]: ( state, action ) => {
-			if ( ! isEmpty( state.items[ state.searchQuery ] ) ) {
-				return Object.assign( {}, state, {
-					selectedResult: action.resultIndex,
-				} );
-			}
-			return Object.assign( {}, state, {
-				selectedResult: -1,
-			} );
-		},
+		[ INLINE_HELP_SELECT_RESULT ]: ( state, action ) => ( {
+			...state,
+			selectedResult: isEmpty( state.items[ state.searchQuery ] ) ? -1 : action.resultIndex,
+		} ),
 		[ INLINE_HELP_SELECT_NEXT_RESULT ]: state => {
 			if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
 				return Object.assign( {}, state, {

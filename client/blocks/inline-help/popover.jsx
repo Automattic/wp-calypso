@@ -59,19 +59,15 @@ class InlineHelpPopover extends Component {
 		this.setState( { showSecondaryView: true } );
 	};
 
-	closeSecondaryView = secondaryViewKey => {
+	closeSecondaryView = () => {
 		this.setSecondaryViewKey( '' );
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_hide` );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
 		this.props.selectResult( -1 );
 		this.setState( { showSecondaryView: false } );
 	};
 
 	openContactView = () => {
 		this.openSecondaryView( VIEW_CONTACT );
-	};
-
-	handleCloseSecondaryViewButton = () => {
-		this.closeSecondaryView( this.state.activeSecondaryView );
 	};
 
 	renderSecondaryView = () => {
@@ -139,7 +135,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 
 					<Button
-						onClick={ this.handleCloseSecondaryViewButton }
+						onClick={ this.closeSecondaryView }
 						className="inline-help__cancel-button"
 						borderless
 					>

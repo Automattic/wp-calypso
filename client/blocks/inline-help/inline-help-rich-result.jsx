@@ -114,7 +114,7 @@ class InlineHelpRichResult extends Component {
 		return (
 			<div>
 				<h2 className={ classes }>{ preventWidows( decodeEntities( title ) ) }</h2>
-				<p> { decodeEntities( description ) } </p>
+				<p>{ decodeEntities( description ) }</p>
 				<Button primary onClick={ this.handleClick } href={ link }>
 					{
 						{
