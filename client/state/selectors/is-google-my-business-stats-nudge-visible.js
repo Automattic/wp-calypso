@@ -9,8 +9,6 @@ import { isGoogleMyBusinessLocationConnected } from 'state/selectors';
 import { planMatches } from 'lib/plans';
 import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
 
-const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
-
 /**
  * Returns true if site has promote goal set
  *
@@ -59,12 +57,5 @@ export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 		return false;
 	}
 
-	const createdAt = getSiteOption( state, siteId, 'created_at' );
-	const isWeekPassedSinceSiteCreation = Date.parse( createdAt ) + WEEK_IN_SECONDS * 1000 < Date.now();
-
-	return (
-		isWeekPassedSinceSiteCreation &&
-		siteHasBusinessPlan( state, siteId ) &&
-		siteHasPromoteGoal( state, siteId )
-	);
+	return siteHasBusinessPlan( state, siteId ) && siteHasPromoteGoal( state, siteId );
 }
