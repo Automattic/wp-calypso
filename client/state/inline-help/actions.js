@@ -10,6 +10,8 @@ import {
 	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
+	INLINE_HELP_CONTACT_FORM_RESET,
+	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 } from 'state/action-types';
 
 /**
@@ -57,6 +59,32 @@ export function selectResult( resultIndex ) {
 			resultIndex,
 		} );
 	};
+}
+
+/**
+ * Resets the inline contact form state.
+ *
+ * @return {Function}  Action thunk
+ */
+export function resetInlineHelpContactForm() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_CONTACT_FORM_RESET,
+		} );
+	}
+}
+
+/**
+ * Shows the Q&A suggestions on the contact form.
+ *
+ * @return {Function}  Action thunk
+ */
+export function showQandAOnInlineHelpContactForm() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
+		} );
+	}
 }
 
 /**

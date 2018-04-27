@@ -32,6 +32,8 @@ import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
 import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { isShowingQandAInlineHelpContactForm } from 'state/inline-help/selectors';
+import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
 import { generateSubjectFromMessage } from './utils';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 
@@ -85,6 +87,7 @@ export class HelpContactForm extends React.PureComponent {
 			value: null,
 			requestChange: () => {},
 		},
+		showingQandAStep: false,
 	};
 
 	/**
@@ -98,7 +101,6 @@ export class HelpContactForm extends React.PureComponent {
 		subject: '',
 		sibylClicked: false,
 		qanda: [],
-		showingQandAStep: false,
 	};
 
 	componentDidMount() {
@@ -287,10 +289,10 @@ export class HelpContactForm extends React.PureComponent {
 		} );
 	};
 
-	toggleShowQandAStep = () => {
-		this.setState( { showingQandAStep: ! this.state.showingQandAStep } );
-	};
-
+	/**
+	 * Renders a compact list of the suggested questions.
+	 * @param  {Object} Rendered list
+	 */
 	renderCompactQandAResults = () => {
 		return (
 			<ul>
@@ -321,8 +323,8 @@ export class HelpContactForm extends React.PureComponent {
 			showQASuggestions,
 			showHelpLanguagePrompt,
 			translate,
+			showingQandAStep,
 		} = this.props;
-		const { showingQandAStep } = this.state;
 		const hasQASuggestions = this.state.qanda.length > 0;
 
 		const howCanWeHelpOptions = [
@@ -351,15 +353,11 @@ export class HelpContactForm extends React.PureComponent {
 			{ value: 'panicked', label: translate( 'Panicked' ) },
 		];
 
-		if ( showingQandAStep ) {
+		if ( showingQandAStep && hasQASuggestions ) {
 			return (
 				<div className="help-contact-form">
 					<p>{ translate( 'Did you want the answer to any of these questions?' ) }</p>
 					{ this.renderCompactQandAResults() }
-					<FormButton onClick={ this.toggleShowQandAStep }>
-						<Gridicon icon="chevron-left" />
-						Edit my message
-					</FormButton>
 					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
 						{ buttonLabel }
 						<Gridicon icon="chevron-right" />
@@ -440,7 +438,7 @@ export class HelpContactForm extends React.PureComponent {
 
 				{ ! showQASuggestions &&
 					hasQASuggestions && (
-						<FormButton type="button" onClick={ this.toggleShowQandAStep }>
+						<FormButton type="button" onClick={ this.props.showQandAOnInlineHelpContactForm }>
 							{ translate( 'Continue' ) }
 						</FormButton>
 					) }
@@ -475,6 +473,7 @@ const mapStateToProps = state => ( {
 	currentUserLocale: getCurrentUserLocale( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
+	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
 } );
 
 const mapDispatchToProps = {
@@ -482,6 +481,7 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	trackSibylClick,
 	trackSupportAfterSibylClick,
+	showQandAOnInlineHelpContactForm,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

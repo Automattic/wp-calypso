@@ -14,6 +14,8 @@ import {
 	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
+	INLINE_HELP_CONTACT_FORM_RESET,
+	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 } from 'state/action-types';
 
 export function requesting( state = {}, action ) {
@@ -79,4 +81,22 @@ export const search = createReducer(
 	}
 );
 
-export default combineReducers( { requesting, search } );
+export const contactForm = createReducer(
+	{
+		isShowingQandASuggestions: false,
+	},
+	{
+		[ INLINE_HELP_CONTACT_FORM_RESET ]: state => {
+			return Object.assign( {}, state, {
+				isShowingQandASuggestions: false,
+			} );
+		},
+		[ INLINE_HELP_CONTACT_FORM_SHOW_QANDA ]: state => {
+			return Object.assign( {}, state, {
+				isShowingQandASuggestions: true,
+			} );
+		},
+	}
+);
+
+export default combineReducers( { requesting, search, contactForm } );
