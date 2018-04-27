@@ -326,12 +326,12 @@ describe( 'cart-item', () => {
 			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
 		} );
 
-		test( 'Returns "biennial subscription" for biennial plan', () => {
+		test( 'Returns "two year subscription" for biennial plan', () => {
 			const instance = new CartItem( props );
 			isMonthly.mockImplementation( () => false );
 			isYearly.mockImplementation( () => false );
 			isBiennially.mockImplementation( () => true );
-			expect( instance.getSubscriptionLength() ).toEqual( 'biennial subscription' );
+			expect( instance.getSubscriptionLength() ).toEqual( 'two year subscription' );
 		} );
 
 		test( 'Returns false for unknown type of plan', () => {
