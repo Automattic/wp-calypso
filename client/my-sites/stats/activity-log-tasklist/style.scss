@@ -1,11 +1,17 @@
 .card.activity-log-tasklist {
 	padding-bottom: 4px;
+	font-size: 14px;
 
 	.activity-log-tasklist__heading {
 		display: flex;
-		font-weight: 700;
+		font-weight: 500;
 		justify-content: space-between;
 		margin-bottom: 16px;
+
+		.ellipsis-menu {
+			position: relative;
+			top: -4px;
+		}
 
 		.ellipsis-menu__toggle {
 			padding: 0;
@@ -18,7 +24,7 @@
 	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, .5 );
 	display: flex;
 	justify-content: flex-end;
-	padding: 16px 8px;
+	padding: 16px 0;
 
 	.activity-log-item__activity-icon {
 		margin-right: 16px;
@@ -31,7 +37,7 @@
 }
 
 .activity-log-tasklist__update-text {
-	font-weight: 500;
+
 }
 
 .activity-log-tasklist__update-version {
