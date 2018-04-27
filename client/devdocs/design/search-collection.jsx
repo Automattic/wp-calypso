@@ -54,7 +54,11 @@ const Collection = ( {
 		const exampleName = getComponentName( example );
 		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
 		const readmeFilePath =
-			( section === 'blocks' ? 'blocks' : 'components' ) + '/' + example.props.readmeFilePath;
+			'/client/' +
+			( section === 'blocks' ? 'blocks' : 'components' ) +
+			'/' +
+			example.props.readmeFilePath +
+			'/README.md';
 
 		showCounter++;
 

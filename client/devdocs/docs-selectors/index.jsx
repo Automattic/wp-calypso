@@ -32,7 +32,7 @@ export default class DocsSelectors extends PureComponent {
 					<DocsSelectorsSingle { ...{ selector, search } } />
 				) : (
 					<div>
-						<ReadmeViewer readmeFilePath="state/selectors" />
+						<ReadmeViewer readmeFilePath="/client/state/selectors/README.md" />
 						<DocsSelectorsSearch search={ search } /> }
 					</div>
 				) }

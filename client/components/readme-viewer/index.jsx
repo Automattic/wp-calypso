@@ -26,10 +26,9 @@ class ReadmeViewer extends Component {
 
 	componentDidMount() {
 		const { readmeFilePath } = this.props;
-		const path = `/client/${ readmeFilePath }/README.md`;
 		request
 			.get( '/devdocs/service/content' )
-			.query( { path: path } )
+			.query( { path: readmeFilePath } )
 			.then( ( { text } ) => {
 				this.setState( {
 					readme: htmlToReactParser.parse( text ),
@@ -42,7 +41,7 @@ class ReadmeViewer extends Component {
 		const editLink = (
 			<a
 				className="readme-viewer__doc-edit-link devdocs__doc-edit-link"
-				href={ `https://github.com/Automattic/wp-calypso/edit/master/client/${ readmeFilePath }/README.md` }
+				href={ `https://github.com/Automattic/wp-calypso/edit/master${ readmeFilePath }` }
 			>
 				Improve this document on GitHub
 			</a>
