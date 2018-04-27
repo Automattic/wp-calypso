@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
+import Button from 'components/button';
 import Card from 'components/card';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
@@ -27,6 +28,7 @@ class ActivityLogTaskUpdate extends Component {
 		disable: PropTypes.bool,
 		updatePlugin: PropTypes.func,
 		dismissPlugin: PropTypes.func,
+		goToPlugin: PropTypes.func,
 
 		// Localize
 		translate: PropTypes.func.isRequired,
@@ -34,6 +36,7 @@ class ActivityLogTaskUpdate extends Component {
 
 	handlePluginUpdate = () => this.props.updatePlugin( this.props.plugin );
 	handlePluginDismiss = () => this.props.dismissPlugin( this.props.plugin.slug );
+	handlePluginNameClick = () => this.props.goToPlugin( this.props.plugin.slug );
 
 	render() {
 		const { translate, plugin, disable } = this.props;
@@ -43,8 +46,14 @@ class ActivityLogTaskUpdate extends Component {
 				<ActivityIcon activityIcon="plugins" activityStatus="warning" />
 				<span className="activity-log-tasklist__update-item">
 					<span className="activity-log-tasklist__update-text">
-						{ translate( 'Update available for %(pluginName)s', {
-							args: { pluginName: plugin.name },
+						{ translate( 'Update available for {{plugin/}}', {
+							components: {
+								plugin: (
+									<Button onClick={ this.handlePluginNameClick } borderless>
+										{ plugin.name }
+									</Button>
+								),
+							},
 						} ) }
 					</span>
 					<span className="activity-log-tasklist__update-bullet">&bull;</span>

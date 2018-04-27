@@ -24,6 +24,7 @@ import { updatePlugin } from 'state/plugins/installed/actions';
 import { getStatusForPlugin } from 'state/plugins/installed/selectors';
 import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { navigate } from 'state/ui/actions';
 
 /**
  * Checks if the supplied plugin or plugins are currently updating.
@@ -54,7 +55,6 @@ class ActivityLogTasklist extends Component {
 	};
 
 	state = {
-		pluginUpdateNotice: null, // keyed by plugin id, like "hello-dolly/hello"
 		dismissedPlugins: [],
 	};
 
@@ -84,6 +84,22 @@ class ActivityLogTasklist extends Component {
 	};
 
 	/**
+	 * Goes to general plugin management screen.
+	 *
+	 * @returns {object} Action to redirect to plugins management.
+	 */
+	goManagePlugins = () => this.props.goManagePlugins( this.props.siteSlug );
+
+	/**
+	 * Goes to single plugin management screen.
+	 *
+	 * @param {string} pluginSlug Plugin slug, like "hello-dolly".
+	 *
+	 * @returns {object} Action to redirect to plugin management.
+	 */
+	goToPlugin = pluginSlug => this.props.goToPlugin( pluginSlug, this.props.siteSlug );
+
+	/**
 	 * Starts the update process for a specified plugin. Displays an informational notice.
 	 *
 	 * @param {object} singlePlugin Plugin information that includes
@@ -100,23 +116,19 @@ class ActivityLogTasklist extends Component {
 
 		updateSinglePlugin( singlePlugin, location );
 
-		this.setState( {
-			pluginUpdateNotice: merge( this.state.pluginUpdateNotice, {
-				[ singlePlugin.slug ]: showInfoNotice(
-					PluginNotices.inProgressMessage( 'UPDATE_PLUGIN', '1 site 1 plugin', {
-						plugin: singlePlugin.name,
-						site: siteName,
-					} ),
-					{
-						id: singlePlugin.slug,
-						showDismiss: false,
-					}
-				),
+		showInfoNotice(
+			PluginNotices.inProgressMessage( 'UPDATE_PLUGIN', '1 site 1 plugin', {
+				plugin: singlePlugin.name,
+				site: siteName,
 			} ),
-		} );
+			{
+				id: singlePlugin.slug,
+				showDismiss: false,
+			}
+		);
 	};
 
-	componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps ) {
 		if ( isEmpty( this.props.pluginsWithUpdate ) ) {
 			return;
 		}
@@ -128,9 +140,6 @@ class ActivityLogTasklist extends Component {
 			translate,
 			pluginsWithUpdate,
 		} = this.props;
-		const newState = {};
-		const noticesToShow = {};
-		const pluginsCompleted = [];
 
 		each( Object.values( pluginsWithUpdate ), plugin => {
 			const pluginSlug = plugin.slug;
@@ -148,18 +157,6 @@ class ActivityLogTasklist extends Component {
 			}
 
 			const updateStatus = plugin.updateStatus;
-			const updateNoticeId = get(
-				prevState.pluginUpdateNotice,
-				[ pluginSlug, 'notice', 'noticeId' ],
-				null
-			);
-
-			// If there is no notice displayed
-			if ( ! updateNoticeId ) {
-				return;
-			}
-
-			noticesToShow[ pluginSlug ] = null;
 
 			// If it errored, clear and show error notice
 			const pluginData = {
@@ -169,7 +166,7 @@ class ActivityLogTasklist extends Component {
 
 			switch ( updateStatus.status ) {
 				case 'error':
-					noticesToShow[ pluginSlug ] = showErrorNotice(
+					showErrorNotice(
 						PluginNotices.singleErrorMessage( 'UPDATE_PLUGIN', pluginData, {
 							error: updateStatus,
 						} ),
@@ -181,27 +178,17 @@ class ActivityLogTasklist extends Component {
 					);
 					break;
 				case 'completed':
-					noticesToShow[ pluginSlug ] = showSuccessNotice(
+					showSuccessNotice(
 						PluginNotices.successMessage( 'UPDATE_PLUGIN', '1 site 1 plugin', pluginData ),
 						{
 							id: pluginSlug,
-							duration: 5555,
+							duration: 3000,
 						}
 					);
-					pluginsCompleted.push( pluginSlug );
+					this.dismissPlugins( pluginSlug );
 					break;
 			}
 		} );
-
-		if ( ! isEmpty( noticesToShow ) ) {
-			newState.pluginUpdateNotice = merge( {}, prevState.pluginUpdateNotice, noticesToShow );
-		}
-
-		if ( ! isEmpty( pluginsCompleted ) ) {
-			newState.dismissedPlugins = union( prevState.dismissedPlugins, pluginsCompleted );
-		}
-
-		return isEmpty( newState ) ? null : newState;
 	}
 
 	render() {
@@ -229,11 +216,19 @@ class ActivityLogTasklist extends Component {
 					<EllipsisMenu>
 						<PopoverMenuItem
 							onClick={ this.dismissPlugins }
-							className="activity-log-tasklist__dismiss-all"
+							className="activity-log-tasklist__menu-item"
 							disabled={ isSomePluginUpdating }
 						>
 							<Gridicon icon="trash" size={ 24 } />
 							<span>{ translate( 'Dismiss all' ) }</span>
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							onClick={ this.goManagePlugins }
+							className="activity-log-tasklist__menu-item"
+							disabled={ isSomePluginUpdating }
+						>
+							<Gridicon icon="cog" size={ 24 } />
+							<span>{ translate( 'Manage plugins' ) }</span>
 						</PopoverMenuItem>
 					</EllipsisMenu>
 				</div>
@@ -243,6 +238,7 @@ class ActivityLogTasklist extends Component {
 					<ActivityLogTaskUpdate
 						key={ plugin.id }
 						plugin={ plugin }
+						goToPlugin={ this.goToPlugin }
 						updatePlugin={ this.updatePlugin }
 						dismissPlugin={ this.dismissPlugins }
 						disable={ isSomePluginUpdating }
@@ -279,6 +275,7 @@ const mapStateToProps = ( state, { siteId, plugins } ) => {
 	const site = getSite( state, siteId );
 	return {
 		siteId,
+		siteSlug: site.slug,
 		siteName: site.name,
 		pluginsWithUpdate: makePluginsList( plugins, state, siteId ),
 	};
@@ -300,8 +297,26 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	showSuccessNotice: ( success, options ) => dispatch( successNotice( success, options ) ),
 	trackDismissPluginAll: () =>
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_plugin_all' ) ),
-	trackDismissPlugin: plugin_slug =>
-		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_plugin', { plugin_slug } ) ),
+	trackDismissPlugin: pluginSlug =>
+		dispatch(
+			recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_plugin', {
+				plugin_slug: pluginSlug,
+			} )
+		),
+	goManagePlugins: siteSlug =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_tasklist_manage_plugins' ),
+				navigate( `/plugins/manage/${ siteSlug }` )
+			)
+		),
+	goToPlugin: ( pluginSlug, siteSlug ) =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_tasklist_manage_single_plugin' ),
+				navigate( `/plugins/${ pluginSlug }/${ siteSlug }` )
+			)
+		),
 } );
 
 export default WithPluginsToUpdate(

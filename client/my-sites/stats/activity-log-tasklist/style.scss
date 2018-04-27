@@ -37,7 +37,10 @@
 }
 
 .activity-log-tasklist__update-text {
-
+	.button.is-borderless {
+		vertical-align: middle;
+		line-height: 1;
+	}
 }
 
 .activity-log-tasklist__update-version {
@@ -55,7 +58,7 @@
 	white-space: pre;
 }
 
-.activity-log-tasklist__dismiss-all {
+.activity-log-tasklist__menu-item {
 	display: flex;
 	align-items: center;
 }
