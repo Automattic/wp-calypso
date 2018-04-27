@@ -1,10 +1,11 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,16 +13,15 @@ import { localize } from 'i18n-calypso';
  */
 import JetpackLogo from 'components/jetpack-logo';
 import Main from 'components/main';
-import { retrieveMobileRedirect } from './persistence-utils';
 import { getPartnerSlug } from './utils';
+import { retrieveMobileRedirect } from './persistence-utils';
 
-const JetpackConnectMainWrapper = ( { isWide, className, children, authQuery, translate } ) => {
-	const wrapperClassName = classNames( 'jetpack-connect__main', {
-		'is-wide': isWide,
-		'is-mobile-app-flow': !! retrieveMobileRedirect(),
-	} );
+class JetpackConnectMainWrapper extends PureComponent {
+	static defaultProps = { isWide: false };
+	static propTypes = { isWide: PropTypes.bool };
 
-	const getHeaderImage = () => {
+	getHeaderImage() {
+		const { authQuery, translate } = this.props;
 		const partnerSlug = getPartnerSlug( authQuery );
 		const baseCobrandedAttributes = {
 			width: '662.5',
@@ -41,6 +41,7 @@ const JetpackConnectMainWrapper = ( { isWide, className, children, authQuery, tr
 						/>
 					);
 					break;
+
 				case 'pressable':
 					image = (
 						<img
@@ -50,6 +51,7 @@ const JetpackConnectMainWrapper = ( { isWide, className, children, authQuery, tr
 						/>
 					);
 					break;
+
 				case 'milesweb':
 					image = (
 						<img
@@ -59,6 +61,7 @@ const JetpackConnectMainWrapper = ( { isWide, className, children, authQuery, tr
 						/>
 					);
 					break;
+
 				case 'bluehost':
 					image = (
 						<img
@@ -76,22 +79,22 @@ const JetpackConnectMainWrapper = ( { isWide, className, children, authQuery, tr
 				{ image || <JetpackLogo full size={ 45 } /> }
 			</div>
 		);
-	};
+	}
 
-	return (
-		<Main className={ classNames( className, wrapperClassName ) }>
-			{ getHeaderImage() }
-			{ children }
-		</Main>
-	);
-};
+	render() {
+		const { isWide, className, children } = this.props;
+		const wrapperClassName = classNames( 'jetpack-connect__main', {
+			'is-wide': isWide,
+			'is-mobile-app-flow': !! retrieveMobileRedirect(),
+		} );
 
-JetpackConnectMainWrapper.propTypes = {
-	isWide: PropTypes.bool,
-};
-
-JetpackConnectMainWrapper.defaultProps = {
-	isWide: false,
-};
+		return (
+			<Main className={ classNames( className, wrapperClassName ) }>
+				{ this.getHeaderImage() }
+				{ children }
+			</Main>
+		);
+	}
+}
 
 export default localize( JetpackConnectMainWrapper );
