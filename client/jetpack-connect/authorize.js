@@ -29,6 +29,7 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
+import PlansStatic from './plans-static';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
@@ -55,6 +56,7 @@ import {
 	isCalypsoStartedConnection,
 	isSsoApproved,
 	retrieveMobileRedirect,
+	retrievePlan,
 } from './persistence-utils';
 import {
 	authorize as authorizeAction,
@@ -552,6 +554,11 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
+	onPlanSelect = () => {
+		// Hack: we're storing selected plan in a cookie, and this needs to force re-render.
+		this.forceUpdate();
+	};
+
 	renderFooterLinks() {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
@@ -623,6 +630,19 @@ export class JetpackAuthorize extends Component {
 	}
 
 	render() {
+		const { authorizeSuccess } = this.props.authorizationData;
+		const { interval, isMobileAppFlow, selectedPlan } = this.props;
+
+		if ( ! isMobileAppFlow && ! selectedPlan && ( this.isAuthorizing() || authorizeSuccess ) ) {
+			return (
+				<PlansStatic
+					basePlansPath={ '/jetpack/connect/authorize' }
+					interval={ interval }
+					onPlanSelect={ this.onPlanSelect }
+				/>
+			);
+		}
+
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
@@ -652,6 +672,7 @@ export default connect(
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
+		const selectedPlan = retrievePlan();
 
 		return {
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
@@ -664,6 +685,7 @@ export default connect(
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
 			mobileAppRedirect,
+			selectedPlan,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
