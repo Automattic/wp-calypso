@@ -72,7 +72,7 @@ export class AuthFormHeader extends Component {
 		if ( host ) {
 			return translate( 'Jetpack, in partnership with %(host)s', {
 				args: { host },
-				context: '%(host)s is the company name of a hosting partner. Ex. - Pressable',
+				comment: '%(host)s is the company name of a hosting partner. Ex. - Pressable',
 			} );
 		}
 
