@@ -293,7 +293,7 @@ class SimplePaymentsDialog extends Component {
 			productId = Promise.resolve( this.state.selectedPaymentId );
 		} else if (
 			config.isEnabled( 'memberships' ) &&
-			this.props.newlyCreatedIsMembershipSubscription
+			this.props.currentlyEditedIsMembershipSubscription
 		) {
 			// This is memberships business.
 			productId = dispatch( createMembershipButton( siteId ) ).then( newProduct => {
