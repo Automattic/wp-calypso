@@ -141,20 +141,21 @@ class DesignAssets extends React.Component {
 			<Main className={ className }>
 				<DocumentHead title="UI Components" />
 
-				<ReadmeViewer readmeFilePath="components" />
-
 				{ component ? (
 					<HeaderCake onClick={ this.backToComponents } backText="All Components">
 						{ slugToCamelCase( component ) }
 					</HeaderCake>
 				) : (
-					<SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs"
-						className="design__ui-components-search"
-					/>
+					<div>
+						<ReadmeViewer readmeFilePath="components" />
+						<SearchCard
+							onSearch={ this.onSearch }
+							initialValue={ filter }
+							placeholder="Search components…"
+							analyticsGroup="Docs"
+							className="design__ui-components-search"
+						/>
+					</div>
 				) }
 
 				<Collection component={ component } filter={ filter }>

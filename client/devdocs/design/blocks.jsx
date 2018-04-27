@@ -107,18 +107,21 @@ export default class AppComponents extends React.Component {
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Blocks" />
-				<ReadmeViewer readmeFilePath="blocks" />
+
 				{ this.props.component ? (
 					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 						{ slugToCamelCase( this.props.component ) }
 					</HeaderCake>
 				) : (
-					<SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ this.state.filter }
-						placeholder="Search blocks…"
-						analyticsGroup="Docs"
-					/>
+					<div>
+						<ReadmeViewer readmeFilePath="blocks" />
+						<SearchCard
+							onSearch={ this.onSearch }
+							initialValue={ this.state.filter }
+							placeholder="Search blocks…"
+							analyticsGroup="Docs"
+						/>
+					</div>
 				) }
 				<Collection
 					component={ this.props.component }
