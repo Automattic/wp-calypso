@@ -72,6 +72,10 @@ class PlansStep extends Component {
 		);
 	}
 
+	handleFreePlanButtonClick = () => {
+		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
+	};
+
 	plansFeaturesList() {
 		const { hideFreePlan, selectedSite } = this.props;
 
@@ -93,11 +97,7 @@ class PlansStep extends Component {
 				   * unless we've already selected an option that implies a paid plan.
 				   * This is in particular true for domain names. */
 				hideFreePlan &&
-					! this.getDomainName() && (
-						<PlansSkipButton
-							onClick={ this.onSelectPlan } // Called with no args, selects the Free Plan
-						/>
-					) }
+					! this.getDomainName() && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
 			</div>
 		);
 	}
