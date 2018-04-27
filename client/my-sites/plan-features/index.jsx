@@ -224,7 +224,7 @@ class PlanFeatures extends Component {
 						currencyCode={ currencyCode }
 						current={ current }
 						discountPrice={ discountPrice }
-						isJetpackSite={ isJetpack }
+						isJetpack={ isJetpack }
 						planTitle={ planConstantObj.getTitle() }
 						planType={ planName }
 						rawPrice={ rawPrice }
@@ -255,6 +255,7 @@ class PlanFeatures extends Component {
 			canPurchase,
 			isInSignup,
 			isLandingPage,
+			isJetpack,
 			planProperties,
 			selectedPlan,
 			translate,
@@ -299,6 +300,7 @@ class PlanFeatures extends Component {
 						available={ available }
 						current={ current }
 						currencyCode={ currencyCode }
+						isJetpack={ isJetpack }
 						popular={ popular }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
@@ -351,6 +353,7 @@ class PlanFeatures extends Component {
 			basePlansPath,
 			displayJetpackPlans,
 			isInSignup,
+			isJetpack,
 			planProperties,
 			selectedPlan,
 			siteType,
@@ -408,6 +411,7 @@ class PlanFeatures extends Component {
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
 						isInSignup={ isInSignup }
+						isJetpack={ isJetpack }
 						isPlaceholder={ isPlaceholder }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
@@ -690,7 +694,8 @@ export default connect(
 		} = ownProps;
 		const selectedSiteId = site ? site.ID : null;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-		const isJetpack = isJetpackSite( state, selectedSiteId );
+		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
+		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );

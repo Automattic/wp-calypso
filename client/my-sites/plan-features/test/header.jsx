@@ -26,35 +26,37 @@ jest.mock( 'i18n-calypso', () => ( {
 /**
  * External dependencies
  */
-import { shallow } from 'enzyme';
 import React from 'react';
+import { shallow } from 'enzyme';
+import { identity } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
+import { PlanFeaturesHeader } from '../header';
 import {
-	PLAN_FREE,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
-	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
+	PLAN_FREE,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
 } from 'lib/plans/constants';
-
-/**
- * Internal dependencies
- */
-import { PlanFeaturesHeader } from '../header';
 
 const props = {
 	translate: x => x,
 	planType: PLAN_FREE,
 	currentSitePlan: { productSlug: PLAN_FREE },
-	isSiteJetpack: null,
+	isJetpack: null,
 };
 
 describe( 'PlanFeaturesHeader basic tests', () => {
@@ -106,7 +108,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		test( `Should render InfoPopover for free plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
-				isSiteJetpack: true,
+				isJetpack: true,
 				planType: productSlug,
 			} );
 			const tf = shallow( comp.getBillingTimeframe() );
@@ -119,7 +121,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 			test( `Should render InfoPopover for non-jetpack sites (${ productSlug })`, () => {
 				const comp = new PlanFeaturesHeader( {
 					...myProps,
-					isSiteJetpack: false,
+					isJetpack: false,
 					planType: productSlug,
 				} );
 				const tf = shallow( comp.getBillingTimeframe() );
@@ -129,7 +131,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 			test( `Should render InfoPopover for AT sites (${ productSlug })`, () => {
 				const comp = new PlanFeaturesHeader( {
 					...myProps,
-					isSiteJetpack: true,
+					isJetpack: true,
 					isSiteAT: true,
 					planType: productSlug,
 				} );
@@ -139,7 +141,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 			test( `Should render InfoPopover when hideMonthly is true (${ productSlug })`, () => {
 				const comp = new PlanFeaturesHeader( {
 					...myProps,
-					isSiteJetpack: true,
+					isJetpack: true,
 					hideMonthly: true,
 					planType: productSlug,
 				} );
@@ -166,11 +168,41 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		test( `Should not render InfoPopover for paid plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
-				isSiteJetpack: true,
+				isJetpack: true,
 				planType: productSlug,
 			} );
 			const tf = shallow( comp.getBillingTimeframe() );
 			expect( tf.find( 'InfoPopover' ).length ).toBe( 0 );
 		} );
+	} );
+} );
+
+describe( 'PlanIntervalDiscount', () => {
+	const baseProps = {
+		isYearly: true,
+		rawPrice: 22,
+		relatedMonthlyPlan: { raw_price: 2 },
+		translate: identity,
+	};
+	test( 'should show interval discount for Jetpack during signup', () => {
+		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isInSignup isJetpack /> );
+		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should not show interval discount for Jetpack outside signup', () => {
+		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isJetpack /> );
+		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should not show interval discount for simple during signup', () => {
+		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isInSignup /> );
+		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should not show interval discount for atomic during signup', () => {
+		const wrapper = shallow(
+			<PlanFeaturesHeader { ...baseProps } isInSignup isJetpack isSiteAT />
+		);
+		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
 	} );
 } );
