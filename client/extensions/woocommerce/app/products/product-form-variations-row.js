@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -126,6 +124,7 @@ class ProductFormVariationsRow extends Component {
 
 	renderImage = () => {
 		const { src, placeholder, isUploading } = this.state;
+		const { translate } = this.props;
 
 		let image = null;
 		if ( src && ! isUploading ) {
@@ -133,14 +132,15 @@ class ProductFormVariationsRow extends Component {
 				<figure>
 					<ImagePreloader
 						src={ src }
-						placeholder={ ( placeholder && <img src={ placeholder } /> ) || <span /> }
+						alt={ translate( 'Variation thumbnail' ) }
+						placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
 					/>
 				</figure>
 			);
 		} else if ( isUploading ) {
 			image = (
 				<figure>
-					<img src={ placeholder || <span /> } />
+					<img src={ placeholder || '' } alt="" />
 					<Spinner />
 				</figure>
 			);
@@ -155,6 +155,7 @@ class ProductFormVariationsRow extends Component {
 			<Button
 				compact
 				onClick={ this.removeImage }
+				aria-label={ translate( 'Remove image' ) }
 				className="products__product-form-variation-image-remove"
 			>
 				<Gridicon
