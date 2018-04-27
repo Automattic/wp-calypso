@@ -144,6 +144,12 @@ const validate = ( values, props ) => {
 		if ( ! values.stripe_account ) {
 			errors.stripe_account = 'Choose or connect a new Stripe Account.';
 		}
+
+		if ( values.stripe_account === 'create' && ! values.email ) {
+			errors.email = translate(
+				'If you want us to create a Stripe account for you, you need to provide an email address.'
+			);
+		}
 	}
 	return errors;
 };
@@ -259,7 +265,10 @@ class ProductForm extends Component {
 								component={ FormSelect }
 								children={ Object.values( this.props.membershipsConnectedAccounts )
 									.map( acct => (
-										<option value={ acct.connected_destination_account_id }>
+										<option
+											value={ acct.connected_destination_account_id }
+											key={ acct.connected_destination_account_id }
+										>
 											{ acct.payment_partner_account_id }
 										</option>
 									) )
@@ -274,6 +283,18 @@ class ProductForm extends Component {
 								<Button onClick={ this.props.authorizeStripeAccount }>
 									{ translate( 'Authorize Stripe Account' ) }
 								</Button>
+							) }
+							{ this.props.isChoosingToCreateStripeAccount && (
+								<div>
+									<ReduxFormFieldset
+										name="email"
+										label={ translate( 'Email' ) }
+										explanation={ translate(
+											'New Stripe account will be tied to this email address.'
+										) }
+										component={ FormTextInput }
+									/>
+								</div>
 							) }
 							<ReduxFormFieldset
 								name="renewal_schedule"
@@ -306,6 +327,8 @@ export default compose(
 				isRecurringSubscription: get( state, [ 'form', REDUX_FORM_NAME, 'values', 'recurring' ] ),
 				isChoosingToAuthorizeStripeAccount:
 					get( state, [ 'form', REDUX_FORM_NAME, 'values', 'stripe_account' ], '' ) === 'authorize',
+				isChoosingToCreateStripeAccount:
+					get( state, [ 'form', REDUX_FORM_NAME, 'values', 'stripe_account' ], '' ) === 'create',
 				membershipsConnectedAccounts: get(
 					state,
 					[ 'memberships', 'connectedAccounts', 'accounts' ],

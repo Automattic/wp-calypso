@@ -56,20 +56,36 @@ const productFormToCustomPost = state => productToCustomPost( getProductFormValu
 const createMembershipButton = siteId => ( dispatch, getState ) => {
 	// This is a memberships submission.
 	const values = get( getState(), [ 'form', 'simplePaymentsForm', 'values' ], {} );
-	return wpcom.req
-		.post( `/sites/${ siteId }/memberships/product`, {
-			title: values.title,
-			description: values.description,
-			connected_destination_account_id: values.stripe_account,
-			interval: values.renewal_schedule,
-			price: values.price,
-			currency: values.currency,
-		} )
-		.then( newProduct => {
-			const product = membershipProductFromApi( newProduct.product );
-			dispatch( receiveUpdateProduct( siteId, product ) );
-			return product;
-		} );
+	const createProduct = product =>
+		wpcom.req
+			.post( `/sites/${ siteId }/memberships/product`, {
+				title: product.title,
+				description: product.description,
+				connected_destination_account_id: product.stripe_account,
+				interval: product.renewal_schedule,
+				price: product.price,
+				currency: product.currency,
+			} )
+			.then( newProduct => {
+				const membershipProduct = membershipProductFromApi( newProduct.product );
+				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
+				return membershipProduct;
+			} );
+
+	if ( values.stripe_account === 'create' && values.email ) {
+		// We need to create Stripe Account.
+		return wpcom.req
+			.post( '/me/stripe_connect/create', {
+				country: 'USA', // FOR NOW
+				email: values.email,
+			} )
+			.then( newAccount => {
+				values.stripe_account = newAccount.result.account.connected_destination_account_id;
+				return createProduct( values );
+			} );
+	}
+
+	return createProduct( values );
 };
 
 // Thunk action creator to create a new button
@@ -150,7 +166,11 @@ class SimplePaymentsDialog extends Component {
 		multiple: false,
 		email: '',
 		featuredImageId: null,
-		recurring: false,
+		...( config.isEnabled( 'memberships' ) && {
+			recurring: false,
+			stripe_account: '',
+			renewal_schedule: '1 year',
+		} ),
 	};
 
 	constructor( props ) {

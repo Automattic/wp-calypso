@@ -14,7 +14,11 @@ export const metadataSchema = {
 	status: { type: 'string', metaKey: 'spay_status' },
 	email: { type: 'string', metaKey: 'spay_email' },
 	formatted_price: { type: 'string', metaKey: 'spay_formatted_price' },
-	...( config.isEnabled( 'memberships' ) && { recurring: { type: 'boolean' } } ),
+	...( config.isEnabled( 'memberships' ) && {
+		recurring: { type: 'boolean' },
+		stripe_account: { type: 'string' },
+		renewal_schedule: { type: 'string' },
+	} ),
 };
 
 /**

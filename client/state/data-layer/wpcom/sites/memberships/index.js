@@ -25,6 +25,8 @@ export const membershipProductFromApi = product => ( {
 	price: product.price,
 	title: product.title,
 	recurring: true,
+	stripe_account: product.connected_destination_account_id,
+	renewal_schedule: product.interval,
 } );
 
 export const handleMembershipsList = dispatchRequestEx( {
