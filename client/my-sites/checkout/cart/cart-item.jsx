@@ -122,9 +122,11 @@ export class CartItem extends React.Component {
 		if ( cartItem && cartItem.product_cost ) {
 			return (
 				<span>
-					<span className="cart__free-with-plan">
-						{ cartItem.product_cost } { cartItem.currency }
-					</span>
+					{ ! ( isEnabled( 'upgrades/2-year-plans' ) && this.isDomainProductDiscountedTo0() ) ? (
+						<span className="cart__free-with-plan">
+							{ cartItem.product_cost } { cartItem.currency }
+						</span>
+					) : null }
 					<span className="cart__free-text">{ translate( 'Free with your plan' ) }</span>
 				</span>
 			);
@@ -199,12 +201,7 @@ export class CartItem extends React.Component {
 
 	getSubscriptionLength() {
 		const { cartItem, translate } = this.props;
-		if (
-			isEnabled( 'upgrades/2-year-plans' ) &&
-			isDomainProduct( cartItem ) &&
-			isBundled( cartItem ) &&
-			cartItem.cost === 0
-		) {
+		if ( isEnabled( 'upgrades/2-year-plans' ) && this.isDomainProductDiscountedTo0() ) {
 			return false;
 		}
 
@@ -222,6 +219,11 @@ export class CartItem extends React.Component {
 		}
 
 		return false;
+	}
+
+	isDomainProductDiscountedTo0() {
+		const { cartItem } = this.props;
+		return isDomainProduct( cartItem ) && isBundled( cartItem ) && cartItem.cost === 0;
 	}
 
 	getProductName() {
