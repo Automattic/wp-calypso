@@ -5,11 +5,70 @@
 import React, { Fragment } from 'react';
 import { parsePatch } from 'diff';
 
+/**
+ * Uses a heuristic to return proper file name indicators
+ *
+ * This function lists the filenames for the left and right
+ * side of the diff in a single string.
+ *
+ * It searches for the longest shared prefix and returns
+ * whatever remains after that. If the paths are identical
+ * it only returns a single filename as we have detected
+ * that the diff compares changes to only one file.
+ *
+ * An exception is made for `a/` and `b/` prefixes often
+ * added by `git` and other utilities to separate the left
+ * from the right when looking at the contents of a single
+ * file over time.
+ *
+ * @param {string} oldFileName filename of left contents
+ * @param {string} newFileName filename of right contents
+ * @return {Element|string} description of the file or files in the diff
+ */
 const filename = ( { oldFileName, newFileName } ) => {
-	const oldName = oldFileName.replace( /.+\//, '' );
-	const newName = newFileName.replace( /.+\//, '' );
+	// if we think the diff utility added a bogus
+	// prefix then cut it off
+	const isLikelyPrefixed =
+		'a' === oldFileName[ 0 ] &&
+		'/' === oldFileName[ 1 ] &&
+		'b' === newFileName[ 0 ] &&
+		'/' === newFileName[ 1 ];
 
-	return oldName !== newName ? `${ oldName } → ${ newName }` : oldName;
+	const [ prev, next ] = isLikelyPrefixed
+		? [ oldFileName.slice( 2 ), newFileName.slice( 2 ) ]
+		: [ oldFileName, newFileName ];
+
+	if ( prev === next ) {
+		// it's the same file, return the basename
+		return prev.replace( /.+\//, '' );
+	}
+
+	// find the longest shared path prefix
+	const length = Math.max( prev.length, next.length );
+	for ( let i = 0, slash = 0; i < length; i++ ) {
+		if ( prev[ i ] === '/' && next[ i ] === '/' ) {
+			slash = i;
+		}
+
+		if ( prev[ i ] !== next[ i ] ) {
+			return (
+				<Fragment>
+					{ slash !== 0 && (
+						<span className="diff-viewer__path-prefix">{ prev.slice( 0, slash ) }</span>
+					) }
+					<span className="diff-viewer__path">{ prev.slice( slash ) }</span>
+					{ ' → ' }
+					{ slash !== 0 && (
+						<span className="diff-viewer__path-prefix">{ next.slice( 0, slash ) }</span>
+					) }
+					<span className="diff-viewer__path">{ next.slice( slash ) }</span>
+				</Fragment>
+			);
+		}
+	}
+
+	// otherwise we have no shared prefix
+	return `${ prev } → ${ next }`;
 };
 
 export const DiffViewer = ( { diff } ) => (
