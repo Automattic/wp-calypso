@@ -273,13 +273,14 @@ export class PlanFeaturesHeader extends Component {
 			basePlansPath,
 			currencyCode,
 			isJetpack,
+			isSiteAT,
 			isYearly,
 			rawPrice,
 			relatedMonthlyPlan,
 			relatedYearlyPlan,
 			siteSlug,
 		} = this.props;
-		if ( isJetpack ) {
+		if ( isJetpack && ! isSiteAT ) {
 			const [ discountPrice, originalPrice ] = isYearly
 				? [ relatedMonthlyPlan.raw_price * 12, rawPrice ]
 				: [ rawPrice * 12, get( relatedYearlyPlan, 'raw_price' ) ];
