@@ -16,7 +16,7 @@ import FormattedHeader from 'components/formatted-header';
 import safeImageUrl from 'lib/safe-image-url';
 import Site from 'blocks/site';
 import versionCompare from 'lib/version-compare';
-import { authQueryPropTypes, getPartnerSlugFromId } from './utils';
+import { authQueryPropTypes } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -32,8 +32,9 @@ export class AuthFormHeader extends Component {
 
 	getState() {
 		const { user, authorize } = this.props;
+		const { partnerSlug } = this.props.authQuery;
 
-		if ( getPartnerSlugFromId( this.props.authQuery.partnerId ) ) {
+		if ( partnerSlug ) {
 			return 'partner';
 		}
 
@@ -50,7 +51,7 @@ export class AuthFormHeader extends Component {
 
 	getHeaderText() {
 		const { translate } = this.props;
-		const partnerSlug = getPartnerSlugFromId( this.props.authQuery.partnerId );
+		const { partnerSlug } = this.props.authQuery;
 
 		if ( partnerSlug ) {
 			switch ( partnerSlug ) {

@@ -37,7 +37,7 @@ export function authQueryTransformer( queryObject ) {
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
-		partnerId: parseInt( queryObject.partner_id, 10 ) || null,
+		partnerSlug: getPartnerSlugFromId( queryObject.partner_id ),
 		redirectAfterAuth: queryObject.redirect_after_auth || null,
 		siteIcon: queryObject.site_icon || null,
 		siteUrl: queryObject.site_url || null,
@@ -54,7 +54,7 @@ export const authQueryPropTypes = PropTypes.shape( {
 	homeUrl: PropTypes.string.isRequired,
 	jpVersion: PropTypes.string,
 	nonce: PropTypes.string.isRequired,
-	partnerId: PropTypes.number,
+	partnerSlug: PropTypes.string,
 	redirectAfterAuth: PropTypes.string,
 	redirectUri: PropTypes.string.isRequired,
 	scope: PropTypes.string.isRequired,
@@ -128,7 +128,7 @@ export function parseAuthorizationQuery( query ) {
 }
 
 export function getPartnerSlugFromId( partnerId ) {
-	switch ( partnerId ) {
+	switch ( parseInt( partnerId, 10 ) ) {
 		case 51945:
 		case 51946:
 			return 'dreamhost';
@@ -144,6 +144,6 @@ export function getPartnerSlugFromId( partnerId ) {
 		case 51652: // Clients used for testing.
 			return 'dreamhost';
 		default:
-			return '';
+			return null;
 	}
 }
