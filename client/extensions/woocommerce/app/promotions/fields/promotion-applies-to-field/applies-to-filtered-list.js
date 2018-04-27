@@ -17,7 +17,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/products/selectors';
-import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
+import { getAllProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Search from 'components/search';
 
@@ -289,7 +289,7 @@ function mapStateToProps( state ) {
 	const siteId = site ? site.ID : null;
 	const productsLoading = areProductsLoading( state, siteId );
 	const products = productsLoading ? null : getAllProducts( state, siteId );
-	const productCategories = getProductCategories( state, {}, siteId );
+	const productCategories = getAllProductCategories( state, {}, siteId );
 
 	// TODO: This is temporary, as it's not used anymore.
 	const nonVariableProducts =
