@@ -45,8 +45,3 @@ index 51455bdb14..bc0622d001 100644
    pre:
      - ? |
 ```
-
-The filenames _may_ be prefixed with a false such as in the example output from `git` above.
-This component currently ignores the base path of the file entirely and so does not care
-about this prefix. As a result, it also won't show that a file changed names if the filename
-itself is the same but the base path changed.
