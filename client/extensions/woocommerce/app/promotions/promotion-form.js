@@ -35,7 +35,6 @@ export default class PromotionForm extends React.PureComponent {
 		} ),
 		editPromotion: PropTypes.func.isRequired,
 		products: PropTypes.array,
-		productCategories: PropTypes.array,
 		showEmptyValidationErrors: PropTypes.bool,
 	};
 
@@ -105,4 +104,3 @@ export default class PromotionForm extends React.PureComponent {
 		);
 	}
 }
-

@@ -25,7 +25,6 @@ import {
 	deletePromotion,
 } from 'woocommerce/state/sites/promotions/actions';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
-import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 import { editPromotion, clearPromotionEdits } from 'woocommerce/state/ui/promotions/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
@@ -48,7 +47,6 @@ class PromotionUpdate extends React.Component {
 		currency: PropTypes.string,
 		hasEdits: PropTypes.bool.isRequired,
 		products: PropTypes.array,
-		productCategories: PropTypes.array,
 		site: PropTypes.shape( {
 			ID: PropTypes.number,
 			slug: PropTypes.string,
@@ -205,15 +203,7 @@ class PromotionUpdate extends React.Component {
 	};
 
 	render() {
-		const {
-			site,
-			currency,
-			className,
-			promotion,
-			products,
-			productCategories,
-			hasEdits,
-		} = this.props;
+		const { site, currency, className, promotion, products, hasEdits } = this.props;
 		const { saveAttempted, busy } = this.state;
 
 		return (
@@ -232,7 +222,6 @@ class PromotionUpdate extends React.Component {
 					promotion={ promotion }
 					editPromotion={ this.props.editPromotion }
 					products={ products }
-					productCategories={ productCategories }
 					showEmptyValidationErrors={ saveAttempted }
 				/>
 			</Main>
@@ -248,7 +237,6 @@ function mapStateToProps( state, ownProps ) {
 	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 	const productsLoading = areProductsLoading( state, site.ID );
 	const products = productsLoading ? null : getAllProducts( state, site.ID );
-	const productCategories = getProductCategories( state, {}, site.ID );
 	const edits = getPromotionEdits( state, promotionId, site.ID );
 	const hasEdits = Boolean( edits );
 
@@ -259,7 +247,6 @@ function mapStateToProps( state, ownProps ) {
 		promotion,
 		currency,
 		products,
-		productCategories,
 	};
 }
 
