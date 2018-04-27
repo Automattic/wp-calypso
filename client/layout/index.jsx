@@ -47,6 +47,7 @@ import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
+import { isE2ETest } from 'lib/e2e';
 
 /* eslint-disable react/no-deprecated */
 const Layout = createReactClass( {
@@ -118,7 +119,7 @@ const Layout = createReactClass( {
 				<QuerySites allSites />
 				<QueryPreferences />
 				{ <GuidedTours /> }
-				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
+				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
