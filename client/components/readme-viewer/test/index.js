@@ -3,26 +3,23 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
+import { expect } from 'chai';
 import React from 'react';
-import { render } from 'enzyme';
-import sinon from 'sinon';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
+import ReadmeViewer from 'components/readme-viewer';
 
 describe( 'ReadmeViewer', () => {
 	it( 'should render README.md when given readmeFilePath', () => {
-		const getReadme = sinon.spy();
-		render( <ReadmeViewer readmeFilePath="foo" getReadme={ getReadme } /> );
-		assert.isTrue( getReadme.called );
+		const readme = shallow( <ReadmeViewer readmeFilePath="foo" /> );
+		expect( readme ).to.have.className( 'readme-viewer__wrapper' );
 	} );
 
 	it( 'should not render a README.md when not given readmeFilePath', () => {
-		const getReadme = sinon.spy();
-		render( <ReadmeViewer getReadme={ getReadme } /> );
-		assert.isTrue( getReadme.notCalled );
+		const readme = shallow( <ReadmeViewer /> );
+		expect( readme ).to.not.have.className( 'readme-viewer__wrapper' );
 	} );
 } );

@@ -46,16 +46,15 @@ class ReadmeViewer extends Component {
 				Improve this document on GitHub
 			</a>
 		);
-		return (
-			<div>
+
+		return this.props.readmeFilePath ? (
+			<div className="readme-viewer__wrapper devdocs__doc-content">
 				{ this.state.readme && editLink }
-				<div className="devdocs__doc-content readme-viewer__wrapper">
-					{ this.state.readme || (
-						<div className="readme-viewer__not-available">No documentation available.</div>
-					) }
-				</div>
+				{ this.state.readme || (
+					<div className="readme-viewer__not-available">No documentation available.</div>
+				) }
 			</div>
-		);
+		) : null;
 	}
 }
 
