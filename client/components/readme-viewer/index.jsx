@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import { Parser } from 'html-to-react';
 import PropTypes from 'prop-types';
+import request from 'superagent';
 
 const htmlToReactParser = new Parser();
 
@@ -16,19 +17,28 @@ const htmlToReactParser = new Parser();
 
 class ReadmeViewer extends Component {
 	static propTypes = {
-		getReadme: PropTypes.func,
 		readmeFilePath: PropTypes.string,
 	};
 
-	static defaultProps = {
-		getReadme: readmeFilePath => {
-			return htmlToReactParser.parse( require( `../../${ readmeFilePath }` ) );
-		},
+	state = {
+		readme: null,
 	};
+
+	componentDidMount() {
+		const { readmeFilePath } = this.props;
+		const path = `/client/${ readmeFilePath }/README.md`;
+		request
+			.get( '/devdocs/service/content' )
+			.query( { path: path } )
+			.then( ( { text } ) => {
+				this.setState( {
+					readme: htmlToReactParser.parse( text ),
+				} );
+			} );
+	}
 
 	render() {
 		const { readmeFilePath } = this.props;
-		const readme = readmeFilePath && this.props.getReadme( readmeFilePath );
 		const editLink = (
 			<a
 				className="readme-viewer__doc-edit-link devdocs__doc-edit-link"
@@ -39,9 +49,9 @@ class ReadmeViewer extends Component {
 		);
 		return (
 			<div>
-				{ readme && editLink }
+				{ this.state.readme && editLink }
 				<div className="devdocs__doc-content readme-viewer__wrapper">
-					{ readme || (
+					{ this.state.readme || (
 						<div className="readme-viewer__not-available">No documentation available.</div>
 					) }
 				</div>
