@@ -20,16 +20,12 @@ class RebrandCitiesThankYou extends Component {
 	}
 
 	render() {
-		const { analyticsPath, analyticsProps, receipt, translate } = this.props;
+		const { analyticsProperties, receipt, translate } = this.props;
 		const displayPrice = get( receipt, 'data.displayPrice' );
 
 		return (
 			<div className="plan-thank-you-card checkout-thank-you__rebrand-cities">
-				<PageViewTracker
-					path={ analyticsPath }
-					title="Checkout Thank You"
-					properties={ analyticsProps }
-				/>
+				<PageViewTracker { ...analyticsProperties } title="Checkout Thank You" />
 				<ThankYouCard
 					name={ translate( 'Rebrand Cities package' ) }
 					price={ displayPrice }
