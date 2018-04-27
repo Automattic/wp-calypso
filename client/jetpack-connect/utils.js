@@ -127,13 +127,7 @@ export function parseAuthorizationQuery( query ) {
 	return null;
 }
 
-export function getPartnerSlug( authQuery ) {
-	if ( ! authQuery || 'object' !== typeof authQuery ) {
-		return '';
-	}
-
-	const { partnerId } = authQuery;
-
+export function getPartnerSlugFromId( partnerId ) {
 	switch ( partnerId ) {
 		case 51945:
 		case 51946:

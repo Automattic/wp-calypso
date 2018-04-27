@@ -623,8 +623,9 @@ export class JetpackAuthorize extends Component {
 	}
 
 	render() {
+		const { partnerId } = this.props.authQuery;
 		return (
-			<MainWrapper authQuery={ this.props.authQuery }>
+			<MainWrapper partnerId={ partnerId }>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection

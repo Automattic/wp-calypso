@@ -13,16 +13,22 @@ import { localize } from 'i18n-calypso';
  */
 import JetpackLogo from 'components/jetpack-logo';
 import Main from 'components/main';
-import { getPartnerSlug } from './utils';
+import { getPartnerSlugFromId } from './utils';
 import { retrieveMobileRedirect } from './persistence-utils';
 
 class JetpackConnectMainWrapper extends PureComponent {
-	static defaultProps = { isWide: false };
-	static propTypes = { isWide: PropTypes.bool };
+	static propTypes = {
+		isWide: PropTypes.bool,
+		partnerId: PropTypes.number,
+	};
+
+	static defaultProps = {
+		isWide: false,
+	};
 
 	getHeaderImage() {
-		const { authQuery, translate } = this.props;
-		const partnerSlug = getPartnerSlug( authQuery );
+		const { partnerId, translate } = this.props;
+		const partnerSlug = getPartnerSlugFromId( partnerId );
 		const baseCobrandedAttributes = {
 			width: '662.5',
 			height: '85',
