@@ -20,7 +20,7 @@ export default localize( ( { translate } ) => {
 				description={ translate(
 					'Add a PayPal payment button and start selling your goods and services.'
 				) }
-				href={ 'theme' }
+				href={ 'https://en.support.wordpress.com/simple-payments/' }
 				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-payments.svg" /> }
 				target={ '' }
 				title={ translate( 'Sell online with PayPal.' ) }
