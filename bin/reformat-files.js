@@ -15,12 +15,6 @@ const prettier = require( 'prettier' );
 const shouldFormat = require( './utils/should-format' );
 
 /**
- * Module constants
- */
-const defaultPrettierConfig = undefined;
-const sassPrettierConfig = { parser: 'scss' };
-
-/**
  * Find all JS and JSX files in the project that have the @format tag
  * and reformat them with Prettier. Useful when upgrading Prettier to
  * a newer version.
@@ -49,10 +43,9 @@ files.forEach( file => {
 		return;
 	}
 
-	const formattedText = prettier.format(
-		text,
-		file.endsWith( '.scss' ) ? sassPrettierConfig : defaultPrettierConfig
-	);
+	const config = prettier.resolveConfig.sync( file );
+	config.filepath = file;
+	const formattedText = prettier.format( text, config );
 
 	// did the re-formatting change anything?
 	if ( formattedText === text ) {
