@@ -363,58 +363,6 @@ PostActions = {
 			callback( error, data );
 		} );
 	},
-
-	/**
-	 * Calls out to API to update Post object with any changed attributes
-	 *
-	 * @param {Object} site Site object
-	 * @param {object} post to be changed
-	 * @param {object} attributes only send the attributes to be changed
-	 * @param {function} callback callback receives ( err, post ) arguments
-
-	 */
-	update: function( site, post, attributes, callback ) {
-		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.update( attributes, PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	/**
-	 * Sends `delete` request to the API. The first request
-	 * updates status to `trash`, the second request deletes the post.
-	 *
-	 * @param {Object} site Site object
-	 * @param {object} post to be trashed
-	 * @param {function} callback that receives ( err, post ) arguments
-	 */
-	trash: function( site, post, callback ) {
-		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.delete( PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	/**
-	 * Restores post/page from trash
-	 *
-	 * @param {object} post to be trashed
-	 * @param {function} callback that receives ( err, post ) arguments
-	 * @param {Object} site Site object
-	 */
-	restore: function( site, post, callback ) {
-		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.restore( PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	receiveUpdate: function( site, callback, error, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_UPDATED_POST',
-			error: error,
-			post: data,
-			site,
-		} );
-		callback( error, data );
-	},
 };
 
 export default PostActions;
