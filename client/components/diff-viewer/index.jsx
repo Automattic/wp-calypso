@@ -5,6 +5,12 @@
 import React, { Fragment } from 'react';
 import { parsePatch } from 'diff';
 
+const decompose = path => {
+	const lastSlash = path.lastIndexOf( '/' );
+
+	return lastSlash > -1 ? [ path.slice( 0, lastSlash ), path.slice( lastSlash ) ] : [ '', path ];
+};
+
 /**
  * Uses a heuristic to return proper file name indicators
  *
@@ -23,7 +29,7 @@ import { parsePatch } from 'diff';
  *
  * @param {string} oldFileName filename of left contents
  * @param {string} newFileName filename of right contents
- * @return {Element|string} description of the file or files in the diff
+ * @return {Element} description of the file or files in the diff
  */
 const filename = ( { oldFileName, newFileName } ) => {
 	// if we think the diff utility added a bogus
@@ -39,8 +45,15 @@ const filename = ( { oldFileName, newFileName } ) => {
 		: [ oldFileName, newFileName ];
 
 	if ( prev === next ) {
-		// it's the same file, return the basename
-		return prev.replace( /.+\//, '' );
+		const [ base, name ] = decompose( prev );
+
+		// it's the same file, return the single name
+		return (
+			<Fragment>
+				{ base && <span className="diff-viewer__path-prefix">{ base }</span> }
+				<span className="diff-viewer__path">{ name }</span>
+			</Fragment>
+		);
 	}
 
 	// find the longest shared path prefix
@@ -68,7 +81,18 @@ const filename = ( { oldFileName, newFileName } ) => {
 	}
 
 	// otherwise we have no shared prefix
-	return `${ prev } → ${ next }`;
+	const [ prevBase, prevName ] = decompose( prev );
+	const [ nextBase, nextName ] = decompose( next );
+
+	return (
+		<Fragment>
+			{ prevBase && <span className="diff-viewer__path-prefix">{ prevBase }</span> }
+			<span className="diff-viewer__path">{ prevName }</span>
+			{ ' → ' }
+			{ nextBase && <span className="diff-viewer__path-prefix">{ nextBase }</span> }
+			<span className="diff-viewer__path">{ nextName }</span>
+		</Fragment>
+	);
 };
 
 export const DiffViewer = ( { diff } ) => (
