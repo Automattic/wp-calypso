@@ -143,6 +143,7 @@ export class PlanFeaturesHeader extends Component {
 
 	getBillingTimeframe() {
 		const {
+			currentSitePlan,
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
@@ -166,6 +167,7 @@ export class PlanFeaturesHeader extends Component {
 			);
 		}
 
+		const isFreePlan = planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } );
 		if (
 			isSiteAT ||
 			! isSiteJetpack ||
@@ -176,6 +178,7 @@ export class PlanFeaturesHeader extends Component {
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
 					{ isDiscounted &&
+						! isFreePlan &&
 						! isPlaceholder && (
 							<InfoPopover
 								className="plan-features__header-tip-info"
