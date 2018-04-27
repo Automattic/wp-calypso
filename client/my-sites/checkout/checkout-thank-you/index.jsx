@@ -262,7 +262,7 @@ export class CheckoutThankYou extends React.Component {
 
 	getAnalyticsProperties = () => {
 		const { gsuiteReceiptId, receiptId, selectedFeature: feature, selectedSite } = this.props;
-		const site = selectedSite.slug;
+		const site = get( selectedSite, 'slug' );
 
 		if ( gsuiteReceiptId ) {
 			return {
