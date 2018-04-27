@@ -26,8 +26,7 @@ class InlineHelpCompactResult extends Component {
 
 	render() {
 		const { helpLink } = this.props;
-		const key = helpLink.link + '-'.helpLink.id;
-
+		const key = helpLink.link + '-' + helpLink.id;
 		return (
 			<li key={ key }>
 				<a
