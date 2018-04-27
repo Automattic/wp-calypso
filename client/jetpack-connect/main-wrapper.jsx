@@ -33,56 +33,45 @@ class JetpackConnectMainWrapper extends PureComponent {
 			className: 'jetpack-connect__main-partner-logo',
 		};
 
-		let image = null;
-		if ( partnerSlug ) {
-			switch ( partnerSlug ) {
-				case 'dreamhost':
-					image = (
-						<img
-							{ ...baseCobrandedAttributes }
-							src="/calypso/images/jetpack/jetpack-dreamhost-connection.png"
-							alt={ translate( 'Co-branded Jetpack and DreamHost logo' ) }
-						/>
-					);
-					break;
+		switch ( partnerSlug ) {
+			case 'dreamhost':
+				return (
+					<img
+						{ ...baseCobrandedAttributes }
+						src="/calypso/images/jetpack/jetpack-dreamhost-connection.png"
+						alt={ translate( 'Co-branded Jetpack and DreamHost logo' ) }
+					/>
+				);
 
-				case 'pressable':
-					image = (
-						<img
-							{ ...baseCobrandedAttributes }
-							src="/calypso/images/jetpack/jetpack-pressable-connection.png"
-							alt={ translate( 'Co-branded Jetpack and Pressable logo' ) }
-						/>
-					);
-					break;
+			case 'pressable':
+				return (
+					<img
+						{ ...baseCobrandedAttributes }
+						src="/calypso/images/jetpack/jetpack-pressable-connection.png"
+						alt={ translate( 'Co-branded Jetpack and Pressable logo' ) }
+					/>
+				);
 
-				case 'milesweb':
-					image = (
-						<img
-							{ ...baseCobrandedAttributes }
-							src="/calypso/images/jetpack/jetpack-milesweb-connection.png"
-							alt={ translate( 'Co-branded Jetpack and MilesWeb logo' ) }
-						/>
-					);
-					break;
+			case 'milesweb':
+				return (
+					<img
+						{ ...baseCobrandedAttributes }
+						src="/calypso/images/jetpack/jetpack-milesweb-connection.png"
+						alt={ translate( 'Co-branded Jetpack and MilesWeb logo' ) }
+					/>
+				);
 
-				case 'bluehost':
-					image = (
-						<img
-							{ ...baseCobrandedAttributes }
-							src="/calypso/images/jetpack/jetpack-bluehost-connection.png"
-							alt={ translate( 'Co-branded Jetpack and Bluehost logo' ) }
-						/>
-					);
-					break;
-			}
+			case 'bluehost':
+				return (
+					<img
+						{ ...baseCobrandedAttributes }
+						src="/calypso/images/jetpack/jetpack-bluehost-connection.png"
+						alt={ translate( 'Co-branded Jetpack and Bluehost logo' ) }
+					/>
+				);
 		}
 
-		return (
-			<div className="jetpack-connect__main-logo">
-				{ image || <JetpackLogo full size={ 45 } /> }
-			</div>
-		);
+		return <JetpackLogo full size={ 45 } />;
 	}
 
 	render() {
@@ -94,7 +83,7 @@ class JetpackConnectMainWrapper extends PureComponent {
 
 		return (
 			<Main className={ classNames( className, wrapperClassName ) }>
-				{ this.getHeaderImage() }
+				<div className="jetpack-connect__main-logo">{ this.getHeaderImage() }</div>
 				{ children }
 			</Main>
 		);
