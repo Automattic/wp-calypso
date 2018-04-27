@@ -24,14 +24,7 @@ import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 
 class PlansStep extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.onSelectPlan = this.onSelectPlan.bind( this );
-		this.plansFeaturesSelection = this.plansFeaturesSelection.bind( this );
-	}
-
-	onSelectPlan( cartItem ) {
+	onSelectPlan = cartItem => {
 		const {
 				additionalStepData,
 				stepSectionName,
@@ -71,7 +64,7 @@ class PlansStep extends Component {
 		SignupActions.submitSignupStep( step, [], providedDependencies );
 
 		goToNextStep();
-	}
+	};
 
 	getDomainName() {
 		return (
@@ -109,7 +102,7 @@ class PlansStep extends Component {
 		);
 	}
 
-	plansFeaturesSelection() {
+	plansFeaturesSelection = () => {
 		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
 		const headerText = translate( "Pick a plan that's right for you." );
@@ -126,7 +119,7 @@ class PlansStep extends Component {
 				stepContent={ this.plansFeaturesList() }
 			/>
 		);
-	}
+	};
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
