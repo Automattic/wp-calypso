@@ -8,7 +8,6 @@
 
 import { mergeHandlers } from 'state/action-watchers/utils';
 import block from './block';
-import connectedAccounts from './connected-accounts';
 import devices from './devices';
 import notification from './notification';
 import settings from './settings';
@@ -19,7 +18,6 @@ import twoStep from './two-step';
 
 export default mergeHandlers(
 	block,
-	connectedAccounts,
 	countries,
 	devices,
 	notification,
