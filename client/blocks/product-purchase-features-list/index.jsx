@@ -40,6 +40,7 @@ import JetpackSearch from './jetpack-search';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import MobileApps from './mobile-apps';
+import SellOnlinePaypal from './sell-online-paypal';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
@@ -83,6 +84,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
 				<MobileApps />
+				<SellOnlinePaypal />
 			</Fragment>
 		);
 	}
@@ -102,6 +104,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
 				<MobileApps />
+				<SellOnlinePaypal />
 			</Fragment>
 		);
 	}
@@ -115,6 +118,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<MobileApps />
+				<SellOnlinePaypal />
 			</Fragment>
 		);
 	}
@@ -134,6 +138,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					selectedSite={ selectedSite }
 				/>
 				<MobileApps />
+				<SellOnlinePaypal />
 			</Fragment>
 		);
 	}
@@ -154,6 +159,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackVideo selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
+				<SellOnlinePaypal />
 			</Fragment>
 		);
 	}
@@ -172,6 +178,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
+				<SellOnlinePaypal />
 			</Fragment>
 		);
 	}
@@ -201,6 +208,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
+				<SellOnlinePaypal />
 			</Fragment>
 		);
 	}
