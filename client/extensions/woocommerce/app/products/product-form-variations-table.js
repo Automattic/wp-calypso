@@ -152,7 +152,7 @@ class ProductFormVariationsTable extends React.Component {
 							type="number"
 							onChange={ this.setStockQuantity }
 							placeholder={ translate( 'Quantity' ) }
-							disabled={ 'no' === storeIsManagingStock ? 'disabled' : '' }
+							disabled={ 'no' === storeIsManagingStock }
 						/>
 					</div>
 				</td>
