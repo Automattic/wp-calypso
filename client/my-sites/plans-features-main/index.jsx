@@ -169,10 +169,6 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	handleFreePlanButtonClick = () => {
-		this.props.onUpgradeClick( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
-	};
-
 	render() {
 		const { site, displayJetpackPlans, isInSignup } = this.props;
 		let faqs = null;
