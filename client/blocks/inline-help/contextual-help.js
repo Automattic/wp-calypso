@@ -1,9 +1,17 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import { compact, first, get } from 'lodash';
+
+/**
+ * Internal Dependencies
+ */
+import { RESULT_TOUR, RESULT_VIDEO } from './constants';
+
 /**
  * Module variables
- *
- * @format
  */
-
 const fallbackLinks = [
 	{
 		link: 'https://en.support.wordpress.com/business-plan/',
@@ -659,9 +667,37 @@ const contextLinksForSection = {
 	],
 };
 
+const videosForSection = {
+	sharing: [
+		{
+			type: RESULT_VIDEO,
+			link: 'https://www.youtube.com/embed/YVelWG3hf3o',
+			title: 'Add Social Sharing Buttons to Your Website',
+			description:
+				'Find out how to add social sharing buttons to your WordPress.com site, which you can also ' +
+				'do with a Jetpack-enabled WordPress site. Our step-by-step video will walk you through it, ' +
+				"and it's easier than you'd think!",
+		},
+	],
+};
+const toursForSection = {
+	media: [
+		{
+			type: RESULT_TOUR,
+			tour: 'mediaBasicsTour',
+			key: 'tour:mediaBasicsTour',
+			title: 'Learn Media Library Basics',
+			description:
+				'The Media Library is a useful tool to help you manage, search, and edit your photos, videos, documents, and other media.',
+		},
+	],
+};
+
 export function getContextResults( section ) {
-	if ( contextLinksForSection[ section ] ) {
-		return contextLinksForSection[ section ];
-	}
-	return fallbackLinks;
+	// make sure editorially to show at most one tour and one video at once
+	// `first` is a safe-guard in case that fails
+	const video = first( get( videosForSection, section ) );
+	const tour = first( get( toursForSection, section ) );
+	const links = get( contextLinksForSection, section, fallbackLinks );
+	return compact( [ tour, video, ...links ] );
 }
