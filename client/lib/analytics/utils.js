@@ -5,6 +5,7 @@
  */
 
 import debugFactory from 'debug';
+import sha256 from 'hash.js/lib/hash/sha/256';
 
 /**
  * Module variables
@@ -26,6 +27,12 @@ export function doNotTrack() {
 	);
 	debug( `Do Not Track: ${ result }` );
 	return result;
+}
+
+export function hashPii( data ) {
+	return sha256()
+		.update( data.toString() )
+		.digest( 'hex' );
 }
 
 // If this list catches things that are not necessarily forbidden we're ok with
