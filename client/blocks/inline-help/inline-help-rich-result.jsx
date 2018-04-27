@@ -7,12 +7,20 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { omitBy, isUndefined } from 'lodash';
+import { get, isUndefined, omitBy } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { RESULT_ARTICLE, RESULT_TOUR, RESULT_VIDEO } from './constants';
+import {
+	RESULT_ARTICLE,
+	RESULT_DESCRIPTION,
+	RESULT_LINK,
+	RESULT_TITLE,
+	RESULT_TOUR,
+	RESULT_TYPE,
+	RESULT_VIDEO,
+} from './constants';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import ResizableIframe from 'components/resizable-iframe';
@@ -34,7 +42,7 @@ class InlineHelpRichResult extends Component {
 		event.preventDefault();
 		const { href } = event.target;
 		const { type } = this.props;
-		const { tour } = this.props.result;
+		const tour = get( this.props.result, RESULT_TOUR );
 		const tracksData = omitBy(
 			{
 				search_query: this.props.searchQuery,
@@ -72,7 +80,7 @@ class InlineHelpRichResult extends Component {
 
 	renderDialog = () => {
 		const { showDialog } = this.state;
-		const { link } = this.props.result;
+		const link = get( this.props.result, RESULT_LINK );
 		const iframeClasses = classNames( 'inline-help__richresult__dialog__video' );
 		return (
 			<Dialog
@@ -99,7 +107,9 @@ class InlineHelpRichResult extends Component {
 	render() {
 		const { type } = this.props;
 		const { translate, result } = this.props;
-		const { title, description, link } = result;
+		const title = get( result, RESULT_TITLE );
+		const description = get( result, RESULT_DESCRIPTION );
+		const link = get( result, RESULT_LINK );
 		const classes = classNames( 'inline-help__richresult__title' );
 		return (
 			<div>
@@ -122,7 +132,7 @@ class InlineHelpRichResult extends Component {
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	searchQuery: getSearchQuery( state ),
-	type: ownProps.result.type || RESULT_ARTICLE,
+	type: get( ownProps.result, RESULT_TYPE, RESULT_ARTICLE ),
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,
