@@ -29,6 +29,12 @@ export function doNotTrack() {
 	return result;
 }
 
+/**
+ * Hashes users' Personally Identifiable Information using SHA256
+ *
+ * @param {String|Number} Data to be hashed
+ * @returns {String} SHA256 in hex string format
+ */
 export function hashPii( data ) {
 	return sha256()
 		.update( data.toString() )
