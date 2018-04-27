@@ -53,7 +53,14 @@ import {
 import sortProducts from 'lib/products-values/sort';
 import { getTld } from 'lib/domains';
 import { domainProductSlugs } from 'lib/domains/constants';
-import { isPersonalPlan, isPremiumPlan, isBusinessPlan, isWpComFreePlan } from 'lib/plans';
+import {
+	getTermDuration,
+	getPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isWpComFreePlan,
+} from 'lib/plans';
 
 /**
  * Adds the specified item to a shopping cart.
@@ -381,6 +388,23 @@ export function hasOnlyRenewalItems( cart ) {
 }
 
 /**
+ * Returns a bill period of given cartItem
+ *
+ * @param {Object} cartItem - cartItem
+ * @returns {Number|null} bill period of given cartItem
+ */
+export function getCartItemBillPeriod( cartItem ) {
+	let billPeriod = cartItem.bill_period;
+	if ( ! Number.isInteger( billPeriod ) ) {
+		const plan = getPlan( cartItem.product_slug );
+		if ( plan ) {
+			billPeriod = getTermDuration( plan.term );
+		}
+	}
+	return billPeriod;
+}
+
+/**
  * Determines whether any product in the specified shopping cart is a renewable subscription.
  * Will return false if the cart is empty.
  *
@@ -388,7 +412,7 @@ export function hasOnlyRenewalItems( cart ) {
  * @returns {boolean} true if any product in the cart renews
  */
 export function hasRenewableSubscription( cart ) {
-	return cart.products && some( getAll( cart ), cartItem => cartItem.bill_period > 0 );
+	return cart.products && some( getAll( cart ), cartItem => getCartItemBillPeriod( cartItem ) > 0 );
 }
 
 /**
