@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import config from 'config';
+
+/**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
@@ -55,6 +60,11 @@ export const siteHasBusinessPlan = createSelector(
 export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 	if ( isGoogleMyBusinessLocationConnected( state, siteId ) ) {
 		return false;
+	}
+
+	// call-for-testing condition, remove on launch
+	if ( config.isEnabled( 'google-my-business' ) ) {
+		return true;
 	}
 
 	return siteHasBusinessPlan( state, siteId ) && siteHasPromoteGoal( state, siteId );
