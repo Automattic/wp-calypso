@@ -53,29 +53,27 @@ export class AuthFormHeader extends Component {
 		const { translate } = this.props;
 		const { partnerSlug } = this.props.authQuery;
 
-		if ( partnerSlug ) {
-			let host = '';
-			switch ( partnerSlug ) {
-				case 'dreamhost':
-					host = 'Dreamhost';
-					break;
-				case 'pressable':
-					host = 'Pressable';
-					break;
-				case 'milesweb':
-					host = 'Milesweb';
-					break;
-				case 'bluehost':
-					host = 'Bluehost';
-					break;
-			}
+		let host = '';
+		switch ( partnerSlug ) {
+			case 'dreamhost':
+				host = 'Dreamhost';
+				break;
+			case 'pressable':
+				host = 'Pressable';
+				break;
+			case 'milesweb':
+				host = 'Milesweb';
+				break;
+			case 'bluehost':
+				host = 'Bluehost';
+				break;
+		}
 
-			return !! host
-				? translate( 'Jetpack, in partnership with %(host)s', {
-						args: { host },
-						context: '%(host)s is the company name of a hosting partner. Ex. - Pressable',
-					} )
-				: translate( 'Completing set up' );
+		if ( host ) {
+			return translate( 'Jetpack, in partnership with %(host)s', {
+				args: { host },
+				context: '%(host)s is the company name of a hosting partner. Ex. - Pressable',
+			} );
 		}
 
 		switch ( this.getState() ) {
