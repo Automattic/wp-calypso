@@ -25,6 +25,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
+import InlineHelpCompactResult from 'blocks/inline-help/inline-help-compact-result';
 import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
 import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors';
@@ -35,7 +36,6 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { isShowingQandAInlineHelpContactForm } from 'state/inline-help/selectors';
 import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
 import { generateSubjectFromMessage } from './utils';
-import { decodeEntities, preventWidows } from 'lib/formatting';
 
 /**
  * Module variables
@@ -296,13 +296,9 @@ export class HelpContactForm extends React.PureComponent {
 	renderCompactQandAResults = () => {
 		return (
 			<ul>
-				{ this.state.qanda.map( link => (
-					<li key={ link.link }>
-						<a href={ link.link } title={ decodeEntities( link.description ) }>
-							{ preventWidows( decodeEntities( link.title ) ) }
-						</a>
-					</li>
-				) ) }
+				{ this.state.qanda.map( link => {
+					return <InlineHelpCompactResult helpLink={ link } onClick={ this.trackSibylClick } />;
+				} ) }
 			</ul>
 		);
 	};
