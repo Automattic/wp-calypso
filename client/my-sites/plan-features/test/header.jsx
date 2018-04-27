@@ -26,8 +26,8 @@ jest.mock( 'i18n-calypso', () => ( {
 /**
  * External dependencies
  */
-import { shallow } from 'enzyme';
 import React from 'react';
+import { shallow } from 'enzyme';
 import { identity } from 'lodash';
 
 /**
@@ -36,20 +36,20 @@ import { identity } from 'lodash';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import { PlanFeaturesHeader } from '../header';
 import {
-	PLAN_FREE,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
-	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
+	PLAN_FREE,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
 } from 'lib/plans/constants';
 
 const props = {

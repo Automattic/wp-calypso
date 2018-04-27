@@ -305,24 +305,24 @@ export class PlanFeaturesHeader extends Component {
 
 PlanFeaturesHeader.propTypes = {
 	available: PropTypes.bool,
+	bestValue: PropTypes.bool,
 	billingTimeFrame: PropTypes.string.isRequired,
+	currencyCode: PropTypes.string,
 	current: PropTypes.bool,
+	discountPrice: PropTypes.number,
+	isInJetpackConnect: PropTypes.bool,
 	isInSignup: PropTypes.bool,
+	isJetpack: PropTypes.bool,
+	isPlaceholder: PropTypes.bool,
+	newPlan: PropTypes.bool,
 	onClick: PropTypes.func,
 	planType: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 	popular: PropTypes.bool,
-	newPlan: PropTypes.bool,
-	bestValue: PropTypes.bool,
 	rawPrice: PropTypes.number,
-	discountPrice: PropTypes.number,
-	currencyCode: PropTypes.string,
-	title: PropTypes.string.isRequired,
-	isPlaceholder: PropTypes.bool,
-	translate: PropTypes.func,
-	siteSlug: PropTypes.string,
-	isInJetpackConnect: PropTypes.bool,
 	relatedMonthlyPlan: PropTypes.object,
-	isJetpack: PropTypes.bool,
+	siteSlug: PropTypes.string,
+	title: PropTypes.string.isRequired,
+	translate: PropTypes.func,
 
 	// Connected props
 	currentSitePlan: PropTypes.object,
@@ -331,18 +331,18 @@ PlanFeaturesHeader.propTypes = {
 };
 
 PlanFeaturesHeader.defaultProps = {
+	basePlansPath: null,
+	bestValue: false,
 	current: false,
+	currentSitePlan: {},
 	isInSignup: false,
+	isJetpack: false,
+	isPlaceholder: false,
+	isSiteAT: false,
+	newPlan: false,
 	onClick: noop,
 	popular: false,
-	newPlan: false,
-	bestValue: false,
-	isPlaceholder: false,
 	siteSlug: '',
-	basePlansPath: null,
-	currentSitePlan: {},
-	isSiteAT: false,
-	isJetpack: false,
 };
 
 export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) => {
