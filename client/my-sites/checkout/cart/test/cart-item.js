@@ -13,8 +13,16 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import { CartItem } from '../cart-item';
-import { isPlan, isMonthly, isYearly, isBiennially } from 'lib/products-values';
+import {
+	isPlan,
+	isMonthly,
+	isYearly,
+	isBiennially,
+	isBundled,
+	isDomainProduct,
+} from 'lib/products-values';
 import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_JETPACK_PERSONAL,
@@ -33,6 +41,11 @@ const mockPlansModule = () => {
 };
 mockPlansModule();
 
+jest.mock( 'config', () => {
+	const fn = () => {};
+	fn.isEnabled = jest.fn( () => null );
+	return fn;
+} );
 jest.mock( 'lib/format-currency', () => jest.fn() );
 jest.mock( 'lib/mixins/analytics', () => ( {} ) );
 jest.mock( 'lib/products-values', () => ( {
@@ -42,6 +55,7 @@ jest.mock( 'lib/products-values', () => ( {
 	isYearly: jest.fn( () => null ),
 	isBiennially: jest.fn( () => null ),
 	isBundled: jest.fn( () => null ),
+	isDomainProduct: jest.fn( () => null ),
 	isCredits: jest.fn( () => null ),
 	isGoogleApps: jest.fn( () => null ),
 } ) );
@@ -235,6 +249,39 @@ describe( 'cart-item', () => {
 				},
 			} );
 			expect( () => instance.calcMonthlyBillingDetails() ).toThrowError();
+		} );
+	} );
+
+	describe( 'getSubscriptionLength() - bundled domains', () => {
+		beforeAll( () => {
+			isMonthly.mockImplementation( () => false );
+			isYearly.mockImplementation( () => true );
+			isBiennially.mockImplementation( () => false );
+		} );
+
+		const instance = new CartItem( { ...props, cartItem: { cost: 0, bill_period: 1 } } );
+
+		test( 'Returns false for bundled domains - if 2 year plans are enabled', () => {
+			isEnabled.mockImplementation( () => true );
+			isDomainProduct.mockImplementation( () => true );
+			isBundled.mockImplementation( () => true );
+			expect( instance.getSubscriptionLength() ).toEqual( false );
+		} );
+
+		test( 'Returns "annual subscription" for non-bundled domains - if 2 year plans are enabled', () => {
+			isEnabled.mockImplementation( () => true );
+			isDomainProduct.mockImplementation( () => true );
+			isBundled.mockImplementation( () => false );
+
+			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
+		} );
+
+		test( 'Returns "annual subscription" for bundled domains - if 2 year plans are disabled', () => {
+			isEnabled.mockImplementation( () => false );
+			isDomainProduct.mockImplementation( () => true );
+			isBundled.mockImplementation( () => true );
+
+			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
 		} );
 	} );
 
