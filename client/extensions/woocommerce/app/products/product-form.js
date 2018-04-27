@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { getProductsSettingValue } from 'woocommerce/state/sites/settings/products/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProductFormAdditionalDetailsCard from './product-form-additional-details-card';
 import ProductFormCategoriesCard from './product-form-categories-card';
 import ProductFormDetailsCard from './product-form-details-card';
@@ -24,7 +25,7 @@ class ProductForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		site: PropTypes.shape( {
-			slug: PropTypes.string,
+			URL: PropTypes.string,
 		} ),
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
@@ -129,5 +130,6 @@ class ProductForm extends Component {
 }
 
 export default connect( state => ( {
+	site: getSelectedSiteWithFallback( state ),
 	storeIsManagingStock: getProductsSettingValue( state, 'woocommerce_manage_stock' ),
 } ) )( ProductForm );

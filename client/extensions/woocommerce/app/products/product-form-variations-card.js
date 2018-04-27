@@ -16,7 +16,6 @@ import ProductVariationTypesForm from './product-variation-types-form';
 import ProductFormVariationsTable from './product-form-variations-table';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle';
-import { getLink } from 'woocommerce/lib/nav-utils';
 
 class ProductFormVariationsCard extends Component {
 	state = {
@@ -26,7 +25,7 @@ class ProductFormVariationsCard extends Component {
 
 	static propTypes = {
 		site: PropTypes.shape( {
-			slug: PropTypes.string,
+			URL: PropTypes.string,
 		} ),
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
@@ -129,10 +128,8 @@ class ProductFormVariationsCard extends Component {
 			}
 		);
 
-		const inventorySettingsUrl = getLink(
-			'https://:site/wp-admin/admin.php?page=wc-settings&tab=products&section=inventory',
-			site
-		);
+		const inventorySettingsUrl =
+			site.URL + '/wp-admin/admin.php?page=wc-settings&tab=products&section=inventory';
 
 		return (
 			<FoldableCard

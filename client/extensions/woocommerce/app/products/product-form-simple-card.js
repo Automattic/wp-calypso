@@ -21,7 +21,6 @@ import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
-import { getLink } from 'woocommerce/lib/nav-utils';
 import PriceInput from 'woocommerce/components/price-input';
 
 const ProductFormSimpleCard = ( {
@@ -108,10 +107,8 @@ const ProductFormSimpleCard = ( {
 	const quantity = isNull( stock_quantity ) || isUndefined( stock_quantity ) ? '' : stock_quantity;
 
 	const stockDisabled = 'no' === storeIsManagingStock ? true : false;
-	const inventorySettingsUrl = getLink(
-		'https://:site/wp-admin/admin.php?page=wc-settings&tab=products&section=inventory',
-		site
-	);
+	const inventorySettingsUrl =
+		site.URL + '/wp-admin/admin.php?page=wc-settings&tab=products&section=inventory';
 
 	const renderStock = () => (
 		<Card className={ stockClasses }>
@@ -125,7 +122,7 @@ const ProductFormSimpleCard = ( {
 						min="0"
 						onChange={ setStockQuantity }
 						placeholder={ translate( 'Quantity' ) }
-						disabled={ stockDisabled ? 'disabled' : '' }
+						disabled={ stockDisabled }
 					/>
 				</div>
 				{ product.manage_stock && (
@@ -176,7 +173,7 @@ const ProductFormSimpleCard = ( {
 
 ProductFormSimpleCard.propTypes = {
 	site: PropTypes.shape( {
-		slug: PropTypes.string,
+		URL: PropTypes.string,
 	} ),
 	siteId: PropTypes.number,
 	product: PropTypes.shape( {
