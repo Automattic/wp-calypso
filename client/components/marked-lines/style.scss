@@ -32,7 +32,7 @@
 .marked-lines__lines {
 	display: flex;
 	flex-direction: column;
-	white-space: nowrap;
+	white-space: pre;
 	overflow-x: visible;
 }
 
