@@ -23,7 +23,7 @@ export default localize( ( { translate } ) => {
 						'track stats, moderate comments, and more.'
 				) }
 				buttonText={ translate( 'Get the apps' ) }
-				href={ '/themes/' }
+				href={ 'https://apps.wordpress.com/get?utm_source=calypsomyplan&utm_medium=cta&utm_campaign=calypsogetappscard' }
 			/>
 		</div>
 	);
