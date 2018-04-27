@@ -64,7 +64,7 @@ export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 
 	// call-for-testing condition, remove on launch
 	if ( config.isEnabled( 'google-my-business' ) ) {
-		return true;
+		return siteHasBusinessPlan( state, siteId );
 	}
 
 	return siteHasBusinessPlan( state, siteId ) && siteHasPromoteGoal( state, siteId );
