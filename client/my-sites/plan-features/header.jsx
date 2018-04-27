@@ -307,6 +307,7 @@ PlanFeaturesHeader.propTypes = {
 	available: PropTypes.bool,
 	billingTimeFrame: PropTypes.string.isRequired,
 	current: PropTypes.bool,
+	isInSignup: PropTypes.bool,
 	onClick: PropTypes.func,
 	planType: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 	popular: PropTypes.bool,
@@ -331,6 +332,7 @@ PlanFeaturesHeader.propTypes = {
 
 PlanFeaturesHeader.defaultProps = {
 	current: false,
+	isInSignup: false,
 	onClick: noop,
 	popular: false,
 	newPlan: false,
