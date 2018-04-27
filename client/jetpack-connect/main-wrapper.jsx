@@ -15,10 +15,11 @@ import JetpackLogo from 'components/jetpack-logo';
 import Main from 'components/main';
 import { retrieveMobileRedirect } from './persistence-utils';
 
-class JetpackConnectMainWrapper extends PureComponent {
+export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
 		partnerSlug: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
