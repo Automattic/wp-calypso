@@ -24,7 +24,7 @@ import Search from 'components/search';
 function categoryContainsString( category, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();
 
-	if ( -1 < category.name.toLocaleLowerCase().indexOf( matchString ) ) {
+	if ( -1 < category.label.toLocaleLowerCase().indexOf( matchString ) ) {
 		// found in category name
 		return true;
 	}
