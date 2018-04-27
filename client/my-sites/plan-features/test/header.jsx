@@ -28,6 +28,13 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+import { identity } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
+import { PlanFeaturesHeader } from '../header';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -44,11 +51,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-
-/**
- * Internal dependencies
- */
-import { PlanFeaturesHeader } from '../header';
 
 const props = {
 	translate: x => x,
@@ -172,5 +174,35 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 			const tf = shallow( comp.getBillingTimeframe() );
 			expect( tf.find( 'InfoPopover' ).length ).toBe( 0 );
 		} );
+	} );
+} );
+
+describe( 'PlanIntervalDiscount', () => {
+	const baseProps = {
+		isYearly: true,
+		rawPrice: 22,
+		relatedMonthlyPlan: { raw_price: 2 },
+		translate: identity,
+	};
+	test( 'should show interval discount for Jetpack during signup', () => {
+		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isInSignup isJetpack /> );
+		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should not show interval discount for Jetpack outside signup', () => {
+		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isJetpack /> );
+		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should not show interval discount for simple during signup', () => {
+		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isInSignup /> );
+		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should not show interval discount for atomic during signup', () => {
+		const wrapper = shallow(
+			<PlanFeaturesHeader { ...baseProps } isInSignup isJetpack isSiteAT />
+		);
+		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
 	} );
 } );
