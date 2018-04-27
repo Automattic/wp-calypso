@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { translate } from 'i18n-calypso';
 import { every, filter, find, get, isArray, some, startsWith } from 'lodash';
 
 /**
@@ -23,9 +22,9 @@ import {
  * We aren't pushing the "WooCommerce Services" brand anywhere in Calypso, so the method names must be changed.
  */
 const METHOD_NAMES = {
-	wc_services_usps: translate( 'USPS', { comment: 'United States Postal Services' } ),
-	wc_services_canada_post: translate( 'Canada Post' ),
-	wc_services_fedex: translate( 'FedEx' ),
+	wc_services_usps: 'USPS',
+	wc_services_canada_post: 'Canada Post',
+	wc_services_fedex: 'FedEx',
 };
 
 /**
