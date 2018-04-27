@@ -205,9 +205,10 @@ export class JetpackSignup extends Component {
 		);
 	}
 	render() {
+		const { partnerId } = this.props.authQuery;
 		const { isCreatingAccount } = this.state;
 		return (
-			<MainWrapper>
+			<MainWrapper partnerId={ partnerId }>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader authQuery={ this.props.authQuery } />
