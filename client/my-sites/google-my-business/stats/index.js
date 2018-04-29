@@ -119,7 +119,7 @@ class GoogleMyBusinessStats extends Component {
 					<GoogleMyBusinessStatsTip
 						buttonHref="https://business.google.com/"
 						buttonText={ translate( 'Post Photos' ) }
-						eventName="'calypso_google_my_business_stats_post_photos_button_click'"
+						eventName="calypso_google_my_business_stats_post_photos_button_click"
 						illustration="reviews"
 						text={ translate(
 							'Listings with recent photos typically drive more view to their business websites.'
@@ -172,7 +172,7 @@ class GoogleMyBusinessStats extends Component {
 					<GoogleMyBusinessStatsTip
 						buttonHref="https://business.google.com/"
 						buttonText={ translate( 'Complete Your Listing' ) }
-						eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
+						eventName="calypso_google_my_business_stats_complete_your_listing_button_click"
 						illustration="complete-listing"
 						text={ translate(
 							'Complete business listings get on average 7x more clicks than empty listings.'
@@ -184,7 +184,7 @@ class GoogleMyBusinessStats extends Component {
 					<GoogleMyBusinessStatsTip
 						buttonHref="https://business.google.com/"
 						buttonText={ translate( 'Complete Your Listing' ) }
-						eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
+						eventName="calypso_google_my_business_stats_complete_your_listing_button_click"
 						illustration="compare"
 						text={ translate(
 							'Customers compare business listings on Google to make decisions. Make your listing count.'
