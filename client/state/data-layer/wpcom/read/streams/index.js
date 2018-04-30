@@ -160,8 +160,6 @@ const streamApis = {
 	},
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
-		dateProperty: 'tagged_on',
-		pollQuery: () => getQueryStringForPoll( [ 'tagged_on' ] ),
 	},
 	list: {
 		path: ( { streamKey } ) => {
