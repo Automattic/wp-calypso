@@ -1,23 +1,22 @@
 .domain-product-price {
 	color: $gray-darken-30;
-	display: inline-block;
-	font-size: 17px;
 	font-weight: 600;
 
 	@include breakpoint( ">660px" ) {
-		min-width: 130px;
-		display: flex;
 		align-items: center;
-		margin-top: -4px;
+		display: flex;
+		flex: 0 2 280px;
+		font-size: 17px;
+		justify-content: flex-end;
+		padding-right: 2em;
 	}
 
 	@include breakpoint( "<660px" ) {
+		display: inline-block;
 		font-size: 14px;
 	}
 
 	&.is-with-plans-only:not( .is-free-domain ) {
-		flex: 1 0 280px;
-
 		small {
 			font-size: 12px;
 		}
@@ -46,12 +45,7 @@
 	}
 
 	&.is-free-domain {
-		display: block;
 		font-size: 13px;
-
-		@include breakpoint( ">960px" ) {
-			margin-top: -6px;
-		}
 
 		small {
 			font-size: 100%;
@@ -61,15 +55,6 @@
 		.domain-product-price__price {
 			opacity: .6;
 			text-decoration: line-through;
-		}
-
-		&.no-price {
-			@include breakpoint( ">660px" ) {
-				padding-top: 7px;
-			}
-			@include breakpoint( ">960px" ) {
-				padding-top: 13px;
-			}
 		}
 	}
 
