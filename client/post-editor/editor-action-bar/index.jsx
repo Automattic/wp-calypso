@@ -128,7 +128,6 @@ export default connect( state => {
 		const postCategories = postTerms && postTerms.category;
 		// WARNING: postCategories is an array for posts where categories have
 		// been edited, but an object for posts returned from the API
-		console.log( postCategories );
 		if ( find( postCategories, { ID: podcastingCategoryId } ) ) {
 			isPodcastEpisode = true;
 		}
