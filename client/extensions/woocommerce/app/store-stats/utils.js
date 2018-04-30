@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { find, includes, forEach, findIndex, round } from 'lodash';
 import classnames from 'classnames';
 import { moment, translate } from 'i18n-calypso';
