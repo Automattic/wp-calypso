@@ -20,7 +20,7 @@ const fetch = action => {
 	];
 };
 
-const onFailure = ( action, error ) => {
+const onError = ( action, error ) => {
 	update( action.id, 'failure', error );
 
 	return { type: HTTP_DATA_TICK };
@@ -59,7 +59,7 @@ const onSuccess = ( action, apiData ) => {
 		'function' === typeof apiData ? parseResponse( apiData, action.fromApi ) : [ undefined, [] ];
 
 	if ( undefined !== error ) {
-		return onFailure( action, error );
+		return onError( action, error );
 	}
 
 	update( action.id, 'success', apiData );
@@ -73,7 +73,7 @@ export default {
 		dispatchRequestEx( {
 			fetch,
 			onSuccess,
-			onFailure,
+			onError,
 		} ),
 	],
 };

@@ -57,8 +57,8 @@ const empty = Object.freeze( {
 
 let dispatch;
 
-export const enhancer = createStore => ( ...storeArgs ) => {
-	const store = createStore( ...storeArgs );
+export const enhancer = next => ( ...args ) => {
+	const store = next( ...args );
 
 	dispatch = store.dispatch;
 
