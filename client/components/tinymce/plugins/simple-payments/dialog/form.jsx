@@ -9,7 +9,7 @@ import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import emailValidator from 'email-validator';
-import { flowRight as compose, omit, padEnd, trimEnd, get } from 'lodash';
+import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,6 +27,9 @@ import QueryMembershipsConnectedAccounts from 'components/data/query-memberships
 import config from 'config';
 import Button from 'components/button';
 import { authorizeStripeAccount } from 'state/memberships/connected-accounts/actions';
+import isEditedSimplePaymentsRecurring from 'state/selectors/is-edited-simple-payments-recurring';
+import getEditedSimplePaymentsStripeAccount from 'state/selectors/get-edited-simple-payments-stripe-account';
+import getMembershipsConnectedAccounts from 'state/selectors/get-memberships-connected-accounts';
 
 const REDUX_FORM_NAME = 'simplePaymentsForm';
 
@@ -324,16 +327,12 @@ export default compose(
 	connect(
 		state => {
 			return {
-				isRecurringSubscription: get( state, [ 'form', REDUX_FORM_NAME, 'values', 'recurring' ] ),
+				isRecurringSubscription: isEditedSimplePaymentsRecurring( state, REDUX_FORM_NAME ),
 				isChoosingToAuthorizeStripeAccount:
-					get( state, [ 'form', REDUX_FORM_NAME, 'values', 'stripe_account' ], '' ) === 'authorize',
+					getEditedSimplePaymentsStripeAccount( state, REDUX_FORM_NAME ) === 'authorize',
 				isChoosingToCreateStripeAccount:
-					get( state, [ 'form', REDUX_FORM_NAME, 'values', 'stripe_account' ], '' ) === 'create',
-				membershipsConnectedAccounts: get(
-					state,
-					[ 'memberships', 'connectedAccounts', 'accounts' ],
-					{}
-				),
+					getEditedSimplePaymentsStripeAccount( state, REDUX_FORM_NAME ) === 'create',
+				membershipsConnectedAccounts: getMembershipsConnectedAccounts( state ),
 			};
 		},
 		{ authorizeStripeAccount }
