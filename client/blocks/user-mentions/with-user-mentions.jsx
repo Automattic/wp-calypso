@@ -28,6 +28,26 @@ export default EnhancedComponent =>
 		static displayName = `withUserMentions( ${ EnhancedComponent.displayName ||
 			EnhancedComponent.name } )`;
 		static propTypes = {};
+		static defaultProps = {
+			suggestions: [
+				{
+					ID: 1,
+					user_login: 'bungle',
+				},
+				{
+					ID: 2,
+					user_login: 'george',
+				},
+				{
+					ID: 3,
+					user_login: 'zippy',
+				},
+				{
+					ID: 4,
+					user_login: 'geoffrey',
+				},
+			],
+		};
 
 		state = {
 			showPopover: false,
@@ -219,26 +239,8 @@ export default EnhancedComponent =>
 		hidePopover = () => this.setState( { showPopover: false } );
 
 		render() {
-			//const { siteId } = this.props;
+			const { suggestions } = this.props;
 			const { query, showPopover } = this.state;
-			const suggestions = [
-				{
-					ID: 1,
-					user_login: 'bungle',
-				},
-				{
-					ID: 2,
-					user_login: 'george',
-				},
-				{
-					ID: 3,
-					user_login: 'zippy',
-				},
-				{
-					ID: 4,
-					user_login: 'geoffrey',
-				},
-			];
 
 			this.matchingSuggestions = this.getMatchingSuggestions( suggestions, query );
 			const selectedSuggestionId =
