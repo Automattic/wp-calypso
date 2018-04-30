@@ -79,8 +79,6 @@
 		.is-placeholder & {
 			margin-right: 50%;
 			min-height: 22px;
-			margin-top: 9px;
-			margin-bottom: 9px;
 		}
 
 		.is-placeholder:nth-of-type(2n + 1) & {
@@ -118,9 +116,8 @@
 	// NOTE: .is-kracken-ui can be removed once feature is deployed.
 	.is-kracken-ui &.is-primary {
 		color: $white;
-		padding-left: 3em;
-		padding-right: 3em;
 		margin-left: 1em;
+		padding: 0.25em 3em;
 		transition: all 0.1s linear;
 
 		&:hover {
