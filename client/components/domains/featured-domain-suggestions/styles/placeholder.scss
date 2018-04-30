@@ -1,0 +1,41 @@
+/** @format */
+
+.featured-domain-suggestion--is-placeholder {
+	.domain-registration-suggestion__title,
+	.domain-registration-suggestion__progress-bar,
+	.domain-registration-suggestion__match-reasons,
+	.domain-suggestion__action {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: $gray-lighten-30;
+		color: transparent;
+	}
+
+	.domain-registration-suggestion__title {
+		height: 22px;
+		width: 60%;
+	}
+}
+
+.featured-domain-suggestions--compact .featured-domain-suggestion--is-placeholder {
+	min-height: 22px;
+}
+
+.featured-domain-suggestions--full .featured-domain-suggestion--is-placeholder {
+	min-height: 222px;
+
+	.domain-registration-suggestion__title {
+		height: 45px;
+	}
+	.domain-product-price {
+		height: 18px;
+	}
+	.domain-registration-suggestion__progress-bar {
+		height: 22px;
+	}
+	.domain-registration-suggestion__match-reasons {
+		height: 52px;
+	}
+	.domain-suggestion__action {
+		height: 40px;
+	}
+}

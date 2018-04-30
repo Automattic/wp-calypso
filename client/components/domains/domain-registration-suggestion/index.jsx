@@ -15,22 +15,16 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DomainSuggestion from 'components/domains/domain-suggestion';
-import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	isNewTld,
-	isTestTld,
-	parseMatchReasons,
-	VALID_MATCH_REASONS,
-} from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
+import { parseMatchReasons, VALID_MATCH_REASONS } from './utility';
+import MatchReasonsTooltip from './match-reasons-tooltip';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -85,64 +79,6 @@ class DomainRegistrationSuggestion extends React.Component {
 		this.props.onButtonClick( this.props.suggestion );
 	};
 
-	getDomainFlags() {
-		// TODO: Remove this entire function and isNewTld/isTestTld from utility.js
-		if ( config.isEnabled( 'domains/kracken-ui' ) && this.props.isSignupStep ) {
-			return null;
-		}
-		const { suggestion, translate } = this.props;
-		const domain = suggestion.domain_name;
-		const domainFlags = [];
-
-		if ( domain ) {
-			// Grab everything from the first dot, so 'example.co.uk' will
-			// match '.co.uk' but not '.uk'
-			// This won't work if we add subdomains.
-			const tld = domain.substring( domain.indexOf( '.' ) );
-
-			if ( isNewTld( tld ) ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-new` }
-						content={ translate( 'New' ) }
-						status="success"
-					/>
-				);
-			}
-
-			if ( isTestTld( tld ) ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-testing` }
-						content={ 'Testing only' }
-						status="warning"
-					/>
-				);
-			}
-		}
-
-		if ( suggestion.isRecommended ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-recommended` }
-					content={ translate( 'Recommended' ) }
-					status="success"
-				/>
-			);
-		}
-
-		if ( suggestion.isBestAlternative ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-best-alternative` }
-					content={ translate( 'Best Alternative' ) }
-				/>
-			);
-		}
-
-		return domainFlags;
-	}
-
 	getButtonProps() {
 		const {
 			cart,
@@ -184,15 +120,20 @@ class DomainRegistrationSuggestion extends React.Component {
 	renderDomain() {
 		const { suggestion: { domain_name: domain }, isFeatured } = this.props;
 		return (
-			<h3 className="domain-registration-suggestion__title">
-				{ domain }
-				{ ! isFeatured ? this.getDomainFlags() : null }
+			<h3 className="domain-registration-suggestion__title-container">
+				<div className="domain-registration-suggestion__title">{ domain }</div>
+				{ isFeatured && this.renderProgressBar( { includeMatchReasons: true } ) }
 			</h3>
 		);
 	}
 
-	renderProgressBar() {
-		const { suggestion: { isRecommended, isBestAlternative }, translate, isFeatured } = this.props;
+	renderProgressBar( { includeMatchReasons = false } = {} ) {
+		const {
+			suggestion: { domain_name: domain, isRecommended, isBestAlternative },
+			translate,
+			isFeatured,
+		} = this.props;
+		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
 
 		if ( ! isFeatured ) {
 			return null;
@@ -220,7 +161,10 @@ class DomainRegistrationSuggestion extends React.Component {
 			return (
 				<div className="domain-registration-suggestion__progress-bar">
 					<ProgressBar { ...progressBarProps } />
-					<span className="domain-registration-suggestion__progress-bar-text">{ title }</span>
+					<span className="domain-registration-suggestion__progress-bar-text">
+						{ title }
+						{ includeMatchReasons && <MatchReasonsTooltip matchReasons={ matchReasons } /> }
+					</span>
 				</div>
 			);
 		}

@@ -62,6 +62,7 @@ class DomainSuggestion extends React.Component {
 					{ children }
 					{ ! hidePrice && <DomainProductPrice price={ price } rule={ priceRule } /> }
 				</div>
+				<div className="domain-suggestion__spacer" />
 				<Button className="domain-suggestion__action" { ...this.props.buttonProps }>
 					{ this.props.buttonContent }
 				</Button>

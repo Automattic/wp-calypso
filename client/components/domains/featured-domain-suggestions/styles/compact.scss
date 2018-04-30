@@ -1,0 +1,57 @@
+/** @format */
+
+.featured-domain-suggestions.featured-domain-suggestions--compact {
+	flex-wrap: wrap;
+
+	.featured-domain-suggestion .domain-suggestion__content {
+		> .domain-registration-suggestion__match-reasons,
+		> .domain-registration-suggestion__progress-bar {
+			display: none;
+		}
+	}
+
+	.domain-registration-suggestion__title-container {
+		display: flex;
+		flex-direction: column;
+
+		.domain-registration-suggestion__progress-bar {
+			display: block;
+
+			.domain-registration-suggestion__progress-bar-text {
+				font-size: 0.75em;
+			}
+		}
+	}
+
+	.domain-registration-suggestion__match-reasons-tooltip-container {
+		> .gridicon {
+			color: $blue-medium;
+			margin-left: 0.25em;
+			vertical-align: sub;
+		}
+	}
+
+	.domain-product-price {
+		align-self: center;
+		padding-top: 0;
+	}
+}
+
+// This element is instantiated outside of the suggestion container
+.domain-registration-suggestion__match-reason-tooltipped {
+	align-items: center;
+	display: flex;
+	font-size: 1.25em;
+	padding: 0.25em 0;
+
+	> .gridicon {
+		color: $alert-green;
+		margin-right: 0.25em;
+	}
+}
+
+.domain-registration-suggestion__match-reasons-tooltip {
+	.popover__inner {
+		padding: 1em;
+	}
+}
