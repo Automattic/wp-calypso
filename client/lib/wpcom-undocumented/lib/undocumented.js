@@ -871,10 +871,9 @@ Undocumented.prototype.mekeyringConnections = function( forceExternalUsersRefetc
 	}
 
 	return this.wpcom.req.get(
+		'/me/keyring-connections',
 		{
-			path: '/me/keyring-connections',
-			apiVersion: '1.1',
-			body: { force_external_users_refetch: forceExternalUsersRefetch },
+			force_external_users_refetch: forceExternalUsersRefetch,
 		},
 		fn
 	);
