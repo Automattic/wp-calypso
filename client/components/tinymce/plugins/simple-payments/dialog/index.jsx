@@ -23,7 +23,12 @@ import Dialog from 'components/dialog';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import Navigation from './navigation';
-import ProductForm, { getProductFormValues, isProductFormValid, isProductFormDirty } from './form';
+import ProductForm, {
+	getProductFormValues,
+	isProductFormValid,
+	isProductFormDirty,
+	REDUX_FORM_NAME,
+} from './form';
 import ProductList from './list';
 import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
@@ -45,6 +50,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
 import config from 'config';
+import isEditedSimplePaymentsRecurring from 'state/selectors/is-edited-simple-payments-recurring';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -55,7 +61,7 @@ const productFormToCustomPost = state => productToCustomPost( getProductFormValu
 
 const createMembershipButton = siteId => ( dispatch, getState ) => {
 	// This is a memberships submission.
-	const values = get( getState(), [ 'form', 'simplePaymentsForm', 'values' ], {} );
+	const values = getProductFormValues( getState() );
 	const createProduct = product =>
 		wpcom.req
 			.post( `/sites/${ siteId }/memberships/product`, {
@@ -76,7 +82,7 @@ const createMembershipButton = siteId => ( dispatch, getState ) => {
 		// We need to create Stripe Account.
 		return wpcom.req
 			.post( '/me/stripe_connect/create', {
-				country: 'USA', // FOR NOW
+				country: 'US', // FOR NOW
 				email: values.email,
 			} )
 			.then( newAccount => {
@@ -599,10 +605,9 @@ export default connect( ( state, { siteId } ) => {
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
-		currentlyEditedIsMembershipSubscription: get(
+		currentlyEditedIsMembershipSubscription: isEditedSimplePaymentsRecurring(
 			state,
-			[ 'form', 'simplePaymentsForm', 'values', 'recurring' ],
-			false
+			REDUX_FORM_NAME
 		),
 		isJetpackNotSupported:
 			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),

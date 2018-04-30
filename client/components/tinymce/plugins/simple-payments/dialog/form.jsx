@@ -31,7 +31,7 @@ import isEditedSimplePaymentsRecurring from 'state/selectors/is-edited-simple-pa
 import getEditedSimplePaymentsStripeAccount from 'state/selectors/get-edited-simple-payments-stripe-account';
 import getMembershipsConnectedAccounts from 'state/selectors/get-memberships-connected-accounts';
 
-const REDUX_FORM_NAME = 'simplePaymentsForm';
+export const REDUX_FORM_NAME = 'simplePaymentsForm';
 
 // Export some selectors that are needed by the code that submits the form
 export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( state );
