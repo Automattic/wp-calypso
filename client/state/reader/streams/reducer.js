@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { findIndex, uniqBy, last, takeRightWhile, takeWhile } from 'lodash';
+import { findIndex, uniqWith, last, takeRightWhile, takeWhile } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -19,7 +19,7 @@ import {
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_SHOW_UPDATES,
 } from 'state/action-types';
-import { keyToString, keyForPost, keysAreEqual } from 'reader/post-key';
+import { keysAreEqual } from 'reader/post-key';
 
 /*
  * Contains a list of post-keys representing the items of a stream.
@@ -27,8 +27,7 @@ import { keyToString, keyForPost, keysAreEqual } from 'reader/post-key';
 export const items = ( state = [], action ) => {
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
-			const { posts, gap } = action.payload;
-			const postKeys = posts.map( keyForPost );
+			const { streamItems, gap } = action.payload;
 
 			let nextState;
 			if ( !! gap ) {
@@ -38,17 +37,17 @@ export const items = ( state = [], action ) => {
 				// create a new gap if we still need one
 				let nextGap = [];
 				const from = gap.from;
-				const to = moment( last( posts ).date );
+				const to = moment( last( streamItems ).date );
 				if ( ! from.isSame( to ) ) {
 					nextGap = [ { isGap: true, from, to } ];
 				}
 
-				nextState = [ ...beforeGap, ...postKeys, ...nextGap, ...afterGap ];
+				nextState = [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ];
 			} else {
-				nextState = [ ...state, ...postKeys ];
+				nextState = [ ...state, ...streamItems ];
 			}
 
-			nextState = uniqBy( nextState, keyToString );
+			nextState = uniqWith( nextState, keysAreEqual );
 
 			if ( nextState.length === state.length ) {
 				return state;
@@ -68,11 +67,11 @@ export const PENDING_ITEMS_DEFAULT = { lastUpdated: null, items: [] };
  * This is the data backing the orange "${number} new posts" pill.
  */
 export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
-	let posts, moments, maxDate;
+	let streamItems, moments, maxDate;
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
-			posts = action.payload.posts;
-			moments = posts.map( p => p.date ).map( date => moment( date ) );
+			streamItems = action.payload.streamItems;
+			moments = streamItems.map( item => moment( item.date ) );
 			maxDate = moment.max( moments );
 
 			if ( ! state.lastUpdated || state.lastUpdated < maxDate ) {
@@ -80,23 +79,21 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			}
 			return state;
 		case READER_STREAMS_UPDATES_RECEIVE:
-			posts = action.payload.posts;
+			streamItems = action.payload.streamItems;
 			// only retain posts that are newer than ones we already have
 			if ( state.lastUpdated ) {
-				posts = posts.filter( p => moment( p.date ) > state.lastUpdated );
-				if ( posts.length === 0 ) {
+				streamItems = streamItems.filter( item => moment( item.date ) > state.lastUpdated );
+				if ( streamItems.length === 0 ) {
 					return state;
 				}
 			}
 
-			const postKeys = posts.map( keyForPost );
-
-			const newItems = uniqBy( postKeys, keyToString );
-			moments = posts.map( p => p.date ).map( date => moment( date ) );
+			const newItems = uniqWith( streamItems, keysAreEqual );
+			moments = streamItems.map( item => moment( item.date ) );
 			maxDate = moment.max( moments );
 
 			// there might be a gap if we didn't have to filter something out
-			if ( posts.length === action.payload.posts.length ) {
+			if ( streamItems.length === action.payload.streamItems.length ) {
 				const minDate = moment.min( moments );
 				newItems.push( {
 					isGap: true,
@@ -157,7 +154,7 @@ export const isRequesting = ( state = false, action ) => {
  */
 export const lastPage = ( state = false, action ) => {
 	if ( action.type === READER_STREAMS_PAGE_RECEIVE ) {
-		return action.payload.posts.length === 0;
+		return action.payload.streamItems.length === 0;
 	}
 	return state;
 };

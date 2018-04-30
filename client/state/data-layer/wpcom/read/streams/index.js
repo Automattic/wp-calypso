@@ -17,6 +17,7 @@ import { READER_STREAMS_PAGE_REQUEST } from 'state/action-types';
 import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
 import { errorNotice } from 'state/notices/actions';
 import { receivePosts } from 'state/reader/posts/actions';
+import { keyForPost } from 'reader/post-key';
 
 /**
  * Pull the suffix off of a stream key
@@ -40,13 +41,13 @@ function streamKeySuffix( streamKey ) {
 	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
 }
 
-const PER_RECS = 6;
+const PER_FETCH = 6;
 const PER_POLL = 5;
 const PER_GAP = 40;
 
 export const getQueryString = ( extras = {} ) => {
 	const meta = [ 'post', 'discover_original_post' ].join( ',' );
-	return { orderBy: 'date', meta, ...extras };
+	return { orderBy: 'date', meta, ...extras, content_width: 675 };
 };
 const defaultQueryFn = getQueryString;
 
@@ -84,10 +85,12 @@ function getQueryStringForPoll( extraFields = [], extraQueryParams = {} ) {
 const streamApis = {
 	following: {
 		path: () => '/read/following',
+		dateProperty: 'date',
 		pollQuery: getQueryStringForPoll,
 	},
 	search: {
 		path: () => '/read/search',
+		dateProperty: 'date',
 		query: ( pageHandle, { streamKey } ) => {
 			const { sort, q } = JSON.parse( streamKeySuffix( streamKey ) );
 			return { orderBy: sort, q, ...pageHandle, sort };
@@ -95,35 +98,43 @@ const streamApis = {
 	},
 	feed: {
 		path: ( { streamKey } ) => `/read/feed/${ streamKeySuffix( streamKey ) }/posts`,
+		dateProperty: 'date',
 		pollQuery: getQueryStringForPoll,
 	},
 	site: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/posts`,
+		dateProperty: 'date',
 		pollQuery: getQueryStringForPoll,
 	},
 	conversations: {
 		path: () => '/read/conversations',
+		dateProperty: 'last_comment_date_gmt',
 		pollQuery: () => getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ] ),
 	},
 	featured: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/featured`,
+		dateProperty: 'date',
 	},
 	a8c: {
 		path: () => '/read/a8c',
+		dateProperty: 'date',
 		pollQuery: getQueryStringForPoll,
 	},
 	'conversations-a8c': {
 		path: () => '/read/conversations',
+		dateProperty: 'last_comment_date_gmt',
 		query: extras => getQueryString( { ...extras, index: 'a8c' } ),
 		pollQuery: () =>
 			getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], { index: 'a8c' } ),
 	},
 	likes: {
 		path: () => '/read/liked',
+		dateProperty: 'liked_on',
 		pollQuery: () => getQueryStringForPoll( [ 'date_liked' ] ),
 	},
 	recommendations_posts: {
 		path: () => '/read/recommendations/posts',
+		dateProperty: 'date',
 		query: ( { query } ) => {
 			return {
 				...query,
@@ -134,12 +145,12 @@ const streamApis = {
 	},
 	custom_recs_posts_with_images: {
 		path: () => '/read/recommendations/posts',
+		dateProperty: 'date',
 		query: extras => {
 			return {
 				...extras,
 				meta: 'post,discover_original_post',
-				content_width: 675,
-				number: PER_RECS,
+				number: PER_FETCH,
 				orderBy: 'date',
 				seed: random( 0, 1000 ),
 				// algorithm: 'read:recommendations:posts/es/7',
@@ -148,7 +159,8 @@ const streamApis = {
 		},
 	},
 	tag: {
-		path: () => '/read/tags/:tag/posts',
+		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
+		dateProperty: 'tagged_on',
 		pollQuery: () => getQueryStringForPoll( [ 'tagged_on' ] ),
 	},
 	list: {
@@ -156,6 +168,7 @@ const streamApis = {
 			const { owner, slug } = JSON.parse( streamKeySuffix( streamKey ) );
 			return `/read/list/${ owner }/${ slug }/posts`;
 		},
+		dateProperty: 'date',
 	},
 };
 
@@ -186,7 +199,7 @@ export function requestPage( action ) {
 		apiVersion,
 		query: isPoll
 			? pollQuery()
-			: query( { ...pageHandle, number: !! gap ? PER_GAP : 10 }, action.payload ),
+			: query( { ...pageHandle, number: !! gap ? PER_GAP : PER_FETCH }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );
@@ -199,7 +212,8 @@ export function fromApi( data ) {
 
 export function handlePage( action, data ) {
 	const { posts, date_range, meta, next_page } = data;
-	const { streamKey, query, isPoll, gap } = action.payload;
+	const { streamKey, query, isPoll, gap, streamType } = action.payload;
+	const { dateProperty } = streamApis[ streamType ];
 	let pageHandle = {};
 
 	if ( meta && meta.next_page ) {
@@ -219,10 +233,15 @@ export function handlePage( action, data ) {
 	}
 
 	const actions = [];
+	const streamItems = posts.map( post => ( {
+		...keyForPost( post ),
+		date: post[ dateProperty ],
+	} ) );
+
 	if ( isPoll ) {
-		actions.push( receiveUpdates( { streamKey, posts, query } ) );
+		actions.push( receiveUpdates( { streamKey, streamItems, query } ) );
 	} else {
-		actions.push( receivePage( { streamKey, query, posts, pageHandle, gap } ) );
+		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
 		actions.push( receivePosts( posts ) );
 	}
 

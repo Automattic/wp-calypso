@@ -42,12 +42,12 @@ export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null
 	};
 }
 
-export function receivePage( { streamKey, pageHandle, posts, gap } ) {
+export function receivePage( { streamKey, pageHandle, streamItems, gap } ) {
 	return {
 		type: READER_STREAMS_PAGE_RECEIVE,
 		payload: {
 			streamKey,
-			posts,
+			streamItems,
 			pageHandle,
 			gap,
 		},
@@ -62,10 +62,10 @@ export const showUpdates = ( { streamKey } ) => ( dispatch, getState ) => {
 	} );
 };
 
-export function receiveUpdates( { streamKey, posts } ) {
+export function receiveUpdates( { streamKey, streamItems } ) {
 	return {
 		type: READER_STREAMS_UPDATES_RECEIVE,
-		payload: { streamKey, posts },
+		payload: { streamKey, streamItems },
 	};
 }
 
