@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import Count from 'components/count';
 
-class BulkSelect extends React.Component {
+export class BulkSelect extends React.Component {
 	static displayName = 'BulkSelect';
 
 	static propTypes = {
