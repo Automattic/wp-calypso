@@ -127,12 +127,15 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 			enabled = getShippingZoneMethod( state, method._originalId, siteId ).enabled;
 		}
 
+		// Prettier formatting indents the schema line in a way eslint doesn't like.
+		/* eslint-disable indent */
 		const defaultValues = startsWith( method.methodType, 'wc_services' )
 			? getDefaultSettingsValues(
 					getShippingMethodSchema( state, method.methodType, siteId ).formSchema
 				)
 			: {};
 		return merge( {}, defaultValues, method, { enabled: false !== enabled } );
+		/* eslint-enable indent */
 	} );
 	return sortShippingZoneMethods( state, siteId, allMethods );
 };
