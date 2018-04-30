@@ -195,10 +195,7 @@ class EditorDrawer extends Component {
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel labelText={ translate( 'Location' ) } />
-				<AsyncLoad
-					require="post-editor/editor-location"
-					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
-				/>
+				<AsyncLoad require="post-editor/editor-location" />
 			</AccordionSection>
 		);
 	}

@@ -7,17 +7,22 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 import { stringify } from 'qs';
 
 /**
  * Internal dependencies
  */
-import PostActions from 'lib/posts/actions';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import { recordEvent, recordStat } from 'lib/posts/stats';
+import PostMetadata from 'lib/post-metadata';
 import EditorLocationSearch from './search';
 import Notice from 'components/notice';
 import RemoveButton from 'components/remove-button';
+import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
 /**
  * Module variables
@@ -49,8 +54,7 @@ class EditorLocation extends React.Component {
 			locating: false,
 		} );
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.updateMetadata( {
+		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			geo_latitude: position.coords.latitude,
 			geo_longitude: position.coords.longitude,
 		} );
@@ -88,12 +92,14 @@ class EditorLocation extends React.Component {
 	};
 
 	clear = () => {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.deleteMetadata( [ 'geo_latitude', 'geo_longitude' ] );
+		this.props.deletePostMetadata( this.props.siteId, this.props.postId, [
+			'geo_latitude',
+			'geo_longitude',
+		] );
 	};
 
 	onSearchSelect = result => {
-		PostActions.updateMetadata( {
+		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			geo_latitude: result.geometry.location.lat,
 			geo_longitude: result.geometry.location.lng,
 		} );
@@ -158,4 +164,17 @@ class EditorLocation extends React.Component {
 	}
 }
 
-export default localize( EditorLocation );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+		const coordinates = PostMetadata.geoCoordinates( post );
+
+		return { siteId, postId, coordinates };
+	},
+	{
+		updatePostMetadata,
+		deletePostMetadata,
+	}
+)( localize( EditorLocation ) );
