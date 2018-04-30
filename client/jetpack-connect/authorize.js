@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -21,6 +22,7 @@ import config from 'config';
 import Disclaimer from './disclaimer';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { InfoNotice } from 'blocks/global-notice';
 import Gravatar from 'components/gravatar';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -631,15 +633,18 @@ export class JetpackAuthorize extends Component {
 
 	render() {
 		const { authorizeSuccess } = this.props.authorizationData;
-		const { interval, isMobileAppFlow, selectedPlan } = this.props;
+		const { interval, isMobileAppFlow, translate } = this.props;
 
-		if ( ! isMobileAppFlow && ! selectedPlan && ( this.isAuthorizing() || authorizeSuccess ) ) {
+		if ( ! isMobileAppFlow && ( this.isAuthorizing() || authorizeSuccess ) ) {
 			return (
-				<PlansStatic
-					basePlansPath={ '/jetpack/connect/authorize' }
-					interval={ interval }
-					onPlanSelect={ this.onPlanSelect }
-				/>
+				<Fragment>
+					<InfoNotice text={ translate( "We're setting up your site…" ) } icon="plans" isLoading />
+					<PlansStatic
+						basePlansPath={ '/jetpack/connect/authorize' }
+						interval={ interval }
+						onPlanSelect={ this.onPlanSelect }
+					/>
+				</Fragment>
 			);
 		}
 
