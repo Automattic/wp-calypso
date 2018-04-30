@@ -52,11 +52,11 @@ describe( 'index', () => {
 		assert.equal( 1, bulkSelect.find( '.bulk-select__some-checked-icon' ).length );
 	} );
 
-	test( 'should set the passed ID prop on the input', () => {
+	test( 'should add the aria-label to the input', () => {
 		const bulkSelect = shallow(
-			<BulkSelect selectedElements={ 2 } totalElements={ 3 } onToggle={ noop } id="fake-example" />
+			<BulkSelect selectedElements={ 2 } totalElements={ 3 } onToggle={ noop } ariaLabel="Select All" />
 		);
-		assert.equal( 'fake-example', bulkSelect.find( 'input' ).prop( 'id' ) );
+		assert.equal( 'Select All', bulkSelect.find( 'input' ).prop( 'aria-label' ) );
 	} );
 
 	test( 'should not mark the input readOnly', () => {
