@@ -34,7 +34,7 @@ import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
-		post: PropTypes.object.isRequired,
+		post: PropTypes.object,
 		feed: PropTypes.object,
 		onBlock: PropTypes.func,
 		showFollow: PropTypes.bool,

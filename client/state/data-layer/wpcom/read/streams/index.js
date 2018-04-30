@@ -5,7 +5,7 @@
  */
 import { random } from 'lodash';
 import { translate } from 'i18n-calypso';
-import querystring from 'querystring';
+import { parse } from 'qs';
 
 /**
  * Internal dependencies
@@ -42,6 +42,7 @@ function streamKeySuffix( streamKey ) {
 
 const PER_RECS = 6;
 const PER_POLL = 5;
+const PER_GAP = 40;
 
 export const getQueryString = ( extras = {} ) => {
 	const meta = [ 'post', 'discover_original_post' ].join( ',' );
@@ -164,7 +165,7 @@ const streamApis = {
  * @returns {object} http action for data-layer to dispatch
  */
 export function requestPage( action ) {
-	const { payload: { streamKey, streamType, pageHandle, isPoll } } = action;
+	const { payload: { streamKey, streamType, pageHandle, isPoll, gap } } = action;
 	const api = streamApis[ streamType ];
 
 	if ( ! api ) {
@@ -183,7 +184,9 @@ export function requestPage( action ) {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
-		query: isPoll ? pollQuery() : query( { ...pageHandle }, action.payload ),
+		query: isPoll
+			? pollQuery()
+			: query( { ...pageHandle, number: !! gap ? PER_GAP : 10 }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );
@@ -196,7 +199,7 @@ export function fromApi( data ) {
 
 export function handlePage( action, data ) {
 	const { posts, date_range, meta, next_page } = data;
-	const { streamKey, query, isPoll } = action.payload;
+	const { streamKey, query, isPoll, gap } = action.payload;
 	let pageHandle = {};
 
 	if ( meta && meta.next_page ) {
@@ -208,24 +211,26 @@ export function handlePage( action, data ) {
 		// so this code breaks it down into an object
 		// to be re-stringified later.
 		// TODO: stop doing this extra work
-		pageHandle = querystring.parse( next_page );
+		pageHandle = parse( next_page );
 	} else if ( date_range ) {
 		// feeds use date_range. no next_page handles here
 		const { after } = date_range;
 		pageHandle = { before: after };
 	}
+
 	const actions = [];
 	if ( isPoll ) {
 		actions.push( receiveUpdates( { streamKey, posts, query } ) );
 	} else {
-		actions.push( receivePage( { streamKey, query, posts, pageHandle } ) );
+		actions.push( receivePage( { streamKey, query, posts, pageHandle, gap } ) );
 		actions.push( receivePosts( posts ) );
 	}
 
 	return actions;
 }
 
-export function handleError() {
+export function handleError( err ) {
+	console.error( 'data-layer error: ', err ); // eslint-disable-line no-console
 	return errorNotice( translate( 'Could not fetch the next page of posts' ) );
 }
 

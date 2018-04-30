@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { findIndex, uniqBy } from 'lodash';
+import { findIndex, uniqBy, last, takeRightWhile, takeWhile } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -27,16 +27,34 @@ import { keyToString, keyForPost, keysAreEqual } from 'reader/post-key';
 export const items = ( state = [], action ) => {
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
-			const { posts } = action.payload;
+			const { posts, gap } = action.payload;
 			const postKeys = posts.map( keyForPost );
 
-			const newState = uniqBy( [ ...state, ...postKeys ], keyToString );
+			let nextState;
+			if ( !! gap ) {
+				const beforeGap = takeWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
+				const afterGap = takeRightWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
 
-			// only return newState if it has actually been modified
-			if ( newState.length > state.length ) {
-				return newState;
+				// create a new gap if we still need one
+				let nextGap = [];
+				const from = gap.from;
+				const to = moment( last( posts ).date );
+				if ( ! from.isSame( to ) ) {
+					nextGap = [ { isGap: true, from, to } ];
+				}
+
+				nextState = [ ...beforeGap, ...postKeys, ...nextGap, ...afterGap ];
+			} else {
+				nextState = [ ...state, ...postKeys ];
 			}
-			return state;
+
+			nextState = uniqBy( nextState, keyToString );
+
+			if ( nextState.length === state.length ) {
+				return state;
+			}
+
+			return nextState;
 		case READER_STREAMS_SHOW_UPDATES:
 			return [ ...action.payload.items, ...state ];
 	}
@@ -121,9 +139,11 @@ export const selected = ( state = null, action ) => {
  * isRequesting data is mostly used for whether or not to render placeholders
  */
 export const isRequesting = ( state = false, action ) => {
+	// this has become a lie! its not really whether we are requesting, just if we need to show
+	// placeholders at the bottom of the stream
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_REQUEST:
-			return true;
+			return state || ( ! action.payload.isPoll && ! action.payload.isGap );
 		case READER_STREAMS_PAGE_RECEIVE:
 			return false;
 	}
@@ -147,7 +167,12 @@ export const lastPage = ( state = false, action ) => {
  * This usually gets handed to the request for more stream items
  */
 export const pageHandle = ( state = null, action ) => {
-	if ( action.type === READER_STREAMS_PAGE_RECEIVE && action.payload.pageHandle ) {
+	if (
+		action.type === READER_STREAMS_PAGE_RECEIVE &&
+		action.payload.pageHandle &&
+		! action.payload.isPoll &&
+		! action.payload.gap
+	) {
 		return action.payload.pageHandle;
 	}
 	return state;
