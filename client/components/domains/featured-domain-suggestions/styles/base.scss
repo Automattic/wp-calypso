@@ -40,8 +40,7 @@
 	// .card used to increase specificity
 	&.card .domain-product-price {
 		margin: 0;
-		flex-grow: 0;
-		flex-basis: auto;
+		justify-content: flex-start;
 
 		&.is-with-plans-only,
 		&.is-free-domain {
