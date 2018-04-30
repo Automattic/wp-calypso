@@ -25,11 +25,9 @@ import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import analytics from 'lib/analytics';
 import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import hasHappychatLocalizedSupport from 'state/happychat/selectors/has-happychat-localized-support';
 import {
-	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'state/help/ticket/selectors';
@@ -54,7 +52,6 @@ import {
 import { getSitePlan, isRequestingSites } from 'state/sites/selectors';
 import {
 	hasUserAskedADirectlyQuestion,
-	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
 	getLocalizedLanguageNames,
@@ -65,6 +62,7 @@ import { isDefaultLocale } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryLanguageNames from 'components/data/query-language-names';
+import getInlineHelpSupportVariation from 'state/selectors/get-inline-help-support-variation';
 
 /**
  * Module variables
@@ -148,7 +146,7 @@ class HelpContact extends React.Component {
 	prepareDirectlyWidget = () => {
 		if (
 			this.hasDataToDetermineVariation() &&
-			this.getSupportVariation() === SUPPORT_DIRECTLY &&
+			this.props.supportVariation === SUPPORT_DIRECTLY &&
 			this.props.isDirectlyUninitialized
 		) {
 			this.props.initializeDirectly();
@@ -275,24 +273,6 @@ class HelpContact extends React.Component {
 	shouldUseDirectly = () => {
 		const isEn = this.props.currentUserLocale === 'en';
 		return isEn && ! this.props.isDirectlyFailed;
-	};
-
-	getSupportVariation = () => {
-		const { ticketSupportEligible } = this.props;
-
-		if ( this.shouldUseHappychat() ) {
-			return SUPPORT_HAPPYCHAT;
-		}
-
-		if ( ticketSupportEligible ) {
-			return SUPPORT_TICKET;
-		}
-
-		if ( this.shouldUseDirectly() ) {
-			return SUPPORT_DIRECTLY;
-		}
-
-		return SUPPORT_FORUM;
 	};
 
 	recordCompactSubmit = variation => {
@@ -464,8 +444,8 @@ class HelpContact extends React.Component {
 	};
 
 	shouldShowPreloadForm = () => {
-		const waitingOnDirectly =
-			this.getSupportVariation() === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
+		const { supportVariation } = this.props;
+		const waitingOnDirectly = supportVariation === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
 
 		return (
 			this.props.isRequestingSites || ! this.hasDataToDetermineVariation() || waitingOnDirectly
@@ -491,7 +471,7 @@ class HelpContact extends React.Component {
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
-		const { compact, translate, selectedSitePlanSlug } = this.props;
+		const { compact, selectedSitePlanSlug, supportVariation, translate } = this.props;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -511,8 +491,6 @@ class HelpContact extends React.Component {
 				</div>
 			);
 		}
-
-		const supportVariation = this.getSupportVariation();
 
 		if ( supportVariation === SUPPORT_DIRECTLY && this.props.hasAskedADirectlyQuestion ) {
 			// We're taking the Directly confirmation outside the standard `confirmation` state object
@@ -608,20 +586,18 @@ export default connect(
 			getUserInfo: getHappychatUserInfo( state ),
 			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
-			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isHappychatAvailable: isHappychatAvailable( state ),
 			isHappychatUserEligible: isHappychatUserEligible( state ),
 			localizedLanguageNames: getLocalizedLanguageNames( state ),
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
-			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
 			isRequestingSites: isRequestingSites( state ),
 			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,
+			supportVariation: getInlineHelpSupportVariation( state ),
 		};
 	},
 	{
