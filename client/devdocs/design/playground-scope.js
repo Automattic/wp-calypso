@@ -27,6 +27,7 @@ export Collection from 'devdocs/design/search-collection';
 export Count from 'components/count';
 export CountedTextarea from 'components/forms/counted-textarea';
 export DatePicker from 'components/date-picker';
+export DiffViewer from 'components/diff-viewer';
 export DropZones from 'components/drop-zone';
 export EllipsisMenu from 'components/ellipsis-menu';
 export Emojify from 'components/emojify';

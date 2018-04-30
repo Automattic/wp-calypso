@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
+import DiffViewer from 'components/diff-viewer';
 import FoldableCard from 'components/foldable-card';
 import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
@@ -63,16 +64,7 @@ export class ThreatAlert extends Component {
 							</div>
 							<p className="activity-log__threat-alert-dirpath">{ file.dirpath }</p>
 							{ file.context && <MarkedLines context={ file.context } /> }
-							{ file.diff && (
-								<Fragment>
-									<pre>
-										<code>{ file.diff[ 0 ] }</code>
-									</pre>
-									<pre>
-										<code>{ file.diff[ 1 ] }</code>
-									</pre>
-								</Fragment>
-							) }
+							{ file.diff && <DiffViewer diff={ file.diff } /> }
 						</Fragment>
 					) ) }
 			</FoldableCard>
