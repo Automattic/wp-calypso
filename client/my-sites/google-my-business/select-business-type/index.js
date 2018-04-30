@@ -90,7 +90,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 			connectButton = (
 				<KeyringConnectButton
 					serviceId="google_my_business"
-					onClick={ this.trackCreateMyListingClick }
+					onClick={ this.trackCreateYourListingClick }
 					onConnect={ this.handleConnect }
 				>
 					{ translate( 'Create Your Listing', {
@@ -104,7 +104,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					primary
 					href="https://business.google.com/create"
 					target="_blank"
-					onClick={ this.trackCreateMyListingClick }
+					onClick={ this.trackCreateYourListingClick }
 				>
 					{ translate( 'Create Your Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
