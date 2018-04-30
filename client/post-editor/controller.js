@@ -171,13 +171,14 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 			 */
 			const metadataWhitelist = [ 'geo_latitude', 'geo_longitude' ];
 
-			// Filter the post metadata to include only the ones we want to copy and add
-			// an `operation` field to the copied values.
+			// Filter the post metadata to include only the ones we want to copy,
+			// use only the `key` and `value` properties (and, most importantly exclude `id`),
+			// and add an `operation` field to the copied values.
 			const copiedMetadata = reduce(
 				postToCopy.metadata,
-				( copiedMeta, meta ) => {
-					if ( includes( metadataWhitelist, meta.key ) ) {
-						copiedMeta.push( { ...meta, operation: 'update' } );
+				( copiedMeta, { key, value } ) => {
+					if ( includes( metadataWhitelist, key ) ) {
+						copiedMeta.push( { key, value, operation: 'update' } );
 					}
 					return copiedMeta;
 				},
