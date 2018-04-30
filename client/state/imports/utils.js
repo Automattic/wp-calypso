@@ -66,9 +66,9 @@ export function fromApi( state ) {
 
 	return {
 		importerId,
+		progress,
 		importerState: apiToAppState( importStatus ),
 		type: `importer-type-${ type }`,
-		progress: progress,
 		customData: generateSourceAuthorIds( customData ),
 		site: { ID: siteId },
 	};
