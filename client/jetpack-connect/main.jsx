@@ -22,7 +22,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainHeader from './main-header';
 import MainWrapper from './main-wrapper';
 import page from 'page';
-import PlansStatic from './plans-static';
 import SiteUrlInput from './site-url-input';
 import versionCompare from 'lib/version-compare';
 import { addCalypsoEnvQueryArg, cleanUrl } from './utils';
@@ -32,7 +31,7 @@ import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import { persistSession, retrieveMobileRedirect, retrievePlan } from './persistence-utils';
+import { persistSession, retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
 import {
@@ -303,11 +302,6 @@ export class JetpackConnectMain extends Component {
 		return includes( FLOW_TYPES, this.props.type );
 	}
 
-	onPlanSelect = () => {
-		// Hack: we're storing selected plan in a cookie, and this needs to force re-render.
-		this.forceUpdate();
-	};
-
 	renderFooter() {
 		const { translate } = this.props;
 		return (
@@ -359,21 +353,8 @@ export class JetpackConnectMain extends Component {
 	}
 
 	render() {
-		const { interval, selectedPlan, type } = this.props;
 		const status = this.getStatus();
-
-		if (
-			! selectedPlan &&
-			( this.isCurrentUrlFetching() || this.state.redirecting || this.state.waitingForSites )
-		) {
-			return (
-				<PlansStatic
-					interval={ interval }
-					basePlansPath={ '/jetpack/connect' }
-					onPlanSelect={ this.onPlanSelect }
-				/>
-			);
-		}
+		const { type } = this.props;
 
 		return (
 			<MainWrapper>
@@ -395,7 +376,6 @@ const connectComponent = connect(
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
-		const selectedPlan = retrievePlan();
 
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
@@ -405,7 +385,6 @@ const connectComponent = connect(
 			isRequestingSites: isRequestingSites( state ),
 			jetpackConnectSite: getConnectingSite( state ),
 			mobileAppRedirect,
-			selectedPlan,
 		};
 	},
 	{
