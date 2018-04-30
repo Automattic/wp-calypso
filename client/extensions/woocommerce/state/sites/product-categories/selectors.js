@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, isArray, omit, range, values } from 'lodash';
+import { get, isArray, omit, some, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,28 +56,15 @@ export function areProductCategoriesLoading(
 }
 
 /**
- * Returns true if currently requesting product categories for a query, excluding all known
- * queried pages, or false otherwise.
+ * Returns true if currently requesting product categories for any query, or false otherwise.
  *
  * @param {Object} state Whole Redux state tree
- * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean}       Returns true if currently requesting product categories for a query, excluding all known queried pages.
+ * @return {Boolean}       Returns true if currently requesting product categories for any query
  */
-export function areAnyProductCategoriesLoading(
-	state,
-	query = {},
-	siteId = getSelectedSiteId( state )
-) {
-	const lastPage = getProductCategoriesLastPage( state, query, siteId );
-	if ( null === lastPage ) {
-		return false;
-	}
-
-	return range( 1, lastPage + 1 ).some( page => {
-		const catQuery = { ...query, page };
-		return areProductCategoriesLoading( state, catQuery, siteId );
-	} );
+export function areAnyProductCategoriesLoading( state, siteId = getSelectedSiteId( state ) ) {
+	const categoryState = getRawCategoryState( state, siteId );
+	return some( categoryState.isQueryLoading );
 }
 
 /**

@@ -61,21 +61,16 @@ describe( 'selectors', () => {
 
 	describe( '#areAnyProductCategoriesLoading', () => {
 		test( 'should be false when state is not available.', () => {
-			expect( areAnyProductCategoriesLoading( state, {}, 'site.one' ) ).to.be.false;
+			expect( areAnyProductCategoriesLoading( state, 'site.one' ) ).to.be.false;
 		} );
 
 		test( 'should be true when any page of categories are currently being fetched.', () => {
 			// page 2 is currently being fetched, but this selector ignores page
-			expect( areAnyProductCategoriesLoading( state, {}, 'site.two' ) ).to.be.true;
-		} );
-
-		test( 'should be true when categories are currently being fetched, and passed a page parameter.', () => {
-			// page 2 is currently being fetched, but this selector ignores page
-			expect( areAnyProductCategoriesLoading( state, { page: 2 }, 'site.two' ) ).to.be.true;
+			expect( areAnyProductCategoriesLoading( state, 'site.two' ) ).to.be.true;
 		} );
 
 		test( 'should be false when categories are loaded.', () => {
-			expect( areAnyProductCategoriesLoading( state, {}, 'site.three' ) ).to.be.false;
+			expect( areAnyProductCategoriesLoading( state, 'site.three' ) ).to.be.false;
 		} );
 	} );
 
