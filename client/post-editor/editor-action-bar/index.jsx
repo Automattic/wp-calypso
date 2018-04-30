@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -125,12 +126,10 @@ export default connect( state => {
 	if ( podcastingCategoryId ) {
 		const postTerms = getEditedPostValue( state, siteId, postId, 'terms' );
 		const postCategories = postTerms && postTerms.category;
-		if (
-			Array.isArray( postCategories ) &&
-			// This is not a bound selector...
-			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			postCategories.some( cat => cat.ID === podcastingCategoryId )
-		) {
+		// WARNING: postCategories is an array for posts where categories have
+		// been edited, but an object for posts returned from the API
+		console.log( postCategories );
+		if ( find( postCategories, { ID: podcastingCategoryId } ) ) {
 			isPodcastEpisode = true;
 		}
 	}
