@@ -8,7 +8,7 @@ import config from 'config';
 import userFactory from 'lib/user';
 import { makeLayout } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { loggedIn, loggedOut, upload, fetchThemeFilters } from './controller';
+import { loggedIn, loggedOut, upload, fetchThemeFilters, setUpLocale } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
 
 export default function( router ) {
@@ -47,16 +47,17 @@ export default function( router ) {
 			router( '/themes/upload/*', '/themes' );
 
 			const loggedOutRoutes = [
-				'/themes/:tier(free|premium)?',
-				'/themes/:tier(free|premium)?/filter/:filter',
-				'/themes/:vertical?/:tier(free|premium)?',
-				'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
+				'/themes/:tier(free|premium)?/:lang?',
+				'/themes/:tier(free|premium)?/filter/:filter/:lang?',
+				'/themes/:vertical?/:tier(free|premium)?/:lang?',
+				'/themes/:vertical?/:tier(free|premium)?/filter/:filter/:lang?',
 			];
 			router(
 				loggedOutRoutes,
 				fetchThemeFilters,
 				validateVertical,
 				validateFilters,
+				setUpLocale,
 				loggedOut,
 				makeLayout
 			);

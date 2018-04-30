@@ -13,6 +13,7 @@ import {
 	redirectSearchAndType,
 	redirectFilterAndType,
 	redirectToThemeDetails,
+	setUpLocale,
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
 
@@ -24,10 +25,11 @@ export default function( router ) {
 		} );
 
 		const showcaseRoutes = [
-			'/themes/:tier(free|premium)?',
-			'/themes/:tier(free|premium)?/filter/:filter',
-			'/themes/:vertical?/:tier(free|premium)?',
-			'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
+			'/themes/:lang?',
+			'/themes/:tier(free|premium)?/:lang?',
+			'/themes/:tier(free|premium)?/filter/:filter/:lang?',
+			'/themes/:vertical?/:tier(free|premium)?/:lang?',
+			'/themes/:vertical?/:tier(free|premium)?/filter/:filter/:lang?',
 		];
 		router(
 			showcaseRoutes,
@@ -35,6 +37,7 @@ export default function( router ) {
 			validateVertical,
 			validateFilters,
 			fetchThemeData,
+			setUpLocale,
 			loggedOut,
 			makeLayout
 		);

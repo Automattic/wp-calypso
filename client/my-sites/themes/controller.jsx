@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { compact, includes, isEmpty, startsWith } from 'lodash';
+import { compact, forEach, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import React from 'react';
 
@@ -20,6 +20,7 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
 import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
+import { getLanguage } from 'lib/i18n-utils';
 import getThemeFilters from 'state/selectors/get-theme-filters';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -41,6 +42,7 @@ function getProps( context ) {
 		analyticsPath,
 		search: context.query.s,
 		pathName: context.pathname,
+		langSlug: context.lang,
 		trackScrollPage: boundTrackScrollPage,
 	};
 }
@@ -156,4 +158,19 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 		redirectedSection = 'setup';
 	}
 	res.redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
+}
+
+// Set up the locale in case it has ended up in the flow param
+export function setUpLocale( context, next ) {
+	forEach( context.params, value => {
+		const language = getLanguage( value );
+		if ( language ) {
+			context.lang = value;
+			if ( language.rtl ) {
+				context.isRTL = true;
+			}
+			return false;
+		}
+	} );
+	next();
 }

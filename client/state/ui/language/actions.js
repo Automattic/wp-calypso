@@ -21,6 +21,8 @@ import { LOCALE_SET } from 'state/action-types';
  */
 export const setLocale = ( localeSlug, localeVariant = null ) => {
 	switchLocale( localeSlug, localeVariant );
+	// eslint-disable-next-line
+	console.log( 'setLocale', localeSlug );
 	return {
 		type: LOCALE_SET,
 		localeSlug,

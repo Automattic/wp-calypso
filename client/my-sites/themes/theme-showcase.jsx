@@ -119,16 +119,20 @@ class ThemeShowcase extends React.Component {
 	 * @returns {String} Theme showcase url
 	 */
 	constructUrl = sections => {
-		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
+		const { vertical, tier, filter, siteSlug, searchString, langSlug } = {
+			...this.props,
+			...sections,
+		};
 
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
+		const lang = langSlug ? `/${ langSlug }` : '';
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
 
-		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }${ lang }`;
 		return buildUrl( url, searchString );
 	};
 
@@ -292,7 +296,7 @@ class ThemeShowcase extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
+const mapStateToProps = ( state, { siteId, filter, tier, vertical, langSlug } ) => ( {
 	currentThemeId: getActiveTheme( state, siteId ),
 	isLoggedIn: !! getCurrentUserId( state ),
 	siteSlug: getSiteSlug( state, siteId ),
@@ -301,6 +305,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
+	langSlug,
 } );
 
 const mapDispatchToProps = {
