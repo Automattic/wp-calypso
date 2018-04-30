@@ -16,7 +16,7 @@ import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
 import { loadScript as loadScriptCallback } from 'lib/load-script';
-import { shouldSkipAds } from 'lib/analytics/utils';
+import { shouldSkipAds, hashPii } from 'lib/analytics/utils';
 import { promisify } from '../../utils';
 
 /**
@@ -644,7 +644,7 @@ function recordProduct( product, orderId ) {
 	}
 
 	const currentUser = user.get();
-	const userId = currentUser ? currentUser.ID : 0;
+	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
 
 	try {
 		// Google Analytics
@@ -791,7 +791,7 @@ function recordOrderInAtlas( cart, orderId ) {
 		product_slugs: cart.products.map( product => product.product_slug ).join( ', ' ),
 		revenue: cart.total_cost,
 		currency_code: cart.currency,
-		user_id: currentUser ? currentUser.ID : 0,
+		user_id: currentUser ? hashPii( currentUser.ID ) : 0,
 		order_id: orderId,
 	};
 
@@ -972,7 +972,7 @@ function floodlightUserParams() {
 
 	const currentUser = user.get();
 	if ( currentUser ) {
-		params.u4 = currentUser.ID.toString();
+		params.u4 = hashPii( currentUser.ID );
 	}
 
 	const anonymousUserId = tracksAnonymousUserId();
@@ -1142,7 +1142,7 @@ function recordInCriteo( eventName, eventProps ) {
 	events.push( { event: 'setSiteType', type: criteoSiteType() } );
 
 	if ( user.get() ) {
-		events.push( { event: 'setEmail', email: [ user.get().email ] } );
+		events.push( { event: 'setEmail', email: [ hashPii( user.get().email ) ] } );
 	}
 
 	const conversionEvent = clone( eventProps );
