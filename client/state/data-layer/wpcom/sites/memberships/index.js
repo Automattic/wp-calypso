@@ -12,7 +12,8 @@ import { noop } from 'lodash';
 import { SIMPLE_PAYMENTS_PRODUCTS_LIST, MEMBERSHIPS_PRODUCTS_RECEIVE } from 'state/action-types';
 
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx, TransformerError } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { TransformerError } from 'lib/make-json-schema-parser';
 
 export const membershipProductFromApi = product => ( {
 	ID: product.id || product.connected_account_product_id,
