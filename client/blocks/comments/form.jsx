@@ -19,6 +19,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { isCommentableDiscoverPost } from 'blocks/comments/helper';
+import PostCommentFormTextarea from './form-textarea';
 
 class PostCommentForm extends React.Component {
 	constructor( props ) {
@@ -215,8 +216,7 @@ class PostCommentForm extends React.Component {
 								<br />
 							</pre>
 							<AutoDirection>
-								<textarea
-									className="comments__form-textarea"
+								<PostCommentFormTextarea
 									value={ this.state.commentText }
 									placeholder={ translate( 'Enter your comment here…' ) }
 									ref={ this.handleTextAreaNode }
@@ -225,6 +225,7 @@ class PostCommentForm extends React.Component {
 									onFocus={ this.handleFocus }
 									onBlur={ this.handleBlur }
 									onChange={ this.handleTextChange }
+									siteId={ post.site_ID }
 								/>
 							</AutoDirection>
 						</div>
