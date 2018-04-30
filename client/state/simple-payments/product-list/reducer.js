@@ -11,6 +11,7 @@ import {
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE,
+	MEMBERSHIPS_PRODUCTS_RECEIVE,
 } from 'state/action-types';
 
 /**
@@ -57,7 +58,7 @@ export const items = createReducer(
 				: []
 			).concat( products ),
 		} ),
-		[ 'MEMBERSHIPS_PRODUCTS_RECEIVE' ]: ( state, { siteId, products } ) => ( {
+		[ MEMBERSHIPS_PRODUCTS_RECEIVE ]: ( state, { siteId, products } ) => ( {
 			...state,
 			[ siteId ]: ( state[ siteId ]
 				? state[ siteId ].filter( item => ! item.recurring )

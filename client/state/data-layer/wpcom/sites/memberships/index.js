@@ -9,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SIMPLE_PAYMENTS_PRODUCTS_LIST } from 'state/action-types';
+import { SIMPLE_PAYMENTS_PRODUCTS_LIST, MEMBERSHIPS_PRODUCTS_RECEIVE } from 'state/action-types';
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, TransformerError } from 'state/data-layer/wpcom-http/utils';
@@ -49,7 +49,7 @@ export const handleMembershipsList = dispatchRequestEx( {
 		return products;
 	},
 	onSuccess: ( { siteId }, products ) => ( {
-		type: 'MEMBERSHIPS_PRODUCTS_RECEIVE',
+		type: MEMBERSHIPS_PRODUCTS_RECEIVE,
 		siteId,
 		products,
 	} ),

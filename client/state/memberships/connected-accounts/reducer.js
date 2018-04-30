@@ -3,13 +3,16 @@
 /**
  * Internal dependencies
  */
-
+import {
+	MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST,
+	MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE,
+} from 'state/action-types';
 import { createReducer, combineReducers } from 'state/utils';
 
 const accounts = createReducer(
 	{},
 	{
-		[ 'MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE' ]: ( state, data ) => ( {
+		[ MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE ]: ( state, data ) => ( {
 			...state,
 			...data.accounts,
 		} ),
@@ -17,8 +20,8 @@ const accounts = createReducer(
 );
 
 const isFetching = createReducer( false, {
-	[ 'MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE' ]: () => false,
-	[ 'MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST' ]: () => true,
+	[ MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE ]: () => false,
+	[ MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST ]: () => true,
 } );
 
 export default combineReducers( {

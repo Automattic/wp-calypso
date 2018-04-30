@@ -125,7 +125,7 @@ const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
 
 const updateMembershipButton = ( siteId, productId ) => ( dispatch, getState ) => {
 	// This is a memberships submission.
-	const values = get( getState(), [ 'form', 'simplePaymentsForm', 'values' ], {} );
+	const values = getProductFormValues( getState() );
 	return wpcom.req
 		.post( `/sites/${ siteId }/memberships/product/${ productId }`, {
 			title: values.title,
