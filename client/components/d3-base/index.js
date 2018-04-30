@@ -37,15 +37,6 @@ export default class D3Base extends Component {
 
 	chartRef = React.createRef();
 
-	/**
-	 * Determines if new props were provided, and updates the local state accordingly. This basically stores any new
-	 * prop in the local state (so it can be used for comparison in future calls), and resets the list of params in that
-	 * case (in order to indicate that the chart should be drawn again).
-	 *
-	 * @param {Object} nextProps the next props
-	 * @param {Object} prevState the previous state
-	 * @returns {Object} the next state
-	 */
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		let state = {};
 
