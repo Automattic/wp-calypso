@@ -58,7 +58,7 @@ export default function() {
 
 	if ( isLoggedOut ) {
 		page(
-			'/jetpack/connect/authorize/:locale?',
+			'/jetpack/connect/authorize/:interval(yearly|monthly)?/:locale?',
 			controller.maybeOnboard,
 			controller.setMasterbar,
 			controller.signupForm,
@@ -67,7 +67,7 @@ export default function() {
 		);
 	} else {
 		page(
-			'/jetpack/connect/authorize/:locale?',
+			'/jetpack/connect/authorize/:interval(yearly|monthly)?/:locale?',
 			controller.maybeOnboard,
 			controller.redirectWithoutLocaleIfLoggedIn,
 			controller.setMasterbar,
