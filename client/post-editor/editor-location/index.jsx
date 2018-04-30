@@ -29,6 +29,11 @@ import { getEditedPost } from 'state/posts/selectors';
  */
 const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 
+// Convert a float coordinate to formatted string with 7 decimal places.
+// Ensures correct equality comparison with values returned from WP.com API
+// that formats float metadata values exactly this way.
+const toGeoString = coord => String( Number( coord ).toFixed( 7 ) );
+
 class EditorLocation extends React.Component {
 	static displayName = 'EditorLocation';
 
@@ -55,8 +60,8 @@ class EditorLocation extends React.Component {
 		} );
 
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
-			geo_latitude: position.coords.latitude,
-			geo_longitude: position.coords.longitude,
+			geo_latitude: toGeoString( position.coords.latitude ),
+			geo_longitude: toGeoString( position.coords.longitude ),
 		} );
 
 		recordStat( 'location_geolocate_success' );
@@ -100,8 +105,8 @@ class EditorLocation extends React.Component {
 
 	onSearchSelect = result => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
-			geo_latitude: result.geometry.location.lat,
-			geo_longitude: result.geometry.location.lng,
+			geo_latitude: toGeoString( result.geometry.location.lat ),
+			geo_longitude: toGeoString( result.geometry.location.lng ),
 		} );
 	};
 
