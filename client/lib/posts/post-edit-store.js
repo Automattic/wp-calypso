@@ -256,18 +256,6 @@ function dispatcherCallback( payload ) {
 			_queueChanges = true;
 			break;
 
-		// called by post changes elsewhere e.g. drafts drawer
-		case 'RECEIVE_UPDATED_POST':
-			if ( ! action.error ) {
-				if ( _post && action.post.ID === _post.ID ) {
-					updatePost( action.site, action.post );
-					PostEditStore.emit( 'change' );
-				}
-			}
-			_queueChanges = false;
-			_queue = [];
-			break;
-
 		case 'RECEIVE_POST_BEING_EDITED':
 			if ( ! action.error ) {
 				updatePost( action.site, action.post );
