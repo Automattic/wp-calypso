@@ -138,7 +138,6 @@ export class ProductPurchaseFeaturesList extends Component {
 					selectedSite={ selectedSite }
 				/>
 				<MobileApps />
-				<SellOnlinePaypal />
 			</Fragment>
 		);
 	}
@@ -178,7 +177,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
-				<SellOnlinePaypal />
 			</Fragment>
 		);
 	}
