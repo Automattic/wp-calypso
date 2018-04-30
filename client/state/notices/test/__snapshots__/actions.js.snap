@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`actions createNotice() should use default options when none provided 1`] = `
+Object {
+  "button": undefined,
+  "displayOnNextPage": false,
+  "duration": undefined,
+  "href": undefined,
+  "icon": undefined,
+  "isPersistent": false,
+  "noticeId": "1",
+  "onClick": undefined,
+  "showDismiss": true,
+  "status": "is-info",
+  "text": "Notice text",
+}
+`;
+
+exports[`actions status helpers bound createNotice dispatches expected action 1`] = `
+Object {
+  "notice": Object {
+    "button": undefined,
+    "displayOnNextPage": false,
+    "duration": undefined,
+    "href": undefined,
+    "icon": undefined,
+    "isPersistent": false,
+    "noticeId": "3",
+    "onClick": undefined,
+    "showDismiss": true,
+    "status": "is-success",
+    "text": "text",
+  },
+  "type": "NOTICE_CREATE",
+}
+`;
+
+exports[`actions status helpers bound createNotice dispatches expected action 2`] = `
+Object {
+  "notice": Object {
+    "button": undefined,
+    "displayOnNextPage": false,
+    "duration": undefined,
+    "href": undefined,
+    "icon": undefined,
+    "isPersistent": false,
+    "noticeId": "4",
+    "onClick": undefined,
+    "showDismiss": true,
+    "status": "is-error",
+    "text": "text",
+  },
+  "type": "NOTICE_CREATE",
+}
+`;
+
+exports[`actions status helpers bound createNotice dispatches expected action 3`] = `
+Object {
+  "notice": Object {
+    "button": undefined,
+    "displayOnNextPage": false,
+    "duration": undefined,
+    "href": undefined,
+    "icon": undefined,
+    "isPersistent": false,
+    "noticeId": "5",
+    "onClick": undefined,
+    "showDismiss": true,
+    "status": "is-info",
+    "text": "text",
+  },
+  "type": "NOTICE_CREATE",
+}
+`;
+
+exports[`actions status helpers bound createNotice dispatches expected action 4`] = `
+Object {
+  "notice": Object {
+    "button": undefined,
+    "displayOnNextPage": false,
+    "duration": undefined,
+    "href": undefined,
+    "icon": undefined,
+    "isPersistent": false,
+    "noticeId": "6",
+    "onClick": undefined,
+    "showDismiss": true,
+    "status": "is-warning",
+    "text": "text",
+  },
+  "type": "NOTICE_CREATE",
+}
+`;
+
+exports[`actions status helpers bound createNotice dispatches expected action 5`] = `
+Object {
+  "notice": Object {
+    "button": undefined,
+    "displayOnNextPage": false,
+    "duration": undefined,
+    "href": undefined,
+    "icon": undefined,
+    "isPersistent": false,
+    "noticeId": "7",
+    "onClick": undefined,
+    "showDismiss": true,
+    "status": "is-plain",
+    "text": "text",
+  },
+  "type": "NOTICE_CREATE",
+}
+`;
