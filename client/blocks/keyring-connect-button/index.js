@@ -106,7 +106,7 @@ class KeyringConnectButton extends Component {
 			requestExternalAccess( this.props.service.connect_URL, () => {
 				// When the user has finished authorizing the connection
 				// (or otherwise closed the window), force a refresh
-				this.props.requestKeyringConnections();
+				this.props.requestKeyringConnections( true );
 
 				// In the case that a Keyring connection doesn't exist, wait for app
 				// authorization to occur, then display with the available connections

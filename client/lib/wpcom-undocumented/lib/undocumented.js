@@ -861,12 +861,20 @@ Undocumented.prototype.saveSharingButtons = function( siteId, buttons, fn ) {
  * @api public
  * @return {Promise} A Promise to resolve when complete.
  */
-Undocumented.prototype.mekeyringConnections = function( fn ) {
+Undocumented.prototype.mekeyringConnections = function( forceExternalUsersRefetch, fn ) {
 	debug( '/me/keyring-connections query' );
+
+	// set defaults, first argument is actually a callback
+	if ( typeof forceExternalUsersRefetch === 'function' ) {
+		fn = forceExternalUsersRefetch;
+		forceExternalUsersRefetch = false;
+	}
+
 	return this.wpcom.req.get(
 		{
 			path: '/me/keyring-connections',
 			apiVersion: '1.1',
+			body: { force_external_users_refetch: forceExternalUsersRefetch },
 		},
 		fn
 	);
