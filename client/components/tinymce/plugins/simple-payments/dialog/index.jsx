@@ -524,7 +524,7 @@ class SimplePaymentsDialog extends Component {
 			);
 		}
 
-		if ( false && ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
+		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
 				<EmptyContent
 					illustration="/calypso/images/illustrations/type-e-commerce.svg"
