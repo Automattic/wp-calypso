@@ -872,9 +872,7 @@ Undocumented.prototype.mekeyringConnections = function( forceExternalUsersRefetc
 
 	return this.wpcom.req.get(
 		'/me/keyring-connections',
-		{
-			force_external_users_refetch: forceExternalUsersRefetch,
-		},
+		forceExternalUsersRefetch ? { force_external_users_refetch: forceExternalUsersRefetch } : {},
 		fn
 	);
 };
