@@ -18,6 +18,7 @@ export default class extends React.Component {
 	static displayName = 'BulkSelect';
 
 	static propTypes = {
+		id: PropTypes.string,
 		totalElements: PropTypes.number.isRequired,
 		selectedElements: PropTypes.number.isRequired,
 		onToggle: PropTypes.func.isRequired,
@@ -49,10 +50,18 @@ export default class extends React.Component {
 			// since Enzyme still doesn't support :checked pseudoselector.
 			'is-checked': isChecked,
 		} );
+		const inputProps = {
+			className: inputClasses,
+			checked: isChecked,
+		};
+		if ( this.props.id ) {
+			inputProps.id = this.props.id;
+		}
+
 		return (
-			<span className="bulk-select" onClick={ this.handleToggleAll }>
+			<span className="bulk-select">
 				<span className="bulk-select__container">
-					<input type="checkbox" className={ inputClasses } checked={ isChecked } readOnly />
+					<input type="checkbox" { ...inputProps } onChange={ this.handleToggleAll } />
 					<Count count={ this.props.selectedElements } />
 					{ this.getStateIcon() }
 				</span>

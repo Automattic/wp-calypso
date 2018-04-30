@@ -52,6 +52,21 @@ describe( 'index', () => {
 		assert.equal( 1, bulkSelect.find( '.bulk-select__some-checked-icon' ).length );
 	} );
 
+	test( 'should set the passed ID prop on the input', () => {
+		const bulkSelect = shallow(
+			<BulkSelect selectedElements={ 2 } totalElements={ 3 } onToggle={ noop } id="fake-example" />
+		);
+		assert.equal( 'fake-example', bulkSelect.find( 'input' ).prop( 'id' ) );
+	} );
+
+	test( 'should not mark the input readOnly', () => {
+		const bulkSelect = shallow(
+			<BulkSelect selectedElements={ 2 } totalElements={ 3 } onToggle={ noop } />
+		);
+		// There is no prop readOnly, so this is undefined
+		assert.equal( undefined, bulkSelect.find( 'input' ).prop( 'readOnly' ) );
+	} );
+
 	test( 'should be call onToggle when clicked', () => {
 		let hasBeenCalled = false;
 		const callback = function() {
@@ -60,7 +75,7 @@ describe( 'index', () => {
 		const bulkSelect = shallow(
 			<BulkSelect selectedElements={ 0 } totalElements={ 3 } onToggle={ callback } />
 		);
-		bulkSelect.simulate( 'click' );
+		bulkSelect.find( 'input' ).simulate( 'change' );
 		assert.equal( hasBeenCalled, true );
 	} );
 
@@ -72,7 +87,7 @@ describe( 'index', () => {
 		const bulkSelect = shallow(
 			<BulkSelect selectedElements={ 0 } totalElements={ 3 } onToggle={ callback } />
 		);
-		bulkSelect.simulate( 'click' );
+		bulkSelect.find( 'input' ).simulate( 'change' );
 	} );
 
 	test( 'should be call onToggle with the new state when there are some selected elements', done => {
@@ -83,7 +98,7 @@ describe( 'index', () => {
 		const bulkSelect = shallow(
 			<BulkSelect selectedElements={ 1 } totalElements={ 3 } onToggle={ callback } />
 		);
-		bulkSelect.simulate( 'click' );
+		bulkSelect.find( 'input' ).simulate( 'change' );
 	} );
 
 	test( 'should be call onToggle with the new state when there all elements are selected', done => {
@@ -94,6 +109,6 @@ describe( 'index', () => {
 		const bulkSelect = shallow(
 			<BulkSelect selectedElements={ 3 } totalElements={ 3 } onToggle={ callback } />
 		);
-		bulkSelect.simulate( 'click' );
+		bulkSelect.find( 'input' ).simulate( 'change' );
 	} );
 } );
