@@ -276,8 +276,10 @@ class ProductForm extends Component {
 										</option>
 									) )
 									.concat( [
-										<option value="create">{ translate( 'Create Stripe account for me' ) }</option>,
-										<option value="authorize">
+										<option value="create" key="create">
+											{ translate( 'Create Stripe account for me' ) }
+										</option>,
+										<option value="authorize" key="authorize">
 											{ translate( 'I already have a Stripe account' ) }
 										</option>,
 									] ) }
