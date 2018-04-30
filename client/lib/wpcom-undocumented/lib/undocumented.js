@@ -1804,31 +1804,22 @@ Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
 };
 
 Undocumented.prototype.requestTransferCode = function( options, fn ) {
-	const { domainName, unlock, disablePrivacy } = options,
+	const { domainName } = options,
 		data = {
 			domainStatus: JSON.stringify( {
 				command: 'send-code',
-				payload: {
-					unlock,
-					disable_privacy: disablePrivacy,
-				},
 			} ),
 		};
 
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
-Undocumented.prototype.cancelTransferRequest = function(
-	{ domainName, enablePrivacy, declineTransfer, lockDomain },
-	fn
-) {
+Undocumented.prototype.cancelTransferRequest = function( { domainName, declineTransfer }, fn ) {
 	const data = {
 		domainStatus: JSON.stringify( {
 			command: 'cancel-transfer-request',
 			payload: {
-				enable_privacy: enablePrivacy,
 				decline_transfer: declineTransfer,
-				lock_domain: lockDomain,
 			},
 		} ),
 	};
