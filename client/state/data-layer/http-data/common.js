@@ -57,10 +57,12 @@ const empty = Object.freeze( {
 
 let dispatch;
 
-export const enhancer = store => {
+export const enhancer = createStore => ( ...storeArgs ) => {
+	const store = createStore( ...storeArgs );
+
 	dispatch = store.dispatch;
 
-	return next => next;
+	return store;
 };
 
 export const getHttpData = id => httpData.get( id ) || empty;
