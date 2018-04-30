@@ -98,6 +98,20 @@ class FormCountrySelectFromApi extends Component {
 	}
 }
 
+const getLocationsListFromContinents = ( state, continents, siteId ) => {
+	const locationsList = [];
+	continents.forEach( continent => {
+		const countries = getCountriesByContinent( state, continent.code, siteId );
+		locationsList.push(
+			...countries.map( country => ( {
+				...country,
+				continent: continent.code,
+			} ) )
+		);
+	} );
+	return locationsList;
+};
+
 export default connect(
 	( state, props ) => {
 		const site = getSelectedSiteWithFallback( state );
@@ -106,18 +120,9 @@ export default connect(
 		const areSettingsLoaded = areSettingsGeneralLoaded( state );
 		const value = ! props.value ? address.country : props.value;
 
-		const locationsList = [];
 		const isLoaded = areLocationsLoaded( state, siteId );
 		const continents = getContinents( state, siteId );
-		continents.forEach( continent => {
-			const countries = getCountriesByContinent( state, continent.code, siteId );
-			locationsList.push(
-				...countries.map( country => ( {
-					...country,
-					continent: continent.code,
-				} ) )
-			);
-		} );
+		const locationsList = getLocationsListFromContinents( state, continents, siteId );
 
 		return {
 			areSettingsLoaded,
