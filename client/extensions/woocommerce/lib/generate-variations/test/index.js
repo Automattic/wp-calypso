@@ -102,7 +102,7 @@ describe( 'generateVariations', () => {
 			},
 		] );
 	} );
-	test( 'generates a complex cartesian of variations when passed a product with multiple variation attributes and multiple options', () => {
+	test( 'generates a complex cartesian of variations when passed a product with multiple attributes and options', () => {
 		const product = {
 			id: 1,
 			attributes: [
