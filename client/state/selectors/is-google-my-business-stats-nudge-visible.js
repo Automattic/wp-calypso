@@ -11,6 +11,7 @@ import config from 'config';
 import createSelector from 'lib/create-selector';
 import { getSiteOption, getSitePlanSlug } from 'state/sites/selectors';
 import { isGoogleMyBusinessLocationConnected } from 'state/selectors';
+import { isRequestingSiteSettings, getSiteSettings } from 'state/site-settings/selectors';
 import { planMatches } from 'lib/plans';
 import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
 
@@ -58,6 +59,13 @@ export const siteHasBusinessPlan = createSelector(
  * @return {Boolean} True if we should show the nudge
  */
 export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
+	// We don't want to show the nudge, and then hide it when it's obvious
+	// the site is actually already connected, therefore we must wait for the site
+	// settings to be fetched so we could verify site does not have connection connected
+	if ( getSiteSettings( state, siteId ) === null || isRequestingSiteSettings( state, siteId ) ) {
+		return false;
+	}
+
 	if ( isGoogleMyBusinessLocationConnected( state, siteId ) ) {
 		return false;
 	}
