@@ -55,21 +55,30 @@ const empty = Object.freeze( {
 	pendingSince: undefined,
 } );
 
+let dispatch;
+
+export const enhancer = store => {
+	dispatch = store.dispatch;
+
+	return next => next;
+};
+
 export const getHttpData = id => httpData.get( id ) || empty;
 
-export const requestHttpData = ( id, action, { fromApi, freshness } ) => {
-	const request = { type: HTTP_DATA_REQUEST, id, fetch: action, fromApi };
+export const requestHttpData = ( id, fetchAction, { fromApi, freshness } ) => {
+	const data = getHttpData( id );
+	const { state, lastUpdated } = data;
 
-	if ( 'number' !== typeof freshness ) {
-		return request;
+	if (
+		'uninitialized' === state ||
+		( 'number' === typeof freshness && 'pending' !== state && Date.now() - lastUpdated > freshness )
+	) {
+		if ( 'development' === process.env.NODE_ENV && 'function' !== typeof dispatch ) {
+			throw new Error( 'Cannot use HTTP data without injecting Redux store enhancer!' );
+		}
+
+		dispatch( { type: HTTP_DATA_REQUEST, id, fetch: fetchAction, fromApi } );
 	}
 
-	const { lastUpdated, state } = getHttpData( id );
-	const staleness = Date.now() - lastUpdated;
-	if ( 'pending' === state || staleness < freshness ) {
-		// an empty thunk performs no dispatch
-		return () => undefined;
-	}
-
-	return request;
+	return data;
 };
