@@ -55,10 +55,21 @@ export class LanguagePicker extends PureComponent {
 	}
 
 	findLanguage( valueKey, value ) {
-		return find( this.props.languages, lang => {
+		const { translate } = this.props;
+		//check if the language provided is supported by Calypso
+		const language = find( this.props.languages, lang => {
 			// The value passed is sometimes string instead of number - need to use ==
 			return lang[ valueKey ] == value; // eslint-disable-line eqeqeq
 		} );
+		//if an unsupported language is provided return it without a display name
+		if ( value && ! language ) {
+			return {
+				langSlug: value,
+				name: translate( 'Unsupported language' ),
+			};
+		}
+		//else return either the supported language or undefined (loading state)
+		return language;
 	}
 
 	selectLanguage = languageSlug => {
