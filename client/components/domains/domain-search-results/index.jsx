@@ -189,30 +189,26 @@ class DomainSearchResults extends React.Component {
 				</div>
 			);
 
-			let regularSuggestions = suggestions;
-
-			if ( this.props.isSignupStep ) {
-				regularSuggestions = suggestions.filter(
-					suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
-				);
-				const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
-				const bestAlternativeSuggestions = suggestions.filter(
-					suggestion => suggestion.isBestAlternative
-				);
-				featuredSuggestionElement = (
-					<FeaturedDomainSuggestions
-						cart={ this.props.cart }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						isSignupStep={ this.props.isSignupStep }
-						key="featured"
-						onButtonClick={ this.props.onClickResult }
-						primarySuggestion={ first( bestMatchSuggestions ) }
-						query={ this.props.lastDomainSearched }
-						secondarySuggestion={ first( bestAlternativeSuggestions ) }
-						selectedSite={ this.props.selectedSite }
-					/>
-				);
-			}
+			const regularSuggestions = suggestions.filter(
+				suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+			);
+			const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
+			const bestAlternativeSuggestions = suggestions.filter(
+				suggestion => suggestion.isBestAlternative
+			);
+			featuredSuggestionElement = (
+				<FeaturedDomainSuggestions
+					cart={ this.props.cart }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					isSignupStep={ this.props.isSignupStep }
+					key="featured"
+					onButtonClick={ this.props.onClickResult }
+					primarySuggestion={ first( bestMatchSuggestions ) }
+					query={ this.props.lastDomainSearched }
+					secondarySuggestion={ first( bestAlternativeSuggestions ) }
+					selectedSite={ this.props.selectedSite }
+				/>
+			);
 
 			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
 				if ( suggestion.is_placeholder ) {
@@ -247,9 +243,7 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 		} else {
-			featuredSuggestionElement = this.props.isSignupStep && (
-				<FeaturedDomainSuggestions showPlaceholders />
-			);
+			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
 			suggestionElements = this.renderPlaceholders();
 		}
 

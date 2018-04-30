@@ -74,6 +74,7 @@ export class FeaturedDomainSuggestions extends Component {
 
 	getClassNames() {
 		return classNames( 'featured-domain-suggestions', this.getTextSizeClass(), {
+			'featured-domain-suggestions__is-domain-management': ! this.props.isSignupStep,
 			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
 		} );
 	}

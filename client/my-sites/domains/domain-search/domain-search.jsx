@@ -162,7 +162,7 @@ class DomainSearch extends Component {
 		}
 
 		return (
-			<Main className={ classes }>
+			<Main className={ classes } wideLayout>
 				<QueryProductsList />
 				<SidebarNavigation />
 				{ content }
