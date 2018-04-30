@@ -122,24 +122,14 @@ export function getProductCategories( state, query = {}, siteId = getSelectedSit
 }
 
 /**
- * Gets all product categories from API data for a query, ignoring pages.
+ * Gets all product categories from API data, as currently loaded in the state (might not
+ * be all the products on the remote site, if they haven't all been requested).
  *
  * @param {Object} state Global state tree
- * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
  * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @return {Array} List of product categories
  */
-export function getAllProductCategories( state, query = {}, siteId = getSelectedSiteId( state ) ) {
-	const loading = areAnyProductCategoriesLoading( state, query, siteId );
-	if ( loading ) {
-		return [];
-	}
-
-	const lastPage = getProductCategoriesLastPage( state, query, siteId );
-	if ( null === lastPage ) {
-		return [];
-	}
-
+export function getAllProductCategories( state, siteId = getSelectedSiteId( state ) ) {
 	const categoryState = getRawCategoryState( state, siteId );
 	const items = values( categoryState.items ) || [];
 	return items.map( cat => getProductCategory( state, cat.id, siteId ) );

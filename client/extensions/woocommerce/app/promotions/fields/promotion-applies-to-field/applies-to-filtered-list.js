@@ -289,7 +289,7 @@ function mapStateToProps( state ) {
 	const siteId = site ? site.ID : null;
 	const productsLoading = areProductsLoading( state, siteId );
 	const products = productsLoading ? null : getAllProducts( state, siteId );
-	const productCategories = getAllProductCategories( state, {}, siteId );
+	const productCategories = getAllProductCategories( state, siteId );
 
 	// TODO: This is temporary, as it's not used anymore.
 	const nonVariableProducts =

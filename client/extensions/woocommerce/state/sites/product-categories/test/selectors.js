@@ -123,16 +123,19 @@ describe( 'selectors', () => {
 
 	describe( '#getAllProductCategories()', () => {
 		test( 'should return an empty array if data is not available.', () => {
-			expect( getAllProductCategories( state, {}, 'site.one' ) ).to.eql( [] );
+			expect( getAllProductCategories( state, 'site.one' ) ).to.eql( [] );
 		} );
 
-		test( 'should return an empty array if data is still loading.', () => {
-			expect( getAllProductCategories( state, {}, 'site.two' ) ).to.eql( [] );
+		test( 'should return the existing categories as an array if more data is loading.', () => {
+			expect( getAllProductCategories( state, 'site.two' ) ).to.eql( [
+				{ id: 1, label: 'cat1', name: 'cat1', slug: 'cat-1', parent: 0 },
+				{ id: 2, label: 'cat2', name: 'cat2', slug: 'cat-2', parent: 0 },
+			] );
 		} );
 
 		test( 'should get all product categories from specified site', () => {
-			expect( getAllProductCategories( state, {}, 'site.three' ) ).to.have.lengthOf( 6 );
-			expect( getAllProductCategories( state, {}, 'site.three' ) ).to.eql( [
+			expect( getAllProductCategories( state, 'site.three' ) ).to.have.lengthOf( 6 );
+			expect( getAllProductCategories( state, 'site.three' ) ).to.eql( [
 				{ id: 1, label: 'cat1', name: 'cat1', slug: 'cat-1', parent: 0 },
 				{ id: 2, label: 'cat2', name: 'cat2', slug: 'cat-2', parent: 0 },
 				{ id: 3, label: 'cat2 - cat3', name: 'cat3', slug: 'cat-3', parent: 2 },
