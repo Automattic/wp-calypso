@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, translate, localize } from 'i18n-calypso';
-import { has, omit } from 'lodash';
+import { has, omit, defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -272,9 +272,9 @@ const mapDispatchToProps = dispatch => {
 	return {
 		...boundActionCreators,
 		mapAuthorFor: importerId => ( source, target ) =>
-			setTimeout( () => {
+			defer( () => {
 				dispatch( mapAuthor( importerId, source, target ) );
-			}, 0 ),
+			} ),
 	};
 };
 
