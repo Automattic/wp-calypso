@@ -18,7 +18,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
 		return (
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/custom-domain.svg" /> }
 				title={ translate( 'Select your custom domain' ) }
 				description={ translate(
 					'Your plan includes a free custom domain, which gives your site a more professional, branded feel.'

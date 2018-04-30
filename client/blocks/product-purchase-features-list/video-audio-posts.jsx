@@ -33,7 +33,7 @@ export const VideoAudioPosts = ( { selectedSite, plan, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/upgrades/media-post.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-video-hosting.svg" /> }
 				title={ translate( 'Video and audio posts' ) }
 				description={ getDescription( plan, translate ) }
 				buttonText={ translate( 'Start a new post' ) }

@@ -16,7 +16,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon="plugins"
+				icon={ <img alt="" src="/calypso/images/illustrations/install-button.svg" /> }
 				title={ translate( 'Add a Plugin' ) }
 				description={ translate(
 					'Search and add plugins right from your dashboard, or upload a plugin ' +
