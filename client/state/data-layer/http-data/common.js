@@ -73,7 +73,3 @@ export const requestHttpData = ( id, action, { fromApi, freshness } ) => {
 
 	return request;
 };
-
-window.httpData = httpData;
-window.getHttpData = getHttpData;
-window.requestHttpData = requestHttpData;
