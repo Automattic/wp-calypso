@@ -11,12 +11,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isProductsListFetching as isFetching } from 'state/products-list/selectors';
+import { shouldRequestProductsListFromServer } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 
 class QueryProductsList extends Component {
+	static propTypes = {
+		shouldRequest: PropTypes.bool,
+		requestProductsList: PropTypes.func,
+	};
+
 	componentWillMount() {
-		if ( ! this.props.isFetching ) {
+		if ( this.props.shouldRequest ) {
 			this.props.requestProductsList();
 		}
 	}
@@ -26,11 +31,9 @@ class QueryProductsList extends Component {
 	}
 }
 
-QueryProductsList.propTypes = {
-	isFetching: PropTypes.bool,
-	requestProductsList: PropTypes.func,
-};
-
-export default connect( state => ( { isFetching: isFetching( state ) } ), { requestProductsList } )(
-	QueryProductsList
-);
+export default connect(
+	state => ( {
+		shouldRequest: shouldRequestProductsListFromServer( state ),
+	} ),
+	{ requestProductsList }
+)( QueryProductsList );

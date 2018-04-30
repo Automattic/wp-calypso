@@ -25,7 +25,11 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'items',
+			'hasLoadedFromServer',
+			'isFetching',
+		] );
 	} );
 
 	describe( '#items()', () => {
@@ -134,18 +138,6 @@ describe( 'reducer', () => {
 
 		test( 'should be false when a request fails', () => {
 			const state = isFetching( true, { type: PRODUCTS_LIST_REQUEST_FAILURE } );
-			expect( state ).to.eql( false );
-		} );
-
-		test( 'should never persist state', () => {
-			const state = isFetching( true, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should never load persisted state', () => {
-			const state = isFetching( true, { type: DESERIALIZE } );
-
 			expect( state ).to.eql( false );
 		} );
 	} );

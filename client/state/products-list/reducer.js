@@ -21,14 +21,30 @@ export const items = createReducer(
 	productsListSchema
 );
 
+// Has the products list been loaded from server yet? As opposed to using the potentially
+// stale data from local storage.
+export const hasLoadedFromServer = ( state = false, action ) => {
+	switch ( action.type ) {
+		case PRODUCTS_LIST_RECEIVE:
+			return true;
+	}
+	return state;
+};
+
 // Tracks product list fetching state
-export const isFetching = createReducer( false, {
-	[ PRODUCTS_LIST_REQUEST ]: () => true,
-	[ PRODUCTS_LIST_RECEIVE ]: () => false,
-	[ PRODUCTS_LIST_REQUEST_FAILURE ]: () => false,
-} );
+export const isFetching = ( state = false, action ) => {
+	switch ( action.type ) {
+		case PRODUCTS_LIST_REQUEST:
+			return true;
+		case PRODUCTS_LIST_RECEIVE:
+		case PRODUCTS_LIST_REQUEST_FAILURE:
+			return false;
+	}
+	return state;
+};
 
 export default combineReducers( {
+	hasLoadedFromServer,
 	isFetching,
 	items,
 } );

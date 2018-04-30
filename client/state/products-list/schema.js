@@ -20,7 +20,7 @@ export const productsListSchema = {
 				product_name: { type: 'string' },
 				product_slug: { type: 'string' },
 				description: { type: 'string' },
-				cost: { type: [ 'integer', 'null' ] },
+				cost: { type: [ 'string', 'number', 'null' ] },
 				prices: {
 					type: 'object',
 				},

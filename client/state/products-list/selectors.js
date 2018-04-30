@@ -15,8 +15,16 @@ import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import { getPlan, applyTestFiltersToPlansList, getTermDuration } from 'lib/plans';
 
+export function hasProductsListLoadedFromServer( state ) {
+	return state.productsList.hasLoadedFromServer;
+}
+
 export function isProductsListFetching( state ) {
 	return state.productsList.isFetching;
+}
+
+export function shouldRequestProductsListFromServer( state ) {
+	return ! hasProductsListLoadedFromServer( state ) && ! isProductsListFetching( state );
 }
 
 export function getProductsList( state ) {
