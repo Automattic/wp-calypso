@@ -259,9 +259,9 @@ class ProductForm extends Component {
 							<ReduxFormFieldset
 								name="stripe_account"
 								explanation={ translate(
-									'This is the Stripe Account where the funds will end up.'
+									'This is the Stripe account where the funds will end up.'
 								) }
-								label={ translate( 'Stripe Account' ) }
+								label={ translate( 'Stripe account' ) }
 								component={ FormSelect }
 								children={ Object.values( this.props.membershipsConnectedAccounts )
 									.map( acct => (
@@ -273,7 +273,7 @@ class ProductForm extends Component {
 										</option>
 									) )
 									.concat( [
-										<option value="create">{ translate( 'Create Stripe Account for me' ) }</option>,
+										<option value="create">{ translate( 'Create Stripe account for me' ) }</option>,
 										<option value="authorize">
 											{ translate( 'I already have a Stripe account' ) }
 										</option>,
@@ -281,7 +281,7 @@ class ProductForm extends Component {
 							/>
 							{ this.props.isChoosingToAuthorizeStripeAccount && (
 								<Button onClick={ this.props.authorizeStripeAccount }>
-									{ translate( 'Authorize Stripe Account' ) }
+									{ translate( 'Authorize Stripe account' ) }
 								</Button>
 							) }
 							{ this.props.isChoosingToCreateStripeAccount && (
