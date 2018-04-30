@@ -41,7 +41,6 @@
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
-		margin: 8px 0 0 0;
 	}
 
 	.notice.is-compact {
@@ -104,6 +103,10 @@
 			color: transparent;
 		}
 	}
+}
+
+.domain-registration-suggestion__title {
+	align-self: center;
 }
 
 .button.domain-suggestion__action {
