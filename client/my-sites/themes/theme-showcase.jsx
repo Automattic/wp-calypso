@@ -27,6 +27,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getThemeFilterTerms from 'state/selectors/get-theme-filter-terms';
 import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
 import getThemeShowcaseDescription from 'state/selectors/get-theme-showcase-description';
@@ -119,7 +120,7 @@ class ThemeShowcase extends React.Component {
 	 * @returns {String} Theme showcase url
 	 */
 	constructUrl = sections => {
-		const { vertical, tier, filter, siteSlug, searchString, langSlug } = {
+		const { vertical, tier, filter, siteSlug, searchString, localeSlug } = {
 			...this.props,
 			...sections,
 		};
@@ -127,7 +128,8 @@ class ThemeShowcase extends React.Component {
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
-		const lang = langSlug ? `/${ langSlug }` : '';
+		const lang =
+			localeSlug && localeSlug !== config( 'i18n_default_locale_slug' ) ? `/${ localeSlug }` : '';
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
@@ -296,7 +298,7 @@ class ThemeShowcase extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical, langSlug } ) => ( {
+const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	currentThemeId: getActiveTheme( state, siteId ),
 	isLoggedIn: !! getCurrentUserId( state ),
 	siteSlug: getSiteSlug( state, siteId ),
@@ -305,7 +307,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical, langSlug } ) 
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
-	langSlug,
+	localeSlug: getCurrentLocaleSlug( state ),
 } );
 
 const mapDispatchToProps = {
