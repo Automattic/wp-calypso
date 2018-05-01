@@ -108,4 +108,12 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
+	signupDomainStrikethruPrice: {
+		datestamp: '20180504',
+		variations: {
+			enabled: 50,
+			disabled: 50,
+		},
+		defaultVariation: 'disabled',
+	},
 };
