@@ -49,6 +49,7 @@ export class JetpackLogo extends PureComponent {
 
 		if ( full === true ) {
 			return (
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				<svg height={ size } className="jetpack-logo" viewBox="0 0 118 32">
 					<title>Jetpack</title>
 					{ logoPathSize32 }
@@ -65,6 +66,7 @@ export class JetpackLogo extends PureComponent {
 		}
 
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<svg className="jetpack-logo" height={ size } width={ size } viewBox="0 0 32 32">
 				{ logoPathSize32 }
 			</svg>
@@ -127,6 +129,7 @@ export class JetpackLogo extends PureComponent {
 			return null;
 		}
 
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		return <div className="jetpack-logo">{ image }</div>;
 	}
 
