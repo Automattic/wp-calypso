@@ -222,6 +222,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackCustomizeClick }
 				icon="customize"
 				preloadSectionName="customize"
+				forceInternalLink
 			>
 				<SidebarButton
 					onClick={ this.trackSidebarButtonClick( 'themes' ) }
