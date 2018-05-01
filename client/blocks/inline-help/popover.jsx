@@ -64,6 +64,7 @@ class InlineHelpPopover extends Component {
 		this.setSecondaryViewKey( '' );
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
 		this.props.selectResult( -1 );
+		this.props.resetContactForm();
 		this.setState( { showSecondaryView: false } );
 	};
 
@@ -86,16 +87,6 @@ class InlineHelpPopover extends Component {
 				}
 			</div>
 		);
-	};
-
-	toggleContactForm = () => {
-		if ( this.state.showContactForm ) {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_hide' );
-			this.props.resetContactForm();
-		} else {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_show' );
-		}
-		this.setState( { showContactForm: ! this.state.showContactForm } );
 	};
 
 	render() {
