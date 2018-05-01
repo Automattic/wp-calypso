@@ -81,5 +81,5 @@ export function getInlineHelpCurrentlySelectedLink( state ) {
  * @return {Boolean}        Is the contact form UI showing the questions
  */
 export function isShowingQandAInlineHelpContactForm( state ) {
-	return get( state, 'inlineHelpSearchResults.contactForm.isShowingQandASuggestions' );
+	return get( state, 'inlineHelpSearchResults.contactForm.isShowingQandASuggestions', false );
 }

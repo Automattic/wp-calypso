@@ -4,6 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ class InlineHelpCompactResult extends Component {
 	};
 
 	onClick = event => {
-		this.props.onClick && this.props.onClick( event, this.props.helpLink );
+		invoke( this.props, 'onClick', event, this.props.helpLink );
 	};
 
 	render() {

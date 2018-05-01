@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { debounce, isEqual, find } from 'lodash';
+import { debounce, isEqual, find, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -88,6 +88,7 @@ export class HelpContactForm extends React.PureComponent {
 			requestChange: () => {},
 		},
 		showingQandAStep: false,
+		showQandAOnInlineHelpContactForm: () => {},
 	};
 
 	/**
@@ -321,7 +322,7 @@ export class HelpContactForm extends React.PureComponent {
 			translate,
 			showingQandAStep,
 		} = this.props;
-		const hasQASuggestions = this.state.qanda.length > 0;
+		const hasQASuggestions = ! isEmpty( this.state.qanda );
 
 		const howCanWeHelpOptions = [
 			{
@@ -439,7 +440,7 @@ export class HelpContactForm extends React.PureComponent {
 						</FormButton>
 					) }
 
-				{ ( showQASuggestions || ( ! showQASuggestions && ! hasQASuggestions ) ) && (
+				{ ( showQASuggestions || ! hasQASuggestions ) && (
 					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
 						{ buttonLabel }
 					</FormButton>

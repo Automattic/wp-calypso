@@ -86,16 +86,14 @@ export const contactForm = createReducer(
 		isShowingQandASuggestions: false,
 	},
 	{
-		[ INLINE_HELP_CONTACT_FORM_RESET ]: state => {
-			return Object.assign( {}, state, {
-				isShowingQandASuggestions: false,
-			} );
-		},
-		[ INLINE_HELP_CONTACT_FORM_SHOW_QANDA ]: state => {
-			return Object.assign( {}, state, {
-				isShowingQandASuggestions: true,
-			} );
-		},
+		[ INLINE_HELP_CONTACT_FORM_RESET ]: state => ( {
+			...state,
+			isShowingQandASuggestions: false,
+		} ),
+		[ INLINE_HELP_CONTACT_FORM_SHOW_QANDA ]: state => ( {
+			...state,
+			isShowingQandASuggestions: true,
+		} ),
 	}
 );
 
