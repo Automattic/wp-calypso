@@ -33,7 +33,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
 		return (
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/illustrations/custom-domain.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/custom-domain.svg" /> }
 				title={ translate( 'Custom Domain' ) }
 				description={ translate(
 					'Your plan includes the custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.',
