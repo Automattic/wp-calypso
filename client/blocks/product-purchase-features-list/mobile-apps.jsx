@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
+import { addQueryArgs } from 'lib/route';
 
 export default localize( ( { translate } ) => {
 	return (
@@ -23,9 +24,14 @@ export default localize( ( { translate } ) => {
 						'track stats, moderate comments, and more.'
 				) }
 				buttonText={ translate( 'Get the apps' ) }
-				href={
-					'https://apps.wordpress.com/get?utm_source=calypsomyplan&utm_medium=cta&utm_campaign=calypsogetappscard'
-				}
+				href={ addQueryArgs(
+					{
+						utm_source: 'calypsomyplan',
+						utm_medium: 'cta',
+						utm_campaign: 'calypsogetappscard',
+					},
+					'https://apps.wordpress.com/get?'
+				) }
 				target="_blank"
 			/>
 		</div>
