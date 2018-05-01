@@ -68,7 +68,6 @@ export function combine( postKey1, postKey2 ) {
 	return combined;
 }
 
-//@TODO: operate on things with dates...
 export const combineCards = postKeys =>
 	postKeys.reduce( ( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );

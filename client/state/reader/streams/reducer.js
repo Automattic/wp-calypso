@@ -71,13 +71,13 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
 			streamItems = action.payload.streamItems;
-			moments = streamItems.map( item => moment( item.date ) );
-			maxDate = moment.max( moments );
+			maxDate = moment( streamItems[ 0 ].date );
 
-			if ( ! state.lastUpdated || state.lastUpdated < maxDate ) {
-				return { ...state, lastUpdated: maxDate };
+			if ( state.lastUpdated && maxDate < state.lastUpdated ) {
+				return state;
 			}
-			return state;
+
+			return { ...state, lastUpdated: maxDate };
 		case READER_STREAMS_UPDATES_RECEIVE:
 			streamItems = action.payload.streamItems;
 			// only retain posts that are newer than ones we already have
@@ -91,10 +91,14 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			const newItems = uniqWith( streamItems, keysAreEqual );
 			moments = streamItems.map( item => moment( item.date ) );
 			maxDate = moment.max( moments );
+			const minDate = moment.min( moments );
 
 			// there might be a gap if we didn't have to filter something out
-			if ( streamItems.length === action.payload.streamItems.length ) {
-				const minDate = moment.min( moments );
+			if (
+				state.lastUpdated &&
+				streamItems.length === action.payload.streamItems.length &&
+				! minDate.isSame( state.lastUpdated )
+			) {
 				newItems.push( {
 					isGap: true,
 					from: state.lastUpdated,
