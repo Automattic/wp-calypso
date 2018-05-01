@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSites } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 

@@ -9,7 +9,7 @@ import { partition, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSite } from 'state/sites/selectors';
 import { getPrimarySiteId, getSitesItems } from 'state/selectors';
 

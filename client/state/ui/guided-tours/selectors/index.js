@@ -29,7 +29,7 @@ import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import findOngoingTour from './find-ongoing-tour';
 
 const BLACKLISTED_SECTIONS = [

@@ -9,7 +9,7 @@ import { filter, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 
 /**
  * Selector for all of the reader tags a user is following. Sorted by tag slug

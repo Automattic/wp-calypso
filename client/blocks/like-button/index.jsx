@@ -12,8 +12,7 @@ import { connect } from 'react-redux';
  */
 import { like, unlike } from 'state/posts/likes/actions';
 import LikeButton from './button';
-import getPostLikeCount from 'state/selectors/get-post-like-count';
-import isLikedPost from 'state/selectors/is-liked-post';
+import { getPostLikeCount, isLikedPost } from 'state/selectors';
 import QueryPostLikes from 'components/data/query-post-likes';
 
 class LikeButtonContainer extends Component {

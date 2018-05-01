@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSectionName } from 'state/ui/selectors';
 
 /**

@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSitesItems } from 'state/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
 

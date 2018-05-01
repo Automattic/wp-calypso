@@ -9,7 +9,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSitesItems, isMainSiteOf } from 'state/selectors';
 
 /**

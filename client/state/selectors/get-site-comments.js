@@ -9,7 +9,7 @@ import { filter, get, orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 
 function filterCommentsByStatus( comments, status ) {
 	return 'all' === status

@@ -31,7 +31,7 @@ import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
@@ -48,6 +48,29 @@ import { isSiteUpgradeable, getSiteOptions, getSitesItems } from 'state/selector
 export const getRawSite = ( state, siteId ) => {
 	return getSitesItems( state )[ siteId ] || null;
 };
+
+/**
+ * Returns the slug for a site, or null if the site is unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?String}        Site slug
+ */
+export const getSiteSlug = createSelector(
+	( state, siteId ) => {
+		const site = getRawSite( state, siteId );
+		if ( ! site ) {
+			return null;
+		}
+
+		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+		}
+
+		return urlToSlug( site.URL );
+	},
+	[ getSitesItems ]
+);
 
 /**
  * Returns a site object by its slug.
@@ -225,29 +248,6 @@ export function isJetpackMinimumVersion( state, siteId, version ) {
 
 	return versionCompare( siteVersion, version, '>=' );
 }
-
-/**
- * Returns the slug for a site, or null if the site is unknown.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?String}        Site slug
- */
-export const getSiteSlug = createSelector(
-	( state, siteId ) => {
-		const site = getRawSite( state, siteId );
-		if ( ! site ) {
-			return null;
-		}
-
-		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-		}
-
-		return urlToSlug( site.URL );
-	},
-	[ getSitesItems ]
-);
 
 /**
  * Returns the domain for a site, or null if the site is unknown.

@@ -9,7 +9,7 @@ import { get, range } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
 
 /**

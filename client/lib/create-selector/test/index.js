@@ -9,7 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import createSelector from '../';
+import { default as createSelector } from '../';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'index', () => {

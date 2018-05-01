@@ -7,6 +7,8 @@ import {
 	isGoogleMyBusinessLocationConnected,
 	isSiteGoogleMyBusinessEligible,
 } from 'state/selectors';
+import { default as createSelector } from 'lib/create-selector';
+import { getSiteOption, getSitePlanSlug } from 'state/sites/selectors';
 import {
 	isRequestingSiteSettings,
 	getSiteSettings,
@@ -30,9 +32,9 @@ export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 		return false;
 	}
 
-	if ( isGoogleMyBusinessLocationConnected( state, siteId ) ) {
-		return false;
-	}
+	const createdAt = getSiteOption( state, siteId, 'created_at' );
+	const isWeekPassedSinceSiteCreation =
+		Date.parse( createdAt ) + WEEK_IN_SECONDS * 1000 < Date.now();
 
 	return isSiteGoogleMyBusinessEligible( state, siteId );
 }

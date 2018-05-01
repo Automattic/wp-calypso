@@ -9,7 +9,7 @@ import { sortBy } from 'lodash';
  * Internal dependencies
  */
 import { getSite } from 'state/sites/selectors';
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSitesItems } from 'state/selectors';
 
 /**

@@ -9,7 +9,7 @@ import { get, find } from 'lodash';
 /**
  * Internal Dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { calculateMonthlyPriceForPlan } from 'lib/plans';
 
 /**

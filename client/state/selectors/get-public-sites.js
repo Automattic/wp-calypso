@@ -5,7 +5,7 @@
  */
 import { getSitesItems } from 'state/selectors';
 import { getSite } from 'state/sites/selectors';
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 
 /**
  * Get all public sites

@@ -9,7 +9,7 @@ import { compact, map, uniq } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getUpcomingBillingTransactions } from 'state/selectors';
 

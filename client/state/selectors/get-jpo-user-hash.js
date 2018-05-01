@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { default as createSelector } from 'lib/create-selector';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import { getUnconnectedSite } from 'state/selectors';
 
