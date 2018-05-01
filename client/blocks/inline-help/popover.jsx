@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
  */
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { selectResult } from 'state/inline-help/actions';
+import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -23,7 +23,6 @@ import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
 import HelpContact from 'me/help/help-contact';
 import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
-import { resetInlineHelpContactForm } from 'state/inline-help/actions';
 import { getHelpSelectedSite } from 'state/help/selectors';
 
 class InlineHelpPopover extends Component {
