@@ -11,6 +11,7 @@ import React from 'react';
  */
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
+import ExternalLink from 'components/external-link';
 import Main from 'components/main';
 
 export default class Typography extends React.PureComponent {
@@ -23,6 +24,13 @@ export default class Typography extends React.PureComponent {
 
 				<div className="design__typography-content devdocs__doc-content">
 					<h1>Typography</h1>
+					<p>
+						These guidlines are based on the{' '}
+						<ExternalLink icon={ true } href="https://dotcombrand.wordpress.com/typography/">
+							WordPress.com Brand Guide
+						</ExternalLink>.
+					</p>
+
 					<h2>Interface Typography</h2>
 
 					<p>
