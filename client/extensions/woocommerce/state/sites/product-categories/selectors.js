@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, isArray, omit, some, values } from 'lodash';
+import { get, isArray, omit, some, range, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -123,6 +123,38 @@ export function getAllProductCategories( state, siteId = getSelectedSiteId( stat
 }
 
 /**
+ * Gets all product categories from API data, as currently loaded in the state (might not
+ * be all the products on the remote site, if they haven't all been requested).
+ *
+ * @param {Object} state Global state tree
+ * @param {String} search Search term to filter responses
+ * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
+ * @return {Array} List of product categories for a search query
+ */
+export function getAllProductCategoriesBySearch(
+	state,
+	search,
+	siteId = getSelectedSiteId( state )
+) {
+	const lastPage = getProductCategoriesLastPage( state, { search }, siteId );
+	if ( null === lastPage ) {
+		return [];
+	}
+
+	const result = [];
+	range( 1, lastPage + 1 ).some( page => {
+		const query = {
+			search,
+			page,
+		};
+		const categories = getProductCategories( state, query, siteId );
+		result.push( ...categories );
+	} );
+
+	return result;
+}
+
+/**
  * @param {Object} state Whole Redux state tree
  * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
@@ -133,7 +165,9 @@ export function getProductCategoriesLastPage(
 	query = {},
 	siteId = getSelectedSiteId( state )
 ) {
-	const serializedQuery = getSerializedProductCategoriesQuery( omit( query, 'page' ) );
+	const serializedQuery = getSerializedProductCategoriesQuery(
+		omit( query, [ 'page', 'offset' ] )
+	);
 	const categoryState = getRawCategoryState( state, siteId );
 	return ( categoryState.totalPages && categoryState.totalPages[ serializedQuery ] ) || null;
 }
@@ -149,7 +183,9 @@ export function getTotalProductCategories(
 	query = {},
 	siteId = getSelectedSiteId( state )
 ) {
-	const serializedQuery = getSerializedProductCategoriesQuery( omit( query, 'page' ) );
+	const serializedQuery = getSerializedProductCategoriesQuery(
+		omit( query, [ 'page', 'offset' ] )
+	);
 	const categoryState = getRawCategoryState( state, siteId );
 	return ( categoryState.total && categoryState.total[ serializedQuery ] ) || 0;
 }
