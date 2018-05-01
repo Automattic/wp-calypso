@@ -187,8 +187,8 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	trackThemesClick = () => {
-		this.trackMenuItemClick( 'themes' );
+	trackCustomizeClick = () => {
+		this.trackMenuItemClick( 'customize' );
 		this.onNavigate();
 	};
 
@@ -219,12 +219,12 @@ export class MySitesSidebar extends Component {
 				tipTarget="themes"
 				selected={ itemLinkMatches( '/customize', path ) }
 				link={ this.props.customizeUrl }
-				//onNavigate={ this.trackThemesClick }
+				onNavigate={ this.trackCustomizeClick }
 				icon="customize"
 				preloadSectionName="customize"
 			>
 				<SidebarButton
-					//onClick={ this.trackSidebarButtonClick( 'customize' ) }
+					onClick={ this.trackSidebarButtonClick( 'themes' ) }
 					href={ themesLink }
 					preloadSectionName="themes"
 					forceTargetInternal
