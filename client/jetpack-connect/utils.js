@@ -7,6 +7,7 @@ import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import PropTypes from 'prop-types';
 import { authorizeQueryDataSchema } from './schema';
 import { head, includes, isEmpty, split } from 'lodash';
+import urls from 'url';
 
 /**
  * Internal dependencies
@@ -146,4 +147,13 @@ export function getPartnerSlugFromId( partnerId ) {
 		default:
 			return null;
 	}
+}
+
+export function getPartnerSlugFromCurrentUrl() {
+	const parsed = urls.parse( window.location.href, true );
+	if ( ! parsed || ! parsed.query || ! parsed.query.partner_id ) {
+		return null;
+	}
+
+	return getPartnerSlugFromId( parseInt( parsed.query.partner_id, 10 ) );
 }
