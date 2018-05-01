@@ -216,7 +216,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ translate( 'Customize' ) }
-				tipTarget="customize"
+				tipTarget="themes"
 				selected={ itemLinkMatches( '/customize', path ) }
 				link={ this.props.customizeUrl }
 				//onNavigate={ this.trackThemesClick }
