@@ -123,7 +123,7 @@ export class HappinessSupport extends Component {
 	renderIllustration() {
 		return (
 			<div className="happiness-support__illustration">
-				<img src="/calypso/images/illustrations/happiness-support.svg" />
+				<img alt="" src="/calypso/images/illustrations/jetpack-support.svg" />
 			</div>
 		);
 	}

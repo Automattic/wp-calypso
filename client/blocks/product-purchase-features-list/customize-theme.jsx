@@ -29,7 +29,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/upgrades/customize-theme.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-dashboard.svg" /> }
 				title={ translate( 'Advanced customization' ) }
 				description={ translate(
 					"Change your site's appearance in a few clicks, with an expanded " +
