@@ -44,15 +44,6 @@ const config = {
 		],
 		'@babel/plugin-proposal-export-default-from',
 		'@babel/transform-runtime',
-		[
-			'transform-imports',
-			{
-				'state/selectors': {
-					transform: 'state/selectors/${member}',
-					kebabCase: true,
-				},
-			},
-		],
 		isCalypsoClient && './inline-imports.js', // inline-imports can only occur after transform-imports
 	] ),
 	env: {
