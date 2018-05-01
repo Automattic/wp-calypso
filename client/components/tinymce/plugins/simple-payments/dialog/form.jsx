@@ -256,65 +256,66 @@ class ProductForm extends Component {
 							/>
 						</div>
 					) }
-					{ this.props.isRecurringSubscription && (
-						<div>
-							<QueryMembershipsConnectedAccounts />
-							<ReduxFormFieldset
-								name="stripe_account"
-								explanation={ translate(
-									'This is the Stripe account where the funds will end up.'
-								) }
-								label={ translate( 'Stripe account' ) }
-								component={ FormSelect }
-								children={ Object.values( this.props.membershipsConnectedAccounts )
-									.map( acct => (
-										<option
-											value={ acct.connected_destination_account_id }
-											key={ acct.connected_destination_account_id }
-										>
-											{ acct.payment_partner_account_id }
-										</option>
-									) )
-									.concat( [
-										<option value="create" key="create">
-											{ translate( 'Create Stripe account for me' ) }
-										</option>,
-										<option value="authorize" key="authorize">
-											{ translate( 'I already have a Stripe account' ) }
-										</option>,
-									] ) }
-							/>
-							{ this.props.isChoosingToAuthorizeStripeAccount && (
-								<Button onClick={ this.props.authorizeStripeAccount }>
-									{ translate( 'Authorize Stripe account' ) }
-								</Button>
-							) }
-							{ this.props.isChoosingToCreateStripeAccount && (
-								<div>
-									<ReduxFormFieldset
-										name="email"
-										label={ translate( 'Email' ) }
-										explanation={ translate(
-											'New Stripe account will be tied to this email address.'
-										) }
-										component={ FormTextInput }
-									/>
-								</div>
-							) }
-							<ReduxFormFieldset
-								name="renewal_schedule"
-								explanation={ translate( 'After what time should the subscription renew?' ) }
-								label={ translate( 'Renewal Schedule' ) }
-								component={ FormSelect }
-							>
-								<option value="1 week">{ translate( '1 Week' ) }</option>
-								<option value="1 month">{ translate( '1 Month' ) }</option>
-								<option value="1 year">{ translate( '1 Year' ) }</option>
-							</ReduxFormFieldset>
-						</div>
-					) }
+					{ this.props.isRecurringSubscription && this.renderRecurringFields() }
 				</div>
 			</form>
+		);
+	}
+
+	renderRecurringFields() {
+		const { translate } = this.props;
+		return (
+			<div>
+				<QueryMembershipsConnectedAccounts />
+				<ReduxFormFieldset
+					name="stripe_account"
+					explanation={ translate( 'This is the Stripe account where the funds will end up.' ) }
+					label={ translate( 'Stripe account' ) }
+					component={ FormSelect }
+					children={ Object.values( this.props.membershipsConnectedAccounts )
+						.map( acct => (
+							<option
+								value={ acct.connected_destination_account_id }
+								key={ acct.connected_destination_account_id }
+							>
+								{ acct.payment_partner_account_id }
+							</option>
+						) )
+						.concat( [
+							<option value="create" key="create">
+								{ translate( 'Create Stripe account for me' ) }
+							</option>,
+							<option value="authorize" key="authorize">
+								{ translate( 'I already have a Stripe account' ) }
+							</option>,
+						] ) }
+				/>
+				{ this.props.isChoosingToAuthorizeStripeAccount && (
+					<Button onClick={ this.props.authorizeStripeAccount }>
+						{ translate( 'Authorize Stripe account' ) }
+					</Button>
+				) }
+				{ this.props.isChoosingToCreateStripeAccount && (
+					<div>
+						<ReduxFormFieldset
+							name="email"
+							label={ translate( 'Email' ) }
+							explanation={ translate( 'New Stripe account will be tied to this email address.' ) }
+							component={ FormTextInput }
+						/>
+					</div>
+				) }
+				<ReduxFormFieldset
+					name="renewal_schedule"
+					explanation={ translate( 'After what time should the subscription renew?' ) }
+					label={ translate( 'Renewal Schedule' ) }
+					component={ FormSelect }
+				>
+					<option value="1 week">{ translate( '1 Week' ) }</option>
+					<option value="1 month">{ translate( '1 Month' ) }</option>
+					<option value="1 year">{ translate( '1 Year' ) }</option>
+				</ReduxFormFieldset>
+			</div>
 		);
 	}
 }
@@ -329,7 +330,9 @@ export default compose(
 	connect(
 		state => {
 			return {
-				isRecurringSubscription: isEditedSimplePaymentsRecurring( state, REDUX_FORM_NAME ),
+				isRecurringSubscription:
+					config.isEnabled( 'memberships' ) &&
+					isEditedSimplePaymentsRecurring( state, REDUX_FORM_NAME ),
 				isChoosingToAuthorizeStripeAccount:
 					getEditedSimplePaymentsStripeAccount( state, REDUX_FORM_NAME ) === 'authorize',
 				isChoosingToCreateStripeAccount:

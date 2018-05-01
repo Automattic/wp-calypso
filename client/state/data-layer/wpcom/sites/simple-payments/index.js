@@ -30,6 +30,7 @@ import {
 	receiveProductsList,
 	receiveUpdateProduct,
 } from 'state/simple-payments/product-list/actions';
+import config from 'config';
 
 /**
  * Convert custom post metadata array to product attributes
@@ -86,7 +87,7 @@ export function customPostToProduct( customPost ) {
  * @return {Array} validated and converted product list
  */
 export function customPostsToProducts( responseData ) {
-	if ( ! responseData.posts ) {
+	if ( config.isEnabled( 'memberships' ) && ! responseData.posts ) {
 		// This is to disregard the memberships response.
 		throw new TransformerError(
 			'This is from Memberships response. We have to disregard it since' +
