@@ -33,6 +33,7 @@ export function createNotice( status, text, options = {} ) {
 		onClick: options.onClick,
 		showDismiss,
 		status: status,
+		spokenMessage: '',
 		text: text,
 	};
 	if ( showDismiss && typeof options.onDismissClick === 'function' ) {

@@ -140,7 +140,7 @@
 }
 
 // "X" for dismissing a notice
-.notice__dismiss {
+.button.notice__dismiss {
 	flex-shrink: 0;
 	padding: 12px;
 	cursor: pointer;
@@ -149,6 +149,7 @@
 	.gridicon {
 		width: 18px;
 		height: 18px;
+		top: -2px;
 	}
 
 	@include breakpoint( ">480px" ) {
@@ -172,7 +173,7 @@
 }
 
 // specificity for general `a` elements within notice is too great
-a.notice__action {
+.button.notice__action {
 	cursor: pointer;
 	font-size: 12px;
 	font-weight: 400;
@@ -202,7 +203,8 @@ a.notice__action {
 		color: $gray-lighten-10;
 	}
 
-	&:hover {
+	&:hover,
+	&:focus {
 		color: $white;
 	}
 
@@ -261,7 +263,7 @@ a.notice__action {
 		}
 	}
 
-	a.notice__action {
+	.button.notice__action {
 		background: transparent;
 		display: inline-block;
 		margin: 0;

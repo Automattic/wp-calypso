@@ -44,6 +44,21 @@ class GlobalNotices extends Component {
 		}
 	}
 
+	showA11yNotice = () => {
+		const message = (
+			<span>
+				This is a notice with an action in the text, for example
+				<a href="#">this is a link.</a>
+			</span>
+		);
+		const spokenMessage = 'This is screen-reader only notice text';
+		if ( this.state.useState ) {
+			this.props.createNotice( 'is-success', message, { spokenMessage } );
+		} else {
+			notices[ type ]( message, { spokenMessage } );
+		}
+	};
+
 	render() {
 		return (
 			<div>
@@ -57,6 +72,15 @@ class GlobalNotices extends Component {
 					<Button onClick={ this.showInfoNotice }>Show info notice</Button>
 					<Button onClick={ this.showWarningNotice }>Show warning notice</Button>
 				</ButtonGroup>
+
+				<hr aria-hidden />
+				<p>
+					In some cases, we want to use a different string for the visual text & what is announced
+					for screen reader users. For example, a notice with an action in the text might be
+					disruptive to the screen reader's focus flow. Instead, we can pass a simple string to
+					<code>spokenMessage</code>.
+				</p>
+				<Button onClick={ this.showA11yNotice }>Show accessible notice</Button>
 			</div>
 		);
 	}

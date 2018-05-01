@@ -112,6 +112,8 @@ const Layout = createReactClass( {
 				'is-active': this.props.isLoading,
 			} );
 
+		const screenReaderClass = 'screen-reader-text';
+
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
@@ -129,6 +131,7 @@ const Layout = createReactClass( {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && <JITM /> }
+					<div aria-live="assertive" id="screen-reader-notice" className={ screenReaderClass } />
 					<GlobalNotices
 						id="notices"
 						notices={ notices.list }

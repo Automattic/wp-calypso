@@ -1,15 +1,19 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+
+/**
+ * Internal dependencies
+ */
+import { NoticeAnnouncement } from './announcement';
+import Button from 'components/button';
 
 export class Notice extends Component {
 	static defaultProps = {
@@ -98,6 +102,7 @@ export class Notice extends Component {
 
 		return (
 			<div className={ classes }>
+				<NoticeAnnouncement { ...this.props } />
 				<span className="notice__icon-wrapper">
 					<Gridicon className="notice__icon" icon={ icon || this.getIcon() } size={ 24 } />
 				</span>
@@ -106,12 +111,14 @@ export class Notice extends Component {
 				</span>
 				{ text ? children : null }
 				{ showDismiss && (
-					<span tabIndex="0" className="notice__dismiss" onClick={ onDismissClick }>
+					<Button
+						borderless
+						className="notice__dismiss"
+						onClick={ onDismissClick }
+						aria-label={ translate( 'Dismiss' ) }
+					>
 						<Gridicon icon="cross" size={ 24 } />
-						<span className="notice__screen-reader-text screen-reader-text">
-							{ translate( 'Dismiss' ) }
-						</span>
-					</span>
+					</Button>
 				) }
 			</div>
 		);
