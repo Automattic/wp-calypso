@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find, noop } from 'lodash';
+import { find, isString, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,7 +62,7 @@ export class LanguagePicker extends PureComponent {
 			return lang[ valueKey ] == value; // eslint-disable-line eqeqeq
 		} );
 		//if an unsupported language is provided return it without a display name
-		if ( value && ! language ) {
+		if ( isString( value ) && ! language ) {
 			return {
 				langSlug: value,
 				name: translate( 'Unsupported language' ),
