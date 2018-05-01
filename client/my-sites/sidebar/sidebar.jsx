@@ -215,21 +215,21 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ translate( 'Themes' ) }
-				tipTarget="themes"
-				selected={ itemLinkMatches( '/themes', path ) }
-				link={ themesLink }
-				onNavigate={ this.trackThemesClick }
-				icon="themes"
-				preloadSectionName="themes"
+				label={ translate( 'Customize' ) }
+				tipTarget="customize"
+				selected={ itemLinkMatches( '/customize', path ) }
+				link={ this.props.customizeUrl }
+				//onNavigate={ this.trackThemesClick }
+				icon="customize"
+				preloadSectionName="customize"
 			>
 				<SidebarButton
-					onClick={ this.trackSidebarButtonClick( 'customize' ) }
-					href={ this.props.customizeUrl }
-					preloadSectionName="customize"
+					//onClick={ this.trackSidebarButtonClick( 'customize' ) }
+					href={ themesLink }
+					preloadSectionName="themes"
 					forceTargetInternal
 				>
-					{ this.props.translate( 'Customize' ) }
+					{ this.props.translate( 'Themes' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
