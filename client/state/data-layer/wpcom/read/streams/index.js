@@ -18,6 +18,7 @@ import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
 import { errorNotice } from 'state/notices/actions';
 import { receivePosts } from 'state/reader/posts/actions';
 import { keyForPost } from 'reader/post-key';
+import { recordTrack } from 'reader/stats';
 
 /**
  * Pull the suffix off of a stream key
@@ -41,6 +42,17 @@ function streamKeySuffix( streamKey ) {
 	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
 }
 
+const analyticsAlgoMap = new Map();
+function analyticsForStream( { streamKey, algorithm, posts } ) {
+	analyticsAlgoMap.set( streamKey, algorithm );
+
+	const eventName = 'calypso_traintracks_render';
+	posts.filter( post => !! post.railcar ).forEach( post => {
+		recordTrack( eventName, post.railcar );
+	} );
+}
+const getAlgorithmForStream = streamKey => analyticsAlgoMap.get( streamKey );
+
 const PER_FETCH = 6;
 const PER_POLL = 5;
 const PER_GAP = 40;
@@ -61,27 +73,6 @@ function getQueryStringForPoll( extraFields = [], extraQueryParams = {} ) {
 	};
 }
 
-// function trainTracksProxyForStream( stream, callback ) {
-// 	return function( err, response ) {
-// 		const eventName = 'calypso_traintracks_render';
-// 		if ( response && response.algorithm ) {
-// 			stream.algorithm = response.algorithm;
-// 		}
-// 		forEach( response && response.posts, post => {
-// 			if ( post.railcar ) {
-// 				if ( stream.isQuerySuggestion ) {
-// 					post.railcar.rec_result = 'suggestion';
-// 				}
-// 				analytics.tracks.recordEvent( eventName, post.railcar );
-// 			}
-// 		} );
-// 		callback( err, response );
-// 	};
-// }
-
-// Each object is a composed of:
-//   path: a function that given the action, returns The API path to hit
-//   query: a function that given the action, returns the querystring to use.
 const streamApis = {
 	following: {
 		path: () => '/read/following',
@@ -160,6 +151,7 @@ const streamApis = {
 	},
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
+		dateProperty: 'date',
 	},
 	list: {
 		path: ( { streamKey } ) => {
@@ -191,13 +183,20 @@ export function requestPage( action ) {
 		pollQuery = getQueryStringForPoll,
 	} = api;
 
+	const algorithm = getAlgorithmForStream( streamKey )
+		? { algorithm: getAlgorithmForStream( streamKey ) }
+		: {};
+
 	return http( {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
 		query: isPoll
-			? pollQuery()
-			: query( { ...pageHandle, number: !! gap ? PER_GAP : PER_FETCH }, action.payload ),
+			? pollQuery( { ...algorithm } )
+			: query(
+					{ ...pageHandle, ...algorithm, number: !! gap ? PER_GAP : PER_FETCH },
+					action.payload
+				),
 		onSuccess: action,
 		onFailure: action,
 	} );
@@ -230,6 +229,10 @@ export function handlePage( action, data ) {
 		pageHandle = { before: after };
 	}
 
+	if ( data.algorithm ) {
+		analyticsForStream( { streamKey, algorithm: data.algorithm, posts } );
+	}
+
 	const actions = [];
 	const streamItems = posts.map( post => ( {
 		...keyForPost( post ),
@@ -246,8 +249,7 @@ export function handlePage( action, data ) {
 	return actions;
 }
 
-export function handleError( err ) {
-	console.error( 'data-layer error: ', err ); // eslint-disable-line no-console
+export function handleError() {
 	return errorNotice( translate( 'Could not fetch the next page of posts' ) );
 }
 

@@ -5,7 +5,7 @@
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { zip } from 'lodash';
+import { zip, some } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -19,6 +19,7 @@ import QueryReaderPost from 'components/data/query-reader-post';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
 import { getReaderStream as getStream } from 'state/selectors';
 import { requestPage } from 'state/reader/streams/actions';
+import { keyToString } from 'reader/post-key';
 
 function getPostUrl( post ) {
 	return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
@@ -77,10 +78,12 @@ class FeedFeatured extends React.PureComponent {
 
 	render() {
 		const { posts, translate, stream } = this.props;
-		if ( ! posts ) {
+		if ( ! posts || some( posts, post => ! post ) ) {
 			return (
 				<Fragment>
-					{ stream.items.map( postKey => <QueryReaderPost postKey={ postKey } /> ) }
+					{ stream.items.map( postKey => (
+						<QueryReaderPost postKey={ postKey } key={ keyToString( postKey ) } />
+					) ) }
 				</Fragment>
 			);
 		}

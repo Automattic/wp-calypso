@@ -21,7 +21,6 @@ import {
 	selectNextItem,
 	selectPrevItem,
 	showUpdates,
-	// shufflePosts,
 } from 'state/reader/streams/actions';
 import {
 	getReaderStream as getStream,
@@ -29,7 +28,7 @@ import {
 	getReaderStreamShouldRequestRecommendations as shouldRequestRecs,
 } from 'state/selectors';
 
-import LikeHelper from 'reader/like-helper';
+import { shouldShowLikes } from 'reader/like-helper';
 import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
 import isLikedPost from 'state/selectors/is-liked-post';
 import ListEnd from 'components/list-end';
@@ -187,7 +186,7 @@ class ReaderStream extends React.Component {
 			return;
 		}
 
-		if ( LikeHelper.shouldShowLikes( post ) ) {
+		if ( shouldShowLikes( post ) ) {
 			this.toggleLikeAction( post.site_ID, post.ID );
 		}
 	};
@@ -410,7 +409,7 @@ class ReaderStream extends React.Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
-				<Interval onTick={ this.poll } period={ 10000 } />
+				<Interval onTick={ this.poll } period={ EVERY_MINUTE } />
 				{ this.props.isMain &&
 					this.props.showMobileBackToSidebar && (
 						<MobileBackToSidebar>
@@ -426,7 +425,7 @@ class ReaderStream extends React.Component {
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro : null }
 				{ body }
-				{ showingStream && false /*TODO: make work */ && items.length && <ListEnd /> }
+				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
 			</TopLevel>
 		);
 	}
@@ -464,6 +463,5 @@ export default connect(
 		selectPrevItem,
 		showUpdates,
 		viewStream,
-		// shufflePosts,
 	}
 )( localize( ReaderStream ) );
