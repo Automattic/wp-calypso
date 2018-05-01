@@ -56,6 +56,7 @@ import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import login from './login/reducer';
 import media from './media/reducer';
+import memberships from './memberships/reducer';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
@@ -186,6 +187,9 @@ const reducers = {
 	wordads,
 };
 
+if ( config.isEnabled( 'memberships' ) ) {
+	reducers.memberships = memberships;
+}
 export const reducer = combineReducers( reducers );
 
 /**
