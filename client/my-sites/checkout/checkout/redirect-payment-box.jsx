@@ -5,7 +5,7 @@
  */
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { snakeCase, some, map, zipObject, isEmpty } from 'lodash';
+import { snakeCase, some, map, zipObject, isEmpty, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ import notices from 'notices';
 import EbanxPaymentFields from 'my-sites/checkout/checkout/ebanx-payment-fields';
 import { planMatches } from 'lib/plans';
 import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
-import { validatePaymentDetails } from 'lib/checkout';
+import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
 
 export class RedirectPaymentBox extends PureComponent {
@@ -80,7 +80,7 @@ export class RedirectPaymentBox extends PureComponent {
 		this.setState( {
 			paymentDetails: {
 				...this.state.paymentDetails,
-				[ name ]: value,
+				[ name ]: maskField( name, this.state.paymentDetails[ name ], value ),
 			},
 		} );
 	};
@@ -153,8 +153,13 @@ export class RedirectPaymentBox extends PureComponent {
 			cancelUrl += 'no-site';
 		}
 
+		// unmask form values
+		const paymentDetails = mapValues( this.state.paymentDetails, ( value, key ) =>
+			unmaskField( key, null, value )
+		);
+
 		const dataForApi = {
-			payment: Object.assign( {}, this.state.paymentDetails, {
+			payment: Object.assign( {}, paymentDetails, {
 				paymentMethod: this.paymentMethodByType( this.props.paymentType ),
 				successUrl: origin + this.props.redirectTo(),
 				cancelUrl,

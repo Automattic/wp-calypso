@@ -9,6 +9,37 @@ import { identity } from 'lodash';
  */
 import { getCreditCardType } from 'lib/checkout';
 
+/**
+ * Formats a credit card card number
+ * @param {String} cardNumber unformatted field value
+ * @returns {String} formatted value
+ */
+export function formatCreditCard( cardNumber ) {
+	if ( getCreditCardType( cardNumber ) === 'amex' ) {
+		return formatAmexCreditCard( cardNumber );
+	}
+	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 19 );
+	const formattedNumber = `${ digits.slice( 0, 4 ) } ${ digits.slice( 4, 8 ) } ${ digits.slice(
+		8,
+		12
+	) } ${ digits.slice( 12 ) }`;
+	return formattedNumber.trim();
+}
+
+/**
+ * Formats an American Express card number
+ * @param {String} cardNumber unformatted field value
+ * @returns {String} formatted value
+ */
+export function formatAmexCreditCard( cardNumber ) {
+	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 15 );
+	const formattedNumber = `${ digits.slice( 0, 4 ) } ${ digits.slice( 4, 10 ) } ${ digits.slice(
+		10,
+		15
+	) }`;
+	return formattedNumber.trim();
+}
+
 const fieldMasks = {};
 
 fieldMasks[ 'expiration-date' ] = {
@@ -39,27 +70,6 @@ fieldMasks[ 'expiration-date' ] = {
 	},
 
 	unmask: identity,
-};
-
-export const formatAmexCreditCard = function( cardNumber ) {
-	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 15 );
-	const formattedNumber = `${ digits.slice( 0, 4 ) } ${ digits.slice( 4, 10 ) } ${ digits.slice(
-		10,
-		15
-	) }`;
-	return formattedNumber.trim();
-};
-
-export const formatCreditCard = function( cardNumber ) {
-	if ( getCreditCardType( cardNumber ) === 'amex' ) {
-		return formatAmexCreditCard( cardNumber );
-	}
-	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 19 );
-	const formattedNumber = `${ digits.slice( 0, 4 ) } ${ digits.slice( 4, 8 ) } ${ digits.slice(
-		8,
-		12
-	) } ${ digits.slice( 12 ) }`;
-	return formattedNumber.trim();
 };
 
 fieldMasks.number = {
@@ -100,6 +110,13 @@ fieldMasks.document = {
 	unmask: identity,
 };
 
+/**
+ * Formats a field value
+ * @param {String} fieldName name of field corresponding to a child open of `fieldMasks`
+ * @param {String} previousValue the current value of the field before change
+ * @param {String} nextValue the new, incoming value of the field on change
+ * @returns {String} formatted value
+ */
 export function maskField( fieldName, previousValue, nextValue ) {
 	const fieldMask = fieldMasks[ fieldName ];
 	if ( ! fieldMask ) {
@@ -109,6 +126,13 @@ export function maskField( fieldName, previousValue, nextValue ) {
 	return fieldMask.mask( previousValue, nextValue );
 }
 
+/**
+ * Reverses masking formats of a field value
+ * @param {String} fieldName name of field corresponding to a child open of `fieldMasks`
+ * @param {String} previousValue the current value of the field before change
+ * @param {String} nextValue the new, incoming value of the field on change
+ * @returns {String} deformatted value
+ */
 export function unmaskField( fieldName, previousValue, nextValue ) {
 	const fieldMask = fieldMasks[ fieldName ];
 	if ( ! fieldMask ) {
