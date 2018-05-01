@@ -6,8 +6,11 @@
 import {
 	isGoogleMyBusinessLocationConnected,
 	isSiteGoogleMyBusinessEligible,
+	getSiteOptions,
 } from 'state/selectors';
 import { isRequestingSiteSettings, getSiteSettings } from 'state/site-settings/selectors';
+import versionCompare from 'lib/version-compare';
+import { isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Returns true if the Google My Business (GMB) nudge should be visible in stats
@@ -28,6 +31,16 @@ export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 	}
 
 	if ( isGoogleMyBusinessLocationConnected( state, siteId ) ) {
+		return false;
+	}
+
+	// Jetpack site needs to be at least version 6.1 for us to be able to modify site settings
+	const siteOptions = getSiteOptions( state, siteId );
+
+	if (
+		isJetpackSite( state, siteId ) &&
+		! versionCompare( siteOptions.jetpack_version, '6.1', '>=' )
+	) {
 		return false;
 	}
 
