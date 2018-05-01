@@ -22,7 +22,7 @@ export default localize( ( { translate } ) => {
 				) }
 				href={ 'https://en.support.wordpress.com/simple-payments/' }
 				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-payments.svg" /> }
-				target={ '' }
+				target="_blank"
 				title={ translate( 'Sell online with PayPal.' ) }
 			/>
 		</div>
