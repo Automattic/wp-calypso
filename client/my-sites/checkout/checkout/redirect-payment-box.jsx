@@ -55,7 +55,7 @@ export class RedirectPaymentBox extends PureComponent {
 	setPaymentDetailsState( paymentType ) {
 		let paymentDetailsState = {};
 		switch ( paymentType ) {
-			case 'tef':
+			case 'brazil-tef':
 				paymentDetailsState = {
 					'tef-bank': '',
 					...zipObject(
@@ -229,7 +229,7 @@ export class RedirectPaymentBox extends PureComponent {
 				{ value: 'triodos_bank', label: 'Triodos Bank' },
 				{ value: 'van_lanschot', label: 'Van Lanschot' },
 			],
-			tef: [
+			'brazil-tef': [
 				{ value: 'banrisul', label: 'Banrisul' },
 				{ value: 'bradesco', label: 'Bradesco' },
 				{ value: 'bancodobrasil', label: 'Banco do Brasil' },
@@ -253,12 +253,12 @@ export class RedirectPaymentBox extends PureComponent {
 				return this.createField( 'email', Input, {
 					label: translate( 'Email Address' ),
 				} );
-			case 'tef':
+			case 'brazil-tef':
 				return (
 					<Fragment>
 						{ this.createField( 'tef-bank', Select, {
 							label: translate( 'Bank' ),
-							options: this.getBankOptions( 'tef' ),
+							options: this.getBankOptions( 'brazil-tef' ),
 						} ) }
 						<EbanxPaymentFields
 							countryCode="BR"

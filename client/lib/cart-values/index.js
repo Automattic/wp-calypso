@@ -159,7 +159,7 @@ function paymentMethodClassName( method ) {
 		ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
 		paypal: 'WPCOM_Billing_PayPal_Express',
 		p24: 'WPCOM_Billing_Stripe_Source_P24',
-		tef: 'WPCOM_Billing_Ebanx_Redirect_Tef',
+		'brazil-tef': 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
 	};
 
 	return paymentMethodsClassNames[ method ] || '';
@@ -181,7 +181,7 @@ function paymentMethodName( method ) {
 		ideal: 'iDEAL',
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
-		tef: 'TEF - Transferência bancária',
+		'brazil-tef': 'Transferência bancária',
 	};
 
 	return paymentMethodsNames[ method ] || method;
@@ -196,7 +196,7 @@ function isPaymentMethodEnabled( cart, method ) {
 		'ideal',
 		'paypal',
 		'p24',
-		'tef',
+		'brazil-tef',
 	];
 	const methodClassName = paymentMethodClassName( method );
 

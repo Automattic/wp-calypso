@@ -131,11 +131,11 @@ describe( 'RedirectPaymentBox', () => {
 		} );
 	} );
 
-	describe( 'TEF payments', () => {
-		test( 'should render fields required for TEF', () => {
+	describe( 'Brazil TEF payments', () => {
+		test( 'should render fields required for Brazil TEF', () => {
 			const props = {
 				...defaultProps,
-				paymentType: 'tef',
+				paymentType: 'brazil-tef',
 			};
 			const wrapper = shallow( <RedirectPaymentBox { ...props } /> );
 			expect( wrapper.find( '[name="tef-bank"]' ) ).toHaveLength( 1 );

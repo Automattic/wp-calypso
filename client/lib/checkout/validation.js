@@ -95,7 +95,7 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
 		case 'credit-card':
 			return creditCardFieldRules( getAdditionalFieldRules( paymentDetails ) );
-		case 'tef':
+		case 'brazil-tef':
 			return tefPaymentFieldRules();
 		default:
 			return null;

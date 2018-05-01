@@ -28,7 +28,7 @@ const paymentMethods = {
 		US: DEFAULT_PAYMENT_METHODS,
 		AT: [ 'credit-card', 'eps', 'paypal' ],
 		BE: [ 'credit-card', 'bancontact', 'paypal' ],
-		BR: [ 'credit-card', 'tef', 'paypal' ],
+		BR: [ 'credit-card', 'brazil-tef', 'paypal' ],
 		CN: [ 'credit-card', 'alipay', 'paypal' ],
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
 		NL: [ 'credit-card', 'ideal', 'paypal' ],

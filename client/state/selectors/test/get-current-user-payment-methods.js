@@ -181,10 +181,12 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 			'paypal',
 		] );
 	} );
+
 	test( 'BR should return credit card primary, tef, and PayPal secondary', () => {
+		update( 'geo', 'success', 'BR' );
 		expect( getCurrentUserPaymentMethods( ptBrBRCountryState ) ).to.eql( [
 			'credit-card',
-			'tef',
+			'brazil-tef',
 			'paypal',
 		] );
 	} );

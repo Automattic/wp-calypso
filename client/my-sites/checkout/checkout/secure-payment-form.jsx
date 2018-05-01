@@ -327,7 +327,7 @@ const SecurePaymentForm = createReactClass( {
 			case 'giropay':
 			case 'ideal':
 			case 'p24':
-			case 'tef':
+			case 'brazil-tef':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }
