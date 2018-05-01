@@ -34,18 +34,28 @@ const PredefinedPackages = ( {
 			event.stopPropagation();
 			toggleAll( siteId, group.serviceId, group.groupId, event.target.checked );
 		};
+		const inputId = `group-${ group.serviceId }-${ group.groupId }`;
 
+		// The onClick handler only exists to prevent the input click event from bubbling up to FoldableCard
+		// This does not affect the keyboard accessibility.
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<div className="packages__group-header">
-				<BulkSelect
-					totalElements={ group.total }
-					selectedElements={ group.selected }
-					onToggle={ onToggle }
-					className="packages__group-header-checkbox"
-				/>
-				{ group.title }
+				<label htmlFor={ inputId } onClick={ event => event.stopPropagation() }>
+					<BulkSelect
+						id={ inputId }
+						totalElements={ group.total }
+						selectedElements={ group.selected }
+						onToggle={ onToggle }
+						className="packages__group-header-checkbox"
+					/>
+					{ group.title }
+				</label>
 			</div>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events */
+		/* eslint-enable jsx-a11y/no-static-element-interactions */
 	};
 
 	const getSelectionSummary = ( selectedCount, totalCount ) => {
