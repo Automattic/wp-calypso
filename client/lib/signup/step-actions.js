@@ -38,8 +38,6 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, domainItem, siteUrl, themeSlugWithRepo } = dependencies;
 
-	const productsList = getProductsList( reduxStore.getState() );
-
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
 		const providedDependencies = {
@@ -50,9 +48,9 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ];
-
 		if ( domainItem ) {
 			const { product_slug: productSlug } = domainItem;
+			const productsList = getProductsList( reduxStore.getState() );
 			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
 				domainChoiceCart.push(
 					cartItems.domainPrivacyProtection( {
@@ -63,7 +61,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			}
 		}
 
-		SignupCart.createCart( cartKey, domainChoiceCart, productsList, error =>
+		SignupCart.createCart( cartKey, domainChoiceCart, error =>
 			callback( error, providedDependencies )
 		);
 	} else if ( designType === 'existing-site' ) {
@@ -75,7 +73,6 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		SignupCart.createCart(
 			siteId,
 			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
-			productsList,
 			error => {
 				callback( error, providedDependencies );
 				page.redirect( `/checkout/${ siteSlug }` );
@@ -160,10 +157,9 @@ export function createSiteWithCart(
 			const addToCartAndProceed = () => {
 				let privacyItem = null;
 
-				const productsList = getProductsList( reduxStore.getState() );
-
 				if ( domainItem ) {
 					const { product_slug: productSlug } = domainItem;
+					const productsList = getProductsList( reduxStore.getState() );
 					if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
 						if ( isDomainTransfer( domainItem ) ) {
 							privacyItem = cartItems.domainTransferPrivacy( {
@@ -188,7 +184,7 @@ export function createSiteWithCart(
 				].filter( item => item );
 
 				if ( newCartItems.length ) {
-					SignupCart.addToCart( siteId, newCartItems, productsList, function( cartError ) {
+					SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
 						callback( cartError, providedDependencies );
 					} );
 				} else {
@@ -314,7 +310,7 @@ export function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
-export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem }, reduxStore ) {
+export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		defer( callback );
@@ -324,9 +320,7 @@ export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem }, 
 
 	const newCartItems = [ cartItem, privacyItem ].filter( item => item );
 
-	const productsList = getProductsList( reduxStore.getState() );
-
-	SignupCart.addToCart( siteId, newCartItems, productsList, error =>
+	SignupCart.addToCart( siteId, newCartItems, error =>
 		callback( error, { cartItem, privacyItem } )
 	);
 }

@@ -12,15 +12,11 @@ import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
 import { recordEvents } from './cart-analytics';
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';
 import { applyCoupon, cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
 import wp from 'lib/wp';
-import { reduxGetState, reduxDispatch } from 'lib/redux-bridge';
-import { requestProductsList } from 'state/products-list/actions';
-import {
-	getProductsList,
-	shouldRequestProductsListFromServer,
-} from 'state/products-list/selectors';
 
 const wpcom = wp.undocumented();
 
@@ -75,16 +71,8 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	const reduxState = reduxGetState();
-	const productsList = getProductsList( reduxState );
-	const shouldRequest = ! shouldRequestProductsListFromServer( reduxState );
-
-	if ( shouldRequest ) {
-		reduxDispatch( requestProductsList() );
-	}
-
 	const wrappedFunction = flowRight(
-		partialRight( fillInAllCartItemAttributes, productsList ),
+		partialRight( fillInAllCartItemAttributes, productsList.get() ),
 		changeFunction
 	);
 
