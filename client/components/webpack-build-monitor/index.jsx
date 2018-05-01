@@ -6,6 +6,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import io from 'socket.io-client';
 import { find, startsWith } from 'lodash';
 
 /**
@@ -14,16 +15,16 @@ import { find, startsWith } from 'lodash';
 import Spinner from 'components/spinner';
 
 const MESSAGE_STATUS_MAP = {
-	'[HMR] connected': { isConnected: true },
-	'[WDS] Disconnected!': { isConnected: false },
-	'[HMR] bundle rebuilding': { isBuildingJs: true },
-	'[HMR] Cannot find update (Full reload needed)': { needsReload: true },
-	"[HMR] The following modules couldn't be hot updated": { needsReload: true },
 	'Building CSS…': { isBuildingCss: true },
 	'CSS build failed': { hasError: true },
-	'[WDS] Nothing changed.': { isBuildingJs: false },
 	'Reloading CSS: ': { isBuildingCss: false },
-	'[HMR] bundle rebuilt in': { isBuildingJs: false },
+	'[HMR] Cannot find update (Full reload needed)': { needsReload: true },
+	'webpack building...': { isBuildingJs: true },
+	'webpack built ': { isBuildingJs: false },
+	'[HMR] connected': { isConnected: true },
+	"[HMR] The following modules couldn't be hot updated": { needsReload: true },
+	'[WDS] Disconnected!': { isConnected: false },
+	'[WDS] Nothing changed.': { isBuildingJs: false },
 };
 
 let buildState = {
@@ -32,24 +33,60 @@ let buildState = {
 	isBuildingJs: false,
 	isConnected: true,
 	needsReload: false,
+	stateUpdater: null,
 };
 
-const interceptConsole = ( consoleObject, updater ) => {
-	[ 'error', 'log', 'warn' ].forEach( method => {
-		const unwrapped = consoleObject[ method ];
+const hmrLogger = message => {
+	const stateUpdates = find( MESSAGE_STATUS_MAP, ( v, prefix ) => startsWith( message, prefix ) );
 
-		consoleObject[ method ] = ( msg, ...args ) => {
-			const stateUpdates = find( MESSAGE_STATUS_MAP, ( v, prefix ) => startsWith( msg, prefix ) );
+	if ( stateUpdates && 'function' === typeof buildState.stateUpdater ) {
+		buildState = { ...buildState, ...stateUpdates };
+		buildState.stateUpdater( buildState );
+	}
+};
 
-			if ( stateUpdates ) {
-				buildState = { ...buildState, ...stateUpdates };
-				updater( buildState );
-			}
+window.hmrLogger = hmrLogger;
 
-			unwrapped( msg, ...args );
-		};
+io
+	.connect( location.protocol + '//' + location.host + '/css-hot-reload' )
+	.on( 'css-hot-reload', function( data ) {
+		switch ( data.status ) {
+			case 'reload':
+				return hmrLogger( 'Reloading CSS: ' );
+			case 'building':
+				return hmrLogger( 'Building CSS…' );
+			case 'build-failed':
+				return hmrLogger( 'CSS build failed.' );
+		}
 	} );
-};
+
+io
+	.connect( location.protocol + '//' + location.host + '/webpack-build-monitor' )
+	.on( 'message', hmrLogger );
+
+const socket = io.connect( location.protocol + '//' + location.host + '/' );
+socket.on( 'connect', ( ...oargs ) => {
+	console.log( '~io~> ', ...oargs );
+
+	socket.on( 'message', ( ...args ) => console.log( '~io~> ', ...args ) );
+} );
+
+module &&
+	module.hot &&
+	module.hot.addStatusHandler &&
+	( () => {
+		let lastStatus;
+
+		module.hot.addStatusHandler(
+			status => (
+				console.log( status ),
+				lastStatus === 'apply' &&
+					status === 'idle' &&
+					hmrLogger( "[HMR] The following modules couldn't be hot updated" ),
+				( lastStatus = status )
+			)
+		);
+	} )();
 
 const getMessage = ( { hasError, isBuildingCss, isBuildingJs, isConnected } ) => {
 	if ( ! isConnected ) {
@@ -89,7 +126,7 @@ class WebpackBuildMonitor extends React.PureComponent {
 		}
 		alreadyExists = true;
 
-		interceptConsole( console, state => this.setState( state ) );
+		buildState.stateUpdater = state => this.setState( state );
 	}
 
 	render() {
