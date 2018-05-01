@@ -7,15 +7,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import AuthorSelector from 'blocks/author-selector';
 import UserItem from 'components/user';
-import user from 'lib/user';
+import { getCurrentUser } from 'state/current-user/selectors';
 
-export default class extends React.PureComponent {
+class ImporterAuthorMapping extends React.Component {
 	static displayName = 'ImporterAuthorMapping';
 
 	static propTypes = {
@@ -41,11 +42,10 @@ export default class extends React.PureComponent {
 		}
 	}
 
-	getCurrentUser = () => {
-		const currentUser = user().get();
-
-		return Object.assign( {}, currentUser, { name: currentUser.display_name } );
-	};
+	getCurrentUser = () => ( {
+		...this.props.currentUser,
+		name: this.props.currentUser.display_name,
+	} );
 
 	render() {
 		const {
@@ -73,3 +73,7 @@ export default class extends React.PureComponent {
 		);
 	}
 }
+
+export default connect( state => ( { currentUser: getCurrentUser( state ) } ) )(
+	ImporterAuthorMapping
+);
