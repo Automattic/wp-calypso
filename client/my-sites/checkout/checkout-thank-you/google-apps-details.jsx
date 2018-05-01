@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -12,11 +13,9 @@ import i18n from 'i18n-calypso';
  */
 import { GOOGLE_APPS_LEARNING_CENTER } from 'lib/url/support';
 import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
+import { getCurrentUser } from 'state/current-user/selectors';
 
-const user = userFactory();
-
-const GoogleAppsDetails = () => {
+const GoogleAppsDetails = ( { user } ) => {
 	return (
 		<PurchaseDetail
 			icon="mail"
@@ -38,7 +37,7 @@ const GoogleAppsDetails = () => {
 						),
 					},
 					args: {
-						email: user.get().email,
+						email: user.email,
 					},
 				}
 			) }
@@ -48,4 +47,4 @@ const GoogleAppsDetails = () => {
 	);
 };
 
-export default GoogleAppsDetails;
+export default connect( state => ( { user: getCurrentUser( state ) } ) )( GoogleAppsDetails );

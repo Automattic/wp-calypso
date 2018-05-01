@@ -10,20 +10,19 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
 import { getSiteFileModDisableReason } from 'lib/site/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
 import config from 'config';
-const user = userFactory();
 
-const BasicDetails = ( { translate } ) => (
+const BasicDetails = ( { translate, user } ) => (
 	<PurchaseDetail
 		icon="cog"
 		title={ translate( 'Set up your VaultPress and Akismet accounts' ) }
 		description={ translate(
 			'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. ' +
 				'Follow the instructions in the email to get started.',
-			{ args: { email: user.get().email } }
+			{ args: { email: user.email } }
 		) }
 	/>
 );
@@ -135,6 +134,6 @@ const JetpackPlanDetails = config.isEnabled( 'manage/plugins/setup' )
 			null,
 			mapDispatchToProps
 	  )( EnhancedDetails )
-	: BasicDetails;
+	: connect( state => ( { user: getCurrentUser( state ) } ) )( BasicDetails );
 
 export default localize( JetpackPlanDetails );
