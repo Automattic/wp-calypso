@@ -76,6 +76,7 @@
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor-github-link": false,
+		"post-editor/image-editor": true,
 		"post-editor/media-advanced": true,
 		"press-this": true,
 		"publicize-preview": true,
