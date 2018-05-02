@@ -87,7 +87,7 @@
 		"reader/new-post-notifications": true,
 		"reader/user-mention-suggestions": false,
 		"resume-editing": true,
-		"republicize": false,
+		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
