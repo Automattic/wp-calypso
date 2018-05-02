@@ -17,6 +17,8 @@ node_modules
 .eslintcache
 test-results*.xml
 /stats.json
+# vscode local history
+.history
 
 # added during build
 /config/secrets.json
