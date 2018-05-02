@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -128,7 +128,7 @@ export default connect( state => {
 		const postCategories = postTerms && postTerms.category;
 		// WARNING: postCategories is an array for posts where categories have
 		// been edited, but an object for posts returned from the API
-		if ( find( postCategories, { ID: podcastingCategoryId } ) ) {
+		if ( some( postCategories, { ID: podcastingCategoryId } ) ) {
 			isPodcastEpisode = true;
 		}
 	}
