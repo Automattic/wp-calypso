@@ -90,7 +90,7 @@ class ReaderLikeButton extends React.Component {
 					siteId &&
 					postId && (
 						<PostLikesPopover
-							className="reader-likes-popover"
+							className="reader-likes-popover" // eslint-disable-line
 							onMouseEnter={ this.maybeShowLikesPopover }
 							onMouseLeave={ this.maybeHideLikesPopover }
 							siteId={ siteId }
