@@ -8,16 +8,7 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-let mc = () => {},
-	ga = () => {},
-	tracks = () => {};
-
-if ( process.env.NODE_ENV !== 'test' ) {
-	const analytics = require( 'lib/analytics' );
-	mc = analytics.mc;
-	ga = analytics.ga;
-	tracks = analytics.tracks;
-}
+import { mc, ga, tracks } from 'lib/analytics';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 

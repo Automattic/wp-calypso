@@ -18,7 +18,7 @@ import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
 import { errorNotice } from 'state/notices/actions';
 import { receivePosts } from 'state/reader/posts/actions';
 import { keyForPost } from 'reader/post-key';
-import { recordTrack } from 'reader/stats';
+import { recordTrackEvent } from 'state/analytics/actions';
 
 /**
  * Pull the suffix off of a stream key
@@ -44,12 +44,17 @@ function streamKeySuffix( streamKey ) {
 
 const analyticsAlgoMap = new Map();
 function analyticsForStream( { streamKey, algorithm, posts } ) {
+	if ( ! streamKey || ! algorithm || ! posts ) {
+		return [];
+	}
+
 	analyticsAlgoMap.set( streamKey, algorithm );
 
 	const eventName = 'calypso_traintracks_render';
-	posts.filter( post => !! post.railcar ).forEach( post => {
-		recordTrack( eventName, post.railcar );
-	} );
+	const analyticsActions = posts
+		.filter( post => !! post.railcar )
+		.map( post => recordTrackEvent( eventName, post.railcar ) );
+	return analyticsActions;
 }
 const getAlgorithmForStream = streamKey => analyticsAlgoMap.get( streamKey );
 
@@ -232,11 +237,9 @@ export function handlePage( action, data ) {
 		// TODO: stop doing this extra work
 		pageHandle = parse( next_page );
 	}
-	if ( data.algorithm ) {
-		analyticsForStream( { streamKey, algorithm: data.algorithm, posts } );
-	}
 
-	const actions = [];
+	const actions = analyticsForStream( { streamKey, algorithm: data.algorithm, posts } );
+
 	const streamItems = posts.map( post => ( {
 		...keyForPost( post ),
 		date: post[ dateProperty ],
