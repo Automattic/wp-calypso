@@ -39,7 +39,7 @@ export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 
 	if (
 		isJetpackSite( state, siteId ) &&
-		! versionCompare( siteOptions.jetpack_version, '6.1', '>=' )
+		! versionCompare( siteOptions.jetpack_version, '6.2', '>=' )
 	) {
 		return false;
 	}
