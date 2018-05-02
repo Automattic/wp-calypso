@@ -22,7 +22,6 @@ import {
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
 import MailChimpDashboard from './mailchimp_dashboard';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryMailChimpSettings from 'woocommerce/state/sites/settings/mailchimp/querySettings';
 
 class MailChimp extends React.Component {
@@ -63,21 +62,14 @@ class MailChimp extends React.Component {
 		const gettingStarted =
 			! setupWizardStarted && ! isRequestingData && ( settings && settings.active_tab !== 'sync' );
 
-		// Special case for store dashboard where we want to only show MailChimpGetingStarted in case
-		// when user has not finished settup. We show nothing in other cases.
-		if ( dashboardView ) {
-			// Disabling due to performance issues with the plugin.
-			return null;
-		}
-
-		// Disable setup view for now
-		if ( ! isRequestingData && gettingStarted ) {
+		// TODO Eventually re-implement a new dashboard widget for extension
+		// that accomodates sites without the plugin installed
+		if ( dashboardView || ! hasMailChimp ) {
 			return null;
 		}
 
 		return (
 			<div className="mailchimp">
-				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
 				{ ( isRequestingData || gettingStarted ) && (
 					<MailChimpGettingStarted
@@ -125,7 +117,7 @@ function mapStateToProps( state ) {
 	const isRequestingPlugins = isRequestingForSites( state, [ siteId ] );
 	const isRequestingMailChimpSettings = isRequestingSettings( state, siteId );
 	const sitePlugins = getPlugins( state, [ siteId ] );
-	const mailChimp = filter( sitePlugins, matches( { id: mailChimpId } ) );
+	const mailChimp = filter( sitePlugins, matches( { id: mailChimpId, active: true } ) );
 	const hasMailChimp = !! mailChimp.length;
 	const settings = mailChimpSettings( state, siteId );
 	return {
