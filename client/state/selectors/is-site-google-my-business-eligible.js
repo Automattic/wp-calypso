@@ -46,7 +46,7 @@ export const siteHasBusinessPlan = createSelector(
 );
 
 /**
- * Returns true if site has business plan
+ * Returns true if site has jetpack premium/business plan
  *
  * @param  {Object}  state  Global state tree
  * @param  {String}  siteId The Site ID
