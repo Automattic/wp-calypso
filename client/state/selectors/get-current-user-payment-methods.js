@@ -10,7 +10,7 @@ import { lowerCase, upperCase } from 'lodash';
  * Internal dependencies
  */
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { getGeoCountryShort } from 'state/geo/selectors';
+import { requestGeoLocation } from 'state/data-layer/http-data/getters';
 
 /**
  * Constants
@@ -44,7 +44,7 @@ const paymentMethods = {
  * @return {Array}               Preferred payment methods
  */
 export default function getCurrentUserPaymentMethods( state ) {
-	const countryCode = getGeoCountryShort( state );
+	const countryCode = requestGeoLocation().data;
 	const wpcomLang = getCurrentUserLocale( state );
 	const generatedLocale = lowerCase( wpcomLang ) + '-' + upperCase( countryCode );
 

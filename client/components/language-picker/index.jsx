@@ -14,10 +14,9 @@ import { find, isString, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getGeoCountryShort } from 'state/geo/selectors';
-import QueryGeo from 'components/data/query-geo';
 import LanguagePickerModal from './modal';
 import QueryLanguageNames from 'components/data/query-language-names';
+import { requestGeoLocation } from 'state/data-layer/http-data/getters';
 import { getLanguageCodeLabels } from './utils';
 
 export class LanguagePicker extends PureComponent {
@@ -174,13 +173,12 @@ export class LanguagePicker extends PureComponent {
 					</div>
 				</div>
 				{ this.renderModal( language.langSlug ) }
-				<QueryGeo />
 				<QueryLanguageNames />
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
-	countryCode: getGeoCountryShort( state ),
-} ) )( localize( LanguagePicker ) );
+export default connect( () => ( { countryCode: requestGeoLocation().data } ) )(
+	localize( LanguagePicker )
+);

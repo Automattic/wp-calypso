@@ -40,7 +40,6 @@ import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
-import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import googleMyBusiness from './google-my-business/reducer';
 import help from './help/reducer';
@@ -131,7 +130,6 @@ const reducers = {
 	domains,
 	extensions,
 	form,
-	geo,
 	googleAppsUsers,
 	googleMyBusiness,
 	happinessEngineers,

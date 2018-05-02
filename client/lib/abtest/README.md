@@ -68,7 +68,7 @@ Also, the user's variation is saved in local storage. You can see this in Chrome
 
 Here's another example with country targeting:
 ```jsx
-const userCountryCode = getGeoCountryShort( state );
+const userCountryCode = requestGeoLocation().data;
 let buttonWording;
 
 if ( abtest( 'freeTrialButtonWordingForIndia', userCountryCode ) === 'startFreeTrial' ) {
@@ -161,7 +161,7 @@ You would need to update [config/default.json](https://github.com/Automattic/wp-
 "knownABTestKeys": [
    "freeTrialButtonWording"
  ]
- 
+
  "overrideABTests": [
   [ "freeTrialButtonWording_201502160", "startFreeTrial" ]
  ]
