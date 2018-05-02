@@ -188,7 +188,7 @@ export default class PagedStream {
 		}
 	}
 
-	selectItem( postKey, id ) {
+	selectItem( postKey ) {
 		const selectedIndex = findIndex( this.postKeys, postKey );
 		if (
 			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) &&

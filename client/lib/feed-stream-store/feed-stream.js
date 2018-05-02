@@ -229,7 +229,7 @@ export default class FeedStream {
 		}
 	}
 
-	selectItem( postKey, id ) {
+	selectItem( postKey ) {
 		const selectedIndex = findIndex( this.postKeys, postKey );
 		if (
 			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) &&

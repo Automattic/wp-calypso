@@ -28,6 +28,7 @@ export default function EmptySearchRecommendedPost( { post } ) {
 
 	const site = { title: post && post.site_name };
 
+	/* eslint-disable  wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post && post.global_ID }>
 			<RelatedPostCard
