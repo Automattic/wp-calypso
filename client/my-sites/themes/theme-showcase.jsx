@@ -120,7 +120,7 @@ class ThemeShowcase extends React.Component {
 	 * @returns {String} Theme showcase url
 	 */
 	constructUrl = sections => {
-		const { vertical, tier, filter, siteSlug, searchString, localeSlug } = {
+		const { vertical, tier, filter, siteSlug, searchString, localeSlug, isLoggedIn } = {
 			...this.props,
 			...sections,
 		};
@@ -128,8 +128,11 @@ class ThemeShowcase extends React.Component {
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
-		const lang =
-			localeSlug && localeSlug !== config( 'i18n_default_locale_slug' ) ? `/${ localeSlug }` : '';
+/*
+		const lang = ! isLoggedIn && localeSlug && localeSlug !== config( 'i18n_default_locale_slug' )
+			? `/${ localeSlug }`
+			: '';
+*/
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
@@ -307,7 +310,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
-	localeSlug: getCurrentLocaleSlug( state ),
+	//localeSlug: getCurrentLocaleSlug( state ),
 } );
 
 const mapDispatchToProps = {

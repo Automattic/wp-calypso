@@ -171,15 +171,18 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 
 // Set up the locale in case it has ended up in the flow param
 export function setUpLocale( context, next ) {
-	forEach( context.params, value => {
-		const language = getLanguage( value );
-		if ( language ) {
-			context.lang = value;
-			if ( language.rtl ) {
-				context.isRTL = true;
+	// only when the page is rendered server side
+	if ( context.isServerSide ) {
+		forEach( context.params, value => {
+			const language = getLanguage( value );
+			if ( language ) {
+				context.lang = value;
+				if ( language.rtl ) {
+					context.isRTL = true;
+				}
+				return false;
 			}
-			return false;
-		}
-	} );
+		} );
+	}
 	next();
 }

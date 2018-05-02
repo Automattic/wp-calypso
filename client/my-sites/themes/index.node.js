@@ -25,11 +25,12 @@ export default function( router ) {
 		} );
 
 		const showcaseRoutes = [
-			'/themes/:lang?',
-			'/themes/:tier(free|premium)?/:lang?',
-			'/themes/:tier(free|premium)?/filter/:filter/:lang?',
-			'/themes/:vertical?/:tier(free|premium)?/:lang?',
-			'/themes/:vertical?/:tier(free|premium)?/filter/:filter/:lang?',
+			// currently we only want to catch redirects to /themes/{langSlug}
+			'/themes/:lang',
+			'/themes/:tier(free|premium)?',
+			'/themes/:tier(free|premium)?/filter/:filter',
+			'/themes/:vertical?/:tier(free|premium)?',
+			'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
 		];
 		router(
 			showcaseRoutes,

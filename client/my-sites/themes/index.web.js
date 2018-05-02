@@ -1,6 +1,12 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+
+import page from 'page';
+
+/**
  * Internal dependencies
  */
 
@@ -25,7 +31,13 @@ export default function( router ) {
 				router( '/themes/upload', siteSelection, sites, makeLayout );
 				router( '/themes/upload/:site_id?', siteSelection, upload, navigation, makeLayout );
 			}
+
+/*			router( [ '/themes/:lang' ], () => {
+				page.redirect( '/themes' );
+			} );*/
+
 			const loggedInRoutes = [
+				'/themes/:lang',
 				`/themes/:tier(free|premium)?/:site_id(${ siteId })?`,
 				`/themes/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })?`,
 				`/themes/:vertical?/:tier(free|premium)?/:site_id(${ siteId })?`,
@@ -33,6 +45,7 @@ export default function( router ) {
 			];
 			router(
 				loggedInRoutes,
+				setUpLocale,
 				fetchThemeFilters,
 				validateVertical,
 				validateFilters,
@@ -47,17 +60,16 @@ export default function( router ) {
 			router( '/themes/upload/*', '/themes' );
 
 			const loggedOutRoutes = [
-				'/themes/:tier(free|premium)?/:lang?',
-				'/themes/:tier(free|premium)?/filter/:filter/:lang?',
-				'/themes/:vertical?/:tier(free|premium)?/:lang?',
-				'/themes/:vertical?/:tier(free|premium)?/filter/:filter/:lang?',
+				'/themes/:tier(free|premium)?',
+				'/themes/:tier(free|premium)?/filter/:filter',
+				'/themes/:vertical?/:tier(free|premium)?',
+				'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
 			];
 			router(
 				loggedOutRoutes,
 				fetchThemeFilters,
 				validateVertical,
 				validateFilters,
-				setUpLocale,
 				loggedOut,
 				makeLayout
 			);
