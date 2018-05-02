@@ -185,7 +185,9 @@ export class CartItem extends React.Component {
 		return (
 			<li className="cart-item">
 				<div className="primary-details">
-					<span className="product-name">{ name || translate( 'Loading…' ) }</span>
+					<span className="product-name" data-e2e-product-slug={ cartItem.product_slug }>
+						{ name || translate( 'Loading…' ) }
+					</span>
 					<span className="product-domain">{ this.getProductInfo() }</span>
 				</div>
 
