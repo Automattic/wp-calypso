@@ -9,17 +9,13 @@ import { filter, forEach, compact, partition, get } from 'lodash';
  * Internal dependencies
  */
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
+import analytics, { mc } from 'lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import wpcom from 'lib/wp';
 import { keyForPost, keyToString } from 'reader/post-key';
 import { pageViewForPost } from 'reader/stats';
 import { hasPostBeenSeen } from './selectors';
 import { receiveLikes } from 'state/posts/likes/actions';
-
-let analytics;
-if ( process.env.NODE_ENV !== 'test' ) {
-	analytics = require( 'lib/analytics' );
-}
 
 function trackRailcarRender( post ) {
 	analytics.tracks.recordEvent( 'calypso_traintracks_render', post.railcar );
@@ -151,10 +147,7 @@ export const markPostSeen = ( post, site ) => ( dispatch, getState ) => {
 		if ( site && site.ID ) {
 			if ( site.is_private || ! isAdmin ) {
 				pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
-				analytics.mc.bumpStat(
-					'reader_pageviews',
-					site.is_private ? 'private_view' : 'public_view'
-				);
+				mc.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
 			}
 		}
 	}
