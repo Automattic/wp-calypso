@@ -28,26 +28,6 @@ export default EnhancedComponent =>
 		static displayName = `withUserMentions( ${ EnhancedComponent.displayName ||
 			EnhancedComponent.name } )`;
 		static propTypes = {};
-		static defaultProps = {
-			suggestions: [
-				{
-					ID: 1,
-					user_login: 'bungle',
-				},
-				{
-					ID: 2,
-					user_login: 'george',
-				},
-				{
-					ID: 3,
-					user_login: 'zippy',
-				},
-				{
-					ID: 4,
-					user_login: 'geoffrey',
-				},
-			],
-		};
 
 		state = {
 			showPopover: false,
