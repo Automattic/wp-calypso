@@ -47,6 +47,7 @@ const isAtlasEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
 const isMediaWallahEnabled = false;
+const isNanigansEnabled = true;
 
 // Retargeting events are fired once every `retargetingPeriod` seconds.
 const retargetingPeriod = 60 * 60 * 24;
@@ -89,6 +90,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
 	YANDEX_SCRIPT_URL = 'https://mc.yandex.ru/metrika/watch.js',
 	OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js',
+	NANIGANS_SCRIPT_URL = 'https://cdn.nanigans.com/NaN_tracker.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -104,6 +106,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		linkedInPartnerId: '195308',
 		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
+		nanigansAppId: '653793',
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
@@ -251,6 +254,33 @@ function setupOutbrainGlobal() {
 	api.loaded = true;
 	api.marketerId = TRACKING_IDS.outbrainAdvId;
 	api.queue = [];
+}
+
+/**
+ * For Nanigans, we delay the configuration until an actual purchase is made.
+ *
+ * Becomes true when the global configuration has been added to the window.NaN_api
+ *
+ * @type {boolean}
+ */
+let isNanigansConfigured = false;
+
+/**
+ * Defines the global variables required by Nanigans
+ * (app tracking ID, user's hashed e-mail)
+ */
+function setupNanigansGlobal() {
+	isNanigansConfigured = true;
+
+	const currentUser = user.get();
+	const normalizedEmail =
+		currentUser && currentUser.email ? currentUser.email.toLowerCase().replace( /\s/g, '' ) : '';
+
+	window.NaN_api = [
+		[ TRACKING_IDS.nanigansAppId, normalizedEmail ? hashPii( normalizedEmail ) : '' ],
+	];
+
+	debug( 'Nanigans setup: ', window.NaN_api, ', for e-mail: ' + normalizedEmail );
 }
 
 const loadScript = promisify( loadScriptCallback );
@@ -580,6 +610,7 @@ export function recordOrder( cart, orderId ) {
 	recordOrderInAtlas( cart, orderId );
 	recordOrderInCriteo( cart, orderId );
 	recordOrderInFloodlight( cart, orderId );
+	recordOrderInNanigans( cart, orderId );
 
 	// This has to come before we add the items to the Google Analytics cart
 	recordOrderInGoogleAnalytics( cart, orderId );
@@ -838,6 +869,45 @@ function recordOrderInFloodlight( cart, orderId ) {
 	};
 
 	recordParamsInFloodlight( params );
+}
+
+/**
+ * Records an order in Nanigans. If nanigans is not already loaded and configured, it configures it now (delayed load
+ * until the moment when we actually need this pixel).
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInNanigans( cart, orderId ) {
+	if ( ! isAdTrackingAllowed() || ! isNanigansEnabled ) {
+		return;
+	}
+
+	debug( 'recordOrderInNanigans: Record purchase' );
+
+	const productPrices = cart.products.map( product => product.cost * 100 ); // VALUE is in cents, [ 0, 9600 ]
+	const eventDetails = {
+		sku: cart.products.map( product => product.product_slug ), // [ 'blog_domain', 'plan_premium' ]
+		qty: cart.products.map( () => 1 ), // [ 1, 1 ]
+		currency: cart.currency,
+		unique: orderId, // unique transaction id
+	};
+
+	const eventStruct = [
+		'purchase', // EVENT_TYPE
+		'main', // EVENT_NAME
+		productPrices,
+		eventDetails,
+	];
+
+	if ( ! isNanigansConfigured ) {
+		setupNanigansGlobal();
+		loadScript( NANIGANS_SCRIPT_URL );
+	}
+
+	debug( 'Nanigans push:', eventStruct );
+	window.NaN_api.push( eventStruct ); // NaN api is either an array that supports push, either the real Nanigans API
 }
 
 /**
