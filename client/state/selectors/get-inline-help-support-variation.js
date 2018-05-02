@@ -9,10 +9,10 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import { isTicketSupportEligible } from 'state/help/ticket/selectors';
 
-const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
-const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
-const SUPPORT_TICKET = 'SUPPORT_TICKET';
-const SUPPORT_FORUM = 'SUPPORT_FORUM';
+export const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
+export const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
+export const SUPPORT_TICKET = 'SUPPORT_TICKET';
+export const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
 /**
  * @param {Object} state Global state tree

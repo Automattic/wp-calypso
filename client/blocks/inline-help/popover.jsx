@@ -24,6 +24,9 @@ import InlineHelpRichResult from './inline-help-rich-result';
 import HelpContact from 'me/help/help-contact';
 import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
+import getInlineHelpSupportVariation, {
+	SUPPORT_FORUM,
+} from 'state/selectors/get-inline-help-support-variation';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -88,9 +91,15 @@ class InlineHelpPopover extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { supportVariation, translate } = this.props;
 		const { showSecondaryView } = this.state;
 		const popoverClasses = { 'is-secondary-view-active': showSecondaryView };
+
+		const isForumSupportVariation = supportVariation === SUPPORT_FORUM;
+
+		const secondaryViewButtonLabel = isForumSupportVariation
+			? translate( 'Support Forums' )
+			: translate( 'Contact us' );
 
 		return (
 			<Popover
@@ -130,7 +139,7 @@ class InlineHelpPopover extends Component {
 						borderless
 					>
 						<Gridicon icon="chat" className="inline-help__gridicon-left" />
-						{ translate( 'Contact us' ) }
+						{ secondaryViewButtonLabel }
 						<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
 					</Button>
 
@@ -153,6 +162,7 @@ export default connect(
 		searchQuery: getSearchQuery( state ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
+		supportVariation: getInlineHelpSupportVariation( state ),
 	} ),
 	{
 		recordTracksEvent,
