@@ -332,11 +332,7 @@ class ActivityLog extends Component {
 		// Content shown when there are no logs.
 		// The network request either finished with no events or is still ongoing.
 		const noLogsContent = requestData.logs.hasLoaded ? (
-			<EmptyContent
-				title={ translate( 'No activity for %s', {
-					args: this.getStartMoment().format( 'MMMM YYYY' ),
-				} ) }
-			/>
+			<EmptyContent title={ translate( 'No events recorded yet.' ) } />
 		) : (
 			<section className="activity-log__wrapper">
 				{ [ 1, 2, 3 ].map( i => (
