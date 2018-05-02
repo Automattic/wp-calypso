@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { map, chunk } from 'lodash';
-import jsxToString from 'jsx-to-string';
 
 /**
  * Internal dependencies
@@ -17,6 +16,7 @@ import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
 import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
 import Placeholder from 'devdocs/devdocs-async-load/placeholder';
+import { getExampleCodeFromComponent } from './playground-utils';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );
@@ -64,15 +64,12 @@ const Collection = ( {
 			);
 		}
 
-		if ( example.props.exampleCode ) {
-			const code =
-				typeof example.props.exampleCode === 'string'
-					? example.props.exampleCode
-					: jsxToString( example.props.exampleCode );
+		const exampleCode = getExampleCodeFromComponent( example );
+		if ( exampleCode ) {
 			return (
 				<div>
 					<ComponentPlayground
-						code={ code }
+						code={ exampleCode }
 						name={ exampleName }
 						unique={ !! component }
 						url={ exampleLink }
