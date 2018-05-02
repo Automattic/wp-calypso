@@ -16,7 +16,6 @@ import QueryContactDetailsCache from 'components/data/query-contact-details-cach
 import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
-import analytics from 'lib/analytics';
 import FormButton from 'components/forms/form-button';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
 import wp from 'lib/wp';
@@ -34,6 +33,7 @@ import {
 import { cartItems } from 'lib/cart-values';
 import { getContactDetailsCache } from 'state/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();
@@ -50,9 +50,7 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	componentDidMount() {
-		if ( analytics ) {
-			analytics.tracks.recordEvent( 'calypso_checkout_domain_contact_information_view' );
-		}
+		this.props.recordTracksEvent( 'calypso_checkout_domain_contact_information_view' );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -305,5 +303,6 @@ export class DomainDetailsFormContainer extends PureComponent {
 }
 
 export default connect( state => ( { contactDetails: getContactDetailsCache( state ) } ), {
+	recordTracksEvent,
 	updateContactDetailsCache,
 } )( localize( DomainDetailsFormContainer ) );
