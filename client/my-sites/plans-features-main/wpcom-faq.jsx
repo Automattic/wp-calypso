@@ -52,9 +52,9 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 				answer={ translate(
 					'Yes! With the WordPress.com Business plan you can search for and install external plugins.' +
 						' All plans already come with a custom set of plugins tailored just for them.' +
-						' {{a}}Check out all included plugins{{/a}}.',
+						' {{a}}Find out more about plugins{{/a}}.',
 					{
-						components: { a: <a href={ `/plugins/${ siteSlug }` } /> },
+						components: { a: <a href="https://en.support.wordpress.com/plugins/" /> },
 					}
 				) }
 			/>
