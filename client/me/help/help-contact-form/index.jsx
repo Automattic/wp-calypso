@@ -25,7 +25,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
-import InlineHelpCompactResult from 'blocks/inline-help/inline-help-compact-result';
+import InlineHelpCompactResults from 'blocks/inline-help/inline-help-compact-results';
 import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
 import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors';
@@ -291,26 +291,6 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
-	 * Renders a compact list of the suggested questions.
-	 * @param  {Object} Rendered list
-	 */
-	renderCompactQandAResults = () => {
-		return (
-			<ul>
-				{ this.state.qanda.map( link => {
-					return (
-						<InlineHelpCompactResult
-							key={ link.link + '#' + link.id }
-							helpLink={ link }
-							onClick={ this.trackSibylClick }
-						/>
-					);
-				} ) }
-			</ul>
-		);
-	};
-
-	/**
 	 * Render the contact form
 	 * @return {object} ReactJS JSX object
 	 */
@@ -360,7 +340,10 @@ export class HelpContactForm extends React.PureComponent {
 			return (
 				<div className="help-contact-form">
 					<p>{ translate( 'Did you want the answer to any of these questions?' ) }</p>
-					{ this.renderCompactQandAResults() }
+					<InlineHelpCompactResults
+						helpLinks={ this.state.qanda }
+						onClick={ this.trackSibylClick }
+					/>
 					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
 						{ buttonLabel }
 						<Gridicon icon="chevron-right" />

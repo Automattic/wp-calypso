@@ -28,7 +28,7 @@ class InlineHelpCompactResult extends Component {
 	render() {
 		const { helpLink } = this.props;
 		return (
-			<li>
+			<li className="inline-help__results-item">
 				<a
 					href={ helpLink.link }
 					title={ decodeEntities( helpLink.description ) }
