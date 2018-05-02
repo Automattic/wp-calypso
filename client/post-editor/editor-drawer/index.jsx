@@ -17,7 +17,6 @@ import AccordionSection from 'components/accordion/section';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
-import PostMetadata from 'lib/post-metadata';
 import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryPostTypes from 'components/data/query-post-types';
@@ -242,12 +241,7 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return (
-			<AsyncLoad
-				require="post-editor/editor-seo-accordion"
-				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
-			/>
-		);
+		return <AsyncLoad require="post-editor/editor-seo-accordion" />;
 	}
 
 	renderCopyPost() {
