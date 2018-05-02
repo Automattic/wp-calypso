@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
@@ -80,7 +80,7 @@ export class MoreFiltersControl extends Component {
 	handleFiltersReset = () => {
 		this.setState( { showOverallValidationError: false }, () => {
 			this.togglePopover();
-			this.props.onFiltersReset();
+			this.props.onFiltersReset( 'includeDashes', 'maxCharacters', 'showExactMatchesOnly' );
 		} );
 	};
 	handleFiltersSubmit = () => {
@@ -99,9 +99,9 @@ export class MoreFiltersControl extends Component {
 		const { translate } = this.props;
 		const hasFilterValues = this.getFiltercounts() > 0;
 		return (
-			<div className="search-filters__more-filters">
+			<div className="search-filters__filter search-filters__more-filters">
 				<Button
-					primary={ hasFilterValues }
+					className={ classNames( { 'is-active': hasFilterValues } ) }
 					ref={ button => ( this.button = button ) } // eslint-disable-line react/jsx-no-bind
 					onClick={ this.togglePopover }
 				>

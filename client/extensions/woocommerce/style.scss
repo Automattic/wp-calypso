@@ -71,7 +71,7 @@
 	}
 
 	.woocommerce__placeholder {
-		padding-top: 0;
+		padding-top: 32px;
 
 		@include breakpoint( "<660px" ) {
 			padding-top: 16px;

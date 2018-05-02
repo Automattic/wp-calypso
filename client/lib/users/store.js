@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:users:store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-var _fetchingUsersByNamespace = {}, // store fetching state (boolean)
+let _fetchingUsersByNamespace = {}, // store fetching state (boolean)
 	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)
 	_usersBySite = {}, // store user objects
 	_totalUsersByNamespace = {}, // store total found for params
@@ -23,10 +23,10 @@ var _fetchingUsersByNamespace = {}, // store fetching state (boolean)
 	_offsetByNamespace = {}, // store fetch progress
 	_userIDsByNamespace = {}; // store user order
 
-var UsersStore = {
+const UsersStore = {
 	// This data can help manage infinite scroll
 	getPaginationData: function( fetchOptions ) {
-		var namespace = getNamespace( fetchOptions );
+		const namespace = getNamespace( fetchOptions );
 		debug( 'getPaginationData:', namespace );
 		return {
 			fetchInitialized: _usersFetchedByNamespace.hasOwnProperty( namespace ),
@@ -39,7 +39,7 @@ var UsersStore = {
 	},
 	// Get Users for a set of fetchOptions
 	getUsers: function( fetchOptions ) {
-		var namespace = getNamespace( fetchOptions ),
+		let namespace = getNamespace( fetchOptions ),
 			siteId = fetchOptions.siteId,
 			users = [];
 
@@ -151,7 +151,7 @@ function addSingleUser( fetchOptions, user, namespace ) {
 }
 
 function updateUsers( fetchOptions, users, total ) {
-	var namespace = getNamespace( fetchOptions ),
+	let namespace = getNamespace( fetchOptions ),
 		offset = fetchOptions.offset;
 
 	debug( 'updateUsers:', namespace );
@@ -176,7 +176,7 @@ function getNamespace( fetchOptions ) {
 }
 
 UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		namespace;
 
 	switch ( action.type ) {

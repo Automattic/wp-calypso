@@ -26,6 +26,7 @@ export default class PurchaseDetail extends PureComponent {
 		isRequired: PropTypes.bool,
 		isSubmitting: PropTypes.bool,
 		onClick: PropTypes.func,
+		primaryButton: PropTypes.bool,
 		requiredText: PropTypes.string,
 		target: PropTypes.string,
 		rel: PropTypes.string,
@@ -34,10 +35,20 @@ export default class PurchaseDetail extends PureComponent {
 
 	static defaultProps = {
 		onClick: noop,
+		primaryButton: false,
 	};
 
 	renderPurchaseButton() {
-		const { buttonText, isPlaceholder, isSubmitting, href, onClick, target, rel } = this.props;
+		const {
+			buttonText,
+			isPlaceholder,
+			isSubmitting,
+			href,
+			onClick,
+			primaryButton,
+			target,
+			rel,
+		} = this.props;
 
 		if ( ! buttonText && ! isPlaceholder ) {
 			return null;
@@ -48,6 +59,7 @@ export default class PurchaseDetail extends PureComponent {
 				disabled={ isSubmitting }
 				href={ href }
 				onClick={ onClick }
+				primary={ primaryButton }
 				target={ target }
 				rel={ rel }
 				text={ buttonText }

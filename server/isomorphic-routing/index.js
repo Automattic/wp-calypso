@@ -85,7 +85,8 @@ function applyMiddlewares( context, expressNext, ...middlewares ) {
 				next();
 			}
 		} )
-	 );
+	); // prettier-ignore
+
 	compose( ...liftedMiddlewares )();
 }
 

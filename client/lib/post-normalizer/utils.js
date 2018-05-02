@@ -172,6 +172,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'player.theplatform.com',
 		'embed.radiopublic.com',
 		'gfycat.com',
+		'scribd.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();

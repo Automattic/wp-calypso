@@ -15,7 +15,7 @@
 import tinymce from 'tinymce/tinymce';
 
 function wcpomAutoResize( editor ) {
-	var settings = editor.settings,
+	let settings = editor.settings,
 		oldSize = 0;
 
 	function isFullscreen() {
@@ -28,7 +28,7 @@ function wcpomAutoResize( editor ) {
 	}
 
 	function isEndOfEditor() {
-		var range, start, body, element, child;
+		let range, start, body, element, child;
 		range = editor.selection.getRng();
 
 		if ( ( range.startOffset === 0 && range.endOffset !== 0 ) || ! range.collapsed ) {
@@ -49,7 +49,7 @@ function wcpomAutoResize( editor ) {
 	}
 
 	function resize( e ) {
-		var deltaSize,
+		let deltaSize,
 			doc,
 			body,
 			docElm,
@@ -179,7 +179,7 @@ function wcpomAutoResize( editor ) {
 
 	// Add padding at the bottom for better UX
 	editor.on( 'init', function() {
-		var overflowPadding, bottomMargin;
+		let overflowPadding, bottomMargin;
 
 		overflowPadding = editor.getParam( 'autoresize_overflow_padding', 1 );
 		bottomMargin = editor.getParam( 'autoresize_bottom_margin', 50 );

@@ -20,10 +20,10 @@ import { resetSaveBlockers } from 'state/ui/editor/save-blockers/actions';
 /**
  * Module variables
  */
-var REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/,
+let REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/,
 	CONTENT_LENGTH_ASSUME_SET = 50;
 
-var _initialRawContent = null,
+let _initialRawContent = null,
 	_isAutosaving = false,
 	_isLoading = false,
 	_isNew = false,
@@ -101,7 +101,7 @@ function updatePost( site, post ) {
 }
 
 function initializeNewPost( site, options ) {
-	var args;
+	let args;
 	options = options || {};
 
 	args = {
@@ -173,7 +173,7 @@ function normalize( post ) {
 }
 
 function setRawContent( content ) {
-	var isDirty, hasContent;
+	let isDirty, hasContent;
 
 	if ( null === _initialRawContent ) {
 		debug( 'Set initial raw content to: %s', content );
@@ -202,7 +202,7 @@ function isContentEmpty( content ) {
 }
 
 function dispatcherCallback( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		changed;
 
 	switch ( action.type ) {
@@ -254,18 +254,6 @@ function dispatcherCallback( payload ) {
 
 		case 'EDIT_POST_SAVE':
 			_queueChanges = true;
-			break;
-
-		// called by post changes elsewhere e.g. drafts drawer
-		case 'RECEIVE_UPDATED_POST':
-			if ( ! action.error ) {
-				if ( _post && action.post.ID === _post.ID ) {
-					updatePost( action.site, action.post );
-					PostEditStore.emit( 'change' );
-				}
-			}
-			_queueChanges = false;
-			_queue = [];
 			break;
 
 		case 'RECEIVE_POST_BEING_EDITED':
@@ -320,7 +308,7 @@ PostEditStore = {
 	},
 
 	getChangedAttributes: function() {
-		var changedAttributes, metadata;
+		let changedAttributes, metadata;
 
 		if ( this.isNew() ) {
 			return _post;

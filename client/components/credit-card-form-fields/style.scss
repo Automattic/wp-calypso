@@ -39,6 +39,10 @@
 	margin-top: 15px;
 	position: relative;
 
+	&.name {
+		margin-top: 0;
+	}
+
 	select {
 		font-size: 15px;
 		width: 100%;

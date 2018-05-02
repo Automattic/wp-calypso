@@ -21,7 +21,7 @@ import { normalizeTermsForApi } from 'state/posts/utils';
 import { reduxGetState } from 'lib/redux-bridge';
 import { isEditorSaveBlocked } from 'state/ui/editor/selectors';
 
-var PostActions;
+let PostActions;
 
 /**
  * Helper for performing a metadata operation on the currently edited post.
@@ -95,7 +95,7 @@ PostActions = {
 	 * @param {Object} options Edit options
 	 */
 	startEditingNew: function( site, options ) {
-		var args;
+		let args;
 		options = options || {};
 
 		args = {
@@ -116,7 +116,7 @@ PostActions = {
 	 * @param {Number} postId Post ID to load
 	 */
 	startEditingExisting: function( site, postId ) {
-		var currentPost = PostEditStore.get(),
+		let currentPost = PostEditStore.get(),
 			postHandle;
 
 		if ( ! site || ! site.ID ) {
@@ -155,7 +155,7 @@ PostActions = {
 	},
 
 	autosave: function( site, callback ) {
-		var post = PostEditStore.get(),
+		let post = PostEditStore.get(),
 			savedPost = PostEditStore.getSavedPost(),
 			siteHandle = wpcom.undocumented().site( post.site_ID );
 
@@ -270,7 +270,7 @@ PostActions = {
 	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
 	 */
 	saveEdited: function( site, attributes, context, callback, options ) {
-		var post, postHandle, query, changedAttributes, rawContent, mode, isNew;
+		let post, postHandle, query, changedAttributes, rawContent, mode, isNew;
 
 		// TODO: skip this edit if `attributes` are `null`. That means
 		// we don't want to do any additional edit before saving.
@@ -362,58 +362,6 @@ PostActions = {
 
 			callback( error, data );
 		} );
-	},
-
-	/**
-	 * Calls out to API to update Post object with any changed attributes
-	 *
-	 * @param {Object} site Site object
-	 * @param {object} post to be changed
-	 * @param {object} attributes only send the attributes to be changed
-	 * @param {function} callback callback receives ( err, post ) arguments
-
-	 */
-	update: function( site, post, attributes, callback ) {
-		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.update( attributes, PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	/**
-	 * Sends `delete` request to the API. The first request
-	 * updates status to `trash`, the second request deletes the post.
-	 *
-	 * @param {Object} site Site object
-	 * @param {object} post to be trashed
-	 * @param {function} callback that receives ( err, post ) arguments
-	 */
-	trash: function( site, post, callback ) {
-		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.delete( PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	/**
-	 * Restores post/page from trash
-	 *
-	 * @param {object} post to be trashed
-	 * @param {function} callback that receives ( err, post ) arguments
-	 * @param {Object} site Site object
-	 */
-	restore: function( site, post, callback ) {
-		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.restore( PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	receiveUpdate: function( site, callback, error, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_UPDATED_POST',
-			error: error,
-			post: data,
-			site,
-		} );
-		callback( error, data );
 	},
 };
 

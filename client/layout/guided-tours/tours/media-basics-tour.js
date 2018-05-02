@@ -30,7 +30,13 @@ export const MediaBasicsTour = makeTour(
 		path="/media"
 		when={ and( isDesktop, isNewUser ) }
 	>
-		<Step name="init" arrow="top-left" target=".media-library__upload-buttons" placement="below">
+		<Step
+			name="init"
+			arrow="top-left"
+			target=".media-library__upload-buttons"
+			placement="below"
+			style={ { animationDelay: '2s' } }
+		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>{ translate( 'Welcome to your media libary!' ) }</p>

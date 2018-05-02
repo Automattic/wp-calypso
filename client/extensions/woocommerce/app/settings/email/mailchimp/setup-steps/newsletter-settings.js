@@ -28,7 +28,7 @@ const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, t
 				<p>{ translate(
 					'Choose your list carefully as you won\'t be able to change it later. ' +
 					'Create a list in MailChimp if you have not already done so.'
-					) }
+				) }
 				</p>
 			</Notice>
 			<FormLabel>

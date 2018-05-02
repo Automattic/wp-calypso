@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { find } from 'lodash';
@@ -29,12 +28,9 @@ import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
+import { isPrivateSite as isPrivateSiteSelector } from 'state/selectors';
 
 class EditorVisibility extends React.Component {
-	static defaultProps = {
-		isPrivateSite: false,
-	};
-
 	static propTypes = {
 		context: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
@@ -51,8 +47,6 @@ class EditorVisibility extends React.Component {
 	state = {
 		passwordIsValid: true,
 	};
-
-	showingAcceptDialog = false;
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.password === nextProps.password ) {
@@ -81,16 +75,6 @@ class EditorVisibility extends React.Component {
 		}
 
 		return 'public';
-	};
-
-	isPasswordValid = () => {
-		if ( 'password' !== this.getVisibility() ) {
-			return true;
-		}
-
-		const password = ReactDom.findDOMNode( this.refs.postPassword ).value.trim();
-
-		return password.length;
 	};
 
 	updatePostStatus = () => {
@@ -168,8 +152,6 @@ class EditorVisibility extends React.Component {
 			return;
 		}
 
-		this.showingAcceptDialog = true;
-
 		let message;
 
 		if ( this.props.type === 'page' ) {
@@ -187,7 +169,6 @@ class EditorVisibility extends React.Component {
 		accept(
 			message,
 			accepted => {
-				this.showingAcceptDialog = false;
 				if ( accepted ) {
 					this.onPrivatePublish();
 				}
@@ -212,7 +193,7 @@ class EditorVisibility extends React.Component {
 		this.props.editPost( siteId, postId, { password: newPassword } );
 	};
 
-	renderPasswordInput = () => {
+	renderPasswordInput() {
 		const value = this.props.password ? this.props.password.trim() : null;
 		const isError = ! this.state.passwordIsValid;
 		const errorMessage = this.props.translate( 'Password is empty.', {
@@ -223,12 +204,10 @@ class EditorVisibility extends React.Component {
 			<div>
 				<FormTextInput
 					autoFocus
-					onKeyUp={ this.onKey }
 					onChange={ this.onPasswordChange }
 					onBlur={ this.onPasswordChange }
 					value={ value }
 					isError={ isError }
-					ref="postPassword"
 					placeholder={ this.props.translate( 'Create password', {
 						context: 'Editor: Create password for post',
 					} ) }
@@ -237,7 +216,7 @@ class EditorVisibility extends React.Component {
 				{ isError ? <FormInputValidation isError={ true } text={ errorMessage } /> : null }
 			</div>
 		);
-	};
+	}
 
 	renderPrivacyDropdown = visibility => {
 		const publicLabelPublicSite = this.props.translate( 'Public', {
@@ -319,10 +298,12 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
+		const isPrivateSite = isPrivateSiteSelector( state, siteId );
 
 		return {
 			siteId,
 			postId,
+			isPrivateSite,
 		};
 	},
 	{ editPost }

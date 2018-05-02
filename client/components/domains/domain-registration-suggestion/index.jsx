@@ -87,7 +87,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 	getDomainFlags() {
 		// TODO: Remove this entire function and isNewTld/isTestTld from utility.js
-		if ( config.isEnabled( 'domains/kracken-ui' ) ) {
+		if ( config.isEnabled( 'domains/kracken-ui' ) && this.props.isSignupStep ) {
 			return null;
 		}
 		const { suggestion, translate } = this.props;
@@ -155,13 +155,11 @@ class DomainRegistrationSuggestion extends React.Component {
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
 
-		let buttonClasses, buttonContent;
+		let buttonContent;
 
 		if ( isAdded ) {
-			buttonClasses = 'added';
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
-			buttonClasses = 'add is-primary';
 			buttonContent =
 				! isSignupStep &&
 				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
@@ -171,7 +169,6 @@ class DomainRegistrationSuggestion extends React.Component {
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 		return {
-			buttonClasses,
 			buttonContent,
 		};
 	}

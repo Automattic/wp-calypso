@@ -22,6 +22,7 @@ const ActionCard = ( {
 	buttonTarget,
 	buttonHref,
 	buttonOnClick,
+	children,
 } ) => (
 	<CompactCard className="action-card">
 		<div className="action-card__main">
@@ -29,14 +30,16 @@ const ActionCard = ( {
 			<p>{ mainText }</p>
 		</div>
 		<div className="action-card__button-container">
-			<Button
-				primary={ buttonPrimary }
-				href={ buttonHref }
-				target={ buttonTarget }
-				onClick={ buttonOnClick }
-			>
-				{ buttonText } { buttonIcon && <Gridicon icon={ buttonIcon } /> }
-			</Button>
+			{ children || (
+				<Button
+					primary={ buttonPrimary }
+					href={ buttonHref }
+					target={ buttonTarget }
+					onClick={ buttonOnClick }
+				>
+					{ buttonText } { buttonIcon && <Gridicon icon={ buttonIcon } /> }
+				</Button>
+			) }
 		</div>
 	</CompactCard>
 );
@@ -45,11 +48,12 @@ ActionCard.propTypes = {
 	headerText: PropTypes.string.isRequired,
 	mainText: PropTypes.string.isRequired,
 	buttonPrimary: PropTypes.bool,
-	buttonText: PropTypes.string.isRequired,
+	buttonText: PropTypes.string,
 	buttonIcon: PropTypes.string,
 	buttonOnClick: PropTypes.func,
 	buttonHref: PropTypes.string,
 	buttonTarget: PropTypes.string,
+	children: PropTypes.any,
 };
 
 export default ActionCard;

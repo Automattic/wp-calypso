@@ -187,7 +187,6 @@ export class PlansFeaturesMain extends Component {
 				{ this.getPlanFeatures() }
 				<PlanFooter isInSignup={ isInSignup } isJetpack={ displayJetpackPlans } />
 				{ faqs }
-				<div className="plans-features-main__bottom" />
 			</div>
 		);
 	}

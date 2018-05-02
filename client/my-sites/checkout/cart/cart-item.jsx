@@ -11,6 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { isEnabled } from 'config';
 import { canRemoveFromCart, cartItems } from 'lib/cart-values';
 import {
 	isCredits,
@@ -21,6 +22,7 @@ import {
 	isBiennially,
 	isPlan,
 	isBundled,
+	isDomainProduct,
 } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -120,9 +122,11 @@ export class CartItem extends React.Component {
 		if ( cartItem && cartItem.product_cost ) {
 			return (
 				<span>
-					<span className="cart__free-with-plan">
-						{ cartItem.product_cost } { cartItem.currency }
-					</span>
+					{ ! ( isEnabled( 'upgrades/2-year-plans' ) && this.isDomainProductDiscountedTo0() ) ? (
+						<span className="cart__free-with-plan">
+							{ cartItem.product_cost } { cartItem.currency }
+						</span>
+					) : null }
 					<span className="cart__free-text">{ translate( 'Free with your plan' ) }</span>
 				</span>
 			);
@@ -181,7 +185,9 @@ export class CartItem extends React.Component {
 		return (
 			<li className="cart-item">
 				<div className="primary-details">
-					<span className="product-name">{ name || translate( 'Loading…' ) }</span>
+					<span className="product-name" data-e2e-product-slug={ cartItem.product_slug }>
+						{ name || translate( 'Loading…' ) }
+					</span>
 					<span className="product-domain">{ this.getProductInfo() }</span>
 				</div>
 
@@ -197,6 +203,10 @@ export class CartItem extends React.Component {
 
 	getSubscriptionLength() {
 		const { cartItem, translate } = this.props;
+		if ( isEnabled( 'upgrades/2-year-plans' ) && this.isDomainProductDiscountedTo0() ) {
+			return false;
+		}
+
 		const hasBillPeriod = cartItem.bill_period && parseInt( cartItem.bill_period ) !== -1;
 		if ( ! hasBillPeriod ) {
 			return false;
@@ -207,10 +217,15 @@ export class CartItem extends React.Component {
 		} else if ( isYearly( cartItem ) ) {
 			return translate( 'annual subscription' );
 		} else if ( isBiennially( cartItem ) ) {
-			return translate( 'biennial subscription' );
+			return translate( 'two year subscription' );
 		}
 
 		return false;
+	}
+
+	isDomainProductDiscountedTo0() {
+		const { cartItem } = this.props;
+		return isDomainProduct( cartItem ) && isBundled( cartItem ) && cartItem.cost === 0;
 	}
 
 	getProductName() {

@@ -32,6 +32,7 @@ export default localize( MyComponent );
 - *icon* (string) – icon slug passed as the `icon` prop of the `Gridicon`
 - *isPlaceholder* (boolean) – determines whether or not to render shimmering placeholders
 - *isRequired* (boolean) – adds a notice icon next to the main icon
+- *primaryButton* (boolean) — determines whether the CTA button is primary ( default: `false` )
 - *requiredText* (string) – adds a notice to the top, determines the text in that notice
 - *target* (string) – target passed as the `target` prop for the `Button`
 - *title* (string) – string used as the text of the heading

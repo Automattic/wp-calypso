@@ -24,7 +24,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 class GoogleMyBusinessNewAccount extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string.isRequired,
+		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -39,9 +39,7 @@ class GoogleMyBusinessNewAccount extends Component {
 	};
 
 	trackNoThanksClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_new_account_no_thanks_button_click'
-		);
+		this.props.recordTracksEvent( 'calypso_google_my_business_new_account_no_thanks_button_click' );
 	};
 
 	render() {
@@ -49,10 +47,7 @@ class GoogleMyBusinessNewAccount extends Component {
 
 		return (
 			<Main className="gmb-new-account" wideLayout>
-				<PageViewTracker
-					path="/google-my-business/new/:site"
-					title="Google My Business > New"
-				/>
+				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
 
 				<DocumentHead title={ translate( 'Google My Business' ) } />
 
@@ -88,10 +83,7 @@ class GoogleMyBusinessNewAccount extends Component {
 								{ translate( 'Create Your Listing' ) }
 							</Button>
 
-							<Button
-								href={ `/stats/${ siteSlug }` }
-								onClick={ this.trackNoThanksClick }
-							>
+							<Button href={ `/stats/${ siteSlug }` } onClick={ this.trackNoThanksClick }>
 								{ translate( 'No thanks' ) }
 							</Button>
 						</div>

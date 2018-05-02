@@ -333,7 +333,7 @@ export const getEditedPost = createSelector(
 
 		return mergePostEdits( post, edits );
 	},
-	state => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.queries, state.posts.edits ]
 );
 
 /**
@@ -433,7 +433,7 @@ export const isEditedPostDirty = createSelector(
 			);
 		} );
 	},
-	state => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.queries, state.posts.edits ]
 );
 
 /**

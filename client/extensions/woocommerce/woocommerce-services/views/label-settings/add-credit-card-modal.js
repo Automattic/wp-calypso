@@ -47,7 +47,7 @@ class AddCardDialog extends Component {
 				additionalClassNames="add-credit-card-modal woocommerce wcc-root"
 				isVisible={ isVisible }
 				onClose={ onClose }
-				>
+			>
 				<HeaderCake onClick={ onClose }>{ translate( 'Add Credit Card' ) }</HeaderCake>
 				<CreditCardForm
 					createCardToken={ this.createCardToken }

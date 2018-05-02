@@ -18,7 +18,7 @@ const CountryDropdown = ( props ) => {
 		<Dropdown
 			{ ...props }
 			valuesMap={ valuesMap }
-			/>
+		/>
 	);
 };
 

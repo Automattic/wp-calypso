@@ -4,7 +4,8 @@
 		column-gap: 16px;
 	}
 
-	.pie-chart__chart-drawing {
+	.pie-chart__chart-drawing,
+	.pie-chart__placeholder-drawing {
 		max-width: 200px;
 	}
 }

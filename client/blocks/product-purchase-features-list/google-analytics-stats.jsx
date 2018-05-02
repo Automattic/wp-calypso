@@ -16,7 +16,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/upgrades/adwords.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-google-analytics.svg" /> }
 				title={ translate( 'Google Analytics' ) }
 				description={ translate(
 					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."

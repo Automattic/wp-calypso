@@ -24,6 +24,7 @@ import { isEnabled } from 'config';
 import CreditCardForm from 'blocks/credit-card-form/docs/example';
 import CalendarButton from 'blocks/calendar-button/docs/example';
 import CalendarPopover from 'blocks/calendar-popover/docs/example';
+import Checklist from 'blocks/checklist/docs/example';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/docs/example';
@@ -84,7 +85,7 @@ import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dia
 import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/example';
 import ConversationFollowButton from 'blocks/conversation-follow-button/docs/example';
 import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
-import UserMentionSuggestions from 'blocks/user-mention-suggestions/docs/example';
+import UserMentions from 'blocks/user-mentions/docs/example';
 
 export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
@@ -128,6 +129,7 @@ export default class AppComponents extends React.Component {
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
 					<CommentButtons readmeFilePath="comment-button" />
+					<Checklist readmeFilePath="checklist" />
 					<DisconnectJetpackDialog />
 					<CreditCardForm readmeFilePath="credit-card-form" />
 					<FollowButton readmeFilePath="follow-button" />
@@ -187,7 +189,7 @@ export default class AppComponents extends React.Component {
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
 					<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					{ isEnabled( 'reader/user-mention-suggestions' ) && <UserMentionSuggestions /> }
+					{ isEnabled( 'reader/user-mention-suggestions' ) && <UserMentions /> }
 				</Collection>
 			</Main>
 		);

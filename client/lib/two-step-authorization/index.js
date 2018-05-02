@@ -171,7 +171,7 @@ TwoStepAuthorization.prototype.backupCodes = function( callback ) {
  * transition until it is ready
  */
 TwoStepAuthorization.prototype.validateBackupCode = function( code, callback ) {
-	var args = {
+	const args = {
 		code: code,
 		action: 'create-backup-receipt',
 	};

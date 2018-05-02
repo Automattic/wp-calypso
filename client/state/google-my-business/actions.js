@@ -4,9 +4,6 @@
  * Internal dependencies
  */
 import {
-	GOOGLE_MY_BUSINESS_CONNECT_LOCATION,
-	GOOGLE_MY_BUSINESS_DISCONNECT_LOCATION,
-	GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
@@ -17,13 +14,6 @@ export const connectGoogleMyBusinessLocation = (
 	keyringConnectionId,
 	locationId
 ) => dispatch => {
-	dispatch( {
-		type: GOOGLE_MY_BUSINESS_CONNECT_LOCATION,
-		siteId,
-		keyringConnectionId,
-		locationId,
-	} );
-
 	return dispatch(
 		saveSiteSettings( siteId, {
 			google_my_business_keyring_id: keyringConnectionId,
@@ -41,11 +31,6 @@ export const connectGoogleMyBusinessLocation = (
 };
 
 export const disconnectGoogleMyBusinessLocation = siteId => dispatch => {
-	dispatch( {
-		type: GOOGLE_MY_BUSINESS_DISCONNECT_LOCATION,
-		siteId,
-	} );
-
 	return dispatch(
 		saveSiteSettings( siteId, {
 			google_my_business_keyring_id: false,
@@ -61,13 +46,6 @@ export const disconnectGoogleMyBusinessLocation = siteId => dispatch => {
 		return Promise.resolve();
 	} );
 };
-
-export const changeGoogleMyBusinessStatsInterval = ( siteId, statType, interval ) => ( {
-	type: GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
-	siteId,
-	statType,
-	interval,
-} );
 
 export const requestGoogleMyBusinessStats = (
 	siteId,

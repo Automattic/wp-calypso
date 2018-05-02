@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { merge } from 'lodash';
+import { intersection, merge, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,11 @@ import {
 	SHORTCODE_REQUEST_FAILURE,
 	SHORTCODE_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { registerActionForward } from 'lib/redux-bridge';
+import { parse } from 'lib/shortcode';
+
+registerActionForward( 'RECEIVE_MEDIA_ITEMS' );
+registerActionForward( 'RECEIVE_MEDIA_ITEM' );
 
 const createRequestingReducer = requesting => {
 	return ( state, { siteId, shortcode } ) => {
@@ -46,6 +51,36 @@ export const requesting = createReducer(
 	}
 );
 
+function mediaItemsReducer( state, { siteId, data } ) {
+	if ( ! state.hasOwnProperty( siteId ) ) {
+		return state;
+	}
+
+	if ( ! data ) {
+		return state;
+	}
+	const media = Array.isArray( data.media ) ? data.media : [ data ];
+	const updatedIds = media.map( item => String( item.ID ) );
+
+	return {
+		...state,
+		[ siteId ]: pickBy( state[ siteId ], shortcode => {
+			const parsed = parse( shortcode.shortcode );
+			if (
+				parsed.tag !== 'gallery' ||
+				! parsed.attrs ||
+				! parsed.attrs.named ||
+				! parsed.attrs.named.ids
+			) {
+				return true;
+			}
+
+			const ids = parsed.attrs.named.ids.split( ',' );
+			return ! intersection( ids, updatedIds ).length;
+		} ),
+	};
+}
+
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID keys to an object that contains the site shortcodes.
@@ -57,6 +92,8 @@ export const requesting = createReducer(
 export const items = createReducer(
 	{},
 	{
+		FLUX_RECEIVE_MEDIA_ITEM: mediaItemsReducer,
+		FLUX_RECEIVE_MEDIA_ITEMS: mediaItemsReducer,
 		[ SHORTCODE_RECEIVE ]: ( state, { siteId, shortcode, data } ) => {
 			return merge( {}, state, {
 				[ siteId ]: {

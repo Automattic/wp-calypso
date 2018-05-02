@@ -10,6 +10,9 @@ import page from 'page';
 import config from 'config';
 import { getStatsDefaultSitePage } from 'lib/route';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
+import { getSectionGroup } from 'state/ui/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 let singleton;
 
@@ -33,6 +36,7 @@ GlobalShortcuts.prototype.bindShortcuts = function() {
 	KeyboardShortcuts.on( 'open-help', this.openHelp.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-reader', this.goToReader.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-my-likes', this.goToMyLikes.bind( this ) );
+	KeyboardShortcuts.on( 'open-site-selector', this.openSiteSelector.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-stats', this.goToStats.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-blog-posts', this.goToBlogPosts.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-pages', this.goToPages.bind( this ) );
@@ -47,8 +51,17 @@ GlobalShortcuts.prototype.setSelectedSite = function( site ) {
 };
 
 GlobalShortcuts.prototype.openHelp = function() {
+	// the inline help component is responsible for injecting this
 	if ( this.showInlineHelp ) {
 		this.showInlineHelp();
+	}
+};
+
+GlobalShortcuts.prototype.openSiteSelector = function() {
+	if ( 'sites' === getSectionGroup( reduxGetState() ) ) {
+		reduxDispatch( setLayoutFocus( 'sites' ) );
+	} else {
+		page( '/sites' );
 	}
 };
 

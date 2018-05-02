@@ -35,7 +35,7 @@ Emitter( PopupMonitor.prototype );
  * @public
  */
 PopupMonitor.prototype.open = function( url, name, specs ) {
-	var windowInstance;
+	let windowInstance;
 	name = name || Date.now();
 
 	windowInstance = window.open( url, name, specs );
@@ -54,7 +54,7 @@ PopupMonitor.prototype.open = function( url, name, specs ) {
  * @public
  */
 PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
-	var screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
+	let screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
 		screenLeft = typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX;
 
 	return [
@@ -73,7 +73,7 @@ PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
  * @public
  */
 PopupMonitor.prototype.isOpen = function( name ) {
-	var isClosed = false;
+	let isClosed = false;
 
 	try {
 		isClosed = this.intervals[ name ] && this.intervals[ name ].closed;
@@ -88,7 +88,7 @@ PopupMonitor.prototype.isOpen = function( name ) {
  * open, then the interval is stopped.
  */
 PopupMonitor.prototype.checkStatus = function() {
-	for ( var name in this.intervals ) {
+	for ( const name in this.intervals ) {
 		if ( this.intervals.hasOwnProperty( name ) && ! this.isOpen( name ) ) {
 			this.emit( 'close', name );
 			delete this.intervals[ name ];

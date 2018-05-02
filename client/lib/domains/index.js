@@ -271,6 +271,10 @@ function getDomainPrice( slug, productsList, currencyCode ) {
 	return price;
 }
 
+function getAvailableTlds() {
+	return wpcom.undocumented().getAvailableTlds();
+}
+
 export {
 	canAddGoogleApps,
 	canRedirect,
@@ -297,4 +301,5 @@ export {
 	resendInboundTransferEmail,
 	restartInboundTransfer,
 	startInboundTransfer,
+	getAvailableTlds,
 };

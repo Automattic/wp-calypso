@@ -1,26 +1,6 @@
 /** @format */
-
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
-jest.mock( '../google-vouchers', () => ( {} ) );
-jest.mock( '../video-audio-posts', () => {
-	const React = require( 'react' );
-	return class VideoAudioPosts extends React.Component {};
-} );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
+jest.mock( '../google-vouchers', () => 'GoogleVouchers' );
+jest.mock( '../video-audio-posts', () => 'VideoAudioPosts' );
 
 /**
  * External dependencies
@@ -274,5 +254,41 @@ describe( 'ProductPurchaseFeaturesList feature functions', () => {
 		const audioPosts = comp.find( 'VideoAudioPosts' );
 		assert.lengthOf( audioPosts, 1 );
 		assert.equal( audioPosts.props().plan, PLAN_PREMIUM );
+	} );
+} );
+
+describe( '<HappinessSupportCard isJetpackFreePlan', () => {
+	const props = {
+		plan: PLAN_JETPACK_FREE,
+		selectedSite: {
+			plan: PLAN_JETPACK_FREE,
+		},
+	};
+	test( 'Should set isJetpackFreePlan for free plan', () => {
+		const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
+		const happinessSupport = comp.find( 'HappinessSupportCard' );
+		expect( happinessSupport.prop( 'isJetpackFreePlan' ) ).toBe( true );
+	} );
+} );
+
+describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
+	[
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_JETPACK_BUSINESS,
+		PLAN_JETPACK_BUSINESS_MONTHLY,
+	].forEach( plan => {
+		const props = {
+			plan: plan,
+			isPlaceholder: false,
+			selectedSite: {
+				plan,
+			},
+		};
+		test( `Should be eligible for live chat for ${ plan }`, () => {
+			const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
+			const happinessSupport = comp.find( 'HappinessSupportCard' );
+			expect( happinessSupport.prop( 'showLiveChatButton' ) ).toBe( true );
+		} );
 	} );
 } );
