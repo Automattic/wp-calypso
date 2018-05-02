@@ -246,7 +246,7 @@ class DeleteUser extends React.PureComponent {
 					</FormFieldset>
 
 					<FormButtonsBar>
-						<FormButton isScary={ true } disabled={ this.isDeleteButtonDisabled() }>
+						<FormButton scary={ true } disabled={ this.isDeleteButtonDisabled() }>
 							{ translate( 'Delete user', { context: 'Button label' } ) }
 						</FormButton>
 					</FormButtonsBar>
