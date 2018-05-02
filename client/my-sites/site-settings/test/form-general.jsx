@@ -14,18 +14,6 @@ jest.mock( 'components/info-popover', () => 'InfoPopover' );
 jest.mock( 'components/banner', () => 'Banner' );
 jest.mock( 'components/data/query-site-settings', () => 'QuerySiteSettings' );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
-
 /**
  * External dependencies
  */
@@ -34,7 +22,6 @@ import React from 'react';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
@@ -96,7 +83,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 					<SiteSettingsFormGeneral { ...props } siteIsJetpack={ false } site={ { plan } } />
 				);
 				expect( comp.find( 'Banner' ).length ).toBe( 1 );
-				expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
+				expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS );
 			} );
 		} );
 
