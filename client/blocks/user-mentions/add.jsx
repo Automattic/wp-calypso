@@ -18,15 +18,15 @@ const keys = { enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow: 40 };
  *
  * @example: withUserMentionSuggestions( Component )
  *
- * @param {object} EnhancedComponent - React component to wrap
+ * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
-export default EnhancedComponent =>
+export default WrappedComponent =>
 	class withUserMentions extends React.Component {
 		matchingSuggestions = [];
 
-		static displayName = `withUserMentions( ${ EnhancedComponent.displayName ||
-			EnhancedComponent.name } )`;
+		static displayName = `withUserMentions( ${ WrappedComponent.displayName ||
+			WrappedComponent.name } )`;
 		static propTypes = {};
 
 		state = {
@@ -232,7 +232,7 @@ export default EnhancedComponent =>
 
 			return (
 				<Fragment>
-					<EnhancedComponent
+					<WrappedComponent
 						{ ...this.props }
 						onKeyUp={ this.handleKeyUp }
 						onKeyDown={ this.handleKeyDown }
