@@ -47,6 +47,7 @@ import likes from './likes/reducer';
 import revisions from './revisions/reducer';
 import {
 	getSerializedPostsQuery,
+	getUnappliedMetadataEdits,
 	isAuthorEqual,
 	isDiscussionEqual,
 	isTermsEqual,
@@ -433,11 +434,26 @@ export function edits( state = {}, action ) {
 								return isDiscussionEqual( value, post[ key ] );
 							case 'featured_image':
 								return value === getFeaturedImageId( post );
+							case 'metadata':
+								// omit from unappliedPostEdits, metadata edits will be merged
+								return true;
 							case 'terms':
 								return isTermsEqual( value, post[ key ] );
 						}
 						return isEqual( post[ key ], value );
 					} );
+
+					// remove edits that are already applied in the incoming metadata values and
+					// leave only the unapplied ones.
+					if ( postEdits.metadata ) {
+						const unappliedMetadataEdits = getUnappliedMetadataEdits(
+							postEdits.metadata,
+							post.metadata
+						);
+						if ( unappliedMetadataEdits.length > 0 ) {
+							unappliedPostEdits.metadata = unappliedMetadataEdits;
+						}
+					}
 
 					return set( memoState, [ post.site_ID, post.ID ], unappliedPostEdits );
 				},

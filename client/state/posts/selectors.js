@@ -17,7 +17,8 @@ import {
 	getSerializedPostsQueryWithoutPage,
 	isAuthorEqual,
 	isDiscussionEqual,
-	mergePostEdits,
+	areAllMetadataEditsApplied,
+	applyPostEdits,
 	normalizePostForEditing,
 	normalizePostForDisplay,
 } from './utils';
@@ -331,7 +332,7 @@ export const getEditedPost = createSelector(
 			return post;
 		}
 
-		return mergePostEdits( post, edits );
+		return applyPostEdits( post, edits );
 	},
 	state => [ state.posts.queries, state.posts.edits ]
 );
@@ -420,6 +421,9 @@ export const isEditedPostDirty = createSelector(
 					}
 					case 'featured_image': {
 						return value !== getFeaturedImageId( post );
+					}
+					case 'metadata': {
+						return ! areAllMetadataEditsApplied( value, post.metadata );
 					}
 					case 'parent': {
 						return get( post, 'parent.ID', 0 ) !== value;

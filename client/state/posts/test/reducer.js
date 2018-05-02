@@ -1277,6 +1277,53 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove metadata edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							metadata: [
+								{ key: 'tobeupdated', value: 'newvalue', operation: 'update' },
+								{ key: 'tobedeleted', operation: 'delete' },
+								{
+									key: 'notyetupdated',
+									value: 'newvalue',
+									operation: 'update',
+								},
+								{ key: 'notyetdeleted', operation: 'delete' },
+							],
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							metadata: [
+								{ key: 'tobeupdated', value: 'newvalue' },
+								{ key: 'notyetupdated', value: 'oldvalue' },
+								{ key: 'notyetdeleted', value: 'value' },
+							],
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						metadata: [
+							{ key: 'notyetupdated', value: 'newvalue', operation: 'update' },
+							{ key: 'notyetdeleted', operation: 'delete' },
+						],
+					},
+				},
+			} );
+		} );
+
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {

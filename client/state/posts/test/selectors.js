@@ -2278,6 +2278,108 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.false;
 		} );
 
+		test( 'should return true if there are unapplied metadata edits', () => {
+			const queries = {
+				2916284: new PostQueryManager( {
+					items: {
+						841: {
+							ID: 841,
+							site_ID: 2916284,
+							metadata: [ { key: 'seo_description', value: 'Hello' } ],
+						},
+					},
+				} ),
+			};
+
+			// check unapplied metadata update
+			const updateEdits = {
+				2916284: {
+					841: {
+						metadata: [
+							{
+								key: 'seo_description',
+								value: 'Hello World',
+								operation: 'update',
+							},
+						],
+					},
+				},
+			};
+
+			expect(
+				isEditedPostDirty(
+					{
+						posts: {
+							queries,
+							edits: updateEdits,
+						},
+					},
+					2916284,
+					841
+				)
+			).to.be.true;
+
+			// check unapplied metadata delete
+			const deleteEdits = {
+				2916284: {
+					841: {
+						metadata: [ { key: 'seo_description', operation: 'delete' } ],
+					},
+				},
+			};
+
+			expect(
+				isEditedPostDirty(
+					{
+						posts: {
+							queries,
+							edits: deleteEdits,
+						},
+					},
+					2916284,
+					841
+				)
+			).to.be.true;
+		} );
+
+		test( 'should return false if all metadata edits are already applied', () => {
+			expect(
+				isEditedPostDirty(
+					{
+						posts: {
+							queries: {
+								2916284: new PostQueryManager( {
+									items: {
+										841: {
+											ID: 841,
+											site_ID: 2916284,
+											metadata: [ { key: 'seo_description', value: 'Hello World' } ],
+										},
+									},
+								} ),
+							},
+							edits: {
+								2916284: {
+									841: {
+										metadata: [
+											{
+												key: 'seo_description',
+												value: 'Hello World',
+												operation: 'update',
+											},
+											{ key: 'geo_latitude', operation: 'delete' },
+										],
+									},
+								},
+							},
+						},
+					},
+					2916284,
+					841
+				)
+			).to.be.false;
+		} );
+
 		test( 'should start returning false after update to original post makes the edits noop', () => {
 			// items key will not change
 			const items = {

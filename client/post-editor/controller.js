@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { map, pick, reduce, startsWith } from 'lodash';
+import { includes, map, pick, reduce, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -137,6 +137,13 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 			postAttributes.title = decodeEntities( postAttributes.title );
 			postAttributes.featured_image = getFeaturedImageId( postToCopy );
 
+			actions.startEditingNew( site, {
+				content: postToCopy.content,
+				title: postToCopy.title,
+				type: postToCopy.type,
+			} );
+			actions.edit( postAttributes );
+
 			/**
 			 * A post attributes whitelist for Redux's `editPost()` action.
 			 *
@@ -147,41 +154,42 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 			 * @see https://github.com/Automattic/wp-calypso/pull/13933
 			 */
 			const reduxPostAttributes = pick( postAttributes, [
+				'excerpt',
 				'featured_image',
 				'format',
 				'terms',
 				'title',
 			] );
 
-			actions.startEditingNew( site, {
-				content: postToCopy.content,
-				title: postToCopy.title,
-				type: postToCopy.type,
-			} );
-			context.store.dispatch( editPost( site.ID, null, reduxPostAttributes ) );
-			actions.edit( postAttributes );
-
 			/**
-			 * A post metadata whitelist for Flux's `updateMetadata()` action.
+			 * A post metadata whitelist for the `updatePostMetadata()` action.
 			 *
-			 * This is needed because blindly passing all post metadata to `updateMetadata()`
+			 * This is needed because blindly passing all post metadata to `editPost()`
 			 * causes unforeseeable issues, such as Publicize not triggering on the copied post.
 			 *
 			 * @see https://github.com/Automattic/wp-calypso/issues/14840
 			 */
 			const metadataWhitelist = [ 'geo_latitude', 'geo_longitude' ];
 
-			// Convert the metadata array into a metadata object, needed because `updateMetadata()` expects an object.
-			const metadata = reduce(
+			// Filter the post metadata to include only the ones we want to copy,
+			// use only the `key` and `value` properties (and, most importantly exclude `id`),
+			// and add an `operation` field to the copied values.
+			const copiedMetadata = reduce(
 				postToCopy.metadata,
-				( newMetadata, { key, value } ) => {
-					newMetadata[ key ] = value;
-					return newMetadata;
+				( copiedMeta, { key, value } ) => {
+					if ( includes( metadataWhitelist, key ) ) {
+						copiedMeta.push( { key, value, operation: 'update' } );
+					}
+					return copiedMeta;
 				},
-				{}
+				[]
 			);
 
-			actions.updateMetadata( pick( metadata, metadataWhitelist ) );
+			if ( copiedMetadata.length > 0 ) {
+				reduxPostAttributes.metadata = copiedMetadata;
+			}
+
+			context.store.dispatch( editPost( site.ID, null, reduxPostAttributes ) );
 		} )
 		.catch( error => {
 			Dispatcher.handleServerAction( {
