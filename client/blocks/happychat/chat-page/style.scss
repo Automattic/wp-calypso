@@ -4,23 +4,25 @@
  * even though we'll be hiding that for the time being.
  */
 
-.happychat__page {
-	position: fixed;
+.chat-page {
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;
-	top: 0;
 	margin-top: 47px;
-	left: 272px;
-	right: 0;
-	bottom: 0;
+	position: fixed;
+		top: 0;
+		left: 273px;
+		right: 0;
+		bottom: 0;
+	height: 100%;
+	min-height: 100%;
 }
 
 @include breakpoint( ">1040px" ) {
 
-	.happychat__page .happychat__timeline-message {
+	.chat-page .happychat__timeline-message {
 		max-width: 80%;
 	}
 
@@ -28,7 +30,7 @@
 
 @include breakpoint( "<960px" ) {
 
-	.happychat__page {
+	.chat-page {
 		left: 229px;
 	}
 
@@ -36,8 +38,8 @@
 
 @include breakpoint( "<660px" ) {
 
-	.happychat__page {
-			left: 0;
+	.chat-page {
+		left: 0;
 	}
 
 }
