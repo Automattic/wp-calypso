@@ -15,28 +15,15 @@ import {
 	Step,
 	ButtonRow,
 	Continue,
+	Link,
 	Quit,
 } from 'layout/guided-tours/config-elements';
 import { isDesktop } from 'lib/viewport';
 import { AddContentButton } from '../button-labels';
 
-class RepositioningStep extends Step {
-	componentDidMount() {
-		super.componentDidMount();
-		this.interval = setInterval( () => {
-			this.onScrollOrResize();
-		}, 2000 );
-	}
-
-	componentWillUnmount() {
-		super.componentWillUnmount();
-		clearInterval( this.interval );
-	}
-}
-
 export const SimplePaymentsEmailTour = makeTour(
-	<Tour name="simplePaymentsEmailTour" version="20180501" path="/" when={ and( isDesktop ) }>
-		<RepositioningStep name="init" target="side-menu-page" placement="beside" arrow="left-top">
+	<Tour name="simplePaymentsEmailTour" version="20180501" path="/pages" when={ and( isDesktop ) }>
+		<Step name="init" target="side-menu-page" placement="beside" arrow="left-top">
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
@@ -47,7 +34,7 @@ export const SimplePaymentsEmailTour = makeTour(
 					<Continue
 						click
 						hidden
-						step="step2"
+						step="choose-payment-button"
 						target=".sidebar__menu li[data-post-type='page'] a.sidebar__button"
 					/>
 					<ButtonRow>
@@ -55,12 +42,13 @@ export const SimplePaymentsEmailTour = makeTour(
 					</ButtonRow>
 				</Fragment>
 			) }
-		</RepositioningStep>
-		<RepositioningStep
-			name="step2"
+		</Step>
+		<Step
+			name="choose-payment-button"
 			arrow="top-left"
 			target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
 			placement="below"
+			style={ { zIndex: 131000 } }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
@@ -74,8 +62,31 @@ export const SimplePaymentsEmailTour = makeTour(
 							"You'll be able to set a price, upload a photo, and describe your product or cause."
 						) }
 					</p>
+					<Continue
+						click
+						hidden
+						step="finish"
+						target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
+					/>
 				</Fragment>
 			) }
-		</RepositioningStep>
+		</Step>
+		<Step name="finish" placement="center" style={ { zIndex: 100000 } }>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							"That's it! As an optional final step, feel free to complete the rest of your page and publish when ready!"
+						) }
+					</p>
+					<ButtonRow>
+						<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
+					</ButtonRow>
+					<Link href="https://en.support.wordpress.com/simple-payments">
+						{ translate( 'Learn more about Simple Payments.' ) }
+					</Link>
+				</Fragment>
+			) }
+		</Step>
 	</Tour>
 );
