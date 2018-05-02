@@ -34,7 +34,10 @@ jest.mock( 'lib/store-transactions', () => ( {
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
-jest.mock( 'lib/abtest', () => ( {} ) );
+jest.mock( 'lib/abtest', () => ( {
+	abtest() {},
+	getABTestVariation() {},
+} ) );
 jest.mock( 'lib/abtest/active-tests', () => ( {} ) );
 jest.mock( 'lib/cart-values', () => ( {
 	cartItems: {
