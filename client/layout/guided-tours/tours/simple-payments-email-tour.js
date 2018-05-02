@@ -23,7 +23,13 @@ import { AddContentButton } from '../button-labels';
 
 export const SimplePaymentsEmailTour = makeTour(
 	<Tour name="simplePaymentsEmailTour" version="20180501" path="/pages" when={ and( isDesktop ) }>
-		<Step name="init" target="side-menu-page" placement="beside" arrow="left-top">
+		<Step
+			name="init"
+			target="side-menu-page"
+			placement="beside"
+			arrow="left-top"
+			style={ { animationDelay: '2s' } }
+		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
@@ -48,7 +54,7 @@ export const SimplePaymentsEmailTour = makeTour(
 			arrow="top-left"
 			target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
 			placement="below"
-			style={ { zIndex: 131000 } }
+			style={ { animationDelay: '2s', marginLeft: '-10px', zIndex: 'auto' } }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
@@ -60,23 +66,6 @@ export const SimplePaymentsEmailTour = makeTour(
 					<p>
 						{ translate(
 							"You'll be able to set a price, upload a photo, and describe your product or cause."
-						) }
-					</p>
-					<Continue
-						click
-						hidden
-						step="finish"
-						target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
-					/>
-				</Fragment>
-			) }
-		</Step>
-		<Step name="finish" placement="center" style={ { zIndex: 100000 } }>
-			{ ( { translate } ) => (
-				<Fragment>
-					<p>
-						{ translate(
-							"That's it! As an optional final step, feel free to complete the rest of your page and publish when ready!"
 						) }
 					</p>
 					<ButtonRow>
