@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { debounce, isEqual, find, isEmpty } from 'lodash';
+import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -322,7 +322,7 @@ export class HelpContactForm extends React.PureComponent {
 			translate,
 			showingQandAStep,
 		} = this.props;
-		const hasQASuggestions = ! isEmpty( this.state.qanda );
+		const hasQASuggestions = isArray( this.state.qanda ) && ! isEmpty( this.state.qanda );
 
 		const howCanWeHelpOptions = [
 			{
