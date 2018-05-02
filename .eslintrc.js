@@ -1,27 +1,21 @@
+/** @format */
+
 module.exports = {
 	root: true,
-	'extends': [
-		'wpcalypso/react',
-		'plugin:jsx-a11y/recommended',
-		'plugin:jest/recommended',
-	],
+	extends: [ 'wpcalypso/react', 'plugin:jsx-a11y/recommended', 'plugin:jest/recommended' ],
 	parser: 'babel-eslint',
 	env: {
 		browser: true,
 		'jest/globals': true,
 		mocha: true,
-		node: true
+		node: true,
 	},
 	globals: {
 		asyncRequire: true,
 		PROJECT_NAME: true,
 		COMMIT_SHA: true,
 	},
-	plugins: [
-		'jest',
-		'jsx-a11y',
-		'import',
-	],
+	plugins: [ 'jest', 'jsx-a11y', 'import' ],
 	rules: {
 		camelcase: 0, // REST API objects include underscores
 		'jest/valid-expect': 0,
@@ -30,11 +24,14 @@ module.exports = {
 		'no-restricted-imports': [ 2, 'lib/mixins/data-observe' ],
 		'no-restricted-modules': [ 2, 'lib/mixins/data-observe' ],
 		'no-unused-expressions': 0, // Allows Chai `expect` expressions
-		'wpcalypso/jsx-classname-namespace': [ 2, {
-			rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
-		} ],
+		'wpcalypso/jsx-classname-namespace': [
+			2,
+			{
+				rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
+			},
+		],
 		'wpcalypso/import-no-redux-combine-reducers': 2,
 		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path' ] } ],
 		'import/no-extraneous-dependencies': [ 'error', { packageDir: './' } ],
-	}
+	},
 };
