@@ -133,6 +133,7 @@ UserSettings.prototype.fetchSettings = function() {
 					this.settings = decodeUserSettingsEntities( data );
 					this.initialized = true;
 					this.emit( 'change' );
+					this.emit( 'postInit' );
 				}
 
 				this.fetchingSettings = false;
