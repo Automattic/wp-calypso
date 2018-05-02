@@ -1,12 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-
-import page from 'page';
-
-/**
  * Internal dependencies
  */
 
@@ -32,10 +26,6 @@ export default function( router ) {
 				router( '/themes/upload/:site_id?', siteSelection, upload, navigation, makeLayout );
 			}
 
-/*			router( [ '/themes/:lang' ], () => {
-				page.redirect( '/themes' );
-			} );*/
-
 			const loggedInRoutes = [
 				'/themes/:lang',
 				`/themes/:tier(free|premium)?/:site_id(${ siteId })?`,
@@ -45,7 +35,6 @@ export default function( router ) {
 			];
 			router(
 				loggedInRoutes,
-				setUpLocale,
 				fetchThemeFilters,
 				validateVertical,
 				validateFilters,
@@ -60,6 +49,8 @@ export default function( router ) {
 			router( '/themes/upload/*', '/themes' );
 
 			const loggedOutRoutes = [
+				// currently we only want to catch redirects to /themes/{langSlug}
+				'/themes/:lang?',
 				'/themes/:tier(free|premium)?',
 				'/themes/:tier(free|premium)?/filter/:filter',
 				'/themes/:vertical?/:tier(free|premium)?',
@@ -67,6 +58,7 @@ export default function( router ) {
 			];
 			router(
 				loggedOutRoutes,
+				setUpLocale,
 				fetchThemeFilters,
 				validateVertical,
 				validateFilters,

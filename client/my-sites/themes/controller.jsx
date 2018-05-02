@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { compact, forEach, includes, isEmpty, startsWith, endsWith } from 'lodash';
+import { compact, forEach, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import React from 'react';
 
@@ -76,15 +76,6 @@ export function loggedOut( context, next ) {
 	if ( context.isServerSide && ! isEmpty( context.query ) ) {
 		// Don't server-render URLs with query params
 		return next();
-	}
-
-	// Store previous path if it ends with a valid langSlug
-	// in order that we can return from a theme preview
-	if (
-		startsWith( context.pathname, '/themes' ) &&
-		endsWith( context.pathname, `/${ context.lang }` )
-	) {
-		context.store.dispatch( setBackPath( context.pathname ) );
 	}
 
 	const props = getProps( context );

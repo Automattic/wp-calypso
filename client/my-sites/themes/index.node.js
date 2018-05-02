@@ -26,7 +26,7 @@ export default function( router ) {
 
 		const showcaseRoutes = [
 			// currently we only want to catch redirects to /themes/{langSlug}
-			'/themes/:lang',
+			'/themes/:lang?',
 			'/themes/:tier(free|premium)?',
 			'/themes/:tier(free|premium)?/filter/:filter',
 			'/themes/:vertical?/:tier(free|premium)?',
@@ -34,11 +34,11 @@ export default function( router ) {
 		];
 		router(
 			showcaseRoutes,
+			setUpLocale,
 			fetchThemeFilters,
 			validateVertical,
 			validateFilters,
 			fetchThemeData,
-			setUpLocale,
 			loggedOut,
 			makeLayout
 		);
