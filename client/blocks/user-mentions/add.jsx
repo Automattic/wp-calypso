@@ -14,11 +14,11 @@ import UserMentionSuggestionList from './suggestion-list';
 const keys = { enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow: 40 };
 
 /**
- * withUserMentionSuggestions is a higher-order component that adds user mention support to whatever input it wraps.
+ * addUserMentionSuggestions is a higher-order component that adds user mention support to whatever input it wraps.
  *
  * @example: withUserMentionSuggestions( Component )
  *
- * @param {object} EnhancedComponent - react component to wrap
+ * @param {object} EnhancedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
 export default EnhancedComponent =>
@@ -172,9 +172,11 @@ export default EnhancedComponent =>
 			const node = this.textInput.current;
 			const nodeRect = node.getBoundingClientRect();
 			const caretPosition = getCaretCoordinates( node, node.selectionEnd );
+			const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 			const position = {
-				left: nodeRect.left + caretPosition.left,
-				top: nodeRect.top + caretPosition.top + 28,
+				left: nodeRect.left + caretPosition.left + scrollLeft,
+				top: nodeRect.top + caretPosition.top + scrollTop + 28,
 			};
 
 			console.log( position ); // eslint-disable-line no-console
