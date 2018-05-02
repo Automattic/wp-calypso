@@ -18,7 +18,6 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import store from 'store';
 
-import user from 'lib/user';
 import Welcome from 'my-sites/welcome/welcome';
 
 class WelcomeMessage extends Component {
@@ -44,7 +43,6 @@ class WelcomeMessage extends Component {
   },
 
   render() {
-    const currentUser = user.get();
     const showWelcome = ! store.get( 'hideExampleWelcome' );
 
     return (
