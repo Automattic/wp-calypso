@@ -52,7 +52,7 @@ const AddItemDialog = ( props ) => {
 				key={ `${ pckgId }-${ itemIdx }` }
 				className="packages-step__dialog-package-option">
 				<FormCheckbox checked={ includes( addedItems[ pckgId ], itemIdx ) }
-						onChange={ onChange } />
+					onChange={ onChange } />
 				<span>{ itemLabel }</span>
 			</FormLabel>
 		);
@@ -86,11 +86,11 @@ const AddItemDialog = ( props ) => {
 
 	return (
 		<Dialog isVisible={ showAddItemDialog }
-				isFullScreen={ false }
-				onClickOutside={ onClose }
-				onClose={ onClose }
-				buttons={ buttons }
-				additionalClassNames="wcc-root woocommerce packages-step__dialog" >
+			isFullScreen={ false }
+			onClickOutside={ onClose }
+			onClose={ onClose }
+			buttons={ buttons }
+			additionalClassNames="wcc-root woocommerce packages-step__dialog" >
 			<FormSectionHeading>{ translate( 'Add item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
 				<p>

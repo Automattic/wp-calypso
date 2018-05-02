@@ -61,7 +61,7 @@ class InlineHelpSearchCard extends Component {
 				this.props.selectNextResult();
 				break;
 			case 'Enter':
-				this.props.openResult( event, this.props.selectedLink );
+				this.props.openResult( event );
 				break;
 		}
 	};

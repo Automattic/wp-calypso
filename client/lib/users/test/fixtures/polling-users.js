@@ -19,5 +19,5 @@ const updatedUsers = clonedMoreUsers.map( user => {
 
 export default {
 	found: 7,
-	users: Array.concat( usersData.users, updatedUsers ),
+	users: [].concat( usersData.users ).concat( updatedUsers ),
 };

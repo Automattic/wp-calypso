@@ -75,7 +75,7 @@ class ProductUpdate extends React.Component {
 
 	componentDidMount() {
 		const { params, product, site, variations } = this.props;
-		const productId = Number( params.product );
+		const productId = Number( params.product_id );
 
 		if ( site && site.ID ) {
 			if ( ! product ) {
@@ -91,7 +91,7 @@ class ProductUpdate extends React.Component {
 
 	componentWillReceiveProps( newProps ) {
 		const { params, site } = this.props;
-		const productId = Number( params.product );
+		const productId = Number( params.product_id );
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
@@ -233,7 +233,7 @@ class ProductUpdate extends React.Component {
 }
 
 function mapStateToProps( state, ownProps ) {
-	const productId = Number( ownProps.params.product );
+	const productId = Number( ownProps.params.product_id );
 
 	const site = getSelectedSiteWithFallback( state );
 	const product = getProductWithLocalEdits( state, productId );

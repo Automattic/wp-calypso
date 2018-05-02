@@ -120,7 +120,7 @@ export const ReaderSidebar = createReactClass( {
 	handleReaderSidebarA8cConversationsClicked() {
 		recordAction( 'clicked_reader_sidebar_a8c_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar A8C Conversations' );
-		recordTrack( 'calypso_reader_sidebar_a8c_conversations_clicked' );
+		recordTrack( 'calypso_reader_sidebar_automattic_conversations_clicked' );
 	},
 
 	handleReaderSidebarDiscoverClicked() {

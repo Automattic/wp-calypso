@@ -8,16 +8,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
-import EditorRevisionsLegacyLink from 'post-editor/editor-revisions/legacy-link';
 import * as postUtils from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
 import { recordStat, recordEvent } from 'lib/posts/stats';
@@ -45,10 +42,6 @@ export class EditPostStatus extends Component {
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 	};
-
-	constructor( props ) {
-		super( props );
-	}
 
 	toggleStickyStatus = () => {
 		let stickyStat, stickyEventLabel;
@@ -95,9 +88,6 @@ export class EditPostStatus extends Component {
 			isPublished = postUtils.isPublished( this.props.savedPost );
 			isScheduled = this.props.savedPost && this.props.savedPost.status === 'future';
 		}
-
-		const adminUrl =
-			this.props.site && this.props.site.options && this.props.site.options.admin_url;
 
 		return (
 			<div className="edit-post-status">
@@ -150,12 +140,6 @@ export class EditPostStatus extends Component {
 						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				) }
-				{ ! isEnabled( 'post-editor/revisions' ) && (
-					<EditorRevisionsLegacyLink
-						adminUrl={ adminUrl }
-						revisionsFromPostObj={ get( this.props, 'post.revisions' ) }
-					/>
-				) }
 			</div>
 		);
 	}
@@ -176,13 +160,11 @@ export class EditPostStatus extends Component {
 		}
 
 		const { password, type } = this.props.post || {};
-		const isPrivateSite = this.props.site && this.props.site.is_private;
 		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
 		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
 		const props = {
 			status: this.props.status,
 			onPrivatePublish: this.props.onPrivatePublish,
-			isPrivateSite,
 			type,
 			password,
 			savedStatus,

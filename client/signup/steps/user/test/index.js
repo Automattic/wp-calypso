@@ -17,7 +17,7 @@ import sinon from 'sinon';
  */
 import { UserStep as User } from '../';
 
-jest.mock( 'components/signup-form', () => require( 'components/empty-component' ) );
+jest.mock( 'blocks/signup-form', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/abtest', () => () => {} );
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'signup/step-wrapper', () => require( 'components/empty-component' ) );

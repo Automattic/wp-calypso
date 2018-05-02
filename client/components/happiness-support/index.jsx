@@ -35,6 +35,8 @@ export class HappinessSupport extends Component {
 	};
 
 	static defaultProps = {
+		isJetpack: false,
+		isJetpackFreePlan: false,
 		showLiveChatButton: false,
 	};
 
@@ -121,7 +123,7 @@ export class HappinessSupport extends Component {
 	renderIllustration() {
 		return (
 			<div className="happiness-support__illustration">
-				<img src="/calypso/images/illustrations/happiness-support.svg" />
+				<img alt="" src="/calypso/images/illustrations/jetpack-support.svg" />
 			</div>
 		);
 	}
@@ -140,7 +142,7 @@ export class HappinessSupport extends Component {
 				rel="noopener noreferrer"
 				className="happiness-support__support-button"
 			>
-				{ this.props.translate( 'Search our support site' ) }
+				{ this.props.translate( 'Support documentation' ) }
 			</Button>
 		);
 	}

@@ -29,61 +29,18 @@
 	}
 }
 
-.stored-card.visa {
-	background-image: url('/calypso/images/upgrades/cc-visa-disabled.svg');
-}
+$cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
 
-.stored-card.mastercard {
-	background-image: url('/calypso/images/upgrades/cc-mastercard-disabled.svg');
-}
-
-.stored-card.amex {
-	background-image: url('/calypso/images/upgrades/cc-amex-disabled.svg');
-}
-
-.stored-card.discover {
-	background-image: url('/calypso/images/upgrades/cc-discover-disabled.svg');
-}
-
-.stored-card.diners {
-	background-image: url('/calypso/images/upgrades/cc-diners-disabled.svg');
-}
-
-.stored-card.jcb {
-	background-image: url('/calypso/images/upgrades/cc-jcb-disabled.svg');
-}
-
-.stored-card.unionpay {
-	background-image: url('/calypso/images/upgrades/cc-unionpay-disabled.svg');
+@each $brand in $cc-brands {
+	.stored-card.#{$brand} {
+		background-image: url('/calypso/images/upgrades/cc-#{$brand}-disabled.svg');
+	}
 }
 
 .selected > .payment-box-section-inner {
-	.stored-card.visa {
-		background-image: url('/calypso/images/upgrades/cc-visa.svg');
-	}
-
-	.stored-card.mastercard {
-		background-image: url('/calypso/images/upgrades/cc-mastercard.svg');
-	}
-
-	.stored-card.amex {
-		background-image: url('/calypso/images/upgrades/cc-amex.svg');
-	}
-
-	.stored-card.discover {
-		background-image: url('/calypso/images/upgrades/cc-discover.svg');
-	}
-
-
-	.stored-card.diners {
-		background-image: url('/calypso/images/upgrades/cc-diners.svg');
-	}
-
-	.stored-card.jcb {
-		background-image: url('/calypso/images/upgrades/cc-jcb.svg');
-	}
-
-	.stored-card.unionpay {
-		background-image: url('/calypso/images/upgrades/cc-unionpay.svg');
+	@each $brand in $cc-brands {
+		.stored-card.#{$brand} {
+			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
+		}
 	}
 }

@@ -193,7 +193,7 @@ class DomainSearchResults extends React.Component {
 			const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
 			let regularSuggestions = suggestions;
 
-			if ( isKrackenUI ) {
+			if ( isKrackenUI && this.props.isSignupStep ) {
 				regularSuggestions = suggestions.filter(
 					suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
 				);
@@ -249,6 +249,8 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 		} else {
+			featuredSuggestionElement = config.isEnabled( 'domains/kracken-ui' ) &&
+				this.props.isSignupStep && <FeaturedDomainSuggestions showPlaceholders />;
 			suggestionElements = this.renderPlaceholders();
 		}
 
@@ -256,6 +258,7 @@ class DomainSearchResults extends React.Component {
 			<div className="domain-search-results__domain-suggestions">
 				{ suggestionCount }
 				{ featuredSuggestionElement }
+				{ this.props.children }
 				{ suggestionElements }
 				{ unavailableOffer }
 			</div>

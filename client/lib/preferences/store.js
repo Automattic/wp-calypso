@@ -16,7 +16,7 @@ import PreferencesConstants from './constants';
 /**
  * Module variables
  */
-var PreferencesStore = {
+const PreferencesStore = {
 	_preferences: undefined,
 };
 
@@ -68,7 +68,7 @@ PreferencesStore.get = function( key ) {
 };
 
 PreferencesStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case 'UPDATE_ME_SETTINGS':

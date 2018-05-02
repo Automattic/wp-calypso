@@ -80,12 +80,13 @@ class PodcastingDetails extends Component {
 		);
 	}
 
-	renderTextField( { FormComponent = FormInput, key, label } ) {
+	renderTextField( { FormComponent = FormInput, key, label, explanation } ) {
 		const { fields, isRequestingSettings, onChangeField, isPodcastingEnabled } = this.props;
 
 		return (
 			<FormFieldset>
 				<FormLabel htmlFor={ key }>{ label }</FormLabel>
+				{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 				<FormComponent
 					id={ key }
 					name={ key }
@@ -224,6 +225,13 @@ class PodcastingDetails extends Component {
 							FormComponent: FormTextarea,
 							key: 'podcasting_summary',
 							label: translate( 'Summary' ),
+						} ) }
+						{ this.renderTextField( {
+							key: 'podcasting_email',
+							label: translate( 'Email Address' ),
+							explanation: translate(
+								'This email address will be displayed in the feed and is required for some services such as Google Play.'
+							),
 						} ) }
 						{ this.renderTextField( {
 							key: 'podcasting_copyright',

@@ -7,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
-import { create } from '../';
+import { fetchRefunds, sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
+import { create, fetch } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'handlers', () => {
@@ -35,6 +35,29 @@ describe( 'handlers', () => {
 						},
 						query: {
 							json: true,
+						},
+					},
+					action
+				)
+			);
+		} );
+	} );
+
+	describe( '#fetch', () => {
+		test( 'should dispatch a get action to the API via the jetpack proxy for this siteId & orderId', () => {
+			const action = fetchRefunds( 123, 74 );
+			const result = fetch( action );
+
+			expect( result ).to.eql(
+				http(
+					{
+						method: 'GET',
+						path: '/jetpack-blogs/123/rest-api/',
+						apiVersion: '1.1',
+						body: null,
+						query: {
+							json: true,
+							path: '/wc/v3/orders/74/refunds&_method=GET',
 						},
 					},
 					action

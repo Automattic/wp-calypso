@@ -109,7 +109,7 @@ class ConversationCaterpillarComponent extends React.Component {
 						return (
 							<Gravatar
 								className={ gravClasses }
-								key={ author.ID }
+								key={ author.email }
 								user={ author }
 								size={ 32 }
 								aria-hidden="true"

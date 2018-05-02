@@ -1,15 +1,12 @@
+/** @format */
 /**
- * External depedencies
- *
- * @format
+ * External dependencies
  */
-
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -54,11 +51,14 @@ class ReviewCard extends Component {
 
 	renderToggle() {
 		const { isExpanded } = this.state;
+		const { translate } = this.props;
 		return (
 			<Button
 				borderless
 				className="reviews__action-collapse"
-				onClick={ isExpanded ? this.toggleExpanded : noop }
+				aria-label={ isExpanded ? translate( 'Collapse review' ) : translate( 'Expand review' ) }
+				aria-expanded={ isExpanded }
+				onClick={ this.toggleExpanded }
 			>
 				<Gridicon icon="chevron-down" />
 			</Button>
@@ -83,10 +83,7 @@ class ReviewCard extends Component {
 	renderPreview() {
 		const { review } = this.props;
 		return (
-			<div
-				className={ classNames( 'reviews__header', 'is-preview' ) }
-				onClick={ this.toggleExpanded }
-			>
+			<div className={ classNames( 'reviews__header', 'is-preview' ) }>
 				<div className="reviews__header-content">
 					<div className="reviews__author-gravatar">
 						<Gravatar object={ review } forType="review" />

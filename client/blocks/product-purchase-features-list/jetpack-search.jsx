@@ -16,7 +16,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon="search"
+				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-search.svg" /> }
 				title={ translate( 'Jetpack search' ) }
 				description={ translate(
 					'Replace the default WordPress search with better results ' +

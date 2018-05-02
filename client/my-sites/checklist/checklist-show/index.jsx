@@ -12,7 +12,7 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
-import Checklist from 'components/checklist';
+import Checklist from 'blocks/checklist';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
