@@ -1,15 +1,13 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { startsWith } from 'lodash';
+import { startsWith, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,27 +54,33 @@ const ShippingZoneLocationDialogCountries = ( { continentCountries, translate, a
 			? 'shipping-zone__location-dialog-list-item is-disabled'
 			: 'shipping-zone__location-dialog-list-item';
 
+		const inputId = uniqueId( 'location-' );
+
 		return (
-			<li key={ index } className={ listItemClass } onClick={ onToggle }>
-				{ isCountry ? (
-					<FormCheckbox
-						readOnly
-						className={ checkboxClass }
-						checked={ uiSelected }
-						disabled={ disabled }
-					/>
-				) : (
-					<BulkSelect
-						totalElements={ location.countryCount }
-						selectedElements={ location.selectedCountryCount }
-						readOnly
-						className={ checkboxClass }
-						disabled={ disabled }
-					/>
-				) }
-				{ isCountry ? <LocationFlag code={ code } /> : null }
-				<span>{ decodeEntities( name ) }</span>
-				{ disabled && <small>{ translate( '(An existing zone covers this location)' ) }</small> }
+			<li key={ index } className={ listItemClass }>
+				<label htmlFor={ inputId }>
+					{ isCountry ? (
+						<FormCheckbox
+							id={ inputId }
+							onChange={ onToggle }
+							className={ checkboxClass }
+							checked={ uiSelected }
+							disabled={ disabled }
+						/>
+					) : (
+						<BulkSelect
+							id={ inputId }
+							totalElements={ location.countryCount }
+							selectedElements={ location.selectedCountryCount }
+							onToggle={ onToggle }
+							className={ checkboxClass }
+							disabled={ disabled }
+						/>
+					) }
+					{ isCountry ? <LocationFlag code={ code } /> : null }
+					<span>{ decodeEntities( name ) }</span>
+					{ disabled && <small>{ translate( '(An existing zone covers this location)' ) }</small> }
+				</label>
 			</li>
 		);
 	};

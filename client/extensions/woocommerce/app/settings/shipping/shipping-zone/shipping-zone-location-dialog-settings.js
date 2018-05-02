@@ -1,9 +1,4 @@
-/**
- * /* eslint wpcalypso/i18n-ellipsis: 0
- *
- * @format
- */
-
+/** @format */
 /**
  * External dependencies
  */
@@ -19,6 +14,7 @@ import FilteredList from 'woocommerce/components/filtered-list';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
@@ -77,27 +73,42 @@ const ShippingZoneLocationDialogSettings = ( {
 		}
 
 		const radios = [
-			<div key={ 1 } onClick={ onPostcodeSelect }>
-				<FormRadio onChange={ onPostcodeSelect } checked={ filteredByPostcode } />
+			<label key={ 1 } htmlFor="include-postcodes">
+				<FormRadio
+					id="include-postcodes"
+					name="include"
+					onChange={ onPostcodeSelect }
+					checked={ filteredByPostcode }
+				/>
 				{ translate( 'Include specific postcodes in the zone' ) }
-			</div>,
+			</label>,
 		];
 
 		if ( ! countryOwner ) {
 			radios.unshift(
-				<div key={ 0 } onClick={ onWholeCountrySelect }>
-					<FormRadio onChange={ onWholeCountrySelect } checked={ unfiltered } />
+				<label key={ 0 } htmlFor="include-all">
+					<FormRadio
+						id="include-all"
+						name="include"
+						onChange={ onWholeCountrySelect }
+						checked={ unfiltered }
+					/>
 					{ translate( 'Include entire country in the zone' ) }
-				</div>
+				</label>
 			);
 		}
 
 		if ( canFilterByState ) {
 			radios.push(
-				<div key={ 2 } onClick={ onStateSelect }>
-					<FormRadio onChange={ onStateSelect } checked={ filteredByState } />
+				<label key={ 2 } htmlFor="include-states">
+					<FormRadio
+						id="include-states"
+						name="include"
+						onChange={ onStateSelect }
+						checked={ filteredByState }
+					/>
 					{ translate( 'Include specific states in the zone' ) }
-				</div>
+				</label>
 			);
 		}
 
@@ -115,15 +126,20 @@ const ShippingZoneLocationDialogSettings = ( {
 			actions.toggleStateSelected( code, ! selected );
 		};
 
+		const inputId = `state-${ index }`;
+
 		return (
-			<li key={ index } className="shipping-zone__location-dialog-list-item" onClick={ onToggle }>
-				<FormCheckbox
-					onChange={ onToggle }
-					className="shipping-zone__location-dialog-list-item-checkbox"
-					checked={ selected }
-					disabled={ disabled }
-				/>
-				{ decodeEntities( name ) }
+			<li key={ index } className="shipping-zone__location-dialog-list-item">
+				<label htmlFor={ inputId }>
+					<FormCheckbox
+						id={ inputId }
+						onChange={ onToggle }
+						className="shipping-zone__location-dialog-list-item-checkbox"
+						checked={ selected }
+						disabled={ disabled }
+					/>
+					{ decodeEntities( name ) }
+				</label>
 			</li>
 		);
 	};
@@ -134,8 +150,10 @@ const ShippingZoneLocationDialogSettings = ( {
 
 			return (
 				<FormFieldSet>
-					<FormLabel required>{ translate( 'Post codes' ) }</FormLabel>
-					<FormTextInput value={ postcode || '' } onChange={ onPostcodeChange } />
+					<FormLabel htmlFor="postcodes" required>
+						{ translate( 'Post codes' ) }
+					</FormLabel>
+					<FormTextInput id="postcodes" value={ postcode || '' } onChange={ onPostcodeChange } />
 					<p>
 						{ translate(
 							'Postcodes containing wildcards (e.g. CB23*) and fully numeric ranges (e.g. 90210…99000) are also supported.'
@@ -163,9 +181,9 @@ const ShippingZoneLocationDialogSettings = ( {
 	};
 
 	return (
-		<div>
+		<div className="shipping-zone__location-dialog-settings">
 			<FormFieldSet>
-				<FormLabel>{ translate( 'Shipping Zone settings' ) }</FormLabel>
+				<FormLegend>{ translate( 'Shipping Zone settings' ) }</FormLegend>
 				{ renderRadios() }
 			</FormFieldSet>
 			{ renderDetailedSettings() }
