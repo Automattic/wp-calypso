@@ -7,7 +7,7 @@
 	@include breakpoint( '>660px' ) {
 		align-items: center;
 		display: flex;
-		flex: 0 2 280px;
+		flex: 0 2 360px;
 		font-size: 17px;
 		justify-content: flex-end;
 		padding-right: 2em;
@@ -40,7 +40,7 @@
 
 	.domain-product-price__strikethrough-price {
 		text-decoration: line-through;
-		margin-right: 0.25em;
+		margin-right: 0.75em;
 		opacity: 0.7;
 	}
 
