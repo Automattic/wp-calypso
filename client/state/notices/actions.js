@@ -20,28 +20,14 @@ export function removeNotice( noticeId ) {
 	};
 }
 
-export function createNotice( status, text, options = {} ) {
-	const showDismiss = typeof options.showDismiss === 'boolean' ? options.showDismiss : true;
-	const notice = {
-		button: options.button,
-		displayOnNextPage: options.displayOnNextPage || false,
-		duration: options.duration,
-		href: options.href,
-		icon: options.icon,
-		isPersistent: options.isPersistent || false,
-		noticeId: options.id || uniqueId(),
-		onClick: options.onClick,
-		showDismiss,
-		status: status,
-		text: text,
-	};
-	if ( showDismiss && typeof options.onDismissClick === 'function' ) {
-		notice.onDismissClick = options.onDismissClick;
-	}
-
+export function createNotice( status, text, { id, ...noticeOptions } = {} ) {
 	return {
 		type: NOTICE_CREATE,
-		notice: notice,
+		notice: Object.assign( { showDismiss: true }, noticeOptions, {
+			noticeId: id || uniqueId(),
+			status,
+			text,
+		} ),
 	};
 }
 
