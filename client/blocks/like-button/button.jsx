@@ -64,6 +64,8 @@ class LikeButton extends PureComponent {
 			postId,
 			slug,
 			translate,
+			onMouseEnter,
+			onMouseLeave,
 		} = this.props;
 		const showLikeCount = likeCount > 0 || showZeroCount;
 		const isLink = containerTag === 'a';
@@ -114,6 +116,8 @@ class LikeButton extends PureComponent {
 					href,
 					className: classNames( containerClasses ),
 					onClick: ! isLink ? this.toggleLiked : null,
+					onMouseEnter,
+					onMouseLeave,
 				},
 				isNull
 			),

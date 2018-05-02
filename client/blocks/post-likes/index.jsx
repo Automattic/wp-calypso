@@ -72,7 +72,17 @@ class PostLikes extends React.PureComponent {
 	}
 
 	render() {
-		const { likeCount, likes, postId, postType, siteId, translate, showDisplayNames } = this.props;
+		const {
+			likeCount,
+			likes,
+			postId,
+			postType,
+			siteId,
+			translate,
+			showDisplayNames,
+			onMouseEnter,
+			onMouseLeave,
+		} = this.props;
 
 		let noLikesLabel;
 
@@ -85,9 +95,10 @@ class PostLikes extends React.PureComponent {
 		const isLoading = ! likes;
 
 		const classes = classnames( 'post-likes', { 'has-display-names': showDisplayNames } );
+		const extraProps = { onMouseEnter, onMouseLeave };
 
 		return (
-			<div className={ classes }>
+			<div className={ classes } { ...extraProps }>
 				<QueryPostLikes siteId={ siteId } postId={ postId } needsLikers={ true } />
 				{ isLoading && (
 					<span key="placeholder" className="post-likes__count is-loading">
