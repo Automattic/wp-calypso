@@ -16,7 +16,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import DomainSuggestion from 'components/domains/domain-suggestion';
-import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
@@ -24,8 +23,6 @@ import {
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
-	isNewTld,
-	isTestTld,
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
 } from 'components/domains/domain-registration-suggestion/utility';
@@ -84,65 +81,6 @@ class DomainRegistrationSuggestion extends React.Component {
 		this.props.onButtonClick( this.props.suggestion );
 	};
 
-	getDomainFlags() {
-		// TODO: Remove this function and isNewTld/isTestTld from utility.js
-		//       when new designs for /domains/add is released.
-		if ( this.props.isSignupStep ) {
-			return null;
-		}
-		const { suggestion, translate } = this.props;
-		const domain = suggestion.domain_name;
-		const domainFlags = [];
-
-		if ( domain ) {
-			// Grab everything from the first dot, so 'example.co.uk' will
-			// match '.co.uk' but not '.uk'
-			// This won't work if we add subdomains.
-			const tld = domain.substring( domain.indexOf( '.' ) );
-
-			if ( isNewTld( tld ) ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-new` }
-						content={ translate( 'New' ) }
-						status="success"
-					/>
-				);
-			}
-
-			if ( isTestTld( tld ) ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-testing` }
-						content={ 'Testing only' }
-						status="warning"
-					/>
-				);
-			}
-		}
-
-		if ( suggestion.isRecommended ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-recommended` }
-					content={ translate( 'Recommended' ) }
-					status="success"
-				/>
-			);
-		}
-
-		if ( suggestion.isBestAlternative ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-best-alternative` }
-					content={ translate( 'Best Alternative' ) }
-				/>
-			);
-		}
-
-		return domainFlags;
-	}
-
 	getButtonProps() {
 		const {
 			cart,
@@ -179,13 +117,8 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderDomain() {
-		const { suggestion: { domain_name: domain }, isFeatured } = this.props;
-		return (
-			<h3 className="domain-registration-suggestion__title">
-				{ domain }
-				{ ! isFeatured ? this.getDomainFlags() : null }
-			</h3>
-		);
+		const { suggestion: { domain_name: domain } } = this.props;
+		return <h3 className="domain-registration-suggestion__title">{ domain }</h3>;
 	}
 
 	renderProgressBar() {
