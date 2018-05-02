@@ -178,6 +178,19 @@ export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPl
 }
 
 /**
+ * Removes the specified item and its dependency items from a shopping cart.
+ *
+ * @param {Object} oldItem - item as `CartItemValue` object
+ * @param {Object} newItem - item as `CartItemValue` object
+ * @returns {Function} the function that removes the items from a shopping cart
+ */
+export function replaceItem( oldItem, newItem ) {
+	return function( cart ) {
+		return flow( [ remove( oldItem ), add( newItem ) ] )( cart );
+	};
+}
+
+/**
  * Retrieves the dependency items from the shopping cart for the given cart item.
  *
  * @param {Object} cartItem - item as `CartItemValue` object
@@ -1033,6 +1046,7 @@ export default {
 	remove,
 	removeItemAndDependencies,
 	removePrivacyFromAllDomains,
+	replaceItem,
 	siteRedirect,
 	shouldBundleDomainWithPlan,
 	spaceUpgradeItem,

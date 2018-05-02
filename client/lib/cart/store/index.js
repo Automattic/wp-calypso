@@ -133,6 +133,10 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 				)
 			);
 			break;
+
+		case UpgradesActionTypes.CART_ITEM_REPLACE:
+			update( cartItems.replaceItem( action.oldItem, action.newItem ) );
+			break;
 	}
 } );
 
