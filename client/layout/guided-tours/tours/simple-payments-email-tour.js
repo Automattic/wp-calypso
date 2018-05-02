@@ -4,7 +4,7 @@
  */
 
 import React, { Fragment } from 'react';
-import { overEvery as and } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,11 +18,10 @@ import {
 	Link,
 	Quit,
 } from 'layout/guided-tours/config-elements';
-import { isDesktop } from 'lib/viewport';
 import { AddContentButton } from '../button-labels';
 
 export const SimplePaymentsEmailTour = makeTour(
-	<Tour name="simplePaymentsEmailTour" version="20180501" path="/pages" when={ and( isDesktop ) }>
+	<Tour name="simplePaymentsEmailTour" version="20180501" path="/" when={ noop }>
 		<Step
 			name="init"
 			target="side-menu-page"
