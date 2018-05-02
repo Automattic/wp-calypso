@@ -57,6 +57,15 @@ export const getExcerptForPost = post => {
 	);
 };
 
+/**
+ * Returns a summary of a post, truncated approximately at the same length as our servers
+ * and Facebook truncate it.
+ *
+ * @param {Object} post A post object.
+ * @param {Function} translate The i18n-calypso function.
+ * @param {Number} maxWords Approximation of the truncation logic performed by our servers.
+ * @returns {String} Post summary
+ */
 export const getSummaryForPost = ( post, translate, maxWords = 60 ) => {
 	if ( ! post ) {
 		return null;
