@@ -15,7 +15,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import {
@@ -86,8 +85,9 @@ class DomainRegistrationSuggestion extends React.Component {
 	};
 
 	getDomainFlags() {
-		// TODO: Remove this entire function and isNewTld/isTestTld from utility.js
-		if ( config.isEnabled( 'domains/kracken-ui' ) && this.props.isSignupStep ) {
+		// TODO: Remove this function and isNewTld/isTestTld from utility.js
+		//       when new designs for /domains/add is released.
+		if ( this.props.isSignupStep ) {
 			return null;
 		}
 		const { suggestion, translate } = this.props;

@@ -13,8 +13,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import PremiumPopover from 'components/plans/premium-popover';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
@@ -64,22 +62,10 @@ class DomainProductPrice extends React.Component {
 	renderIncludedInPremium() {
 		const { translate } = this.props;
 
-		// TODO: When removing this flag, remember to remove PremiumPopover component
-		//       from the codebase.
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
-		const includedInPlanText = translate( 'Included in paid plans' );
-
 		return (
 			<div className="domain-product-price is-with-plans-only">
 				<small className="domain-product-price__premium-text" ref="subMessage">
-					{ isKrackenUi ? (
-						includedInPlanText
-					) : (
-						<PremiumPopover
-							position="bottom left"
-							textLabel={ translate( 'Included in WordPress.com Premium' ) }
-						/>
-					) }
+					{ translate( 'Included in paid plans' ) }
 				</small>
 			</div>
 		);

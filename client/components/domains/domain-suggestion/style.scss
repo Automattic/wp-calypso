@@ -113,8 +113,7 @@
 	text-align: center;
 	color: $blue-medium;
 
-	// NOTE: .is-kracken-ui can be removed once feature is deployed.
-	.is-kracken-ui &.is-primary {
+	&.is-primary {
 		color: $white;
 		margin-left: 1em;
 		padding: 0.25em 3em;

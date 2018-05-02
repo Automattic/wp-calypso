@@ -58,7 +58,6 @@ import {
 import {
 	getStrippedDomainBase,
 	getTldWeightOverrides,
-	isFreeSuggestion,
 	isNumberString,
 	isUnknownSuggestion,
 } from 'components/domains/register-domain-step/utility';
@@ -321,10 +320,9 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
 
 		return (
-			<div className={ `register-domain-step ${ isKrackenUi ? 'is-kracken-ui' : '' }` }>
+			<div className="register-domain-step">
 				<div className="register-domain-step__search">
 					<SearchCard
 						ref={ this.bindSearchCardReference }
@@ -696,8 +694,6 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
-
 		const suggestionMap = new Map();
 		flatten( compact( results ) ).forEach( result => {
 			const { domain_name: domainName } = result;
@@ -714,10 +710,7 @@ class RegisterDomainStep extends React.Component {
 		const bestAlternative = suggestion =>
 			! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
 
-		let availableSuggestions = reject( suggestions, isUnknownSuggestion );
-		if ( ! isKrackenUi ) {
-			availableSuggestions = reject( suggestions, isFreeSuggestion );
-		}
+		const availableSuggestions = reject( suggestions, isUnknownSuggestion );
 
 		const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
 
