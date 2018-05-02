@@ -44,7 +44,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import {
 	addItem,
-	removeItem,
+	replaceItem,
 	applyCoupon,
 	resetTransaction,
 	setDomainDetails,
@@ -553,17 +553,16 @@ export class Checkout extends React.Component {
 	}
 
 	handleTermChange = ( { value: planSlug } ) => {
-		const products = this.getPlanProducts();
+		const product = this.getPlanProducts()[ 0 ];
 		const cartItem = getCartItemForPlan( planSlug, {
-			domainToBundle: get( products, '[0].extra.domain_to_bundle', '' ),
+			domainToBundle: get( product, 'extra.domain_to_bundle', '' ),
 		} );
-		products.forEach( removeItem );
 		analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
 			product_slug: cartItem.product_slug,
 			free_trial: cartItem.free_trial,
 			from_section: 'checkout',
 		} );
-		addItem( cartItem );
+		replaceItem( product, cartItem );
 	};
 
 	paymentMethodsAbTestFilter() {
