@@ -84,6 +84,7 @@ function getQueryStringForPoll( extraFields = [], extraQueryParams = {} ) {
 		...extraQueryParams,
 	};
 }
+const seed = random( 0, 1000 );
 
 const streamApis = {
 	following: {
@@ -139,11 +140,7 @@ const streamApis = {
 		path: () => '/read/recommendations/posts',
 		dateProperty: 'date',
 		query: ( { query } ) => {
-			return {
-				...query,
-				seed: random( 0, 1000 ),
-				algorithm: 'read:recommendations:posts/es/1',
-			};
+			return { ...query, seed, algorithm: 'read:recommendations:posts/es/1' };
 		},
 	},
 	custom_recs_posts_with_images: {
@@ -152,7 +149,7 @@ const streamApis = {
 		query: extras =>
 			getQueryString( {
 				...extras,
-				seed: random( 0, 1000 ),
+				seed,
 				alg_prefix: 'read:recommendations:posts',
 			} ),
 	},
@@ -249,8 +246,8 @@ export function handlePage( action, data ) {
 	if ( isPoll ) {
 		actions.push( receiveUpdates( { streamKey, streamItems, query } ) );
 	} else {
-		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
 		actions.push( receivePosts( posts ) );
+		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
 	}
 
 	return actions;
