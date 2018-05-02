@@ -15,7 +15,7 @@ import Dialog from 'components/dialog';
 import Button from 'components/button';
 import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
-import { getTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';
+import { getSingleTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';
 
 /**
  * Module varialbles
@@ -63,7 +63,7 @@ export class Translatable extends Component {
 		const { singular, context, plural, locale } = this.props;
 
 		if ( ! this.hasDataLoaded() ) {
-			getTranslationData( locale, { singular, context, plural } )
+			getSingleTranslationData( locale, { singular, context, plural } )
 				.then( originalData =>
 					this.setState( {
 						originalData,

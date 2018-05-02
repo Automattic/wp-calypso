@@ -75,14 +75,17 @@ export function isCommunityTranslatorEnabled() {
  * @returns {Object} request object
  */
 export function postRequest( glotPressUrl, postFormData ) {
-	return request
-		.post( glotPressUrl )
-		.withCredentials()
-		.send( postFormData )
-		.then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
-		.catch( error => {
-			throw error; // pass on the error so the call sites can handle it accordingly.
-		} );
+	return (
+		request
+			.post( glotPressUrl )
+			.withCredentials()
+			.send( postFormData )
+			// .then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
+			.then( response => response.body )
+			.catch( error => {
+				throw error; // pass on the error so the call sites can handle it accordingly.
+			} )
+	);
 }
 
 /**
@@ -94,7 +97,7 @@ export function postRequest( glotPressUrl, postFormData ) {
  * @param {Function} post see postRequest()
  * @returns {Object} request object
  */
-export function getTranslationData(
+export function getSingleTranslationData(
 	locale,
 	originalStringData,
 	apiBaseUrl = GP_BASE_URL + '/api',
@@ -109,7 +112,9 @@ export function getTranslationData(
 		`&original_strings=${ encodeURIComponent( JSON.stringify( [ originalStringData ] ) ) }`,
 	];
 
-	return post( glotPressUrl, postFormData.join( '' ) );
+	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressDataEntries =>
+		normalizeDetailsFromTranslationData( head( glotPressDataEntries ) )
+	);
 }
 
 /**
@@ -142,7 +147,9 @@ export function submitTranslation(
 		),
 	];
 
-	return post( glotPressUrl, postFormData.join( '' ) );
+	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressData =>
+		normalizeDetailsFromTranslationData( glotPressData )
+	);
 }
 
 /**
