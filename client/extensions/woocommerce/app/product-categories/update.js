@@ -63,7 +63,7 @@ class ProductCategoryUpdate extends React.Component {
 
 	componentDidMount() {
 		const { params, site, category } = this.props;
-		const categoryId = Number( params.category );
+		const categoryId = Number( params.category_id );
 
 		if ( site && site.ID ) {
 			if ( ! category ) {
@@ -75,7 +75,7 @@ class ProductCategoryUpdate extends React.Component {
 
 	componentWillReceiveProps( newProps ) {
 		const { params, site } = this.props;
-		const categoryId = Number( params.category );
+		const categoryId = Number( params.category_id );
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
@@ -199,7 +199,7 @@ class ProductCategoryUpdate extends React.Component {
 }
 
 function mapStateToProps( state, ownProps ) {
-	const categoryId = Number( ownProps.params.category );
+	const categoryId = Number( ownProps.params.category_id );
 
 	const site = getSelectedSiteWithFallback( state );
 	const category = getProductCategoryWithLocalEdits( state, categoryId );

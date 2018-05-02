@@ -39,8 +39,8 @@ const renderPackageDimensions = ( dimensions, dimensionUnit ) => {
 		dimensions.width,
 		dimensions.height,
 	]
-	.map( ( dimension ) => `${ dimension } ${ dimensionUnit }` )
-	.join( ' x ' );
+		.map( ( dimension ) => `${ dimension } ${ dimensionUnit }` )
+		.join( ' x ' );
 };
 
 const PackageInfo = ( props ) => {

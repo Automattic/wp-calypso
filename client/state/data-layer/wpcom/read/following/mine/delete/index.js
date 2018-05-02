@@ -18,7 +18,7 @@ import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
-export function requestUnfollow( { dispatch, getState }, action ) {
+export function requestUnfollow( { dispatch }, action ) {
 	const { payload: { feedUrl } } = action;
 	dispatch(
 		http( {

@@ -40,7 +40,7 @@ function UndocumentedMe( wpcom ) {
 inherits( UndocumentedMe, Me );
 
 UndocumentedMe.prototype.billingHistoryEmailReceipt = function( receiptId, callback ) {
-	var args = {
+	const args = {
 		path: '/me/billing-history/receipt/' + receiptId + '/email',
 	};
 
@@ -61,7 +61,7 @@ UndocumentedMe.prototype.purchases = function( callback ) {
 };
 
 UndocumentedMe.prototype.getConnectedApplications = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/connected-applications',
 	};
@@ -70,7 +70,7 @@ UndocumentedMe.prototype.getConnectedApplications = function( callback ) {
 };
 
 UndocumentedMe.prototype.revokeApplicationConnection = function( connectionID, callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/connected-applications/' + connectionID + '/delete',
 	};
@@ -79,7 +79,7 @@ UndocumentedMe.prototype.revokeApplicationConnection = function( connectionID, c
 };
 
 UndocumentedMe.prototype.validatePassword = function( password, callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/settings/password/validate',
 		body: {
@@ -91,7 +91,7 @@ UndocumentedMe.prototype.validatePassword = function( password, callback ) {
 };
 
 UndocumentedMe.prototype.sendSMSValidationCode = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/sms/new',
 	};
@@ -100,7 +100,7 @@ UndocumentedMe.prototype.sendSMSValidationCode = function( callback ) {
 };
 
 UndocumentedMe.prototype.validateTwoStepCode = function( body, callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/validate',
 		body: body,
@@ -110,7 +110,7 @@ UndocumentedMe.prototype.validateTwoStepCode = function( body, callback ) {
 };
 
 UndocumentedMe.prototype.getTwoStep = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/',
 	};
@@ -119,7 +119,7 @@ UndocumentedMe.prototype.getTwoStep = function( callback ) {
 };
 
 UndocumentedMe.prototype.getAppAuthCodes = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/app-auth-setup/',
 	};
@@ -128,7 +128,7 @@ UndocumentedMe.prototype.getAppAuthCodes = function( callback ) {
 };
 
 UndocumentedMe.prototype.validateUsername = function( username, callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/username/validate/' + username,
 	};
@@ -137,7 +137,7 @@ UndocumentedMe.prototype.validateUsername = function( username, callback ) {
 };
 
 UndocumentedMe.prototype.changeUsername = function( username, action, callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/username',
 		body: {
@@ -172,14 +172,14 @@ UndocumentedMe.prototype.storedCardAdd = function( cardToken, callback ) {
 };
 
 UndocumentedMe.prototype.storedCardDelete = function( card, callback ) {
-	var args = {
+	const args = {
 		path: '/me/stored-cards/' + card.stored_details_id + '/delete',
 	};
 	return this.wpcom.req.post( args, callback );
 };
 
 UndocumentedMe.prototype.backupCodes = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/backup-codes/new',
 	};
@@ -207,7 +207,7 @@ UndocumentedMe.prototype.getNotificationSettings = function( callback ) {
 };
 
 UndocumentedMe.prototype.updateNotificationSettings = function( settings, applyToAll, callback ) {
-	var query = {};
+	let query = {};
 	debug( '/me/notification/settings/' );
 
 	if ( applyToAll ) {
@@ -226,7 +226,7 @@ UndocumentedMe.prototype.updateNotificationSettings = function( settings, applyT
 };
 
 UndocumentedMe.prototype.getAccountRecovery = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery',
 	};
@@ -235,7 +235,7 @@ UndocumentedMe.prototype.getAccountRecovery = function( callback ) {
 };
 
 UndocumentedMe.prototype.updateAccountRecoveryPhone = function( country, phoneNumber, callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/phone',
 		body: {
@@ -248,7 +248,7 @@ UndocumentedMe.prototype.updateAccountRecoveryPhone = function( country, phoneNu
 };
 
 UndocumentedMe.prototype.deleteAccountRecoveryPhone = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/phone/delete',
 	};
@@ -257,7 +257,7 @@ UndocumentedMe.prototype.deleteAccountRecoveryPhone = function( callback ) {
 };
 
 UndocumentedMe.prototype.newValidationAccountRecoveryPhone = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/phone/validation/new',
 	};
@@ -266,7 +266,7 @@ UndocumentedMe.prototype.newValidationAccountRecoveryPhone = function( callback 
 };
 
 UndocumentedMe.prototype.validateAccountRecoveryPhone = function( code, callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/phone/validation',
 		body: { code },
@@ -276,7 +276,7 @@ UndocumentedMe.prototype.validateAccountRecoveryPhone = function( code, callback
 };
 
 UndocumentedMe.prototype.updateAccountRecoveryEmail = function( email, callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/email',
 		body: {
@@ -288,7 +288,7 @@ UndocumentedMe.prototype.updateAccountRecoveryEmail = function( email, callback 
 };
 
 UndocumentedMe.prototype.deleteAccountRecoveryEmail = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/email/delete',
 	};
@@ -297,7 +297,7 @@ UndocumentedMe.prototype.deleteAccountRecoveryEmail = function( callback ) {
 };
 
 UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function( callback ) {
-	var args = {
+	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/email/validation/new',
 	};

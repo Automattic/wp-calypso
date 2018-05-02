@@ -6,13 +6,12 @@
 /**
  * External dependencies
  */
-var socketio = require( 'socket.io' );
-var debug = require( 'debug' )( 'calypso:bundler:hot-reloader' );
-var cssHotReloader = require( './css-hot-reload' );
+const socketio = require( 'socket.io' );
+const debug = require( 'debug' )( 'calypso:bundler:hot-reloader' );
+const cssHotReloader = require( './css-hot-reload' );
 
-var io = null,
-	_stats = null,
-	hotReloader;
+let io = null,
+	_stats = null;
 
 function invalidPlugin() {
 	if ( io ) {
@@ -40,7 +39,7 @@ function sendStats( socket, stats, force ) {
 	}
 }
 
-hotReloader = {
+const hotReloader = {
 	listen: function( server, webpackCompiler ) {
 		io = socketio.listen( server, { 'log level': 1 } );
 		io.sockets.on( 'connection', function( socket ) {

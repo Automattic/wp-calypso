@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -29,6 +28,17 @@ const StatsWidgetList = ( {
 		}
 	};
 
+	let viewMarkup;
+	if ( viewLink && fetchedData && Array.isArray( fetchedData ) && fetchedData.length ) {
+		viewMarkup = (
+			<div className="stats-widget__more">
+				<a href={ viewLink } onClick={ onView }>
+					{ viewText }
+				</a>
+			</div>
+		);
+	}
+
 	return (
 		<div className="stats-widget__box-contents stats-type-list">
 			<Module
@@ -47,17 +57,7 @@ const StatsWidgetList = ( {
 				/>
 			</Module>
 
-			{ ( viewLink &&
-				fetchedData &&
-				Array.isArray( fetchedData ) &&
-				fetchedData.length && (
-					<div className="stats-widget__more">
-						<a href={ viewLink } onClick={ onView }>
-							{ viewText }
-						</a>
-					</div>
-				) ) ||
-				null }
+			{ viewMarkup }
 		</div>
 	);
 };

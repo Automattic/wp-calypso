@@ -19,7 +19,7 @@ import {
  *
  * @return {Function} Action thunk
  */
-export function requestKeyringConnections() {
+export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
 	return dispatch => {
 		dispatch( {
 			type: KEYRING_CONNECTIONS_REQUEST,
@@ -27,7 +27,7 @@ export function requestKeyringConnections() {
 
 		return wpcom
 			.undocumented()
-			.mekeyringConnections()
+			.mekeyringConnections( forceExternalUsersRefetch )
 			.then( ( { connections } ) => {
 				dispatch( {
 					type: KEYRING_CONNECTIONS_RECEIVE,

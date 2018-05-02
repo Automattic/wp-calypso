@@ -13,6 +13,8 @@ import Popover from 'components/popover';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 
+const customPosition = { top: 300, left: 500 };
+
 class PopoverExample extends PureComponent {
 	constructor( props ) {
 		super( props );
@@ -64,8 +66,9 @@ class PopoverExample extends PureComponent {
 					id="popover__basic-example"
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
-					position={ this.state.popoverPosition }
+					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
 					context={ this.refs && this.refs.popoverButton }
+					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
 				>
 					<div style={ { padding: '10px' } }>Simple Popover Instance</div>
 				</Popover>
@@ -86,8 +89,9 @@ class PopoverExample extends PureComponent {
 					id="popover__menu-example"
 					isVisible={ this.state.showPopoverMenu }
 					onClose={ this.closePopoverMenu }
-					position={ this.state.popoverPosition }
+					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
 					context={ this.refs && this.refs.popoverMenuButton }
+					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
 				>
 					<PopoverMenuItem action="A">Item A</PopoverMenuItem>
 					<PopoverMenuItem action="B">Item B</PopoverMenuItem>
@@ -111,6 +115,7 @@ class PopoverExample extends PureComponent {
 						<option value="bottom">bottom</option>
 						<option value="bottom left">bottom left</option>
 						<option value="bottom right">bottom right</option>
+						<option value="custom">custom</option>
 					</select>
 				</label>
 

@@ -138,8 +138,7 @@ const ShippingZoneLocationDialogSettings = ( {
 					<FormTextInput value={ postcode || '' } onChange={ onPostcodeChange } />
 					<p>
 						{ translate(
-							'Postcodes containing wildcards (e.g. CB23*) ' +
-								'and fully numeric ranges (e.g. 90210...99000) are also supported.'
+							'Postcodes containing wildcards (e.g. CB23*) and fully numeric ranges (e.g. 90210…99000) are also supported.'
 						) }
 					</p>
 				</FormFieldSet>

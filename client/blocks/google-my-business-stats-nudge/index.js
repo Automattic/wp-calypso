@@ -90,7 +90,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 						<div className="google-my-business-stats-nudge__button-row">
 							<Button
-								href={ `/google-my-business/select-business-type/${ this.props.siteSlug }` }
+								href={ `/google-my-business/${ this.props.siteSlug }` }
 								primary
 								onClick={ this.onStartNowClick }
 							>

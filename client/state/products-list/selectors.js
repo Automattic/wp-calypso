@@ -85,6 +85,7 @@ export const planSlugToPlanProduct = ( products, planSlug ) => {
  * @return {Object} Object with a full and monthly price
  */
 export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) => ( {
+	priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
 	priceFull: getPlanPrice( state, siteId, planObject, false ),
 	priceMonthly: getPlanPrice( state, siteId, planObject, true ),
 } );

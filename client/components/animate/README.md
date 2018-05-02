@@ -19,4 +19,4 @@ render() {
 
 #### Props
 
-* `type`: a string matching one of the approved transition effects.
+* `type`: (string) a string matching one of the approved transition effects (`appear` or `fade-in`).

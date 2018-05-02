@@ -7,13 +7,26 @@
  */
 import { makeGoogleAnalyticsTrackingFunction } from '../';
 
-jest.mock( 'config', () => key => {
-	const config = {
-		google_analytics_enabled: true,
-		google_analytics_key: 'foobar',
+jest.mock( 'config', () => {
+	const isEnabled = feature => {
+		const features = {
+			'google-analytics': true,
+		};
+
+		return features[ feature ] || false;
 	};
-	return config[ key ];
+	const configApi = key => {
+		const config = {
+			google_analytics_key: 'foobar',
+		};
+		return config[ key ];
+	};
+
+	configApi.isEnabled = isEnabled;
+
+	return configApi;
 } );
+
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
 	retarget: () => {},
 } ) );

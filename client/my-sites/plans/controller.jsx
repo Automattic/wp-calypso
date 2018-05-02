@@ -26,6 +26,7 @@ export default {
 					destinationType={ context.params.destinationType }
 					selectedFeature={ context.query.feature }
 					selectedPlan={ context.query.plan }
+					withSaleInfo={ 'sale' in context.query }
 				/>
 			</CheckoutData>
 		);

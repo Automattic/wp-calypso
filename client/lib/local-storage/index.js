@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:local-storage' );
 
-var _data = {},
+let _data = {},
 	storage = {
 		setItem: function( id, val ) {
 			_data[ id ] = String( val );

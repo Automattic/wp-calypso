@@ -1,4 +1,5 @@
 /** @format */
+
 export function keyForPost( post ) {
 	if ( ! post ) {
 		return;
