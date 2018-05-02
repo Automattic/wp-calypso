@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
 import { escapeRegExp, findIndex, get, head, includes, throttle, pick } from 'lodash';
 
@@ -231,7 +231,7 @@ export default EnhancedComponent =>
 			const popoverPosition = pick( this.state.popoverPosition, [ 'top', 'left' ] );
 
 			return (
-				<div>
+				<Fragment>
 					<EnhancedComponent
 						{ ...this.props }
 						onKeyUp={ this.handleKeyUp }
@@ -250,7 +250,7 @@ export default EnhancedComponent =>
 								onClose={ this.hidePopover }
 							/>
 						) }
-				</div>
+				</Fragment>
 			);
 		}
 	};

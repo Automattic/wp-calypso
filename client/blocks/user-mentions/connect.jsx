@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryUsersSuggestions from 'components/data/query-users-suggestions';
 import { getUserSuggestions } from 'state/users/suggestions/selectors';
@@ -16,10 +16,10 @@ const connectUserMentions = WrappedComponent => {
 
 		render() {
 			return (
-				<div>
+				<Fragment>
 					{ !! this.props.siteId && <QueryUsersSuggestions siteId={ this.props.siteId } /> }
 					<WrappedComponent { ...this.props } />
-				</div>
+				</Fragment>
 			);
 		}
 	}
