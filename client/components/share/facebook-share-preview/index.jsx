@@ -1,6 +1,5 @@
 /** @format */
-/* eslint-disable jsx-a11y/alt-text, jsx-a11y/anchor-is-valid */
-
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /**
  * External dependencies
  */
@@ -60,6 +59,7 @@ export class FacebookSharePreview extends PureComponent {
 									className="facebook-share-preview__profile-picture"
 									src={ externalProfilePicture }
 									onError={ this.setBrokenProfileImage }
+									alt={ externalDisplay }
 								/>
 							) }
 						</div>
@@ -99,7 +99,11 @@ export class FacebookSharePreview extends PureComponent {
 
 						{ ! isNull( imageUrl ) && (
 							<div className="facebook-share-preview__image-wrapper">
-								<img className="facebook-share-preview__image" src={ imageUrl } />
+								<img
+									alt="Facebook Preview Thumbnail"
+									className="facebook-share-preview__image"
+									src={ imageUrl }
+								/>
 							</div>
 						) }
 
