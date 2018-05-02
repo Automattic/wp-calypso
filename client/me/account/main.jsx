@@ -48,10 +48,10 @@ import { isRequestingMissingSites } from 'state/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import _user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
+import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
-const enableTranslatorKey = 'enable_translator';
 
 /**
  * Debug instance
@@ -194,13 +194,13 @@ const Account = createReactClass( {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
-				<FormLabel htmlFor={ enableTranslatorKey }>
+				<FormLabel htmlFor={ ENABLE_TRANSLATOR_KEY }>
 					<FormCheckbox
-						checked={ this.getUserSetting( 'enable_translator' ) }
+						checked={ this.getUserSetting( ENABLE_TRANSLATOR_KEY ) }
 						onChange={ this.updateCommunityTranslatorSetting }
 						disabled={ this.getDisabledState() }
-						id={ enableTranslatorKey }
-						name={ enableTranslatorKey }
+						id={ ENABLE_TRANSLATOR_KEY }
+						name={ ENABLE_TRANSLATOR_KEY }
 						onClick={ this.getCheckboxHandler( 'Community Translator' ) }
 					/>
 					<span>

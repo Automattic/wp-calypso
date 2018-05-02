@@ -11,7 +11,12 @@ import { head, find, get } from 'lodash';
  */
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
-import { GP_PROJECT, GP_BASE_URL, GP_PROJECT_TRANSLATION_SET_SLUGS } from './constants';
+import {
+	GP_PROJECT,
+	GP_BASE_URL,
+	GP_PROJECT_TRANSLATION_SET_SLUGS,
+	ENABLE_TRANSLATOR_KEY,
+} from './constants';
 import { canBeTranslated } from 'lib/i18n-utils';
 
 /**
@@ -49,7 +54,10 @@ export function canDisplayCommunityTranslator(
  * @returns {Bool} whether the CT should be enabled
  */
 export function isCommunityTranslatorEnabled() {
-	if ( ! userSettings.getSettings() || ! userSettings.getOriginalSetting( 'enable_translator' ) ) {
+	if (
+		! userSettings.getSettings() ||
+		! userSettings.getOriginalSetting( ENABLE_TRANSLATOR_KEY )
+	) {
 		return false;
 	}
 
