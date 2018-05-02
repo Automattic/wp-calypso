@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -63,6 +64,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryLanguageNames from 'components/data/query-language-names';
 import getInlineHelpSupportVariation from 'state/selectors/get-inline-help-support-variation';
+
+const debug = debugFactory( 'calypso:help-contact' );
 
 /**
  * Module variables
@@ -472,6 +475,8 @@ class HelpContact extends React.Component {
 	getView = () => {
 		const { confirmation } = this.state;
 		const { compact, selectedSitePlanSlug, supportVariation, translate } = this.props;
+
+		debug( { supportVariation } );
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
