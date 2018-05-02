@@ -71,7 +71,7 @@ const domainSearch = ( context, next ) => {
 	}
 
 	context.primary = (
-		<Main>
+		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
 			<DocumentHead title={ translate( 'Domain Search' ) } />
 			<CartData>
@@ -113,7 +113,7 @@ const mapDomain = ( context, next ) => {
 
 const transferDomain = ( context, next ) => {
 	context.primary = (
-		<Main>
+		<Main wideLayout>
 			<PageViewTracker
 				path={ domainTransferIn( ':site' ) }
 				title="Domain Search > Domain Transfer"

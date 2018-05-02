@@ -8,6 +8,12 @@
 			min-height: 26px;
 		}
 	}
+
+	&.featured-domain-suggestions__is-domain-management .featured-domain-suggestion {
+		.domain-suggestion__action {
+			font-size: 16px;
+		}
+	}
 }
 
 .featured-domain-suggestion {
