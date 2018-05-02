@@ -12,7 +12,7 @@ import { openPrintingFlow } from '../actions';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
- } from '../../action-types';
+} from '../../action-types';
 import * as selectors from '../selectors';
 
 const orderId = 1;

@@ -152,11 +152,12 @@ class OrderDetailsTable extends Component {
 		if ( isEditing ) {
 			return (
 				<Fragment>
-					<ScreenReaderText>
-						<label htmlFor={ inputId }>
+					<label htmlFor={ inputId }>
+						<ScreenReaderText>
 							{ translate( 'Quantity of %(item)s', { args: { item: item.name } } ) }
-						</label>
-					</ScreenReaderText>
+						</ScreenReaderText>
+					</label>
+
 					<FormTextInput
 						type="number"
 						id={ inputId }

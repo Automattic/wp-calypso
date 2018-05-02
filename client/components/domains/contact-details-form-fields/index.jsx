@@ -80,6 +80,7 @@ export class ContactDetailsFormFields extends Component {
 		onCancel: PropTypes.func,
 		disableSubmitButton: PropTypes.bool,
 		className: PropTypes.string,
+		userCountryCode: PropTypes.string,
 		needsOnlyGoogleAppsDetails: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 	};
@@ -102,12 +103,13 @@ export class ContactDetailsFormFields extends Component {
 		needsOnlyGoogleAppsDetails: false,
 		hasCountryStates: false,
 		translate: identity,
+		userCountryCode: 'US',
 	};
 
-	constructor() {
-		super();
+	constructor( props ) {
+		super( props );
 		this.state = {
-			phoneCountryCode: 'US',
+			phoneCountryCode: this.props.countryCode || this.props.userCountryCode,
 			form: null,
 			submissionCount: 0,
 		};

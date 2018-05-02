@@ -27,7 +27,7 @@ const STORAGE_KEY = 'signupProgress';
  */
 let signupProgress = [];
 
-var SignupProgressStore = {
+const SignupProgressStore = {
 	get: function() {
 		return clone( signupProgress );
 	},
@@ -151,7 +151,7 @@ function addStorableDependencies( step, action ) {
 }
 
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		step = addTimestamp( action.data );
 
 	Dispatcher.waitFor( [ SignupDependencyStore.dispatchToken ] );

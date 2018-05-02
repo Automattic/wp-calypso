@@ -41,7 +41,7 @@ function StatsDataLocalList( options ) {
  * @api public
  */
 StatsDataLocalList.prototype.getData = function() {
-	var localStoreData = store.get( this.localStoreKey ) || [];
+	const localStoreData = store.get( this.localStoreKey ) || [];
 	return localStoreData;
 };
 
@@ -65,7 +65,7 @@ StatsDataLocalList.prototype.clear = function() {
  * @api public
  */
 StatsDataLocalList.prototype.set = function( key, value ) {
-	var record = { key: key, createdAt: new Date().getTime(), data: value },
+	let record = { key: key, createdAt: new Date().getTime(), data: value },
 		localData = this.getData(),
 		newLocalData;
 

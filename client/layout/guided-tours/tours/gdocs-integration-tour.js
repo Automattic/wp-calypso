@@ -33,7 +33,7 @@ export const GDocsIntegrationTour = makeTour(
 		path="/post"
 		when={ and( isCurrentUserEmailVerified, hasUserPastedFromGoogleDocs ) }
 	>
-		<Step name="init" placement="right">
+		<Step name="init" placement="right" style={ { animationDelay: '2s' } }>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>{ translate( 'Did you know you can create drafts from Google Docs?' ) }</p>

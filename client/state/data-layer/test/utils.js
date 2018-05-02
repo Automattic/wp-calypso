@@ -1,14 +1,9 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
-import { bypassDataLayer } from '../utils';
+import { bypassDataLayer, convertToCamelCase } from '../utils';
 
 describe( 'Data Layer', () => {
 	describe( '#local', () => {
@@ -16,7 +11,7 @@ describe( 'Data Layer', () => {
 			const action = { type: 'ADD_SPLINE', id: 42 };
 			const localAction = bypassDataLayer( action );
 
-			expect( localAction ).to.have.deep.property( 'meta.dataLayer.doBypass', true );
+			expect( localAction ).toHaveProperty( 'meta.dataLayer.doBypass', true );
 		} );
 
 		test( 'should not destroy existing meta', () => {
@@ -31,8 +26,58 @@ describe( 'Data Layer', () => {
 			};
 			const localAction = bypassDataLayer( action );
 
-			expect( localAction ).to.have.deep.property( 'meta.oceanName', 'ARCTIC' );
-			expect( localAction ).to.have.deep.property( 'meta.dataLayer.forceRefresh', true );
+			expect( localAction ).toHaveProperty( 'meta.oceanName', 'ARCTIC' );
+			expect( localAction ).toHaveProperty( 'meta.dataLayer.forceRefresh', true );
+		} );
+	} );
+
+	describe( '#convertToCamelCase', () => {
+		const snakeObject = {
+			primitive_value: 'string_const',
+			'value_with.dot_key': null,
+			'value_with[bracket_key]': null,
+			array_value: [
+				{
+					first_first: 1,
+					first_second: 2,
+				},
+				{
+					second_first: 3,
+					second_second: 4,
+				},
+			],
+			object_value: {
+				obj_foo: {
+					obj_foo: null,
+				},
+				obj_bar: {
+					obj_bar: null,
+				},
+			},
+		};
+
+		expect( convertToCamelCase( snakeObject ) ).toEqual( {
+			primitiveValue: 'string_const',
+			valueWithDotKey: null,
+			valueWithBracketKey: null,
+			arrayValue: [
+				{
+					firstFirst: 1,
+					firstSecond: 2,
+				},
+				{
+					secondFirst: 3,
+					secondSecond: 4,
+				},
+			],
+			objectValue: {
+				objFoo: {
+					objFoo: null,
+				},
+				objBar: {
+					objBar: null,
+				},
+			},
 		} );
 	} );
 } );

@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { filter, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,10 @@ import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
 import { getSiteSettings, isRequestingSiteSettings } from 'state/site-settings/selectors';
-import { getGoogleMyBusinessConnectedLocation } from 'state/selectors';
+import {
+	getGoogleMyBusinessLocations,
+	getSiteUserConnectionsForGoogleMyBusiness,
+} from 'state/selectors';
 import {
 	connectGoogleMyBusinessLocation,
 	disconnectGoogleMyBusinessLocation,
@@ -120,25 +123,16 @@ export class GoogleMyBusiness extends SharingService {
 
 export default connectFor(
 	GoogleMyBusiness,
-	( state, props ) => {
-		const connectedLocation = getGoogleMyBusinessConnectedLocation( state, props.siteId );
-
-		// only keep external connections (aka GMB locations) to choose from
-		const availableExternalAccounts = filter( props.availableExternalAccounts || [], {
-			isExternal: true,
-		} );
-
-		return {
-			...props,
-			availableExternalAccounts,
-			siteSettings: getSiteSettings( state, props.siteId ),
-			requestingSiteSettings: isRequestingSiteSettings( state, props.siteId ),
-			saveRequests: state.siteSettings.saveRequests,
-			removableConnections: props.keyringConnections,
-			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: connectedLocation ? [ connectedLocation ] : [],
-		};
-	},
+	( state, props ) => ( {
+		...props,
+		availableExternalAccounts: getGoogleMyBusinessLocations( state, props.siteId ),
+		siteSettings: getSiteSettings( state, props.siteId ),
+		requestingSiteSettings: isRequestingSiteSettings( state, props.siteId ),
+		saveRequests: state.siteSettings.saveRequests,
+		removableConnections: props.keyringConnections,
+		fetchConnection: props.requestKeyringConnections,
+		siteUserConnections: getSiteUserConnectionsForGoogleMyBusiness( state, props.siteId ),
+	} ),
 	{
 		connectGoogleMyBusinessLocation,
 		disconnectGoogleMyBusinessLocation,

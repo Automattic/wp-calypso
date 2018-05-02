@@ -41,7 +41,8 @@ button {
 		border-color: $gray-lighten-10;
 		color: $gray-dark;
 	}
-	&:active {
+	&:active,
+	&.is-active {
 		border-width: 2px 1px 1px;
 	}
 	&:visited {
@@ -55,7 +56,8 @@ button {
 		border-color: $gray-lighten-30;
 		cursor: default;
 
-		&:active {
+		&:active,
+		&.is-active {
 			border-width: 1px 1px 2px;
 		}
 	}
@@ -202,7 +204,8 @@ button {
 		color: $gray-lighten-30;
 		cursor: default;
 
-		&:active {
+		&:active,
+		&.is-active {
 			border-width: 0;
 		}
 	}
@@ -224,7 +227,8 @@ button {
 
 		&:focus,
 		&:hover,
-		&:active {
+		&:active,
+		&.is-active {
 			color: $link-highlight;
 		}
 
@@ -307,7 +311,8 @@ button {
 
 	&:hover,
 	&:focus,
-	&:active {
+	&:active,
+	&.is-active {
 		color: $link-highlight;
 		box-shadow: none;
 	}

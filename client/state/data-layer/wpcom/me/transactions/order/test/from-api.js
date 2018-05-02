@@ -3,9 +3,9 @@
 /**
  * Internal dependencies
  */
-import { SchemaError } from 'state/data-layer/wpcom-http/utils';
-import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
 import fromApi, { convertProcessingStatus } from '../from-api';
+import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
+import { SchemaError } from 'lib/make-json-schema-parser';
 
 describe( 'wpcom-api', () => {
 	describe( 'fromApi()', () => {

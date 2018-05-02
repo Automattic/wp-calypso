@@ -23,9 +23,9 @@ import { getStatsPathForTab } from 'lib/route';
 /**
  * Module variables
  */
-var widgetDomain = 'https://widgets.wp.com';
+const widgetDomain = 'https://widgets.wp.com';
 
-var Desktop = {
+const Desktop = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 */
@@ -60,7 +60,7 @@ var Desktop = {
 	},
 
 	receiveMessage: function( event ) {
-		var data;
+		let data;
 
 		if ( event.origin !== widgetDomain ) {
 			return;
@@ -161,7 +161,7 @@ var Desktop = {
 	// now that our browser session has a valid wordpress.com cookie, let's force
 	// reload the notifications iframe so wpcom-proxy-request API calls work
 	onCookieAuthComplete: function() {
-		var iframe = document.querySelector( '#wpnt-notes-iframe2' );
+		const iframe = document.querySelector( '#wpnt-notes-iframe2' );
 		iframe.src = iframe.src;
 	},
 

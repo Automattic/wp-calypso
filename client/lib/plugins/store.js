@@ -29,7 +29,7 @@ const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
 
 // Stores the plugins of each site.
-var _fetching = {},
+let _fetching = {},
 	_pluginsBySite = {},
 	_filters = {
 		none: function() {
@@ -116,14 +116,14 @@ function updatePlugins( site, plugins ) {
 
 const PluginsStore = {
 	getPlugin: function( sites, pluginSlug ) {
-		var pluginData = {},
+		let pluginData = {},
 			fetched = false;
 		pluginData.sites = [];
 
 		sites = ! isArray( sites ) ? [ sites ] : sites;
 
 		sites.forEach( function( site ) {
-			var sitePlugins = PluginsStore.getSitePlugins( site );
+			const sitePlugins = PluginsStore.getSitePlugins( site );
 			if ( typeof sitePlugins !== 'undefined' ) {
 				fetched = true;
 			}
@@ -145,7 +145,7 @@ const PluginsStore = {
 	},
 
 	getPlugins: function( sites, pluginFilter ) {
-		var fetched = false,
+		let fetched = false,
 			plugins = {};
 
 		sites = ! isArray( sites ) ? [ sites ] : sites;
@@ -154,7 +154,7 @@ const PluginsStore = {
 			return [];
 		}
 		sites.forEach( function( site ) {
-			var sitePlugins = PluginsStore.getSitePlugins( site );
+			const sitePlugins = PluginsStore.getSitePlugins( site );
 			if ( sitePlugins !== undefined ) {
 				fetched = true;
 			}
@@ -200,7 +200,7 @@ const PluginsStore = {
 	},
 
 	getSitePlugin: function( site, pluginSlug ) {
-		var plugins = this.getSitePlugins( site );
+		const plugins = this.getSitePlugins( site );
 		if ( ! plugins ) {
 			return plugins;
 		}
@@ -210,7 +210,7 @@ const PluginsStore = {
 
 	// Array of sites with a particular plugin.
 	getSites: function( sites, pluginSlug ) {
-		var plugin,
+		let plugin,
 			plugins = this.getPlugins( sites ),
 			pluginSites;
 		if ( ! plugins ) {
@@ -240,7 +240,7 @@ const PluginsStore = {
 
 	// Array of sites without a particular plugin.
 	getNotInstalledSites: function( sites, pluginSlug ) {
-		var installedOnSites = this.getSites( sites, pluginSlug ) || [];
+		const installedOnSites = this.getSites( sites, pluginSlug ) || [];
 		return sites.filter( function( site ) {
 			if ( ! site.visible ) {
 				return false;

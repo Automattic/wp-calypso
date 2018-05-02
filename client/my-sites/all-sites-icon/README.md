@@ -1,7 +1,7 @@
 All Sites Icon
 ==============
 
-This component is used to display a composite grid of site icons from the user's sites. It takes the sites-list instance object as a prop.
+This component is used to display a composite grid of site icons from the user's sites. It takes an array of all user's sites as a prop.
 
 #### How to use:
 

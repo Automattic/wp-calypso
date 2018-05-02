@@ -91,7 +91,7 @@ class LabelItem extends Component {
 						{ translate( 'Label #%(labelIndex)s printed', {
 							args: {
 								labelIndex: label.labelIndex + 1,
-							}
+							},
 						} ) }
 					</span>
 					{ label.showDetails && this.renderLabelDetails( label ) }

@@ -145,7 +145,7 @@ const AddressFields = ( props ) => {
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
 				onClick={ submitAddressForNormalizationHandler } >
-					{ translate( 'Validate address' ) }
+				{ translate( 'Validate address' ) }
 			</StepConfirmationButton>
 		</div>
 	);

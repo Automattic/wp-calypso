@@ -34,6 +34,9 @@ import {
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
+import PodcastIndicator from 'components/podcast-indicator';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 /**
  * Constants
@@ -322,8 +325,16 @@ class TermTreeSelectorList extends Component {
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getTermChildren( item.ID );
 
-		const { multiple, defaultTermId, translate, selected } = this.props;
+		const {
+			multiple,
+			defaultTermId,
+			translate,
+			selected,
+			taxonomy,
+			podcastingCategoryId,
+		} = this.props;
 		const itemId = item.ID;
+		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const checked = includes( selected, itemId );
 		const inputType = multiple ? 'checkbox' : 'radio';
@@ -344,7 +355,10 @@ class TermTreeSelectorList extends Component {
 			<div key={ itemId } ref={ setItemRef } className="term-tree-selector__list-item">
 				<label>
 					{ input }
-					<span className="term-tree-selector__label">{ name }</span>
+					<span className="term-tree-selector__label">
+						{ name }
+						{ isPodcastingCategory && <PodcastIndicator size={ 18 } /> }
+					</span>
 				</label>
 				{ children.length > 0 && (
 					<div className="term-tree-selector__nested-list">
@@ -421,6 +435,8 @@ class TermTreeSelectorList extends Component {
 						query={ { ...query, page } }
 					/>
 				) ) }
+				{ taxonomy === 'category' && siteId && <QuerySiteSettings siteId={ siteId } /> }
+
 				{ showSearch && <Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> }
 				<List
 					ref={ this.setListRef }
@@ -449,5 +465,6 @@ export default connect( ( state, ownProps ) => {
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		query,
+		podcastingCategoryId: taxonomy === 'category' && getPodcastingCategoryId( state, siteId ),
 	};
 } )( localize( TermTreeSelectorList ) );

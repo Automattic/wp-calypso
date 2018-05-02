@@ -20,12 +20,21 @@ import StepWrapper from 'signup/step-wrapper';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 import { isEnabled } from 'config';
 import PlanFeatures from 'my-sites/plan-features';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 
-class PlansAtomicStoreStep extends Component {
+import { planMatches } from 'lib/plans';
+import {
+	GROUP_WPCOM,
+	TYPE_BUSINESS,
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+} from 'lib/plans/constants';
+
+export class PlansAtomicStoreStep extends Component {
 	static propTypes = {
 		additionalStepData: PropTypes.object,
 		goToNextStep: PropTypes.func.isRequired,
@@ -66,7 +75,10 @@ class PlansAtomicStoreStep extends Component {
 			// If we're inside the store signup flow and the cart item is a Business Plan,
 			// set a flag on it. It will trigger Automated Transfer when the product is being
 			// activated at the end of the checkout process.
-			if ( designType === DESIGN_TYPE_STORE && cartItem.product_slug === PLAN_BUSINESS ) {
+			if (
+				designType === DESIGN_TYPE_STORE &&
+				planMatches( cartItem.product_slug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
+			) {
 				cartItem.extra = Object.assign( cartItem.extra || {}, {
 					is_store_signup: true,
 				} );

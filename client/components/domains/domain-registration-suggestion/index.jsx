@@ -86,6 +86,10 @@ class DomainRegistrationSuggestion extends React.Component {
 	};
 
 	getDomainFlags() {
+		// TODO: Remove this entire function and isNewTld/isTestTld from utility.js
+		if ( config.isEnabled( 'domains/kracken-ui' ) && this.props.isSignupStep ) {
+			return null;
+		}
 		const { suggestion, translate } = this.props;
 		const domain = suggestion.domain_name;
 		const domainFlags = [];
@@ -117,25 +121,23 @@ class DomainRegistrationSuggestion extends React.Component {
 			}
 		}
 
-		if ( ! config.isEnabled( 'domains/kracken-ui' ) ) {
-			if ( suggestion.isRecommended ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-recommended` }
-						content={ translate( 'Recommended' ) }
-						status="success"
-					/>
-				);
-			}
+		if ( suggestion.isRecommended ) {
+			domainFlags.push(
+				<DomainSuggestionFlag
+					key={ `${ domain }-recommended` }
+					content={ translate( 'Recommended' ) }
+					status="success"
+				/>
+			);
+		}
 
-			if ( suggestion.isBestAlternative ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-best-alternative` }
-						content={ translate( 'Best Alternative' ) }
-					/>
-				);
-			}
+		if ( suggestion.isBestAlternative ) {
+			domainFlags.push(
+				<DomainSuggestionFlag
+					key={ `${ domain }-best-alternative` }
+					content={ translate( 'Best Alternative' ) }
+				/>
+			);
 		}
 
 		return domainFlags;
@@ -153,13 +155,11 @@ class DomainRegistrationSuggestion extends React.Component {
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
 
-		let buttonClasses, buttonContent;
+		let buttonContent;
 
 		if ( isAdded ) {
-			buttonClasses = 'added';
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
-			buttonClasses = 'add is-primary';
 			buttonContent =
 				! isSignupStep &&
 				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
@@ -169,7 +169,6 @@ class DomainRegistrationSuggestion extends React.Component {
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 		return {
-			buttonClasses,
 			buttonContent,
 		};
 	}
@@ -262,7 +261,6 @@ class DomainRegistrationSuggestion extends React.Component {
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
-				showExpandedPrice={ isFeatured }
 				{ ...this.getButtonProps() }
 			>
 				{ this.renderDomain() }
