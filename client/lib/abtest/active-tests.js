@@ -83,14 +83,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	upgradePricingDisplayV3: {
-		datestamp: '20180402',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-	},
 	mobilePlansTablesOnSignup: {
 		datestamp: '20180330',
 		variations: {

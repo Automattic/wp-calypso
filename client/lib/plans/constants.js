@@ -164,11 +164,6 @@ const WPComGetBillingTimeframe = abtest => {
 		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
 			return i18n.translate( '/month, billed annually or every two years' );
 		}
-
-		if ( abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return '/month, billed annually';
-		}
 	}
 	return i18n.translate( 'per month, billed yearly' );
 };
@@ -645,13 +640,7 @@ export const PLANS_LIST = {
 				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 			] ),
-		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
-				// Note: Don't make this translatable because it's only visible to English-language users
-				return '/month, billed monthly';
-			}
-			return i18n.translate( 'per month, billed monthly' );
-		},
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
 
@@ -729,13 +718,7 @@ export const PLANS_LIST = {
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_ALL_FREE_FEATURES_JETPACK,
 		],
-		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
-				// Note: Don't make this translatable because it's only visible to English-language users
-				return '/month, billed monthly';
-			}
-			return i18n.translate( 'per month, billed monthly' );
-		},
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
 
@@ -858,13 +841,7 @@ export const PLANS_LIST = {
 				FEATURE_SEARCH,
 				FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
-		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplayV3' ) === 'modified' ) {
-				// Note: Don't make this translatable because it's only visible to English-language users
-				return '/month, billed monthly';
-			}
-			return i18n.translate( 'per month, billed monthly' );
-		},
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
 };
