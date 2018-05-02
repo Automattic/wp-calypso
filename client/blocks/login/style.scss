@@ -217,3 +217,9 @@
 .login__form-password.is-hidden {
 	display: none;
 }
+
+.login__jetpack-logo {
+	@include breakpoint( '<660px' ) {
+		margin-top: 20px;
+	}
+}

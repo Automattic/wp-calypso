@@ -192,7 +192,7 @@ class Login extends Component {
 		} else if ( isJetpack ) {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
 			preHeader = (
-				<div>
+				<div className="login__jetpack-logo">
 					<JetpackLogo full size={ 45 } />
 				</div>
 			);
