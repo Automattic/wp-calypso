@@ -199,6 +199,7 @@ describe( 'streams', () => {
 		it( 'should return a receivePage action', () => {
 			const { streamKey, query } = action.payload;
 			expect( handlePage( action, fromApi( data ) ) ).toEqual( [
+				expect.any( Function ), // receivePosts thunk
 				receivePage( {
 					streamKey,
 					query,
@@ -206,7 +207,6 @@ describe( 'streams', () => {
 					gap: null,
 					pageHandle: { before: '2018' },
 				} ),
-				expect.any( Function ), // receivePosts thunk
 			] );
 		} );
 
