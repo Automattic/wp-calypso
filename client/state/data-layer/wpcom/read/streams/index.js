@@ -18,7 +18,7 @@ import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
 import { errorNotice } from 'state/notices/actions';
 import { receivePosts } from 'state/reader/posts/actions';
 import { keyForPost } from 'reader/post-key';
-import { recordTrackEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Pull the suffix off of a stream key
@@ -53,7 +53,7 @@ function analyticsForStream( { streamKey, algorithm, posts } ) {
 	const eventName = 'calypso_traintracks_render';
 	const analyticsActions = posts
 		.filter( post => !! post.railcar )
-		.map( post => recordTrackEvent( eventName, post.railcar ) );
+		.map( post => recordTracksEvent( eventName, post.railcar ) );
 	return analyticsActions;
 }
 const getAlgorithmForStream = streamKey => analyticsAlgoMap.get( streamKey );

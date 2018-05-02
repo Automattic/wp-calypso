@@ -91,6 +91,7 @@ class ReaderStream extends React.Component {
 		intro: null,
 		forcePlaceholders: false,
 	};
+	page = 0;
 
 	componentDidUpdate( { selectedPostKey } ) {
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
@@ -295,7 +296,8 @@ class ReaderStream extends React.Component {
 	fetchNextPage = options => {
 		const { streamKey, stream, startDate } = this.props;
 		if ( options.triggeredByScroll ) {
-			// this.props.trackScrollPage( this.props.postsStore.getPage() + 1 );
+			this.props.trackScrollPage( this.page );
+			this.page++;
 		}
 		const indexOfColon = streamKey.indexOf( ':' );
 		const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
