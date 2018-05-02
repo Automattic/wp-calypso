@@ -151,7 +151,7 @@ export class HelpContactForm extends React.PureComponent {
 			.getQandA( query, site )
 			.then( qanda =>
 				this.setState( {
-					qanda,
+					qanda: isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
 					// we don't want to track "questions -> question click -> different questions -> support click",
 					// so we need to set sibylClicked to false here if the questions have changed
@@ -328,7 +328,7 @@ export class HelpContactForm extends React.PureComponent {
 			translate,
 			showingQandAStep,
 		} = this.props;
-		const hasQASuggestions = isArray( this.state.qanda ) && ! isEmpty( this.state.qanda );
+		const hasQASuggestions = ! isEmpty( this.state.qanda );
 
 		const howCanWeHelpOptions = [
 			{
