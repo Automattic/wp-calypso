@@ -17,10 +17,10 @@ class FilterItem extends Component {
 	};
 
 	render() {
-		const { isDisabled, selected } = this.props;
+		const { disabled, selected } = this.props;
 
 		return (
-			<SectionNavTabItem selected={ selected } onClick={ this.activate } disabled={ isDisabled }>
+			<SectionNavTabItem selected={ selected } onClick={ this.activate } disabled={ disabled }>
 				{ this.props.children }
 			</SectionNavTabItem>
 		);
