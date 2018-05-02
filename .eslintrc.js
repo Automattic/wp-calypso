@@ -33,5 +33,6 @@ module.exports = {
 		'wpcalypso/import-no-redux-combine-reducers': 2,
 		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path' ] } ],
 		'import/no-extraneous-dependencies': [ 'error', { packageDir: './' } ],
+		indent: 0,
 	},
 };
