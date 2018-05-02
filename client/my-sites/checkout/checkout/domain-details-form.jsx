@@ -51,10 +51,7 @@ export class DomainDetailsForm extends PureComponent {
 
 	componentDidMount() {
 		if ( analytics ) {
-			analytics.pageView.record(
-				'/checkout/domain-contact-information',
-				'Checkout > Domain Contact Information'
-			);
+			analytics.tracks.recordEvent( 'calypso_checkout_domain_contact_information_view' );
 		}
 	}
 
