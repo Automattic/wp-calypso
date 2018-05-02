@@ -198,6 +198,7 @@ export const connectOptions = connect(
 		let mapGetUrl = identity,
 			mapHideForTheme = identity;
 
+		/* eslint-disable wpcalypso/redux-no-bound-selectors */
 		if ( siteId ) {
 			mapGetUrl = getUrl => t => getUrl( state, t, siteId );
 			mapHideForTheme = hideForTheme => t => hideForTheme( state, t, siteId, origin );
@@ -214,6 +215,7 @@ export const connectOptions = connect(
 				option.hideForTheme ? { hideForTheme: mapHideForTheme( option.hideForTheme ) } : {}
 			)
 		);
+		/* eslint-enable wpcalypso/redux-no-bound-selectors */
 	},
 	( dispatch, { siteId, source = 'unknown' } ) => {
 		const options = pickBy( ALL_THEME_OPTIONS, 'action' );
