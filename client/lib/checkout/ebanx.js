@@ -33,7 +33,7 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' )
  */
 export function shouldRenderAdditionalEbanxFields( countryCode = '' ) {
 	return (
-		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
+		isEbanxCreditCardProcessingEnabledForCountry( countryCode ) &&
 		! isEmpty( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ].fields )
 	);
 }
@@ -88,6 +88,11 @@ export function ebanxFieldRules( country ) {
 
 			'phone-number': {
 				description: i18n.translate( 'Phone Number' ),
+				rules: [ 'required' ],
+			},
+
+			'postal-code': {
+				description: i18n.translate( 'Postal Code' ),
 				rules: [ 'required' ],
 			},
 		},

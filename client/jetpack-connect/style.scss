@@ -100,7 +100,8 @@
 	.example-components__site-address-container {
 		position: relative;
 
-		.gridicon {
+		.gridicons-user,
+		.gridicons-globe {
 			position: absolute;
 			top: 8px;
 			left: 8px;
@@ -522,16 +523,6 @@
 	margin-bottom: 16px;
 }
 
-.jetpack-connect__plans-nav-buttons {
-	text-align: center;
-	margin-bottom: 17px;
-
-	.button .gridicon {
-		padding-left: 4px;
-		margin-right: -5px;
-	}
-}
-
 .jetpack-connect__happychat-button {
 	background: none;
 	border: none;
@@ -607,12 +598,8 @@
 	}
 }
 
-.jetpack-connect__auth-form-header-image {
-	text-align: center;
-}
-
 .jetpack-connect__hide-plan-icons {
-	.jetpack-connect__plans-nav-buttons {
+	.plans-skip-button {
 		margin-bottom: 0;
 	}
 

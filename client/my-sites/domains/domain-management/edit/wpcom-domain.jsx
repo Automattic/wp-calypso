@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card';
 import Header from './card/header';
@@ -42,7 +41,7 @@ const WpcomDomain = createReactClass( {
 			return null;
 		}
 
-		if ( isEnabled( 'site-address-editor' ) && get( domain, 'type' ) === domainTypes.WPCOM ) {
+		if ( get( domain, 'type' ) === domainTypes.WPCOM ) {
 			return <SiteRenamer currentDomain={ domain } />;
 		}
 

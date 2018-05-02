@@ -21,7 +21,7 @@ import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
-import { serverRouter, getCacheKey } from 'isomorphic-routing';
+import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
 import { serverRender, serverRenderError, renderJsx } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
@@ -174,7 +174,11 @@ function getAcceptedLanguagesFromHeader( header ) {
 function getDefaultContext( request ) {
 	let initialServerState = {};
 	const bodyClasses = [];
-	const cacheKey = getCacheKey( request );
+	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
+	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
+	// called before route-specific middleware, so it's up to the cache *writes* in server
+	// render to make sure that Redux state and markup are only cached for whitelisted query args.
+	const cacheKey = getNormalizedPath( request.pathname, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
 	let sectionCss;
@@ -401,7 +405,6 @@ function setUpCSP( req, res, next ) {
 	];
 
 	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
-	req.context.analyticsScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
 
 	const policy = {
 		'default-src': [ "'self'" ],
@@ -414,7 +417,7 @@ function setUpCSP( req, res, next ) {
 			'*.wordpress.com',
 			'https://apis.google.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
-			`'nonce-${ req.context.analyticsScriptNonce }'`,
+			'www.google-analytics.com',
 			...inlineScripts.map( hash => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
@@ -580,6 +583,8 @@ module.exports = function() {
 
 					if ( config.isEnabled( 'code-splitting' ) ) {
 						req.context.chunkFiles = getFilesForChunk( section.name );
+					} else {
+						req.context.chunkFiles = [];
 					}
 
 					if ( section.secondary && req.context ) {

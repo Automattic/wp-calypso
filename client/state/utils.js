@@ -130,7 +130,7 @@ export const keyedReducer = ( keyPath, reducer, globalActions = [ SERIALIZE, DES
 	// some keys are invalid
 	if ( 'string' !== typeof keyPath ) {
 		throw new TypeError(
-			`Key name passed into ``keyedReducer`` must be a string but I detected a ${ typeof keyName }`
+			'Key name passed into '`keyedReducer`` must be a string but I detected a ${ typeof keyName }`
 		);
 	}
 
@@ -142,7 +142,7 @@ export const keyedReducer = ( keyPath, reducer, globalActions = [ SERIALIZE, DES
 
 	if ( 'function' !== typeof reducer ) {
 		throw new TypeError(
-			`Reducer passed into ``keyedReducer`` must be a function but I detected a ${ typeof reducer }`
+			'Reducer passed into '`keyedReducer`` must be a function but I detected a ${ typeof reducer }`
 		);
 	}
 

@@ -14,5 +14,5 @@ export const storeJITM = ( state = {}, { type, jitms } ) =>
 const sitePathJITM = keyedReducer( 'keyedPath', storeJITM );
 
 export default combineReducers( {
-	sitePathJITM
+	sitePathJITM,
 } );

@@ -1,27 +1,25 @@
 ScreenReaderText (JSX)
 ====================
 
-ScreenReaderText is a component that is invisible on normal displays but "visible" to screen readers.
+ScreenReaderText is a component that is invisible on screen, but read out to screen readers. Use this to add context to inputs, buttons, or sections that might be obvious from visual cues but not to a screen reader user.
+
+This idea was pulled from WordPress core, for more background & technical details, see [Hiding text for screen readers with WordPress Core](https://make.wordpress.org/accessibility/2015/02/09/hiding-text-for-screen-readers-with-wordpress-core/)
 
 -------
 
 #### How to use:
 
 ```js
+import Button from 'components/button';
+import Gridicon from 'gridicons';
 import ScreenReaderText from 'components/screen-reader-text';
 
 function ScreenReaderTextExample() {
-	const srText = "I'm visible for screen readers";
 	return (
-		<div>
-			<p>
-				This text is followed by the JSX "&lt;ScreenReaderText&gt;{ srText }&lt;/ScreenReaderText&gt;".
-				It's invisible on normal displays but "visible" to screen readers. Inspect to see the
-				example.
-			</p>
-			<ScreenReaderText>{ srText }</ScreenReaderText>
-		</div>
+		<Button>
+			<Gridicon icon="cross" />
+			<ScreenReaderText>{ translate( 'Close' ) }</ScreenReaderText>
+		</Button>
 	);
 }
-
 ```

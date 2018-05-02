@@ -28,7 +28,7 @@ const StateDropdown = ( props ) => {
 		<Dropdown
 			{ ...props }
 			valuesMap={ { '': props.translate( 'Select one…' ), ...statesMap } }
-			/>
+		/>
 	);
 };
 

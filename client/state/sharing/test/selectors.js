@@ -93,6 +93,7 @@ describe( 'selectors', () => {
 					name: 'John',
 					picture: undefined,
 					description: undefined,
+					meta: undefined,
 				},
 			] );
 		} );

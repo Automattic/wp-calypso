@@ -15,7 +15,7 @@ import { loadScript } from 'lib/load-script';
 import user from 'lib/user';
 import config from 'config';
 
-var SIFTSCIENCE_URL = 'https://cdn.siftscience.com/s.js',
+let SIFTSCIENCE_URL = 'https://cdn.siftscience.com/s.js',
 	hasLoaded = false;
 
 if ( ! window._sift ) {

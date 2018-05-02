@@ -4,6 +4,7 @@
  */
 import page from 'page';
 import { get } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -25,7 +26,7 @@ import { requestSite } from 'state/sites/actions';
 
 // @TODO proper redux data layer stuff for the nonce
 function fetchNonce( siteId ) {
-	return wpcom.undocumented().getRequestSiteRenameNonce( siteId );
+	return wpcom.undocumented().getRequestSiteAddressChangeNonce( siteId );
 }
 
 export const getErrorNotice = message =>
@@ -39,8 +40,8 @@ export const getErrorNotice = message =>
 const dispatchErrorNotice = ( dispatch, error ) =>
 	dispatch(
 		getErrorNotice(
-			// @TODO translate copy once finalised
-			error.message || 'Sorry, we were unable to complete your domain change. Please try again.'
+			error.message ||
+				translate( 'Sorry, we were unable to change your site address. Please try again.' )
 		)
 	);
 
@@ -102,13 +103,14 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 	} );
 
 	const eventProperties = {
+		blog_id: siteId,
 		new_domain: newBlogName,
 		discard,
 	};
 
 	const errorHandler = error => {
 		dispatch(
-			recordTracksEvent( 'calypso_siterename_error', {
+			recordTracksEvent( 'calypso_siteaddresschange_error', {
 				...eventProperties,
 				error_code: error.code,
 			} )
@@ -121,26 +123,25 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 		} );
 	};
 
-	dispatch( recordTracksEvent( 'calypso_siterename_request', eventProperties ) );
+	dispatch( recordTracksEvent( 'calypso_siteaddresschange_request', eventProperties ) );
 
 	return fetchNonce( siteId )
 		.then( nonce => {
 			wpcom
 				.undocumented()
-				.updateSiteName( siteId, newBlogName, discard, nonce )
+				.updateSiteAddress( siteId, newBlogName, discard, nonce )
 				.then( data => {
 					const newSlug = get( data, 'new_slug' );
 
 					if ( newSlug ) {
-						dispatch( recordTracksEvent( 'calypso_siterename_success', eventProperties ) );
+						dispatch( recordTracksEvent( 'calypso_siteaddresschange_success', eventProperties ) );
 
 						const newAddress = newSlug + '.wordpress.com';
 						dispatch( requestSite( siteId ) ).then( () => {
 							page( domainManagementEdit( newAddress, newAddress ) );
 
 							dispatch(
-								// @TODO translate copy once finalised
-								successNotice( 'Your new domain name is ready to go!', {
+								successNotice( translate( 'Your new site address is ready to go!' ), {
 									id: 'siteRenameSuccessful',
 									duration: 5000,
 									showDismiss: true,

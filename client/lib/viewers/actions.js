@@ -14,9 +14,9 @@ const debug = debugFactory( 'calypso:viewers:actions' );
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 
-var ViewersActions = {
+const ViewersActions = {
 	fetch: function( siteId, page = 1 ) {
-		var number = 100;
+		const number = 100;
 		debug( 'Fetch site viewers', siteId );
 
 		Dispatcher.handleViewAction( {

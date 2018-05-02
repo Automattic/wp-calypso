@@ -368,19 +368,6 @@ export class JetpackConnectMain extends Component {
 			</MainWrapper>
 		);
 	}
-
-	renderNotJetpackButton() {
-		const { translate } = this.props;
-		return (
-			<a
-				className="jetpack-connect__no-jetpack-button"
-				href="#"
-				onClick={ this.confirmJetpackNotInstalled }
-			>
-				{ translate( "Don't have jetpack installed?" ) }
-			</a>
-		);
-	}
 }
 
 const connectComponent = connect(

@@ -97,7 +97,7 @@ MailingList.prototype.unsubscribe = function( emailAddress, hmac, context, callb
 };
 
 function createSubscriberResourceUrl( category, emailAddress, method ) {
-	var url =
+	let url =
 		'/mailing-lists/' +
 		encodeURIComponent( category ) +
 		'/subscribers/' +

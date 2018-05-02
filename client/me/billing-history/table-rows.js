@@ -22,7 +22,7 @@ function getSearchableStrings( transaction ) {
 function search( transactions, searchQuery ) {
 	return transactions.filter( function( transaction ) {
 		return some( getSearchableStrings( transaction ), function( val ) {
-			var haystack, needle;
+			let haystack, needle;
 
 			if ( isDate( val ) ) {
 				val = formatDate( val );

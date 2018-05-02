@@ -13,18 +13,13 @@ import {
 	composeAnalytics,
 	withAnalytics,
 	bumpStat,
-	setTracksAnonymousUserId,
 	recordTracksEvent,
 	recordTracksEventWithClientId,
 	recordPageView,
 	recordPageViewWithClientId,
 } from '../actions.js';
 
-import {
-	ANALYTICS_MULTI_TRACK,
-	ANALYTICS_STAT_BUMP,
-	ANALYTICS_TRACKS_ANONID_SET,
-} from 'state/action-types';
+import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP } from 'state/action-types';
 
 describe( 'middleware', () => {
 	describe( 'actions', () => {
@@ -87,18 +82,6 @@ describe( 'middleware', () => {
 			)();
 
 			expect( composite.meta.analytics ).to.have.lengthOf( 2 );
-		} );
-
-		test( 'should allow setting Tracks anonymous ID', () => {
-			const tracksAction = setTracksAnonymousUserId( 'abcd1234' );
-			const expected = [
-				{
-					type: ANALYTICS_TRACKS_ANONID_SET,
-					payload: 'abcd1234',
-				},
-			];
-			expect( tracksAction.type ).to.equal( ANALYTICS_TRACKS_ANONID_SET );
-			expect( tracksAction.meta.analytics ).to.deep.equal( expected );
 		} );
 	} );
 

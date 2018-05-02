@@ -96,7 +96,7 @@ AccountPasswordData.prototype.getValidationFailures = function() {
 };
 
 AccountPasswordData.prototype.generate = function() {
-	var i,
+	let i,
 		length = random( 12, 35 ),
 		chars = map( this.charsets, function( charset ) {
 			// Ensure one character from each character set is in the password

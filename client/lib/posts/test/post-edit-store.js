@@ -265,26 +265,29 @@ describe( 'post-edit-store', () => {
 		assert( PostEditStore.isDirty() );
 	} );
 
-	test( 'excludes metadata without an operation on edit', () => {
-		const postEdits = {
-				title: 'Super Duper',
-				metadata: [
-					{ key: 'super', value: 'duper', operation: 'update' },
-					{ key: 'foo', value: 'bar', operation: 'delete' },
-					{ key: 'bar', value: 'foo' },
-				],
-			},
-			expectedMetadata = [
-				{ key: 'super', value: 'duper', operation: 'update' },
-				{ key: 'foo', value: 'bar', operation: 'delete' },
-			];
-
+	test( 'updates existing metadata on edit', () => {
+		// initial post
 		dispatcherCallback( {
 			action: {
 				type: 'RECEIVE_POST_TO_EDIT',
-				post: {},
+				post: {
+					metadata: [
+						{ key: 'keepable', value: 'constvalue' },
+						{ key: 'updatable', value: 'oldvalue' },
+						{ key: 'deletable', value: 'trashvalue' },
+					],
+				},
 			},
 		} );
+
+		// apply some edits
+		const postEdits = {
+			title: 'Super Duper',
+			metadata: [
+				{ key: 'updatable', value: 'newvalue', operation: 'update' },
+				{ key: 'deletable', operation: 'delete' },
+			],
+		};
 
 		dispatcherCallback( {
 			action: {
@@ -293,10 +296,113 @@ describe( 'post-edit-store', () => {
 			},
 		} );
 
-		assert( PostEditStore.get().metadata === postEdits.metadata );
+		// check the expected values of post attributes after the edit is applied
 		assert( PostEditStore.get().title === postEdits.title );
+		assert(
+			isEqual( PostEditStore.get().metadata, [
+				{ key: 'keepable', value: 'constvalue' },
+				{ key: 'updatable', value: 'newvalue', operation: 'update' },
+				{ key: 'deletable', operation: 'delete' },
+			] )
+		);
+
+		// check the modifications sent to the API endpoint
 		assert( PostEditStore.getChangedAttributes().title === postEdits.title );
-		assert( isEqual( PostEditStore.getChangedAttributes().metadata, expectedMetadata ) );
+		assert(
+			isEqual( PostEditStore.getChangedAttributes().metadata, [
+				{ key: 'updatable', value: 'newvalue', operation: 'update' },
+				{ key: 'deletable', operation: 'delete' },
+			] )
+		);
+	} );
+
+	test( 'should include metadata edits made previously', () => {
+		// initial post
+		dispatcherCallback( {
+			action: {
+				type: 'RECEIVE_POST_TO_EDIT',
+				post: {
+					metadata: [ { key: 'deletable', value: 'trashvalue' } ],
+				},
+			},
+		} );
+
+		// first edit
+		dispatcherCallback( {
+			action: {
+				type: 'EDIT_POST',
+				post: {
+					metadata: [ { key: 'deletable', operation: 'delete' } ],
+				},
+			},
+		} );
+
+		// second edit
+		dispatcherCallback( {
+			action: {
+				type: 'EDIT_POST',
+				post: {
+					metadata: [ { key: 'updatable', value: 'newvalue', operation: 'update' } ],
+				},
+			},
+		} );
+
+		assert(
+			isEqual( PostEditStore.get().metadata, [
+				{ key: 'deletable', operation: 'delete' },
+				{ key: 'updatable', value: 'newvalue', operation: 'update' },
+			] )
+		);
+	} );
+
+	test( 'should not duplicate existing metadata edits', () => {
+		// initial post
+		dispatcherCallback( {
+			action: {
+				type: 'RECEIVE_POST_TO_EDIT',
+				post: {
+					metadata: [
+						{ key: 'keepable', value: 'constvalue' },
+						{ key: 'phoenixable', value: 'fawkes' },
+					],
+				},
+			},
+		} );
+
+		// delete metadata prop
+		dispatcherCallback( {
+			action: {
+				type: 'EDIT_POST',
+				post: {
+					metadata: [ { key: 'phoenixable', operation: 'delete' } ],
+				},
+			},
+		} );
+
+		// recreate the prop
+		dispatcherCallback( {
+			action: {
+				type: 'EDIT_POST',
+				post: {
+					metadata: [ { key: 'phoenixable', value: 'newfawkes', operation: 'update' } ],
+				},
+			},
+		} );
+
+		// edited post metadata after edits
+		assert(
+			isEqual( PostEditStore.get().metadata, [
+				{ key: 'keepable', value: 'constvalue' },
+				{ key: 'phoenixable', value: 'newfawkes', operation: 'update' },
+			] )
+		);
+
+		// metadata update request sent to the API endpoint
+		assert(
+			isEqual( PostEditStore.getChangedAttributes().metadata, [
+				{ key: 'phoenixable', value: 'newfawkes', operation: 'update' },
+			] )
+		);
 	} );
 
 	test( 'reset post after saving an edit', () => {

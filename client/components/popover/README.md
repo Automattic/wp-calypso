@@ -30,6 +30,17 @@ className will be always added to the instance.
 The `context` property must be set to a DOMElement or React ref to the element
 the popover should be attached to (point to).
 
+#### `customPosition { object }`
+
+Provide a custom position to render the popover at. The parent component takes all
+responsibility for moving the popover on resize and scroll.
+
+Example:
+
+`{ left: 100, top: 20, positionClass: 'bottom' }`
+
+You can specify `positionClass` to control which way the popover arrow points.
+
 #### `id { string } - optional`
 
 Use this optional property to set a Popover identifier among all of the Popover

@@ -140,22 +140,21 @@ export class CreditCardFormFields extends React.Component {
 						onCountrySelected: this.updateFieldValues,
 					} ) }
 
-					{ ebanxDetailsRequired && (
+					{ ebanxDetailsRequired ? (
 						<EbanxPaymentFields
 							countryCode={ this.getFieldValue( 'country' ) }
 							countriesList={ countriesList }
 							getErrorMessage={ this.props.getErrorMessage }
 							getFieldValue={ this.getFieldValue }
 							handleFieldChange={ this.updateFieldValues }
-							fieldClassName="credit-card-form-fields__field"
 						/>
+					) : (
+						this.createField( 'postal-code', Input, {
+							label: translate( 'Postal Code', {
+								context: 'Postal code on credit card form',
+							} ),
+						} )
 					) }
-
-					{ this.createField( 'postal-code', Input, {
-						label: translate( 'Postal Code', {
-							context: 'Postal code on credit card form',
-						} ),
-					} ) }
 				</div>
 			</div>
 		);

@@ -4,13 +4,18 @@
  */
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import {
+	fetchRefundsFailure,
+	fetchRefundsSuccess,
 	createRefundFailure,
 	createRefundSuccess,
 } from 'woocommerce/state/sites/orders/refunds/actions';
 import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
 import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
 import request from 'woocommerce/state/sites/http-request';
-import { WOOCOMMERCE_ORDER_REFUND_CREATE } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_ORDER_REFUND_CREATE,
+	WOOCOMMERCE_ORDER_REFUNDS_REQUEST,
+} from 'woocommerce/state/action-types';
 import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
 export const create = action => {
@@ -37,6 +42,21 @@ const onCreateSuccess = ( action, { data } ) => dispatch => {
 	}
 };
 
+export const fetch = action => {
+	const { siteId, orderId } = action;
+	return request( siteId, action ).get( `orders/${ orderId }/refunds` );
+};
+
+const onError = ( action, error ) => dispatch => {
+	const { siteId, orderId } = action;
+	dispatch( fetchRefundsFailure( siteId, orderId, error ) );
+};
+
+const onSuccess = ( action, { data } ) => dispatch => {
+	const { siteId, orderId } = action;
+	dispatch( fetchRefundsSuccess( siteId, orderId, data ) );
+};
+
 export default {
 	[ WOOCOMMERCE_ORDER_REFUND_CREATE ]: [
 		dispatchRequestEx( {
@@ -44,6 +64,15 @@ export default {
 			fetch: create,
 			onSuccess: onCreateSuccess,
 			onError: onCreateError,
+			fromApi: verifyResponseHasData,
+		} ),
+	],
+	[ WOOCOMMERCE_ORDER_REFUNDS_REQUEST ]: [
+		dispatchRequestEx( {
+			// fetch used in dispatchRequestEx to create the http request
+			fetch,
+			onSuccess,
+			onError,
 			fromApi: verifyResponseHasData,
 		} ),
 	],

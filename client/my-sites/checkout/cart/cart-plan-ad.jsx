@@ -25,7 +25,9 @@ import { PLAN_PREMIUM } from 'lib/plans/constants';
 class CartPlanAd extends Component {
 	addToCartAndRedirect = event => {
 		event.preventDefault();
-		addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
+		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
+		const domainToBundle = get( domainRegistrations, '[0].meta', '' );
+		addItem( cartItems.premiumPlan( PLAN_PREMIUM, { domainToBundle } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 

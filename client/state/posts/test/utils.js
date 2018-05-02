@@ -19,7 +19,7 @@ import {
 	getSerializedPostsQueryWithoutPage,
 	getTermIdsFromEdits,
 	isTermsEqual,
-	mergeIgnoringArrays,
+	mergePostEdits,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -339,14 +339,11 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( 'mergeIgnoringArrays()', () => {
+	describe( 'mergePostEdits', () => {
 		test( 'should merge into an empty object', () => {
-			const merged = mergeIgnoringArrays(
-				{},
-				{
-					tags_by_id: [ 4, 5, 6 ],
-				}
-			);
+			const merged = mergePostEdits( deepFreeze( {} ), {
+				tags_by_id: [ 4, 5, 6 ],
+			} );
 
 			expect( merged ).to.eql( {
 				tags_by_id: [ 4, 5, 6 ],
@@ -354,10 +351,10 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should not modify array properties in the original object', () => {
-			const merged = mergeIgnoringArrays(
-				{
+			const merged = mergePostEdits(
+				deepFreeze( {
 					tags_by_id: [ 4, 5, 6 ],
-				},
+				} ),
 				{}
 			);
 
@@ -367,11 +364,10 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should allow removing array items', () => {
-			const merged = mergeIgnoringArrays(
-				{},
-				{
+			const merged = mergePostEdits(
+				deepFreeze( {
 					tags_by_id: [ 4, 5, 6 ],
-				},
+				} ),
 				{
 					tags_by_id: [ 4, 6 ],
 				}
@@ -383,11 +379,10 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should replace arrays with the new value', () => {
-			const merged = mergeIgnoringArrays(
-				{},
-				{
+			const merged = mergePostEdits(
+				deepFreeze( {
 					tags_by_id: [ 4, 5, 6 ],
-				},
+				} ),
 				{
 					tags_by_id: [ 1, 2, 3, 4 ],
 				}
@@ -395,6 +390,21 @@ describe( 'utils', () => {
 
 			expect( merged ).to.eql( {
 				tags_by_id: [ 1, 2, 3, 4 ],
+			} );
+		} );
+
+		test( 'should add properties to nested objects', () => {
+			const merged = mergePostEdits(
+				deepFreeze( {
+					discussion: { comments_open: false },
+				} ),
+				{
+					discussion: { pings_open: false },
+				}
+			);
+
+			expect( merged ).to.eql( {
+				discussion: { comments_open: false, pings_open: false },
 			} );
 		} );
 	} );
