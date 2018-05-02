@@ -33,8 +33,7 @@ import Timezone from 'components/timezone';
 import SiteIconSetting from './site-icon-setting';
 import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
-import { findFirstSimilarPlanKey } from 'lib/plans';
-import { FEATURE_NO_BRANDING, TYPE_BUSINESS } from 'lib/plans/constants';
+import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -516,7 +515,7 @@ export class SiteSettingsFormGeneral extends Component {
 							! isBusiness( site.plan ) && (
 								<Banner
 									feature={ FEATURE_NO_BRANDING }
-									plan={ findFirstSimilarPlanKey( site.plan, { type: TYPE_BUSINESS } ) }
+									plan={ PLAN_BUSINESS }
 									title={ translate(
 										'Remove the footer credit entirely with WordPress.com Business'
 									) }
