@@ -298,7 +298,13 @@ export class HelpContactForm extends React.PureComponent {
 		return (
 			<ul>
 				{ this.state.qanda.map( link => {
-					return <InlineHelpCompactResult helpLink={ link } onClick={ this.trackSibylClick } />;
+					return (
+						<InlineHelpCompactResult
+							key={ link.link + '#' + link.id }
+							helpLink={ link }
+							onClick={ this.trackSibylClick }
+						/>
+					);
 				} ) }
 			</ul>
 		);
