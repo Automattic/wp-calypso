@@ -16,7 +16,7 @@ export const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
 /**
  * @param {Object} state Global state tree
- * @return {String} True if current user is able to see the checklist after checkout
+ * @return {String} One of the exported support variation constants listed above
  */
 export default function getSupportVariation( state ) {
 	if (
