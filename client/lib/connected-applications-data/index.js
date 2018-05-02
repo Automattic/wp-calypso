@@ -104,7 +104,7 @@ ConnectedApplications.prototype.revoke = function( connectionID, callback ) {
  * @param int connectionID The ID of the connection
  */
 ConnectedApplications.prototype.getApplication = function( connectionID ) {
-	var application;
+	let application;
 	if ( ! this.initialized ) {
 		this.fetch();
 		return;

@@ -3,7 +3,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import { noop, snakeCase } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,7 +50,7 @@ export function recordSaveEvent( site, context ) {
 
 	const currentStatus = savedPost.status;
 	const nextStatus = post.status;
-	let tracksEventName = 'calypso_editor_' + snakeCase( post.type ) + '_';
+	let tracksEventName = 'calypso_editor_';
 	let statName = false;
 	let statEvent = false;
 	let usageAction = false;

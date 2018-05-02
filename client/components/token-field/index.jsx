@@ -31,6 +31,7 @@ class TokenField extends PureComponent {
 		tokenizeOnSpace: PropTypes.bool,
 		placeholder: PropTypes.string,
 		id: PropTypes.string,
+		isExpanded: PropTypes.bool,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
@@ -62,6 +63,7 @@ class TokenField extends PureComponent {
 		isBorderless: false,
 		disabled: false,
 		tokenizeOnSpace: false,
+		isExpanded: false,
 	};
 
 	static initialState = {
@@ -121,7 +123,7 @@ class TokenField extends PureComponent {
 					suggestions={ this._getMatchingSuggestions() }
 					selectedIndex={ this.state.selectedSuggestionIndex }
 					scrollIntoView={ this.state.selectedSuggestionScroll }
-					isExpanded={ this.state.isActive }
+					isExpanded={ this.props.isExpanded || this.state.isActive }
 					onHover={ this._onSuggestionHovered }
 					onSelect={ this._onSuggestionSelected }
 				/>

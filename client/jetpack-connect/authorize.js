@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
@@ -29,8 +29,6 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
@@ -51,6 +49,7 @@ import {
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
+	XMLRPC_ERROR,
 } from './connection-notice-types';
 import {
 	isCalypsoStartedConnection,
@@ -75,7 +74,6 @@ import {
  */
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 const MAX_AUTH_ATTEMPTS = 3;
-const PRESSABLE_PARTNER_ID = 49640;
 
 export class JetpackAuthorize extends Component {
 	static propTypes = {
@@ -256,7 +254,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
-		const { partnerId } = props.authQuery;
+		const { partnerSlug } = props.authQuery;
 		const partnerRedirectFlag = config.isEnabled(
 			'jetpack/connect-redirect-pressable-credential-approval'
 		);
@@ -264,7 +262,7 @@ export class JetpackAuthorize extends Component {
 		// If the redirect flag is set, then we conditionally redirect the Pressable client to
 		// a credential approval screen. Otherwise, we need to redirect all other partners back
 		// to wp-admin.
-		return partnerRedirectFlag ? partnerId && PRESSABLE_PARTNER_ID !== partnerId : partnerId;
+		return partnerRedirectFlag ? partnerSlug && 'pressable' !== partnerSlug : partnerSlug;
 	}
 
 	handleClickHelp = () => {
@@ -343,38 +341,26 @@ export class JetpackAuthorize extends Component {
 
 	renderXmlrpcFeedback() {
 		const { translate } = this.props;
+
 		return (
-			<div>
-				<div className="jetpack-connect__notices-container">
-					<Notice
-						icon="notice"
-						status="is-error"
-						text={ translate( 'We had trouble connecting.' ) }
-						showDismiss={ false }
-					>
-						<NoticeAction onClick={ this.handleResolve }>{ translate( 'Try again' ) }</NoticeAction>
-					</Notice>
-				</div>
-				<p>
-					{ translate(
-						'WordPress.com was unable to reach your site and approve the connection. ' +
-							'Try again by clicking the button above; ' +
-							"if that doesn't work you may need to {{link}}contact support{{/link}}.",
-						{
-							components: {
-								link: (
-									<a
-										href="https://jetpack.com/contact-support"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-				{ this.renderErrorDetails() }
-			</div>
+			<p>
+				{ translate(
+					'WordPress.com was unable to reach your site and approve the connection. ' +
+						'Try again by clicking the button above; ' +
+						"if that doesn't work you may need to {{link}}contact support{{/link}}.",
+					{
+						components: {
+							link: (
+								<a
+									href="https://jetpack.com/contact-support"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</p>
 		);
 	}
 
@@ -461,16 +447,26 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 		if ( this.props.hasXmlrpcError ) {
-			return this.renderXmlrpcFeedback();
+			return (
+				<Fragment>
+					<JetpackConnectNotices
+						noticeType={ XMLRPC_ERROR }
+						onActionClick={ this.handleResolve }
+						onTerminalError={ redirectToMobileApp }
+					/>
+					{ this.renderXmlrpcFeedback() }
+					{ this.renderErrorDetails() }
+				</Fragment>
+			);
 		}
 		return (
-			<div>
+			<Fragment>
 				<JetpackConnectNotices
 					noticeType={ DEFAULT_AUTHORIZE_ERROR }
 					onTerminalError={ redirectToMobileApp }
 				/>
 				{ this.renderErrorDetails() }
-			</div>
+			</Fragment>
 		);
 	}
 
@@ -539,12 +535,12 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { clientId, homeUrl, partnerId, redirectAfterAuth } = this.props.authQuery;
+		const { clientId, homeUrl, partnerSlug, redirectAfterAuth } = this.props.authQuery;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
 			config.isEnabled( 'jetpack/connect-redirect-pressable-credential-approval' ) &&
-			PRESSABLE_PARTNER_ID === partnerId
+			'pressable' === partnerSlug
 		) {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
@@ -626,8 +622,9 @@ export class JetpackAuthorize extends Component {
 	}
 
 	render() {
+		const { partnerSlug } = this.props.authQuery;
 		return (
-			<MainWrapper>
+			<MainWrapper partnerSlug={ partnerSlug }>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection

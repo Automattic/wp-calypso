@@ -31,8 +31,8 @@ const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } )
 		/>
 		{ ! isKeyCorrect && (
 			apiKey
-			? <FormInputValidation isError text={ translate( 'Key appears to be invalid.' ) } />
-			: <FormInputValidation isError text={ translate( 'An API key is required to make a connection.' ) } />
+				? <FormInputValidation isError text={ translate( 'Key appears to be invalid.' ) } />
+				: <FormInputValidation isError text={ translate( 'An API key is required to make a connection.' ) } />
 		) }
 		<FormSettingExplanation>
 			{ translate( 'To find your MailChimp API key click your profile picture, select Account and go to Extras ' +

@@ -17,7 +17,7 @@ import emitter from 'lib/mixins/emitter';
  */
 const debug = debugModule( 'calypso:wordads:store' );
 
-var _earnings = {},
+let _earnings = {},
 	_loadingError = null,
 	_isLoading = false,
 	EarningsStore;
@@ -58,7 +58,7 @@ function setLoadingError( error ) {
 }
 
 EarningsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	switch ( action.type ) {
 		case 'FETCHING_EARNINGS':
 			debug( 'EarningsStore FETCHING_EARNINGS', action );

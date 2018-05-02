@@ -28,11 +28,9 @@
 }
 
 .register-domain-step.is-kracken-ui {
-	.register-domain-step__search {
-		padding-bottom: 10px;
-	}
+	.register-domain-step__search,
 	.register-domain-step__filter {
-		padding-bottom: 20px;
+		padding-bottom: 12px;
 	}
 }
 
@@ -113,5 +111,25 @@
 		.register-domain-step__next-page-content {
 			opacity: 0.3;
 		}
+	}
+}
+
+.register-domain-step__tld-buttons {
+	display: flex;
+	justify-content: space-between;
+
+	.button {
+		flex-grow: 1;
+		margin-right: 1em;
+
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+}
+
+.register-domain-step {
+	.button.is-active {
+		background: $gray-lighten-30;
 	}
 }

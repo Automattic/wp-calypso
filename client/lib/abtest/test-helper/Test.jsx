@@ -23,6 +23,11 @@ export default class extends React.Component {
 									'test-helper__current-variation': variation === currentVariation,
 								} ) }
 							>
+								<input
+									className="test-helper__choice-indicator"
+									type="radio"
+									checked={ variation === currentVariation }
+								/>
 								{ variation }
 							</a>
 						</li>

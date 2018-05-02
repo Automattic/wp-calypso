@@ -12,15 +12,15 @@ import warn from 'lib/warn';
  */
 import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { dispatchRequest } from 'woocommerce/state/wc-api/utils';
-import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import {
 	fetchProducts,
 	fetchProductsFailure,
 	productUpdated,
 	productsUpdated,
 } from 'woocommerce/state/sites/products/actions';
+import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
 import request from 'woocommerce/state/sites/http-request';
+import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_UPDATE,

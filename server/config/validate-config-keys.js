@@ -57,7 +57,7 @@ environmentKeys.forEach( ( [ filename, keys ] ) => {
 					`Key ${ chalk.blue( key ) } defined in ${ chalk.blue( filename ) } ` +
 					`but not in ${ chalk.blue( '_shared.json' ) }\n` +
 					`Please add a default value in ${ chalk.blue( '_shared.json' ) } ` +
-					`before adding overrides in the environment-specific config files.`
+					'before adding overrides in the environment-specific config files.'
 			);
 
 			process.exit( 1 ); //eslint-disable-line

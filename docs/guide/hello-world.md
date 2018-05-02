@@ -53,14 +53,10 @@ touch client/my-sites/hello-world/controller.js
 There you'll write your controller with a function called `helloWorld`:
 
 ```javascript
-const Controller = {
-	helloWorld( context, next ) {
-		console.log( 'Hello, world?' );
-		next();
-	},
+export const helloWorld = ( context, next ) => {
+	console.log( 'Hello, world?' );
+	next();
 };
-
-export default Controller;
 ```
 
 ### 4. Set up the route
@@ -72,7 +68,7 @@ Run the following command to create the file:
 touch client/my-sites/hello-world/index.js
 ```
 
-Here we'll require the `page` module, the My Sites controller and our own controller, and write our main route handler:
+Here we'll import the `page` module, the My Sites controller and our own controller, and write our main route handler:
 
 ```javascript
 /**
@@ -107,6 +103,8 @@ export default () => {
 * `helloWorld` is our newly created controller handler.
 * `makeLayout` creates `Layout` element which contains elements from `context.primary` and `context.secondary`.
 * `clientRender` renders `Layout` element into DOM.
+
+You can read more about ES6 modules from Axel Rauschmayer's "[_ECMAScript 6 modules: the final syntax_](http://2ality.com/2014/09/es6-modules-final.html)" as well from _MDN web docs_: [_export_](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export) & [_import_](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import).
 
 ### 5. Register section
 
@@ -249,10 +247,10 @@ import HelloWorld from 'my-sites/hello-world/main';
 Then remove the `console.log` call and enter the following instead:
 
 ```jsx
-helloWorld( context, next ) {
+export const helloWorld = ( context, next ) => {
 	context.primary = <HelloWorld />;
 	next();
-},
+};
 ```
 
 In the `Main` constant we are getting our main jsx file for our section. We then place `HelloWorld` element in `context.primary` property, which will be eventually get placed in DOM inside `#primary` div element in `Layout` element.

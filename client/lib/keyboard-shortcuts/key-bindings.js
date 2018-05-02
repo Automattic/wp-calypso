@@ -79,6 +79,15 @@ const KEY_BINDINGS = {
 			},
 		},
 		{
+			eventName: 'open-site-selector',
+			keys: [ 'g', 'w' ],
+			type: 'sequence',
+			description: {
+				keys: [ 'g', 'w' ],
+				text: translate( 'Switch Site' ),
+			},
+		},
+		{
 			eventName: 'go-to-stats',
 			keys: [ 'g', 's' ],
 			type: 'sequence',

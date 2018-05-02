@@ -14,14 +14,14 @@ const debug = debugFactory( 'calypso:viewers:store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-var _fetchingViewers = {},
+let _fetchingViewers = {},
 	_viewersBySite = {},
 	_totalViewers = {},
 	_numViewersFetched = {},
 	_viewersCurrentPage = {},
 	_removingFromSite = {};
 
-var ViewersStore = {
+const ViewersStore = {
 	// This data may help with infinite scrolling
 	getPaginationData: function( siteId ) {
 		return {
@@ -99,7 +99,7 @@ function removeViewerFromSite( siteId, viewerId ) {
 }
 
 ViewersStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	debug( 'register event Type', action.type, payload );
 
 	switch ( action.type ) {

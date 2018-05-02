@@ -29,7 +29,7 @@ import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from 'lib
  */
 
 function sortProducts( products ) {
-	var planItems, includedItems, domainItems, creditItems, otherItems;
+	let planItems, includedItems, domainItems, creditItems, otherItems;
 
 	planItems = products.filter( isPlan );
 

@@ -38,6 +38,13 @@
 	}
 }
 
+.design__preview {
+	position: relative;
+	@include breakpoint( '>960px') {
+		position: static;
+	}
+}
+
 @include breakpoint( '>960px') {
 	.design__playground {
 		display: flex;
@@ -48,5 +55,25 @@
 	.design__preview {
 		width: 50%;
 		overflow: scroll;
+	}
+}
+
+.design__component-playground-code {
+	position: relative;
+}
+
+.design__component-playground-clipboard {
+	padding: 0;
+	position: absolute;
+		right: 10px;
+		top: 10px;
+}
+
+.design__playground-examples {
+	margin-bottom: 1em;
+	text-align: right;
+
+	.select-dropdown__container {
+		text-align: left;
 	}
 }

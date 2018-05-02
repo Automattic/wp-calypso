@@ -7,7 +7,7 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { get, pick } from 'lodash';
+import { get, intersection, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -26,7 +26,7 @@ import { getCurrentLocaleSlug, getCurrentLocaleVariant } from 'state/selectors';
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
-import { getCacheKey } from 'isomorphic-routing';
+import { getNormalizedPath } from 'isomorphic-routing';
 import { logToLogstash } from 'state/logstash/actions';
 
 const debug = debugFactory( 'calypso:server-render' );
@@ -122,15 +122,34 @@ export function render( element, key = JSON.stringify( element ), req ) {
 	//todo: render an error?
 }
 
+/**
+ * Check a query object against an array of whitelisted keys.
+ *
+ * If any key in the query is not present in the whitelist, it is not cacheable.
+ *
+ * @param  {Object}        [query={}]                Query object
+ * @param  {Array<string>} [whitelistedQueryKeys=[]] Whitelisted keys
+ * @return {boolean}                                 True if all query keys are whitelisted
+ */
+export function isCacheableQuery( query = {}, whitelistedQueryKeys = [] ) {
+	const queryKeys = Object.keys( query );
+	return queryKeys.length === intersection( queryKeys, whitelistedQueryKeys ).length;
+}
+
 export function serverRender( req, res ) {
 	const context = req.context;
+
 	let title,
 		metas = [],
 		links = [],
 		cacheKey = false;
 
-	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
-		cacheKey = getCacheKey( context );
+	if (
+		isSectionIsomorphic( context.store.getState() ) &&
+		! context.user &&
+		isCacheableQuery( context.query, context.cacheQueryKeys )
+	) {
+		cacheKey = getNormalizedPath( context.pathname, context.query );
 	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {
@@ -143,8 +162,7 @@ export function serverRender( req, res ) {
 		context.layout &&
 		! context.user &&
 		cacheKey &&
-		isDefaultLocale( context.lang ) &&
-		! context.query.email_address // Don't do SSR when PIIs are present at the request
+		isDefaultLocale( context.lang )
 	) {
 		context.renderedLayout = render(
 			context.layout,

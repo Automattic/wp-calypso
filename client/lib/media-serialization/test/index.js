@@ -54,7 +54,7 @@ describe( 'MediaSerialization', () => {
 		} );
 
 		test( 'should parse an image HTMLElement', () => {
-			let img = document.createElement( 'img' );
+			const img = document.createElement( 'img' );
 			img.className = 'size-full wp-image-1627 alignright';
 			img.src = 'https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg';
 			img.alt = 'Example';
@@ -92,7 +92,7 @@ describe( 'MediaSerialization', () => {
 		} );
 
 		test( 'should favor natural dimensions over inferred', () => {
-			let img = document.createElement( 'img' );
+			const img = document.createElement( 'img' );
 			[ 'width', 'height' ].forEach( dimension => {
 				Object.defineProperty( img, dimension, {
 					get: () => 660,
@@ -111,7 +111,7 @@ describe( 'MediaSerialization', () => {
 		} );
 
 		test( 'should favor attribute dimensions over natural', () => {
-			let img = document.createElement( 'img' );
+			const img = document.createElement( 'img' );
 			img.width = 660;
 			img.height = 660;
 			[ 'naturalWidth', 'naturalHeight' ].forEach( dimension => {

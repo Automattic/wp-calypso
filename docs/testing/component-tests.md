@@ -1,82 +1,89 @@
 # Component Tests
 
-Calypso has a lot of React UI components. (Try for example running `find -name *.jsx` under the `client` folder). This combined with the fact that UI tests are among the more difficult things to (unit) test, a guide or checklist for how to make it as easy and focused as possible seems appropriate.
+Calypso has a lot of React UI components. (Try for example running `find . -name '*.js?'` from the `client` folder).  It can be difficult to test components and UI. This guide will help make it as easy and focused as possible.
 
 ## [Getting started](#getting-started)
 
-To run all current client side tests, run `npm run test-client` in the root source folder. You can also run individual tests. Check [Testing overview](testing-overview.md#client-side-tests) documentation for more details.
+To run all current client side tests, run `npm run test-client` from within the Calypso source. You can also run individual tests, see [Testing overview](testing-overview.md#how-to-run-a-smaller-subset-of-test-files) for more details.
 
 Going through the current tests is a good way to get ideas for how different kinds of things can be tested.
 
 ### [Set up a test environment](#setting-up-environment)
 
-It's very possible that your tests will assume the existence of a browser environment to work properly. The test runner we use [Jest](https://facebook.github.io/jest) allows to set browser-like environment through [jsdom](https://github.com/tmpvar/jsdom). We opted to default to node-like environment to make tests faster. If some tests require another environment, you can add a _@jest-environment_ docblock. Check [this Jest doc](https://facebook.github.io/jest/docs/configuration.html#testenvironment-string) to learn more.
+It's very possible that your tests will assume the existence of a browser environment to work properly. The test runner we use, [Jest](https://facebook.github.io/jest), uses the browser-like environment [jsdom](https://github.com/tmpvar/jsdom). We default to a node-like environment to make tests faster. If some tests require another environment, you can add `/** @jest-environment jsdom */` docblock. Check [this Jest doc](https://facebook.github.io/jest/docs/en/configuration.html#testenvironment-string) to learn more.
 
 ### [What to test?](#what-to-test)
 
 This obviously varies between components, but a few easy things to start out with:
+
 #### Does rendering the component produce expected results
+
 Like its child components?
 
 ```javascript
-this.posts = shallowRenderer.getRenderOutput();
+import { shallow } from 'enzyme';
+import MyComponent from 'my-component';
+import AnExpectedChildComponent from 'an-expected-child-component';
 
-assert.equal( this.posts.type.displayName, 'Main' );
-assert.equal( this.posts.props.children[0].type.displayName, 'SidebarNavigation' );
-assert.equal( this.posts.props.children[1].type.displayName, 'PostsNavigation' );
-assert.equal( this.posts.props.children[2].type.displayName, 'PostList' );
+test( 'should have AnExpectedChildComponent as a child of MyComponent', () => {
+	const wrapper = shallow( <MyComponent /> );
+	expect( wrapper ).toMatchSnapshot();
+	expect( wrapper.find( AnExpectedChildComponent ) ).toHaveLength( 1 );
+} );
 ```
 
 #### Are props passed around correctly
+
 Continuing the example from above
 
 ```javascript
-// Check that it received the correct class
-assert.equal( this.posts.props.className, 'posts' );
-
-// Check that child components that should receive props receive them correctly
-assert.equal( this.posts.props.children[1].props.testProp.test, 'test' );
-assert.equal( this.posts.props.children[2].props.testProp.test, 'test' );
+expect( wrapper.find( AnExpectedChildComponent ).props( 'fantastic' ) ).toBe( true );
 ```
 
 #### The React class's functions
+
 Often there are individually testable functions within React classes. You can access the individual function through the class's prototype.
 
 ```javascript
-this.Posts.prototype._setWarning(...);
+expect( MyComponent.prototype.appendWorldBang( 'Hello, ' ) ).toBe( 'Hello, world!' );
 ```
 
-#### Is interaction handled correctly
-When a user for example clicks an element does the component react like it should?
-Example test from `client/components/Accordion`
+Or by accessing the wrapper's `instance()`:
 
 ```javascript
-import { shallow } from 'enzyme';
-import { expect } from 'chai';
+expect( wrapper.instance().shouldShowPlaceholder() ).toBe( true );
+```
 
-it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
-	const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
-	// Simulate a click event to toggle expanding state
+#### Is interaction handled correctly
+
+When a user for example clicks an element does the component react like it should?
+
+Example test from `client/components/Accordion`:
+
+```javascript
+test( 'should accept an onToggle function handler to be invoked when toggled', () => {
+	const toggleSpy = jest.fn();
+	const wrapper = shallow(
+		<Accordion title="Section" onToggle={ toggleSpy }>
+			Content
+		</Accordion>
+	);
+
 	wrapper.find( '.accordion__toggle' ).simulate( 'click' );
 
-	function finishTest( isExpanded ) {
-		// Check that it received the toggled state (the component is initially collapsed/not expanded)
-		expect( isExpanded ).to.be.true;
-
-		process.nextTick( function() {
-			// Check that the component is expanded
-			expect( wrapper ).to.have.state( 'isExpanded' ).be.true;
-			done();
-		} );
-	}
+	expect( toggleSpy ).toHaveBeenCalledTimes( 1 );
+	expect( toggleSpy ).toHaveBeenCalledWith( true );
+	expect( wrapper.state( 'isExpanded' ) ).toBe( true );
 } );
 ```
 
 ## [Techniques for avoiding calling other than the targeted code](#techniques-for-avoiding-calling-other-code)
+
 Like their name suggests, unit tests should be targeting only one clear unit at a time. Try to minimize the amount of code you're calling outside the targeted code. This other code could be for example subcomponents, mixins, or just other functions than the one you're testing.
 
 ### [Shallow rendering](#shallow-rendering)
+
 Shallow rendering helps with inspecting whether our component renders correctly, without having to render subcomponents. Lets hear it from Facebook themselves:
 
 > When writing unit tests for React, shallow rendering can be helpful. Shallow rendering lets you
@@ -88,76 +95,83 @@ Shallow rendering helps with inspecting whether our component renders correctly,
 
 For a complete example of usage, see `client/components/themes-list/test/index.jsx`.
 
-The render function basically just draws a bunch of Theme subcomponents:
+The render function basically just draws a bunch of Theme sub-components:
 
 ```javascript
-...
-render: function() {
-	return (
-		<ul className="themes-list">
-			{ this.props.themes.map( function( theme ) {
-				return (
-					<li key={ 'theme' + theme.name }>
-						<Theme theme={ theme } />
-					</li>
-				);
-			} ) }
-		</ul>
-	);
+class ThemesList extends React.Component {
+	// …
+	render() {
+		return (
+			<div className="themes-list">
+				{ this.props.themes.map( function( theme ) {
+					return (
+						<Theme key={ 'theme' + theme.name }>
+							<Theme theme={ theme } />
+					);
+				} ) }
+			</div>
+		);
+	}
 }
-
-...
 ```
 
 So we test it like this:
 
 ```javascript
-import ShallowRenderer from 'react-test-renderer/shallow';
+import EmptyContent from 'components/empty-content';
+import Theme from 'components/theme';
+import { shallow } from 'enzyme';
+import { ThemesList } from '../';
 
-this.props = {
+const defaultProps = deepFreeze( {
 	themes: [
-		{
-			name: 'kubrick',
-			screenshot: '/theme/kubrick/screenshot.png',
-		},
-		{
-			name: 'picard',
-			screenshot: '/theme/picard/screenshot.png',
-		}
-	]
-};
+		{ id: '1', name: 'kubrick', screenshot: '/theme/kubrick/screenshot.png' },
+		{ id: '2', name: 'picard', screenshot: '/theme/picard/screenshot.png' },
+	],
+	// …
+} );
 
-const renderer = new ShallowRenderer();
+	test( 'should render a div with a className of "themes-list"', () => {
+		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
+		expect( wrapper ).toMatchSnapshot();
+		expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
+		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+	} );
 
-renderer.render(
-	React.createElement( ThemesList, this.props )
-);
+	test( 'should render a <Theme /> child for each provided theme', () => {
+		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
+		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+	} );
 
-this.themesList = renderer.getRenderOutput();
-
-assert( this.themesList.props.children.length === this.props.themes.length, 'child count is different from themes count' );
+	test( 'should display the EmptyContent component when no themes are provided', () => {
+		const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
+		expect( wrapper.type() ).toBe( EmptyContent );
+	} );
 ```
 
-So here we avoid having to actually draw the `Theme` components when testing `ThemesList`.
+By using `shallow`, we avoid rendering the `Theme` components when testing `ThemesList`.
 
 ## Troubleshooting
 
-* Valid tests can fail if a component is wrapped in a higher order component, like `localize()` or `connect()`. This is because a shallow render only results in the higher component being rendered, not its children. The best practice is to test the raw component directly, with external dependencies mocked, so that the results aren't influenced by anything outside the component being tested:
+* Valid tests can fail if a component is wrapped in a higher order component, like `localize()` or `connect()`. This is because a shallow render only results in the higher component being rendered, not its children.
 
-	```js
-	// Bad
-	export default localize( class SomeComponent extends React.Component {
-		// ...
-	} );
-	```
+The best practice is to test the unwrapped component, with external dependencies mocked, so that the results aren't influenced by anything outside the component being tested:
 
-	```js
-	// Good
-	export class SomeComponent extends React.Component {
-		// ...
-	}
+```javascript
+// Bad. Tests cannot access the unwrapped component.
+export default localize( class SomeComponent extends React.Component {
+	// ...
+} );
+```
 
-	export default localize( SomeComponent );
-	```
+```javascript
+// Good! This component can imported for testing.
+export class SomeComponent extends React.Component {
+	// ...
+}
 
-	See [#18064](https://github.com/Automattic/wp-calypso/pull/18064) for full examples of using ES6 classes.
+// The default export wrapped component can be imported for use elsewhere.
+export default localize( SomeComponent );
+```
+
+See [#18064](https://github.com/Automattic/wp-calypso/pull/18064) for full examples of using ES6 classes.

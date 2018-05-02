@@ -9,7 +9,7 @@ import { assert } from 'chai';
 import sinon from 'sinon';
 
 describe( 'index', () => {
-	var FollowList, FollowListSite, followList, site;
+	let FollowList, FollowListSite, followList, site;
 
 	beforeAll( () => {
 		FollowList = require( 'lib/follow-list' );
@@ -50,7 +50,7 @@ describe( 'index', () => {
 
 		describe( 'follow', () => {
 			test( 'should call the follow endpoint and execute the callback', () => {
-				var changeCallback = sinon.spy();
+				const changeCallback = sinon.spy();
 				site.on( 'change', changeCallback );
 				site.follow();
 				assert.isTrue( changeCallback.called, 'callbacks subscribed to change should be called' );
@@ -58,7 +58,7 @@ describe( 'index', () => {
 			} );
 
 			test( 'should not call the follow endpoint or execute the callback if already following', () => {
-				var changeCallback = sinon.spy();
+				const changeCallback = sinon.spy();
 				site.is_following = true;
 				site.on( 'change', changeCallback );
 				site.follow();
@@ -69,7 +69,7 @@ describe( 'index', () => {
 
 		describe( 'unfollow', () => {
 			test( 'should call the unfollow endpoint and execute the callback', () => {
-				var changeCallback = sinon.spy();
+				const changeCallback = sinon.spy();
 				site.is_following = true;
 				site.on( 'change', changeCallback );
 				site.unfollow();
@@ -78,7 +78,7 @@ describe( 'index', () => {
 			} );
 
 			test( 'should not call the unfollow endpoint or execute the callback if already following', () => {
-				var changeCallback = sinon.spy();
+				const changeCallback = sinon.spy();
 				site.is_following = false;
 				site.on( 'change', changeCallback );
 				site.unfollow();

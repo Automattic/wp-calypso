@@ -3,14 +3,13 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
 import { isBusinessPlanUser } from 'state/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'lib/plans/constants';
 
 describe( 'isBusinessPlanUser()', () => {
 	test( 'should return true if any purchase is a business plan.', () => {
@@ -33,7 +32,30 @@ describe( 'isBusinessPlanUser()', () => {
 			},
 		} );
 
-		assert.isTrue( isBusinessPlanUser( state ) );
+		expect( isBusinessPlanUser( state ) ).toBe( true );
+	} );
+
+	test( 'should return true if any purchase is a business plan (2y).', () => {
+		const state = deepFreeze( {
+			currentUser: {
+				id: 123,
+			},
+			purchases: {
+				data: [
+					{
+						user_id: '123',
+						product_slug: 'some-other-plan',
+					},
+					{
+						user_id: '123',
+						product_slug: PLAN_BUSINESS_2_YEARS,
+					},
+				],
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		} );
+
+		expect( isBusinessPlanUser( state ) ).toBe( true );
 	} );
 
 	test( 'should return false if non of the purchases is a business plan.', () => {
@@ -56,7 +78,7 @@ describe( 'isBusinessPlanUser()', () => {
 			},
 		} );
 
-		assert.isFalse( isBusinessPlanUser( state ) );
+		expect( isBusinessPlanUser( state ) ).toBe( false );
 	} );
 
 	test( 'should return false if current user id is null.', () => {
@@ -64,7 +86,7 @@ describe( 'isBusinessPlanUser()', () => {
 			currentUser: {},
 		} );
 
-		assert.isFalse( isBusinessPlanUser( state ) );
+		expect( isBusinessPlanUser( state ) ).toBe( false );
 	} );
 
 	test( 'should return false if purchasing data is null.', () => {
@@ -84,6 +106,6 @@ describe( 'isBusinessPlanUser()', () => {
 			},
 		} );
 
-		assert.isFalse( isBusinessPlanUser( state ) );
+		expect( isBusinessPlanUser( state ) ).toBe( false );
 	} );
 } );
