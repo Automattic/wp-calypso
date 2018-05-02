@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { random } from 'lodash';
+import { random, map } from 'lodash';
 import { translate } from 'i18n-calypso';
 import { parse } from 'qs';
 
@@ -53,17 +53,24 @@ function analyticsForStream( { streamKey, algorithm, posts } ) {
 }
 const getAlgorithmForStream = streamKey => analyticsAlgoMap.get( streamKey );
 
-const PER_FETCH = 6;
+export const PER_FETCH = 6;
 const PER_POLL = 5;
 const PER_GAP = 40;
 
+export const QUERY_META = [ 'post', 'discover_original_post' ].join( ',' );
 export const getQueryString = ( extras = {} ) => {
-	const meta = [ 'post', 'discover_original_post' ].join( ',' );
-	return { orderBy: 'date', meta, ...extras, content_width: 675 };
+	return { orderBy: 'date', meta: QUERY_META, ...extras, content_width: 675 };
 };
 const defaultQueryFn = getQueryString;
 
-const SITE_LIMITER_FIELDS = [ 'ID', 'site_ID', 'date', 'feed_ID', 'feed_item_ID', 'global_ID' ];
+export const SITE_LIMITER_FIELDS = [
+	'ID',
+	'site_ID',
+	'date',
+	'feed_ID',
+	'feed_item_ID',
+	'global_ID',
+];
 function getQueryStringForPoll( extraFields = [], extraQueryParams = {} ) {
 	return {
 		orderBy: 'date',
@@ -84,7 +91,7 @@ const streamApis = {
 		dateProperty: 'date',
 		query: ( pageHandle, { streamKey } ) => {
 			const { sort, q } = JSON.parse( streamKeySuffix( streamKey ) );
-			return { orderBy: sort, q, ...pageHandle, sort };
+			return { sort, q, ...pageHandle, content_width: 675 };
 		},
 	},
 	feed: {
@@ -137,17 +144,12 @@ const streamApis = {
 	custom_recs_posts_with_images: {
 		path: () => '/read/recommendations/posts',
 		dateProperty: 'date',
-		query: extras => {
-			return {
+		query: extras =>
+			getQueryString( {
 				...extras,
-				meta: 'post,discover_original_post',
-				number: PER_FETCH,
-				orderBy: 'date',
 				seed: random( 0, 1000 ),
-				// algorithm: 'read:recommendations:posts/es/7',
 				alg_prefix: 'read:recommendations:posts',
-			};
-		},
+			} ),
 	},
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
@@ -216,6 +218,12 @@ export function handlePage( action, data ) {
 	if ( meta && meta.next_page ) {
 		// sites give pange handles nested within the meta key
 		pageHandle = { page_handle: next_page || meta.next_page };
+	} else if ( date_range && date_range.after ) {
+		// feeds use date_range. no next_page handles here
+		// search api will give you a date_range but for relevance search it will have before/after=null
+		// and offsets must be used
+		const { after } = date_range;
+		pageHandle = { before: after };
 	} else if ( next_page ) {
 		// search api returns next_page as top-level.
 		// but weirdly it returns the next querystring necessary
@@ -223,12 +231,7 @@ export function handlePage( action, data ) {
 		// to be re-stringified later.
 		// TODO: stop doing this extra work
 		pageHandle = parse( next_page );
-	} else if ( date_range ) {
-		// feeds use date_range. no next_page handles here
-		const { after } = date_range;
-		pageHandle = { before: after };
 	}
-
 	if ( data.algorithm ) {
 		analyticsForStream( { streamKey, algorithm: data.algorithm, posts } );
 	}
@@ -237,6 +240,7 @@ export function handlePage( action, data ) {
 	const streamItems = posts.map( post => ( {
 		...keyForPost( post ),
 		date: post[ dateProperty ],
+		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ),
 	} ) );
 
 	if ( isPoll ) {

@@ -297,9 +297,10 @@ class ReaderStream extends React.Component {
 		if ( options.triggeredByScroll ) {
 			// this.props.trackScrollPage( this.props.postsStore.getPage() + 1 );
 		}
-
-		const pageHandle = includes( streamKey, 'rec' ) // recs api requires offsets
-			? { offset: stream.items.length }
+		const indexOfColon = streamKey.indexOf( ':' );
+		const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
+		const pageHandle = includes( streamType, 'rec' ) //|| streamType === 'search' // elasticsearch requires offsets
+			? { offset: stream.items.length + 1 }
 			: stream.pageHandle || { before: startDate };
 		this.props.requestPage( { streamKey, pageHandle } );
 	};
@@ -370,7 +371,7 @@ class ReaderStream extends React.Component {
 	};
 
 	render() {
-		const { forcePlaceholders, pendingItems, updateCount, lastPage } = this.props;
+		const { forcePlaceholders, pendingItems, updateCount, lastPage, streamKey } = this.props;
 		let { items, isRequesting } = this.props;
 
 		const hasNoPosts = false && items.length === 0;
@@ -406,10 +407,13 @@ class ReaderStream extends React.Component {
 			);
 			showingStream = true;
 		}
+		const indexOfColon = streamKey.indexOf( ':' );
+		const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
+
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
-				<Interval onTick={ this.poll } period={ EVERY_MINUTE } />
+				{ ! streamType === 'search' && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 				{ this.props.isMain &&
 					this.props.showMobileBackToSidebar && (
 						<MobileBackToSidebar>

@@ -8,21 +8,41 @@ import deepfreeze from 'deep-freeze';
  * Internal Dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestPage, handlePage, handleError, fromApi } from '../';
-import { requestPage as requestPageAction, receivePage } from 'state/reader/streams/actions';
+import { requestPage, handlePage, handleError, fromApi, PER_FETCH, QUERY_META } from '../';
+import {
+	requestPage as requestPageAction,
+	receivePage,
+	receiveUpdates,
+} from 'state/reader/streams/actions';
 import { errorNotice } from 'state/notices/actions';
+
+jest.mock( 'lib/analytics', () => ( {
+	tracks: { recordEvent: jest.fn() },
+	mc: { bumpStat: jest.fn() },
+} ) );
+
+jest.mock( 'lib/wp' );
+jest.mock( 'reader/stats', () => ( { recordTrack: () => {} } ) );
+jest.mock( 'lib/warn', () => () => {} );
 
 describe( 'streams', () => {
 	const action = deepfreeze( requestPageAction( { streamKey: 'following', page: 2 } ) );
 
 	describe( 'requestPage', () => {
+		const query = {
+			orderBy: 'date',
+			meta: QUERY_META,
+			number: PER_FETCH,
+			content_width: 675,
+		};
+
 		it( 'should return an http request', () => {
 			expect( requestPage( action ) ).toEqual(
 				http( {
 					method: 'GET',
 					path: '/read/following',
 					apiVersion: '1.2',
-					query: action.query,
+					query,
 					onSuccess: action,
 					onFailure: action,
 				} )
@@ -40,7 +60,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/following',
 						apiVersion: '1.2',
-						query: {},
+						query,
 					},
 				},
 				{
@@ -49,7 +69,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/a8c',
 						apiVersion: '1.2',
-						query: {},
+						query,
 					},
 				},
 				{
@@ -58,37 +78,43 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/conversations',
 						apiVersion: '1.2',
-						query: {},
+						query,
 					},
 				},
 				{
-					stream: 'a8c_conversations',
+					stream: 'conversations-a8c',
 					expected: {
 						method: 'GET',
 						path: '/read/conversations',
 						apiVersion: '1.2',
-						query: { index: 'a8c' },
+						query: { ...query, index: 'a8c' },
 					},
 				},
 				{
-					stream: 'search:foo',
+					stream: 'search: { "q": "foo", "sort": "date" }',
 					expected: {
 						method: 'GET',
 						path: '/read/search',
 						apiVersion: '1.2',
 						query: {
+							sort: 'date',
 							q: 'foo',
+							number: PER_FETCH,
+							content_width: 675,
 						},
 					},
 				},
 				{
-					stream: 'search:foo:bar',
+					stream: 'search: { "q": "foo:bar", "sort": "relevance" }',
 					expected: {
 						method: 'GET',
 						path: '/read/search',
 						apiVersion: '1.2',
 						query: {
+							sort: 'relevance',
 							q: 'foo:bar',
+							number: PER_FETCH,
+							content_width: 675,
 						},
 					},
 				},
@@ -98,7 +124,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/feed/1234/posts',
 						apiVersion: '1.2',
-						query: {},
+						query,
 					},
 				},
 				{
@@ -107,7 +133,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/sites/1234/posts',
 						apiVersion: '1.2',
-						query: {},
+						query,
 					},
 				},
 				{
@@ -116,7 +142,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/sites/1234/featured',
 						apiVersion: '1.2',
-						query: {},
+						query,
 					},
 				},
 				{
@@ -125,7 +151,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/liked',
 						apiVersion: '1.2',
-						query: {},
+						query,
 					},
 				},
 				{
@@ -147,7 +173,8 @@ describe( 'streams', () => {
 						path: '/read/recommendations/posts',
 						apiVersion: '1.2',
 						query: {
-							algorithm: 'read:recommendations:posts/es/7',
+							...query,
+							alg_prefix: 'read:recommendations:posts',
 							seed: expect.any( Number ),
 						},
 					},
@@ -167,13 +194,35 @@ describe( 'streams', () => {
 	} );
 
 	describe( 'handlePage', () => {
-		const data = deepfreeze( { posts: [] } );
+		const data = deepfreeze( { posts: [], date_range: { after: '2018' } } );
 
 		it( 'should return a receivePage action', () => {
 			const { streamKey, query } = action.payload;
-			expect( handlePage( action, fromApi( data ) ) ).toEqual(
-				receivePage( { streamKey, query, posts: data.posts } )
-			);
+			expect( handlePage( action, fromApi( data ) ) ).toEqual( [
+				receivePage( {
+					streamKey,
+					query,
+					streamItems: data.posts,
+					gap: null,
+					pageHandle: { before: '2018' },
+				} ),
+				expect.any( Function ), // receivePosts thunk
+			] );
+		} );
+
+		it( 'should return a receiveUpdates action when type is a poll', () => {
+			const { streamKey, query } = action.payload;
+			expect(
+				handlePage( { ...action, payload: { ...action.payload, isPoll: true } }, fromApi( data ) )
+			).toEqual( [
+				receiveUpdates( {
+					streamKey,
+					query,
+					streamItems: data.posts,
+					gap: null,
+					pageHandle: { before: '2018' },
+				} ),
+			] );
 		} );
 	} );
 
@@ -184,17 +233,6 @@ describe( 'streams', () => {
 			const notice = errorNotice( 'Could not fetch the next page of posts' );
 			delete notice.notice.noticeId;
 			expect( handleError( action, error ) ).toMatchObject( notice );
-		} );
-	} );
-
-	describe( 'fromApi', () => {
-		it( 'should return an empty array when data is falsey', () => {
-			expect( fromApi( null ) ).toEqual( [] );
-			expect( fromApi( undefined ) ).toEqual( [] );
-			expect( fromApi( false ) ).toEqual( [] );
-			expect( fromApi( {} ) ).toEqual( [] );
-			expect( fromApi( { posts: null } ) ).toEqual( [] );
-			expect( fromApi( { posts: [] } ) ).toEqual( [] );
 		} );
 	} );
 } );
