@@ -52,7 +52,7 @@ export const siteHasBusinessPlan = createSelector(
  * @param  {String}  siteId The Site ID
  * @return {Boolean} True if site has business plan
  */
-export const siteHasJetpackPlan = createSelector(
+export const siteHasEligibleJetpackPlan = createSelector(
 	( state, siteId ) => {
 		const slug = getSitePlanSlug( state, siteId );
 
@@ -68,9 +68,7 @@ export const siteHasJetpackPlan = createSelector(
  * Returns true if the site is eliglbe to  use Google My Business (GMB)
  *
  * It should be visible if:
- * - site is older than 1 week,
- * - site has a business plan
- * - site has a promote goal
+ * - site has a business plan on wpcom or jetpack premium/business
  * @param  {Object}  state  Global state tree
  * @param  {String}  siteId The Site ID
  * @return {Boolean} True if we should show the nudge
@@ -78,11 +76,11 @@ export const siteHasJetpackPlan = createSelector(
 export default function isSiteGoogleMyBusinessEligible( state, siteId ) {
 	// call-for-testing condition, remove on launch
 	if ( config.isEnabled( 'google-my-business' ) ) {
-		return siteHasBusinessPlan( state, siteId ) || siteHasJetpackPlan( state, siteId );
+		return siteHasBusinessPlan( state, siteId ) || siteHasEligibleJetpackPlan( state, siteId );
 	}
 
 	return (
 		( siteHasBusinessPlan( state, siteId ) && siteHasPromoteGoal( state, siteId ) ) ||
-		siteHasJetpackPlan( state, siteId )
+		siteHasEligibleJetpackPlan( state, siteId )
 	);
 }
