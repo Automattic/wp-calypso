@@ -8,7 +8,6 @@ import {
 	getConnectingSite,
 	getJetpackSiteByUrl,
 	getSSO,
-	getUserAlreadyConnected,
 	hasExpiredSecretError,
 	hasXmlrpcError,
 	isRemoteSiteOnSitesList,
@@ -410,28 +409,6 @@ describe( 'selectors', () => {
 			};
 
 			expect( getAuthAttempts( state, 'sitetest.com' ) ).toBe( 2 );
-		} );
-	} );
-
-	describe( '#getUserAlreadyConnected()', () => {
-		const makeUserAlreadyConnectedState = result => ( {
-			jetpackConnect: {
-				jetpackConnectAuthorize: {
-					userAlreadyConnected: result,
-				},
-			},
-		} );
-
-		test( 'should return false if state is missing', () => {
-			expect( getUserAlreadyConnected( {} ) ).toBe( false );
-		} );
-
-		test( 'should return the value from state', () => {
-			const falseState = makeUserAlreadyConnectedState( false );
-			expect( getUserAlreadyConnected( falseState ) ).toBe( false );
-
-			const trueState = makeUserAlreadyConnectedState( true );
-			expect( getUserAlreadyConnected( trueState ) ).toBe( true );
 		} );
 	} );
 } );

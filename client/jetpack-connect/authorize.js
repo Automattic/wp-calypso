@@ -63,7 +63,6 @@ import {
 import {
 	getAuthAttempts,
 	getAuthorizationData,
-	getUserAlreadyConnected,
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isRemoteSiteOnSitesList,
@@ -98,7 +97,6 @@ export class JetpackAuthorize extends Component {
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
-		userAlreadyConnected: PropTypes.bool.isRequired,
 	};
 
 	redirecting = false;
@@ -665,7 +663,6 @@ export default connect(
 			isMobileAppFlow,
 			mobileAppRedirect,
 			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
 	},
 	{
