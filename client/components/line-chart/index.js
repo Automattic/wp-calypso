@@ -22,6 +22,8 @@ const POINT_SIZE = 3;
 const END_POINT_SIZE = 1;
 const MAX_DRAW_POINTS_SIZE = 10;
 const CHART_MARGIN = 0.01;
+const MAX_LEFT_TICKS = 10;
+const MAX_BOTTOM_TICKS = 10;
 
 class LineChart extends Component {
 	static propTypes = {
@@ -51,12 +53,13 @@ class LineChart extends Component {
 	};
 
 	drawAxes = ( svg, params ) => {
-		const { yScale, xScale, height } = params;
+		const { yScale, xScale, height, leftTicks, bottomTicks } = params;
 		const { margin } = this.props;
 
 		const axisLeft = d3AxisLeft( yScale );
 		const bottomAxis = d3AxisBottom( xScale );
-		bottomAxis.ticks( 6 );
+		bottomAxis.ticks( bottomTicks );
+		axisLeft.ticks( leftTicks );
 
 		svg
 			.append( 'g' )
@@ -192,6 +195,8 @@ class LineChart extends Component {
 				] )
 				.range( [ newHeight - margin.bottom, margin.top ] )
 				.nice(),
+			leftTicks: MAX_LEFT_TICKS >= valueExtent[ 1 ] ? valueExtent[ 1 ] : MAX_LEFT_TICKS,
+			bottomTicks: MAX_BOTTOM_TICKS >= concatData.length ? concatData.length : MAX_BOTTOM_TICKS,
 		};
 	};
 

@@ -33,6 +33,7 @@ export default class D3Base extends Component {
 		params: null,
 		drawChart: null,
 		getParams: null,
+		updateParams: false,
 	};
 
 	chartRef = React.createRef();
@@ -41,15 +42,15 @@ export default class D3Base extends Component {
 		let state = {};
 
 		if ( nextProps.data !== prevState.data ) {
-			state = { ...state, data: nextProps.data };
+			state = { ...state, data: nextProps.data, updateParams: true };
 		}
 
 		if ( nextProps.drawChart !== prevState.drawChart ) {
-			state = { ...state, drawChart: nextProps.drawChart };
+			state = { ...state, drawChart: nextProps.drawChart, updateParams: true };
 		}
 
 		if ( nextProps.getParams !== prevState.getParams ) {
-			state = { ...state, getParams: nextProps.getParams };
+			state = { ...state, getParams: nextProps.getParams, updateParams: true };
 		}
 
 		if ( ! isEmpty( state ) ) {
@@ -66,7 +67,10 @@ export default class D3Base extends Component {
 	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		return nextState.params !== null && this.state.params !== nextState.params;
+		return (
+			( nextState.params !== null && this.state.params !== nextState.params ) ||
+			this.state.updateParams
+		);
 	}
 
 	componentDidUpdate() {
@@ -89,7 +93,7 @@ export default class D3Base extends Component {
 	 * Renders the chart, or triggers a rendering by updating the list of params.
 	 */
 	drawChart() {
-		if ( this.state.params === null ) {
+		if ( this.state.params === null || this.state.updateParams ) {
 			this.updateParams();
 		} else {
 			const svg = this.drawContainer();
@@ -117,7 +121,8 @@ export default class D3Base extends Component {
 	}
 
 	updateParams = () => {
-		this.setState( { params: this.state.getParams( this.chartRef.current ) } );
+		const params = this.state.getParams( this.chartRef.current );
+		this.setState( { params, updateParams: false } );
 	};
 
 	render() {
