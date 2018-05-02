@@ -39,6 +39,7 @@ import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackSearch from './jetpack-search';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
+import MobileApps from './mobile-apps';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
@@ -70,7 +71,6 @@ export class ProductPurchaseFeaturesList extends Component {
 					onClick={ this.props.recordBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
 				/>
-				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
@@ -81,6 +81,8 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				<FindNewTheme selectedSite={ selectedSite } />
+				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
+				<MobileApps />
 			</Fragment>
 		);
 	}
@@ -99,6 +101,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
+				<MobileApps />
 			</Fragment>
 		);
 	}
@@ -111,6 +114,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<AdvertisingRemoved isBusinessPlan={ false } />
+				<MobileApps />
 			</Fragment>
 		);
 	}
@@ -129,6 +133,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					onClick={ this.props.recordReturnToDashboardClick }
 					selectedSite={ selectedSite }
 				/>
+				<MobileApps />
 			</Fragment>
 		);
 	}
@@ -148,6 +153,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize />
 				<JetpackVideo />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
+				<MobileApps />
 			</Fragment>
 		);
 	}
@@ -165,6 +171,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackBackupSecurity />
 				<JetpackAntiSpam />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
+				<MobileApps />
 			</Fragment>
 		);
 	}
@@ -193,6 +200,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackBackupSecurity />
 				<JetpackAntiSpam />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
+				<MobileApps />
 			</Fragment>
 		);
 	}

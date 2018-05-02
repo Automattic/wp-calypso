@@ -1,23 +1,6 @@
 /** @format */
-
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.mock( 'components/purchase-detail', () => 'PurchaseDetail' );
-jest.mock( '../google-vouchers', () => ( {} ) );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
+jest.mock( '../google-vouchers', () => 'GoogleVouchers' );
 
 /**
  * External dependencies

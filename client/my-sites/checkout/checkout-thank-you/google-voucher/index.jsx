@@ -138,6 +138,7 @@ class GoogleVoucherDetails extends Component {
 			>
 				<div className="google-voucher-dialog__header">
 					<img
+						alt=""
 						src="/calypso/images/google-vouchers/google-voucher.svg"
 						className="google-voucher-dialog__header__image"
 					/>
@@ -236,8 +237,9 @@ class GoogleVoucherDetails extends Component {
 			<div>
 				<QuerySiteVouchers siteId={ selectedSite.ID } />
 				<PurchaseDetails
+					alt=""
 					id="google-credits"
-					icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
+					icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
 					title={ translate( 'Google AdWords credit' ) }
 					description={ translate(
 						'Use a $100 credit with Google to bring traffic to your most important Posts and Pages.'

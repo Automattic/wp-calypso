@@ -72,8 +72,15 @@ function middleware( app ) {
 				</head>
 				<body>
 					<h1>Welcome to Calypso!</h1>
-					<p>Please wait until webpack has finished compiling and you see <code style="font-size: 1.2em; color: blue; font-weight: bold;">READY!</code> in the server console. This page should then refresh automatically. If it hasn&rsquo;t, hit <em>Refresh</em>.</p>
-					<p>In the meantime, try to follow all the emotions of the allmoji: <img src="https://emoji.slack-edge.com/T024FN1V2/allmoji/fa5781cf7a8c5685.gif" width="36" style="vertical-align: middle;">
+					<p>
+						Please wait until webpack has finished compiling and you see
+						<code style="font-size: 1.2em; color: blue; font-weight: bold;">READY!</code> in
+						the server console. This page should then refresh automatically. If it hasn&rsquo;t, hit <em>Refresh</em>.
+					</p>
+					<p>
+						In the meantime, try to follow all the emotions of the allmoji:
+						<img src="https://emoji.slack-edge.com/T024FN1V2/allmoji/fa5781cf7a8c5685.gif"
+							width="36" style="vertical-align: middle;">
 				</body>
 			` );
 		} else {

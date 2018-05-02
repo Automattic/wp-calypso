@@ -52,11 +52,12 @@ import {
 import {
 	getContactDetailsCache,
 	getCurrentUserPaymentMethods,
+	getUpgradePlanSlugFromPath,
 	isDomainOnlySite,
 	isEligibleForCheckoutToChecklist,
 } from 'state/selectors';
 import { getStoredCards } from 'state/stored-cards/selectors';
-import { isValidFeatureKey, getUpgradePlanSlugFromPath, getPlan, findPlansKeys } from 'lib/plans';
+import { isValidFeatureKey, getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
@@ -216,7 +217,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const planSlug = getUpgradePlanSlugFromPath( this.props.product, this.props.selectedSite );
+		const { planSlug } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -642,6 +643,7 @@ export default connect(
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
+			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
 		};
 	},
 	{

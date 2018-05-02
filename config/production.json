@@ -116,6 +116,7 @@
 		"signup/atomic-store-flow": true,
 		"signup/wpcc": true,
 		"simple-payments": true,
+		"memberships": false,
 		"ssr/sample-log-cache-misses": true,
 		"support-user": true,
 		"sync-handler": true,

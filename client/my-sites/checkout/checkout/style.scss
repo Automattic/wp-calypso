@@ -928,6 +928,9 @@
 	select {
 		width: 100%;
 	}
+	&.checkout__ebanx-mx .checkout__form-state-field {
+		display: none;
+	}
 }
 
 .checkout__form-info-text {

@@ -31,11 +31,13 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import isEligibleForSpringDiscount from 'state/selectors/is-current-user-eligible-for-spring-discount';
+import {
+	canUpgradeToPlan,
+	isCurrentUserEligibleForSpringDiscount as isEligibleForSpringDiscount,
+} from 'state/selectors';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
-	canUpgradeToPlan,
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
@@ -224,7 +226,7 @@ class PlanFeatures extends Component {
 						currencyCode={ currencyCode }
 						current={ current }
 						discountPrice={ discountPrice }
-						isJetpackSite={ isJetpack }
+						isJetpack={ isJetpack }
 						planTitle={ planConstantObj.getTitle() }
 						planType={ planName }
 						rawPrice={ rawPrice }
@@ -255,6 +257,7 @@ class PlanFeatures extends Component {
 			canPurchase,
 			isInSignup,
 			isLandingPage,
+			isJetpack,
 			planProperties,
 			selectedPlan,
 			translate,
@@ -299,6 +302,7 @@ class PlanFeatures extends Component {
 						available={ available }
 						current={ current }
 						currencyCode={ currencyCode }
+						isJetpack={ isJetpack }
 						popular={ popular }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
@@ -351,6 +355,7 @@ class PlanFeatures extends Component {
 			basePlansPath,
 			displayJetpackPlans,
 			isInSignup,
+			isJetpack,
 			planProperties,
 			selectedPlan,
 			siteType,
@@ -408,6 +413,7 @@ class PlanFeatures extends Component {
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
 						isInSignup={ isInSignup }
+						isJetpack={ isJetpack }
 						isPlaceholder={ isPlaceholder }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
@@ -690,7 +696,8 @@ export default connect(
 		} = ownProps;
 		const selectedSiteId = site ? site.ID : null;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-		const isJetpack = isJetpackSite( state, selectedSiteId );
+		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
+		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -706,7 +713,9 @@ export default connect(
 				const planObject = getPlan( state, planProductId );
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
-				const available = isInSignup ? true : canUpgradeToPlan( plan, site ) && canPurchase;
+				const available = isInSignup
+					? true
+					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;

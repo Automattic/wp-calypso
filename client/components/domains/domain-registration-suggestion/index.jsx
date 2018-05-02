@@ -155,13 +155,11 @@ class DomainRegistrationSuggestion extends React.Component {
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
 
-		let buttonClasses, buttonContent;
+		let buttonContent;
 
 		if ( isAdded ) {
-			buttonClasses = 'added';
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
-			buttonClasses = 'add is-primary';
 			buttonContent =
 				! isSignupStep &&
 				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
@@ -171,7 +169,6 @@ class DomainRegistrationSuggestion extends React.Component {
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 		return {
-			buttonClasses,
 			buttonContent,
 		};
 	}

@@ -43,6 +43,7 @@ import Collection from 'devdocs/design/search-collection';
 import Count from 'components/count/docs/example';
 import CountedTextareas from 'components/forms/counted-textarea/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
+import DiffViewerExample from 'components/diff-viewer/docs/example';
 import DropZones from 'components/drop-zone/docs/example';
 import EllipsisMenu from 'components/ellipsis-menu/docs/example';
 import EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
@@ -68,11 +69,13 @@ import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
 import JetpackLogoExample from 'components/jetpack-logo/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
 import ListEnd from 'components/list-end/docs/example';
+import MarkedLinesExample from 'components/marked-lines/docs/example';
 import Notices from 'components/notice/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
 import PieChart from 'components/pie-chart/docs/example';
 import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
+import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
 import ProgressBar from 'components/progress-bar/docs/example';
 import Ranges from 'components/forms/range/docs/example';
@@ -172,6 +175,7 @@ class DesignAssets extends React.Component {
 					<Count readmeFilePath="count" />
 					<CountedTextareas readmeFilePath="forms/counted-textarea" />
 					<DatePicker readmeFilePath="date-picker" />
+					<DiffViewerExample readmeFilePath="diff-viewer" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmbedDialog readmeFilePath="tinymce/plugins/embed" />
@@ -198,11 +202,13 @@ class DesignAssets extends React.Component {
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<ListEnd readmeFilePath="list-end" />
+					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
 					<PieChart readmeFilePath="pie-chart" />
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
+					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
 					<ProgressBar readmeFilePath="progress-bar" />
 					<Ranges readmeFilePath="forms/range" />

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -16,7 +15,7 @@ describe( 'reducer', () => {
 	describe( 'items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		describe( 'NOTICE_CREATE', () => {
@@ -28,7 +27,7 @@ describe( 'reducer', () => {
 					notice: notice,
 				} );
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: notice,
 				} );
 			} );
@@ -46,7 +45,7 @@ describe( 'reducer', () => {
 					noticeId: 2,
 				} );
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					1: { noticeId: 1 },
 					3: { noticeId: 3 },
 				} );
@@ -62,7 +61,7 @@ describe( 'reducer', () => {
 					noticeId: 2,
 				} );
 
-				expect( state ).to.equal( original );
+				expect( state ).toBe( original );
 			} );
 		} );
 
@@ -75,7 +74,7 @@ describe( 'reducer', () => {
 					type: ROUTE_SET,
 				} );
 
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 
 			test( 'should preserve persistent notices on route set', () => {
@@ -87,7 +86,7 @@ describe( 'reducer', () => {
 					type: ROUTE_SET,
 				} );
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					2: { noticeId: 2, isPersistent: true },
 				} );
 			} );
@@ -101,7 +100,7 @@ describe( 'reducer', () => {
 					type: ROUTE_SET,
 				} );
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					2: { noticeId: 2, displayOnNextPage: false },
 				} );
 			} );

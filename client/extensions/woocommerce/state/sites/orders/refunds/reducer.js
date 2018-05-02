@@ -1,14 +1,13 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
+	WOOCOMMERCE_ORDER_REFUNDS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -20,19 +19,32 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function isSaving( state = {}, action ) {
+export function isSaving( state = null, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDER_REFUND_CREATE:
 		case WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS:
 		case WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.orderId ]: WOOCOMMERCE_ORDER_REFUND_CREATE === action.type,
-			} );
+			return WOOCOMMERCE_ORDER_REFUND_CREATE === action.type;
 		default:
 			return state;
 	}
 }
 
-export default combineReducers( {
-	isSaving,
-} );
+export function items( state = [], action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_ORDER_REFUNDS_REQUEST_SUCCESS:
+			return action.refunds;
+		case WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS:
+			return [ ...state, action.refund ];
+		default:
+			return state;
+	}
+}
+
+export default keyedReducer(
+	'orderId',
+	combineReducers( {
+		isSaving,
+		items,
+	} )
+);

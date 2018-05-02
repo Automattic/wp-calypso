@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { siteHasBusinessPlan } from '../is-google-my-business-stats-nudge-visible';
+import { siteHasBusinessPlan } from '../is-site-google-my-business-eligible';
 
 import {
 	PLAN_FREE,
