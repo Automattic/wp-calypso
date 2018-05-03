@@ -10,6 +10,7 @@ import { makeLayout } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { loggedIn, loggedOut, upload, fetchThemeFilters, setUpLocale } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
+import { langRouteParams } from 'controller/shared';
 
 export default function( router ) {
 	const user = userFactory();
@@ -27,7 +28,6 @@ export default function( router ) {
 			}
 
 			const loggedInRoutes = [
-				'/themes/:lang',
 				`/themes/:tier(free|premium)?/:site_id(${ siteId })?`,
 				`/themes/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })?`,
 				`/themes/:vertical?/:tier(free|premium)?/:site_id(${ siteId })?`,
@@ -50,7 +50,7 @@ export default function( router ) {
 
 			const loggedOutRoutes = [
 				// currently we only want to catch redirects to /themes/{langSlug}
-				'/themes/:lang?',
+				`/themes/${ langRouteParams }`,
 				'/themes/:tier(free|premium)?',
 				'/themes/:tier(free|premium)?/filter/:filter',
 				'/themes/:vertical?/:tier(free|premium)?',

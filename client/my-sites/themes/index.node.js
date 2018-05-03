@@ -15,6 +15,7 @@ import {
 	redirectToThemeDetails,
 	setUpLocale,
 } from './controller';
+import { langRouteParams } from 'controller/shared';
 import { validateFilters, validateVertical } from './validate-filters';
 
 export default function( router ) {
@@ -25,8 +26,7 @@ export default function( router ) {
 		} );
 
 		const showcaseRoutes = [
-			// currently we only want to catch redirects to /themes/{langSlug}
-			'/themes/:lang?',
+			`/themes/${ langRouteParams }`,
 			'/themes/:tier(free|premium)?',
 			'/themes/:tier(free|premium)?/filter/:filter',
 			'/themes/:vertical?/:tier(free|premium)?',

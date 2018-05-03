@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { compact, forEach, includes, isEmpty, startsWith } from 'lodash';
+import { compact, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import React from 'react';
 
@@ -22,6 +22,7 @@ import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import { getLanguage } from 'lib/i18n-utils';
 import getThemeFilters from 'state/selectors/get-theme-filters';
+import { setLocale } from 'state/ui/language/actions';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -162,18 +163,16 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 
 // Set up the locale in case it has ended up in the flow param
 export function setUpLocale( context, next ) {
-	// only when the page is rendered server side
-	if ( context.isServerSide ) {
-		forEach( context.params, value => {
-			const language = getLanguage( value );
-			if ( language ) {
-				context.lang = value;
-				if ( language.rtl ) {
-					context.isRTL = true;
-				}
-				return false;
+	const language = getLanguage( context.params.lang );
+	if ( language && language.langSlug ) {
+		if ( context.isServerSide ) {
+			context.lang = language.langSlug;
+			if ( language.rtl ) {
+				context.isRTL = true;
 			}
-		} );
+		} else {
+			setLocale( language.langSlug );
+		}
 	}
 	next();
 }
