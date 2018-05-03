@@ -49,7 +49,7 @@ export class PlansFeaturesMain extends Component {
 		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
 		const { siteId } = this.props;
-		const nextSiteId = nextProps.siteId;
+		const { siteId: nextSiteId } = nextProps;
 		if ( siteId !== nextSiteId && nextSiteId ) {
 			this.props.selectHappychatSiteId( nextSiteId );
 		}
