@@ -376,7 +376,7 @@ class ReaderStream extends React.Component {
 		const { forcePlaceholders, pendingItems, updateCount, lastPage, streamKey } = this.props;
 		let { items, isRequesting } = this.props;
 
-		const hasNoPosts = false && items.length === 0;
+		const hasNoPosts = items.length === 0;
 		let body, showingStream;
 
 		// trick an infinite list to showing placeholders

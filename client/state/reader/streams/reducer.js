@@ -71,6 +71,10 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
 			streamItems = action.payload.streamItems;
+			if ( streamItems.length === 0 ) {
+				return state;
+			}
+
 			maxDate = moment( streamItems[ 0 ].date );
 
 			if ( state.lastUpdated && maxDate < state.lastUpdated ) {
@@ -80,12 +84,14 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			return { ...state, lastUpdated: maxDate };
 		case READER_STREAMS_UPDATES_RECEIVE:
 			streamItems = action.payload.streamItems;
+
 			// only retain posts that are newer than ones we already have
 			if ( state.lastUpdated ) {
 				streamItems = streamItems.filter( item => moment( item.date ) > state.lastUpdated );
-				if ( streamItems.length === 0 ) {
-					return state;
-				}
+			}
+
+			if ( streamItems.length === 0 ) {
+				return state;
 			}
 
 			const newItems = uniqWith( streamItems, keysAreEqual );
