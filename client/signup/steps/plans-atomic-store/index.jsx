@@ -39,7 +39,7 @@ export class PlansAtomicStoreStep extends Component {
 		additionalStepData: PropTypes.object,
 		goToNextStep: PropTypes.func.isRequired,
 		hideFreePlan: PropTypes.bool,
-		selectedSiteId: PropTypes.number,
+		siteId: PropTypes.number,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -114,7 +114,7 @@ export class PlansAtomicStoreStep extends Component {
 	}
 
 	plansFeaturesList() {
-		const { hideFreePlan, selectedSiteId, designType } = this.props;
+		const { hideFreePlan, siteId, designType } = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
@@ -135,13 +135,13 @@ export class PlansAtomicStoreStep extends Component {
 		return (
 			<div>
 				<QueryPlans />
-				<QuerySitePlans siteId={ selectedSiteId } />
+				<QuerySitePlans siteId={ siteId } />
 
 				<PlanFeatures
 					plans={ plans }
 					onUpgradeClick={ this.onSelectPlan }
 					isInSignup={ true }
-					siteId={ selectedSiteId }
+					siteId={ siteId }
 					domainName={ this.getDomainName() }
 					displayJetpackPlans={ false }
 				/>
@@ -193,6 +193,6 @@ export class PlansAtomicStoreStep extends Component {
 }
 
 export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
-	selectedSiteId: getSiteId( state, siteSlug ),
+	siteId: getSiteId( state, siteSlug ),
 	designType: getDesignType( state ),
 } ) )( localize( PlansAtomicStoreStep ) );
