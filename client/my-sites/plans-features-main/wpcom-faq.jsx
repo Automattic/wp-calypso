@@ -56,7 +56,13 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						' {{a}}Find out more about plugins{{/a}}.',
 					{
 						components: {
-							a: <a href={ 'https://' + getSupportLocale() + '.support.wordpress.com/plugins/' } />,
+							a: (
+								<a
+									href={ 'https://' + getSupportLocale() + '.support.wordpress.com/plugins/' }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
 						},
 					}
 				) }
