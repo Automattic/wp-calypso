@@ -14,9 +14,11 @@ import UserMentionSuggestionList from './suggestion-list';
 const keys = { enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow: 40 };
 
 /**
- * addUserMentionSuggestions is a higher-order component that adds user mention support to whatever input it wraps.
+ * addUserMentions is a higher-order component that adds user mention support to whatever input it wraps.
  *
- * @example: withUserMentionSuggestions( Component )
+ * Suggestions can be provided via the suggestions prop, or by the connectUserMentions higher-order component.
+ *
+ * @example: addUserMentions( Component )
  *
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
