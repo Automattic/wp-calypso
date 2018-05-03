@@ -48,7 +48,7 @@ describe( 'selectors', () => {
 		uiState.methods = null;
 	} );
 
-	describe( 'getPaymentMethodEdits', () => {
+	describe( 'getPaymentMethodsWithEdits', () => {
 		test( 'should return empty array when the methods are being loaded', () => {
 			siteState.paymentMethods = LOADING;
 			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [] );

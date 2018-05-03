@@ -1433,7 +1433,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
 		} );
 
-		test( 'should return true when there is a whole country selected but the it belongs to other zone and does not allow states', () => {
+		test( 'should return true when there is a whole country selected but it belongs to another zone and does not allow states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {

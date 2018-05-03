@@ -203,9 +203,9 @@ class ShippingLabels extends Component {
 					<p className="label-settings__credit-card-description">{ summary }</p>
 					{ canEditPayments && (
 						<p className="label-settings__credit-card-description">
-							<a href="#" onClick={ expand }>
+							<Button onClick={ expand } borderless>
 								{ translate( 'Choose a different card' ) }
-							</a>
+							</Button>
 						</p>
 					) }
 				</div>

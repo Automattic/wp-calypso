@@ -10,6 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import Notice from 'components/notice';
@@ -92,9 +93,9 @@ const AddressSuggestion = ( {
 					<AddressSummary
 						values={ values }
 						countriesData={ countriesData } />
-					<a className="address-step__suggestion-edit" onClick={ editAddress } >
+					<Button borderless className="address-step__suggestion-edit" onClick={ editAddress } >
 						{ translate( 'Edit address' ) }
-					</a>
+					</Button>
 				</RadioButton>
 				<RadioButton
 					checked={ selectNormalized }

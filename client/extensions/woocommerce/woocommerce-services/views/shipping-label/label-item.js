@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import DetailsDialog from './label-details-modal';
@@ -38,7 +39,9 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'Request refund' ) }</a>
+				<Button onClick={ openDialog } borderless className="shipping-label__button">
+					{ translate( 'Request refund' ) }
+				</Button>
 			</span>
 		);
 	};
@@ -60,7 +63,9 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'Reprint' ) }</a>
+				<Button onClick={ openDialog } borderless className="shipping-label__button">
+					{ translate( 'Reprint' ) }
+				</Button>
 			</span>
 		);
 	};
@@ -76,7 +81,9 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'View details' ) }</a>
+				<Button onClick={ openDialog } borderless className="shipping-label__button">
+					{ translate( 'View details' ) }
+				</Button>
 			</span>
 		);
 	};

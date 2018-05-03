@@ -12,6 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import getPackageDescriptions from './get-package-descriptions';
 import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
@@ -42,12 +43,13 @@ const PackageList = ( props ) => {
 		const onOpenClick = () => props.openPackage( orderId, siteId, pckgId );
 		return (
 			<div className="packages-step__list-item" key={ pckgId }>
-				<div
+				<Button
+					borderless
 					className={ classNames( 'packages-step__list-package', { 'is-selected': packageId === pckgId } ) }
 					onClick={ onOpenClick } >
 					<span className="packages-step__list-package-name">{ name }</span>
 					{ renderCountOrError( isError, count ) }
-				</div>
+				</Button>
 			</div>
 		);
 	};
