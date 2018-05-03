@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
@@ -22,7 +21,7 @@ import { getNotices } from 'state/notices/selectors';
 
 const debug = debugModule( 'calypso:notices' );
 
-const NoticesList = createReactClass( {
+export const NoticesList = createReactClass( {
 	displayName: 'NoticesList',
 
 	mixins: [ observe( 'notices' ) ],
@@ -30,6 +29,10 @@ const NoticesList = createReactClass( {
 	propTypes: {
 		id: PropTypes.string,
 		notices: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
+
+		// Connected props
+		removeNotice: PropTypes.func.isRequired,
+		storeNotices: PropTypes.array.isRequired,
 	},
 
 	getDefaultProps() {

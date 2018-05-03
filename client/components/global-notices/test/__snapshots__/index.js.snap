@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<NoticesList /> should render notices with expected HTML 1`] = `
+<div
+  className="global-notices"
+  id="overlay-notices"
+>
+  <Localized(Notice)
+    key="notice-testing-notice"
+    noticeId="testing-notice"
+    onDismissClick={[Function]}
+    showDismiss={true}
+    status="is-success"
+    text="A test notice"
+  />
+</div>
+`;
