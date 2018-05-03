@@ -63,7 +63,12 @@ import { isDefaultLocale } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryLanguageNames from 'components/data/query-language-names';
-import getInlineHelpSupportVariation from 'state/selectors/get-inline-help-support-variation';
+import getInlineHelpSupportVariation, {
+	SUPPORT_DIRECTLY,
+	SUPPORT_HAPPYCHAT,
+	SUPPORT_TICKET,
+	SUPPORT_FORUM,
+} from 'state/selectors/get-inline-help-support-variation';
 
 const debug = debugFactory( 'calypso:help-contact' );
 
@@ -73,11 +78,6 @@ const debug = debugFactory( 'calypso:help-contact' );
 const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
-
-const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
-const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
-const SUPPORT_TICKET = 'SUPPORT_TICKET';
-const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
 const startShowingEaster2018ClosureNoticeAt = i18n.moment( 'Thu, 29 Mar 2018 00:00:00 +0000' );
 const stopShowingEaster2018ClosureNoticeAt = i18n.moment( 'Mon, 2 Apr 2018 00:00:00 +0000' );
