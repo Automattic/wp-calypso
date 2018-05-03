@@ -48,7 +48,6 @@ import {
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
-	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
 import {
@@ -363,12 +362,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	renderNotices() {
-		const {
-			authorizeError,
-			isAuthorizing,
-			authorizeSuccess,
-			userAlreadyConnected,
-		} = this.props.authorizationData;
+		const { authorizeError, isAuthorizing, authorizeSuccess } = this.props.authorizationData;
 		const { alreadyAuthorized, site } = this.props.authQuery;
 
 		let redirectToMobileApp = null;
@@ -386,18 +380,6 @@ export class JetpackAuthorize extends Component {
 			return (
 				<JetpackConnectNotices
 					noticeType={ ALREADY_CONNECTED_BY_OTHER_USER }
-					onTerminalError={ redirectToMobileApp }
-				/>
-			);
-		}
-
-		if ( userAlreadyConnected ) {
-			// Via wp-admin it is possible to connect additional users after the initial connection is made. But if we
-			// are trying to connect an additional user, and we are logged into a wordpress.com account that is already
-			// connected, we need to show an error.
-			return (
-				<JetpackConnectNotices
-					noticeType={ USER_IS_ALREADY_CONNECTED_TO_SITE }
 					onTerminalError={ redirectToMobileApp }
 				/>
 			);
