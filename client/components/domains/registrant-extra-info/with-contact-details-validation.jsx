@@ -8,8 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import validatorFactory from 'is-my-json-valid';
-import { castArray, get, isEmpty, map, once, reduce, replace } from 'lodash';
-import { update } from 'lodash/fp';
+import { castArray, get, isEmpty, map, once, reduce, replace, update } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 
@@ -77,11 +76,11 @@ export function formatIMJVErrors( errors, schema ) {
 			// Compare the error to the schema and try to find an appropriate
 			// error message
 			const error = interpretIMJVError( rawError, schema );
-			return update(
-				error.path,
-				errorsForField => [ ...( errorsForField || [] ), error ],
-				accumulatedErrors
-			);
+
+			return update( accumulatedErrors, error.path, errorsForField => [
+				...( errorsForField || [] ),
+				error,
+			] );
 		},
 		{}
 	);
