@@ -1,36 +1,47 @@
+/** @format */
+
 .domain-product-price {
 	color: $gray-darken-30;
 	font-weight: 600;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		align-items: center;
 		display: flex;
-		flex: 0 2 280px;
+		flex: 0 2 360px;
 		font-size: 17px;
 		justify-content: flex-end;
 		padding-right: 2em;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: inline-block;
 		font-size: 14px;
 	}
 
-	&.is-with-plans-only:not( .is-free-domain ) {
-		small {
-			font-size: 12px;
-		}
-	}
-
 	.map-domain-step & {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			padding-bottom: 5px;
 		}
 	}
 
 	small {
 		font-weight: 400;
-		opacity: .6;
+		opacity: 0.6;
+	}
+
+	&.domain-product-price__is-with-plans-only {
+		font-weight: 400;
+		font-size: 0.9em;
+	}
+
+	.domain-product-price__included-in-plan {
+		color: $blue-dark;
+	}
+
+	.domain-product-price__strikethrough-price {
+		text-decoration: line-through;
+		margin-right: 0.75em;
+		opacity: 0.7;
 	}
 
 	.domain-product-price__premium-text {
@@ -53,17 +64,17 @@
 		}
 
 		.domain-product-price__price {
-			opacity: .6;
+			opacity: 0.6;
 			text-decoration: line-through;
 		}
 	}
 
 	.is-placeholder & {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: $gray-lighten-30;
 			color: transparent;
