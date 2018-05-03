@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { preventWidows } from 'lib/formatting';
 import config from 'config';
 import FormLabel from 'components/forms/form-label';
 import SegmentedControl from 'components/segmented-control';
@@ -345,7 +346,9 @@ export class HelpContactForm extends React.PureComponent {
 		if ( showingQandAStep && hasQASuggestions ) {
 			return (
 				<div className="help-contact-form">
-					<p>{ translate( 'Did you want the answer to any of these questions?' ) }</p>
+					<h2 className="help-contact-form__title">
+						{ preventWidows( translate( 'Did you want the answer to any of these questions?' ) ) }
+					</h2>
 					<InlineHelpCompactResults
 						helpLinks={ this.state.qanda }
 						onClick={ this.trackSibylClick }
