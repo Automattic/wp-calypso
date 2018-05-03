@@ -21,7 +21,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSite, hasAllSitesList } from 'state/sites/selectors';
 import { areAllSitesSingleUser, getSites, getVisibleSites, hasLoadedSites } from 'state/selectors';
-import AllSites from 'my-sites/all-sites';
+import AllSites from 'blocks/all-sites';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';

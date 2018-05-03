@@ -21,6 +21,7 @@ import { isEnabled } from 'config';
 /**
  * Docs examples
  */
+import AllSites from 'blocks/all-sites/docs/example';
 import CreditCardForm from 'blocks/credit-card-form/docs/example';
 import CalendarButton from 'blocks/calendar-button/docs/example';
 import CalendarPopover from 'blocks/calendar-popover/docs/example';
@@ -33,7 +34,6 @@ import FollowMenu from 'blocks/follow-menu/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
-import AllSites from 'my-sites/all-sites/docs/example';
 import Site from 'blocks/site/docs/example';
 import SitePlaceholder from 'blocks/site/docs/placeholder-example';
 import SitesDropdown from 'components/sites-dropdown/docs/example';
@@ -125,6 +125,7 @@ export default class AppComponents extends React.Component {
 					filter={ this.state.filter }
 					section="blocks"
 				>
+					<AllSites readmeFilePath="all-sites" />
 					<AuthorSelector readmeFilePath="author-selector" />
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
@@ -143,7 +144,6 @@ export default class AppComponents extends React.Component {
 					<PlanStorage readmeFilePath="plan-storage" />
 					<PostSchedule />
 					<PostSelector />
-					<AllSites />
 					<Site readmeFilePath="site" />
 					<SitePlaceholder />
 					<SitesDropdown />
