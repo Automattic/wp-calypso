@@ -6,7 +6,7 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { includes, findLast, noop, times } from 'lodash';
+import { findLast, noop, times } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -101,7 +101,7 @@ class ReaderStream extends React.Component {
 		if ( this.props.shouldRequestRecs ) {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
-				pageHandle: { offset: this.props.recsStream.items.length }, // @todo: move setting of pageHandle to data-layer
+				pageHandle: this.props.recsStream.pageHandle,
 			} );
 		}
 	}
@@ -138,6 +138,7 @@ class ReaderStream extends React.Component {
 		const { streamKey } = this.props;
 		this.props.resetCardExpansions();
 		this.props.viewStream( { streamKey } );
+		this.fetchNextPage( {} );
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
@@ -299,11 +300,7 @@ class ReaderStream extends React.Component {
 			this.props.trackScrollPage( this.page );
 			this.page++;
 		}
-		const indexOfColon = streamKey.indexOf( ':' );
-		const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
-		const pageHandle = includes( streamType, 'rec' ) //|| streamType === 'search' // elasticsearch requires offsets
-			? { offset: stream.items.length + 1 }
-			: stream.pageHandle || { before: startDate };
+		const pageHandle = stream.pageHandle || { before: startDate };
 		this.props.requestPage( { streamKey, pageHandle } );
 	};
 
@@ -376,7 +373,7 @@ class ReaderStream extends React.Component {
 		const { forcePlaceholders, pendingItems, updateCount, lastPage, streamKey } = this.props;
 		let { items, isRequesting } = this.props;
 
-		const hasNoPosts = items.length === 0;
+		const hasNoPosts = items.length === 0 && ! isRequesting;
 		let body, showingStream;
 
 		// trick an infinite list to showing placeholders

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { random, map } from 'lodash';
+import { random, map, includes, get } from 'lodash';
 import { translate } from 'i18n-calypso';
 import { parse } from 'qs';
 
@@ -217,7 +217,10 @@ export function handlePage( action, data ) {
 	const { dateProperty } = streamApis[ streamType ];
 	let pageHandle = {};
 
-	if ( meta && meta.next_page ) {
+	if ( includes( streamType, 'rec' ) ) {
+		const offset = get( action, 'payload.pageHandle.offset', 0 ) + PER_FETCH;
+		pageHandle = { offset };
+	} else if ( meta && meta.next_page ) {
 		// sites give pange handles nested within the meta key
 		pageHandle = { page_handle: next_page || meta.next_page };
 	} else if ( date_range && date_range.after ) {
@@ -227,7 +230,7 @@ export function handlePage( action, data ) {
 		const { after } = date_range;
 		pageHandle = { before: after };
 	} else if ( next_page ) {
-		// search api returns next_page as top-level.
+		// search relevance api returns next_page as top-level.
 		// but weirdly it returns the next querystring necessary
 		// so this code breaks it down into an object
 		// to be re-stringified later.
@@ -240,7 +243,7 @@ export function handlePage( action, data ) {
 	const streamItems = posts.map( post => ( {
 		...keyForPost( post ),
 		date: post[ dateProperty ],
-		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ),
+		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
 	} ) );
 
 	if ( isPoll ) {
@@ -253,7 +256,8 @@ export function handlePage( action, data ) {
 	return actions;
 }
 
-export function handleError() {
+export function handleError( action, err ) {
+	warn( 'Could not fetch next page of posts:', action, err );
 	return errorNotice( translate( 'Could not fetch the next page of posts' ) );
 }
 

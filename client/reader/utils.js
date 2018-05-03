@@ -96,3 +96,9 @@ export function showFullPost( { post, replaceHistory, comments } ) {
 
 export const shallowEquals = ( o1, o2 ) =>
 	every( Object.keys( o1 ), key => o1[ key ] === o2[ key ] );
+
+export function getStreamType( streamKey ) {
+	const indexOfColon = streamKey.indexOf( ':' );
+	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
+	return streamType;
+}

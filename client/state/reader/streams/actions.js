@@ -15,6 +15,7 @@ import {
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'state/action-types';
 import { getReaderStream as getStream } from 'state/selectors';
+import { getStreamType } from 'reader/utils';
 
 /**
  * Fetch posts into a stream
@@ -27,8 +28,7 @@ import { getReaderStream as getStream } from 'state/selectors';
  * @return {object}          The action object
  */
 export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null } ) {
-	const indexOfColon = streamKey.indexOf( ':' );
-	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
+	const streamType = getStreamType( streamKey );
 
 	return {
 		type: READER_STREAMS_PAGE_REQUEST,
