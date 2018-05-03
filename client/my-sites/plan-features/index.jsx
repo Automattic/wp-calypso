@@ -638,7 +638,7 @@ PlanFeatures.propTypes = {
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
-	site: PropTypes.object,
+	siteId: PropTypes.number,
 };
 
 PlanFeatures.defaultProps = {
@@ -647,7 +647,7 @@ PlanFeatures.defaultProps = {
 	isInSignup: false,
 	isJetpack: false,
 	selectedSiteSlug: '',
-	site: {},
+	siteId: null,
 	onUpgradeClick: noop,
 };
 
@@ -691,10 +691,10 @@ export default connect(
 			plans,
 			onUpgradeClick,
 			isLandingPage,
-			site,
+			siteId,
 			displayJetpackPlans,
 		} = ownProps;
-		const selectedSiteId = site ? site.ID : null;
+		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
