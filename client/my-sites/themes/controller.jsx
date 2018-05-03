@@ -161,12 +161,20 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 	res.redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
 }
 
-// Set up the locale in case it has ended up in the flow param
+/**
+ * Searches for a valid lang param and switches locale
+ *
+ * @param {object} context - route context object
+ * @param {function} next - page.js call to the next registered callback
+ */
 export function setUpLocale( context, next ) {
 	const language = getLanguage( context.params.lang );
 	if ( language && language.langSlug ) {
 		if ( context.isServerSide ) {
-			context.lang = language.langSlug;
+			// Ensure the html lang/dir attribute values are set
+			// prioritize parentLangSlug for locale variants
+			// See: server/render/index.js
+			context.lang = language.parentLangSlug || language.langSlug;
 			if ( language.rtl ) {
 				context.isRTL = true;
 			}

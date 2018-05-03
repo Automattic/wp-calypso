@@ -28,6 +28,7 @@ export default function( router ) {
 			}
 
 			const loggedInRoutes = [
+				`/themes/${ langRouteParams }`,
 				`/themes/:tier(free|premium)?/:site_id(${ siteId })?`,
 				`/themes/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })?`,
 				`/themes/:vertical?/:tier(free|premium)?/:site_id(${ siteId })?`,
@@ -35,6 +36,7 @@ export default function( router ) {
 			];
 			router(
 				loggedInRoutes,
+				setUpLocale,
 				fetchThemeFilters,
 				validateVertical,
 				validateFilters,
@@ -49,7 +51,6 @@ export default function( router ) {
 			router( '/themes/upload/*', '/themes' );
 
 			const loggedOutRoutes = [
-				// currently we only want to catch redirects to /themes/{langSlug}
 				`/themes/${ langRouteParams }`,
 				'/themes/:tier(free|premium)?',
 				'/themes/:tier(free|premium)?/filter/:filter',
