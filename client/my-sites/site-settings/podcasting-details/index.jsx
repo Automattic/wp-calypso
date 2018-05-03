@@ -281,6 +281,7 @@ const getFormSettings = settings => {
 		'podcasting_category_1',
 		'podcasting_category_2',
 		'podcasting_category_3',
+		'podcasting_email',
 	] );
 };
 
