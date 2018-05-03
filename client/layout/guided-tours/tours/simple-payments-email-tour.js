@@ -38,10 +38,15 @@ export const SimplePaymentsEmailTour = makeTour(
 					</p>
 					<Continue
 						click
-						hidden
 						step="choose-payment-button"
 						target=".sidebar__menu li[data-post-type='page'] a.sidebar__button"
-					/>
+					>
+						{ translate( 'Click {{strong}}Add{{/strong}} to continue.', {
+							components: {
+								strong: <strong />,
+							},
+						} ) }
+					</Continue>
 					<ButtonRow>
 						<Quit>{ translate( 'Quit' ) }</Quit>
 					</ButtonRow>
