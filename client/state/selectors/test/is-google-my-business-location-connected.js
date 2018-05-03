@@ -11,8 +11,8 @@ describe( 'isGoogleMyBusinessLocationConnected()', () => {
 			siteSettings: {
 				items: {
 					1234: {
-						google_my_business_keyring_id: null,
-						google_my_business_location_id: '',
+						jetpack_google_my_business_keyring_id: null,
+						jetpack_google_my_business_location_id: '',
 					},
 				},
 			},
@@ -26,8 +26,8 @@ describe( 'isGoogleMyBusinessLocationConnected()', () => {
 			siteSettings: {
 				items: {
 					1234: {
-						google_my_business_keyring_id: '234523',
-						google_my_business_location_id: '2354235',
+						jetpack_google_my_business_keyring_id: '234523',
+						jetpack_google_my_business_location_id: '2354235',
 					},
 				},
 			},

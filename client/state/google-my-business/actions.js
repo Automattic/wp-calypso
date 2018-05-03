@@ -16,13 +16,13 @@ export const connectGoogleMyBusinessLocation = (
 ) => dispatch => {
 	return dispatch(
 		saveSiteSettings( siteId, {
-			google_my_business_keyring_id: keyringConnectionId,
-			google_my_business_location_id: locationId,
+			jetpack_google_my_business_keyring_id: keyringConnectionId,
+			jetpack_google_my_business_location_id: locationId,
 		} )
 	).then( ( { updated } ) => {
 		if (
-			! updated.hasOwnProperty( 'google_my_business_keyring_id' ) &&
-			! updated.hasOwnProperty( 'google_my_business_location_id' )
+			! updated.hasOwnProperty( 'jetpack_google_my_business_keyring_id' ) &&
+			! updated.hasOwnProperty( 'jetpack_google_my_business_location_id' )
 		) {
 			return Promise.reject();
 		}
@@ -33,13 +33,13 @@ export const connectGoogleMyBusinessLocation = (
 export const disconnectGoogleMyBusinessLocation = siteId => dispatch => {
 	return dispatch(
 		saveSiteSettings( siteId, {
-			google_my_business_keyring_id: false,
-			google_my_business_location_id: false,
+			jetpack_google_my_business_keyring_id: false,
+			jetpack_google_my_business_location_id: false,
 		} )
 	).then( ( { updated } ) => {
 		if (
-			! updated.hasOwnProperty( 'google_my_business_keyring_id' ) &&
-			! updated.hasOwnProperty( 'google_my_business_location_id' )
+			! updated.hasOwnProperty( 'jetpack_google_my_business_keyring_id' ) &&
+			! updated.hasOwnProperty( 'jetpack_google_my_business_location_id' )
 		) {
 			return Promise.reject();
 		}

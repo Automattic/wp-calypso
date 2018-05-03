@@ -13,8 +13,8 @@ import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 
 function isConnected( keyringConnection, externalUser, siteSettings ) {
 	return (
-		keyringConnection.ID === siteSettings.google_my_business_keyring_id &&
-		externalUser.external_ID === siteSettings.google_my_business_location_id
+		keyringConnection.ID === siteSettings.jetpack_google_my_business_keyring_id &&
+		externalUser.external_ID === siteSettings.jetpack_google_my_business_location_id
 	);
 }
 
