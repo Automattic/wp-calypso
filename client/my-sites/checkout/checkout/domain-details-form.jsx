@@ -50,7 +50,9 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_checkout_domain_contact_information_view' );
+		if ( this.props.recordTracksEvent ) {
+			this.props.recordTracksEvent( 'calypso_checkout_domain_contact_information_view' );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
