@@ -76,14 +76,13 @@ This means that instead of `import`ing `page`, you just add a `router` argument 
 
 If you're interested in single-tree rendering your section, please proceed to the [Isomorphic Routing docs](isomorphic-routing.md).
 
-## Site specific URLs
+## Site-specific URLs
 
 When a URL in Calypso is a view that relates to a site, the `site_slug` filter should usually be the last URL fragment. This means that when you remove it you should get all sites views for the same section. For example:
 
 `/posts/drafts/:site.` - If you remove the “site” you should get a view for all sites. Use that principle to determine where the site fragment should be.
 
-
-There are some exceptions to this; if the filter is an id, which is specific to a site—in that case, the site specific resources should go after the site fragment. For example;
+There are some exceptions to this; if the filter is an id, which is specific to a site—in that case, the site specific resources should go after the site fragment. For example:
 
 `/comment/{ siteFragment }/{ commentId }`
 
