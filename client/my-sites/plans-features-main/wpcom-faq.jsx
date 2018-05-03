@@ -16,6 +16,7 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { purchasesRoot } from 'me/purchases/paths';
+import { getSupportLocale } from 'lib/i18n-utils';
 
 const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	const helpLink =
@@ -54,7 +55,9 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						' All plans already come with a custom set of plugins tailored just for them.' +
 						' {{a}}Find out more about plugins{{/a}}.',
 					{
-						components: { a: <a href="https://en.support.wordpress.com/plugins/" /> },
+						components: {
+							a: <a href={ 'https://' + getSupportLocale() + '.support.wordpress.com/plugins/' } />,
+						},
 					}
 				) }
 			/>
