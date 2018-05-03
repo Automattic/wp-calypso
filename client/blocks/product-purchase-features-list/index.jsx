@@ -151,7 +151,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackBackupSecurity />
 				<JetpackAntiSpam />
 				<JetpackPublicize />
-				<JetpackVideo />
+				<JetpackVideo selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
 			</Fragment>
@@ -195,7 +195,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<FindNewTheme selectedSite={ selectedSite } />
-				<JetpackVideo />
+				<JetpackVideo selectedSite={ selectedSite } />
 				<JetpackPublicize />
 				<JetpackBackupSecurity />
 				<JetpackAntiSpam />
