@@ -12,7 +12,8 @@
 	-webkit-overflow-scrolling: touch;
 }
 
-.facebook-share-preview a {
+.facebook-share-preview a,
+.facebook-share-preview__application-link {
 	color: #365899;
 	text-decoration: none;
 }

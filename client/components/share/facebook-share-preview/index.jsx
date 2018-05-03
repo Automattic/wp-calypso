@@ -1,5 +1,4 @@
 /** @format */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 /**
  * External dependencies
  */
@@ -72,7 +71,7 @@ export class FacebookSharePreview extends PureComponent {
 								<span>
 									{ translate( 'published an article on {{a}}WordPress{{/a}}.', {
 										components: {
-											a: <a href="#" />,
+											a: <span className="facebook-share-preview__application-link" />,
 										},
 									} ) }
 								</span>
