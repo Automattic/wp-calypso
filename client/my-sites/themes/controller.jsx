@@ -21,8 +21,8 @@ import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/ac
 import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import { getLanguage } from 'lib/i18n-utils';
-import getThemeFilters from 'state/selectors/get-theme-filters';
 import { setLocale } from 'state/ui/language/actions';
+import getThemeFilters from 'state/selectors/get-theme-filters';
 
 const debug = debugFactory( 'calypso:themes' );
 
