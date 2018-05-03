@@ -74,7 +74,7 @@ export class Gravatar extends Component {
 			return <span className="gravatar is-missing" />;
 		}
 
-		const altText = alt || user.display_name;
+		const altText = alt || user.display_name || user.name;
 		const avatarURL = tempImage || this.getResizedImageURL( safeImageURL( user.avatar_URL ) );
 		const classes = classnames( 'gravatar', this.props.className );
 
