@@ -208,6 +208,9 @@ export default WrappedComponent =>
 			const textAfterSelectionEnd = node.value.slice( node.selectionEnd, node.value.length + 1 );
 
 			node.value = textBeforeAtSymbol + '@' + userLogin + textAfterSelectionEnd;
+
+			// Make sure the input still has focus (after a selection has been chosen with the mouse, for example)
+			node.focus();
 		};
 
 		updatePosition = ( state = this.state, newPosition ) => {
