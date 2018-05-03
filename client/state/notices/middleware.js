@@ -33,7 +33,7 @@ import {
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITES_DELETE_REQUEST_SUCCESS,
 	INVITES_DELETE_REQUEST_FAILURE,
-	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
+	JETPACK_CONNECT_AUTHORIZE_FAILURE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -320,13 +320,8 @@ export const onBillingTransactionRequestFailure = ( { transactionId, error } ) =
 	} );
 };
 
-export const onJetpackConnectUserAlreadyConnected = () => {
-	return errorNotice(
-		translate(
-			'This WordPress.com account is already connected to another user on this site. ' +
-				'Please login to another WordPress.com account to complete the connection.'
-		)
-	);
+export const onJetpackConnectAuthorizeFailure = ( { message } ) => {
+	return errorNotice( message );
 };
 
 /**
@@ -352,7 +347,7 @@ export const handlers = {
 	[ INVITES_DELETE_REQUEST_SUCCESS ]: onDeleteInvitesSuccess,
 	[ INVITES_DELETE_REQUEST_FAILURE ]: onDeleteInvitesFailure,
 	[ INVITE_RESEND_REQUEST_FAILURE ]: onInviteResendRequestFailure,
-	[ JETPACK_CONNECT_USER_ALREADY_CONNECTED ]: onJetpackConnectUserAlreadyConnected,
+	[ JETPACK_CONNECT_AUTHORIZE_FAILURE ]: onJetpackConnectAuthorizeFailure,
 	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,

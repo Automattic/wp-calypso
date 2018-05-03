@@ -5,6 +5,7 @@
  */
 import debugFactory from 'debug';
 import { omit, pick } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -41,7 +42,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
+	JETPACK_CONNECT_AUTHORIZE_FAILURE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -311,7 +312,13 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 					siteId,
 				} );
 				dispatch( redirectMobileApp( USER_IS_ALREADY_CONNECTED_TO_SITE ) );
-				dispatch( { type: JETPACK_CONNECT_USER_ALREADY_CONNECTED } );
+				dispatch( {
+					type: JETPACK_CONNECT_AUTHORIZE_FAILURE,
+					message: translate(
+						'This WordPress.com account is already connected to another user on this site. ' +
+							'Please login to another WordPress.com account to complete the connection.'
+					),
+				} );
 
 				if ( ! siteIsOnSitesList ) {
 					debug( 'adding site to sites list' );
