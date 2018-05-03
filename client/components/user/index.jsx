@@ -21,7 +21,7 @@ export default class User extends Component {
 
 	render() {
 		const user = this.props.user || null;
-		const name = user ? user.name || user.display_name : '';
+		const name = user ? user.display_name || user.name : '';
 		return (
 			<div className="user" title={ name }>
 				<Gravatar size={ 26 } user={ user } />
