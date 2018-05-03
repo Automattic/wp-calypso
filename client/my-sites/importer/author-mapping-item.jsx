@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AuthorSelector from 'blocks/author-selector';
-import UserItem from 'components/user';
+import User from 'components/user';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 class ImporterAuthorMapping extends React.Component {
@@ -32,20 +32,16 @@ class ImporterAuthorMapping extends React.Component {
 				avatar_URL: PropTypes.string.isRequired,
 			} ),
 		} ).isRequired,
+		currentUser: PropTypes.object,
 	};
 
 	componentWillMount() {
 		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
 
 		if ( hasSingleAuthor ) {
-			selectAuthor( this.getCurrentUser() );
+			selectAuthor( this.props.currentUser );
 		}
 	}
-
-	getCurrentUser = () => ( {
-		...this.props.currentUser,
-		name: this.props.currentUser.display_name,
-	} );
 
 	render() {
 		const {
@@ -64,10 +60,10 @@ class ImporterAuthorMapping extends React.Component {
 				<Gridicon className="importer__mapping-relation" icon="arrow-right" />
 				{ ! hasSingleAuthor ? (
 					<AuthorSelector siteId={ siteId } onSelect={ onSelect }>
-						<UserItem user={ selectedAuthor } />
+						<User user={ selectedAuthor } />
 					</AuthorSelector>
 				) : (
-					<UserItem user={ this.getCurrentUser() } />
+					<User user={ this.getCurrentUser() } />
 				) }
 			</div>
 		);
