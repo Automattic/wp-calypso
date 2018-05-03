@@ -28,7 +28,6 @@ import {
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
-	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
@@ -60,7 +59,6 @@ export class JetpackConnectNotices extends Component {
 			RETRY_AUTH,
 			RETRYING_AUTH,
 			SECRET_EXPIRED,
-			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 			XMLRPC_ERROR,
 		] ).isRequired,
@@ -176,15 +174,6 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.text = translate(
 					'This site is already connected to a different WordPress.com user, ' +
 						'you need to disconnect that user before you can connect another.'
-				);
-				noticeValues.status = 'is-warning';
-				noticeValues.icon = 'notice';
-				return noticeValues;
-
-			case USER_IS_ALREADY_CONNECTED_TO_SITE:
-				noticeValues.text = translate(
-					'This WordPress.com account is already connected to another user on this site. ' +
-						'Please login to another WordPress.com account to complete the connection.'
 				);
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
