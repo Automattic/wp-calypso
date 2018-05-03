@@ -4,7 +4,7 @@
  */
 import { translate } from 'i18n-calypso';
 
-export const tasks = {
+const tasks = {
 	jetpack_brute_force: {
 		completedTitle: translate(
 			"We've automatically protected you from brute force login attacks."
@@ -48,3 +48,25 @@ export const tasks = {
 		duration: translate( '3 min' ),
 	},
 };
+
+const sequence = [
+	'jetpack_brute_force',
+	'jetpack_spam_filtering',
+	'jetpack_backups',
+	'jetpack_monitor',
+	'jetpack_plugin_updates',
+	'jetpack_sign_in',
+];
+
+export function jetpackTasks( checklist ) {
+	if ( ! checklist || ! checklist.tasks ) {
+		return null;
+	}
+
+	return sequence.map( id => {
+		const task = tasks[ id ];
+		const taskFromServer = checklist.tasks[ id ];
+
+		return { id, ...task, ...taskFromServer };
+	} );
+}
