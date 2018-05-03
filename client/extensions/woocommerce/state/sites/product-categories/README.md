@@ -82,10 +82,10 @@ Gets the total number of product categories available on a site for a query. Opt
 
 Returns the last page number of results for a query. Optional `siteId`, will default to the currently selected site.
 
-### `areAnyProductCategoriesLoading( state, query: object, siteId: number )`
+### `areAnyProductCategoriesLoading( state, siteId: number )`
 
-Similar to `areProductCategoriesLoading`, this selector returns if a given request is being loaded for a query, ignoring the page parameter -- meaning this will return if there is a pending request for a certain query on any page of results. Optional `siteId`, will default to the currently selected site.
+Similar to `areProductCategoriesLoading`, this selector returns if any given request is being loaded from a site -- meaning this will return if there is a pending request for any query against a site. Optional `siteId`, will default to the currently selected site.
 
-### `getAllProductCategories( state, query: object, siteId: number )`
+### `getAllProductCategories( state, siteId: number )`
 
-Similar to `getProductCategories`, this selector returns all results from a particular query, across all loaded pages. Optional `siteId`, will default to the currently selected site.
+Similar to `getProductCategories`, this selector returns all results across all loaded pages. Optional `siteId`, will default to the currently selected site.
