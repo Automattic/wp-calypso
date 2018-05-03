@@ -342,6 +342,10 @@
 	text-align: left;
 	margin: 0;
 	padding: 8px 0;
+
+	.help-contact-form & {
+		padding: 0;
+	}
 }
 
 .inline-help__results-item {
@@ -375,6 +379,16 @@
 
 		a {
 			color: $white;
+		}
+	}
+
+	.help-contact-form & {
+		a {
+			padding-left: 0;
+
+			&:hover {
+				background: none;
+			}
 		}
 	}
 }
