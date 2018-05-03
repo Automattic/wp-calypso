@@ -10,6 +10,7 @@ import React from 'react';
  */
 import TextareaAutosize from '../index';
 
+TextareaAutosize.displayName = 'TextareaAutosize';
 TextareaAutosizeExample.displayName = 'TextareaAutosize';
 
 function TextareaAutosizeExample( props ) {
