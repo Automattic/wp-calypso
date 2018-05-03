@@ -100,7 +100,7 @@ const siteRedirect = ( context, next ) => {
 
 const mapDomain = ( context, next ) => {
 	context.primary = (
-		<Main>
+		<Main wideLayout>
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
 			<CartData>
