@@ -135,7 +135,13 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	doQandASearch = () => {
-		const query = this.state.subject + ' ' + this.state.message;
+		const query = ( this.state.subject + ' ' + this.state.message ).trim();
+
+		if ( '' === query ) {
+			this.setState( { qanda: [] } );
+			return;
+		}
+
 		const areSameQuestions = ( existingQuestions, newQuestions ) => {
 			const existingIDs = existingQuestions.map( question => question.id );
 			existingIDs.sort();
