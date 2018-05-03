@@ -44,10 +44,7 @@ import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import googleMyBusiness from './google-my-business/reducer';
 import help from './help/reducer';
-import {
-	enhancer as httpDataEnhancer,
-	reducer as httpData,
-} from 'state/data-layer/http-data/common';
+import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
