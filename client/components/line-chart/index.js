@@ -11,6 +11,7 @@ import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
 import { select as d3Select } from 'd3-selection';
 import { concat, first, last } from 'lodash';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -22,7 +23,7 @@ const POINT_SIZE = 3;
 const END_POINT_SIZE = 1;
 const MAX_DRAW_POINTS_SIZE = 10;
 const CHART_MARGIN = 0.01;
-const MAX_LEFT_TICKS = 10;
+const MAX_LEFT_TICKS = 6;
 const MAX_BOTTOM_TICKS = 10;
 
 class LineChart extends Component {
@@ -59,6 +60,7 @@ class LineChart extends Component {
 		const axisLeft = d3AxisLeft( yScale );
 		const bottomAxis = d3AxisBottom( xScale );
 		bottomAxis.ticks( bottomTicks );
+		bottomAxis.tickFormat( d => moment( d ).format( 'll' ) );
 		axisLeft.ticks( leftTicks );
 
 		svg
@@ -196,7 +198,10 @@ class LineChart extends Component {
 				.range( [ newHeight - margin.bottom, margin.top ] )
 				.nice(),
 			leftTicks: MAX_LEFT_TICKS >= valueExtent[ 1 ] ? valueExtent[ 1 ] : MAX_LEFT_TICKS,
-			bottomTicks: MAX_BOTTOM_TICKS >= concatData.length ? concatData.length : MAX_BOTTOM_TICKS,
+			bottomTicks:
+				MAX_BOTTOM_TICKS >= concatData.length / data.length
+					? concatData.length / data.length
+					: MAX_BOTTOM_TICKS,
 		};
 	};
 
