@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
  */
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { selectResult } from 'state/inline-help/actions';
+import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -63,6 +63,7 @@ class InlineHelpPopover extends Component {
 		this.setSecondaryViewKey( '' );
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
 		this.props.selectResult( -1 );
+		this.props.resetContactForm();
 		this.setState( { showSecondaryView: false } );
 	};
 
@@ -157,5 +158,6 @@ export default connect(
 	{
 		recordTracksEvent,
 		selectResult,
+		resetContactForm: resetInlineHelpContactForm,
 	}
 )( localize( InlineHelpPopover ) );
