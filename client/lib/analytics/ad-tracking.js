@@ -610,6 +610,7 @@ export function recordOrder( cart, orderId ) {
 	recordOrderInAtlas( cart, orderId );
 	recordOrderInCriteo( cart, orderId );
 	recordOrderInFloodlight( cart, orderId );
+	recordOrderInFacebook( cart, orderId );
 	recordOrderInNanigans( cart, orderId );
 
 	// This has to come before we add the items to the Google Analytics cart
@@ -710,17 +711,6 @@ function recordProduct( product, orderId ) {
 					google_remarketing_only: false,
 				} );
 			}
-		}
-
-		// Facebook
-		if ( isFacebookEnabled ) {
-			window.fbq( 'track', 'Purchase', {
-				currency: product.currency,
-				product_slug: product.product_slug,
-				value: product.cost,
-				user_id: userId,
-				order_id: orderId,
-			} );
 		}
 
 		// Twitter
@@ -908,6 +898,44 @@ function recordOrderInNanigans( cart, orderId ) {
 
 	debug( 'Nanigans push:', eventStruct );
 	window.NaN_api.push( eventStruct ); // NaN api is either an array that supports push, either the real Nanigans API
+}
+
+/**
+ * Records an order in Facebook (a single event for the entire order)
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInFacebook( cart, orderId ) {
+	if ( ! isAdTrackingAllowed() || ! isFacebookEnabled ) {
+		return;
+	}
+
+	/**
+	 * We have made a conscioius decision to ignore the 0 cost carts, such that these carts are not considered
+	 * a conversion. We will analyze the results and make a final decision on this.
+	 */
+	if ( cart.total_cost < 0.01 ) {
+		debug( 'recordOrderInFacebook: Skipping due to a 0-value cart.' );
+		return;
+	}
+
+	debug( 'recordOrderInFacebook: Record purchase' );
+
+	const currentUser = user.get();
+
+	const fbParams = {
+		currency: cart.currency,
+		product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
+		value: cart.total_cost,
+		user_id: currentUser ? currentUser.ID : 0,
+		order_id: orderId,
+	};
+
+	debug( 'recordParamsInFacebook: ', fbParams );
+
+	window.fbq( 'track', 'Purchase', fbParams );
 }
 
 /**
