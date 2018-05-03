@@ -50,100 +50,98 @@ function noSites( context, analyticsPath ) {
 	clientRender( context );
 }
 
-export default {
-	addCardDetails( context, next ) {
-		if ( userHasNoSites() ) {
-			return noSites( context, '/me/purchases/:site/:purchaseId/payment/add' );
-		}
+export function addCardDetails( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/payment/add' );
+	}
 
-		setTitle( context, titles.addCardDetails );
+	setTitle( context, titles.addCardDetails );
 
-		context.primary = <AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
-		next();
-	},
+	context.primary = <AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
+	next();
+}
 
-	addCreditCard( context, next ) {
-		context.primary = <AddCreditCard />;
-		next();
-	},
+export function addCreditCard( context, next ) {
+	context.primary = <AddCreditCard />;
+	next();
+}
 
-	cancelPrivacyProtection( context, next ) {
-		if ( userHasNoSites() ) {
-			return noSites( context, '/me/purchases/:site/:purchaseId/cancel-privacy-protection' );
-		}
+export function cancelPrivacyProtection( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/cancel-privacy-protection' );
+	}
 
-		setTitle( context, titles.cancelPrivacyProtection );
+	setTitle( context, titles.cancelPrivacyProtection );
 
-		context.primary = (
-			<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
-		);
-		next();
-	},
+	context.primary = (
+		<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+	);
+	next();
+}
 
-	cancelPurchase( context, next ) {
-		if ( userHasNoSites() ) {
-			return noSites( context, '/me/purchases/:site/:purchaseId/cancel' );
-		}
+export function cancelPurchase( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/cancel' );
+	}
 
-		setTitle( context, titles.cancelPurchase );
+	setTitle( context, titles.cancelPurchase );
 
-		context.primary = <CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
-		next();
-	},
+	context.primary = <CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
+	next();
+}
 
-	confirmCancelDomain( context, next ) {
-		if ( userHasNoSites() ) {
-			return noSites( context, '/me/purchases/:site/:purchaseId/confirm-cancel-domain' );
-		}
+export function confirmCancelDomain( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/confirm-cancel-domain' );
+	}
 
-		setTitle( context, titles.confirmCancelDomain );
+	setTitle( context, titles.confirmCancelDomain );
 
-		context.primary = (
-			<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
-		);
-		next();
-	},
+	context.primary = (
+		<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+	);
+	next();
+}
 
-	editCardDetails( context, next ) {
-		if ( userHasNoSites() ) {
-			return noSites( context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId' );
-		}
+export function editCardDetails( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId' );
+	}
 
-		setTitle( context, titles.editCardDetails );
+	setTitle( context, titles.editCardDetails );
 
-		context.primary = (
-			<EditCardDetails
-				cardId={ context.params.cardId }
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
-		);
-		next();
-	},
+	context.primary = (
+		<EditCardDetails
+			cardId={ context.params.cardId }
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+		/>
+	);
+	next();
+}
 
-	list( context, next ) {
-		if ( userHasNoSites() ) {
-			return noSites( context, '/me/purchases' );
-		}
+export function list( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases' );
+	}
 
-		setTitle( context );
+	setTitle( context );
 
-		context.primary = <PurchasesList noticeType={ context.params.noticeType } />;
-		next();
-	},
+	context.primary = <PurchasesList noticeType={ context.params.noticeType } />;
+	next();
+}
 
-	managePurchase( context, next ) {
-		if ( userHasNoSites() ) {
-			return noSites( context, '/me/purchases/:site/:purchaseId' );
-		}
+export function managePurchase( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId' );
+	}
 
-		setTitle( context, titles.managePurchase );
+	setTitle( context, titles.managePurchase );
 
-		context.primary = (
-			<ManagePurchase
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-				destinationType={ context.params.destinationType }
-			/>
-		);
-		next();
-	},
-};
+	context.primary = (
+		<ManagePurchase
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			destinationType={ context.params.destinationType }
+		/>
+	);
+	next();
+}

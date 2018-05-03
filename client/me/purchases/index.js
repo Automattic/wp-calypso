@@ -12,7 +12,7 @@ import page from 'page';
 import billingController from 'me/billing-history/controller';
 import meController from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
-import controller from './controller';
+import * as controller from './controller';
 import * as paths from './paths';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 
