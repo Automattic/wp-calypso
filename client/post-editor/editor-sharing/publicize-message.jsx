@@ -40,12 +40,10 @@ class PublicizeMessage extends Component {
 		preFilledMessage: '',
 	};
 
-	state = {
-		userHasEditedMessage: false,
-	};
+	userHasEditedMessage = false;
 
 	onChange = event => {
-		this.setState( { userHasEditedMessage: true } );
+		this.userHasEditedMessage = true;
 		this.props.onChange( event.target.value );
 	};
 
@@ -55,7 +53,7 @@ class PublicizeMessage extends Component {
 	};
 
 	shouldPreFillMessage() {
-		return ! this.state.userHasEditedMessage && '' === this.props.message;
+		return ! this.userHasEditedMessage && '' === this.props.message;
 	}
 
 	getMessage() {
