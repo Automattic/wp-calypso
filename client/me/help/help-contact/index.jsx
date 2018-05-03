@@ -71,7 +71,6 @@ import QueryLanguageNames from 'components/data/query-language-names';
  */
 const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 const wpcom = wpcomLib.undocumented();
-let savedContactForm = null;
 
 const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
 const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
@@ -96,6 +95,8 @@ class HelpContact extends React.Component {
 		wasAdditionalSupportOptionShown: false,
 	};
 
+	savedContactForm = null;
+
 	componentDidMount() {
 		this.prepareDirectlyWidget();
 	}
@@ -111,8 +112,12 @@ class HelpContact extends React.Component {
 		page( '/help' );
 	};
 
-	clearSavedContactForm = () => {
-		savedContactForm = null;
+	clearSavedContactForm() {
+		this.savedContactForm = null;
+	}
+
+	updateSavedContactForm = formValues => {
+		this.savedContactForm = formValues;
 	};
 
 	startHappychat = contactForm => {
@@ -436,8 +441,8 @@ class HelpContact extends React.Component {
 			disabled: isSubmitting,
 			showHelpLanguagePrompt: showHelpLanguagePrompt,
 			valueLink: {
-				value: savedContactForm,
-				requestChange: contactForm => ( savedContactForm = contactForm ),
+				value: this.savedContactForm,
+				requestChange: this.updateSavedContactForm,
 			},
 		};
 	};
