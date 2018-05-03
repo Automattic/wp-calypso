@@ -7,7 +7,6 @@ exports[`<NoticesList /> should render notices with expected HTML 1`] = `
 >
   <Localized(Notice)
     key="notice-testing-notice"
-    noticeId="testing-notice"
     onDismissClick={[Function]}
     showDismiss={true}
     status="is-success"

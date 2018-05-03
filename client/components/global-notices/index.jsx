@@ -54,12 +54,12 @@ export const NoticesList = createReactClass( {
 
 	// Auto-bound by createReactClass.
 	// Migrate to arrow => when using class extends React.Component
-	removeReduxNotice( notice ) {
+	removeReduxNotice( noticeId, onDismissClick ) {
 		return e => {
-			if ( notice.onDismissClick ) {
-				notice.onDismissClick( e );
+			if ( onDismissClick ) {
+				onDismissClick( e );
 			}
-			this.props.removeNotice( notice.noticeId );
+			this.props.removeNotice( noticeId );
 		};
 	},
 
@@ -89,21 +89,25 @@ export const NoticesList = createReactClass( {
 		//and from the old component. When all notices are moved to redux store, this component
 		//needs to be updated.
 		noticesList = noticesList.concat(
-			this.props.storeNotices.map( function( { button, href, onClick, ...notice } ) {
-				return (
-					<Notice
-						{ ...notice }
-						key={ `notice-${ notice.noticeId }` }
-						onDismissClick={ this.removeReduxNotice( notice ) }
-					>
-						{ button && (
-							<NoticeAction href={ href } onClick={ onClick }>
-								{ button }
-							</NoticeAction>
-						) }
-					</Notice>
-				);
-			}, this )
+			this.props.storeNotices.map(
+				// Collect `<Notice />` props in rest, extract other expected props
+				function( { button, href, noticeId, onClick, ...notice } ) {
+					return (
+						<Notice
+							{ ...notice }
+							key={ `notice-${ noticeId }` }
+							onDismissClick={ this.removeReduxNotice( noticeId, notice.onDismissClick ) }
+						>
+							{ button && (
+								<NoticeAction href={ href } onClick={ onClick }>
+									{ button }
+								</NoticeAction>
+							) }
+						</Notice>
+					);
+				},
+				this
+			)
 		);
 
 		if ( ! noticesList.length ) {
