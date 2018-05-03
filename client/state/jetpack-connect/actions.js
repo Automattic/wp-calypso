@@ -14,11 +14,13 @@ import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
-import { clearPlan } from 'jetpack-connect/persistence-utils';
+import { clearPlan, retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
+import { navigate } from 'state/ui/actions';
 import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
+import { USER_IS_ALREADY_CONNECTED_TO_SITE } from 'jetpack-connect/connection-notice-types';
 import { urlToSlug } from 'lib/url';
 import { withoutNotice } from 'state/notices/actions';
 import {
@@ -276,6 +278,16 @@ export function createAccount( userData ) {
 	};
 }
 
+export function redirectMobileApp( reason ) {
+	return dispatch => {
+		const mobileAppRedirect = retrieveMobileRedirect();
+		if ( mobileAppRedirect ) {
+			const url = addQueryArgs( { reason }, mobileAppRedirect );
+			dispatch( navigate( url ) );
+		}
+	};
+}
+
 export function isUserConnected( siteId, siteIsOnSitesList ) {
 	let accessibleSite;
 	return dispatch => {
@@ -298,9 +310,9 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 					type: SITE_REQUEST_SUCCESS,
 					siteId,
 				} );
-				dispatch( {
-					type: JETPACK_CONNECT_USER_ALREADY_CONNECTED,
-				} );
+				dispatch( redirectMobileApp( USER_IS_ALREADY_CONNECTED_TO_SITE ) );
+				dispatch( { type: JETPACK_CONNECT_USER_ALREADY_CONNECTED } );
+
 				if ( ! siteIsOnSitesList ) {
 					debug( 'adding site to sites list' );
 					dispatch( receiveSite( omit( accessibleSite, '_headers' ) ) );
