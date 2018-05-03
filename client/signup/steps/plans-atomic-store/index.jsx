@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { isEmpty, filter, get } from 'lodash';
+import { isEmpty, filter } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
-import { getSiteBySlug } from 'state/sites/selectors';
+import { getSiteId } from 'state/selectors';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import QueryPlans from 'components/data/query-plans';
@@ -193,6 +193,6 @@ export class PlansAtomicStoreStep extends Component {
 }
 
 export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
-	selectedSiteId: siteSlug ? get( getSiteBySlug( state, siteSlug ), [ 'ID' ] ) : null,
+	selectedSiteId: getSiteId( state, siteSlug ),
 	designType: getDesignType( state ),
 } ) )( localize( PlansAtomicStoreStep ) );
