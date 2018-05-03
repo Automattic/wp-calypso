@@ -47,6 +47,7 @@ import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
+import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
 
 /* eslint-disable react/no-deprecated */
@@ -142,10 +143,14 @@ const Layout = createReactClass( {
 						{ this.props.primary }
 					</div>
 				</div>
-				<TranslatorLauncher
-					isEnabled={ translator.isEnabled() }
-					isActive={ translator.isActivated() }
-				/>
+				{ config.isEnabled( 'i18n/community-translator' ) && isCommunityTranslatorEnabled() ? (
+					<AsyncLoad require="components/community-translator" />
+				) : (
+					<TranslatorLauncher
+						isEnabled={ translator.isEnabled() }
+						isActive={ translator.isActivated() }
+					/>
+				) }
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) &&
 					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }

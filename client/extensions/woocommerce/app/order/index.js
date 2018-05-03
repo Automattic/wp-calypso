@@ -105,5 +105,6 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { clearOrderEdits, fetchNotes, fetchOrder, fetchRefunds }, dispatch )
+	dispatch =>
+		bindActionCreators( { clearOrderEdits, fetchNotes, fetchOrder, fetchRefunds }, dispatch )
 )( localize( Order ) );

@@ -62,8 +62,5 @@ export default function isSiteGoogleMyBusinessEligible( state, siteId ) {
 		return siteHasBusinessPlan( state, siteId );
 	}
 
-	return (
-		siteHasBusinessPlan( state, siteId ) &&
-		siteHasPromoteGoal( state, siteId )
-	);
+	return siteHasBusinessPlan( state, siteId ) && siteHasPromoteGoal( state, siteId );
 }

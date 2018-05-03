@@ -7,10 +7,7 @@ import {
 	isGoogleMyBusinessLocationConnected,
 	isSiteGoogleMyBusinessEligible,
 } from 'state/selectors';
-import {
-	isRequestingSiteSettings,
-	getSiteSettings,
-} from 'state/site-settings/selectors';
+import { isRequestingSiteSettings, getSiteSettings } from 'state/site-settings/selectors';
 
 /**
  * Returns true if the Google My Business (GMB) nudge should be visible in stats

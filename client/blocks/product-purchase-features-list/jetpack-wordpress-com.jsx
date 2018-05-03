@@ -18,9 +18,7 @@ export default localize( ( { selectedSite, translate } ) => {
 			<PurchaseDetail
 				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
 				title={ translate( 'Automatic Updates' ) }
-				description={ translate(
-					'Keep your plugins up-to-date, hassle-free.',
-				) }
+				description={ translate( 'Keep your plugins up-to-date, hassle-free.' ) }
 				buttonText={ translate( 'Configure auto updates' ) }
 				href={ `/plugins/manage/${ selectedSite.slug }` }
 			/>

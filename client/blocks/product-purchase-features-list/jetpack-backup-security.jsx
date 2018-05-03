@@ -20,9 +20,7 @@ const JetpackBackupSecurity = ( { backupEngine, site, siteId, translate } ) => (
 		<PurchaseDetail
 			icon={ <img alt="" src="/calypso/images/illustrations/jetpack-security.svg" /> }
 			title={ translate( 'Site Security' ) }
-			description={ translate(
-				'Your site is safe with secure backups and real-time scans.'
-			) }
+			description={ translate( 'Your site is safe with secure backups and real-time scans.' ) }
 			buttonText={
 				backupEngine === 'rewind'
 					? translate( 'View Activity Log' )
