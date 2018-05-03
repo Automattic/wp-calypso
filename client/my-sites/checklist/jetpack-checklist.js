@@ -21,7 +21,9 @@ const tasks = {
 			"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
 		),
 		completedTitle: translate( 'You turned on backups and scanning.' ),
+		completedButtonText: 'Change',
 		duration: translate( '2 min' ),
+		url: '/stats/activity/$siteSlug',
 	},
 	jetpack_monitor: {
 		title: translate( 'Jetpack Monitor' ),
@@ -29,7 +31,9 @@ const tasks = {
 			"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
 		),
 		completedTitle: translate( 'You turned on Jetpack Monitor.' ),
+		completedButtonText: 'Change',
 		duration: translate( '3 min' ),
+		url: '/settings/security/$siteSlug',
 	},
 	jetpack_plugin_updates: {
 		title: translate( 'Automatic Plugin Updates' ),
@@ -37,7 +41,9 @@ const tasks = {
 			'Choose which WordPress plugins you want to keep automatically updated.'
 		),
 		completedTitle: translate( 'You turned on automatic plugin updates.' ),
+		completedButtonText: 'Change',
 		duration: translate( '3 min' ),
+		url: '/plugins/manage/$siteSlug',
 	},
 	jetpack_sign_in: {
 		title: translate( 'WordPress.com sign in' ),
@@ -45,7 +51,9 @@ const tasks = {
 			'Manage your log in preferences and two-factor authentication settings.'
 		),
 		completedTitle: translate( 'You completed your sign in preferences.' ),
+		completedButtonText: 'Change',
 		duration: translate( '3 min' ),
+		url: '/settings/security/$siteSlug',
 	},
 };
 
