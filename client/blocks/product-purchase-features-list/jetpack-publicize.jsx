@@ -21,6 +21,8 @@ export default localize( ( { translate } ) => {
 				description={ translate(
 					'Schedule unlimited tweets, Facebook posts, and other social posts in advance.'
 				) }
+				buttonText={ translate( 'Learn more' ) }
+				href="https://jetpack.com/features/"
 			/>
 		</div>
 	);
