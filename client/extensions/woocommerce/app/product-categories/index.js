@@ -54,8 +54,12 @@ class ProductCategories extends Component {
 		const { site } = this.props;
 		const { searchQuery } = this.state;
 
-		const requestedPages = searchQuery && searchQuery.length && this.state.requestedSearchPages || this.state.requestedPages;
-		const stateName = searchQuery && searchQuery.length && 'requestedSearchPages' || 'requestedPages';
+		let stateName = 'requestedPages';
+		if ( searchQuery && searchQuery.length ) {
+			// We're viewing search results, and should use the search value
+			stateName = 'requestedSearchPages';
+		}
+		const requestedPages = this.state[ stateName ];
 
 		pages.forEach( page => {
 			if ( ! includes( requestedPages, page ) ) {

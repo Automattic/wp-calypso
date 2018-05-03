@@ -80,7 +80,7 @@ export function getProductCategoryWithLocalEdits(
  */
 export function getProductCategoriesWithLocalEdits( state, siteId = getSelectedSiteId( state ) ) {
 	const categoryCreates = getAllProductCategoryEdits( state, siteId ).creates || [];
-	const fetchedCategories = getAllProductCategories( state, {}, siteId );
+	const fetchedCategories = getAllProductCategories( state, siteId );
 	const categoriesWithUpdates = fetchedCategories.map( c =>
 		getProductCategoryWithLocalEdits( state, c.id, siteId )
 	);
