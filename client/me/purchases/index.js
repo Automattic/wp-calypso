@@ -49,7 +49,14 @@ export default function( router ) {
 		clientRender
 	);
 
-	router( paths.purchasesRoot, meController.sidebar, controller.list, makeLayout, clientRender );
+	router(
+		paths.purchasesRoot,
+		redirectLoggedOut,
+		meController.sidebar,
+		controller.list,
+		makeLayout,
+		clientRender
+	);
 
 	router(
 		paths.managePurchase(),
