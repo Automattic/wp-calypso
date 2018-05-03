@@ -467,11 +467,12 @@ $devdocs-max-width: 720px;
 	}
 
 	code {
-		font-size: 15px;
 		background-color: $white;
-		padding: 2px 6px;
 		border-radius: 3px;
 		color: $blue-dark;
+		font-size: 15px;
+		padding: 2px 6px;
+		max-width: 100px;
 	}
 
 	pre > code {

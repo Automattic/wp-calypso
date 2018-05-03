@@ -1,7 +1,7 @@
 Empty Content
-=============
+===
 
-This module provides a consistent rendering component for empty content cases in Calypso's sections. EmptyContent should be used to display an alternate layout when the user has no data of a given resource. Not to be confused with subsets of data being contextually empty (searches, filters, etc.). The component accepts a set of predefined properties.
+EmptyContent is used when a customer has no data to show. This is an opportunity to provide explanation or guidance to help customer progress. The EmptyContent is intended for use when a full view is empty, and not for individual elements or areas in the interface.
 
 ## Usage
 
@@ -29,26 +29,32 @@ render() {
 		</div>
 	);
 }
-
 ```
 
-## Properties
+### Props
 
-* **title** — The title to be displayed.
-* **line** — (optional) A secondary line, usually leads to the call to action.
-* **illustration** — (optional) The url string of an image path. Displays drake illustration by default.
-* **illustrationWidth** — (optional) Will display the image at native width unless a specific width is provided.
-* **action** — (optional) Label or React element used for the primary action button.
-* **actionURL** — (optional) `href` value for the primary action button.
-* **actionCallback** — (optional) `onClick` value for the primary action button.
-* **actionTarget** - (optional) If ommitted, no target attribute is specified.
+Name | Type | Default | Description
+--- | --- | --- | ---
+`title`* | `string` | `'You haven't created any content yet.'` | The title to be displayed.
+`line` | `string` | `null` | A secondary line, usually leads to the call to action.
+`illustration` | `url` |  | The url string of an image path. Displays the [empty results](/calypso/images/illustrations/illustration-empty-results.svg) image by default.
+`illustrationWidth` | `number` | `null` | Will display the image at native width unless a specific width is provided.
+`action` | `string/object` | `null` | Label or React element used for the primary action button.
+`actionURL` | `string` | `null` | `href` value for the primary action button.
+`actionCallback` | `function` | `null` | `onClick` value for the primary action button.
+`actionTarget` | `string` | `null` | If omitted, no target attribute is specified.
+`actionHoverCallback`* | `bool` | `0` | Indicates activity while a background action is being performed.
+`isCompact` | `bool` | `false` | Shows a smaller version of the component.
 
+### Additional props
 The component also supports a secondary action. This should be used sparingly.
 
-* **secondaryAction** — (optional) Label or React element used for the secondary action button.
-* **secondaryActionURL** — (optional) `href` value for the secondary action button.
-* **secondaryActionCallback** — (optional) `onClick` value for the secondary action button.
-* **secondaryActionTarget** - (optional) If ommitted, no target attribute is specified.
+Name | Type | Default | Description
+--- | --- | --- | ---
+`secondaryAction` | `string/object` | `null` | Label or React element used for the secondary action button.
+`secondaryActionURL` | `string` | `null` | `href` value for the secondary action button.
+`secondaryActionCallback` | `fuction` | `null` | `onClick` value for the secondary action button.
+`secondaryActionTarget` | `string` | `null` | If omitted, no target attribute is specified.
 
 ### Example: Sites
 
@@ -63,3 +69,10 @@ ReactDom.render(
 	document.getElementById( 'primary' )
 );
 ```
+
+## General guidelines
+
+- Use simple and clear language that empowers customers to move forward.
+- Be encouraging and never make customers feel unsuccessful or guilty because they haven’t used a product or feature.
+- Explain the steps a customer needs to take to activate a product or feature.
+- Use only one **primary** call-to-action button.
