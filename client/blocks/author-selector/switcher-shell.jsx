@@ -3,7 +3,6 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -27,10 +26,8 @@ import { hasTouch } from 'lib/touch-detect';
 const debug = debugModule( 'calypso:author-selector' );
 let instance = 0;
 
-const SwitcherShell = createReactClass( {
-	displayName: 'AuthorSwitcherShell',
-
-	propTypes: {
+class AuthorSwitcherShell extends React.Component {
+	static propTypes = {
 		users: PropTypes.array,
 		fetchingUsers: PropTypes.bool,
 		numUsersFetched: PropTypes.number,
@@ -39,29 +36,27 @@ const SwitcherShell = createReactClass( {
 		allowSingleUser: PropTypes.bool,
 		popoverPosition: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.func } ),
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			showAuthorMenu: false,
-		};
-	},
+	state = {
+		showAuthorMenu: false,
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.instance = instance;
 		instance++;
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			! nextProps.fetchOptions.siteId ||
 			nextProps.fetchOptions.siteId !== this.props.fetchOptions.siteId
 		) {
 			this.props.updateSearch( false );
 		}
-	},
+	}
 
-	componentDidUpdate: function( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( ! this.state.showAuthorMenu ) {
 			return;
 		}
@@ -69,9 +64,9 @@ const SwitcherShell = createReactClass( {
 		if ( ! prevState.showAuthorMenu && this.props.users.length > 10 && ! hasTouch() ) {
 			setTimeout( () => this.refs.authorSelectorSearch.focus(), 0 );
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		const { users, fetchNameSpace } = this.props;
 		const infiniteListKey = fetchNameSpace + this.instance;
 
@@ -132,24 +127,24 @@ const SwitcherShell = createReactClass( {
 				</Popover>
 			</span>
 		);
-	},
+	}
 
-	_isLastPage: function() {
+	_isLastPage() {
 		let usersLength = this.props.users.length;
 		if ( this.props.exclude ) {
 			usersLength += this.props.excludedUsers.length;
 		}
 
 		return this.props.totalUsers <= usersLength;
-	},
+	}
 
-	_setListContext: function( infiniteListInstance ) {
+	_setListContext = infiniteListInstance => {
 		this.setState( {
 			listContext: ReactDom.findDOMNode( infiniteListInstance ),
 		} );
-	},
+	};
 
-	_userCanSelectAuthor: function() {
+	_userCanSelectAuthor() {
 		const { users } = this.props;
 
 		if ( this.props.fetchOptions.search ) {
@@ -162,15 +157,15 @@ const SwitcherShell = createReactClass( {
 		}
 
 		return true;
-	},
+	}
 
-	_toggleShowAuthor: function() {
+	_toggleShowAuthor = () => {
 		this.setState( {
 			showAuthorMenu: ! this.state.showAuthorMenu,
 		} );
-	},
+	};
 
-	_onClose: function( event ) {
+	_onClose = event => {
 		const toggleElement = ReactDom.findDOMNode( this.refs[ 'author-selector-toggle' ] );
 
 		if ( event && toggleElement.contains( event.target ) ) {
@@ -181,9 +176,9 @@ const SwitcherShell = createReactClass( {
 			showAuthorMenu: false,
 		} );
 		this.props.updateSearch( false );
-	},
+	};
 
-	_renderAuthor: function( author ) {
+	_renderAuthor = author => {
 		const authorGUID = this._getAuthorItemGUID( author );
 		return (
 			<PopoverMenuItem
@@ -196,17 +191,17 @@ const SwitcherShell = createReactClass( {
 				<UserItem user={ author } />
 			</PopoverMenuItem>
 		);
-	},
+	};
 
-	_noUsersFound: function() {
+	_noUsersFound() {
 		return (
 			<div className="author-selector__no-users">
 				{ this.props.translate( 'No matching users found.' ) }
 			</div>
 		);
-	},
+	}
 
-	_selectAuthor: function( author ) {
+	_selectAuthor = author => {
 		debug( 'assign author:', author );
 		if ( this.props.onSelect ) {
 			this.props.onSelect( author );
@@ -215,31 +210,31 @@ const SwitcherShell = createReactClass( {
 			showAuthorMenu: false,
 		} );
 		this.props.updateSearch( false );
-	},
+	};
 
-	_fetchNextPage: function() {
+	_fetchNextPage = () => {
 		const fetchOptions = Object.assign( {}, this.props.fetchOptions, {
 			offset: this.props.users.length,
 		} );
 		debug( 'fetching next batch of authors' );
 		fetchUsers( fetchOptions );
-	},
+	};
 
-	_getAuthorItemGUID: function( author ) {
+	_getAuthorItemGUID = author => {
 		return 'author-item-' + author.ID;
-	},
+	};
 
-	_renderLoadingAuthors: function() {
+	_renderLoadingAuthors = () => {
 		return (
 			<PopoverMenuItem disabled={ true } key="author-item-placeholder">
 				<UserItem />
 			</PopoverMenuItem>
 		);
-	},
+	};
 
-	_onSearch: function( searchTerm ) {
+	_onSearch = searchTerm => {
 		this.props.updateSearch( searchTerm );
-	},
-} );
+	};
+}
 
-export default localize( SwitcherShell );
+export default localize( AuthorSwitcherShell );
