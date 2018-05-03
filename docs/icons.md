@@ -1,6 +1,6 @@
 # Icons
 
-This document will cover how to use icons in Calypso, as well as how to create icons for the native apps, favicons, and bookmark touch icons.
+This document will cover how to use icons in Calypso, as well as how to create icons for the native apps, favicons, and bookmark touch icons. These guidelines are based on the [WordPress.com Brand Guide](https://dotcombrand.wordpress.com/iconography/).
 
 ## Gridicons
 
