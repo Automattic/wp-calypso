@@ -94,7 +94,7 @@ class ProductImagePicker extends Component {
 		}
 
 		return (
-			<div>
+			<div className="dialog__product-image-picker">
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<AsyncLoad
 						require="post-editor/media-modal"
