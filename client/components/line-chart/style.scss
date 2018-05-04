@@ -21,7 +21,7 @@
 }
 
 .line-chart__line-selected {
-	stroke-width: 6px;
+	stroke-width: 5px;
 }
 
 .line-chart__area-0 {
@@ -64,11 +64,11 @@
 
 .line-chart__area-selected {
 	&.line-chart__area-0 {
-		opacity: 0.9;
+		opacity: 0.8;
 	}
 
 	&.line-chart__area-1 {
-		opacity: 0.6;
+		opacity: 0.5;
 	}
 
 	&.line-chart__area-2 {
