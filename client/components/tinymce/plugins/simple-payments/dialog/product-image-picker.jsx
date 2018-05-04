@@ -33,8 +33,13 @@ class ProductImagePicker extends Component {
 		isSelecting: false,
 	};
 
-	showMediaModal = () => {
+	showMediaModal = event => {
 		const { siteId, featuredImage } = this.props;
+
+		if ( event.key && event.key !== 'Enter' ) {
+			// A11y - prevent opening Media modal with any key
+			return;
+		}
 
 		if ( featuredImage ) {
 			MediaActions.setLibrarySelectedItems( siteId, [ featuredImage ] );
