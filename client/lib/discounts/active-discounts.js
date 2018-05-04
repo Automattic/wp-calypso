@@ -4,6 +4,10 @@
  */
 export default [
 	{
+		name: 'mothers_day_2018',
+		abTestName: 'mothersDay2018Discount',
+		startsAt: new Date( 2018, 4, 11, 0, 0, 0 ),
+		endsAt: new Date( 2018, 4, 13, 23, 59, 59 ),
 		variations: {
 			upsell_30: {
 				nudgeText: '30% Off All Plans',
@@ -18,10 +22,5 @@ export default [
 					'Enter coupon code “MOTHERSDAY20” during checkout to claim your 30% discount',
 			},
 		},
-
-		name: 'mothers_day_2018',
-		abTestName: 'mothersDay2018Discount',
-		startsAt: new Date( 2018, 4, 11, 0, 0, 0 ),
-		endsAt: new Date( 2018, 4, 13, 23, 59, 59 ),
 	},
 ];
