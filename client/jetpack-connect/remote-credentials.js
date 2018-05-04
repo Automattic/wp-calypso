@@ -301,11 +301,17 @@ export class OrgCredentialsForm extends Component {
 			{ url: siteToConnect },
 			'/jetpack/connect/instructions'
 		);
+		const manualInstallClick = () => {
+			this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_instructionsclick', {
+				url: siteToConnect,
+			} );
+		};
 
 		return (
 			<LoggedOutFormLinks>
 				{ ( this.isInvalidCreds() || ! installError ) && (
-					<LoggedOutFormLinkItem href={ manualInstallUrl }>
+					// eslint-disable-next-line react/no-jsx-bind
+					<LoggedOutFormLinkItem href={ manualInstallUrl } onClick={ manualInstallClick }>
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
 				) }
