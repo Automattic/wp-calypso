@@ -9,6 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import withUserMentions from 'blocks/user-mentions/index';
+import { isEnabled } from 'config';
 
 // @todo Move ref forwarding to the HOC
 const PostCommentFormTextarea = React.forwardRef( ( props, ref ) => (
@@ -25,4 +26,9 @@ const PostCommentFormTextarea = React.forwardRef( ( props, ref ) => (
 	/>
 ) );
 
-export default withUserMentions( PostCommentFormTextarea );
+let component = PostCommentFormTextarea;
+if ( isEnabled( 'reader/user-mention-suggestions' ) ) {
+	component = withUserMentions( PostCommentFormTextarea );
+}
+
+export default component;
