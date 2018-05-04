@@ -6,7 +6,8 @@
 
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUserPurchases } from 'state/purchases/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
+import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 
 /**
  * Returns a boolean flag indicating if the current user is a business plan user.
@@ -27,5 +28,7 @@ export default state => {
 		return false;
 	}
 
-	return purchases.some( purchase => PLAN_BUSINESS === purchase.productSlug );
+	return purchases.some( purchase =>
+		planMatches( purchase.productSlug, { group: GROUP_WPCOM, type: TYPE_BUSINESS } )
+	);
 };

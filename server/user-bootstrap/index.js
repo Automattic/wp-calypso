@@ -29,9 +29,8 @@ const debug = debugFactory( 'calypso:bootstrap' ),
 
 module.exports = function( authCookieValue, geoCountry, callback ) {
 	// create HTTP Request object
-	var req = superagent.get( url ),
-		hmac,
-		hash;
+	const req = superagent.get( url );
+	let hmac, hash;
 
 	if ( authCookieValue ) {
 		authCookieValue = decodeURIComponent( authCookieValue );
@@ -53,14 +52,14 @@ module.exports = function( authCookieValue, geoCountry, callback ) {
 
 	// start the request
 	req.end( function( err, res ) {
-		var body, statusCode, user, error, key;
+		let error, key;
 
 		if ( err && ! res ) {
 			return callback( err );
 		}
 
-		body = res.body;
-		statusCode = res.status;
+		const body = res.body;
+		const statusCode = res.status;
 
 		debug( '%o -> %o status code', url, statusCode );
 
@@ -74,7 +73,7 @@ module.exports = function( authCookieValue, geoCountry, callback ) {
 			return callback( error );
 		}
 
-		user = filterUserObject( body );
+		const user = filterUserObject( body );
 		callback( null, user );
 	} );
 };

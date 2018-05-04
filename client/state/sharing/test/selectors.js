@@ -92,6 +92,8 @@ describe( 'selectors', () => {
 					keyringConnectionId: 4,
 					name: 'John',
 					picture: undefined,
+					description: undefined,
+					meta: undefined,
 				},
 			] );
 		} );

@@ -411,6 +411,7 @@ $devdocs-max-width: 720px;
 	}
 }
 
+
 // Documentation — Copy-heavy things like Contributing and Typography
 .devdocs__doc-content,
 .docs-example__readme-viewer {
@@ -528,6 +529,15 @@ $devdocs-max-width: 720px;
 	h2 {
 		margin-top: 16px;
 	}
+}
+
+.design__typography-code-example {
+	font-family: $code;
+	font-size: 15px;
+}
+
+.design__typography-modular-scale {
+	max-width: 150px;
 }
 
 // At the end of documentation and reademe's

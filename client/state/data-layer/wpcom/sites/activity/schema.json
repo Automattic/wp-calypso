@@ -64,7 +64,6 @@
 				},
 				"generator": { "type": "object" },
 				"gridicon": { "type": "string" },
-				"is_discarded": { "type": "boolean" },
 				"is_rewindable": { "type": "boolean" },
 				"rewind_id": { "type": [ "null", "string" ] },
 				"items": {

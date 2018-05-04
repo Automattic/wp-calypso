@@ -19,6 +19,7 @@ describe( 'reducer', () => {
 			'contactForm',
 			'imageEditor',
 			'videoEditor',
+			'saveBlockers',
 		] );
 	} );
 

@@ -17,7 +17,8 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import PlansSkipButton from './plans-skip-button';
+import PlansExtendedInfo from './plans-extended-info';
+import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { addItem } from 'lib/upgrades/actions';
@@ -73,24 +74,23 @@ class Plans extends Component {
 
 	maybeRedirect() {
 		if ( this.props.isAutomatedTransfer ) {
-			externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			return externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 		if ( this.props.selectedPlan ) {
-			this.selectPlan( this.props.selectedPlan );
+			return this.selectPlan( this.props.selectedPlan );
 		}
 		if ( this.props.hasPlan || this.props.notJetpack ) {
-			this.redirect( CALYPSO_PLANS_PAGE );
+			return this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
 			// Invalid site
-			this.redirect( JPC_PATH_PLANS );
+			return this.redirect( JPC_PATH_PLANS );
 		}
 		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.calypsoStartedConnection ) {
-				this.redirectToCalypso();
-			} else {
-				this.redirectToWpAdmin();
+				return this.redirectToCalypso();
 			}
+			return this.redirectToWpAdmin();
 		}
 	}
 
@@ -188,6 +188,12 @@ class Plans extends Component {
 		);
 	}
 
+	handleInfoButtonClick = info => () => {
+		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
+			help_type: info,
+		} );
+	};
+
 	render() {
 		const { interval, isRtlLayout, selectedSite, translate } = this.props;
 
@@ -215,6 +221,7 @@ class Plans extends Component {
 					selectedSite={ selectedSite }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
+					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
 							label={ helpButtonLabel }

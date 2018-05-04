@@ -12,7 +12,6 @@ const debug = debugFactory( 'calypso:two-step-authorization' );
  */
 import emitter from 'lib/mixins/emitter';
 import userSettings from 'lib/user-settings';
-import applicationPasswords from 'lib/application-passwords-data';
 import connectedApplications from 'lib/connected-applications-data';
 import analytics from 'lib/analytics';
 import wp from 'lib/wp';
@@ -79,7 +78,6 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 				// data from the following modules.
 				if ( this.isReauthRequired() ) {
 					userSettings.fetchSettings();
-					applicationPasswords.fetch();
 					connectedApplications.fetch();
 					reduxDispatch( requestUserProfileLinks() );
 				}
@@ -173,7 +171,7 @@ TwoStepAuthorization.prototype.backupCodes = function( callback ) {
  * transition until it is ready
  */
 TwoStepAuthorization.prototype.validateBackupCode = function( code, callback ) {
-	var args = {
+	const args = {
 		code: code,
 		action: 'create-backup-receipt',
 	};

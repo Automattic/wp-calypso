@@ -10,6 +10,7 @@ import wpcom from 'lib/wp';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
@@ -62,6 +63,9 @@ export function submitNpsSurvey( surveyName, score ) {
 		debug( 'Submitting NPS survey...' );
 		dispatch( submitNpsSurveyRequesting( surveyName, score ) );
 
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_submitted' );
+		analytics.tracks.recordEvent( 'calypso_nps_survey_submitted' );
+
 		return wpcom
 			.undocumented()
 			.submitNPSSurvey( surveyName, score )
@@ -81,6 +85,9 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 		debug( 'Submitting NPS survey with no score...' );
 		dispatch( submitNpsSurveyWithNoScoreRequesting( surveyName ) );
 
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
+		analytics.tracks.recordEvent( 'calypso_nps_survey_dismissed' );
+
 		return wpcom
 			.undocumented()
 			.dismissNPSSurvey( surveyName )
@@ -99,6 +106,9 @@ export function sendNpsSurveyFeedback( surveyName, feedback ) {
 	return dispatch => {
 		debug( 'Sending NPS survey feedback...' );
 		dispatch( sendNpsSurveyFeedbackRequesting( surveyName, feedback ) );
+
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'feedback_submitted' );
+		analytics.tracks.recordEvent( 'calypso_nps_survey_feedback_submitted' );
 
 		return wpcom
 			.undocumented()

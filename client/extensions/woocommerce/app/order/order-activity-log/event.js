@@ -108,13 +108,42 @@ class OrderEvent extends Component {
 			};
 		},
 
+		[ EVENT_TYPES.REFUND_NOTE ]: event => {
+			const { translate } = this.props;
+			return {
+				icon: 'credit-card',
+				heading: translate( 'Refund' ),
+				content: (
+					<div>
+						{ translate( 'Refunded %(amount)s', {
+							args: {
+								amount: formatCurrency( event.amount, event.currency ),
+							},
+						} ) }
+						<br />
+						{ event.reason }
+					</div>
+				),
+			};
+		},
+
 		//render the loading placeholder without props
 		[ undefined ]: () => ( {} ),
 	};
 
+	renderDefaultEvent = event => {
+		const { translate } = this.props;
+		return {
+			icon: 'aside',
+			heading: translate( 'Note' ),
+			content: event.content,
+		};
+	};
+
 	render() {
 		const { moment, event } = this.props;
-		const { icon, heading, content } = this.eventPropsByType[ event.type ]( event );
+		const renderEvent = this.eventPropsByType[ event.type ] || this.renderDefaultEvent;
+		const { icon, heading, content } = renderEvent( event );
 
 		return (
 			<div className="order-activity-log__note">

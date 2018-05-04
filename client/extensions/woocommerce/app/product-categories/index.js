@@ -25,7 +25,6 @@ import Search from 'components/search';
 import { withAnalytics } from 'state/analytics/actions';
 
 class ProductCategories extends Component {
-
 	state = {
 		requestedPages: [ 1 ],
 		requestedSearchPages: [],
@@ -95,9 +94,9 @@ class ProductCategories extends Component {
 					<a href={ getLink( '/store/products/:site/', site ) }>{ productsLabel }</a>,
 					<span>{ categoriesLabel }</span>,
 				] }>
-				<Button primary href={ getLink( '/store/products/category/:site/', site ) }>
-					{ translate( 'Add category' ) }
-				</Button>
+					<Button primary href={ getLink( '/store/products/category/:site/', site ) }>
+						{ translate( 'Add category' ) }
+					</Button>
 				</ActionHeader>
 				<SectionNav selectedText={ categoriesLabel }>
 					<NavTabs label={ translate( 'Products' ) } selectedText={ categoriesLabel }>
@@ -121,7 +120,6 @@ class ProductCategories extends Component {
 			</Main>
 		);
 	}
-
 }
 
 function mapStateToProps( state ) {

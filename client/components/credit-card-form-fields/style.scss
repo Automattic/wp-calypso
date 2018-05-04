@@ -11,16 +11,8 @@
 		margin-left: 15px;
 	}
 
-	.credit-card-form-fields__state-field {
-		flex-basis: calc( 100% );
-	}
-
-	.form__hidden-input a {
-		display: block;
-		font-size:  12px;
-		margin-top: -10px;
-		margin-left: 15px;
-		margin-bottom: 15px;
+	.checkout__ebanx-payment-fields {
+		margin-left: 0;
 	}
 
 	@include breakpoint( '>480px' ) {
@@ -36,36 +28,20 @@
 		.postal-code {
 			flex-basis: 8em;
 		}
-
-		&.ebanx-details-required {
-
-			.address-2,
-			.country,
-			.city {
-				flex-basis: calc( 100% - 15px );
-			}
-
-			.street-number {
-				flex-basis: calc( 33% - 15px);
-			}
-
-			.address-1 {
-				flex-basis: calc( 66% - 15px);
-			}
-
-			.document,
-			.phone,
-			.credit-card-form-fields__state-field,
-			.postal-code {
-				flex-basis: calc( 50% - 15px );
-			}
-		}
 	}
 }
 
-.credit-card-form-fields__field {
+.credit-card-form-fields {
 	margin-bottom: 15px;
+}
+
+.credit-card-form-fields__field {
+	margin-top: 15px;
 	position: relative;
+
+	&.name {
+		margin-top: 0;
+	}
 
 	select {
 		font-size: 15px;
@@ -75,12 +51,4 @@
 	input[disabled] {
 		cursor: not-allowed;
 	}
-}
-
-.credit-card-form-fields__info-text {
-	margin-left: 15px;
-	color: $gray-lighten-10;
-	display: block;
-	font-size: 12px;
-	font-style: italic;
 }

@@ -222,11 +222,7 @@ export const PluginsList = createReactClass( {
 	},
 
 	removePluginsNotices() {
-		const { notices: { completed, errors } = {} } = this.state;
-
-		if ( completed || errors ) {
-			PluginsActions.removePluginsNotices( [ ...completed, ...errors ] );
-		}
+		PluginsActions.removePluginsNotices( 'completed', 'error' );
 	},
 
 	doActionOverSelected( actionName, action ) {

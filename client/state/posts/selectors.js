@@ -17,7 +17,7 @@ import {
 	getSerializedPostsQueryWithoutPage,
 	isAuthorEqual,
 	isDiscussionEqual,
-	mergeIgnoringArrays,
+	mergePostEdits,
 	normalizePostForEditing,
 	normalizePostForDisplay,
 } from './utils';
@@ -331,13 +331,9 @@ export const getEditedPost = createSelector(
 			return post;
 		}
 
-		if ( ! post ) {
-			return edits;
-		}
-
-		return mergeIgnoringArrays( {}, post, edits );
+		return mergePostEdits( post, edits );
 	},
-	state => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.queries, state.posts.edits ]
 );
 
 /**
@@ -437,7 +433,7 @@ export const isEditedPostDirty = createSelector(
 			);
 		} );
 	},
-	state => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.queries, state.posts.edits ]
 );
 
 /**

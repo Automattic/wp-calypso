@@ -10,19 +10,13 @@ import {
 	saveJetpackSettings,
 	handleSaveSuccess,
 	announceRequestFailure,
-	announceSaveFailure,
+	handleSaveFailure,
 	retryOrAnnounceSaveFailure,
 	fromApi,
 } from '../';
-import {
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
-	JETPACK_ONBOARDING_SETTINGS_UPDATE,
-} from 'state/action-types';
+import { JETPACK_SETTINGS_SAVE, JETPACK_SETTINGS_UPDATE } from 'state/action-types';
 import { normalizeSettings } from 'state/jetpack/settings/utils';
-import {
-	saveJetpackSettingsSuccess,
-	updateJetpackSettings,
-} from 'state/jetpack-onboarding/actions';
+import { saveJetpackSettingsSuccess, updateJetpackSettings } from 'state/jetpack/settings/actions';
 
 describe( 'requestJetpackSettings()', () => {
 	const dispatch = jest.fn();
@@ -31,7 +25,7 @@ describe( 'requestJetpackSettings()', () => {
 	const siteId = 12345678;
 
 	const action = {
-		type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
+		type: JETPACK_SETTINGS_UPDATE,
 		siteId,
 	};
 
@@ -202,14 +196,25 @@ describe( 'saveJetpackSettings()', () => {
 		},
 	};
 
+	const previousSettings = {
+		onboarding: {
+			siteTitle: '',
+			siteDescription: 'Just another WordPress site',
+		},
+	};
+
+	const getState = () => ( {
+		jetpack: { settings: { [ 12345678 ]: previousSettings } },
+	} );
+
 	const action = {
-		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+		type: JETPACK_SETTINGS_SAVE,
 		siteId,
 		settings,
 	};
 
 	test( 'should dispatch an action for POST HTTP request to save Jetpack settings, omitting JPO credentials', () => {
-		saveJetpackSettings( { dispatch }, action );
+		saveJetpackSettings( { dispatch, getState }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
@@ -223,7 +228,7 @@ describe( 'saveJetpackSettings()', () => {
 						json: true,
 					},
 				},
-				action
+				{ ...action, meta: { ...action.meta, settings: previousSettings } }
 			)
 		);
 		expect( dispatch ).toHaveBeenCalledWith(
@@ -249,12 +254,26 @@ describe( 'handleSaveSuccess()', () => {
 	} );
 } );
 
-describe( 'announceSaveFailure()', () => {
+describe( 'handleSaveFailure()', () => {
 	const dispatch = jest.fn();
 	const siteId = 12345678;
+	const action = {
+		type: JETPACK_SETTINGS_SAVE,
+		siteId,
+		settings: {
+			siteTitle: 'My Awesome Site',
+			siteDescription: 'Not just another WordPress Site',
+		},
+		meta: {
+			settings: {
+				siteTitle: '',
+				siteDescription: 'Just another WordPress site',
+			},
+		},
+	};
 
 	test( 'should trigger an error notice upon unsuccessful save request', () => {
-		announceSaveFailure( { dispatch }, { siteId } );
+		handleSaveFailure( { dispatch }, { siteId }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -278,7 +297,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 		},
 	};
 	const action = {
-		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+		type: JETPACK_SETTINGS_SAVE,
 		siteId,
 		settings,
 		meta: {
@@ -299,7 +318,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 			expect.objectContaining( {
 				settings,
 				siteId,
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_SETTINGS_SAVE,
 				meta: {
 					dataLayer: {
 						retryCount: 1,
@@ -310,7 +329,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 		);
 	} );
 
-	test( 'should trigger announceSaveFailure upon max number of WooCommerce install timeout', () => {
+	test( 'should trigger handleSaveFailure upon max number of WooCommerce install timeout', () => {
 		const thirdAttemptAction = {
 			...action,
 			meta: {

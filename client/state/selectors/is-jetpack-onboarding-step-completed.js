@@ -52,5 +52,5 @@ export default createSelector(
 				return false;
 		}
 	},
-	state => [ state.jetpackOnboarding.settings ]
+	state => [ state.jetpack.settings ]
 );

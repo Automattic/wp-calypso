@@ -12,29 +12,40 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
-import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
+import GoogleMyBusinessSelectLocationButton from './button';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getGoogleMyBusinessLocations } from 'state/selectors';
+import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
-		locations: PropTypes.arrayOf( GoogleMyBusinessLocationType ).isRequired,
+		connectedLocation: PropTypes.object,
+		locations: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string.isRequired,
+		requestKeyringConnections: PropTypes.func.isRequired,
+		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
 	goBack = () => {
 		page.back( `/google-my-business/new/${ this.props.siteSlug }` );
+	};
+
+	handleLocationSelected = () => {
+		const { siteSlug } = this.props;
+		page.redirect( `/google-my-business/stats/${ siteSlug }` );
 	};
 
 	trackAddYourBusinessClick = () => {
@@ -43,14 +54,12 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
-	trackConnectLocationClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_location_connect_location_button_click'
-		);
-	};
+	componentDidMount() {
+		this.props.requestKeyringConnections( true );
+	}
 
 	render() {
-		const { locations, translate, siteSlug } = this.props;
+		const { locations, siteId, translate } = this.props;
 
 		return (
 			<Main className="gmb-select-location" wideLayout>
@@ -61,6 +70,9 @@ class GoogleMyBusinessSelectLocation extends Component {
 
 				<DocumentHead title={ translate( 'Google My Business' ) } />
 
+				<QuerySiteSettings siteId={ siteId } />
+				<QueryKeyringConnections />
+
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
@@ -70,13 +82,11 @@ class GoogleMyBusinessSelectLocation extends Component {
 				</CompactCard>
 
 				{ locations.map( location => (
-					<GoogleMyBusinessLocation isCompact key={ location.id } location={ location }>
-						<Button
-							href={ `/google-my-business/stats/${ siteSlug }` }
-							onClick={ this.trackConnectLocationClick }
-						>
-							{ translate( 'Connect Location' ) }
-						</Button>
+					<GoogleMyBusinessLocation key={ location.ID } location={ location } isCompact>
+						<GoogleMyBusinessSelectLocationButton
+							location={ location }
+							onSelected={ this.handleLocationSelected }
+						/>
 					</GoogleMyBusinessLocation>
 				) ) }
 
@@ -87,7 +97,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 							components: {
 								link: (
 									<ExternalLink
-										href="https://www.google.com/business/"
+										href="https://business.google.com/create"
 										target="_blank"
 										rel="noopener noreferrer"
 										icon={ true }
@@ -102,32 +112,20 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	}
 }
-
 export default connect(
-	state => ( {
-		locations: [
-			{
-				id: 12345,
-				address: [
-					'Centre Commercial Cap 3000',
-					'Avenue Eugene Donadei',
-					'06700 Saint-Laurent-du-Var',
-					'France',
-				],
-				name: 'Starbucks',
-				photo: 'http://www.shantee.net/wp-content/uploads/2016/02/cookies-internet-1030x684.jpg',
-				verified: true,
-			},
-			{
-				id: 67890,
-				address: [ '234 Piedmont Drive', 'Talihassee, FL 34342', 'USA' ],
-				name: 'Pinch Bakeshop',
-				verified: false,
-			},
-		],
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const locations = getGoogleMyBusinessLocations( state, siteId );
+
+		return {
+			locations,
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	},
 	{
+		connectGoogleMyBusinessLocation,
 		recordTracksEvent,
+		requestKeyringConnections,
 	}
 )( localize( GoogleMyBusinessSelectLocation ) );

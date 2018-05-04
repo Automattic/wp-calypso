@@ -13,7 +13,7 @@ import { pickBy, get } from 'lodash';
 import { abtest } from 'lib/abtest';
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
-import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
+import { getPlan, applyTestFiltersToPlansList, getTermDuration } from 'lib/plans';
 
 export function isProductsListFetching( state ) {
 	return state.productsList.isFetching;
@@ -85,6 +85,7 @@ export const planSlugToPlanProduct = ( products, planSlug ) => {
  * @return {Object} Object with a full and monthly price
  */
 export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) => ( {
+	priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
 	priceFull: getPlanPrice( state, siteId, planObject, false ),
 	priceMonthly: getPlanPrice( state, siteId, planObject, true ),
 } );
@@ -109,5 +110,5 @@ export const computeProductsWithPrices = ( state, siteId, planSlugs ) => {
 			...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan ),
 		} ) )
 		.filter( availablePlanProduct => availablePlanProduct.priceFull )
-		.sort( ( a, b ) => b.priceMonthly - a.priceMonthly );
+		.sort( ( a, b ) => getTermDuration( a.plan.term ) - getTermDuration( b.plan.term ) );
 };

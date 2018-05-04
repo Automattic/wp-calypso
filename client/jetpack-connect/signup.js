@@ -25,7 +25,7 @@ import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import SignupForm from 'components/signup-form';
+import SignupForm from 'blocks/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
@@ -205,9 +205,10 @@ export class JetpackSignup extends Component {
 		);
 	}
 	render() {
+		const { partnerSlug } = this.props.authQuery;
 		const { isCreatingAccount } = this.state;
 		return (
-			<MainWrapper>
+			<MainWrapper partnerSlug={ partnerSlug }>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader authQuery={ this.props.authQuery } />
@@ -216,9 +217,7 @@ export class JetpackSignup extends Component {
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
-						isSocialSignupEnabled={
-							isEnabled( 'signup/social' ) && isEnabled( 'jetpack/connect/social-signup' )
-						}
+						isSocialSignupEnabled={ isEnabled( 'signup/social' ) }
 						locale={ this.props.locale }
 						redirectToAfterLoginUrl={ addQueryArgs(
 							{ auth_approved: true },

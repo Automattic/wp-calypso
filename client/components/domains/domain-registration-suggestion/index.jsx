@@ -24,7 +24,12 @@ import {
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isNewTld, isTestTld } from 'components/domains/domain-registration-suggestion/utility';
+import {
+	isNewTld,
+	isTestTld,
+	parseMatchReasons,
+	VALID_MATCH_REASONS,
+} from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
 
 const NOTICE_GREEN = '#4ab866';
@@ -38,6 +43,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			domain_name: PropTypes.string.isRequired,
 			product_slug: PropTypes.string,
 			cost: PropTypes.string,
+			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 		} ).isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -80,6 +86,10 @@ class DomainRegistrationSuggestion extends React.Component {
 	};
 
 	getDomainFlags() {
+		// TODO: Remove this entire function and isNewTld/isTestTld from utility.js
+		if ( config.isEnabled( 'domains/kracken-ui' ) && this.props.isSignupStep ) {
+			return null;
+		}
 		const { suggestion, translate } = this.props;
 		const domain = suggestion.domain_name;
 		const domainFlags = [];
@@ -111,25 +121,23 @@ class DomainRegistrationSuggestion extends React.Component {
 			}
 		}
 
-		if ( ! config.isEnabled( 'domains/kracken-ui' ) ) {
-			if ( suggestion.isRecommended ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-recommended` }
-						content={ translate( 'Recommended' ) }
-						status="success"
-					/>
-				);
-			}
+		if ( suggestion.isRecommended ) {
+			domainFlags.push(
+				<DomainSuggestionFlag
+					key={ `${ domain }-recommended` }
+					content={ translate( 'Recommended' ) }
+					status="success"
+				/>
+			);
+		}
 
-			if ( suggestion.isBestAlternative ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-best-alternative` }
-						content={ translate( 'Best Alternative' ) }
-					/>
-				);
-			}
+		if ( suggestion.isBestAlternative ) {
+			domainFlags.push(
+				<DomainSuggestionFlag
+					key={ `${ domain }-best-alternative` }
+					content={ translate( 'Best Alternative' ) }
+				/>
+			);
 		}
 
 		return domainFlags;
@@ -147,13 +155,11 @@ class DomainRegistrationSuggestion extends React.Component {
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
 
-		let buttonClasses, buttonContent;
+		let buttonContent;
 
 		if ( isAdded ) {
-			buttonClasses = 'added';
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
-			buttonClasses = 'add is-primary';
 			buttonContent =
 				! isSignupStep &&
 				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
@@ -163,7 +169,6 @@ class DomainRegistrationSuggestion extends React.Component {
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 		return {
-			buttonClasses,
 			buttonContent,
 		};
 	}
@@ -218,6 +223,27 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 	}
 
+	renderMatchReason() {
+		const { suggestion: { domain_name: domain }, isFeatured } = this.props;
+
+		if ( ! isFeatured || ! Array.isArray( this.props.suggestion.match_reasons ) ) {
+			return null;
+		}
+
+		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
+
+		return (
+			<div className="domain-registration-suggestion__match-reasons">
+				{ matchReasons.map( ( phrase, index ) => (
+					<div className="domain-registration-suggestion__match-reason" key={ index }>
+						<Gridicon icon="checkmark" size={ 18 } />
+						{ phrase }
+					</div>
+				) ) }
+			</div>
+		);
+	}
+
 	render() {
 		const {
 			domainsWithPlansOnly,
@@ -235,11 +261,11 @@ class DomainRegistrationSuggestion extends React.Component {
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
-				showExpandedPrice={ isFeatured }
 				{ ...this.getButtonProps() }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
+				{ this.renderMatchReason() }
 			</DomainSuggestion>
 		);
 	}

@@ -78,7 +78,7 @@ PromotionFormTypeCard.propTypes = {
 	promotion: PropTypes.shape( {
 		id: PropTypes.isRequired,
 		type: PropTypes.oneOf(
-			[ 'product_sale', 'fixed_product', 'fixed_cart', 'percent' ]
+			[ 'product_sale', 'fixed_product', 'fixed_cart', 'percent', 'free_shipping' ]
 		).isRequired,
 	} ),
 	editPromotion: PropTypes.func.isRequired,

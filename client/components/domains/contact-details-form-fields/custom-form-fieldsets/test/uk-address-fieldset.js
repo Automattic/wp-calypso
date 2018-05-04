@@ -17,6 +17,7 @@ import UkAddressFieldset from '../uk-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
+	translate: x => x,
 } ) );
 
 describe( 'UK Address Fieldset', () => {

@@ -13,7 +13,6 @@ import Notice from 'components/notice';
 import TooltipComponent from 'components/tooltip';
 
 class Tooltip extends React.Component {
-
 	constructor( props ) {
 		super( props );
 		this.state = { show: false };
@@ -48,7 +47,6 @@ class Tooltip extends React.Component {
 			</div>
 		);
 	}
-
 }
 
 const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting } ) => {
@@ -72,7 +70,7 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 						div_info: <span className="mailchimp__sync-notice-info" />,
 						tooltip: <Tooltip listName={ syncState.mailchimp_list_name } />,
 					},
-					args: { mailingListname: syncState.mailchimp_list_name }
+					args: { mailingListname: syncState.mailchimp_list_name },
 				} ) }
 		/>
 	);
@@ -90,7 +88,7 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 						div_info: <span className="mailchimp__sync-notice-info" />,
 						tooltip: <Tooltip listName={ syncState.mailchimp_list_name } />,
 					},
-					args: { mailingListname: syncState.mailchimp_list_name }
+					args: { mailingListname: syncState.mailchimp_list_name },
 				} ) }
 		/>
 	);
@@ -123,8 +121,8 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 						span: <span />,
 					},
 					args: {
-						account_name
-					}
+						account_name,
+					},
 				} ) }
 			</div>
 			<span className="mailchimp__sync-status">
@@ -140,8 +138,8 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 						span: <span />,
 					},
 					args: {
-						products
-					}
+						products,
+					},
 				} ) }
 				{ translate( '{{span_info}}Orders:{{/span_info}} {{span}}%(orders)s{{/span}}', {
 					components: {
@@ -149,8 +147,8 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 						span: <span />,
 					},
 					args: {
-						orders
-					}
+						orders,
+					},
 				} ) }
 			</div>
 		</div>

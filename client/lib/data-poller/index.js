@@ -15,7 +15,7 @@ import Poller from './poller';
 const _pollers = {};
 
 function add( dataStore, fetcher, options ) {
-	var poller = new Poller( dataStore, fetcher, options );
+	const poller = new Poller( dataStore, fetcher, options );
 	if ( poller.id === 0 ) {
 		initActivityDetection();
 	}
@@ -37,7 +37,7 @@ function remove( poller ) {
 }
 
 function pauseAll() {
-	var poller, id;
+	let poller, id;
 	debug( 'Pausing active pollers' );
 	for ( id in _pollers ) {
 		poller = _pollers[ id ];
@@ -49,7 +49,7 @@ function pauseAll() {
 }
 
 function resumePaused() {
-	var poller, id;
+	let poller, id;
 	debug( 'Resuming paused pollers' );
 	for ( id in _pollers ) {
 		poller = _pollers[ id ];

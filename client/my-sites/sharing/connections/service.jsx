@@ -429,6 +429,7 @@ export class SharingService extends Component {
 					service={ this.props.service }
 					accounts={ accounts }
 					onAccountSelected={ this.addConnection }
+					disclaimerText={ this.getDisclamerText && this.getDisclamerText() }
 				/>
 				<FoldableCard
 					className={ classNames }
@@ -495,6 +496,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isFetching: isFetchingConnections( state, siteId ),
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),
+				service,
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 			};

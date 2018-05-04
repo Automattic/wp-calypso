@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { clone, findIndex, indexOf, isArray, pullAt, reject } from 'lodash';
+import { clone, findIndex, indexOf, isArray, pullAt } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 
@@ -14,13 +14,13 @@ const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-var _errors = [],
+let _errors = [],
 	_inProgress = [],
 	_completed = [],
 	LogStore;
 
 function addLog( status, action, site, plugin, error ) {
-	var log = {
+	const log = {
 		status: status,
 		action: action,
 		site: site,
@@ -44,28 +44,25 @@ function addLog( status, action, site, plugin, error ) {
 	}
 }
 
-function removeLog( log ) {
-	debug( 'removing log:', log );
-	switch ( log.status ) {
+function clearLog( status ) {
+	debug( 'clearing log:', status );
+	switch ( status ) {
 		case 'error':
-			_errors = reject( _errors, log );
-			debug( 'current errors:', _errors );
+			_errors = [];
 			break;
 
 		case 'inProgress':
-			_inProgress = reject( _inProgress, log );
-			debug( 'current in progress:', _inProgress );
+			_inProgress = [];
 			break;
 
 		case 'completed':
-			_completed = reject( _completed, log );
-			debug( 'current completed:', _completed );
+			_completed = [];
 			break;
 	}
 }
 
 function removeSingleLog( log ) {
-	var index;
+	let index;
 	debug( 'removing log:', log );
 	switch ( log.status ) {
 		case 'error':
@@ -102,9 +99,9 @@ LogStore = {
 	},
 
 	isInProgressAction: function( siteId, pluginSlug, action ) {
-		var dones = arguments.length;
+		const dones = arguments.length;
 		return _inProgress.some( function( log ) {
-			var done = 0;
+			let done = 0;
 			if ( action && isArray( action ) ) {
 				if ( indexOf( action, log.action ) !== -1 ) {
 					done++;
@@ -131,12 +128,12 @@ LogStore = {
 };
 
 LogStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	debug( 'register event Type', action.type, payload );
 	switch ( action.type ) {
 		case 'REMOVE_PLUGINS_NOTICES':
-			action.logs.forEach( removeLog );
+			action.logs.forEach( clearLog );
 			LogStore.emitChange();
 			break;
 		case 'UPDATE_PLUGIN':
@@ -177,6 +174,12 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 				addLog( 'completed', action.action, action.site, action.plugin );
 			}
 			LogStore.emitChange();
+			break;
+		case 'RECEIVE_PLUGINS':
+			if ( action.error ) {
+				addLog( 'error', action.action, action.site, null, action.error );
+				LogStore.emitChange();
+			}
 			break;
 	}
 } );

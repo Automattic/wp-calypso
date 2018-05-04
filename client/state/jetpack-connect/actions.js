@@ -10,6 +10,7 @@ import { omit, pick } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
@@ -44,7 +45,6 @@ import {
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
 
 /**
  * Module constants
@@ -210,15 +210,9 @@ export function createSocialAccount( socialInfo ) {
 		dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount' ) );
 
 		try {
-			/**
-			 * @TODO (sirreal) update to `jetpack-connect` when D11099-code lands
-			 *
-			 * The signup flow is required and affects some post signup activity.
-			 * `account` should be safe until patch lands.
-			 */
 			const { username, bearer_token } = await wpcom.undocumented().usersSocialNew( {
 				...socialInfo,
-				signup_flow_name: 'account' /* 'jetpack-connect' */,
+				signup_flow_name: 'jetpack-connect',
 			} );
 			dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
 			return { username, bearerToken: bearer_token };
@@ -257,7 +251,7 @@ export function createAccount( userData ) {
 
 		try {
 			const data = await wpcom.undocumented().usersNew( userData );
-			const bearerToken = makeParser(
+			const bearerToken = makeJsonSchemaParser(
 				{
 					type: 'object',
 					required: [ 'bearer_token' ],
@@ -265,7 +259,6 @@ export function createAccount( userData ) {
 						bearer_token: { type: 'string' },
 					},
 				},
-				{},
 				( { bearer_token } ) => bearer_token
 			)( data );
 

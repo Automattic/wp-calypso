@@ -18,6 +18,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import ZoneDetailsForm from '../../forms/zone-details-form';
 import { addZone } from '../../../state/zones/actions';
 import { settingsPath } from '../../../app/util';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class ZoneCreator extends PureComponent {
 	static propTypes = {
@@ -34,6 +35,11 @@ class ZoneCreator extends PureComponent {
 
 		return (
 			<div>
+				<PageViewTracker
+					path="/extensions/zoninator/new/:site"
+					title="WP Zone Manager > New Zone"
+				/>
+
 				<HeaderCake backHref={ `${ settingsPath }/${ siteSlug }` }>
 					{ translate( 'Add a zone' ) }
 				</HeaderCake>

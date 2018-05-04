@@ -18,6 +18,7 @@ import { mapValues } from 'lodash';
  */
 import { combineReducers } from 'state/utils';
 import actionLogger from './action-log';
+import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import applicationPasswords from './application-passwords/reducer';
@@ -41,12 +42,12 @@ import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
+import googleMyBusiness from './google-my-business/reducer';
 import help from './help/reducer';
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
-import jetpackOnboarding from './jetpack-onboarding/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
@@ -55,6 +56,7 @@ import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import login from './login/reducer';
 import media from './media/reducer';
+import memberships from './memberships/reducer';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
@@ -72,7 +74,7 @@ import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
-import { rewindReducer as rewind } from './rewind';
+import { rewindAlerts, rewindReducer as rewind } from './rewind';
 import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
@@ -110,6 +112,7 @@ const extensions = combineReducers(
 const reducers = {
 	analyticsTracking,
 	accountRecovery,
+	activePromotions,
 	activityLog,
 	application,
 	applicationPasswords,
@@ -129,6 +132,7 @@ const reducers = {
 	form,
 	geo,
 	googleAppsUsers,
+	googleMyBusiness,
 	happinessEngineers,
 	happychat,
 	help,
@@ -136,7 +140,6 @@ const reducers = {
 	inlineHelpSearchResults,
 	invites,
 	jetpackConnect,
-	jetpackOnboarding,
 	jetpack,
 	jetpackRemoteInstall,
 	jetpackSync,
@@ -161,6 +164,7 @@ const reducers = {
 	reader,
 	receipts,
 	rewind,
+	rewindAlerts,
 	sharing,
 	shortcodes,
 	signup,
@@ -183,6 +187,9 @@ const reducers = {
 	wordads,
 };
 
+if ( config.isEnabled( 'memberships' ) ) {
+	reducers.memberships = memberships;
+}
 export const reducer = combineReducers( reducers );
 
 /**

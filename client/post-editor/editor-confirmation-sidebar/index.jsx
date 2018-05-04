@@ -30,7 +30,7 @@ import {
 	isPrivateEditedPostPasswordValid,
 	getEditedPost,
 } from 'state/posts/selectors';
-import { canCurrentUser, isPrivateSite as isPrivateSiteSelector } from 'state/selectors';
+import { canCurrentUser } from 'state/selectors';
 
 class EditorConfirmationSidebar extends Component {
 	static propTypes = {
@@ -102,7 +102,7 @@ class EditorConfirmationSidebar extends Component {
 	}
 
 	renderPrivacyControl() {
-		const { isPrivateSite, post, onPrivatePublish } = this.props;
+		const { post, onPrivatePublish } = this.props;
 
 		if ( ! post ) {
 			return;
@@ -114,7 +114,6 @@ class EditorConfirmationSidebar extends Component {
 		const savedPassword = get( this.props, 'savedPost.password' );
 		const props = {
 			onPrivatePublish,
-			isPrivateSite,
 			type,
 			password,
 			status,
@@ -230,7 +229,6 @@ export default connect(
 		const post = getEditedPost( state, siteId, postId );
 		const isPrivatePost = isEditedPostPrivate( state, siteId, postId );
 		const isPrivatePostPasswordValid = isPrivateEditedPostPasswordValid( state, siteId, postId );
-		const isPrivateSite = isPrivateSiteSelector( state, siteId );
 		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
 
 		return {
@@ -238,7 +236,6 @@ export default connect(
 			postId,
 			post,
 			isPrivatePost,
-			isPrivateSite,
 			isPrivatePostPasswordValid,
 			canUserPublishPosts,
 		};

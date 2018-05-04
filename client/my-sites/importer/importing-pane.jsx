@@ -134,7 +134,7 @@ class ImportingPane extends React.PureComponent {
 
 		if ( pageCount && postCount ) {
 			return this.props.translate(
-				'All done! Check out {{a}}Posts{{/a}} or ' +
+				'All done! Check out {{a}}Posts{{/a}} and ' +
 					'{{b}}Pages{{/b}} to see your imported content.',
 				{
 					components: {
@@ -256,7 +256,9 @@ class ImportingPane extends React.PureComponent {
 
 const mapDispatchToProps = dispatch => ( {
 	mapAuthorFor: importerId => ( source, target ) =>
-		dispatch( mapAuthor( importerId, source, target ) ),
+		setTimeout( () => {
+			dispatch( mapAuthor( importerId, source, target ) );
+		}, 0 ),
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( localize( ImportingPane ) );

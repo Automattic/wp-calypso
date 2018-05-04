@@ -19,8 +19,8 @@ import {
 
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
-import { getPlan } from 'lib/plans';
-import { TERM_MONTHLY } from 'lib/plans/constants';
+import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
+const plans = require( 'lib/plans' );
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
@@ -30,10 +30,10 @@ jest.mock( 'state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 } ) );
 
-jest.mock( 'lib/plans', () => ( {
-	applyTestFiltersToPlansList: jest.fn( x => x ),
-	getPlan: jest.fn(),
-} ) );
+plans.applyTestFiltersToPlansList = jest.fn( x => x );
+plans.getPlan = jest.fn();
+
+const { getPlan } = plans;
 
 jest.mock( 'state/plans/selectors', () => ( {
 	getPlanRawPrice: jest.fn(),
@@ -136,9 +136,11 @@ describe( 'selectors', () => {
 			getPlanDiscountedRawPrice.mockImplementation(
 				( a, b, c, { isMonthly } ) => ( isMonthly ? 10 : 120 )
 			);
+			getPlanRawPrice.mockImplementation( () => 150 );
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan ) ).toEqual( {
+				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceMonthly: 10,
 			} );
@@ -149,19 +151,21 @@ describe( 'selectors', () => {
 		const plans = {
 			plan1: {
 				id: 1,
+				term: TERM_MONTHLY,
 				getStoreSlug: () => 'abc',
 				getProductId: () => 'def',
 			},
 
 			plan2: {
 				id: 2,
+				term: TERM_ANNUALLY,
 				getStoreSlug: () => 'jkl',
 				getProductId: () => 'mno',
 			},
 		};
 
 		beforeEach( () => {
-			getPlanRawPrice.mockImplementation( () => 0 );
+			getPlanRawPrice.mockImplementation( () => 150 );
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, storeSlug, { isMonthly } ) => {
 				if ( storeSlug === 'abc' ) {
 					return isMonthly ? 10 : 120;
@@ -173,7 +177,7 @@ describe( 'selectors', () => {
 			getPlan.mockImplementation( slug => plans[ slug ] );
 		} );
 
-		test( 'Should return list of shapes { priceFull, priceMonthly, plan, product, planSlug }', () => {
+		test( 'Should return list of shapes { priceFull, priceFullBeforeDiscount, priceMonthly, plan, product, planSlug }', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -185,18 +189,20 @@ describe( 'selectors', () => {
 
 			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ] ) ).toEqual( [
 				{
-					planSlug: 'plan2',
-					plan: plans.plan2,
-					product: state.productsList.items.plan2,
-					priceFull: 240,
-					priceMonthly: 20,
-				},
-				{
 					planSlug: 'plan1',
 					plan: plans.plan1,
 					product: state.productsList.items.plan1,
+					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
+				},
+				{
+					planSlug: 'plan2',
+					plan: plans.plan2,
+					product: state.productsList.items.plan2,
+					priceFullBeforeDiscount: 150,
+					priceFull: 240,
+					priceMonthly: 20,
 				},
 			] );
 		} );
@@ -216,6 +222,7 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: plans.plan1,
 					product: state.productsList.items.plan1,
+					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
 				},
@@ -236,6 +243,7 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: plans.plan1,
 					product: state.productsList.items.plan1,
+					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
 				},
@@ -246,6 +254,11 @@ describe( 'selectors', () => {
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, storeSlug, { isMonthly } ) => {
 				if ( storeSlug === 'abc' ) {
 					return isMonthly ? 10 : 120;
+				}
+			} );
+			getPlanRawPrice.mockImplementation( ( a, productId ) => {
+				if ( productId === 'def' ) {
+					return 150;
 				}
 			} );
 
@@ -263,6 +276,7 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: plans.plan1,
 					product: state.productsList.items.plan1,
+					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
 				},

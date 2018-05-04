@@ -179,7 +179,7 @@ export class DomainDetailsForm extends PureComponent {
 	};
 
 	renderDomainContactDetailsFields() {
-		const { contactDetails, translate } = this.props;
+		const { contactDetails, translate, userCountryCode } = this.props;
 		const labelTexts = {
 			submitButton: this.getSubmitButtonText(),
 			organization: translate(
@@ -192,6 +192,7 @@ export class DomainDetailsForm extends PureComponent {
 		};
 		return (
 			<ContactDetailsFormFields
+				userCountryCode={ userCountryCode }
 				contactDetails={ contactDetails }
 				needsFax={ this.needsFax() }
 				needsOnlyGoogleAppsDetails={ this.needsOnlyGoogleAppsDetails() }

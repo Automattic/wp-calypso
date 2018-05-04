@@ -21,7 +21,7 @@ import {
 	isApiKeyCorrect,
 	isSubmittingNewsletterSetting,
 	isSubmittingStoreInfo,
-	} from 'woocommerce/state/sites/settings/mailchimp/selectors';
+} from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import KeyInputStep from './setup-steps/key-input.js';
 import LogIntoMailchimp from './setup-steps/log-into-mailchimp.js';
 import NewsletterSettings from './setup-steps/newsletter-settings.js';
@@ -61,7 +61,7 @@ const storeSettingsRequiredFields = [ 'store_name', 'store_street', 'store_city'
 	'store_currency_code', 'admin_email' ];
 
 const campaignDefaultsRequiredFields = [ 'campaign_from_name', 'campaign_from_email', 'campaign_subject',
-		'campaign_language', 'campaign_permission_reminder' ];
+	'campaign_language', 'campaign_permission_reminder' ];
 
 class MailChimpSetup extends React.Component {
 	constructor( props ) {
@@ -297,27 +297,27 @@ class MailChimpSetup extends React.Component {
 		}
 
 		return (
-				<Dialog
-					isVisible
-					buttons={ buttons }
-					onClose={ this.props.onClose }
-					className={ dialogClass }>
+			<Dialog
+				isVisible
+				buttons={ buttons }
+				onClose={ this.props.onClose }
+				className={ dialogClass }>
 
-					<div className="mailchimp__setup-dialog-progress">
-						<ProgressBar
-							value={ stepNum + 1 }
-							total={ uiStepsCount }
-							compact
-						/>
-						<ProgressIndicator
-							stepNumber={ stepNum }
-							totalSteps={ uiStepsCount }
-						/>
-					</div>
-					<div className="mailchimp__setup-dialog-content">
-						{ this.renderStep() }
-					</div>
-				</Dialog>
+				<div className="mailchimp__setup-dialog-progress">
+					<ProgressBar
+						value={ stepNum + 1 }
+						total={ uiStepsCount }
+						compact
+					/>
+					<ProgressIndicator
+						stepNumber={ stepNum }
+						totalSteps={ uiStepsCount }
+					/>
+				</div>
+				<div className="mailchimp__setup-dialog-content">
+					{ this.renderStep() }
+				</div>
+			</Dialog>
 		);
 	}
 }

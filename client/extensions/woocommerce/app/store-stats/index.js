@@ -34,6 +34,8 @@ import { getUnitPeriod, getEndPeriod, getQueries, getWidgetPath } from './utils'
 import QuerySiteStats from 'components/data/query-site-stats';
 import config from 'config';
 import StoreStatsReferrerWidget from './store-stats-referrer-widget';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 class StoreStats extends Component {
 	static propTypes = {
@@ -56,6 +58,10 @@ class StoreStats extends Component {
 
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
+				<PageViewTracker
+					path={ `/store/stats/orders/${ unit }/:site` }
+					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
+				/>
 				{ siteId && (
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }

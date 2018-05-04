@@ -147,9 +147,12 @@ exports[`Plans should render plans 1`] = `
       }
     }
   >
-    <Localized(PlansSkipButton)
+    <Connect(Localized(PlansSkipButton))
       isRtl={false}
       onClick={[Function]}
+    />
+    <Localized(PlansExtendedInfo)
+      recordTracks={[Function]}
     />
     <LoggedOutFormLinks>
       <Connect(Localized(JetpackConnectHappychatButton))

@@ -22,6 +22,7 @@ import {
 	updateOrders,
 } from 'woocommerce/state/sites/orders/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import { navigate } from 'state/ui/actions';
 import request from 'woocommerce/state/sites/http-request';
 import {
@@ -48,6 +49,7 @@ const onDeleteError = ( action, error ) => dispatch => {
 const onDeleteSuccess = action => dispatch => {
 	const { siteId, siteSlug, orderId } = action;
 	dispatch( deleteOrderSuccess( siteId, orderId ) );
+	dispatch( fetchCounts( siteId ) );
 	dispatch( navigate( `/store/orders/${ siteSlug }` ) );
 	dispatch( successNotice( translate( 'Order deleted.' ), { duration: 8000 } ) );
 };
@@ -119,6 +121,7 @@ export function onOrderSaveSuccess( { dispatch }, action, { data } ) {
 	if ( 'function' === typeof action.onSuccess && 'undefined' !== typeof data.id ) {
 		action.onSuccess( dispatch, data.id );
 	}
+	dispatch( fetchCounts( siteId ) );
 	dispatch( saveOrderSuccess( siteId, orderId, data ) );
 }
 

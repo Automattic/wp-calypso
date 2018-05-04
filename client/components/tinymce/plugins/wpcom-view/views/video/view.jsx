@@ -15,7 +15,7 @@ import { merge } from 'lodash';
 import resizableView from '../../resizable-view';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { stringify, parse } from 'lib/shortcode';
-import Shortcode from 'components/shortcode';
+import Shortcode from 'blocks/shortcode';
 
 function VideoView( { siteId, content, width } ) {
 	if ( ! siteId || ! width ) {

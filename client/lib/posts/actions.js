@@ -5,7 +5,7 @@
  */
 
 import store from 'store';
-import { assign, clone, defer, fromPairs } from 'lodash';
+import { assign, clone, defer, fromPairs, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,8 +18,10 @@ import versionCompare from 'lib/version-compare';
 import Dispatcher from 'dispatcher';
 import { recordSaveEvent } from './stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
+import { reduxGetState } from 'lib/redux-bridge';
+import { isEditorSaveBlocked } from 'state/ui/editor/selectors';
 
-var PostActions;
+let PostActions;
 
 /**
  * Helper for performing a metadata operation on the currently edited post.
@@ -35,40 +37,36 @@ var PostActions;
  *                                              or `delete`)
  */
 function handleMetadataOperation( key, value, operation ) {
-	var post = PostEditStore.get(),
-		metadata;
-
-	if ( 'string' === typeof key || Array.isArray( key ) ) {
-		// Normalize a string or array of string keys to an object of key value
-		// pairs. To accomodate both, we coerce the key into an array before
-		// mapping to pull the object pairs.
-		key = fromPairs( [].concat( key ).map( meta => [ meta, value ] ) );
+	// Normalize a string or array of string keys to an object of key value pairs.
+	if ( 'string' === typeof key ) {
+		// case of handleMetadataOperation( 'excerpt', 'text', 'update' )
+		key = { [ key ]: value };
+	} else if ( Array.isArray( key ) ) {
+		// case of handleMetadataOperation( [ 'geo_latitude', 'geo_longitude' ], null, 'delete' )
+		key = fromPairs( key.map( meta => [ meta, value ] ) );
 	}
 
-	// Overwrite duplicates based on key
-	metadata = ( post.metadata || [] ).filter( meta => ! key.hasOwnProperty( meta.key ) );
-
-	Object.keys( key ).forEach( function( objectKey ) {
+	const metadata = map( key, function( objectValue, objectKey ) {
 		// `update` is a sufficient operation for new metadata, as it will add
 		// the metadata if it does not already exist. Similarly, we're not
 		// concerned with deleting a key which was added during previous edits,
 		// since this will effectively noop.
-		var meta = {
+		const meta = {
 			key: objectKey,
-			operation: operation,
+			operation,
 		};
 
 		if ( 'delete' !== operation ) {
-			meta.value = key[ objectKey ];
+			meta.value = objectValue;
 		}
 
-		metadata.push( meta );
+		return meta;
 	} );
 
 	Dispatcher.handleViewAction( {
 		type: 'EDIT_POST',
 		post: {
-			metadata: metadata,
+			metadata,
 		},
 	} );
 }
@@ -97,7 +95,7 @@ PostActions = {
 	 * @param {Object} options Edit options
 	 */
 	startEditingNew: function( site, options ) {
-		var args;
+		let args;
 		options = options || {};
 
 		args = {
@@ -118,7 +116,7 @@ PostActions = {
 	 * @param {Number} postId Post ID to load
 	 */
 	startEditingExisting: function( site, postId ) {
-		var currentPost = PostEditStore.get(),
+		let currentPost = PostEditStore.get(),
 			postHandle;
 
 		if ( ! site || ! site.ID ) {
@@ -157,7 +155,7 @@ PostActions = {
 	},
 
 	autosave: function( site, callback ) {
-		var post = PostEditStore.get(),
+		let post = PostEditStore.get(),
 			savedPost = PostEditStore.getSavedPost(),
 			siteHandle = wpcom.undocumented().site( post.site_ID );
 
@@ -208,30 +206,6 @@ PostActions = {
 				autosave: true,
 			} );
 		}
-	},
-
-	/**
-	 * Prevents the post from being saved
-	 *
-	 * @param {String} key Unique identifier to sandbox block condition
-	 */
-	blockSave: function( key ) {
-		Dispatcher.handleViewAction( {
-			type: 'BLOCK_EDIT_POST_SAVE',
-			key: key,
-		} );
-	},
-
-	/**
-	 * Allows a post to be saved after having been blocked
-	 *
-	 * @param {String} key Unique identifier to sandbox block condition
-	 */
-	unblockSave: function( key ) {
-		Dispatcher.handleViewAction( {
-			type: 'UNBLOCK_EDIT_POST_SAVE',
-			key: key,
-		} );
 	},
 
 	/**
@@ -296,8 +270,10 @@ PostActions = {
 	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
 	 */
 	saveEdited: function( site, attributes, context, callback, options ) {
-		var post, postHandle, query, changedAttributes, rawContent, mode, isNew;
+		let post, postHandle, query, changedAttributes, rawContent, mode, isNew;
 
+		// TODO: skip this edit if `attributes` are `null`. That means
+		// we don't want to do any additional edit before saving.
 		Dispatcher.handleViewAction( {
 			type: 'EDIT_POST',
 			post: attributes,
@@ -313,7 +289,7 @@ PostActions = {
 		}
 
 		// Prevent saving post if another module has blocked saving.
-		if ( PostEditStore.isSaveBlocked() ) {
+		if ( isEditorSaveBlocked( reduxGetState() ) ) {
 			defer( callback, new Error( 'SAVE_BLOCKED' ), post );
 			return;
 		}
@@ -386,58 +362,6 @@ PostActions = {
 
 			callback( error, data );
 		} );
-	},
-
-	/**
-	 * Calls out to API to update Post object with any changed attributes
-	 *
-	 * @param {Object} site Site object
-	 * @param {object} post to be changed
-	 * @param {object} attributes only send the attributes to be changed
-	 * @param {function} callback callback receives ( err, post ) arguments
-
-	 */
-	update: function( site, post, attributes, callback ) {
-		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.update( attributes, PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	/**
-	 * Sends `delete` request to the API. The first request
-	 * updates status to `trash`, the second request deletes the post.
-	 *
-	 * @param {Object} site Site object
-	 * @param {object} post to be trashed
-	 * @param {function} callback that receives ( err, post ) arguments
-	 */
-	trash: function( site, post, callback ) {
-		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.delete( PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	/**
-	 * Restores post/page from trash
-	 *
-	 * @param {object} post to be trashed
-	 * @param {function} callback that receives ( err, post ) arguments
-	 * @param {Object} site Site object
-	 */
-	restore: function( site, post, callback ) {
-		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.restore( PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	receiveUpdate: function( site, callback, error, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_UPDATED_POST',
-			error: error,
-			post: data,
-			site,
-		} );
-		callback( error, data );
 	},
 };
 

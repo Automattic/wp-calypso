@@ -5,7 +5,6 @@
 import {
 	ACTIVITY_LOG_REQUEST,
 	ACTIVITY_LOG_UPDATE,
-	ACTIVITY_LOG_WATCH,
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
@@ -92,7 +91,7 @@ export function activityLogRequest( siteId, params ) {
 	};
 }
 
-export function activityLogUpdate( siteId, data, found, oldestItemTs, query ) {
+export function activityLogUpdate( siteId, data, found, oldestItemTs, query, { doMerge } ) {
 	return {
 		type: ACTIVITY_LOG_UPDATE,
 		siteId,
@@ -100,6 +99,7 @@ export function activityLogUpdate( siteId, data, found, oldestItemTs, query ) {
 		found,
 		oldestItemTs,
 		query,
+		doMerge,
 	};
 }
 
@@ -302,15 +302,3 @@ export function dismissRewindBackupProgress( siteId, downloadId ) {
 		downloadId,
 	};
 }
-
-export const startWatching = siteId => ( {
-	type: ACTIVITY_LOG_WATCH,
-	isWatching: true,
-	siteId,
-} );
-
-export const stopWatching = siteId => ( {
-	type: ACTIVITY_LOG_WATCH,
-	isWatching: false,
-	siteId,
-} );

@@ -60,6 +60,10 @@
 			padding-left: 8px;
 		}
 
+		.cart__free-text:first-child {
+			padding-left: 0;
+		}
+
 		.product-monthly-price {
 			color: $gray;
 			display: block;

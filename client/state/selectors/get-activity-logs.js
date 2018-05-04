@@ -2,7 +2,9 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, values } from 'lodash';
+
+const emptyList = [];
 
 /**
  * Returns list of Activity Log items.
@@ -12,11 +14,8 @@ import { get } from 'lodash';
  * @param  {?Object}       query  Optional. Query object, passed to ActivityQueryManager.
  * @return {?array}               Activity log item objects. Null if no data.
  */
-export default function getActivityLogs( state, siteId, query ) {
-	const manager = get( state, [ 'activityLog', 'logItems', siteId ], null );
-	if ( ! manager ) {
-		return null;
-	}
+export default function getActivityLogs( state, siteId ) {
+	const events = get( state, [ 'activityLog', 'logItems', siteId, 'data', 'items' ] );
 
-	return manager.getItems( query );
+	return events ? values( events ).sort( ( a, b ) => b.rewindId - a.rewindId ) : emptyList;
 }

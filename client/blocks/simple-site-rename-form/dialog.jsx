@@ -23,6 +23,7 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 		newDomainSuffix: PropTypes.string,
 		onConfirm: PropTypes.func.isRequired,
 		onClose: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -62,6 +63,7 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 			isVisible,
 			newDomainName,
 			newDomainSuffix,
+			siteId,
 			translate,
 		} = this.props;
 		const buttons = [
@@ -86,8 +88,11 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 				onClose={ this.onClose }
 			>
 				<TrackComponentView
-					eventName="calypso_siterename_areyousure_view"
-					eventProperties={ { new_domain: newDomainName } }
+					eventName="calypso_siteaddresschange_areyousure_view"
+					eventProperties={ {
+						blog_id: siteId,
+						new_domain: newDomainName,
+					} }
 				/>
 				<h1>{ translate( "Let's review…" ) }</h1>
 				<p>

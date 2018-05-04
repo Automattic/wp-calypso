@@ -3,112 +3,110 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
-import { isEqual, sortBy } from 'lodash';
+import { sortBy, sumBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import LegendItem from './legend-item';
+import DataType from './data-type';
 
-const NUM_COLOR_SECTIONS = 3;
 const SVG_SIZE = 300;
+const NUM_COLOR_SECTIONS = 3;
+
+function transformData( data ) {
+	const sortedData = sortBy( data, datum => datum.value )
+		.reverse()
+		.map( ( datum, index ) => ( {
+			...datum,
+			sectionNum: index % NUM_COLOR_SECTIONS,
+		} ) );
+
+	const arcs = d3Pie()
+		.startAngle( -Math.PI )
+		.value( datum => datum.value )( sortedData );
+
+	const arcGen = d3Arc()
+		.innerRadius( 0 )
+		.outerRadius( SVG_SIZE / 2 );
+
+	const paths = arcs.map( arc => arcGen( arc ) );
+
+	return sortedData.map( ( datum, index ) => ( {
+		...datum,
+		path: paths[ index ],
+	} ) );
+}
 
 class PieChart extends Component {
 	static propTypes = {
-		data: PropTypes.arrayOf(
-			PropTypes.shape( {
-				description: PropTypes.string,
-				name: PropTypes.string.isRequired,
-				value: PropTypes.number.isRequired,
-			} )
-		).isRequired,
-		title: PropTypes.string,
+		data: PropTypes.arrayOf( DataType ).isRequired,
+		translate: PropTypes.func.isRequired,
+		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {
+		data: null,
+		dataTotal: 0,
+	};
 
-		this.state = this.processData( props.data );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props.data, nextProps.data ) ) {
-			this.setState( this.processData( nextProps.data ) );
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.data !== prevState.data ) {
+			return {
+				data: nextProps.data,
+				dataTotal: sumBy( nextProps.data, datum => datum.value ),
+				transformedData: transformData( nextProps.data ),
+			};
 		}
+
+		return null;
 	}
 
-	processData( data ) {
-		const sortedData = sortBy( data, datum => datum.value ).reverse();
+	renderPieChart() {
+		const { transformedData } = this.state;
+		return transformedData.map( datum => {
+			return (
+				<path
+					className={ `pie-chart__chart-section-${ datum.sectionNum }` }
+					key={ datum.name }
+					d={ datum.path }
+				/>
+			);
+		} );
+	}
 
-		const arcs = d3Pie()
-			.startAngle( Math.PI )
-			.startAngle( -Math.PI )
-			.value( datum => datum.value )( sortedData );
-
-		const arcGen = d3Arc()
-			.innerRadius( 0 )
-			.outerRadius( SVG_SIZE / 2 );
-
-		const paths = arcs.map( arc => arcGen( arc ) );
-
-		return {
-			data: sortedData.map( ( datum, index ) => ( {
-				...datum,
-				sectionNum: index % NUM_COLOR_SECTIONS,
-				path: paths[ index ],
-			} ) ),
-			dataTotal: sortedData.reduce( ( result, datum ) => result + datum.value, 0 ),
-		};
+	renderEmptyChart() {
+		return (
+			<circle cx={ 0 } cy={ 0 } r={ SVG_SIZE / 2 } className="pie-chart__chart-drawing-empty" />
+		);
 	}
 
 	render() {
-		const { title } = this.props;
-		const { data, dataTotal } = this.state;
+		const { title, translate } = this.props;
+		const { dataTotal } = this.state;
 
 		return (
-			<div>
-				<div className={ 'pie-chart__chart' }>
-					<svg
-						className={ 'pie-chart__chart-drawing' }
-						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
-						preserveAspectRatio={ 'xMidYMid meet' }
-					>
-						<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
-							{ data.map( ( datum, index ) => {
-								return (
-									<path
-										className={ `pie-chart__chart-section-${ datum.sectionNum }` }
-										key={ index.toString() }
-										d={ datum.path }
-									/>
-								);
-							} ) }
-						</g>
-					</svg>
-				</div>
-
-				{ title && <h2 className={ 'pie-chart__title' }>{ title }</h2> }
-
-				<div className={ 'pie-chart__legend' }>
-					{ data.map( ( datum, index ) => {
-						return (
-							<LegendItem
-								key={ index.toString() }
-								name={ datum.name }
-								value={ datum.value }
-								sectionNumber={ datum.sectionNum }
-								percent={ Math.round( datum.value / dataTotal * 100 ).toString() }
-								description={ datum.description }
-							/>
-						);
-					} ) }
-				</div>
+			<div className={ 'pie-chart' }>
+				<svg
+					className={ 'pie-chart__chart-drawing' }
+					viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
+					preserveAspectRatio={ 'xMidYMid meet' }
+				>
+					<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
+						{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }
+					</g>
+				</svg>
+				{ title && (
+					<h2 className={ 'pie-chart__title' }>
+						{ 'string' === typeof title ? title : title( translate, dataTotal ) }
+					</h2>
+				) }
 			</div>
 		);
 	}
 }
 
-export default PieChart;
+export default localize( PieChart );

@@ -58,6 +58,20 @@ export default class DevdocsSidebar extends React.PureComponent {
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="multiple-users"
+							label="Accessibility"
+							link="/devdocs/docs/accessibility.md"
+							selected={ this.isItemSelected( '/devdocs/docs/accessibility.md' ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="ink"
+							label="Color"
+							link="https://dotcombrand.wordpress.com/color/"
+							selected={ this.isItemSelected( 'https://dotcombrand.wordpress.com/color/' ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="heading"
 							label="Typography"
 							link="/devdocs/typography"
@@ -71,9 +85,9 @@ export default class DevdocsSidebar extends React.PureComponent {
 							selected={ this.isItemSelected( '/devdocs/docs/icons.md' ) }
 						/>
 					</ul>
-				</SidebarMenu>
-				<SidebarHeading>Live Docs</SidebarHeading>
-				<SidebarMenu>
+
+					<SidebarHeading>Live Docs</SidebarHeading>
+
 					<ul>
 						<SidebarItem
 							className="devdocs__navigation-item"
@@ -89,6 +103,17 @@ export default class DevdocsSidebar extends React.PureComponent {
 							link="/devdocs/blocks"
 							selected={ this.isItemSelected( '/devdocs/blocks', false ) }
 						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="code"
+							label="Playground"
+							link="/devdocs/playground"
+							selected={ this.isItemSelected( '/devdocs/playground', false ) }
+						/>
+					</ul>
+
+					<SidebarHeading>Developer Tools</SidebarHeading>
+					<ul>
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="plugins"

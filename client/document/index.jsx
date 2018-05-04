@@ -12,7 +12,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { default as appConfig } from 'config';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
@@ -51,7 +50,6 @@ class Document extends React.Component {
 			devDocsURL,
 			feedbackURL,
 			inlineScriptNonce,
-			analyticsScriptNonce,
 		} = this.props;
 
 		const inlineScript =
@@ -163,12 +161,20 @@ class Document extends React.Component {
 					/>
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
-					<script
-						nonce={ inlineScriptNonce }
-						dangerouslySetInnerHTML={ {
-							__html: manifest,
-						} }
-					/>
+					{ /*
+						* inline manifest in production, but reference by url for development.
+						* this lets us have the performance benefit in prod, without breaking HMR in dev
+						* since the manifest needs to be updated on each save
+						*/ }
+					{ env === 'development' && <script src="/calypso/manifest.js" /> }
+					{ env !== 'development' && (
+						<script
+							nonce={ inlineScriptNonce }
+							dangerouslySetInnerHTML={ {
+								__html: manifest,
+							} }
+						/>
+					) }
 					{ entrypoint.map( asset => <script key={ asset } src={ asset } /> ) }
 					{ chunkFiles.map( chunk => <script key={ chunk } src={ chunk } /> ) }
 					<script nonce={ inlineScriptNonce } type="text/javascript">
@@ -193,15 +199,6 @@ class Document extends React.Component {
 						 `,
 						} }
 					/>
-					{ // Load GA only if enabled in the config.
-					appConfig( 'google_analytics_enabled' ) && (
-						<script
-							async={ true }
-							type="text/javascript"
-							src="https://www.google-analytics.com/analytics.js"
-							nonce={ analyticsScriptNonce }
-						/>
-					) }
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>

@@ -442,6 +442,7 @@ $plan-features-sidebar-width: 272px;
 	margin: 0 auto;
 	padding: 20px 0 10px;
 	transform: translateY(-20px);
+	overflow-x: auto;
 }
 
 .touch {
@@ -543,14 +544,6 @@ $plan-features-sidebar-width: 272px;
 	.plan-features__row:last-of-type .plan-features__table-item {
 		border-bottom: solid 1px lighten( $gray, 27% );
 	}
-}
-
-.plans-features-main__bottom .plan-features__actions {
-	padding-bottom: 0;
-}
-
-.plans-features-main__bottom .plan-features__actions-button {
-	width: auto;
 }
 
 /**
