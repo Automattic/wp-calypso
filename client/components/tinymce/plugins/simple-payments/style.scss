@@ -129,6 +129,11 @@
 		}
 	}
 
+	.dialog__product-image {
+		max-width: 200px;
+		max-height: 200px;
+	}
+
 	.dialog__product-image-edit-icon {
 		position: absolute;
 		color: $white;
@@ -177,6 +182,11 @@
 
 	.upload-image {
 		margin-bottom: 20px;
+	}
+
+	.dialog__editor-simple-payments-modal-image {
+		max-width: 200px;
+		max-height: 200px;
 	}
 }
 
@@ -264,7 +274,6 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	border: 1px solid $gray-lighten-10;
 	background-color: $gray-lighten-30;
 
 	&.is-placeholder {
