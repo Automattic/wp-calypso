@@ -35,7 +35,7 @@ class ImporterAuthorMapping extends React.Component {
 		currentUser: PropTypes.object,
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
 
 		if ( hasSingleAuthor ) {
@@ -52,6 +52,7 @@ class ImporterAuthorMapping extends React.Component {
 				name,
 				mappedTo: selectedAuthor = { name: /* Don't translate yet */ 'Choose an author…' },
 			},
+			currentUser,
 		} = this.props;
 
 		return (
@@ -63,13 +64,13 @@ class ImporterAuthorMapping extends React.Component {
 						<User user={ selectedAuthor } />
 					</AuthorSelector>
 				) : (
-					<User user={ this.getCurrentUser() } />
+					<User user={ currentUser } />
 				) }
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( { currentUser: getCurrentUser( state ) } ) )(
-	ImporterAuthorMapping
-);
+export default connect( state => ( {
+	currentUser: getCurrentUser( state ),
+} ) )( ImporterAuthorMapping );
