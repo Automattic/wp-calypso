@@ -21,7 +21,24 @@ import {
 import { AddContentButton } from '../button-labels';
 import { getSectionName } from 'state/ui/selectors';
 
-const hasSidebar = state => ! includes( [ 'customize', 'post-editor' ], getSectionName( state ) );
+const hasSidebar = state =>
+	includes(
+		[
+			'/stats',
+			'/plans',
+			'/pages',
+			'/posts',
+			'/media',
+			'/comments',
+			'/types',
+			'/themes',
+			'/sharing',
+			'/people',
+			'/plugins',
+			'/settings',
+		],
+		getSectionName( state )
+	);
 
 // When moving from stats to the editor, the menu disappears, the first step
 // loses its target, and it repositions in the top left corner.
