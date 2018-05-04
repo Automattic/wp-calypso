@@ -51,6 +51,7 @@ import {
 	isAuthorEqual,
 	isDateEqual,
 	isDiscussionEqual,
+	isStatusEqual,
 	isTermsEqual,
 	mergePostEdits,
 	normalizePostForState,
@@ -440,6 +441,8 @@ export function edits( state = {}, action ) {
 							case 'metadata':
 								// omit from unappliedPostEdits, metadata edits will be merged
 								return true;
+							case 'status':
+								return isStatusEqual( value, post[ key ] );
 							case 'terms':
 								return isTermsEqual( value, post[ key ] );
 						}

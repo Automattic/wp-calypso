@@ -1353,6 +1353,48 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove status edits after they are saved', () => {
+			const emptyEditsState = {
+				2916284: {
+					841: {},
+				},
+			};
+
+			const editsStateWithStatus = status =>
+				deepFreeze( {
+					2916284: {
+						841: {
+							status,
+						},
+					},
+				} );
+
+			const receivePostActionWithStatus = status => ( {
+				type: POSTS_RECEIVE,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						type: 'post',
+						status,
+					},
+				],
+			} );
+
+			expect(
+				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'future' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'publish' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'future' ), receivePostActionWithStatus( 'publish' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'draft' ), receivePostActionWithStatus( 'draft' ) )
+			).to.eql( emptyEditsState );
+		} );
+
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
