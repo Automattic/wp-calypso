@@ -14,12 +14,12 @@
 	background-color: $gray-light;
 }
 
-.product-categories__list-item-card {
-	cursor: pointer;
-}
-
 .product-categories__list-item-card.card.is-compact {
 	padding: 0;
+}
+
+.accessible-focus & .product-categories__list-item-card:focus {
+	border-left: 3px solid $blue-wordpress;
 }
 
 .product-categories__list-item-wrapper {
@@ -38,6 +38,7 @@
 
 	.product-categories__list-item-description {
 		margin-left: 24px;
+		color: $gray-text;
 	}
 
 	.image-thumb {
@@ -47,7 +48,6 @@
 	.count {
 		margin: 18px 0px 0px 16px;
 	}
-
 
 	&:hover {
 		background: lighten( $gray, 35% );

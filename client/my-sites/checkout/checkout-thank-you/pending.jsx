@@ -64,17 +64,12 @@ class CheckoutPending extends PureComponent {
 				return;
 			}
 
-			// It is mostly because the user has cancelled the payment.
-			// See the explanation in https://github.com/Automattic/wp-calypso/pull/23670#issuecomment-377186515
-			if ( ORDER_TRANSACTION_STATUS.FAILURE === processingStatus ) {
-				// Bring the user back to the plan page in this case.
-				page( planRoute );
-
-				return;
-			}
-
-			// or the processing status indicates that there was something wrong.
-			if ( ORDER_TRANSACTION_STATUS.ERROR === processingStatus ) {
+			// If the processing status indicates that there was something wrong.
+			// It could be because the user has cancelled the payment, or because the payment failed after being authorized
+			if (
+				ORDER_TRANSACTION_STATUS.ERROR === processingStatus ||
+				ORDER_TRANSACTION_STATUS.FAILURE === processingStatus
+			) {
 				// redirect users back to the checkout page so they can try again.
 				retryOnError();
 

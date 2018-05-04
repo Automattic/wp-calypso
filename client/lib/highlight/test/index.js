@@ -26,7 +26,7 @@ describe( 'highlight', () => {
 		} );
 
 		test( 'should wrap the term with the custom wrapper node when provided', () => {
-			var span = document.createElement( 'span' );
+			const span = document.createElement( 'span' );
 			span.setAttribute( 'class', 'marker' );
 			expect( highlight( 'hello', 'hello world', span ) ).to.contain(
 				'<span class="marker">hello</span> world'

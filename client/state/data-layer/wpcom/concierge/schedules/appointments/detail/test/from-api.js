@@ -3,8 +3,8 @@
 /**
  * Internal dependencies
  */
-import { SchemaError } from 'state/data-layer/wpcom-http/utils';
 import fromApi from '../from-api';
+import { SchemaError } from 'lib/make-json-schema-parser';
 
 describe( 'fromApi()', () => {
 	test( 'should validate and transform the data successfully.', () => {

@@ -44,7 +44,7 @@ export function conversationsA8c( context, next ) {
 	const title = 'Reader > Conversations > Automattic';
 
 	trackPageLoad( basePath, 'Reader > Conversations > Automattic', mcKey );
-	recordTrack( 'calypso_reader_conversations_a8c_viewed' );
+	recordTrack( 'calypso_reader_conversations_automattic_viewed' );
 
 	const convoStream = feedStreamStore( 'conversations-a8c' );
 	ensureStoreLoading( convoStream, context );

@@ -14,7 +14,7 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import SignupForm from 'components/signup-form';
+import SignupForm from 'blocks/signup-form';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { login } from 'lib/paths';
 import { createAccount, acceptInvite } from 'lib/invites/actions';

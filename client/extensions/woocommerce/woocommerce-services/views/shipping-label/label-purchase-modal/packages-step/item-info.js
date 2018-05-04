@@ -64,4 +64,4 @@ export default connect(
 	( dispatch ) => bindActionCreators( {
 		openItemMove,
 	}, dispatch )
-	)( localize( ItemInfo ) );
+)( localize( ItemInfo ) );

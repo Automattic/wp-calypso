@@ -27,16 +27,16 @@ const renderRateNotice = ( translate ) => {
 };
 
 export const ShippingRates = ( {
-		id,
-		selectedRates, // Store owner selected rates, not customer
-		availableRates,
-		selectedPackages,
-		allPackages,
-		updateRate,
-		errors,
-		shouldShowRateNotice,
-		translate,
-	} ) => {
+	id,
+	selectedRates, // Store owner selected rates, not customer
+	availableRates,
+	selectedPackages,
+	allPackages,
+	updateRate,
+	errors,
+	shouldShowRateNotice,
+	translate,
+} ) => {
 	const packageNames = getPackageDescriptions( selectedPackages, allPackages, true );
 	const hasSinglePackage = ( 1 === Object.keys( selectedPackages ).length );
 	const hasMultiplePackages = ( 1 < Object.keys( selectedPackages ).length );

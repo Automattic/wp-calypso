@@ -25,22 +25,26 @@ import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors'
 import { isStoreSetupComplete } from 'woocommerce/state/sites/setup-choices/selectors';
 import Main from 'components/main';
 import Placeholder from './dashboard/placeholder';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
 import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class App extends Component {
 	static propTypes = {
-		siteId: PropTypes.number,
+		allRequiredPluginsActive: PropTypes.bool,
+		analyticsPath: PropTypes.string,
+		analyticsTitle: PropTypes.string,
 		canUserManageOptions: PropTypes.bool.isRequired,
 		children: PropTypes.element.isRequired,
 		documentTitle: PropTypes.string,
+		fetchSetupChoices: PropTypes.func.isRequired,
 		hasPendingAutomatedTransfer: PropTypes.bool.isRequired,
 		isAtomicSite: PropTypes.bool.isRequired,
 		isDashboard: PropTypes.bool.isRequired,
-		analyticsPath: PropTypes.string,
-		analyticsTitle: PropTypes.string,
+		pluginsLoaded: PropTypes.bool.isRequired,
+		siteId: PropTypes.number,
+		translate: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
@@ -123,13 +127,13 @@ class App extends Component {
 
 	render = () => {
 		const {
-			siteId,
-			canUserManageOptions,
-			isAtomicSite,
-			hasPendingAutomatedTransfer,
-			translate,
 			analyticsPath,
 			analyticsTitle,
+			canUserManageOptions,
+			hasPendingAutomatedTransfer,
+			isAtomicSite,
+			siteId,
+			translate,
 		} = this.props;
 		if ( ! siteId ) {
 			return null;
@@ -176,13 +180,13 @@ function mapStateToProps( state ) {
 	const isSetupComplete = isStoreSetupComplete( state, siteId );
 
 	return {
-		siteId,
 		allRequiredPluginsActive,
 		canUserManageOptions: siteId ? canUserManageOptions : false,
 		isAtomicSite: siteId ? isAtomicSite : false,
 		isSetupComplete,
 		hasPendingAutomatedTransfer: siteId ? hasPendingAutomatedTransfer : false,
 		pluginsLoaded,
+		siteId,
 	};
 }
 

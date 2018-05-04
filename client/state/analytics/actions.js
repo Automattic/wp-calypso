@@ -15,7 +15,6 @@ import {
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
-	ANALYTICS_TRACKS_ANONID_SET,
 	ANALYTICS_TRACKS_OPT_OUT,
 } from 'state/action-types';
 
@@ -67,25 +66,13 @@ export const recordEvent = ( service, args ) => ( {
 	},
 } );
 
-export const setTracksAnonymousUserId = anonId => ( {
-	type: ANALYTICS_TRACKS_ANONID_SET,
-	meta: {
-		analytics: [
-			{
-				type: ANALYTICS_TRACKS_ANONID_SET,
-				payload: anonId,
-			},
-		],
-	},
-} );
-
 export const loadTrackingTool = trackingTool => ( {
 	type: ANALYTICS_TRACKING_ON,
 	meta: {
 		analytics: [
 			{
 				type: ANALYTICS_TRACKING_ON,
-				payload: trackingTool,
+				payload: { trackingTool },
 			},
 		],
 	},
@@ -97,7 +84,7 @@ export const setTracksOptOut = isOptingOut => ( {
 		analytics: [
 			{
 				type: ANALYTICS_TRACKS_OPT_OUT,
-				payload: isOptingOut,
+				payload: { isOptingOut },
 			},
 		],
 	},
@@ -115,7 +102,7 @@ export const recordCustomFacebookConversionEvent = ( name, properties ) =>
 export const recordCustomAdWordsRemarketingEvent = properties =>
 	recordEvent( 'adwords', { properties } );
 
-export const recordPageView = ( url, title, service ) => ( {
+export const recordPageView = ( url, title, service, properties = {} ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,
 	meta: {
 		analytics: [
@@ -125,6 +112,7 @@ export const recordPageView = ( url, title, service ) => ( {
 					service,
 					url,
 					title,
+					...properties,
 				},
 			},
 		],

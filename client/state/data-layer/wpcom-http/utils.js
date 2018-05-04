@@ -4,7 +4,6 @@
  * External dependencies
  */
 import deterministicStringify from 'json-stable-stringify';
-import schemaValidator from 'is-my-json-valid';
 import { get, identity, merge, noop } from 'lodash';
 
 /**
@@ -17,7 +16,7 @@ import warn from 'lib/warn';
  * Returns response data from an HTTP request success action if available
  *
  * @param {Object} action may contain HTTP response data
- * @returns {?*} response data if available
+ * @returns {*|undefined} response data if available
  */
 export const getData = action => get( action, 'meta.dataLayer.data', undefined );
 
@@ -25,140 +24,31 @@ export const getData = action => get( action, 'meta.dataLayer.data', undefined )
  * Returns error data from an HTTP request failure action if available
  *
  * @param {Object} action may contain HTTP response error data
- * @returns {?*} error data if available
+ * @returns {*|undefined} error data if available
  */
 export const getError = action => get( action, 'meta.dataLayer.error', undefined );
 
 /**
  * Returns (response) headers data from an HTTP request action if available
  *
- * @param {Object} action may contain HTTP response headers data
- * @returns {?*} headers data if available
+ * @param   {Object}      action Request action for which to retrieve HTTP response headers
+ * @returns {*|undefined}        Headers data if available
  */
 export const getHeaders = action => get( action, 'meta.dataLayer.headers', undefined );
 
 /**
  * @typedef {Object} ProgressData
- * @property {number} loaded number of bytes already transferred
- * @property {number} total total number of bytes to transfer
+ * @property {number} loaded Number of bytes already transferred
+ * @property {number} total  Total number of bytes to transfer
  */
 
 /**
  * Returns progress data from an HTTP request progress action if available
  *
- * @param {Object} action may contain HTTP progress data
- * @returns {Object|null} progress data if available
- * @returns {ProgressData}
+ * @param  {Object} action          may contain HTTP progress data
+ * @return {ProgressData|undefined} Progress data if available
  */
 export const getProgress = action => get( action, 'meta.dataLayer.progress', undefined );
-
-export class SchemaError extends Error {
-	constructor( errors ) {
-		super( 'Failed to validate with JSON schema' );
-		this.schemaErrors = errors;
-	}
-}
-
-export class TransformerError extends Error {
-	constructor( error, data, transformer ) {
-		super( error.message );
-		this.inputData = data;
-		this.transformer = transformer;
-	}
-}
-
-export const makeParser = ( schema, schemaOptions = {}, transformer = identity ) => {
-	let transform;
-	let validate;
-
-	const genParser = () => {
-		const options = Object.assign( { greedy: true, verbose: true }, schemaOptions );
-		const validator = schemaValidator( schema, options );
-
-		// filter out unwanted properties even though we may have let them slip past validation
-		// note: this property does not nest deeply into the data structure, that is, properties
-		// of a property that aren't in the schema could still come through since only the top
-		// level of properties are pruned
-		const filter = schemaValidator.filter(
-			Object.assign(
-				{},
-				schema,
-				schema.type && schema.type === 'object' && { additionalProperties: false }
-			)
-		);
-
-		validate = data => {
-			if ( ! validator( data ) ) {
-				if ( 'development' === process.env.NODE_ENV ) {
-					// eslint-disable-next-line no-console
-					console.warn( 'JSON Validation Failure' );
-
-					validator.errors.forEach( error =>
-						// eslint-disable-next-line no-console
-						console.warn( {
-							field: error.field,
-							message: error.message,
-							value: error.value,
-							actualType: error.type,
-							expectedType: get( schema, error.schemaPath ),
-						} )
-					);
-
-					if ( undefined !== window ) {
-						// eslint-disable-next-line no-console
-						console.log( 'updated `lastValidator` and `lastValidated` in console' );
-						// eslint-disable-next-line no-console
-						console.log( 'run `lastValidator( lastValidated )` to reproduce failing validation' );
-						window.lastValidator = validator;
-						window.lastValidated = data;
-					}
-				}
-
-				throw new SchemaError( validator.errors );
-			}
-
-			return filter( data );
-		};
-
-		transform = data => {
-			try {
-				return transformer( data );
-			} catch ( e ) {
-				if ( 'development' === process.env.NODE_ENV ) {
-					// eslint-disable-next-line no-console
-					console.warn( 'Data Transformation Failure' );
-
-					// eslint-disable-next-line no-console
-					console.warn( {
-						inputData: data,
-						error: e,
-					} );
-
-					if ( undefined !== window ) {
-						// eslint-disable-next-line no-console
-						console.log( 'updated `lastTransformer` and `lastTransformed` in console' );
-						// eslint-disable-next-line no-console
-						console.log(
-							'run `lastTransformer( lastTransformed )` to reproduce failing transform'
-						);
-						window.lastTransformer = transformer;
-						window.lastTransformed = data;
-					}
-				}
-
-				throw new TransformerError( e, data, transformer );
-			}
-		};
-	};
-
-	return data => {
-		if ( ! transform ) {
-			genParser();
-		}
-
-		return transform( validate( data ) );
-	};
-};
 
 const getRequestStatus = action => {
 	if ( undefined !== getError( action ) ) {

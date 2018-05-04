@@ -392,25 +392,25 @@ describe( 'actions', () => {
 
 		test( 'should dispatch failure action when saving new post fails', done => {
 			savePost( 77203074, null, { title: 'Hello World' } )( spy ).catch( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: POST_SAVE_FAILURE,
-						siteId: 77203074,
-						postId: null,
-						error: sinon.match( { message: 'User cannot edit posts' } ),
-					} );
-					done();
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_SAVE_FAILURE,
+					siteId: 77203074,
+					postId: null,
+					error: sinon.match( { message: 'User cannot edit posts' } ),
+				} );
+				done();
 			} );
 		} );
 
 		test( 'should dispatch failure action when saving existing post fails', done => {
 			savePost( 77203074, 102, { title: 'Hello World' } )( spy ).catch( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: POST_SAVE_FAILURE,
-						siteId: 77203074,
-						postId: 102,
-						error: sinon.match( { message: 'User cannot edit post' } ),
-					} );
-					done();
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_SAVE_FAILURE,
+					siteId: 77203074,
+					postId: 102,
+					error: sinon.match( { message: 'User cannot edit post' } ),
+				} );
+				done();
 			} );
 		} );
 	} );
@@ -468,13 +468,13 @@ describe( 'actions', () => {
 
 		test( 'should dispatch failure action when deleting post fails', done => {
 			deletePost( 77203074, 102 )( spy ).catch( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: POST_DELETE_FAILURE,
-						siteId: 77203074,
-						postId: 102,
-						error: sinon.match( { message: 'User cannot delete posts' } ),
-					} );
-					done();
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_DELETE_FAILURE,
+					siteId: 77203074,
+					postId: 102,
+					error: sinon.match( { message: 'User cannot delete posts' } ),
+				} );
+				done();
 			} );
 		} );
 	} );
@@ -526,13 +526,13 @@ describe( 'actions', () => {
 
 		test( 'should dispatch failure action when restoring post fails', done => {
 			restorePost( 77203074, 102 )( spy ).catch( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: POST_RESTORE_FAILURE,
-						siteId: 77203074,
-						postId: 102,
-						error: sinon.match( { message: 'User cannot restore trashed posts' } ),
-					} );
-					done();
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_RESTORE_FAILURE,
+					siteId: 77203074,
+					postId: 102,
+					error: sinon.match( { message: 'User cannot restore trashed posts' } ),
+				} );
+				done();
 			} );
 		} );
 	} );

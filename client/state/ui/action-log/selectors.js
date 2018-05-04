@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { last } from 'lodash';
+import { findLast, last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,9 +35,21 @@ export function getActionLog( state ) {
  * @return {Array}               Array of Redux actions of with a type of
  *                               ROUTE_SET, each with timestamp
  */
-export function getRouteHistory( state ) {
-	return getActionLog( state ).filter( action => action.type === ROUTE_SET );
-}
+export const getRouteHistory = createSelector(
+	state => getActionLog( state ).filter( action => action.type === ROUTE_SET ),
+	state => [ state.ui.actionLog ]
+);
+
+/**
+ * Returns the last ROUTE_SET action that had been dispatched for the current user.
+ *
+ * @param  {Object}   state      Global state tree
+ * @return {Object}              The last Redux action of type ROUTE_SET, with timestamp
+ */
+export const getLastRouteAction = createSelector(
+	state => findLast( getActionLog( state ), action => action.type === ROUTE_SET ),
+	state => [ state.ui.actionLog ]
+);
 
 /**
  * Returns the last item from the action log.

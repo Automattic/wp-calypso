@@ -21,13 +21,14 @@ import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
 import { abtest } from 'lib/abtest';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export class SignupProcessingScreen extends Component {
 	static propTypes = {
 		hasCartItems: PropTypes.bool.isRequired,
 		loginHandler: PropTypes.func,
 		steps: PropTypes.array.isRequired,
-		user: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		user: PropTypes.object,
 		signupProgress: PropTypes.array,
 		flowSteps: PropTypes.array,
 		useOAuth2Layout: PropTypes.bool.isRequired,
@@ -369,4 +370,5 @@ export class SignupProcessingScreen extends Component {
 
 export default connect( state => ( {
 	useOAuth2Layout: showOAuth2Layout( state ),
+	user: getCurrentUser( state ),
 } ) )( localize( SignupProcessingScreen ) );

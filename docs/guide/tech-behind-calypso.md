@@ -101,4 +101,4 @@ The way we use Git with Calypso is described in the [Git Workflow document](../g
 * [webpack](http://webpack.github.io) – building a JavaScript bundle of all of our modules and making sure loading them works just fine
 * [Babel](https://babeljs.io) – for transpiling ES2015+ and JSX
 
-Previous: [Hello, World!](hello-world.md) Next: [Glossary of Terms](glossary.md)
+Previous: [Hello, World!](hello-world.md) Next: [Information Architecture](information-architecture.md)

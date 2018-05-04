@@ -5,6 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEmpty } from 'lodash';
@@ -25,6 +26,7 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Pagination from 'components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
+import RewindAlerts from './rewind-alerts';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
@@ -353,16 +355,19 @@ class ActivityLog extends Component {
 		);
 
 		const timePeriod = ( () => {
+			const today = this.applySiteOffset( moment.utc( Date.now() ) );
 			let last = null;
 
 			return ( { rewindId } ) => {
-				const ts = 1000 * rewindId;
+				const ts = this.applySiteOffset( moment.utc( rewindId * 1000 ) );
 
-				if ( null === last || moment( ts ).format( 'D' ) !== moment( last ).format( 'D' ) ) {
+				if ( null === last || ! ts.isSame( last, 'day' ) ) {
 					last = ts;
 					return (
 						<h2 className="activity-log__time-period" key={ `time-period-${ ts }` }>
-							{ moment( ts ).format( 'LL' ) }
+							{ ts.isSame( today, 'day' )
+								? ts.format( translate( 'LL[ — Today]', { context: 'moment format string' } ) )
+								: ts.format( 'LL' ) }
 						</h2>
 					);
 				}
@@ -379,6 +384,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
+				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (

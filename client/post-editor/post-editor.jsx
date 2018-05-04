@@ -330,7 +330,6 @@ export class PostEditor extends React.Component {
 						<div className="post-editor__content-editor">
 							<EditorActionBar
 								isNew={ this.state.isNew }
-								onPrivatePublish={ this.onPublish }
 								savedPost={ this.state.savedPost }
 								site={ site }
 								isPostPrivate={ utils.isPrivate( this.state.post ) }
@@ -470,10 +469,9 @@ export class PostEditor extends React.Component {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( {
 			content: revision.content,
-			excerpt: revision.excerpt,
-			title: revision.title,
 		} );
 		this.props.editPost( this.props.siteId, this.props.postId, {
+			excerpt: revision.excerpt,
 			title: revision.title,
 		} );
 	};

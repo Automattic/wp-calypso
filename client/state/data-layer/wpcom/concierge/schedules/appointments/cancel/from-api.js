@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import responseSchema from './schema';
 
-export default makeParser( responseSchema, {} );
+export default makeJsonSchemaParser( responseSchema );

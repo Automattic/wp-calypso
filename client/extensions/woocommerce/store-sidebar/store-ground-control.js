@@ -28,10 +28,10 @@ const StoreGroundControl = ( { site, translate } ) => {
 				href={ backLink }
 				aria-label={ translate( 'Go back' ) }
 			>
-				<Gridicon icon="arrow-left" />
+				<Gridicon icon="chevron-left" />
 			</Button>
 			<div className="store-sidebar__ground-control-site">
-				<Site compact site={ site } indicator={ false } homeLink externalLink />
+				<Site site={ site } indicator={ false } homeLink externalLink />
 			</div>
 		</div>
 	);

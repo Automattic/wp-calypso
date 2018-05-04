@@ -105,15 +105,15 @@ const PackagesStep = ( props ) => {
 						siteId={ props.siteId }
 						orderId={ props.orderId } />
 					: ( <div key="no-packages" className="packages-step__package">
-							{ translate( 'There are no packages or items associated with this order' ) }
-						</div> )
+						{ translate( 'There are no packages or items associated with this order' ) }
+					</div> )
 				}
 			</div>
 
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || ! packageIds.length }
 				onClick={ confirmPackagesHandler } >
-					{ translate( 'Use these packages' ) }
+				{ translate( 'Use these packages' ) }
 			</StepConfirmationButton>
 
 			<MoveItemDialog
