@@ -21,6 +21,6 @@ describe( 'fromApi()', () => {
 			fromApi( invalidFieldTypes );
 		};
 
-		expect( invalidateCall ).toThrowError( SchemaError );
+		expect( invalidateCall ).toThrow( new SchemaError().message );
 	} );
 } );
