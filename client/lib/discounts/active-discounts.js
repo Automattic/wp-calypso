@@ -19,7 +19,7 @@ export default [
 				nudgeText: '20% Off All Plans',
 				nudgeEndsTodayText: '20% Off (Ends Today)',
 				plansPageNoticeText:
-					'Enter coupon code “MOTHERSDAY20” during checkout to claim your 30% discount',
+					'Enter coupon code “MOTHERSDAY20” during checkout to claim your 20% discount',
 			},
 		},
 	},
