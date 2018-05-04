@@ -151,7 +151,7 @@ class LineChart extends Component {
 
 			svg
 				.append( 'path' )
-				.attr( 'class', `line-chart__line-${ colorNum }` )
+				.attr( 'class', `line-chart__line-color-${ colorNum } line-chart__line-${ index }` )
 				.attr( 'd', line( dataSeries ) );
 		} );
 
@@ -167,7 +167,7 @@ class LineChart extends Component {
 
 				svg
 					.append( 'path' )
-					.attr( 'class', `line-chart__area-${ colorNum }` )
+					.attr( 'class', `line-chart__area-color-${ colorNum } line-chart__area-${ index }` )
 					.attr( 'd', area( dataSeries ) );
 			} );
 		}
@@ -189,7 +189,7 @@ class LineChart extends Component {
 							'class',
 							`line-chart__line-point line-chart__line${
 								drawFullSeries ? '' : '-end'
-							}-point-${ colorNum }`
+							}-point-color-${ colorNum }`
 						)
 						.attr( 'cx', xScale( datum.date ) )
 						.attr( 'cy', yScale( datum.value ) )
