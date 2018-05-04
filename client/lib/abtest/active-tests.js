@@ -1,7 +1,7 @@
 /** @format */
 export default {
 	mothersDay2018Discount: {
-		datestamp: '20180413',
+		datestamp: '20180411',
 		variations: {
 			upsell_30: 30,
 			upsell_20: 30,
