@@ -16,10 +16,6 @@ render: function() {
 
 ```
 
-## Autoscroll
-
-Happychat uses the `./autoscroll.js` mixin to provide scroll-to-bottom functionality as chat messages are received.
-
 ## Scrollbleed
 
 Happychat uses the `./scrollbleed.js` mixin to prevent mousewheel scroll events from scrolling DOM nodes unexpectedly (e.g. scrolling the whole page once the end of the chat has been reached).

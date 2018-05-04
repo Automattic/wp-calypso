@@ -16,9 +16,3 @@ export const eventSchema = {
 		links: { type: 'array' },
 	},
 };
-
-export const timelineSchema = {
-	type: 'array',
-	additionalProperties: false,
-	items: eventSchema,
-};

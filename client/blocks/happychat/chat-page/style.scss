@@ -20,14 +20,6 @@
 	min-height: 100%;
 }
 
-@include breakpoint( ">1040px" ) {
-
-	.chat-page .happychat__timeline-message {
-		max-width: 80%;
-	}
-
-}
-
 @include breakpoint( "<960px" ) {
 
 	.chat-page {

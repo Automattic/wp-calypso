@@ -320,37 +320,6 @@
 	}
 }
 
-.happychat__timeline-message {
-	flex: 0 0 auto;
-	display: flex;
-	flex-direction: row-reverse;
-	padding: 0 10px;
-	margin-top: 6px;
-	margin-bottom: 6px;
-	margin-right: auto;
-	margin-left: 0;
-
-	a {
-		color: $blue-medium;
-		text-decoration: underline;
-	}
-
-	a:hover {
-		text-decoration: none;
-	}
-
-	&.is-user-message {
-		flex-direction: row;
-		margin-left: auto;
-		margin-right: 0;
-
-		a {
-			color: lighten( $blue-light, 10% );
-		}
-
-	}
-}
-
 /**
  * Panel mode
  */
