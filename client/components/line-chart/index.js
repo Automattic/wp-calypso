@@ -18,6 +18,7 @@ import { moment } from 'i18n-calypso';
  */
 import D3Base from 'components/d3-base';
 import Tooltip from 'components/tooltip';
+import LineChartLegend from './legend';
 
 const CHART_MARGIN = 0.01;
 const POINTS_MAX = 10;
@@ -325,7 +326,9 @@ class LineChart extends Component {
 		}
 
 		return (
-			<div>
+			<div className="line-chart">
+				{ legendInfo && <LineChartLegend data={ legendInfo } /> }
+
 				<D3Base
 					className="line-chart__base"
 					drawChart={ this.drawChart }

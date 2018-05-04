@@ -1,3 +1,7 @@
+.line-chart {
+	position: relative;
+}
+
 .line-chart__line-0 {
 	fill: none;
 	stroke: $blue-dark;
@@ -93,7 +97,19 @@
 	fill: $gray-darken-10;
 }
 
- .line-chart__legend-sample-0 {
+.line-chart__legend {
+	position: absolute;
+	right: 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+
+	.legend-item {
+		margin-left: 20px;
+	}
+}
+
+.line-chart__legend-sample-0 {
 	fill: $blue-dark;
 }
 

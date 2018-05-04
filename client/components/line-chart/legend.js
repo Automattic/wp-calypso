@@ -16,7 +16,6 @@ const NUM_SERIES = 3;
 class LineChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.array.isRequired,
-		fillArea: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -24,22 +23,21 @@ class LineChartLegend extends Component {
 	};
 
 	render() {
-		const { data, fillArea } = this.props;
+		const { data } = this.props;
 
 		return (
-			<div className="line-chart__legend">
+			<span className="line-chart__legend">
 				{ data.map( ( dataSeries, index ) => {
 					return (
 						<LegendItem
 							key={ dataSeries.name }
 							name={ dataSeries.name }
-							circleClassName={ `line-chart__legend-sample-${ index % NUM_SERIES }${ fillArea &&
-								'-fill' }` }
+							circleClassName={ `line-chart__legend-sample-${ index % NUM_SERIES }-fill` }
 							description={ dataSeries.description }
 						/>
 					);
 				} ) }
-			</div>
+			</span>
 		);
 	}
 }

@@ -15,7 +15,6 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import LineChart from 'components/line-chart';
-import LineChartLegend from 'components/line-chart/legend';
 import LineChartPlaceholder from 'components/line-chart/placeholder';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
@@ -184,8 +183,8 @@ class GoogleMyBusinessStatsChart extends Component {
 					fillArea
 					data={ transformedData }
 					renderTooltipForDatanum={ renderTooltipForDatanum }
+					legendInfo={ legendInfo }
 				/>
-				<LineChartLegend fillArea data={ legendInfo } />
 			</Fragment>
 		);
 	}
