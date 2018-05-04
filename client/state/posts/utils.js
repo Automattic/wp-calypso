@@ -27,6 +27,7 @@ import {
 	find,
 	reject,
 } from 'lodash';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -378,6 +379,10 @@ export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
  */
 export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
 	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );
+}
+
+export function isDateEqual( localDateEdit, savedDate ) {
+	return moment( localDateEdit ).isSame( savedDate );
 }
 
 function isUnappliedMetadataEdit( edit, savedMetadata ) {

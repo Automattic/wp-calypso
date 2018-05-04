@@ -49,6 +49,7 @@ import {
 	getSerializedPostsQuery,
 	getUnappliedMetadataEdits,
 	isAuthorEqual,
+	isDateEqual,
 	isDiscussionEqual,
 	isTermsEqual,
 	mergePostEdits,
@@ -430,6 +431,8 @@ export function edits( state = {}, action ) {
 						switch ( key ) {
 							case 'author':
 								return isAuthorEqual( value, post[ key ] );
+							case 'date':
+								return isDateEqual( value, post[ key ] );
 							case 'discussion':
 								return isDiscussionEqual( value, post[ key ] );
 							case 'featured_image':

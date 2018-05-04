@@ -16,6 +16,7 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	isAuthorEqual,
+	isDateEqual,
 	isDiscussionEqual,
 	areAllMetadataEditsApplied,
 	applyPostEdits,
@@ -414,7 +415,7 @@ export const isEditedPostDirty = createSelector(
 						return ! isAuthorEqual( value, post.author );
 					}
 					case 'date': {
-						return ! moment( value ).isSame( post.date );
+						return ! isDateEqual( value, post.date );
 					}
 					case 'discussion': {
 						return ! isDiscussionEqual( value, post.discussion );
