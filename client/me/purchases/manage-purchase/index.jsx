@@ -169,10 +169,7 @@ class ManagePurchase extends Component {
 
 	renderPlanDetails() {
 		return (
-			<PurchasePlanDetails
-				selectedSite={ this.props.selectedSite }
-				purchaseId={ this.props.purchaseId }
-			/>
+			<PurchasePlanDetails siteId={ this.props.siteId } purchaseId={ this.props.purchaseId } />
 		);
 	}
 
