@@ -116,8 +116,15 @@ export function createCouponUpdateFromPromotion( promotion ) {
 	let freeShipping = promotion.freeShipping;
 	let discountType = promotion.type;
 	const meta = [ { key: 'promotion_type', value: promotion.type } ];
-	const productIds = ( appliesTo && appliesTo.productIds ) || undefined;
-	const productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
+
+	let productIds = ( appliesTo && appliesTo.productIds ) || undefined;
+	let productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
+
+	// If 'all' was selected, pass in empty arrays to reset product ids and category ids
+	if ( appliesTo.all ) {
+		productIds = [];
+		productCategoryIds = [];
+	}
 
 	// If end date is null, that means it was enabled but not selected, so use today as default.
 	const endDate = null === promotion.endDate ? new Date().toISOString() : promotion.endDate;

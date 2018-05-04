@@ -109,7 +109,7 @@ export class SubscriptionLengthOption extends React.Component {
 					<div className="subscription-length-picker__option-term">{ this.getTermText() }</div>
 				</div>
 				<div className="subscription-length-picker__option-description">
-					{ priceBeforeDiscount ? (
+					{ priceBeforeDiscount && priceBeforeDiscount !== price ? (
 						<div className="subscription-length-picker__option-old-price">
 							{ priceBeforeDiscount }
 						</div>

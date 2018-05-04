@@ -13,7 +13,7 @@ import React from 'react';
 import AcceptDialog from './dialog';
 
 export default function( message, callback, confirmButtonText, cancelButtonText, options ) {
-	var wrapper = document.createElement( 'div' );
+	let wrapper = document.createElement( 'div' );
 	document.body.appendChild( wrapper );
 
 	function onClose( result ) {

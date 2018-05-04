@@ -26,7 +26,6 @@ import TranslatorLauncher from './community-translator/launcher';
 import GuidedTours from 'layout/guided-tours';
 import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
-import SitesListNotices from 'lib/sites-list/notices';
 import OfflineStatus from 'layout/offline-status';
 import QueryPreferences from 'components/data/query-preferences';
 
@@ -51,6 +50,7 @@ import SupportUser from 'support/support-user';
 import isHappychatPanelHidden from 'state/happychat/selectors/is-happychat-panel-hidden';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
+import { isE2ETest } from 'lib/e2e';
 
 /* eslint-disable react/no-deprecated */
 const Layout = createReactClass( {
@@ -121,12 +121,11 @@ const Layout = createReactClass( {
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
-				<SitesListNotices />
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
 				<QueryPreferences />
 				{ <GuidedTours /> }
-				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
+				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -156,11 +155,11 @@ const Layout = createReactClass( {
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) &&
 					shouldLoadChat && (
-						<AsyncLoad
-							require="blocks/happychat/chat-panel"
-							minimized={ this.props.wasChatRecentlyActive }
-						/>
-					) }
+					<AsyncLoad
+						require="blocks/happychat/chat-panel"
+						minimized={ this.props.wasChatRecentlyActive }
+					/>
+				) }
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }

@@ -20,7 +20,7 @@ import site from './lib/mock-site';
 const options = { siteId: site.ID };
 
 describe( 'Email Followers Store', () => {
-	var Dispatcher, EmailFollowersStore;
+	let Dispatcher, EmailFollowersStore;
 
 	beforeEach( () => {
 		Dispatcher = require( 'dispatcher' );
@@ -37,18 +37,18 @@ describe( 'Email Followers Store', () => {
 		} );
 
 		test( 'Should update the store on RECEIVE_EMAIL_FOLLOWERS', () => {
-			var followers = EmailFollowersStore.getFollowers( options );
+			const followers = EmailFollowersStore.getFollowers( options );
 			assert.equal( 2, followers.length );
 		} );
 
 		test( 'The store should return an array of objects when fetching email followers', () => {
-			var followers = EmailFollowersStore.getFollowers( options );
+			const followers = EmailFollowersStore.getFollowers( options );
 			assert.isArray( followers );
 			assert.isObject( followers[ 0 ] );
 		} );
 
 		test( 'Fetching more email followers should update the array in the store', () => {
-			var followers = EmailFollowersStore.getFollowers( options ),
+			let followers = EmailFollowersStore.getFollowers( options ),
 				followersAgain;
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
@@ -57,7 +57,7 @@ describe( 'Email Followers Store', () => {
 		} );
 
 		test( 'Pagination data should update when we fetch more email followers', () => {
-			var pagination = EmailFollowersStore.getPaginationData( options );
+			let pagination = EmailFollowersStore.getPaginationData( options );
 			assert.equal( pagination.totalFollowers, 4 );
 			assert.equal( pagination.numFollowersFetched, 2 );
 			assert.equal( pagination.followersCurrentPage, 1 );
@@ -73,7 +73,7 @@ describe( 'Email Followers Store', () => {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
 		test( 'Should remove a single follower.', () => {
-			var followers = EmailFollowersStore.getFollowers( options ),
+			let followers = EmailFollowersStore.getFollowers( options ),
 				followersAgain;
 
 			assert.equal( followers.length, 2 );
@@ -83,7 +83,7 @@ describe( 'Email Followers Store', () => {
 			assert.equal( followersAgain.length, 1 );
 		} );
 		test( 'Should restore a single follower on removal error.', () => {
-			var followers = EmailFollowersStore.getFollowers( options ),
+			let followers = EmailFollowersStore.getFollowers( options ),
 				followersAfterRemove,
 				followersAfterError;
 			assert.equal( followers.length, 2 );

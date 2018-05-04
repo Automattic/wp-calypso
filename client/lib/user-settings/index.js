@@ -150,7 +150,7 @@ UserSettings.prototype.fetchSettings = function() {
  * @return {Null} null
  */
 UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
-	var settings = settingsOverride ? settingsOverride : this.unsavedSettings;
+	const settings = settingsOverride ? settingsOverride : this.unsavedSettings;
 
 	if ( isEmpty( settings ) ) {
 		debug( 'There are no settings to save.' );
@@ -255,7 +255,7 @@ UserSettings.prototype.isPendingEmailChange = function() {
  * @return {*} setting name value
  */
 UserSettings.prototype.getSetting = function( settingName ) {
-	var setting = null;
+	let setting = null;
 
 	// If we haven't fetched settings, or if the setting doesn't exist return null
 	if ( has( this.settings, settingName ) ) {

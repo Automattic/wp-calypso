@@ -282,7 +282,7 @@ describe( 'helpers', () => {
 				type: 'fixed_cart',
 				amount: '20',
 				appliesTo: { all: true },
-				couponId: 25
+				couponId: 25,
 			};
 
 			const badCouponPromotionCall = () => {

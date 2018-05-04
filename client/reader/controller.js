@@ -257,6 +257,7 @@ const exported = {
 
 		setPageTitle( context, 'Automattic' );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
 				require="reader/team/main"
@@ -275,6 +276,7 @@ const exported = {
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
 };

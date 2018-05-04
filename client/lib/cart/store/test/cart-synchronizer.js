@@ -11,9 +11,9 @@ import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import CartSynchronizer from '../cart-synchronizer';
 import FakeWPCOM from './fake-wpcom';
 
-var TEST_CART_KEY = 91234567890;
+const TEST_CART_KEY = 91234567890;
 
-var poller = {
+const poller = {
 	add: function() {},
 };
 
@@ -29,7 +29,7 @@ describe( 'cart-synchronizer', () => {
 
 	describe( '*before* the first fetch from the server', () => {
 		test( 'should *not* allow the value to be read', () => {
-			var wpcom = FakeWPCOM(),
+			let wpcom = FakeWPCOM(),
 				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller );
 
 			assert.throws( () => {
@@ -38,7 +38,7 @@ describe( 'cart-synchronizer', () => {
 		} );
 
 		test( 'should enqueue local changes and POST them after fetching', () => {
-			var wpcom = FakeWPCOM(),
+			let wpcom = FakeWPCOM(),
 				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
 				serverCart = emptyCart( TEST_CART_KEY );
 
@@ -61,7 +61,7 @@ describe( 'cart-synchronizer', () => {
 
 	describe( '*after* the first fetch from the server', () => {
 		test( 'should allow the value to be read', () => {
-			var wpcom = FakeWPCOM(),
+			let wpcom = FakeWPCOM(),
 				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
 				serverCart = emptyCart( TEST_CART_KEY );
 
@@ -73,7 +73,7 @@ describe( 'cart-synchronizer', () => {
 	} );
 
 	test( 'should make local changes visible immediately', () => {
-		var wpcom = FakeWPCOM(),
+		let wpcom = FakeWPCOM(),
 			synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
 			serverCart = emptyCart( TEST_CART_KEY );
 

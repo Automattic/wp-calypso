@@ -20,7 +20,7 @@ export default jsonp;
 /**
  * Callback index.
  */
-var count = 0;
+let count = 0;
 
 /**
  * Noop function. Does nothing.
@@ -35,7 +35,7 @@ function noop() {}
  * @param {Function} optional callback
  */
 function jsonp( url, query, fn ) {
-	var prefix = '__jp',
+	let prefix = '__jp',
 		timeout = 60000,
 		enc = encodeURIComponent,
 		target = document.getElementsByTagName( 'script' )[ 0 ] || document.head,

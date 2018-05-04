@@ -6,9 +6,9 @@
 import { get } from 'lodash';
 
 const getGoogleMyBusinessLocationId = ( state, siteId ) => {
-	return get( state, `googleMyBusiness.${ siteId }.location.id`, null );
+	return get( state, `siteSettings.items.${ siteId }.google_my_business_location_id`, null );
 };
 
 export default function isGoogleMyBusinessLocationConnected( state, siteId ) {
-	return getGoogleMyBusinessLocationId( state, siteId ) !== null;
+	return !! getGoogleMyBusinessLocationId( state, siteId );
 }

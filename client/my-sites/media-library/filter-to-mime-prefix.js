@@ -15,7 +15,7 @@
  */
 
 export default function( filter ) {
-	var mimePrefix;
+	let mimePrefix;
 
 	switch ( filter ) {
 		case 'images':

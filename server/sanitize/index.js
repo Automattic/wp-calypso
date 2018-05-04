@@ -12,7 +12,7 @@
  */
 
 function jsSlashEncoder( charStr ) {
-	var code = charStr.charCodeAt( 0 ),
+	const code = charStr.charCodeAt( 0 ),
 		hex = code.toString( 16 ).toUpperCase();
 
 	if ( code < 0x80 ) {
@@ -46,8 +46,8 @@ function jsSlashEncoder( charStr ) {
  * @return {string} JSON serialized string
  **/
 exports.jsonStringifyForHtml = function( value ) {
-	var jsonInHtmlBlacklist = /[^\x22,\-\.0-9:A-Z\[\x5C\]_a-z{}]/g;
-	var cdataClose = /\]\](?:>|\\x3E|\\u003E)/gi;
+	const jsonInHtmlBlacklist = /[^\x22,\-\.0-9:A-Z\[\x5C\]_a-z{}]/g;
+	const cdataClose = /\]\](?:>|\\x3E|\\u003E)/gi;
 	return (
 		JSON.stringify( value )
 			.replace( jsonInHtmlBlacklist, jsSlashEncoder )

@@ -97,6 +97,7 @@ export default {
 
 		// Extract this into a component...
 		context.primary = (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<Main className="auth">
 				<p className="auth__welcome">Loading user...</p>
 				<PulsingDot active />

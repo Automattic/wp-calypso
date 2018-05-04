@@ -37,6 +37,7 @@ const exported = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_discover_viewed' );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
 				require="reader/site-stream"
@@ -60,6 +61,7 @@ const exported = {
 				featuredStore={ featuredStore }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
 };

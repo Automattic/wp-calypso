@@ -81,87 +81,17 @@ describe( 'actions', () => {
 				} )
 			).to.be.true;
 		} );
-
-		test( 'should include metadata already existing on the post object', () => {
-			PostEditStore.get.restore();
-			sandbox.stub( PostEditStore, 'get' ).returns( {
-				metadata: [ { key: 'other', value: '1234' } ],
-			} );
-
-			PostActions.updateMetadata( 'foo', 'bar' );
-
-			expect(
-				Dispatcher.handleViewAction.calledWithMatch( {
-					type: 'EDIT_POST',
-					post: {
-						metadata: [
-							{ key: 'other', value: '1234' },
-							{ key: 'foo', value: 'bar', operation: 'update' },
-						],
-					},
-				} )
-			).to.be.true;
-		} );
-
-		test( 'should include metadata edits made previously', () => {
-			PostEditStore.get.restore();
-			sandbox.stub( PostEditStore, 'get' ).returns( {
-				metadata: [ { key: 'other', operation: 'delete' } ],
-			} );
-
-			PostActions.updateMetadata( 'foo', 'bar' );
-
-			expect(
-				Dispatcher.handleViewAction.calledWithMatch( {
-					type: 'EDIT_POST',
-					post: {
-						metadata: [
-							{ key: 'other', operation: 'delete' },
-							{ key: 'foo', value: 'bar', operation: 'update' },
-						],
-					},
-				} )
-			).to.be.true;
-		} );
-
-		test( 'should not duplicate existing metadata edits', () => {
-			PostEditStore.get.restore();
-			sandbox.stub( PostEditStore, 'get' ).returns( {
-				metadata: [
-					{ key: 'bar', value: 'foo' },
-					{ key: 'foo', value: 'baz', operation: 'delete' },
-				],
-			} );
-
-			PostActions.updateMetadata( 'foo', 'bar' );
-
-			expect(
-				Dispatcher.handleViewAction.calledWithMatch( {
-					type: 'EDIT_POST',
-					post: {
-						metadata: [
-							{ key: 'bar', value: 'foo' },
-							{ key: 'foo', value: 'bar', operation: 'update' },
-						],
-					},
-				} )
-			).to.be.true;
-		} );
 	} );
 
 	describe( '#deleteMetadata()', () => {
 		test( 'should dispatch a post edit with a deleted metadata', () => {
-			PostEditStore.get.restore();
-			sandbox.stub( PostEditStore, 'get' ).returns( {
-				metadata: [ { key: 'bar', value: 'foo' } ],
-			} );
 			PostActions.deleteMetadata( 'foo' );
 
 			expect(
 				Dispatcher.handleViewAction.calledWithMatch( {
 					type: 'EDIT_POST',
 					post: {
-						metadata: [ { key: 'bar', value: 'foo' }, { key: 'foo', operation: 'delete' } ],
+						metadata: [ { key: 'foo', operation: 'delete' } ],
 					},
 				} )
 			).to.be.true;

@@ -8,12 +8,12 @@ import { EventEmitter } from 'events';
 import page from 'page';
 
 /* eslint no-multi-spaces: 0 */
-var Route = page.Route;
+const Route = page.Route;
 
 // routing state and middleware
-var location = new EventEmitter();
-var currentContext = null;
-var route = new Route( '*' );
+const location = new EventEmitter();
+let currentContext = null;
+const route = new Route( '*' );
 
 // Inject our route at the front so we are always called
 page.callbacks.unshift(

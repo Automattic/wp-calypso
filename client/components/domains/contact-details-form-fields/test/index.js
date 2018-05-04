@@ -181,4 +181,41 @@ describe( 'ContactDetailsFormFields', () => {
 			);
 		} );
 	} );
+
+	describe( 'Setting phone input country', () => {
+		test( 'should user address country if available', () => {
+			const newProps = {
+				...defaultProps,
+				countryCode: 'JP',
+				userCountryCode: 'NZ',
+			};
+			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			expect( wrapper.find( 'FormPhoneMediaInput' ).props().countryCode ).toEqual( 'JP' );
+		} );
+
+		test( 'should set phone country using geo location when country code not available in contact details', () => {
+			const newProps = {
+				contactDetails: {
+					...defaultProps.contactDetails,
+					countryCode: '',
+				},
+				onSubmit: noop,
+				userCountryCode: 'FR',
+			};
+			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			expect( wrapper.find( 'FormPhoneMediaInput' ).props().countryCode ).toEqual( 'FR' );
+		} );
+
+		test( 'should use US as fallback', () => {
+			const newProps = {
+				contactDetails: {
+					...defaultProps.contactDetails,
+					countryCode: '',
+				},
+				onSubmit: noop,
+			};
+			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			expect( wrapper.find( 'FormPhoneMediaInput' ).props().countryCode ).toEqual( 'US' );
+		} );
+	} );
 } );

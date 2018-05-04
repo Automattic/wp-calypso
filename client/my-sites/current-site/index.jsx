@@ -21,11 +21,10 @@ import Gridicon from 'gridicons';
 import SiteNotice from './notice';
 import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSectionName, getSelectedSite } from 'state/ui/selectors';
 import { getSelectedOrAllSites, getVisibleSites } from 'state/selectors';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
-import { getSectionName } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isRtl from 'state/selectors/is-rtl';
 import { hasAllSitesList } from 'state/sites/selectors';
@@ -130,7 +129,7 @@ class CurrentSite extends Component {
 					<AllSites />
 				) }
 
-				<SiteNotice site={ selectedSite } allSitesPath={ this.props.allSitesPath } />
+				<SiteNotice site={ selectedSite } />
 				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
 			</Card>
 		);

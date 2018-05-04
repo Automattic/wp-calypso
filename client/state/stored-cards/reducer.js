@@ -82,14 +82,19 @@ export const isFetching = ( state = false, action ) => {
  * @param {Object} action - storedCard action
  * @return {Object} updated state
  */
-export const isDeleting = ( state = false, action ) => {
+export const isDeleting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case STORED_CARDS_DELETE:
-			return true;
+			return {
+				...state,
+				[ action.card.stored_details_id ]: true,
+			};
 
 		case STORED_CARDS_DELETE_FAILED:
 		case STORED_CARDS_DELETE_COMPLETED:
-			return false;
+			const nextState = { ...state };
+			delete nextState[ action.card.stored_details_id ];
+			return nextState;
 	}
 
 	return state;

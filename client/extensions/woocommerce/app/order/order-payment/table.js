@@ -155,11 +155,12 @@ class OrderRefundTable extends Component {
 		const inputId = `quantity-${ item.id }`;
 		return (
 			<OrderLineItem key={ item.id } isEditing item={ item } order={ order } site={ site }>
-				<ScreenReaderText>
-					<label htmlFor={ inputId }>
+				<label htmlFor={ inputId }>
+					<ScreenReaderText>
 						{ translate( 'Quantity of %(item)s', { args: { item: item.name } } ) }
-					</label>
-				</ScreenReaderText>
+					</ScreenReaderText>
+				</label>
+
 				<FormTextInput
 					type="number"
 					id={ inputId }
@@ -190,11 +191,11 @@ class OrderRefundTable extends Component {
 					</span>
 				</TableItem>
 				<TableItem colSpan="2" className="order-payment__item-total order-details__item-total">
-					<ScreenReaderText>
-						<label htmlFor={ inputId }>
+					<label htmlFor={ inputId }>
+						<ScreenReaderText>
 							{ translate( 'Value of fee %(item)s', { args: { item: item.name } } ) }
-						</label>
-					</ScreenReaderText>
+						</ScreenReaderText>
+					</label>
 					<PriceInput
 						id={ inputId }
 						currency={ order.currency }

@@ -96,6 +96,9 @@ Whether somebody is reviewing your code or you are reviewing somebody else’s c
 
 If you feel yourself waiting for someone to review a PR, don’t hesitate to personally ask for someone to review it or to mention them on GitHub. _The PR author is responsible for pushing the change through._
 
+### Adding A New Component
+
+If you'd like to add a new component to Calypso, please review our [new component checklist](../docs/new-component-checklist.md).
 
 ### We’re Here To Help
 
