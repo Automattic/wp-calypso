@@ -412,8 +412,9 @@ class ManagePurchase extends Component {
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
-					selectedSite={ selectedSite }
 					purchase={ purchase }
+					selectedSite={ selectedSite }
+					siteSlug={ this.props.siteSlug }
 				/>
 			</div>
 		);

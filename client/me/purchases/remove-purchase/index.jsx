@@ -58,8 +58,10 @@ class RemovePurchase extends Component {
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
 		setAllSitesSelected: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 		userId: PropTypes.number.isRequired,
 	};
 
@@ -159,9 +161,7 @@ class RemovePurchase extends Component {
 		const { isDomainOnlySite, purchase, selectedSite, translate } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
-			const survey = wpcom
-				.marketing()
-				.survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
+			const survey = wpcom.marketing().survey( 'calypso-remove-purchase', this.props.siteId );
 			const surveyData = {
 				'why-cancel': {
 					response: this.state.survey.questionOneRadio,
@@ -204,7 +204,7 @@ class RemovePurchase extends Component {
 			} else {
 				if ( isDomainRegistration( purchase ) ) {
 					if ( isDomainOnlySite ) {
-						this.props.receiveDeletedSite( selectedSite.ID );
+						this.props.receiveDeletedSite( this.props.siteId );
 						this.props.setAllSitesSelected();
 					}
 
@@ -218,7 +218,7 @@ class RemovePurchase extends Component {
 					notices.success(
 						translate( '%(productName)s was removed from {{siteName/}}.', {
 							args: { productName },
-							components: { siteName: <em>{ selectedSite.domain }</em> },
+							components: { siteName: <em>{ purchase.domain }</em> },
 						} ),
 						{ persistent: true }
 					);
@@ -316,7 +316,7 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { purchase, selectedSite, translate } = this.props;
+		const { purchase, translate } = this.props;
 		const buttons = {
 			cancel: {
 				action: 'cancel',
@@ -375,7 +375,7 @@ class RemovePurchase extends Component {
 					defaultContent={ this.renderPlanDialogText() }
 					onInputChange={ this.onSurveyChange }
 					purchase={ purchase }
-					selectedSite={ selectedSite }
+					selectedSite={ { slug: this.props.siteSlug } /* FIXME: (sirreal) slug passing hack */ }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					surveyStep={ this.state.surveyStep }
 				/>
@@ -401,7 +401,7 @@ class RemovePurchase extends Component {
 				<p>
 					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
 						args: { productName },
-						components: { siteName: <em>{ this.props.selectedSite.domain }</em> },
+						components: { siteName: <em>{ this.props.purchase.domain }</em> },
 					} ) }{' '}
 					{ isGoogleApps( purchase )
 						? translate(
@@ -473,7 +473,7 @@ class RemovePurchase extends Component {
 	}
 
 	render() {
-		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
+		if ( isDataLoading( this.props ) || ! this.props.purchase || ! this.props.siteId ) {
 			return null;
 		}
 
@@ -492,15 +492,19 @@ class RemovePurchase extends Component {
 }
 
 export default connect(
-	( state, { selectedSite } ) => ( {
-		isDomainOnlySite: selectedSite && isDomainOnly( state, selectedSite.ID ),
-		isAutomatedTransferSite: selectedSite && isSiteAutomatedTransfer( state, selectedSite.ID ),
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
-		purchasesError: getPurchasesError( state ),
-		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
-		userId: getCurrentUserId( state ),
-	} ),
+	( state, { purchase } ) => {
+		const siteId = purchase ? purchase.siteId : null;
+		return {
+			isDomainOnlySite: siteId && isDomainOnly( state, siteId ),
+			isAutomatedTransferSite: siteId && isSiteAutomatedTransfer( state, siteId ),
+			isChatAvailable: isHappychatAvailable( state ),
+			isChatActive: hasActiveHappychatSession( state ),
+			purchasesError: getPurchasesError( state ),
+			precancellationChatAvailable: isPrecancellationChatAvailable( state ),
+			siteId,
+			userId: getCurrentUserId( state ),
+		};
+	},
 	{
 		receiveDeletedSite,
 		recordTracksEvent,
