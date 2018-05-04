@@ -14,7 +14,7 @@ import tinymce from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-import SuggestionList from './suggestion-list';
+import SuggestionList from 'blocks/user-mentions/suggestion-list';
 import EditorMention from './editor-mention';
 import QueryUsersSuggestions from 'components/data/query-users-suggestions';
 import { getSelectedSiteId } from 'state/ui/selectors';
