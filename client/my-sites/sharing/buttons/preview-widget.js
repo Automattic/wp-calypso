@@ -7,17 +7,17 @@
 import { stringify } from 'qs';
 import i18n from 'i18n-calypso';
 
-var baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
+const baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 
 export default {
 	generatePreviewUrlFromButtons: function( buttons, showMore ) {
-		var numberOfCustomButtons = 0,
+		let numberOfCustomButtons = 0,
 			query = {};
 
 		// Build the query parameter array of services names to be rendered
 		// by the official sharing buttons preview widget
 		buttons.forEach( function( button ) {
-			var index;
+			let index;
 
 			if ( button.custom ) {
 				// Custom buttons previews are specified by index using the

@@ -14,7 +14,7 @@ const debug = debugFactory( 'calypso:my-sites:people:log-store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-var _errors = [],
+let _errors = [],
 	_inProgress = [],
 	_completed = [],
 	PeopleLogStore;
@@ -40,7 +40,7 @@ function removeLog( log ) {
 }
 
 function addLog( status, action, siteId, user, error ) {
-	var log = {
+	const log = {
 		status: status,
 		action: action,
 		siteId: siteId,
@@ -64,7 +64,7 @@ function getList( listName ) {
 }
 
 function filterList( listName, filterBy ) {
-	var list = getList( listName );
+	let list = getList( listName );
 	if ( filterBy ) {
 		list = list.filter( filterBy );
 	}
@@ -94,7 +94,7 @@ PeopleLogStore = {
 };
 
 PeopleLogStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case 'REMOVE_PEOPLE_NOTICES':

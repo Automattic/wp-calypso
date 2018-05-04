@@ -7,7 +7,7 @@
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:poller' );
 
-var DEFAULT_INTERVAL = 30000,
+let DEFAULT_INTERVAL = 30000,
 	_id = 0;
 
 function Poller( dataStore, fetcher, options ) {
@@ -45,7 +45,7 @@ function Poller( dataStore, fetcher, options ) {
 }
 
 Poller.prototype.start = function() {
-	var fetch = function() {
+	const fetch = function() {
 		debug( 'Calling fetcher for %o', { fetcher: this.fetcher, store: this.dataStore } );
 		this.fetch();
 	}.bind( this );

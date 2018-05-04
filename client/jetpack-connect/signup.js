@@ -25,7 +25,7 @@ import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import SignupForm from 'components/signup-form';
+import SignupForm from 'blocks/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
@@ -205,9 +205,10 @@ export class JetpackSignup extends Component {
 		);
 	}
 	render() {
+		const { partnerSlug } = this.props.authQuery;
 		const { isCreatingAccount } = this.state;
 		return (
-			<MainWrapper>
+			<MainWrapper partnerSlug={ partnerSlug }>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader authQuery={ this.props.authQuery } />

@@ -7,12 +7,12 @@
 	vertical-align: middle;
 	width: 35px;
 
-	$cc-payment-types: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
+	$payment-cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
 	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24';
 
-	@each $type in $cc-payment-types {
-		&.is-#{$type} {
-			background-image: url('/calypso/images/upgrades/cc-#{$type}.svg');
+	@each $brand in $payment-cc-brands {
+		&.is-#{$brand} {
+			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
 		}
 	}
 

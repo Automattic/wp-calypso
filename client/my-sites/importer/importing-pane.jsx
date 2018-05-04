@@ -134,7 +134,7 @@ class ImportingPane extends React.PureComponent {
 
 		if ( pageCount && postCount ) {
 			return this.props.translate(
-				'All done! Check out {{a}}Posts{{/a}} or ' +
+				'All done! Check out {{a}}Posts{{/a}} and ' +
 					'{{b}}Pages{{/b}} to see your imported content.',
 				{
 					components: {

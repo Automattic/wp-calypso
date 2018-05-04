@@ -62,7 +62,7 @@ function KeyboardShortcuts( keyBindings ) {
 }
 
 KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
-	var self = this;
+	const self = this;
 
 	// bind keys from the key bindings to their named events
 	keyBindings.forEach( function( keyBinding ) {
@@ -79,7 +79,7 @@ KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
 };
 
 KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, checkKeys ) {
-	var self = this,
+	let self = this,
 		keyCombinations = [],
 		matches;
 
@@ -120,7 +120,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 					return;
 				}
 
-				var keyValue;
+				let keyValue;
 				// Check if the value of the pressed key matches. This is needed
 				// for keys being used with shift modifiers, as the charCode only
 				// matches the modified key: '/' instead of '?'. Many of these
@@ -155,7 +155,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
  * @private
  */
 KeyboardShortcuts.prototype._getKey = function( event ) {
-	var key;
+	let key;
 	if ( !! event.key ) {
 		return event.key;
 	}

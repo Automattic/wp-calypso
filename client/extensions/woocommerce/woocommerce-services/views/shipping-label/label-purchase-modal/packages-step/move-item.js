@@ -110,18 +110,18 @@ const MoveItemDialog = ( props ) => {
 			action: 'move',
 			label: translate( 'Move' ),
 			isPrimary: true,
-			disabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization
+			disabled: targetPackageId === openedPackageId, // Result of targetPackageId initialization
 			onClick: () => props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
 		},
 	];
 
 	return (
 		<Dialog isVisible={ showItemMoveDialog }
-				isFullScreen={ false }
-				onClickOutside={ onClose }
-				onClose={ onClose }
-				buttons={ buttons }
-				additionalClassNames="wcc-root woocommerce packages-step__dialog" >
+			isFullScreen={ false }
+			onClickOutside={ onClose }
+			onClose={ onClose }
+			buttons={ buttons }
+			additionalClassNames="wcc-root woocommerce packages-step__dialog" >
 			<FormSectionHeading>{ translate( 'Move item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
 				<p>{ desc }</p>

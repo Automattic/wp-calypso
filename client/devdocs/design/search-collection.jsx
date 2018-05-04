@@ -6,10 +6,12 @@
 
 import React from 'react';
 import { map, chunk } from 'lodash';
+import jsxToString from 'jsx-to-string';
 
 /**
  * Internal dependencies
  */
+import ComponentPlayground from 'devdocs/design/component-playground';
 import LazyRender from 'react-lazily-render';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
@@ -59,6 +61,27 @@ const Collection = ( {
 				<span key={ `instance-link-${ showCounter }` } className="design__instance-link">
 					<a href={ exampleLink }>{ exampleName }</a>
 				</span>
+			);
+		}
+
+		if ( example.props.exampleCode ) {
+			const code =
+				typeof example.props.exampleCode === 'string'
+					? example.props.exampleCode
+					: jsxToString( example.props.exampleCode );
+			return (
+				<div>
+					<ComponentPlayground
+						code={ code }
+						name={ exampleName }
+						unique={ !! component }
+						url={ exampleLink }
+						component={ component }
+					/>
+					{ component && (
+						<ReadmeViewer section={ section } readmeFilePath={ example.props.readmeFilePath } />
+					) }
+				</div>
 			);
 		}
 

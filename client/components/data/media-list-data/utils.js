@@ -8,7 +8,7 @@ export default {
 	 * @param {string} filter - The filter to get a mime from
 	 */
 	getMimeBaseTypeFromFilter: function( filter ) {
-		var mime;
+		let mime;
 
 		switch ( filter ) {
 			case 'images':

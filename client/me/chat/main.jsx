@@ -54,7 +54,7 @@ export class HappychatPage extends Component {
 		} = this.props;
 
 		return (
-			<div className="happychat__page" aria-live="polite" aria-relevant="additions">
+			<div className="chat happychat__page" aria-live="polite" aria-relevant="additions">
 				<HappychatConnection />
 				<Notices
 					chatStatus={ chatStatus }

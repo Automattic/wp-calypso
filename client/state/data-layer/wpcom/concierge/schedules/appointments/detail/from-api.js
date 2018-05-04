@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import responseSchema from './schema';
 
 export const transform = ( { begin_timestamp, end_timestamp, schedule_id, ...rest } ) => ( {
@@ -13,4 +13,4 @@ export const transform = ( { begin_timestamp, end_timestamp, schedule_id, ...res
 	...rest,
 } );
 
-export default makeParser( responseSchema, {}, transform );
+export default makeJsonSchemaParser( responseSchema, transform );

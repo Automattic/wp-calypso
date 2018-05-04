@@ -31,7 +31,7 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } 
 			/>
 
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/ads-removed.svg" /> }
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +

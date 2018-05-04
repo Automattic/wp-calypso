@@ -8,7 +8,7 @@ import { assign, pick } from 'lodash';
 import urls from 'url';
 
 export default function( url ) {
-	var bits,
+	let bits,
 		formatKeys = [ 'host', 'hash', 'search', 'path' ];
 
 	// If it's empty, return null

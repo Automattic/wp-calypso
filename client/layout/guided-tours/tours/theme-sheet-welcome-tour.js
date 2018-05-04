@@ -37,7 +37,7 @@ export const ThemeSheetWelcomeTour = makeTour(
 			isAbTestInVariant( 'themeSheetWelcomeTour', 'enabled' )
 		) }
 	>
-		<Step name="init" placement="right" next="live-preview">
+		<Step name="init" placement="right" next="live-preview" style={ { animationDelay: '2s' } }>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>

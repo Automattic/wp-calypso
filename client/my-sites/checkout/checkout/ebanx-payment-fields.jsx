@@ -4,8 +4,9 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find, isEmpty } from 'lodash';
+import { find, isEmpty, includes, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,131 +29,130 @@ export class EbanxPaymentFields extends Component {
 		fieldClassName: '',
 	};
 
-	state = {
-		userSelectedPhoneCountryCode: '',
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			userSelectedPhoneCountryCode: '',
+			fields: get( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ props.countryCode ], 'fields', null ),
+		};
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.countryCode !== this.props.countryCode ) {
+			this.setFieldsState( this.props.countryCode );
+		}
+	}
+
+	setFieldsState( countryCode ) {
+		this.setState( {
+			fields: get( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ], 'fields', null ),
+		} );
+	}
 
 	createField = ( fieldName, componentClass, props ) => {
 		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
 		const isError = ! isEmpty( errorMessage );
+		const fieldProps = Object.assign(
+			{},
+			{
+				additionalClasses: `checkout__checkout-field ${ this.props.fieldClassName }`,
+				isError,
+				errorMessage: errorMessage[ 0 ],
+				name: fieldName,
+				onBlur: this.onFieldChange,
+				onChange: this.onFieldChange,
+				value: this.props.getFieldValue( fieldName ) || '',
+				autoComplete: 'off',
+				labelClass: 'checkout__form-label',
+			},
+			props
+		);
 
-		return PAYMENT_PROCESSOR_EBANX_COUNTRIES[ this.props.countryCode ].fields.indexOf( fieldName ) >
-			-1
-			? React.createElement(
-					componentClass,
-					Object.assign(
-						{},
-						{
-							additionalClasses: `checkout__form-field ${ this.props.fieldClassName }`,
-							isError,
-							errorMessage: errorMessage[ 0 ],
-							name: fieldName,
-							onBlur: this.onFieldChange,
-							onChange: this.onFieldChange,
-							value: this.props.getFieldValue( fieldName ),
-							autoComplete: 'off',
-							labelClass: 'checkout__form-label',
-						},
-						props
-					)
-				)
+		return includes( this.state.fields, fieldName )
+			? React.createElement( componentClass, fieldProps )
 			: null;
 	};
 
 	handlePhoneFieldChange = ( { value, countryCode } ) => {
-		this.setState(
-			{
-				userSelectedPhoneCountryCode: countryCode,
-			},
-			() => {
-				this.props.handleFieldChange( 'phone-number', value );
-			}
-		);
+		this.props.handleFieldChange( 'phone-number', value );
+		this.setState( { userSelectedPhoneCountryCode: countryCode } );
 	};
 
-	onFieldChange = event => {
-		this.props.handleFieldChange( event.target.name, event.target.value );
-	};
+	onFieldChange = event => this.props.handleFieldChange( event.target.name, event.target.value );
 
-	renderFields() {
+	render() {
 		const { translate, countriesList, countryCode } = this.props;
 		const { userSelectedPhoneCountryCode } = this.state;
 		const countryData = find( countriesList.get(), { code: countryCode } );
 		const countryName = countryData && countryData.name ? countryData.name : '';
+		const containerClassName = classNames(
+			'checkout__ebanx-payment-fields',
+			`checkout__ebanx-${ countryCode.toLowerCase() }`
+		);
 
-		let ebanxMessage = '';
-		if ( countryName ) {
-			ebanxMessage = translate(
-				'The following fields are also required for payments in %(countryName)s',
-				{
-					args: {
-						countryName,
-					},
-				}
-			);
-		}
-		return [
-			<span key="ebanx-required-fields" className="checkout__form-info-text">
-				{ ebanxMessage }
-			</span>,
+		return (
+			<div className={ containerClassName }>
+				<span key="ebanx-required-fields" className="checkout__form-info-text">
+					{ countryName &&
+						translate( 'The following fields are also required for payments in %(countryName)s', {
+							args: {
+								countryName,
+							},
+						} ) }
+				</span>
 
-			this.createField( 'document', Input, {
-				label: translate( 'Taxpayer Identification Number', {
-					comment:
-						'Individual taxpayer registry identification required ' +
-						'for Brazilian payment methods on credit card form',
-				} ),
-				key: 'document',
-			} ),
-
-			this.createField( 'phone-number', FormPhoneMediaInput, {
-				onChange: this.handlePhoneFieldChange,
-				countriesList,
-				// If the user has manually selected a country for the phone
-				// number, use that, but otherwise default this to the same
-				// country as the billing address.
-				countryCode: userSelectedPhoneCountryCode || countryCode,
-				label: translate( 'Phone' ),
-				key: 'phone-number',
-			} ),
-
-			this.createField( 'address-1', Input, {
-				maxLength: 40,
-				label: translate( 'Address' ),
-				key: 'address-1',
-			} ),
-
-			this.createField( 'street-number', Input, {
-				inputMode: 'numeric',
-				label: translate( 'Street Number', {
-					comment: 'Street number associated with address on credit card form',
-				} ),
-				key: 'street-number',
-			} ),
-
-			this.createField( 'address-2', HiddenInput, {
-				maxLength: 40,
-				label: translate( 'Address Line 2' ),
-				text: translate( '+ Add Address Line 2' ),
-				key: 'address-2',
-			} ),
-
-			this.createField( 'city', Input, {
-				label: translate( 'City' ),
-				key: 'city',
-			} ),
-
-			<div className="checkout__form-state-field" key="state">
-				{ this.createField( 'state', StateSelect, {
-					countryCode: countryCode,
-					label: translate( 'State' ),
+				{ this.createField( 'document', Input, {
+					label: translate( 'Taxpayer Identification Number', {
+						comment:
+							'Individual taxpayer registry identification required ' +
+							'for Brazilian payment methods on credit card form',
+					} ),
 				} ) }
-			</div>,
-		];
-	}
 
-	render() {
-		return <React.Fragment>{ this.renderFields() }</React.Fragment>;
+				{ this.createField( 'phone-number', FormPhoneMediaInput, {
+					onChange: this.handlePhoneFieldChange,
+					countriesList,
+					// If the user has manually selected a country for the phone
+					// number, use that, but otherwise default this to the same
+					// country as the billing address.
+					countryCode: userSelectedPhoneCountryCode || countryCode,
+					label: translate( 'Phone' ),
+				} ) }
+
+				{ this.createField( 'address-1', Input, {
+					maxLength: 40,
+					label: translate( 'Address' ),
+				} ) }
+
+				{ this.createField( 'street-number', Input, {
+					inputMode: 'numeric',
+					label: translate( 'Street Number', {
+						comment: 'Street number associated with address on credit card form',
+					} ),
+				} ) }
+
+				{ this.createField( 'address-2', HiddenInput, {
+					maxLength: 40,
+					label: translate( 'Address Line 2' ),
+					text: translate( '+ Add Address Line 2' ),
+				} ) }
+
+				{ this.createField( 'city', Input, {
+					label: translate( 'City' ),
+				} ) }
+
+				<div className="checkout__form-state-field">
+					{ this.createField( 'state', StateSelect, {
+						countryCode,
+						label: translate( 'State' ),
+					} ) }
+				</div>
+
+				{ this.createField( 'postal-code', Input, {
+					label: translate( 'Postal Code' ),
+				} ) }
+			</div>
+		);
 	}
 }
 

@@ -9,6 +9,9 @@ import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
+	WOOCOMMERCE_ORDER_REFUNDS_REQUEST,
+	WOOCOMMERCE_ORDER_REFUNDS_REQUEST_SUCCESS,
+	WOOCOMMERCE_ORDER_REFUNDS_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
 export const sendRefund = ( siteId, orderId, refund, onSuccess = false, onFailure = false ) => {
@@ -44,5 +47,31 @@ export const createRefundSuccess = ( siteId, orderId, refund ) => {
 		siteId,
 		orderId,
 		refund,
+	};
+};
+
+export const fetchRefunds = ( siteId, orderId ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_REFUNDS_REQUEST,
+		siteId,
+		orderId,
+	};
+};
+
+export const fetchRefundsFailure = ( siteId, orderId, error = {} ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_REFUNDS_REQUEST_FAILURE,
+		siteId,
+		orderId,
+		error,
+	};
+};
+
+export const fetchRefundsSuccess = ( siteId, orderId, refunds ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_REFUNDS_REQUEST_SUCCESS,
+		siteId,
+		orderId,
+		refunds,
 	};
 };

@@ -76,8 +76,8 @@ class ErrorBanner extends PureComponent {
 					details: translate( 'We came across a problem while trying to restore your site.' ),
 				}
 			: {
-					title: translate( 'Problem creating a backup' ),
-					details: translate( 'We came across a problem creating a backup for your site.' ),
+					title: translate( 'Problem preparing your file' ),
+					details: translate( 'There was a problem preparing your backup for downloading.' ),
 				};
 
 		return (

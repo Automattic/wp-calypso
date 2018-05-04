@@ -41,7 +41,7 @@ const SERVICE_LOCALIZED_SUBDOMAINS = [ 'en', 'pt', 'de', 'es', 'fr' ];
 const IGNORE_PREFERENCE_NAME = 'editorProofreadIgnore';
 
 function plugin( editor ) {
-	var suggestionsMenu,
+	let suggestionsMenu,
 		started,
 		atdCore,
 		dom,
@@ -81,8 +81,8 @@ function plugin( editor ) {
 
 		reposition() {
 			const rootNode = editor.dom.getRoot();
-			let pos = tinymce.DOM.getPos( editor.getContentAreaContainer() );
-			let targetPos = editor.dom.getPos( this.settings.target );
+			const pos = tinymce.DOM.getPos( editor.getContentAreaContainer() );
+			const targetPos = editor.dom.getPos( this.settings.target );
 
 			// Adjust targetPos for scrolling in the editor
 			if ( rootNode.nodeName === 'BODY' ) {
@@ -178,7 +178,7 @@ function plugin( editor ) {
 					'span.hiddenSpellError, span.hiddenGrammarError, span.hiddenSuggestion'
 				),
 				function( node ) {
-					var text = node.innerText || node.textContent;
+					const text = node.innerText || node.textContent;
 
 					if ( text === word ) {
 						dom.remove( node, true );
@@ -195,7 +195,7 @@ function plugin( editor ) {
 	// Called when the user clicks "Finish" or when no more suggestions left.
 	// Removes all remaining spans and fires custom event.
 	function finish() {
-		var node,
+		let node,
 			regex = new RegExp( 'mceItemHidden|hidden(((Grammar|Spell)Error)|Suggestion)' ),
 			nodes = editor.dom.select( 'span' ),
 			i = nodes.length;
@@ -257,7 +257,7 @@ function plugin( editor ) {
 
 	function setAlwaysIgnore( text ) {
 		// Save ignore preference
-		let ignores = PreferencesStore.get( IGNORE_PREFERENCE_NAME ) || [];
+		const ignores = PreferencesStore.get( IGNORE_PREFERENCE_NAME ) || [];
 		if ( -1 === ignores.indexOf( text ) ) {
 			ignores.push( text );
 		}
@@ -267,7 +267,7 @@ function plugin( editor ) {
 
 	// Create the suggestions menu
 	function showSuggestions( target ) {
-		var items = [],
+		let items = [],
 			text = target.innerText || target.textContent,
 			errorDescription = atdCore.findSuggestion( target );
 
@@ -359,7 +359,7 @@ function plugin( editor ) {
 
 		// add a command to request a document check and process the results.
 		editor.addCommand( 'mceWritingImprovementTool', function( callback ) {
-			var results,
+			let results,
 				errorCount = 0;
 
 			if ( typeof callback !== 'function' ) {
@@ -466,7 +466,7 @@ function plugin( editor ) {
 
 		// Sync ignored strings to core
 		function syncToCore() {
-			let ignores = PreferencesStore.get( IGNORE_PREFERENCE_NAME );
+			const ignores = PreferencesStore.get( IGNORE_PREFERENCE_NAME );
 			if ( ignores ) {
 				atdCore.setIgnoreStrings( ignores );
 			}
@@ -494,7 +494,7 @@ function plugin( editor ) {
 		context: 'tools',
 		cmd: 'mceWritingImprovementTool',
 		onPostRender: function() {
-			var self = this;
+			const self = this;
 
 			editor.on( 'SpellcheckStart SpellcheckEnd', function() {
 				self.active( started );
@@ -506,7 +506,7 @@ function plugin( editor ) {
 		tooltip: translate( 'Proofread Writing', { comment: 'Editor proofreading button tooltip' } ),
 		cmd: 'mceWritingImprovementTool',
 		onPostRender: function() {
-			var self = this;
+			const self = this;
 
 			editor.on( 'SpellcheckStart SpellcheckEnd', function() {
 				self.active( started );

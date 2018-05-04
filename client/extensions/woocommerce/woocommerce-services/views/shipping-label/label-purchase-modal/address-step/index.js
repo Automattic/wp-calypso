@@ -22,16 +22,16 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const renderSummary = ( {
-		values,
-		isNormalized,
-		normalizationInProgress,
-		normalized,
-		selectNormalized,
-		storeOptions,
-		errors,
-		translate,
-		expandStateName = false,
-	}, showCountry ) => {
+	values,
+	isNormalized,
+	normalizationInProgress,
+	normalized,
+	selectNormalized,
+	storeOptions,
+	errors,
+	translate,
+	expandStateName = false,
+}, showCountry ) => {
 	if ( normalizationInProgress ) {
 		return translate( 'Validating address…' );
 	}
@@ -47,7 +47,7 @@ const renderSummary = ( {
 	let str = city + ', ';
 	if ( state ) {
 		const statesMap = ( expandStateName && ( countriesData[ country ] || {} ).states ) || {};
-		str += ( statesMap[ state ] || state ) + '\xa0 ';  // append two spaces: non-breaking and normal
+		str += ( statesMap[ state ] || state ) + '\xa0 '; // append two spaces: non-breaking and normal
 	}
 	str += ( 'US' === country ? postcode.split( '-' )[ 0 ] : postcode );
 	if ( showCountry ) {

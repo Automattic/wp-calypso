@@ -27,7 +27,7 @@ export const SimplePaymentsTour = makeTour(
 			arrow="top-left"
 			target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
 			placement="below"
-			style={ { marginLeft: '-10px', zIndex: 'auto' } }
+			style={ { animationDelay: '2s', marginLeft: '-10px', zIndex: 'auto' } }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
