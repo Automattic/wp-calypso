@@ -87,7 +87,7 @@ const webpackConfig = {
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
-		runtimeChunk: { name: 'manifest' },
+		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 		namedModules: true,
 		namedChunks: isDevelopment,
 		minimize: shouldMinify,
