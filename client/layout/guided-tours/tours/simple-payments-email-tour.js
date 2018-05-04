@@ -24,18 +24,18 @@ import { getSectionName } from 'state/ui/selectors';
 const hasSidebar = state =>
 	includes(
 		[
-			'/stats',
-			'/plans',
-			'/pages',
-			'/posts',
-			'/media',
-			'/comments',
-			'/types',
-			'/themes',
-			'/sharing',
-			'/people',
-			'/plugins',
-			'/settings',
+			'stats',
+			'plans',
+			'posts-pages',
+			'media',
+			'comments',
+			'posts-custom',
+			'themes',
+			'sharing',
+			'people',
+			'plugins',
+			'domains',
+			'settings',
 		],
 		getSectionName( state )
 	);
