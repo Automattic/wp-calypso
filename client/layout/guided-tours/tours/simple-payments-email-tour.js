@@ -21,7 +21,7 @@ import {
 import { AddContentButton } from '../button-labels';
 import { getSectionName } from 'state/ui/selectors';
 
-const hasSidebar = state =>
+const sectionHasSidebar = state =>
 	includes(
 		[
 			'stats',
@@ -58,7 +58,7 @@ export const SimplePaymentsEmailTour = makeTour(
 			arrow="left-top"
 			style={ { animationDelay: '2s' } }
 			onTargetDisappear={ handleTargetDisappear }
-			when={ hasSidebar }
+			when={ sectionHasSidebar }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
