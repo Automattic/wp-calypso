@@ -4,6 +4,7 @@
  */
 import { find, isString } from 'lodash';
 import { parse } from 'url';
+import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -135,4 +136,21 @@ export function removeLocaleFromPath( path ) {
 	}
 
 	return parts.join( '/' ) + queryString;
+}
+
+/**
+ * Returns the slug for the WordPress.com support site for the current user, if
+ * any.
+ *
+ * Uses a (short) list of relatively well-updated *.support.wordpress.com
+ * support sites defined in config/_shared.json.
+ *
+ * @returns {string} A slug which is a valid subdomain of *.support.wordpress.com.
+ */
+export function getSupportLocale() {
+	const localeSlug = getLocaleSlug();
+	if ( config( 'support_locales' ).indexOf( localeSlug ) > -1 ) {
+		return localeSlug;
+	}
+	return 'en';
 }
