@@ -15,7 +15,7 @@ import Dispatcher from 'dispatcher';
 import { action as ActionTypes } from './constants';
 import wpcom from 'lib/wp';
 
-var HelpSearchActions = {
+const HelpSearchActions = {
 	fetch: function( searchQuery ) {
 		debug( 'fetching help links' );
 

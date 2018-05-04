@@ -1,5 +1,24 @@
 /** @format */
 export default {
+	multiyearSubscriptions: {
+		datestamp: '20180417',
+		variations: {
+			show: 10,
+			hide: 90,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	springSale30PercentOff: {
+		datestamp: '20180413',
+		variations: {
+			upsell: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	signupAtomicStoreVsPressable: {
 		datestamp: '20171101',
 		variations: {
@@ -64,21 +83,13 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	upgradePricingDisplayV2: {
-		datestamp: '20180305',
+	upgradePricingDisplayV3: {
+		datestamp: '20180402',
 		variations: {
 			original: 50,
 			modified: 50,
 		},
 		defaultVariation: 'original',
-	},
-	redesignedSidebarBanner: {
-		datestamp: '20180222',
-		variations: {
-			newBanner: 50,
-			oldBanner: 50,
-		},
-		defaultVariation: 'oldBanner',
 	},
 	mobilePlansTablesOnSignup: {
 		datestamp: '20180330',
@@ -88,5 +99,13 @@ export default {
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true,
+	},
+	showMoneyBackGuarantee: {
+		datestamp: '20180409',
+		variations: {
+			no: 1,
+			yes: 1,
+		},
+		defaultVariation: 'no',
 	},
 };

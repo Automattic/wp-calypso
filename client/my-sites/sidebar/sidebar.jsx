@@ -187,8 +187,8 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	trackThemesClick = () => {
-		this.trackMenuItemClick( 'themes' );
+	trackCustomizeClick = () => {
+		this.trackMenuItemClick( 'customize' );
 		this.onNavigate();
 	};
 
@@ -215,21 +215,22 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ translate( 'Themes' ) }
+				label={ translate( 'Customize' ) }
 				tipTarget="themes"
-				selected={ itemLinkMatches( '/themes', path ) }
-				link={ themesLink }
-				onNavigate={ this.trackThemesClick }
-				icon="themes"
-				preloadSectionName="themes"
+				selected={ itemLinkMatches( '/customize', path ) }
+				link={ this.props.customizeUrl }
+				onNavigate={ this.trackCustomizeClick }
+				icon="customize"
+				preloadSectionName="customize"
+				forceInternalLink
 			>
 				<SidebarButton
-					onClick={ this.trackSidebarButtonClick( 'customize' ) }
-					href={ this.props.customizeUrl }
-					preloadSectionName="customize"
+					onClick={ this.trackSidebarButtonClick( 'themes' ) }
+					href={ themesLink }
+					preloadSectionName="themes"
 					forceTargetInternal
 				>
-					{ this.props.translate( 'Customize' ) }
+					{ this.props.translate( 'Themes' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
@@ -681,7 +682,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<Sidebar>
 				<SidebarRegion>
-					<CurrentSite allSitesPath={ this.props.allSitesPath } />
+					<CurrentSite />
 					{ this.renderSidebarMenus() }
 				</SidebarRegion>
 				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>

@@ -16,7 +16,7 @@ import { follow, unfollow, recordFollowError } from 'state/reader/follows/action
 import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
-export function requestFollow( { dispatch, getState }, action ) {
+export function requestFollow( { dispatch }, action ) {
 	const { payload: { feedUrl } } = action;
 
 	dispatch(

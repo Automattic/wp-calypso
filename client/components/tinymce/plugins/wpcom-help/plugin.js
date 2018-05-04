@@ -14,7 +14,7 @@ import tinymce from 'tinymce/tinymce';
 import HelpModal from './help-modal';
 
 function wpcomHelpPlugin( editor ) {
-	var node;
+	let node;
 
 	editor.on( 'init', function() {
 		node = editor.getContainer().appendChild( document.createElement( 'div' ) );

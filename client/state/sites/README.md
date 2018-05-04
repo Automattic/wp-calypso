@@ -3,8 +3,6 @@ Sites
 
 A module for managing site data.
 
-__Note:__ This module does not yet have complete feature parity with [`sites-list`](../../lib/sites-list). Refer to the set of actions and reducers below to determine whether your needs are satisfied. If not, consider adding support to the module, or use `sites-list` instead.
-
 ## Actions
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.

@@ -31,16 +31,16 @@ const ProductFormCategoriesCard = ( {
 } ) => {
 	const handleChange = categoryNames => {
 		const newCategories = compact(
-			categoryNames.map( name => {
-				const escapedCategoryName = escape( name );
+			categoryNames.map( label => {
+				const escapedCategoryName = escape( label );
 				const category = find( productCategories, cat => {
-					return escape( cat.name ) === escapedCategoryName;
+					return escape( cat.label ) === escapedCategoryName;
 				} );
 
 				if ( ! category ) {
 					// Add a new product category to the creates list.
 					const newCategoryId = generateProductCategoryId();
-					editProductCategory( siteId, { id: newCategoryId }, { name } );
+					editProductCategory( siteId, { id: newCategoryId }, { name: label, label } );
 					return { id: newCategoryId };
 				}
 
@@ -61,10 +61,10 @@ const ProductFormCategoriesCard = ( {
 	const selectedCategoryNames = compact(
 		selectedCategories.map( c => {
 			const category = find( productCategories, { id: c.id } );
-			return ( category && unescape( category.name ) ) || undefined;
+			return ( category && unescape( category.label ) ) || undefined;
 		} )
 	);
-	const productCategoryNames = productCategories.map( c => unescape( c.name ) );
+	const productCategoryNames = productCategories.map( c => unescape( c.label ) );
 
 	return (
 		<Card className="products__categories-card">

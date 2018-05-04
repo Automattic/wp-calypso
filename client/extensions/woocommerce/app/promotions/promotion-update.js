@@ -244,7 +244,7 @@ function mapStateToProps( state, ownProps ) {
 	const site = getSelectedSiteWithFallback( state );
 	const currencySettings = getPaymentCurrencySettings( state );
 	const currency = currencySettings ? currencySettings.value : null;
-	const promotionId = ownProps.params.promotion;
+	const promotionId = ownProps.params.promotion_id;
 	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 	const productsLoading = areProductsLoading( state, site.ID );
 	const products = productsLoading ? null : getAllProducts( state, site.ID );

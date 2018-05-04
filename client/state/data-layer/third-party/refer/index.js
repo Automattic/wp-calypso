@@ -44,7 +44,7 @@ const trackAffiliatePageLoad = ( { dispatch }, action ) => {
 	);
 };
 
-const trackAffiliatePageLoadSuccess = ( { dispatch }, action, rData ) => {
+const trackAffiliatePageLoadSuccess = ( store, action, rData ) => {
 	aDebug( 'affiliate referrer request successful', rData );
 };
 

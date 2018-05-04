@@ -56,18 +56,20 @@ import {
 	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
+	getLocalizedLanguageNames,
 } from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
-import { getLanguage, isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
+import QueryLanguageNames from 'components/data/query-language-names';
 
 /**
  * Module variables
  */
-const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
+const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
@@ -314,13 +316,13 @@ class HelpContact extends React.Component {
 
 	getContactFormPropsVariation = variationSlug => {
 		const { isSubmitting } = this.state;
-		const { currentUserLocale, hasMoreThanOneSite, translate } = this.props;
+		const { currentUserLocale, hasMoreThanOneSite, translate, localizedLanguageNames } = this.props;
+		let buttonLabel = translate( 'Chat with us' );
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
 				// TEMPORARY: to collect data about the customer preferences, context 1050-happychat-gh
 				// for non english customers check if we have full support in their language
-				let buttonLabel = translate( 'Chat with us' );
 				let additionalSupportOption = { enabled: false };
 
 				if ( ! isDefaultLocale( currentUserLocale ) && ! this.props.hasHappychatLocalizedSupport ) {
@@ -333,10 +335,14 @@ class HelpContact extends React.Component {
 						this.setState( { wasAdditionalSupportOptionShown: true } );
 					}
 
-					// override chat buttons
-					buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
-						args: { defaultLanguage },
-					} );
+					if ( localizedLanguageNames && localizedLanguageNames[ defaultLanguageSlug ] ) {
+						// override chat buttons
+						buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
+							args: {
+								defaultLanguage: localizedLanguageNames[ defaultLanguageSlug ].localized,
+							},
+						} );
+					}
 
 					// add additional support option
 					additionalSupportOption = {
@@ -592,6 +598,7 @@ class HelpContact extends React.Component {
 				<Card className="help-contact__form">{ this.getView() }</Card>
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
+				<QueryLanguageNames />
 			</Fragment>
 		);
 		if ( this.props.compact ) {
@@ -617,6 +624,7 @@ export default connect(
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
 			isHappychatUserEligible: isHappychatUserEligible( state ),
+			localizedLanguageNames: getLocalizedLanguageNames( state ),
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),

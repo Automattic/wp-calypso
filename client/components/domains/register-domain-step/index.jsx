@@ -16,6 +16,7 @@ import {
 	isEmpty,
 	mapKeys,
 	noop,
+	pick,
 	pickBy,
 	reject,
 	snakeCase,
@@ -32,9 +33,11 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
+import Button from 'components/button';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
-import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
+import { checkDomainAvailability, getFixedDomainSearch, getAvailableTlds } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
@@ -74,8 +77,12 @@ const debug = debugFactory( 'calypso:domains:register-domain-step' );
 const domains = wpcom.domains();
 
 // max amount of domain suggestions we should fetch/display
-const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
+const PAGE_SIZE = 10;
+const MAX_PAGES = 3;
+const SUGGESTION_QUANTITY = config.isEnabled( 'domains/kracken-ui/pagination' )
+	? PAGE_SIZE * MAX_PAGES
+	: PAGE_SIZE;
 
 let searchVendor = 'group_1';
 const fetchAlgo = searchVendor + '/v1';
@@ -182,15 +189,16 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( suggestion );
 
 		return {
+			availableTlds: [],
 			clickedExampleSuggestion: false,
 			filters: this.getInitialFiltersState(),
+			lastFilters: this.getInitialFiltersState(),
 			lastQuery: suggestion,
 			lastDomainSearched: null,
 			lastDomainStatus: null,
 			lastDomainIsTransferrable: false,
 			loadingResults,
 			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
-			loadingNextPageResults: false,
 			notice: null,
 			pageNumber: 1,
 			searchResults: null,
@@ -203,6 +211,7 @@ class RegisterDomainStep extends React.Component {
 			includeDashes: false,
 			maxCharacters: '',
 			showExactMatchesOnly: false,
+			tlds: [],
 		};
 	}
 
@@ -270,6 +279,8 @@ class RegisterDomainStep extends React.Component {
 
 			this.setState( state );
 		}
+
+		this.getAvailableTlds();
 
 		this._isMounted = false;
 	}
@@ -339,7 +350,7 @@ class RegisterDomainStep extends React.Component {
 						showDismiss={ false }
 					/>
 				) }
-				{ this.content() }
+				{ this.renderContent() }
 				{ this.renderPaginationControls() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
@@ -349,10 +360,16 @@ class RegisterDomainStep extends React.Component {
 
 	renderSearchFilters() {
 		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
+		const isRenderingInitialSuggestions =
+			! Array.isArray( this.state.searchResults ) &&
+			! this.state.loadingResults &&
+			! this.props.showExampleSuggestions;
 		return (
-			isKrackenUi && (
+			isKrackenUi &&
+			! isRenderingInitialSuggestions && (
 				<div className="register-domain-step__filter">
 					<SearchFilters
+						availableTlds={ this.state.availableTlds }
 						filters={ this.state.filters }
 						onChange={ this.onFiltersChange }
 						onFiltersReset={ this.onFiltersReset }
@@ -363,13 +380,48 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
+	renderTldButtons() {
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
+		const { availableTlds, lastFilters: { tlds: selectedTlds } } = this.state;
+		return (
+			isKrackenUi && (
+				<CompactCard className="register-domain-step__tld-buttons">
+					{ availableTlds.slice( 0, 8 ).map( tld => (
+						<Button
+							className={ classNames( { 'is-active': includes( selectedTlds, tld ) } ) }
+							data-selected={ includes( selectedTlds, tld ) }
+							key={ tld }
+							onClick={ this.toggleTldInFilter }
+							value={ tld }
+						>
+							.{ tld }
+						</Button>
+					) ) }
+				</CompactCard>
+			)
+		);
+	}
+
 	renderPaginationControls() {
 		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
-		if ( ! isKrackenUi || this.state.searchResults === null ) {
+		if ( ! isKrackenUi ) {
 			return null;
 		}
 
-		const isLoading = this.state.loadingResults || this.state.loadingNextPageResults;
+		const { searchResults, pageNumber, loadingResults: isLoading } = this.state;
+
+		if ( searchResults === null ) {
+			return null;
+		}
+
+		if ( pageNumber >= MAX_PAGES ) {
+			return null;
+		}
+
+		if ( searchResults.length <= pageNumber * PAGE_SIZE ) {
+			return null;
+		}
+
 		const className = classNames( 'button', 'register-domain-step__next-page', {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
@@ -396,16 +448,16 @@ class RegisterDomainStep extends React.Component {
 		this.setState( { clickedExampleSuggestion: true } );
 	};
 
-	content() {
+	renderContent() {
 		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
-			return this.allSearchResults();
+			return this.renderSearchResults();
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return this.getExampleSuggestions();
+			return this.renderExampleSuggestions();
 		}
 
-		return this.initialSuggestions();
+		return this.renderInitialSuggestions();
 	}
 
 	save = () => {
@@ -413,29 +465,58 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	repeatSearch = ( stateOverride = {}, { shouldQuerySubdomains = true } = {} ) => {
+		this.save();
+
+		const { lastQuery } = this.state;
+		const loadingResults = Boolean( getFixedDomainSearch( lastQuery ) );
+
 		const nextState = {
 			exactMatchDomain: null,
 			lastDomainSearched: null,
-			loadingResults: true,
-			loadingSubdomainResults: true,
+			loadingResults,
+			loadingSubdomainResults: loadingResults,
 			notice: null,
 			...stateOverride,
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
 		this.setState( nextState, () => {
-			this.onSearch( this.state.lastQuery, { shouldQuerySubdomains } );
+			loadingResults && this.onSearch( lastQuery, { shouldQuerySubdomains } );
 		} );
 	};
 
 	getActiveFiltersForAPI() {
 		const { filters } = this.state;
-		return {
-			...mapKeys(
-				pickBy( filters, value => isNumberString( value ) || typeof value === 'boolean' ),
-				( value, key ) => snakeCase( key )
+		return mapKeys(
+			pickBy(
+				filters,
+				value => isNumberString( value ) || value === true || Array.isArray( value )
 			),
-		};
+			( value, key ) => snakeCase( key )
+		);
 	}
+
+	toggleTldInFilter = event => {
+		const isCurrentlySelected = event.currentTarget.dataset.selected === 'true';
+		const newTld = event.currentTarget.value;
+
+		const tlds = new Set( [ ...this.state.filters.tlds, newTld ] );
+		if ( isCurrentlySelected ) {
+			tlds.delete( newTld );
+		}
+
+		this.setState(
+			{
+				filters: {
+					...this.state.filters,
+					tlds: [ ...tlds ],
+				},
+			},
+			() => {
+				this.save();
+				this.repeatSearch( { pageNumber: 1 } );
+			}
+		);
+	};
 
 	onFiltersChange = newFilters => {
 		this.setState( {
@@ -443,12 +524,17 @@ class RegisterDomainStep extends React.Component {
 		} );
 	};
 
-	onFiltersReset = () => {
+	onFiltersReset = ( ...keysToReset ) => {
 		this.setState(
 			{
-				filters: this.getInitialFiltersState(),
+				filters: {
+					...this.state.filters,
+					...pick( this.getInitialFiltersState(), keysToReset ),
+				},
 			},
-			this.repeatSearch
+			() => {
+				this.repeatSearch();
+			}
 		);
 	};
 
@@ -477,6 +563,12 @@ class RegisterDomainStep extends React.Component {
 			},
 			callback
 		);
+	};
+
+	getAvailableTlds = () => {
+		getAvailableTlds().then( availableTlds => {
+			this.setState( { availableTlds } );
+		} );
 	};
 
 	checkDomainAvailability = ( domain, timestamp ) => {
@@ -544,12 +636,12 @@ class RegisterDomainStep extends React.Component {
 			quantity: suggestionQuantity,
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
-			page_number: this.state.pageNumber,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: searchVendor,
 			vertical: this.props.surveyVertical,
 			...this.getActiveFiltersForAPI(),
 		};
+		this.setState( { lastFilters: this.state.filters } );
 
 		debug( 'Fetching domains suggestions with the following query', query );
 
@@ -567,14 +659,6 @@ class RegisterDomainStep extends React.Component {
 					domainSuggestions.length,
 					this.props.analyticsSection
 				);
-
-				// If page number is greater than 1, then we assume the user has advanced
-				// to the next page. Given our "load more" pagination design, this means
-				// we'd want to combine the existing suggestions with the new suggestions
-				if ( this.state.pageNumber > 1 ) {
-					this.setState( { loadingNextPageResults: false } );
-					return [ ...this.state.searchResults, ...domainSuggestions ];
-				}
 
 				return domainSuggestions;
 			} )
@@ -748,8 +832,6 @@ class RegisterDomainStep extends React.Component {
 
 		const timestamp = Date.now();
 
-		searchVendor = this.props.isSignupStep ? 'group_2' : 'group_1';
-
 		const domainSuggestions = Promise.all( [
 			this.checkDomainAvailability( domain, timestamp ),
 			this.getDomainsSuggestions( domain, timestamp ),
@@ -770,18 +852,10 @@ class RegisterDomainStep extends React.Component {
 	showNextPage = () => {
 		debug( 'showNextPage was triggered' );
 
-		this.repeatSearch(
-			{
-				loadingNextPageResults: true,
-				loadingResults: false,
-				loadingSubdomainResults: false,
-				pageNumber: this.state.pageNumber + 1,
-			},
-			{ shouldQuerySubdomains: false }
-		);
+		this.setState( { pageNumber: this.state.pageNumber + 1 }, this.save );
 	};
 
-	initialSuggestions() {
+	renderInitialSuggestions() {
 		let domainRegistrationSuggestions;
 		let domainUnavailableSuggestion;
 		let suggestions;
@@ -827,7 +901,7 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
-	getExampleSuggestions() {
+	renderExampleSuggestions() {
 		return (
 			<ExampleDomainSuggestions
 				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
@@ -839,13 +913,15 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
-	allSearchResults() {
+	renderSearchResults() {
 		const {
 			exactMatchDomain,
 			lastDomainIsTransferrable,
 			lastDomainSearched,
 			lastDomainStatus,
+			pageNumber,
 		} = this.state;
+
 		const matchesSearchedDomain = suggestion => suggestion.domain_name === exactMatchDomain;
 		const availableDomain =
 			lastDomainStatus === domainAvailability.AVAILABLE &&
@@ -853,7 +929,15 @@ class RegisterDomainStep extends React.Component {
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
 		const searchResults = this.state.searchResults || [];
-		let suggestions = [ ...searchResults ];
+
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
+
+		let suggestions;
+		if ( isKrackenUi ) {
+			suggestions = searchResults.slice( 0, pageNumber * PAGE_SIZE );
+		} else {
+			suggestions = [ ...searchResults ];
+		}
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
@@ -866,7 +950,7 @@ class RegisterDomainStep extends React.Component {
 		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
 			// the search returned no results
 			if ( this.props.showExampleSuggestions ) {
-				return this.getExampleSuggestions();
+				return this.renderExampleSuggestions();
 			}
 
 			suggestions = this.props.defaultSuggestions || [];
@@ -891,12 +975,14 @@ class RegisterDomainStep extends React.Component {
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerUnavailableOption={ this.props.offerUnavailableOption }
-				placeholderQuantity={ SUGGESTION_QUANTITY }
+				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
 				railcarSeed={ this.state.railcarSeed }
 				fetchAlgo={ fetchAlgo }
 				cart={ this.props.cart }
-			/>
+			>
+				{ this.renderTldButtons() }
+			</DomainSearchResults>
 		);
 	}
 
