@@ -1324,6 +1324,35 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove date edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							date: '2018-05-01T10:36:41+02:00',
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							date: '2018-05-01T08:36:41+00:00',
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {},
+				},
+			} );
+		} );
+
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
