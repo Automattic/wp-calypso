@@ -20,14 +20,24 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { AddContentButton } from '../button-labels';
 
+// When moving from stats to the editor, the menu disappears, the first step
+// loses its target, and it repositions in the top left corner.
+// This function immediately moves it outside of the viewport, and, as soon
+// as the next step's target appears, the step is repositioned correctly.
+const handleTargetDisappear = () => {
+	const tourFirstStep = document.querySelector( '.guided-tours__step-first' );
+	tourFirstStep.style.left = '-9999px';
+};
+
 export const SimplePaymentsEmailTour = makeTour(
-	<Tour name="simplePaymentsEmailTour" version="20180501" path="/" when={ noop }>
+	<Tour name="simplePaymentsEmailTour" version="20180504" path="/stats" when={ noop }>
 		<Step
 			name="init"
 			target="side-menu-page"
 			placement="beside"
 			arrow="left-top"
 			style={ { animationDelay: '2s' } }
+			onTargetDisappear={ handleTargetDisappear }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
