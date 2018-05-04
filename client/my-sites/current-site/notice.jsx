@@ -5,6 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import url from 'url';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -14,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import isEligibleForSpringDiscount from 'state/selectors/is-current-user-eligible-for-spring-discount';
+import getActiveDiscount from 'state/selectors/get-active-discount';
 import { domainManagementList } from 'my-sites/domains/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { canCurrentUser, isDomainOnlySite, isEligibleForFreeToPaidUpsell } from 'state/selectors';
@@ -107,22 +108,33 @@ class SiteNotice extends React.Component {
 		);
 	}
 
-	freeToPaidPlan30PercentOffNotice() {
-		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
+	activeDiscountNotice() {
+		if ( ! this.props.activeDiscount ) {
 			return null;
 		}
 
-		const { site } = this.props;
+		const { site, activeDiscount } = this.props;
+		const { nudgeText, nudgeEndsTodayText, ctaText, name } = activeDiscount;
+		const bannerText =
+			nudgeEndsTodayText && this.promotionEndsToday( activeDiscount )
+				? nudgeEndsTodayText
+				: nudgeText;
 
 		return (
 			<SidebarBanner
 				ctaName="free-to-paid-sidebar"
-				ctaText={ 'Upgrade' }
-				href={ `/plans/${ site.slug }?sale` }
+				ctaText={ ctaText || 'Upgrade' }
+				href={ `/plans/${ site.slug }?discount=${ name }` }
 				icon="info-outline"
-				text={ '30% Off (Ends Today)' } // no translate() since we're launching this just for EN audience
+				text={ bannerText }
 			/>
 		);
+	}
+
+	promotionEndsToday( { endsAt } ) {
+		const now = new Date();
+		const format = 'YYYYMMDD';
+		return moment( now ).format( format ) === moment( endsAt ).format( format );
 	}
 
 	jetpackPluginsSetupNotice() {
@@ -159,9 +171,7 @@ class SiteNotice extends React.Component {
 		return (
 			<div className="site__notices">
 				<QueryActivePromotions />
-				{ this.props.isEligibleForSpringDiscount
-					? this.freeToPaidPlan30PercentOffNotice()
-					: this.freeToPaidPlanNotice() }
+				{ this.props.activeDiscount ? this.activeDiscountNotice() : this.freeToPaidPlanNotice() }
 				<DomainToPaidPlanNotice />
 				{ this.getSiteRedirectNotice( site ) }
 				<QuerySitePlans siteId={ site.ID } />
@@ -178,7 +188,7 @@ export default connect(
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
-			isEligibleForSpringDiscount: isEligibleForSpringDiscount( state, siteId ),
+			activeDiscount: getActiveDiscount( state ),
 			hasDomainCredit: hasDomainCredit( state, siteId ),
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 			pausedJetpackPluginsSetup:

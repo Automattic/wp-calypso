@@ -1,5 +1,15 @@
 /** @format */
 export default {
+	mothersDay2018Discount: {
+		datestamp: '20180413',
+		variations: {
+			upsell_30: 30,
+			upsell_20: 30,
+			control: 30,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	multiyearSubscriptions: {
 		datestamp: '20180417',
 		variations: {
