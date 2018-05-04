@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
 import { escapeRegExp, findIndex, get, head, includes, throttle, pick } from 'lodash';
 
@@ -14,40 +14,22 @@ import UserMentionSuggestionList from './suggestion-list';
 const keys = { enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow: 40 };
 
 /**
- * withUserMentionSuggestions is a higher-order component that adds user mention support to whatever input it wraps.
+ * addUserMentions is a higher-order component that adds user mention support to whatever input it wraps.
  *
- * @example: withUserMentionSuggestions( Component )
+ * Suggestions can be provided via the suggestions prop, or by the connectUserMentions higher-order component.
  *
- * @param {object} EnhancedComponent - react component to wrap
+ * @example: addUserMentions( Component )
+ *
+ * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
-export default EnhancedComponent =>
+export default WrappedComponent =>
 	class withUserMentions extends React.Component {
 		matchingSuggestions = [];
 
-		static displayName = `withUserMentions( ${ EnhancedComponent.displayName ||
-			EnhancedComponent.name } )`;
+		static displayName = `withUserMentions( ${ WrappedComponent.displayName ||
+			WrappedComponent.name } )`;
 		static propTypes = {};
-		static defaultProps = {
-			suggestions: [
-				{
-					ID: 1,
-					user_login: 'bungle',
-				},
-				{
-					ID: 2,
-					user_login: 'george',
-				},
-				{
-					ID: 3,
-					user_login: 'zippy',
-				},
-				{
-					ID: 4,
-					user_login: 'geoffrey',
-				},
-			],
-		};
 
 		state = {
 			showPopover: false,
@@ -172,9 +154,11 @@ export default EnhancedComponent =>
 			const node = this.textInput.current;
 			const nodeRect = node.getBoundingClientRect();
 			const caretPosition = getCaretCoordinates( node, node.selectionEnd );
+			const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 			const position = {
-				left: nodeRect.left + caretPosition.left,
-				top: nodeRect.top + caretPosition.top + 28,
+				left: nodeRect.left + caretPosition.left + scrollLeft,
+				top: nodeRect.top + caretPosition.top + scrollTop + 28,
 			};
 
 			console.log( position ); // eslint-disable-line no-console
@@ -224,6 +208,9 @@ export default EnhancedComponent =>
 			const textAfterSelectionEnd = node.value.slice( node.selectionEnd, node.value.length + 1 );
 
 			node.value = textBeforeAtSymbol + '@' + userLogin + textAfterSelectionEnd;
+
+			// Make sure the input still has focus (after a selection has been chosen with the mouse, for example)
+			node.focus();
 		};
 
 		updatePosition = ( state = this.state, newPosition ) => {
@@ -249,8 +236,8 @@ export default EnhancedComponent =>
 			const popoverPosition = pick( this.state.popoverPosition, [ 'top', 'left' ] );
 
 			return (
-				<div>
-					<EnhancedComponent
+				<Fragment>
+					<WrappedComponent
 						{ ...this.props }
 						onKeyUp={ this.handleKeyUp }
 						onKeyDown={ this.handleKeyDown }
@@ -268,7 +255,7 @@ export default EnhancedComponent =>
 								onClose={ this.hidePopover }
 							/>
 						) }
-				</div>
+				</Fragment>
 			);
 		}
 	};
