@@ -40,7 +40,6 @@ import {
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
@@ -55,7 +54,7 @@ import {
 	isDomainTransfer,
 	isTheme,
 } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
+import { getSite, isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
@@ -83,7 +82,7 @@ class ManagePurchase extends Component {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchase: PropTypes.object,
 		plan: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		theme: PropTypes.object,
 		userId: PropTypes.number,
@@ -375,7 +374,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, selectedSiteId, selectedSite } = this.props;
+		const { purchase, selectedSite, siteId } = this.props;
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),
@@ -387,7 +386,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<div>
-				<PurchaseSiteHeader siteId={ selectedSiteId } name={ siteName } domain={ siteDomain } />
+				<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
@@ -424,7 +423,7 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { selectedSite, selectedSiteId, purchase, isPurchaseTheme } = this.props;
+		const { isPurchaseTheme, purchase, selectedSite, siteId } = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
@@ -443,9 +442,7 @@ class ManagePurchase extends Component {
 					title="Purchases > Manage Purchase"
 				/>
 				<QueryUserPurchases userId={ this.props.userId } />
-				{ isPurchaseTheme && (
-					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ purchase.meta } />
-				) }
+				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 				<Main className={ classes }>
 					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
 					{
@@ -466,20 +463,19 @@ class ManagePurchase extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
-	const selectedSiteId = getSelectedSiteId( state );
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
-	const selectedSite = getSelectedSite( state );
+	const siteId = purchase ? purchase.siteId : null;
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
-		selectedSiteId,
-		selectedSite,
+		selectedSite: getSite( state, siteId ),
 		isPurchaseTheme,
-		isAtomicSite: selectedSite && isSiteAtomic( state, selectedSiteId ),
+		isAtomicSite: siteId && isSiteAtomic( state, siteId ),
 		plan: isPurchasePlan ? applyTestFiltersToPlansList( purchase.productSlug, abtest ) : undefined,
-		theme: isPurchaseTheme ? getCanonicalTheme( state, selectedSiteId, purchase.meta ) : undefined,
+		siteId,
+		theme: isPurchaseTheme ? getCanonicalTheme( state, siteId, purchase.meta ) : undefined,
 		userId: getCurrentUserId( state ),
 	};
 } )( localize( ManagePurchase ) );
