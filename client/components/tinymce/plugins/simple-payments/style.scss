@@ -1,5 +1,11 @@
 /** @format **/
 
+.remove-backdrop-background.dialog__backdrop {
+	// prevent stacking multiple dialog backdrops since we have
+	// simple payments and media library dialog open at the same time
+	background-color: rgba(white, 0);
+}
+
 .editor-simple-payments-modal {
 	&.dialog.card {
 		position: absolute;

@@ -66,6 +66,7 @@ function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 
 export class EditorMediaModal extends Component {
 	static propTypes = {
+		additionalBackdropClassNames: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
 		visible: PropTypes.bool,
 		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
 		onClose: PropTypes.func,
@@ -84,6 +85,7 @@ export class EditorMediaModal extends Component {
 	};
 
 	static defaultProps = {
+		additionalBackdropClassNames: '',
 		visible: false,
 		mediaLibrarySelectedItems: Object.freeze( [] ),
 		onClose: noop,
@@ -133,7 +135,6 @@ export class EditorMediaModal extends Component {
 		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );
 		}
-
 	}
 
 	componentWillUnmount() {
@@ -625,6 +626,7 @@ export class EditorMediaModal extends Component {
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
 				additionalClassNames="editor-media-modal"
+				additionalBackdropClassNames={ this.props.additionalBackdropClassNames }
 				shouldCloseOnOverlayClick={ this.shouldClose() }
 				shouldCloseOnEsc={ false }
 			>
