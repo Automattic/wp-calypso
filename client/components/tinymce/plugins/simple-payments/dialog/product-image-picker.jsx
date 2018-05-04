@@ -68,7 +68,13 @@ class ProductImagePicker extends Component {
 
 	getImagePlaceholder() {
 		return (
-			<div className="dialog__product-image-placeholder">
+			<div
+				className="dialog__product-image-placeholder"
+				onClick={ this.showMediaModal }
+				onKeyDown={ this.showMediaModal }
+				role="button"
+				tabIndex={ 0 }
+			>
 				<Gridicon icon="add-image" size={ 36 } />
 				{ this.props.translate( 'Add an Image' ) }
 			</div>
@@ -79,7 +85,13 @@ class ProductImagePicker extends Component {
 		const { siteId } = this.props;
 
 		return (
-			<div className="dialog__product-image">
+			<div
+				className="dialog__product-image"
+				onClick={ this.showMediaModal }
+				onKeyDown={ this.showMediaModal }
+				role="button"
+				tabIndex={ 0 }
+			>
 				<ProductImage siteId={ siteId } imageId={ this.props.input.value } showEditIcon={ true } />
 				<RemoveButton onRemove={ this.removeCurrentImage } />
 			</div>
@@ -110,13 +122,7 @@ class ProductImagePicker extends Component {
 					/>
 				</MediaLibrarySelectedData>
 
-				<div
-					className="dialog__product-image-container"
-					onClick={ this.showMediaModal }
-					onKeyDown={ this.showMediaModal }
-					role="button"
-					tabIndex={ 0 }
-				>
+				<div className="dialog__product-image-container">
 					{ this.props.input.value && this.getCurrentImage() }
 					{ ! this.props.input.value && this.getImagePlaceholder() }
 				</div>
