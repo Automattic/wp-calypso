@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, isArray, get, merge, each, omit, keyBy, union, some, drop, find } from 'lodash';
+import { isEmpty, get, mapValues, each, omit, keyBy, union, find } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
 
@@ -30,14 +30,21 @@ import { navigate } from 'state/ui/actions';
 /**
  * Checks if the supplied plugin or plugins are currently updating.
  *
- * @param {object|array} plugins Plugin object or list of plugin objects to check their update status.
- * @returns {bool}               True if one or more plugins are updating.
+ * @param {object|array} s Plugin object or list of plugin objects to check their update status.
+ * @returns {bool}         True if one or more plugins are updating.
  */
-const isPluginUpdating = plugins =>
-	some(
-		isArray( plugins ) ? plugins : [ plugins ],
-		plugin => 'inProgress' === get( plugin, 'updateStatus.status' )
-	);
+const isPluginUpdating = s =>
+	( Array.isArray( s ) ? s : [ s ] ).some( p => 'inProgress' === get( p, 'updateStatus.status' ) );
+
+/**
+ * Checks if the plugin is enqueued to be updated searching it in the list by its slug.
+ *
+ * @param {string} g Plugin slug.
+ * @param {array}  q Collection of plugins currently in the update queue.
+ *
+ * @returns {bool}   True if the plugin is enqueued to be updated.
+ */
+const isPluginEnqueued = ( g, q ) => !! find( q, { slug: g } );
 
 class ActivityLogTasklist extends Component {
 	static propTypes = {
@@ -117,6 +124,13 @@ class ActivityLogTasklist extends Component {
 		}
 	};
 
+	/**
+	 * Add a plugin to the update queue.
+	 *
+	 * @param {object} plugin Plugin to enqueue.
+	 *
+	 * @returns {undefined}
+	 */
 	enqueuePlugin = plugin =>
 		this.setState(
 			{
@@ -125,14 +139,24 @@ class ActivityLogTasklist extends Component {
 			this.continueQueue
 		);
 
+	/**
+	 * Remove a plugin from the update queue.
+	 *
+	 * @returns {undefined}
+	 */
 	dequeuePlugin = () =>
 		this.setState(
 			{
-				queuedPlugins: drop( this.state.queuedPlugins ),
+				queuedPlugins: this.state.queuedPlugins.slice( 1 ),
 			},
 			this.continueQueue
 		);
 
+	/**
+	 * Add all plugins with pending updates to the queue and process it.
+	 *
+	 * @returns {undefined}
+	 */
 	updateAll = () =>
 		this.setState(
 			{
@@ -174,15 +198,15 @@ class ActivityLogTasklist extends Component {
 	};
 
 	componentDidMount() {
-		const canonicalPath = `/stats/activity/${ this.props.siteSlug }`;
-		page.exit( canonicalPath, ( context, next ) => {
+		const path = `/stats/activity/${ this.props.siteSlug }`;
+		page.exit( path, ( context, next ) => {
 			if (
 				! this.state.queuedPlugins.length ||
-				window.confirm( this.props.translate( 'Cancel plugin updates and leave?' ) )
+				window.confirm( this.props.translate( 'Navigating away will cancel remaining updates' ) )
 			) {
 				return next();
 			}
-			setTimeout( () => page.replace( canonicalPath, null, false, false ), 0 );
+			page.replace( path, null, false, false );
 		} );
 	}
 
@@ -281,18 +305,18 @@ class ActivityLogTasklist extends Component {
 						disabled={ 0 < queuedPlugins.length }
 					>
 						<PopoverMenuItem
-							onClick={ this.dismissPlugins }
-							className="activity-log-tasklist__menu-item"
-						>
-							<Gridicon icon="trash" size={ 24 } />
-							<span>{ translate( 'Dismiss all' ) }</span>
-						</PopoverMenuItem>
-						<PopoverMenuItem
 							onClick={ this.goManagePlugins }
 							className="activity-log-tasklist__menu-item"
 						>
 							<Gridicon icon="cog" size={ 24 } />
 							<span>{ translate( 'Manage plugins' ) }</span>
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							onClick={ this.dismissPlugins }
+							className="activity-log-tasklist__menu-item"
+						>
+							<Gridicon icon="trash" size={ 24 } />
+							<span>{ translate( 'Dismiss all' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
 				</div>
@@ -305,7 +329,7 @@ class ActivityLogTasklist extends Component {
 						goToPlugin={ this.goToPlugin }
 						updatePlugin={ this.enqueuePlugin }
 						dismissPlugin={ this.dismissPlugins }
-						disable={ !! find( queuedPlugins, { slug: plugin.slug } ) }
+						disable={ isPluginEnqueued( plugin.slug, queuedPlugins ) }
 					/>
 				) ) }
 			</Card>
@@ -321,17 +345,18 @@ class ActivityLogTasklist extends Component {
  * 		{string}       name   Plugin name
  * 		{object|false} status Current update status
  * }
- * @param {array}  pluginList List of plugins that will be updated
- * @param {object} state      Progress of plugin update as found in status.plugins.installed.state.
- * @param {number} siteId     ID of the site where the plugin is installed
+ * @param {array}  pluginList Collection of plugins that will be updated.
+ * @param {object} state      App state tree.
+ * @param {number} siteId     ID of the site where the plugin is installed.
  *
  * @returns {array} List of plugins to update with their status.
  */
 const makePluginsList = ( pluginList, state, siteId ) =>
 	keyBy(
-		pluginList.map( plugin =>
-			merge( {}, plugin, { updateStatus: getStatusForPlugin( state, siteId, plugin.id ) } )
-		),
+		mapValues( pluginList, plugin => ( {
+			...plugin,
+			updateStatus: getStatusForPlugin( state, siteId, plugin.id ),
+		} ) ),
 		'slug'
 	);
 
