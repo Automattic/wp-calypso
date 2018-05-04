@@ -36,12 +36,7 @@ const PurchasesSite = ( {
 		items = times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
 	} else {
 		items = purchases.map( purchase => (
-			<PurchaseItem
-				key={ purchase.id }
-				slug={ slug }
-				isDisconnectedSite={ ! site }
-				purchase={ purchase }
-			/>
+			<PurchaseItem key={ purchase.id } slug={ slug } purchase={ purchase } />
 		) );
 	}
 
