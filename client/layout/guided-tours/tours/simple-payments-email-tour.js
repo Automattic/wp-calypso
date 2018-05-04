@@ -4,7 +4,7 @@
  */
 
 import React, { Fragment } from 'react';
-import { noop } from 'lodash';
+import { includes, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +19,9 @@ import {
 	Quit,
 } from 'layout/guided-tours/config-elements';
 import { AddContentButton } from '../button-labels';
+import { getSectionName } from 'state/ui/selectors';
+
+const hasSidebar = state => ! includes( [ 'customize', 'post-editor' ], getSectionName( state ) );
 
 // When moving from stats to the editor, the menu disappears, the first step
 // loses its target, and it repositions in the top left corner.
@@ -38,6 +41,7 @@ export const SimplePaymentsEmailTour = makeTour(
 			arrow="left-top"
 			style={ { animationDelay: '2s' } }
 			onTargetDisappear={ handleTargetDisappear }
+			when={ hasSidebar }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
