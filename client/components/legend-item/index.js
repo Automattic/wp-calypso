@@ -5,6 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { noop } from 'lodash';
 
 const SVG_SIZE = 30;
 
@@ -12,9 +13,24 @@ class LegendItem extends Component {
 	static propTypes = {
 		circleClassName: PropTypes.string.isRequired,
 		description: PropTypes.string,
+		onMouseOver: PropTypes.func,
+		onMouseOut: PropTypes.func,
 		name: PropTypes.string.isRequired,
 		percent: PropTypes.string,
 		value: PropTypes.string,
+	};
+
+	static defaultProps = {
+		onMouseEnter: noop,
+		onMouseOut: noop,
+	};
+
+	handleMouseOver = () => {
+		this.props.onMouseOver( this.props.name );
+	};
+
+	handleMouseOut = () => {
+		this.props.onMouseOut( this.props.name );
 	};
 
 	renderValueAndPercent() {
@@ -39,7 +55,12 @@ class LegendItem extends Component {
 		const { circleClassName, description, name } = this.props;
 
 		return (
-			<div className="legend-item">
+			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+			<div
+				className="legend-item"
+				onMouseOver={ this.handleMouseOver }
+				onMouseOut={ this.handleMouseOut }
+			>
 				<div className="legend-item__title">
 					<svg
 						className={ 'legend-item__title-sample-drawing' }
