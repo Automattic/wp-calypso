@@ -30,7 +30,7 @@ const handleTargetDisappear = () => {
 };
 
 export const SimplePaymentsEmailTour = makeTour(
-	<Tour name="simplePaymentsEmailTour" version="20180504" path="/stats" when={ noop }>
+	<Tour name="simplePaymentsEmailTour" version="20180501" path="/" when={ noop }>
 		<Step
 			name="init"
 			target="side-menu-page"
