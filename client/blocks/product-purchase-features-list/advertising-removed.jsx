@@ -23,10 +23,10 @@ export default localize( ( { isBusinessPlan, selectedSite, translate } ) => {
 						? translate( 'All WordPress.com advertising has been removed from your site.' )
 						: translate(
 								'All WordPress.com advertising has been removed from your site. ' +
-									'Upgrade to remove the WordPress.com footer credit.'
+									'Upgrade to Business to remove the WordPress.com footer credit.'
 							)
 				}
-				buttonText={ translate( 'Upgrade' ) }
+				buttonText={ translate( 'Upgrade to Business' ) }
 				href={ '/checkout/' + selectedSite.slug + '/business' }
 			/>
 		</div>
