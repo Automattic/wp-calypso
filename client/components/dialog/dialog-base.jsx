@@ -10,11 +10,11 @@ import classnames from 'classnames';
 class DialogBase extends Component {
 	static propTypes = {
 		additionalClassNames: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
-		additionalBackdropClassNames: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
 		autoFocus: PropTypes.bool,
 		baseClassName: PropTypes.string,
 		buttons: PropTypes.array,
 		className: PropTypes.string,
+		isBackdropVisible: PropTypes.bool,
 		isFullScreen: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		label: PropTypes.string,
@@ -25,7 +25,7 @@ class DialogBase extends Component {
 
 	static defaultProps = {
 		baseClassName: 'dialog',
-		additionalBackdropClassNames: '',
+		isBackdropVisible: true,
 		isFullScreen: true,
 		autoFocus: true,
 		label: '',
@@ -34,7 +34,7 @@ class DialogBase extends Component {
 	render() {
 		const {
 				additionalClassNames,
-				additionalBackdropClassNames,
+				isBackdropVisible,
 				baseClassName,
 				isFullScreen,
 				shouldCloseOnEsc,
@@ -42,8 +42,9 @@ class DialogBase extends Component {
 			contentClassName = baseClassName + '__content',
 			// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
 			dialogClassName = classnames( baseClassName, 'card', additionalClassNames ),
-			backdropClassName = classnames( baseClassName + '__backdrop', additionalBackdropClassNames, {
+			backdropClassName = classnames( baseClassName + '__backdrop', {
 				'is-full-screen': !! isFullScreen,
+				'is-hidden': ! isBackdropVisible,
 			} );
 
 		return (

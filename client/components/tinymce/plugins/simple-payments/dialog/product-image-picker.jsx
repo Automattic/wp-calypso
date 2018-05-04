@@ -114,7 +114,7 @@ class ProductImagePicker extends Component {
 						onClose={ this.setImage }
 						enabledFilters={ [ 'images' ] }
 						visible={ this.state.isSelecting }
-						additionalBackdropClassNames="remove-backdrop-background"
+						isBackdropVisible={ false }
 						labels={ {
 							confirm: translate( 'Add' ),
 						} }
