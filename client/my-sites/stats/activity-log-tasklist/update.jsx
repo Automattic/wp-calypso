@@ -26,7 +26,7 @@ class ActivityLogTaskUpdate extends Component {
 			name: PropTypes.string,
 		} ).isRequired,
 		disable: PropTypes.bool,
-		updatePlugin: PropTypes.func,
+		enqueuePlugin: PropTypes.func,
 		dismissPlugin: PropTypes.func,
 		goToPlugin: PropTypes.func,
 
@@ -34,7 +34,7 @@ class ActivityLogTaskUpdate extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	handlePluginUpdate = () => this.props.updatePlugin( this.props.plugin );
+	handlePluginEnqueue = () => this.props.enqueuePlugin( this.props.plugin );
 	handlePluginDismiss = () => this.props.dismissPlugin( this.props.plugin.slug );
 	handlePluginNameClick = () => this.props.goToPlugin( this.props.plugin.slug );
 
@@ -66,7 +66,7 @@ class ActivityLogTaskUpdate extends Component {
 						compact
 						primary
 						label={ translate( 'Update' ) }
-						onClick={ this.handlePluginUpdate }
+						onClick={ this.handlePluginEnqueue }
 						disabled={ disable }
 					>
 						<PopoverMenuItem icon="trash" onClick={ this.handlePluginDismiss }>

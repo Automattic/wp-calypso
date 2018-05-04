@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty, get, mapValues, each, omit, keyBy, union, find } from 'lodash';
-import Gridicon from 'gridicons';
 import page from 'page';
 
 /**
@@ -56,6 +55,13 @@ class ActivityLogTasklist extends Component {
 		// Plugins already updated + those with pending updates.
 		// This extends plugins with the plugin update status.
 		pluginsWithUpdate: PropTypes.object.isRequired,
+		trackUpdatePlugin: PropTypes.func.isRequired,
+		trackUpdatePluginFromError: PropTypes.func.isRequired,
+		trackUpdatePluginAll: PropTypes.func.isRequired,
+		trackDismissPluginAll: PropTypes.func.isRequired,
+		trackDismissPlugin: PropTypes.func.isRequired,
+		goManagePlugins: PropTypes.func.isRequired,
+		goToPlugin: PropTypes.func.isRequired,
 
 		// Localize
 		translate: PropTypes.func.isRequired,
@@ -128,16 +134,21 @@ class ActivityLogTasklist extends Component {
 	 * Add a plugin to the update queue.
 	 *
 	 * @param {object} plugin Plugin to enqueue.
-	 *
-	 * @returns {undefined}
+	 * @param {string} from   Send 'task' when this is called from the task list, 'notice' when it's called from error notice.
 	 */
-	enqueuePlugin = plugin =>
+	enqueuePlugin = ( plugin, from = 'task' ) => {
+		if ( 'task' === from ) {
+			this.props.trackUpdatePlugin( plugin.slug );
+		} else if ( 'notice' === from ) {
+			this.props.trackUpdatePluginFromError( plugin.slug );
+		}
 		this.setState(
 			{
 				queuedPlugins: union( this.state.queuedPlugins, [ plugin ] ),
 			},
 			this.continueQueue
 		);
+	};
 
 	/**
 	 * Remove a plugin from the update queue.
@@ -154,10 +165,9 @@ class ActivityLogTasklist extends Component {
 
 	/**
 	 * Add all plugins with pending updates to the queue and process it.
-	 *
-	 * @returns {undefined}
 	 */
-	updateAll = () =>
+	updateAll = () => {
+		this.props.trackUpdatePluginAll();
 		this.setState(
 			{
 				queuedPlugins: union(
@@ -167,6 +177,7 @@ class ActivityLogTasklist extends Component {
 			},
 			this.continueQueue
 		);
+	};
 
 	/**
 	 * Starts the update process for a specified plugin. Displays an informational notice.
@@ -177,13 +188,11 @@ class ActivityLogTasklist extends Component {
 	 * 		{string} slug Plugin slug, like "hello-dolly".
 	 * 		{string} name Plugin name, like "Hello Dolly".
 	 * }
-	 * @param {string} location Send 'from_task' when this is called a row in the task list,
-	 *                          'from_notice' when it's called from error notice.
 	 */
-	updatePlugin = ( plugin, location = 'from_task' ) => {
+	updatePlugin = plugin => {
 		const { showInfoNotice, siteName, updateSinglePlugin } = this.props;
 
-		updateSinglePlugin( plugin, location );
+		updateSinglePlugin( plugin );
 
 		showInfoNotice(
 			PluginNotices.inProgressMessage( 'UPDATE_PLUGIN', '1 site 1 plugin', {
@@ -206,7 +215,10 @@ class ActivityLogTasklist extends Component {
 			) {
 				return next();
 			}
-			page.replace( path, null, false, false );
+			setTimeout(
+				() => page.replace( `/stats/activity/${ this.props.siteSlug }`, null, false, false ),
+				0
+			);
 		} );
 	}
 
@@ -255,7 +267,7 @@ class ActivityLogTasklist extends Component {
 						{
 							id: pluginSlug,
 							button: translate( 'Try again' ),
-							onClick: () => this.enqueuePlugin( plugin, 'from_notice' ),
+							onClick: () => this.enqueuePlugin( plugin, 'notice' ),
 						}
 					);
 					this.dequeuePlugin();
@@ -307,15 +319,15 @@ class ActivityLogTasklist extends Component {
 						<PopoverMenuItem
 							onClick={ this.goManagePlugins }
 							className="activity-log-tasklist__menu-item"
+							icon="cog"
 						>
-							<Gridicon icon="cog" size={ 24 } />
 							<span>{ translate( 'Manage plugins' ) }</span>
 						</PopoverMenuItem>
 						<PopoverMenuItem
 							onClick={ this.dismissPlugins }
 							className="activity-log-tasklist__menu-item"
+							icon="trash"
 						>
-							<Gridicon icon="trash" size={ 24 } />
 							<span>{ translate( 'Dismiss all' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
@@ -327,7 +339,7 @@ class ActivityLogTasklist extends Component {
 						key={ plugin.id }
 						plugin={ plugin }
 						goToPlugin={ this.goToPlugin }
-						updatePlugin={ this.enqueuePlugin }
+						enqueuePlugin={ this.enqueuePlugin }
 						dismissPlugin={ this.dismissPlugins }
 						disable={ isPluginEnqueued( plugin.slug, queuedPlugins ) }
 					/>
@@ -371,27 +383,22 @@ const mapStateToProps = ( state, { siteId, plugins } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	updateSinglePlugin: ( plugin, location ) =>
-		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_tasklist_update_plugin', {
-					plugin_slug: plugin.slug,
-					location,
-				} ),
-				updatePlugin( siteId, plugin )
-			)
-		),
+	updateSinglePlugin: plugin => dispatch( updatePlugin( siteId, plugin ) ),
 	showErrorNotice: ( error, options ) => dispatch( errorNotice( error, options ) ),
 	showInfoNotice: ( info, options ) => dispatch( infoNotice( info, options ) ),
 	showSuccessNotice: ( success, options ) => dispatch( successNotice( success, options ) ),
+	trackUpdatePlugin: plugin_slug =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_update_plugin', { plugin_slug } ) ),
+	trackUpdatePluginFromError: plugin_slug =>
+		dispatch(
+			recordTracksEvent( 'calypso_activitylog_tasklist_update_plugin_from_error', { plugin_slug } )
+		),
+	trackUpdatePluginAll: () =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_update_plugin_all' ) ),
 	trackDismissPluginAll: () =>
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_plugin_all' ) ),
-	trackDismissPlugin: pluginSlug =>
-		dispatch(
-			recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_plugin', {
-				plugin_slug: pluginSlug,
-			} )
-		),
+	trackDismissPlugin: plugin_slug =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_plugin', { plugin_slug } ) ),
 	goManagePlugins: siteSlug =>
 		dispatch(
 			withAnalytics(
