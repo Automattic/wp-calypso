@@ -14,12 +14,13 @@ import meController from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 
-export default function() {
+export default function( router ) {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
-		page(
+		router(
 			paths.addCreditCard,
+			redirectLoggedOut,
 			meController.sidebar,
 			controller.addCreditCard,
 			makeLayout,
@@ -27,29 +28,39 @@ export default function() {
 		);
 
 		// redirect legacy urls
-		page( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard ) );
+		router( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard ) );
 	}
 
-	page(
+	router(
 		paths.billingHistory,
+		redirectLoggedOut,
 		meController.sidebar,
 		billingController.billingHistory,
 		makeLayout,
 		clientRender
 	);
 
-	page(
+	router(
 		paths.billingHistoryReceipt(),
+		redirectLoggedOut,
 		meController.sidebar,
 		billingController.transaction,
 		makeLayout,
 		clientRender
 	);
 
-	page( paths.purchasesRoot, meController.sidebar, controller.list, makeLayout, clientRender );
+	router(
+		paths.purchasesRoot,
+		redirectLoggedOut,
+		meController.sidebar,
+		controller.list,
+		makeLayout,
+		clientRender
+	);
 
-	page(
+	router(
 		paths.managePurchase(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.managePurchase,
@@ -57,8 +68,9 @@ export default function() {
 		clientRender
 	);
 
-	page(
+	router(
 		paths.cancelPurchase(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.cancelPurchase,
@@ -66,8 +78,9 @@ export default function() {
 		clientRender
 	);
 
-	page(
+	router(
 		paths.cancelPrivacyProtection(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.cancelPrivacyProtection,
@@ -75,8 +88,9 @@ export default function() {
 		clientRender
 	);
 
-	page(
+	router(
 		paths.confirmCancelDomain(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.confirmCancelDomain,
@@ -84,8 +98,9 @@ export default function() {
 		clientRender
 	);
 
-	page(
+	router(
 		paths.addCardDetails(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.addCardDetails,
@@ -93,8 +108,9 @@ export default function() {
 		clientRender
 	);
 
-	page(
+	router(
 		paths.editCardDetails(),
+		redirectLoggedOut,
 		meController.sidebar,
 		siteSelection,
 		controller.editCardDetails,
@@ -103,33 +119,35 @@ export default function() {
 	);
 
 	// redirect legacy urls
-	page( '/purchases', () => page.redirect( paths.purchasesRoot ) );
-	page( '/purchases/:siteName/:purchaseId', ( { params: { siteName, purchaseId } } ) =>
+	router( '/purchases', () => page.redirect( paths.purchasesRoot ) );
+	router( '/purchases/:siteName/:purchaseId', ( { params: { siteName, purchaseId } } ) =>
 		page.redirect( paths.managePurchase( siteName, purchaseId ) )
 	);
-	page( '/purchases/:siteName/:purchaseId/cancel', ( { params: { siteName, purchaseId } } ) =>
+	router( '/purchases/:siteName/:purchaseId/cancel', ( { params: { siteName, purchaseId } } ) =>
 		page.redirect( paths.cancelPurchase( siteName, purchaseId ) )
 	);
-	page(
+	router(
 		'/purchases/:siteName/:purchaseId/cancel-private-registration',
 		( { params: { siteName, purchaseId } } ) =>
 			page.redirect( paths.cancelPrivacyProtection( siteName, purchaseId ) )
 	);
-	page(
+	router(
 		'/purchases/:siteName/:purchaseId/confirm-cancel-domain',
 		( { params: { siteName, purchaseId } } ) =>
 			page.redirect( paths.confirmCancelDomain( siteName, purchaseId ) )
 	);
-	page( '/purchases/:siteName/:purchaseId/payment/add', ( { params: { siteName, purchaseId } } ) =>
-		page.redirect( paths.addCardDetails( siteName, purchaseId ) )
+	router(
+		'/purchases/:siteName/:purchaseId/payment/add',
+		( { params: { siteName, purchaseId } } ) =>
+			page.redirect( paths.addCardDetails( siteName, purchaseId ) )
 	);
-	page(
+	router(
 		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
 		( { params: { siteName, purchaseId, cardId } } ) =>
 			page.redirect( paths.editCardDetails( siteName, purchaseId, cardId ) )
 	);
-	page( '/me/billing', () => page.redirect( paths.billingHistory ) );
-	page( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
+	router( '/me/billing', () => page.redirect( paths.billingHistory ) );
+	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
 	);
 }
