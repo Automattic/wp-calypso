@@ -182,13 +182,13 @@ export default {
 		if ( 'simplePaymentsEmailTour' === get( queryOptions, 'tour' ) ) {
 			if ( ! isDesktop() ) {
 				context.store.dispatch(
-					recordTracksEvent( 'calypso_simple_payment_email_tour', { mobile: true } )
+					recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'mobile' } )
 				);
 				window.location.href = 'https://en.support.wordpress.com/simple-payments/';
 				return;
 			}
 			context.store.dispatch(
-				recordTracksEvent( 'calypso_simple_payment_email_tour', { mobile: false } )
+				recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'desktop' } )
 			);
 		}
 
