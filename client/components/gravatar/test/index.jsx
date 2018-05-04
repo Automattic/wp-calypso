@@ -37,6 +37,7 @@ describe( 'Gravatar', () => {
 			expect( img.hasClass( 'gravatar' ) ).to.equal( true );
 			expect( img.prop( 'width' ) ).to.equal( 32 );
 			expect( img.prop( 'height' ) ).to.equal( 32 );
+			expect( img.prop( 'alt' ) ).to.equal( 'Bob The Tester' );
 		} );
 
 		test( 'should update the width and height when given a size attribute', () => {
@@ -48,6 +49,7 @@ describe( 'Gravatar', () => {
 			expect( img.hasClass( 'gravatar' ) ).to.equal( true );
 			expect( img.prop( 'width' ) ).to.equal( 100 );
 			expect( img.prop( 'height' ) ).to.equal( 100 );
+			expect( img.prop( 'alt' ) ).to.equal( 'Bob The Tester' );
 		} );
 
 		test( 'should update source image when given imgSize attribute', () => {
@@ -61,6 +63,7 @@ describe( 'Gravatar', () => {
 			expect( img.hasClass( 'gravatar' ) ).to.equal( true );
 			expect( img.prop( 'width' ) ).to.equal( 32 );
 			expect( img.prop( 'height' ) ).to.equal( 32 );
+			expect( img.prop( 'alt' ) ).to.equal( 'Bob The Tester' );
 		} );
 
 		test( 'should serve a default image if no avatar_URL available', () => {
@@ -73,6 +76,40 @@ describe( 'Gravatar', () => {
 			expect( img.hasClass( 'gravatar' ) ).to.equal( true );
 			expect( img.prop( 'width' ) ).to.equal( 32 );
 			expect( img.prop( 'height' ) ).to.equal( 32 );
+			expect( img.prop( 'alt' ) ).to.equal( 'Bob The Tester' );
+		} );
+
+		test( 'should also pick up the default alt from the name prop', () => {
+			const userFromSiteApi = {
+				avatar_URL: avatarUrl,
+				name: 'Bob The Tester',
+			};
+			const gravatar = shallow( <Gravatar user={ userFromSiteApi } /> );
+			const img = gravatar.find( 'img' );
+
+			expect( img.length ).to.equal( 1 );
+			expect( img.prop( 'src' ) ).to.equal( avatarUrl );
+			expect( img.hasClass( 'gravatar' ) ).to.equal( true );
+			expect( img.prop( 'width' ) ).to.equal( 32 );
+			expect( img.prop( 'height' ) ).to.equal( 32 );
+			expect( img.prop( 'alt' ) ).to.equal( 'Bob The Tester' );
+		} );
+
+		test( 'should prefer display_name for the alt', () => {
+			const userFromSiteApi = {
+				avatar_URL: avatarUrl,
+				name: 'Bob The Tester',
+				display_name: 'Bob',
+			};
+			const gravatar = shallow( <Gravatar user={ userFromSiteApi } /> );
+			const img = gravatar.find( 'img' );
+
+			expect( img.length ).to.equal( 1 );
+			expect( img.prop( 'src' ) ).to.equal( avatarUrl );
+			expect( img.hasClass( 'gravatar' ) ).to.equal( true );
+			expect( img.prop( 'width' ) ).to.equal( 32 );
+			expect( img.prop( 'height' ) ).to.equal( 32 );
+			expect( img.prop( 'alt' ) ).to.equal( 'Bob' );
 		} );
 
 		test( 'should allow overriding the alt attribute', () => {

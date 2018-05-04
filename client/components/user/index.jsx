@@ -12,8 +12,8 @@ import PropTypes from 'prop-types';
  */
 import Gravatar from 'components/gravatar';
 
-export default class UserItem extends Component {
-	static displayName = 'UserItem';
+export default class User extends Component {
+	static displayName = 'User';
 
 	static propTypes = {
 		user: PropTypes.object,
@@ -21,7 +21,7 @@ export default class UserItem extends Component {
 
 	render() {
 		const user = this.props.user || null;
-		const name = user ? user.name : '';
+		const name = user ? user.display_name || user.name : '';
 		return (
 			<div className="user" title={ name }>
 				<Gravatar size={ 26 } user={ user } />
