@@ -147,7 +147,7 @@ class DesignAssets extends React.Component {
 					</HeaderCake>
 				) : (
 					<div>
-						<ReadmeViewer readmeFilePath="/client/components/README.md" />
+						<ReadmeViewer readmeFilePath="/client/devdocs/design/README.md" />
 						<SearchCard
 							onSearch={ this.onSearch }
 							initialValue={ filter }
