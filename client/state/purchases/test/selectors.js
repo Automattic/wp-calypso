@@ -7,6 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { createPurchasesArray } from 'lib/purchases/assembler';
 import {
 	getPurchases,
 	getByPurchaseId,
@@ -16,7 +17,6 @@ import {
 	getSitePurchases,
 	isUserPaid,
 } from '../selectors';
-import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'selectors', () => {
 	describe( 'getPurchases', () => {
@@ -37,9 +37,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPurchases( state ) ).to.deep.equal(
-				purchasesAssembler.createPurchasesArray( initialPurchases )
-			);
+			expect( getPurchases( state ) ).to.deep.equal( createPurchasesArray( initialPurchases ) );
 
 			const newPurchases = Object.freeze( [
 				{ ID: 3, product_name: 'business plan', blog_id: 3117 },
@@ -53,7 +51,7 @@ describe( 'selectors', () => {
 						},
 					} )
 				)
-			).to.deep.equal( purchasesAssembler.createPurchasesArray( newPurchases ) );
+			).to.deep.equal( createPurchasesArray( newPurchases ) );
 		} );
 	} );
 
