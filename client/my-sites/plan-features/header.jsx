@@ -58,10 +58,7 @@ export class PlanFeaturesHeader extends Component {
 					<PlanIcon plan={ planType } />
 				</div>
 				<div className="plan-features__header-text">
-					<h4 className="plan-features__header-title">
-						{ title }
-						{ this.getCreditLabel() }
-					</h4>
+					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
@@ -93,36 +90,6 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getIntervalDiscount() }
 				</div>
 			</div>
-		);
-	}
-
-	getCreditLabel() {
-		const {
-			available,
-			discountPrice,
-			isJetpack,
-			rawPrice,
-			relatedMonthlyPlan,
-			showModifiedPricingDisplay,
-		} = this.props;
-
-		if ( ! showModifiedPricingDisplay || ! available || this.isPlanCurrent() ) {
-			return null;
-		}
-
-		if ( ! discountPrice && ! relatedMonthlyPlan ) {
-			return null;
-		}
-
-		if ( relatedMonthlyPlan && relatedMonthlyPlan.raw_price * 12 === rawPrice ) {
-			return null;
-		}
-
-		// Note: Don't make this translatable because it's only visible to English-language users
-		return (
-			<span className="plan-features__header-credit-label">
-				{ isJetpack ? 'Discount' : 'Credit available' }
-			</span>
 		);
 	}
 
@@ -210,7 +177,6 @@ export class PlanFeaturesHeader extends Component {
 			isJetpack,
 			rawPrice,
 			relatedMonthlyPlan,
-			showModifiedPricingDisplay,
 		} = this.props;
 
 		if ( isPlaceholder && ! isInSignup ) {
@@ -228,9 +194,7 @@ export class PlanFeaturesHeader extends Component {
 				<span className="plan-features__header-price-group">
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={
-							showModifiedPricingDisplay && this.isPlanCurrent() ? rawPrice : originalPrice
-						}
+						rawPrice={ originalPrice }
 						isInSignup={ isInSignup }
 						original
 					/>
@@ -304,7 +268,6 @@ export class PlanFeaturesHeader extends Component {
 }
 
 PlanFeaturesHeader.propTypes = {
-	available: PropTypes.bool,
 	bestValue: PropTypes.bool,
 	billingTimeFrame: PropTypes.string.isRequired,
 	currencyCode: PropTypes.string,
