@@ -5,12 +5,12 @@
  */
 import { createPurchasesArray } from 'lib/purchases/assembler';
 import {
-	getPurchases,
 	getByPurchaseId,
-	isFetchingUserPurchases,
-	isFetchingSitePurchases,
 	getIncludedDomainPurchase,
+	getPurchases,
 	getSitePurchases,
+	isFetchingSitePurchases,
+	isFetchingUserPurchases,
 	isUserPaid,
 } from '../selectors';
 
