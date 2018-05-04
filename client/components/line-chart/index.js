@@ -24,7 +24,15 @@ const END_POINT_SIZE = 1;
 const MAX_DRAW_POINTS_SIZE = 10;
 const CHART_MARGIN = 0.01;
 const MAX_LEFT_TICKS = 6;
-const MAX_BOTTOM_TICKS = 10;
+const MAX_BOTTOM_TICKS = 8;
+const SPACE_FOR_BOTTOM_TICK = 70;
+
+const dateFormatFunction = displayMonthOnly => ( date, index, tickRefs ) => {
+	const everyOtherTick = tickRefs.length > MAX_BOTTOM_TICKS;
+	return ! everyOtherTick || index % 2 === 0
+		? moment( date ).format( displayMonthOnly ? 'MMM' : 'MMM D' )
+		: '';
+};
 
 class LineChart extends Component {
 	static propTypes = {
@@ -54,22 +62,24 @@ class LineChart extends Component {
 	};
 
 	drawAxes = ( svg, params ) => {
-		const { yScale, xScale, height, leftTicks, bottomTicks } = params;
+		const { yScale, xScale, height, leftTicks, bottomTicks, displayMonthOnly } = params;
 		const { margin } = this.props;
 
 		const axisLeft = d3AxisLeft( yScale );
 		const bottomAxis = d3AxisBottom( xScale );
 		bottomAxis.ticks( bottomTicks );
-		bottomAxis.tickFormat( d => moment( d ).format( 'll' ) );
+		bottomAxis.tickFormat( dateFormatFunction( displayMonthOnly ) );
 		axisLeft.ticks( leftTicks );
 
 		svg
 			.append( 'g' )
+			.attr( 'class', 'line-chart__y-axis' )
 			.attr( 'transform', `translate(${ margin.left },0)` )
 			.call( axisLeft );
 
 		svg
 			.append( 'g' )
+			.attr( 'class', 'line-chart__x-axis' )
 			.attr( 'transform', `translate(0,${ height - margin.bottom })` )
 			.call( bottomAxis );
 	};
@@ -181,6 +191,28 @@ class LineChart extends Component {
 		const valueExtent = d3Extent( concatData, d => d.value );
 		const valueDomainAdjustment = ( valueExtent[ 1 ] - valueExtent[ 0 ] ) * CHART_MARGIN;
 
+		const minDate = new Date( timeExtent[ 0 ] );
+		const maxDate = new Date( timeExtent[ 1 ] );
+		const months = maxDate.getMonth() - minDate.getMonth() + 1;
+		minDate.setMonth( minDate.getMonth() + 1 );
+		// in case of a short month like Feb.
+		maxDate.setDate( maxDate.getDate() - 3 );
+
+		const displayMonthOnly = minDate < maxDate;
+
+		// if the value is less than our max ticks, use that value so that each tick is a round integer
+		const leftTicks = MAX_LEFT_TICKS > valueExtent[ 1 ] ? valueExtent[ 1 ] : MAX_LEFT_TICKS;
+
+		// use only enough ticks for months, or the etire length of the data
+		let bottomTicks = displayMonthOnly ? months : concatData.length / data.length;
+		// reduce the number of ticks if it looks like they will be drawn too close together
+		bottomTicks =
+			Math.floor( newWidth / SPACE_FOR_BOTTOM_TICK ) < bottomTicks
+				? Math.floor( newWidth / SPACE_FOR_BOTTOM_TICK )
+				: bottomTicks;
+		// if we still have more ticks that the maximum we allow, cut it down to the max
+		bottomTicks = MAX_BOTTOM_TICKS < bottomTicks ? MAX_BOTTOM_TICKS : bottomTicks;
+
 		return {
 			height: newHeight,
 			width: newWidth,
@@ -197,11 +229,9 @@ class LineChart extends Component {
 				] )
 				.range( [ newHeight - margin.bottom, margin.top ] )
 				.nice(),
-			leftTicks: MAX_LEFT_TICKS >= valueExtent[ 1 ] ? valueExtent[ 1 ] : MAX_LEFT_TICKS,
-			bottomTicks:
-				MAX_BOTTOM_TICKS >= concatData.length / data.length
-					? concatData.length / data.length
-					: MAX_BOTTOM_TICKS,
+			leftTicks,
+			bottomTicks,
+			displayMonthOnly,
 		};
 	};
 
