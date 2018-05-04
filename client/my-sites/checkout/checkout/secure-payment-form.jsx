@@ -195,6 +195,10 @@ const SecurePaymentForm = createReactClass( {
 		);
 	},
 
+	renderHostedPaywallBox() {
+		return null;
+	},
+
 	renderCreditCardPaymentBox() {
 		return (
 			<PaymentBox
