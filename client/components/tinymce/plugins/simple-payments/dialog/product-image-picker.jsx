@@ -75,9 +75,8 @@ class ProductImagePicker extends Component {
 
 		return (
 			<div className="dialog__product-image">
-				<ProductImage siteId={ siteId } imageId={ this.props.input.value } />
+				<ProductImage siteId={ siteId } imageId={ this.props.input.value } showEditIcon={ true } />
 				<RemoveButton onRemove={ this.removeCurrentImage } />
-				<Gridicon icon="pencil" className="dialog__product-image-edit-icon" />
 			</div>
 		);
 	}

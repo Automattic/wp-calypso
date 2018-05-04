@@ -93,11 +93,16 @@
 		}
 	}
 
+	.dialog__editor-simple-payments-modal-figure-container {
+		position:relative;
+	}
+
 	.dialog__product-image-container {
+		width: 200px;
+		height: 200px;
 		position: relative;
 		margin-bottom: 20px;
 		margin-right: 25px;
-		box-sizing: border-box;
 
 		&:focus {
 			outline: none;
@@ -126,12 +131,19 @@
 
 	.dialog__product-image-edit-icon {
 		position: absolute;
-		top: auto;
-		bottom: 8px;
-		right: 8px;
-		padding: 0;
 		color: $white;
 		opacity: 0.9;
+		bottom: 8px;
+		right: 8px;
+		line-height: 0;
+		padding: 4px;
+		border: none;
+		background: rgba(0, 0, 0, 0.2);
+		border-radius: 50%;
+
+		&:hover {
+			opacity: 1;
+		}
 	}
 }
 
@@ -205,7 +217,7 @@
 		margin-right: 24px;
 	}
 
-	.editor-simple-payments-modal__figure {
+	.dialog__editor-simple-payments-modal-figure {
 		flex: none;
 		margin-left: 16px;
 		height: 40px;
@@ -248,7 +260,7 @@
 	margin-left: 16px;
 }
 
-.editor-simple-payments-modal__figure {
+.dialog__editor-simple-payments-modal-figure {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -260,7 +272,7 @@
 	}
 }
 
-.editor-simple-payments-modal__image {
+.dialog__editor-simple-payments-modal-image {
 	max-width: 100%;
 	max-height: 100%;
 }
