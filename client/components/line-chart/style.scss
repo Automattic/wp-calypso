@@ -75,12 +75,20 @@
 	padding-bottom: 50%;
 }
 
+.line-chart__x-axis,
 .line-chart__y-axis {
-	font-size: 15px;
-	stroke-width: 2px;
+	font-size: 11px;
+
+	.domain,
+	line {
+		stroke: $gray-lighten-30;
+	}
 }
 
-.line-chart__x-axis {
-	font-size: 15px;
-	stroke-width: 2px;
+.line-chart__x-axis text {
+	fill: $gray-darken-30;
+}
+
+.line-chart__y-axis text {
+	fill: $gray-darken-10;
 }
