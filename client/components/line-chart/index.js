@@ -203,11 +203,12 @@ class LineChart extends Component {
 	};
 
 	getBottomAxisParams = ( concatData, data, margin, newWidth ) => {
-		const timeExtent = d3Extent( concatData, d => d.date );
-		const timeDomainAdjustment = ( timeExtent[ 1 ] - timeExtent[ 0 ] ) * CHART_MARGIN;
+		const [ minTimestamp, maxTimestamp ] = d3Extent( concatData, datum => datum.date );
 
-		const minDate = new Date( timeExtent[ 0 ] );
-		const maxDate = new Date( timeExtent[ 1 ] );
+		const timeDomainAdjustment = ( maxTimestamp - minTimestamp ) * CHART_MARGIN;
+
+		const minDate = new Date( minTimestamp );
+		const maxDate = new Date( maxTimestamp );
 		const months = maxDate.getMonth() - minDate.getMonth() + 1;
 		minDate.setMonth( minDate.getMonth() + 1 );
 		// in case of a short month like Feb.
@@ -217,19 +218,21 @@ class LineChart extends Component {
 
 		// use only enough ticks for months, or the etire length of the data
 		let bottomTicks = displayMonthOnly ? months : concatData.length / data.length;
+
 		// reduce the number of ticks if it looks like they will be drawn too close together
 		bottomTicks =
 			Math.floor( newWidth / SPACE_FOR_BOTTOM_TICK ) < bottomTicks
 				? Math.floor( newWidth / SPACE_FOR_BOTTOM_TICK )
 				: bottomTicks;
+
 		// if we still have more ticks that the maximum we allow, cut it down to the max
 		bottomTicks = MAX_BOTTOM_TICKS < bottomTicks ? MAX_BOTTOM_TICKS : bottomTicks;
 
 		return {
 			xScale: d3TimeScale()
 				.domain( [
-					timeExtent[ 0 ] - timeDomainAdjustment,
-					timeExtent[ 1 ] + timeDomainAdjustment,
+					minTimestamp - timeDomainAdjustment,
+					maxTimestamp + timeDomainAdjustment,
 				] )
 				.range( [ margin.left, newWidth - margin.right - SPACE_FOR_VERTICAL_TICKS ] ),
 			bottomTicks,
@@ -238,17 +241,18 @@ class LineChart extends Component {
 	};
 
 	getLeftAxisParams = ( concatData, margin, newHeight, yAxisMode ) => {
-		const valueExtent = d3Extent( concatData, d => d.value );
-		const valueDomainAdjustment = ( valueExtent[ 1 ] - valueExtent[ 0 ] ) * CHART_MARGIN;
+		const [ minValue, maxValue ] = d3Extent( concatData, datum => datum.value );
+
+		const valueDomainAdjustment = ( maxValue - minValue ) * CHART_MARGIN;
 
 		// if the value is less than our max ticks, use that value so that each tick is a round integer
-		const leftTicks = MAX_LEFT_TICKS > valueExtent[ 1 ] ? valueExtent[ 1 ] : MAX_LEFT_TICKS;
+		const leftTicks = MAX_LEFT_TICKS > maxValue ? maxValue : MAX_LEFT_TICKS;
 
 		return {
 			yScale: d3ScaleLinear()
 				.domain( [
-					yAxisMode === 'relative' ? valueExtent[ 0 ] - valueDomainAdjustment : 0,
-					valueExtent[ 1 ] + valueDomainAdjustment,
+					yAxisMode === 'relative' ? minValue - valueDomainAdjustment : 0,
+					maxValue + valueDomainAdjustment,
 				] )
 				.range( [ newHeight - margin.bottom, margin.top ] )
 				.nice(),
