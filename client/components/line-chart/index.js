@@ -62,26 +62,37 @@ class LineChart extends Component {
 	};
 
 	drawAxes = ( svg, params ) => {
-		const { yScale, xScale, height, leftTicks, bottomTicks, displayMonthOnly } = params;
+		this.drawBottomAxis( svg, params );
+		this.drawLeftAxis( svg, params );
+	};
+
+	drawBottomAxis = ( svg, params ) => {
+		const { bottomTicks, displayMonthOnly, height, xScale } = params;
 		const { margin } = this.props;
 
-		const axisLeft = d3AxisLeft( yScale );
-		const bottomAxis = d3AxisBottom( xScale );
-		bottomAxis.ticks( bottomTicks );
-		bottomAxis.tickFormat( dateFormatFunction( displayMonthOnly ) );
-		axisLeft.ticks( leftTicks );
-
-		svg
-			.append( 'g' )
-			.attr( 'class', 'line-chart__y-axis' )
-			.attr( 'transform', `translate(${ margin.left },0)` )
-			.call( axisLeft );
+		const axis = d3AxisBottom( xScale );
+		axis.ticks( bottomTicks );
+		axis.tickFormat( dateFormatFunction( displayMonthOnly ) );
 
 		svg
 			.append( 'g' )
 			.attr( 'class', 'line-chart__x-axis' )
 			.attr( 'transform', `translate(0,${ height - margin.bottom })` )
-			.call( bottomAxis );
+			.call( axis );
+	};
+
+	drawLeftAxis = ( svg, params ) => {
+		const { leftTicks, yScale } = params;
+		const { margin } = this.props;
+
+		const axis = d3AxisLeft( yScale );
+		axis.ticks( leftTicks );
+
+		svg
+			.append( 'g' )
+			.attr( 'class', 'line-chart__y-axis' )
+			.attr( 'transform', `translate(${ margin.left },0)` )
+			.call( axis );
 	};
 
 	drawLines = ( svg, params ) => {
