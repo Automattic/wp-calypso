@@ -202,17 +202,9 @@ class LineChart extends Component {
 		this.setState( { pointHovered: null } );
 	};
 
-	getParams = node => {
-		const { aspectRatio, margin, data, yAxisMode } = this.props;
-		const newWidth = node.offsetWidth;
-		const newHeight = newWidth / aspectRatio;
-
-		const concatData = concat( ...data );
-
+	getBottomAxisParams = ( concatData, data, margin, newWidth ) => {
 		const timeExtent = d3Extent( concatData, d => d.date );
 		const timeDomainAdjustment = ( timeExtent[ 1 ] - timeExtent[ 0 ] ) * CHART_MARGIN;
-		const valueExtent = d3Extent( concatData, d => d.value );
-		const valueDomainAdjustment = ( valueExtent[ 1 ] - valueExtent[ 0 ] ) * CHART_MARGIN;
 
 		const minDate = new Date( timeExtent[ 0 ] );
 		const maxDate = new Date( timeExtent[ 1 ] );
@@ -222,9 +214,6 @@ class LineChart extends Component {
 		maxDate.setDate( maxDate.getDate() - 3 );
 
 		const displayMonthOnly = minDate < maxDate;
-
-		// if the value is less than our max ticks, use that value so that each tick is a round integer
-		const leftTicks = MAX_LEFT_TICKS > valueExtent[ 1 ] ? valueExtent[ 1 ] : MAX_LEFT_TICKS;
 
 		// use only enough ticks for months, or the etire length of the data
 		let bottomTicks = displayMonthOnly ? months : concatData.length / data.length;
@@ -237,14 +226,25 @@ class LineChart extends Component {
 		bottomTicks = MAX_BOTTOM_TICKS < bottomTicks ? MAX_BOTTOM_TICKS : bottomTicks;
 
 		return {
-			height: newHeight,
-			width: newWidth,
 			xScale: d3TimeScale()
 				.domain( [
 					timeExtent[ 0 ] - timeDomainAdjustment,
 					timeExtent[ 1 ] + timeDomainAdjustment,
 				] )
 				.range( [ margin.left, newWidth - margin.right - SPACE_FOR_VERTICAL_TICKS ] ),
+			bottomTicks,
+			displayMonthOnly,
+		};
+	};
+
+	getLeftAxisParams = ( concatData, margin, newHeight, yAxisMode ) => {
+		const valueExtent = d3Extent( concatData, d => d.value );
+		const valueDomainAdjustment = ( valueExtent[ 1 ] - valueExtent[ 0 ] ) * CHART_MARGIN;
+
+		// if the value is less than our max ticks, use that value so that each tick is a round integer
+		const leftTicks = MAX_LEFT_TICKS > valueExtent[ 1 ] ? valueExtent[ 1 ] : MAX_LEFT_TICKS;
+
+		return {
 			yScale: d3ScaleLinear()
 				.domain( [
 					yAxisMode === 'relative' ? valueExtent[ 0 ] - valueDomainAdjustment : 0,
@@ -253,8 +253,22 @@ class LineChart extends Component {
 				.range( [ newHeight - margin.bottom, margin.top ] )
 				.nice(),
 			leftTicks,
-			bottomTicks,
-			displayMonthOnly,
+		};
+	};
+
+	getParams = node => {
+		const { aspectRatio, margin, data, yAxisMode } = this.props;
+
+		const newWidth = node.offsetWidth;
+		const newHeight = newWidth / aspectRatio;
+
+		const concatData = concat( ...data );
+
+		return {
+			height: newHeight,
+			width: newWidth,
+			...this.getBottomAxisParams( concatData, data, margin, newWidth ),
+			...this.getLeftAxisParams( concatData, margin, newHeight, yAxisMode ),
 		};
 	};
 
