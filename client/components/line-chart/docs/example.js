@@ -41,23 +41,26 @@ class LineChartExample extends Component {
 	};
 
 	changeDataMin = event => {
-		const newMin = event.target.value;
+		const newDataMin = event.target.value;
+
 		this.setState( {
-			dataMin: newMin,
-			data: LineChartExample.createData( newMin, this.state.dataMax, this.state.seriesLength ),
+			dataMin: newDataMin,
+			data: LineChartExample.createData( newDataMin, this.state.dataMax, this.state.seriesLength ),
 		} );
 	};
 
 	changeDataMax = event => {
-		const newMax = event.target.value;
+		const newDataMax = event.target.value;
+
 		this.setState( {
-			dataMax: event.target.value,
-			data: LineChartExample.createData( this.state.dataMin, newMax, this.state.seriesLength ),
+			dataMax: newDataMax,
+			data: LineChartExample.createData( this.state.dataMin, newDataMax, this.state.seriesLength ),
 		} );
 	};
 
 	changeSeriesLength = event => {
 		const newSeriesLength = event.target.value;
+
 		this.setState( {
 			seriesLength: newSeriesLength,
 			data: LineChartExample.createData( this.state.dataMin, this.state.dataMax, newSeriesLength ),
