@@ -174,9 +174,9 @@ class LineChart extends Component {
 	};
 
 	drawChart = ( svg, params ) => {
+		this.drawAxes( svg, params );
 		this.drawLines( svg, params );
 		this.drawPoints( svg, params );
-		this.drawAxes( svg, params );
 		this.bindEvents( svg, params );
 	};
 
