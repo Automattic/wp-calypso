@@ -106,7 +106,7 @@ class LineChartExample extends Component {
 						<input
 							type="number"
 							value={ this.state.dataMin }
-							min={ 0 }
+							min="0"
 							onChange={ this.changeDataMin }
 						/>
 
@@ -114,7 +114,7 @@ class LineChartExample extends Component {
 						<input
 							type="number"
 							value={ this.state.dataMax }
-							min={ 0 }
+							min="0"
 							onChange={ this.changeDataMax }
 						/>
 
@@ -122,7 +122,7 @@ class LineChartExample extends Component {
 						<input
 							type="number"
 							value={ this.state.seriesLength }
-							min={ 3 }
+							min="3"
 							onChange={ this.changeSeriesLength }
 						/>
 
@@ -133,6 +133,7 @@ class LineChartExample extends Component {
 									checked={ this.state.fillArea }
 									onChange={ this.toggleFillArea }
 								/>
+
 								Fill Area
 							</label>
 						</div>
@@ -144,6 +145,7 @@ class LineChartExample extends Component {
 									checked={ this.state.yAxisMode === 'absolute' }
 									onChange={ this.toggleYAxisMode }
 								/>
+
 								Absolute Y Axis
 							</label>
 						</div>
