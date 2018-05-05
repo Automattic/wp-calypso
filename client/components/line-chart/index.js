@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { extent as d3Extent } from 'd3-array';
 import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
-import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
+import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { select as d3Select } from 'd3-selection';
 import { concat, first, last } from 'lodash';
 import { moment } from 'i18n-calypso';
@@ -26,6 +26,7 @@ const CHART_MARGIN = 0.01;
 const MAX_LEFT_TICKS = 6;
 const MAX_BOTTOM_TICKS = 8;
 const SPACE_FOR_BOTTOM_TICK = 70;
+const SPACE_FOR_VERTICAL_TICKS = 30;
 
 const dateFormatFunction = displayMonthOnly => ( date, index, tickRefs ) => {
 	const everyOtherTick = tickRefs.length > MAX_BOTTOM_TICKS;
@@ -83,18 +84,27 @@ class LineChart extends Component {
 	};
 
 	drawLeftAxis = ( svg, params ) => {
-		const { leftTicks, yScale } = params;
+		const { leftTicks, yScale, width } = params;
 		const { margin } = this.props;
 
-		const axis = d3AxisLeft( yScale );
+		const axis = d3AxisRight( yScale );
 		axis.ticks( leftTicks );
+		axis.tickSize( width - margin.left - margin.right );
 		axis.tickSizeOuter( 0 );
 
-		svg
+		const g = svg
 			.append( 'g' )
 			.attr( 'class', 'line-chart__y-axis' )
 			.attr( 'transform', `translate(${ margin.left },0)` )
 			.call( axis );
+
+		// Removes the vertical axis line
+		g.select( '.domain' ).remove();
+
+		// Moves axis values below the tick lines, and right-align them
+		g.selectAll( '.tick text' )
+			.style( 'text-anchor', 'end' )
+			.attr( 'transform', 'translate(-10,12)' );
 	};
 
 	drawLines = ( svg, params ) => {
@@ -234,7 +244,7 @@ class LineChart extends Component {
 					timeExtent[ 0 ] - timeDomainAdjustment,
 					timeExtent[ 1 ] + timeDomainAdjustment,
 				] )
-				.range( [ margin.left, newWidth - margin.right ] ),
+				.range( [ margin.left, newWidth - margin.right - SPACE_FOR_VERTICAL_TICKS ] ),
 			yScale: d3ScaleLinear()
 				.domain( [
 					yAxisMode === 'relative' ? valueExtent[ 0 ] - valueDomainAdjustment : 0,
