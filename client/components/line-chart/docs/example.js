@@ -40,7 +40,7 @@ class LineChartExample extends Component {
 		fillArea: false,
 	};
 
-	handleDataMinChange = event => {
+	changeDataMin = event => {
 		const newMin = event.target.value;
 		this.setState( {
 			dataMin: newMin,
@@ -48,7 +48,7 @@ class LineChartExample extends Component {
 		} );
 	};
 
-	handleDataMaxChange = event => {
+	changeDataMax = event => {
 		const newMax = event.target.value;
 		this.setState( {
 			dataMax: event.target.value,
@@ -56,7 +56,7 @@ class LineChartExample extends Component {
 		} );
 	};
 
-	handleSeriesLengthChange = event => {
+	changeSeriesLength = event => {
 		const newSeriesLength = event.target.value;
 		this.setState( {
 			seriesLength: newSeriesLength,
@@ -64,19 +64,19 @@ class LineChartExample extends Component {
 		} );
 	};
 
-	handleShowDataControlsToggle = () => {
+	toggleDataControls = () => {
 		this.setState( {
 			showDataControls: ! this.state.showDataControls,
 		} );
 	};
 
-	handleFillAreaToggle = () => {
+	toggleFillArea = () => {
 		this.setState( {
 			fillArea: ! this.state.fillArea,
 		} );
 	};
 
-	handleYAxisModeToggle = () => {
+	toggleYAxisMode = () => {
 		this.setState( {
 			yAxisMode: this.state.yAxisMode === 'absolute' ? 'relative' : 'absolute',
 		} );
@@ -85,7 +85,7 @@ class LineChartExample extends Component {
 	render() {
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.handleShowDataControlsToggle }>
+				<a className="docs__design-toggle button" onClick={ this.toggleDataControls }>
 					{ this.state.showDataControls ? 'Hide Data Controls' : 'Show Data Controls' }
 				</a>
 
@@ -104,7 +104,7 @@ class LineChartExample extends Component {
 							type="number"
 							value={ this.state.dataMin }
 							min={ 0 }
-							onChange={ this.handleDataMinChange }
+							onChange={ this.changeDataMin }
 						/>
 
 						<label>Data Max</label>
@@ -112,7 +112,7 @@ class LineChartExample extends Component {
 							type="number"
 							value={ this.state.dataMax }
 							min={ 0 }
-							onChange={ this.handleDataMaxChange }
+							onChange={ this.changeDataMax }
 						/>
 
 						<label>Series Length</label>
@@ -120,7 +120,7 @@ class LineChartExample extends Component {
 							type="number"
 							value={ this.state.seriesLength }
 							min={ 3 }
-							onChange={ this.handleSeriesLengthChange }
+							onChange={ this.changeSeriesLength }
 						/>
 
 						<div>
@@ -128,7 +128,7 @@ class LineChartExample extends Component {
 								<input
 									type="checkbox"
 									checked={ this.state.fillArea }
-									onChange={ this.handleFillAreaToggle }
+									onChange={ this.toggleFillArea }
 								/>
 								Fill Area
 							</label>
@@ -139,7 +139,7 @@ class LineChartExample extends Component {
 								<input
 									type="checkbox"
 									checked={ this.state.yAxisMode === 'absolute' }
-									onChange={ this.handleYAxisModeToggle }
+									onChange={ this.toggleYAxisMode }
 								/>
 								Absolute Y Axis
 							</label>
