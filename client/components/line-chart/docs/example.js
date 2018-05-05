@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { moment } from 'i18n-calypso';
 import { range, random } from 'lodash';
 
 /**
@@ -18,26 +19,30 @@ class LineChartExample extends Component {
 	static displayName = 'LineChart';
 
 	static createData( dataMin, dataMax, seriesLength ) {
+		const now = moment();
+
 		return range( NUM_DATA_SERIES ).map( () => {
-			return range( seriesLength ).map( e => {
-				const date = new Date();
-				date.setDate( date.getDate() - ( seriesLength - e ) );
+			let date = now.clone();
+
+			return range( seriesLength ).map( () => {
+				date = date.subtract( 1, 'days' );
+
 				return {
-					date: date.getTime(),
+					date: date.valueOf(),
 					value: random( dataMin, dataMax ),
 				};
-			} );
+			} ).reverse();
 		} );
 	}
 
 	state = {
-		dataMin: 1,
+		data: LineChartExample.createData( 1, 50, 10 ),
 		dataMax: 50,
+		dataMin: 1,
+		fillArea: false,
 		seriesLength: 10,
 		showDataControls: false,
-		data: LineChartExample.createData( 1, 50, 10 ),
 		yAxisMode: 'absolute',
-		fillArea: false,
 	};
 
 	changeDataMin = event => {
