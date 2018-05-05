@@ -73,6 +73,7 @@ class LineChart extends Component {
 		const axis = d3AxisBottom( xScale );
 		axis.ticks( bottomTicks );
 		axis.tickFormat( dateFormatFunction( displayMonthOnly ) );
+		axis.tickSizeOuter( 0 );
 
 		svg
 			.append( 'g' )
@@ -87,6 +88,7 @@ class LineChart extends Component {
 
 		const axis = d3AxisLeft( yScale );
 		axis.ticks( leftTicks );
+		axis.tickSizeOuter( 0 );
 
 		svg
 			.append( 'g' )
