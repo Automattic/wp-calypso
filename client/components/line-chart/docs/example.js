@@ -88,6 +88,7 @@ class LineChartExample extends Component {
 				<a className="docs__design-toggle button" onClick={ this.handleShowDataControlsToggle }>
 					{ this.state.showDataControls ? 'Hide Data Controls' : 'Show Data Controls' }
 				</a>
+
 				<Card>
 					<LineChart
 						data={ this.state.data }
@@ -95,6 +96,7 @@ class LineChartExample extends Component {
 						fillArea={ this.state.fillArea }
 					/>
 				</Card>
+
 				{ this.state.showDataControls && (
 					<div>
 						<label>Data Min</label>
@@ -104,6 +106,7 @@ class LineChartExample extends Component {
 							min={ 0 }
 							onChange={ this.handleDataMinChange }
 						/>
+
 						<label>Data Max</label>
 						<input
 							type="number"
@@ -111,6 +114,7 @@ class LineChartExample extends Component {
 							min={ 0 }
 							onChange={ this.handleDataMaxChange }
 						/>
+
 						<label>Series Length</label>
 						<input
 							type="number"
@@ -118,21 +122,27 @@ class LineChartExample extends Component {
 							min={ 3 }
 							onChange={ this.handleSeriesLengthChange }
 						/>
+
 						<div>
-							<label>Fill Area</label>
-							<input
-								type="checkbox"
-								checked={ this.state.fillArea }
-								onChange={ this.handleFillAreaToggle }
-							/>
+							<label>
+								<input
+									type="checkbox"
+									checked={ this.state.fillArea }
+									onChange={ this.handleFillAreaToggle }
+								/>
+								Fill Area
+							</label>
 						</div>
+
 						<div>
-							<label>Absolute Y Axis</label>
-							<input
-								type="checkbox"
-								checked={ this.state.yAxisMode === 'absolute' }
-								onChange={ this.handleYAxisModeToggle }
-							/>
+							<label>
+								<input
+									type="checkbox"
+									checked={ this.state.yAxisMode === 'absolute' }
+									onChange={ this.handleYAxisModeToggle }
+								/>
+								Absolute Y Axis
+							</label>
 						</div>
 					</div>
 				) }
