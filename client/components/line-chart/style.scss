@@ -70,17 +70,16 @@
 
 .line-chart__placeholder {
 	@include placeholder();
+
 	padding-bottom: 50%;
- }
+}
 
 .line-chart__y-axis {
 	font-size: 15px;
 	stroke-width: 2px;
-	//fill: $gray-dark;
 }
 
 .line-chart__x-axis {
 	font-size: 15px;
 	stroke-width: 2px;
-	//fill: $gray-dark;
 }
