@@ -131,11 +131,21 @@ export default {
 export const reducer = ( state = 0, { type } ) => ( HTTP_DATA_TICK === type ? state + 1 : state );
 
 let dispatch;
+let dispatchQueue = [];
 
 export const enhancer = next => ( ...args ) => {
 	const store = next( ...args );
 
 	dispatch = store.dispatch;
+
+	// allow rest of enhancers and middleware
+	// to load then dispatch all queued actions
+	// delay picked to allow for initialization
+	// to occur while remaining "instant"
+	setTimeout( () => {
+		dispatchQueue.forEach( dispatch );
+		dispatchQueue = [];
+	}, 50 );
 
 	return store;
 };
@@ -161,12 +171,14 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
 			throw new Error( 'Cannot use HTTP data without injecting Redux store enhancer!' );
 		}
 
-		dispatch( {
+		const action = {
 			type: HTTP_DATA_REQUEST,
 			id: requestId,
 			fetch: 'function' === typeof fetchAction ? fetchAction() : fetchAction,
 			fromApi: 'function' === typeof fromApi ? fromApi() : a => a,
-		} );
+		};
+
+		dispatch ? dispatch( action ) : dispatchQueue.push( action );
 	}
 
 	return data;
