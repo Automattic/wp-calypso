@@ -22,7 +22,7 @@ export default localize( ( { selectedSite, translate } ) => {
 					'High-speed, high-definition video hosting that uses your server space efficiently, and comes with no third-party ads.'
 				) }
 				buttonText={ translate( 'Activate' ) }
-				href={ `/media/${ selectedSite.slug }` }
+				href={ `/media/videos/${ selectedSite.slug }` }
 			/>
 		</div>
 	);
