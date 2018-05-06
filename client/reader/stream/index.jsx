@@ -52,6 +52,8 @@ import Interval, { EVERY_MINUTE } from 'lib/interval';
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 
+const pagesByKey = new Map();
+
 class ReaderStream extends React.Component {
 	static propTypes = {
 		trackScrollPage: PropTypes.func.isRequired,
@@ -91,7 +93,6 @@ class ReaderStream extends React.Component {
 		intro: null,
 		forcePlaceholders: false,
 	};
-	page = 0;
 
 	componentDidUpdate( { selectedPostKey } ) {
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
@@ -297,8 +298,10 @@ class ReaderStream extends React.Component {
 	fetchNextPage = options => {
 		const { streamKey, stream, startDate } = this.props;
 		if ( options.triggeredByScroll ) {
-			this.props.trackScrollPage( this.page );
-			this.page++;
+			const page = pagesByKey.get( streamKey ) || 0;
+			pagesByKey.set( streamKey, page + 1 );
+
+			this.props.trackScrollPage( page );
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
 		this.props.requestPage( { streamKey, pageHandle } );
