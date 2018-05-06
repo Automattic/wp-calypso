@@ -19,17 +19,17 @@ import { moment } from 'i18n-calypso';
 import D3Base from 'components/d3-base';
 import Tooltip from 'components/tooltip';
 
-const POINT_SIZE = 3;
-const END_POINT_SIZE = 1;
-const MAX_DRAW_POINTS_SIZE = 10;
 const CHART_MARGIN = 0.01;
-const MAX_LEFT_TICKS = 6;
-const MAX_BOTTOM_TICKS = 8;
-const SPACE_FOR_BOTTOM_TICK = 70;
-const SPACE_FOR_VERTICAL_TICKS = 30;
+const POINTS_MAX = 10;
+const POINTS_SIZE = 3;
+const POINTS_END_SIZE = 1;
+const X_AXIS_TICKS_MAX = 8;
+const X_AXIS_TICKS_SPACE = 70;
+const Y_AXIS_TICKS_MAX = 6;
+const Y_AXIS_TICKS_SPACE = 30;
 
 const dateFormatFunction = displayMonthOnly => ( date, index, tickRefs ) => {
-	const everyOtherTick = tickRefs.length > MAX_BOTTOM_TICKS;
+	const everyOtherTick = tickRefs.length > X_AXIS_TICKS_MAX;
 	return ! everyOtherTick || index % 2 === 0
 		? moment( date ).format( displayMonthOnly ? 'MMM' : 'MMM D' )
 		: '';
@@ -63,16 +63,16 @@ class LineChart extends Component {
 	};
 
 	drawAxes = ( svg, params ) => {
-		this.drawBottomAxis( svg, params );
-		this.drawLeftAxis( svg, params );
+		this.drawXAxis( svg, params );
+		this.drawYAxis( svg, params );
 	};
 
-	drawBottomAxis = ( svg, params ) => {
-		const { bottomTicks, displayMonthOnly, height, xScale } = params;
+	drawXAxis = ( svg, params ) => {
+		const { displayMonthOnly, height, xScale, xTicks } = params;
 		const { margin } = this.props;
 
 		const axis = d3AxisBottom( xScale );
-		axis.ticks( bottomTicks );
+		axis.ticks( xTicks );
 		axis.tickFormat( dateFormatFunction( displayMonthOnly ) );
 		axis.tickSizeOuter( 0 );
 
@@ -83,12 +83,12 @@ class LineChart extends Component {
 			.call( axis );
 	};
 
-	drawLeftAxis = ( svg, params ) => {
-		const { leftTicks, yScale, width } = params;
+	drawYAxis = ( svg, params ) => {
+		const { yScale, yTicks, width } = params;
 		const { margin } = this.props;
 
 		const axis = d3AxisRight( yScale );
-		axis.ticks( leftTicks );
+		axis.ticks( yTicks );
 		axis.tickSize( width - margin.left - margin.right );
 		axis.tickSizeOuter( 0 );
 
@@ -148,7 +148,7 @@ class LineChart extends Component {
 		const { data } = this.props;
 
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
-			const drawFullSeries = dataSeries.length < MAX_DRAW_POINTS_SIZE;
+			const drawFullSeries = dataSeries.length < POINTS_MAX;
 			const colorNum = dataSeriesIndex % 3;
 
 			( drawFullSeries ? dataSeries : [ first( dataSeries ), last( dataSeries ) ] ).forEach(
@@ -163,7 +163,7 @@ class LineChart extends Component {
 						)
 						.attr( 'cx', xScale( datum.date ) )
 						.attr( 'cy', yScale( datum.value ) )
-						.attr( 'r', drawFullSeries ? POINT_SIZE : END_POINT_SIZE )
+						.attr( 'r', drawFullSeries ? POINTS_SIZE : POINTS_END_SIZE )
 						.datum( datum );
 				}
 			);
@@ -191,18 +191,18 @@ class LineChart extends Component {
 	};
 
 	handleMouseEnterPoint = point => {
-		d3Select( point ).attr( 'r', Math.floor( POINT_SIZE * 1.5 ) );
+		d3Select( point ).attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
 
 		this.setState( { pointHovered: point } );
 	};
 
 	handleMouseOutPoint = point => {
-		d3Select( point ).attr( 'r', POINT_SIZE );
+		d3Select( point ).attr( 'r', POINTS_SIZE );
 
 		this.setState( { pointHovered: null } );
 	};
 
-	getBottomAxisParams = ( concatData, data, margin, newWidth ) => {
+	getXAxisParams = ( concatData, data, margin, newWidth ) => {
 		const [ minTimestamp, maxTimestamp ] = d3Extent( concatData, datum => datum.date );
 
 		const timeDomainAdjustment = ( maxTimestamp - minTimestamp ) * CHART_MARGIN;
@@ -217,16 +217,16 @@ class LineChart extends Component {
 		const displayMonthOnly = minDate < maxDate;
 
 		// use only enough ticks for months, or the etire length of the data
-		let bottomTicks = displayMonthOnly ? months : concatData.length / data.length;
+		let xTicks = displayMonthOnly ? months : concatData.length / data.length;
 
 		// reduce the number of ticks if it looks like they will be drawn too close together
-		bottomTicks =
-			Math.floor( newWidth / SPACE_FOR_BOTTOM_TICK ) < bottomTicks
-				? Math.floor( newWidth / SPACE_FOR_BOTTOM_TICK )
-				: bottomTicks;
+		xTicks =
+			Math.floor( newWidth / X_AXIS_TICKS_SPACE ) < xTicks
+				? Math.floor( newWidth / X_AXIS_TICKS_SPACE )
+				: xTicks;
 
 		// if we still have more ticks that the maximum we allow, cut it down to the max
-		bottomTicks = MAX_BOTTOM_TICKS < bottomTicks ? MAX_BOTTOM_TICKS : bottomTicks;
+		xTicks = X_AXIS_TICKS_MAX < xTicks ? X_AXIS_TICKS_MAX : xTicks;
 
 		return {
 			xScale: d3TimeScale()
@@ -234,19 +234,19 @@ class LineChart extends Component {
 					minTimestamp - timeDomainAdjustment,
 					maxTimestamp + timeDomainAdjustment,
 				] )
-				.range( [ margin.left, newWidth - margin.right - SPACE_FOR_VERTICAL_TICKS ] ),
-			bottomTicks,
+				.range( [ margin.left, newWidth - margin.right - Y_AXIS_TICKS_SPACE ] ),
+			xTicks,
 			displayMonthOnly,
 		};
 	};
 
-	getLeftAxisParams = ( concatData, margin, newHeight, yAxisMode ) => {
+	getYAxisParams = ( concatData, margin, newHeight, yAxisMode ) => {
 		const [ minValue, maxValue ] = d3Extent( concatData, datum => datum.value );
 
 		const valueDomainAdjustment = ( maxValue - minValue ) * CHART_MARGIN;
 
 		// if the value is less than our max ticks, use that value so that each tick is a round integer
-		const leftTicks = MAX_LEFT_TICKS > maxValue ? maxValue : MAX_LEFT_TICKS;
+		const yTicks = Y_AXIS_TICKS_MAX > maxValue ? maxValue : Y_AXIS_TICKS_MAX;
 
 		return {
 			yScale: d3ScaleLinear()
@@ -256,7 +256,7 @@ class LineChart extends Component {
 				] )
 				.range( [ newHeight - margin.bottom, margin.top ] )
 				.nice(),
-			leftTicks,
+			yTicks,
 		};
 	};
 
@@ -271,8 +271,8 @@ class LineChart extends Component {
 		return {
 			height: newHeight,
 			width: newWidth,
-			...this.getBottomAxisParams( concatData, data, margin, newWidth ),
-			...this.getLeftAxisParams( concatData, margin, newHeight, yAxisMode ),
+			...this.getXAxisParams( concatData, data, margin, newWidth ),
+			...this.getYAxisParams( concatData, margin, newHeight, yAxisMode ),
 		};
 	};
 
