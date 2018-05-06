@@ -42,7 +42,6 @@ class LineChart extends Component {
 		fillArea: PropTypes.bool,
 		margin: PropTypes.object,
 		renderTooltipForDatanum: PropTypes.func,
-		yAxisMode: PropTypes.oneOf( [ 'relative', 'absolute' ] ),
 	};
 
 	static defaultProps = {
@@ -55,7 +54,6 @@ class LineChart extends Component {
 			left: 30,
 		},
 		renderTooltipForDatanum: datum => datum.value,
-		yAxisMode: 'absolute',
 	};
 
 	state = {
@@ -240,7 +238,7 @@ class LineChart extends Component {
 		};
 	};
 
-	getYAxisParams = ( concatData, margin, newHeight, yAxisMode ) => {
+	getYAxisParams = ( concatData, margin, newHeight ) => {
 		const [ minValue, maxValue ] = d3Extent( concatData, datum => datum.value );
 
 		const valueDomainAdjustment = ( maxValue - minValue ) * CHART_MARGIN;
@@ -251,7 +249,7 @@ class LineChart extends Component {
 		return {
 			yScale: d3ScaleLinear()
 				.domain( [
-					yAxisMode === 'relative' ? minValue - valueDomainAdjustment : 0,
+					0,
 					maxValue + valueDomainAdjustment,
 				] )
 				.range( [ newHeight - margin.bottom, margin.top ] )
@@ -261,7 +259,7 @@ class LineChart extends Component {
 	};
 
 	getParams = node => {
-		const { aspectRatio, margin, data, yAxisMode } = this.props;
+		const { aspectRatio, margin, data } = this.props;
 
 		const newWidth = node.offsetWidth;
 		const newHeight = newWidth / aspectRatio;
@@ -272,7 +270,7 @@ class LineChart extends Component {
 			height: newHeight,
 			width: newWidth,
 			...this.getXAxisParams( concatData, data, margin, newWidth ),
-			...this.getYAxisParams( concatData, margin, newHeight, yAxisMode ),
+			...this.getYAxisParams( concatData, margin, newHeight ),
 		};
 	};
 

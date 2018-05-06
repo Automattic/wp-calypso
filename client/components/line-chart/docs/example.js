@@ -42,7 +42,6 @@ class LineChartExample extends Component {
 		fillArea: false,
 		seriesLength: 10,
 		showDataControls: false,
-		yAxisMode: 'absolute',
 	};
 
 	changeDataMin = event => {
@@ -84,12 +83,6 @@ class LineChartExample extends Component {
 		} );
 	};
 
-	toggleYAxisMode = () => {
-		this.setState( {
-			yAxisMode: this.state.yAxisMode === 'absolute' ? 'relative' : 'absolute',
-		} );
-	};
-
 	render() {
 		return (
 			<div>
@@ -100,7 +93,6 @@ class LineChartExample extends Component {
 				<Card>
 					<LineChart
 						data={ this.state.data }
-						yAxisMode={ this.state.yAxisMode }
 						fillArea={ this.state.fillArea }
 					/>
 				</Card>
@@ -140,18 +132,6 @@ class LineChartExample extends Component {
 								/>
 
 								Fill Area
-							</label>
-						</div>
-
-						<div>
-							<label>
-								<input
-									type="checkbox"
-									checked={ this.state.yAxisMode === 'absolute' }
-									onChange={ this.toggleYAxisMode }
-								/>
-
-								Absolute Y Axis
 							</label>
 						</div>
 					</div>
