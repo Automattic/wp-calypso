@@ -91,8 +91,9 @@ class Desktop extends React.Component {
 							<a
 								className="bug-report"
 								href={ feedbackURL }
-								title="Report an issue"
+								rel="noopener"
 								target="_blank"
+								title="Report an issue"
 							>
 								<Gridicon icon="bug" size={ 18 } />
 							</a>
