@@ -12,5 +12,9 @@ export const requestGeoLocation = () =>
 			method: 'GET',
 			url: 'https://public-api.wordpress.com/geo/',
 		} ),
-		{ fromApi: ( { body: { country_short } } ) => [ [ 'geo', parseInt( country_short, 10 ) ] ] }
+		{
+			fromApi: () => ( { body: { country_short } } ) => [
+				[ 'geo', parseInt( country_short, 10 ) ],
+			],
+		}
 	);
