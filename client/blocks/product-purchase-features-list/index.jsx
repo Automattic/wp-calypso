@@ -84,7 +84,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
 				<MobileApps />
-				<SellOnlinePaypal />
+				<SellOnlinePaypal isJetpack={ false } />
 			</Fragment>
 		);
 	}
@@ -104,7 +104,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
 				<MobileApps />
-				<SellOnlinePaypal />
+				<SellOnlinePaypal isJetpack={ false } />
 			</Fragment>
 		);
 	}
@@ -118,7 +118,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<MobileApps />
-				<SellOnlinePaypal />
+				<SellOnlinePaypal isJetpack={ false } />
 			</Fragment>
 		);
 	}
@@ -158,7 +158,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackVideo selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
-				<SellOnlinePaypal />
+				<SellOnlinePaypal isJetpack />
 			</Fragment>
 		);
 	}
@@ -206,7 +206,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
-				<SellOnlinePaypal />
+				<SellOnlinePaypal isJetpack />
 			</Fragment>
 		);
 	}
