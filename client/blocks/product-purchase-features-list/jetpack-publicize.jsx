@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { translate } ) => {
+export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -21,6 +21,8 @@ export default localize( ( { translate } ) => {
 				description={ translate(
 					'Schedule unlimited tweets, Facebook posts, and other social posts in advance.'
 				) }
+				buttonText={ translate( 'Learn more' ) }
+				href={ `/sharing/${ selectedSite.slug }` }
 			/>
 		</div>
 	);

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { translate } ) => {
+export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -21,6 +21,8 @@ export default localize( ( { translate } ) => {
 				description={ translate(
 					'High-speed, high-definition video hosting that uses your server space efficiently, and comes with no third-party ads.'
 				) }
+				buttonText={ translate( 'Activate' ) }
+				href={ `/media/videos/${ selectedSite.slug }` }
 			/>
 		</div>
 	);

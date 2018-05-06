@@ -149,9 +149,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				<MonetizeSite selectedSite={ selectedSite } />
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<JetpackBackupSecurity />
-				<JetpackAntiSpam />
-				<JetpackPublicize />
-				<JetpackVideo />
+				<JetpackAntiSpam selectedSite={ selectedSite } />
+				<JetpackPublicize selectedSite={ selectedSite } />
+				<JetpackVideo selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
 			</Fragment>
@@ -169,7 +169,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				/>
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<JetpackBackupSecurity />
-				<JetpackAntiSpam />
+				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
 			</Fragment>
@@ -195,10 +195,10 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<FindNewTheme selectedSite={ selectedSite } />
-				<JetpackVideo />
-				<JetpackPublicize />
+				<JetpackVideo selectedSite={ selectedSite } />
+				<JetpackPublicize selectedSite={ selectedSite } />
 				<JetpackBackupSecurity />
-				<JetpackAntiSpam />
+				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
 			</Fragment>
