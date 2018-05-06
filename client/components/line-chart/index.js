@@ -25,7 +25,7 @@ const POINTS_SIZE = 3;
 const POINTS_END_SIZE = 1;
 const X_AXIS_TICKS_MAX = 8;
 const X_AXIS_TICKS_SPACE = 70;
-const Y_AXIS_TICKS_MAX = 6;
+const Y_AXIS_TICKS = 6;
 const Y_AXIS_TICKS_SPACE = 30;
 
 const dateFormatFunction = displayMonthOnly => ( date, index, tickRefs ) => {
@@ -241,20 +241,24 @@ class LineChart extends Component {
 	getYAxisParams = ( concatData, margin, newHeight ) => {
 		const [ minValue, maxValue ] = d3Extent( concatData, datum => datum.value );
 
+		let maxDomain = maxValue;
+
+		// Makes sure we always use integers instead of decimal numbers for tick labels when the maximum value is less
+		// than the default number of ticks
+		if ( maxDomain < Y_AXIS_TICKS ) {
+			maxDomain = Y_AXIS_TICKS;
+		}
+
 		const valueDomainAdjustment = ( maxValue - minValue ) * CHART_MARGIN;
 
-		// if the value is less than our max ticks, use that value so that each tick is a round integer
-		const yTicks = Y_AXIS_TICKS_MAX > maxValue ? maxValue : Y_AXIS_TICKS_MAX;
+		maxDomain = maxDomain + valueDomainAdjustment;
 
 		return {
 			yScale: d3ScaleLinear()
-				.domain( [
-					0,
-					maxValue + valueDomainAdjustment,
-				] )
+				.domain( [ 0, maxDomain ] )
 				.range( [ newHeight - margin.bottom, margin.top ] )
 				.nice(),
-			yTicks,
+			yTicks: Y_AXIS_TICKS,
 		};
 	};
 
