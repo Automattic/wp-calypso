@@ -105,10 +105,8 @@ const parseResponse = ( data, fromApi ) => {
 };
 
 const onSuccess = ( action, apiData ) => {
-	const [ error, data ] =
-		'function' === typeof action.fromApi
-			? parseResponse( apiData, action.fromApi )
-			: [ undefined, [] ];
+	const fromApi = 'function' === typeof action.fromApi && action.fromApi();
+	const [ error, data ] = fromApi ? parseResponse( apiData, fromApi ) : [ undefined, [] ];
 
 	if ( undefined !== error ) {
 		return onError( action, error );
