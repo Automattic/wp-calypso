@@ -4,7 +4,57 @@
  */
 import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { update } from './common';
+
+export const httpData = new Map();
+
+const empty = Object.freeze( {
+	state: 'uninitialized',
+	data: undefined,
+	error: undefined,
+	lastUpdated: -Infinity,
+	pendingSince: undefined,
+} );
+
+export const getHttpData = id => httpData.get( id ) || empty;
+
+export const update = ( id, state, data ) => {
+	const lastUpdated = Date.now();
+	const item = httpData.get( id );
+	const hasItem = item !== undefined;
+
+	// We could have left out the keys for
+	// the previous properties if they didn't
+	// exist but I wanted to make sure we can
+	// get our hidden classes to optimize here.
+	switch ( state ) {
+		case 'failure':
+			return httpData.set( id, {
+				state,
+				data: hasItem ? item.data : undefined,
+				error: data,
+				lastUpdated: hasItem ? item.lastUpdated : -Infinity,
+				pendingSince: undefined,
+			} );
+
+		case 'pending':
+			return httpData.set( id, {
+				state,
+				data: hasItem ? item.data : undefined,
+				error: undefined,
+				lastUpdated: hasItem ? item.lastUpdated : -Infinity,
+				pendingSince: lastUpdated,
+			} );
+
+		case 'success':
+			return httpData.set( id, {
+				state,
+				data,
+				error: undefined,
+				lastUpdated,
+				pendingSince: undefined,
+			} );
+	}
+};
 
 const fetch = action => {
 	update( action.id, 'pending' );
@@ -55,8 +105,8 @@ const parseResponse = ( data, fromApi ) => {
 };
 
 const onSuccess = ( action, apiData ) => {
-	const [ error, data ] =
-		'function' === typeof apiData ? parseResponse( apiData, action.fromApi ) : [ undefined, [] ];
+	const fromApi = 'function' === typeof action.fromApi && action.fromApi();
+	const [ error, data ] = fromApi ? parseResponse( apiData, fromApi ) : [ undefined, [] ];
 
 	if ( undefined !== error ) {
 		return onError( action, error );
@@ -76,4 +126,48 @@ export default {
 			onError,
 		} ),
 	],
+};
+
+export const reducer = ( state = 0, { type } ) => ( HTTP_DATA_TICK === type ? state + 1 : state );
+
+let dispatch;
+
+export const enhancer = next => ( ...args ) => {
+	const store = next( ...args );
+
+	dispatch = store.dispatch;
+
+	return store;
+};
+
+/**
+ * Fetches data from a fetchable action
+ *
+ * @param {string} requestId uniquely identifies the request or request type
+ * @param {function|object} fetchAction action that when dispatched will request the data (may be wrapped in a lazy thunk)
+ * @param {?function} fromApi when called produces a function that validates and transforms API data into Calypso data
+ * @param {?number} freshness indicates how many ms stale data is allowed to be before refetching
+ * @return {*} stored data container for request
+ */
+export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = Infinity } ) => {
+	const data = getHttpData( requestId );
+	const { state, lastUpdated } = data;
+
+	if (
+		'uninitialized' === state ||
+		( 'pending' !== state && Date.now() - lastUpdated > freshness )
+	) {
+		if ( 'development' === process.env.NODE_ENV && 'function' !== typeof dispatch ) {
+			throw new Error( 'Cannot use HTTP data without injecting Redux store enhancer!' );
+		}
+
+		dispatch( {
+			type: HTTP_DATA_REQUEST,
+			id: requestId,
+			fetch: 'function' === typeof fetchAction ? fetchAction() : fetchAction,
+			fromApi: 'function' === typeof fromApi ? fromApi() : a => a,
+		} );
+	}
+
+	return data;
 };
