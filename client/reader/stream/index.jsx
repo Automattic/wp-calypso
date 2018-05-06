@@ -370,7 +370,7 @@ class ReaderStream extends React.Component {
 	};
 
 	render() {
-		const { forcePlaceholders, pendingItems, updateCount, lastPage, streamKey } = this.props;
+		const { forcePlaceholders, lastPage, streamKey } = this.props;
 		let { items, isRequesting } = this.props;
 
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -412,7 +412,7 @@ class ReaderStream extends React.Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
-				{ ! streamType === 'search' && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
+				{ streamType !== 'search' && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 				{ this.props.isMain &&
 					this.props.showMobileBackToSidebar && (
 						<MobileBackToSidebar>
@@ -420,11 +420,7 @@ class ReaderStream extends React.Component {
 						</MobileBackToSidebar>
 					) }
 
-				<UpdateNotice
-					count={ updateCount }
-					onClick={ this.showUpdates }
-					pendingPostKeys={ pendingItems }
-				/>
+				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro : null }
 				{ body }
@@ -447,8 +443,6 @@ export default connect(
 			} ),
 			stream,
 			recsStream: getStream( state, recsStreamKey ),
-			pendingItems: stream.pendingItems.items,
-			updateCount: stream.pendingItems.items.length,
 			selectedPostKey: stream.selected,
 			selectedPost: getPostByKey( state, stream.selected ),
 			lastPage: stream.lastPage,

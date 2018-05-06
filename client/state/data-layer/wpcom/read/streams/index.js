@@ -59,7 +59,7 @@ function analyticsForStream( { streamKey, algorithm, posts } ) {
 const getAlgorithmForStream = streamKey => analyticsAlgoMap.get( streamKey );
 
 export const PER_FETCH = 6;
-const PER_POLL = 5;
+const PER_POLL = 40;
 const PER_GAP = 40;
 
 export const QUERY_META = [ 'post', 'discover_original_post' ].join( ',' );
@@ -90,7 +90,6 @@ const streamApis = {
 	following: {
 		path: () => '/read/following',
 		dateProperty: 'date',
-		pollQuery: getQueryStringForPoll,
 	},
 	search: {
 		path: () => '/read/search',
@@ -103,12 +102,10 @@ const streamApis = {
 	feed: {
 		path: ( { streamKey } ) => `/read/feed/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
-		pollQuery: getQueryStringForPoll,
 	},
 	site: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
-		pollQuery: getQueryStringForPoll,
 	},
 	conversations: {
 		path: () => '/read/conversations',
@@ -122,7 +119,6 @@ const streamApis = {
 	a8c: {
 		path: () => '/read/a8c',
 		dateProperty: 'date',
-		pollQuery: getQueryStringForPoll,
 	},
 	'conversations-a8c': {
 		path: () => '/read/conversations',
@@ -196,7 +192,7 @@ export function requestPage( action ) {
 		path: path( { ...action.payload } ),
 		apiVersion,
 		query: isPoll
-			? pollQuery( { ...algorithm } )
+			? pollQuery( [], { ...algorithm } )
 			: query(
 					{ ...pageHandle, ...algorithm, number: !! gap ? PER_GAP : PER_FETCH },
 					action.payload

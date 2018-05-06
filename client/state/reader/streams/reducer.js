@@ -30,7 +30,7 @@ export const items = ( state = [], action ) => {
 			const { streamItems, gap } = action.payload;
 
 			let nextState;
-			if ( !! gap ) {
+			if ( gap ) {
 				const beforeGap = takeWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
 				const afterGap = takeRightWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
 
@@ -47,13 +47,7 @@ export const items = ( state = [], action ) => {
 				nextState = [ ...state, ...streamItems ];
 			}
 
-			nextState = uniqWith( nextState, keysAreEqual );
-
-			if ( nextState.length === state.length ) {
-				return state;
-			}
-
-			return nextState;
+			return uniqWith( nextState, keysAreEqual );
 		case READER_STREAMS_SHOW_UPDATES:
 			return [ ...action.payload.items, ...state ];
 	}
@@ -87,7 +81,9 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 
 			// only retain posts that are newer than ones we already have
 			if ( state.lastUpdated ) {
-				streamItems = streamItems.filter( item => moment( item.date ) > state.lastUpdated );
+				streamItems = streamItems.filter( item =>
+					moment( item.date ).isSameOrAfter( state.lastUpdated )
+				);
 			}
 
 			if ( streamItems.length === 0 ) {

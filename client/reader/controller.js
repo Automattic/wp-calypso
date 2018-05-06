@@ -172,9 +172,9 @@ const exported = {
 
 	feedListing( context, next ) {
 		const basePath = '/read/feeds/:feed_id';
-		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id;
-		const mcKey = 'blog';
 		const feedId = context.params.feed_id;
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + feedId;
+		const mcKey = 'blog';
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_blog_preview', { feed_id: feedId } );
@@ -203,8 +203,9 @@ const exported = {
 
 	blogListing( context, next ) {
 		const basePath = '/read/blogs/:blog_id';
-		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + context.params.blog_id;
-		const streamKey = 'site:' + context.params.blog_id;
+		const blogId = context.params.blog_id;
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + blogId;
+		const streamKey = 'site:' + blogId;
 		const mcKey = 'blog';
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -215,9 +216,9 @@ const exported = {
 		context.primary = (
 			<AsyncLoad
 				require="reader/site-stream"
-				key={ 'site-' + context.params.blog_id }
+				key={ 'site-' + blogId }
 				streamKey={ streamKey }
-				siteId={ +context.params.blog_id }
+				siteId={ +blogId }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
