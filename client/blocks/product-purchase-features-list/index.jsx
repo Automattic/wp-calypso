@@ -150,7 +150,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<JetpackBackupSecurity />
 				<JetpackAntiSpam selectedSite={ selectedSite } />
-				<JetpackPublicize />
+				<JetpackPublicize selectedSite={ selectedSite } />
 				<JetpackVideo selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
 				<MobileApps />
@@ -196,7 +196,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<FindNewTheme selectedSite={ selectedSite } />
 				<JetpackVideo selectedSite={ selectedSite } />
-				<JetpackPublicize />
+				<JetpackPublicize selectedSite={ selectedSite } />
 				<JetpackBackupSecurity />
 				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackReturnToDashboard selectedSite={ selectedSite } />
