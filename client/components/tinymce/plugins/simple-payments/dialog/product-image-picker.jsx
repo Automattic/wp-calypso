@@ -41,23 +41,21 @@ class ProductImagePicker extends Component {
 			return;
 		}
 
-		if ( featuredImage ) {
-			MediaActions.setLibrarySelectedItems( siteId, [ featuredImage ] );
-		}
-
-		this.setState( { isSelecting: true } );
+		this.setState( { isSelecting: true }, () => {
+			if ( featuredImage ) {
+				MediaActions.setLibrarySelectedItems( siteId, [ featuredImage ] );
+			}
+		} );
 	};
 
-	hideMediaModal = () => this.setState( { isSelecting: false } );
-
 	setImage = value => {
-		this.hideMediaModal();
+		this.setState( { isSelecting: false }, () => {
+			if ( ! value ) {
+				return;
+			}
 
-		if ( ! value ) {
-			return;
-		}
-
-		this.props.input.onChange( value.items[ 0 ].ID );
+			this.props.input.onChange( value.items[ 0 ].ID );
+		} );
 	};
 
 	removeCurrentImage = event => {
@@ -100,6 +98,7 @@ class ProductImagePicker extends Component {
 
 	render() {
 		const { siteId, translate } = this.props;
+		const { isSelecting } = this.state;
 
 		if ( ! siteId ) {
 			return;
@@ -113,7 +112,7 @@ class ProductImagePicker extends Component {
 						siteId={ siteId }
 						onClose={ this.setImage }
 						enabledFilters={ [ 'images' ] }
-						visible={ this.state.isSelecting }
+						visible={ isSelecting }
 						isBackdropVisible={ false }
 						labels={ {
 							confirm: translate( 'Add' ),
