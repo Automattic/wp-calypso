@@ -11,7 +11,6 @@ Happychat state shape:
   - status: one of the HAPPYCHAT_CHAT_STATUS_* [constants](./constants.js)
   - lastActivityTimestamp: milliseconds since the ongoing chat received or set a message.
 - ui
-  - isMinimizing: whether the happychat client is minimizing.
   - isOpen: whether the happychat client is opened.
   - lostFocusAt: milliseconds since the happychat client lost focus.
 - user

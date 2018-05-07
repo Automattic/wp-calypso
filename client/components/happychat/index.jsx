@@ -14,20 +14,12 @@ import { localize } from 'i18n-calypso';
  */
 // actions
 import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
-import {
-	blur,
-	focus,
-	closeChat,
-	minimizeChat,
-	minimizedChat,
-	setCurrentMessage,
-} from 'state/happychat/ui/actions';
+import { blur, focus, closeChat, setCurrentMessage } from 'state/happychat/ui/actions';
 // selectors
 import canUserSendMessages from 'state/happychat/selectors/can-user-send-messages';
 import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
 import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
 import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
-import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
 // UI components
@@ -50,10 +42,8 @@ export class Happychat extends Component {
 
 	// transform-class-properties syntax so this is bound within the function
 	onCloseChatTitle = () => {
-		const { onMinimizeChat, onMinimizedChat, onCloseChat } = this.props;
-		onMinimizeChat();
+		const { onCloseChat } = this.props;
 		setTimeout( () => {
-			onMinimizedChat();
 			onCloseChat();
 		}, 500 );
 	};
