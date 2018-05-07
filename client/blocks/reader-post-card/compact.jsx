@@ -15,7 +15,7 @@ import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import FeaturedAsset from './featured-asset';
 
 const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	/* eslint-disable wpcalypso/jsx-classname-namespace,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 	return (
 		<div className="reader-post-card__post" onClick={ onClick }>
 			<FeaturedAsset
@@ -43,7 +43,7 @@ const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 			</div>
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
+	/* eslint-disable wpcalypso/jsx-classname-namespace,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 };
 
 CompactPost.propTypes = {

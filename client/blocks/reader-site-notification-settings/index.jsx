@@ -124,7 +124,7 @@ class ReaderSiteNotificationSettings extends Component {
 
 		return (
 			<div className="reader-site-notification-settings">
-				<span
+				<button
 					className="reader-site-notification-settings__button"
 					onClick={ this.togglePopoverVisibility }
 					ref={ this.saveSpanRef }
@@ -136,7 +136,7 @@ class ReaderSiteNotificationSettings extends Component {
 					>
 						{ translate( 'Settings' ) }
 					</span>
-				</span>
+				</button>
 
 				<ReaderPopover
 					onClose={ this.closePopover }

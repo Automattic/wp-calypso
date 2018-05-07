@@ -120,6 +120,7 @@ class ReaderCombinedCardPost extends React.Component {
 			'has-featured-asset': !! featuredAsset,
 		} );
 
+		/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<li className={ classes } onClick={ this.handleCardClick }>
 				{ this.props.showFeaturedAsset && (
@@ -167,6 +168,7 @@ class ReaderCombinedCardPost extends React.Component {
 				</div>
 			</li>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
 	}
 }
 

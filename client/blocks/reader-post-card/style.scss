@@ -663,6 +663,11 @@
 .reader-post-card__blocked-undo {
 	padding-left: 2px;
 	cursor: pointer;
+	color: $blue-wordpress;
+
+	&:hover {
+		color: $link-highlight;
+	}
 }
 
 // For these borderless cards to look more presentable on Devdocs

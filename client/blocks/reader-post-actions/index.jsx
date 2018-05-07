@@ -50,7 +50,7 @@ const ReaderPostActions = props => {
 
 	const listClassnames = classnames( 'reader-post-actions', className );
 
-	/* eslint-disable react/jsx-no-target-blank */
+	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	return (
 		<ul className={ listClassnames }>
 			{ showVisit && (
@@ -120,7 +120,7 @@ const ReaderPostActions = props => {
 			) }
 		</ul>
 	);
-	/* eslint-enable react/jsx-no-target-blank */
+	/* eslint-enable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 };
 
 ReaderPostActions.propTypes = {
