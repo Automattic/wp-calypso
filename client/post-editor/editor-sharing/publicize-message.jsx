@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import FormTextarea from 'components/forms/form-textarea';
 import InfoPopover from 'components/info-popover';
 import TrackInputChanges from 'components/track-input-changes';
-import PostActions from 'lib/posts/actions';
 import * as stats from 'lib/posts/stats';
 
 class PublicizeMessage extends Component {
@@ -36,23 +36,15 @@ class PublicizeMessage extends Component {
 		acceptableLength: 280,
 		requireCount: false,
 		displayMessageHeading: true,
+		onChange: noop,
 		preFilledMessage: '',
 	};
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			userHasEditedMessage: false,
-		};
-	}
+
+	userHasEditedMessage = false;
 
 	onChange = event => {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		this.setState( { userHasEditedMessage: true } );
-		if ( this.props.onChange ) {
-			this.props.onChange( event.target.value );
-		} else {
-			PostActions.updateMetadata( '_wpas_mess', event.target.value );
-		}
+		this.userHasEditedMessage = true;
+		this.props.onChange( event.target.value );
 	};
 
 	recordStats = () => {
@@ -61,7 +53,7 @@ class PublicizeMessage extends Component {
 	};
 
 	shouldPreFillMessage() {
-		return ! this.state.userHasEditedMessage && '' === this.props.message;
+		return ! this.userHasEditedMessage && '' === this.props.message;
 	}
 
 	getMessage() {

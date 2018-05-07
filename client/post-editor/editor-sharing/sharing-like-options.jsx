@@ -14,46 +14,24 @@ import { connect } from 'react-redux';
  */
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
-import PostActions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
-import { isEditorNewPost } from 'state/ui/editor/selectors';
+import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
+import { getSite, isJetpackModuleActive } from 'state/sites/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { editPost } from 'state/posts/actions';
 
 class SharingLikeOptions extends React.Component {
 	static propTypes = {
-		site: PropTypes.object,
-		post: PropTypes.object,
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
 		isSharingButtonsEnabled: PropTypes.bool,
 		isLikesEnabled: PropTypes.bool,
-		isNew: PropTypes.bool,
+		isShowingSharingButtons: PropTypes.bool,
+		isShowingLikeButton: PropTypes.bool,
 	};
 
-	isShowingSharingButtons = () => {
-		if ( this.props.post && 'sharing_enabled' in this.props.post ) {
-			return this.props.post.sharing_enabled;
-		}
-
-		if ( this.props.site && this.props.isNew ) {
-			return this.props.site.options.default_sharing_status;
-		}
-
-		return true;
-	};
-
-	isShowingLikeButton = () => {
-		if ( this.props.post && 'likes_enabled' in this.props.post ) {
-			return this.props.post.likes_enabled;
-		}
-
-		if ( this.props.site && this.props.isNew ) {
-			return this.props.site.options.default_likes_enabled;
-		}
-
-		return true;
-	};
-
-	renderSharingButtonField = () => {
+	renderSharingButtonField() {
 		if ( ! this.props.isSharingButtonsEnabled ) {
 			return;
 		}
@@ -62,15 +40,15 @@ class SharingLikeOptions extends React.Component {
 			<label>
 				<FormCheckbox
 					name="sharing_enabled"
-					checked={ this.isShowingSharingButtons() }
+					checked={ this.props.isShowingSharingButtons }
 					onChange={ this.onChange }
 				/>
 				<span>{ this.props.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
 			</label>
 		);
-	};
+	}
 
-	renderLikesButtonField = () => {
+	renderLikesButtonField() {
 		if ( ! this.props.isLikesEnabled ) {
 			return;
 		}
@@ -79,24 +57,23 @@ class SharingLikeOptions extends React.Component {
 			<label>
 				<FormCheckbox
 					name="likes_enabled"
-					checked={ this.isShowingLikeButton() }
+					checked={ this.props.isShowingLikeButton }
 					onChange={ this.onChange }
 				/>
 				<span>{ this.props.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
 			</label>
 		);
-	};
+	}
 
 	onChange = event => {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( {
+		this.props.editPost( this.props.siteId, this.props.postId, {
 			[ event.target.name ]: event.target.checked,
 		} );
 
 		this.recordStats( event );
 	};
 
-	recordStats = event => {
+	recordStats( event ) {
 		let mcStat = event.target.name,
 			eventStat = 'sharing_enabled' === event.target.name ? 'Sharing Buttons' : 'Like Button';
 
@@ -105,7 +82,7 @@ class SharingLikeOptions extends React.Component {
 
 		recordStat( mcStat );
 		recordEvent( eventStat );
-	};
+	}
 
 	render() {
 		if ( ! this.props.isSharingButtonsEnabled && ! this.props.isLikesEnabled ) {
@@ -124,12 +101,48 @@ class SharingLikeOptions extends React.Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+function isShowingSharingButtons( site, post, isNew ) {
+	if ( post && 'sharing_enabled' in post ) {
+		return post.sharing_enabled;
+	}
 
-	return {
-		isSharingButtonsEnabled: false !== isJetpackModuleActive( state, siteId, 'sharedaddy' ),
-		isLikesEnabled: false !== isJetpackModuleActive( state, siteId, 'likes' ),
-		isNew: isEditorNewPost( state ),
-	};
-} )( localize( SharingLikeOptions ) );
+	if ( site && isNew ) {
+		return site.options.default_sharing_status;
+	}
+
+	return true;
+}
+
+function isShowingLikeButton( site, post, isNew ) {
+	if ( post && 'likes_enabled' in post ) {
+		return post.likes_enabled;
+	}
+
+	if ( site && isNew ) {
+		return site.options.default_likes_enabled;
+	}
+
+	return true;
+}
+
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const site = getSite( state, siteId );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+		const isNew = isEditorNewPost( state );
+
+		return {
+			siteId,
+			postId,
+			isSharingButtonsEnabled: false !== isJetpackModuleActive( state, siteId, 'sharedaddy' ),
+			isLikesEnabled: false !== isJetpackModuleActive( state, siteId, 'likes' ),
+			isShowingSharingButtons: isShowingSharingButtons( site, post, isNew ),
+			isShowingLikeButton: isShowingLikeButton( site, post, isNew ),
+		};
+	},
+	{
+		editPost,
+	}
+)( localize( SharingLikeOptions ) );

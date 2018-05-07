@@ -141,13 +141,7 @@ class EditorDrawer extends Component {
 	}
 
 	renderSharing() {
-		return (
-			<AsyncLoad
-				require="post-editor/editor-sharing/accordion"
-				site={ this.props.site }
-				post={ this.props.post }
-			/>
-		);
+		return <AsyncLoad require="post-editor/editor-sharing/accordion" />;
 	}
 
 	renderFeaturedImage() {
