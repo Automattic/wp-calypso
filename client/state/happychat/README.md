@@ -11,7 +11,6 @@ Happychat state shape:
   - status: one of the HAPPYCHAT_CHAT_STATUS_* [constants](./constants.js)
   - lastActivityTimestamp: milliseconds since the ongoing chat received or set a message.
 - ui
-  - currentMessage: current message as typed by the customer in the happychat client.
   - isMinimizing: whether the happychat client is minimizing.
   - isOpen: whether the happychat client is opened.
   - lostFocusAt: milliseconds since the happychat client lost focus.
@@ -31,10 +30,6 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Opens Happychat Socket.IO client connection. _Note: Most use cases should use the Query Component
 [`<HappychatConnection />`](../../components/happychat/connection.jsx) instead of dispatching
 this action directly._
-
-### `setCurrentMessage( message: String )`
-
-Updates the pending message that the user is composing in the Happychat client.
 
 ### `sendMessage( message: String )`
 
