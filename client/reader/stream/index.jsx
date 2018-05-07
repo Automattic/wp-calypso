@@ -169,6 +169,7 @@ class ReaderStream extends React.Component {
 		if ( streamKey !== this.props.streamKey ) {
 			this.props.resetCardExpansions();
 			this.props.viewStream( { streamKey } );
+			this.fetchNextPage( {} );
 		}
 	}
 
