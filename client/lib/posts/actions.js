@@ -5,7 +5,7 @@
  */
 
 import store from 'store';
-import { assign, clone, defer, fromPairs, map } from 'lodash';
+import { assign, clone, defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,54 +22,6 @@ import { reduxGetState } from 'lib/redux-bridge';
 import { isEditorSaveBlocked } from 'state/ui/editor/selectors';
 
 let PostActions;
-
-/**
- * Helper for performing a metadata operation on the currently edited post.
- * Accepts a key, value, and operation, where key may be a string or array
- * of string keys. Alternatively, specify an object of key value pairs as the
- * first parameter. Dispatches an `EDIT_POST` action.
- *
- * @param  {(String|String[]|Object)} key       The metadata key(s) or object
- *                                              of metadata key-value pairs
- * @param  {*}                        value     The metadata value
- * @param  {String}                   operation The metadata operation to
- *                                              perform (`add`, `update`,
- *                                              or `delete`)
- */
-function handleMetadataOperation( key, value, operation ) {
-	// Normalize a string or array of string keys to an object of key value pairs.
-	if ( 'string' === typeof key ) {
-		// case of handleMetadataOperation( 'excerpt', 'text', 'update' )
-		key = { [ key ]: value };
-	} else if ( Array.isArray( key ) ) {
-		// case of handleMetadataOperation( [ 'geo_latitude', 'geo_longitude' ], null, 'delete' )
-		key = fromPairs( key.map( meta => [ meta, value ] ) );
-	}
-
-	const metadata = map( key, function( objectValue, objectKey ) {
-		// `update` is a sufficient operation for new metadata, as it will add
-		// the metadata if it does not already exist. Similarly, we're not
-		// concerned with deleting a key which was added during previous edits,
-		// since this will effectively noop.
-		const meta = {
-			key: objectKey,
-			operation,
-		};
-
-		if ( 'delete' !== operation ) {
-			meta.value = objectValue;
-		}
-
-		return meta;
-	} );
-
-	Dispatcher.handleViewAction( {
-		type: 'EDIT_POST',
-		post: {
-			metadata,
-		},
-	} );
-}
 
 /**
  * Normalizes attributes to API expectations
@@ -239,25 +191,6 @@ PostActions = {
 		Dispatcher.handleViewAction( {
 			type: 'RESET_POST_RAW_CONTENT',
 		} );
-	},
-
-	/**
-	 * Edits metadata attributes on a post
-	 *
-	 * @param {(string|object)} key The metadata key, or an object of key-value pairs
-	 * @param {*} value The metadata value
-	 */
-	updateMetadata: function( key, value ) {
-		handleMetadataOperation( key, value, 'update' );
-	},
-
-	/**
-	 * Deletes a metadata attribute from a post
-	 *
-	 * @param {string} key The metadata key
-	 */
-	deleteMetadata: function( key ) {
-		handleMetadataOperation( key, null, 'delete' );
 	},
 
 	/**
