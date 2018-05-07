@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { findIndex, uniqWith, last, takeRightWhile, takeWhile } from 'lodash';
+import { findIndex, last, takeRightWhile, takeWhile } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -29,7 +29,6 @@ export const items = ( state = [], action ) => {
 		case READER_STREAMS_PAGE_RECEIVE:
 			const { streamItems, gap } = action.payload;
 
-			let nextState;
 			if ( gap ) {
 				const beforeGap = takeWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
 				const afterGap = takeRightWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
@@ -42,12 +41,10 @@ export const items = ( state = [], action ) => {
 					nextGap = [ { isGap: true, from, to } ];
 				}
 
-				nextState = [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ];
-			} else {
-				nextState = [ ...state, ...streamItems ];
+				return [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ];
 			}
+			return [ ...state, ...streamItems ];
 
-			return uniqWith( nextState, keysAreEqual );
 		case READER_STREAMS_SHOW_UPDATES:
 			return [ ...action.payload.items, ...state ];
 	}
@@ -61,7 +58,7 @@ export const PENDING_ITEMS_DEFAULT = { lastUpdated: null, items: [] };
  * This is the data backing the orange "${number} new posts" pill.
  */
 export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
-	let streamItems, moments, maxDate;
+	let streamItems, maxDate;
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
 			streamItems = action.payload.streamItems;
@@ -71,18 +68,20 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 
 			maxDate = moment( streamItems[ 0 ].date );
 
-			if ( state.lastUpdated && maxDate < state.lastUpdated ) {
+			if ( state.lastUpdated && maxDate.isSameOrBefore( state.lastUpdated ) ) {
 				return state;
 			}
 
 			return { ...state, lastUpdated: maxDate };
 		case READER_STREAMS_UPDATES_RECEIVE:
 			streamItems = action.payload.streamItems;
+			maxDate = moment( streamItems[ 0 ].date );
+			const minDate = moment( last( streamItems ).date );
 
 			// only retain posts that are newer than ones we already have
 			if ( state.lastUpdated ) {
 				streamItems = streamItems.filter( item =>
-					moment( item.date ).isSameOrAfter( state.lastUpdated )
+					moment( item.date ).isAfter( state.lastUpdated )
 				);
 			}
 
@@ -90,17 +89,10 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 				return state;
 			}
 
-			const newItems = uniqWith( streamItems, keysAreEqual );
-			moments = streamItems.map( item => moment( item.date ) );
-			maxDate = moment.max( moments );
-			const minDate = moment.min( moments );
+			const newItems = [ ...streamItems ];
 
-			// there might be a gap if we didn't have to filter something out
-			if (
-				state.lastUpdated &&
-				streamItems.length === action.payload.streamItems.length &&
-				! minDate.isSame( state.lastUpdated )
-			) {
+			// there is a gap if the oldest item in the poll is newer than last update time
+			if ( state.lastUpdated && minDate.isAfter( state.lastUpdated ) ) {
 				newItems.push( {
 					isGap: true,
 					from: state.lastUpdated,

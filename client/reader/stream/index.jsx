@@ -40,7 +40,7 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
 import PostLifecycle from './post-lifecycle';
-import { showSelectedPost } from 'reader/utils';
+import { showSelectedPost, getStreamType } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
 import { keysAreEqual, keyToString, keyForPost } from 'reader/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
@@ -409,8 +409,7 @@ class ReaderStream extends React.Component {
 			);
 			showingStream = true;
 		}
-		const indexOfColon = streamKey.indexOf( ':' );
-		const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
+		const streamType = getStreamType( streamKey );
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (

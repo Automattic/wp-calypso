@@ -217,7 +217,7 @@ export function handlePage( action, data ) {
 		const offset = get( action, 'payload.pageHandle.offset', 0 ) + PER_FETCH;
 		pageHandle = { offset };
 	} else if ( meta && meta.next_page ) {
-		// sites give pange handles nested within the meta key
+		// sites give page handles nested within the meta key
 		pageHandle = { page_handle: next_page || meta.next_page };
 	} else if ( date_range && date_range.after ) {
 		// feeds use date_range. no next_page handles here
