@@ -11,7 +11,7 @@ import { escapeRegExp, findIndex, get, head, includes, throttle, pick } from 'lo
  */
 import UserMentionSuggestionList from './suggestion-list';
 
-const keys = { enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow: 40 };
+const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow: 40 };
 
 /**
  * addUserMentions is a higher-order component that adds user mention support to whatever input it wraps.
@@ -83,6 +83,12 @@ export default WrappedComponent =>
 		handleKeyDown = event => {
 			const selectedIndex = this.getSelectedSuggestionIndex();
 
+			// Cancel Enter and Tab default actions so we can define our own in keyUp
+			if ( includes( [ keys.enter, keys.tab ], event.keyCode ) && this.state.showPopover ) {
+				event.preventDefault();
+				return false;
+			}
+
 			if ( ! includes( [ keys.upArrow, keys.downArrow ], event.keyCode ) || -1 === selectedIndex ) {
 				return;
 			}
@@ -114,7 +120,7 @@ export default WrappedComponent =>
 				return this.hidePopover();
 			}
 
-			if ( includes( [ keys.enter ], event.keyCode ) ) {
+			if ( includes( [ keys.enter, keys.tab ], event.keyCode ) ) {
 				if ( ! this.state.showPopover || this.matchingSuggestions.length === 0 ) {
 					return;
 				}
