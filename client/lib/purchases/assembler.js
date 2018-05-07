@@ -87,15 +87,10 @@ function createPurchaseObject( purchase ) {
 	return object;
 }
 
-function createPurchasesArray( dataTransferObject ) {
+export function createPurchasesArray( dataTransferObject ) {
 	if ( ! Array.isArray( dataTransferObject ) ) {
 		return [];
 	}
 
 	return sortProducts( dataTransferObject.map( createPurchaseObject ) );
 }
-
-export default {
-	createPurchaseObject,
-	createPurchasesArray,
-};
