@@ -411,11 +411,12 @@ class ReaderStream extends React.Component {
 			showingStream = true;
 		}
 		const streamType = getStreamType( streamKey );
+		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
-				{ streamType !== 'search' && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
+				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 				{ this.props.isMain &&
 					this.props.showMobileBackToSidebar && (
 						<MobileBackToSidebar>
