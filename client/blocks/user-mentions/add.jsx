@@ -83,6 +83,11 @@ export default WrappedComponent =>
 		handleKeyDown = event => {
 			const selectedIndex = this.getSelectedSuggestionIndex();
 
+			if ( includes( [ keys.enter ], event.keyCode ) && this.state.showPopover ) {
+				event.preventDefault();
+				return false;
+			}
+
 			if ( ! includes( [ keys.upArrow, keys.downArrow ], event.keyCode ) || -1 === selectedIndex ) {
 				return;
 			}
