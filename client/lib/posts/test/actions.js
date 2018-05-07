@@ -49,68 +49,6 @@ describe( 'actions', () => {
 		sandbox.restore();
 	} );
 
-	describe( '#updateMetadata()', () => {
-		test( 'should dispatch a post edit with a new metadata value', () => {
-			PostActions.updateMetadata( 'foo', 'bar' );
-
-			expect(
-				Dispatcher.handleViewAction.calledWithMatch( {
-					type: 'EDIT_POST',
-					post: {
-						metadata: [ { key: 'foo', value: 'bar', operation: 'update' } ],
-					},
-				} )
-			).to.be.true;
-		} );
-
-		test( 'accepts an object of key value pairs', () => {
-			PostActions.updateMetadata( {
-				foo: 'bar',
-				baz: 'qux',
-			} );
-
-			expect(
-				Dispatcher.handleViewAction.calledWithMatch( {
-					type: 'EDIT_POST',
-					post: {
-						metadata: [
-							{ key: 'foo', value: 'bar', operation: 'update' },
-							{ key: 'baz', value: 'qux', operation: 'update' },
-						],
-					},
-				} )
-			).to.be.true;
-		} );
-	} );
-
-	describe( '#deleteMetadata()', () => {
-		test( 'should dispatch a post edit with a deleted metadata', () => {
-			PostActions.deleteMetadata( 'foo' );
-
-			expect(
-				Dispatcher.handleViewAction.calledWithMatch( {
-					type: 'EDIT_POST',
-					post: {
-						metadata: [ { key: 'foo', operation: 'delete' } ],
-					},
-				} )
-			).to.be.true;
-		} );
-
-		test( 'should accept an array of metadata keys to delete', () => {
-			PostActions.deleteMetadata( [ 'foo', 'bar' ] );
-
-			expect(
-				Dispatcher.handleViewAction.calledWithMatch( {
-					type: 'EDIT_POST',
-					post: {
-						metadata: [ { key: 'foo', operation: 'delete' }, { key: 'bar', operation: 'delete' } ],
-					},
-				} )
-			).to.be.true;
-		} );
-	} );
-
 	describe( '#saveEdited()', () => {
 		test( 'should not send a request if the post has no content', done => {
 			const spy = sandbox.spy();
