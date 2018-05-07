@@ -6,23 +6,20 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PostEditStore from 'lib/posts/post-edit-store';
-import userModule from 'lib/user';
 import { countWords } from 'lib/text-utils';
-
-/**
- * Module variables
- */
-const user = userModule();
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 export class EditorWordCount extends PureComponent {
 	static propTypes = {
 		selectedText: PropTypes.string,
+		localeSlug: PropTypes.string,
 	};
 
 	state = {
@@ -47,7 +44,7 @@ export class EditorWordCount extends PureComponent {
 		} );
 	};
 
-	getSelectedTextCount = () => {
+	getSelectedTextCount() {
 		const selectedText = countWords( this.props.selectedText );
 
 		if ( ! selectedText ) {
@@ -68,13 +65,10 @@ export class EditorWordCount extends PureComponent {
 				},
 			}
 		);
-	};
+	}
 
 	render() {
-		const currentUser = user.get();
-		const localeSlug = ( currentUser && currentUser.localeSlug ) || 'en';
-
-		switch ( localeSlug ) {
+		switch ( this.props.localeSlug ) {
 			case 'ja':
 			case 'th':
 			case 'zh-cn':
@@ -105,4 +99,6 @@ export class EditorWordCount extends PureComponent {
 	}
 }
 
-export default localize( EditorWordCount );
+export default connect( state => ( {
+	localeSlug: getCurrentUserLocale( state ) || 'en',
+} ) )( localize( EditorWordCount ) );
