@@ -169,7 +169,7 @@ class ReaderStream extends React.Component {
 		if ( streamKey !== this.props.streamKey ) {
 			this.props.resetCardExpansions();
 			this.props.viewStream( { streamKey } );
-			this.fetchNextPage( {} );
+			this.fetchNextPage( {}, nextProps );
 		}
 	}
 
@@ -296,16 +296,16 @@ class ReaderStream extends React.Component {
 		this.props.requestPage( { streamKey, isPoll: true } );
 	};
 
-	fetchNextPage = options => {
-		const { streamKey, stream, startDate } = this.props;
+	fetchNextPage = ( options, props = this.props ) => {
+		const { streamKey, stream, startDate } = props;
 		if ( options.triggeredByScroll ) {
 			const page = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, page + 1 );
 
-			this.props.trackScrollPage( page );
+			props.trackScrollPage( page );
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
-		this.props.requestPage( { streamKey, pageHandle } );
+		props.requestPage( { streamKey, pageHandle } );
 	};
 
 	showUpdates = () => {
