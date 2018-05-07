@@ -17,14 +17,14 @@ const FORUM_LINK = '//en.forums.wordpress.com';
 const InlineHelpForumView = ( { translate = identity } ) => (
 	<div className="inline-help__forum-view">
 		<h2 className="inline-help__view-heading">
-			{ preventWidows( translate( 'Find Answers In Our Public Forums' ) ) }
+			{ preventWidows( translate( 'Ask the Community for Help' ) ) }
 		</h2>
 		<p>
 			{ preventWidows(
 				translate(
-					'Post a new question in our {{strong}}public forums{{/strong}}, ' +
-						'where it may be answered by helpful community members, ' +
-						'by following the link below.',
+					'Use this link to post a question in our {{strong}}public forums{{/strong}}, ' +
+						'where thousands of WordPress.com members around the world ' +
+						'can offer their expertise and advice.',
 					{
 						components: {
 							strong: <strong />,
@@ -34,7 +34,7 @@ const InlineHelpForumView = ( { translate = identity } ) => (
 			) }
 		</p>
 		<Button href={ FORUM_LINK } target="_blank" rel="noopener noreferrer" primary>
-			{ translate( 'Support Forums' ) }
+			{ translate( 'Go to the Support Forums' ) }
 		</Button>
 	</div>
 );
