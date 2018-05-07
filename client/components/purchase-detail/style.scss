@@ -77,7 +77,6 @@
 
 	@include breakpoint( "<660px" ) {
 		display: block;
-		margin: 0 auto;
 	}
 }
 
@@ -85,7 +84,6 @@
 	background: $gray-darken-20;
 	border-radius: 50%;
 	color: $white;
-	margin: 0 auto 10px;
 	padding: 16px;
 	width: 100%;
 	flex-shrink: 0;
