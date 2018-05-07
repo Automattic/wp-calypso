@@ -28,10 +28,15 @@ const X_AXIS_TICKS_SPACE = 70;
 const Y_AXIS_TICKS = 6;
 const Y_AXIS_TICKS_SPACE = 30;
 
-const dateFormatFunction = displayMonthOnly => ( date, index, tickRefs ) => {
-	const everyOtherTick = tickRefs.length > X_AXIS_TICKS_MAX;
-	return ! everyOtherTick || index % 2 === 0
-		? moment( date ).format( displayMonthOnly ? 'MMM' : 'MMM D' )
+const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) => {
+	// this can only be figured out here, becuase D3 will decide how many ticks there should be
+	const everyOtherTickOnly = ! displayMonthTicksOnly && tickRefs.length > X_AXIS_TICKS_MAX;
+	const isFirstMonthTick =
+		index === 0 || tickRefs[ index - 1 ].__data__.getMonth() < date.getMonth();
+	return ( ! everyOtherTickOnly && ! displayMonthTicksOnly ) ||
+		( everyOtherTickOnly && index % 2 === 0 ) ||
+		( displayMonthTicksOnly && isFirstMonthTick )
+		? moment( date ).format( displayMonthTicksOnly ? 'MMM' : 'MMM D' )
 		: '';
 };
 
@@ -217,17 +222,11 @@ class LineChart extends Component {
 
 		const timeDomainAdjustment = ( maxTimestamp - minTimestamp ) * CHART_MARGIN;
 
-		const minDate = new Date( minTimestamp );
-		const maxDate = new Date( maxTimestamp );
-		const months = maxDate.getMonth() - minDate.getMonth() + 1;
-		minDate.setMonth( minDate.getMonth() + 1 );
-		// in case of a short month like Feb.
-		maxDate.setDate( maxDate.getDate() - 3 );
+		const displayMonthOnly =
+			new Date( maxTimestamp ).getMonth() - new Date( minTimestamp ).getMonth() >= 2;
 
-		const displayMonthOnly = minDate < maxDate;
-
-		// use only enough ticks for months, or the etire length of the data
-		let xTicks = displayMonthOnly ? months : concatData.length / data.length;
+		// start out with a single ticks for each data point
+		let xTicks = concatData.length / data.length;
 
 		// reduce the number of ticks if it looks like they will be drawn too close together
 		xTicks =
