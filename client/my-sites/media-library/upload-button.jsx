@@ -75,7 +75,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var classes = classNames( 'media-library__upload-button', 'button', this.props.className );
+		const classes = classNames( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
 			<form ref="form" className={ classes }>

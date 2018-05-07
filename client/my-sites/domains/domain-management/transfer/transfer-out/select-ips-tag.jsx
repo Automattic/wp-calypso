@@ -42,9 +42,9 @@ class SelectIpsTag extends Component {
 		request.get( SelectIpsTag.ipsTagListUrl ).then( ( response ) => {
 			this.receiveIpsTagList( response.body );
 		} )
-		.catch( ( error ) => {
-			debug( 'Failed to load IPS tag list! ' + error );
-		} );
+			.catch( ( error ) => {
+				debug( 'Failed to load IPS tag list! ' + error );
+			} );
 	}
 
 	componentDidUpdate() {
@@ -114,8 +114,8 @@ class SelectIpsTag extends Component {
 				status="is-success"
 				text={
 					registrarUrl
-					? translate( 'Success! Please visit your new registrar to complete the transfer.' )
-					: translate( 'Success! Contact your new registrar to complete the transfer.' )
+						? translate( 'Success! Please visit your new registrar to complete the transfer.' )
+						: translate( 'Success! Contact your new registrar to complete the transfer.' )
 				}
 				showDismiss={ false }
 			>
@@ -188,7 +188,7 @@ class SelectIpsTag extends Component {
 				<p>
 					{ translate( 'Please verify you wish to set the registrar for ' +
 						'{{strong}}%(selectedDomainName)s{{/strong}} to the following:',
-						{ args: { selectedDomainName }, components: { strong: <strong /> } }
+					{ args: { selectedDomainName }, components: { strong: <strong /> } }
 					) }
 				</p>
 				<p>

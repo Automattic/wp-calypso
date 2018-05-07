@@ -84,7 +84,7 @@ class StatusLabel extends React.PureComponent {
 	}
 
 	renderLabel = () => {
-		var post = this.props.post,
+		let post = this.props.post,
 			editedTime = this.props.moment( postUtils.getEditedTime( post ) ),
 			label;
 

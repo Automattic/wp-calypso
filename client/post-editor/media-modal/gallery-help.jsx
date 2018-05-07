@@ -144,9 +144,8 @@ export default connect(
 				onDismiss: options => {
 					if ( options.remember ) {
 						return savePreference( 'mediaModalGalleryInstructionsDismissed', true );
-					} else {
-						return setPreference( 'mediaModalGalleryInstructionsDismissedForSession', true );
 					}
+					return setPreference( 'mediaModalGalleryInstructionsDismissedForSession', true );
 				},
 			},
 			dispatch

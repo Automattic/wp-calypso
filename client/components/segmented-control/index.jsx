@@ -18,7 +18,7 @@ import ControlItem from 'components/segmented-control/item';
 /**
  * Internal variables
  */
-var _instance = 1;
+let _instance = 1;
 
 /**
  * SegmentedControl
@@ -45,7 +45,7 @@ class SegmentedControl extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		var initialSelected;
+		let initialSelected;
 
 		if ( props.options ) {
 			initialSelected = props.initialSelected || props.options[ 0 ].value;
@@ -67,7 +67,7 @@ class SegmentedControl extends React.Component {
 	}
 
 	render() {
-		var segmentedClasses = {
+		const segmentedClasses = {
 			'segmented-control': true,
 			'keyboard-navigation': this.state.keyboardNavigation,
 			'is-compact': this.props.compact,
@@ -94,13 +94,13 @@ class SegmentedControl extends React.Component {
 	}
 
 	getSegmentedItems = () => {
-		var refIndex = 0;
+		let refIndex = 0;
 		if ( this.props.children ) {
 			// add keys and refs to children
 			return React.Children.map(
 				this.props.children,
 				function( child, index ) {
-					var newChild = React.cloneElement( child, {
+					const newChild = React.cloneElement( child, {
 						ref: child.type === ControlItem ? 'item-' + refIndex : null,
 						key: 'item-' + index,
 						onClick: function( event ) {
@@ -182,7 +182,7 @@ class SegmentedControl extends React.Component {
 	};
 
 	navigateItemByTabKey = event => {
-		var direction = event.shiftKey ? 'previous' : 'next',
+		let direction = event.shiftKey ? 'previous' : 'next',
 			newIndex = this.focusSibling( direction );
 
 		// allow tabbing out of control
@@ -197,7 +197,7 @@ class SegmentedControl extends React.Component {
 	 * @return {Number|Boolean} - returns false if the newIndex is out of bounds
 	 */
 	focusSibling = direction => {
-		var increment, items, newIndex;
+		let increment, items, newIndex;
 
 		if ( this.props.options ) {
 			items = filter( map( this.props.options, 'value' ), Boolean );
@@ -225,7 +225,7 @@ class SegmentedControl extends React.Component {
 
 	getCurrentFocusedIndex = () => {
 		// item is the <li> element containing the focused link
-		var activeItem = document.activeElement.parentNode,
+		let activeItem = document.activeElement.parentNode,
 			siblings = Array.prototype.slice( activeItem.parentNode.children ),
 			index = siblings.indexOf( activeItem );
 

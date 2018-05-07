@@ -60,7 +60,7 @@ class PostRelativeTime extends React.PureComponent {
 	};
 
 	getStatusText = () => {
-		var status = this.props.post.status,
+		let status = this.props.post.status,
 			statusClassName = 'post-relative-time-status__status',
 			statusIcon = 'aside',
 			statusText;
@@ -101,7 +101,7 @@ class PostRelativeTime extends React.PureComponent {
 	};
 
 	render() {
-		var timeText = this.getRelativeTimeText(),
+		let timeText = this.getRelativeTimeText(),
 			statusText = this.getStatusText(),
 			relativeTimeClass = timeText ? 'post-relative-time-status' : null,
 			innerText = (

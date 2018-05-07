@@ -25,7 +25,7 @@ class StatsActionSpam extends React.Component {
 	};
 
 	clickHandler = event => {
-		var spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
+		let spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
 			gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam',
 			wpcomSite;
 		event.stopPropagation();
@@ -45,7 +45,7 @@ class StatsActionSpam extends React.Component {
 	};
 
 	render() {
-		var label = this.state.spammed
+		let label = this.state.spammed
 				? this.props.translate( 'Not Spam' )
 				: this.props.translate( 'Spam', {
 						context: 'Stats: Action to mark an item as spam',

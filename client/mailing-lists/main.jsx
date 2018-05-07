@@ -171,7 +171,7 @@ class MainComponent extends React.Component {
 
 	render() {
 		const translate = this.props.translate;
-		var headingLabel = this.state.isSubscribed
+		let headingLabel = this.state.isSubscribed
 				? translate( "You're subscribed" )
 				: translate( "We've unsubscribed your email." ),
 			messageLabel = this.state.isSubscribed

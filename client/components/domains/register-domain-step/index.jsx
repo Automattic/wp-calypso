@@ -83,7 +83,7 @@ const SUGGESTION_QUANTITY = config.isEnabled( 'domains/kracken-ui/pagination' )
 	? PAGE_SIZE * MAX_PAGES
 	: PAGE_SIZE;
 
-let searchVendor = 'group_1';
+const searchVendor = 'group_1';
 const fetchAlgo = searchVendor + '/v1';
 
 let searchQueue = [];

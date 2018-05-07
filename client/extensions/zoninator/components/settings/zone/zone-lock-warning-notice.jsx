@@ -18,7 +18,6 @@ import { requestZones } from '../../../state/zones/actions';
 import { blocked } from '../../../state/locks/selectors';
 
 class ZoneLockWarningNotice extends PureComponent {
-
 	static propTypes = {
 		isBlocked: PropTypes.bool,
 		requestFeed: PropTypes.func.isRequired,

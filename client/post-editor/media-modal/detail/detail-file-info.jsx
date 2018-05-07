@@ -87,7 +87,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 	};
 
 	render() {
-		let classes = classNames( 'editor-media-modal-detail__file-info', {
+		const classes = classNames( 'editor-media-modal-detail__file-info', {
 			'is-loading': ! this.props.item,
 		} );
 

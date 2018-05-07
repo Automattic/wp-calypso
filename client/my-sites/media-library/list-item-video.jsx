@@ -60,8 +60,7 @@ export default class extends React.Component {
 					</span>
 				</div>
 			);
-		} else {
-			return <ListItemFileDetails { ...this.props } icon="video-camera" />;
 		}
+		return <ListItemFileDetails { ...this.props } icon="video-camera" />;
 	}
 }

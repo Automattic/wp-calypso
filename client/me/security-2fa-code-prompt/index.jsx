@@ -118,7 +118,7 @@ class Security2faCodePrompt extends React.Component {
 	};
 
 	onBeginCodeValidation = () => {
-		var args = {
+		const args = {
 			code: this.state.verificationCode,
 		};
 
@@ -148,7 +148,7 @@ class Security2faCodePrompt extends React.Component {
 	};
 
 	getSubmitButtonLabel = () => {
-		var label;
+		let label;
 
 		switch ( this.props.action ) {
 			case 'disable-two-step':
@@ -193,7 +193,7 @@ class Security2faCodePrompt extends React.Component {
 	};
 
 	render() {
-		var codePlaceholder = twoStepAuthorization.isTwoStepSMSEnabled()
+		const codePlaceholder = twoStepAuthorization.isTwoStepSMSEnabled()
 			? constants.sevenDigit2faPlaceholder
 			: constants.sixDigit2faPlaceholder;
 

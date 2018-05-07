@@ -58,7 +58,6 @@ class QueryMailChimpSyncStatus extends Component {
 	render() {
 		return null;
 	}
-
 }
 
 export default connect(

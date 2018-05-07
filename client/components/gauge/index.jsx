@@ -28,7 +28,7 @@ export default class extends React.PureComponent {
 	};
 
 	componentDidUpdate() {
-		var canvas = this.refs.canvas,
+		let canvas = this.refs.canvas,
 			ctx = canvas.getContext( '2d' );
 
 		ctx.clearRect( 0, 0, this.props.width, this.props.height );
@@ -40,7 +40,7 @@ export default class extends React.PureComponent {
 	}
 
 	drawArcs = () => {
-		var canvas = this.refs.canvas,
+		let canvas = this.refs.canvas,
 			x = this.props.width / 2,
 			y = this.props.height / 2,
 			ctx = canvas.getContext( '2d' ),
@@ -61,7 +61,7 @@ export default class extends React.PureComponent {
 	};
 
 	render() {
-		var wrapperStyles = {
+		let wrapperStyles = {
 				width: this.props.width,
 				height: this.props.height,
 			},

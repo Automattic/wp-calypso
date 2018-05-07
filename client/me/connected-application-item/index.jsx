@@ -47,7 +47,7 @@ class ConnectedApplicationItem extends React.Component {
 
 	renderAccessScopeBadge() {
 		const { connection: { scope, site } } = this.props;
-		var meta = '';
+		let meta = '';
 
 		if ( ! this.props.connection ) {
 			return;
@@ -68,7 +68,7 @@ class ConnectedApplicationItem extends React.Component {
 
 	renderScopeMessage() {
 		const { connection: { scope, site } } = this.props;
-		var message;
+		let message;
 		if ( ! this.props.connection ) {
 			return;
 		}
@@ -191,7 +191,7 @@ class ConnectedApplicationItem extends React.Component {
 	}
 
 	render() {
-		let classes = classNames( {
+		const classes = classNames( {
 			'connected-application-item': true,
 			'is-placeholder': this.props.isPlaceholder,
 		} );

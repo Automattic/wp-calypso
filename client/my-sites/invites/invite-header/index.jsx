@@ -103,7 +103,7 @@ class InviteHeader extends React.Component {
 	};
 
 	render() {
-		let classes = classNames( 'invite-header', { 'is-placeholder': ! this.props.inviteKey } );
+		const classes = classNames( 'invite-header', { 'is-placeholder': ! this.props.inviteKey } );
 
 		return (
 			<div className={ classes }>

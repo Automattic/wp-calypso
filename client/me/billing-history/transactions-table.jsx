@@ -27,7 +27,7 @@ class TransactionsTable extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		var initialTransactions;
+		let initialTransactions;
 
 		if ( props.transactions ) {
 			initialTransactions = tableRows.filter( props.transactions, props.initialFilter );
@@ -49,7 +49,7 @@ class TransactionsTable extends React.Component {
 	}
 
 	filterTransactions = filter => {
-		var newFilter, newTransactions;
+		let newFilter, newTransactions;
 
 		if ( ! this.props.transactions ) {
 			return;
@@ -78,7 +78,7 @@ class TransactionsTable extends React.Component {
 	};
 
 	render() {
-		var header;
+		let header;
 
 		if ( false !== this.props.header ) {
 			header = (
@@ -125,7 +125,7 @@ class TransactionsTable extends React.Component {
 	};
 
 	serviceNameDescription = transaction => {
-		var description;
+		let description;
 		if ( transaction.domain ) {
 			description = (
 				<div>
@@ -182,7 +182,7 @@ class TransactionsTable extends React.Component {
 		}
 
 		return this.state.transactions.map( function( transaction ) {
-			var date = tableRows.formatDate( transaction.date );
+			const date = tableRows.formatDate( transaction.date );
 
 			return (
 				<tr key={ transaction.id } className="billing-history__transaction">

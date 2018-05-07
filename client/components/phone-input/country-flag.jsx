@@ -57,9 +57,8 @@ export default class extends React.Component {
 						style={ style }
 					/>
 				);
-			} else {
-				return <Gridicon icon="globe" size={ 24 } className="phone-input__flag-icon" />;
 			}
+			return <Gridicon icon="globe" size={ 24 } className="phone-input__flag-icon" />;
 		}
 	};
 

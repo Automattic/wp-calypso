@@ -133,7 +133,6 @@ export class EditorMediaModal extends Component {
 		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );
 		}
-
 	}
 
 	componentWillUnmount() {

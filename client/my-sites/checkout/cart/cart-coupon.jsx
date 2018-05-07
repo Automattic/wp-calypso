@@ -20,7 +20,7 @@ class CartCoupon extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		var coupon = props.cart.coupon,
+		let coupon = props.cart.coupon,
 			cartHadCouponBeforeMount = Boolean( props.cart.coupon );
 
 		this.state = {

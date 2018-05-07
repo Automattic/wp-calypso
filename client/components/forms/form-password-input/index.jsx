@@ -26,10 +26,9 @@ export default class extends React.Component {
 		if ( isMobile() ) {
 			this.state = { hidePassword: false };
 			return;
-		} else {
-			this.state = { hidePassword: true };
-			return;
 		}
+		this.state = { hidePassword: true };
+		return;
 	}
 
 	togglePasswordVisibility = () => {
@@ -48,7 +47,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var toggleVisibilityClasses = classNames( {
+		const toggleVisibilityClasses = classNames( {
 			'form-password-input__toggle': true,
 			'form-password-input__toggle-visibility': ! this.props.hideToggle,
 		} );

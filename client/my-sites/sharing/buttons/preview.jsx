@@ -49,7 +49,7 @@ class SharingButtonsPreview extends React.Component {
 	};
 
 	toggleEditLabel = () => {
-		var isEditingLabel = ! this.state.isEditingLabel;
+		const isEditingLabel = ! this.state.isEditingLabel;
 		this.setState( { isEditingLabel: isEditingLabel } );
 
 		if ( isEditingLabel ) {
@@ -86,11 +86,10 @@ class SharingButtonsPreview extends React.Component {
 				return this.props.translate( 'Edit sharing buttons', {
 					context: 'Sharing: Buttons edit label',
 				} );
-			} else {
-				return this.props.translate( 'Add sharing buttons', {
-					context: 'Sharing: Buttons edit label',
-				} );
 			}
+			return this.props.translate( 'Add sharing buttons', {
+				context: 'Sharing: Buttons edit label',
+			} );
 		} else if ( enabledButtonsExist ) {
 			return this.props.translate( 'Edit “More” buttons', {
 				context: 'Sharing: Buttons edit label',
@@ -103,7 +102,7 @@ class SharingButtonsPreview extends React.Component {
 	};
 
 	getButtonsTrayToggleButtonElement = visibility => {
-		var enabledButtonsExist = some( this.props.buttons, {
+		const enabledButtonsExist = some( this.props.buttons, {
 			visibility: visibility,
 			enabled: true,
 		} );
@@ -158,7 +157,7 @@ class SharingButtonsPreview extends React.Component {
 	};
 
 	getPreviewButtonsElement = () => {
-		var enabledButtons = filter( this.props.buttons, { enabled: true } );
+		const enabledButtons = filter( this.props.buttons, { enabled: true } );
 
 		if ( enabledButtons.length ) {
 			return (

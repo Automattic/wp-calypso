@@ -40,7 +40,7 @@ class StatsSiteOverview extends Component {
 		const { siteId, siteSlug, path, summaryData, query, title } = this.props;
 		const { views, visitors, likes, comments } = summaryData;
 		const siteStatsPath = [ path, siteSlug ].join( '/' );
-		let headerPath = siteStatsPath;
+		const headerPath = siteStatsPath;
 
 		return (
 			<div>

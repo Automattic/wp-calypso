@@ -103,7 +103,7 @@ class InviteAccept extends React.Component {
 		let loginUrl = login( { redirectTo: window.location.href } );
 
 		if ( invite && invite.sentTo ) {
-			let presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
+			const presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
 			loginUrl += presetEmail;
 		}
 
@@ -130,7 +130,7 @@ class InviteAccept extends React.Component {
 		}
 		debug( 'Rendering invite' );
 
-		let props = {
+		const props = {
 			invite: this.state.invite,
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
 			decline: this.decline,
@@ -145,7 +145,7 @@ class InviteAccept extends React.Component {
 		const { error } = this.state;
 		debug( 'Rendering error: ' + JSON.stringify( error ) );
 
-		let props = {
+		const props = {
 			title: this.props.translate( 'Oops, that invite is not valid', {
 				context: 'Title that is display to users when attempting to accept an invalid invite.',
 			} ),
