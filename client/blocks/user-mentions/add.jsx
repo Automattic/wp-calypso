@@ -24,7 +24,7 @@ const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow:
  * @returns {object} the enhanced component
  */
 export default WrappedComponent =>
-	class withUserMentions extends React.Component {
+	class AddUserMentions extends React.Component {
 		matchingSuggestions = [];
 
 		static displayName = `withUserMentions( ${ WrappedComponent.displayName ||
@@ -159,12 +159,20 @@ export default WrappedComponent =>
 		getPosition() {
 			const node = this.textInput.current;
 			const nodeRect = node.getBoundingClientRect();
-			const caretPosition = getCaretCoordinates( node, node.selectionEnd );
+			const query = this.getQueryText();
+
+			// We want the position of the caret at the @ symbol
+			let caretPosition = node.selectionEnd;
+			if ( query ) {
+				caretPosition = node.selectionEnd - query.length;
+			}
+
+			const caretCoordinates = getCaretCoordinates( node, caretPosition );
 			const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 			const position = {
-				left: nodeRect.left + caretPosition.left + scrollLeft,
-				top: nodeRect.top + caretPosition.top + scrollTop + 28,
+				left: nodeRect.left + caretCoordinates.left + scrollLeft,
+				top: nodeRect.top + caretCoordinates.top + scrollTop + 28,
 			};
 
 			console.log( position ); // eslint-disable-line no-console
@@ -202,6 +210,7 @@ export default WrappedComponent =>
 			return suggestions.slice( 0, 10 );
 		}
 
+		// Insert a selected suggestion into the textbox
 		insertSuggestion = ( { user_login: userLogin } ) => {
 			if ( ! userLogin ) {
 				return;
