@@ -63,7 +63,30 @@ class BusinessAddOnsStep extends React.Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { goToNextStep, stepName, translate } = this.props;
+		const { goToNextStep, stepName, translate, signupDependencies } = this.props;
+
+		const stepOptionInformation = {
+			blogEnabled: formState.getFieldValue( this.state.form, 'blogEnabled' ),
+		};
+
+		const stepHeadstartInformation = {
+			contactForm: formState.getFieldValue( this.state.form, 'contactForm' ),
+			leadGeneration: formState.getFieldValue( this.state.form, 'leadGeneration' ),
+			simplePayments: formState.getFieldValue( this.state.form, 'simplePayments' ),
+		};
+
+		const stepSiteInformation = Object.assign( {}, signupDependencies.siteInformation, {
+			options: Object.assign(
+				{},
+				signupDependencies.siteInformation.options,
+				stepOptionInformation
+			),
+			headstart: Object.assign(
+				{},
+				signupDependencies.siteInformation.headstart,
+				stepHeadstartInformation
+			),
+		} );
 
 		//Submit Step
 		SignupActions.submitSignupStep(
@@ -73,21 +96,18 @@ class BusinessAddOnsStep extends React.Component {
 			},
 			[],
 			{
-				businessAddOns: {
-					blogEnabled: formState.getFieldValue( this.state.form, 'blogEnabled' ),
-					contactForm: formState.getFieldValue( this.state.form, 'contactForm' ),
-					leadGeneration: formState.getFieldValue( this.state.form, 'leadGeneration' ),
-					simplePayments: formState.getFieldValue( this.state.form, 'simplePayments' ),
-				},
+				siteInformation: Object.assign(
+					{},
+					signupDependencies.siteInformation,
+					stepSiteInformation
+				),
 			}
 		);
 
 		goToNextStep();
 	};
 
-	skipStep = () => {
-		this.submitSiteTitleStep( '' );
-	};
+	skipStep = () => this.props.goToNextStep();
 
 	renderBusinessAddOnsStep() {
 		const { translate } = this.props;
@@ -102,6 +122,7 @@ class BusinessAddOnsStep extends React.Component {
 								id="blogEnabled"
 								className="business-add-ons__checkbox"
 								onChange={ this.handleChangeEvent }
+								value={ true }
 							/>
 							{ translate( 'A blog' ) }
 						</FormLabel>
@@ -112,6 +133,7 @@ class BusinessAddOnsStep extends React.Component {
 								id="contactForm"
 								className="business-add-ons__checkbox"
 								onChange={ this.handleChangeEvent }
+								value={ true }
 							/>
 							{ translate( 'A contact form' ) }
 						</FormLabel>
@@ -122,6 +144,7 @@ class BusinessAddOnsStep extends React.Component {
 								id="leadGeneration"
 								className="business-add-ons__checkbox"
 								onChange={ this.handleChangeEvent }
+								value={ true }
 							/>
 							{ translate( 'An email subscription pop-up' ) }
 						</FormLabel>
@@ -132,6 +155,7 @@ class BusinessAddOnsStep extends React.Component {
 								id="simplePayments"
 								className="business-add-ons__checkbox"
 								onChange={ this.handleChangeEvent }
+								value={ true }
 							/>
 							{ translate( 'Simple payment buttons' ) }
 						</FormLabel>

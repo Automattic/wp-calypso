@@ -340,18 +340,18 @@ export function generateSteps( {
 
 		'business-information': {
 			stepName: 'business-information',
-			providesDependencies: [ 'businessInformation' ],
+			providesDependencies: [ 'siteInformation' ],
 		},
 
 		'business-add-ons': {
 			stepName: 'business-add-ons',
-			providesDependencies: [ 'businessAddOns' ],
+			providesDependencies: [ 'siteInformation' ],
 		},
 
 		style: {
 			stepName: 'style',
 			dependencies: [ 'themeSlugWithRepo' ],
-			providesDependencies: [ 'themeStyle' ],
+			providesDependencies: [ 'siteInformation' ],
 		},
 	};
 }

@@ -36,13 +36,10 @@ class SignupThemeStyleList extends Component {
 	}
 
 	renderStyle = style => {
+		const onScreenshotClick = () => this.props.handleScreenshotClick( style );
+
 		return (
-			<Card
-				key={ style.slug }
-				href={ `#${ style.slug }` }
-				className="theme-style__item"
-				onClick={ this.props.handleScreenshotClick }
-			>
+			<Card key={ style.slug } className="theme-style__item" onClick={ onScreenshotClick }>
 				<img className="theme-style__item-image" src={ style.image } alt={ style.name } />
 				<div className="theme-style__item-copy">
 					<span className="theme-style__item-cta button is-compact">{ style.name }</span>

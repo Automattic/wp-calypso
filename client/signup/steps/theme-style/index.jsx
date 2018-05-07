@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import SignupActions from 'lib/signup/actions';
 import SignupThemeStyleList from './signup-theme-style-list';
 import StepWrapper from 'signup/step-wrapper';
@@ -26,23 +25,36 @@ class ThemeStyleStep extends Component {
 	};
 
 	pickThemeStyle = themeStyle => {
-		analytics.tracks.recordEvent( 'calypso_signup_theme_style_select', {
-			themeStyle,
+		const { goToNextStep, signupDependencies } = this.props;
+
+		const stepThemeModInformation = {
+			active_style_pack: themeStyle.slug,
+		};
+
+		const stepSiteInformation = Object.assign( {}, signupDependencies.siteInformation, {
+			theme_mods: Object.assign(
+				{},
+				signupDependencies.siteInformation.theme_mods,
+				stepThemeModInformation
+			),
 		} );
 
 		SignupActions.submitSignupStep(
 			{
 				stepName: this.props.stepName,
 				processingMessage: this.props.translate( 'Styling your site.' ),
-				themeStyle,
 			},
-			null,
+			[],
 			{
-				themeStyle,
+				siteInformation: Object.assign(
+					{},
+					signupDependencies.siteInformation,
+					stepSiteInformation
+				),
 			}
 		);
 
-		this.props.goToNextStep();
+		goToNextStep();
 	};
 
 	renderThemeStyleList() {

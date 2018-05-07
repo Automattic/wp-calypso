@@ -22,7 +22,7 @@ import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
+import { getSiteTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
@@ -299,8 +299,7 @@ class AboutStep extends Component {
 
 		//Site Goals
 		this.props.setSiteGoals( siteGoalsInput );
-		themeRepo = getThemeForSiteGoals( siteGoalsInput );
-		designType = getSiteTypeForSiteGoals( siteGoalsInput, this.props.flowName );
+		//themeRepo = getThemeForSiteGoals( siteGoalsInput );
 
 		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
 			eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
@@ -309,6 +308,7 @@ class AboutStep extends Component {
 		eventAttributes.site_goal_selections = siteGoalsGroup;
 
 		//SET SITETYPE
+		designType = getSiteTypeForSiteGoals( siteGoalsInput, this.props.flowName );
 		this.props.setDesignType( designType );
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', {
 			category: designType,

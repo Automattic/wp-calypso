@@ -132,6 +132,7 @@ export function createSiteWithCart(
 				theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 				vertical: surveyVertical || undefined,
 				siteGoals: siteGoals || undefined,
+				siteInformation: dependencies.siteInformation || undefined,
 			},
 			validate: false,
 			find_available_url: isPurchasingItem,
@@ -408,11 +409,19 @@ export function createAccount(
 	}
 }
 
-export function createSite( callback, { themeSlugWithRepo }, { site }, reduxStore ) {
+export function createSite(
+	callback,
+	{ themeSlugWithRepo, siteInformation },
+	{ site },
+	reduxStore
+) {
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		options: { theme: themeSlugWithRepo },
+		options: {
+			theme: themeSlugWithRepo,
+			siteInformation: siteInformation || undefined,
+		},
 		validate: false,
 	};
 

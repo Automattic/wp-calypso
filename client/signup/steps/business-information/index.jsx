@@ -82,12 +82,28 @@ class BusinessInformationStep extends React.Component {
 			},
 			[],
 			{
-				businessInformation: {
-					phoneNumber: formState.getFieldValue( this.state.form, 'phoneNumber' ),
-					emailAddress: formState.getFieldValue( this.state.form, 'emailAddress' ),
-					mailingAddress: formState.getFieldValue( this.state.form, 'mailingAddress' ),
-					contactMap: formState.getFieldValue( this.state.form, 'contactMap' ),
-					businessHours: formState.getFieldValue( this.state.form, 'businessHours' ),
+				siteInformation: {
+					theme_mods: {
+						radcliffe_2_contact_info_phone: formState.getFieldValue(
+							this.state.form,
+							'phoneNumber'
+						),
+						radcliffe_2_contact_info_email: formState.getFieldValue(
+							this.state.form,
+							'emailAddress'
+						),
+						radcliffe_2_contact_info_address: formState.getFieldValue(
+							this.state.form,
+							'mailingAddress'
+						),
+						radcliffe_2_contact_info_hours: formState.getFieldValue(
+							this.state.form,
+							'businessHours'
+						),
+					},
+					headstart: {
+						contactMap: formState.getFieldValue( this.state.form, 'contactMap' ),
+					},
 				},
 			}
 		);
@@ -95,9 +111,7 @@ class BusinessInformationStep extends React.Component {
 		goToNextStep();
 	};
 
-	skipStep = () => {
-		this.submitSiteTitleStep( '' );
-	};
+	skipStep = () => this.props.goToNextStep();
 
 	renderBusinessInformationStep() {
 		const { translate } = this.props;
