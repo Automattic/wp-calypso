@@ -46,7 +46,7 @@ class DomainSearch extends Component {
 		domainRegistrationMaintenanceEndTime: null,
 	};
 
-	handleDomainsAvailabilityChange = ( isAvailable, maintenanceEndTime ) => {
+	handleDomainsAvailabilityChange = ( isAvailable, maintenanceEndTime = null ) => {
 		this.setState( {
 			domainRegistrationAvailable: isAvailable,
 			domainRegistrationMaintenanceEndTime: maintenanceEndTime,

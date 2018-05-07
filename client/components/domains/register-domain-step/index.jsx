@@ -544,7 +544,7 @@ class RegisterDomainStep extends React.Component {
 						this.props.analyticsSection
 					);
 
-					this.props.onDomainsAvailabilityChange( true, 0 );
+					this.props.onDomainsAvailabilityChange( true );
 					resolve( isDomainAvailable ? result : null );
 				}
 			);
