@@ -33,7 +33,6 @@ export default class D3Base extends Component {
 		params: null,
 		drawChart: null,
 		getParams: null,
-		updateParams: false,
 	};
 
 	chartRef = React.createRef();
@@ -42,15 +41,15 @@ export default class D3Base extends Component {
 		let state = {};
 
 		if ( nextProps.data !== prevState.data ) {
-			state = { ...state, data: nextProps.data, updateParams: true };
+			state = { ...state, data: nextProps.data };
 		}
 
 		if ( nextProps.drawChart !== prevState.drawChart ) {
-			state = { ...state, drawChart: nextProps.drawChart, updateParams: true };
+			state = { ...state, drawChart: nextProps.drawChart };
 		}
 
 		if ( nextProps.getParams !== prevState.getParams ) {
-			state = { ...state, getParams: nextProps.getParams, updateParams: true };
+			state = { ...state, getParams: nextProps.getParams };
 		}
 
 		if ( ! isEmpty( state ) ) {
@@ -69,7 +68,7 @@ export default class D3Base extends Component {
 	shouldComponentUpdate( nextProps, nextState ) {
 		return (
 			( nextState.params !== null && this.state.params !== nextState.params ) ||
-			this.state.updateParams
+			this.state.data !== nextState.data
 		);
 	}
 
@@ -93,16 +92,16 @@ export default class D3Base extends Component {
 	 * Renders the chart, or triggers a rendering by updating the list of params.
 	 */
 	drawChart() {
-		if ( this.state.params === null || this.state.updateParams ) {
+		if ( ! this.state.params ) {
 			this.updateParams();
-		} else {
-			const svg = this.drawContainer();
-
-			this.props.drawChart( svg, this.state.params );
+			return;
 		}
+
+		const svg = this.getContainer();
+		this.props.drawChart( svg, this.state.params );
 	}
 
-	drawContainer() {
+	getContainer() {
 		const { className } = this.props;
 		const { width, height } = this.state.params;
 
@@ -122,7 +121,7 @@ export default class D3Base extends Component {
 
 	updateParams = () => {
 		const params = this.state.getParams( this.chartRef.current );
-		this.setState( { params, updateParams: false } );
+		this.setState( { params } );
 	};
 
 	render() {
