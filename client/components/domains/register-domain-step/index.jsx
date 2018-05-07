@@ -67,11 +67,15 @@ import {
 	recordSearchFormSubmit,
 	recordSearchFormView,
 	recordSearchResultsReceive,
+	recordShowMoreResults,
 	recordTransferDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
+
+// TODO: Enable A/B test handling for M2.1 release
+const isPaginationEnabled = config.isEnabled( 'domains/kracken-ui/pagination' );
 
 const domains = wpcom.domains();
 
@@ -79,9 +83,7 @@ const domains = wpcom.domains();
 const INITIAL_SUGGESTION_QUANTITY = 2;
 const PAGE_SIZE = 10;
 const MAX_PAGES = 3;
-const SUGGESTION_QUANTITY = config.isEnabled( 'domains/kracken-ui/pagination' )
-	? PAGE_SIZE * MAX_PAGES
-	: PAGE_SIZE;
+const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
 
 let searchVendor = 'group_1';
 const fetchAlgo = searchVendor + '/v1';
@@ -401,8 +403,7 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderPaginationControls() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
-		if ( ! isKrackenUi ) {
+		if ( ! isPaginationEnabled ) {
 			return null;
 		}
 
@@ -843,9 +844,21 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	showNextPage = () => {
-		debug( 'showNextPage was triggered' );
+		const pageNumber = this.state.pageNumber + 1;
 
-		this.setState( { pageNumber: this.state.pageNumber + 1 }, this.save );
+		debug(
+			`Showing page ${ pageNumber } with query "${ this.state.lastQuery }" in section "${
+				this.props.analyticsSection
+			}"`
+		);
+
+		this.props.recordShowMoreResults(
+			this.state.lastQuery,
+			pageNumber,
+			this.props.analyticsSection
+		);
+
+		this.setState( { pageNumber }, this.save );
 	};
 
 	renderInitialSuggestions() {
@@ -923,7 +936,7 @@ class RegisterDomainStep extends React.Component {
 
 		const searchResults = this.state.searchResults || [];
 
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
+		const isKrackenUi = isPaginationEnabled;
 
 		let suggestions;
 		if ( isKrackenUi ) {
@@ -1059,6 +1072,7 @@ export default connect(
 		recordSearchFormSubmit,
 		recordSearchFormView,
 		recordSearchResultsReceive,
+		recordShowMoreResults,
 		recordTransferDomainButtonClick,
 	}
 )( localize( RegisterDomainStep ) );

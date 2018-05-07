@@ -84,3 +84,14 @@ export const recordDomainAvailabilityReceive = (
 			section,
 		} )
 	);
+
+export function recordShowMoreResults( searchQuery, pageNumber, section ) {
+	return composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Show More Results' ),
+		recordTracksEvent( 'calypso_domain_search_show_more_results', {
+			search_query: searchQuery,
+			page_number: pageNumber,
+			section,
+		} )
+	);
+}
