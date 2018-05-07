@@ -4,7 +4,7 @@
  */
 import config from 'config';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { isDirectlyFailed } from 'state/selectors';
+import { isDirectlyReady } from 'state/selectors';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import { isTicketSupportEligible } from 'state/help/ticket/selectors';
@@ -31,7 +31,7 @@ export default function getSupportVariation( state ) {
 		return SUPPORT_TICKET;
 	}
 
-	if ( getCurrentUserLocale( state ) === 'en' && ! isDirectlyFailed( state ) ) {
+	if ( getCurrentUserLocale( state ) === 'en' && isDirectlyReady( state ) ) {
 		return SUPPORT_DIRECTLY;
 	}
 
