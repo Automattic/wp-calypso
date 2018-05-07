@@ -111,8 +111,9 @@ const Collection = ( {
 			{ examples.slice( 0, examplesToMount ) }
 
 			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), exampleGroup => {
+				const groupKey = map( exampleGroup, example => example.key ).join( '_' );
 				return (
-					<LazyRender>
+					<LazyRender key={ groupKey }>
 						{ shouldRender =>
 							shouldRender ? exampleGroup : <Placeholder count={ examplesToMount } />
 						}
