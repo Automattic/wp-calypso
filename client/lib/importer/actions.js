@@ -29,7 +29,12 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
-import { lockImporter, unlockImporter } from 'state/imports/importer-locks/actions';
+import {
+	cancelImport as reduxCancelImport,
+	resetImport as reduxResetImport,
+	startMappingAuthors as reduxStartMappingAuthors,
+	startImporting as reduxStartImporting,
+} from 'state/imports/importer-locks/actions';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { fromApi, toApi } from './common';
 
@@ -77,7 +82,7 @@ function receiveImporterStatus( importerStatus ) {
 }
 
 export function cancelImport( siteId, importerId ) {
-	reduxDispatch( lockImporter( importerId ) );
+	reduxDispatch( reduxCancelImport( importerId ) );
 
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_IMPORT_CANCEL,
@@ -133,7 +138,7 @@ export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => ( {
 
 export function resetImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
-	reduxDispatch( lockImporter( importerId ) );
+	reduxDispatch( reduxResetImport( importerId ) );
 
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_IMPORT_RESET,
@@ -151,7 +156,7 @@ export function resetImport( siteId, importerId ) {
 }
 
 export function startMappingAuthors( importerId ) {
-	reduxDispatch( lockImporter( importerId ) );
+	reduxDispatch( reduxStartMappingAuthors( importerId ) );
 
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_AUTHORS_START_MAPPING,
@@ -181,7 +186,7 @@ export const startImport = ( siteId, importerType ) => {
 export function startImporting( importerStatus ) {
 	const { importerId, site: { ID: siteId } } = importerStatus;
 
-	reduxDispatch( unlockImporter( importerId ) );
+	reduxDispatch( reduxStartImporting( importerId ) );
 
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_START_IMPORTING,

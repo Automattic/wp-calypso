@@ -4,7 +4,12 @@
  * Internal dependencies
  */
 import { keyedReducer } from 'state/utils';
-import { IMPORTS_IMPORT_LOCK, IMPORTS_IMPORT_UNLOCK } from 'state/action-types';
+import {
+	IMPORTS_IMPORT_CANCEL,
+	IMPORTS_IMPORT_RESET,
+	IMPORTS_AUTHORS_START_MAPPING,
+	IMPORTS_START_IMPORTING,
+} from 'state/action-types';
 
 /**
  * Track whether an importer is currently locked or unlocked
@@ -19,9 +24,11 @@ import { IMPORTS_IMPORT_LOCK, IMPORTS_IMPORT_UNLOCK } from 'state/action-types';
  */
 export default keyedReducer( 'importerId', ( state = {}, action ) => {
 	switch ( action.type ) {
-		case IMPORTS_IMPORT_LOCK:
+		case IMPORTS_IMPORT_CANCEL:
+		case IMPORTS_IMPORT_RESET:
+		case IMPORTS_AUTHORS_START_MAPPING:
 			return true;
-		case IMPORTS_IMPORT_UNLOCK:
+		case IMPORTS_START_IMPORTING:
 			return false;
 	}
 

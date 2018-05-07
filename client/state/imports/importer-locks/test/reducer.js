@@ -9,90 +9,75 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { IMPORTS_IMPORT_LOCK, IMPORTS_IMPORT_UNLOCK } from 'state/action-types';
+import {
+	IMPORTS_IMPORT_CANCEL,
+	IMPORTS_IMPORT_RESET,
+	IMPORTS_AUTHORS_START_MAPPING,
+	IMPORTS_START_IMPORTING,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
-	describe( IMPORTS_IMPORT_LOCK, () => {
-		test( 'adds the value of the provided `importerId` as a key to the stae object with the value of `true`', () => {
-			const previousState = {};
+	test( 'sets the value for the `importerId` as `true` for the `IMPORTS_IMPORT_CANCEL` action', () => {
+		const previousState = {};
 
-			const state = reducer( previousState, {
-				type: IMPORTS_IMPORT_LOCK,
-				importerId: 'testImporter',
-			} );
-
-			expect( state ).to.eql( {
-				testImporter: true,
-			} );
+		const state = reducer( previousState, {
+			type: IMPORTS_IMPORT_CANCEL,
+			importerId: 'testImporter',
 		} );
 
-		test( 'overwrites any existing values for the provided `importerId` in the state object', () => {
-			const previousState = {
-				testImporter: false,
-			};
-
-			const state = reducer( previousState, {
-				type: IMPORTS_IMPORT_LOCK,
-				importerId: 'testImporter',
-			} );
-
-			expect( state ).to.eql( {
-				testImporter: true,
-			} );
-		} );
-
-		test( 'does not result in a state change if the importerId is not provided in the action payload', () => {
-			const previousState = {
-				testImporter: false,
-			};
-
-			const state = reducer( previousState, {
-				type: IMPORTS_IMPORT_LOCK,
-			} );
-
-			expect( state ).to.eql( previousState );
+		expect( state ).to.eql( {
+			testImporter: true,
 		} );
 	} );
 
-	describe( IMPORTS_IMPORT_UNLOCK, () => {
-		test( 'adds the value of the provided `importerId` as a key to the state object with the value of `false`', () => {
-			const previousState = {};
+	test( 'sets the value for the `importerId` as `true` for the `IMPORTS_IMPORT_RESET` action', () => {
+		const previousState = {};
 
-			const state = reducer( previousState, {
-				type: IMPORTS_IMPORT_UNLOCK,
-				importerId: 'testImporter',
-			} );
-
-			expect( state ).to.eql( {
-				testImporter: false,
-			} );
+		const state = reducer( previousState, {
+			type: IMPORTS_IMPORT_RESET,
+			importerId: 'testImporter',
 		} );
 
-		test( 'overwrites any existing values for the provided `importerId` in the state object', () => {
-			const previousState = {
-				testImporter: true,
-			};
+		expect( state ).to.eql( {
+			testImporter: true,
+		} );
+	} );
 
-			const state = reducer( previousState, {
-				type: IMPORTS_IMPORT_UNLOCK,
-				importerId: 'testImporter',
-			} );
+	test( 'sets the value for the `importerId` as `true` for the `IMPORTS_AUTHORS_START_MAPPING` action', () => {
+		const previousState = {};
 
-			expect( state ).to.eql( {
-				testImporter: false,
-			} );
+		const state = reducer( previousState, {
+			type: IMPORTS_AUTHORS_START_MAPPING,
+			importerId: 'testImporter',
 		} );
 
-		test( 'does not result in a state change if the importerId is not provided in the action payload', () => {
-			const previousState = {
-				testImporter: false,
-			};
-
-			const state = reducer( previousState, {
-				type: IMPORTS_IMPORT_UNLOCK,
-			} );
-
-			expect( state ).to.eql( previousState );
+		expect( state ).to.eql( {
+			testImporter: true,
 		} );
+	} );
+
+	test( 'sets the value for the `importerId` as `false` for the `IMPORTS_START_IMPORTING` action', () => {
+		const previousState = {};
+
+		const state = reducer( previousState, {
+			type: IMPORTS_START_IMPORTING,
+			importerId: 'testImporter',
+		} );
+
+		expect( state ).to.eql( {
+			testImporter: false,
+		} );
+	} );
+
+	test( 'does not result in a state change if the importerId is not provided in the action payload', () => {
+		const previousState = {
+			testImporter: false,
+		};
+
+		const state = reducer( previousState, {
+			type: IMPORTS_IMPORT_CANCEL,
+		} );
+
+		expect( state ).to.eql( previousState );
 	} );
 } );
