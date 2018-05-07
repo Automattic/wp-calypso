@@ -77,13 +77,6 @@ export class EditorNotice extends Component {
 		const typeLabel = get( typeObject, 'labels.singular_name', type );
 
 		switch ( key ) {
-			case 'warnPublishDateChange':
-				// This message can only appear for type === 'post'.  See
-				// PostEditor#checkForDateChange().
-				return translate(
-					'Are you sure about that? If you change the date, existing links to your post will stop working.'
-				);
-
 			case 'publishFailure':
 				return translate( 'Publishing of %(typeLabel)s failed.', {
 					args: { typeLabel: typeLabel.toLowerCase() },

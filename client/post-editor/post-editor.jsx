@@ -941,48 +941,6 @@ export class PostEditor extends React.Component {
 		analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
 			context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
 		} );
-
-		this.checkForDateChange( dateValue );
-	};
-
-	checkForDateChange = date => {
-		const { savedPost } = this.state;
-
-		if ( ! savedPost ) {
-			return;
-		}
-
-		const currentDate = this.props.moment( date );
-		const modifiedDate = this.props.moment( savedPost.date );
-		const dateChange = ! (
-			currentDate.get( 'date' ) === modifiedDate.get( 'date' ) &&
-			currentDate.get( 'month' ) === modifiedDate.get( 'month' ) &&
-			currentDate.get( 'year' ) === modifiedDate.get( 'year' )
-		);
-		const diff = !! currentDate.diff( modifiedDate ) && !! dateChange;
-
-		if ( savedPost.type === 'post' && utils.isPublished( savedPost ) && diff ) {
-			this.warnPublishDateChange();
-		} else {
-			this.warnPublishDateChange( { clearWarning: true } );
-		}
-	};
-
-	// when a post that is published, modifies its date, this updates the post url
-	// we should warn users of this case
-	warnPublishDateChange = ( { clearWarning = false } = {} ) => {
-		if ( clearWarning ) {
-			if ( get( this.state, 'notice.message' ) === 'warnPublishDateChange' ) {
-				this.hideNotice();
-			}
-			return;
-		}
-		this.setState( {
-			notice: {
-				status: 'is-warning',
-				message: 'warnPublishDateChange',
-			},
-		} );
 	};
 
 	onSaveSuccess = message => {
