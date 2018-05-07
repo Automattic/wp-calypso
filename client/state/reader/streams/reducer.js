@@ -33,6 +33,16 @@ export const items = ( state = [], action ) => {
 				const beforeGap = takeWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
 				const afterGap = takeRightWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
 
+				// after query param is inclusive, so we need to drop duplicate post
+				if ( keysAreEqual( last( streamItems ), afterGap[ 0 ] ) ) {
+					streamItems.pop();
+				}
+
+				// gap was empty
+				if ( streamItems.length === 0 ) {
+					return [ ...beforeGap, ...afterGap ];
+				}
+
 				// create a new gap if we still need one
 				let nextGap = [];
 				const from = gap.from;
