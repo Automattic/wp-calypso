@@ -27,7 +27,7 @@ export default localize( ( { isJetpack, translate } ) => {
 				}
 				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-payments.svg" /> }
 				target="_blank"
-				title={ translate( 'Sell online with PayPal.' ) }
+				title={ translate( 'Sell online with PayPal' ) }
 			/>
 		</div>
 	);
