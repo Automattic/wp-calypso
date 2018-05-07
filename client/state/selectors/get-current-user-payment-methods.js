@@ -19,7 +19,9 @@ import { requestGeoLocation } from 'state/data-getters';
  * digit GeoIP country code, or a WP.com "locale" code (more of a
  * two letter lang code really). Return value precedence is in that order.
  */
-const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
+
+// TODO: @ramonjd remove 'emergent-paywall' in default payment methods
+const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal', 'emergent-paywall' ];
 
 const paymentMethods = {
 	byLocale: {},

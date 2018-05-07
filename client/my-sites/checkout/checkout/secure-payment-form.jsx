@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
  */
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
+import EmergentPaywallBox from './emergent-paywall-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
@@ -49,6 +50,8 @@ const SecurePaymentForm = createReactClass( {
 	},
 
 	getInitialState() {
+		// eslint-disable-next-line
+		console.log( 'getInitialState', this.props.cart, this.props.paymentMethods );
 		return {
 			userSelectedPaymentBox: null,
 			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart, this.props.paymentMethods ),
@@ -70,7 +73,9 @@ const SecurePaymentForm = createReactClass( {
 		}
 
 		for ( i = 0; i < paymentMethods.length; i++ ) {
-			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
+			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ||
+			// TODO: @ramonjd remove this after testing
+			paymentMethods[ i ] === 'emergent-paywall' ) {
 				return paymentMethods[ i ];
 			}
 		}
@@ -195,8 +200,26 @@ const SecurePaymentForm = createReactClass( {
 		);
 	},
 
-	renderHostedPaywallBox() {
-		return null;
+	renderEmergentPaywallBox() {
+		return (
+			<PaymentBox
+				classSet="emergent-payments-box"
+				cart={ this.props.cart }
+				paymentMethods={ this.props.paymentMethods }
+				currentPaymentMethod="emergent-paywall"
+				onSelectPaymentMethod={ this.selectPaymentBox }
+			>
+				<EmergentPaywallBox
+					cards={ this.props.cards }
+					transaction={ this.props.transaction }
+					cart={ this.props.cart }
+					selectedSite={ this.props.selectedSite }
+					transactionStep={ this.props.transaction.step }
+				>
+					{ this.props.children }
+				</EmergentPaywallBox>
+			</PaymentBox>
+		);
 	},
 
 	renderCreditCardPaymentBox() {
@@ -298,7 +321,8 @@ const SecurePaymentForm = createReactClass( {
 	renderPaymentBox() {
 		const { visiblePaymentBox } = this.state;
 		debug( 'getting %o payment box ...', visiblePaymentBox );
-
+		// eslint-disable-next-line
+		console.log( 'getting %o payment box ...', visiblePaymentBox );
 		switch ( visiblePaymentBox ) {
 			case 'credits':
 				return this.renderCreditsPaymentBox();
@@ -324,7 +348,12 @@ const SecurePaymentForm = createReactClass( {
 						{ this.renderPayPalPaymentBox() }
 					</div>
 				);
-
+			case 'emergent-paywall':
+				return (
+					<div>
+						{ this.renderEmergentPaywallBox() }
+					</div>
+				);
 			case 'alipay':
 			case 'bancontact':
 			case 'eps':

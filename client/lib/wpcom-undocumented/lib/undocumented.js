@@ -1177,6 +1177,25 @@ Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
 };
 
 /**
+ * GET emergent paywall iframe client configuration
+ *
+ * @param {object} data - post data
+ * @param {Function} fn The callback function
+ * @api public
+ *
+ * @returns {Promise} promise
+ *
+ * The data format is: {
+ * }
+ */
+// TODO: @ramonjd find out if any data need to be sent
+Undocumented.prototype.emergentPaywellConfiguration = function( countryCode, cart, fn ) {
+	debug( '/me/emergent-paywall-configuration query' );
+
+	return this.wpcom.req.post( '/me/emergent-paywall-configuration', { country: countryCode, cart }, fn );
+};
+
+/**
  * GET paypal_express_url
  *
  * @param {object} [data] The GET data
