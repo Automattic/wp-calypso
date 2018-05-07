@@ -57,8 +57,19 @@ class LineChart extends Component {
 	};
 
 	state = {
+		data: null,
+		fillArea: false,
 		pointHovered: null,
 	};
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		// force refresh D3Base if fillArea has changed
+		if ( prevState.data !== nextProps.data || prevState.fillArea !== nextProps.fillArea ) {
+			return { data: [ ...nextProps.data ], fillArea: nextProps.fillArea };
+		}
+
+		return null;
+	}
 
 	drawAxes = ( svg, params ) => {
 		this.drawXAxis( svg, params );
@@ -100,14 +111,15 @@ class LineChart extends Component {
 		g.select( '.domain' ).remove();
 
 		// Moves axis values below the tick lines, and right-align them
-		g.selectAll( '.tick text' )
+		g
+			.selectAll( '.tick text' )
 			.style( 'text-anchor', 'end' )
 			.attr( 'transform', 'translate(-10,12)' );
 	};
 
 	drawLines = ( svg, params ) => {
 		const { xScale, yScale } = params;
-		const { data } = this.props;
+		const { data } = this.state;
 
 		const line = d3Line()
 			.x( datum => xScale( datum.date ) )
@@ -123,7 +135,7 @@ class LineChart extends Component {
 				.attr( 'd', line( dataSeries ) );
 		} );
 
-		if ( this.props.fillArea ) {
+		if ( this.state.fillArea ) {
 			const area = d3Area()
 				.x( datum => xScale( datum.date ) )
 				.y0( yScale( 0 ) )
@@ -143,7 +155,7 @@ class LineChart extends Component {
 
 	drawPoints = ( svg, params ) => {
 		const { xScale, yScale } = params;
-		const { data } = this.props;
+		const { data } = this.state;
 
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
 			const drawFullSeries = dataSeries.length < POINTS_MAX;
@@ -228,10 +240,7 @@ class LineChart extends Component {
 
 		return {
 			xScale: d3TimeScale()
-				.domain( [
-					minTimestamp - timeDomainAdjustment,
-					maxTimestamp + timeDomainAdjustment,
-				] )
+				.domain( [ minTimestamp - timeDomainAdjustment, maxTimestamp + timeDomainAdjustment ] )
 				.range( [ margin.left, newWidth - margin.right - Y_AXIS_TICKS_SPACE ] ),
 			xTicks,
 			displayMonthOnly,
@@ -263,7 +272,8 @@ class LineChart extends Component {
 	};
 
 	getParams = node => {
-		const { aspectRatio, margin, data } = this.props;
+		const { data } = this.state;
+		const { aspectRatio, margin } = this.props;
 
 		const newWidth = node.offsetWidth;
 		const newHeight = newWidth / aspectRatio;
@@ -294,8 +304,7 @@ class LineChart extends Component {
 	};
 
 	render() {
-		const { data } = this.props;
-		const { pointHovered } = this.state;
+		const { data, pointHovered } = this.state;
 
 		if ( ! data ) {
 			return null;
