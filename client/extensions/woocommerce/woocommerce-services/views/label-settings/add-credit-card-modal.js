@@ -5,14 +5,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { localize } from 'i18n-calypso';
 import { curry } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import HeaderCake from 'components/header-cake';
 import { closeAddCardDialog } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { getLabelSettingsForm } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import CreditCardForm from 'blocks/credit-card-form';
@@ -38,7 +36,7 @@ class AddCardDialog extends Component {
 	}
 
 	render() {
-		const { siteId, isVisible, translate } = this.props;
+		const { siteId, isVisible } = this.props;
 
 		const onClose = () => this.props.closeAddCardDialog( siteId );
 
@@ -48,13 +46,13 @@ class AddCardDialog extends Component {
 				isVisible={ isVisible }
 				onClose={ onClose }
 			>
-				<HeaderCake onClick={ onClose }>{ translate( 'Add Credit Card' ) }</HeaderCake>
 				<CreditCardForm
 					createCardToken={ this.createCardToken }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
 					saveStoredCard={ this.props.addStoredCard }
 					successCallback={ onClose }
 					showUsedForExistingPurchasesInfo={ true }
+					onCancel={ onClose }
 				/>
 			</Dialog>
 		);
@@ -72,4 +70,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeAddCardDialog, addStoredCard }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AddCardDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( AddCardDialog );
