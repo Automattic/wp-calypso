@@ -10,7 +10,7 @@ import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } fr
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { select as d3Select } from 'd3-selection';
-import { concat, first, last } from 'lodash';
+import { concat, first, last, mean } from 'lodash';
 import { moment } from 'i18n-calypso';
 
 /**
@@ -29,10 +29,20 @@ const Y_AXIS_TICKS = 6;
 const Y_AXIS_TICKS_SPACE = 30;
 
 const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) => {
-	// this can only be figured out here, becuase D3 will decide how many ticks there should be
 	const everyOtherTickOnly = ! displayMonthTicksOnly && tickRefs.length > X_AXIS_TICKS_MAX;
+	// this can only be figured out here, becuase D3 will decide how many ticks there should be
 	const isFirstMonthTick =
-		index === 0 || tickRefs[ index - 1 ].__data__.getMonth() < date.getMonth();
+		index ===
+		Math.round(
+			mean(
+				tickRefs
+					.map(
+						( tickRef, tickRefIndex ) =>
+							tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
+					)
+					.filter( e => e !== null )
+			)
+		);
 	return ( ! everyOtherTickOnly && ! displayMonthTicksOnly ) ||
 		( everyOtherTickOnly && index % 2 === 0 ) ||
 		( displayMonthTicksOnly && isFirstMonthTick )
