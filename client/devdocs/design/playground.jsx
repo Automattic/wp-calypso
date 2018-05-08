@@ -10,7 +10,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import { keys } from 'lodash';
-import jsxToString from 'jsx-to-string';
 
 /**
  * Internal dependencies
@@ -23,6 +22,7 @@ import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import Main from 'components/main';
 import DropdownItem from 'components/select-dropdown/item';
 import SelectDropdown from 'components/select-dropdown';
+import { getExampleCodeFromComponent } from './playground-utils';
 
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
@@ -100,24 +100,13 @@ class DesignAssets extends React.Component {
 		} );
 	};
 
-	getExampleCodeFromComponent( Component ) {
-		const exampleComponent = <Component />;
-		if ( ! exampleComponent.props.exampleCode ) {
-			return null;
-		}
-
-		if ( typeof exampleComponent.props.exampleCode === 'string' ) {
-			return exampleComponent.props.exampleCode;
-		}
-
-		return jsxToString( exampleComponent.props.exampleCode );
-	}
-
 	listOfExamples() {
 		return (
 			<SelectDropdown selectedText="Add a component" className="design__playground-examples">
 				{ keys( componentExamples ).map( name => {
-					const exampleCode = this.getExampleCodeFromComponent( componentExamples[ name ] );
+					const ExampleComponentName = componentExamples[ name ];
+					const exampleComponent = <ExampleComponentName />;
+					const exampleCode = getExampleCodeFromComponent( exampleComponent );
 					return (
 						exampleCode && (
 							<DropdownItem key={ name } onClick={ this.addComponent( exampleCode ) }>
