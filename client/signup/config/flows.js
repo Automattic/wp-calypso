@@ -289,6 +289,17 @@ const flows = {
 		allowContinue: false,
 		hideFlowProgress: true,
 	},
+
+	'clone-site': {
+		steps: [ 'clone-start', 'clone-destination', 'clone-credentials', 'clone-point' ],
+		destination: () => {
+			return '/stats/activity';
+		},
+		description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
+		lastModified: '2018-05-07',
+		disallowResume: true,
+		allowContinue: false,
+	},
 };
 
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {

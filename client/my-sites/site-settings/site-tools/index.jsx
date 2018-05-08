@@ -52,6 +52,7 @@ class SiteTools extends Component {
 			siteSlug,
 			importUrl,
 			exportUrl,
+			cloneUrl,
 			showChangeAddress,
 			showDeleteContent,
 			showDeleteSite,
@@ -90,6 +91,8 @@ class SiteTools extends Component {
 		const exportText = translate(
 			'Export content from your site. You own your data — take it anywhere!'
 		);
+		const cloneTitle = translate( 'Clone' );
+		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
 		let changeAddressText = translate( "Register a new domain or change your site's address." );
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
@@ -109,6 +112,7 @@ class SiteTools extends Component {
 				) }
 				<SiteToolsLink href={ importUrl } title={ importTitle } description={ importText } />
 				<SiteToolsLink href={ exportUrl } title={ exportTitle } description={ exportText } />
+				<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
 				{ showThemeSetup && (
 					<SiteToolsLink
 						href={ themeSetupLink }
@@ -184,6 +188,7 @@ export default connect( state => {
 
 	let importUrl = `/settings/import/${ siteSlug }`;
 	let exportUrl = `/settings/export/${ siteSlug }`;
+	let cloneUrl = `/start/clone-site/${ siteSlug }`;
 	if ( isJetpack ) {
 		importUrl = getSiteAdminUrl( state, siteId, 'import.php' );
 		exportUrl = getSiteAdminUrl( state, siteId, 'export.php' );
@@ -196,6 +201,7 @@ export default connect( state => {
 		purchasesError: getPurchasesError( state ),
 		importUrl,
 		exportUrl,
+		cloneUrl,
 		showChangeAddress: ! isJetpack && ! isVip,
 		showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 		showDeleteContent: ! isJetpack && ! isVip,
