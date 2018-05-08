@@ -34,6 +34,7 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/me/security/connected-applications',
 		meController.sidebar,
@@ -41,13 +42,7 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
-	page(
-		'/me/security/connected-applications/:application_id',
-		meController.sidebar,
-		controller.connectedApplication,
-		makeLayout,
-		clientRender
-	);
+
 	page(
 		'/me/security/account-recovery',
 		meController.sidebar,
