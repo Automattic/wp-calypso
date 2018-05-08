@@ -11,8 +11,11 @@ import { identity } from 'lodash';
  */
 import Button from 'components/button';
 import { preventWidows } from 'lib/formatting';
+import analytics from 'lib/analytics';
 
 const FORUM_LINK = '//en.forums.wordpress.com';
+
+const trackForumOpen = () => analytics.tracks.recordEvent( 'calypso_inlinehelp_forums_open' );
 
 const InlineHelpForumView = ( { translate = identity } ) => (
 	<div className="inline-help__forum-view">
@@ -33,7 +36,13 @@ const InlineHelpForumView = ( { translate = identity } ) => (
 				)
 			) }
 		</p>
-		<Button href={ FORUM_LINK } target="_blank" rel="noopener noreferrer" primary>
+		<Button
+			href={ FORUM_LINK }
+			target="_blank"
+			rel="noopener noreferrer"
+			primary
+			onClick={ trackForumOpen }
+		>
 			{ translate( 'Go to the Support Forums' ) }
 		</Button>
 	</div>
