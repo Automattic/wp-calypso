@@ -716,7 +716,7 @@ class RegisterDomainStep extends React.Component {
 		const timeDiff = Date.now() - timestamp;
 
 		if ( error && error.statusCode === 503 ) {
-			this.props.onDomainsAvailabilityChange( false, 0 );
+			this.props.onDomainsAvailabilityChange( false );
 		} else if ( error && error.error ) {
 			this.showValidationErrorMessage( domain, error.error );
 		}
