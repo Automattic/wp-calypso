@@ -22,6 +22,7 @@ import {
 	pollThemeTransferStatus,
 	initiateThemeTransfer,
 	installTheme,
+	updateTheme,
 	installAndTryAndCustomizeTheme,
 	tryAndCustomizeTheme,
 	tryAndCustomize,
@@ -43,6 +44,9 @@ import {
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
+	THEME_UPDATE,
+	THEME_UPDATE_SUCCESS,
+	THEME_UPDATE_FAILURE,
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
@@ -928,6 +932,113 @@ describe( 'actions', () => {
 					siteId: 2211667,
 					themeId: 'pinboard-wpcom',
 					error: sinon.match( { message: 'The theme is already installed' } ),
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#updateTheme', () => {
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+		} );
+
+		const successResponse = {
+			themes: [
+				{
+					id: 'dara-wpcom',
+					screenshot:
+						'//i0.wp.com/springcolors.mystagingwebsite.com/wp-content/themes/dara-wpcom/screenshot.png?ssl=1',
+					active: true,
+					name: 'Dara',
+					theme_uri: 'https://wordpress.com/themes/dara/',
+					description:
+						'With bold featured images and bright, cheerful colors, Dara is ready to get to work for your business.',
+					author: 'Automattic',
+					author_uri: 'http://wordpress.com/themes/',
+					tags: [],
+					version: '1.2.1',
+					update: null,
+					autoupdate: false,
+					autoupdate_translation: false,
+					log: [
+						[
+							'Downloading update from https://public-api.wordpress.com/rest/v1/themes/download/dara.zip&#8230;',
+							'Unpacking the update&#8230;',
+							'Installing the latest version&#8230;',
+							'Enabling Maintenance mode&#8230;',
+							'Removing the old version of the theme&#8230;',
+							'Theme updated successfully.',
+						],
+					],
+				},
+			],
+		};
+
+		const downloadFailureResponse = {
+			status: 400,
+			code: 'unknown_theme',
+			message: 'The theme directory "typist-wpcom" does not exist.',
+		};
+
+		const upToDateFailureResponse = {
+			status: 400,
+			code: 'theme_already_installed',
+			message: 'The theme is at the latest version.',
+		};
+
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2211667/themes', { action: 'update', themes: 'dara-wpcom' } )
+				.reply( 200, successResponse )
+				.post( '/rest/v1.1/sites/2211667/themes', { action: 'update', themes: 'typist-wpcom' } )
+				.reply( 400, downloadFailureResponse )
+				.post( '/rest/v1.1/sites/2211667/themes', { action: 'update', themes: 'pinboard-wpcom' } )
+				.reply( 400, upToDateFailureResponse );
+		} );
+
+		test( 'should dispatch theme update request action when triggered', () => {
+			updateTheme( 'dara-wpcom', 2211667 )( spy, getState );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: THEME_UPDATE,
+				siteId: 2211667,
+				themeId: 'dara-wpcom',
+			} );
+		} );
+
+		test( 'should dispatch wpcom theme update request success action when request completes', () => {
+			return updateTheme( 'dara-wpcom', 2211667 )( spy, getState ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_UPDATE_SUCCESS,
+					siteId: 2211667,
+					themeId: 'dara-wpcom',
+				} );
+			} );
+		} );
+
+		test( 'should dispatch wpcom theme update request failure action when theme was not found', () => {
+			return updateTheme( 'typist-wpcom', 2211667 )( spy, getState ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_UPDATE_FAILURE,
+					siteId: 2211667,
+					themeId: 'typist-wpcom',
+					error: sinon.match( { message: 'The theme directory "typist-wpcom" does not exist.' } ),
+				} );
+			} );
+		} );
+
+		test( 'should dispatch wpcom theme update request failure action when theme is up to date', () => {
+			return updateTheme( 'pinboard-wpcom', 2211667 )( spy, getState ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_UPDATE_FAILURE,
+					siteId: 2211667,
+					themeId: 'pinboard-wpcom',
+					error: sinon.match( { message: 'The theme is at the latest version.' } ),
 				} );
 			} );
 		} );

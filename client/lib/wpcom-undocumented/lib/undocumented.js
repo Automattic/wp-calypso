@@ -1602,6 +1602,30 @@ Undocumented.prototype.installThemeOnJetpack = function( siteId, themeId, fn ) {
 };
 
 /**
+ * Updates a theme from WordPress.org or WordPress.com on the given Jetpack site.
+ *
+ * @param {String}    siteId    The site ID
+ * @param {String}    themeId Theme slug, suffixed with -wpcom if it's a WordPress.com theme.
+ * @param {Function}  fn        The callback function
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.updateThemeOnJetpack = function( siteId, themeId, fn ) {
+	const path = `/sites/${ siteId }/themes`;
+	debug( path );
+
+	return this.wpcom.req.post(
+		{
+			path,
+			body: {
+				action: 'update',
+				themes: themeId,
+			},
+		},
+		fn
+	);
+};
+
+/**
  * Delete a theme from Jetpack site.
  *
  * @param {Number}    siteId   The site ID

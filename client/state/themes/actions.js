@@ -30,6 +30,9 @@ import {
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
+	THEME_UPDATE,
+	THEME_UPDATE_SUCCESS,
+	THEME_UPDATE_FAILURE,
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
@@ -479,6 +482,43 @@ export function installTheme( themeId, siteId ) {
 			.catch( error => {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,
+					siteId,
+					themeId,
+					error,
+				} );
+			} );
+	};
+}
+
+/**
+ * Triggers a network request to update a WordPress.org or WordPress.com theme on a Jetpack site.
+ *
+ * @param  {String}   themeId Theme slug, suffixed with '-wpcom' if it's a WordPress.com theme.
+ * @param  {String}   siteId  Jetpack Site ID
+ * @return {Function}         Action thunk
+ */
+export function updateTheme( themeId, siteId ) {
+	return dispatch => {
+		dispatch( {
+			type: THEME_UPDATE,
+			siteId,
+			themeId,
+		} );
+
+		return wpcom
+			.undocumented()
+			.updateThemeOnJetpack( siteId, themeId )
+			.then( theme => {
+				dispatch( receiveTheme( theme, siteId ) );
+				dispatch( {
+					type: THEME_UPDATE_SUCCESS,
+					siteId,
+					themeId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: THEME_UPDATE_FAILURE,
 					siteId,
 					themeId,
 					error,

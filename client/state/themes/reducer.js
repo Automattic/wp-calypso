@@ -26,6 +26,9 @@ import {
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
+	THEME_UPDATE,
+	THEME_UPDATE_SUCCESS,
+	THEME_UPDATE_FAILURE,
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
@@ -179,6 +182,30 @@ export function themeInstalls( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
 					[ action.themeId ]: THEME_INSTALL === action.type,
+				} ),
+			} );
+	}
+
+	return state;
+}
+
+/**
+ * Returns the updated theme update requests state for a Jetpack site  after an action has been
+ * dispatched. The state reflects a mapping of site ID, theme slug pairing to a
+ * boolean reflecting whether a request for the theme update is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function themeUpdates( state = {}, action ) {
+	switch ( action.type ) {
+		case THEME_UPDATE:
+		case THEME_UPDATE_SUCCESS:
+		case THEME_UPDATE_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
+					[ action.themeId ]: THEME_UPDATE === action.type,
 				} ),
 			} );
 	}
@@ -404,6 +431,7 @@ export default combineReducers( {
 	queryRequestErrors,
 	lastQuery,
 	themeInstalls,
+	themeUpdates,
 	themeRequests,
 	themeRequestErrors,
 	activeThemes,
