@@ -9,7 +9,7 @@ import { find, forEach, last, times } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getBillingTransactionsByType from './get-billing-transactions-by-type';
+import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
 
 /**
  * Based on the transactions list, returns metadata for rendering the date filters with counts

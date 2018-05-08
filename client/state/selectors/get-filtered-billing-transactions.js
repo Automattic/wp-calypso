@@ -9,8 +9,8 @@ import { compact, flatten, isDate, omit, slice, some, values } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getBillingTransactionsByType from './get-billing-transactions-by-type';
-import getBillingTransactionFilters from './get-billing-transaction-filters';
+import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
+import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 
 const PAGE_SIZE = 5;
 
@@ -38,7 +38,7 @@ const getSearchableStrings = transaction => {
  * Utility function to search the transactions by the provided searchQuery
  * @param {Array} transactions transactions to search
  * @param {String} searchQuery search query
- * @returns {Array}            search result
+ * @returns {Array}            search results
  */
 const search = ( transactions, searchQuery ) =>
 	transactions.filter( transaction =>
