@@ -60,6 +60,7 @@ class LineChart extends Component {
 		aspectRatio: PropTypes.number,
 		data: PropTypes.array.isRequired,
 		fillArea: PropTypes.bool,
+		legendInfo: PropTypes.array,
 		margin: PropTypes.object,
 		renderTooltipForDatanum: PropTypes.func,
 	};
@@ -68,7 +69,7 @@ class LineChart extends Component {
 		aspectRatio: 2,
 		fillArea: false,
 		margin: {
-			top: 30,
+			top: 10,
 			right: 30,
 			bottom: 30,
 			left: 30,
@@ -343,6 +344,7 @@ class LineChart extends Component {
 	};
 
 	render() {
+		const { legendInfo } = this.props;
 		const { data, pointHovered } = this.state;
 
 		if ( ! data ) {
