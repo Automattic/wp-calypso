@@ -10,7 +10,7 @@ import { lowerCase, upperCase } from 'lodash';
  * Internal dependencies
  */
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { requestGeoLocation } from 'state/data-layer/http-data/getters';
+import { requestGeoLocation } from 'state/data-getters';
 
 /**
  * Constants

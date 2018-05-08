@@ -16,7 +16,7 @@ import { find, isString, noop } from 'lodash';
  */
 import LanguagePickerModal from './modal';
 import QueryLanguageNames from 'components/data/query-language-names';
-import { requestGeoLocation } from 'state/data-layer/http-data/getters';
+import { requestGeoLocation } from 'state/data-getters';
 import { getLanguageCodeLabels } from './utils';
 
 export class LanguagePicker extends PureComponent {
