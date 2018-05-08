@@ -245,7 +245,10 @@ class RegisterDomainStep extends React.Component {
 			return nextProps.onDomainsAvailabilityChange( true );
 		}
 		if ( error && error.statusCode === 503 ) {
-			return nextProps.onDomainsAvailabilityChange( false );
+			return nextProps.onDomainsAvailabilityChange(
+				false,
+				get( nextProps, 'defaultSuggestionsError.data.maintenance_end_time', 0 )
+			);
 		}
 
 		if ( error && error.error ) {
@@ -603,11 +606,10 @@ class RegisterDomainStep extends React.Component {
 					if ( isDomainAvailable ) {
 						this.setState( { notice: null } );
 					} else {
-						this.showValidationErrorMessage(
-							domain,
-							status,
-							get( result, 'other_site_domain', null )
-						);
+						this.showValidationErrorMessage( domain, status, {
+							site: get( result, 'other_site_domain', null ),
+							maintenanceEndTime: get( result, 'maintenance_end_time', null ),
+						} );
 					}
 
 					this.props.recordDomainAvailabilityReceive(
@@ -663,11 +665,13 @@ class RegisterDomainStep extends React.Component {
 			} )
 			.catch( error => {
 				const timeDiff = Date.now() - timestamp;
-
-				if ( error && error.statusCode === 503 ) {
-					this.props.onDomainsAvailabilityChange( false );
+				if ( error && error.statusCode === 503 && ! this.props.isSignupStep ) {
+					const maintenanceEndTime = get( error, 'data.maintenance_end_time', 0 );
+					this.props.onDomainsAvailabilityChange( false, maintenanceEndTime );
 				} else if ( error && error.error ) {
-					this.showValidationErrorMessage( domain, error.error );
+					this.showValidationErrorMessage( domain, error.error, {
+						maintenanceEndTime: get( error, 'data.maintenance_end_time', null ),
+					} );
 				}
 
 				const analyticsResults = [
@@ -1042,17 +1046,18 @@ class RegisterDomainStep extends React.Component {
 		page( this.getTransferDomainUrl() );
 	};
 
-	showValidationErrorMessage( domain, error, site ) {
+	showValidationErrorMessage( domain, error, errorData ) {
 		const { TRANSFERRABLE } = domainAvailability;
 		if ( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) {
 			return;
 		}
 
+		let site = get( errorData, 'site', null );
 		if ( ! site ) {
 			site = get( this.props, 'selectedSite.slug', null );
 		}
 
-		const { message, severity } = getAvailabilityNotice( domain, error, site );
+		const { message, severity } = getAvailabilityNotice( domain, error, errorData );
 		this.setState( { notice: message, noticeSeverity: severity } );
 	}
 }

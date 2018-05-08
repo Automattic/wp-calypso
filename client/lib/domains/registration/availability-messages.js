@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -22,11 +23,13 @@ import {
 	domainTransferIn,
 } from 'my-sites/domains/paths';
 
-function getAvailabilityNotice( domain, error, site ) {
+function getAvailabilityNotice( domain, error, errorData ) {
 	let message,
 		severity = 'error';
 
 	const tld = getTld( domain );
+
+	const { site, maintenanceEndTime } = errorData;
 
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
@@ -146,10 +149,21 @@ function getAvailabilityNotice( domain, error, site ) {
 			break;
 		case domainAvailability.MAINTENANCE:
 			if ( tld ) {
+				let maintenanceEnd = translate( 'shortly', {
+					comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
+				} );
+				if ( maintenanceEndTime ) {
+					maintenanceEnd = moment.unix( maintenanceEndTime ).fromNow();
+				}
+
 				message = translate(
-					'Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing maintenance. Please check back shortly.',
+					'Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing maintenance. Please ' +
+						'try a different extension or check back %(maintenanceEnd)s.',
 					{
-						args: { tld },
+						args: {
+							tld,
+							maintenanceEnd,
+						},
 						components: {
 							strong: <strong />,
 						},
@@ -158,9 +172,26 @@ function getAvailabilityNotice( domain, error, site ) {
 				severity = 'info';
 			}
 			break;
+		case domainAvailability.PURCHASES_DISABLED:
+			let maintenanceEnd = translate( 'shortly', {
+				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
+			} );
+			if ( maintenanceEndTime ) {
+				maintenanceEnd = moment.unix( maintenanceEndTime ).fromNow();
+			}
+
+			message = translate(
+				'Domains registration is unavailable at this time. Please select a free WordPress.com ' +
+					'domain or check back %(maintenanceEnd)s.',
+				{
+					args: { maintenanceEnd },
+				}
+			);
+			severity = 'info';
+			break;
+
 		case domainAvailability.MAPPABLE:
 		case domainAvailability.AVAILABLE:
-		case domainAvailability.PURCHASES_DISABLED:
 		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.UNKNOWN:
 		case domainAvailability.EMPTY_RESULTS:

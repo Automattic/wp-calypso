@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -42,10 +43,14 @@ class DomainSearch extends Component {
 
 	state = {
 		domainRegistrationAvailable: true,
+		domainRegistrationMaintenanceEndTime: null,
 	};
 
-	handleDomainsAvailabilityChange = isAvailable => {
-		this.setState( { domainRegistrationAvailable: isAvailable } );
+	handleDomainsAvailabilityChange = ( isAvailable, maintenanceEndTime = null ) => {
+		this.setState( {
+			domainRegistrationAvailable: isAvailable,
+			domainRegistrationMaintenanceEndTime: maintenanceEndTime,
+		} );
 	};
 
 	handleAddRemoveDomain = suggestion => {
@@ -111,18 +116,30 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate } = this.props,
-			classes = classnames( 'main-column', {
-				'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
-			} );
+		const { selectedSite, selectedSiteSlug, translate } = this.props;
+		const classes = classnames( 'main-column', {
+			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
+		} );
+		const { domainRegistrationMaintenanceEndTime } = this.state;
 		let content;
 
 		if ( ! this.state.domainRegistrationAvailable ) {
+			let maintenanceEndTime = translate( 'shortly', {
+				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
+			} );
+			if ( domainRegistrationMaintenanceEndTime ) {
+				maintenanceEndTime = moment.unix( domainRegistrationMaintenanceEndTime ).fromNow();
+			}
+
 			content = (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
 					title={ translate( 'Domain registration is unavailable' ) }
-					line={ translate( "We're hard at work on the issue. Please check back shortly." ) }
+					line={ translate( "We're hard at work on the issue. Please check back %(timePeriod)s.", {
+						args: {
+							timePeriod: maintenanceEndTime,
+						},
+					} ) }
 					action={ translate( 'Back to Plans' ) }
 					actionURL={ '/plans/' + selectedSiteSlug }
 				/>

@@ -468,7 +468,11 @@ class TransferDomainStep extends React.Component {
 								site = get( this.props, 'selectedSite.slug', null );
 							}
 
-							const { message, severity } = getAvailabilityNotice( domain, status, site );
+							const maintenanceEndTime = get( result, 'maintenance_end_time', null );
+							const { message, severity } = getAvailabilityNotice( domain, status, {
+								site,
+								maintenanceEndTime,
+							} );
 							this.setState( { notice: message, noticeSeverity: severity } );
 					}
 
