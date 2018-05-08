@@ -305,9 +305,14 @@ class ActivityLogTasklist extends Component {
 				<div className="activity-log-tasklist__heading">
 					{ // Not using count method since we want a "one" string.
 					1 < numberOfPluginUpdates
-						? translate( 'You have %(updates)s updates available', {
-								args: { updates: numberOfPluginUpdates },
-							} )
+						? translate(
+								'You have %(updates)s update available',
+								'You have %(updates)s updates available',
+								{
+									count: numberOfPluginUpdates,
+									args: { updates: numberOfPluginUpdates },
+								}
+							)
 						: translate( 'You have one update available' ) }
 					<SplitButton
 						compact
