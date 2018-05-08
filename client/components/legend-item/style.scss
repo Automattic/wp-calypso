@@ -1,0 +1,33 @@
+.legend-item {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: column;
+}
+
+.legend-item__title {
+	display: flex;
+	align-items: center;
+}
+
+.legend-item__title-name {
+	font-size: 14px;
+}
+
+.legend-item__title-sample-drawing {
+	height: 12px;
+	width: 12px;
+	margin-right: 7px;
+}
+
+.legend-item__detail {
+	margin-left: 21px;
+}
+
+.legend-item__detail-value {
+	font-size: 16px;
+}
+
+.legend-item__detail-description {
+	color: $gray-text-min;
+	font-size: 16px;
+}

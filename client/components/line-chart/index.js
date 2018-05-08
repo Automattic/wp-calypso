@@ -18,6 +18,7 @@ import { moment } from 'i18n-calypso';
  */
 import D3Base from 'components/d3-base';
 import Tooltip from 'components/tooltip';
+import LineChartLegend from './legend';
 
 const CHART_MARGIN = 0.01;
 const POINTS_MAX = 10;
@@ -52,12 +53,16 @@ const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) =>
 };
 
 const dateToAbsoluteMonth = date => date.getYear() * 12 + date.getMonth();
+// number of different colors this component can display
+// More than NUM_SERIES and 2 series will use the same color
+const NUM_SERIES = 3;
 
 class LineChart extends Component {
 	static propTypes = {
 		aspectRatio: PropTypes.number,
 		data: PropTypes.array.isRequired,
 		fillArea: PropTypes.bool,
+		legendInfo: PropTypes.array,
 		margin: PropTypes.object,
 		renderTooltipForDatanum: PropTypes.func,
 	};
@@ -66,7 +71,7 @@ class LineChart extends Component {
 		aspectRatio: 2,
 		fillArea: false,
 		margin: {
-			top: 30,
+			top: 10,
 			right: 30,
 			bottom: 30,
 			left: 30,
@@ -78,6 +83,7 @@ class LineChart extends Component {
 		data: null,
 		fillArea: false,
 		pointHovered: null,
+		svg: null,
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
@@ -145,11 +151,11 @@ class LineChart extends Component {
 			.curve( d3MonotoneXCurve );
 
 		data.forEach( ( dataSeries, index ) => {
-			const colorNum = index % 3;
+			const colorNum = index % NUM_SERIES;
 
 			svg
 				.append( 'path' )
-				.attr( 'class', `line-chart__line-${ colorNum }` )
+				.attr( 'class', `line-chart__line-color-${ colorNum } line-chart__line-${ index }` )
 				.attr( 'd', line( dataSeries ) );
 		} );
 
@@ -161,11 +167,11 @@ class LineChart extends Component {
 				.curve( d3MonotoneXCurve );
 
 			data.forEach( ( dataSeries, index ) => {
-				const colorNum = index % 3;
+				const colorNum = index % NUM_SERIES;
 
 				svg
 					.append( 'path' )
-					.attr( 'class', `line-chart__area-${ colorNum }` )
+					.attr( 'class', `line-chart__area-color-${ colorNum } line-chart__area-${ index }` )
 					.attr( 'd', area( dataSeries ) );
 			} );
 		}
@@ -177,7 +183,7 @@ class LineChart extends Component {
 
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
 			const drawFullSeries = dataSeries.length < POINTS_MAX;
-			const colorNum = dataSeriesIndex % 3;
+			const colorNum = dataSeriesIndex % NUM_SERIES;
 
 			( drawFullSeries ? dataSeries : [ first( dataSeries ), last( dataSeries ) ] ).forEach(
 				datum => {
@@ -187,7 +193,7 @@ class LineChart extends Component {
 							'class',
 							`line-chart__line-point line-chart__line${
 								drawFullSeries ? '' : '-end'
-							}-point-${ colorNum }`
+							}-point-color-${ colorNum }`
 						)
 						.attr( 'cx', xScale( datum.date ) )
 						.attr( 'cy', yScale( datum.value ) )
@@ -216,6 +222,7 @@ class LineChart extends Component {
 		this.drawLines( svg, params );
 		this.drawPoints( svg, params );
 		this.bindEvents( svg, params );
+		this.setState( { svg } );
 	};
 
 	handleMouseEnterPoint = point => {
@@ -284,6 +291,24 @@ class LineChart extends Component {
 		};
 	};
 
+	handleDataSeriesSelected = selectedItemIndex => {
+		const { data } = this.props;
+		const { svg } = this.state;
+
+		if ( ! svg ) {
+			return;
+		}
+
+		data.forEach( ( dataSeries, dataSeriesIndex ) => {
+			const selected = selectedItemIndex === dataSeriesIndex;
+			svg
+				.select(
+					`path.line-chart__line-${ dataSeriesIndex }, path.line-chart__area-${ dataSeriesIndex }`
+				)
+				.classed( 'line-chart__line-selected', selected );
+		} );
+	};
+
 	getParams = node => {
 		const { data } = this.state;
 		const { aspectRatio, margin } = this.props;
@@ -317,6 +342,7 @@ class LineChart extends Component {
 	};
 
 	render() {
+		const { legendInfo } = this.props;
 		const { data, pointHovered } = this.state;
 
 		if ( ! data ) {
@@ -324,7 +350,14 @@ class LineChart extends Component {
 		}
 
 		return (
-			<div>
+			<div className="line-chart">
+				{ legendInfo && (
+					<LineChartLegend
+						data={ legendInfo }
+						onDataSeriesSelected={ this.handleDataSeriesSelected }
+					/>
+				) }
+
 				<D3Base
 					className="line-chart__base"
 					drawChart={ this.drawChart }

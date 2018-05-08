@@ -55,6 +55,19 @@ function transformData( props ) {
 	} );
 }
 
+function createLegendInfo( props ) {
+	const { data } = props;
+
+	if ( ! data ) {
+		return data;
+	}
+
+	return data.metricValues.map( metric => ( {
+		description: get( props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
+		name: get( props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
+	} ) );
+}
+
 function getAggregation( props ) {
 	return props.chartType === 'pie' ? 'total' : 'daily';
 }
@@ -90,6 +103,7 @@ class GoogleMyBusinessStatsChart extends Component {
 			return {
 				data: nextProps.data,
 				transformedData: transformData( nextProps ),
+				legendInfo: createLegendInfo( nextProps ),
 			};
 		}
 
@@ -157,18 +171,21 @@ class GoogleMyBusinessStatsChart extends Component {
 
 	renderLineChart() {
 		const { renderTooltipForDatanum } = this.props;
-		const { transformedData } = this.state;
+		const { transformedData, legendInfo } = this.state;
 
 		if ( ! transformedData ) {
 			return <LineChartPlaceholder />;
 		}
 
 		return (
-			<LineChart
-				fillArea
-				data={ transformedData }
-				renderTooltipForDatanum={ renderTooltipForDatanum }
-			/>
+			<Fragment>
+				<LineChart
+					fillArea
+					data={ transformedData }
+					renderTooltipForDatanum={ renderTooltipForDatanum }
+					legendInfo={ legendInfo }
+				/>
+			</Fragment>
 		);
 	}
 
