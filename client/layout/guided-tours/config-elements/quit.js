@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { targetForSlug } from '../positioning';
 import contextTypes from '../context-types';
 
 export default class Quit extends Component {
@@ -26,6 +27,42 @@ export default class Quit extends Component {
 
 	constructor( props, context ) {
 		super( props, context );
+	}
+
+	componentDidMount() {
+		this.addTargetListener();
+	}
+
+	componentWillUnmount() {
+		this.removeTargetListener();
+	}
+
+	componentWillUpdate() {
+		this.removeTargetListener();
+	}
+
+	componentDidUpdate() {
+		this.addTargetListener();
+	}
+
+	addTargetListener() {
+		const { target = false, click } = this.props;
+		const targetNode = targetForSlug( target );
+
+		if ( click && targetNode && targetNode.addEventListener ) {
+			targetNode.addEventListener( 'click', this.onClick );
+			targetNode.addEventListener( 'touchstart', this.onClick );
+		}
+	}
+
+	removeTargetListener() {
+		const { target = false, click } = this.props;
+		const targetNode = targetForSlug( target );
+
+		if ( click && targetNode && targetNode.removeEventListener ) {
+			targetNode.removeEventListener( 'click', this.onClick );
+			targetNode.removeEventListener( 'touchstart', this.onClick );
+		}
 	}
 
 	onClick = event => {
