@@ -29,6 +29,8 @@ import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
 import config from 'config';
+import { isDesktop } from 'lib/viewport';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -176,6 +178,20 @@ export default {
 
 	site: function( context, next ) {
 		const { params: { site_id: givenSiteId }, query: queryOptions, store } = context;
+
+		if ( 'simplePaymentsEmailTour' === get( queryOptions, 'tour' ) ) {
+			if ( ! isDesktop() ) {
+				context.store.dispatch(
+					recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'mobile' } )
+				);
+				window.location.href = 'https://support.wordpress.com/simple-payments/';
+				return;
+			}
+			context.store.dispatch(
+				recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'desktop' } )
+			);
+		}
+
 		const filters = getSiteFilters( givenSiteId );
 		const state = store.getState();
 		const currentSite = getSite( state, givenSiteId );
