@@ -10,13 +10,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import {
-	blur,
-	focus,
-	closeChat,
-	minimizeChat,
-	minimizedChat,
-} from 'state/happychat/ui/actions';
+import { blur, focus, closeChat, minimizeChat, minimizedChat } from 'state/happychat/ui/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
@@ -27,10 +21,6 @@ import { LAYOUT_PANEL_MAX_PARENT_SIZE } from 'blocks/happychat/chat-client/const
  * Main chat panel UI component
  */
 export class HappychatPanel extends Component {
-	static propTypes = {};
-
-	static defaultProps = {};
-
 	componentDidMount() {
 		this.props.setFocused();
 	}
@@ -48,10 +38,7 @@ export class HappychatPanel extends Component {
 					'is-minimizing': isMinimizing,
 				} ) }
 			>
-				<HappychatClient
-					layout={ LAYOUT_PANEL_MAX_PARENT_SIZE }
-					user={ currentUser }
-				/>
+				<HappychatClient layout={ LAYOUT_PANEL_MAX_PARENT_SIZE } user={ currentUser } />
 			</div>
 		);
 	}
