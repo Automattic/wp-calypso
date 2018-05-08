@@ -40,6 +40,7 @@ class LineChartLegend extends Component {
 			<span className="line-chart__legend">
 				{ data.map( ( dataSeries, index ) => {
 					return (
+						// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 						<LegendItem
 							key={ dataSeries.name }
 							name={ dataSeries.name }
