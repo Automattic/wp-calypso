@@ -203,11 +203,6 @@ export function requestPage( action ) {
 	} );
 }
 
-export function fromApi( data ) {
-	// TODO: is there any transformation to do here?
-	return data;
-}
-
 export function handlePage( action, data ) {
 	const { posts, date_range, meta, next_page } = data;
 	const { streamKey, query, isPoll, gap, streamType } = action.payload;
@@ -264,7 +259,6 @@ export default {
 			fetch: requestPage,
 			onSuccess: handlePage,
 			onError: handleError,
-			fromApi,
 		} ),
 	],
 };

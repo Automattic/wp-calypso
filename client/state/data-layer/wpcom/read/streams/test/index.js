@@ -8,7 +8,15 @@ import deepfreeze from 'deep-freeze';
  * Internal Dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestPage, handlePage, handleError, fromApi, INITIAL_FETCH, QUERY_META } from '../';
+import {
+	requestPage,
+	handlePage,
+	handleError,
+	fromApi,
+	INITIAL_FETCH,
+	PER_FETCH,
+	QUERY_META,
+} from '../';
 import {
 	requestPage as requestPageAction,
 	receivePage,
@@ -45,6 +53,23 @@ describe( 'streams', () => {
 					query,
 					onSuccess: action,
 					onFailure: action,
+				} )
+			);
+		} );
+
+		it( 'should set proper params for subsequent fetches', () => {
+			const pageHandle = { after: 'the robots attack' };
+			const secondPage = { ...action, payload: { ...action.payload, pageHandle } };
+			const httpAction = requestPage( secondPage );
+
+			expect( httpAction ).toEqual(
+				http( {
+					method: 'GET',
+					path: '/read/following',
+					apiVersion: '1.2',
+					query: { ...query, number: PER_FETCH, after: 'the robots attack' },
+					onSuccess: secondPage,
+					onFailure: secondPage,
 				} )
 			);
 		} );
