@@ -130,7 +130,7 @@ const streamApis = {
 	},
 	likes: {
 		path: () => '/read/liked',
-		dateProperty: 'liked_on',
+		dateProperty: 'date_liked',
 		pollQuery: () => getQueryStringForPoll( [ 'date_liked' ] ),
 	},
 	recommendations_posts: {
