@@ -19,26 +19,10 @@ import {
 	Quit,
 } from 'layout/guided-tours/config-elements';
 import { AddContentButton } from '../button-labels';
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName, hasSidebar } from 'state/ui/selectors';
 
 const sectionHasSidebar = state =>
-	includes(
-		[
-			'stats',
-			'plans',
-			'posts-pages',
-			'media',
-			'comments',
-			'posts-custom',
-			'themes',
-			'sharing',
-			'people',
-			'plugins',
-			'domains',
-			'settings',
-		],
-		getSectionName( state )
-	);
+	hasSidebar( state ) && ! includes( [ 'customize' ], getSectionName( state ) );
 
 // When moving from stats to the editor, the menu disappears, the first step
 // loses its target, and it repositions in the top left corner.
