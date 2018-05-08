@@ -36,7 +36,7 @@ export const SimplePaymentsEmailTour = makeTour(
 			target="side-menu-page"
 			placement="beside"
 			arrow="left-top"
-			style={ { animationDelay: '2s' } }
+			style={ { animationDelay: '2s', marginTop: '-5px' } }
 			onTargetDisappear={ handleTargetDisappear }
 		>
 			{ ( { translate } ) => (
@@ -68,7 +68,7 @@ export const SimplePaymentsEmailTour = makeTour(
 			arrow="top-left"
 			target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
 			placement="below"
-			style={ { marginLeft: '-10px', zIndex: 'auto' } }
+			style={ { marginLeft: '-7px', zIndex: 'auto' } }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
