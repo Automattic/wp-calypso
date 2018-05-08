@@ -5,7 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { findIndex, noop } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,10 +25,8 @@ class LineChartLegend extends Component {
 		onDataSeriesSelected: noop,
 	};
 
-	handleMouseOver = dataSeriesName => {
-		const { data } = this.props;
-		const index = findIndex( data, { name: dataSeriesName } );
-		this.props.onDataSeriesSelected( index );
+	handleMouseOver = dataSeriesIndex => {
+		this.props.onDataSeriesSelected( dataSeriesIndex );
 	};
 
 	handleMouseOut = () => {
@@ -47,6 +45,7 @@ class LineChartLegend extends Component {
 							name={ dataSeries.name }
 							circleClassName={ `line-chart__legend-sample-${ index % NUM_SERIES }-fill` }
 							description={ dataSeries.description }
+							seriesIndex={ index }
 							onMouseOver={ this.handleMouseOver }
 							onMouseOut={ this.handleMouseOut }
 						/>

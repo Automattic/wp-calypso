@@ -17,6 +17,7 @@ class LegendItem extends Component {
 		onMouseOut: PropTypes.func,
 		name: PropTypes.string.isRequired,
 		percent: PropTypes.string,
+		seriesIndex: PropTypes.number,
 		value: PropTypes.string,
 	};
 
@@ -26,11 +27,11 @@ class LegendItem extends Component {
 	};
 
 	handleMouseOver = () => {
-		this.props.onMouseOver( this.props.name );
+		this.props.onMouseOver( this.props.seriesIndex );
 	};
 
 	handleMouseOut = () => {
-		this.props.onMouseOut( this.props.name );
+		this.props.onMouseOut( this.props.seriesIndex );
 	};
 
 	renderValueAndPercent() {

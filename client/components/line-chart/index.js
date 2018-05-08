@@ -80,6 +80,7 @@ class LineChart extends Component {
 		data: null,
 		fillArea: false,
 		pointHovered: null,
+		svg: null,
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
@@ -218,6 +219,7 @@ class LineChart extends Component {
 		this.drawLines( svg, params );
 		this.drawPoints( svg, params );
 		this.bindEvents( svg, params );
+		this.setState( { svg } );
 	};
 
 	handleMouseEnterPoint = point => {
@@ -288,25 +290,22 @@ class LineChart extends Component {
 
 	handleDataSeriesSelected = selectedItemIndex => {
 		const { data } = this.props;
+		const { svg } = this.state;
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
 			if ( selectedItemIndex === dataSeriesIndex ) {
-				d3Select( `path.line-chart__line-${ dataSeriesIndex }` ).classed(
-					'line-chart__line-selected',
-					true
-				);
-				d3Select( `path.line-chart__area-${ dataSeriesIndex }` ).classed(
-					'line-chart__area-selected',
-					true
-				);
+				svg
+					.select( `path.line-chart__line-${ dataSeriesIndex }` )
+					.classed( 'line-chart__line-selected', true );
+				svg
+					.select( `path.line-chart__area-${ dataSeriesIndex }` )
+					.classed( 'line-chart__area-selected', true );
 			} else {
-				d3Select( `path.line-chart__line-${ dataSeriesIndex }` ).classed(
-					'line-chart__line-selected',
-					false
-				);
-				d3Select( `path.line-chart__area-${ dataSeriesIndex }` ).classed(
-					'line-chart__area-selected',
-					false
-				);
+				svg
+					.select( `path.line-chart__line-${ dataSeriesIndex }` )
+					.classed( 'line-chart__line-selected', false );
+				svg
+					.select( `path.line-chart__area-${ dataSeriesIndex }` )
+					.classed( 'line-chart__area-selected', false );
 			}
 		} );
 	};
