@@ -8,7 +8,7 @@ import deepfreeze from 'deep-freeze';
  * Internal Dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestPage, handlePage, handleError, fromApi, PER_FETCH, QUERY_META } from '../';
+import { requestPage, handlePage, handleError, fromApi, INITIAL_FETCH, QUERY_META } from '../';
 import {
 	requestPage as requestPageAction,
 	receivePage,
@@ -32,7 +32,7 @@ describe( 'streams', () => {
 		const query = {
 			orderBy: 'date',
 			meta: QUERY_META,
-			number: PER_FETCH,
+			number: INITIAL_FETCH,
 			content_width: 675,
 		};
 
@@ -99,7 +99,7 @@ describe( 'streams', () => {
 						query: {
 							sort: 'date',
 							q: 'foo',
-							number: PER_FETCH,
+							number: INITIAL_FETCH,
 							content_width: 675,
 						},
 					},
@@ -113,7 +113,7 @@ describe( 'streams', () => {
 						query: {
 							sort: 'relevance',
 							q: 'foo:bar',
-							number: PER_FETCH,
+							number: INITIAL_FETCH,
 							content_width: 675,
 						},
 					},
