@@ -10,11 +10,11 @@ import page from 'page';
  * Internal Dependencies
  */
 import * as billingController from 'me/billing-history/controller';
-import { sidebar } from 'me/controller';
-import { siteSelection } from 'my-sites/controller';
 import * as controller from './controller';
 import * as paths from './paths';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
+import { sidebar } from 'me/controller';
+import { siteSelection } from 'my-sites/controller';
 
 export default function( router ) {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {

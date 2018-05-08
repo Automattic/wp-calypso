@@ -3,12 +3,11 @@
 /**
  * Internal dependencies
  */
-
-import page from 'page';
-import config from 'config';
-import { sidebar } from 'me/controller';
 import * as helpController from './controller';
+import config from 'config';
+import page from 'page';
 import { makeLayout, render as clientRender } from 'controller';
+import { sidebar } from 'me/controller';
 
 export default function() {
 	if ( config.isEnabled( 'help' ) ) {
