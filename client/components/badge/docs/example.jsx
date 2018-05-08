@@ -13,6 +13,7 @@ import Badge from 'components/badge';
 
 const BadgeExample = () => this.props.exampleCode;
 
+Badge.displayName = 'Badge';
 BadgeExample.displayName = 'Badge';
 
 BadgeExample.defaultProps = {
