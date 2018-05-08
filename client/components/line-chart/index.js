@@ -27,6 +27,7 @@ const X_AXIS_TICKS_MAX = 8;
 const X_AXIS_TICKS_SPACE = 70;
 const Y_AXIS_TICKS = 6;
 const Y_AXIS_TICKS_SPACE = 30;
+const APPROXIMATELY_A_MONTH_IN_MS = 31 * 24 * 60 * 60 * 1000;
 
 const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) => {
 	const everyOtherTickOnly = ! displayMonthTicksOnly && tickRefs.length > X_AXIS_TICKS_MAX;
@@ -49,6 +50,8 @@ const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) =>
 		? moment( date ).format( displayMonthTicksOnly ? 'MMM' : 'MMM D' )
 		: '';
 };
+
+const dateToAbsoluteMonth = date => date.getYear() * 12 + date.getMonth();
 
 class LineChart extends Component {
 	static propTypes = {
@@ -231,12 +234,13 @@ class LineChart extends Component {
 		const [ minTimestamp, maxTimestamp ] = d3Extent( concatData, datum => datum.date );
 
 		const timeDomainAdjustment = ( maxTimestamp - minTimestamp ) * CHART_MARGIN;
+		const displayMonthOnly = maxTimestamp - minTimestamp > APPROXIMATELY_A_MONTH_IN_MS;
+		const months =
+			dateToAbsoluteMonth( new Date( maxTimestamp ) ) -
+			dateToAbsoluteMonth( new Date( minTimestamp ) );
 
-		const displayMonthOnly =
-			new Date( maxTimestamp ).getMonth() - new Date( minTimestamp ).getMonth() >= 2;
-
-		// start out with a single ticks for each data point
-		let xTicks = concatData.length / data.length;
+		// start out with a single ticks for each data point, or the number of months if we have enough dates
+		let xTicks = displayMonthOnly ? months : concatData.length / data.length;
 
 		// reduce the number of ticks if it looks like they will be drawn too close together
 		xTicks =
