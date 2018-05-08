@@ -17,12 +17,6 @@ import TimeSince from 'components/time-since';
 export class ThreatAlert extends Component {
 	render() {
 		const { threat, translate } = this.props;
-		const earliestDetection =
-			threat.files &&
-			threat.files.reduce(
-				( earliest, { firstDetected } ) => ( firstDetected < earliest ? firstDetected : earliest ),
-				Infinity
-			);
 
 		return (
 			<FoldableCard
@@ -35,38 +29,58 @@ export class ThreatAlert extends Component {
 						<div className="activity-log__threat-alert-header">
 							<div>
 								<span className="activity-log__threat-alert-title">
-									{ translate( 'Thread found' ) }
+									{ threat.diff && translate( 'Threat found in core WordPress file' ) }
+									{ threat.extension &&
+										threat.extension.type === 'plugin' &&
+										translate( 'Threat found in your {{s}}%(slug)s{{/s}} Plugin', {
+											args: {
+												slug: threat.extension.slug,
+											},
+											components: {
+												s: <span className="activity-log__threat-alert-title-slug" />,
+											},
+										} ) }
+									{ threat.extension &&
+										threat.extension.type === 'theme' &&
+										translate( 'Threat found in your {{s}}%(slug)s{{/s}} Theme', {
+											args: {
+												slug: threat.extension.slug,
+											},
+											components: {
+												s: <span className="activity-log__threat-alert-title-slug" />,
+											},
+										} ) }
+									{ ! threat.extension && ! threat.diff && translate( 'Threat found' ) }
 								</span>
-								{ threat.files && (
-									<TimeSince
-										className="activity-log__threat-alert-time-since"
-										date={ earliestDetection }
-										dateFormat="ll"
-									/>
-								) }
+								<TimeSince
+									className="activity-log__threat-alert-time-since"
+									date={ threat.firstDetected }
+									dateFormat="ll"
+								/>
 							</div>
 							<span>{ translate( 'Malware code detected' ) }</span>
 						</div>
 					</Fragment>
 				}
 			>
-				{ threat.description }
-				{ threat.files &&
-					threat.files.map( file => (
-						<Fragment key={ file.name }>
-							<div className="activity-log__threat-alert-file-header">
-								<span className="activity-log__threat-alert-filename">{ file.name }</span>
-								<TimeSince
-									className="activity-log__threat-alert-time-since"
-									date={ file.firstDetected }
-									dateFormat="ll"
-								/>
-							</div>
-							<p className="activity-log__threat-alert-dirpath">{ file.dirpath }</p>
-							{ file.context && <MarkedLines context={ file.context } /> }
-							{ file.diff && <DiffViewer diff={ file.diff } /> }
-						</Fragment>
-					) ) }
+				{ ! threat.filename && (
+					<p className="activity-log__threat-alert-signature">{ threat.signature }</p>
+				) }
+				{ threat.filename && (
+					<Fragment>
+						<p>
+							{ translate( '{{s}}%(signature)s{{/s}} in:', {
+								args: { signature: threat.signature },
+								comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
+								components: { s: <span className="activity-log__threat-alert-signature" /> },
+							} ) }
+						</p>
+						<pre className="activity-log__threat-alert-filename">{ threat.filename }</pre>
+					</Fragment>
+				) }
+				<p className="activity-log__threat-alert-description">{ threat.description }</p>
+				{ threat.context && <MarkedLines context={ threat.context } /> }
+				{ threat.diff && <DiffViewer diff={ threat.diff } /> }
 			</FoldableCard>
 		);
 	}

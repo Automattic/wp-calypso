@@ -81,6 +81,12 @@
 .activity-log__threat-alert {
 	& .activity-log-item__activity-icon {
 	}
+
+	& .diff-viewer,
+	& .marked-lines {
+		max-height: 300px;
+		overflow-y: scroll;
+	}
 }
 
 .activity-log__threat-alert-header {
@@ -90,16 +96,20 @@
 	.activity-log__threat-alert-title {
 		color: black;
 	}
+
+	.activity-log__threat-alert-title-slug {
+		font-weight: bold;
+	}
 }
 
-.activity-log__threat-alert-file-header {
-	margin-top: 1em;
-	margin-bottom: 4px;
+.activity-log__threat-alert-signature {
+	font-weight: bold;
+}
 
-	.activity-log__threat-alert-filename {
-		color: black;
-		font-weight: 500;
-	}
+.activity-log__threat-alert-filename {
+	padding: 4px;
+	color: black;
+	font-weight: 500;
 }
 
 .activity-log__threat-alert-time-since {
@@ -107,13 +117,8 @@
 	padding-left: 4px;
 	color: $gray;
 
-	&::before {
+	&:before {
 		// cdot three-per-em-space
 		content: '\00b7\2004';
 	}
-}
-
-.activity-log__threat-alert-dirpath {
-	margin-top: 0;
-	color: $gray;
 }
