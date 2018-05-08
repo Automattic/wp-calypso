@@ -132,7 +132,7 @@ export class Mentions extends Component {
 		this.top = top;
 
 		node.style.left = `${ this.left }px`;
-		// 10 is the top position of .mentions__suggestions .popover__inner, which hasn't rendered yet.
+		// 10 is the top position of .user-mentions__suggestions .popover__inner, which hasn't rendered yet.
 		node.style.top = `${ mceToolbarOffsetHeight + this.top + height - 10 }px`;
 	}
 
