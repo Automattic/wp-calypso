@@ -7,7 +7,7 @@
 import page from 'page';
 import config from 'config';
 import meController from 'me/controller';
-import helpController from './controller';
+import * as helpController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
