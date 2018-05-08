@@ -19,8 +19,9 @@ export default class Quit extends Component {
 	static displayName = 'Quit';
 
 	static propTypes = {
+		click: PropTypes.bool,
 		primary: PropTypes.bool,
-		subtle: PropTypes.bool,
+		target: PropTypes.string,
 	};
 
 	static contextTypes = contextTypes;
