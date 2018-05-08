@@ -37,6 +37,7 @@ class CreditCardForm extends Component {
 		successCallback: PropTypes.func.isRequired,
 		showUsedForExistingPurchasesInfo: PropTypes.bool,
 		autoFocus: PropTypes.bool,
+		heading: PropTypes.string,
 		onCancel: PropTypes.func,
 	};
 
@@ -233,10 +234,11 @@ class CreditCardForm extends Component {
 	}
 
 	render() {
-		const { translate, autoFocus, onCancel } = this.props;
+		const { translate, autoFocus, heading, onCancel } = this.props;
 		return (
 			<form onSubmit={ this.onSubmit } ref={ this.storeForm }>
 				<Card className="credit-card-form__content">
+					{ heading && <div className="credit-card-form__heading">{ heading }</div> }
 					<CreditCardFormFields
 						card={ this.getCardDetails() }
 						countriesList={ countriesList }

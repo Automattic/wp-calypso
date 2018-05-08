@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
 import { curry } from 'lodash';
 
 /**
@@ -36,7 +37,7 @@ class AddCardDialog extends Component {
 	}
 
 	render() {
-		const { siteId, isVisible } = this.props;
+		const { siteId, isVisible, translate } = this.props;
 
 		const onClose = () => this.props.closeAddCardDialog( siteId );
 
@@ -52,6 +53,7 @@ class AddCardDialog extends Component {
 					saveStoredCard={ this.props.addStoredCard }
 					successCallback={ onClose }
 					showUsedForExistingPurchasesInfo={ true }
+					heading={ translate( 'Add credit card' ) }
 					onCancel={ onClose }
 				/>
 			</Dialog>
@@ -70,4 +72,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeAddCardDialog, addStoredCard }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( AddCardDialog );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddCardDialog ) );
