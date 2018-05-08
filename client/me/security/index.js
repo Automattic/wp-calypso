@@ -11,7 +11,7 @@ import page from 'page';
  */
 import config from 'config';
 import meController from 'me/controller';
-import controller from './controller';
+import * as controller from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
@@ -34,6 +34,7 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/me/security/connected-applications',
 		meController.sidebar,
@@ -41,13 +42,7 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
-	page(
-		'/me/security/connected-applications/:application_id',
-		meController.sidebar,
-		controller.connectedApplication,
-		makeLayout,
-		clientRender
-	);
+
 	page(
 		'/me/security/account-recovery',
 		meController.sidebar,
