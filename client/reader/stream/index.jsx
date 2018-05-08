@@ -48,6 +48,7 @@ import { reduxGetState } from 'lib/redux-bridge';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { viewStream } from 'state/reader/watermarks/actions';
 import Interval, { EVERY_MINUTE } from 'lib/interval';
+import { PER_FETCH, INITIAL_FETCH } from 'state/data-layer/wpcom/read/streams';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -325,7 +326,7 @@ class ReaderStream extends React.Component {
 
 	renderLoadingPlaceholders = () => {
 		const { items } = this.props;
-		const count = items.length === 0 ? 2 : 4; // @TODO: figure out what numbers should go here and make sensible const
+		const count = items.length === 0 ? INITIAL_FETCH : PER_FETCH;
 
 		return times( count, i => {
 			if ( this.props.placeholderFactory ) {

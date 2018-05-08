@@ -58,7 +58,8 @@ function analyticsForStream( { streamKey, algorithm, posts } ) {
 }
 const getAlgorithmForStream = streamKey => analyticsAlgoMap.get( streamKey );
 
-export const PER_FETCH = 6;
+export const PER_FETCH = 7;
+export const INITIAL_FETCH = 4;
 const PER_POLL = 40;
 const PER_GAP = 40;
 
@@ -187,16 +188,16 @@ export function requestPage( action ) {
 		? { algorithm: getAlgorithmForStream( streamKey ) }
 		: {};
 
+	const fetchCount = pageHandle ? PER_FETCH : INITIAL_FETCH;
+	const number = !! gap ? PER_GAP : fetchCount;
+
 	return http( {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
 		query: isPoll
 			? pollQuery( [], { ...algorithm } )
-			: query(
-					{ ...pageHandle, ...algorithm, number: !! gap ? PER_GAP : PER_FETCH },
-					action.payload
-				),
+			: query( { ...pageHandle, ...algorithm, number }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );
