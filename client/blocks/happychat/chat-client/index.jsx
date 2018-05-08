@@ -14,6 +14,9 @@ import includes from 'lodash/includes';
  */
 import HappychatConnection from 'blocks/happychat/connection';
 import { LAYOUT_PANEL_MAX_PARENT_SIZE, LAYOUT_MAX_PARENT_SIZE } from './constants';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import getSkills from 'state/happychat/selectors/get-skills';
 
 /*
  * Main chat UI component
@@ -24,6 +27,7 @@ export class HappychatClient extends Component {
 		minimized: PropTypes.bool,
 		nodeId: PropTypes.string,
 		skills: PropTypes.object,
+		user: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -33,18 +37,16 @@ export class HappychatClient extends Component {
 	};
 
 	componentDidMount() {
-		const { dispatch, layout, minimized, nodeId, skills, state } = this.props;
+		const { layout, minimized, nodeId, skills, defaultSkills, user } = this.props;
 
 		// configure and open happychat
-		HappychatConnection(
-			{ state, dispatch },
-			{
-				nodeId,
-				layout,
-				minimized,
-				skills,
-			}
-		);
+		HappychatConnection( {
+			layout,
+			minimized,
+			nodeId,
+			user,
+			skills: skills || defaultSkills,
+		} );
 	}
 
 	render() {
@@ -63,6 +65,11 @@ export class HappychatClient extends Component {
 	}
 }
 
-const mapState = state => ( { state } );
+const mapState = state => {
+	return {
+		defaultSkills: getSkills( state, getSelectedSiteId( state ) ),
+		user: getCurrentUser( state ),
+	};
+};
 
 export default connect( mapState )( HappychatClient );
