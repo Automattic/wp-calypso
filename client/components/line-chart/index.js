@@ -53,6 +53,8 @@ const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) =>
 };
 
 const dateToAbsoluteMonth = date => date.getYear() * 12 + date.getMonth();
+// number of different colors this component can display
+// More than NUM_SERIES and 2 series will use the same color
 const NUM_SERIES = 3;
 
 class LineChart extends Component {
