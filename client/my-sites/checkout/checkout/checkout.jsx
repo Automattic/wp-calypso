@@ -32,7 +32,6 @@ import { managePurchase } from 'me/purchases/paths';
 import SubscriptionLengthPicker from 'blocks/subscription-length-picker';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
-import QueryGeo from 'components/data/query-geo';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryPlans from 'components/data/query-plans';
 import SecurePaymentForm from './secure-payment-form';
@@ -610,7 +609,6 @@ export class Checkout extends React.Component {
 					<QueryProducts />
 					<QueryContactDetailsCache />
 					<QueryStoredCards />
-					<QueryGeo />
 
 					{ this.content() }
 				</div>
