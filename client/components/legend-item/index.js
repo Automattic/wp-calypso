@@ -21,7 +21,7 @@ class LegendItem extends Component {
 	};
 
 	static defaultProps = {
-		onMouseEnter: noop,
+		onMouseOver: noop,
 		onMouseOut: noop,
 	};
 

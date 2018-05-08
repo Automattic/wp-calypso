@@ -286,10 +286,10 @@ class LineChart extends Component {
 		};
 	};
 
-	handleDataSeriesSelected = legendItem => {
+	handleDataSeriesSelected = selectedItemIndex => {
 		const { data } = this.props;
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
-			if ( legendItem === dataSeriesIndex ) {
+			if ( selectedItemIndex === dataSeriesIndex ) {
 				d3Select( `path.line-chart__line-${ dataSeriesIndex }` ).classed(
 					'line-chart__line-selected',
 					true
