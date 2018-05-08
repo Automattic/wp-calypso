@@ -485,7 +485,7 @@ export class PostEditor extends React.Component {
 	};
 
 	onEditedPostChange = () => {
-		var didLoad = this.state.isLoading && ! PostEditStore.isLoading(),
+		let didLoad = this.state.isLoading && ! PostEditStore.isLoading(),
 			loadingError = PostEditStore.getLoadingError(),
 			postEditState,
 			post,
@@ -581,7 +581,7 @@ export class PostEditor extends React.Component {
 	};
 
 	autosave = () => {
-		var callback;
+		let callback;
 
 		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
@@ -737,7 +737,7 @@ export class PostEditor extends React.Component {
 	};
 
 	onPreview = ( action, event ) => {
-		var status = 'draft',
+		let status = 'draft',
 			previewPost;
 
 		if ( this.state.previewAction !== action ) {
@@ -985,7 +985,7 @@ export class PostEditor extends React.Component {
 	};
 
 	getEditorMode = () => {
-		var editorMode = 'tinymce';
+		let editorMode = 'tinymce';
 		if ( this.props.editorModePreference ) {
 			editorMode = this.props.editorModePreference;
 

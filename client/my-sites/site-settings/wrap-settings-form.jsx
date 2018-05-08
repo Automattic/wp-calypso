@@ -265,7 +265,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		( state, { fields } ) => {
 			const siteId = getSelectedSiteId( state );
 			let isSavingSettings = isSavingSiteSettings( state, siteId );
-			let isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
+			const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 			let settings = getSiteSettings( state, siteId );
 			let isRequestingSettings = isRequestingSiteSettings( state, siteId ) && ! settings;
 			let isJetpackSaveRequestSuccessful;

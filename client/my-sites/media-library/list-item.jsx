@@ -61,7 +61,7 @@ export default class extends React.Component {
 	};
 
 	renderItem = () => {
-		var component;
+		let component;
 
 		if ( ! this.props.media ) {
 			return;

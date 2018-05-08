@@ -72,7 +72,7 @@ class ActivityLogSwitch extends Component {
 								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
 								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }`
 						}
-						>
+					>
 						{ translate( 'Continue setup' ) }
 					</Button>
 				);

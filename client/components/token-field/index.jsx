@@ -87,12 +87,12 @@ class TokenField extends PureComponent {
 	}
 
 	render() {
-		var classes = classNames( 'token-field', {
+		const classes = classNames( 'token-field', {
 			'is-active': this.state.isActive,
 			'is-disabled': this.props.disabled,
 		} );
 
-		var tokenFieldProps = {
+		let tokenFieldProps = {
 			ref: 'main',
 			className: classes,
 			tabIndex: '-1',
@@ -132,7 +132,7 @@ class TokenField extends PureComponent {
 	}
 
 	_renderTokensAndInput = () => {
-		var components = map( this.props.value, this._renderToken );
+		const components = map( this.props.value, this._renderToken );
 
 		components.splice( this._getIndexOfInput(), 0, this._renderInput() );
 
@@ -221,7 +221,7 @@ class TokenField extends PureComponent {
 	};
 
 	_onSuggestionHovered = suggestion => {
-		var index = this._getMatchingSuggestions().indexOf( suggestion );
+		const index = this._getMatchingSuggestions().indexOf( suggestion );
 
 		if ( index >= 0 ) {
 			this.setState( {
@@ -261,7 +261,7 @@ class TokenField extends PureComponent {
 	};
 
 	_onKeyDown = event => {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		switch ( event.keyCode ) {
 			case 8: // backspace (delete to left)
@@ -303,7 +303,7 @@ class TokenField extends PureComponent {
 	};
 
 	_onKeyPress = event => {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		switch ( event.charCode ) {
 			case 44: // comma
@@ -319,7 +319,7 @@ class TokenField extends PureComponent {
 	};
 
 	_handleDeleteKey = deleteToken => {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		if ( this.state.tokenInputHasFocus && this._isInputEmpty() ) {
 			deleteToken();
@@ -330,7 +330,7 @@ class TokenField extends PureComponent {
 	};
 
 	_getMatchingSuggestions = () => {
-		var suggestions = this.props.suggestions,
+		let suggestions = this.props.suggestions,
 			match = this.props.saveTransform( this.state.incompleteTokenValue ),
 			startsWithMatch = [],
 			containsMatch = [];
@@ -343,7 +343,7 @@ class TokenField extends PureComponent {
 			each(
 				suggestions,
 				function( suggestion ) {
-					var index = suggestion.toLocaleLowerCase().indexOf( match );
+					const index = suggestion.toLocaleLowerCase().indexOf( match );
 					if ( this.props.value.indexOf( suggestion ) === -1 ) {
 						if ( index === 0 ) {
 							startsWithMatch.push( suggestion );
@@ -367,7 +367,7 @@ class TokenField extends PureComponent {
 	};
 
 	_addCurrentToken = () => {
-		var preventDefault = false,
+		let preventDefault = false,
 			selectedSuggestion = this._getSelectedSuggestion();
 
 		if ( selectedSuggestion ) {
@@ -382,7 +382,7 @@ class TokenField extends PureComponent {
 	};
 
 	_handleLeftArrowKey = () => {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		if ( this._isInputEmpty() ) {
 			this._moveInputBeforePreviousToken();
@@ -393,7 +393,7 @@ class TokenField extends PureComponent {
 	};
 
 	_handleRightArrowKey = () => {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		if ( this._isInputEmpty() ) {
 			this._moveInputAfterNextToken();
@@ -425,7 +425,7 @@ class TokenField extends PureComponent {
 	};
 
 	_handleCommaKey = () => {
-		var preventDefault = true;
+		const preventDefault = true;
 
 		if ( this._inputHasValidValue() ) {
 			this._addNewToken( this.state.incompleteTokenValue );
@@ -443,7 +443,7 @@ class TokenField extends PureComponent {
 	};
 
 	_deleteTokenBeforeInput = () => {
-		var index = this._getIndexOfInput() - 1;
+		const index = this._getIndexOfInput() - 1;
 
 		if ( index > -1 ) {
 			this._deleteToken( this.props.value[ index ] );
@@ -451,7 +451,7 @@ class TokenField extends PureComponent {
 	};
 
 	_deleteTokenAfterInput = () => {
-		var index = this._getIndexOfInput();
+		const index = this._getIndexOfInput();
 
 		if ( index < this.props.value.length ) {
 			this._deleteToken( this.props.value[ index ] );

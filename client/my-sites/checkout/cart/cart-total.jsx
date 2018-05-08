@@ -15,7 +15,7 @@ import { cartItems } from 'lib/cart-values';
 
 class CartTotal extends React.Component {
 	render() {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		if ( cart.hasPendingServerUpdates ) {
 			return (
@@ -40,17 +40,16 @@ class CartTotal extends React.Component {
 	}
 
 	totalLabel = () => {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
 			return this.props.translate( 'Total Due Now:', {
 				context: 'Upgrades: Total cart cost in checkout when buying a free trial',
 			} );
-		} else {
-			return this.props.translate( 'Total:', {
-				context: 'Upgrades: Total cart cost in checkout when buying a full price upgrade',
-			} );
 		}
+		return this.props.translate( 'Total:', {
+			context: 'Upgrades: Total cart cost in checkout when buying a full price upgrade',
+		} );
 	};
 }
 

@@ -40,7 +40,7 @@ class EditorLocation extends React.Component {
 	static propTypes = {
 		label: PropTypes.string,
 		coordinates: function( props, propName ) {
-			var prop = props[ propName ];
+			const prop = props[ propName ];
 			if (
 				prop &&
 				( ! Array.isArray( prop ) || 2 !== prop.length || 2 !== prop.filter( Number ).length )
@@ -127,7 +127,7 @@ class EditorLocation extends React.Component {
 	};
 
 	render() {
-		var error, buttonText;
+		let error, buttonText;
 
 		if ( this.state.error ) {
 			error = (

@@ -123,7 +123,7 @@ class PeopleSectionNav extends Component {
 	}
 
 	render() {
-		var selectedText,
+		let selectedText,
 			hasPinnedItems = false,
 			search = null;
 

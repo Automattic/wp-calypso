@@ -85,7 +85,7 @@ const PAGE_SIZE = 10;
 const MAX_PAGES = 3;
 const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
 
-let searchVendor = 'group_1';
+const searchVendor = 'group_1';
 const fetchAlgo = searchVendor + '/v1';
 
 let searchQueue = [];

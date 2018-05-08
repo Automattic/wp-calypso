@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Globals
  */
-var noop = () => {};
+const noop = () => {};
 
 export default class extends React.Component {
 	static displayName = 'PostScheduleHeaderControls';

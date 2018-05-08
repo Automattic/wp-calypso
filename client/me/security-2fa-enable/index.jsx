@@ -146,7 +146,7 @@ class Security2faEnable extends React.Component {
 	};
 
 	onBeginCodeValidation = () => {
-		var args = {
+		const args = {
 			code: this.state.verificationCode,
 			action: 'enable-two-step',
 		};
@@ -190,7 +190,7 @@ class Security2faEnable extends React.Component {
 	};
 
 	renderQRCode = () => {
-		var qrClasses = classNames( 'security-2fa-enable__qr-code', {
+		const qrClasses = classNames( 'security-2fa-enable__qr-code', {
 			'is-placeholder': ! this.state.otpAuthUri,
 		} );
 

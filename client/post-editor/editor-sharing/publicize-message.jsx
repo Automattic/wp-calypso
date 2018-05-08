@@ -97,19 +97,18 @@ class PublicizeMessage extends Component {
 					{ this.renderInfoPopover() }
 				</CountedTextarea>
 			);
-		} else {
-			return (
-				<div>
-					<FormTextarea
-						disabled={ this.props.disabled }
-						value={ this.getMessage() }
-						placeholder={ placeholder }
-						onChange={ this.onChange }
-						className="editor-sharing__message-input"
-					/>
-				</div>
-			);
 		}
+		return (
+			<div>
+				<FormTextarea
+					disabled={ this.props.disabled }
+					value={ this.getMessage() }
+					placeholder={ placeholder }
+					onChange={ this.onChange }
+					className="editor-sharing__message-input"
+				/>
+			</div>
+		);
 	}
 
 	render() {

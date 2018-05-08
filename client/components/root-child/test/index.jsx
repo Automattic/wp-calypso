@@ -35,7 +35,7 @@ class Greeting extends React.Component {
 }
 
 describe( 'RootChild', () => {
-	var container;
+	let container;
 
 	beforeAll( function() {
 		container = document.createElement( 'div' );
@@ -48,7 +48,7 @@ describe( 'RootChild', () => {
 
 	describe( 'rendering', () => {
 		test( 'should render any children as descendants of body', () => {
-			var tree = ReactDom.render( React.createElement( Greeting ), container );
+			const tree = ReactDom.render( React.createElement( Greeting ), container );
 
 			expect( tree.refs.parentChild.parentNode.className ).to.equal( 'parent' );
 
@@ -56,7 +56,7 @@ describe( 'RootChild', () => {
 		} );
 
 		test( 'accepts props to be added to a wrapper element', () => {
-			var tree = ReactDom.render(
+			const tree = ReactDom.render(
 				React.createElement( Greeting, {
 					rootChildProps: { className: 'wrapper' },
 				} ),
@@ -69,7 +69,7 @@ describe( 'RootChild', () => {
 		} );
 
 		test( 'should update the children if parent is re-rendered', () => {
-			var tree = mount( React.createElement( Greeting ), { attachTo: container } );
+			const tree = mount( React.createElement( Greeting ), { attachTo: container } );
 			tree.setProps( { toWhom: 'Universe' } );
 
 			expect( tree.ref( 'rootChild' ).innerHTML ).to.equal( 'Hello Universe!' );

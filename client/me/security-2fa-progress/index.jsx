@@ -22,7 +22,7 @@ class Security2faProgress extends React.Component {
 	}
 
 	stepClass = step => {
-		var currentStep = parseInt( this.props.step, 10 );
+		const currentStep = parseInt( this.props.step, 10 );
 
 		return {
 			isHighlighted: step === currentStep,

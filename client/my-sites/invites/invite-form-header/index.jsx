@@ -260,7 +260,7 @@ class InviteFormHeader extends React.Component {
 	};
 
 	render() {
-		let roleExplanation = this.getExplanationForInvite();
+		const roleExplanation = this.getExplanationForInvite();
 		return (
 			<div className="invite-form-header">
 				<h3 className="invite-form-header__title">

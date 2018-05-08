@@ -44,7 +44,7 @@ class PluginSiteJetpack extends React.Component {
 	};
 
 	renderInstallButton = () => {
-		var installInProgress = PluginsLog.isInProgressAction(
+		const installInProgress = PluginsLog.isInProgressAction(
 			this.props.site.ID,
 			this.props.plugin.slug,
 			'INSTALL_PLUGIN'

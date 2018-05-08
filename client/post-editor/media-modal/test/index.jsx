@@ -94,7 +94,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the list view', done => {
-		var media = DUMMY_MEDIA.slice( 0, 1 ),
+		let media = DUMMY_MEDIA.slice( 0, 1 ),
 			tree;
 
 		tree = shallow(
@@ -118,7 +118,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete multiple items from the list view', done => {
-		var tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
@@ -139,7 +139,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the detail view', done => {
-		var media = DUMMY_MEDIA[ 0 ],
+		let media = DUMMY_MEDIA[ 0 ],
 			tree;
 
 		tree = shallow(
@@ -163,7 +163,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the detail view, even when multiple selected', done => {
-		var tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
@@ -202,7 +202,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should revert to an earlier media item when the last item is deleted from detail view', done => {
-		var tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }

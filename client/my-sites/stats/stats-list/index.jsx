@@ -33,7 +33,7 @@ export default class extends React.Component {
 	};
 
 	buildLists = ( groups, parentKey ) => {
-		var results,
+		let results,
 			listClass = classNames( 'module-content-list', {
 				'module-content-list-sublist': parentKey,
 				'is-expanded': this.isGroupActive( parentKey ),
@@ -41,7 +41,7 @@ export default class extends React.Component {
 
 		if ( groups ) {
 			results = groups.map( function( group, groupIndex ) {
-				var childResults,
+				let childResults,
 					active,
 					groupTree = parentKey ? [ parentKey ] : [],
 					groupKey,
@@ -76,7 +76,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var list = this.buildLists( this.props.data );
+		const list = this.buildLists( this.props.data );
 		return list;
 	}
 }

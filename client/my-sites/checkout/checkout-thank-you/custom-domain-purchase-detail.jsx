@@ -45,9 +45,8 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 				{ ...actionButton }
 			/>
 		);
-	} else {
-		return null;
 	}
+	return null;
 };
 
 CustomDomainPurchaseDetail.propTypes = {

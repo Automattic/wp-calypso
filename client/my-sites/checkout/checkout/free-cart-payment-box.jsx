@@ -22,7 +22,7 @@ class FreeCartPaymentBox extends React.Component {
 	};
 
 	content = () => {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		return (
 			<form onSubmit={ this.props.onSubmit }>
@@ -63,7 +63,7 @@ class FreeCartPaymentBox extends React.Component {
 	};
 
 	getProductName = () => {
-		var cart = this.props.cart,
+		let cart = this.props.cart,
 			product;
 
 		if ( cart.has_bundle_credit && this.props.selectedSite.plan ) {
@@ -72,9 +72,8 @@ class FreeCartPaymentBox extends React.Component {
 
 		if ( product ) {
 			return product.product_name;
-		} else {
-			return '';
 		}
+		return '';
 	};
 
 	render() {

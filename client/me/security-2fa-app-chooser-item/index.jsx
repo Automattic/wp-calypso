@@ -35,7 +35,7 @@ class Security2faAppChooserItem extends React.Component {
 	};
 
 	possiblyRenderDownloadQRCode = appURL => {
-		var imgURL =
+		const imgURL =
 			'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=H|0&chl=' +
 			encodeURIComponent( appURL );
 

@@ -42,7 +42,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 	}
 
 	renderValidation = () => {
-		var validation = null;
+		let validation = null;
 		if ( this.state.validation ) {
 			validation = <FormInputValidation isError text={ this.state.validation } />;
 		}
@@ -50,7 +50,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 	};
 
 	renderExplanation = () => {
-		var explanation = null,
+		let explanation = null,
 			text;
 
 		if ( this.props.primaryEmail ) {
@@ -117,7 +117,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 	};
 
 	onSave = () => {
-		var email = this.state.email;
+		const email = this.state.email;
 
 		if ( ! this.isSavable() ) {
 			return;
