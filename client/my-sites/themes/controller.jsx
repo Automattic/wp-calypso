@@ -79,6 +79,9 @@ export function loggedOut( context, next ) {
 		return next();
 	}
 
+	// Store previous path in order that we can return from a theme preview
+	context.store.dispatch( setBackPath( context.pathname ) );
+
 	const props = getProps( context );
 
 	context.primary = <LoggedOutComponent { ...props } />;
@@ -169,17 +172,16 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
  */
 export function setUpLocale( context, next ) {
 	const language = getLanguage( context.params.lang );
-	if ( language && language.langSlug ) {
-		if ( context.isServerSide ) {
-			// Ensure the html lang/dir attribute values are set
-			// prioritize parentLangSlug for locale variants
-			// See: server/render/index.js
-			context.lang = language.parentLangSlug || language.langSlug;
-			if ( language.rtl ) {
-				context.isRTL = true;
-			}
-		} else {
+	if ( language ) {
+		if ( ! context.isServerSide ) {
 			setLocale( language.langSlug );
+		}
+		// Ensure the html lang/dir attribute values are set
+		// prioritize parentLangSlug for locale variants
+		// See: server/render/index.js
+		context.lang = language.parentLangSlug || language.langSlug;
+		if ( language.rtl ) {
+			context.isRTL = true;
 		}
 	}
 	next();

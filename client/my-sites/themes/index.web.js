@@ -52,10 +52,10 @@ export default function( router ) {
 
 			const loggedOutRoutes = [
 				`/themes/${ langRouteParams }`,
-				'/themes/:tier(free|premium)?',
-				'/themes/:tier(free|premium)?/filter/:filter',
-				'/themes/:vertical?/:tier(free|premium)?',
-				'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
+				`/themes/:tier(free|premium)?/${ langRouteParams }`,
+				`/themes/:tier(free|premium)?/filter/:filter/${ langRouteParams }`,
+				`/themes/:vertical?/:tier(free|premium)?/${ langRouteParams }`,
+				`/themes/:vertical?/:tier(free|premium)?/filter/:filter/${ langRouteParams }`,
 			];
 			router(
 				loggedOutRoutes,
