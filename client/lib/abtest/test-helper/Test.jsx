@@ -27,6 +27,7 @@ export default class extends React.Component {
 									className="test-helper__choice-indicator"
 									type="radio"
 									checked={ variation === currentVariation }
+									readOnly
 								/>
 								{ variation }
 							</a>
