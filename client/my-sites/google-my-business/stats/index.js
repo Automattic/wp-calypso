@@ -19,7 +19,6 @@ import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart'
 import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SectionHeader from 'components/section-header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
@@ -112,7 +111,6 @@ class GoogleMyBusinessStats extends Component {
 						} }
 						renderTooltipForDatanum={ this.renderSearchTooltipForDatanum }
 					/>
-					<SectionHeader label={ translate( 'How customers search for your business' ) } />
 				</div>
 
 				<div className="gmb-stats__metric">

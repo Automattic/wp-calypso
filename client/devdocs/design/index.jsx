@@ -68,6 +68,7 @@ import InputChrono from 'components/input-chrono/docs/example';
 import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
 import JetpackLogoExample from 'components/jetpack-logo/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
+import LineChart from 'components/line-chart/docs/example';
 import ListEnd from 'components/list-end/docs/example';
 import MarkedLinesExample from 'components/marked-lines/docs/example';
 import Notices from 'components/notice/docs/example';
@@ -201,6 +202,7 @@ class DesignAssets extends React.Component {
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
 					<LanguagePicker readmeFilePath="language-picker" />
+					<LineChart />
 					<ListEnd readmeFilePath="list-end" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<Notices readmeFilePath="notice" />

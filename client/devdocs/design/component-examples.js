@@ -45,6 +45,7 @@ export InputChrono from 'components/input-chrono/docs/example';
 export JetpackColophonExample from 'components/jetpack-colophon/docs/example';
 export JetpackLogoExample from 'components/jetpack-logo/docs/example';
 export LanguagePicker from 'components/language-picker/docs/example';
+export LineChart from 'components/line-chart/docs/example';
 export ListEnd from 'components/list-end/docs/example';
 export MarkedLinesExample from 'components/marked-lines/docs/example';
 export Notices from 'components/notice/docs/example';
