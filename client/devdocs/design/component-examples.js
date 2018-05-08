@@ -39,7 +39,6 @@ export GlobalNotices from 'components/global-notices/docs/example';
 export Gravatar from 'components/gravatar/docs/example';
 export HeaderButton from 'components/header-button/docs/example';
 export Headers from 'components/header-cake/docs/example';
-export HrWithText from 'components/hr-with-text/docs/example';
 export ImagePreloader from 'components/image-preloader/docs/example';
 export InfoPopover from 'components/info-popover/docs/example';
 export InputChrono from 'components/input-chrono/docs/example';
