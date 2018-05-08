@@ -298,21 +298,12 @@ class LineChart extends Component {
 		}
 
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
-			if ( selectedItemIndex === dataSeriesIndex ) {
-				svg
-					.select( `path.line-chart__line-${ dataSeriesIndex }` )
-					.classed( 'line-chart__line-selected', true );
-				svg
-					.select( `path.line-chart__area-${ dataSeriesIndex }` )
-					.classed( 'line-chart__area-selected', true );
-			} else {
-				svg
-					.select( `path.line-chart__line-${ dataSeriesIndex }` )
-					.classed( 'line-chart__line-selected', false );
-				svg
-					.select( `path.line-chart__area-${ dataSeriesIndex }` )
-					.classed( 'line-chart__area-selected', false );
-			}
+			const selected = selectedItemIndex === dataSeriesIndex;
+			svg
+				.select(
+					`path.line-chart__line-${ dataSeriesIndex }, path.line-chart__area-${ dataSeriesIndex }`
+				)
+				.classed( 'line-chart__line-selected', selected );
 		} );
 	};
 
