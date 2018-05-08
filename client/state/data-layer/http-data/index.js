@@ -175,7 +175,7 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
 			type: HTTP_DATA_REQUEST,
 			id: requestId,
 			fetch: 'function' === typeof fetchAction ? fetchAction() : fetchAction,
-			fromApi: 'function' === typeof fromApi ? fromApi() : a => a,
+			fromApi: 'function' === typeof fromApi ? fromApi : () => a => a,
 		};
 
 		dispatch ? dispatch( action ) : dispatchQueue.push( action );
@@ -183,3 +183,9 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
 
 	return data;
 };
+
+if ( 'object' === typeof window && window.app && window.app.isDebug ) {
+	window.getHttpData = getHttpData;
+	window.httpData = httpData;
+	window.requestHttpData = requestHttpData;
+}
