@@ -9,7 +9,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import billingController from 'me/billing-history/controller';
+import * as billingController from 'me/billing-history/controller';
 import meController from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
 import * as controller from './controller';
