@@ -37,6 +37,7 @@ import PushNotificationApprovalPoller from './two-factor-authentication/push-not
 import userFactory from 'lib/user';
 import SocialConnectPrompt from './social-connect-prompt';
 import JetpackLogo from 'components/jetpack-logo';
+import { getPartnerSlugFromCurrentUrl } from 'jetpack-connect/utils';
 
 const user = userFactory();
 
@@ -193,7 +194,7 @@ class Login extends Component {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
 			preHeader = (
 				<div className="login__jetpack-logo">
-					<JetpackLogo full size={ 45 } />
+					<JetpackLogo full size={ 45 } partnerSlug={ getPartnerSlugFromCurrentUrl() } />
 				</div>
 			);
 		}

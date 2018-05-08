@@ -23,5 +23,6 @@ export default function JetpackLogoExample() {
 
 * `full` : (bool) Whether or not to show the Jetpack text alongside the icon
 * `size` : (number) The height of the SVG
+* `partnerSlug`: (string) If the slug is for a known partner, will return a cobranded logo
 
 All other props are passed to the underlying `Button`.

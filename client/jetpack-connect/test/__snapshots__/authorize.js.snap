@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`JetpackAuthorize renders as expected 1`] = `
-<Localized(JetpackConnectMainWrapper)>
+<JetpackConnectMainWrapper
+  isWide={false}
+>
   <div
     className="jetpack-connect__authorize-form"
   >
@@ -98,5 +100,5 @@ exports[`JetpackAuthorize renders as expected 1`] = `
       </LoggedOutFormLinks>
     </div>
   </div>
-</Localized(JetpackConnectMainWrapper)>
+</JetpackConnectMainWrapper>
 `;
