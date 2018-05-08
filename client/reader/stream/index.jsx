@@ -95,14 +95,16 @@ class ReaderStream extends React.Component {
 	};
 
 	componentDidUpdate( { selectedPostKey } ) {
+		const { recsStreamKey, recsStream } = this.props;
+
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
 		}
 
-		if ( this.props.shouldRequestRecs ) {
+		if ( this.props.shouldRequestRecs && ! recsStream.isRequesting ) {
 			this.props.requestPage( {
-				streamKey: this.props.recsStreamKey,
-				pageHandle: this.props.recsStream.pageHandle,
+				streamKey: recsStreamKey,
+				pageHandle: recsStream.pageHandle,
 			} );
 		}
 	}
