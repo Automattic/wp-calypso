@@ -235,7 +235,7 @@ class RegisterDomainStep extends React.Component {
 		const error = nextProps.defaultSuggestionsError;
 
 		if ( ! error ) {
-			return nextProps.onDomainsAvailabilityChange( true, 0 );
+			return nextProps.onDomainsAvailabilityChange( true );
 		}
 		if ( error && error.statusCode === 503 ) {
 			return nextProps.onDomainsAvailabilityChange(
@@ -573,7 +573,7 @@ class RegisterDomainStep extends React.Component {
 		return domains
 			.suggestions( query )
 			.then( domainSuggestions => {
-				this.props.onDomainsAvailabilityChange( true, 0 );
+				this.props.onDomainsAvailabilityChange( true );
 				const timeDiff = Date.now() - timestamp;
 				const analyticsResults = domainSuggestions.map( suggestion => suggestion.domain_name );
 
@@ -691,7 +691,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	handleSubdomainSuggestions = ( domain, timestamp ) => subdomainSuggestions => {
-		this.props.onDomainsAvailabilityChange( true, 0 );
+		this.props.onDomainsAvailabilityChange( true );
 		const timeDiff = Date.now() - timestamp;
 		const analyticsResults = subdomainSuggestions.map( suggestion => suggestion.domain_name );
 
