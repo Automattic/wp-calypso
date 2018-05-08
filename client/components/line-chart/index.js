@@ -292,6 +292,11 @@ class LineChart extends Component {
 	handleDataSeriesSelected = selectedItemIndex => {
 		const { data } = this.props;
 		const { svg } = this.state;
+
+		if ( ! svg ) {
+			return;
+		}
+
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
 			if ( selectedItemIndex === dataSeriesIndex ) {
 				svg
