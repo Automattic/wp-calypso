@@ -266,8 +266,10 @@ export class PluginMeta extends Component {
 			'page-visit-counter',
 			'post-views-counter',
 			'tokenad',
+			'wordpress-popular-posts',
 			'wp-postviews',
 			'wp-statistics',
+			'wp-ulike',
 
 			// security
 			'wordfence',
