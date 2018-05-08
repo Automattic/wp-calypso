@@ -10,7 +10,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import * as billingController from 'me/billing-history/controller';
-import meController from 'me/controller';
+import { sidebar } from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
 import * as controller from './controller';
 import * as paths from './paths';
@@ -21,7 +21,7 @@ export default function( router ) {
 		router(
 			paths.addCreditCard,
 			redirectLoggedOut,
-			meController.sidebar,
+			sidebar,
 			controller.addCreditCard,
 			makeLayout,
 			clientRender
@@ -34,7 +34,7 @@ export default function( router ) {
 	router(
 		paths.billingHistory,
 		redirectLoggedOut,
-		meController.sidebar,
+		sidebar,
 		billingController.billingHistory,
 		makeLayout,
 		clientRender
@@ -43,7 +43,7 @@ export default function( router ) {
 	router(
 		paths.billingHistoryReceipt(),
 		redirectLoggedOut,
-		meController.sidebar,
+		sidebar,
 		billingController.transaction,
 		makeLayout,
 		clientRender
@@ -52,7 +52,7 @@ export default function( router ) {
 	router(
 		paths.purchasesRoot,
 		redirectLoggedOut,
-		meController.sidebar,
+		sidebar,
 		controller.list,
 		makeLayout,
 		clientRender
@@ -61,7 +61,7 @@ export default function( router ) {
 	router(
 		paths.managePurchase(),
 		redirectLoggedOut,
-		meController.sidebar,
+		sidebar,
 		siteSelection,
 		controller.managePurchase,
 		makeLayout,
@@ -71,7 +71,7 @@ export default function( router ) {
 	router(
 		paths.cancelPurchase(),
 		redirectLoggedOut,
-		meController.sidebar,
+		sidebar,
 		siteSelection,
 		controller.cancelPurchase,
 		makeLayout,
@@ -81,7 +81,7 @@ export default function( router ) {
 	router(
 		paths.cancelPrivacyProtection(),
 		redirectLoggedOut,
-		meController.sidebar,
+		sidebar,
 		siteSelection,
 		controller.cancelPrivacyProtection,
 		makeLayout,
@@ -91,7 +91,7 @@ export default function( router ) {
 	router(
 		paths.confirmCancelDomain(),
 		redirectLoggedOut,
-		meController.sidebar,
+		sidebar,
 		siteSelection,
 		controller.confirmCancelDomain,
 		makeLayout,
@@ -101,7 +101,7 @@ export default function( router ) {
 	router(
 		paths.addCardDetails(),
 		redirectLoggedOut,
-		meController.sidebar,
+		sidebar,
 		siteSelection,
 		controller.addCardDetails,
 		makeLayout,
@@ -111,7 +111,7 @@ export default function( router ) {
 	router(
 		paths.editCardDetails(),
 		redirectLoggedOut,
-		meController.sidebar,
+		sidebar,
 		siteSelection,
 		controller.editCardDetails,
 		makeLayout,

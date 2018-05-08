@@ -6,7 +6,7 @@
 
 import page from 'page';
 import config from 'config';
-import meController from 'me/controller';
+import { sidebar } from 'me/controller';
 import * as helpController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -15,7 +15,7 @@ export default function() {
 		page(
 			'/help',
 			helpController.loggedOut,
-			meController.sidebar,
+			sidebar,
 			helpController.help,
 			makeLayout,
 			clientRender
@@ -23,7 +23,7 @@ export default function() {
 		page(
 			'/help/contact',
 			helpController.loggedOut,
-			meController.sidebar,
+			sidebar,
 			helpController.contact,
 			makeLayout,
 			clientRender
@@ -34,7 +34,7 @@ export default function() {
 		page(
 			'/help/courses',
 			helpController.loggedOut,
-			meController.sidebar,
+			sidebar,
 			helpController.courses,
 			makeLayout,
 			clientRender
