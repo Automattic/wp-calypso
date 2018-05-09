@@ -19,11 +19,9 @@ import {
 	getCreatedSocialAccountUsername,
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
-	isSocialAccountCreating,
 } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
-import { InfoNotice } from 'blocks/global-notice';
 import { login } from 'lib/paths';
 
 class SocialLoginForm extends Component {
@@ -132,10 +130,6 @@ class SocialLoginForm extends Component {
 					/>
 				</div>
 
-				{ this.props.isSocialAccountCreating && (
-					<InfoNotice text={ this.props.translate( 'Creating your account…' ) } />
-				) }
-
 				{ this.props.bearerToken && (
 					<WpcomLoginForm
 						log={ this.props.username }
@@ -151,7 +145,6 @@ class SocialLoginForm extends Component {
 export default connect(
 	state => ( {
 		redirectTo: getRedirectToOriginal( state ),
-		isSocialAccountCreating: isSocialAccountCreating( state ),
 		bearerToken: getCreatedSocialAccountBearerToken( state ),
 		username: getCreatedSocialAccountUsername( state ),
 	} ),

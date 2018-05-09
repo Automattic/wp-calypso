@@ -6,6 +6,7 @@
 import request from 'superagent';
 import { get, defer, replace } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { infoNotice, removeNotice } from 'state/notices/actions';
 
 /**
  * Internal dependencies
@@ -241,12 +242,9 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
  * @return {Function}                A thunk that can be dispatched
  */
 export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
-	dispatch( {
-		type: SOCIAL_CREATE_ACCOUNT_REQUEST,
-		notice: {
-			message: translate( 'Creating your account' ),
-		},
-	} );
+	const ACCT_CREATION_NOTICE_ID = 'ACCT_CREATION_NOTICE_ID';
+	dispatch( { type: SOCIAL_CREATE_ACCOUNT_REQUEST } );
+	dispatch( infoNotice( 'Creating your account…', { id: ACCT_CREATION_NOTICE_ID } ) );
 
 	return wpcom
 		.undocumented()
@@ -258,6 +256,7 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 					bearerToken: wpcomResponse.bearer_token,
 				};
 				dispatch( { type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS, data } );
+				dispatch( removeNotice( ACCT_CREATION_NOTICE_ID ) );
 				return data;
 			},
 			wpcomError => {
@@ -267,6 +266,7 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 					type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 					error,
 				} );
+				dispatch( removeNotice( ACCT_CREATION_NOTICE_ID ) );
 
 				return Promise.reject( error );
 			}
