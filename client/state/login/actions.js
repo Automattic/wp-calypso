@@ -4,7 +4,7 @@
  * External dependencies
  */
 import request from 'superagent';
-import { get, defer, replace } from 'lodash';
+import { defer, get, replace } from 'lodash';
 import { translate } from 'i18n-calypso';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 
