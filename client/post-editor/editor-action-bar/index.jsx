@@ -25,23 +25,22 @@ import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
 import PodcastIndicator from 'components/podcast-indicator';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
+import { isSingleUserSite } from 'state/sites/selectors';
 
 class EditorActionBar extends Component {
 	static propTypes = {
 		isNew: PropTypes.bool,
-		post: PropTypes.object,
 		savedPost: PropTypes.object,
-		site: PropTypes.object,
+		siteId: PropTypes.number,
+		multiUserSite: PropTypes.bool,
+		post: PropTypes.object,
 		type: PropTypes.string,
-		isPostPrivate: PropTypes.bool,
+		isPostPrivateOrPasswordProtected: PropTypes.bool,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			viewLinkTooltip: false,
-		};
-	}
+	state = {
+		viewLinkTooltip: false,
+	};
 
 	showViewLinkTooltip = () => {
 		this.setState( { viewLinkTooltip: true } );
@@ -54,12 +53,15 @@ class EditorActionBar extends Component {
 	viewLinkTooltipContext = React.createRef();
 
 	render() {
-		// We store privacy changes via Flux while we store password changes via Redux.
-		// This results in checking Flux for some items and Redux for others to correctly
-		// update based on post changes. Flux changes are passed down from parent components.
-		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
-		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
-		const { isPostPrivate, siteId, isPodcastEpisode } = this.props;
+		const {
+			isPostPrivateOrPasswordProtected,
+			isPodcastEpisode,
+			multiUserSite,
+			siteId,
+			type,
+		} = this.props;
+
+		const showSticky = type === 'post' && ! isPostPrivateOrPasswordProtected;
 
 		return (
 			<div className="editor-action-bar">
@@ -74,10 +76,7 @@ class EditorActionBar extends Component {
 					) }
 				</div>
 				<div className="editor-action-bar__cell is-right">
-					{ this.props.post &&
-						this.props.type === 'post' &&
-						! isPasswordProtected &&
-						! isPostPrivate && <EditorSticky /> }
+					{ showSticky && <EditorSticky /> }
 					{ isPodcastEpisode && (
 						<PodcastIndicator
 							className="editor-action-bar__podcasting-indicator"
@@ -114,9 +113,12 @@ class EditorActionBar extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
+	const multiUserSite = isSingleUserSite( state, siteId ) === false;
 	const postId = getEditorPostId( state );
 	const post = getEditedPost( state, siteId, postId );
 	const type = getEditedPostValue( state, siteId, postId, 'type' );
+	const isPostPrivateOrPasswordProtected =
+		utils.isPrivate( post ) || utils.getVisibility( post ) === 'password';
 
 	const podcastingCategoryId = getPodcastingCategoryId( state, siteId );
 	let isPodcastEpisode = false;
@@ -132,9 +134,11 @@ export default connect( state => {
 
 	return {
 		siteId,
+		multiUserSite,
 		postId,
 		post,
 		type,
+		isPostPrivateOrPasswordProtected,
 		isPodcastEpisode,
 	};
 } )( EditorActionBar );

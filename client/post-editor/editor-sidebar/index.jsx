@@ -47,7 +47,7 @@ export class EditorSidebar extends Component {
 		return (
 			<div className="editor-sidebar">
 				<EditorSidebarHeader />
-				<EditorActionBar isNew={ isNew } post={ post } savedPost={ savedPost } site={ site } />
+				<EditorActionBar isNew={ isNew } savedPost={ savedPost } />
 				<EditorDrawer
 					site={ site }
 					savedPost={ savedPost }

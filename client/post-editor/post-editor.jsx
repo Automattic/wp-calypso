@@ -316,12 +316,7 @@ export class PostEditor extends React.Component {
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
-							<EditorActionBar
-								isNew={ this.state.isNew }
-								savedPost={ this.state.savedPost }
-								site={ site }
-								isPostPrivate={ utils.isPrivate( this.state.post ) }
-							/>
+							<EditorActionBar isNew={ this.state.isNew } savedPost={ this.state.savedPost } />
 							<div className="post-editor__site">
 								<Site
 									compact
