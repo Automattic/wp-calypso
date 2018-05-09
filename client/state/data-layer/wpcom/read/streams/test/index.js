@@ -8,15 +8,7 @@ import deepfreeze from 'deep-freeze';
  * Internal Dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	requestPage,
-	handlePage,
-	handleError,
-	fromApi,
-	INITIAL_FETCH,
-	PER_FETCH,
-	QUERY_META,
-} from '../';
+import { requestPage, handlePage, handleError, INITIAL_FETCH, PER_FETCH, QUERY_META } from '../';
 import {
 	requestPage as requestPageAction,
 	receivePage,
@@ -223,7 +215,7 @@ describe( 'streams', () => {
 
 		it( 'should return a receivePage action', () => {
 			const { streamKey, query } = action.payload;
-			expect( handlePage( action, fromApi( data ) ) ).toEqual( [
+			expect( handlePage( action, data ) ).toEqual( [
 				expect.any( Function ), // receivePosts thunk
 				receivePage( {
 					streamKey,
@@ -238,7 +230,7 @@ describe( 'streams', () => {
 		it( 'should return a receiveUpdates action when type is a poll', () => {
 			const { streamKey, query } = action.payload;
 			expect(
-				handlePage( { ...action, payload: { ...action.payload, isPoll: true } }, fromApi( data ) )
+				handlePage( { ...action, payload: { ...action.payload, isPoll: true } }, data )
 			).toEqual( [
 				receiveUpdates( {
 					streamKey,
