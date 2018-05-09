@@ -102,7 +102,7 @@ class ReaderStream extends React.Component {
 			this.scrollToSelectedPost( true );
 		}
 
-		if ( this.props.shouldRequestRecs && ! recsStream.isRequesting ) {
+		if ( this.props.shouldRequestRecs ) {
 			this.props.requestPage( {
 				streamKey: recsStreamKey,
 				pageHandle: recsStream.pageHandle,
