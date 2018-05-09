@@ -8,6 +8,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import config from 'config';
+import { makeLayout, render as clientRender } from 'controller';
+import { sidebar } from 'me/controller';
 import {
 	accountRecovery,
 	connectedApplications,
@@ -15,9 +18,6 @@ import {
 	socialLogin,
 	twoStep,
 } from './controller';
-import config from 'config';
-import { makeLayout, render as clientRender } from 'controller';
-import { sidebar } from 'me/controller';
 
 export default function() {
 	page( '/me/security', sidebar, password, makeLayout, clientRender );
