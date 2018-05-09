@@ -167,15 +167,31 @@ export default WrappedComponent =>
 				caretPosition = node.selectionEnd - query.length;
 			}
 
+			// Get the line height in the textarea
+			let lineHeight;
+			const lineHeightAdjustment = 4;
+			const style = window.getComputedStyle( node );
+			const lineHeightValueWithPixels = style.getPropertyValue( 'line-height' );
+			if ( lineHeightValueWithPixels ) {
+				lineHeight = +lineHeightValueWithPixels.replace( 'px', '' ) + lineHeightAdjustment;
+			}
+
+			// Figure out where the popover should go, taking account of @ symbol position, scroll position and line height
 			const caretCoordinates = getCaretCoordinates( node, caretPosition );
 			const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 			const position = {
 				left: nodeRect.left + caretCoordinates.left + scrollLeft,
-				top: nodeRect.top + caretCoordinates.top + scrollTop + 28,
+				top: nodeRect.top + caretCoordinates.top + scrollTop + lineHeight,
 			};
 
-			console.log( position ); // eslint-disable-line no-console
+			// If we're close to the window edge, shuffle the popover left so it doesn't vanish
+			const windowEdgeThreshold = 150;
+			const windowWidthDifference = window.innerWidth - position.left;
+
+			if ( windowWidthDifference < windowEdgeThreshold ) {
+				position.left = position.left - ( windowEdgeThreshold - windowWidthDifference );
+			}
 
 			return position;
 		}
