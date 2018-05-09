@@ -859,6 +859,7 @@
 		margin: -10px 0;
 	}
 
+	.checkout__institution,
 	.checkout__credit-card {
 		margin-right: 5px;
 	}
@@ -886,6 +887,26 @@
 		}
 	}
 }
+
+// Emergent Paywall
+// -----------------------------------
+.checkout__emergent-paywall-form {
+	height:0;
+	width: 0;
+}
+.checkout__emergent-paywall-loading-content {
+	min-height: 300px;
+}
+
+.checkout__emergent-paywall-frame-container {
+	height: 0;
+	overflow: hidden;
+	&.iframe-loaded {
+		height: auto;
+		overflow: visible;
+	}
+}
+
 
 // Ebanx checkout fields
 // -----------------------------------
@@ -941,9 +962,6 @@
 		display: none;
 	}
 }
-
-// Emergent Paywall
-// -----------------------------------
 
 .checkout__form-info-text {
 	margin-left: 15px;

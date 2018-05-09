@@ -52,6 +52,10 @@ export class PaymentBox extends PureComponent {
 				labelLogo = <Gridicon icon="credit-card" className="checkout__credit-card" />;
 				labelAdditionalText = paymentMethodName( method );
 				break;
+			case 'emergent-paywall':
+				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
+				labelAdditionalText = paymentMethodName( method );
+				break;
 			case 'ideal':
 				labelAdditionalText = paymentMethodName( method );
 				break;
@@ -94,8 +98,7 @@ export class PaymentBox extends PureComponent {
 		if ( ! this.props.paymentMethods ) {
 			return null;
 		}
-		// eslint-disable-next-line
-		console.log( 'getPaymentMethods this.props.paymentMethods', this.props.paymentMethods );
+
 		return this.props.paymentMethods.map( method => {
 			return this.paymentMethod( method );
 		} );
@@ -114,8 +117,6 @@ export class PaymentBox extends PureComponent {
 			: translate( 'Loading…' );
 
 		const paymentMethods = this.getPaymentMethods();
-		// eslint-disable-next-line
-		console.log( 'render paymentMethods', paymentMethods );
 
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>

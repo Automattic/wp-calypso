@@ -50,8 +50,6 @@ const SecurePaymentForm = createReactClass( {
 	},
 
 	getInitialState() {
-		// eslint-disable-next-line
-		console.log( 'getInitialState', this.props.cart, this.props.paymentMethods );
 		return {
 			userSelectedPaymentBox: null,
 			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart, this.props.paymentMethods ),
