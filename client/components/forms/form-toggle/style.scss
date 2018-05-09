@@ -12,13 +12,14 @@
 	border-radius: 12px;
 	box-sizing: border-box;
 	padding: 2px;
-	width: 40px;
+	width: 44px;
 	height: 24px;
 	vertical-align: middle;
 	align-self: flex-start;
 	outline: 0;
 	cursor: pointer;
 	transition: all .4s ease, box-shadow 0s;
+	margin-top: 3px;
 
 	&:before,
 	&:after {
@@ -43,6 +44,7 @@
 }
 
 .form-toggle__label {
+	display: flex;
 	cursor: pointer;
 
 	.is-disabled & {
