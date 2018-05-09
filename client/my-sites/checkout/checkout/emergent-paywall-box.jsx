@@ -5,8 +5,10 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import page from 'page';
 import classNames from 'classnames';
-import { get, isEqual, debounce } from 'lodash';
+import { assign, get, isEqual, debounce } from 'lodash';
+import debug from 'debug';
 
 /**
  * Internal dependencies
@@ -14,14 +16,18 @@ import { get, isEqual, debounce } from 'lodash';
 import { localize, translate } from 'i18n-calypso';
 import notices from 'notices';
 import analytics from 'lib/analytics';
-import cartValues, { paymentMethodName } from 'lib/cart-values';
+import { paymentMethodName, paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
 import TermsOfService from './terms-of-service';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
+const log = debug( 'calypso:checkout:payment:emergent-payall' );
 
 export class EmergentPaywallBox extends Component {
-	static propTypes = {};
+	static propTypes = {
+		cart: PropTypes.object.isRequired,
+		transaction: PropTypes.object.isRequired,
+	};
 
 	constructor() {
 		super();
@@ -54,12 +60,14 @@ export class EmergentPaywallBox extends Component {
 			iframeHeight: 600,
 			iframeWidth: 750,
 			hasConfigLoaded: false,
+			redirectTo: '',
 		};
 	}
 
 	onMessageReceiveHandler = event => {
 		if ( event && event.origin === 'https://paypluseval.tfelements.com' ) {
 			const message = get( JSON.parse( event.data ), 'message', {} );
+			log( 'Received event from Emergent Paywall:', message );
 
 			switch ( message.name ) {
 				case 'WINDOW_SIZE':
@@ -70,8 +78,12 @@ export class EmergentPaywallBox extends Component {
 					break;
 				case 'PURCHASE_STATUS':
 					if ( 'submitted' in message ) {
-						//Submit order
+						this.prepareOrder();
 					} else if ( 'success' in message ) {
+						//TODO: delay until this.state.redirectTo is not empty if it is
+						if ( message.success && this.state.redirectTo !== '' ) {
+							page( this.state.redirectTo );
+						}
 						// message.success ? 'success' : 'failure'
 					} else if ( 'close' in message ) {
 						//closed
@@ -82,6 +94,61 @@ export class EmergentPaywallBox extends Component {
 			}
 		}
 	};
+
+	prepareOrder() {
+		let cancelPath = '/checkout/';
+		let successPath = '/checkout/thank-you/';
+
+		if ( this.props.selectedSite ) {
+			cancelPath += this.props.selectedSite.slug;
+			successPath += this.props.selectedSite.slug;
+		} else {
+			cancelPath += 'no-site';
+			successPath += this.props.selectedSite.slug;
+		}
+
+		successPath += '/pending/';
+
+		const origin = getLocationOrigin( location );
+		const cancelUrl = origin + cancelPath;
+		const successUrl = origin + successPath;
+
+		const dataForApi = {
+			payment: assign( {}, this.state, {
+				paymentMethod: paymentMethodClassName( 'emergent-paywall' ),
+				successUrl: successUrl,
+				cancelUrl,
+			} ),
+			cart: this.props.cart,
+			domainDetails: this.props.transaction.domainDetails,
+		};
+
+		log( 'Preparing Order' );
+
+		// get the redirect URL from rest endpoint
+		wpcom.transactions(
+			'POST',
+			dataForApi,
+			function( error, result ) {
+				let errorMessage;
+				if ( error ) {
+					log( 'Error creating order: ', error );
+
+					if ( error.message ) {
+						errorMessage = error.message;
+					} else {
+						errorMessage = translate( "We've encountered a problem. Please try again later." );
+					}
+					log( 'Error message: ' + errorMessage );
+					// TODO: This shouldn't happen, but if it does, what can we do?
+				} else if ( result.order_id ) {
+					log( 'Order created. Order ID is: ' + result.order_id );
+					analytics.tracks.recordEvent( 'calypso_checkout_with_emergent_paywall' );
+					this.setState( { redirectTo: successPath + result.order_id } );
+				}
+			}.bind( this )
+		);
+	}
 
 	fetchIframeConfiguration = () => {
 		notices.clearNotices( 'notices' );
