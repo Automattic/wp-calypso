@@ -2,37 +2,26 @@
 /**
  * External dependencies
  */
-// import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
  */
 import config from 'config';
-
-// Components
 import HappychatConnection from 'components/happychat/connection-connected';
-
-// Query Components
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import QueryLanguageNames from 'components/data/query-language-names';
-
-// State Actions
 import { openChat as openHappychat } from 'state/happychat/ui/actions';
 import { initialize as initializeDirectly } from 'state/help/directly/actions';
-
-// State Selectors
 import { isRequestingSites } from 'state/sites/selectors';
-import getInlineHelpSupportVariation from 'state/selectors/get-inline-help-support-variation';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
-import { isTicketSupportConfigurationReady } from 'state/help/ticket/selectors';
+import {
+	isTicketSupportConfigurationReady,
+	getTicketSupportRequestError,
+} from 'state/help/ticket/selectors';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import { isDirectlyUninitialized } from 'state/selectors';
-
-const debug = debugFactory( 'calypso:inline-help-support-query' );
 
 class QueryInlineHelpSupportTypes extends Component {
 	componentDidMount() {
@@ -47,11 +36,7 @@ class QueryInlineHelpSupportTypes extends Component {
 	}
 
 	prepareDirectlyWidget = () => {
-		if (
-			this.hasDataToDetermineVariation() &&
-			// 	this.props.supportVariation === SUPPORT_DIRECTLY &&
-			this.props.isDirectlyUninitialized
-		) {
+		if ( this.hasDataToDetermineVariation() && this.props.isDirectlyUninitialized ) {
 			this.props.initializeDirectly();
 		}
 	};
@@ -64,7 +49,7 @@ class QueryInlineHelpSupportTypes extends Component {
 	 */
 	hasDataToDetermineVariation = () => {
 		const ticketReadyOrError =
-			this.props.ticketSupportConfigurationReady || null != this.props.ticketSupportRequestError;
+			this.props.ticketSupportConfigurationReady || this.props.ticketSupportRequestError !== null;
 		const happychatReadyOrDisabled =
 			! config.isEnabled( 'happychat' ) || this.props.isHappychatUserEligible !== null;
 
@@ -72,14 +57,6 @@ class QueryInlineHelpSupportTypes extends Component {
 	};
 
 	render() {
-		const { directlyStatus, supportVariation, shouldStartHappychatConnection } = this.props;
-
-		debug( {
-			directlyStatus,
-			supportVariation,
-			shouldStartHappychatConnection,
-		} );
-
 		return (
 			<React.Fragment>
 				<QueryTicketSupportConfiguration />
@@ -91,19 +68,14 @@ class QueryInlineHelpSupportTypes extends Component {
 }
 
 export default connect(
-	state => {
-		const helpSelectedSiteId = getHelpSelectedSiteId( state );
-		const directlyStatus = get( state, 'help.directly.status' );
-
-		return {
-			shouldStartHappychatConnection: ! isRequestingSites( state ) && !! helpSelectedSiteId,
-			supportVariation: getInlineHelpSupportVariation( state ),
-			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
-			isHappychatUserEligible: isHappychatUserEligible( state ),
-			isDirectlyUninitialized: isDirectlyUninitialized( state ),
-			directlyStatus,
-		};
-	},
+	state => ( {
+		shouldStartHappychatConnection:
+			! isRequestingSites( state ) && !! getHelpSelectedSiteId( state ),
+		ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
+		ticketSupportRequestError: getTicketSupportRequestError( state ),
+		isHappychatUserEligible: isHappychatUserEligible( state ),
+		isDirectlyUninitialized: isDirectlyUninitialized( state ),
+	} ),
 	{
 		initializeDirectly,
 		openHappychat,

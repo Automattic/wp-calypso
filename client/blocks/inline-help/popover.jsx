@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import { VIEW_CONTACT, VIEW_FORUM, VIEW_RICH_RESULT } from './constants';
+import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import Button from 'components/button';
@@ -21,14 +21,10 @@ import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
-import InlineHelpForumView from './inline-help-forum-view';
-import HelpContact from 'me/help/help-contact';
 import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
-import getInlineHelpSupportVariation, {
-	SUPPORT_FORUM,
-} from 'state/selectors/get-inline-help-support-variation';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
+import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -74,8 +70,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	openContactView = () => {
-		const showForumGuide = this.props.supportVariation === SUPPORT_FORUM;
-		this.openSecondaryView( showForumGuide ? VIEW_FORUM : VIEW_CONTACT );
+		this.openSecondaryView( VIEW_CONTACT );
 	};
 
 	renderSecondaryView = () => {
@@ -87,14 +82,13 @@ class InlineHelpPopover extends Component {
 			<div className={ classes }>
 				{
 					{
-						contact: <HelpContact compact selectedSite={ this.props.selectedSite } />,
+						contact: <InlineHelpContactView />,
 						richresult: (
 							<InlineHelpRichResult
 								result={ this.props.selectedResult }
 								setDialogState={ this.props.setDialogState }
 							/>
 						),
-						forums: <InlineHelpForumView />,
 					}[ this.state.activeSecondaryView ]
 				}
 			</div>
@@ -168,7 +162,6 @@ export default connect(
 		searchQuery: getSearchQuery( state ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-		supportVariation: getInlineHelpSupportVariation( state ),
 	} ),
 	{
 		recordTracksEvent,
