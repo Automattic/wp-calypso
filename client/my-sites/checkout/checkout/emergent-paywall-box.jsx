@@ -16,7 +16,7 @@ import debug from 'debug';
 import { localize, translate } from 'i18n-calypso';
 import notices from 'notices';
 import analytics from 'lib/analytics';
-import { paymentMethodName, paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
+import { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
 import TermsOfService from './terms-of-service';
 import wp from 'lib/wp';
 
@@ -55,12 +55,14 @@ export class EmergentPaywallBox extends Component {
 	getInitialState() {
 		return {
 			paywall_url: '',
+			paymentMethod: paymentMethodClassName( 'emergent-paywall' ),
 			payload: '',
 			signature: '',
 			iframeHeight: 600,
 			iframeWidth: 750,
 			hasConfigLoaded: false,
 			redirectTo: '',
+			pendingOrder: false,
 		};
 	}
 
@@ -78,15 +80,16 @@ export class EmergentPaywallBox extends Component {
 					break;
 				case 'PURCHASE_STATUS':
 					if ( 'submitted' in message ) {
-						this.prepareOrder();
+						log( 'Setting state.pendingOrder to the prepareOrder promise' );
+						this.setState( { pendingOrder: this.prepareOrder() } );
 					} else if ( 'success' in message ) {
-						//TODO: delay until this.state.redirectTo is not empty if it is
-						if ( message.success && this.state.redirectTo !== '' ) {
-							page( this.state.redirectTo );
+						if ( message.success ) {
+							this.handlePaywallSuccess();
+						} else {
+							// TODO: handle failure.
 						}
-						// message.success ? 'success' : 'failure'
 					} else if ( 'close' in message ) {
-						//closed
+						//paywall window closed
 					}
 					break;
 				default:
@@ -95,29 +98,35 @@ export class EmergentPaywallBox extends Component {
 		}
 	};
 
+	handlePaywallSuccess() {
+		this.state.pendingOrder
+			.then( result => {
+				if ( result.order_id ) {
+					log( 'Order created. Order ID is: ' + result.order_id );
+
+					const siteSlug = this.props.selectedSite ? this.props.selectedSite.slug : 'no-site';
+					const successPath = `/checkout/thank-you/${ siteSlug }/pending/${ result.order_id }`;
+
+					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
+						payment_method: this.state.paymentMethod,
+					} );
+					page.redirect( successPath );
+				}
+			} )
+			.catch( error => {
+				log(
+					'Error creating order: ',
+					error,
+					error.message || translate( "We've encountered a problem. Please try again later." )
+				);
+				// TODO: This shouldn't happen, but if it does, what can we do?
+			} );
+	}
+
 	prepareOrder() {
-		let cancelPath = '/checkout/';
-		let successPath = '/checkout/thank-you/';
-
-		if ( this.props.selectedSite ) {
-			cancelPath += this.props.selectedSite.slug;
-			successPath += this.props.selectedSite.slug;
-		} else {
-			cancelPath += 'no-site';
-			successPath += this.props.selectedSite.slug;
-		}
-
-		successPath += '/pending/';
-
-		const origin = getLocationOrigin( location );
-		const cancelUrl = origin + cancelPath;
-		const successUrl = origin + successPath;
-
 		const dataForApi = {
 			payment: assign( {}, this.state, {
-				paymentMethod: paymentMethodClassName( 'emergent-paywall' ),
-				successUrl: successUrl,
-				cancelUrl,
+				paymentMethod: this.state.paymentMethod,
 			} ),
 			cart: this.props.cart,
 			domainDetails: this.props.transaction.domainDetails,
@@ -125,29 +134,8 @@ export class EmergentPaywallBox extends Component {
 
 		log( 'Preparing Order' );
 
-		// get the redirect URL from rest endpoint
-		wpcom.transactions(
-			'POST',
-			dataForApi,
-			function( error, result ) {
-				let errorMessage;
-				if ( error ) {
-					log( 'Error creating order: ', error );
-
-					if ( error.message ) {
-						errorMessage = error.message;
-					} else {
-						errorMessage = translate( "We've encountered a problem. Please try again later." );
-					}
-					log( 'Error message: ' + errorMessage );
-					// TODO: This shouldn't happen, but if it does, what can we do?
-				} else if ( result.order_id ) {
-					log( 'Order created. Order ID is: ' + result.order_id );
-					analytics.tracks.recordEvent( 'calypso_checkout_with_emergent_paywall' );
-					this.setState( { redirectTo: successPath + result.order_id } );
-				}
-			}.bind( this )
-		);
+		// get the order ID from rest endpoint
+		return wpcom.transactions( 'POST', dataForApi );
 	}
 
 	fetchIframeConfiguration = () => {
@@ -197,6 +185,7 @@ export class EmergentPaywallBox extends Component {
 		const iframeContainerClasses = classNames( 'checkout__emergent-paywall-frame-container', {
 			'iframe-loaded': hasConfigLoaded,
 		} );
+
 		return (
 			<div>
 				<TermsOfService />
