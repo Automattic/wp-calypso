@@ -7,11 +7,6 @@
 	margin-bottom: 24px;
 	padding: 12px 16px;
 
-	// This seems totally broken on mobile, and just, like an abandoned idea for a UI.
-	@include breakpoint( "<660px" ) {
-		display: none;
-	}
-
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 8px;
 	}
@@ -69,12 +64,6 @@
 
 .post-editor__content .editor-action-bar {
 	@include breakpoint( "<660px" ) {
-		display: none;
-	}
-}
-
-.editor-sidebar .editor-action-bar {
-	@include breakpoint( ">660px" ) {
 		display: none;
 	}
 }
