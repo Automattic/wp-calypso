@@ -10,7 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
+import * as controller from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {

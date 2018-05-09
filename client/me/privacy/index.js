@@ -9,10 +9,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import meController from 'me/controller';
-import privacyController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { privacy } from './controller';
+import { sidebar } from 'me/controller';
 
 export default function() {
-	page( '/me/privacy', meController.sidebar, privacyController, makeLayout, clientRender );
+	page( '/me/privacy', sidebar, privacy, makeLayout, clientRender );
 }
