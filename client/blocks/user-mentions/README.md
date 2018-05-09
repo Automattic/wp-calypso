@@ -1,7 +1,7 @@
 User Mentions
 =============
 
-This block provides a higher-order component withUserMentions(), which can be used in conjunction with a standard textarea to add user mentions support.
+This block provides a higher-order component withUserMentions(), which can be used in conjunction with a standard textarea to add user mentions support. Typing '@<something>' in the textarea will produce a popover menu to select a username by clicking or pressing Enter or Tab.
 
 It also provides the components UserMentionsSuggestionList and UserMentionsSuggestion, which are also used in the Editor Mentions TinyMCE plugin (client/components/tinymce/plugins/mentions).
 
