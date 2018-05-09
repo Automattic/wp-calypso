@@ -15,6 +15,7 @@ const ALT_TEXT = {
 	mastercard: 'MasterCard',
 	visa: 'VISA',
 	paypal: 'PayPal',
+	placeholder: '',
 };
 
 const POSSIBLE_TYPES = keys( ALT_TEXT );
