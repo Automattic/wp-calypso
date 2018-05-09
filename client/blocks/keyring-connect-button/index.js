@@ -147,7 +147,10 @@ class KeyringConnectButton extends Component {
 	 * @return {Boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( keyringConnections ) {
-		const hasAnyConnectionOptions = some( keyringConnections, { isConnected: false } );
+		const hasAnyConnectionOptions = some(
+			keyringConnections,
+			e => e.isConnected === false || e.isConnected === undefined
+		);
 
 		if ( keyringConnections.length === 0 ) {
 			this.setState( { isConnecting: false } );
