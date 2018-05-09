@@ -28,6 +28,7 @@ import { getHelpSelectedSite } from 'state/help/selectors';
 import getInlineHelpSupportVariation, {
 	SUPPORT_FORUM,
 } from 'state/selectors/get-inline-help-support-variation';
+import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -113,6 +114,7 @@ class InlineHelpPopover extends Component {
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
+				<QuerySupportTypes />
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
 						openResult={ this.openResultView }
