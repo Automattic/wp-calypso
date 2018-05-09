@@ -17,64 +17,63 @@ import SplitButton from 'components/split-button';
 
 class ActivityLogTaskUpdate extends Component {
 	static propTypes = {
-		plugin: PropTypes.shape( {
-			id: PropTypes.string,
-			slug: PropTypes.string,
-			update: PropTypes.shape( {
-				new_version: PropTypes.string,
-			} ),
-			name: PropTypes.string,
-		} ).isRequired,
+		toUpdate: PropTypes.object.isRequired,
 		disable: PropTypes.bool,
-		enqueuePlugin: PropTypes.func,
-		dismissPlugin: PropTypes.func,
-		goToPlugin: PropTypes.func,
+		name: PropTypes.string,
+		slug: PropTypes.string,
+		version: PropTypes.string,
+		type: PropTypes.string,
+		updateType: PropTypes.string,
+
+		goToPage: PropTypes.func,
+		enqueueTheme: PropTypes.func,
+		dismissTheme: PropTypes.func,
+
+		// Plugin specific
+		enqueue: PropTypes.func,
+		dismiss: PropTypes.func,
 
 		// Localize
 		translate: PropTypes.func.isRequired,
 	};
 
-	handlePluginEnqueue = () => this.props.enqueuePlugin( this.props.plugin );
-	handlePluginDismiss = () => this.props.dismissPlugin( this.props.plugin.slug );
-	handlePluginNameClick = () => this.props.goToPlugin( this.props.plugin.slug );
+	handleEnqueue = () => this.props.enqueue( this.props.toUpdate );
+	handleDismiss = () => this.props.dismiss( this.props.slug );
+	handleNameClick = () => this.props.goToPage( this.props.slug, this.props.type );
 
 	render() {
-		const { translate, plugin, disable } = this.props;
+		const { translate, name, version, type, updateType, disable } = this.props;
 
 		return (
 			<Card className="activity-log-tasklist__task" compact>
-				<ActivityIcon activityIcon="plugins" activityStatus="warning" />
+				<ActivityIcon activityIcon={ `${ type }s` } activityStatus="warning" />
 				<span className="activity-log-tasklist__update-item">
 					<div>
 						<span className="activity-log-tasklist__update-text">
-							{ translate( 'Update available for {{plugin/}}', {
+							{ translate( 'Update available for {{linked/}}', {
 								components: {
-									plugin: (
-										<Button borderless onClick={ this.handlePluginNameClick }>
-											{ plugin.name }
+									linked: (
+										<Button onClick={ this.handleNameClick } borderless>
+											{ name }
 										</Button>
 									),
 								},
 							} ) }
 						</span>
 						<span className="activity-log-tasklist__update-bullet">&bull;</span>
-						<span className="activity-log-tasklist__update-version">
-							{ plugin.update.new_version }
-						</span>
+						<span className="activity-log-tasklist__update-version">{ version }</span>
 					</div>
-					<div className="activity-log-tasklist__update-type">
-						{ translate( 'Plugin update available' ) }
-					</div>
+					<div className="activity-log-tasklist__update-type">{ updateType }</div>
 				</span>
 				<span className="activity-log-tasklist__update-action">
 					<SplitButton
 						compact
 						primary
 						label={ translate( 'Update' ) }
-						onClick={ this.handlePluginEnqueue }
+						onClick={ this.handleEnqueue }
 						disabled={ disable }
 					>
-						<PopoverMenuItem icon="trash" onClick={ this.handlePluginDismiss }>
+						<PopoverMenuItem icon="trash" onClick={ this.handleDismiss }>
 							{ translate( 'Dismiss' ) }
 						</PopoverMenuItem>
 					</SplitButton>
