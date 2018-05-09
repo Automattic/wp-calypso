@@ -24,8 +24,8 @@ import {
 	isPostsLastPageForQuery,
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQueryIgnoringPage,
-	isEditedPostPrivate,
-	isPrivateEditedPostPasswordValid,
+	isEditedPostPasswordProtected,
+	isEditedPostPasswordProtectedWithValidPassword,
 	getEditedPost,
 	getPostEdits,
 	getEditedPostValue,
@@ -1544,9 +1544,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'isEditedPostPrivate()', () => {
+	describe( 'isEditedPostPasswordProtected()', () => {
 		test( 'should return false if the post does not exist', () => {
-			const privatePost = isEditedPostPrivate(
+			const protectedPost = isEditedPostPasswordProtected(
 				{
 					posts: {
 						items: {},
@@ -1558,7 +1558,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( privatePost ).to.be.false;
+			expect( protectedPost ).to.be.false;
 		} );
 
 		test( 'should return false if post password is a zero length string', () => {
@@ -1569,7 +1569,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: 'secret',
 			};
-			const privatePost = isEditedPostPrivate(
+			const protectedPost = isEditedPostPasswordProtected(
 				{
 					posts: {
 						items: {
@@ -1593,7 +1593,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( privatePost ).to.be.false;
+			expect( protectedPost ).to.be.false;
 		} );
 
 		test( 'should return true if post password is a non-zero length string', () => {
@@ -1604,7 +1604,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: '',
 			};
-			const privatePost = isEditedPostPrivate(
+			const protectedPost = isEditedPostPasswordProtected(
 				{
 					posts: {
 						items: {
@@ -1628,7 +1628,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( privatePost ).to.be.true;
+			expect( protectedPost ).to.be.true;
 		} );
 
 		test( 'should return true if post password is whitespace only', () => {
@@ -1639,7 +1639,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: '',
 			};
-			const privatePost = isEditedPostPrivate(
+			const protectedPost = isEditedPostPasswordProtected(
 				{
 					posts: {
 						items: {
@@ -1663,13 +1663,13 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( privatePost ).to.be.true;
+			expect( protectedPost ).to.be.true;
 		} );
 	} );
 
-	describe( 'isPrivateEditedPostPasswordValid()', () => {
+	describe( 'isEditedPostPasswordProtectedWithValidPassword()', () => {
 		test( 'should return false if the post does not exist', () => {
-			const isPasswordValid = isPrivateEditedPostPasswordValid(
+			const isPasswordValid = isEditedPostPasswordProtectedWithValidPassword(
 				{
 					posts: {
 						items: {},
@@ -1692,7 +1692,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: 'secret',
 			};
-			const isPasswordValid = isPrivateEditedPostPasswordValid(
+			const isPasswordValid = isEditedPostPasswordProtectedWithValidPassword(
 				{
 					posts: {
 						items: {
@@ -1727,7 +1727,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: '',
 			};
-			const isPasswordValid = isPrivateEditedPostPasswordValid(
+			const isPasswordValid = isEditedPostPasswordProtectedWithValidPassword(
 				{
 					posts: {
 						items: {
@@ -1762,7 +1762,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: '',
 			};
-			const isPasswordValid = isPrivateEditedPostPasswordValid(
+			const isPasswordValid = isEditedPostPasswordProtectedWithValidPassword(
 				{
 					posts: {
 						items: {
