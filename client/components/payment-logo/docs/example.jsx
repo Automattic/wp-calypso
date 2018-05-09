@@ -17,9 +17,12 @@ class PaymentLogoExamples extends React.PureComponent {
 	render() {
 		return (
 			<div>
-				<PaymentLogo type="amex" /> <PaymentLogo type="discover" /> {' '}
-				<PaymentLogo type="mastercard" /> <PaymentLogo type="visa" /> {' '}
-				<PaymentLogo type="paypal" isCompact /> <PaymentLogo type="paypal" />
+				<PaymentLogo type="alipay" /> <PaymentLogo type="amex" /> <PaymentLogo type="bancontact" />{' '}
+				<PaymentLogo type="diners" /> <PaymentLogo type="discover" /> <PaymentLogo type="eps" />{' '}
+				<PaymentLogo type="giropay" /> <PaymentLogo type="ideal" /> <PaymentLogo type="jcb" />{' '}
+				<PaymentLogo type="mastercard" /> <PaymentLogo type="p24" /> <PaymentLogo type="paypal" />
+				<PaymentLogo type="paypal" isCompact /> <PaymentLogo type="unionpay" />{' '}
+				<PaymentLogo type="visa" />
 			</div>
 		);
 	}

@@ -10,12 +10,21 @@ import React from 'react';
 import { keys } from 'lodash';
 
 const ALT_TEXT = {
+	alipay: 'Alipay',
 	amex: 'American Express',
+	bancontact: 'Bancontact',
+	diners: 'Diners Club',
 	discover: 'Discover',
+	eps: 'eps',
+	giropay: 'Giropay',
+	ideal: 'iDEAL',
+	jcb: 'JCB',
 	mastercard: 'MasterCard',
-	visa: 'VISA',
+	p24: 'Przelewy24',
 	paypal: 'PayPal',
 	placeholder: '',
+	unionpay: 'UnionPay',
+	visa: 'VISA',
 };
 
 const POSSIBLE_TYPES = keys( ALT_TEXT );
