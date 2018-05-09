@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { get, isEmpty, omit, startsWith } from 'lodash';
 
 /**
@@ -229,15 +228,13 @@ export const twoFactorAuthPushPoll = createReducer(
 );
 
 export const socialAccount = createReducer(
-	{ isCreating: false, createError: null },
+	{ createError: null },
 	{
-		[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => ( { isCreating: true } ),
+		[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => ( {} ),
 		[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => ( {
-			isCreating: false,
 			createError: error,
 		} ),
 		[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: ( state, { data: { username, bearerToken } } ) => ( {
-			isCreating: false,
 			username,
 			bearerToken,
 			createError: null,
