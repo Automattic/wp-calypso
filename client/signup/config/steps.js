@@ -320,4 +320,19 @@ export default {
 		stepName: 'clone-point',
 		providesDependencies: [ 'clonePoint' ],
 	},
+
+	'clone-jetpack': {
+		stepName: 'clone-jetpack',
+		providesDependencies: [ 'cloneJetpack' ],
+	},
+
+	'clone-ready': {
+		stepName: 'clone-ready',
+		providesDependencies: [],
+	},
+
+	'clone-cloning': {
+		stepName: 'clone-cloning',
+		providesDependencies: [],
+	},
 };

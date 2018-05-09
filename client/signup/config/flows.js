@@ -291,7 +291,15 @@ const flows = {
 	},
 
 	'clone-site': {
-		steps: [ 'clone-start', 'clone-destination', 'clone-credentials', 'clone-point' ],
+		steps: [
+			'clone-start',
+			'clone-destination',
+			'clone-credentials',
+			'clone-point',
+			'clone-jetpack',
+			'clone-ready',
+			'clone-cloning',
+		],
 		destination: () => {
 			return '/stats/activity';
 		},

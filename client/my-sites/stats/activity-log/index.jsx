@@ -423,6 +423,7 @@ class ActivityLog extends Component {
 										disableBackup={ disableBackup }
 										hideRestore={ 'active' !== rewindState.state }
 										siteId={ siteId }
+										activityMeta={ {} }
 									/>
 								</Fragment>
 							) ) }

@@ -348,6 +348,22 @@ class ActivityLogItem extends Component {
 		);
 	};
 
+	performCloneAction = () => this.props.cloneOnClick( this.props.activity.activityTs );
+
+	renderCloneAction = () => {
+		const { cloneOnClick, translate } = this.props;
+
+		return (
+			<Button
+				className="activity-log-item__clone-action"
+				primary
+				onClick={ this.performCloneAction }
+			>
+				{ translate( 'Clone from here' ) }
+			</Button>
+		);
+	};
+
 	render() {
 		const {
 			activity,

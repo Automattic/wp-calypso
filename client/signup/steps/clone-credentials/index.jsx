@@ -27,6 +27,10 @@ class CloneCredentialsStep extends Component {
 		signupDependencies: PropTypes.object,
 	};
 
+	state = {
+		gotSuccess: false,
+	};
+
 	goToNextStep = () => {
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
 			roleName: 'alternate',
@@ -58,11 +62,12 @@ class CloneCredentialsStep extends Component {
 		);
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( 'success' === nextProps.updateStatus ) {
+	componentWillReceiveProps = nextProps => {
+		if ( 'success' === nextProps.updateStatus && ! this.state.gotSuccess ) {
+			this.setState( { gotSuccess: true } );
 			this.goToNextStep();
 		}
-	}
+	};
 
 	render() {
 		const {

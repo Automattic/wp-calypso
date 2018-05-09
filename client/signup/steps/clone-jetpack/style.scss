@@ -1,4 +1,4 @@
-.clone-point__card {
+.clone-jetpack__card {
 	text-align: center;
 	max-width: 640px;
 	padding: 4rem;
@@ -6,7 +6,7 @@
 	padding-bottom: 3rem;
 }
 
-.clone-point__title {
+.clone-jetpack__title {
 	display: inline-block;
 	font-size: 2.5rem;
 	font-weight: 300;
@@ -14,24 +14,24 @@
 	color: $gray-text;
 }
 
-.clone-point__image {
+.clone-jetpack__image {
 	max-width: 140px;
 	display: block;
 	margin: 0 auto 2rem auto;
 }
 
-.clone-point__description {
+.clone-jetpack__description {
 	color: $gray-text-min;
 	font-size: 1.4rem;
 	font-weight: 100;
 	line-height: 2.5rem;
 }
 
-.clone-point__wrap {
+.clone-jetpack__wrap {
 	text-align: center;
 }
 
-.clone-point__column {
+.clone-jetpack__column {
 	max-width: 40%;
 	display: inline-block;
 	vertical-align: top;
