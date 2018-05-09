@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
 import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import Main from 'components/main';
+import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -194,7 +196,7 @@ class GoogleMyBusinessStats extends Component {
 	}
 
 	render() {
-		const { locationData, siteId, siteSlug, translate } = this.props;
+		const { isLocationVerified, locationData, siteId, siteSlug, translate } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -211,6 +213,27 @@ class GoogleMyBusinessStats extends Component {
 
 				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 				<QueryKeyringConnections />
+
+				{ ! isLocationVerified && (
+					<Notice
+						status="is-error"
+						text={ translate(
+							'Your location has not been verified. ' +
+								"Statistics won't be visible until you have {{a}}verified your location{{/a}} with Google.",
+							{
+								components: {
+									a: (
+										<a
+											href="https://support.google.com/business/answer/7107242"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					/>
+				) }
 
 				<GoogleMyBusinessLocation location={ locationData }>
 					<Button
@@ -232,7 +255,9 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const locationData = getGoogleMyBusinessConnectedLocation( state, siteId );
+		const isLocationVerified = get( locationData, 'meta.state.isVerified', false );
 		return {
+			isLocationVerified,
 			locationData,
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
