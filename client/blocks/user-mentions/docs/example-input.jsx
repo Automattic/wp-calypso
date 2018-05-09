@@ -8,7 +8,6 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import ExampleInput from './example-input';
 import addUserMentions from '../add';
 
 const UserMentionsExampleInput = React.forwardRef( ( props, ref ) => (
