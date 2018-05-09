@@ -14,9 +14,27 @@ import FoldableCard from 'components/foldable-card';
 import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
 
+const detailType = threat => {
+	if ( threat.hasOwnProperty( 'diff' ) ) {
+		return 'core';
+	}
+
+	if ( threat.hasOwnProperty( 'context' ) ) {
+		return 'file';
+	}
+
+	if ( threat.hasOwnProperty( 'extension' ) ) {
+		// 'plugin' or 'theme'
+		return threat.extension.type;
+	}
+
+	return 'none';
+};
+
 export class ThreatAlert extends Component {
 	render() {
 		const { threat, translate } = this.props;
+		const type = detailType( threat );
 
 		return (
 			<FoldableCard
@@ -29,28 +47,38 @@ export class ThreatAlert extends Component {
 						<div className="activity-log__threat-alert-header">
 							<div>
 								<span className="activity-log__threat-alert-title">
-									{ threat.diff && translate( 'Threat found in core WordPress file' ) }
-									{ threat.extension &&
-										threat.extension.type === 'plugin' &&
-										translate( 'Threat found in your {{s}}%(slug)s{{/s}} Plugin', {
-											args: {
-												slug: threat.extension.slug,
-											},
+									{ 'core' === type && translate( 'Threat found in a core WordPress file' ) }
+									{ 'plugin' === type &&
+										translate( 'Threat found in your {{pluginSlug/}} Plugin', {
 											components: {
-												s: <span className="activity-log__threat-alert-title-slug" />,
+												pluginSlug: (
+													<span className="activity-log__threat-alert-title-slug">
+														{ threat.extension.slug }
+													</span>
+												),
 											},
 										} ) }
-									{ threat.extension &&
-										threat.extension.type === 'theme' &&
-										translate( 'Threat found in your {{s}}%(slug)s{{/s}} Theme', {
-											args: {
-												slug: threat.extension.slug,
-											},
+									{ 'theme' === type &&
+										translate( 'Threat found in your {{themeSlug/}} Theme', {
 											components: {
-												s: <span className="activity-log__threat-alert-title-slug" />,
+												themeSlug: (
+													<span className="activity-log__threat-alert-title-slug">
+														{ threat.extension.slug }
+													</span>
+												),
 											},
 										} ) }
-									{ ! threat.extension && ! threat.diff && translate( 'Threat found' ) }
+									{ 'file' === type &&
+										translate( 'Threat found in your {{filename/}} file', {
+											components: {
+												filename: (
+													<code className="activity-log__threat-alert-title-filename">
+														{ threat.filename.replace( /.+[/]/, '' ) }
+													</code>
+												),
+											},
+										} ) }
+									{ 'none' === type && translate( 'Threat found' ) }
 								</span>
 								<TimeSince
 									className="activity-log__threat-alert-time-since"
@@ -69,10 +97,15 @@ export class ThreatAlert extends Component {
 				{ threat.filename && (
 					<Fragment>
 						<p>
-							{ translate( '{{s}}%(signature)s{{/s}} in:', {
-								args: { signature: threat.signature },
+							{ translate( '{{threatSignature/}} in:', {
 								comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
-								components: { s: <span className="activity-log__threat-alert-signature" /> },
+								components: {
+									threatSignature: (
+										<span className="activity-log__threat-alert-signature">
+											{ threat.signature }
+										</span>
+									),
+								},
 							} ) }
 						</p>
 						<pre className="activity-log__threat-alert-filename">{ threat.filename }</pre>

@@ -79,11 +79,12 @@
 }
 
 .activity-log__threat-alert {
-	& .activity-log-item__activity-icon {
+	.foldable-card__main {
+		flex: unset;
 	}
 
-	& .diff-viewer,
-	& .marked-lines {
+	.diff-viewer,
+	.marked-lines {
 		max-height: 300px;
 		overflow-y: scroll;
 	}
@@ -108,7 +109,7 @@
 
 .activity-log__threat-alert-filename {
 	padding: 4px;
-	color: black;
+	color: #000;
 	font-weight: 500;
 }
 
