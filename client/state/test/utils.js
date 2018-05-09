@@ -230,14 +230,17 @@ describe( 'utils', () => {
 
 			test( 'should return current state when serialize action type passed', () => {
 				expect( reducer( currentState, actionSerialize ) ).toBe( currentState );
+				expect( reducer( currentState, actionSerialize ) ).toEqual( currentState );
 			} );
 
 			test( 'should return initial state when valid initial state and deserialize action type passed', () => {
 				expect( reducer( currentState, actionDeserialize ) ).toBe( currentState );
+				expect( reducer( currentState, actionDeserialize ) ).toEqual( currentState );
 			} );
 
 			test( 'should return default state when invalid initial state and deserialize action type passed', () => {
 				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).toBe( initialState );
+				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).toEqual( initialState );
 			} );
 		} );
 
@@ -253,10 +256,12 @@ describe( 'utils', () => {
 
 			test( 'should return overridden state when serialize action type passed', () => {
 				expect( reducer( currentState, actionSerialize ) ).toBe( overriddenState );
+				expect( reducer( currentState, actionSerialize ) ).toEqual( overriddenState );
 			} );
 
 			test( 'should return overridden state when deserialize action type passed', () => {
 				expect( reducer( currentState, actionDeserialize ) ).toBe( overriddenState );
+				expect( reducer( currentState, actionDeserialize ) ).toEqual( overriddenState );
 			} );
 		} );
 	} );
