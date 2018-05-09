@@ -13,8 +13,8 @@ import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 
 function isConnected( externalUser, siteSettings ) {
 	return (
-		externalUser.keyringConnectionId === siteSettings.google_my_business_keyring_id &&
-		externalUser.ID === siteSettings.google_my_business_location_id
+		externalUser.keyringConnectionId === siteSettings.jetpack_google_my_business_keyring_id &&
+		externalUser.ID === siteSettings.jetpack_google_my_business_location_id
 	);
 }
 
