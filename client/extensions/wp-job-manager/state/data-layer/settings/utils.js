@@ -1,4 +1,5 @@
 /** @format */
+
 export const fromApi = ( {
 	job_manager_allowed_application_method,
 	job_manager_category_filter_type,
