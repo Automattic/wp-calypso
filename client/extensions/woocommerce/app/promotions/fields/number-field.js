@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,11 +12,11 @@ import PropTypes from 'prop-types';
 import FormTextInput from 'components/forms/form-text-input';
 import FormField from './form-field';
 
-const NumberField = ( props ) => {
+const NumberField = props => {
 	const { fieldName, explanationText, placeholderText, value, edit, minValue, maxValue } = props;
-	const renderedValue = ( 'undefined' !== typeof value && null !== value ? value : '' );
+	const renderedValue = 'undefined' !== typeof value && null !== value ? value : '';
 
-	const onChange = ( e ) => {
+	const onChange = e => {
 		const newValue = e.target.value;
 
 		if ( 'undefined' !== minValue && newValue < minValue ) {
@@ -28,7 +30,7 @@ const NumberField = ( props ) => {
 	};
 
 	return (
-		<FormField { ...props } >
+		<FormField { ...props }>
 			<FormTextInput
 				id={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }

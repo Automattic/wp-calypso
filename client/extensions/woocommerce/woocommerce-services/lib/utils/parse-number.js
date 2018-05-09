@@ -1,4 +1,6 @@
-export default ( value ) => {
+/** @format */
+
+export default value => {
 	if ( '' === value ) {
 		return 0;
 	}

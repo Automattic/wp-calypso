@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,7 +19,9 @@ import { getGoogleMyBusinessLocations } from 'state/selectors';
  * @return {Object}        A connected GMB location
  */
 export default function getGoogleMyBusinessConnectedLocation( state, siteId ) {
-	return last( filter( getGoogleMyBusinessLocations( state, siteId ), {
-		isConnected: true,
-	} ) );
+	return last(
+		filter( getGoogleMyBusinessLocations( state, siteId ), {
+			isConnected: true,
+		} )
+	);
 }

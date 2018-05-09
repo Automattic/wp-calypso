@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Returns true if sites have been loaded in the state
  * @param  {Object}  state Global state tree

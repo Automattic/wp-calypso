@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,24 +13,21 @@ import { localize } from 'i18n-calypso';
 import Dropdown from '../dropdown';
 import TextField from '../text-field';
 
-const StateDropdown = ( props ) => {
+const StateDropdown = props => {
 	const statesMap = ( props.countriesData[ props.countryCode ] || {} ).states;
 
-	if ( ! statesMap ) { // We don't have a list of states for this country
-		return (
-			<TextField { ...props } />
-		);
+	if ( ! statesMap ) {
+		// We don't have a list of states for this country
+		return <TextField { ...props } />;
 	}
 
-	if ( ! Object.keys( statesMap ).length ) { // This country has no states
+	if ( ! Object.keys( statesMap ).length ) {
+		// This country has no states
 		return null;
 	}
 
 	return (
-		<Dropdown
-			{ ...props }
-			valuesMap={ { '': props.translate( 'Select one…' ), ...statesMap } }
-		/>
+		<Dropdown { ...props } valuesMap={ { '': props.translate( 'Select one…' ), ...statesMap } } />
 	);
 };
 
@@ -39,10 +38,7 @@ StateDropdown.propTypes = {
 	description: PropTypes.string,
 	value: PropTypes.string.isRequired,
 	updateValue: PropTypes.func.isRequired,
-	error: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.bool,
-	] ),
+	error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	className: PropTypes.string,
 };
 

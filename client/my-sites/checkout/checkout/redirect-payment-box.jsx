@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,7 +16,11 @@ import PaymentChatButton from './payment-chat-button';
 import CartToggle from './cart-toggle';
 import TermsOfService from './terms-of-service';
 import Input from 'my-sites/domains/components/form/input';
-import cartValues, { paymentMethodName, paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
+import cartValues, {
+	paymentMethodName,
+	paymentMethodClassName,
+	getLocationOrigin,
+} from 'lib/cart-values';
 import SubscriptionText from './subscription-text';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
@@ -32,7 +38,7 @@ export class RedirectPaymentBox extends PureComponent {
 		cart: PropTypes.object.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
-	}
+	};
 
 	constructor() {
 		super();
@@ -70,7 +76,8 @@ export class RedirectPaymentBox extends PureComponent {
 
 		this.setSubmitState( {
 			info: translate( 'Setting up your %(paymentProvider)s payment', {
-				args: { paymentProvider: this.getPaymentProviderName() } } ),
+				args: { paymentProvider: this.getPaymentProviderName() },
+			} ),
 			disabled: true,
 		} );
 
@@ -93,40 +100,52 @@ export class RedirectPaymentBox extends PureComponent {
 		};
 
 		// get the redirect URL from rest endpoint
-		wpcom.undocumented().transactions( 'POST', dataForApi, function( error, result ) {
-			let errorMessage;
-			if ( error ) {
-				if ( error.message ) {
-					errorMessage = error.message;
-				} else {
-					errorMessage = translate( "We've encountered a problem. Please try again later." );
-				}
+		wpcom.undocumented().transactions(
+			'POST',
+			dataForApi,
+			function( error, result ) {
+				let errorMessage;
+				if ( error ) {
+					if ( error.message ) {
+						errorMessage = error.message;
+					} else {
+						errorMessage = translate( "We've encountered a problem. Please try again later." );
+					}
 
-				this.setSubmitState( {
-					error: errorMessage,
-					disabled: false,
-				} );
-			} else if ( result.redirect_url ) {
-				this.setSubmitState( {
-					info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
-					disabled: true,
-				} );
-				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
-				analytics.tracks.recordEvent( 'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType ) );
-				location.href = result.redirect_url;
-			}
-		}.bind( this ) );
+					this.setSubmitState( {
+						error: errorMessage,
+						disabled: false,
+					} );
+				} else if ( result.redirect_url ) {
+					this.setSubmitState( {
+						info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
+						disabled: true,
+					} );
+					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
+					analytics.tracks.recordEvent(
+						'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType )
+					);
+					location.href = result.redirect_url;
+				}
+			}.bind( this )
+		);
 	}
 
 	renderButtonText() {
 		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
 			return translate( 'Purchase %(price)s subscription with %(paymentProvider)s', {
-				args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() },
+				args: {
+					price: this.props.cart.total_cost_display,
+					paymentProvider: this.getPaymentProviderName(),
+				},
 			} );
 		}
 
 		return translate( 'Pay %(price)s with %(paymentProvider)s', {
-			args: { price: this.props.cart.total_cost_display, paymentProvider: this.getPaymentProviderName() },
+			args: {
+				price: this.props.cart.total_cost_display,
+				paymentProvider: this.getPaymentProviderName(),
+			},
 		} );
 	}
 
@@ -146,11 +165,15 @@ export class RedirectPaymentBox extends PureComponent {
 		};
 
 		const idealBanksOptions = map( idealBanks, ( text, optionValue ) => (
-			<option value={ optionValue } key={ optionValue }>{ text }</option>
+			<option value={ optionValue } key={ optionValue }>
+				{ text }
+			</option>
 		) );
 
 		return [
-			<option value="" key="-">{ translate( 'Please select your bank.' ) }</option>,
+			<option value="" key="-">
+				{ translate( 'Please select your bank.' ) }
+			</option>,
 			...idealBanksOptions,
 		];
 	}
@@ -159,13 +182,8 @@ export class RedirectPaymentBox extends PureComponent {
 		if ( 'ideal' === this.props.paymentType ) {
 			return (
 				<div className="checkout__checkout-field">
-					<FormLabel htmlFor="ideal-bank">
-						{ translate( 'Bank' ) }
-					</FormLabel>
-					<FormSelect
-						name="ideal-bank"
-						onChange={ this.handleChange }
-					>
+					<FormLabel htmlFor="ideal-bank">{ translate( 'Bank' ) }</FormLabel>
+					<FormSelect name="ideal-bank" onChange={ this.handleChange }>
 						{ this.renderBankOptions() }
 					</FormSelect>
 				</div>
@@ -178,7 +196,8 @@ export class RedirectPaymentBox extends PureComponent {
 					name="email"
 					onChange={ this.handleChange }
 					label={ translate( 'Email Address' ) }
-					eventFormName="Checkout Form" />
+					eventFormName="Checkout Form"
+				/>
 			);
 		}
 	}
@@ -194,14 +213,14 @@ export class RedirectPaymentBox extends PureComponent {
 
 		return (
 			<form onSubmit={ this.redirectToPayment }>
-
 				<div className="checkout__payment-box-section">
 					<Input
 						additionalClasses="checkout-field"
 						name="name"
 						onChange={ this.handleChange }
 						label={ translate( 'Your Name' ) }
-						eventFormName="Checkout Form" />
+						eventFormName="Checkout Form"
+					/>
 
 					{ this.renderAdditionalFields() }
 				</div>
@@ -209,22 +228,22 @@ export class RedirectPaymentBox extends PureComponent {
 				{ this.props.children }
 
 				<TermsOfService
-					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
+					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
+						this.props.cart
+					) }
+				/>
 
 				<div className="checkout__payment-box-actions">
 					<div className="checkout__pay-button">
-						<button type="submit" className="checkout__button-pay button is-primary " >
+						<button type="submit" className="checkout__button-pay button is-primary ">
 							{ this.renderButtonText() }
 						</button>
 						<SubscriptionText cart={ this.props.cart } />
 					</div>
 
-					{
-						showPaymentChatButton &&
-						<PaymentChatButton
-							paymentType={ this.props.paymentType }
-							cart={ this.props.cart } />
-					}
+					{ showPaymentChatButton && (
+						<PaymentChatButton paymentType={ this.props.paymentType } cart={ this.props.cart } />
+					) }
 				</div>
 
 				<CartCoupon cart={ this.props.cart } />

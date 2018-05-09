@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -21,4 +23,4 @@ function getItemValue( schema ) {
 	}
 }
 
-export default ( schema ) => mapValues( schema.properties, getItemValue );
+export default schema => mapValues( schema.properties, getItemValue );

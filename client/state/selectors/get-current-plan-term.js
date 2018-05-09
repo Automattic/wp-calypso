@@ -1,7 +1,8 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-
 import { getPlan } from 'lib/plans';
 import { getSitePlan } from 'state/sites/selectors';
 

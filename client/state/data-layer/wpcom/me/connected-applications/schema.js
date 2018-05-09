@@ -1,3 +1,5 @@
+/** @format */
+
 export default {
 	type: 'object',
 	properties: {
@@ -38,7 +40,8 @@ export default {
 								},
 								required: [ 'site_ID', 'site_URL', 'site_name' ],
 								additionalProperties: false,
-							} ],
+							},
+						],
 					},
 					title: { type: 'string' },
 				},

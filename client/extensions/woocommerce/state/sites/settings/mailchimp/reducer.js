@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -52,7 +54,7 @@ function settings( state = {}, action ) {
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
 			const data = { mailchimp_lists: action.lists };
 			const listKeys = keys( action.lists );
-			if ( ! state.mailchimp_list && ( listKeys.length > 0 ) ) {
+			if ( ! state.mailchimp_list && listKeys.length > 0 ) {
 				// Just pick first that will be shown to the user in the dropdown
 				// We are setting mailchimp_list just in case user likes it and clicks
 				// Continue without actually sellecting something.
@@ -94,8 +96,8 @@ function settingsRequestError( state = false, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE:
-			const error = WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE === action.type
-				? action.error : false;
+			const error =
+				WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE === action.type ? action.error : false;
 			return error;
 	}
 
@@ -150,8 +152,8 @@ function syncStatusRequestError( state = false, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE:
-			const error = WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE === action.type
-				? action.error : false;
+			const error =
+				WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE === action.type ? action.error : false;
 			return error;
 	}
 
@@ -188,8 +190,8 @@ function resyncRequestError( state = false, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE:
-			const error = WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE === action.type
-				? action.error : false;
+			const error =
+				WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE === action.type ? action.error : false;
 			return error;
 	}
 
@@ -226,8 +228,8 @@ function apiKeySubmitError( state = false, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE:
-			const error = WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE === action.type
-				? action.error : false;
+			const error =
+				WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE === action.type ? action.error : false;
 			return error;
 	}
 
@@ -264,8 +266,8 @@ function storeInfoSubmitError( state = false, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE:
-			const error = WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE === action.type
-				? action.error : false;
+			const error =
+				WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE === action.type ? action.error : false;
 			return error;
 	}
 
@@ -302,8 +304,8 @@ function listsRequestError( state = false, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE:
-			const error = WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE === action.type
-				? action.error : false;
+			const error =
+				WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE === action.type ? action.error : false;
 			return error;
 	}
 
@@ -340,8 +342,10 @@ function newsletterSettingsSubmitError( state = false, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE:
-			const error = WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE === action.type
-				? action.error : false;
+			const error =
+				WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE === action.type
+					? action.error
+					: false;
 			return error;
 	}
 

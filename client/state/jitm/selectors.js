@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,14 +13,19 @@ import { getSectionName, getSelectedSiteId } from 'state/ui/selectors';
  * @param {object} state The application state
  * @return {array} An array of jitms
  */
-export const getJITM = ( state ) => get( state, [ 'jitm', 'sitePathJITM', getSectionName( state ) + getSelectedSiteId( state ) ], [] );
+export const getJITM = state =>
+	get(
+		state,
+		[ 'jitm', 'sitePathJITM', getSectionName( state ) + getSelectedSiteId( state ) ],
+		[]
+	);
 
 /**
  * Get the top jitm available for the current site/section
  * @param {object} state Thee application state
  * @return {object} A jitm
  */
-export const getTopJITM = ( state ) => {
+export const getTopJITM = state => {
 	const jitms = getJITM( state );
 
 	if ( jitms.length === 0 ) {

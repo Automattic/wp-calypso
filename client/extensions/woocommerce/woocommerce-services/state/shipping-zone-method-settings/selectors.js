@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,8 +11,15 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-const getAllShippingZoneMethodSettingsLoadState = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingZoneMethodSettings' ], {} );
+const getAllShippingZoneMethodSettingsLoadState = (
+	state,
+	siteId = getSelectedSiteId( state )
+) => {
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingZoneMethodSettings' ],
+		{}
+	);
 };
 
 /**
@@ -19,7 +28,11 @@ const getAllShippingZoneMethodSettingsLoadState = ( state, siteId = getSelectedS
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the settings for the giving shipping zone method have been successfully loaded from the server
  */
-export const isShippingZoneMethodSettingsLoaded = ( state, instanceId, siteId = getSelectedSiteId( state ) ) => {
+export const isShippingZoneMethodSettingsLoaded = (
+	state,
+	instanceId,
+	siteId = getSelectedSiteId( state )
+) => {
 	return true === getAllShippingZoneMethodSettingsLoadState( state, siteId )[ instanceId ];
 };
 
@@ -29,6 +42,10 @@ export const isShippingZoneMethodSettingsLoaded = ( state, instanceId, siteId = 
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping zone method settings currently being retrieved from the server
  */
-export const isShippingZoneMethodSettingsLoading = ( state, instanceId, siteId = getSelectedSiteId( state ) ) => {
+export const isShippingZoneMethodSettingsLoading = (
+	state,
+	instanceId,
+	siteId = getSelectedSiteId( state )
+) => {
 	return LOADING === getAllShippingZoneMethodSettingsLoadState( state, siteId )[ instanceId ];
 };

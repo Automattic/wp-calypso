@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -22,20 +24,20 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
-const PackageList = ( props ) => {
+const PackageList = props => {
 	const { orderId, siteId, selected, all, errors, packageId, translate } = props;
 
 	const renderCountOrError = ( isError, count ) => {
 		if ( isError ) {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			return ( <Gridicon icon="notice-outline" className="is-error" size={ 18 } /> );
+			return <Gridicon icon="notice-outline" className="is-error" size={ 18 } />;
 		}
 
 		if ( undefined === count ) {
 			return null;
 		}
 
-		return ( <span className="packages-step__list-package-count">{ count }</span> );
+		return <span className="packages-step__list-package-count">{ count }</span>;
 	};
 
 	const renderPackageListItem = ( pckgId, name, count ) => {
@@ -45,8 +47,11 @@ const PackageList = ( props ) => {
 			<div className="packages-step__list-item" key={ pckgId }>
 				<Button
 					borderless
-					className={ classNames( 'packages-step__list-package', { 'is-selected': packageId === pckgId } ) }
-					onClick={ onOpenClick } >
+					className={ classNames( 'packages-step__list-package', {
+						'is-selected': packageId === pckgId,
+					} ) }
+					onClick={ onOpenClick }
+				>
 					<span className="packages-step__list-package-name">{ name }</span>
 					{ renderCountOrError( isError, count ) }
 				</Button>
@@ -55,14 +60,18 @@ const PackageList = ( props ) => {
 	};
 
 	const renderPackageListHeader = ( key, text ) => {
-		return ( <div className="packages-step__list-item packages-step__list-header" key={ key }>{ text }</div> );
+		return (
+			<div className="packages-step__list-item packages-step__list-header" key={ key }>
+				{ text }
+			</div>
+		);
 	};
 
 	const packageLabels = getPackageDescriptions( selected, all, false );
 	const packed = [];
 	const individual = [];
 
-	Object.keys( selected ).forEach( ( pckgId ) => {
+	Object.keys( selected ).forEach( pckgId => {
 		const pckg = selected[ pckgId ];
 
 		if ( 'individual' === pckg.box_id ) {
@@ -73,7 +82,9 @@ const PackageList = ( props ) => {
 	} );
 
 	if ( packed.length || individual.length ) {
-		packed.unshift( renderPackageListHeader( 'boxed-header', translate( 'Packages to be Shipped' ) ) );
+		packed.unshift(
+			renderPackageListHeader( 'boxed-header', translate( 'Packages to be Shipped' ) )
+		);
 	}
 
 	return (
@@ -106,7 +117,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { openPackage }, dispatch );
 };
 

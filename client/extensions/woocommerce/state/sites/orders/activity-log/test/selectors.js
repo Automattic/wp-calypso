@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,11 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	isActivityLogLoaded,
-	isActivityLogLoading,
-	getActivityLogEvents,
-} from '../selectors';
+import { isActivityLogLoaded, isActivityLogLoading, getActivityLogEvents } from '../selectors';
 import * as plugins from 'woocommerce/state/selectors/plugins';
 
 const getState = ( notesState, labelsState ) => ( {
@@ -267,17 +265,20 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should be true if labels fetch errors out, but notes were loaded', () => {
-			expect( isActivityLogLoaded( getState( notesLoadedSubtree, labelsErrorSubtree ), 45, 123 ) ).to.be.true;
+			expect( isActivityLogLoaded( getState( notesLoadedSubtree, labelsErrorSubtree ), 45, 123 ) )
+				.to.be.true;
 		} );
 
 		it( 'should be false if labels fetch errors out, and notes were not loaded', () => {
-			expect( isActivityLogLoaded( getState( notesLoadingSubtree, labelsErrorSubtree ), 45, 123 ) ).to.be.false;
+			expect( isActivityLogLoaded( getState( notesLoadingSubtree, labelsErrorSubtree ), 45, 123 ) )
+				.to.be.false;
 		} );
 
 		it( 'should be true if WCS is disabled, and notes were loaded', () => {
 			wcsEnabledStub.restore();
 			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
-			expect( isActivityLogLoaded( getState( notesLoadedSubtree, labelsLoadingState ), 45, 123 ) ).to.be.true;
+			expect( isActivityLogLoaded( getState( notesLoadedSubtree, labelsLoadingState ), 45, 123 ) )
+				.to.be.true;
 		} );
 	} );
 
@@ -314,22 +315,26 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should be false when notes are loaded and labels errored out', () => {
-			expect( isActivityLogLoading( getState( notesLoadedSubtree, labelsErrorSubtree ), 45, 123 ) ).to.be.false;
+			expect( isActivityLogLoading( getState( notesLoadedSubtree, labelsErrorSubtree ), 45, 123 ) )
+				.to.be.false;
 		} );
 
 		it( 'should be true when notes are loading and labels errored out', () => {
-			expect( isActivityLogLoading( getState( notesLoadingSubtree, labelsErrorSubtree ), 45, 123 ) ).to.be.true;
+			expect( isActivityLogLoading( getState( notesLoadingSubtree, labelsErrorSubtree ), 45, 123 ) )
+				.to.be.true;
 		} );
 	} );
 
 	describe( '#getActivityLogEvents', () => {
 		it( 'should be empty when notes are currently being fetched for this order.', () => {
 			expect( getActivityLogEvents( notesAndLabelsLoadingState, 45, 123 ) ).to.be.empty;
-			expect( getActivityLogEvents( getState( notesLoadingSubtree, emptyLabelsSubtree ), 45, 123 ) ).to.be.empty;
+			expect( getActivityLogEvents( getState( notesLoadingSubtree, emptyLabelsSubtree ), 45, 123 ) )
+				.to.be.empty;
 		} );
 
 		it( 'should be empty when notes are loaded but labels are not.', () => {
-			expect( getActivityLogEvents( getState( emptyNotesSubtree, labelsLoadingSubtree ), 45, 123 ) ).to.be.empty;
+			expect( getActivityLogEvents( getState( emptyNotesSubtree, labelsLoadingSubtree ), 45, 123 ) )
+				.to.be.empty;
 		} );
 
 		it( 'should return just the notes when notes are loaded and the Services extension is disabled.', () => {

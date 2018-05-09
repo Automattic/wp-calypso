@@ -1,3 +1,5 @@
+/** @format */
+
 // The following polyfills exist for the draft-js editor, since
 // we are unable to change its codebase and yet we are waiting
 // on a solid solution for general IE polyfills

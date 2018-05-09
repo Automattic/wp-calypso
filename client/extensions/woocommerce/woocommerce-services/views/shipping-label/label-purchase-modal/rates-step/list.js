@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -15,13 +17,15 @@ import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
 import formatCurrency from 'lib/format-currency';
 
-const renderRateNotice = ( translate ) => {
+const renderRateNotice = translate => {
 	return (
 		<Notice
 			className="rates-step__notice"
 			icon="info-outline"
 			showDismiss={ false }
-			text={ translate( 'The service and rate chosen by the customer at checkout is not available. Please choose another.' ) }
+			text={ translate(
+				'The service and rate chosen by the customer at checkout is not available. Please choose another.'
+			) }
 		/>
 	);
 };
@@ -38,8 +42,8 @@ export const ShippingRates = ( {
 	translate,
 } ) => {
 	const packageNames = getPackageDescriptions( selectedPackages, allPackages, true );
-	const hasSinglePackage = ( 1 === Object.keys( selectedPackages ).length );
-	const hasMultiplePackages = ( 1 < Object.keys( selectedPackages ).length );
+	const hasSinglePackage = 1 === Object.keys( selectedPackages ).length;
+	const hasMultiplePackages = 1 < Object.keys( selectedPackages ).length;
 
 	const getTitle = ( pckg, pckgId ) => {
 		if ( hasSinglePackage ) {
@@ -55,34 +59,33 @@ export const ShippingRates = ( {
 		const serverErrors = errors.server && errors.server[ pckgId ];
 		const formError = errors.form && errors.form[ pckgId ];
 
-		packageRates.forEach( ( rateObject ) => {
+		packageRates.forEach( rateObject => {
 			valuesMap[ rateObject.service_id ] =
 				rateObject.title + ' (' + formatCurrency( rateObject.rate, 'USD' ) + ')';
 		} );
 
-		const onRateUpdate = ( value ) => updateRate( pckgId, value );
+		const onRateUpdate = value => updateRate( pckgId, value );
 		return (
 			<div key={ pckgId } className="rates-step__package-container">
 				{ serverErrors &&
 					isEmpty( packageRates ) &&
-					hasMultiplePackages &&
-					<p className="rates-step__package-heading">{ packageNames[ pckgId ] }</p>
-				}
-				{ ! isEmpty( packageRates ) &&
+					hasMultiplePackages && (
+						<p className="rates-step__package-heading">{ packageNames[ pckgId ] }</p>
+					) }
+				{ ! isEmpty( packageRates ) && (
 					<Dropdown
 						id={ id + '_' + pckgId }
 						valuesMap={ valuesMap }
 						title={ getTitle( pckg, pckgId ) }
 						value={ selectedRate }
 						updateValue={ onRateUpdate }
-						error={ formError } />
-				}
-				{ serverErrors && serverErrors.map( ( serverError, index ) => {
-					return <FieldError
-						type="server-error"
-						key={ index }
-						text={ serverError } />;
-				} ) }
+						error={ formError }
+					/>
+				) }
+				{ serverErrors &&
+					serverErrors.map( ( serverError, index ) => {
+						return <FieldError type="server-error" key={ index } text={ serverError } />;
+					} ) }
 			</div>
 		);
 	};

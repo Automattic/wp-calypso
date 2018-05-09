@@ -1,3 +1,5 @@
+/** @format */
+
 // All end-to-end tests use a custom user agent containing this string.
 export const E2E_USER_AGENT = 'wp-e2e-tests';
 

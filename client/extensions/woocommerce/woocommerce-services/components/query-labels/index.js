@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,7 +13,10 @@ import { bindActionCreators } from 'redux';
  */
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
 import QueryPackages from 'woocommerce/woocommerce-services/components/query-packages';
-import { fetchLabelsData, fetchLabelsStatus } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	fetchLabelsData,
+	fetchLabelsStatus,
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	hasRefreshedLabelStatus,
 	isError,
@@ -61,8 +66,12 @@ export default connect(
 		error: isError( state, orderId ),
 		refreshedLabelStatus: hasRefreshedLabelStatus( state, orderId ),
 	} ),
-	( dispatch ) => bindActionCreators( {
-		fetchLabelsData,
-		fetchLabelsStatus,
-	}, dispatch )
+	dispatch =>
+		bindActionCreators(
+			{
+				fetchLabelsData,
+				fetchLabelsStatus,
+			},
+			dispatch
+		)
 )( QueryLabels );

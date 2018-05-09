@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -38,22 +40,21 @@ class ZoneLockWarningNotice extends PureComponent {
 
 		this.props.resetLock( this.props.siteId, this.props.zoneId );
 		this.props.requestLock( this.props.siteId, this.props.zoneId );
-	}
+	};
 
-	noticeText = isBlocked => isBlocked
-		? this.props.translate( 'This zone is currently being edited by another user. Try again in a moment.' )
-		: this.props.translate( 'You have reached the maximum idle limit. Refresh to continue.' );
+	noticeText = isBlocked =>
+		isBlocked
+			? this.props.translate(
+					'This zone is currently being edited by another user. Try again in a moment.'
+				)
+			: this.props.translate( 'You have reached the maximum idle limit. Refresh to continue.' );
 
 	render() {
 		const { isBlocked, translate } = this.props;
 
 		return (
 			<div>
-				<Notice
-					showDismiss={ false }
-					status="is-warning"
-					text={ this.noticeText( isBlocked ) }
-				>
+				<Notice showDismiss={ false } status="is-warning" text={ this.noticeText( isBlocked ) }>
 					<NoticeAction onClick={ this.refreshLock }>{ translate( 'Refresh' ) }</NoticeAction>
 				</Notice>
 			</div>
