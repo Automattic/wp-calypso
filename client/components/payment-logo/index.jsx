@@ -10,7 +10,7 @@ import React from 'react';
 
 class PaymentLogo extends React.Component {
 	static propTypes = {
-		type: PropTypes.string.isRequired,
+		type: PropTypes.oneOf( [ 'amex', 'discover', 'mastercard', 'visa', 'paypal' ] ),
 		altText: PropTypes.string.isRequired,
 		isCompact: PropTypes.bool,
 	};
