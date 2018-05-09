@@ -12,7 +12,10 @@ It also provides the components `UserMentionsSuggestionList` and `UserMentionsSu
 import withUserMentions from 'blocks/user-mentions';
 
 const ExampleInput = React.forwardRef( ( props, ref ) => (
-	<textarea ref={ ref } onKeyUp={ props.onKeyUp } onKeyDown={ props.onKeyDown } />
+	<textarea
+		ref={ ref }
+		onKeyUp={ props.onKeyUp }
+		onKeyDown={ props.onKeyDown } />
 ) );
 
 export default withUserMentions( ExampleInput );
@@ -23,8 +26,8 @@ Note: you'll need to wrap the child component with `React.forwardRef`, and pass 
 
 #### Higher order components
 
-*addUserMentions* (add.jsx) provides the suggestion popup to the wrapped component. If you don't want suggestions from the API, you can just hand this component a `suggestions` prop. The Devdocs example uses this HOC.
+`addUserMentions` (add.jsx) provides the suggestion popup to the wrapped component. If you don't want suggestions from the API, you can just hand this component a `suggestions` prop. The Devdocs example uses this HOC.
 
-*connectUserMentions* (connect.jsx) provides a list of user suggestions from the API to the wrapped component.
+`connectUserMentions` (connect.jsx) provides a list of user suggestions from the API to the wrapped component.
 
-*withUserMentions* (index.jsx) combines the two higher-order components above. This HOC is used by the Reader comments box.
+`withUserMentions` (index.jsx) combines the two higher-order components above. This HOC is used by the Reader comments box.
