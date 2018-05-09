@@ -219,7 +219,7 @@ class GoogleMyBusinessStats extends Component {
 						status="is-error"
 						text={ translate(
 							'Your location has not been verified. ' +
-								"Statistics won't be visible until you have {{a}}verified your location{{/a}} with Google.",
+								'Statistics are not available until you have {{a}}verified your location{{/a}} with Google.',
 							{
 								components: {
 									a: (
