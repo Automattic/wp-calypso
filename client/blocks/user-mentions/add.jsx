@@ -147,11 +147,14 @@ export default WrappedComponent =>
 
 		getQueryText() {
 			const node = this.textInput.current;
+			const textBeforeCaret = node.value.slice( 0, node.selectionEnd );
+			const lastAtSymbolPosition = textBeforeCaret.lastIndexOf( '@' );
+			const textFromLastAtSymbol = node.value.slice( lastAtSymbolPosition, node.value.length + 1 );
+
 			// (?:^|\\s) means start of input or whitespace
 			// ([A-Za-z0-9_\+\-]*) means 0 or more instances of: A-Z a-z 0-9 _ + -
 			const matcher = new RegExp( '(?:^|\\s)@([A-Za-z0-9_+-]*)$', 'gi' );
-			const textBeforeCaret = node.value.slice( 0, node.selectionEnd );
-			const match = matcher.exec( textBeforeCaret );
+			const match = matcher.exec( textFromLastAtSymbol );
 
 			return match && match.length > 1 ? match[ 1 ] : null;
 		}
@@ -222,10 +225,20 @@ export default WrappedComponent =>
 			const textBeforeAtSymbol = node.value.slice( 0, lastAtSymbolPosition );
 			const textAfterSelectionEnd = node.value.slice( node.selectionEnd, node.value.length + 1 );
 
-			node.value = textBeforeAtSymbol + '@' + userLogin + textAfterSelectionEnd;
+			let newTextValue = textBeforeAtSymbol + '@' + userLogin;
+
+			// Add the text after the caret, but only if it doesn't match the username (avoids duplication)
+			if ( userLogin !== textAfterSelectionEnd ) {
+				newTextValue += textAfterSelectionEnd;
+			}
+
+			node.value = newTextValue;
 
 			// Make sure the input still has focus (after a selection has been chosen with the mouse, for example)
 			node.focus();
+
+			// Move the caret to the end of the inserted username
+			node.selectionStart = lastAtSymbolPosition + newTextValue.length;
 		};
 
 		updatePosition = ( state = this.state, newPosition ) => {
