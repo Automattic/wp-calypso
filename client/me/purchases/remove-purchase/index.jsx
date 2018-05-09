@@ -375,8 +375,8 @@ class RemovePurchase extends Component {
 					defaultContent={ this.renderPlanDialogText() }
 					onInputChange={ this.onSurveyChange }
 					purchase={ purchase }
-					selectedSite={ { slug: this.props.siteSlug } /* FIXME: (sirreal) slug passing hack */ }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
+					siteSlug={ this.props.siteSlug }
 					surveyStep={ this.state.surveyStep }
 				/>
 			</Dialog>

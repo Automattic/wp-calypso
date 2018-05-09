@@ -182,8 +182,8 @@ class CancelPurchaseButton extends Component {
 					defaultContent={ this.renderCancellationEffect() }
 					onInputChange={ this.onSurveyChange }
 					purchase={ purchase }
-					selectedSite={ selectedSite }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
+					siteSlug={ selectedSite.slug }
 					surveyStep={ this.state.surveyStep }
 				/>
 			</Dialog>
@@ -191,8 +191,8 @@ class CancelPurchaseButton extends Component {
 	};
 
 	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase,
-			{ slug } = this.props.selectedSite;
+		const { id } = this.props.purchase;
+		const { slug } = this.props.selectedSite;
 
 		page( confirmCancelDomain( slug, id ) );
 	};
