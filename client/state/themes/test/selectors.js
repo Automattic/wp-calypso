@@ -37,6 +37,7 @@ import {
 	isActivatingTheme,
 	hasActivatedTheme,
 	isInstallingTheme,
+	isUpdatingTheme,
 	isThemePremium,
 	isThemePurchased,
 	isPremiumThemeAvailable,
@@ -2052,6 +2053,72 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( installing ).to.be.true;
+		} );
+	} );
+
+	describe( '#isUpdatingTheme', () => {
+		test( 'given no site, should return false', () => {
+			const updating = isUpdatingTheme( {
+				themes: {
+					themeUpdates: {},
+				},
+			} );
+
+			expect( updating ).to.be.false;
+		} );
+
+		test( 'given a site, should return true if theme is currently being installed', () => {
+			const updating = isUpdatingTheme(
+				{
+					themes: {
+						themeUpdates: {
+							2916284: {
+								karuna: true,
+							},
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {} ),
+						},
+					},
+					sites: {
+						items: {
+							2916284: { ID: 2916284, jetpack: false },
+						},
+					},
+				},
+				'karuna',
+				2916284
+			);
+
+			expect( updating ).to.be.true;
+		} );
+
+		test( 'given a jetpack site and wpcom theme, should return true if theme is currently being updated', () => {
+			const updating = isUpdatingTheme(
+				{
+					themes: {
+						themeUpdates: {
+							77203074: {
+								'karuna-wpcom': true,
+							},
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { karuna: { id: 'karuna' } },
+							} ),
+						},
+					},
+					sites: {
+						items: {
+							77203074: { ID: 77203074, URL: 'https://example.net', jetpack: true },
+						},
+					},
+				},
+				'karuna',
+				77203074
+			);
+
+			expect( updating ).to.be.true;
 		} );
 	} );
 

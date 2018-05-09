@@ -581,6 +581,19 @@ export function isInstallingTheme( state, themeId, siteId ) {
 }
 
 /**
+ * Whether the theme is currently being updated on the (Jetpack) site.
+ *
+ * @param  {Object}  state     Global state tree
+ * @param  {String}  themeId Theme slug for which we check installing state
+ * @param  {Number}  siteId    Site ID
+ * @return {Boolean}           True if theme update is running
+ */
+export function isUpdatingTheme( state, themeId, siteId ) {
+	const suffixedThemeId = getSuffixedThemeId( state, themeId, siteId );
+	return get( state.themes.themeUpdates, [ siteId, suffixedThemeId ], false );
+}
+
+/**
  * Whether a WPCOM theme given by its ID is premium.
  *
  * @param  {Object} state   Global state tree
