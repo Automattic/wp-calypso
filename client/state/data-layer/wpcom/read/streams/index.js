@@ -5,7 +5,6 @@
  */
 import { random, map, includes, get } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { parse } from 'qs';
 
 /**
  * Internal dependencies
@@ -212,7 +211,7 @@ export function handlePage( action, data ) {
 	if ( includes( streamType, 'rec' ) ) {
 		const offset = get( action, 'payload.pageHandle.offset', 0 ) + PER_FETCH;
 		pageHandle = { offset };
-	} else if ( meta && meta.next_page ) {
+	} else if ( next_page || ( meta && meta.next_page ) ) {
 		// sites give page handles nested within the meta key
 		pageHandle = { page_handle: next_page || meta.next_page };
 	} else if ( date_range && date_range.after ) {
@@ -221,13 +220,6 @@ export function handlePage( action, data ) {
 		// and offsets must be used
 		const { after } = date_range;
 		pageHandle = { before: after };
-	} else if ( next_page ) {
-		// search relevance api returns next_page as top-level.
-		// but weirdly it returns the next querystring necessary
-		// so this code breaks it down into an object
-		// to be re-stringified later.
-		// TODO: stop doing this extra work
-		pageHandle = parse( next_page );
 	}
 
 	const actions = analyticsForStream( { streamKey, algorithm: data.algorithm, posts } );
