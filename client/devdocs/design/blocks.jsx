@@ -189,7 +189,9 @@ export default class AppComponents extends React.Component {
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
 					<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					{ isEnabled( 'reader/user-mention-suggestions' ) && <UserMentions /> }
+					{ isEnabled( 'reader/user-mention-suggestions' ) && (
+						<UserMentions readmeFilePath="user-mentions" />
+					) }
 				</Collection>
 			</Main>
 		);
