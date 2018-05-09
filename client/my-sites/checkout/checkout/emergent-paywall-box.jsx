@@ -21,9 +21,7 @@ import wp from 'lib/wp';
 const wpcom = wp.undocumented();
 
 export class EmergentPaywallBox extends Component {
-	static propTypes = {
-
-	};
+	static propTypes = {};
 
 	constructor() {
 		super();
@@ -61,18 +59,23 @@ export class EmergentPaywallBox extends Component {
 
 	onMessageReceiveHandler = event => {
 		if ( event && event.origin === 'https://paypluseval.tfelements.com' ) {
-			const { name, payload } = get( event.data, 'message', {} );
+			const message = get( JSON.parse( event.data ), 'message', {} );
 
-			switch ( name ) {
+			switch ( message.name ) {
 				case 'WINDOW_SIZE':
 					this.setState( {
-						iframeHeight: payload.size.height,
-						iframeWidth: payload.size.width,
+						iframeHeight: message.payload.size.height,
+						iframeWidth: message.payload.size.width,
 					} );
 					break;
 				case 'PURCHASE_STATUS':
-					// initialized: true?
-					// closed: true?
+					if ( 'submitted' in message ) {
+						//Submit order
+					} else if ( 'success' in message ) {
+						// message.success ? 'success' : 'failure'
+					} else if ( 'close' in message ) {
+						//closed
+					}
 					break;
 				default:
 					break;
@@ -92,12 +95,15 @@ export class EmergentPaywallBox extends Component {
 			return;
 		}
 
-		this.setState( {
-			hasConfigLoaded: true,
-			...iframeConfig,
-		}, () => {
-			this.formRef.current.submit();
-		} );
+		this.setState(
+			{
+				hasConfigLoaded: true,
+				...iframeConfig,
+			},
+			() => {
+				this.formRef.current.submit();
+			}
+		);
 	};
 
 	renderLoadingBlock() {
@@ -113,7 +119,14 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	render() {
-		const { payload, paywall_url, signature, iframeHeight, iframeWidth, hasConfigLoaded } = this.state;
+		const {
+			payload,
+			paywall_url,
+			signature,
+			iframeHeight,
+			iframeWidth,
+			hasConfigLoaded,
+		} = this.state;
 		const iframeContainerClasses = classNames( 'checkout__emergent-paywall-frame-container', {
 			'iframe-loaded': hasConfigLoaded,
 		} );
@@ -146,7 +159,6 @@ export class EmergentPaywallBox extends Component {
 						/>
 					</div>
 				</div>
-
 			</div>
 		);
 	}
