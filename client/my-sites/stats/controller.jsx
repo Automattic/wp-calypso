@@ -30,6 +30,7 @@ import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
 import config from 'config';
 import { isDesktop } from 'lib/viewport';
+import { filterStateToQuery, queryToFilterState } from 'my-sites/stats/activity-log/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
@@ -394,6 +395,14 @@ export default {
 		if ( siteId && siteHasWpcomFreePlan && ! config.isEnabled( 'activity-log-wpcom-free' ) ) {
 			page.redirect( '/stats' );
 			return next();
+		}
+
+		console.log( context.query );
+		console.log( queryToFilterState( context.query ) );
+		try {
+			console.log( filterStateToQuery( context.state.activityLog.filter[ siteId ] ) );
+		} catch ( e ) {
+			console.log( 'no filter state' );
 		}
 
 		context.primary = (

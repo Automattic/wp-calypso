@@ -73,3 +73,143 @@ export function getActivityLogQuery() {
 		number: 1000,
 	};
 }
+
+export const filterStateToQuery = filter => {
+	return Object.keys( filter )
+		.map( key => {
+			const spread = ( name, values = filter[ key ] ) =>
+				values.length > 1 ? values.map( v => [ `${ name }[]`, v ] ) : [ [ name, values[ 0 ] ] ];
+
+			const value = filter[ key ];
+
+			switch ( key ) {
+				case 'activityId':
+					return spread( 'activity-id' );
+
+				case 'notActivityId':
+					return spread( 'not-activity-id' );
+
+				case 'actor':
+					return spread( 'by' );
+
+				case 'notActor':
+					return spread( 'not-by' );
+
+				case 'group':
+					return spread( 'group' );
+
+				case 'notGroup':
+					return spread( 'not-group' );
+
+				case 'isRewindable':
+					return [ [ 'rewindable', value ] ];
+
+				case 'object':
+					return spread( 'object' );
+
+				case 'notObject':
+					return spread( 'not-object' );
+
+				case 'page':
+					return [ [ 'page', value ] ];
+
+				case 'startingAfter':
+					return [ [ 'start', value.toISOString() ] ];
+
+				case 'startingBefore':
+					return [ [ 'end', value.toISOString() ] ];
+
+				case 'textSearch':
+					return spread( 's' );
+
+				case 'type':
+					return spread( 'type' );
+
+				case 'notType':
+					return spread( 'not-type' );
+
+				default:
+					return [];
+			}
+		} )
+		.reduce( ( query, pairs ) => [ ...query, ...pairs ], [] );
+};
+
+export const queryToFilterState = query => {
+	const appendToBasList = ( base, prop, value ) => ( {
+		...base,
+		[ prop ]: [ ...( base[ prop ] || [] ), value ],
+	} );
+
+	return Object.keys( query ).reduce( ( filter, key ) => {
+		const appendToList = prop => appendToBasList( filter, prop, filter[ key ] );
+		const value = query[ key ];
+
+		switch ( key ) {
+			case 'activity-id':
+			case 'activity-id[]':
+				return appendToList( 'activityId' );
+
+			case 'not-activity-id':
+			case 'not-activity-id[]':
+				return appendToList( 'notActivityId' );
+
+			case 'by':
+			case 'by[]':
+				return appendToList( 'actor' );
+
+			case 'not-by':
+			case 'not-by[]':
+				return appendToList( 'notActor' );
+
+			case 'end':
+				return { ...filter, startingBefore: Date.parse( value ) };
+
+			case 'group':
+			case 'group[]':
+				return appendToList( 'group' );
+
+			case 'not-group':
+			case 'not-group[]':
+				return appendToList( 'notGroup' );
+
+			case 'object':
+			case 'object[]':
+				return appendToList( 'object' );
+
+			case 'not-object':
+			case 'not-object[]':
+				return appendToList( 'notObject' );
+
+			case 'page':
+				return { ...filter, page: value };
+
+			case 'rewindable':
+				return { ...filter, isRewindable: !! value };
+
+			case 'not-rewindable':
+				return { ...filter, isRewindable: ! value };
+
+			case 's':
+			case 's[]':
+				return appendToList( 'textSearch' );
+
+			case 'start':
+				return { ...filter, startingAfter: Date.parse( value ) };
+
+			case 'type':
+			case 'type[]':
+				return appendToList( 'type' );
+
+			case 'not-type':
+			case 'not-type[]':
+				return appendToList( 'notType' );
+
+			default:
+				return filter;
+		}
+	}, {} );
+};
+
+window.filter2query = filterStateToQuery;
+window.query2filter = queryToFilterState;
