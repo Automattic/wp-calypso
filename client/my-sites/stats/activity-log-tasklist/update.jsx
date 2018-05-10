@@ -45,21 +45,26 @@ class ActivityLogTaskUpdate extends Component {
 			<Card className="activity-log-tasklist__task" compact>
 				<ActivityIcon activityIcon="plugins" activityStatus="warning" />
 				<span className="activity-log-tasklist__update-item">
-					<span className="activity-log-tasklist__update-text">
-						{ translate( 'Update available for {{plugin/}}', {
-							components: {
-								plugin: (
-									<Button onClick={ this.handlePluginNameClick } borderless>
-										{ plugin.name }
-									</Button>
-								),
-							},
-						} ) }
-					</span>
-					<span className="activity-log-tasklist__update-bullet">&bull;</span>
-					<span className="activity-log-tasklist__update-version">
-						{ plugin.update.new_version }
-					</span>
+					<div>
+						<span className="activity-log-tasklist__update-text">
+							{ translate( 'Update available for {{plugin/}}', {
+								components: {
+									plugin: (
+										<Button borderless onClick={ this.handlePluginNameClick }>
+											{ plugin.name }
+										</Button>
+									),
+								},
+							} ) }
+						</span>
+						<span className="activity-log-tasklist__update-bullet">&bull;</span>
+						<span className="activity-log-tasklist__update-version">
+							{ plugin.update.new_version }
+						</span>
+					</div>
+					<div className="activity-log-tasklist__update-type">
+						{ translate( 'Plugin update available' ) }
+					</div>
 				</span>
 				<span className="activity-log-tasklist__update-action">
 					<SplitButton

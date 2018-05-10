@@ -4,7 +4,7 @@
 
 	.activity-log-tasklist__heading {
 		display: flex;
-		font-weight: 500;
+		font-weight: 600;
 		justify-content: space-between;
 		margin-bottom: 16px;
 
@@ -34,24 +34,31 @@
 
 .activity-log-tasklist__update-item {
 	flex-grow: 1;
+
+	& > div {
+		line-height: 100%;
+	}
 }
 
 .activity-log-tasklist__update-text {
+	font-weight: 500;
+
 	.button.is-borderless {
 		vertical-align: middle;
 		line-height: 1;
 	}
 }
 
-.activity-log-tasklist__update-version {
-	color: $gray-text-min;
+.activity-log-tasklist__update-version,
+.activity-log-tasklist__update-type,
+.activity-log-tasklist__update-bullet {
+	color: $gray;
 }
 
 .activity-log-tasklist__update-bullet {
-	color: $gray-text-min;
-	font-size: 10px;
-	margin: 0 8px;
-	vertical-align: text-bottom;
+	font-size: 7px;
+	margin: 0 7px;
+	vertical-align: middle;
 }
 
 .activity-log-tasklist__update-action {
