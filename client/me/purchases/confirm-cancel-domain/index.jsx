@@ -26,13 +26,13 @@ import HeaderCake from 'components/header-cake';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getName as getDomainName } from 'lib/purchases';
-import { getPurchase, goToCancelPurchase, isDataLoading, recordPageView } from '../utils';
+import { getPurchase, isDataLoading, recordPageView } from '../utils';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
-import { purchasesRoot } from 'me/purchases/paths';
+import { cancelPurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { refreshSitePlans } from 'state/sites/plans/actions';
@@ -53,6 +53,7 @@ class ConfirmCancelDomain extends React.Component {
 		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 	};
 
 	state = {
@@ -94,10 +95,6 @@ class ConfirmCancelDomain extends React.Component {
 		}
 
 		return [ 'other_host', 'transfer' ].indexOf( selectedReason.value ) === -1;
-	};
-
-	goToCancelPurchase = () => {
-		goToCancelPurchase( this.props );
 	};
 
 	onSubmit = event => {
@@ -269,7 +266,9 @@ class ConfirmCancelDomain extends React.Component {
 					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
 					title="Purchases > Confirm Cancel Domain"
 				/>
-				<HeaderCake onClick={ this.goToCancelPurchase }>{ titles.confirmCancelDomain }</HeaderCake>
+				<HeaderCake backHref={ cancelPurchase( this.props.siteSlug, this.props.purchaseId ) }>
+					{ titles.confirmCancelDomain }
+				</HeaderCake>
 				<Card>
 					<FormSectionHeading className="is-primary">
 						{ this.props.translate( 'Canceling %(domain)s', { args: { domain } } ) }

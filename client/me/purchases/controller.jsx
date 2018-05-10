@@ -98,7 +98,10 @@ export function confirmCancelDomain( context, next ) {
 	setTitle( context, titles.confirmCancelDomain );
 
 	context.primary = (
-		<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+		<ConfirmCancelDomain
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			siteSlug={ context.params.site }
+		/>
 	);
 	next();
 }
