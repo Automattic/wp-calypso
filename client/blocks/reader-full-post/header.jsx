@@ -44,12 +44,13 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 		<div className={ classNames( classes ) }>
 			{ post.title ? (
 				<AutoDirection>
-					<h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
+					<h1 className="reader-full-post__header-title">
 						<ExternalLink
 							className="reader-full-post__header-title-link"
 							href={ externalHref }
 							target="_blank"
 							icon={ false }
+							onClick={ handlePermalinkClick }
 						>
 							{ post.title }
 						</ExternalLink>

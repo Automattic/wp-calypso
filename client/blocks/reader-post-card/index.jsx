@@ -154,6 +154,7 @@ class ReaderPostCard extends React.Component {
 			);
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const readerPostActions = (
 			<ReaderPostActions
 				post={ discoverPost || post }
@@ -169,6 +170,7 @@ class ReaderPostCard extends React.Component {
 				iconSize={ 18 }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		// Set up post byline
 		let postByline;

@@ -66,6 +66,7 @@ class SiteSelector extends Component {
 		onClose: noop,
 		onSiteSelect: noop,
 		groups: false,
+		autoFocus: false,
 	};
 
 	state = {

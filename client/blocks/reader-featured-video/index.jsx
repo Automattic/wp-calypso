@@ -113,6 +113,7 @@ class ReaderFeaturedVideo extends React.Component {
 							className="reader-featured-video__play-icon"
 							src="/calypso/images/reader/play-icon.png"
 							title={ translate( 'Play Video' ) }
+							alt={ translate( 'Play button' ) }
 						/>
 					) }
 				</ReaderFeaturedImage>
