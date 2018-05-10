@@ -44,7 +44,7 @@ import { domainManagementTransferIn } from 'my-sites/domains/paths';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
 import { isPlan } from 'lib/products-values';
-import { isNextDomainFree } from 'lib/cart-values/cart-items';
+import { isDomainIncludedInPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -145,7 +145,7 @@ class TransferDomainStep extends React.Component {
 			this.props.currencyCode
 		);
 
-		if ( isNextDomainFree( cart ) ) {
+		if ( isNextDomainFree( cart ) || isDomainIncludedInPlan( cart, searchQuery ) ) {
 			domainProductPrice = translate( 'Free with your plan' );
 		} else if ( domainsWithPlansOnly && ! isPlan( selectedSite.plan ) ) {
 			domainProductPrice = translate( 'Included in paid plans' );
