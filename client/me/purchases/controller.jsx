@@ -130,6 +130,7 @@ export function editCardDetails( context, next ) {
 		<EditCardDetails
 			cardId={ context.params.cardId }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			siteSlug={ context.params.site }
 		/>
 	);
 	next();
