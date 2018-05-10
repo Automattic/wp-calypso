@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
-import { assign, get, isEqual, debounce, startsWith } from 'lodash';
+import { get, isEqual, debounce, startsWith } from 'lodash';
 import debug from 'debug';
 
 /**
@@ -57,6 +57,7 @@ export class EmergentPaywallBox extends Component {
 			paywall_url: '',
 			paymentMethod: paymentMethodClassName( 'emergent-paywall' ),
 			payload: '',
+			charge_id: '',
 			signature: '',
 			iframeHeight: 600,
 			iframeWidth: 750,
@@ -125,9 +126,10 @@ export class EmergentPaywallBox extends Component {
 
 	prepareOrder() {
 		const dataForApi = {
-			payment: assign( {}, this.state, {
+			payment: {
 				paymentMethod: this.state.paymentMethod,
-			} ),
+				paymentKey: this.state.charge_id,
+			},
 			cart: this.props.cart,
 			domainDetails: this.props.transaction.domainDetails,
 		};
