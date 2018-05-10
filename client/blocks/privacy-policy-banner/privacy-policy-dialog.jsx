@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,12 +14,11 @@ import Button from 'components/button';
 
 class PrivacyPolicyDialog extends Component {
 	render() {
-		const buttons = <Button
-			primary
-			onClick={ this.props.onClose }
-		>
-			{ this.props.translate( 'Close' ) }
-		</Button>;
+		const buttons = (
+			<Button primary onClick={ this.props.onClose }>
+				{ this.props.translate( 'Close' ) }
+			</Button>
+		);
 
 		// let's enable `dangerouslySetInnerHTML` since we trust in the content.
 		// It's gotten from the privacy-policy WP REST API.
@@ -44,4 +45,3 @@ class PrivacyPolicyDialog extends Component {
 }
 
 export default localize( PrivacyPolicyDialog );
-

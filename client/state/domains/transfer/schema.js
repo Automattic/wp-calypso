@@ -1,3 +1,5 @@
+/** @format */
+
 export const domainTransferSchema = {
 	type: 'object',
 	patternProperties: {

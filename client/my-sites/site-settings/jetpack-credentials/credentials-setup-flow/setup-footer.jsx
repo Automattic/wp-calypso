@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -36,16 +38,10 @@ class SetupFooter extends Component {
 
 		return (
 			<CompactCard className="credentials-setup-flow__footer">
-				<Button
-					ref={ this.setPopoverContext }
-					onClick={ this.togglePopover }
-					borderless
-				>
+				<Button ref={ this.setPopoverContext } onClick={ this.togglePopover } borderless>
 					<Gridicon icon="help" />
 					<span className="credentials-setup-flow__help-button-text">
-						{
-							translate( "Need help finding your site's server credentials?" )
-						}
+						{ translate( "Need help finding your site's server credentials?" ) }
 					</span>
 				</Button>
 				<Popover
@@ -55,16 +51,14 @@ class SetupFooter extends Component {
 					className="credentials-setup-flow__popover"
 					position="top"
 				>
-					{
-						translate( 'You can normally get your credentials from your hosting provider. ' +
-							'Their website should explain how to get or create the credentials you need.' )
-					}
+					{ translate(
+						'You can normally get your credentials from your hosting provider. ' +
+							'Their website should explain how to get or create the credentials you need.'
+					) }
 				</Popover>
 
 				{ happychatIsAvailable && (
-					<HappychatButton
-						onClick={ this.props.happychatEvent }
-					>
+					<HappychatButton onClick={ this.props.happychatEvent }>
 						<Gridicon icon="chat" />
 						<span className="credentials-setup-flow__happychat-button-text">
 							{ translate( 'Get help' ) }

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,16 +13,16 @@ import { omit } from 'lodash';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormField from './form-field';
 
-const CheckboxField = ( props ) => {
+const CheckboxField = props => {
 	const { fieldName, explanationText, placeholderText, value, edit } = props;
-	const renderedValue = ( 'undefined' !== typeof value ? value : false );
+	const renderedValue = 'undefined' !== typeof value ? value : false;
 
 	const onChange = () => {
 		edit( fieldName, ! value );
 	};
 
 	return (
-		<FormField { ...omit( props, 'explanationText' ) } >
+		<FormField { ...omit( props, 'explanationText' ) }>
 			<FormCheckbox
 				id={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }
@@ -28,9 +30,7 @@ const CheckboxField = ( props ) => {
 				placeholder={ placeholderText }
 				onChange={ onChange }
 			/>
-			<span>
-				{ explanationText }
-			</span>
+			<span>{ explanationText }</span>
 		</FormField>
 	);
 };

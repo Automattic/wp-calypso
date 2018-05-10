@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -20,10 +22,7 @@ import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { saveDomainIpsTag } from 'state/domains/transfer/actions';
-import {
-	getGainingRegistrar,
-	getIpsTagSaveStatus,
-} from 'state/selectors';
+import { getGainingRegistrar, getIpsTagSaveStatus } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:domains:select-ips-tag' );
 
@@ -39,23 +38,25 @@ class SelectIpsTag extends Component {
 	};
 
 	componentDidMount() {
-		request.get( SelectIpsTag.ipsTagListUrl ).then( ( response ) => {
-			this.receiveIpsTagList( response.body );
-		} )
-			.catch( ( error ) => {
+		request
+			.get( SelectIpsTag.ipsTagListUrl )
+			.then( response => {
+				this.receiveIpsTagList( response.body );
+			} )
+			.catch( error => {
 				debug( 'Failed to load IPS tag list! ' + error );
 			} );
 	}
 
 	componentDidUpdate() {
-		if ( this.state.currentQuery && ( this.state.currentQuery !== this.state.ipsTagInput ) ) {
+		if ( this.state.currentQuery && this.state.currentQuery !== this.state.ipsTagInput ) {
 			this.hideSuggestions();
 		}
 	}
 
 	receiveIpsTagList = ipsTagList => {
 		this.setState( { ipsTagList } );
-	}
+	};
 
 	handleKeyDown = event => this.suggestionsRef.handleKeyEvent( event );
 
@@ -64,11 +65,11 @@ class SelectIpsTag extends Component {
 	handleSuggestionClick = position => {
 		const parsedLabel = position.label.split( ' ' );
 		this.setState( { ipsTagInput: parsedLabel[ 0 ] } );
-	}
+	};
 
 	handleSubmit = () => {
 		this.props.saveDomainIpsTag( this.props.selectedDomainName, this.state.selectedRegistrar );
-	}
+	};
 
 	getRegistrarInfo( ipsTag, ipsTagList ) {
 		return find( ipsTagList, [ 'tag', ipsTag ] );
@@ -76,7 +77,10 @@ class SelectIpsTag extends Component {
 
 	getSuggestions() {
 		return this.state.ipsTagList
-			.filter( hint => this.state.currentQuery && startsWith( hint.tag, toUpper( this.state.currentQuery ) ) )
+			.filter(
+				hint =>
+					this.state.currentQuery && startsWith( hint.tag, toUpper( this.state.currentQuery ) )
+			)
 			.map( hint => ( { label: hint.tag + '  (' + hint.registrarName + ')' } ) );
 	}
 
@@ -96,15 +100,15 @@ class SelectIpsTag extends Component {
 			selectedRegistrar,
 			showDialog: true,
 		} );
-	}
+	};
 
-	onCloseDialog = ( action ) => {
+	onCloseDialog = action => {
 		if ( 'submit' === action ) {
 			this.handleSubmit();
 		}
 
 		this.setState( { showDialog: false } );
-	}
+	};
 
 	renderGoToGainingRegistrar() {
 		const { translate, gainingRegistrar: { registrarUrl } } = this.props;
@@ -142,7 +146,7 @@ class SelectIpsTag extends Component {
 				<p>
 					{ translate(
 						'Please enter the IPS tag of the registrar you wish to transfer ' +
-						'{{strong}}%(selectedDomainName)s{{/strong}} to.',
+							'{{strong}}%(selectedDomainName)s{{/strong}} to.',
 						{ args: { selectedDomainName }, components: { strong: <strong /> } }
 					) }
 				</p>
@@ -183,12 +187,14 @@ class SelectIpsTag extends Component {
 				baseClassName="transfer__ips_tag_set_dialog"
 				buttons={ buttons }
 				isVisible={ showDialog }
-				onClose={ this.onCloseDialog }>
+				onClose={ this.onCloseDialog }
+			>
 				<h1>{ translate( 'Transfer Confirmation' ) }</h1>
 				<p>
-					{ translate( 'Please verify you wish to set the registrar for ' +
-						'{{strong}}%(selectedDomainName)s{{/strong}} to the following:',
-					{ args: { selectedDomainName }, components: { strong: <strong /> } }
+					{ translate(
+						'Please verify you wish to set the registrar for ' +
+							'{{strong}}%(selectedDomainName)s{{/strong}} to the following:',
+						{ args: { selectedDomainName }, components: { strong: <strong /> } }
 					) }
 				</p>
 				<p>
@@ -196,9 +202,10 @@ class SelectIpsTag extends Component {
 					{ selectedRegistrar.registrarName ? '(' + selectedRegistrar.registrarName + ')' : '' }
 				</p>
 				<p>
-					{ translate( 'After submitting this tag change, the domain will no longer be in our system. ' +
-						'You will need to contact the new registrar to complete the transfer and regain ' +
-						'control of the domain.'
+					{ translate(
+						'After submitting this tag change, the domain will no longer be in our system. ' +
+							'You will need to contact the new registrar to complete the transfer and regain ' +
+							'control of the domain.'
 					) }
 				</p>
 			</Dialog>
@@ -215,11 +222,14 @@ class SelectIpsTag extends Component {
 					<p>
 						{ translate(
 							"{{strong}}.uk{{/strong}} domains are transferred by setting the domain's IPS tag here to the " +
-							'value provided by the new registrar and then contacting the {{em}}new registrar{{/em}} to ' +
-							'complete the transfer.', { components: { strong: <strong />, em: <em /> } }
+								'value provided by the new registrar and then contacting the {{em}}new registrar{{/em}} to ' +
+								'complete the transfer.',
+							{ components: { strong: <strong />, em: <em /> } }
 						) }
 					</p>
-					{ 'success' === saveStatus ? this.renderGoToGainingRegistrar() : this.renderIpsTagSelect() }
+					{ 'success' === saveStatus
+						? this.renderGoToGainingRegistrar()
+						: this.renderIpsTagSelect() }
 				</Card>
 			</div>
 		);
@@ -231,5 +241,5 @@ export default connect(
 		gainingRegistrar: getGainingRegistrar( state, ownProps.selectedDomainName ),
 		saveStatus: getIpsTagSaveStatus( state, ownProps.selectedDomainName ),
 	} ),
-	{ saveDomainIpsTag },
+	{ saveDomainIpsTag }
 )( localize( SelectIpsTag ) );

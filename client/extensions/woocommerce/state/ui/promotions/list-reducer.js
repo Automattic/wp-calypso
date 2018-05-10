@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -19,8 +21,8 @@ export default createReducer( initialState, {
 } );
 
 function promotionsPageSet( state, action ) {
-	const currentPage = ( 0 < action.currentPage ? action.currentPage : initialState.currentPage );
-	const perPage = ( 0 < action.perPage ? action.perPage : initialState.perPage );
+	const currentPage = 0 < action.currentPage ? action.currentPage : initialState.currentPage;
+	const perPage = 0 < action.perPage ? action.perPage : initialState.perPage;
 
 	return { ...state, perPage, currentPage };
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -19,7 +21,9 @@ describe( 'utils', () => {
 			expect( str ).to.equal( '12345678901234567890' );
 		} );
 		test( 'should return first 40 characters in input has more than 40 characters', () => {
-			const str = generateSubjectFromMessage( '12345678901234567890123456789012345678901234567890' );
+			const str = generateSubjectFromMessage(
+				'12345678901234567890123456789012345678901234567890'
+			);
 			expect( str ).to.equal( '1234567890123456789012345678901234567890' );
 		} );
 	} );

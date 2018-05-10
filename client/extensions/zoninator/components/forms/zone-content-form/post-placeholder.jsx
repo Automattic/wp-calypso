@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,8 +10,6 @@ import React from 'react';
  */
 import SectionHeader from 'components/section-header';
 
-const PostPlaceholder = () => (
-	<SectionHeader className="zone-content-form__placeholder" />
-);
+const PostPlaceholder = () => <SectionHeader className="zone-content-form__placeholder" />;
 
 export default PostPlaceholder;

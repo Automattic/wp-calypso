@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,11 +19,15 @@ import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import getProductLink from 'woocommerce/woocommerce-services/lib/utils/get-product-link';
 import { getSite } from 'state/sites/selectors';
-import { closeItemMove, setTargetPackage, moveItem } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	closeItemMove,
+	setTargetPackage,
+	moveItem,
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
-const MoveItemDialog = ( props ) => {
+const MoveItemDialog = props => {
 	const {
 		site,
 		siteId,
@@ -42,9 +48,7 @@ const MoveItemDialog = ( props ) => {
 	const renderRadioButton = ( pckgId, label ) => {
 		const onChange = () => props.setTargetPackage( orderId, siteId, pckgId );
 		return (
-			<FormLabel
-				key={ pckgId }
-				className="packages-step__dialog-package-option">
+			<FormLabel key={ pckgId } className="packages-step__dialog-package-option">
 				<FormRadio checked={ pckgId === targetPackageId } onChange={ onChange } />
 				{ label }
 			</FormLabel>
@@ -55,14 +59,18 @@ const MoveItemDialog = ( props ) => {
 	const items = openedPackage.items;
 	const item = items[ movedItemIndex ];
 	const itemUrl = getProductLink( item.product_id, site );
-	const itemLink = <a href={ itemUrl } target="_blank" rel="noopener noreferrer">{ item.name }</a>;
+	const itemLink = (
+		<a href={ itemUrl } target="_blank" rel="noopener noreferrer">
+			{ item.name }
+		</a>
+	);
 	let desc;
 
 	const packageLabels = getPackageDescriptions( selected, all, true );
 
 	const renderPackedOptions = () => {
 		const elements = [];
-		Object.keys( selected ).forEach( ( pckgId ) => {
+		Object.keys( selected ).forEach( pckgId => {
 			const pckg = selected[ pckgId ];
 			if ( pckgId === openedPackageId || 'individual' === pckg.box_id ) {
 				return;
@@ -87,19 +95,24 @@ const MoveItemDialog = ( props ) => {
 	};
 
 	if ( '' === openedPackageId ) {
-		desc = translate( '{{itemLink/}} is currently saved for a later shipment.', { components: { itemLink } } );
+		desc = translate( '{{itemLink/}} is currently saved for a later shipment.', {
+			components: { itemLink },
+		} );
 	} else if ( 'individual' === openedPackage.box_id ) {
-		desc = translate( '{{itemLink/}} is currently shipped in its original packaging.', { components: { itemLink } } );
+		desc = translate( '{{itemLink/}} is currently shipped in its original packaging.', {
+			components: { itemLink },
+		} );
 	} else {
-		desc = translate(
-			'{{itemLink/}} is currently in {{pckg/}}.',
-			{
-				components: {
-					itemLink,
-					pckg: <span className="packages-step__dialog-package-name">{ packageLabels[ openedPackageId ] }</span>,
-				},
-			}
-		);
+		desc = translate( '{{itemLink/}} is currently in {{pckg/}}.', {
+			components: {
+				itemLink,
+				pckg: (
+					<span className="packages-step__dialog-package-name">
+						{ packageLabels[ openedPackageId ] }
+					</span>
+				),
+			},
+		} );
 	}
 
 	const onClose = () => props.closeItemMove( orderId, siteId );
@@ -111,17 +124,20 @@ const MoveItemDialog = ( props ) => {
 			label: translate( 'Move' ),
 			isPrimary: true,
 			disabled: targetPackageId === openedPackageId, // Result of targetPackageId initialization
-			onClick: () => props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
+			onClick: () =>
+				props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
 		},
 	];
 
 	return (
-		<Dialog isVisible={ showItemMoveDialog }
+		<Dialog
+			isVisible={ showItemMoveDialog }
 			isFullScreen={ false }
 			onClickOutside={ onClose }
 			onClose={ onClose }
 			buttons={ buttons }
-			additionalClassNames="wcc-root woocommerce packages-step__dialog" >
+			additionalClassNames="wcc-root woocommerce packages-step__dialog"
+		>
 			<FormSectionHeading>{ translate( 'Move item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
 				<p>{ desc }</p>
@@ -160,7 +176,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeItemMove, setTargetPackage, moveItem }, dispatch );
 };
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -68,7 +70,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeAddCardDialog, addStoredCard }, dispatch );
 };
 

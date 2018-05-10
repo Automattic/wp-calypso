@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -26,10 +28,7 @@ export const fetchChecklist = action =>
 	);
 
 export const receiveChecklistSuccess = ( action, checklist ) =>
-	receiveSiteChecklist(
-		action.siteId,
-		checklist
-	);
+	receiveSiteChecklist( action.siteId, checklist );
 
 const dispatchChecklistRequest = dispatchRequestEx( {
 	fetch: fetchChecklist,

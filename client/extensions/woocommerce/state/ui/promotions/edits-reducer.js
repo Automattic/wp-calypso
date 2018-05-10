@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -50,7 +52,7 @@ function editPromotion( promotionsArray, promotion, data ) {
 	let found = false;
 
 	// Look for this object in the array first.
-	const updatedArray = prevArray.map( ( p ) => {
+	const updatedArray = prevArray.map( p => {
 		if ( isEqual( promotion.id, p.id ) ) {
 			found = true;
 			return { ...p, ...data };
@@ -66,4 +68,3 @@ function editPromotion( promotionsArray, promotion, data ) {
 
 	return updatedArray;
 }
-

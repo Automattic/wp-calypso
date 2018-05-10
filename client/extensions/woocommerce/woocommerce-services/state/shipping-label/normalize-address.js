@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -15,11 +17,17 @@ import {
 import * as NoticeActions from 'state/notices/actions';
 
 export default ( orderId, siteId, dispatch, address, group ) => {
-	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS, group, orderId, siteId } );
-	return new Promise( ( resolve ) => {
-		let error = null, fieldErrors = null;
-		const setError = ( err ) => error = err;
-		const setSuccess = ( json ) => {
+	dispatch( {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS,
+		group,
+		orderId,
+		siteId,
+	} );
+	return new Promise( resolve => {
+		let error = null,
+			fieldErrors = null;
+		const setError = err => ( error = err );
+		const setSuccess = json => {
 			if ( json.field_errors ) {
 				fieldErrors = json.field_errors;
 				return;
@@ -33,7 +41,7 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 				isTrivialNormalization: json.is_trivial_normalization,
 			} );
 		};
-		const setIsSaving = ( saving ) => {
+		const setIsSaving = saving => {
 			if ( ! saving ) {
 				dispatch( {
 					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
@@ -44,17 +52,22 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 					fieldErrors,
 				} );
 				if ( error ) {
-					dispatch( NoticeActions.errorNotice(
-						translate( 'Error validating %(group)s address: %(error)s', { args: { group, error } } )
-					) );
+					dispatch(
+						NoticeActions.errorNotice(
+							translate( 'Error validating %(group)s address: %(error)s', {
+								args: { group, error },
+							} )
+						)
+					);
 				}
 				setTimeout( () => resolve( ! error ), 0 );
 			}
 		};
 		setIsSaving( true );
-		api.post( siteId, api.url.addressNormalization(), { address, type: group } )
+		api
+			.post( siteId, api.url.addressNormalization(), { address, type: group } )
 			.then( setSuccess )
 			.catch( setError )
-			.then( () => ( setIsSaving( false ) ) );
+			.then( () => setIsSaving( false ) );
 	} );
 };

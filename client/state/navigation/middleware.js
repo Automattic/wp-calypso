@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,7 +11,7 @@ import page from 'page';
 import { NAVIGATE } from 'state/action-types';
 
 export const navigationMiddleware = () => {
-	return ( next ) => ( action ) => {
+	return next => action => {
 		if ( action.type === NAVIGATE && action.path ) {
 			page( action.path );
 		}

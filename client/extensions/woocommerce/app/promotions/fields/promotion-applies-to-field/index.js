@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -91,7 +93,7 @@ class PromotionAppliesToField extends React.Component {
 		);
 	};
 
-	renderTypeSelectOption = ( option ) => {
+	renderTypeSelectOption = option => {
 		return (
 			<option key={ option.type } value={ option.type }>
 				{ option.labelText }
@@ -99,7 +101,7 @@ class PromotionAppliesToField extends React.Component {
 		);
 	};
 
-	onTypeChange = ( e ) => {
+	onTypeChange = e => {
 		const appliesToType = e.target.value;
 		this.setState( () => ( { appliesToType } ) );
 		this.initializeValue( appliesToType );
@@ -115,7 +117,7 @@ class PromotionAppliesToField extends React.Component {
 	};
 
 	renderProducts = ( appliesTo, singular ) => {
-		const productIds = ( appliesTo && appliesTo.productIds ? appliesTo.productIds : [] );
+		const productIds = appliesTo && appliesTo.productIds ? appliesTo.productIds : [];
 
 		return (
 			<ProductSearch
@@ -138,7 +140,7 @@ class PromotionAppliesToField extends React.Component {
 		);
 	};
 
-	renderSearch = ( appliesToType ) => {
+	renderSearch = appliesToType => {
 		const { value, edit, singular } = this.props;
 
 		switch ( appliesToType ) {
@@ -155,7 +157,7 @@ class PromotionAppliesToField extends React.Component {
 				warn( `Unrecognized appliesToType: ${ appliesToType }` );
 				return null;
 		}
-	}
+	};
 
 	render() {
 		const { appliesToType } = this.state;
@@ -172,4 +174,3 @@ class PromotionAppliesToField extends React.Component {
 }
 
 export default localize( PromotionAppliesToField );
-

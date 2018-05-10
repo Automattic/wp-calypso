@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -69,7 +71,10 @@ export const isActivityLogLoaded = ( state, orderId, siteId = getSelectedSiteId(
 		return false;
 	}
 
-	if ( ! plugins.isWcsEnabled( state, siteId ) || areShippingLabelsErrored( state, orderId, siteId ) ) {
+	if (
+		! plugins.isWcsEnabled( state, siteId ) ||
+		areShippingLabelsErrored( state, orderId, siteId )
+	) {
 		return true;
 	}
 
@@ -88,7 +93,10 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
 		return true;
 	}
 
-	if ( ! plugins.isWcsEnabled( state, siteId ) || areShippingLabelsErrored( state, orderId, siteId ) ) {
+	if (
+		! plugins.isWcsEnabled( state, siteId ) ||
+		areShippingLabelsErrored( state, orderId, siteId )
+	) {
 		return false;
 	}
 
@@ -181,7 +189,8 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				refundableAmount: label.refundable_amount,
 				currency: label.currency,
 				// If there's a refund in progress or completed, the Reprint/Refund buttons or the tracking number must *not* be shown
-				showDetails: ! label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,
+				showDetails:
+					! label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,
 			} );
 		} );
 	}
