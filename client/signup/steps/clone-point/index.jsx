@@ -6,6 +6,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -201,8 +202,10 @@ class ClonePointStep extends Component {
 	}
 }
 
-export default connect( ( state, { startDate } ) => {
-	const siteId = 137043832;
+export default connect( ( state, ownProps ) => {
+	const siteId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
+
+	const startDate = 'today';
 
 	const gmtOffset = getSiteGmtOffset( state, siteId );
 	const timezone = getSiteTimezoneValue( state, siteId );

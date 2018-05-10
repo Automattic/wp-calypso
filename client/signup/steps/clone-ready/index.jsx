@@ -16,6 +16,8 @@ import Card from 'components/card';
 import Button from 'components/button';
 import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { rewindRestore } from 'state/activity-log/actions';
 
 class CloneReadyStep extends Component {
 	static propTypes = {
@@ -28,13 +30,11 @@ class CloneReadyStep extends Component {
 	};
 
 	goToNextStep = () => {
+		const { originBlogId, clonePoint } = this.props.payload;
+
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {} );
 
-		console.log(
-			'this is where we would start the alternate restore with the following payload:',
-			this.props.payload
-		);
-
+		this.props.initRewind( originBlogId, clonePoint, this.props.payload );
 		this.props.goToNextStep();
 	};
 
@@ -95,9 +95,20 @@ class CloneReadyStep extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		destinationSiteName: get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] ),
-		payload: get( ownProps, [ 'signupDependencies' ], {} ),
-	};
-}, null )( localize( CloneReadyStep ) );
+export default connect(
+	( state, ownProps ) => {
+		return {
+			destinationSiteName: get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] ),
+			payload: get( ownProps, [ 'signupDependencies' ], {} ),
+		};
+	},
+	dispatch => ( {
+		initRewind: ( blogId, timestamp, payload ) =>
+			dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_activitylog_clone_request' ),
+					rewindRestore( blogId, timestamp, payload )
+				)
+			),
+	} )
+)( localize( CloneReadyStep ) );

@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -28,7 +29,9 @@ class CloneCloningStep extends Component {
 	};
 
 	goToActivityLog = () => {
-		console.log( 'go to activity log' );
+		const { originSiteSlug } = this.props;
+
+		page.redirect( `/stats/activity/${ originSiteSlug }` );
 	};
 
 	renderStepContent = () => {
@@ -88,5 +91,6 @@ class CloneCloningStep extends Component {
 export default connect( ( state, ownProps ) => {
 	return {
 		originSiteName: get( ownProps, [ 'signupDependencies', 'originSiteName' ], '' ),
+		originSiteSlug: get( ownProps, [ 'signupDependencies', 'originSiteSlug' ], '' ),
 	};
 }, null )( localize( CloneCloningStep ) );
