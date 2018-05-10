@@ -99,6 +99,5 @@ export default connect( state => {
 		isFetchingUserPurchases: isFetchingUserPurchases( state ),
 		purchases: getUserPurchases( state, userId ),
 		sites: getSites( state ),
-	},
-	undefined
-)( localize( PurchasesList ) );
+	};
+} )( localize( PurchasesList ) );
