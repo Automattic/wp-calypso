@@ -18,7 +18,7 @@ export default class SearchFilters extends Component {
 		filters: PropTypes.shape( {
 			includeDashes: PropTypes.bool,
 			maxCharacters: PropTypes.string,
-			showExactMatchesOnly: PropTypes.bool,
+			exactSldMatchesOnly: PropTypes.bool,
 			tlds: PropTypes.arrayOf( PropTypes.string ),
 		} ).isRequired,
 		availableTlds: PropTypes.arrayOf( PropTypes.string ),
@@ -48,7 +48,7 @@ export default class SearchFilters extends Component {
 					{ ...pick( this.props.filters, [
 						'includeDashes',
 						'maxCharacters',
-						'showExactMatchesOnly',
+						'exactSldMatchesOnly',
 					] ) }
 					onChange={ this.updateFilterValues }
 					{ ...pick( this.props, [ 'onFiltersReset', 'onFiltersSubmit' ] ) }

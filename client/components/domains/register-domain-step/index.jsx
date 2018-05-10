@@ -211,7 +211,7 @@ class RegisterDomainStep extends React.Component {
 		return {
 			includeDashes: false,
 			maxCharacters: '',
-			showExactMatchesOnly: false,
+			exactSldMatchesOnly: false,
 			tlds: [],
 		};
 	}
