@@ -9,9 +9,6 @@ import HappychatClientApi from 'happychat-client';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getSkills from 'state/happychat/selectors/get-skills';
 import { setChatOpen, showPanel, hidePanel } from 'state/happychat/ui/actions';
 import {
 	setConnectionStatus,
@@ -30,12 +27,21 @@ import {
 	LAYOUT_PANEL_MAX_PARENT_SIZE,
 } from 'blocks/happychat/chat-client/constants';
 
-export default (
-	{ state, dispatch },
-	{ nodeId = 'happychat-client', layout = LAYOUT_PANEL_MAX_PARENT_SIZE, minimized = true, skills }
-) => {
+export default ( {
+	dispatch,
+	skills,
+	user,
+	nodeId = 'happychat-client',
+	layout = LAYOUT_PANEL_MAX_PARENT_SIZE,
+	minimized = true,
+} ) => {
 	// configure and open happychat
 	HappychatClientApi.open( {
+		layout,
+		minimized,
+		nodeId,
+		skills,
+		user,
 		authentication: {
 			type: AUTH_TYPE_WPCOM_PROXY_IFRAME,
 			options: {
@@ -43,11 +49,6 @@ export default (
 			},
 		},
 		entry: ENTRY_CHAT,
-		layout,
-		minimized,
-		nodeId,
-		skills: skills || getSkills( state, getSelectedSiteId( state ) ),
-		user: getCurrentUser( state ),
 	} );
 
 	// client events
