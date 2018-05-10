@@ -15,6 +15,7 @@ import {
 	selectNextItem,
 	selectPrevItem,
 	requestPage,
+	dismissPost,
 } from '../actions';
 import {
 	items,
@@ -27,6 +28,13 @@ import {
 } from '../reducer';
 
 jest.mock( 'lib/warn', () => () => {} );
+jest.mock( 'lib/wp', () => ( {
+	undocumented: () => ( {
+		me: () => ( {
+			dismissSite: () => {},
+		} ),
+	} ),
+} ) );
 
 const TIME1 = '2018-01-01T00:00:00.000Z';
 const TIME2 = '2018-01-02T00:00:00.000Z';
@@ -53,6 +61,15 @@ describe( 'streams.items reducer', () => {
 		const nextState = items( prevState, action );
 
 		expect( nextState ).toEqual( [ time2PostKey, time1PostKey ] );
+	} );
+
+	it( 'should remove a dismissed post and replace it with the last item', () => {
+		const lastKey = { ...time2PostKey, feedId: 42 };
+		const prevState = deepfreeze( [ time1PostKey, time2PostKey, lastKey ] );
+		const action = dismissPost( { postKey: time1PostKey } );
+		const nextState = items( prevState, action );
+
+		expect( nextState ).toEqual( [ lastKey, time2PostKey ] );
 	} );
 } );
 

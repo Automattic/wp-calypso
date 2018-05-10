@@ -18,6 +18,7 @@ import {
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_SHOW_UPDATES,
+	READER_STREAMS_DISMISS_POST,
 } from 'state/action-types';
 import { keysAreEqual } from 'reader/post-key';
 
@@ -25,9 +26,12 @@ import { keysAreEqual } from 'reader/post-key';
  * Contains a list of post-keys representing the items of a stream.
  */
 export const items = ( state = [], action ) => {
+	let streamItems;
+
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
-			const { streamItems, gap } = action.payload;
+			const { gap } = action.payload;
+			streamItems = action.payload.streamItems;
 
 			if ( gap ) {
 				const beforeGap = takeWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
@@ -57,6 +61,18 @@ export const items = ( state = [], action ) => {
 
 		case READER_STREAMS_SHOW_UPDATES:
 			return [ ...action.payload.items, ...state ];
+		case READER_STREAMS_DISMISS_POST: {
+			const postKey = action.payload.postKey;
+			const indexToRemove = findIndex( state, item => keysAreEqual( item, postKey ) );
+
+			if ( indexToRemove === -1 ) {
+				return state;
+			}
+
+			const newState = [ ...state ];
+			newState[ indexToRemove ] = newState.pop(); // set the dismissed post location to the last item from the recs stream
+			return newState;
+		}
 	}
 	return state;
 };
