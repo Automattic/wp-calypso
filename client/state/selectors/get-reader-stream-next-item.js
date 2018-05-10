@@ -7,7 +7,7 @@
 /**
  * Internal dependencie
  */
-import { getReaderStreamOffsetItem } from 'state/selectors';
+import { getReaderStreamOffsetItem } from './';
 
 function getNextItem( state, currentItem ) {
 	return getReaderStreamOffsetItem( state, currentItem, 1 );

@@ -8,23 +8,31 @@ import React from 'react';
  * Internal dependencies
  */
 import { sectionify } from 'lib/route';
-import { trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import feedStreamFactory from 'lib/feed-stream-store';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'reader/controller-helper';
 import LikedPostsStream from 'reader/liked-stream/main';
 
 const analyticsPageTitle = 'Reader';
 
 const exported = {
 	likes( context, next ) {
-		const basePath = sectionify( context.path );
-		const fullAnalyticsPageTitle = analyticsPageTitle + ' > My Likes';
-		const mcKey = 'postlike';
-		const streamKey = 'likes';
+		const basePath = sectionify( context.path ),
+			fullAnalyticsPageTitle = analyticsPageTitle + ' > My Likes',
+			likedPostsStore = feedStreamFactory( 'likes' ),
+			mcKey = 'postlike';
+
+		ensureStoreLoading( likedPostsStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		context.primary = React.createElement( LikedPostsStream, {
 			key: 'liked',
-			streamKey,
+			postsStore: likedPostsStore,
 			trackScrollPage: trackScrollPage.bind(
 				null,
 				basePath,

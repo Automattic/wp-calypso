@@ -14,7 +14,6 @@ import recommendedSites from './recommended-sites/reducer';
 import relatedPosts from './related-posts/reducer';
 import siteBlocks from './site-blocks/reducer';
 import sites from './sites/reducer';
-import streams from './streams/reducer';
 import tags from './tags/reducer';
 import teams from './teams/reducer';
 import thumbnails from './thumbnails/reducer';
@@ -30,7 +29,6 @@ export default combineReducers( {
 	relatedPosts,
 	siteBlocks,
 	sites,
-	streams,
 	tags,
 	teams,
 	thumbnails,

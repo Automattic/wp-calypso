@@ -9,8 +9,14 @@ import React from 'react';
  */
 import config from 'config';
 import { sectionify } from 'lib/route';
+import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
-import { trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
@@ -20,10 +26,13 @@ const exported = {
 		const blogId = config( 'discover_blog_id' );
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId;
-		const streamKey = `site:${ blogId }`;
-		const featuredStreamKey = `featured:${ blogId }`;
+		const feedStore = feedStreamFactory( 'site:' + blogId );
+		const featuredStore = feedStreamFactory( `featured:${ blogId }` );
 
 		const mcKey = 'discover';
+
+		ensureStoreLoading( feedStore, context );
+		ensureStoreLoading( featuredStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_discover_viewed' );
@@ -33,8 +42,7 @@ const exported = {
 			<AsyncLoad
 				require="reader/site-stream"
 				key={ 'site-' + blogId }
-				streamKey={ streamKey }
-				featuredStreamKey={ featuredStreamKey }
+				postsStore={ feedStore }
 				siteId={ +blogId }
 				title="Discover"
 				trackScrollPage={ trackScrollPage.bind(
@@ -50,6 +58,7 @@ const exported = {
 				isDiscoverStream={ true }
 				showBack={ false }
 				className="is-discover-stream is-site-stream"
+				featuredStore={ featuredStore }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

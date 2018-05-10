@@ -16,12 +16,13 @@ import Gridicon from 'gridicons';
 import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
 import { getCommentById } from 'state/comments/selectors';
-import { getReaderStream as getStream } from 'state/selectors';
 
 class UpdateNotice extends React.PureComponent {
 	static propTypes = {
-		streamKey: PropTypes.string,
+		count: PropTypes.number.isRequired,
 		onClick: PropTypes.func,
+		pendingPostKeys: PropTypes.array,
+		// connected props
 		cappedUnreadCount: PropTypes.string,
 	};
 
@@ -32,7 +33,7 @@ class UpdateNotice extends React.PureComponent {
 
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
-			'is-active': count > 0,
+			'is-active': this.props.count > 0,
 		} );
 
 		return (
@@ -67,13 +68,11 @@ const countNewComments = ( state, postKeys ) => {
 };
 
 const mapStateToProps = ( state, ownProps ) => {
-	const stream = getStream( state, ownProps.streamKey );
-	const pendingItems = stream.pendingItems.items;
-	const updateCount = stream.pendingItems.items.length;
-
 	// ugly hack for convos
-	const isConversations = !! get( pendingItems, [ 0, 'comments' ] );
-	const count = isConversations ? countNewComments( state, pendingItems ) : updateCount;
+	const isConversations = !! get( ownProps.pendingPostKeys, [ 0, 'comments' ] );
+	const count = isConversations
+		? countNewComments( state, ownProps.pendingPostKeys )
+		: ownProps.count;
 
 	return {
 		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
