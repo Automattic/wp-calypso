@@ -21,7 +21,7 @@ import TermsOfService from './terms-of-service';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
-	const log = debug( 'calypso:checkout:payment:emergent-payall' );
+const log = debug( 'calypso:checkout:payment:emergent-payall' );
 
 export class EmergentPaywallBox extends Component {
 	static propTypes = {

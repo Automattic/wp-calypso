@@ -73,11 +73,7 @@ export class PaymentBox extends PureComponent {
 	}
 
 	paymentMethod( method ) {
-		// eslint-disable-next-line
-		console.log( 'paymentMethod paymentMethod', method );
-		// TODO: @ramonjd remove 'emergent-paywall' in default payment methods
-		if ( ! cartValues.isPaymentMethodEnabled( this.props.cart, method ) &&
-			method !== 'emergent-paywall' ) {
+		if ( ! cartValues.isPaymentMethodEnabled( this.props.cart, method ) ) {
 			return null;
 		}
 
@@ -98,7 +94,6 @@ export class PaymentBox extends PureComponent {
 		if ( ! this.props.paymentMethods ) {
 			return null;
 		}
-
 		return this.props.paymentMethods.map( method => {
 			return this.paymentMethod( method );
 		} );

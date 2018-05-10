@@ -1188,11 +1188,14 @@ Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
  * The data format is: {
  * }
  */
-// TODO: @ramonjd find out if any data need to be sent
 Undocumented.prototype.emergentPaywellConfiguration = function( countryCode, cart, fn ) {
 	debug( '/me/emergent-paywall-configuration query' );
 
-	return this.wpcom.req.post( '/me/emergent-paywall-configuration', { country: countryCode, cart }, fn );
+	return this.wpcom.req.post(
+		'/me/emergent-paywall-configuration',
+		{ country: countryCode, cart },
+		fn
+	);
 };
 
 /**

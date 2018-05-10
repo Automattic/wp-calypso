@@ -71,9 +71,7 @@ const SecurePaymentForm = createReactClass( {
 		}
 
 		for ( i = 0; i < paymentMethods.length; i++ ) {
-			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ||
-			// TODO: @ramonjd remove this after testing
-			paymentMethods[ i ] === 'emergent-paywall' ) {
+			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
 				return paymentMethods[ i ];
 			}
 		}
@@ -319,8 +317,7 @@ const SecurePaymentForm = createReactClass( {
 	renderPaymentBox() {
 		const { visiblePaymentBox } = this.state;
 		debug( 'getting %o payment box ...', visiblePaymentBox );
-		// eslint-disable-next-line
-		console.log( 'getting %o payment box ...', visiblePaymentBox );
+
 		switch ( visiblePaymentBox ) {
 			case 'credits':
 				return this.renderCreditsPaymentBox();
@@ -347,11 +344,7 @@ const SecurePaymentForm = createReactClass( {
 					</div>
 				);
 			case 'emergent-paywall':
-				return (
-					<div>
-						{ this.renderEmergentPaywallBox() }
-					</div>
-				);
+				return <div>{ this.renderEmergentPaywallBox() }</div>;
 			case 'alipay':
 			case 'bancontact':
 			case 'eps':
