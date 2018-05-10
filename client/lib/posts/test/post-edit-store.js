@@ -65,22 +65,17 @@ describe( 'post-edit-store', () => {
 		assert( PostEditStore.getSavedPost().site_ID === siteId );
 		const post = PostEditStore.get();
 		assert( post.status === 'draft' );
-		assert( PostEditStore.isNew() );
 	} );
 
-	test( 'initialize existing post', () => {
-		const siteId = 12,
-			postId = 345;
-
+	test( 'reset the currently edited post and prepare to edit a new one', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'START_EDITING_POST',
-				siteId: siteId,
-				postId: postId,
 			},
 		} );
 
-		assert( ! PostEditStore.isNew() );
+		assert( PostEditStore.getSavedPost() == null );
+		assert( PostEditStore.isLoading() );
 	} );
 
 	test( 'sets parent_id properly', () => {
@@ -207,7 +202,7 @@ describe( 'post-edit-store', () => {
 			},
 		} );
 
-		assert( PostEditStore.isNew() );
+		assert( PostEditStore.getSavedPost().ID === undefined );
 		assert( PostEditStore.getSavedPost().title === '' );
 		assert( PostEditStore.get().title === postEdits.title );
 		assert( PostEditStore.get().content === postEdits.content );
@@ -271,6 +266,7 @@ describe( 'post-edit-store', () => {
 			action: {
 				type: 'RECEIVE_POST_TO_EDIT',
 				post: {
+					ID: 1234,
 					metadata: [
 						{ key: 'keepable', value: 'constvalue' },
 						{ key: 'updatable', value: 'oldvalue' },
@@ -322,6 +318,7 @@ describe( 'post-edit-store', () => {
 			action: {
 				type: 'RECEIVE_POST_TO_EDIT',
 				post: {
+					ID: 1234,
 					metadata: [ { key: 'deletable', value: 'trashvalue' } ],
 				},
 			},
@@ -361,6 +358,7 @@ describe( 'post-edit-store', () => {
 			action: {
 				type: 'RECEIVE_POST_TO_EDIT',
 				post: {
+					ID: 1234,
 					metadata: [
 						{ key: 'keepable', value: 'constvalue' },
 						{ key: 'phoenixable', value: 'fawkes' },
@@ -406,11 +404,12 @@ describe( 'post-edit-store', () => {
 	} );
 
 	test( 'reset post after saving an edit', () => {
-		const siteId = 1234,
-			postEdits = {
-				title: 'hello, world!',
-				content: 'initial edit',
-			};
+		const siteId = 1234;
+		const postId = 5678;
+		const postEdits = {
+			title: 'hello, world!',
+			content: 'initial edit',
+		};
 
 		dispatcherCallback( {
 			action: {
@@ -431,11 +430,11 @@ describe( 'post-edit-store', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'RECEIVE_POST_BEING_EDITED',
-				post: assign( { ID: 1234 }, postEdits ),
+				post: assign( { ID: postId }, postEdits ),
 			},
 		} );
 
-		assert( PostEditStore.isNew() === false );
+		assert( PostEditStore.getSavedPost().ID === postId );
 		assert( PostEditStore.getSavedPost().title === postEdits.title );
 		assert( PostEditStore.getSavedPost().content === postEdits.content );
 		assert( PostEditStore.get().title === postEdits.title );
