@@ -75,24 +75,21 @@ describe( 'PostEditor', () => {
 	} );
 
 	describe( 'onEditedPostChange', () => {
-		test( 'should clear content when store state transitions to isNew()', () => {
+		test( 'should clear content when store state transitions to new post', () => {
 			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
-			const stub = sandbox.stub( PostEditStore, 'isNew' );
-			stub.returns( true );
-
+			sandbox.stub( PostEditStore, 'getSavedPost' ).returns( {} );
 			tree.editor = { setEditorContent: sandbox.spy() };
 			tree.onEditedPostChange();
 			expect( tree.editor.setEditorContent ).to.have.been.calledWith( '' );
 		} );
 
-		test( 'should not clear content when store state already isNew()', () => {
+		test( 'should not clear content when store state already has a new post', () => {
 			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
-			const stub = sandbox.stub( PostEditStore, 'isNew' );
-			stub.returns( true );
+			sandbox.stub( PostEditStore, 'getSavedPost' ).returns( {} );
 			tree.editor = { setEditorContent: sandbox.spy() };
-			tree.setState( { isNew: true } );
+			tree.setState( { savedPost: {} } );
 			tree.onEditedPostChange();
 			expect( tree.editor.setEditorContent ).to.not.have.been.called;
 		} );
@@ -100,8 +97,7 @@ describe( 'PostEditor', () => {
 		test( 'should clear content when loading', () => {
 			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
-			const stub = sandbox.stub( PostEditStore, 'isLoading' );
-			stub.returns( true );
+			sandbox.stub( PostEditStore, 'isLoading' ).returns( true );
 			tree.editor = { setEditorContent: sandbox.spy() };
 			tree.onEditedPostChange();
 			expect( tree.editor.setEditorContent ).to.have.been.calledWith( '' );
@@ -111,10 +107,7 @@ describe( 'PostEditor', () => {
 			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
 			const content = 'loaded post';
-			const stub = sandbox.stub( PostEditStore, 'get' );
-			stub.returns( {
-				content: content,
-			} );
+			sandbox.stub( PostEditStore, 'get' ).returns( { content } );
 			tree.editor = { setEditorContent: sandbox.spy() };
 			tree.setState( { isLoading: true } );
 			tree.onEditedPostChange();
@@ -125,10 +118,7 @@ describe( 'PostEditor', () => {
 			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
 			const content = 'new content';
-			const stub = sandbox.stub( PostEditStore, 'get' );
-			stub.returns( {
-				content: content,
-			} );
+			sandbox.stub( PostEditStore, 'get' ).returns( { content } );
 			tree.editor = { setEditorContent: sandbox.spy() };
 			tree.setState( { post: { content: 'old content' } } );
 			tree.onEditedPostChange();
@@ -141,12 +131,12 @@ describe( 'PostEditor', () => {
 
 			const content = 'copied content';
 			tree.setState( {
-				isNew: true,
+				savedPost: {},
 				hasContent: true,
 				isDirty: false,
 			} );
 
-			sandbox.stub( PostEditStore, 'get' ).returns( { content: content } );
+			sandbox.stub( PostEditStore, 'get' ).returns( { content } );
 
 			tree.editor = { setEditorContent: sandbox.spy() };
 			tree.onEditedPostChange();
