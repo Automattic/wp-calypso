@@ -3,6 +3,31 @@ TinyMCE
 
 The `<TinyMCE />` React component is a wrapper around the [TinyMCE](http://www.tinymce.com/) WYWIWYG editor. This folder also contains all of the TinyMCE plugins currently in use by the Calypso project. TinyMCE is relied upon by the editor page, and its implementation is heavily influenced by its usage there. Many plugins and styles have been adapted for use in Calypso from the core WordPress project.
 
+## Upgrading `tinymce`
+
+When upgrading the version of `tinymce` in `package.json`, be sure to also
+update the TinyMCE skin files pulled from the WP.com CDN.  Here's how:
+
+- Point `s1.wp.com` to your WP.com sandbox
+- Upgrade the TinyMCE package in `node_modules/tinymce`
+- Copy the skin files to your WP.com sandbox:
+
+```sh
+export TINYMCE_VERSION=4.x.x # this is the NEW TinyMCE version
+export SANDBOX=your.sandbox.wordpress.com
+ssh $SANDBOX mkdir -p ~/public_html/wp-content/tinymce-assets/$TINYMCE_VERSION/skins/
+scp -r node_modules/tinymce/skins/lightgray/ $SANDBOX:~/public_html/wp-content/tinymce-assets/$TINYMCE_VERSION/skins/
+```
+
+- Make sure the Calypso editor is loading `skin.min.css` and `content.min.css`
+  from the new folder on your sandbox (the URL should look like
+  `//s1.wp.com/wp-content/tinymce-assets/4.x.x/skins/lightgray/skin.min.css`)
+- Commit and deploy the new files from your sandbox
+- Make sure the new files are available to the production CDN (to quickly
+  verify this, you can check `s0.wp.com` and `s2.wp.com` if you don't have them
+  sandboxed).
+- Now you can deploy the new version of `tinymce` in Calypso.
+
 ## Usage
 
 ```jsx
