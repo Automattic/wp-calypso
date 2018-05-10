@@ -14,6 +14,7 @@ import React, { Component } from 'react';
  */
 import CompactCard from 'components/card';
 import EmptyContent from 'components/empty-content';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
@@ -26,8 +27,6 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import PurchasesHeader from './header';
 import PurchasesSite from '../purchases-site';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import userFactory from 'lib/user';
-const user = userFactory();
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class PurchasesList extends Component {
@@ -77,10 +76,10 @@ class PurchasesList extends Component {
 
 		return (
 			<Main className="purchases-list">
+				<QueryUserPurchases userId={ this.props.userId } />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
 				<PurchasesHeader section={ 'purchases' } />
-				<QueryUserPurchases userId={ user.get().ID } />
 				{ content }
 			</Main>
 		);
@@ -93,12 +92,13 @@ PurchasesList.propTypes = {
 	sites: PropTypes.array.isRequired,
 };
 
-export default connect(
-	state => ( {
-		purchases: getUserPurchases( state, user.get().ID ),
+export default connect( state => {
+	const userId = getCurrentUserId( state );
+	return {
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		isFetchingUserPurchases: isFetchingUserPurchases( state ),
+		purchases: getUserPurchases( state, userId ),
 		sites: getSites( state ),
-	} ),
+	},
 	undefined
 )( localize( PurchasesList ) );
