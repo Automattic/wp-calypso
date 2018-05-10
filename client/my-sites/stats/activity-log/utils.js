@@ -210,6 +210,3 @@ export const queryToFilterState = query => {
 		}
 	}, {} );
 };
-
-window.filter2query = filterStateToQuery;
-window.query2filter = queryToFilterState;

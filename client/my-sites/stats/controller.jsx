@@ -5,7 +5,7 @@
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { find, pick, get } from 'lodash';
+import { find, pick, get, isEqual } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -18,6 +18,7 @@ import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getActivityLogFilter } from 'state/selectors';
 import { isWpComFreePlan } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import FollowList from 'lib/follow-list';
@@ -30,7 +31,8 @@ import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
 import config from 'config';
 import { isDesktop } from 'lib/viewport';
-import { filterStateToQuery, queryToFilterState } from 'my-sites/stats/activity-log/utils';
+import { queryToFilterState } from 'my-sites/stats/activity-log/utils';
+import { setFilter } from 'state/activity-log/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
@@ -397,12 +399,14 @@ export default {
 			return next();
 		}
 
-		console.log( context.query );
-		console.log( queryToFilterState( context.query ) );
-		try {
-			console.log( filterStateToQuery( context.state.activityLog.filter[ siteId ] ) );
-		} catch ( e ) {
-			console.log( 'no filter state' );
+		const filter = getActivityLogFilter( state, siteId );
+		const queryFilter = queryToFilterState( context.query );
+
+		if ( ! isEqual( filter, queryFilter ) ) {
+			context.store.dispatch( {
+				...setFilter( siteId, queryFilter ),
+				meta: { skipUrlUpdate: true },
+			} );
 		}
 
 		context.primary = (
