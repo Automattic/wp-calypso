@@ -37,16 +37,17 @@ import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
+import StickyPanel from 'components/sticky-panel';
 import { checkDomainAvailability, getFixedDomainSearch, getAvailableTlds } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import SearchCard from 'components/search-card';
+import Search from 'components/search';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
-import SearchFilters from 'components/domains/search-filters';
+import DropdownFilters from 'components/domains/search-filters/dropdown-filters';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
@@ -63,6 +64,8 @@ import {
 } from 'components/domains/register-domain-step/utility';
 import {
 	recordDomainAvailabilityReceive,
+	recordFiltersReset,
+	recordFiltersSubmit,
 	recordMapDomainButtonClick,
 	recordSearchFormSubmit,
 	recordSearchFormView,
@@ -328,24 +331,26 @@ class RegisterDomainStep extends React.Component {
 
 		return (
 			<div className="register-domain-step">
-				<div className="register-domain-step__search">
-					<SearchCard
-						ref={ this.bindSearchCardReference }
-						additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
-						initialValue={ this.state.lastQuery }
-						onSearch={ this.onSearch }
-						onSearchChange={ this.onSearchChange }
-						onBlur={ this.save }
-						placeholder={ this.props.translate( 'Enter a name or keyword' ) }
-						autoFocus={ true }
-						describedBy={ 'step-header' }
-						delaySearch={ true }
-						delayTimeout={ 1000 }
-						dir="ltr"
-						maxLength={ 60 }
-					/>
-				</div>
-				{ this.renderSearchFilters() }
+				<StickyPanel className="register-domain-step__search">
+					<CompactCard>
+						<Search
+							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+							delaySearch={ true }
+							delayTimeout={ 1000 }
+							describedBy={ 'step-header' }
+							dir="ltr"
+							initialValue={ this.state.lastQuery }
+							maxLength={ 60 }
+							onBlur={ this.save }
+							onSearch={ this.onSearch }
+							onSearchChange={ this.onSearchChange }
+							placeholder={ this.props.translate( 'Enter a name or keyword' ) }
+							ref={ this.bindSearchCardReference }
+						/>
+						{ this.renderSearchFilters() }
+					</CompactCard>
+				</StickyPanel>
 				{ this.state.notice && (
 					<Notice
 						text={ this.state.notice }
@@ -362,23 +367,24 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderSearchFilters() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
+		const isKrackenUi =
+			config.isEnabled( 'domains/kracken-ui/dashes-filter' ) ||
+			config.isEnabled( 'domains/kracken-ui/exact-match-filter' ) ||
+			config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
+		const showFilters = isKrackenUi && ! isRenderingInitialSuggestions;
 		return (
-			isKrackenUi &&
-			! isRenderingInitialSuggestions && (
-				<div className="register-domain-step__filter">
-					<SearchFilters
-						availableTlds={ this.state.availableTlds }
-						filters={ this.state.filters }
-						onChange={ this.onFiltersChange }
-						onFiltersReset={ this.onFiltersReset }
-						onFiltersSubmit={ this.onFiltersSubmit }
-					/>
-				</div>
+			showFilters && (
+				<DropdownFilters
+					filters={ this.state.filters }
+					lastFilters={ this.state.lastFilters }
+					onChange={ this.onFiltersChange }
+					onReset={ this.onFiltersReset }
+					onSubmit={ this.onFiltersSubmit }
+				/>
 			)
 		);
 	}
@@ -527,6 +533,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	onFiltersReset = ( ...keysToReset ) => {
+		this.props.recordFiltersReset( this.state.filters, keysToReset, this.props.analyticsSection );
 		this.setState(
 			{
 				filters: {
@@ -541,6 +548,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	onFiltersSubmit = () => {
+		this.props.recordFiltersSubmit( this.state.filters, this.props.analyticsSection );
 		this.repeatSearch( { pageNumber: 1 } );
 	};
 
@@ -1073,6 +1081,8 @@ export default connect(
 	},
 	{
 		recordDomainAvailabilityReceive,
+		recordFiltersReset,
+		recordFiltersSubmit,
 		recordMapDomainButtonClick,
 		recordSearchFormSubmit,
 		recordSearchFormView,

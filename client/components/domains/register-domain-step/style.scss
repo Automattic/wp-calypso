@@ -1,7 +1,13 @@
 /** @format */
 
 .register-domain-step__search {
-	padding-bottom: 20px;
+	padding-bottom: 12px;
+
+	.card.is-compact {
+		padding: 0;
+		display: flex;
+		align-items: center;
+	}
 
 	.search {
 		margin-bottom: 0;
@@ -24,13 +30,6 @@
 
 	.search-card {
 		margin-bottom: 0;
-	}
-}
-
-.register-domain-step {
-	.register-domain-step__search,
-	.register-domain-step__filter {
-		padding-bottom: 12px;
 	}
 }
 
