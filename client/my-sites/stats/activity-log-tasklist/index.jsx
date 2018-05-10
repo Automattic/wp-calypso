@@ -314,28 +314,30 @@ class ActivityLogTasklist extends Component {
 								}
 							)
 						: translate( 'You have one update available' ) }
-					<SplitButton
-						compact
-						primary
-						label={ translate( 'Update all' ) }
-						onClick={ this.updateAll }
-						disabled={ 0 < queuedPlugins.length }
-					>
-						<PopoverMenuItem
-							onClick={ this.goManagePlugins }
-							className="activity-log-tasklist__menu-item"
-							icon="cog"
+					{ 1 < numberOfPluginUpdates && (
+						<SplitButton
+							compact
+							primary
+							label={ translate( 'Update all' ) }
+							onClick={ this.updateAll }
+							disabled={ 0 < queuedPlugins.length }
 						>
-							<span>{ translate( 'Manage plugins' ) }</span>
-						</PopoverMenuItem>
-						<PopoverMenuItem
-							onClick={ this.dismissPlugins }
-							className="activity-log-tasklist__menu-item"
-							icon="trash"
-						>
-							<span>{ translate( 'Dismiss all' ) }</span>
-						</PopoverMenuItem>
-					</SplitButton>
+							<PopoverMenuItem
+								onClick={ this.goManagePlugins }
+								className="activity-log-tasklist__menu-item"
+								icon="cog"
+							>
+								<span>{ translate( 'Manage plugins' ) }</span>
+							</PopoverMenuItem>
+							<PopoverMenuItem
+								onClick={ this.dismissPlugins }
+								className="activity-log-tasklist__menu-item"
+								icon="trash"
+							>
+								<span>{ translate( 'Dismiss all' ) }</span>
+							</PopoverMenuItem>
+						</SplitButton>
+					) }
 				</div>
 				{ // Show if plugin update didn't start, is still running or errored,
 				// but hide plugin if it was updated successfully.
