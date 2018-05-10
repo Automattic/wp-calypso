@@ -3,31 +3,30 @@
 /**
  * External dependencies
  */
-
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import CompactCard from 'components/card';
 import EmptyContent from 'components/empty-content';
+import Main from 'components/main';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PurchasesHeader from './header';
+import PurchasesSite from '../purchases-site';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { getPurchasesBySite } from 'lib/purchases';
+import { getSites } from 'state/selectors';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 } from 'state/purchases/selectors';
-import { getSites } from 'state/selectors';
-import { getPurchasesBySite } from 'lib/purchases';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PurchasesHeader from './header';
-import PurchasesSite from '../purchases-site';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class PurchasesList extends Component {
 	isDataLoading() {
