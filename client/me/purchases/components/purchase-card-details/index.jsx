@@ -11,14 +11,13 @@ import { curry } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import { createCardToken } from 'lib/store-transactions';
-import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
+import { getPurchase, isDataLoading } from 'me/purchases/utils';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 
 class PurchaseCardDetails extends Component {
 	constructor( props ) {
 		super( props );
 		this.createCardToken = curry( createCardToken )( 'card_update' );
-		this.goToManagePurchase = this.goToManagePurchase.bind( this );
 		this.recordFormSubmitEvent = this.recordFormSubmitEvent.bind( this );
 		this.successCallback = this.successCallback.bind( this );
 	}
@@ -44,10 +43,6 @@ class PurchaseCardDetails extends Component {
 		return {
 			purchaseId: getPurchase( this.props ).id,
 		};
-	}
-
-	goToManagePurchase() {
-		goToManagePurchase( this.props );
 	}
 
 	recordFormSubmitEvent() {
