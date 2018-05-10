@@ -79,7 +79,7 @@ class PurchasesList extends Component {
 				<QueryUserPurchases userId={ this.props.userId } />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
-				<PurchasesHeader section={ 'purchases' } />
+				<PurchasesHeader section="purchases" />
 				{ content }
 			</Main>
 		);
