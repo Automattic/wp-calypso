@@ -5,13 +5,37 @@
  */
 import {
 	HAPPYCHAT_OPEN,
+	HAPPYCHAT_ACTIVITY,
 	HAPPYCHAT_MINIMIZING,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
+	HAPPYCHAT_PANEL_HIDE,
+	HAPPYCHAT_PANEL_SHOW,
 } from 'state/action-types';
 
-const setChatOpen = isOpen => ( { type: HAPPYCHAT_OPEN, isOpen } );
+// TODO: rework action these names to eliminate confusion
+
+/**
+ * Hide the happychat panel
+ * @returns {Object} Action
+ */
+export const hidePanel = () => ( { type: HAPPYCHAT_PANEL_HIDE } );
+
+/**
+ * Show the happychat panel
+ * @returns {Object} Action
+ */
+export const showPanel = () => ( { type: HAPPYCHAT_PANEL_SHOW } );
+
+/**
+ * Set the Happychat panel to display
+ *
+ * @param  {boolean} isOpen If chat is open or not
+ * @returns {Object} Action
+ */
+export const setChatOpen = isOpen => ( { type: HAPPYCHAT_OPEN, isOpen } );
+
 const setChatMinimizing = isMinimizing => ( { type: HAPPYCHAT_MINIMIZING, isMinimizing } );
 
 /**
@@ -50,6 +74,7 @@ export const blur = () => ( { type: HAPPYCHAT_BLUR } );
  */
 export const focus = () => ( { type: HAPPYCHAT_FOCUS } );
 
+export const updateActivity = () => ( { type: HAPPYCHAT_ACTIVITY } );
 /**
  * Returns an action object that sets the current chat message
  *

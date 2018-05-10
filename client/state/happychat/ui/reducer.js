@@ -11,6 +11,8 @@ import {
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
+	HAPPYCHAT_PANEL_HIDE,
+	HAPPYCHAT_PANEL_SHOW,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
@@ -82,4 +84,23 @@ const isMinimizing = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( { currentMessage, isMinimizing, isOpen, lostFocusAt } );
+/**
+ * Tracks the state of the happychat panel visibility
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ *
+ * @return {Object}        Updated state
+ *
+ */
+const isHidden = ( state = false, action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_PANEL_HIDE:
+			return true;
+		case HAPPYCHAT_PANEL_SHOW:
+			return false;
+	}
+	return state;
+};
+
+export default combineReducers( { currentMessage, isMinimizing, isOpen, isHidden, lostFocusAt } );

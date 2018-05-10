@@ -37,10 +37,11 @@ export class HappychatClient extends Component {
 	};
 
 	componentDidMount() {
-		const { layout, minimized, nodeId, skills, defaultSkills, user } = this.props;
+		const { dispatch, layout, minimized, nodeId, skills, defaultSkills, user } = this.props;
 
 		// configure and open happychat
 		HappychatConnection( {
+			dispatch,
 			layout,
 			minimized,
 			nodeId,

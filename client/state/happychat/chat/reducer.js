@@ -12,6 +12,7 @@ import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
  */
 import {
 	SERIALIZE,
+	HAPPYCHAT_ACTIVITY,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
@@ -36,6 +37,7 @@ export const maybeUpscaleTimePrecision = time =>
 
 export const lastActivityTimestamp = ( state = null, action ) => {
 	switch ( action.type ) {
+		case HAPPYCHAT_ACTIVITY:
 		case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			return Date.now();
