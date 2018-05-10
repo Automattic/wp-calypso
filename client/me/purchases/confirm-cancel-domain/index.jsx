@@ -255,7 +255,6 @@ class ConfirmCancelDomain extends React.Component {
 						purchaseId={ this.props.purchaseId }
 						selectedSite={ this.props.selectedSite }
 					/>
-					;
 				</div>
 			);
 		}
