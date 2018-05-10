@@ -5,8 +5,8 @@
 export default [
 	{
 		name: 'mothers_day_2018',
-		startsAt: new Date( 2018, 5, 10, 0, 0, 0 ),
-		endsAt: new Date( 2018, 5, 13, 23, 59, 59 ),
+		startsAt: new Date( 2018, 4, 9, 0, 0, 0 ),
+		endsAt: new Date( 2018, 4, 13, 23, 59, 59 ),
 		nudgeText: '30% Off All Plans',
 		nudgeEndsTodayText: '30% Off (Ends Today)',
 		plansPageNoticeText:
