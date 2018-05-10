@@ -27,7 +27,7 @@ export class MoreFiltersControl extends Component {
 		onChange: PropTypes.func.isRequired,
 		onFiltersReset: PropTypes.func.isRequired,
 		onFiltersSubmit: PropTypes.func.isRequired,
-		showExactMatchesOnly: PropTypes.bool.isRequired,
+		exactSldMatchesOnly: PropTypes.bool.isRequired,
 	};
 
 	state = {
@@ -44,7 +44,7 @@ export class MoreFiltersControl extends Component {
 	getFiltercounts() {
 		return (
 			( this.props.includeDashes && 1 ) +
-			( this.props.showExactMatchesOnly && 1 ) +
+			( this.props.exactSldMatchesOnly && 1 ) +
 			( this.props.maxCharacters !== '' && 1 )
 		);
 	}
@@ -80,7 +80,7 @@ export class MoreFiltersControl extends Component {
 	handleFiltersReset = () => {
 		this.setState( { showOverallValidationError: false }, () => {
 			this.togglePopover();
-			this.props.onFiltersReset( 'includeDashes', 'maxCharacters', 'showExactMatchesOnly' );
+			this.props.onFiltersReset( 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' );
 		} );
 	};
 	handleFiltersSubmit = () => {
@@ -116,7 +116,7 @@ export class MoreFiltersControl extends Component {
 	}
 
 	renderPopover() {
-		const { includeDashes, maxCharacters, showExactMatchesOnly, translate } = this.props;
+		const { includeDashes, maxCharacters, exactSldMatchesOnly, translate } = this.props;
 
 		return (
 			<Popover
@@ -153,11 +153,11 @@ export class MoreFiltersControl extends Component {
 					>
 						<FormInputCheckbox
 							className="search-filters__checkbox"
-							checked={ showExactMatchesOnly }
+							checked={ exactSldMatchesOnly }
 							id="search-filters-show-exact-matches-only"
-							name="showExactMatchesOnly"
+							name="exactSldMatchesOnly"
 							onChange={ this.handleOnChange }
-							value="showExactMatchesOnly"
+							value="exactSldMatchesOnly"
 						/>
 						<span className="search-filters__checkbox-label">
 							{ translate( 'Show exact matches only' ) }
