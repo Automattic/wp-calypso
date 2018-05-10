@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
-import { assign, get, isEqual, debounce } from 'lodash';
+import { assign, get, isEqual, debounce, startsWith } from 'lodash';
 import debug from 'debug';
 
 /**
@@ -21,7 +21,7 @@ import TermsOfService from './terms-of-service';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
-const log = debug( 'calypso:checkout:payment:emergent-payall' );
+	const log = debug( 'calypso:checkout:payment:emergent-payall' );
 
 export class EmergentPaywallBox extends Component {
 	static propTypes = {
@@ -67,7 +67,7 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	onMessageReceiveHandler = event => {
-		if ( event && event.origin === 'https://paypluseval.tfelements.com' ) {
+		if ( event && startsWith( this.state.paywall_url, event.origin ) ) {
 			const message = get( JSON.parse( event.data ), 'message', {} );
 			log( 'Received event from Emergent Paywall:', message );
 

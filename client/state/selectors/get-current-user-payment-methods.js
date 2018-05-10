@@ -20,8 +20,7 @@ import { requestGeoLocation } from 'state/data-getters';
  * two letter lang code really). Return value precedence is in that order.
  */
 
-// TODO: @ramonjd remove 'emergent-paywall' in default payment methods
-const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal', 'emergent-paywall' ];
+const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
 
 const paymentMethods = {
 	byLocale: {},
@@ -33,6 +32,8 @@ const paymentMethods = {
 		BR: [ 'credit-card', 'brazil-tef', 'paypal' ],
 		CN: [ 'credit-card', 'alipay', 'paypal' ],
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
+		// TODO: @ramonjd check this entry with @yoavf
+		IN: [ 'credit-card', 'emergent-paywall' ],
 		NL: [ 'credit-card', 'ideal', 'paypal' ],
 		PL: [ 'credit-card', 'p24', 'paypal' ],
 	},
