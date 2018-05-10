@@ -105,10 +105,20 @@ describe( 'isDiscountActive()', () => {
 			hasActivePromotion.mockImplementation( () => true );
 		} );
 
+		test( 'should return true if there is no ab test', () => {
+			expect(
+				isDiscountActive( {
+					startsAt: DatePlusTime( -10 ),
+					endsAt: DatePlusTime( 100 ),
+				} )
+			).toBe( true );
+		} );
+
 		test( 'should return false if hasActivePromotion returns control', () => {
 			abtest.mockImplementation( () => 'control' );
 			expect(
 				isDiscountActive( {
+					abTestName: 'abtest_one',
 					startsAt: DatePlusTime( -10 ),
 					endsAt: DatePlusTime( 100 ),
 				} )
@@ -119,6 +129,7 @@ describe( 'isDiscountActive()', () => {
 			abtest.mockImplementation( () => 'upsell' );
 			expect(
 				isDiscountActive( {
+					abTestName: 'abtest_one',
 					startsAt: DatePlusTime( -10 ),
 					endsAt: DatePlusTime( 100 ),
 				} )

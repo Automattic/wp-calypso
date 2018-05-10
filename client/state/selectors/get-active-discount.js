@@ -21,6 +21,10 @@ export const isDiscountActive = ( discount, state ) => {
 		return false;
 	}
 
+	if ( ! discount.abTestName ) {
+		return true;
+	}
+
 	const variant = abtest( discount.abTestName );
 	if ( variant === 'control' ) {
 		return false;
