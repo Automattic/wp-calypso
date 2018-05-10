@@ -105,7 +105,7 @@
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/search": true,
-		"reader/user-mention-suggestions": false,
+		"reader/user-mention-suggestions": true,
 		"resume-editing": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,

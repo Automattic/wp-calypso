@@ -118,7 +118,7 @@
 		"reader/related-posts": true,
 		"reader/search": true,
 		"reader/high-watermark": true,
-		"reader/user-mention-suggestions": false,
+		"reader/user-mention-suggestions": true,
 		"resume-editing": true,
 		"republicize": true,
 		"restore-last-location": false,
