@@ -10,14 +10,17 @@
 	font-size: 14px;
 	display: none;
 	box-sizing: border-box;
-	height: 330px;
 
 	transform: translateZ(0);
 	backface-visibility: hidden;
 
-	&.is-open {
+	&.is-visible {
 		display: block;
-		background: $gray-lighten-30;
+		width: 65px;
+	}
+
+	&.is-open {
+		height: 330px;
 		bottom: 0;
 		z-index: z-index( 'root', '.chat-panel.is-open' );
 	}
@@ -31,7 +34,7 @@
  * Panel mode
  */
  .layout:not( .is-section-chat ) {
-	.chat-panel.is-open {
+	.chat-panel.is-open.is-visible {
 		right: 0;
 
 		@include breakpoint( ">480px" ) {
@@ -59,6 +62,10 @@
 		box-sizing: border-box;
 		box-shadow: none;
 		border-left: 1px solid $gray-lighten-25;
+
+		&.is-hidden {
+			display: none;
+		}
 	}
 
 	// add space in the main column for the docked sidebar

@@ -47,6 +47,9 @@ import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
+import isHappychatPanelHidden from 'state/happychat/selectors/is-happychat-panel-hidden';
+import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import { isE2ETest } from 'lib/e2e';
 
 /* eslint-disable react/no-deprecated */
@@ -95,6 +98,9 @@ const Layout = createReactClass( {
 	},
 
 	render: function() {
+		const { isChatOpen, isChatSessionActive, wasChatRecentlyActive } = this.props;
+		const shouldLoadChat = wasChatRecentlyActive || isChatOpen || isChatSessionActive;
+
 		const sectionClass = classnames(
 				'layout',
 				'color-scheme',
@@ -104,7 +110,7 @@ const Layout = createReactClass( {
 				`focus-${ this.props.currentLayoutFocus }`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
-				{ 'has-chat': this.props.chatIsOpen },
+				{ 'has-chat': isChatOpen && this.props.isChatPanelVisible },
 				{ 'has-no-masterbar': this.props.masterbarIsHidden }
 			),
 			loadingClass = classnames( {
@@ -148,7 +154,12 @@ const Layout = createReactClass( {
 				/>
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) &&
-					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+					shouldLoadChat && (
+					<AsyncLoad
+						require="blocks/happychat/chat-panel"
+						minimized={ this.props.wasChatRecentlyActive }
+					/>
+				) }
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
@@ -169,7 +180,10 @@ export default connect( state => {
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
-		chatIsOpen: isHappychatOpen( state ),
+		isChatOpen: isHappychatOpen( state ),
+		isChatSessionActive: hasActiveHappychatSession( state ),
+		isChatPanelVisible: ! isHappychatPanelHidden( state ),
+		wasChatRecentlyActive: wasHappychatRecentlyActive( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
 	};
 } )( Layout );

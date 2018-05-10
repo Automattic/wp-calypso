@@ -33,14 +33,13 @@ import {
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'state/help/ticket/selectors';
-import HappychatConnection from 'components/happychat/connection-connected';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
 	sendMessage as sendHappychatMessage,
 	sendUserInfo,
 } from 'state/happychat/connection/actions';
-import { openChat as openHappychat } from 'state/happychat/ui/actions';
+import { hidePanel, showPanel, openChat } from 'state/happychat/ui/actions';
 import {
 	getCurrentUser,
 	getCurrentUserLocale,
@@ -64,6 +63,7 @@ import { getHelpSelectedSiteId } from 'state/help/selectors';
 import { isDefaultLocale } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 import QueryLanguageNames from 'components/data/query-language-names';
 
 /**
@@ -84,6 +84,7 @@ const stopShowingEaster2018ClosureNoticeAt = i18n.moment( 'Mon, 2 Apr 2018 00:00
 class HelpContact extends React.Component {
 	static propTypes = {
 		compact: PropTypes.bool,
+		closeInlineHelp: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -97,6 +98,11 @@ class HelpContact extends React.Component {
 	};
 
 	componentDidMount() {
+		// With the new happychat client we need to open the socket connection to check for
+		// availability but we'll hide the chat panel
+		this.props.openChat();
+		this.props.hidePanel();
+
 		this.prepareDirectlyWidget();
 	}
 
@@ -112,12 +118,17 @@ class HelpContact extends React.Component {
 	};
 
 	clearSavedContactForm = () => {
+		if ( this.props.closeInlineHelp ) {
+			this.props.closeInlineHelp();
+		}
 		savedContactForm = null;
 	};
 
 	startHappychat = contactForm => {
 		this.recordCompactSubmit( 'happychat' );
-		this.props.openHappychat();
+		// we show the chat panel
+		this.props.showPanel();
+
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
 		this.props.sendUserInfo( this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } ) );
@@ -585,7 +596,6 @@ class HelpContact extends React.Component {
 				) }
 				{ ! this.props.compact && ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className="help-contact__form">{ this.getView() }</Card>
-				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
 				<QueryLanguageNames />
@@ -620,6 +630,7 @@ export default connect(
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
+			isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
 			isRequestingSites: isRequestingSites( state ),
 			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,
 		};
@@ -627,7 +638,9 @@ export default connect(
 	{
 		askDirectlyQuestion,
 		initializeDirectly,
-		openHappychat,
+		hidePanel,
+		showPanel,
+		openChat,
 		recordTracksEvent,
 		sendHappychatMessage,
 		sendUserInfo,
