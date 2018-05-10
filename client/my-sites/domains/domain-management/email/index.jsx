@@ -28,6 +28,7 @@ import {
 import { hasGoogleApps, hasGoogleAppsSupportedDomain, getSelectedDomain } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import DocumentHead from 'components/data/document-head';
 
 class Email extends React.Component {
 	static propTypes = {
@@ -43,6 +44,7 @@ class Email extends React.Component {
 	render() {
 		return (
 			<Main className="domain-management-email" wideLayout={ isPlanFeaturesEnabled() }>
+				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
 				{ this.headerOrUpgradesNavigation() }
 				{ this.content() }

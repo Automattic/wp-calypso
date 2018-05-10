@@ -32,13 +32,6 @@ describe( 'reducer', () => {
 
 			expect( newState ).to.equal( 'new title' );
 		} );
-
-		it( 'should return initial state on route set action', () => {
-			const original = 'new title';
-			const state = title( original, { type: ROUTE_SET } );
-
-			expect( state ).to.equal( '' );
-		} );
 	} );
 
 	describe( '#unreadCount()', () => {

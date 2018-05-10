@@ -23,7 +23,6 @@ export const title = createReducer(
 	'',
 	{
 		[ DOCUMENT_HEAD_TITLE_SET ]: ( state, action ) => action.title,
-		[ ROUTE_SET ]: () => '',
 	},
 	titleSchema
 );

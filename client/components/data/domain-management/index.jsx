@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ import QueryContactDetailsCache from 'components/data/query-contact-details-cach
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import DocumentHead from 'components/data/document-head';
 
 const stores = [ DomainsStore, CartStore ];
 
@@ -71,6 +73,7 @@ const DomainManagementData = createReactClass( {
 		return (
 			<div>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+				<DocumentHead title={ translate( 'Domains' ) } />
 				<StoreConnection
 					component={ this.props.component }
 					stores={ stores }
