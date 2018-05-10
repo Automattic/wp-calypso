@@ -37,7 +37,7 @@ export class EmergentPaywallBox extends Component {
 		this.fetchIframeConfiguration = debounce( this.fetchIframeConfiguration, 500 );
 	}
 
-	componentDidMount() {
+	componentWillMount() {
 		this.fetchIframeConfiguration();
 		window.addEventListener( 'message', this.onMessageReceiveHandler, false );
 	}
@@ -174,14 +174,7 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	render() {
-		const {
-			payload,
-			paywall_url,
-			signature,
-			iframeHeight,
-			iframeWidth,
-			hasConfigLoaded,
-		} = this.state;
+		const { payload, paywall_url, signature, iframeHeight, hasConfigLoaded } = this.state;
 		const iframeContainerClasses = classNames( 'checkout__emergent-paywall-frame-container', {
 			'iframe-loaded': hasConfigLoaded,
 		} );
@@ -207,7 +200,6 @@ export class EmergentPaywallBox extends Component {
 						</form>
 						<iframe
 							height={ iframeHeight }
-							width={ iframeWidth }
 							name="emergent-paywall-iframe"
 							title={ paymentMethodName[ 'emergent-paywall' ] }
 							ref={ this.iframeRef }
