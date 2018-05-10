@@ -106,7 +106,7 @@ export class JetpackConnectMain extends Component {
 	}
 
 	componentDidUpdate() {
-		const { isMobileAppFlow } = this.props;
+		const { isMobileAppFlow, skipRemoteInstall } = this.props;
 
 		if (
 			this.getStatus() === NOT_CONNECTED_JETPACK &&
@@ -129,7 +129,11 @@ export class JetpackConnectMain extends Component {
 		}
 
 		if ( includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], this.getStatus() ) ) {
-			if ( config.isEnabled( 'jetpack/connect/remote-install' ) && ! isMobileAppFlow ) {
+			if (
+				config.isEnabled( 'jetpack/connect/remote-install' ) &&
+				! isMobileAppFlow &&
+				! skipRemoteInstall
+			) {
 				this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
 			} else {
 				this.goToInstallInstructions( '/jetpack/connect/instructions' );
@@ -376,6 +380,9 @@ const connectComponent = connect(
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
+		const jetpackConnectSite = getConnectingSite( state );
+		const siteData = jetpackConnectSite.data || {};
+		const skipRemoteInstall = siteData.skipRemoteInstall;
 
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
@@ -383,8 +390,9 @@ const connectComponent = connect(
 			isLoggedIn: !! getCurrentUserId( state ),
 			isMobileAppFlow,
 			isRequestingSites: isRequestingSites( state ),
-			jetpackConnectSite: getConnectingSite( state ),
+			jetpackConnectSite,
 			mobileAppRedirect,
+			skipRemoteInstall,
 		};
 	},
 	{
