@@ -102,7 +102,6 @@
 		"reader/full-errors": true,
 		"reader/likes-hover": true,
 		"reader/nesting-arrow": true,
-		"reader/new-post-notifications": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/search": true,

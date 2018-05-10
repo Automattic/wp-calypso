@@ -142,7 +142,6 @@
 		"reader/full-errors": true,
 		"reader/list-management": false,
 		"reader/nesting-arrow": true,
-		"reader/new-post-notifications": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/search": true,
