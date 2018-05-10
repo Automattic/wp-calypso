@@ -23,13 +23,14 @@ import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
-		data: PropTypes.array.isRequired,
-		selectedDate: PropTypes.string.isRequired,
-		unit: PropTypes.string.isRequired,
 		basePath: PropTypes.string.isRequired,
-		slug: PropTypes.string,
+		chartTitle: PropTypes.node,
+		data: PropTypes.array.isRequired,
 		renderTabs: PropTypes.func.isRequired,
+		selectedDate: PropTypes.string.isRequired,
+		slug: PropTypes.string,
 		tabs: PropTypes.array.isRequired,
+		unit: PropTypes.string.isRequired,
 		urlQueryParam: PropTypes.object,
 	};
 
@@ -136,7 +137,7 @@ class StoreStatsChart extends Component {
 	};
 
 	render() {
-		const { data, selectedDate, unit, renderTabs, tabs, className } = this.props;
+		const { chartTitle, className, data, renderTabs, selectedDate, tabs, unit } = this.props;
 		const { selectedTabIndex } = this.state;
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
@@ -145,7 +146,10 @@ class StoreStatsChart extends Component {
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		return (
 			<Card className={ classnames( className, 'stats-module' ) }>
-				{ this.renderLegend( selectedTabIndex ) }
+				<div className="store-stats-chart__top">
+					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
+					{ this.renderLegend( selectedTabIndex ) }
+				</div>
 				<ElementChart loading={ isLoading } data={ chartData } barClick={ this.barClick } />
 				{ ! isLoading &&
 					renderTabs( {
