@@ -8,7 +8,7 @@ export default {
 			properties: {
 				items: { type: 'array' },
 				selected: { type: 'object' },
-				pendingItems: { type: 'object' },
+				pendingItems: { type: 'array' },
 				lastPage: { type: 'boolean' },
 				isRequesting: { type: 'boolean' },
 				pageHandle: { type: 'string' },

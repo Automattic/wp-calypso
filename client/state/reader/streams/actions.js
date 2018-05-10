@@ -11,11 +11,10 @@ import {
 	READER_STREAMS_SELECT_FIRST_ITEM,
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
+	READER_STREAMS_FILL_GAP,
 	READER_STREAMS_DISMISS_POST,
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'state/action-types';
-import { getReaderStream as getStream } from 'state/selectors';
-import { getStreamType } from 'reader/utils';
 
 /**
  * Fetch posts into a stream
@@ -27,45 +26,41 @@ import { getStreamType } from 'reader/utils';
  * @param  {object} query    The query for posts. Parameters vary by stream type.
  * @return {object}          The action object
  */
-export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null } ) {
-	const streamType = getStreamType( streamKey );
-
+export function requestPage( { streamKey, pageHandle } ) {
+	const indexOfColon = streamKey.indexOf( ':' );
+	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
 	return {
 		type: READER_STREAMS_PAGE_REQUEST,
 		payload: {
 			streamKey,
 			pageHandle,
 			streamType,
-			isPoll,
-			gap,
 		},
 	};
 }
 
-export function receivePage( { streamKey, pageHandle, streamItems, gap } ) {
+export function receivePage( { streamKey, pageHandle, posts } ) {
 	return {
 		type: READER_STREAMS_PAGE_RECEIVE,
 		payload: {
 			streamKey,
-			streamItems,
+			posts,
 			pageHandle,
-			gap,
 		},
 	};
 }
 
-export const showUpdates = ( { streamKey } ) => ( dispatch, getState ) => {
-	const items = getStream( getState(), streamKey ).pendingItems.items;
-	return dispatch( {
+export function showUpdates( { streamKey } ) {
+	return {
 		type: READER_STREAMS_SHOW_UPDATES,
-		payload: { streamKey, items },
-	} );
-};
+		payload: { streamKey },
+	};
+}
 
-export function receiveUpdates( { streamKey, streamItems } ) {
+export function receiveUpdates( { streamKey, posts } ) {
 	return {
 		type: READER_STREAMS_UPDATES_RECEIVE,
-		payload: { streamKey, streamItems },
+		payload: { streamKey, posts },
 	};
 }
 
@@ -98,11 +93,10 @@ export function selectPrevItem( { streamKey, items } ) {
 }
 
 export function fillGap( { streamKey, gap } ) {
-	return requestPage( {
-		streamKey,
-		pageHandle: { before: gap.to.toISOString(), after: gap.from.toISOString() },
-		gap,
-	} );
+	return {
+		type: READER_STREAMS_FILL_GAP,
+		payload: { streamKey, gap },
+	};
 }
 
 export function dismissPost( { streamKey, postId } ) {

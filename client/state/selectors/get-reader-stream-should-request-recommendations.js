@@ -17,12 +17,7 @@ function shouldRequestRecs( state, streamKey, recsStreamKey ) {
 
 	const totalSubs = getReaderFollows( state ).length;
 	const items = getReaderStream( state, streamKey ).items;
-	const recsStream = getReaderStream( state, recsStreamKey );
-	const recs = recsStream.items;
-
-	if ( recsStream.lastPage || recsStream.isRequesting ) {
-		return false;
-	}
+	const recs = getReaderStream( state, recsStreamKey ).items;
 
 	if ( recs.length === 0 ) {
 		return true;

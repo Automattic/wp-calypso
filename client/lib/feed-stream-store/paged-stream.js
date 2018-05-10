@@ -12,6 +12,7 @@ const debug = debugFactory( 'calypso:feed-store:post-list-store' );
  */
 import Emitter from 'lib/mixins/emitter';
 import { action as ActionTypes } from './constants';
+import { setLastStoreId } from 'reader/controller-helper';
 import * as FeedStreamActions from './actions';
 import { reduxGetState } from 'lib/redux-bridge';
 import { getPostByKey } from 'state/reader/posts/selectors';
@@ -188,13 +189,14 @@ export default class PagedStream {
 		}
 	}
 
-	selectItem( postKey ) {
+	selectItem( postKey, id ) {
 		const selectedIndex = findIndex( this.postKeys, postKey );
 		if (
 			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) &&
 			selectedIndex !== this.selectedIndex
 		) {
 			this.selectedIndex = selectedIndex;
+			setLastStoreId( id );
 			this.emitChange();
 		}
 	}

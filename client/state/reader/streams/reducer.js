@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import { findIndex, last, takeRightWhile, takeWhile } from 'lodash';
-import moment from 'moment';
+import { findIndex, uniqBy, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,9 +16,8 @@ import {
 	READER_STREAMS_UPDATES_RECEIVE,
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
-	READER_STREAMS_SHOW_UPDATES,
 } from 'state/action-types';
-import { keysAreEqual } from 'reader/post-key';
+import { keyToString, keyForPost, keysAreEqual } from 'reader/post-key';
 
 /*
  * Contains a list of post-keys representing the items of a stream.
@@ -27,92 +25,41 @@ import { keysAreEqual } from 'reader/post-key';
 export const items = ( state = [], action ) => {
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
-			const { streamItems, gap } = action.payload;
+			const { posts } = action.payload;
+			const postKeys = posts.map( keyForPost );
 
-			if ( gap ) {
-				const beforeGap = takeWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
-				const afterGap = takeRightWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
+			const newState = uniqBy( [ ...state, ...postKeys ], keyToString );
 
-				// after query param is inclusive, so we need to drop duplicate post
-				if ( keysAreEqual( last( streamItems ), afterGap[ 0 ] ) ) {
-					streamItems.pop();
-				}
-
-				// gap was empty
-				if ( streamItems.length === 0 ) {
-					return [ ...beforeGap, ...afterGap ];
-				}
-
-				// create a new gap if we still need one
-				let nextGap = [];
-				const from = gap.from;
-				const to = moment( last( streamItems ).date );
-				if ( ! from.isSame( to ) ) {
-					nextGap = [ { isGap: true, from, to } ];
-				}
-
-				return [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ];
+			// only return newState if it has actually been modified
+			if ( newState.length > state.length ) {
+				return newState;
 			}
-			return [ ...state, ...streamItems ];
-
-		case READER_STREAMS_SHOW_UPDATES:
-			return [ ...action.payload.items, ...state ];
 	}
 	return state;
 };
 
-export const PENDING_ITEMS_DEFAULT = { lastUpdated: null, items: [] };
 /*
  * Contains new items in the stream that we've learned about since initial render
  * but don't want to display just yet.
  * This is the data backing the orange "${number} new posts" pill.
+
+ * Note: this functionality is likley unused and therefore probably will need some modifications
+ * before it can be utilized well.
  */
-export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
-	let streamItems, maxDate;
+export const pendingItems = ( state = [], action ) => {
 	switch ( action.type ) {
-		case READER_STREAMS_PAGE_RECEIVE:
-			streamItems = action.payload.streamItems;
-			if ( streamItems.length === 0 ) {
-				return state;
-			}
-
-			maxDate = moment( streamItems[ 0 ].date );
-
-			if ( state.lastUpdated && maxDate.isSameOrBefore( state.lastUpdated ) ) {
-				return state;
-			}
-
-			return { ...state, lastUpdated: maxDate };
 		case READER_STREAMS_UPDATES_RECEIVE:
-			streamItems = action.payload.streamItems;
-			maxDate = moment( streamItems[ 0 ].date );
-			const minDate = moment( last( streamItems ).date );
+			const { posts } = action.payload;
+			const postKeys = posts.map( keyForPost );
 
-			// only retain posts that are newer than ones we already have
-			if ( state.lastUpdated ) {
-				streamItems = streamItems.filter( item =>
-					moment( item.date ).isAfter( state.lastUpdated )
-				);
+			const newState = uniqBy( postKeys, keyToString );
+			if ( newState.length !== state.length ) {
+				return newState;
 			}
-
-			if ( streamItems.length === 0 ) {
-				return state;
+			const hasChanges = some( newState, ( key, idx ) => ! keysAreEqual( key, state[ idx ] ) );
+			if ( hasChanges ) {
+				return newState;
 			}
-
-			const newItems = [ ...streamItems ];
-
-			// there is a gap if the oldest item in the poll is newer than last update time
-			if ( state.lastUpdated && minDate.isAfter( state.lastUpdated ) ) {
-				newItems.push( {
-					isGap: true,
-					from: state.lastUpdated,
-					to: minDate,
-				} );
-			}
-
-			return { lastUpdated: maxDate, items: newItems };
-		case READER_STREAMS_SHOW_UPDATES:
-			return { ...state, items: [] };
 	}
 	return state;
 };
@@ -144,11 +91,9 @@ export const selected = ( state = null, action ) => {
  * isRequesting data is mostly used for whether or not to render placeholders
  */
 export const isRequesting = ( state = false, action ) => {
-	// this has become a lie! its not really whether we are requesting, just if we need to show
-	// placeholders at the bottom of the stream
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_REQUEST:
-			return state || ( ! action.payload.isPoll && ! action.payload.isGap );
+			return true;
 		case READER_STREAMS_PAGE_RECEIVE:
 			return false;
 	}
@@ -162,7 +107,7 @@ export const isRequesting = ( state = false, action ) => {
  */
 export const lastPage = ( state = false, action ) => {
 	if ( action.type === READER_STREAMS_PAGE_RECEIVE ) {
-		return action.payload.streamItems.length === 0;
+		return action.payload.posts.length === 0;
 	}
 	return state;
 };
@@ -172,12 +117,7 @@ export const lastPage = ( state = false, action ) => {
  * This usually gets handed to the request for more stream items
  */
 export const pageHandle = ( state = null, action ) => {
-	if (
-		action.type === READER_STREAMS_PAGE_RECEIVE &&
-		action.payload.pageHandle &&
-		! action.payload.isPoll &&
-		! action.payload.gap
-	) {
+	if ( action.type === READER_STREAMS_PAGE_RECEIVE && action.payload.pageHandle ) {
 		return action.payload.pageHandle;
 	}
 	return state;

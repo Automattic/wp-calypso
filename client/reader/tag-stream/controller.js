@@ -8,8 +8,14 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
+import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
-import { trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
 import { TAG_PAGE } from 'reader/follow-sources';
 
@@ -23,8 +29,10 @@ export const tagListing = ( context, next ) => {
 		.replace( /\s+/g, '-' )
 		.replace( /-{2,}/g, '-' );
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
-	const streamKey = 'tag:' + tagSlug;
+	const tagStore = feedStreamFactory( 'tag:' + tagSlug );
 	const mcKey = 'topic';
+
+	ensureStoreLoading( tagStore, context );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack( 'calypso_reader_tag_loaded', {
@@ -35,7 +43,7 @@ export const tagListing = ( context, next ) => {
 		<AsyncLoad
 			require="reader/tag-stream/main"
 			key={ 'tag-' + encodedTag }
-			streamKey={ streamKey }
+			postsStore={ tagStore }
 			encodedTagSlug={ encodedTag }
 			decodedTagSlug={ tagSlug }
 			trackScrollPage={ trackScrollPage.bind(

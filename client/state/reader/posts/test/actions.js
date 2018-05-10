@@ -57,8 +57,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		// TODO: move to analytics middleware so that this doesn't cascade out the need for mocking
-		test.skip( 'should fire tracks events for posts with railcars', () => {
+		test( 'should fire tracks events for posts with railcars', () => {
 			const posts = [
 				{
 					ID: 1,
@@ -208,8 +207,8 @@ describe( 'actions', () => {
 				payload: { post, site },
 			} );
 
-			// expect( pageViewForPost.mock.calls.length ).toBe( 1 );
-			// expect( mc.bumpStat.mock.calls.length ).toBe( 1 );
+			expect( pageViewForPost.mock.calls.length ).toBe( 1 );
+			expect( mc.bumpStat.mock.calls.length ).toBe( 1 );
 		} );
 	} );
 } );
