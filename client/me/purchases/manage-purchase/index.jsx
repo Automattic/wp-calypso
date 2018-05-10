@@ -47,7 +47,7 @@ import {
 } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer as isSiteAtomic } from 'state/selectors';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
@@ -483,7 +483,7 @@ export default connect( ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
 	const isPurchaseTheme = selectedPurchase && isTheme( selectedPurchase );
-	const selectedSite = getSelectedSiteSelector( state );
+	const selectedSite = getSelectedSite( state );
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),

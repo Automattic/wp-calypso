@@ -15,7 +15,7 @@ import { clearPurchases } from 'state/purchases/actions';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDataLoading, recordPageView } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -84,7 +84,7 @@ const mapStateToProps = ( state, { purchaseId } ) => {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSiteSelector( state ),
+		selectedSite: getSelectedSite( state ),
 	};
 };
 

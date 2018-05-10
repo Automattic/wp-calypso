@@ -29,7 +29,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
 } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -222,6 +222,6 @@ export default connect( ( state, props ) => {
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: purchase,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
-		selectedSite: getSelectedSiteSelector( state ),
+		selectedSite: getSelectedSite( state ),
 	};
 } )( localize( CancelPurchase ) );
