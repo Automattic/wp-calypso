@@ -30,7 +30,7 @@ class PostLifecycle extends React.Component {
 		postKey: PropTypes.object.isRequired,
 		isDiscoverStream: PropTypes.bool,
 		handleClick: PropTypes.func,
-		recStoreId: PropTypes.string,
+		recStreamKey: PropTypes.string,
 	};
 
 	shouldComponentUpdate( nextProps ) {
@@ -41,14 +41,14 @@ class PostLifecycle extends React.Component {
 	}
 
 	render() {
-		const { post, postKey, selectedPostKey, recStoreId, followSource } = this.props;
+		const { post, postKey, followSource, isSelected, recsStreamKey, streamKey } = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
 				<RecommendedPosts
 					recommendations={ postKey.recommendations }
 					index={ postKey.index }
-					storeId={ recStoreId }
+					streamKey={ recsStreamKey }
 					followSource={ IN_STREAM_RECOMMENDATION }
 				/>
 			);
@@ -58,24 +58,24 @@ class PostLifecycle extends React.Component {
 					postKey={ postKey }
 					index={ this.props.index }
 					onClick={ this.props.handleClick }
-					selectedPostKey={ selectedPostKey }
+					selectedPostKey={ this.props.selectedPostKey }
 					followSource={ followSource }
 					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 					blockedSites={ this.props.blockedSites }
 				/>
 			);
-		} else if ( postKey.isRecommendation ) {
+		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {
 			return <EmptySearchRecommendedPost post={ post } site={ postKey } />;
 		} else if ( postKey.isGap ) {
 			return (
 				<ListGap
 					gap={ postKey }
-					postsStore={ this.props.postsStore }
-					selected={ this.props.isSelected }
+					selected={ isSelected }
 					handleClick={ this.props.handleClick }
+					streamKey={ streamKey }
 				/>
 			);
-		} else if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
+		} else if ( ! post ) {
 			return (
 				<Fragment>
 					<QueryReaderPost postKey={ postKey } />
@@ -91,13 +91,10 @@ class PostLifecycle extends React.Component {
 			return <PostBlocked post={ post } />;
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
-			const xPostedTo = this.props.postsStore.getSitesCrossPostedTo(
-				xMetadata.commentURL || xMetadata.postURL
-			);
+			// @TODO: xposts don't dedupe. we need to add that to redux.
 			return (
 				<CrossPost
 					{ ...omit( this.props, 'store' ) }
-					xPostedTo={ xPostedTo }
 					xMetadata={ xMetadata }
 					post={ post }
 					postKey={ postKey }
@@ -105,8 +102,7 @@ class PostLifecycle extends React.Component {
 			);
 		}
 
-		const xPostedTo = this.props.postsStore.getSitesCrossPostedTo( post.URL );
-		return <Post { ...this.props } xPostedTo={ xPostedTo } />;
+		return <Post { ...this.props } />;
 	}
 }
 

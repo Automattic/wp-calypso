@@ -9,14 +9,8 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
-import {
-	ensureStoreLoading,
-	trackPageLoad,
-	trackUpdatesLoaded,
-	trackScrollPage,
-} from 'reader/controller-helper';
+import { trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
 import { SEARCH_TYPES } from 'reader/search-stream/search-stream-header';
 
@@ -37,16 +31,16 @@ const exported = {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
 			mcKey = 'search';
 
-		const { sort = 'relevance', q: searchSlug, show = SEARCH_TYPES.POSTS } = context.query;
+		const { sort = 'relevance', q, show = SEARCH_TYPES.POSTS } = context.query;
+		const searchSlug = q;
 
-		let store;
+		let streamKey;
+		let isQuerySuggestion = false;
 		if ( searchSlug ) {
-			store = feedStreamFactory( `search:${ sort }:${ searchSlug }` );
-			store.isQuerySuggestion = context.query.isSuggestion === '1';
-			ensureStoreLoading( store, context );
+			streamKey = 'search:' + JSON.stringify( { sort, q } );
+			isQuerySuggestion = context.query.isSuggestion === '1';
 		} else {
-			store = feedStreamFactory( 'custom_recs_posts_with_images' );
-			ensureStoreLoading( store, context );
+			streamKey = 'custom_recs_posts_with_images';
 		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -73,8 +67,10 @@ const exported = {
 			<AsyncLoad
 				require="reader/search-stream"
 				key="search"
-				postsStore={ store }
+				streamKey={ streamKey }
+				isSuggestion={ isQuerySuggestion }
 				query={ searchSlug }
+				sort={ sort }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,

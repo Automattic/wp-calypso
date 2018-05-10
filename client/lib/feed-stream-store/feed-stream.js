@@ -24,7 +24,6 @@ import Emitter from 'lib/mixins/emitter';
 import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
-import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
 import { keyToString, keysAreEqual } from 'reader/post-key';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
@@ -230,14 +229,13 @@ export default class FeedStream {
 		}
 	}
 
-	selectItem( postKey, id ) {
+	selectItem( postKey ) {
 		const selectedIndex = findIndex( this.postKeys, postKey );
 		if (
 			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) &&
 			selectedIndex !== this.selectedIndex
 		) {
 			this.selectedIndex = selectedIndex;
-			setLastStoreId( id );
 			this.emitChange();
 		}
 	}
