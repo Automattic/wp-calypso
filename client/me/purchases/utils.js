@@ -92,7 +92,6 @@ function getEditCardDetailsPath( siteSlug, purchase ) {
 
 export {
 	getPurchase,
-	getSelectedSite,
 	goToList,
 	goToManagePurchase,
 	isDataLoading,

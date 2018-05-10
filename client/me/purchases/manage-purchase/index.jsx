@@ -42,7 +42,6 @@ import {
 	isDataLoading,
 	getEditCardDetailsPath,
 	getPurchase,
-	getSelectedSite,
 	goToList,
 	recordPageView,
 } from '../utils';
@@ -163,7 +162,7 @@ class ManagePurchase extends Component {
 			! isRenewable( purchase ) ||
 			isExpired( purchase ) ||
 			isExpiring( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.selectedSite
 		) {
 			return null;
 		}
@@ -188,7 +187,7 @@ class ManagePurchase extends Component {
 		const purchase = getPurchase( this.props );
 		const { translate } = this.props;
 
-		if ( ! getSelectedSite( this.props ) ) {
+		if ( ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -217,7 +216,7 @@ class ManagePurchase extends Component {
 			{ id } = purchase;
 		const { translate, isAtomicSite } = this.props;
 
-		if ( ! isCancelable( purchase ) || ! getSelectedSite( this.props ) ) {
+		if ( ! isCancelable( purchase ) || ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -281,7 +280,7 @@ class ManagePurchase extends Component {
 		if (
 			isExpired( purchase ) ||
 			! hasPrivacyProtection( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.selectedSite
 		) {
 			return null;
 		}

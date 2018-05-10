@@ -42,7 +42,6 @@ import {
 	isDataLoading,
 	getEditCardDetailsPath,
 	getPurchase,
-	getSelectedSite,
 } from '../utils';
 
 class PurchaseMeta extends Component {
@@ -231,7 +230,7 @@ class PurchaseMeta extends Component {
 			! canEditPaymentDetails( purchase ) ||
 			! isPaidWithCreditCard( purchase ) ||
 			! cardProcessorSupportsUpdates( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.selectedSite
 		) {
 			return <li>{ paymentDetails }</li>;
 		}
@@ -249,7 +248,7 @@ class PurchaseMeta extends Component {
 		const purchase = getPurchase( this.props );
 		const { translate } = this.props;
 
-		if ( getSelectedSite( this.props ) ) {
+		if ( this.props.selectedSite ) {
 			return null;
 		}
 

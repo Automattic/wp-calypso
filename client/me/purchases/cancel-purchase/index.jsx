@@ -23,13 +23,7 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'lib/purchases';
-import {
-	getPurchase,
-	getSelectedSite,
-	goToManagePurchase,
-	isDataLoading,
-	recordPageView,
-} from 'me/purchases/utils';
+import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -86,7 +80,7 @@ class CancelPurchase extends React.Component {
 		}
 
 		const purchase = getPurchase( props );
-		const selectedSite = getSelectedSite( props );
+		const selectedSite = props.selectedSite;
 
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
@@ -96,7 +90,7 @@ class CancelPurchase extends React.Component {
 
 	redirect = props => {
 		const purchase = getPurchase( props );
-		const selectedSite = getSelectedSite( props );
+		const selectedSite = props.selectedSite;
 		let redirectPath = purchasesRoot;
 
 		if (
