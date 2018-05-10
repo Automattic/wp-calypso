@@ -32,8 +32,7 @@ const paymentMethods = {
 		BR: [ 'credit-card', 'brazil-tef', 'paypal' ],
 		CN: [ 'credit-card', 'alipay', 'paypal' ],
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
-		// TODO: @ramonjd check this entry with @yoavf
-		IN: [ 'credit-card', 'emergent-paywall' ],
+		IN: [ 'credit-card', 'emergent-paywall', 'paypal' ],
 		NL: [ 'credit-card', 'ideal', 'paypal' ],
 		PL: [ 'credit-card', 'p24', 'paypal' ],
 	},
