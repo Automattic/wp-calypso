@@ -1,11 +1,19 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { isPlainObject } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { activeDiscounts } from 'lib/discounts';
 import { abtest } from 'lib/abtest';
+import { planMatches } from 'lib/plans';
 import { hasActivePromotion } from 'state/active-promotions/selectors';
+import { getSitePlanSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export const isDiscountActive = ( discount, state ) => {
 	const now = new Date();
@@ -19,6 +27,13 @@ export const isDiscountActive = ( discount, state ) => {
 
 	if ( ! hasActivePromotion( state, discount.name ) ) {
 		return false;
+	}
+
+	if ( isPlainObject( discount.targetPlan ) ) {
+		const selectedSiteId = getSelectedSiteId( state );
+		const selectedSitePlanSlug = getSitePlanSlug( state, selectedSiteId );
+
+		return planMatches( selectedSitePlanSlug, discount.targetPlan );
 	}
 
 	if ( ! discount.abTestName ) {

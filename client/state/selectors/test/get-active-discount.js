@@ -6,8 +6,16 @@
 import { getActiveDiscount } from 'state/selectors';
 import { isDiscountActive } from 'state/selectors/get-active-discount';
 import { hasActivePromotion } from 'state/active-promotions/selectors';
+import { getSitePlanSlug } from 'state/sites/selectors';
 import { abtest } from 'lib/abtest';
 import discounts from 'lib/discounts';
+import {
+	PLAN_PREMIUM_2_YEARS,
+	TYPE_FREE,
+	TYPE_PREMIUM,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+} from 'lib/plans/constants';
 
 jest.mock( 'state/active-promotions/selectors', () => ( {
 	hasActivePromotion: jest.fn( () => null ),
@@ -19,6 +27,14 @@ jest.mock( 'lib/abtest', () => ( {
 
 jest.mock( 'lib/discounts', () => ( {
 	activeDiscounts: [],
+} ) );
+
+jest.mock( 'state/sites/selectors', () => ( {
+	getSitePlanSlug: jest.fn( () => null ),
+} ) );
+
+jest.mock( 'state/ui/selectors', () => ( {
+	getSelectedSiteId: jest.fn( () => 1 ),
 } ) );
 
 const DatePlusTime = time => {
@@ -134,6 +150,62 @@ describe( 'isDiscountActive()', () => {
 					endsAt: DatePlusTime( 100 ),
 				} )
 			).toBe( true );
+		} );
+	} );
+
+	describe( 'Target plan checks', () => {
+		beforeEach( () => {
+			hasActivePromotion.mockImplementation( () => true );
+			abtest.mockImplementation( () => 'upsell' );
+		} );
+
+		test( 'should return true if there is no target plan', () => {
+			expect(
+				isDiscountActive( {
+					startsAt: DatePlusTime( -10 ),
+					endsAt: DatePlusTime( 100 ),
+				} )
+			).toBe( true );
+		} );
+
+		test( 'should return true if target plan matches the selected site plan', () => {
+			getSitePlanSlug.mockImplementation( () => PLAN_PREMIUM_2_YEARS );
+
+			expect(
+				isDiscountActive( {
+					startsAt: DatePlusTime( -10 ),
+					endsAt: DatePlusTime( 100 ),
+					targetPlan: { type: TYPE_PREMIUM },
+				} )
+			).toBe( true );
+
+			expect(
+				isDiscountActive( {
+					startsAt: DatePlusTime( -10 ),
+					endsAt: DatePlusTime( 100 ),
+					targetPlan: { type: TYPE_PREMIUM, term: TERM_BIENNIALLY },
+				} )
+			).toBe( true );
+		} );
+
+		test( 'should return false if target plan does not match the selected site plan', () => {
+			getSitePlanSlug.mockImplementation( () => PLAN_PREMIUM_2_YEARS );
+
+			expect(
+				isDiscountActive( {
+					startsAt: DatePlusTime( -10 ),
+					endsAt: DatePlusTime( 100 ),
+					targetPlan: { type: TYPE_FREE },
+				} )
+			).toBe( false );
+
+			expect(
+				isDiscountActive( {
+					startsAt: DatePlusTime( -10 ),
+					endsAt: DatePlusTime( 100 ),
+					targetPlan: { type: TYPE_PREMIUM, term: TERM_ANNUALLY },
+				} )
+			).toBe( false );
 		} );
 	} );
 } );
