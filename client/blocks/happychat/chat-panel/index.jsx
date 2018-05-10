@@ -24,10 +24,6 @@ import { LAYOUT_PANEL_MAX_PARENT_SIZE } from 'blocks/happychat/chat-client/const
  * Main chat panel UI component
  */
 export class HappychatPanel extends Component {
-	static propTypes = {};
-
-	static defaultProps = {};
-
 	componentDidMount() {
 		this.props.setFocused();
 	}
