@@ -14,9 +14,6 @@ import page from 'page';
  */
 import { showSelectedPost } from '../utils';
 
-jest.mock( 'lib/feed-stream-store/actions', () => ( {
-	selectItem: jest.fn(),
-} ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => ( {
 	show: require( 'sinon' ).spy(),
