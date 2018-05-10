@@ -72,7 +72,6 @@ import privacyPolicy from './privacy-policy/reducer';
 import productsList from './products-list/reducer';
 import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
-import reader from './reader/reducer';
 import receipts from './receipts/reducer';
 import { rewindAlerts, rewindReducer as rewind } from './rewind';
 import sharing from './sharing/reducer';
@@ -161,7 +160,6 @@ const reducers = {
 	productsList,
 	purchases,
 	pushNotifications,
-	reader,
 	receipts,
 	rewind,
 	rewindAlerts,
