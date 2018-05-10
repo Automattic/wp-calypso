@@ -83,7 +83,9 @@ const Privacy = createReactClass( {
 								>
 									{ translate(
 										// eslint-disable-next-line max-len
-										'Allow us to collect information about how you use your services while you are logged in to your WordPress.com account through our own first-party analytics tool. {{cookiePolicyLink}}Learn more{{/cookiePolicyLink}}',
+										'Allow us to collect information about how you use your services while you ' +
+											'are logged in to your WordPress.com account through our own first-party ' +
+											'analytics tool. {{cookiePolicyLink}}Learn more{{/cookiePolicyLink}}',
 										{
 											components: {
 												cookiePolicyLink,
@@ -96,7 +98,9 @@ const Privacy = createReactClass( {
 							<p>
 								{ translate(
 									// eslint-disable-next-line max-len
-									'We use this information to improve our products, make our marketing to you more relevant, personalize your experience, and for the other purposes described in our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
+									'We use this information to improve our products, make our marketing to you more ' +
+										'relevant, personalize your experience, and for the other purposes described in ' +
+										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
 									{
 										components: {
 											privacyPolicyLink,
@@ -108,7 +112,9 @@ const Privacy = createReactClass( {
 							<p>
 								{ translate(
 									// eslint-disable-next-line max-len
-									'We use other tracking technologies and cookies, including some from third parties. {{cookiePolicyLink}}Learn more{{/cookiePolicyLink}} about these technologies and your options to control them.',
+									'We use other tracking technologies and cookies, including some from third ' +
+										'parties. {{cookiePolicyLink}}Learn more{{/cookiePolicyLink}} about these ' +
+										'technologies and your options to control them.',
 									{
 										components: {
 											cookiePolicyLink,
