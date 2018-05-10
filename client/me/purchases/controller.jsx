@@ -89,7 +89,12 @@ export function cancelPurchase( context, next ) {
 
 	setTitle( context, titles.cancelPurchase );
 
-	context.primary = <CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
+	context.primary = (
+		<CancelPurchase
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			siteSlug={ context.params.site }
+		/>
+	);
 	next();
 }
 
