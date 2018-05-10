@@ -90,7 +90,7 @@ class ProductImagePicker extends Component {
 				role="button"
 				tabIndex={ 0 }
 			>
-				<ProductImage siteId={ siteId } imageId={ this.props.input.value } showEditIcon={ true } />
+				<ProductImage siteId={ siteId } imageId={ this.props.input.value } showEditIcon />
 				<RemoveButton onRemove={ this.removeCurrentImage } />
 			</div>
 		);
@@ -114,6 +114,7 @@ class ProductImagePicker extends Component {
 						enabledFilters={ [ 'images' ] }
 						visible={ isSelecting }
 						isBackdropVisible={ false }
+						disabledDataSources={ [ 'pexels', 'google_photos' ] }
 						labels={ {
 							confirm: translate( 'Add' ),
 						} }
