@@ -48,11 +48,13 @@ import {
 	rewindRestore,
 	rewindBackupDismiss,
 	rewindBackup,
+	updateFilter,
 } from 'state/activity-log/actions';
 import {
 	canCurrentUser,
 	getActivityLog,
 	getActivityLogs,
+	getActivityLogFilter,
 	getBackupProgress,
 	getRequest,
 	getRequestedBackup,
@@ -107,19 +109,9 @@ class ActivityLog extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		currentPage: 1,
-	};
-
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 		this.findExistingRewind( this.props );
-	}
-
-	componentWillUpdate( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId ) {
-			this.setState( { currentPage: 1 } );
-		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -167,7 +159,10 @@ class ActivityLog extends Component {
 		return adjustMoment( { timezone, gmtOffset, moment } );
 	};
 
-	changePage = currentPage => this.setState( { currentPage }, () => window.scrollTo( 0, 0 ) );
+	changePage = pageNumber => {
+		this.props.selectPage( this.props.siteId, pageNumber );
+		window.scrollTo( 0, 0 );
+	};
 
 	/**
 	 * Render a card showing the progress of a restore.
@@ -310,6 +305,7 @@ class ActivityLog extends Component {
 	getActivityLog() {
 		const {
 			enableRewind,
+			filter: { page: requestedPage },
 			logRequestQuery,
 			logs,
 			moment,
@@ -320,15 +316,17 @@ class ActivityLog extends Component {
 			translate,
 		} = this.props;
 
-		const { currentPage } = this.state;
-
 		const disableRestore =
 			! enableRewind ||
 			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
-		const theseLogs = logs.slice( ( currentPage - 1 ) * PAGE_SIZE, currentPage * PAGE_SIZE );
+		const actualPage = Math.max(
+			1,
+			Math.min( requestedPage, Math.ceil( logs.length / PAGE_SIZE ) )
+		);
+		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
 
 		// Content shown when there are no logs.
 		// The network request either finished with no events or is still ongoing.
@@ -435,7 +433,7 @@ class ActivityLog extends Component {
 							className="activity-log__pagination"
 							key="activity-list-pagination"
 							nextLabel={ translate( 'Older' ) }
-							page={ this.state.currentPage }
+							page={ actualPage }
 							pageClick={ this.changePage }
 							perPage={ PAGE_SIZE }
 							prevLabel={ translate( 'Newer' ) }
@@ -501,6 +499,7 @@ export default connect(
 			enableRewind:
 				'active' === rewindState.state &&
 				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
+			filter: getActivityLogFilter( state, siteId ),
 			logRequestQuery,
 			logs: getActivityLogs(
 				state,
@@ -549,5 +548,6 @@ export default connect(
 				recordTracksEvent( 'calypso_activitylog_restore_confirm', { action_id: actionId } ),
 				rewindRestore( siteId, actionId )
 			),
+		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
 	}
 )( localize( ActivityLog ) );

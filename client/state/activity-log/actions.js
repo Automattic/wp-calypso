@@ -3,6 +3,8 @@
  * Internal dependencies
  */
 import {
+	ACTIVITY_LOG_FILTER_SET,
+	ACTIVITY_LOG_FILTER_UPDATE,
 	ACTIVITY_LOG_REQUEST,
 	ACTIVITY_LOG_UPDATE,
 	REWIND_ACTIVATE_FAILURE,
@@ -302,3 +304,15 @@ export function dismissRewindBackupProgress( siteId, downloadId ) {
 		downloadId,
 	};
 }
+
+export const setFilter = ( siteId, filter ) => ( {
+	type: ACTIVITY_LOG_FILTER_SET,
+	siteId,
+	filter,
+} );
+
+export const updateFilter = ( siteId, filter ) => ( {
+	type: ACTIVITY_LOG_FILTER_UPDATE,
+	siteId,
+	filter,
+} );
