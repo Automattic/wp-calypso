@@ -90,9 +90,11 @@ class CompactTinyMCE extends Component {
 
 		this.localize( isRtl, localeSlug );
 
+		const tinymceVersion = tinymce.majorVersion + '.' + tinymce.minorVersion;
+
 		tinymce.init( {
 			selector: '#' + this._id,
-			skin_url: '//s1.wp.com/wp-includes/js/tinymce/skins/lightgray',
+			skin_url: '//s1.wp.com/wp-content/tinymce-assets/' + tinymceVersion + '/skins/lightgray',
 			skin: 'lightgray',
 			body_class: 'description',
 			content_css: '/calypso/tinymce/skins/woocommerce/content.css',
