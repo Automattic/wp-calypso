@@ -15,8 +15,8 @@ update the TinyMCE skin files pulled from the WP.com CDN.  Here's how:
 ```sh
 export TINYMCE_VERSION=4.x.x # this is the NEW TinyMCE version
 export SANDBOX=your.sandbox.wordpress.com
-ssh $SANDBOX mkdir -p ~/public_html/wp-content/tinymce-assets/$TINYMCE_VERSION/skins/
-scp -r node_modules/tinymce/skins/lightgray/ $SANDBOX:~/public_html/wp-content/tinymce-assets/$TINYMCE_VERSION/skins/
+ssh $SANDBOX mkdir -p public_html/wp-content/tinymce-assets/$TINYMCE_VERSION/skins/
+scp -r node_modules/tinymce/skins/lightgray/ $SANDBOX:public_html/wp-content/tinymce-assets/$TINYMCE_VERSION/skins/
 ```
 
 - Make sure the Calypso editor is loading `skin.min.css` and `content.min.css`
