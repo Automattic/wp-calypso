@@ -18,7 +18,7 @@ import AuthorSelector from 'blocks/author-selector';
 import { hasTouch } from 'lib/touch-detect';
 import * as stats from 'lib/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
@@ -26,7 +26,9 @@ import { getCurrentUser } from 'state/current-user/selectors';
 
 export class EditorAuthor extends Component {
 	static propTypes = {
+		site: PropTypes.object,
 		post: PropTypes.object,
+		author: PropTypes.object,
 		isNew: PropTypes.bool,
 	};
 
@@ -99,12 +101,13 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
+		const isNew = isEditorNewPost( state );
 
 		const site = getSite( state, siteId );
 		const post = getEditedPost( state, siteId, postId );
 		const author = get( post, 'author', getCurrentUser( state ) );
 
-		return { site, post, author };
+		return { site, post, author, isNew };
 	},
 	{ editPost }
 )( localize( EditorAuthor ) );

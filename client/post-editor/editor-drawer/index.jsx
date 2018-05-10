@@ -79,7 +79,6 @@ class EditorDrawer extends Component {
 		post: PropTypes.object,
 		canJetpackUseTaxonomies: PropTypes.bool,
 		typeObject: PropTypes.object,
-		isNew: PropTypes.bool,
 		type: PropTypes.string,
 		setPostDate: PropTypes.func,
 		onSave: PropTypes.func,
@@ -200,7 +199,7 @@ class EditorDrawer extends Component {
 
 		return (
 			<AccordionSection>
-				<AsyncLoad require="post-editor/editor-discussion" isNew={ this.props.isNew } />
+				<AsyncLoad require="post-editor/editor-discussion" />
 			</AccordionSection>
 		);
 	}

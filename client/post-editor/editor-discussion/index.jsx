@@ -19,7 +19,7 @@ import InfoPopover from 'components/info-popover';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 
@@ -138,11 +138,11 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
+		const isNew = isEditorNewPost( state );
+		const site = getSite( state, siteId );
+		const post = getEditedPost( state, siteId, postId );
 
-		return {
-			site: getSite( state, siteId ),
-			post: getEditedPost( state, siteId, postId ),
-		};
+		return { site, post, isNew };
 	},
 	{ editPost }
 )( localize( EditorDiscussion ) );

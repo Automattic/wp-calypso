@@ -29,7 +29,6 @@ import { isSingleUserSite } from 'state/sites/selectors';
 
 class EditorActionBar extends Component {
 	static propTypes = {
-		isNew: PropTypes.bool,
 		savedPost: PropTypes.object,
 		siteId: PropTypes.number,
 		multiUserSite: PropTypes.bool,
@@ -71,9 +70,7 @@ class EditorActionBar extends Component {
 					<EditorStatusLabel post={ this.props.savedPost } advancedStatus />
 				</div>
 				<div className="editor-action-bar__cell is-center">
-					{ multiUserSite && (
-						<AsyncLoad require="post-editor/editor-author" isNew={ this.props.isNew } />
-					) }
+					{ multiUserSite && <AsyncLoad require="post-editor/editor-author" /> }
 				</div>
 				<div className="editor-action-bar__cell is-right">
 					{ showSticky && <EditorSticky /> }

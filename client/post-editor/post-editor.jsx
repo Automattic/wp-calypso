@@ -70,6 +70,8 @@ import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-butto
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+const isPostNew = post => !! ( post && ! post.ID );
+
 export class PostEditor extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -120,7 +122,6 @@ export class PostEditor extends React.Component {
 			hasContent: PostEditStore.hasContent(),
 			previewUrl: PostEditStore.getPreviewUrl(),
 			post: PostEditStore.get(),
-			isNew: PostEditStore.isNew(),
 			isAutosaving: PostEditStore.isAutosaving(),
 			isLoading: PostEditStore.isLoading(),
 		};
@@ -316,7 +317,7 @@ export class PostEditor extends React.Component {
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
-							<EditorActionBar isNew={ this.state.isNew } savedPost={ this.state.savedPost } />
+							<EditorActionBar savedPost={ this.state.savedPost } />
 							<div className="post-editor__site">
 								<Site
 									compact
@@ -367,7 +368,7 @@ export class PostEditor extends React.Component {
 									ref={ this.storeEditor }
 									mode={ mode }
 									tabIndex={ 2 }
-									isNew={ this.state.isNew }
+									isNew={ isPostNew( this.state.savedPost ) }
 									onSetContent={ this.debouncedSaveRawContent }
 									onInit={ this.onEditorInitialized }
 									onChange={ this.onEditorContentChange }
@@ -384,7 +385,6 @@ export class PostEditor extends React.Component {
 					<EditorSidebar
 						savedPost={ this.state.savedPost }
 						post={ this.state.post }
-						isNew={ this.state.isNew }
 						onPublish={ this.onPublish }
 						onTrashingPost={ this.onTrashingPost }
 						site={ site }
@@ -456,21 +456,20 @@ export class PostEditor extends React.Component {
 	};
 
 	onEditedPostChange = () => {
-		let didLoad = this.state.isLoading && ! PostEditStore.isLoading(),
-			loadingError = PostEditStore.getLoadingError(),
-			postEditState,
-			post,
-			site;
+		const wasNew = isPostNew( this.state.savedPost );
+		const isNew = isPostNew( PostEditStore.getSavedPost() );
+		const didLoad = this.state.isLoading && ! PostEditStore.isLoading();
+		const loadingError = PostEditStore.getLoadingError();
 
 		if ( loadingError ) {
 			this.setState( { loadingError } );
-		} else if ( ( PostEditStore.isNew() && ! this.state.isNew ) || PostEditStore.isLoading() ) {
+		} else if ( ( isNew && ! wasNew ) || PostEditStore.isLoading() ) {
 			// is new or loading
 			this.setState(
 				this.getDefaultState(),
 				() => this.editor && this.editor.setEditorContent( '' )
 			);
-		} else if ( this.state.isNew && this.state.hasContent && ! this.state.isDirty ) {
+		} else if ( wasNew && this.state.hasContent && ! this.state.isDirty ) {
 			// Is a copy of an existing post.
 			// When copying a post, the created draft is new and the editor is not yet dirty, but it already has content.
 			// Once the content is set, the editor becomes dirty and the following setState won't trigger anymore.
@@ -479,9 +478,9 @@ export class PostEditor extends React.Component {
 				() => this.editor && this.editor.setEditorContent( this.state.post.content )
 			);
 		} else {
-			postEditState = this.getPostEditState();
-			post = postEditState.post;
-			site = this.props.selectedSite;
+			const postEditState = this.getPostEditState();
+			const post = postEditState.post;
+			const site = this.props.selectedSite;
 			if ( didLoad && site && ( this.props.type === 'page' ) !== utils.isPage( post ) ) {
 				// incorrect post type in URL
 				page.redirect( utils.getEditURL( post, site ) );
