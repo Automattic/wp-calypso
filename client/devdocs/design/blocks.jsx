@@ -30,7 +30,6 @@ import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/docs/example';
 import FollowButton from 'blocks/follow-button/docs/example';
-import FollowMenu from 'blocks/follow-menu/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
@@ -134,7 +133,6 @@ export default class AppComponents extends React.Component {
 					<DisconnectJetpackDialog />
 					<CreditCardForm readmeFilePath="credit-card-form" />
 					<FollowButton readmeFilePath="follow-button" />
-					<FollowMenu readmeFilePath="follow-menu" />
 					<HappinessSupport />
 					<ImageEditor readmeFilePath="image-editor" />
 					<VideoEditor readmeFilePath="video-editor" />
