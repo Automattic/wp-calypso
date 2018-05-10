@@ -27,6 +27,10 @@
 	}
 }
 
+.dialog__backdrop.is-hidden {
+	background-color: rgba( white, 0 );
+}
+
 .dialog.card {
 	position: relative;
 	display: flex;

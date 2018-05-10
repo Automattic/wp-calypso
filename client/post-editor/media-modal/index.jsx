@@ -69,6 +69,7 @@ export class EditorMediaModal extends Component {
 		visible: PropTypes.bool,
 		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
 		onClose: PropTypes.func,
+		isBackdropVisible: PropTypes.bool,
 		isParentReady: PropTypes.func,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -87,6 +88,7 @@ export class EditorMediaModal extends Component {
 		visible: false,
 		mediaLibrarySelectedItems: Object.freeze( [] ),
 		onClose: noop,
+		isBackdropVisible: true,
 		isParentReady: () => true,
 		labels: Object.freeze( {} ),
 		setView: noop,
@@ -624,6 +626,7 @@ export class EditorMediaModal extends Component {
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
 				additionalClassNames="editor-media-modal"
+				isBackdropVisible={ this.props.isBackdropVisible }
 				shouldCloseOnOverlayClick={ this.shouldClose() }
 				shouldCloseOnEsc={ false }
 			>

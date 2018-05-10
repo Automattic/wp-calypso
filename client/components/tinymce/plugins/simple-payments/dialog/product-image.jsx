@@ -9,6 +9,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,14 +18,14 @@ import { url as mediaUrl } from 'lib/media/utils';
 import QueryMedia from 'components/data/query-media';
 import { getMediaItem } from 'state/selectors';
 
-const ProductImage = ( { siteId, imageId, image } ) => {
+const ProductImage = ( { siteId, imageId, image, showEditIcon } ) => {
 	if ( ! siteId || ! imageId ) {
 		return null;
 	}
 
 	if ( ! image ) {
 		return (
-			<figure className="editor-simple-payments-modal__figure is-placeholder">
+			<figure className="dialog__editor-simple-payments-modal-figure is-placeholder">
 				<QueryMedia siteId={ siteId } mediaId={ imageId } />
 			</figure>
 		);
@@ -33,9 +34,12 @@ const ProductImage = ( { siteId, imageId, image } ) => {
 	const url = mediaUrl( image, { size: 'medium' } );
 
 	return (
-		<figure className="editor-simple-payments-modal__figure">
-			<img className="editor-simple-payments-modal__image" src={ url } />
-		</figure>
+		<div className="dialog__editor-simple-payments-modal-figure-container">
+			<figure className="dialog__editor-simple-payments-modal-figure">
+				<img className="dialog__editor-simple-payments-modal-image" src={ url } alt="product" />
+			</figure>
+			{ showEditIcon && <Gridicon icon="pencil" className="dialog__product-image-edit-icon" /> }
+		</div>
 	);
 };
 

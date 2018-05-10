@@ -21,7 +21,6 @@ import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
 import FormSelect from 'components/forms/form-select';
-import UploadImage from 'blocks/upload-image';
 import { getCurrencyDefaults } from 'lib/format-currency';
 import QueryMembershipsConnectedAccounts from 'components/data/query-memberships-connected-accounts';
 import config from 'config';
@@ -30,6 +29,7 @@ import { authorizeStripeAccount } from 'state/memberships/connected-accounts/act
 import isEditedSimplePaymentsRecurring from 'state/selectors/is-edited-simple-payments-recurring';
 import getEditedSimplePaymentsStripeAccount from 'state/selectors/get-edited-simple-payments-stripe-account';
 import getMembershipsConnectedAccounts from 'state/selectors/get-memberships-connected-accounts';
+import ProductImagePicker from './product-image-picker';
 
 export const REDUX_FORM_NAME = 'simplePaymentsForm';
 
@@ -134,10 +134,6 @@ const validate = ( values, props ) => {
 		} );
 	}
 
-	if ( values.featuredImageId && values.featuredImageId === 'uploading' ) {
-		errors.featuredImageId = 'uploading';
-	}
-
 	// Checks for 'Memberships' only
 	if ( props.isRecurringSubscription ) {
 		if ( ! values.renewal_schedule ) {
@@ -178,38 +174,13 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 	);
 };
 
-// helper to render UploadImage as a form field
-class UploadImageField extends Component {
-	handleImageEditorDone = () => this.props.input.onChange( 'uploading' );
-	handleImageUploadDone = uploadedImage => this.props.input.onChange( uploadedImage.ID );
-	handleImageRemove = () => this.props.input.onChange( null );
-
-	render() {
-		return (
-			<UploadImage
-				defaultImage={ this.props.input.value }
-				onImageEditorDone={ this.handleImageEditorDone }
-				onImageUploadDone={ this.handleImageUploadDone }
-				onImageRemove={ this.handleImageRemove }
-				onError={ this.props.onError }
-			/>
-		);
-	}
-}
-
 class ProductForm extends Component {
-	handleUploadImageError = ( errorCode, errorMessage ) => this.props.showError( errorMessage );
-
 	render() {
 		const { translate } = this.props;
 
 		return (
 			<form className="editor-simple-payments-modal__form">
-				<Field
-					name="featuredImageId"
-					onError={ this.handleUploadImageError }
-					component={ UploadImageField }
-				/>
+				<Field name="featuredImageId" component={ ProductImagePicker } />
 				<div className="editor-simple-payments-modal__form-fields">
 					<ReduxFormFieldset
 						name="title"
