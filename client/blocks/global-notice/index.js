@@ -11,7 +11,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { infoNotice, removeNotice } from 'state/notices/actions';
+import {
+	errorNotice,
+	infoNotice,
+	plainNotice,
+	removeNotice,
+	successNotice,
+	warningNotice,
+} from 'state/notices/actions';
 
 export class GlobalNotice extends Component {
 	static propTypes = {
@@ -21,7 +28,10 @@ export class GlobalNotice extends Component {
 	};
 
 	componentWillMount() {
-		const { notice } = this.props.displayNotice( this.props.text, { isPersistent: true } );
+		const { notice } = this.props.displayNotice( this.props.text, {
+			...this.props,
+			isPersistent: true,
+		} );
 		this.notice = notice;
 	}
 
@@ -36,7 +46,13 @@ export class GlobalNotice extends Component {
 	}
 }
 
-export const InfoNotice = connect( null, {
-	displayNotice: infoNotice,
-	removeNotice,
-} )( GlobalNotice );
+export const ErrorNotice = connectDisplayHandler( errorNotice )( GlobalNotice );
+export const InfoNotice = connectDisplayHandler( infoNotice )( GlobalNotice );
+export const PlainNotice = connectDisplayHandler( plainNotice )( GlobalNotice );
+export const RemoveNotice = connectDisplayHandler( removeNotice )( GlobalNotice );
+export const SuccessNotice = connectDisplayHandler( successNotice )( GlobalNotice );
+export const WarningNotice = connectDisplayHandler( warningNotice )( GlobalNotice );
+
+function connectDisplayHandler( displayHandler ) {
+	return connect( null, { displayNotice: displayHandler, removeNotice } );
+}
