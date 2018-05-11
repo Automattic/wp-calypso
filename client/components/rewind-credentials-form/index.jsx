@@ -34,6 +34,7 @@ export class RewindCredentialsForm extends Component {
 		allowDelete: PropTypes.bool,
 		onCancel: PropTypes.func,
 		onComplete: PropTypes.func,
+		siteUrl: PropTypes.string,
 	};
 
 	state = {
@@ -72,10 +73,11 @@ export class RewindCredentialsForm extends Component {
 	};
 
 	handleSubmit = () => {
-		const { role, siteId, translate, updateCredentials } = this.props;
+		const { role, siteId, siteUrl, translate, updateCredentials } = this.props;
 
 		const payload = {
 			role,
+			site_url: siteUrl,
 			...this.state.form,
 		};
 
