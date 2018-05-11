@@ -112,10 +112,6 @@ class Plans extends Component {
 		this.selectFreeJetpackPlan();
 	};
 
-	handleHelpButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
-	};
-
 	redirectToWpAdmin() {
 		const { queryRedirect } = this.props;
 		if ( queryRedirect ) {
@@ -227,7 +223,7 @@ class Plans extends Component {
 							label={ helpButtonLabel }
 							eventName="calypso_jpc_plans_chat_initiated"
 						>
-							<HelpButton onClick={ this.handleHelpButtonClick } label={ helpButtonLabel } />
+							<HelpButton label={ helpButtonLabel } />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>

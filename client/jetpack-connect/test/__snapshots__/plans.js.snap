@@ -159,9 +159,8 @@ exports[`Plans should render plans 1`] = `
         eventName="calypso_jpc_plans_chat_initiated"
         label="Need help?"
       >
-        <Localized(JetpackConnectHelpButton)
+        <Connect(Localized(JetpackConnectHelpButton))
           label="Need help?"
-          onClick={[Function]}
         />
       </Connect(Localized(JetpackConnectHappychatButton))>
     </LoggedOutFormLinks>
