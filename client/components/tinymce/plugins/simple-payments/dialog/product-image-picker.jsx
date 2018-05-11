@@ -15,16 +15,13 @@ import PropTypes from 'prop-types';
  */
 
 import AsyncLoad from 'components/async-load';
-import { getMediaItem } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import EditorFeaturedImagePreviewContainer from 'post-editor/editor-featured-image/preview-container';
 import RemoveButton from 'components/remove-button';
 
 class ProductImagePicker extends Component {
 	static propTypes = {
-		featuredImage: PropTypes.object,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	};
@@ -34,18 +31,12 @@ class ProductImagePicker extends Component {
 	};
 
 	showMediaModal = event => {
-		const { siteId, featuredImage } = this.props;
-
 		if ( event.key && event.key !== 'Enter' ) {
 			// A11y - prevent opening Media modal with any key
 			return;
 		}
 
-		this.setState( { isSelecting: true }, () => {
-			if ( featuredImage ) {
-				MediaActions.setLibrarySelectedItems( siteId, [ featuredImage ] );
-			}
-		} );
+		this.setState( { isSelecting: true } );
 	};
 
 	setImage = value => {
@@ -135,11 +126,8 @@ class ProductImagePicker extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
-
+export default connect( state => {
 	return {
-		siteId,
-		featuredImage: getMediaItem( state, siteId, ownProps.input.value ),
+		siteId: getSelectedSiteId( state ),
 	};
 } )( localize( ProductImagePicker ) );
