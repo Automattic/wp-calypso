@@ -30,9 +30,9 @@ module.exports = {
 		// i18n-calypso translate triggers false failures
 		'jsx-a11y/anchor-has-content': 0,
 
-		// error if any given line is over 140 characters long.
-		// Ideally this would be even lower(120, 80?), but that's a big step.
-		'max-len': [ 2, { code: 140 } ],
+		// turn off these rules because they are enforced by prettier
+		'max-len': 0,
+		indent: 0,
 
 		// error if any module depends on the data-observe mixin, which is deprecated
 		'no-restricted-imports': [ 2, 'lib/mixins/data-observe' ],
@@ -62,8 +62,5 @@ module.exports = {
 		// Disallow importing or requiring packages that are not listed in package.json
 		// This prevents us from depending on transitive dependencies, which could break in unexpected ways.
 		'import/no-extraneous-dependencies': [ 'error', { packageDir: './' } ],
-
-		// turn off indenting rules since we let prettier handle it
-		indent: 0,
 	},
 };
