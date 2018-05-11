@@ -179,6 +179,15 @@ class TransactionsTable extends React.Component {
 }
 
 TransactionsTable.propTypes = {
+	//connected props
+	app: PropTypes.string,
+	date: PropTypes.object,
+	page: PropTypes.number,
+	pageSize: PropTypes.number.isRequired,
+	query: PropTypes.string.isRequired,
+	total: PropTypes.number.isRequired,
+	transactions: PropTypes.array,
+	//own props
 	transactionType: PropTypes.string.isRequired,
 	//array allows to accept the output of translate() with components in the string
 	emptyTableText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
@@ -192,13 +201,13 @@ export default connect(
 		const filteredTransactions = getFilteredBillingTransactions( state, transactionType );
 		const filter = getBillingTransactionFilters( state, transactionType );
 		return {
-			transactions: filteredTransactions.transactions,
-			total: filteredTransactions.total,
-			pageSize: filteredTransactions.pageSize,
 			app: filter.app,
 			date: filter.date,
 			page: filter.page,
+			pageSize: filteredTransactions.pageSize,
 			query: filter.query,
+			total: filteredTransactions.total,
+			transactions: filteredTransactions.transactions,
 		};
 	},
 	{

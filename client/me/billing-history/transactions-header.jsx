@@ -20,9 +20,9 @@ import DropdownSeparator from 'components/select-dropdown/separator';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setApp, setDate } from 'state/ui/billing-transactions/actions';
 import {
-	getBillingTransactionFilters,
 	getBillingTransactionAppFilterValues,
 	getBillingTransactionDateFilterValues,
+	getBillingTransactionFilters,
 } from 'state/selectors';
 
 class TransactionsHeader extends React.Component {
@@ -49,8 +49,8 @@ class TransactionsHeader extends React.Component {
 
 	getDatePopoverItemClickHandler( analyticsEvent, date ) {
 		return () => {
-			this.recordClickEvent( 'Date Popover Item: ' + analyticsEvent );
 			const { transactionType } = this.props;
+			this.recordClickEvent( 'Date Popover Item: ' + analyticsEvent );
 			this.props.setDate( transactionType, date.month, date.operator );
 			this.setState( { activePopover: '' } );
 		};
@@ -99,11 +99,9 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderDatePopover() {
-		const { filter, dateFilters } = this.props;
-		const selectedFilter = find( dateFilters, filterMeta =>
-			isEqual( filterMeta.value, filter.date )
-		);
-		const selectedText = selectedFilter ? selectedFilter.title : this.props.translate( 'Date' );
+		const { dateFilters, filter, translate } = this.props;
+		const selectedFilter = find( dateFilters, { value: filter.date } );
+		const selectedText = selectedFilter ? selectedFilter.title : translate( 'Date' );
 
 		return (
 			<SelectDropdown
@@ -111,10 +109,10 @@ class TransactionsHeader extends React.Component {
 				onClick={ this.handleAppsPopoverLinkClick }
 				className="billing-history__transactions-header-select-dropdown"
 			>
-				<DropdownLabel>{ this.props.translate( 'Recent Transactions' ) }</DropdownLabel>
+				<DropdownLabel>{ translate( 'Recent Transactions' ) }</DropdownLabel>
 				{ this.renderDatePicker(
 					'Newest',
-					this.props.translate( 'Newest' ),
+					translate( 'Newest' ),
 					{
 						month: null,
 						operator: null,
@@ -122,7 +120,7 @@ class TransactionsHeader extends React.Component {
 					null
 				) }
 				<DropdownSeparator />
-				<DropdownLabel>{ this.props.translate( 'By Month' ) }</DropdownLabel>
+				<DropdownLabel>{ translate( 'By Month' ) }</DropdownLabel>
 				{ dateFilters.map( function( { count, title, value }, index ) {
 					let analyticsEvent = 'Current Month';
 
@@ -167,9 +165,9 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderAppsPopover() {
-		const { filter, appFilters } = this.props;
-		const selectedFilter = find( appFilters, filterMeta => filterMeta.value === filter.app );
-		const selectedText = selectedFilter ? selectedFilter.title : this.props.translate( 'All Apps' );
+		const { appFilters, filter, translate } = this.props;
+		const selectedFilter = find( appFilters, { value: filter.app } );
+		const selectedText = selectedFilter ? selectedFilter.title : translate( 'All Apps' );
 
 		return (
 			<SelectDropdown
@@ -177,8 +175,8 @@ class TransactionsHeader extends React.Component {
 				onClick={ this.handleAppsPopoverLinkClick }
 				className="billing-history__transactions-header-select-dropdown"
 			>
-				<DropdownLabel>{ this.props.translate( 'App Name' ) }</DropdownLabel>
-				{ this.renderAppPicker( this.props.translate( 'All Apps' ), 'all' ) }
+				<DropdownLabel>{ translate( 'App Name' ) }</DropdownLabel>
+				{ this.renderAppPicker( translate( 'All Apps' ), 'all' ) }
 				{ appFilters.map( function( { title, value, count } ) {
 					return this.renderAppPicker( title, value, count, 'Specific App' );
 				}, this ) }
@@ -203,14 +201,19 @@ class TransactionsHeader extends React.Component {
 }
 
 TransactionsHeader.propTypes = {
+	//connected props
+	appFilters: PropTypes.array.isRequired,
+	dateFilters: PropTypes.array.isRequired,
+	filter: PropTypes.object.isRequired,
+	//own props
 	transactionType: PropTypes.string.isRequired,
 };
 
 export default connect(
 	( state, { transactionType } ) => ( {
-		filter: getBillingTransactionFilters( state, transactionType ),
 		appFilters: getBillingTransactionAppFilterValues( state, transactionType ),
 		dateFilters: getBillingTransactionDateFilterValues( state, transactionType ),
+		filter: getBillingTransactionFilters( state, transactionType ),
 	} ),
 	{
 		recordGoogleEvent,
