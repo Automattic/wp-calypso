@@ -103,7 +103,13 @@ class EditorFeaturedImagePreview extends Component {
 
 		let placeholder;
 		if ( this.state.transientSrc ) {
-			placeholder = <img src={ this.state.transientSrc } />;
+			placeholder = (
+				<img
+					src={ this.state.transientSrc }
+					className="editor-featured-image__preview-image"
+					alt="placeholder"
+				/>
+			);
 		} else {
 			placeholder = <SpinnerLine />;
 		}

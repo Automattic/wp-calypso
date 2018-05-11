@@ -100,8 +100,6 @@
 	}
 
 	.dialog__product-image-container {
-		width: 200px;
-		height: 200px;
 		position: relative;
 		margin-bottom: 20px;
 		margin-right: 25px;
@@ -131,11 +129,6 @@
 				box-shadow: inset 0 0 0 2px $blue-light;
 			}
 		}
-	}
-
-	.dialog__product-image {
-		max-width: 200px;
-		max-height: 200px;
 	}
 
 	.dialog__product-image-edit-icon {
