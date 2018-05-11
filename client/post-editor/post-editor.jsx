@@ -35,7 +35,6 @@ import { recordStat, recordEvent } from 'lib/posts/stats';
 import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
-import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import {
 	getEditorPostId,
@@ -44,7 +43,7 @@ import {
 	isEditorSaveBlocked,
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
+import { editPost } from 'state/posts/actions';
 import { getEditedPostValue, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasBrokenSiteUserConnection, editedPostHasContent } from 'state/selectors';
@@ -147,14 +146,9 @@ export class PostEditor extends React.Component {
 	}
 
 	componentWillUpdate( nextProps, nextState ) {
-		const { isNew, savedPost, isSaving } = nextState;
-		if ( ! isNew && savedPost && savedPost !== this.state.savedPost ) {
-			nextProps.receivePost( savedPost );
-		}
-
 		// Cancel pending changes or autosave when user initiates a save. These
 		// will have been reflected in the save payload.
-		if ( isSaving && ! this.state.isSaving ) {
+		if ( nextState.isSaving && ! this.state.isSaving ) {
 			this.debouncedAutosave.cancel();
 			this.throttledAutosave.cancel();
 		}
@@ -948,18 +942,6 @@ export class PostEditor extends React.Component {
 		const isNotPrivateOrIsConfirmed =
 			'private' !== post.status || 'closed' !== this.state.confirmationSidebar;
 
-		if ( 'draft' === post.status ) {
-			this.props.setEditorLastDraft( post.site_ID, post.ID );
-		} else {
-			this.props.resetEditorLastDraft();
-		}
-
-		// Remove this when the editor is completely reduxified ( When using Redux actions for all post saving requests )
-		this.props.savePostSuccess( post.site_ID, this.props.postId, post, {} );
-
-		// Receive updated post into state
-		this.props.receivePost( post );
-
 		const nextState = {
 			isSaving: false,
 			isPublishing: false,
@@ -1300,11 +1282,7 @@ const enhance = flow(
 			};
 		},
 		{
-			setEditorLastDraft,
-			resetEditorLastDraft,
-			receivePost,
 			editPost,
-			savePostSuccess,
 			setEditorModePreference: partial( savePreference, 'editor-mode' ),
 			setLayoutFocus,
 			setNextLayoutFocus,

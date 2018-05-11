@@ -244,11 +244,7 @@ function dispatcherCallback( payload ) {
 
 		case 'RECEIVE_POST_TO_EDIT':
 			_isLoading = false;
-			if ( action.error ) {
-				setLoadingError( action.error );
-			} else {
-				startEditing( action.site, action.post );
-			}
+			startEditing( action.site, action.post );
 			PostEditStore.emit( 'change' );
 			break;
 
