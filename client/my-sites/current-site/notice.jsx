@@ -171,8 +171,13 @@ class SiteNotice extends React.Component {
 		return (
 			<div className="site__notices">
 				<QueryActivePromotions />
-				{ this.props.activeDiscount ? this.activeDiscountNotice() : this.freeToPaidPlanNotice() }
-				<DomainToPaidPlanNotice />
+				{
+					[
+						this.activeDiscountNotice(),
+						this.freeToPaidPlanNotice(),
+						<DomainToPaidPlanNotice />,
+					].filter( Boolean )[ 0 ]
+				}
 				{ this.getSiteRedirectNotice( site ) }
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.domainCreditNotice() }
