@@ -6,10 +6,9 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import config from 'config';
-import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes, isEmpty, isEqual } from 'lodash';
+import { get, includes, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +37,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import UnavailabilityNotice from './unavailability-notice';
-import { adjustMoment, filterStateToQuery, getActivityLogQuery, getStartMoment } from './utils';
+import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
@@ -118,18 +117,6 @@ class ActivityLog extends Component {
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.rewindState.rewind && this.props.rewindState.rewind ) {
 			this.findExistingRewind( this.props );
-		}
-
-		if ( ! isEqual( prevProps.filter, this.props.filter ) ) {
-			const query = filterStateToQuery( this.props.filter );
-			const queryString = query
-				.map( pair => pair.join( '=' ) )
-				.join( '&' )
-				.replace( /page=1&/, '' );
-
-			queryString === 'page=1'
-				? page( window.location.pathname + window.location.hash )
-				: page( window.location.pathname + '?' + queryString + window.location.hash );
 		}
 	}
 
