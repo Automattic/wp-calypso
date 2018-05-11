@@ -89,6 +89,7 @@ PurchasesList.propTypes = {
 	noticeType: PropTypes.string,
 	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
 	sites: PropTypes.array.isRequired,
+	userId: PropTypes.number.isRequired,
 };
 
 export default connect( state => {
@@ -98,5 +99,6 @@ export default connect( state => {
 		isFetchingUserPurchases: isFetchingUserPurchases( state ),
 		purchases: getUserPurchases( state, userId ),
 		sites: getSites( state ),
+		userId,
 	};
 } )( localize( PurchasesList ) );
