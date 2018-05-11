@@ -34,12 +34,12 @@ class PopoverMenu extends Component {
 		popoverComponent: Popover,
 	};
 
+	menu = React.createRef();
+
 	componentWillUnmount() {
 		// Make sure we don't hold on to reference to the DOM reference
 		this._previouslyFocusedElement = null;
 	}
-
-	storeMenu = ref => ( this.menu = ref );
 
 	render() {
 		const PopoverComponent = this.props.popoverComponent;
@@ -69,7 +69,7 @@ class PopoverMenu extends Component {
 				rootClassName={ rootClassName }
 			>
 				<div
-					ref={ this.storeMenu }
+					ref={ this.menu }
 					role="menu"
 					className="popover__menu"
 					onKeyDown={ this._onKeyDown }
@@ -99,7 +99,7 @@ class PopoverMenu extends Component {
 	};
 
 	_onShow = () => {
-		const elementToFocus = this.menu;
+		const elementToFocus = this.menu.current;
 
 		this._previouslyFocusedElement = document.activeElement;
 
@@ -115,7 +115,7 @@ class PopoverMenu extends Component {
 	 * bottom.
 	 */
 	_getClosestSibling = ( target, isDownwardMotion = true ) => {
-		const menu = this.menu;
+		const menu = this.menu.current;
 
 		let first = menu.firstChild,
 			last = menu.lastChild;

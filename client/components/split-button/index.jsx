@@ -51,16 +51,15 @@ class SplitButton extends PureComponent {
 
 	state = {
 		isMenuVisible: false,
-		popoverContext: false,
 	};
+
+	popoverContext = React.createRef();
 
 	handleMainClick = event => this.props.onClick( event );
 
 	handleMenuClick = () => this.toggleMenu( ! this.state.isMenuVisible );
 
 	hideMenu = () => this.toggleMenu( false );
-
-	setPopoverContext = popoverContext => popoverContext && this.setState( { popoverContext } );
 
 	toggleMenu = isMenuVisible => {
 		if ( ! this.props.disabled ) {
@@ -86,7 +85,7 @@ class SplitButton extends PureComponent {
 			className,
 			popoverClassName,
 		} = this.props;
-		const { isMenuVisible, popoverContext } = this.state;
+		const { isMenuVisible } = this.state;
 		const popoverClasses = classnames( 'split-button__menu', 'popover', popoverClassName );
 		const classes = classnames( 'split-button', className, {
 			'is-menu-visible': isMenuVisible,
@@ -111,7 +110,7 @@ class SplitButton extends PureComponent {
 					compact={ compact }
 					primary={ primary }
 					scary={ scary }
-					ref={ this.setPopoverContext }
+					ref={ this.popoverContext }
 					onClick={ this.handleMenuClick }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					disabled={ disabled || disableMenu }
@@ -123,7 +122,7 @@ class SplitButton extends PureComponent {
 					isVisible={ isMenuVisible }
 					onClose={ this.hideMenu }
 					position={ position }
-					context={ popoverContext }
+					context={ this.popoverContext.current }
 					className={ popoverClasses }
 				>
 					{ children }
