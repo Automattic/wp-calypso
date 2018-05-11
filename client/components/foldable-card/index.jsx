@@ -141,6 +141,7 @@ class FoldableCard extends Component {
 								onKeyPress={ this.onActionKeyPress }
 								onClick={ this.clickAction }
 								role="button"
+								tabIndex={ -1 }
 							>
 								{ ( this.state.expanded && actionButtonExpanded ) || actionButton }
 							</div>
