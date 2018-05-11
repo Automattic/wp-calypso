@@ -77,6 +77,7 @@ export default class extends React.Component {
 				// ID field of parent form instead of sending post actions bellow
 				if ( image && image.ID ) {
 					this.props.onValueChange( image.ID );
+					MediaActions.setLibrarySelectedItems( this.props.siteId, [ image ] );
 				}
 				return;
 			}
