@@ -21,6 +21,7 @@ jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 jest.mock( 'lib/redux-bridge', () => ( {
+	reduxDispatch: action => action,
 	reduxGetState: () => ( { ui: { editor: { saveBlockers: [] } } } ),
 } ) );
 

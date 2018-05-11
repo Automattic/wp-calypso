@@ -18,8 +18,10 @@ import versionCompare from 'lib/version-compare';
 import Dispatcher from 'dispatcher';
 import { recordSaveEvent } from './stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
-import { reduxGetState } from 'lib/redux-bridge';
+import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { isEditorSaveBlocked } from 'state/ui/editor/selectors';
+import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
+import { receivePost, savePostSuccess } from 'state/posts/actions';
 
 let PostActions;
 
@@ -68,13 +70,11 @@ PostActions = {
 	 * @param {Number} postId Post ID to load
 	 */
 	startEditingExisting: function( site, postId ) {
-		let currentPost = PostEditStore.get(),
-			postHandle;
-
 		if ( ! site || ! site.ID ) {
 			return;
 		}
 
+		const currentPost = PostEditStore.get();
 		if ( currentPost && currentPost.site_ID === site.ID && currentPost.ID === postId ) {
 			return; // already editing same post
 		}
@@ -85,16 +85,27 @@ PostActions = {
 			postId: postId,
 		} );
 
-		postHandle = wpcom.site( site.ID ).post( postId );
+		wpcom
+			.site( site.ID )
+			.post( postId )
+			.get( { context: 'edit', meta: 'autosave' } )
+			.then( post => {
+				Dispatcher.handleServerAction( {
+					type: 'RECEIVE_POST_TO_EDIT',
+					post,
+					site,
+				} );
 
-		postHandle.get( { context: 'edit', meta: 'autosave' }, function( error, data ) {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_POST_TO_EDIT',
-				error: error,
-				post: data,
-				site,
+				// Retrieve the normalized post and use it to update Redux store
+				const receivedPost = PostEditStore.get();
+				reduxDispatch( receivePost( receivedPost ) );
+			} )
+			.catch( error => {
+				Dispatcher.handleServerAction( {
+					type: 'SET_POST_LOADING_ERROR',
+					error,
+				} );
 			} );
-		} );
 	},
 
 	/**
@@ -292,6 +303,26 @@ PostActions = {
 				post: data,
 				site,
 			} );
+
+			// Retrieve the normalized post and use it to update Redux store
+			if ( ! error ) {
+				const receivedPost = PostEditStore.get();
+
+				if ( receivedPost.status === 'draft' ) {
+					// If a draft was successfully saved, set it as "last edited draft"
+					// There's UI in masterbar for one-click "continue editing"
+					reduxDispatch( setEditorLastDraft( receivedPost.site_ID, receivedPost.ID ) );
+				} else {
+					// Draft was published or trashed: reset the "last edited draft" record
+					reduxDispatch( resetEditorLastDraft() );
+				}
+
+				// `post.ID` can be null/undefined, which means we're saving new post.
+				// `savePostSuccess` will convert the temporary ID (empty string key) in Redux
+				// to the newly assigned ID in `receivedPost.ID`.
+				reduxDispatch( savePostSuccess( receivedPost.site_ID, post.ID, receivedPost, {} ) );
+				reduxDispatch( receivePost( receivedPost ) );
+			}
 
 			callback( error, data );
 		} );
