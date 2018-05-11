@@ -110,7 +110,6 @@ export class PostEditor extends React.Component {
 			isTitleFocused: false,
 			showPreview: false,
 			isPostPublishPreview: false,
-			previewAction: null,
 		};
 	}
 
@@ -136,8 +135,6 @@ export class PostEditor extends React.Component {
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
-		this.onPreviewClick = this.onPreview.bind( this, 'preview' );
-		this.onViewClick = this.onPreview.bind( this, 'view' );
 		this.useDefaultSidebarFocus();
 		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
@@ -314,7 +311,7 @@ export class PostEditor extends React.Component {
 						isPublishing={ this.state.isPublishing }
 						isSaving={ this.state.isSaving }
 						loadRevision={ this.loadRevision }
-						onPreview={ this.onPreviewClick }
+						onPreview={ this.onPreview }
 						onPublish={ this.onPublish }
 						onSave={ this.onSave }
 						onSaveDraft={ this.props.onSaveDraft }
@@ -433,11 +430,7 @@ export class PostEditor extends React.Component {
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 					) : null }
-					<EditorNotice
-						{ ...this.state.notice }
-						onDismissClick={ this.hideNotice }
-						onViewClick={ this.onPreview }
-					/>
+					<EditorNotice { ...this.state.notice } onDismissClick={ this.hideNotice } />
 				</div>
 				{ isTrashed ? (
 					<RestorePostDialog onClose={ this.onClose } onRestore={ this.onSaveTrashed } />
@@ -716,17 +709,11 @@ export class PostEditor extends React.Component {
 		this.setState( { isSaving: true } );
 	};
 
-	getPreviewUrl = () => {
-		const { post, previewAction, previewUrl } = this.state;
+	getPreviewUrl() {
+		return this.state.previewUrl;
+	}
 
-		if ( previewAction === 'view' && post ) {
-			return post.URL;
-		}
-
-		return previewUrl;
-	};
-
-	getExternalUrl = () => {
+	getExternalUrl() {
 		const { post } = this.state;
 
 		if ( post ) {
@@ -734,18 +721,9 @@ export class PostEditor extends React.Component {
 		}
 
 		return this.getPreviewUrl();
-	};
+	}
 
-	onPreview = ( action, event ) => {
-		let status = 'draft',
-			previewPost;
-
-		if ( this.state.previewAction !== action ) {
-			this.setState( {
-				previewAction: action,
-			} );
-		}
-
+	onPreview = event => {
 		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
 			return this.iframePreview();
 		}
@@ -754,20 +732,16 @@ export class PostEditor extends React.Component {
 			this._previewWindow = window.open( 'about:blank', 'WordPress.com Post Preview' );
 		}
 
-		if ( this.state.savedPost && this.state.savedPost.status ) {
-			status = this.state.savedPost.status;
-		}
-
-		previewPost = function() {
+		const previewPost = () => {
 			if ( this._previewWindow ) {
 				this._previewWindow.location = this.getPreviewUrl();
 				this._previewWindow.focus();
 			} else {
 				this._previewWindow = window.open( this.getPreviewUrl(), 'WordPress.com Post Preview' );
 			}
-		}.bind( this );
+		};
 
-		if ( status === 'publish' ) {
+		if ( this.state.savedPost && this.state.savedPost.status === 'publish' ) {
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.edit( { content: this.editor.getContent() } );
 			actions.autosave( this.props.selectedSite, previewPost );
@@ -799,7 +773,6 @@ export class PostEditor extends React.Component {
 			this.setState( {
 				showPreview: false,
 				isPostPublishPreview: false,
-				previewAction: null,
 			} );
 		}
 	};
@@ -819,7 +792,6 @@ export class PostEditor extends React.Component {
 		this.setState( {
 			showPreview: false,
 			isPostPublishPreview: false,
-			previewAction: null,
 		} );
 
 		return false;
