@@ -21,14 +21,14 @@ import {
 	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
+import { getPurchase, isDataLoading, recordPageView } from '../utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
 import Notice from 'components/notice';
-import { managePurchase, purchasesRoot } from '../paths';
+import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
@@ -41,8 +41,10 @@ class CancelPrivacyProtection extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		purchaseId: PropTypes.number.isRequired,
 		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		siteSlug: PropTypes.string.isRequired,
 	};
 
 	static initialState = {
@@ -210,7 +212,7 @@ class CancelPrivacyProtection extends Component {
 					title="Purchases > Cancel Privacy Protection"
 				/>
 				<QueryUserPurchases userId={ user.get().ID } />
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
+				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
 					{ titles.cancelPrivacyProtection }
 				</HeaderCake>
 				{ notice }

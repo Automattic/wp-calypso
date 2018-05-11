@@ -23,7 +23,7 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'lib/purchases';
-import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
+import { getPurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -34,7 +34,7 @@ import HeaderCake from 'components/header-cake';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
-import { managePurchase, purchasesRoot } from '../paths';
+import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
@@ -46,9 +46,11 @@ class CancelPurchase extends React.Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		selectedPurchase: PropTypes.object,
 		includedDomainPurchase: PropTypes.object,
+		purchaseId: PropTypes.number.isRequired,
+		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		siteSlug: PropTypes.string.isRequired,
 	};
 
 	state = {
@@ -177,7 +179,7 @@ class CancelPurchase extends React.Component {
 
 		return (
 			<Main className="cancel-purchase">
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
+				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
 					{ titles.cancelPurchase }
 				</HeaderCake>
 

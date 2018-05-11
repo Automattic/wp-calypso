@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -25,6 +24,7 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { managePurchase } from 'me/purchases/paths';
 
 const user = userFactory();
 
@@ -33,8 +33,10 @@ class AddCardDetails extends PurchaseCardDetails {
 		clearPurchases: PropTypes.func.isRequired,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		purchaseId: PropTypes.number.isRequired,
 		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		siteSlug: PropTypes.string.isRequired,
 	};
 
 	componentWillMount() {
@@ -66,7 +68,9 @@ class AddCardDetails extends PurchaseCardDetails {
 					path="/me/purchases/:site/:purchaseId/payment/add"
 					title="Purchases > Add Card Details"
 				/>
-				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.addCardDetails }</HeaderCake>
+				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
+					{ titles.addCardDetails }
+				</HeaderCake>
 
 				<CreditCardForm
 					apiParams={ this.getApiParams() }
