@@ -14,6 +14,7 @@ import React from 'react';
  */
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
+import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
@@ -57,10 +58,10 @@ const Privacy = createReactClass( {
 		);
 
 		const cookiePolicyLink = (
-			<a href="https://www.automattic.com/cookies" target="_blank" rel="noopener noreferrer" />
+			<ExternalLink href="https://www.automattic.com/cookies" target="_blank" />
 		);
 		const privacyPolicyLink = (
-			<a href="https://www.automattic.com/privacy" target="_blank" rel="noopener noreferrer" />
+			<ExternalLink href="https://www.automattic.com/privacy" target="_blank" />
 		);
 
 		return (
@@ -82,10 +83,9 @@ const Privacy = createReactClass( {
 									onChange={ this.updateTracksOptOut }
 								>
 									{ translate(
-										// eslint-disable-next-line max-len
-										'Allow us to collect information about how you use your services while you ' +
-											'are logged in to your WordPress.com account through our own first-party ' +
-											'analytics tool. {{cookiePolicyLink}}Learn more{{/cookiePolicyLink}}',
+										'Share information with our analytics tool about your use of services while ' +
+											'logged in to your WordPress.com account. {{cookiePolicyLink}}Learn more' +
+											'{{/cookiePolicyLink}}',
 										{
 											components: {
 												cookiePolicyLink,
@@ -97,10 +97,9 @@ const Privacy = createReactClass( {
 
 							<p>
 								{ translate(
-									// eslint-disable-next-line max-len
-									'We use this information to improve our products, make our marketing to you more ' +
-										'relevant, personalize your experience, and for the other purposes described in ' +
-										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
+									'This information helps us improve our products, make marketing to you more ' +
+										'relevant, personalize your WordPress.com experience, and more as detailed in ' +
+										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}',
 									{
 										components: {
 											privacyPolicyLink,
@@ -111,10 +110,9 @@ const Privacy = createReactClass( {
 
 							<p>
 								{ translate(
-									// eslint-disable-next-line max-len
-									'We use other tracking technologies and cookies, including some from third ' +
-										'parties. {{cookiePolicyLink}}Learn more{{/cookiePolicyLink}} about these ' +
-										'technologies and your options to control them.',
+									'We use other tracking tools, including some from third parties. ' +
+										'{{cookiePolicyLink}}Read about those{{/cookiePolicyLink}} these and how to ' +
+										'control them.',
 									{
 										components: {
 											cookiePolicyLink,
