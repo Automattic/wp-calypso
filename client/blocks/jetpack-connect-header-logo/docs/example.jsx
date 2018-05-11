@@ -36,6 +36,7 @@ class JetpackConnectHeaderLogoExample extends Component {
 					<option value="pressable">Pressable</option>
 					<option value="milesweb">Milesweb</option>
 					<option value="bluehost">Bluehost</option>
+					<option value="inmotion">InMotion</option>
 				</select>
 			</div>
 		);
