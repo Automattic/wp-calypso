@@ -74,7 +74,11 @@ class DomainProductPrice extends React.Component {
 						} ) }
 					</span>
 				) }
-				<span className={ shouldShowStrikethrough && 'domain-product-price__included-in-plan' }>
+				<span
+					className={ classnames( {
+						'domain-product-price__included-in-plan': shouldShowStrikethrough,
+					} ) }
+				>
 					{ translate( 'Included in paid plans' ) }
 				</span>
 			</div>
