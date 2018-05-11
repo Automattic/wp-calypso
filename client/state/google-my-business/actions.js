@@ -7,7 +7,7 @@ import {
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
-import { saveSiteSettings } from 'state/site-settings/actions';
+import { saveSiteKeyrings } from 'state/site-keyrings/actions';
 
 export const connectGoogleMyBusinessLocation = (
 	siteId,
@@ -15,7 +15,7 @@ export const connectGoogleMyBusinessLocation = (
 	locationId
 ) => dispatch => {
 	return dispatch(
-		saveSiteSettings( siteId, {
+		saveSiteKeyrings( siteId, {
 			google_my_business_keyring_id: keyringConnectionId,
 			google_my_business_location_id: locationId,
 		} )
@@ -32,7 +32,7 @@ export const connectGoogleMyBusinessLocation = (
 
 export const disconnectGoogleMyBusinessLocation = siteId => dispatch => {
 	return dispatch(
-		saveSiteSettings( siteId, {
+		saveSiteKeyrings( siteId, {
 			google_my_business_keyring_id: false,
 			google_my_business_location_id: false,
 		} )

@@ -13,8 +13,8 @@ import { isEqual } from 'lodash';
 import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
-import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
-import { getSiteSettings, isRequestingSiteSettings } from 'state/site-settings/selectors';
+import { requestSiteKeyrings, saveSiteKeyrings } from 'state/site-keyrings/actions';
+import { getSiteKeyrings, isRequestingSiteKeyrings } from 'state/site-keyrings/selectors';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import getSiteUserConnectionsForGoogleMyBusiness from 'state/selectors/get-site-user-connections-for-google-my-business';
 import {
@@ -25,7 +25,7 @@ import {
 export class GoogleMyBusiness extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
-		saveSiteSettings: PropTypes.func,
+		saveSiteKeyrings: PropTypes.func,
 		saveRequests: PropTypes.object,
 		siteSettings: PropTypes.object,
 		deleteStoredKeyringConnection: PropTypes.func,
@@ -61,19 +61,19 @@ export class GoogleMyBusiness extends SharingService {
 	};
 
 	componentWillMount() {
-		this.requestSettings( this.props );
+		this.requestKeyrings( this.props );
 	}
 
-	requestSettings( props ) {
-		const { requestingSiteSettings, siteId } = props;
-		if ( ! requestingSiteSettings && siteId ) {
-			props.requestSiteSettings( siteId );
+	requestKeyrings( props ) {
+		const { requestingSiteKeyrings, siteId } = props;
+		if ( ! requestingSiteKeyrings && siteId ) {
+			props.requestSiteKeyrings( siteId );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId && this.props.siteId !== nextProps.siteId ) {
-			this.requestSettings( nextProps );
+			this.requestKeyrings( nextProps );
 		}
 
 		if ( this.state.isAwaitingConnections ) {
@@ -124,8 +124,8 @@ export default connectFor(
 	( state, props ) => ( {
 		...props,
 		availableExternalAccounts: getGoogleMyBusinessLocations( state, props.siteId ),
-		siteSettings: getSiteSettings( state, props.siteId ),
-		requestingSiteSettings: isRequestingSiteSettings( state, props.siteId ),
+		siteKeyrings: getSiteKeyrings( state, props.siteId ),
+		requestingSiteKeyrings: isRequestingSiteKeyrings( state, props.siteId ),
 		saveRequests: state.siteSettings.saveRequests,
 		removableConnections: props.keyringConnections,
 		fetchConnection: props.requestKeyringConnections,
@@ -135,7 +135,7 @@ export default connectFor(
 		connectGoogleMyBusinessLocation,
 		disconnectGoogleMyBusinessLocation,
 		deleteStoredKeyringConnection,
-		requestSiteSettings,
-		saveSiteSettings,
+		requestSiteKeyrings,
+		saveSiteKeyrings,
 	}
 );

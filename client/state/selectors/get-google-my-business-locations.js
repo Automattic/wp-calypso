@@ -8,20 +8,20 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSiteKeyrings } from 'state/site-keyrings/selectors';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 
-function isConnected( externalUser, siteSettings ) {
+function isConnected( externalUser, siteKeyrings ) {
 	return (
-		externalUser.keyringConnectionId === siteSettings.google_my_business_keyring_id &&
-		externalUser.ID === siteSettings.google_my_business_location_id
+		externalUser.keyringConnectionId === siteKeyrings.google_my_business_keyring_id &&
+		externalUser.ID === siteKeyrings.google_my_business_location_id
 	);
 }
 
 export default function getGoogleMyBusinessLocations( state, siteId ) {
-	const siteSettings = getSiteSettings( state, siteId );
+	const siteKeyrings = getSiteKeyrings( state, siteId );
 
-	if ( ! siteSettings ) {
+	if ( ! siteKeyrings ) {
 		return [];
 	}
 
@@ -30,7 +30,7 @@ export default function getGoogleMyBusinessLocations( state, siteId ) {
 	} );
 
 	externalUsers.forEach( externalUser => {
-		externalUser.isConnected = isConnected( externalUser, siteSettings );
+		externalUser.isConnected = isConnected( externalUser, siteKeyrings );
 	} );
 
 	return externalUsers;

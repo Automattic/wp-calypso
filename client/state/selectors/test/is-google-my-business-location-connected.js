@@ -8,7 +8,7 @@ import isGoogleMyBusinessLocationConnected from '../is-google-my-business-locati
 describe( 'isGoogleMyBusinessLocationConnected()', () => {
 	test( 'should return false if location not connected', () => {
 		const state = {
-			siteSettings: {
+			siteKeyrings: {
 				items: {
 					1234: {
 						google_my_business_keyring_id: null,
@@ -23,7 +23,7 @@ describe( 'isGoogleMyBusinessLocationConnected()', () => {
 
 	test( 'should return true if location is connected', () => {
 		const state = {
-			siteSettings: {
+			siteKeyrings: {
 				items: {
 					1234: {
 						google_my_business_keyring_id: '234523',

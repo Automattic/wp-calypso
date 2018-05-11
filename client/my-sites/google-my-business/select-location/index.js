@@ -25,7 +25,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
@@ -70,7 +70,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 
 				<DocumentHead title={ translate( 'Google My Business' ) } />
 
-				<QuerySiteSettings siteId={ siteId } />
+				<QuerySiteKeyrings siteId={ siteId } />
 				<QueryKeyringConnections />
 
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>

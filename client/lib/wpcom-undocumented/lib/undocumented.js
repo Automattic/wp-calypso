@@ -390,6 +390,37 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
 };
 
+/**
+ * GET/POST site settings
+ *
+ * @param {int|string} [siteId] The site ID
+ * @param {string} [method] The request method
+ * @param {object} [data] The POST data
+ * @param {Function} fn The callback function
+ *
+ * @return {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.keyrings = function( siteId, method = 'get', data = {}, fn ) {
+	debug( '/sites/:site_id:/keyrings query' );
+	if ( 'function' === typeof method ) {
+		fn = method;
+		method = 'get';
+		data = {};
+	}
+
+	// If no apiVersion was specified, use the settings api version with the widest support (1.1)
+	const apiVersion = data.apiVersion || '1.1';
+	const body = omit( data, [ 'apiVersion' ] );
+	const path = '/sites/' + siteId + '/keyrings';
+
+	if ( 'get' === method ) {
+		return this.wpcom.req.get( path, { apiVersion }, fn );
+	}
+
+	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
+};
+
 Undocumented.prototype._sendRequest = function( originalParams, fn ) {
 	const { apiVersion, method } = originalParams,
 		updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
