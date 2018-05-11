@@ -123,7 +123,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 	const { canAutoconfigure, credentials = [] } = getRewindState( state, siteId );
 
 	return {
-		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors,max-len
+		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
 		mainCredentials: find( credentials, { role: 'main' } ),
 	};
 };

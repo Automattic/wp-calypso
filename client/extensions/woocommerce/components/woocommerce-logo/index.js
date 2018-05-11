@@ -17,7 +17,6 @@ const WooCommerceLogo = ( { height = 32, width = 120 } ) => {
 		>
 			<g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
 				<g id="woocommerce_logo" transform="translate(-1.000000, 0.000000)">
-					{ /* eslint-disable max-len */ }
 					<path
 						d="M23.7,0.2 L222.8,0.2 C235.4,0.2 245.6,10.4 245.6,23 L245.6,99 C245.6,111.6 235.4,121.8 222.8,121.8 L151.4,121.8 L161.2,145.8 L118.1,121.8 L23.8,121.8 C11.2,121.8 1,111.6 1,99 L1,23 C0.9,10.5 11.1,0.2 23.7,0.2 Z"
 						id="Shape"
@@ -47,7 +46,6 @@ const WooCommerceLogo = ( { height = 32, width = 120 } ) => {
 						fill="#527994"
 						fillRule="nonzero"
 					/>
-					{ /* eslint-enable max-len */ }
 				</g>
 			</g>
 		</svg>

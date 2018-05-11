@@ -163,7 +163,7 @@ class DeleteSite extends Component {
 				<ActionPanel>
 					<ActionPanelBody>
 						<ActionPanelFigure>
-							{ /* eslint-disable max-len */ }
+							{  }
 							<svg
 								width="158"
 								height="174"
@@ -213,7 +213,6 @@ class DeleteSite extends Component {
 									/>
 								</g>
 							</svg>
-							{ /* eslint-enable max-len */ }
 						</ActionPanelFigure>
 						<ActionPanelTitle>{ strings.exportContentFirst }</ActionPanelTitle>
 						<p>

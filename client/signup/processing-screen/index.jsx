@@ -202,7 +202,7 @@ export class SignupProcessingScreen extends Component {
 	renderUpgradeNudge() {
 		const { translate } = this.props;
 
-		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="signup-pricessing__upgrade-nudge">
 				<p className="signup-pricessing__title-subdomain">{ translate( 'Your subdomain' ) }</p>
@@ -244,7 +244,7 @@ export class SignupProcessingScreen extends Component {
 				</Button>
 			</div>
 		);
-		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderUpgradeScreen() {
@@ -253,7 +253,7 @@ export class SignupProcessingScreen extends Component {
 			? translate( 'Congratulations! Your site is live.' )
 			: translate( 'Congratulations! Your website is almost ready.' );
 
-		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.renderFloaties() }
@@ -282,7 +282,7 @@ export class SignupProcessingScreen extends Component {
 				<div className="signup-processing-screen__loader">{ translate( 'Loading…' ) }</div>
 			</div>
 		);
-		/* eslint-enable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	showChecklistAfterLogin = () => {
@@ -338,7 +338,7 @@ export class SignupProcessingScreen extends Component {
 			return this.renderUpgradeScreen();
 		}
 
-		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.renderFloaties() }
@@ -364,7 +364,7 @@ export class SignupProcessingScreen extends Component {
 				</div>
 			</div>
 		);
-		/* eslint-enable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
