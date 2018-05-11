@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { moment as momentLib } from 'i18n-calypso';
+import { get, mapKeys, mapValues } from 'lodash';
 
 /**
  * @typedef OffsetParams
@@ -74,66 +75,42 @@ export function getActivityLogQuery() {
 	};
 }
 
-export const filterStateToQuery = filter => {
-	return Object.keys( filter )
-		.map( key => {
-			const spread = ( name, values = filter[ key ] ) =>
-				values.length > 1 ? values.map( v => [ `${ name }[]`, v ] ) : [ [ name, values[ 0 ] ] ];
-
-			const value = filter[ key ];
-
+export const filterStateToQuery = filter =>
+	mapValues(
+		mapKeys( filter, ( value, key ) =>
+			get(
+				{
+					activityId: 'activity-id',
+					notActivityId: 'not-activity-id',
+					actor: 'by',
+					notActor: 'not-by',
+					group: 'group',
+					notGroup: 'not-group',
+					isRewindable: 'rewindable',
+					object: 'object',
+					notObject: 'not-object',
+					page: 'page',
+					startingAfter: 'start',
+					startingBefore: 'end',
+					textSearch: 's',
+					type: 'type',
+					notType: 'not-type',
+				},
+				key,
+				'undefined'
+			)
+		),
+		( value, key ) => {
 			switch ( key ) {
-				case 'activityId':
-					return spread( 'activity-id' );
-
-				case 'notActivityId':
-					return spread( 'not-activity-id' );
-
-				case 'actor':
-					return spread( 'by' );
-
-				case 'notActor':
-					return spread( 'not-by' );
-
-				case 'group':
-					return spread( 'group' );
-
-				case 'notGroup':
-					return spread( 'not-group' );
-
-				case 'isRewindable':
-					return [ [ 'rewindable', value ] ];
-
-				case 'object':
-					return spread( 'object' );
-
-				case 'notObject':
-					return spread( 'not-object' );
-
-				case 'page':
-					return [ [ 'page', value ] ];
-
 				case 'startingAfter':
-					return [ [ 'start', value.toISOString() ] ];
-
 				case 'startingBefore':
-					return [ [ 'end', value.toISOString() ] ];
-
-				case 'textSearch':
-					return spread( 's' );
-
-				case 'type':
-					return spread( 'type' );
-
-				case 'notType':
-					return spread( 'not-type' );
+					return value.toISOString();
 
 				default:
-					return [];
+					return value;
 			}
-		} )
-		.reduce( ( query, pairs ) => [ ...query, ...pairs ], [] );
-};
+		}
+	);
 
 export const queryToFilterState = query => {
 	const appendToBasList = ( base, prop, value ) => ( {
