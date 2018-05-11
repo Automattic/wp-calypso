@@ -15,6 +15,7 @@ import Collection from 'devdocs/design/search-collection';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 import { isEnabled } from 'config';
 
@@ -106,17 +107,21 @@ export default class AppComponents extends React.Component {
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Blocks" />
+
 				{ this.props.component ? (
 					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 						{ slugToCamelCase( this.props.component ) }
 					</HeaderCake>
 				) : (
-					<SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ this.state.filter }
-						placeholder="Search blocks…"
-						analyticsGroup="Docs"
-					/>
+					<div>
+						<ReadmeViewer readmeFilePath="/client/devdocs/blocks/README.md" />
+						<SearchCard
+							onSearch={ this.onSearch }
+							initialValue={ this.state.filter }
+							placeholder="Search blocks…"
+							analyticsGroup="Docs"
+						/>
+					</div>
 				) }
 				<Collection
 					component={ this.props.component }

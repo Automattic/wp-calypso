@@ -20,6 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 
 /**
@@ -145,13 +146,16 @@ class DesignAssets extends React.Component {
 						{ slugToCamelCase( component ) }
 					</HeaderCake>
 				) : (
-					<SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs"
-						className="design__ui-components-search"
-					/>
+					<div>
+						<ReadmeViewer readmeFilePath="/client/devdocs/design/README.md" />
+						<SearchCard
+							onSearch={ this.onSearch }
+							initialValue={ filter }
+							placeholder="Search components…"
+							analyticsGroup="Docs"
+							className="design__ui-components-search"
+						/>
+					</div>
 				) }
 
 				<Collection component={ component } filter={ filter }>
