@@ -54,7 +54,7 @@ export class FilterResetNotice extends Component {
 					onClick={ this.onReset }
 					tagName="button"
 				>
-					{ this.props.translate( 'Disable filters to see more results' ) }
+					{ this.props.translate( 'Click here to disable filters for more results' ) }
 				</Card>
 			)
 		);
