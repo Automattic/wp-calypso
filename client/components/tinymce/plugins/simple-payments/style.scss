@@ -100,8 +100,6 @@
 	}
 
 	.dialog__product-image-container {
-		width: 200px;
-		height: 200px;
 		position: relative;
 		margin-bottom: 20px;
 		margin-right: 25px;
@@ -118,6 +116,7 @@
 		background-color: $gray-light;
 		box-shadow: inset 0 0 0 1px lighten($gray, 25%);
 		font-size: 14px;
+		overflow: hidden;
 
 		&:hover {
 			cursor: pointer;
@@ -132,31 +131,22 @@
 		}
 	}
 
-	.dialog__product-image {
-		max-width: 200px;
-		max-height: 200px;
-	}
-
-	.dialog__product-image-edit-icon {
-		position: absolute;
-		color: $white;
-		opacity: 0.9;
-		bottom: 8px;
-		right: 8px;
-		line-height: 0;
-		padding: 4px;
-		border: none;
-		background: rgba(0, 0, 0, 0.2);
-		border-radius: 50%;
-
-		&:hover {
-			opacity: 1;
-		}
-	}
-
 	.remove-button {
 		margin-top: -7px;
 		margin-right: -7px;
+	}
+
+	.async-load__placeholder {
+		display: none;
+	}
+
+	.spinner-line {
+		display: none;
+	}
+
+	.editor-featured-image__preview-image {
+		max-width: 200px;
+		max-height: 200px;
 	}
 }
 

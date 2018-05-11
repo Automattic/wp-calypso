@@ -15,16 +15,13 @@ import PropTypes from 'prop-types';
  */
 
 import AsyncLoad from 'components/async-load';
-import { getMediaItem } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import ProductImage from './product-image';
+import EditorFeaturedImagePreviewContainer from 'post-editor/editor-featured-image/preview-container';
 import RemoveButton from 'components/remove-button';
 
 class ProductImagePicker extends Component {
 	static propTypes = {
-		featuredImage: PropTypes.object,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	};
@@ -34,18 +31,12 @@ class ProductImagePicker extends Component {
 	};
 
 	showMediaModal = event => {
-		const { siteId, featuredImage } = this.props;
-
 		if ( event.key && event.key !== 'Enter' ) {
 			// A11y - prevent opening Media modal with any key
 			return;
 		}
 
-		this.setState( { isSelecting: true }, () => {
-			if ( featuredImage ) {
-				MediaActions.setLibrarySelectedItems( siteId, [ featuredImage ] );
-			}
-		} );
+		this.setState( { isSelecting: true } );
 	};
 
 	setImage = value => {
@@ -90,7 +81,12 @@ class ProductImagePicker extends Component {
 				role="button"
 				tabIndex={ 0 }
 			>
-				<ProductImage siteId={ siteId } imageId={ this.props.input.value } showEditIcon />
+				<EditorFeaturedImagePreviewContainer
+					siteId={ siteId }
+					itemId={ this.props.input.value }
+					onImageChange={ this.props.input.onChange }
+					showEditIcon
+				/>
 				<RemoveButton onRemove={ this.removeCurrentImage } />
 			</div>
 		);
@@ -114,7 +110,6 @@ class ProductImagePicker extends Component {
 						enabledFilters={ [ 'images' ] }
 						visible={ isSelecting }
 						isBackdropVisible={ false }
-						disabledDataSources={ [ 'pexels', 'google_photos' ] }
 						labels={ {
 							confirm: translate( 'Add' ),
 						} }
@@ -131,11 +126,6 @@ class ProductImagePicker extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		siteId,
-		featuredImage: getMediaItem( state, siteId, ownProps.input.value ),
-	};
-} )( localize( ProductImagePicker ) );
+export default connect( state => ( { siteId: getSelectedSiteId( state ) } ) )(
+	localize( ProductImagePicker )
+);

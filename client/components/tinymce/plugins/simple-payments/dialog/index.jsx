@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, isNumber, pick, noop, get } from 'lodash';
+import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,6 +51,7 @@ import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
 import config from 'config';
 import isEditedSimplePaymentsRecurring from 'state/selectors/is-edited-simple-payments-recurring';
+import { getFormValues } from 'redux-form';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -419,7 +420,7 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	getActionButtons() {
-		const { formIsValid, formIsDirty, translate } = this.props;
+		const { formIsValid, formIsDirty, translate, featuredImageId } = this.props;
 		const { activeTab, editedPaymentId, isSubmitting } = this.state;
 
 		const formCanBeSubmitted = formIsValid && formIsDirty;
@@ -445,6 +446,12 @@ class SimplePaymentsDialog extends Component {
 			finishLabel = translate( 'Insert' );
 		}
 
+		// Already uploaded images have numeric ids (eg. 11) while the ones that are
+		// still being uploaded use strings instead (eg. 'media-41')
+		// We are relying on that here to determine if we should disable the form
+		// save button until the image is ready.
+		const isUploadingImage = ! isEmpty( featuredImageId ) && ! isNumber( featuredImageId );
+
 		return [
 			<Button onClick={ cancelHandler } disabled={ isSubmitting }>
 				{ translate( 'Cancel' ) }
@@ -452,7 +459,7 @@ class SimplePaymentsDialog extends Component {
 			<Button
 				onClick={ finishHandler }
 				busy={ isSubmitting }
-				disabled={ isSubmitting || finishDisabled }
+				disabled={ isSubmitting || finishDisabled || isUploadingImage }
 				primary
 			>
 				{ isSubmitting ? translate( 'Saving…' ) : finishLabel }
@@ -615,5 +622,6 @@ export default connect( ( state, { siteId } ) => {
 		formIsValid: isProductFormValid( state ),
 		formIsDirty: isProductFormDirty( state ),
 		currentUserEmail: getCurrentUserEmail( state ),
+		featuredImageId: get( getFormValues( REDUX_FORM_NAME )( state ), 'featuredImageId' ),
 	};
 } )( localize( SimplePaymentsDialog ) );
