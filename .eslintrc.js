@@ -2,7 +2,13 @@
 
 module.exports = {
 	root: true,
-	extends: [ 'wpcalypso/react', 'plugin:jsx-a11y/recommended', 'plugin:jest/recommended' ],
+	extends: [
+		'wpcalypso/react',
+		'plugin:jsx-a11y/recommended',
+		'plugin:jest/recommended',
+		'prettier',
+		'prettier/react',
+	],
 	parser: 'babel-eslint',
 	env: {
 		browser: true,
@@ -29,10 +35,6 @@ module.exports = {
 
 		// i18n-calypso translate triggers false failures
 		'jsx-a11y/anchor-has-content': 0,
-
-		// turn off these rules because they are enforced by prettier
-		'max-len': 0,
-		indent: 0,
 
 		// error if any module depends on the data-observe mixin, which is deprecated
 		'no-restricted-imports': [ 2, 'lib/mixins/data-observe' ],
