@@ -6,6 +6,7 @@ import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -152,10 +153,17 @@ class BillingReceipt extends React.Component {
 		const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
 		const items = groupedTransactionItems.map( item => {
+			let name = item.variation;
+			// I wish I could use lib/product-values#isJetpackPlan() here, but that always returns `false`
+			// since `transaction.product_slug` uses hyphens (e.g. `jetpack-premium`), whereas `isJetpackPlan()`
+			// internally uses `getPlan()`, which expects underscores (`jetpack_premium`). -- @ockham
+			if ( startsWith( item.product_slug, 'jetpack-' ) ) {
+				name = `Jetpack ${ name }`;
+			}
 			return (
 				<tr key={ item.id }>
 					<td className="billing-history__receipt-item-name">
-						<span>{ item.variation }</span>
+						<span>{ name }</span>
 						<small>({ item.type_localized })</small>
 						<br />
 						<em>{ item.domain }</em>
