@@ -1,6 +1,6 @@
 /** @format */
 
-import config from 'config';
+import config from './config';
 import { kebabCase } from 'lodash';
 
 export default function transformer( file, api ) {
