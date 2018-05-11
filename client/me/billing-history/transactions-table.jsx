@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { isEmpty } from 'lodash';
+import { isEmpty, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -81,18 +81,26 @@ class TransactionsTable extends React.Component {
 	};
 
 	serviceNameDescription = transaction => {
+		let planName = transaction.plan;
+		// I wish I could use lib/product-values#isJetpackPlan() here, but that always returns `false`
+		// since `transaction.product_slug` uses hyphens (e.g. `jetpack-premium`), whereas `isJetpackPlan()`
+		// internally uses `getPlan()`, which expects underscores (`jetpack_premium`). -- @ockham
+		if ( startsWith( transaction.product_slug, 'jetpack-' ) ) {
+			planName = `Jetpack ${ planName }`;
+		}
+
 		let description;
 		if ( transaction.domain ) {
 			description = (
 				<div>
-					<strong>{ transaction.plan }</strong>
+					<strong>{ planName }</strong>
 					<small>{ transaction.domain }</small>
 				</div>
 			);
 		} else {
 			description = (
 				<strong>
-					{ transaction.product } { transaction.plan }
+					{ transaction.product } { planName }
 				</strong>
 			);
 		}
