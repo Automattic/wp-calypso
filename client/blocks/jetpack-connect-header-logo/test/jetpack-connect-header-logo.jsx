@@ -57,7 +57,7 @@ describe( 'JetpackConnectHeaderLogo', () => {
 		test( 'should prefer partnerSlug prop over partnerSlugFromQuery to allow overriding', () => {
 			const wrapper = shallow(
 				<JetpackConnectHeaderLogo
-					partnerSlug="pressable"
+					partnerSlug="milesweb"
 					partnerSlugFromQuery="dreamhost"
 					translate={ noop }
 				/>
@@ -66,7 +66,7 @@ describe( 'JetpackConnectHeaderLogo', () => {
 			const logo = wrapper.find( '.jetpack-connect-header-logo__cobranded-logo' );
 			expect( logo ).to.have.length( 1 );
 			expect( logo.props().src ).to.equal(
-				'/calypso/images/jetpack/jetpack-pressable-connection.png'
+				'/calypso/images/jetpack/jetpack-milesweb-connection.png'
 			);
 		} );
 	} );
