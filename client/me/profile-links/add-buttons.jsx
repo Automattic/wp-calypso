@@ -31,6 +31,8 @@ class AddProfileLinksButtons extends React.Component {
 		popoverPosition: 'top',
 	};
 
+	popoverContext = React.createRef();
+
 	recordClickEvent = action => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
@@ -45,8 +47,6 @@ class AddProfileLinksButtons extends React.Component {
 		this.props.onShowAddOther();
 	};
 
-	setPopoverContext = button => ( this.popoverMenuButton = button );
-
 	render() {
 		return (
 			<div>
@@ -54,7 +54,7 @@ class AddProfileLinksButtons extends React.Component {
 					isVisible={ this.props.showPopoverMenu }
 					onClose={ this.props.onClosePopoverMenu }
 					position={ this.state.popoverPosition }
-					context={ this.popoverMenuButton }
+					context={ this.popoverContext.current }
 				>
 					<PopoverMenuItem onClick={ this.handleAddWordPressSiteButtonClick }>
 						{ this.props.translate( 'Add WordPress Site' ) }
@@ -66,7 +66,7 @@ class AddProfileLinksButtons extends React.Component {
 
 				<Button
 					compact
-					ref={ this.setPopoverContext }
+					ref={ this.popoverContext }
 					className="popover-icon"
 					onClick={ this.props.onShowPopoverMenu }
 				>

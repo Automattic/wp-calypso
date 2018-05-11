@@ -30,10 +30,11 @@ export class Mentions extends Component {
 	matchingSuggestions = [];
 
 	state = {
-		popoverContext: null,
 		query: '',
 		showPopover: false,
 	};
+
+	popoverContext = React.createRef();
 
 	componentDidMount() {
 		const { editor } = this.props;
@@ -247,20 +248,18 @@ export class Mentions extends Component {
 		} );
 	};
 
-	setPopoverContext = popoverContext => popoverContext && this.setState( { popoverContext } );
-
 	hidePopover = () => this.setState( { showPopover: false } );
 
 	render() {
 		const { siteId, suggestions } = this.props;
-		const { query, showPopover, popoverContext } = this.state;
+		const { query, showPopover } = this.state;
 
 		this.matchingSuggestions = this.getMatchingSuggestions( suggestions, query );
 		const selectedSuggestionId =
 			this.state.selectedSuggestionId || get( head( this.matchingSuggestions ), 'ID' );
 
 		return (
-			<div ref={ this.setPopoverContext }>
+			<div ref={ this.popoverContext }>
 				<QueryUsersSuggestions siteId={ siteId } />
 				{ this.matchingSuggestions.length > 0 &&
 					showPopover && (
@@ -268,7 +267,7 @@ export class Mentions extends Component {
 							query={ query }
 							suggestions={ this.matchingSuggestions }
 							selectedSuggestionId={ selectedSuggestionId }
-							popoverContext={ popoverContext }
+							popoverContext={ this.popoverContext.current }
 							onClick={ this.insertSuggestion }
 							onClose={ this.hidePopover }
 						/>
