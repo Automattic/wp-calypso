@@ -91,7 +91,6 @@ export const SimplePaymentsEmailTour = makeTour(
 					<ButtonRow>
 						<Quit
 							primary
-							click
 							target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
 						>
 							{ translate( 'Got it, thanks!' ) }

@@ -19,7 +19,6 @@ export default class Quit extends Component {
 	static displayName = 'Quit';
 
 	static propTypes = {
-		click: PropTypes.bool,
 		primary: PropTypes.bool,
 		target: PropTypes.string,
 	};
@@ -47,20 +46,20 @@ export default class Quit extends Component {
 	}
 
 	addTargetListener() {
-		const { target = false, click } = this.props;
+		const { target = false } = this.props;
 		const targetNode = targetForSlug( target );
 
-		if ( click && targetNode && targetNode.addEventListener ) {
+		if ( targetNode && targetNode.addEventListener ) {
 			targetNode.addEventListener( 'click', this.onClick );
 			targetNode.addEventListener( 'touchstart', this.onClick );
 		}
 	}
 
 	removeTargetListener() {
-		const { target = false, click } = this.props;
+		const { target = false } = this.props;
 		const targetNode = targetForSlug( target );
 
-		if ( click && targetNode && targetNode.removeEventListener ) {
+		if ( targetNode && targetNode.removeEventListener ) {
 			targetNode.removeEventListener( 'click', this.onClick );
 			targetNode.removeEventListener( 'touchstart', this.onClick );
 		}
