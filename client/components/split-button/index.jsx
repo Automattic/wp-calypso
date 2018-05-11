@@ -61,12 +61,12 @@ class SplitButton extends Component {
 
 	hideMenu = () => this.toggleMenu( false );
 
-	toggleMenu = isMenuVisible => {
+	toggleMenu( isMenuVisible ) {
 		if ( ! this.props.disabled ) {
 			this.setState( { isMenuVisible } );
 			this.props.onToggle( isMenuVisible );
 		}
-	};
+	}
 
 	render() {
 		const {

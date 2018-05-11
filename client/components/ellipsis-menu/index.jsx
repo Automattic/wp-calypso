@@ -56,12 +56,12 @@ class EllipsisMenu extends Component {
 
 	showMenu = () => this.toggleMenu( true );
 
-	toggleMenu = isMenuVisible => {
+	toggleMenu( isMenuVisible ) {
 		if ( ! this.props.disabled ) {
 			this.setState( { isMenuVisible } );
 			this.props.onToggle( isMenuVisible );
 		}
-	};
+	}
 
 	render() {
 		const {
