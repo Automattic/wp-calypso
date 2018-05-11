@@ -14,6 +14,7 @@ import debugModule from 'debug';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
+// eslint-disable-next-line no-restricted-imports
 import observe from 'lib/mixins/data-observe';
 import { connect } from 'react-redux';
 import { removeNotice } from 'state/notices/actions';
@@ -21,6 +22,7 @@ import { getNotices } from 'state/notices/selectors';
 
 const debug = debugModule( 'calypso:notices' );
 
+// eslint-disable-next-line react/prefer-es6-class
 export const NoticesList = createReactClass( {
 	displayName: 'NoticesList',
 
