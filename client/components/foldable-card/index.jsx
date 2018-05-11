@@ -55,6 +55,26 @@ class FoldableCard extends Component {
 		}
 	}
 
+	clickAction = () => ! this.props.clickableHeader && ! this.props.disabled && this.onClick();
+
+	clickExpander = () => ! this.props.clickableHeader && ! this.props.disabled && this.onClick();
+
+	clickHeader = () => this.props.clickableHeader && ! this.props.disabled && this.onClick();
+
+	onActionKeyPress = event => {
+		// enter press
+		if ( 13 === event.keyCode ) {
+			this.clickAction();
+		}
+	};
+
+	onHeaderKeyPress = event => {
+		// enter press
+		if ( 13 === event.keyCode ) {
+			this.clickHeader();
+		}
+	};
+
 	onClick = () => {
 		if ( this.props.children ) {
 			this.setState( { expanded: ! this.state.expanded } );
@@ -79,7 +99,6 @@ class FoldableCard extends Component {
 			clickableHeader,
 			compact,
 			disabled,
-			expanded,
 			expandedSummary,
 			header,
 			icon,
@@ -90,14 +109,12 @@ class FoldableCard extends Component {
 
 		const Container = compact ? CompactCard : Card;
 
-		const clickAction = ! disabled ? this.onClick : null;
 		const itemSiteClasses = classNames( 'foldable-card', className, {
 			'is-disabled': !! disabled,
-			'is-expanded': !! expanded,
+			'is-expanded': !! this.state.expanded,
 			'has-expanded-summary': !! expandedSummary,
 		} );
 
-		const headerClickAction = clickableHeader ? clickAction : null;
 		const headerClasses = classNames( 'foldable-card__header', {
 			'is-clickable': !! clickableHeader,
 			'has-border': !! summary,
@@ -105,7 +122,13 @@ class FoldableCard extends Component {
 
 		return (
 			<Container className={ itemSiteClasses }>
-				<div className={ headerClasses } onClick={ headerClickAction }>
+				<div
+					className={ headerClasses }
+					onKeyPress={ this.onHeaderKeyPress }
+					onClick={ this.clickHeader }
+					role="button"
+					tabIndex={ 0 }
+				>
 					<span className="foldable-card__main">{ header } </span>
 					<span className="foldable-card__secondary">
 						{ summary && <span className="foldable-card__summary">{ summary } </span> }
@@ -115,9 +138,11 @@ class FoldableCard extends Component {
 						{ actionButton ? (
 							<div
 								className="foldable-card__action"
-								onClick={ ! clickableHeader ? clickAction : null }
+								onKeyPress={ this.onActionKeyPress }
+								onClick={ this.clickAction }
+								role="button"
 							>
-								{ ( expanded && actionButtonExpanded ) || actionButton }
+								{ ( this.state.expanded && actionButtonExpanded ) || actionButton }
 							</div>
 						) : (
 							this.props.children && (
@@ -125,7 +150,7 @@ class FoldableCard extends Component {
 									disabled={ disabled }
 									type="button"
 									className="foldable-card__action foldable-card__expand"
-									onClick={ ! clickableHeader ? clickAction : null }
+									onClick={ this.clickExpander }
 								>
 									<ScreenReaderText>{ screenReaderText || translate( 'More' ) }</ScreenReaderText>
 									<Gridicon icon={ icon } size={ 24 } />
