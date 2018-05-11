@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -17,7 +17,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
 
-class SplitButton extends Component {
+class SplitButton extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		label: PropTypes.string,
@@ -49,42 +49,25 @@ class SplitButton extends Component {
 		scary: false,
 	};
 
-	constructor() {
-		super( ...arguments );
-
-		this.state = {
-			isMenuVisible: false,
-			popoverContext: null,
-		};
-
-		this.showMenu = this.toggleMenu.bind( this, true );
-		this.hideMenu = this.toggleMenu.bind( this, false );
-
-		this.setPopoverContext = this.setPopoverContext.bind( this );
-	}
+	state = {
+		isMenuVisible: false,
+		popoverContext: false,
+	};
 
 	handleMainClick = event => this.props.onClick( event );
 
-	handleMenuClick = () => {
-		if ( this.state.isMenuVisible ) {
-			this.hideMenu();
-		} else {
-			this.showMenu();
-		}
-	};
+	handleMenuClick = () => this.toggleMenu( ! this.state.isMenuVisible );
 
-	setPopoverContext( popoverContext ) {
-		if ( popoverContext ) {
-			this.setState( { popoverContext } );
-		}
-	}
+	hideMenu = () => this.toggleMenu( false );
 
-	toggleMenu( isMenuVisible ) {
+	setPopoverContext = popoverContext => popoverContext && this.setState( { popoverContext } );
+
+	toggleMenu = isMenuVisible => {
 		if ( ! this.props.disabled ) {
 			this.setState( { isMenuVisible } );
 			this.props.onToggle( isMenuVisible );
 		}
-	}
+	};
 
 	render() {
 		const {

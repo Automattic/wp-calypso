@@ -1,13 +1,10 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import { createElement, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { omit, uniq, compact } from 'lodash';
 
 export default class Button extends PureComponent {
 	static propTypes = {
@@ -27,35 +24,29 @@ export default class Button extends PureComponent {
 	};
 
 	render() {
-		const omitProps = [ 'compact', 'primary', 'scary', 'busy', 'borderless' ];
-
-		let tag;
-		if ( this.props.href ) {
-			tag = 'a';
-			omitProps.push( 'type' );
-		} else {
-			tag = 'button';
-			omitProps.push( 'target', 'rel' );
-		}
-
-		const props = omit( this.props, omitProps );
-
-		// Block referrers when external link
-		if ( props.target ) {
-			props.rel = uniq(
-				compact( [ ...( props.rel || '' ).split( ' ' ), 'noopener', 'noreferrer' ] )
-			).join( ' ' );
-		}
-
-		return createElement( tag, {
-			...props,
-			className: classNames( 'button', this.props.className, {
-				'is-compact': this.props.compact,
-				'is-primary': this.props.primary,
-				'is-scary': this.props.scary,
-				'is-busy': this.props.busy,
-				'is-borderless': this.props.borderless,
-			} ),
+		const className = classNames( 'button', this.props.className, {
+			'is-compact': this.props.compact,
+			'is-primary': this.props.primary,
+			'is-scary': this.props.scary,
+			'is-busy': this.props.busy,
+			'is-borderless': this.props.borderless,
 		} );
+
+		if ( this.props.href ) {
+			// eslint-disable-next-line no-unused-vars
+			const { compact, primary, scary, busy, borderless, type, ...props } = this.props;
+
+			// block referrers when external link
+			const rel = props.target
+				? ( props.rel || '' ).replace( /noopener|noreferer/g, '' ) + ' noopener noreferer'
+				: props.rel;
+
+			return <a { ...props } rel={ rel } className={ className } />;
+		}
+
+		// eslint-disable-next-line no-unused-vars
+		const { compact, primary, scary, busy, borderless, target, rel, ...props } = this.props;
+
+		return <button { ...props } className={ className } />;
 	}
 }
