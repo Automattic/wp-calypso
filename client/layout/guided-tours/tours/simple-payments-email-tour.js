@@ -74,6 +74,7 @@ export const SimplePaymentsEmailTour = makeTour(
 			target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
 			placement="below"
 			style={ { marginLeft: '-7px', zIndex: 'auto' } }
+			onTargetDisappear={ noop }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
@@ -88,7 +89,12 @@ export const SimplePaymentsEmailTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
+						<Quit
+							primary
+							target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
+						>
+							{ translate( 'Got it, thanks!' ) }
+						</Quit>
 					</ButtonRow>
 					<Link href="https://en.support.wordpress.com/simple-payments">
 						{ translate( 'Learn more about Simple Payments.' ) }
