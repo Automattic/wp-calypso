@@ -28,6 +28,7 @@ import { getHelpSelectedSite } from 'state/help/selectors';
 class InlineHelpPopover extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
+		setDialogState: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -81,7 +82,12 @@ class InlineHelpPopover extends Component {
 				{
 					{
 						contact: <HelpContact compact selectedSite={ this.props.selectedSite } />,
-						richresult: <InlineHelpRichResult result={ this.props.selectedResult } />,
+						richresult: (
+							<InlineHelpRichResult
+								result={ this.props.selectedResult }
+								setDialogState={ this.props.setDialogState }
+							/>
+						),
 					}[ this.state.activeSecondaryView ]
 				}
 			</div>
