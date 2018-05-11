@@ -160,8 +160,8 @@ class ActivityLog extends Component {
 	};
 
 	changePage = pageNumber => {
-		window.scrollTo( 0, 0 );
 		this.props.selectPage( this.props.siteId, pageNumber );
+		window.scrollTo( 0, 0 );
 	};
 
 	/**
