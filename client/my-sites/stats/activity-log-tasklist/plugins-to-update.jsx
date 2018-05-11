@@ -25,10 +25,17 @@ export default WrappedComponent => {
 		state = {
 			// Plugins already updated + those with pending updates
 			plugins: [],
+			siteId: this.props.siteId,
 		};
 
 		static getDerivedStateFromProps( nextProps, prevState ) {
-			return { plugins: unionBy( nextProps.plugins, prevState.plugins, 'slug' ) };
+			return {
+				plugins:
+					nextProps.siteId === prevState.siteId
+						? unionBy( nextProps.plugins, prevState.plugins, 'slug' )
+						: [],
+				siteId: nextProps.siteId,
+			};
 		}
 
 		render() {
