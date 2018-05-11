@@ -118,6 +118,7 @@
 		background-color: $gray-light;
 		box-shadow: inset 0 0 0 1px lighten($gray, 25%);
 		font-size: 14px;
+		overflow: hidden;
 
 		&:hover {
 			cursor: pointer;
@@ -157,6 +158,14 @@
 	.remove-button {
 		margin-top: -7px;
 		margin-right: -7px;
+	}
+
+	.async-load__placeholder {
+		display: none;
+	}
+
+	.spinner-line {
+		display: none;
 	}
 }
 

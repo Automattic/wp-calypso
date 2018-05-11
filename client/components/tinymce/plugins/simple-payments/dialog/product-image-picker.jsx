@@ -19,7 +19,7 @@ import { getMediaItem } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import ProductImage from './product-image';
+import EditorFeaturedImagePreviewContainer from 'post-editor/editor-featured-image/preview-container';
 import RemoveButton from 'components/remove-button';
 
 class ProductImagePicker extends Component {
@@ -90,7 +90,12 @@ class ProductImagePicker extends Component {
 				role="button"
 				tabIndex={ 0 }
 			>
-				<ProductImage siteId={ siteId } imageId={ this.props.input.value } showEditIcon />
+				<EditorFeaturedImagePreviewContainer
+					siteId={ siteId }
+					itemId={ this.props.input.value }
+					onValueChange={ this.props.input.onChange }
+					showEditIcon
+				/>
 				<RemoveButton onRemove={ this.removeCurrentImage } />
 			</div>
 		);
@@ -114,7 +119,6 @@ class ProductImagePicker extends Component {
 						enabledFilters={ [ 'images' ] }
 						visible={ isSelecting }
 						isBackdropVisible={ false }
-						disabledDataSources={ [ 'pexels', 'google_photos' ] }
 						labels={ {
 							confirm: translate( 'Add' ),
 						} }

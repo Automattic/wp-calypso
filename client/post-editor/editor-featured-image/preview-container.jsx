@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { defer } from 'lodash';
+import { defer, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,10 +23,14 @@ export default class extends React.Component {
 		siteId: PropTypes.number.isRequired,
 		itemId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
 		maxWidth: PropTypes.number,
+		onValueChange: PropTypes.func,
+		showEditIcon: PropTypes.bool,
 	};
 
 	state = {
 		image: null,
+		onValueChange: noop,
+		showEditIcon: false,
 	};
 
 	componentDidMount() {
@@ -68,6 +72,15 @@ export default class extends React.Component {
 		} );
 
 		defer( () => {
+			if ( this.props.onValueChange ) {
+				// When used in Simple Payments button we only want to update the
+				// ID field of parent form instead of sending post actions bellow
+				if ( image && image.ID ) {
+					this.props.onValueChange( image.ID );
+				}
+				return;
+			}
+
 			if ( image && image.ID !== this.props.itemId ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				PostActions.edit( {
@@ -79,7 +92,11 @@ export default class extends React.Component {
 
 	render() {
 		return (
-			<EditorFeaturedImagePreview image={ this.state.image } maxWidth={ this.props.maxWidth } />
+			<EditorFeaturedImagePreview
+				image={ this.state.image }
+				maxWidth={ this.props.maxWidth }
+				showEditIcon
+			/>
 		);
 	}
 }
