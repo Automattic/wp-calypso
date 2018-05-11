@@ -66,7 +66,7 @@ import {
 	getOldestItemTs,
 } from 'state/selectors';
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 20;
 
 class ActivityLog extends Component {
 	static propTypes = {
