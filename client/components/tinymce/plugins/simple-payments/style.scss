@@ -167,6 +167,12 @@
 	.spinner-line {
 		display: none;
 	}
+
+	.editor-featured-image__preview-image {
+		width: 200px;
+		height: 200px;
+		object-fit: contain;
+	}
 }
 
 .editor-simple-payments-modal__nudge-nudge {
