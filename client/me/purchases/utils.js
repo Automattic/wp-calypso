@@ -24,10 +24,6 @@ function getPurchase( props ) {
 	return props.selectedPurchase;
 }
 
-function getSelectedSite( props ) {
-	return props.selectedSite;
-}
-
 function goToList() {
 	page( purchasesRoot );
 }
