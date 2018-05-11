@@ -29,10 +29,8 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import {
-	canUpgradeToPlan,
-	isCurrentUserEligibleForSpringDiscount as isEligibleForSpringDiscount,
-} from 'state/selectors';
+import { canUpgradeToPlan } from 'state/selectors';
+import getActiveDiscount from 'state/selectors/get-active-discount';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
@@ -108,7 +106,7 @@ class PlanFeatures extends Component {
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
-					{ this.render30PercentOffNotice() }
+					{ this.renderDiscountNotice() }
 					<div className="plan-features__content">
 						{ mobileView }
 						<table className={ tableClasses }>
@@ -135,20 +133,16 @@ class PlanFeatures extends Component {
 		}
 	};
 
-	render30PercentOffNotice() {
-		const {
-			canPurchase,
-			hasPlaceholders,
-			withSaleInfo,
-			isEligibleForSpringDiscount: eligible,
-		} = this.props;
-		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
+	renderDiscountNotice() {
+		const { canPurchase, hasPlaceholders, withDiscount, activeDiscount } = this.props;
 
+		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
 		if ( ! bannerContainer ) {
 			return false;
 		}
 
-		if ( ! eligible || ! withSaleInfo || hasPlaceholders || ! canPurchase ) {
+		const showActiveDiscount = activeDiscount && withDiscount === activeDiscount.name;
+		if ( ! showActiveDiscount || hasPlaceholders || ! canPurchase ) {
 			return ReactDOM.createPortal( <div />, bannerContainer );
 		}
 
@@ -159,8 +153,7 @@ class PlanFeatures extends Component {
 				icon="info-outline"
 				status="is-success"
 			>
-				{ /* no translate() since we're launching this just for EN audience */ }
-				{ 'Enter coupon code “SPRING30” during checkout to claim your 30% discount' }
+				{ activeDiscount.plansPageNoticeText }
 			</Notice>,
 			bannerContainer
 		);
@@ -704,7 +697,7 @@ export default connect(
 			selectedSiteSlug,
 			siteType,
 
-			isEligibleForSpringDiscount: isEligibleForSpringDiscount( state ),
+			activeDiscount: getActiveDiscount( state ),
 		};
 	},
 	{
