@@ -23,13 +23,13 @@ export default class extends React.Component {
 		siteId: PropTypes.number.isRequired,
 		itemId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
 		maxWidth: PropTypes.number,
-		onValueChange: PropTypes.func,
+		onImageChange: PropTypes.func,
 		showEditIcon: PropTypes.bool,
 	};
 
 	state = {
 		image: null,
-		onValueChange: noop,
+		onImageChange: noop,
 		showEditIcon: false,
 	};
 
@@ -72,11 +72,11 @@ export default class extends React.Component {
 		} );
 
 		defer( () => {
-			if ( this.props.onValueChange ) {
+			if ( this.props.onImageChange ) {
 				// When used in Simple Payments button we only want to update the
 				// ID field of parent form instead of sending post actions bellow
 				if ( image && image.ID ) {
-					this.props.onValueChange( image.ID );
+					this.props.onImageChange( image.ID );
 					MediaActions.setLibrarySelectedItems( this.props.siteId, [ image ] );
 				}
 				return;

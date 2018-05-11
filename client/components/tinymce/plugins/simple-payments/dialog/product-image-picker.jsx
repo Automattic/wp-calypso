@@ -93,7 +93,7 @@ class ProductImagePicker extends Component {
 				<EditorFeaturedImagePreviewContainer
 					siteId={ siteId }
 					itemId={ this.props.input.value }
-					onValueChange={ this.props.input.onChange }
+					onImageChange={ this.props.input.onChange }
 					showEditIcon
 				/>
 				<RemoveButton onRemove={ this.removeCurrentImage } />
