@@ -34,6 +34,8 @@ export class Mentions extends Component {
 		showPopover: false,
 	};
 
+	popoverContext = React.createRef();
+
 	componentDidMount() {
 		const { editor } = this.props;
 		const { left, top } = this.getPosition();
@@ -246,8 +248,6 @@ export class Mentions extends Component {
 		} );
 	};
 
-	setPopoverContext = ref => ( this.popoverContext = ref );
-
 	hidePopover = () => this.setState( { showPopover: false } );
 
 	render() {
@@ -259,7 +259,7 @@ export class Mentions extends Component {
 			this.state.selectedSuggestionId || get( head( this.matchingSuggestions ), 'ID' );
 
 		return (
-			<div ref={ this.setPopoverContext }>
+			<div ref={ this.popoverContext }>
 				<QueryUsersSuggestions siteId={ siteId } />
 				{ this.matchingSuggestions.length > 0 &&
 					showPopover && (
@@ -267,7 +267,7 @@ export class Mentions extends Component {
 							query={ query }
 							suggestions={ this.matchingSuggestions }
 							selectedSuggestionId={ selectedSuggestionId }
-							popoverContext={ this.popoverContext }
+							popoverContext={ this.popoverContext.current }
 							onClick={ this.insertSuggestion }
 							onClose={ this.hidePopover }
 						/>

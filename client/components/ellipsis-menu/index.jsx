@@ -37,6 +37,8 @@ class EllipsisMenu extends Component {
 		isMenuVisible: false,
 	};
 
+	popoverContext = React.createRef();
+
 	handleClick = event => {
 		const { onClick } = this.props;
 		const { isMenuVisible } = this.state;
@@ -51,8 +53,6 @@ class EllipsisMenu extends Component {
 	};
 
 	hideMenu = () => this.toggleMenu( false );
-
-	setPopoverContext = ref => ( this.popoverContext = ref );
 
 	showMenu = () => this.toggleMenu( true );
 
@@ -83,7 +83,7 @@ class EllipsisMenu extends Component {
 		return (
 			<span className={ classes }>
 				<Button
-					ref={ this.setPopoverContext }
+					ref={ this.popoverContext }
 					onClick={ this.handleClick }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					borderless
@@ -96,7 +96,7 @@ class EllipsisMenu extends Component {
 					isVisible={ isMenuVisible }
 					onClose={ this.hideMenu }
 					position={ position }
-					context={ this.popoverContext }
+					context={ this.popoverContext.current }
 					className={ popoverClasses }
 				>
 					{ children }
