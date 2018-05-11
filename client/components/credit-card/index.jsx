@@ -28,7 +28,10 @@ class CreditCard extends React.Component {
 
 	render() {
 		const { card, selected, onSelect, className, children } = this.props;
-		const classes = classNames( 'credit-card', className, { selected, selectable: onSelect } );
+		const classes = classNames( 'credit-card', className, {
+			'is-selected': selected,
+			'is-selectable': onSelect,
+		} );
 
 		return onSelect ? (
 			<div

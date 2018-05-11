@@ -10,11 +10,11 @@ div.credit-card {
         border-top: 1px solid $gray-lighten-30;
     }
 
-    &.selectable:not(.selected) {
+    &.is-selectable:not(.is-selected) {
         cursor: pointer;
     }
 
-    &.selected {
+    &.is-selected {
         cursor: default;
         border-left: 3px solid $alert-green;
         background-color: #fafdf6;

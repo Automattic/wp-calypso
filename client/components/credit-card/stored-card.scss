@@ -37,7 +37,7 @@ $cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa
 	}
 }
 
-.credit-card.selected {
+.credit-card.is-selected {
 	@each $brand in $cc-brands {
 		.credit-card__stored-card.#{$brand} {
 			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
