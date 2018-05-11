@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, isNumber, pick, noop, get } from 'lodash';
+import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -420,7 +420,7 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	getActionButtons() {
-		const { formIsValid, formIsDirty, translate } = this.props;
+		const { formIsValid, formIsDirty, translate, featuredImageId } = this.props;
 		const { activeTab, editedPaymentId, isSubmitting } = this.state;
 
 		const formCanBeSubmitted = formIsValid && formIsDirty;
@@ -450,7 +450,7 @@ class SimplePaymentsDialog extends Component {
 		// still being uploaded use strings instead (eg. 'media-41')
 		// We are relying on that here to determine if we should disable the form
 		// save button until the image is ready.
-		const isUploadingImage = ! isNumber( this.props.featuredImageId );
+		const isUploadingImage = ! isEmpty( featuredImageId ) && ! isNumber( featuredImageId );
 
 		return [
 			<Button onClick={ cancelHandler } disabled={ isSubmitting }>
