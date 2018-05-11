@@ -151,6 +151,7 @@ class FoldableCard extends Component {
 									type="button"
 									className="foldable-card__action foldable-card__expand"
 									onClick={ this.clickExpander }
+									tabIndex={ -1 }
 								>
 									<ScreenReaderText>{ screenReaderText || translate( 'More' ) }</ScreenReaderText>
 									<Gridicon icon={ icon } size={ 24 } />
