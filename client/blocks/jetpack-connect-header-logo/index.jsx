@@ -26,7 +26,7 @@ export class JetpackConnectHeaderLogo extends PureComponent {
 		switch ( partnerSlug ) {
 			case 'dreamhost':
 				return (
-					<svg { ...baseCobrandedAttributes } width="634" height="75" viewBox="0 0 1268 150">
+					<svg { ...baseCobrandedAttributes } width="634" viewBox="0 0 1268 150">
 						<title>
 							{ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
 								args: {
@@ -43,7 +43,7 @@ export class JetpackConnectHeaderLogo extends PureComponent {
 
 			case 'pressable':
 				return (
-					<svg width="662.5" viewBox="0 0 1325 170">
+					<svg { ...baseCobrandedAttributes } width="662.5" viewBox="0 0 1325 170">
 						<title>
 							{ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
 								args: {
@@ -75,7 +75,7 @@ export class JetpackConnectHeaderLogo extends PureComponent {
 
 			case 'bluehost':
 				return (
-					<svg width="662.5" viewBox="0 0 1325 170">
+					<svg { ...baseCobrandedAttributes } width="662.5" viewBox="0 0 1325 170">
 						<title>
 							{ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
 								args: {
@@ -91,7 +91,7 @@ export class JetpackConnectHeaderLogo extends PureComponent {
 				);
 			case 'inmotion':
 				return (
-					<svg width="468" viewBox="0 0 936 151">
+					<svg { ...baseCobrandedAttributes } width="468" viewBox="0 0 936 151">
 						<title>
 							{ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
 								args: {
