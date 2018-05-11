@@ -75,6 +75,7 @@ class DomainSearchResults extends React.Component {
 		let availabilityElement, domainSuggestionElement, offer;
 
 		if (
+			domain &&
 			suggestions.length !== 0 &&
 			includes(
 				[ TRANSFERRABLE, MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, UNKNOWN ],
