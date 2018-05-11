@@ -131,23 +131,6 @@
 		}
 	}
 
-	.dialog__product-image-edit-icon {
-		position: absolute;
-		color: $white;
-		opacity: 0.9;
-		bottom: 8px;
-		right: 8px;
-		line-height: 0;
-		padding: 4px;
-		border: none;
-		background: rgba(0, 0, 0, 0.2);
-		border-radius: 50%;
-
-		&:hover {
-			opacity: 1;
-		}
-	}
-
 	.remove-button {
 		margin-top: -7px;
 		margin-right: -7px;
