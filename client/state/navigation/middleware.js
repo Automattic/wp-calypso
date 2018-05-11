@@ -35,7 +35,11 @@ export const navigationMiddleware = store => {
 				return afterFilter;
 
 			case NAVIGATE:
-				return action.path ? page( action.path ) : next( action );
+				if ( action.path ) {
+					page( action.path );
+				}
+
+				return next( action );
 
 			default:
 				return next( action );
