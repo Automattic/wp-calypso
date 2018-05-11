@@ -27,7 +27,7 @@ import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getName as getDomainName } from 'lib/purchases';
 import { getPurchase, isDataLoading, recordPageView } from '../utils';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
@@ -270,7 +270,7 @@ class ConfirmCancelDomain extends React.Component {
 					{ titles.confirmCancelDomain }
 				</HeaderCake>
 				<Card>
-					<FormSectionHeading className="is-primary">
+					<FormSectionHeading>
 						{ this.props.translate( 'Canceling %(domain)s', { args: { domain } } ) }
 					</FormSectionHeading>
 					<p>
@@ -302,7 +302,7 @@ class ConfirmCancelDomain extends React.Component {
 
 export default connect(
 	( state, props ) => {
-		const selectedSite = getSelectedSiteSelector( state );
+		const selectedSite = getSelectedSite( state );
 
 		return {
 			hasLoadedSites: ! isRequestingSites( state ),

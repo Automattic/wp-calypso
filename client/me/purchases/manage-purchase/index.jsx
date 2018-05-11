@@ -42,13 +42,12 @@ import {
 	isDataLoading,
 	getEditCardDetailsPath,
 	getPurchase,
-	getSelectedSite,
 	goToList,
 	recordPageView,
 } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer as isSiteAtomic } from 'state/selectors';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
@@ -163,7 +162,7 @@ class ManagePurchase extends Component {
 			! isRenewable( purchase ) ||
 			isExpired( purchase ) ||
 			isExpiring( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.selectedSite
 		) {
 			return null;
 		}
@@ -188,7 +187,7 @@ class ManagePurchase extends Component {
 		const purchase = getPurchase( this.props );
 		const { translate } = this.props;
 
-		if ( ! getSelectedSite( this.props ) ) {
+		if ( ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -217,7 +216,7 @@ class ManagePurchase extends Component {
 			{ id } = purchase;
 		const { translate, isAtomicSite } = this.props;
 
-		if ( ! isCancelable( purchase ) || ! getSelectedSite( this.props ) ) {
+		if ( ! isCancelable( purchase ) || ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -281,7 +280,7 @@ class ManagePurchase extends Component {
 		if (
 			isExpired( purchase ) ||
 			! hasPrivacyProtection( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.selectedSite
 		) {
 			return null;
 		}
@@ -484,7 +483,7 @@ export default connect( ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
 	const isPurchaseTheme = selectedPurchase && isTheme( selectedPurchase );
-	const selectedSite = getSelectedSiteSelector( state );
+	const selectedSite = getSelectedSite( state );
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),

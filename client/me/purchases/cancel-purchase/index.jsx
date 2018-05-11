@@ -23,19 +23,13 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'lib/purchases';
-import {
-	getPurchase,
-	getSelectedSite,
-	goToManagePurchase,
-	isDataLoading,
-	recordPageView,
-} from 'me/purchases/utils';
+import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
 } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -86,7 +80,7 @@ class CancelPurchase extends React.Component {
 		}
 
 		const purchase = getPurchase( props );
-		const selectedSite = getSelectedSite( props );
+		const selectedSite = props.selectedSite;
 
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
@@ -96,7 +90,7 @@ class CancelPurchase extends React.Component {
 
 	redirect = props => {
 		const purchase = getPurchase( props );
-		const selectedSite = getSelectedSite( props );
+		const selectedSite = props.selectedSite;
 		let redirectPath = purchasesRoot;
 
 		if (
@@ -228,6 +222,6 @@ export default connect( ( state, props ) => {
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: purchase,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
-		selectedSite: getSelectedSiteSelector( state ),
+		selectedSite: getSelectedSite( state ),
 	};
 } )( localize( CancelPurchase ) );

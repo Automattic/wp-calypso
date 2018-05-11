@@ -28,7 +28,7 @@ import {
 	subscribedWithinPastWeek,
 } from 'lib/purchases';
 import { isDomainTransfer } from 'lib/products-values';
-import { getPurchase, getSelectedSite } from '../utils';
+import { getPurchase } from '../utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isMonthly } from 'lib/plans/constants';
@@ -100,7 +100,7 @@ class PurchaseNotice extends Component {
 		const purchase = getPurchase( this.props );
 		const { editCardDetailsPath, translate } = this.props;
 
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! getSelectedSite( this.props ) ) {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -179,7 +179,7 @@ class PurchaseNotice extends Component {
 			isExpired( purchase ) ||
 			isOneTimePurchase( purchase ) ||
 			isIncludedWithPlan( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.selectedSite
 		) {
 			return null;
 		}

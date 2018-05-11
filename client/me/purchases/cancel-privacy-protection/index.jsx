@@ -22,7 +22,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
 import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
@@ -235,7 +235,7 @@ export default connect(
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state ),
+		selectedSite: getSelectedSite( state ),
 	} ),
 	{ cancelPrivacyProtection }
 )( localize( CancelPrivacyProtection ) );

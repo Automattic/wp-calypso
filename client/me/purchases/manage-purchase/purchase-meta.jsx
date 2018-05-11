@@ -31,7 +31,7 @@ import { isMonthly } from 'lib/plans/constants';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
 import PaymentLogo from 'components/payment-logo';
@@ -42,7 +42,6 @@ import {
 	isDataLoading,
 	getEditCardDetailsPath,
 	getPurchase,
-	getSelectedSite,
 } from '../utils';
 
 class PurchaseMeta extends Component {
@@ -231,7 +230,7 @@ class PurchaseMeta extends Component {
 			! canEditPaymentDetails( purchase ) ||
 			! isPaidWithCreditCard( purchase ) ||
 			! cardProcessorSupportsUpdates( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.selectedSite
 		) {
 			return <li>{ paymentDetails }</li>;
 		}
@@ -249,7 +248,7 @@ class PurchaseMeta extends Component {
 		const purchase = getPurchase( this.props );
 		const { translate } = this.props;
 
-		if ( getSelectedSite( this.props ) ) {
+		if ( this.props.selectedSite ) {
 			return null;
 		}
 
@@ -347,7 +346,7 @@ export default connect( ( state, props ) => {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: purchase,
-		selectedSite: getSelectedSiteSelector( state ),
+		selectedSite: getSelectedSite( state ),
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 	};
 } )( localize( PurchaseMeta ) );
