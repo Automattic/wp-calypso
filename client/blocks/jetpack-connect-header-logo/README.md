@@ -4,6 +4,6 @@ The Jetpack Connect Header Logo component is intended to be used for co-branding
 
 # Props
 
-## partnerSlug (number)
+## partnerSlug (string)
 
-The slug of the hosting partner
+An optional slug of the hosting partner
