@@ -48,6 +48,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import DropdownFilters from 'components/domains/search-filters/dropdown-filters';
+import FilterResetNotice from 'components/domains/search-filters/filter-reset-notice';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
@@ -359,6 +360,7 @@ class RegisterDomainStep extends React.Component {
 					/>
 				) }
 				{ this.renderContent() }
+				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
@@ -408,6 +410,18 @@ class RegisterDomainStep extends React.Component {
 					) ) }
 				</CompactCard>
 			)
+		);
+	}
+
+	renderFilterResetNotice() {
+		return (
+			<FilterResetNotice
+				className="register-domain-step__filter-reset-notice"
+				isLoading={ this.state.loadingResults }
+				lastFilters={ this.state.lastFilters }
+				onReset={ this.onFiltersReset }
+				suggestions={ this.state.searchResults }
+			/>
 		);
 	}
 
@@ -538,7 +552,9 @@ class RegisterDomainStep extends React.Component {
 			{
 				filters: {
 					...this.state.filters,
-					...pick( this.getInitialFiltersState(), keysToReset ),
+					...( Array.isArray( keysToReset ) && keysToReset.length > 0
+						? pick( this.getInitialFiltersState(), keysToReset )
+						: this.getInitialFiltersState() ),
 				},
 			},
 			() => {
@@ -965,13 +981,13 @@ class RegisterDomainStep extends React.Component {
 			}
 		}
 
-		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
-			// the search returned no results
-			if ( this.props.showExampleSuggestions ) {
-				return this.renderExampleSuggestions();
-			}
-
-			suggestions = this.props.defaultSuggestions || [];
+		// the search returned no results
+		if (
+			suggestions.length === 0 &&
+			! this.state.loadingResults &&
+			this.props.showExampleSuggestions
+		) {
+			return this.renderExampleSuggestions();
 		}
 
 		return (

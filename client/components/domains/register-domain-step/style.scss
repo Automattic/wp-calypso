@@ -18,10 +18,6 @@
 		}
 	}
 
-	@include breakpoint( '>660px' ) {
-		padding-bottom: 30px;
-	}
-
 	&.disabled {
 		border-bottom: none; // so that bottom border is not there during google app dialog animation
 		opacity: 0.7;
@@ -49,11 +45,13 @@
 	}
 }
 
+.register-domain-step__filter-reset-notice,
 .register-domain-step__next-page {
 	color: $blue-medium;
 	font-weight: 500;
 	width: 100%;
 	position: relative;
+	margin-bottom: 0;
 
 	border: 0;
 	border-radius: 0;
@@ -71,7 +69,9 @@
 		// from components/domains/domain-suggestion/style
 		box-shadow: 0 0 0 1px $gray;
 	}
+}
 
+.register-domain-step__next-page {
 	.spinner {
 		margin-left: 0.5em;
 
