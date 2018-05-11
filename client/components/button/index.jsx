@@ -38,7 +38,7 @@ export default class Button extends PureComponent {
 
 			// block referrers when external link
 			const rel = props.target
-				? ( props.rel || '' ).replace( /noopener|noreferer/g, '' ) + ' noopener noreferer'
+				? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
 				: props.rel;
 
 			return <a { ...props } rel={ rel } className={ className } />;
