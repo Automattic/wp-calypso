@@ -231,14 +231,18 @@ export class PluginMeta extends Component {
 			'advanced-database-cleaner',
 			'advanced-reset-wp',
 			'advanced-wp-reset',
+			'autoptimize',
 			'better-wp-security',
 			'duplicator',
+			'google-captcha',
 			'file-manager-advanced',
 			'file-manager',
 			'reset-wp',
 			'wordpress-database-reset',
 			'wordpress-reset',
+			'wp-automatic',
 			'wp-clone-by-wp-academy',
+			'wp-file-manager',
 			'wp-prefix-changer',
 			'wp-reset',
 			'wpmu-database-reset',
@@ -253,6 +257,7 @@ export class PluginMeta extends Component {
 
 			// caching
 			'comet-cache',
+			'hyper-cache',
 			'quick-cache',
 			'w3-total-cache',
 			'wp-cache',
@@ -266,8 +271,12 @@ export class PluginMeta extends Component {
 			'page-visit-counter',
 			'post-views-counter',
 			'tokenad',
+			'top-10',
+			'wordpress-popular-posts',
+			'wp-cerber',
 			'wp-postviews',
 			'wp-statistics',
+			'wp-ulike',
 
 			// security
 			'wordfence',
@@ -284,7 +293,11 @@ export class PluginMeta extends Component {
 			'automatic-video-posts',
 			'bwp-minify',
 			'nginx-helper',
+			'patron-button-and-widgets-by-codebard',
+			'porn-embed',
 			'video-importer',
+			'woozone',
+			'wp-cleanfix',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
