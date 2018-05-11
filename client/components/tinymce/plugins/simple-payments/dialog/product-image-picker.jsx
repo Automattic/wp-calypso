@@ -126,8 +126,6 @@ class ProductImagePicker extends Component {
 	}
 }
 
-export default connect( state => {
-	return {
-		siteId: getSelectedSiteId( state ),
-	};
-} )( localize( ProductImagePicker ) );
+export default connect( state => ( { siteId: getSelectedSiteId( state ) } ) )(
+	localize( ProductImagePicker )
+);
