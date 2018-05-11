@@ -4,19 +4,24 @@
  * External dependencies
  */
 
-import { defer, isEmpty, pick } from 'lodash';
+import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import { capitalPDangit } from 'lib/formatting';
 
 /**
  * Internal dependencies
  */
+import CompactCard from 'components/card/compact';
+import Pagination from 'components/pagination';
 import TransactionsHeader from './transactions-header';
-import tableRows from './table-rows';
 import { groupDomainProducts } from './utils';
 import SearchCard from 'components/search-card';
+import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
+import { getFilteredBillingTransactions, getBillingTransactionFilters } from 'state/selectors';
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
@@ -25,69 +30,19 @@ class TransactionsTable extends React.Component {
 		header: false,
 	};
 
-	constructor( props ) {
-		super( props );
-		let initialTransactions;
-
-		if ( props.transactions ) {
-			initialTransactions = tableRows.filter( props.transactions, props.initialFilter );
-		}
-
-		this.state = {
-			transactions: initialTransactions,
-			filter: props.initialFilter,
-		};
-	}
-
-	componentWillUpdate() {
-		if ( ! this.state.transactions ) {
-			// `defer` is necessary to prevent a React.js rendering error. It is
-			// not possible to call `this.setState` during `componentWillUpdate`, so
-			// we use `defer` to run the update on the next event loop.
-			defer( this.filterTransactions.bind( this, this.state.filter ) );
-		}
-	}
-
-	filterTransactions = filter => {
-		let newFilter, newTransactions;
-
-		if ( ! this.props.transactions ) {
-			return;
-		}
-
-		if ( filter.search ) {
-			// In this case the user is typing in the search box. We remove any other
-			// filter parameters besides the text we're searching for.
-			newFilter = pick( filter, 'search' );
-		} else {
-			// Otherwise, the user intends to set a new filter. When we do this, we
-			// get rid of any data from a previous search.
-			newFilter = filter;
-		}
-
-		newTransactions = tableRows.filter( this.props.transactions, newFilter );
-
-		this.setState( {
-			transactions: newTransactions,
-			filter: newFilter,
-		} );
+	onPageClick = page => {
+		this.props.setPage( this.props.transactionType, page );
 	};
 
 	onSearch = terms => {
-		this.filterTransactions( { search: terms } );
+		this.props.setQuery( this.props.transactionType, terms );
 	};
 
 	render() {
 		let header;
 
 		if ( false !== this.props.header ) {
-			header = (
-				<TransactionsHeader
-					onNewFilter={ this.filterTransactions }
-					transactions={ this.props.transactions }
-					filter={ this.state.filter }
-				/>
-			);
+			header = <TransactionsHeader transactionType={ this.props.transactionType } />;
 		}
 
 		return (
@@ -100,6 +55,7 @@ class TransactionsTable extends React.Component {
 					{ header }
 					<tbody>{ this.renderRows() }</tbody>
 				</table>
+				{ this.renderPagination() }
 			</div>
 		);
 	}
@@ -147,7 +103,7 @@ class TransactionsTable extends React.Component {
 	renderPlaceholder = () => {
 		return (
 			<tr className="billing-history__transaction is-placeholder">
-				<td className="date">
+				<td>
 					<div className="billing-history__transaction-text" />
 				</td>
 				<td className="billing-history__trans-app">
@@ -160,14 +116,32 @@ class TransactionsTable extends React.Component {
 		);
 	};
 
+	renderPagination = () => {
+		if ( this.props.total <= this.props.pageSize ) {
+			return null;
+		}
+
+		return (
+			<CompactCard>
+				<Pagination
+					page={ this.props.page }
+					perPage={ this.props.pageSize }
+					total={ this.props.total }
+					pageClick={ this.onPageClick }
+				/>
+			</CompactCard>
+		);
+	};
+
 	renderRows = () => {
-		if ( ! this.state.transactions ) {
+		const { transactions, date, app, query } = this.props;
+		if ( ! transactions ) {
 			return this.renderPlaceholder();
 		}
 
-		if ( isEmpty( this.state.transactions ) ) {
+		if ( isEmpty( transactions ) ) {
 			let noResultsText;
-			if ( this.state.filter !== this.props.initialFilter ) {
+			if ( ! date.newest || '' !== app || '' !== query ) {
 				noResultsText = this.props.noFilterResultsText;
 			} else {
 				noResultsText = this.props.emptyTableText;
@@ -181,12 +155,12 @@ class TransactionsTable extends React.Component {
 			);
 		}
 
-		return this.state.transactions.map( function( transaction ) {
-			const date = tableRows.formatDate( transaction.date );
+		return transactions.map( transaction => {
+			const transactionDate = this.props.moment( transaction.date ).format( 'll' );
 
 			return (
 				<tr key={ transaction.id } className="billing-history__transaction">
-					<td className="date">{ date }</td>
+					<td>{ transactionDate }</td>
 					<td className="billing-history__trans-app">
 						<div className="billing-history__trans-wrap">
 							<div className="billing-history__service-description">
@@ -204,4 +178,40 @@ class TransactionsTable extends React.Component {
 	};
 }
 
-export default localize( TransactionsTable );
+TransactionsTable.propTypes = {
+	//connected props
+	app: PropTypes.string,
+	date: PropTypes.object,
+	page: PropTypes.number,
+	pageSize: PropTypes.number.isRequired,
+	query: PropTypes.string.isRequired,
+	total: PropTypes.number.isRequired,
+	transactions: PropTypes.array,
+	//own props
+	transactionType: PropTypes.string.isRequired,
+	//array allows to accept the output of translate() with components in the string
+	emptyTableText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
+	noFilterResultsText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
+	transactionRenderer: PropTypes.func.isRequired,
+	header: PropTypes.bool,
+};
+
+export default connect(
+	( state, { transactionType } ) => {
+		const filteredTransactions = getFilteredBillingTransactions( state, transactionType );
+		const filter = getBillingTransactionFilters( state, transactionType );
+		return {
+			app: filter.app,
+			date: filter.date,
+			page: filter.page,
+			pageSize: filteredTransactions.pageSize,
+			query: filter.query,
+			total: filteredTransactions.total,
+			transactions: filteredTransactions.transactions,
+		};
+	},
+	{
+		setPage,
+		setQuery,
+	}
+)( localize( TransactionsTable ) );
