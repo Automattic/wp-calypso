@@ -145,9 +145,8 @@
 	}
 
 	.editor-featured-image__preview-image {
-		width: 200px;
-		height: 200px;
-		object-fit: contain;
+		max-width: 200px;
+		max-height: 200px;
 	}
 }
 
