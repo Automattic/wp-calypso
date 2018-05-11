@@ -13,12 +13,13 @@ export default function transformer( file, api ) {
 			path.node.specifiers
 				.map( s => [ s.imported.name, s.local.name ] )
 				.sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) )
-				.map( ( [ name, alias ] ) =>
-					j.importDeclaration(
+				.map( ( [ name, alias ], i ) => ( {
+					...j.importDeclaration(
 						[ j.importSpecifier( j.identifier( 'default' ), j.identifier( alias ) ) ],
 						j.stringLiteral( `state/selectors/${ kebabCase( name ) }` )
-					)
-				)
+					),
+					...( i === 0 ? { comments: path.node.comments } : {} ),
+				} ) )
 				.forEach( i => j( path ).insertBefore( i ) );
 
 			j( path ).remove();
