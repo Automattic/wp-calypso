@@ -31,8 +31,8 @@ import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
 import config from 'config';
 import { isDesktop } from 'lib/viewport';
-import { queryToFilterState } from 'my-sites/stats/activity-log/utils';
 import { setFilter } from 'state/activity-log/actions';
+import { queryToFilterState } from 'state/activity-log/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
