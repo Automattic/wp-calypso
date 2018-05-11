@@ -19,7 +19,7 @@ export class FilterResetNotice extends Component {
 		lastFilters: PropTypes.shape( {
 			includeDashes: PropTypes.bool,
 			maxCharacters: PropTypes.string,
-			showExactMatchesOnly: PropTypes.bool,
+			exactSldMatchesOnly: PropTypes.bool,
 			tlds: PropTypes.arrayOf( PropTypes.string ),
 		} ).isRequired,
 		suggestions: PropTypes.arrayOf( PropTypes.object ),
@@ -28,7 +28,7 @@ export class FilterResetNotice extends Component {
 	hasActiveFilters() {
 		return (
 			( this.props.lastFilters.includeDashes && 1 ) ||
-			( this.props.lastFilters.showExactMatchesOnly && 1 ) ||
+			( this.props.lastFilters.exactSldMatchesOnly && 1 ) ||
 			( this.props.lastFilters.maxCharacters !== '' && 1 ) ||
 			this.props.lastFilters.tlds.length > 0
 		);
