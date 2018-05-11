@@ -51,9 +51,7 @@ class EditorActionBar extends Component {
 		this.setState( { viewLinkTooltip: false } );
 	};
 
-	setViewLinkTooltipContext = viewLinkTooltipContext => {
-		this.setState( { viewLinkTooltipContext } );
-	};
+	viewLinkTooltipContext = React.createRef();
 
 	render() {
 		// We store privacy changes via Flux while we store password changes via Redux.
@@ -92,7 +90,7 @@ class EditorActionBar extends Component {
 							href={ this.props.savedPost.URL }
 							target="_blank"
 							rel="noopener noreferrer"
-							ref={ this.setViewLinkTooltipContext }
+							ref={ this.viewLinkTooltipContext }
 							onMouseEnter={ this.showViewLinkTooltip }
 							onMouseLeave={ this.hideViewLinkTooltip }
 							borderless
@@ -100,7 +98,7 @@ class EditorActionBar extends Component {
 							<Gridicon icon="external" />
 							<Tooltip
 								className="editor-action-bar__view-post-tooltip"
-								context={ this.state.viewLinkTooltipContext }
+								context={ this.viewLinkTooltipContext.current }
 								isVisible={ this.state.viewLinkTooltip }
 								position="bottom left"
 							>
