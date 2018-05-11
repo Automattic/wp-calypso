@@ -981,13 +981,13 @@ class RegisterDomainStep extends React.Component {
 			}
 		}
 
-		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
-			// the search returned no results
-			if ( this.props.showExampleSuggestions ) {
-				return this.renderExampleSuggestions();
-			}
-
-			suggestions = this.props.defaultSuggestions || [];
+		// the search returned no results
+		if (
+			suggestions.length === 0 &&
+			! this.state.loadingResults &&
+			this.props.showExampleSuggestions
+		) {
+			return this.renderExampleSuggestions();
 		}
 
 		return (
