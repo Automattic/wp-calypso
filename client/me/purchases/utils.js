@@ -10,13 +10,7 @@ import page from 'page';
  */
 import analytics from 'lib/analytics';
 import config from 'config';
-import {
-	addCardDetails,
-	editCardDetails,
-	cancelPurchase,
-	managePurchase,
-	purchasesRoot,
-} from './paths';
+import { addCardDetails, editCardDetails, managePurchase, purchasesRoot } from './paths';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -32,13 +26,6 @@ function getPurchase( props ) {
 
 function getSelectedSite( props ) {
 	return props.selectedSite;
-}
-
-function goToCancelPurchase( props ) {
-	const { id } = getPurchase( props ),
-		{ slug } = getSelectedSite( props );
-
-	page( cancelPurchase( slug, id ) );
 }
 
 function goToList() {
@@ -106,7 +93,6 @@ function getEditCardDetailsPath( siteSlug, purchase ) {
 export {
 	getPurchase,
 	getSelectedSite,
-	goToCancelPurchase,
 	goToList,
 	goToManagePurchase,
 	isDataLoading,
