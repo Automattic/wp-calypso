@@ -45,7 +45,11 @@ class PostCommentForm extends React.Component {
 
 	componentDidMount() {
 		// If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
-		if ( this.props.parentCommentId && this._textareaNode ) {
+		if (
+			this.props.parentCommentId &&
+			this._textareaNode &&
+			typeof this._textareaNode.focus === 'function'
+		) {
 			this._textareaNode.focus();
 		}
 	}
