@@ -30,7 +30,7 @@ describe( 'addCalypsoEnvQueryArg', () => {
 
 describe( 'cleanUrl', () => {
 	test( 'should prepare entered urls for network access', () => {
-		const results = [
+		const tests = [
 			{ input: '', expected: '' },
 			{ input: 'a', expected: 'http://a' },
 			{ input: 'example.com', expected: 'http://example.com' },
@@ -38,9 +38,40 @@ describe( 'cleanUrl', () => {
 			{ input: 'http://example.com/', expected: 'http://example.com' },
 			{ input: 'eXAmple.com', expected: 'http://example.com' },
 			{ input: 'example.com/wp-admin', expected: 'http://example.com' },
+
+			{ input: 'http://example.com', expected: 'http://example.com' },
+			{ input: 'https://example.com', expected: 'https://example.com' },
+			{ input: 'http://www.example.com', expected: 'http://www.example.com' },
+			{ input: 'http://example.com/', expected: 'http://example.com/' },
+			{ input: 'https://example.com/', expected: 'https://example.com/' },
+			{ input: 'http://example.com/a/path', expected: 'http://example.com/a/path' },
+			{
+				input: 'http://example.com/a/path?query=args',
+				expected: 'http://example.com/a/path?query=args',
+			},
+			{ input: 'http://example.com?query=args', expected: 'http://example.com?query=args' },
+			{ input: 'http://example.com:12345', expected: 'http://example.com:12345' },
+			{ input: 'http://example.com:12345/', expected: 'http://example.com:12345/' },
+			{
+				input: 'http://example.com:12345/#fragment',
+				expected: 'http://example.com:12345/#fragment',
+			},
+			{
+				input: 'http://example.com:12345/a/path?query=args',
+				expected: 'http://example.com:12345/a/path?query=args',
+			},
+			{
+				input: 'http://example.com:12345?query=args',
+				expected: 'http://example.com:12345?query=args',
+			},
+			{
+				input: 'http://example.com/this-is-a-tricky-path-%2F%3F%26%3D%3A',
+				expected: 'http://example.com/this-is-a-tricky-path-%2F%3F%26%3D%3A',
+			},
+			{ input: 'http://áèîøüñç.com/', expected: 'http://xn--1camcyp5b2a.com/' },
 		];
 
-		results.forEach( ( { input, expected } ) => expect( cleanUrl( input ) ).toBe( expected ) );
+		tests.forEach( ( { input, expected } ) => expect( cleanUrl( input ) ).toBe( expected ) );
 	} );
 } );
 
