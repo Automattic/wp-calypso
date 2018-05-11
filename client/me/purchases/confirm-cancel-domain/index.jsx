@@ -270,7 +270,7 @@ class ConfirmCancelDomain extends React.Component {
 					{ titles.confirmCancelDomain }
 				</HeaderCake>
 				<Card>
-					<FormSectionHeading className="is-primary">
+					<FormSectionHeading>
 						{ this.props.translate( 'Canceling %(domain)s', { args: { domain } } ) }
 					</FormSectionHeading>
 					<p>
