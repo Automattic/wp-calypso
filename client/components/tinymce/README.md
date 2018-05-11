@@ -6,27 +6,18 @@ The `<TinyMCE />` React component is a wrapper around the [TinyMCE](http://www.t
 ## Upgrading `tinymce`
 
 When upgrading the version of `tinymce` in `package.json`, be sure to also
-update the TinyMCE skin files pulled from the WP.com CDN.  Here's how:
+update the TinyMCE skin files pulled from the Calypso public directory. Here's how:
 
-- Point `s1.wp.com` to your WP.com sandbox
 - Upgrade the TinyMCE package in `node_modules/tinymce`
-- Copy the skin files to your WP.com sandbox:
+- Copy the skin files to the public directory in Calypso:
 
 ```sh
-export TINYMCE_VERSION=4.x.x # this is the NEW TinyMCE version
-export SANDBOX=your.sandbox.wordpress.com
-ssh $SANDBOX mkdir -p public_html/wp-content/tinymce-assets/$TINYMCE_VERSION/skins/
-scp -r node_modules/tinymce/skins/lightgray/ $SANDBOX:public_html/wp-content/tinymce-assets/$TINYMCE_VERSION/skins/
+cp -r node_modules/tinymce/skins/lightgray public/tinymce/skins
 ```
 
 - Make sure the Calypso editor is loading `skin.min.css` and `content.min.css`
-  from the new folder on your sandbox (the URL should look like
-  `//s1.wp.com/wp-content/tinymce-assets/4.x.x/skins/lightgray/skin.min.css`)
-- Commit and deploy the new files from your sandbox
-- Make sure the new files are available to the production CDN (to quickly
-  verify this, you can check `s0.wp.com` and `s2.wp.com` if you don't have them
-  sandboxed).
-- Now you can deploy the new version of `tinymce` in Calypso.
+  from the public directory (the URL should look like
+  `http://calypso.localhost:3000/calypso/tinymce/skins/lightgray/skin.min.css`)
 
 ## Usage
 
