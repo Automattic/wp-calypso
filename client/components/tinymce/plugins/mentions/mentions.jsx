@@ -30,7 +30,6 @@ export class Mentions extends Component {
 	matchingSuggestions = [];
 
 	state = {
-		popoverContext: null,
 		query: '',
 		showPopover: false,
 	};
@@ -247,13 +246,13 @@ export class Mentions extends Component {
 		} );
 	};
 
-	setPopoverContext = popoverContext => popoverContext && this.setState( { popoverContext } );
+	setPopoverContext = ref => ( this.popoverContext = ref );
 
 	hidePopover = () => this.setState( { showPopover: false } );
 
 	render() {
 		const { siteId, suggestions } = this.props;
-		const { query, showPopover, popoverContext } = this.state;
+		const { query, showPopover } = this.state;
 
 		this.matchingSuggestions = this.getMatchingSuggestions( suggestions, query );
 		const selectedSuggestionId =
@@ -268,7 +267,7 @@ export class Mentions extends Component {
 							query={ query }
 							suggestions={ this.matchingSuggestions }
 							selectedSuggestionId={ selectedSuggestionId }
-							popoverContext={ popoverContext }
+							popoverContext={ this.popoverContext }
 							onClick={ this.insertSuggestion }
 							onClose={ this.hidePopover }
 						/>

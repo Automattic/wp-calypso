@@ -16,14 +16,10 @@ import PostLikesPopover from '../popover';
 import Button from 'components/button';
 
 class PostLikesExample extends React.PureComponent {
-	constructor() {
-		super();
-		this.state = {
-			showDisplayNames: false,
-			showPopover: false,
-			popoverContext: null,
-		};
-	}
+	state = {
+		showDisplayNames: false,
+		showPopover: false,
+	};
 
 	toggleDisplayNames = () => {
 		this.setState( {
@@ -43,11 +39,7 @@ class PostLikesExample extends React.PureComponent {
 		} );
 	};
 
-	setPopoverContext = element => {
-		this.setState( {
-			popoverContext: element,
-		} );
-	};
+	setPopoverContext = ref => ( this.popoverContext = ref );
 
 	render() {
 		return (
@@ -72,7 +64,7 @@ class PostLikesExample extends React.PureComponent {
 						siteId={ 3584907 }
 						postId={ 39717 }
 						showDisplayNames={ this.state.showDisplayNames }
-						context={ this.state.popoverContext }
+						context={ this.popoverContext }
 						position="bottom"
 						onClose={ this.closePopover }
 					/>

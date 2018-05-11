@@ -45,7 +45,7 @@ class AddProfileLinksButtons extends React.Component {
 		this.props.onShowAddOther();
 	};
 
-	setPopoverContext = button => ( this.popoverMenuButton = button );
+	setPopoverContext = ref => ( this.popoverMenuButton = ref );
 
 	render() {
 		return (

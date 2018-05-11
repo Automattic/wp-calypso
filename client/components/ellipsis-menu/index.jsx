@@ -33,19 +33,9 @@ class EllipsisMenu extends Component {
 		onToggle: noop,
 	};
 
-	constructor() {
-		super( ...arguments );
-
-		this.state = {
-			isMenuVisible: false,
-			popoverContext: null,
-		};
-
-		this.showMenu = this.toggleMenu.bind( this, true );
-		this.hideMenu = this.toggleMenu.bind( this, false );
-
-		this.setPopoverContext = this.setPopoverContext.bind( this );
-	}
+	state = {
+		isMenuVisible: false,
+	};
 
 	handleClick = event => {
 		const { onClick } = this.props;
@@ -60,18 +50,18 @@ class EllipsisMenu extends Component {
 		}
 	};
 
-	setPopoverContext( popoverContext ) {
-		if ( popoverContext ) {
-			this.setState( { popoverContext } );
-		}
-	}
+	hideMenu = () => this.toggleMenu( false );
 
-	toggleMenu( isMenuVisible ) {
+	setPopoverContext = ref => ( this.popoverContext = ref );
+
+	showMenu = () => this.toggleMenu( true );
+
+	toggleMenu = isMenuVisible => {
 		if ( ! this.props.disabled ) {
 			this.setState( { isMenuVisible } );
 			this.props.onToggle( isMenuVisible );
 		}
-	}
+	};
 
 	render() {
 		const {
@@ -83,7 +73,7 @@ class EllipsisMenu extends Component {
 			className,
 			popoverClassName,
 		} = this.props;
-		const { isMenuVisible, popoverContext } = this.state;
+		const { isMenuVisible } = this.state;
 		const classes = classnames( 'ellipsis-menu', className, {
 			'is-menu-visible': isMenuVisible,
 			'is-disabled': disabled,
@@ -106,7 +96,7 @@ class EllipsisMenu extends Component {
 					isVisible={ isMenuVisible }
 					onClose={ this.hideMenu }
 					position={ position }
-					context={ popoverContext }
+					context={ this.popoverContext }
 					className={ popoverClasses }
 				>
 					{ children }
