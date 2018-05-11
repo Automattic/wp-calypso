@@ -238,7 +238,7 @@ class PurchaseMeta extends Component {
 
 		return (
 			<li>
-				<a href={ getEditCardDetailsPath( this.props.selectedSite, purchase ) }>
+				<a href={ getEditCardDetailsPath( this.props.selectedSite.slug, purchase ) }>
 					{ paymentDetails }
 				</a>
 			</li>

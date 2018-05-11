@@ -94,13 +94,13 @@ function canEditPaymentDetails( purchase ) {
 	);
 }
 
-function getEditCardDetailsPath( site, purchase ) {
+function getEditCardDetailsPath( siteSlug, purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
 		const { payment: { creditCard } } = purchase;
 
-		return editCardDetails( site.slug, purchase.id, creditCard.id );
+		return editCardDetails( siteSlug, purchase.id, creditCard.id );
 	}
-	return addCardDetails( site.slug, purchase.id );
+	return addCardDetails( siteSlug, purchase.id );
 }
 
 export {

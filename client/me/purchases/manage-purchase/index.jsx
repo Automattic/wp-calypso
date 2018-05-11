@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -194,7 +193,7 @@ class ManagePurchase extends Component {
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = getEditCardDetailsPath( this.props.selectedSite, purchase );
+			const path = getEditCardDetailsPath( this.props.selectedSite.slug, purchase );
 			const renewing = isRenewing( purchase );
 
 			if (
@@ -449,7 +448,7 @@ class ManagePurchase extends Component {
 			selectedSite &&
 			canEditPaymentDetails( selectedPurchase )
 		) {
-			editCardDetailsPath = getEditCardDetailsPath( selectedSite, selectedPurchase );
+			editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, selectedPurchase );
 		}
 
 		return (
