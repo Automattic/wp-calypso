@@ -6,18 +6,28 @@ The `<TinyMCE />` React component is a wrapper around the [TinyMCE](http://www.t
 ## Upgrading `tinymce`
 
 When upgrading the version of `tinymce` in `package.json`, be sure to also
-update the TinyMCE skin files pulled from the Calypso public directory. Here's how:
+update the TinyMCE skin files pulled from the Calypso repo. Here's how:
 
 - Upgrade the TinyMCE package in `node_modules/tinymce`
-- Copy the skin files to the public directory in Calypso:
+- Update the skin files in the `public/` directory in Calypso:
 
 ```sh
-cp -r node_modules/tinymce/skins/lightgray public/tinymce/skins
+git rm -r public/tinymce/skins/lightgray/
+cp -r node_modules/tinymce/skins/lightgray/ public/tinymce/skins/
+git add public/tinymce/skins/lightgray/
 ```
 
+- Commit any changes to the `public/` directory along with the upgrade
 - Make sure the Calypso editor is loading `skin.min.css` and `content.min.css`
-  from the public directory (the URL should look like
-  `http://calypso.localhost:3000/calypso/tinymce/skins/lightgray/skin.min.css`)
+  from `/calypso/`, which corresponds to the `public/` directory in the repo:
+  - `http://calypso.localhost:3000/calypso/tinymce/skins/lightgray/skin.min.css`
+    (local development)
+  - `https://wordpress.com/calypso/tinymce/skins/lightgray/skin.min.css`
+    (staging)
+
+In the future, it would be nice to not have this manual copy step.  Ideas and
+PRs welcome, but for now, it's probably not a good idea to update these files
+outside of a TinyMCE upgrade.
 
 ## Usage
 
