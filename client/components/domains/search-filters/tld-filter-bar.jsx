@@ -50,6 +50,8 @@ export class TldFilterBar extends Component {
 	bindButton = button => ( this.button = button );
 
 	handleButtonClick = event => {
+		const { filters: { tlds = [] } = {} } = this.props;
+
 		const isCurrentlySelected = event.currentTarget.dataset.selected === 'true';
 		const newTld = event.currentTarget.value;
 
@@ -59,13 +61,13 @@ export class TldFilterBar extends Component {
 			! isCurrentlySelected
 		);
 
-		const tldSet = new Set( [ ...this.props.filters.tlds, newTld ] );
+		const tldSet = new Set( [ ...tlds, newTld ] );
 		if ( isCurrentlySelected ) {
 			tldSet.delete( newTld );
 		}
 
-		const tlds = [ ...tldSet ];
-		this.props.onChange( { tlds }, { shouldSubmit: true } );
+		const newTlds = [ ...tldSet ];
+		this.props.onChange( { tlds: newTlds }, { shouldSubmit: true } );
 	};
 	handleFiltersReset = () => {
 		this.togglePopover();
@@ -125,16 +127,17 @@ export class TldFilterBar extends Component {
 	}
 
 	renderPopoverButton() {
+		const { filters: { tlds = [] } = {}, translate } = this.props;
 		return (
 			<Button
 				className={ classNames( 'search-filters__popover-button', {
-					'is-active': this.props.filters.tlds.length > 0,
+					'is-active': tlds.length > 0,
 				} ) }
 				onClick={ this.togglePopover }
 				ref={ this.bindButton }
 				key="popover-button"
 			>
-				{ this.props.translate( 'More Extensions', {
+				{ translate( 'More Extensions', {
 					context: 'TLD filter button',
 					comment: 'Refers to top level domain name extension, such as ".com"',
 				} ) }

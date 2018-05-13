@@ -543,7 +543,7 @@ class RegisterDomainStep extends React.Component {
 				},
 			},
 			() => {
-				this.repeatSearch();
+				this.repeatSearch( { pageNumber: 1 } );
 			}
 		);
 	};
