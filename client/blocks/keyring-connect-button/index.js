@@ -149,7 +149,8 @@ class KeyringConnectButton extends Component {
 	didKeyringConnectionSucceed( keyringConnections ) {
 		const hasAnyConnectionOptions = some(
 			keyringConnections,
-			e => e.isConnected === false || e.isConnected === undefined
+			keyringConnection =>
+				keyringConnection.isConnected === false || keyringConnection.isConnected === undefined
 		);
 
 		if ( keyringConnections.length === 0 ) {
