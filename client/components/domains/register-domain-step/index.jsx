@@ -33,7 +33,6 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
@@ -49,6 +48,7 @@ import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import DropdownFilters from 'components/domains/search-filters/dropdown-filters';
 import FilterResetNotice from 'components/domains/search-filters/filter-reset-notice';
+import TldFilterBar from 'components/domains/search-filters/tld-filter-bar';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
@@ -171,6 +171,8 @@ class RegisterDomainStep extends React.Component {
 		onAddDomain: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
+		recordFiltersSubmit: PropTypes.func.isRequired,
+		recordFiltersReset: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -391,28 +393,6 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
-	renderTldButtons() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
-		const { availableTlds, lastFilters: { tlds: selectedTlds } } = this.state;
-		return (
-			isKrackenUi && (
-				<CompactCard className="register-domain-step__tld-buttons">
-					{ availableTlds.slice( 0, 8 ).map( tld => (
-						<Button
-							className={ classNames( { 'is-active': includes( selectedTlds, tld ) } ) }
-							data-selected={ includes( selectedTlds, tld ) }
-							key={ tld }
-							onClick={ this.toggleTldInFilter }
-							value={ tld }
-						>
-							.{ tld }
-						</Button>
-					) ) }
-				</CompactCard>
-			)
-		);
-	}
-
 	renderFilterResetNotice() {
 		return (
 			<FilterResetNotice
@@ -540,10 +520,15 @@ class RegisterDomainStep extends React.Component {
 		);
 	};
 
-	onFiltersChange = newFilters => {
-		this.setState( {
-			filters: newFilters,
-		} );
+	onFiltersChange = ( newFilters, { shouldSubmit = false } = {} ) => {
+		this.setState(
+			{
+				filters: { ...this.state.filters, ...newFilters },
+			},
+			() => {
+				shouldSubmit && this.onFiltersSubmit();
+			}
+		);
 	};
 
 	onFiltersReset = ( ...keysToReset ) => {
@@ -990,6 +975,8 @@ class RegisterDomainStep extends React.Component {
 			return this.renderExampleSuggestions();
 		}
 
+		const showTldFilterBar = config.isEnabled( 'domains/kracken-ui/tld-filter' );
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1015,7 +1002,18 @@ class RegisterDomainStep extends React.Component {
 				fetchAlgo={ fetchAlgo }
 				cart={ this.props.cart }
 			>
-				{ this.renderTldButtons() }
+				{ showTldFilterBar && (
+					<TldFilterBar
+						availableTlds={ this.state.availableTlds }
+						filters={ this.state.filters }
+						isSignupStep={ this.props.isSignupStep }
+						lastFilters={ this.state.lastFilters }
+						onChange={ this.onFiltersChange }
+						onReset={ this.onFiltersReset }
+						onSubmit={ this.onFiltersSubmit }
+						showPlaceholder={ this.state.loadingResults || ! suggestions }
+					/>
+				) }
 			</DomainSearchResults>
 		);
 	}

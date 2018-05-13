@@ -89,11 +89,9 @@ export class DropdownFilters extends Component {
 	}
 
 	updateFilterValues = ( name, value ) => {
-		const newFilters = {
-			...this.props.filters,
+		this.props.onChange( {
 			[ name ]: value,
-		};
-		this.props.onChange( newFilters );
+		} );
 	};
 
 	handleOnChange = event => {

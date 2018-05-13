@@ -51,6 +51,7 @@
 		"domains/kracken-ui/dashes-filter": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/max-characters-filter": true,
+		"domains/kracken-ui/tld-filter": true,
 		"domains/kracken-ui/pagination": true,
 		"external-media": true,
 		"external-media/google-photos": true,
