@@ -26,12 +26,10 @@ export class FilterResetNotice extends Component {
 	};
 
 	hasActiveFilters() {
-		return (
-			( this.props.lastFilters.includeDashes && 1 ) ||
-			( this.props.lastFilters.exactSldMatchesOnly && 1 ) ||
-			( this.props.lastFilters.maxCharacters !== '' && 1 ) ||
-			this.props.lastFilters.tlds.length > 0
-		);
+		const {
+			lastFilters: { includeDashes, exactSldMatchesOnly, maxCharacters, tlds = [] } = {},
+		} = this.props;
+		return includeDashes || exactSldMatchesOnly || maxCharacters !== '' || tlds.length > 0;
 	}
 
 	hasTooFewSuggestions() {
