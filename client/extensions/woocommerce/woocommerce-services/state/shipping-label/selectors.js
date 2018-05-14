@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { flatten, find, get, includes, isEmpty, isEqual, isFinite, map, mapValues, omit, pick, round, some, sumBy, uniq } from 'lodash';
+import { fill, find, flatten, forEach, get, includes, isEmpty, isEqual, isFinite,
+	map, mapValues, omit, pick, round, some, uniq, zipObject } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -171,6 +172,26 @@ export const getProductValueFromOrder = createSelector(
 	]
 );
 
+export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! isLoaded( state, orderId, siteId ) ) {
+		return null;
+	}
+
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const { countriesData } = shippingLabel.storeOptions;
+	if ( flagIsEnabled( 'woocommerce/extension-wcservices/international-labels' ) || ! countriesData ) {
+		return countriesData;
+	}
+
+	return {
+		...pick( countriesData, [ 'PR', 'VI' ] ),
+		US: {
+			...countriesData.US,
+			states: omit( countriesData.US.states, [ 'AA', 'AE', 'AP' ] ), // Exclude military addresses
+		},
+	};
+};
+
 const getAddressErrors = ( {
 	values,
 	isNormalized,
@@ -246,8 +267,26 @@ const getPackagesErrors = ( values ) => mapValues( values, ( pckg ) => {
 	return errors;
 } );
 
-export const getCustomsErrors = ( packages, customs ) => {
+export const getCustomsErrors = ( packages, customs, destinationCountryCode, destinationCountryName ) => {
 	const usedProductIds = uniq( flatten( map( packages, pckg => map( pckg.items, 'product_id' ) ) ) );
+
+	const valuesByProductId = zipObject( usedProductIds, fill( Array( usedProductIds.length ), 0 ) );
+	forEach( packages, ( pckg ) => {
+		forEach( pckg.items, ( { quantity, product_id } ) =>
+			valuesByProductId[ product_id ] += quantity * customs.items[ product_id ].value
+		);
+	} );
+
+	const valuesByTariffNumber = {};
+	forEach( pick( customs.items, usedProductIds ), ( itemData, productId ) => {
+		if ( 6 === itemData.tariffNumber.length ) {
+			if ( ! valuesByTariffNumber[ itemData.tariffNumber ] ) {
+				valuesByTariffNumber[ itemData.tariffNumber ] = 0;
+			}
+			valuesByTariffNumber[ itemData.tariffNumber ] += valuesByProductId[ productId ];
+		}
+	} );
+
 	return {
 		packages: mapValues( packages, ( pckg ) => {
 			const errors = {};
@@ -260,9 +299,24 @@ export const getCustomsErrors = ( packages, customs ) => {
 				errors.restrictionExplanation = translate( 'Please describe what kind of restrictions this package must have' );
 			}
 
-			const totalValue = sumBy( pckg.items, ( { quantity, product_id } ) => quantity * customs.items[ product_id ].value );
-			if ( totalValue > 2500 && ! pckg.itn ) {
-				errors.itn = translate( 'ITN is required for shipments over $2,500' );
+			const classesAbove2500usd = new Set();
+			forEach( pckg.items, ( { product_id } ) => {
+				const { tariffNumber } = customs.items[ product_id ];
+				if ( 45 < valuesByTariffNumber[ tariffNumber ] ) {
+					classesAbove2500usd.add( tariffNumber );
+				}
+			} );
+
+			if ( pckg.itn ) {
+				if ( ! /^AES X\d{14}$/.test( pckg.itn ) ) {
+					errors.itn = translate( 'Invalid format' );
+				}
+			} else if ( 'CA' !== destinationCountryCode ) {
+				if ( ! isEmpty( classesAbove2500usd ) ) {
+					errors.itn = translate( 'ITN is required for shipping items valued over $2,500 per tariff code' );
+				} else if ( includes( [ 'IR', 'SY', 'KP', 'CU', 'SD' ], destinationCountryCode ) ) {
+					errors.itn = translate( 'ITN is required for shipments to %(country)s', { args: { country: destinationCountryName } } );
+				}
 			}
 
 			return errors;
@@ -318,11 +372,13 @@ export const getFormErrors = createSelector(
 		if ( isEmpty( form ) ) {
 			return;
 		}
+		const destinationCountryCode = form.destination.values.country;
+		const destinationCountryName = getCountriesData( state, orderId, siteId )[ destinationCountryCode ];
 		return {
 			origin: getAddressErrors( form.origin, countriesData ),
 			destination: getAddressErrors( form.destination, countriesData ),
 			packages: getPackagesErrors( form.packages.selected ),
-			customs: getCustomsErrors( form.packages.selected, form.customs ),
+			customs: getCustomsErrors( form.packages.selected, form.customs, destinationCountryCode, destinationCountryName ),
 			rates: getRatesErrors( form.rates ),
 			sidebar: getSidebarErrors( paperSize ),
 		};
@@ -411,24 +467,4 @@ export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId
 
 export const isLabelDataFetchError = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return isError( state, orderId, siteId ) || areSettingsErrored( state, siteId ) || arePackagesErrored( state, siteId );
-};
-
-export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! isLoaded( state, orderId, siteId ) ) {
-		return null;
-	}
-
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	const { countriesData } = shippingLabel.storeOptions;
-	if ( flagIsEnabled( 'woocommerce/extension-wcservices/international-labels' ) || ! countriesData ) {
-		return countriesData;
-	}
-
-	return {
-		...pick( countriesData, [ 'PR', 'VI' ] ),
-		US: {
-			...countriesData.US,
-			states: omit( countriesData.US.states, [ 'AA', 'AE', 'AP' ] ), // Exclude military addresses
-		},
-	};
 };

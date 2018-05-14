@@ -99,7 +99,10 @@ const PackageRow = ( props ) => {
 
 		<TextField
 			id={ packageId + '_itn' }
-			title={ translate( 'ITN' ) }
+			title={
+				<span>{ translate( 'ITN' ) } (<a href="https://pe.usps.com/text/imm/immc5_010.htm"
+					target="_blank" rel="noopener noreferrer">{ translate( 'more info' ) }</a>)</span>
+			}
 			value={ itn || '' }
 			updateValue={ props.setITN }
 			error={ errors.itn } />
