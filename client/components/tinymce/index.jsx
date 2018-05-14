@@ -257,11 +257,9 @@ export default class extends React.Component {
 
 		const ltrButton = isRtl ? 'ltr,' : '';
 
-		const tinymceVersion = tinymce.majorVersion + '.' + tinymce.minorVersion;
-
 		tinymce.init( {
 			selector: '#' + this._id,
-			skin_url: '//s1.wp.com/wp-content/tinymce-assets/' + tinymceVersion + '/skins/lightgray',
+			skin_url: '/calypso/tinymce/skins/lightgray',
 			skin: 'lightgray',
 			content_css: CONTENT_CSS,
 			language: localeSlug,
