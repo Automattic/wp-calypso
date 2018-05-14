@@ -13,7 +13,7 @@ update the TinyMCE skin files pulled from the Calypso repo. Here's how:
 
 ```sh
 git rm -r public/tinymce/skins/lightgray/
-cp -r node_modules/tinymce/skins/lightgray/ public/tinymce/skins/
+cp -r node_modules/tinymce/skins/lightgray public/tinymce/skins/
 git add public/tinymce/skins/lightgray/
 ```
 
