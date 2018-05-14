@@ -147,7 +147,7 @@ class TransferDomainStep extends React.Component {
 
 		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
 			domainProductPrice = translate( 'Free with your plan' );
-		} else if ( domainsWithPlansOnly && ! isPlan( selectedSite.plan ) ) {
+		} else if ( domainsWithPlansOnly && selectedSite && ! isPlan( selectedSite.plan ) ) {
 			domainProductPrice = translate( 'Included in paid plans' );
 		}
 
