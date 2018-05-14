@@ -1,9 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { isEmpty } from 'lodash';
-/**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
@@ -55,7 +51,7 @@ export const search = createReducer(
 		},
 		[ INLINE_HELP_SELECT_RESULT ]: ( state, action ) => ( {
 			...state,
-			selectedResult: isEmpty( state.items[ state.searchQuery ] ) ? -1 : action.resultIndex,
+			selectedResult: action.resultIndex,
 		} ),
 		[ INLINE_HELP_SELECT_NEXT_RESULT ]: state => {
 			if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
