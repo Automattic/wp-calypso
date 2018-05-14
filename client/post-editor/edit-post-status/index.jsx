@@ -36,7 +36,6 @@ export class EditPostStatus extends Component {
 		site: PropTypes.object,
 		translate: PropTypes.func,
 		type: PropTypes.string,
-		postDate: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
 		status: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
