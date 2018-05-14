@@ -32,6 +32,7 @@ const requestRestore = action =>
 			apiVersion: '1',
 			method: 'POST',
 			path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
+			body: action.payload ? action.payload : {},
 		},
 		action
 	);

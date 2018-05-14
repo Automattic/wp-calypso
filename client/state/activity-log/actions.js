@@ -167,12 +167,21 @@ export function rewindRequestDismiss( siteId ) {
  * @param {number} timestamp Unix timestamp to restore site to
  * @return {Object} action object
  */
-export function rewindRestore( siteId, timestamp ) {
-	return {
-		type: REWIND_RESTORE,
-		siteId,
-		timestamp,
-	};
+export function rewindRestore( siteId, timestamp, payload ) {
+	if ( 'undefined' === typeof payload ) {
+		return {
+			type: REWIND_RESTORE,
+			siteId,
+			timestamp,
+		};
+	} else {
+		return {
+			type: REWIND_RESTORE,
+			siteId,
+			timestamp,
+			payload,
+		};
+	}
 }
 
 export function dismissRewindRestoreProgress( siteId ) {
