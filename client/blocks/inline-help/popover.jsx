@@ -21,9 +21,10 @@ import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
-import HelpContact from 'me/help/help-contact';
 import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
+import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
+import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -81,7 +82,7 @@ class InlineHelpPopover extends Component {
 			<div className={ classes }>
 				{
 					{
-						contact: <HelpContact compact selectedSite={ this.props.selectedSite } />,
+						contact: <InlineHelpContactView />,
 						richresult: (
 							<InlineHelpRichResult
 								result={ this.props.selectedResult }
@@ -107,6 +108,7 @@ class InlineHelpPopover extends Component {
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
+				<QuerySupportTypes />
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
 						openResult={ this.openResultView }
