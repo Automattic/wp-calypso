@@ -118,7 +118,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<MobileApps />
-				<SellOnlinePaypal isJetpack={ false } />
 			</Fragment>
 		);
 	}
