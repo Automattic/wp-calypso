@@ -1179,16 +1179,14 @@ Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
 /**
  * GET emergent paywall iframe client configuration
  *
- * @param {object} data - post data
+ * @param {string} countryCode - user's country code
+ * @param {object} cart - current cart object. See: client/lib/cart/store/index.js
  * @param {Function} fn The callback function
  * @api public
  *
  * @returns {Promise} promise
- *
- * The data format is: {
- * }
  */
-Undocumented.prototype.emergentPaywellConfiguration = function( countryCode, cart, fn ) {
+Undocumented.prototype.emergentPaywallConfiguration = function( countryCode, cart, fn ) {
 	debug( '/me/emergent-paywall-configuration query' );
 
 	return this.wpcom.req.post(

@@ -206,11 +206,9 @@ const SecurePaymentForm = createReactClass( {
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
 				<EmergentPaywallBox
-					cards={ this.props.cards }
-					transaction={ this.props.transaction }
 					cart={ this.props.cart }
 					selectedSite={ this.props.selectedSite }
-					transactionStep={ this.props.transaction.step }
+					transaction={ this.props.transaction }
 				>
 					{ this.props.children }
 				</EmergentPaywallBox>

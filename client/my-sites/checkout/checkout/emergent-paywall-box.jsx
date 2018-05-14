@@ -7,18 +7,20 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
-import { get, isEqual, debounce, startsWith } from 'lodash';
+import { get, isEqual, debounce, startsWith, isBoolean } from 'lodash';
+import { connect } from 'react-redux';
+import { localize, translate } from 'i18n-calypso';
 import debug from 'debug';
 
 /**
  * Internal dependencies
  */
-import { localize, translate } from 'i18n-calypso';
-import notices from 'notices';
 import analytics from 'lib/analytics';
-import { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
+import notices from 'notices';
 import TermsOfService from './terms-of-service';
 import wp from 'lib/wp';
+import { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 
 const wpcom = wp.undocumented();
 const log = debug( 'calypso:checkout:payment:emergent-payall' );
@@ -26,18 +28,23 @@ const log = debug( 'calypso:checkout:payment:emergent-payall' );
 export class EmergentPaywallBox extends Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object,
 		transaction: PropTypes.object.isRequired,
 	};
 
-	constructor() {
-		super();
+	static defaultProps = {
+		selectedSite: {},
+	};
+
+	constructor( props ) {
+		super( props );
 		this.state = this.getInitialState();
 		this.iframeRef = React.createRef();
 		this.formRef = React.createRef();
 		this.fetchIframeConfiguration = debounce( this.fetchIframeConfiguration, 500 );
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchIframeConfiguration();
 		window.addEventListener( 'message', this.onMessageReceiveHandler, false );
 	}
@@ -64,37 +71,61 @@ export class EmergentPaywallBox extends Component {
 			hasConfigLoaded: false,
 			redirectTo: '',
 			pendingOrder: false,
+			siteSlug: this.props.selectedSite ? this.props.selectedSite.slug : 'no-site',
 		};
+	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		if (
+			this.state.hasConfigLoaded !== nextState.hasConfigLoaded ||
+			this.state.iframeHeight !== nextState.iframeHeight
+		) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Determines what to do after a `PURCHASE_STATUS` message
+	 *
+	 * @param {Object} purchaseStatus - the status
+	 * @return {Function?} whichever action is triggered
+	 */
+	handlePurchaseStatusMessage( purchaseStatus ) {
+		if ( isBoolean( purchaseStatus.submitted ) ) {
+			log( 'Setting state.pendingOrder to the prepareOrder promise' );
+			return this.setState( { pendingOrder: this.prepareOrder() } );
+		}
+
+		if ( isBoolean( purchaseStatus.success ) ) {
+			if ( true === purchaseStatus.success ) {
+				log( 'Paywall purchase success' );
+				return this.handlePaywallSuccess();
+			}
+		}
+
+		if ( isBoolean( purchaseStatus.close ) ) {
+			log( 'User has closed the iframe' );
+			return page.redirect( `/plans/${ this.state.siteSlug }` );
+		}
 	}
 
 	onMessageReceiveHandler = event => {
 		if ( event && startsWith( this.state.paywall_url, event.origin ) ) {
 			const message = get( JSON.parse( event.data ), 'message', {} );
 			log( 'Received event from Emergent Paywall:', message );
-
 			switch ( message.name ) {
 				case 'WINDOW_SIZE':
-					this.setState( {
+					return this.setState( {
 						iframeHeight: message.payload.size.height,
 						iframeWidth: message.payload.size.width,
 					} );
-					break;
 				case 'PURCHASE_STATUS':
-					if ( 'submitted' in message ) {
-						log( 'Setting state.pendingOrder to the prepareOrder promise' );
-						this.setState( { pendingOrder: this.prepareOrder() } );
-					} else if ( 'success' in message ) {
-						if ( message.success ) {
-							this.handlePaywallSuccess();
-						} else {
-							// TODO: handle failure.
-						}
-					} else if ( 'close' in message ) {
-						//paywall window closed
-					}
-					break;
-				default:
-					break;
+					return this.handlePurchaseStatusMessage( {
+						close: message.close,
+						success: message.success,
+						submitted: message.submitted,
+					} );
 			}
 		}
 	};
@@ -104,10 +135,9 @@ export class EmergentPaywallBox extends Component {
 			.then( result => {
 				if ( result.order_id ) {
 					log( 'Order created. Order ID is: ' + result.order_id );
-
-					const siteSlug = this.props.selectedSite ? this.props.selectedSite.slug : 'no-site';
-					const successPath = `/checkout/thank-you/${ siteSlug }/pending/${ result.order_id }`;
-
+					const successPath = `/checkout/thank-you/${ this.state.siteSlug }/pending/${
+						result.order_id
+					}`;
 					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
 						payment_method: this.state.paymentMethod,
 					} );
@@ -121,6 +151,7 @@ export class EmergentPaywallBox extends Component {
 					error.message || translate( "We've encountered a problem. Please try again later." )
 				);
 				// TODO: This shouldn't happen, but if it does, what can we do?
+				page.redirect( `/checkout/${ this.state.siteSlug }` );
 			} );
 	}
 
@@ -142,7 +173,8 @@ export class EmergentPaywallBox extends Component {
 
 	fetchIframeConfiguration = () => {
 		notices.clearNotices( 'notices' );
-		wpcom.emergentPaywellConfiguration( 'IN', this.props.cart, this.loadIframe );
+		// TODO: we can use this.props.userCountryCode ( user IP geo code )?
+		wpcom.emergentPaywallConfiguration( 'IN', this.props.cart, this.loadIframe );
 	};
 
 	loadIframe = ( error, iframeConfig ) => {
@@ -214,4 +246,7 @@ export class EmergentPaywallBox extends Component {
 	}
 }
 
-export default localize( EmergentPaywallBox );
+export default connect(
+	state => ( { userCountryCode: getCurrentUserCountryCode( state ) } ),
+	null
+)( localize( EmergentPaywallBox ) );
