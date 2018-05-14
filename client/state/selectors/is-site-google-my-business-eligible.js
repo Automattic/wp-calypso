@@ -46,7 +46,7 @@ export const siteHasBusinessPlan = createSelector(
 );
 
 /**
- * Returns true if site has jetpack premium/business plan
+ * Returns true if site has Jetpack premium/business plan
  *
  * @param  {Object}  state  Global state tree
  * @param  {String}  siteId The Site ID
@@ -65,10 +65,10 @@ export const siteHasEligibleJetpackPlan = createSelector(
 );
 
 /**
- * Returns true if the site is eliglbe to  use Google My Business (GMB)
+ * Returns true if the site is eligible to use Google My Business (GMB)
  *
  * It should be visible if:
- * - site has a business plan on wpcom or jetpack premium/business
+ * - site has a business plan on wpcom or Jetpack premium/business
  * @param  {Object}  state  Global state tree
  * @param  {String}  siteId The Site ID
  * @return {Boolean} True if we should show the nudge

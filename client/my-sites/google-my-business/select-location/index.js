@@ -5,6 +5,8 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import Gridicon from 'gridicons';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -12,14 +14,15 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
-import ExternalLink from 'components/external-link';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessSelectLocationButton from './button';
 import HeaderCake from 'components/header-cake';
+import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -50,7 +53,27 @@ class GoogleMyBusinessSelectLocation extends Component {
 
 	trackAddYourBusinessClick = () => {
 		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_location_add_your_business_link_click'
+			'calypso_google_my_business_select_location_add_your_business_button_click'
+		);
+	};
+
+	handleConnect = () => {
+		const { locations } = this.props;
+
+		const locationCount = locations.length;
+		const verifiedLocationCount = locations.filter( location => {
+			return get( location, 'meta.state.isVerified', false );
+		} ).length;
+
+		this.props.recordTracksEvent( 'calypso_google_my_business_select_location_connect', {
+			location_count: locationCount,
+			verified_location_count: verifiedLocationCount,
+		} );
+	};
+
+	trackAddListingClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_location_use_another_account_button_click'
 		);
 	};
 
@@ -90,28 +113,33 @@ class GoogleMyBusinessSelectLocation extends Component {
 					</GoogleMyBusinessLocation>
 				) ) }
 
-				<Card className="gmb-select-location__add">
-					{ translate(
-						"Don't see the listing you are trying to connect? {{link}}Add your business{{/link}}.",
-						{
-							components: {
-								link: (
-									<ExternalLink
-										href="https://business.google.com/create"
-										target="_blank"
-										rel="noopener noreferrer"
-										icon={ true }
-										onClick={ this.trackAddYourBusinessClick }
-									/>
-								),
-							},
-						}
-					) }
+				<Card className="gmb-select-location__help">
+					<p>{ translate( "Don't see the listing you are trying to connect?" ) }</p>
+
+					<div className="gmb-select-location__help-actions">
+						<Button
+							href={ 'https://business.google.com/create' }
+							target="_blank"
+							onClick={ this.trackAddYourBusinessClick }
+						>
+							{ translate( 'Add your Business' ) } <Gridicon icon="external" />
+						</Button>
+
+						<KeyringConnectButton
+							serviceId="google_my_business"
+							forceReconnect={ true }
+							onClick={ this.trackAddListingClick }
+							onConnect={ this.handleConnect }
+						>
+							{ translate( 'Use another Google Account' ) }
+						</KeyringConnectButton>
+					</div>
 				</Card>
 			</Main>
 		);
 	}
 }
+
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );

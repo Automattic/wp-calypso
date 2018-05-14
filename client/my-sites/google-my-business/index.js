@@ -103,26 +103,32 @@ export default function( router ) {
 		makeLayout
 	);
 
-	router( '/google-my-business/:site', siteSelection, loadKeyringsMiddleware, context => {
-		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const hasConnectedLocation = isGoogleMyBusinessLocationConnected( state, siteId );
-		const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
-		const hasAuthenticated = getKeyringConnectionsByName( state, 'google-my-business' ).length > 0;
+	router(
+		'/google-my-business/:site',
+		siteSelection,
+		loadKeyringsMiddleware,
+		context => {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+			const hasConnectedLocation = isGoogleMyBusinessLocationConnected( state, siteId );
+			const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
+			const hasAuthenticated =
+				getKeyringConnectionsByName( state, 'google_my_business' ).length > 0;
 
-		if ( ! config.isEnabled( 'google-my-business' ) ) {
-			page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
-			return;
-		}
+			if ( ! config.isEnabled( 'google-my-business' ) ) {
+				page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
+				return;
+			}
 
-		if ( hasConnectedLocation ) {
-			page.redirect( `/google-my-business/stats/${ context.params.site }` );
-		} else if ( hasLocationsAvailable ) {
-			page.redirect( `/google-my-business/select-location/${ context.params.site }` );
-		} else if ( hasAuthenticated ) {
-			page.redirect( `/google-my-business/new/${ context.params.site }` );
-		} else {
-			page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
+			if ( hasConnectedLocation ) {
+				page.redirect( `/google-my-business/stats/${ context.params.site }` );
+			} else if ( hasLocationsAvailable ) {
+				page.redirect( `/google-my-business/select-location/${ context.params.site }` );
+			} else if ( hasAuthenticated && ! hasLocationsAvailable ) {
+				page.redirect( `/google-my-business/new/${ context.params.site }` );
+			} else {
+				page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
+			}
 		}
-	} );
+	);
 }

@@ -10,3 +10,29 @@
 		margin-top: 10px;
 	}
 }
+
+.gmb-new-account__actions,
+.gmb-select-location__help-actions {
+	display: flex;
+
+	@include breakpoint( '<480px' ) {
+		flex-direction: column;
+	}
+}
+
+.gmb-new-account__actions .button,
+.gmb-select-location__help-actions .button {
+	@include breakpoint( '<480px' ) {
+		text-align: center;
+	}
+
+	&:not( :last-child ) {
+		@include breakpoint( '<480px' ) {
+			margin-bottom: 10px;
+		}
+
+		@include breakpoint( '>480px' ) {
+			margin-right: 10px;
+		}
+	}
+}
