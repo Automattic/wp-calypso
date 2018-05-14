@@ -163,7 +163,6 @@ class DeleteSite extends Component {
 				<ActionPanel>
 					<ActionPanelBody>
 						<ActionPanelFigure>
-							{  }
 							<svg
 								width="158"
 								height="174"

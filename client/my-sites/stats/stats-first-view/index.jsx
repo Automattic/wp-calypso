@@ -21,7 +21,6 @@ class StatsFirstView extends React.PureComponent {
 				<div>
 					{ this.renderIcon() }
 					<h1>{ this.props.translate( 'See How Your Site Is Performing' ) }</h1>
-					{  }
 					<p>
 						{ this.props.translate(
 							"The Stats page tells you everything you need to know about your site's traffic and visitors — which of your posts are taking off, where your audience is coming from, and who's now following you."
