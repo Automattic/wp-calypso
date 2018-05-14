@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -76,11 +77,12 @@ class GoogleMyBusinessNewAccount extends Component {
 
 						<div className="gmb-new-account__actions">
 							<Button
-								href={ `/google-my-business/select-location/${ siteSlug }` }
+								href={ 'https://www.google.com/business/add' }
+								target="_blank"
 								onClick={ this.trackCreateMyListingClick }
 								primary
 							>
-								{ translate( 'Create Your Listing' ) }
+								{ translate( 'Create Your Listing' ) } <Gridicon icon="external" />
 							</Button>
 
 							<Button href={ `/stats/${ siteSlug }` } onClick={ this.trackNoThanksClick }>
