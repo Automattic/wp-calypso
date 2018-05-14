@@ -8,7 +8,7 @@
 	width: 35px;
 
 	$payment-cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
-	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24';
+	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'brazil-tef';
 
 	@each $brand in $payment-cc-brands {
 		&.is-#{$brand} {
@@ -57,5 +57,10 @@
 		height: 20px;
 		background-size: 70px auto;
 		width: 70px;
+	}
+
+	&.is-tef {
+		background-size: 100px auto;
+		width: 100px;
 	}
 }
