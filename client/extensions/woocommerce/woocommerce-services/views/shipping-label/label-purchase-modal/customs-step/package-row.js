@@ -49,9 +49,9 @@ const PackageRow = ( props ) => {
 		<label htmlFor={ packageId + '_abandonOnNonDelivery' }>
 			<Checkbox
 				id={ packageId + '_abandonOnNonDelivery' }
-				checked={ Boolean( abandonOnNonDelivery ) }
+				checked={ ! abandonOnNonDelivery }
 				onChange={ abandonHandler } />
-			<span>{ translate( 'Abandon package if it can\'t be delivered' ) }</span>
+			<span>{ translate( 'Return to sender if package is unable to be delivered' ) }</span>
 		</label>
 
 		<div className="customs-step__restrictions-row">

@@ -12,10 +12,6 @@
 	margin-bottom: 8px;
 }
 
-.customs-step__package {
-
-}
-
 .customs-step__restrictions-row {
 	margin-top: 8px;
 	display: flex;
@@ -41,32 +37,11 @@
 	}
 }
 
-
-.customs-step__item-rows {
-
-}
-
-.customs-step__item-row {
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
-
-	@include breakpoint( '>960px' ) {
-		flex-wrap: nowrap;
-
-		.form-legend, .form-label {
-			display: none;
-		}
-	}
-}
-
-
 .customs-step__item-rows-header {
 	display: none;
 
 	@include breakpoint( '>960px' ) {
 		display: flex;
-		justify-content: space-between;
 	}
 
 	span {
@@ -76,42 +51,29 @@
 	}
 }
 
-.customs-step__item-id-column {
-	flex-basis: 50%;
+.customs-step__item-row {
+	display: flex;
+	flex-direction: column;
 
-	@include breakpoint( '>960px' ) {
-		flex-basis: 40px;
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+
+		.form-legend, .form-label {
+			display: none;
+		}
 	}
 }
 
-.customs-step__item-value-column {
-	flex-basis: 50%;
+.customs-step__item-description-column,
+.customs-step__item-country-column,
+.customs-step__item-code-column {
+	width: 100%;
 
-	@include breakpoint( '>960px' ) {
-		flex-basis: 100px;
+	@include breakpoint( ">960px" ) {
+		margin-left: 24px;
 	}
 }
 
 .customs-step__item-description-column {
-	flex-basis: 100%;
-
-	@include breakpoint( '>960px' ) {
-		flex-basis: 150px;
-	}
-}
-
-.customs-step__item-country-column {
-	flex-basis: 100%;
-
-	@include breakpoint( '>960px' ) {
-		flex-basis: 180px;
-	}
-}
-
-.customs-step__item-code-column {
-	flex-basis: 100%;
-
-	@include breakpoint( '>960px' ) {
-		flex-basis: 150px;
-	}
+	margin-left: 0;
 }
