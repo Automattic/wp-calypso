@@ -38,11 +38,13 @@ class KeyringConnectButton extends Component {
 		keyringConnections: PropTypes.array,
 		onClick: PropTypes.func,
 		onConnect: PropTypes.func,
+		forceReconnect: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onClick: noop,
 		onConnect: noop,
+		forceReconnect: false,
 	};
 
 	state = {
@@ -84,11 +86,12 @@ class KeyringConnectButton extends Component {
 	}
 
 	performAction = () => {
+		const { forceReconnect } = this.props;
 		const connectionStatus = this.getConnectionStatus();
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
-		if ( 'connected' === connectionStatus ) {
+		if ( 'connected' === connectionStatus && ! forceReconnect ) {
 			this.props.onConnect();
 		} else {
 			this.addConnection();
