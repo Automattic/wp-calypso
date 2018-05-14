@@ -63,7 +63,6 @@ export class JetpackConnectMain extends Component {
 		url: PropTypes.string,
 	};
 
-	/* eslint-disable indent */
 	state = this.props.url
 		? {
 				currentUrl: cleanUrl( this.props.url ),
@@ -75,7 +74,6 @@ export class JetpackConnectMain extends Component {
 				shownUrl: '',
 				waitingForSites: false,
 			};
-	/* eslint-enable indent */
 
 	componentWillMount() {
 		if ( this.props.url ) {

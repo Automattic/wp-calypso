@@ -60,7 +60,6 @@ class SocialConnectPrompt extends Component {
 		return (
 			<Card className="login__social-connect-prompt">
 				<div className="login__social-connect-prompt-logos">
-					{ /* eslint-disable max-len */ }
 					<svg
 						className="login__social-connect-prompt-logo"
 						viewBox="-2 -2 24 24"
@@ -100,7 +99,6 @@ class SocialConnectPrompt extends Component {
 							<circle fill="#C8D7E2" cx="46" cy="2" r="2" />
 						</g>
 					</svg>
-					{ /* eslint-enable max-len */ }
 					<SocialLogo className="login__social-connect-prompt-logo" icon="wordpress" />
 				</div>
 

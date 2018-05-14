@@ -134,7 +134,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		const { translate } = this.props;
 		const disclaimerText = translate(
 			'Not sure? Pick the closest option. You can always change your settings later.'
-		); // eslint-disable-line max-len
+		);
 
 		const storeWrapperClassName = classNames( 'design-type-with-store__store-wrapper', {
 			'is-hidden': ! this.state.showStore,

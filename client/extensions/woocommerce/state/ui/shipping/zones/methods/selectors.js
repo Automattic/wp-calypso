@@ -127,14 +127,11 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 			enabled = getShippingZoneMethod( state, method._originalId, siteId ).enabled;
 		}
 
-		// Prettier formatting indents the following lines causing a linter error 'Expected indentation of 4 tabs but found 5'
-		/* eslint-disable indent */
 		const defaultValues = startsWith( method.methodType, 'wc_services' )
 			? getDefaultSettingsValues(
 					getShippingMethodSchema( state, method.methodType, siteId ).formSchema
 				)
 			: {};
-		/* eslint-enable indent */
 
 		return merge( {}, defaultValues, method, { enabled: false !== enabled } );
 	} );

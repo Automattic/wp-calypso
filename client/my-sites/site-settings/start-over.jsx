@@ -57,7 +57,7 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 				</ActionPanelBody>
 				<ActionPanelFooter>
 					<Button
-						className="settings-action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace,max-len
+						className="settings-action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace
 						href={ EMPTY_SITE }
 					>
 						{ translate( 'Follow the Steps' ) }

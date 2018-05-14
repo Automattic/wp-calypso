@@ -532,7 +532,7 @@ class PlansSetup extends React.Component {
 				<Card className="jetpack-plugins-setup__need-manage">
 					<p>
 						{ translate(
-							'{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.', // eslint-disable-line max-len
+							'{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.',
 							{
 								args: { plan: site.plan.product_name_short },
 								components: { strong: <strong /> },
