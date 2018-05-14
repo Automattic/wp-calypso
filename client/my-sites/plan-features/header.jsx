@@ -110,6 +110,7 @@ export class PlanFeaturesHeader extends Component {
 
 	getBillingTimeframe() {
 		const {
+			currentSitePlan,
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
@@ -133,6 +134,8 @@ export class PlanFeaturesHeader extends Component {
 			);
 		}
 
+		const isUserCurrentlyOnAFreePlan =
+			currentSitePlan && planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } );
 		if (
 			isSiteAT ||
 			! isJetpack ||
@@ -143,6 +146,7 @@ export class PlanFeaturesHeader extends Component {
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
 					{ isDiscounted &&
+						! isUserCurrentlyOnAFreePlan &&
 						! isPlaceholder && (
 							<InfoPopover
 								className="plan-features__header-tip-info"
@@ -312,6 +316,7 @@ export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) 
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 	const isYearly = !! relatedMonthlyPlan;
+
 	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),

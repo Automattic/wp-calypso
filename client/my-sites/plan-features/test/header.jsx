@@ -102,6 +102,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		...props,
 		discountPrice: 12,
 		isPlaceholder: false,
+		currentSitePlan: { productSlug: PLAN_PREMIUM },
 	};
 
 	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( productSlug => {
@@ -116,40 +117,39 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		} );
 	} );
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS ].forEach(
-		productSlug => {
-			test( `Should render InfoPopover for non-jetpack sites (${ productSlug })`, () => {
-				const comp = new PlanFeaturesHeader( {
-					...myProps,
-					isJetpack: false,
-					planType: productSlug,
-				} );
-				const tf = shallow( comp.getBillingTimeframe() );
-				expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+	[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS ].forEach( productSlug => {
+		test( `Should render InfoPopover for non-jetpack sites (${ productSlug })`, () => {
+			const comp = new PlanFeaturesHeader( {
+				...myProps,
+				isSiteJetpack: false,
+				planType: productSlug,
 			} );
+			const tf = shallow( comp.getBillingTimeframe() );
+			expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+		} );
 
-			test( `Should render InfoPopover for AT sites (${ productSlug })`, () => {
-				const comp = new PlanFeaturesHeader( {
-					...myProps,
-					isJetpack: true,
-					isSiteAT: true,
-					planType: productSlug,
-				} );
-				const tf = shallow( comp.getBillingTimeframe() );
-				expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+		test( `Should render InfoPopover for AT sites (${ productSlug })`, () => {
+			const comp = new PlanFeaturesHeader( {
+				...myProps,
+				isSiteJetpack: true,
+				isSiteAT: true,
+				planType: productSlug,
 			} );
-			test( `Should render InfoPopover when hideMonthly is true (${ productSlug })`, () => {
-				const comp = new PlanFeaturesHeader( {
-					...myProps,
-					isJetpack: true,
-					hideMonthly: true,
-					planType: productSlug,
-				} );
-				const tf = shallow( comp.getBillingTimeframe() );
-				expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+			const tf = shallow( comp.getBillingTimeframe() );
+			expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+		} );
+
+		test( `Should render InfoPopover when hideMonthly is true (${ productSlug })`, () => {
+			const comp = new PlanFeaturesHeader( {
+				...myProps,
+				isSiteJetpack: true,
+				hideMonthly: true,
+				planType: productSlug,
 			} );
-		}
-	);
+			const tf = shallow( comp.getBillingTimeframe() );
+			expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+		} );
+	} );
 
 	[
 		PLAN_PERSONAL,
