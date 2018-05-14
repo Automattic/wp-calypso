@@ -92,6 +92,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					serviceId="google_my_business"
 					onClick={ this.trackCreateYourListingClick }
 					onConnect={ this.handleConnect }
+					forceReconnect={ true }
 				>
 					{ translate( 'Create Your Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
