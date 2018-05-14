@@ -271,14 +271,11 @@ export class PostEditor extends React.Component {
 		const site = this.props.selectedSite || undefined;
 		const mode = this.getEditorMode();
 		const isInvalidURL = this.state.loadingError;
-		const siteURL = site ? site.URL + '/' : null;
 
-		let isPage;
 		let isTrashed;
 		let hasAutosave;
 
 		if ( this.state.post ) {
-			isPage = utils.isPage( this.state.post );
 			isTrashed = this.state.post.status === 'trash';
 			hasAutosave = get( this.state.post.meta, [ 'data', 'autosave' ] );
 		}
@@ -361,15 +358,7 @@ export class PostEditor extends React.Component {
 								<FeaturedImage maxWidth={ 1462 } hasDropZone />
 								<div className="post-editor__header">
 									<EditorTitle onChange={ this.onEditorTitleChange } tabIndex={ 1 } />
-									{ this.state.post && isPage && site ? (
-										<EditorPageSlug
-											path={
-												this.state.post.URL && this.state.post.URL !== siteURL
-													? utils.getPagePath( this.state.post )
-													: siteURL
-											}
-										/>
-									) : null }
+									<EditorPageSlug />
 									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
 										<SegmentedControlItem
 											selected={ mode === 'tinymce' }
