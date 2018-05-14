@@ -331,6 +331,23 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
+		let i, ReactComponentName;
+		if ( this.state.notice ) {
+			// Fix restoring components from Redux state.
+			for ( i = 0; i < this.state.notice.length; i++ ) {
+				if (
+					typeof this.state.notice[ i ].type === 'string' &&
+					typeof this.state.notice[ i ].$$typeof === 'undefined'
+				) {
+					ReactComponentName = this.state.notice[ i ].type;
+					this.state.notice[ i ] = (
+						<ReactComponentName { ...this.state.notice[ 0 ] }>
+							{ this.state.notice[ 0 ].props.children }
+						</ReactComponentName>
+					);
+				}
+			}
+		}
 
 		return (
 			<div className="register-domain-step">
