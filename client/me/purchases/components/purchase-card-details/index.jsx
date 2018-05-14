@@ -11,7 +11,7 @@ import { curry } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import { createCardToken } from 'lib/store-transactions';
-import { getPurchase, isDataLoading } from 'me/purchases/utils';
+import { isDataLoading } from 'me/purchases/utils';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 
 class PurchaseCardDetails extends Component {
@@ -33,7 +33,7 @@ class PurchaseCardDetails extends Component {
 	}
 
 	isDataValid( props = this.props ) {
-		const purchase = getPurchase( props ),
+		const purchase = props.selectedPurchase,
 			{ selectedSite } = props;
 
 		return purchase && selectedSite;
@@ -41,18 +41,18 @@ class PurchaseCardDetails extends Component {
 
 	getApiParams() {
 		return {
-			purchaseId: getPurchase( this.props ).id,
+			purchaseId: this.props.selectedPurchase.id,
 		};
 	}
 
 	recordFormSubmitEvent() {
 		analytics.tracks.recordEvent( 'calypso_purchases_credit_card_form_submit', {
-			product_slug: getPurchase( this.props ).productSlug,
+			product_slug: this.props.selectedPurchase.productSlug,
 		} );
 	}
 
 	successCallback() {
-		const { id } = getPurchase( this.props );
+		const { id } = this.props.selectedPurchase;
 
 		this.props.clearPurchases();
 

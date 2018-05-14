@@ -27,7 +27,7 @@ import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
-import { getPurchase, isDataLoading } from '../utils';
+import { isDataLoading } from '../utils';
 import { isDomainRegistration, isPlan, isBusiness, isGoogleApps } from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
@@ -161,7 +161,7 @@ class RemovePurchase extends Component {
 	removePurchase = closeDialog => {
 		this.setState( { isRemoving: true } );
 
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		const { isDomainOnlySite, selectedSite, translate } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
@@ -237,7 +237,7 @@ class RemovePurchase extends Component {
 
 	renderCard = () => {
 		const { translate } = this.props;
-		const productName = getName( getPurchase( this.props ) );
+		const productName = getName( this.props.selectedPurchase );
 
 		return (
 			<CompactCard className="remove-purchase__card" onClick={ this.openDialog }>
@@ -281,7 +281,7 @@ class RemovePurchase extends Component {
 				onClick: this.removePurchase,
 			},
 		];
-		const productName = getName( getPurchase( this.props ) );
+		const productName = getName( this.props.selectedPurchase );
 
 		if (
 			config.isEnabled( 'upgrades/precancellation-chat' ) &&
@@ -307,7 +307,7 @@ class RemovePurchase extends Component {
 
 	renderDomainDialogText() {
 		const { translate } = this.props;
-		const purchase = getPurchase( this.props ),
+		const purchase = this.props.selectedPurchase,
 			productName = getName( purchase );
 
 		return (
@@ -392,7 +392,7 @@ class RemovePurchase extends Component {
 
 	renderPlanDialogText() {
 		const { translate } = this.props;
-		const purchase = getPurchase( this.props ),
+		const purchase = this.props.selectedPurchase,
 			productName = getName( purchase ),
 			includedDomainText = (
 				<p>
@@ -485,7 +485,7 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		if ( ! isRemovable( purchase ) ) {
 			return null;
 		}

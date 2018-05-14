@@ -43,4 +43,4 @@ function getEditCardDetailsPath( siteSlug, purchase ) {
 	return addCardDetails( siteSlug, purchase.id );
 }
 
-export { canEditPaymentDetails, getEditCardDetailsPath, getPurchase, isDataLoading };
+export { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading };

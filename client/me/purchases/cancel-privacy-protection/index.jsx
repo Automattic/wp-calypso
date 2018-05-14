@@ -21,7 +21,7 @@ import {
 	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import { getPurchase, isDataLoading } from '../utils';
+import { isDataLoading } from '../utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -75,7 +75,7 @@ class CancelPrivacyProtection extends Component {
 		}
 
 		const { selectedSite } = props,
-			purchase = getPurchase( props );
+			purchase = props.selectedPurchase;
 
 		return selectedSite && purchase && hasPrivacyProtection( purchase );
 	};
@@ -84,7 +84,7 @@ class CancelPrivacyProtection extends Component {
 		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
 		event.target.blur();
 
-		const { id, meta: domain } = getPurchase( this.props );
+		const { id, meta: domain } = this.props.selectedPurchase;
 
 		this.setState( {
 			disabled: true,
@@ -116,7 +116,7 @@ class CancelPrivacyProtection extends Component {
 	resetState = () => this.setState( this.constructor.initialState );
 
 	renderDescriptionText = () => {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 
 		return (
 			<p>
@@ -134,7 +134,7 @@ class CancelPrivacyProtection extends Component {
 	};
 
 	renderWarningText = () => {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 
 		return (
 			<strong>
