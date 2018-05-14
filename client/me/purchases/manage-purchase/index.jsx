@@ -42,7 +42,6 @@ import {
 	isDataLoading,
 	getEditCardDetailsPath,
 	getPurchase,
-	goToList,
 	recordPageView,
 } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -461,7 +460,7 @@ class ManagePurchase extends Component {
 						path="/me/purchases/:site/:purchaseId"
 						title="Purchases > Manage Purchase"
 					/>
-					<HeaderCake onClick={ goToList }>{ titles.managePurchase }</HeaderCake>
+					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
 					{
 						<PurchaseNotice
 							isDataLoading={ isDataLoading( this.props ) }

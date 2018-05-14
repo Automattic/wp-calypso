@@ -1,16 +1,11 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import page from 'page';
-
-/**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import config from 'config';
-import { addCardDetails, editCardDetails, purchasesRoot } from './paths';
+import { addCardDetails, editCardDetails } from './paths';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -22,10 +17,6 @@ import { isDomainTransfer } from 'lib/products-values';
 // TODO: Remove these property-masking functions in favor of accessing the props directly
 function getPurchase( props ) {
 	return props.selectedPurchase;
-}
-
-function goToList() {
-	page( purchasesRoot );
 }
 
 function isDataLoading( props ) {
@@ -81,7 +72,6 @@ function getEditCardDetailsPath( siteSlug, purchase ) {
 
 export {
 	getPurchase,
-	goToList,
 	isDataLoading,
 	recordPageView,
 	canEditPaymentDetails,
