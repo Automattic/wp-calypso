@@ -1,5 +1,5 @@
 
-Button
+Banner
 ===
 
 This component renders a customizable banner.
