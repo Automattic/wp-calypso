@@ -13,6 +13,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import CountedTextarea from 'components/forms/counted-textarea';
+import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormTextarea from 'components/forms/form-textarea';
 import InfoPopover from 'components/info-popover';
 import TrackInputChanges from 'components/track-input-changes';
@@ -66,7 +67,7 @@ class PublicizeMessage extends Component {
 	renderInfoPopover() {
 		return (
 			<InfoPopover
-				className="publicize-message-counter-info"
+				className="editor-sharing__publicize-message-counter-info"
 				position="bottom left"
 				gaEventCategory="Editor"
 				popoverName="SharingMessage"
@@ -99,31 +100,40 @@ class PublicizeMessage extends Component {
 			);
 		}
 		return (
-			<div>
-				<FormTextarea
-					disabled={ this.props.disabled }
-					value={ this.getMessage() }
-					placeholder={ placeholder }
-					onChange={ this.onChange }
-					className="editor-sharing__message-input"
-				/>
-			</div>
+			<FormTextarea
+				disabled={ this.props.disabled }
+				value={ this.getMessage() }
+				placeholder={ placeholder }
+				onChange={ this.onChange }
+				className="editor-sharing__message-input"
+			/>
 		);
 	}
 
 	render() {
+		const { displayMessageHeading, translate } = this.props;
 		return (
 			<div className="editor-sharing__publicize-message">
-				{ this.props.displayMessageHeading && (
-					<h5 className="editor-sharing__message-heading">
-						{ this.props.translate( 'Customize the message', {
+				{ displayMessageHeading && (
+					<EditorDrawerLabel
+						helpText={ translate(
+							'The following text will be shared along with a link to your post.'
+						) }
+						labelText={ translate( 'Customize the message', {
 							context: 'Post editor sharing message heading',
 						} ) }
-					</h5>
+					>
+						<TrackInputChanges onNewValue={ this.recordStats }>
+							{ this.renderTextarea() }
+						</TrackInputChanges>
+					</EditorDrawerLabel>
 				) }
-				<TrackInputChanges onNewValue={ this.recordStats }>
-					{ this.renderTextarea() }
-				</TrackInputChanges>
+
+				{ ! displayMessageHeading && (
+					<TrackInputChanges onNewValue={ this.recordStats }>
+						{ this.renderTextarea() }
+					</TrackInputChanges>
+				) }
 			</div>
 		);
 	}
