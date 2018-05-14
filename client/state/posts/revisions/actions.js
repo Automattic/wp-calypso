@@ -6,6 +6,8 @@
 import {
 	POST_REVISIONS_DIALOG_OPEN,
 	POST_REVISIONS_DIALOG_CLOSE,
+	POST_REVISIONS_DIFF_SPLIT_VIEW,
+	POST_REVISIONS_DIFF_UNIFY_VIEW,
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
@@ -88,4 +90,12 @@ export const closePostRevisionsDialog = () => ( {
 
 export const openPostRevisionsDialog = () => ( {
 	type: POST_REVISIONS_DIALOG_OPEN,
+} );
+
+export const splitPostRevisionsDiffView = () => ( {
+	type: POST_REVISIONS_DIFF_SPLIT_VIEW,
+} );
+
+export const unifyPostRevisionsDiffView = () => ( {
+	type: POST_REVISIONS_DIFF_UNIFY_VIEW,
 } );
