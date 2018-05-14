@@ -59,7 +59,7 @@ class DnsTemplates extends React.Component {
 					dnsTemplateService: dnsTemplates.MICROSOFT_OFFICE365.SERVICE,
 					modifyVariables: variables =>
 						Object.assign( {}, variables, {
-							mxdata: replace( variables.domain, '.', '-' ) + '.mail.protection.outlook.com.',
+							mxdata: replace( variables.domain, '.', '-' ) + '.mail.protection.outlook.com',
 						} ),
 				},
 				{
