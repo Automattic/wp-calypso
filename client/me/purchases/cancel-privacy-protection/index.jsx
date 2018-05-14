@@ -74,8 +74,8 @@ class CancelPrivacyProtection extends Component {
 			return true;
 		}
 
-		const { selectedSite } = props,
-			purchase = props.selectedPurchase;
+		const { selectedSite } = props;
+		const purchase = props.selectedPurchase;
 
 		return selectedSite && purchase && hasPrivacyProtection( purchase );
 	};
