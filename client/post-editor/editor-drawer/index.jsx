@@ -283,8 +283,6 @@ class EditorDrawer extends Component {
 	}
 
 	renderStatus() {
-		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
-		const postDate = get( this.props.post, 'date', null );
 		const postStatus = get( this.props.post, 'status', null );
 		const { translate, type } = this.props;
 
@@ -292,7 +290,6 @@ class EditorDrawer extends Component {
 			<Accordion title={ translate( 'Status' ) } e2eTitle="status">
 				<EditPostStatus
 					savedPost={ this.props.savedPost }
-					postDate={ postDate }
 					onSave={ this.props.onSave }
 					onTrashingPost={ this.props.onTrashingPost }
 					onPrivatePublish={ this.props.onPrivatePublish }

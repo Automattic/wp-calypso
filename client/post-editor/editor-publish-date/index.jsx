@@ -24,17 +24,12 @@ import { getSelectedSite } from 'state/ui/selectors';
 export class EditorPublishDate extends React.Component {
 	static propTypes = {
 		post: PropTypes.object,
-		postDate: PropTypes.string,
 		setPostDate: PropTypes.func,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			isOpen: false,
-		};
-	}
+	state = {
+		isOpen: false,
+	};
 
 	componentWillUnmount() {
 		window.removeEventListener( 'click', this.handleOutsideClick );
