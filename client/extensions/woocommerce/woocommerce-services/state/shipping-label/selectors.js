@@ -302,7 +302,7 @@ export const getCustomsErrors = ( packages, customs, destinationCountryCode, des
 			const classesAbove2500usd = new Set();
 			forEach( pckg.items, ( { product_id } ) => {
 				const { tariffNumber } = customs.items[ product_id ];
-				if ( 45 < valuesByTariffNumber[ tariffNumber ] ) {
+				if ( 2500 < valuesByTariffNumber[ tariffNumber ] ) {
 					classesAbove2500usd.add( tariffNumber );
 				}
 			} );
