@@ -1,10 +1,10 @@
 // Main
-.settings-action-panel {
+.action-panel {
 	padding-bottom: 16px;
 }
 
 // Title
-.settings-action-panel__title {
+.action-panel__title {
 	margin-bottom: 16px;
 	font-size: 21px;
 	font-weight: 300;
@@ -14,7 +14,7 @@
 }
 
 // Body
-.settings-action-panel__body {
+.action-panel__body {
 	font-size: 14px;
 	line-height: 20px;
 	color: $gray-darken-10;
@@ -25,7 +25,7 @@
 	}
 }
 
-a.settings-action-panel__body-text-link {
+a.action-panel__body-text-link {
 	color: $blue-medium;
 	text-decoration: underline;
 
@@ -35,7 +35,7 @@ a.settings-action-panel__body-text-link {
 }
 
 // Figure
-.settings-action-panel__figure {
+.action-panel__figure {
 	width: 100%;
 	margin: 24px 0;
 	text-align: center;
@@ -52,7 +52,7 @@ a.settings-action-panel__body-text-link {
 }
 
 // Footer
-.settings-action-panel__footer {
+.action-panel__footer {
 	position: relative;
 	padding-top: 17px;
 
@@ -72,12 +72,12 @@ a.settings-action-panel__body-text-link {
 	}
 }
 
-.settings-action-panel__export-button .gridicon,
-.settings-action-panel__support-button .gridicon {
+.action-panel__export-button .gridicon,
+.action-panel__support-button .gridicon {
 	margin-left: 8px;
 }
 
-.settings-action-panel__support-button {
+.action-panel__support-button {
 	&.is-external {
 		margin-right: 8px;
 	}

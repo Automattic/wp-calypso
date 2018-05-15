@@ -16,11 +16,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import ActionPanel from 'my-sites/site-settings/action-panel';
-import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
-import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
-import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
-import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
+import ActionPanel from 'components/action-panel';
+import ActionPanelTitle from 'components/action-panel/title';
+import ActionPanelBody from 'components/action-panel/body';
+import ActionPanelFigure from 'components/action-panel/figure';
+import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import Dialog from 'components/dialog';
@@ -235,7 +235,7 @@ class DeleteSite extends Component {
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						<Button
-							className="delete-site__export-button settings-action-panel__export-button"
+							className="delete-site__export-button action-panel__export-button"
 							disabled={ ! siteId }
 							onClick={ this._checkSiteLoaded }
 							href={ exportLink }
@@ -287,7 +287,7 @@ class DeleteSite extends Component {
 								</p>
 								<p>
 									<a
-										className="delete-site__body-text-link settings-action-panel__body-text-link"
+										className="delete-site__body-text-link action-panel__body-text-link"
 										href="/help/contact"
 									>
 										{ strings.contactSupport }
