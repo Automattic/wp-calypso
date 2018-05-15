@@ -40,8 +40,9 @@ class InlineHelpRichResult extends Component {
 	handleClick = event => {
 		event.preventDefault();
 		const { href } = event.target;
-		const { type } = this.props;
-		const tour = get( this.props.result, RESULT_TOUR );
+		const { type, result } = this.props;
+		const tour = get( result, RESULT_TOUR );
+		const postId = get( result, 'post_id' );
 		const tracksData = omitBy(
 			{
 				search_query: this.props.searchQuery,
@@ -61,9 +62,18 @@ class InlineHelpRichResult extends Component {
 			} else {
 				this.props.setDialogState( {
 					showDialog: true,
-					videoLink: get( this.props.result, RESULT_LINK ),
+					dialogType: 'video',
+					videoLink: get( result, RESULT_LINK ),
 				} );
 			}
+		} else if ( type === RESULT_ARTICLE && postId ) {
+			event.preventDefault();
+			this.props.setDialogState( {
+				showDialog: true,
+				dialogType: 'article',
+				dialogPostHref: href,
+				dialogPostId: postId,
+			} );
 		} else {
 			if ( ! href ) {
 				return;

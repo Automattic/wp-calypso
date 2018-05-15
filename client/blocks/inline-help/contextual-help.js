@@ -15,26 +15,26 @@ import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 const fallbackLinks = [
 	{
 		link: 'http://en.support.wordpress.com/business-plan/',
-		postId: 134940,
+		post_id: 134940,
 		title: 'Uploading custom plugins and themes',
 		description: 'Learn more about installing a custom theme or plugin using the Business plan.',
 	},
 	{
 		link: 'http://en.support.wordpress.com/all-about-domains/',
-		postId: 41171,
+		post_id: 41171,
 		title: 'All About Domains',
 		description: 'Set up your domain whether it’s registered with WordPress.com or elsewhere.',
 	},
 	{
 		link: 'http://en.support.wordpress.com/start/',
-		postId: 81083,
+		post_id: 81083,
 		title: 'Get Started',
 		description:
 			'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.',
 	},
 	{
 		link: 'http://en.support.wordpress.com/settings/privacy-settings/',
-		postId: 1507,
+		post_id: 1507,
 		title: 'Privacy Settings',
 		description: 'Limit your site’s visibility or make it completely private.',
 	},
@@ -44,28 +44,28 @@ const contextLinksForSection = {
 	stats: [
 		{
 			link: 'http://en.support.wordpress.com/stats/',
-			postId: 4454,
+			post_id: 4454,
 			title: 'Stats',
 			description:
 				'Your stats page includes a bunch of nifty graphs, charts, and lists that show you how many visits your site…',
 		},
 		{
 			link: 'http://en.support.wordpress.com/getting-more-views-and-traffic/',
-			postId: 3307,
+			post_id: 3307,
 			title: 'Getting More Views and Traffic',
 			description:
 				'Want more traffic? Here are some tips for attracting more visitors to your site: Tell people in your social networks…',
 		},
 		{
 			link: 'http://en.support.wordpress.com/increase-your-site-traffic/',
-			postId: 132186,
+			post_id: 132186,
 			title: 'Increase Your Site Traffic',
 			description:
 				'One of the most frequent questions our community members ask us — and themselves — is how to get more…',
 		},
 		{
 			link: 'http://en.support.wordpress.com/grow-your-community/',
-			postId: 132190,
+			post_id: 132190,
 			title: 'Grow Your Community',
 			description:
 				"You've worked hard on building your site, now it's time to explore the community and get noticed. On WordPress.com, we…",
@@ -74,21 +74,21 @@ const contextLinksForSection = {
 	sharing: [
 		{
 			link: 'http://en.support.wordpress.com/video-tutorials/connect-to-social-media/',
-			postId: 130825,
+			post_id: 130825,
 			title: 'Integrate and Connect to Social Media',
 			description:
 				'Start sharing your site and attract more traffic and visitors to your content. Learn to activate and control the social…',
 		},
 		{
 			link: 'http://en.support.wordpress.com/sharing/',
-			postId: 7499,
+			post_id: 7499,
 			title: 'Sharing',
 			description:
 				'At the bottom of each post and page you can include sharing buttons for your readers to share your content…',
 		},
 		{
 			link: 'http://en.support.wordpress.com/instagram/',
-			postId: 77589,
+			post_id: 77589,
 			title: 'Instagram',
 			description:
 				'Instagram is a simple way to capture, customize, ' +
@@ -96,7 +96,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/twitter/',
-			postId: 124,
+			post_id: 124,
 			title: 'Twitter',
 			description:
 				'Twitter is a service for the exchange of brief messages, commonly ' +
@@ -106,7 +106,7 @@ const contextLinksForSection = {
 	me: [
 		{
 			link: 'http://en.support.wordpress.com/manage-my-profile/',
-			postId: 19775,
+			post_id: 19775,
 			title: 'Manage My Profile',
 			description:
 				"Your profile is the information you'd like to be shown along with your " +
@@ -114,7 +114,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/gravatars/',
-			postId: 1338,
+			post_id: 1338,
 			title: 'The Gravatar – Your Profile Picture',
 			description:
 				'WordPress.com associates an Avatar with your email address. Gravatar ' +
@@ -123,14 +123,14 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-deactivation/',
-			postId: 138080,
+			post_id: 138080,
 			title: 'Account Deactivation',
 			description:
 				'If you are finished with your WordPress.com account and would like to shut it down, please follow the steps outlined...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/change-your-username/',
-			postId: 2116,
+			post_id: 2116,
 			title: 'Change Your Username',
 			description:
 				'You can change both your WordPress.com account username (the name you use to login) and your display name (the name...',
@@ -145,14 +145,14 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/video-tutorials/manage-your-account/',
-			postId: 130826,
+			post_id: 130826,
 			title: 'Manage Your Account',
 			description:
 				'Learn the ins and outs of managing your WordPress.com account and site. Learn how to change your account password and...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-settings/',
-			postId: 80368,
+			post_id: 80368,
 			title: 'Account Settings',
 			description:
 				'You can review and edit basic account information in Account Settings. ' +
@@ -168,28 +168,28 @@ const contextLinksForSection = {
 	security: [
 		{
 			link: 'http://en.support.wordpress.com/security/two-step-authentication/',
-			postId: 58847,
+			post_id: 58847,
 			title: 'Two Step Authentication',
 			description:
 				"Your WordPress.com site is your home on the internet, and you want to keep that home safe. Hopefully, you've already...",
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-recovery/',
-			postId: 46365,
+			post_id: 46365,
 			title: 'Account Recovery',
 			description:
 				'At some point, you may run into a situation in which you’ve lost access to your account. We want to...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/passwords/',
-			postId: 89,
+			post_id: 89,
 			title: 'Passwords',
 			description:
 				'Passwords are very important to user accounts, and there may come a time when you need to change your password.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/third-party-applications/',
-			postId: 17288,
+			post_id: 17288,
 			title: 'Third Party Applications',
 			description:
 				'WordPress.com allows you to connect with third-party applications that ' +
@@ -199,7 +199,7 @@ const contextLinksForSection = {
 	purchases: [
 		{
 			link: 'http://en.support.wordpress.com/manage-purchases/',
-			postId: 111349,
+			post_id: 111349,
 			title: 'Manage Purchases',
 			description:
 				'You can manage all of your WordPress.com purchases by navigating to the ' +
@@ -207,7 +207,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/auto-renewal/',
-			postId: 110924,
+			post_id: 110924,
 			title: 'Subscriptions for Plans and Domains',
 			description:
 				'Your WordPress.com plans and any domains you add to your sites are based ' +
@@ -215,7 +215,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/discover-the-wordpress-com-plans/',
-			postId: 140323,
+			post_id: 140323,
 			title: 'Discover the WordPress.com Plans',
 			description:
 				'Thank you for building your site on WordPress.com! Upgrading to a plan unlocks a ton of features.',
@@ -231,7 +231,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/email-notifications/',
-			postId: 9443,
+			post_id: 9443,
 			title: 'Email Notifications',
 			description:
 				'Notifications from WordPress.com will be sent to the email address registered ' +
@@ -239,7 +239,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/following-comments/',
-			postId: 4576,
+			post_id: 4576,
 			title: 'Following Comments',
 			description:
 				'When you leave a comment on a WordPress.com blog, you can choose to automatically ' +
@@ -247,7 +247,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/following/',
-			postId: 4899,
+			post_id: 4899,
 			title: 'Following Blogs',
 			description:
 				'When you follow a blog on WordPress.com, the new posts from that site will appear in your Reader, where you...',
@@ -256,7 +256,7 @@ const contextLinksForSection = {
 	media: [
 		{
 			link: 'http://en.support.wordpress.com/media/',
-			postId: 853,
+			post_id: 853,
 			title: 'Media Library',
 			description:
 				'The Media Library is where you can manage your images, audio, videos, and documents ' +
@@ -264,14 +264,14 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/add-media/finding-free-images-and-other-media/',
-			postId: 78425,
+			post_id: 78425,
 			title: 'Finding Free Images and other Media',
 			description:
 				"What do we mean by 'free media'? While much content on the internet is subject to copyright laws, there are...",
 		},
 		{
 			link: 'http://en.support.wordpress.com/add-media/',
-			postId: 38830,
+			post_id: 38830,
 			title: 'Add Media',
 			description:
 				'Dress up your text-based posts and pages with individual images, image galleries, ' +
@@ -279,7 +279,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/videos/',
-			postId: 4744,
+			post_id: 4744,
 			title: 'Videos',
 			description:
 				'Videos are a great way to enhance your blog posts. We use videos all the time on the WordPress.com News...',
@@ -295,7 +295,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/user-mentions/',
-			postId: 91788,
+			post_id: 91788,
 			title: 'User Mentions',
 			description:
 				'User mentions are a great way to include other WordPress.com users within your ' +
@@ -303,14 +303,14 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/adding-users/',
-			postId: 2160,
+			post_id: 2160,
 			title: 'Inviting Contributors, Followers, and Viewers',
 			description:
 				"On WordPress.com, you are able to add users to your website by sending invitations. To send an invitation, you'll want...",
 		},
 		{
 			link: 'http://en.support.wordpress.com/followers/',
-			postId: 5444,
+			post_id: 5444,
 			title: 'My Followers',
 			description:
 				'When someone follows your site, each time you publish new content on your blog they receive an update in their...',
@@ -319,7 +319,7 @@ const contextLinksForSection = {
 	plugins: [
 		{
 			link: 'http://en.support.wordpress.com/plugins/',
-			postId: 2108,
+			post_id: 2108,
 			title: 'Plugins',
 			description:
 				'On WordPress.com, we include the most popular plugin functionality within our ' +
@@ -327,14 +327,14 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/plugins/managing-plugins/',
-			postId: 134818,
+			post_id: 134818,
 			title: 'Managing plugins',
 			description:
 				'After you install a plugin, it will appear in a list at My Sites → Plugins. This list will display any...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/plugins/adding-plugins/',
-			postId: 134719,
+			post_id: 134719,
 			title: 'Adding plugins',
 			description:
 				'Installing and using plugins In addition to built-in plugin functionality, WordPress.com ' +
@@ -350,7 +350,7 @@ const contextLinksForSection = {
 	'posts-pages': [
 		{
 			link: 'http://en.support.wordpress.com/five-step-website-setup/',
-			postId: 100856,
+			post_id: 100856,
 			title: 'Build Your Website in Five Steps',
 			description:
 				"Great, you've registered a website on wordpress.com. Now what? Whether you're building " +
@@ -358,7 +358,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/pages/landing-pages/',
-			postId: 124077,
+			post_id: 124077,
 			title: 'Landing Pages',
 			description:
 				'Landing pages are pages with a single purpose: encouraging your visitors to sign up for ' +
@@ -366,14 +366,14 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/posts/',
-			postId: 84,
+			post_id: 84,
 			title: 'Posts',
 			description:
 				'Posts are what make your blog a blog — they’re servings of content that are listed in reverse chronological order on...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/posts/post-formats/',
-			postId: 10382,
+			post_id: 10382,
 			title: 'Post Formats',
 			description:
 				'Learn how to make gallery, video, audio, and other post types pop with post formats. ' +
@@ -383,14 +383,14 @@ const contextLinksForSection = {
 	'settings-writing': [
 		{
 			link: 'http://en.support.wordpress.com/settings/writing-settings/',
-			postId: 1502,
+			post_id: 1502,
 			title: '"Writing Settings',
 			description:
 				'To change these settings, go to My Sites → Settings → Writing. Manage Categories and Tags Open the Categories or Tags...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/posts/categories-vs-tags/',
-			postId: 2135,
+			post_id: 2135,
 			title: 'Categories vs. Tags',
 			description:
 				'Once upon a time, WordPress.com only provided a Category option. Categories allowed ' +
@@ -398,14 +398,14 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/feeds/',
-			postId: 3589,
+			post_id: 3589,
 			title: 'Feeds',
 			description:
 				'A feed (often called RSS) is a stream of posts or comments that is updated when new content is published. This...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/portfolios/',
-			postId: 84808,
+			post_id: 84808,
 			title: 'Portfolios',
 			description:
 				"If you're hoping to use your WordPress.com site to show off your portfolio separate " +
@@ -415,7 +415,7 @@ const contextLinksForSection = {
 	'settings-discussion': [
 		{
 			link: 'http://en.support.wordpress.com/settings/discussion-settings/',
-			postId: 1504,
+			post_id: 1504,
 			title: 'Discussion Settings',
 			description:
 				'The Discussion Settings are used to control how visitors and other blogs interact ' +
@@ -423,7 +423,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/enable-disable-comments-for-future-posts/',
-			postId: 5997,
+			post_id: 5997,
 			title: 'Enable and Disable Comments for Future Posts',
 			description:
 				'You can enable/disable comments on future posts by going into your Discussion settings. ' +
@@ -431,14 +431,14 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/comments/',
-			postId: 113,
+			post_id: 113,
 			title: 'Comments',
 			description:
 				'Comments are a way for visitors to add feedback to your posts and pages. If you choose to enable comments...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/subscriptions-and-newsletters/',
-			postId: 67810,
+			post_id: 67810,
 			title: 'Subscriptions and Newsletters',
 			description:
 				'This article explains how readers can subscribe to your blog to receive email notifications of all of your posts.  On...',
@@ -453,14 +453,14 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/related-posts/',
-			postId: 1545,
+			post_id: 1545,
 			title: 'Related Posts',
 			description:
 				'The Related Posts feature pulls relevant content from your blog to display at the bottom of your posts.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/webmaster-tools/',
-			postId: 5022,
+			post_id: 5022,
 			title: 'Webmaster Tools',
 			description:
 				'WordPress.com provides you with built-in stats that give you lots of information ' +
@@ -468,7 +468,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/amp-accelerated-mobile-pages/',
-			postId: 122516,
+			post_id: 122516,
 			title: 'AMP (Accelerated Mobile Pages)',
 			description:
 				'AMP (Accelerated Mobile Pages) is an open-source framework that allows browsers ' +
@@ -478,14 +478,14 @@ const contextLinksForSection = {
 	'settings-security': [
 		{
 			link: 'http://en.support.wordpress.com/security/',
-			postId: 10977,
+			post_id: 10977,
 			title: 'Security',
 			description:
 				'The security of your site and your personal data is always a priority. This page describes what we do to...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/unwanted-comments/',
-			postId: 5882,
+			post_id: 5882,
 			title: 'Unwanted Comments and Comment Spam',
 			description:
 				'There are many ways to protect your WordPress.com blogs from unwanted comments: ' +
@@ -493,7 +493,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/selecting-a-strong-password/',
-			postId: 35364,
+			post_id: 35364,
 			title: 'Selecting a Strong Password',
 			description:
 				'The weakest point in any security for your online accounts is usually your password. At WordPress.com, we go to great...',
@@ -502,14 +502,14 @@ const contextLinksForSection = {
 	settings: [
 		{
 			link: 'http://en.support.wordpress.com/settings/',
-			postId: 497,
+			post_id: 497,
 			title: 'Settings',
 			description:
 				'The Settings menu of your site is where you will configure everything about how the blog works and functions. You...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/settings/general-settings/',
-			postId: 1501,
+			post_id: 1501,
 			title: 'General Settings',
 			description:
 				'The General Settings let you control how your site is displayed, such as the ' +
@@ -517,13 +517,13 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/site-icons/',
-			postId: 1327,
+			post_id: 1327,
 			title: 'Site Icons',
 			description: '',
 		},
 		{
 			link: 'http://en.support.wordpress.com/five-step-blog-setup/',
-			postId: 100846,
+			post_id: 100846,
 			title: 'Set Up Your Blog in Five Steps',
 			description:
 				"Congrats, you've registered your blog -- maybe you've even published your first " +
@@ -533,7 +533,7 @@ const contextLinksForSection = {
 	themes: [
 		{
 			link: 'http://en.support.wordpress.com/themes/',
-			postId: 2278,
+			post_id: 2278,
 			title: 'Themes',
 			description:
 				'A theme controls the general look and feel of your site including things like ' +
@@ -541,7 +541,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/themes/mobile-themes/',
-			postId: 4925,
+			post_id: 4925,
 			title: 'Mobile Themes',
 			description:
 				'When a visitor browses to a WordPress.com blog on a mobile device, we show ' +
@@ -549,7 +549,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/premium-themes/',
-			postId: 12112,
+			post_id: 12112,
 			title: 'Premium Themes',
 			description:
 				'Purchasing a Premium Theme On a site with the Premium or Business plan, you can switch to any premium theme...',
@@ -602,7 +602,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/plan-features/',
-			postId: 134698,
+			post_id: 134698,
 			title: 'WordPress.com Plans',
 			description:
 				'All WordPress.com sites are packed with awesome features, and if you would like to take yours to the next level, ...',
@@ -616,7 +616,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/jetpack-add-ons/',
-			postId: 115025,
+			post_id: 115025,
 			title: 'Jetpack Plans',
 			description:
 				'What is Jetpack and do I need it? Jetpack is a feature-rich plugin for self-hosted WordPress sites. If your site...',
@@ -625,21 +625,21 @@ const contextLinksForSection = {
 	'post-editor': [
 		{
 			link: 'http://en.support.wordpress.com/editors/',
-			postId: 3347,
+			post_id: 3347,
 			title: 'Editors',
 			description:
 				'When creating a post or page on your WordPress.com blog, you have two editing modes available to you. Visual Editor...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/visual-editor/',
-			postId: 3644,
+			post_id: 3644,
 			title: 'Visual Editor',
 			description:
 				'The visual editor provides a semi-WYSIWYG (What You See is What You Get) content editor that allows you to easily...',
 		},
 		{
 			link: 'http://en.support.wordpress.com/xml-rpc/',
-			postId: 3595,
+			post_id: 3595,
 			title: 'Offline Editing',
 			description:
 				'There are several desktop applications which you can use to write and publish ' +
@@ -655,7 +655,7 @@ const contextLinksForSection = {
 	reader: [
 		{
 			link: 'http://en.support.wordpress.com/reader/',
-			postId: 32011,
+			post_id: 32011,
 			title: 'Reader',
 			description:
 				'Read posts from all the sites you follow (even the ones that aren’t on WordPress.com), find great new reads, and keep...',
@@ -668,7 +668,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/topics/',
-			postId: 2166,
+			post_id: 2166,
 			title: 'Tags in the Reader',
 			description:
 				'Looking for posts on a specific topic? Besides following entire blogs, you can also follow posts on a specific subject...',
@@ -683,7 +683,7 @@ const contextLinksForSection = {
 	help: [
 		{
 			link: 'http://en.support.wordpress.com/blogging-u/',
-			postId: 117437,
+			post_id: 117437,
 			title: 'Blogging U.',
 			description:
 				'Blogging U. courses deliver expert advice, pro tips, and inspiration right to your ' +
@@ -691,7 +691,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/help-support-options/',
-			postId: 149,
+			post_id: 149,
 			title: 'Help! Getting WordPress.com Support',
 			description:
 				'WordPress.com offers a number of avenues for reaching helpful, individualized support, ' +
@@ -717,7 +717,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/comment-display-options/',
-			postId: 5840,
+			post_id: 5840,
 			title: 'Comment Display Options',
 			description:
 				'You can control comment threading, paging, and comment order settings from the ' +
@@ -732,7 +732,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/comment-likes/',
-			postId: 88757,
+			post_id: 88757,
 			title: 'Comment Likes',
 			description:
 				"Comment Likes: how to like others' comments and control how Comment Likes " +
