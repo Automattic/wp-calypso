@@ -136,6 +136,24 @@ PostMetadata = {
 			return [ latitude, longitude ];
 		}
 	},
+
+	/**
+	 * Given a post object, return either "public" or "private", indicating whether
+	 * the geo-location data associated with the post is allowed to be displayed
+	 * publicly.
+	 *
+	 * @param {Object} post Post object
+	 * @returns {string}	Either "public" or "private"
+	 */
+	geoIsSharedPublicly: function( post ) {
+		const is_shared_publicly = parseInt( getValueByKey( post.metadata, 'geo_public' ), 10 );
+
+		if ( is_shared_publicly ) {
+			return 'public';
+		}
+
+		return 'private';
+	},
 };
 
 export default PostMetadata;

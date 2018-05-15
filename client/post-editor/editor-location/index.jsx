@@ -14,6 +14,7 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
+import FormCheckbox from 'components/forms/form-checkbox';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import PostMetadata from 'lib/post-metadata';
 import EditorLocationSearch from './search';
@@ -34,6 +35,10 @@ const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 // that formats float metadata values exactly this way.
 const toGeoString = coord => String( Number( coord ).toFixed( 7 ) );
 
+function statusToBoolean( status ) {
+	return 'public' === status;
+}
+
 class EditorLocation extends React.Component {
 	static displayName = 'EditorLocation';
 
@@ -48,6 +53,7 @@ class EditorLocation extends React.Component {
 				return new Error( 'Expected array pair of coordinates for prop `' + propName + '`.' );
 			}
 		},
+		isSharedPublicly: PropTypes.string,
 	};
 
 	state = {
@@ -110,6 +116,12 @@ class EditorLocation extends React.Component {
 		} );
 	};
 
+	onShareChange = event => {
+		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
+			geo_public: event.target.checked ? 1 : 0,
+		} );
+	};
+
 	renderCurrentLocation = () => {
 		if ( ! this.props.coordinates ) {
 			return;
@@ -164,6 +176,15 @@ class EditorLocation extends React.Component {
 					onError={ this.onGeolocateFailure }
 					onSelect={ this.onSearchSelect }
 				/>
+				<label htmlFor="geo_public">
+					<FormCheckbox
+						id="geo_public"
+						name="geo_public"
+						checked={ statusToBoolean( this.props.isSharedPublicly ) }
+						onChange={ this.onShareChange }
+					/>
+					<span>{ this.props.translate( 'Display location publicly' ) }</span>
+				</label>
 			</div>
 		);
 	}
@@ -175,8 +196,9 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
 		const coordinates = PostMetadata.geoCoordinates( post );
+		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( post );
 
-		return { siteId, postId, coordinates };
+		return { siteId, postId, coordinates, isSharedPublicly };
 	},
 	{
 		updatePostMetadata,
