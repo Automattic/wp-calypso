@@ -32,6 +32,7 @@ class PhoneInput extends React.PureComponent {
 
 	static defaultProps = {
 		setComponentReference: noop,
+		enableStickyCountry: true,
 	};
 
 	constructor( props ) {
@@ -228,7 +229,7 @@ class PhoneInput extends React.PureComponent {
 			countryCode: newCountryCode,
 			value: this.format( inputValue, newCountryCode ),
 		} );
-		this.setState( { freezeSelection: true } );
+		this.setState( { freezeSelection: this.props.enableStickyCountry } );
 	}
 
 	setNumberInputRef = c => ( this.numberInput = c );
