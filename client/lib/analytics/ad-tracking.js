@@ -874,6 +874,12 @@ function recordOrderInNanigans( cart, orderId ) {
 		return;
 	}
 
+	// As for the FB pixel, we have decided to skip negative or 0-value carts.
+	if ( cart.total_cost < 0.01 ) {
+		debug( 'recordOrderInNanigans: Skipping due to a 0-value cart.' );
+		return;
+	}
+
 	debug( 'recordOrderInNanigans: Record purchase' );
 
 	const productPrices = cart.products.map( product => product.cost * 100 ); // VALUE is in cents, [ 0, 9600 ]
