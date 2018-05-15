@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { flatten, get, sumBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,6 +16,7 @@ import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import LineChart from 'components/line-chart';
 import LineChartPlaceholder from 'components/line-chart/placeholder';
+import Notice from 'components/notice';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
@@ -49,7 +50,7 @@ function transformData( props ) {
 		return metric.dimensionalValues.map( datum => {
 			return {
 				date: Date.parse( datum.time ),
-				value: datum.value,
+				value: datum.value || 0,
 			};
 		} );
 	} );
@@ -195,8 +196,20 @@ class GoogleMyBusinessStatsChart extends Component {
 		return chartType === 'pie' ? this.renderPieChart() : this.renderLineChart();
 	}
 
+	isChartEmpty() {
+		const { transformedData } = this.state;
+
+		if ( ! transformedData ) {
+			return false;
+		}
+
+		return sumBy( flatten( transformedData ), 'value' ) === 0;
+	}
+
 	render() {
 		const { description, interval, title, translate } = this.props;
+
+		const isEmptyChart = this.isChartEmpty();
 
 		return (
 			<div>
@@ -218,7 +231,23 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
 					</select>
 
-					<div className="gmb-stats__metric-chart">{ this.renderChart() }</div>
+					<div className="gmb-stats__metric-chart">
+						{ this.renderChart() }
+						{ isEmptyChart && (
+							<div className="chart__empty">
+								<Notice
+									className="chart__empty-notice"
+									status="is-warning"
+									isCompact
+									text={ translate( 'No activity this period', {
+										context: 'Message on empty bar chart in Stats',
+										comment: 'Should be limited to 32 characters to prevent wrapping',
+									} ) }
+									showDismiss={ false }
+								/>
+							</div>
+						) }
+					</div>
 				</Card>
 			</div>
 		);
