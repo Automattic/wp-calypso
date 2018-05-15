@@ -23,10 +23,12 @@ export class EbanxPaymentFields extends Component {
 		getFieldValue: PropTypes.func.isRequired,
 		handleFieldChange: PropTypes.func.isRequired,
 		fieldClassName: PropTypes.string,
+		disableFields: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		fieldClassName: '',
+		disableFields: false,
 	};
 
 	constructor( props ) {
@@ -64,6 +66,7 @@ export class EbanxPaymentFields extends Component {
 				value: this.props.getFieldValue( fieldName ) || '',
 				autoComplete: 'off',
 				labelClass: 'checkout__form-label',
+				disabled: this.props.disableFields,
 			},
 			props
 		);

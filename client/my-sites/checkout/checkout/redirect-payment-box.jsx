@@ -101,6 +101,7 @@ export class RedirectPaymentBox extends PureComponent {
 					onChange: this.handleChange,
 					value: this.getFieldValue( fieldName ),
 					autoComplete: 'off',
+					disabled: this.state.formDisabled,
 				},
 				props
 			)
@@ -267,10 +268,10 @@ export class RedirectPaymentBox extends PureComponent {
 							getFieldValue={ this.getFieldValue }
 							handleFieldChange={ this.updateFieldValues }
 							eventFormName={ this.eventFormName }
+							disableFields={ this.state.formDisabled }
 						/>
 					</Fragment>
 				);
-
 		}
 	}
 
@@ -302,7 +303,11 @@ export class RedirectPaymentBox extends PureComponent {
 
 				<div className="checkout__payment-box-actions">
 					<div className="checkout__pay-button">
-						<button type="submit" className="checkout__button-pay button is-primary ">
+						<button
+							type="submit"
+							className="checkout__button-pay button is-primary "
+							disabled={ this.state.formDisabled }
+						>
 							{ this.renderButtonText() }
 						</button>
 						<SubscriptionText cart={ this.props.cart } />

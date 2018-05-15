@@ -40,4 +40,21 @@ describe( '<EbanxPaymentFields />', () => {
 		documentInput.simulate( 'change', event );
 		expect( defaultProps.handleFieldChange ).toBeCalledWith( 'document', 'spam' );
 	} );
+
+	test( 'should disable fields', () => {
+		const wrapper = shallow( <EbanxPaymentFields { ...defaultProps } /> );
+		expect(
+			wrapper
+				.find( 'Input' )
+				.first()
+				.props().disabled
+		).toEqual( false );
+		wrapper.setProps( { disableFields: true } );
+		expect(
+			wrapper
+				.find( 'Input' )
+				.first()
+				.props().disabled
+		).toEqual( true );
+	} );
 } );
