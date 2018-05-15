@@ -21,11 +21,8 @@ export class TrackPurchasePageView extends Component {
 		eventName: PropTypes.string.isRequired,
 	};
 
-	hasTracked = false;
-
-	trackOnce() {
-		if ( ! this.hasTracked && ( this.props.productSlug && this.props.eventName ) ) {
-			this.hasTracked = true;
+	track() {
+		if ( this.props.productSlug && this.props.eventName ) {
 			this.props.recordTracksEvent( this.props.eventName, {
 				product_slug: this.props.productSlug,
 			} );
@@ -33,7 +30,7 @@ export class TrackPurchasePageView extends Component {
 	}
 
 	componentDidMount() {
-		this.trackOnce();
+		this.track();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -41,10 +38,8 @@ export class TrackPurchasePageView extends Component {
 			this.props.eventName !== prevProps.eventName ||
 			this.props.productSlug !== prevProps.productSlug
 		) {
-			this.hasTracked = false;
+			this.track();
 		}
-
-		this.trackOnce();
 	}
 
 	render() {
