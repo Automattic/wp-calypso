@@ -34,6 +34,13 @@ const sections = [
 		secondary: true,
 	},
 	{
+		name: 'account-close',
+		paths: [ '/me/account/close' ],
+		module: 'me/account-close',
+		group: 'me',
+		secondary: true,
+	},
+	{
 		name: 'security',
 		paths: [ '/me/security' ],
 		module: 'me/security',

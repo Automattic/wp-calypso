@@ -9,7 +9,7 @@ import { noop } from 'lodash';
 
 import CompactCard from 'components/card/compact';
 
-class AccountSettingsClose extends React.Component {
+class AccountSettingsCloseLink extends React.Component {
 	render() {
 		const { translate } = this.props;
 		const href = '/me/account/close';
@@ -29,4 +29,4 @@ class AccountSettingsClose extends React.Component {
 	}
 }
 
-export default localize( AccountSettingsClose );
+export default localize( AccountSettingsCloseLink );
