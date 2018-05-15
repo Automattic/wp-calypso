@@ -5,16 +5,28 @@
  */
 import { get, find } from 'lodash';
 
-const getGoogleMyBusinessLocationId = ( state, siteId ) => {
+import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
+
+export default function isGoogleMyBusinessLocationConnected( state, siteId ) {
 	const siteKeyrings = get( state, `siteKeyrings.items.${ siteId }`, [] );
 	const googleMyBusinessSiteKeyring = find(
 		siteKeyrings,
 		keyring => keyring.service === 'google_my_business'
 	);
 
-	return googleMyBusinessSiteKeyring ? googleMyBusinessSiteKeyring.external_user_id : undefined;
-};
+	if ( ! googleMyBusinessSiteKeyring ) {
+		return false;
+	}
 
-export default function isGoogleMyBusinessLocationConnected( state, siteId ) {
-	return !! getGoogleMyBusinessLocationId( state, siteId );
+	const keyringConnections = getKeyringConnectionsByName( state, 'google_my_business' ).filter(
+		keyringConnection => {
+			return keyringConnection.ID === googleMyBusinessSiteKeyring.keyring_id;
+		}
+	);
+
+	if ( keyringConnections.length === 0 ) {
+		return false;
+	}
+
+	return !! googleMyBusinessSiteKeyring.external_user_id;
 }
