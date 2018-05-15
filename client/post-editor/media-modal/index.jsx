@@ -345,9 +345,7 @@ export class EditorMediaModal extends Component {
 
 		this.props.setView( ModalViews.DETAIL );
 
-		if ( this.props.onImageEditorDoneHook ) {
-			this.props.onImageEditorDoneHook();
-		}
+		this.props.onImageEditorDoneHook();
 	};
 
 	handleUpdatePoster = ( { ID, posterUrl } ) => {
