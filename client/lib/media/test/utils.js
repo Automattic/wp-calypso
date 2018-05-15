@@ -46,6 +46,7 @@ const EXPECTED_FILE_OBJECT = {
 	ID: UNIQUEID,
 	file: DUMMY_FILENAME,
 	title: 'test.jpg',
+	caption: '',
 	extension: 'jpg',
 	mime_type: 'image/jpeg',
 	guid: DUMMY_FILENAME,
