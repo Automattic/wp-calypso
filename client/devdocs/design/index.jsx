@@ -67,6 +67,7 @@ import ImagePreloader from 'components/image-preloader/docs/example';
 import InfoPopover from 'components/info-popover/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
 import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
+import JetpackHeaderExample from 'components/jetpack-header/docs/example';
 import JetpackLogoExample from 'components/jetpack-logo/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
 import LineChart from 'components/line-chart/docs/example';
@@ -204,6 +205,7 @@ class DesignAssets extends React.Component {
 					<InfoPopover readmeFilePath="info-popover" />
 					<InputChrono readmeFilePath="input-chrono" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
+					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LineChart />

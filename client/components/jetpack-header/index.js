@@ -3,25 +3,23 @@
 /**
  * External Dependencies
  */
-import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getPartnerSlugFromQuery } from 'state/selectors';
 import JetpackLogo from 'components/jetpack-logo';
 
-export class JetpackConnectHeaderLogo extends PureComponent {
+export class JetpackHeader extends PureComponent {
 	static propTypes = {
 		partnerSlug: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
 	renderPartnerLogo() {
-		const { translate, partnerSlugFromQuery } = this.props;
-		const { partnerSlug = partnerSlugFromQuery } = this.props;
+		const { translate, partnerSlug } = this.props;
 		const baseCobrandedAttributes = {
 			className: 'jetpack-connect-header-logo__cobranded-logo',
 		};
@@ -417,15 +415,11 @@ export class JetpackConnectHeaderLogo extends PureComponent {
 
 	render() {
 		return (
-			<div className="jetpack-connect-header-logo">
+			<div className="jetpack-header">
 				{ this.renderPartnerLogo() || <JetpackLogo full size={ 45 } /> }
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => ( {
-	partnerSlugFromQuery: getPartnerSlugFromQuery( state ),
-} );
-
-export default connect( mapStateToProps )( localize( JetpackConnectHeaderLogo ) );
+export default localize( JetpackHeader );
