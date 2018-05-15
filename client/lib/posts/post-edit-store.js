@@ -13,9 +13,12 @@ import emitter from 'lib/mixins/emitter';
  */
 import Dispatcher from 'dispatcher';
 import { decodeEntities } from 'lib/formatting';
-import * as utils from './utils';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { resetSaveBlockers } from 'state/ui/editor/save-blockers/actions';
+import {
+	resetEditorAutosavePreviewUrl,
+	setEditorAutosavePreviewUrl,
+} from 'state/ui/editor/actions';
 
 /**
  * Module variables
@@ -28,7 +31,6 @@ let _initialRawContent = null,
 	_isLoading = false,
 	_loadingError = null,
 	_post = null,
-	_previewUrl = null,
 	_queue = [],
 	_queueChanges = false,
 	_rawContent = null,
@@ -43,7 +45,7 @@ function resetState() {
 	_isLoading = false;
 	_loadingError = null;
 	_post = null;
-	_previewUrl = null;
+	reduxDispatch( resetEditorAutosavePreviewUrl() );
 	_queue = [];
 	_queueChanges = false;
 	_rawContent = null;
@@ -75,7 +77,6 @@ function startEditing( site, post ) {
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
-	_previewUrl = utils.getPreviewURL( site, post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_isLoading = false;
@@ -86,7 +87,7 @@ function updatePost( site, post ) {
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
-	_previewUrl = utils.getPreviewURL( site, post );
+	reduxDispatch( resetEditorAutosavePreviewUrl() );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_loadingError = null;
@@ -267,10 +268,7 @@ function dispatcherCallback( payload ) {
 		case 'RECEIVE_POST_AUTOSAVE':
 			_isAutosaving = false;
 			if ( ! action.error ) {
-				_previewUrl = utils.getPreviewURL(
-					action.site,
-					assign( { preview_URL: action.autosave.preview_URL }, _savedPost )
-				);
+				reduxDispatch( setEditorAutosavePreviewUrl( action.autosave.preview_URL ) );
 			}
 			PostEditStore.emit( 'change' );
 			break;
@@ -345,10 +343,6 @@ PostEditStore = {
 
 	isAutosaving: function() {
 		return _isAutosaving;
-	},
-
-	getPreviewUrl: function() {
-		return _previewUrl;
 	},
 
 	hasContent: function() {

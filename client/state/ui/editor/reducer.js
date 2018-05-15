@@ -2,7 +2,12 @@
 /**
  * Internal dependencies
  */
-import { EDITOR_START, POST_SAVE_SUCCESS } from 'state/action-types';
+import {
+	EDITOR_AUTOSAVE_RESET_PREVIEW_URL,
+	EDITOR_AUTOSAVE_SET_PREVIEW_URL,
+	EDITOR_START,
+	POST_SAVE_SUCCESS,
+} from 'state/action-types';
 import { combineReducers } from 'state/utils';
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
@@ -29,8 +34,20 @@ export function postId( state = null, action ) {
 	return state;
 }
 
+function autosavePreviewUrl( state = null, action ) {
+	switch ( action.type ) {
+		case EDITOR_AUTOSAVE_RESET_PREVIEW_URL:
+			return null;
+		case EDITOR_AUTOSAVE_SET_PREVIEW_URL:
+			return action.previewUrl;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	postId,
+	autosavePreviewUrl,
 	imageEditor,
 	videoEditor,
 	lastDraft,
