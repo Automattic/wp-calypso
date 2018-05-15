@@ -7,10 +7,12 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import AuthorSelector from 'blocks/author-selector';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
@@ -35,17 +37,37 @@ class SiteOwnership extends Component {
 		);
 	}
 
-	renderCurrentUser() {
+	isUserExcludedFromSelector = user => {
 		const { currentUser } = this.props;
+		return (
+			user.linked_user_ID === false ||
+			user.linked_user_ID === currentUser.ID ||
+			! includes( user.roles, 'administrator' )
+		);
+	};
+
+	transformUser( user ) {
+		return user.linked_user_info;
+	}
+
+	renderCurrentUser() {
+		const { currentUser, siteId } = this.props;
 		if ( ! currentUser ) {
 			return;
 		}
 
 		return (
-			<div className="manage-connection__user">
-				<Gravatar user={ currentUser } size={ 24 } />
-				<span className="manage-connection__user-name">{ currentUser.display_name }</span>
-			</div>
+			<AuthorSelector
+				siteId={ siteId }
+				exclude={ this.isUserExcludedFromSelector }
+				transformAuthor={ this.transformUser }
+				allowSingleUser
+			>
+				<div className="manage-connection__user">
+					<Gravatar user={ currentUser } size={ 24 } />
+					<span className="manage-connection__user-name">{ currentUser.display_name }</span>
+				</div>
+			</AuthorSelector>
 		);
 	}
 
