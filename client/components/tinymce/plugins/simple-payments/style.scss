@@ -100,9 +100,11 @@
 	}
 
 	.dialog__product-image-container {
-		position: relative;
+		height: 200px;
 		margin-bottom: 20px;
 		margin-right: 25px;
+		position: relative;
+		width: 200px;
 	}
 
 	.dialog__product-image-placeholder,
