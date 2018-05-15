@@ -22,6 +22,7 @@ import PieChartLegend from 'components/pie-chart/legend';
 import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
 import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import SectionHeader from 'components/section-header';
+import StatsError from './error';
 import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
 import { getGoogleMyBusinessStats } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -78,7 +79,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		changeGoogleMyBusinessStatsInterval: PropTypes.func.isRequired,
 		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
 		chartType: PropTypes.oneOf( [ 'pie', 'line' ] ),
-		data: PropTypes.object,
+		data: PropTypes.oneOf( [ PropTypes.object, PropTypes.bool ] ),
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
@@ -97,6 +98,7 @@ class GoogleMyBusinessStatsChart extends Component {
 
 	state = {
 		data: null,
+		transformedData: null,
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
@@ -191,7 +193,11 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	renderChart() {
-		const { chartType } = this.props;
+		const { chartType, data } = this.props;
+
+		if ( false === data ) {
+			return <StatsError />;
+		}
 
 		return chartType === 'pie' ? this.renderPieChart() : this.renderLineChart();
 	}
