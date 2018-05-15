@@ -107,6 +107,7 @@ class EditorLocation extends React.Component {
 			'geo_latitude',
 			'geo_longitude',
 			'geo_public',
+			'geo_address',
 		] );
 	};
 
