@@ -106,6 +106,7 @@ class EditorLocation extends React.Component {
 		this.props.deletePostMetadata( this.props.siteId, this.props.postId, [
 			'geo_latitude',
 			'geo_longitude',
+			'geo_public',
 		] );
 	};
 
