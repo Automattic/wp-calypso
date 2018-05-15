@@ -6,17 +6,13 @@
 
 import tinymce from 'tinymce/tinymce';
 import closest from 'component-closest';
-import userModule from 'lib/user';
 
 /**
  * Internal dependencies
  */
 import { recordTinyMCEButtonClick } from 'lib/posts/stats';
-
-/**
- * Module variables
- */
-const user = userModule();
+import { reduxGetState } from 'lib/redux-bridge';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 function editorButtonAnalytics( editor ) {
 	function editorEventAncestor( event, selector ) {
@@ -57,7 +53,7 @@ function editorButtonAnalytics( editor ) {
 		};
 	} );
 
-	/**
+	/*
 	 * Track clicks on a couple of odd controls that aren't caught above.
 	 * Using `document.body` because the format dropdown menu is a direct child
 	 * of `document.body` (not a descendant of `editor.container`).
@@ -79,8 +75,7 @@ function editorButtonAnalytics( editor ) {
 			// This is a menu item in the format dropdown.  Only track which
 			// specific item is clicked for english interfaces - the easiest
 			// way to determine which item is selected is by UI text.
-			const currentUser = user.get();
-			const locale = currentUser ? currentUser.localeSlug : 'en';
+			const locale = getCurrentUserLocale( reduxGetState() );
 			if ( locale === 'en' ) {
 				const text = closest( event.target, '.mce-menu-item', true ).textContent;
 				const menuItemName = text
