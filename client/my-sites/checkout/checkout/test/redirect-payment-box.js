@@ -57,6 +57,12 @@ jest.mock( '../payment-chat-button', () => {
 const defaultProps = {
 	cart: {},
 	translate: identity,
+	countriesList: {
+		get: jest.fn( false ),
+	},
+	paymentType: 'default',
+	transaction: identity,
+	redirectTo: 'http://here',
 };
 
 describe( 'RedirectPaymentBox', () => {
@@ -122,6 +128,18 @@ describe( 'RedirectPaymentBox', () => {
 			};
 			const wrapper = shallow( <RedirectPaymentBox { ...props } /> );
 			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 0 );
+		} );
+	} );
+
+	describe( 'Brazil TEF payments', () => {
+		test( 'should render fields required for Brazil TEF', () => {
+			const props = {
+				...defaultProps,
+				paymentType: 'brazil-tef',
+			};
+			const wrapper = shallow( <RedirectPaymentBox { ...props } /> );
+			expect( wrapper.find( '[name="tef-bank"]' ) ).toHaveLength( 1 );
+			expect( wrapper.find( 'EbanxPaymentFields' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

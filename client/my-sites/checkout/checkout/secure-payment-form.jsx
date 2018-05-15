@@ -256,6 +256,7 @@ const SecurePaymentForm = createReactClass( {
 				<RedirectPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
+					countriesList={ countriesListForPayments }
 					selectedSite={ this.props.selectedSite }
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
@@ -326,13 +327,13 @@ const SecurePaymentForm = createReactClass( {
 			case 'giropay':
 			case 'ideal':
 			case 'p24':
+			case 'brazil-tef':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }
 						{ this.renderRedirectPaymentBox( visiblePaymentBox ) }
 					</div>
 				);
-
 			default:
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
 				return null;

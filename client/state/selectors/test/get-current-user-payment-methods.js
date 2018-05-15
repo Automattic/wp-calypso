@@ -96,6 +96,24 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		},
 	};
 
+	const ptBrBRCountryState = {
+		geo: {
+			geo: {
+				country_short: 'BR',
+			},
+		},
+
+		users: {
+			items: {
+				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'pt-br' },
+			},
+		},
+
+		currentUser: {
+			id: 73705554,
+		},
+	};
+
 	test( 'en-US should return credit card primary, PayPal secondary', () => {
 		update( 'geo', 'success', 'US' );
 
@@ -160,6 +178,15 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 
 		expect( getCurrentUserPaymentMethods( frLangFRCountryState ) ).to.eql( [
 			'credit-card',
+			'paypal',
+		] );
+	} );
+
+	test( 'BR should return credit card primary, tef, and PayPal secondary', () => {
+		update( 'geo', 'success', 'BR' );
+		expect( getCurrentUserPaymentMethods( ptBrBRCountryState ) ).to.eql( [
+			'credit-card',
+			'brazil-tef',
 			'paypal',
 		] );
 	} );
