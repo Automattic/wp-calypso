@@ -14,9 +14,9 @@ import NumberField from 'woocommerce/woocommerce-services/components/number-fiel
 import Text from 'woocommerce/woocommerce-services/components/text';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import RadioButtons from 'woocommerce/woocommerce-services/components/radio-buttons';
+import getPackagingManagerLink from 'woocommerce/woocommerce-services/lib/utils/get-packaging-manager-link';
 import ShippingServiceGroups from '../shipping-services';
 import FormLegend from 'components/forms/form-legend';
-import { getLink } from 'woocommerce/lib/nav-utils';
 
 const SettingsItem = ( {
 	formData,
@@ -70,7 +70,7 @@ const SettingsItem = ( {
 					<FormLegend>{ translate( 'Saved Packages' ) }</FormLegend>
 					{ translate( 'Add and edit saved packages using the {{a}}Packaging Manager{{/a}}.', {
 						components: {
-							a: <a href={ getLink( '/store/settings/shipping/:site/', site ) } />,
+							a: <a href={ getPackagingManagerLink( site ) } />,
 						},
 					} ) }
 				</div>
