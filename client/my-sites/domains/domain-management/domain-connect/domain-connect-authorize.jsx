@@ -146,6 +146,7 @@ class DomainConnectAuthorize extends Component {
 						dnsTemplateError={ this.state.dnsTemplateError }
 					/>
 					<DomainConnectAuthorizeRecords
+						domain={ domain }
 						dnsTemplateRecords={ this.state.dnsTemplateRecords }
 						dnsTemplateConflicts={ this.state.dnsTemplateConflicts }
 						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }
