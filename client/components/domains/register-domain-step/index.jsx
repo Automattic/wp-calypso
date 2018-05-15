@@ -198,6 +198,8 @@ class RegisterDomainStep extends React.Component {
 		return {
 			availableTlds: [],
 			clickedExampleSuggestion: false,
+			error: null,
+			errorData: null,
 			filters: this.getInitialFiltersState(),
 			lastFilters: this.getInitialFiltersState(),
 			lastQuery: suggestion,
@@ -206,7 +208,7 @@ class RegisterDomainStep extends React.Component {
 			lastDomainIsTransferrable: false,
 			loadingResults,
 			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
-			notice: null,
+			showNotice: false,
 			pageNumber: 1,
 			searchResults: null,
 			subdomainSearchResults: null,
@@ -331,7 +333,10 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
-
+		const { errorData, error, lastDomainSearched, showNotice } = this.state;
+		const { message, severity } = showNotice
+			? getAvailabilityNotice( lastDomainSearched, error, errorData )
+			: {};
 		return (
 			<div className="register-domain-step">
 				<StickyPanel className="register-domain-step__search">
@@ -354,12 +359,8 @@ class RegisterDomainStep extends React.Component {
 						{ this.renderSearchFilters() }
 					</CompactCard>
 				</StickyPanel>
-				{ this.state.notice && (
-					<Notice
-						text={ this.state.notice }
-						status={ `is-${ this.state.noticeSeverity }` }
-						showDismiss={ false }
-					/>
+				{ message && (
+					<Notice text={ message } status={ `is-${ severity }` } showDismiss={ false } />
 				) }
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
@@ -473,11 +474,13 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( getFixedDomainSearch( lastQuery ) );
 
 		const nextState = {
+			error: null,
+			errorData: null,
 			exactMatchDomain: null,
 			lastDomainSearched: null,
 			loadingResults,
 			loadingSubdomainResults: loadingResults,
-			notice: null,
+			showNotice: false,
 			...stateOverride,
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
@@ -562,12 +565,14 @@ class RegisterDomainStep extends React.Component {
 
 		this.setState(
 			{
+				error: null,
+				errorData: null,
 				exactMatchDomain: null,
 				lastQuery: searchQuery,
 				lastDomainSearched: null,
 				loadingResults,
 				loadingSubdomainResults: loadingResults,
-				notice: null,
+				showNotice: false,
 				pageNumber: 1,
 				searchResults: null,
 				subdomainSearchResults: null,
@@ -613,7 +618,11 @@ class RegisterDomainStep extends React.Component {
 						lastDomainIsTransferrable: isDomainTransferrable,
 					} );
 					if ( isDomainAvailable ) {
-						this.setState( { notice: null } );
+						this.setState( {
+							showNotice: false,
+							error: null,
+							errorData: null,
+						} );
 					} else {
 						this.showValidationErrorMessage( domain, status, {
 							site: get( result, 'other_site_domain', null ),
@@ -1073,14 +1082,7 @@ class RegisterDomainStep extends React.Component {
 		if ( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) {
 			return;
 		}
-
-		let site = get( errorData, 'site', null );
-		if ( ! site ) {
-			site = get( this.props, 'selectedSite.slug', null );
-		}
-
-		const { message, severity } = getAvailabilityNotice( domain, error, errorData );
-		this.setState( { notice: message, noticeSeverity: severity } );
+		this.setState( { showNotice: true, error, errorData } );
 	}
 }
 

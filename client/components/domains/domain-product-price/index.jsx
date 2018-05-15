@@ -62,7 +62,6 @@ class DomainProductPrice extends React.Component {
 
 	renderIncludedInPremium() {
 		const { translate } = this.props;
-
 		const shouldShowStrikethrough = abtest( 'signupDomainStrikethruPrice' ) === 'enabled';
 
 		return (
