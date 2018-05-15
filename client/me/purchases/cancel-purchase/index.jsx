@@ -23,7 +23,7 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'lib/purchases';
-import { getPurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
+import { getPurchase, isDataLoading } from 'me/purchases/utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -39,6 +39,7 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 
 const user = userFactory();
 
@@ -63,8 +64,6 @@ class CancelPurchase extends React.Component {
 			this.redirect( this.props );
 			return;
 		}
-
-		recordPageView( 'cancel_purchase', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -72,8 +71,6 @@ class CancelPurchase extends React.Component {
 			this.redirect( nextProps );
 			return;
 		}
-
-		recordPageView( 'cancel_purchase', this.props, nextProps );
 	}
 
 	isDataValid = ( props = this.props ) => {
@@ -179,6 +176,10 @@ class CancelPurchase extends React.Component {
 
 		return (
 			<Main className="cancel-purchase">
+				<TrackPurchasePageView
+					eventName="calypso_cancel_purchase_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
 				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
 					{ titles.cancelPurchase }
 				</HeaderCake>

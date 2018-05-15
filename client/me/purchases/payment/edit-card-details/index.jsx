@@ -17,7 +17,7 @@ import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchas
 import { getSelectedSite } from 'state/ui/selectors';
 import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading, recordPageView } from 'me/purchases/utils';
+import { isDataLoading } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
@@ -27,6 +27,7 @@ import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { managePurchase } from 'me/purchases/paths';
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 
 const user = userFactory();
 
@@ -45,14 +46,10 @@ class EditCardDetails extends PurchaseCardDetails {
 
 	componentWillMount() {
 		this.redirectIfDataIsInvalid();
-
-		recordPageView( 'edit_card_details', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
-
-		recordPageView( 'edit_card_details', this.props, nextProps );
 	}
 
 	render() {
@@ -70,6 +67,10 @@ class EditCardDetails extends PurchaseCardDetails {
 
 		return (
 			<Main>
+				<TrackPurchasePageView
+					eventName="calypso_edit_card_details_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
 				<PageViewTracker
 					path="/me/purchases/:site/:purchaseId/payment/edit/:cardId"
 					title="Purchases > Edit Card Details"

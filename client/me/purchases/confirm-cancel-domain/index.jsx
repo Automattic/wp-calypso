@@ -26,7 +26,7 @@ import HeaderCake from 'components/header-cake';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getName as getDomainName } from 'lib/purchases';
-import { getPurchase, isDataLoading, recordPageView } from '../utils';
+import { getPurchase, isDataLoading } from '../utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -41,6 +41,7 @@ import { setAllSitesSelected } from 'state/ui/actions';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 
 const user = userFactory();
 
@@ -62,10 +63,6 @@ class ConfirmCancelDomain extends React.Component {
 		confirmed: false,
 		submitting: false,
 	};
-
-	componentWillMount() {
-		recordPageView( 'confirm_cancel_domain', this.props );
-	}
 
 	componentDidMount() {
 		this.redirectIfDataIsInvalid( this.props );
@@ -262,6 +259,10 @@ class ConfirmCancelDomain extends React.Component {
 
 		return (
 			<Main className="confirm-cancel-domain">
+				<TrackPurchasePageView
+					eventName="calypso_confirm_cancel_domain_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
 				<PageViewTracker
 					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
 					title="Purchases > Confirm Cancel Domain"

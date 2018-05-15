@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 /**
  * Internal Dependencies
@@ -42,7 +42,6 @@ import {
 	isDataLoading,
 	getEditCardDetailsPath,
 	getPurchase,
-	recordPageView,
 } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
@@ -80,6 +79,7 @@ import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import { addItems } from 'lib/upgrades/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 
 const user = userFactory();
 
@@ -97,8 +97,6 @@ class ManagePurchase extends Component {
 			page.redirect( purchasesRoot );
 			return;
 		}
-
-		recordPageView( 'manage', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -106,8 +104,6 @@ class ManagePurchase extends Component {
 			page.redirect( purchasesRoot );
 			return;
 		}
-
-		recordPageView( 'manage', this.props, nextProps );
 	}
 
 	isDataValid( props = this.props ) {
@@ -450,16 +446,20 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<span>
+			<Fragment>
+				<TrackPurchasePageView
+					eventName="calypso_manage_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
+				<PageViewTracker
+					path="/me/purchases/:site/:purchaseId"
+					title="Purchases > Manage Purchase"
+				/>
 				<QueryUserPurchases userId={ user.get().ID } />
 				{ isPurchaseTheme && (
 					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ selectedPurchase.meta } />
 				) }
 				<Main className={ classes }>
-					<PageViewTracker
-						path="/me/purchases/:site/:purchaseId"
-						title="Purchases > Manage Purchase"
-					/>
 					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
 					{
 						<PurchaseNotice
@@ -472,7 +472,7 @@ class ManagePurchase extends Component {
 					}
 					{ this.renderPurchaseDetail() }
 				</Main>
-			</span>
+			</Fragment>
 		);
 	}
 }
