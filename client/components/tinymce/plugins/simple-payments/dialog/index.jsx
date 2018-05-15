@@ -194,6 +194,7 @@ class SimplePaymentsDialog extends Component {
 			selectedPaymentId: null,
 			isSubmitting: false,
 			errorMessage: null,
+			isDirtyAfterImageEdit: false,
 		};
 	}
 
@@ -419,11 +420,18 @@ class SimplePaymentsDialog extends Component {
 		);
 	};
 
+	// The only thing we track about image in Simple Payments product form is its media id.
+	// However this doesn't change when the image is edited, and as a result redux form
+	// isDirty selector is not detecting any update, so it's not possible to submit changes
+	// after editing the image (even though they are saved behind the scenes in Media library).
+	// This allows us to force re-enabling of the save button in that case.
+	makeDirtyAfterImageEdit = () => this.setState( { isDirtyAfterImageEdit: true } );
+
 	getActionButtons() {
 		const { formIsValid, formIsDirty, translate, featuredImageId } = this.props;
-		const { activeTab, editedPaymentId, isSubmitting } = this.state;
+		const { activeTab, editedPaymentId, isSubmitting, isDirtyAfterImageEdit } = this.state;
 
-		const formCanBeSubmitted = formIsValid && formIsDirty;
+		const formCanBeSubmitted = formIsValid && ( formIsDirty || isDirtyAfterImageEdit );
 
 		let cancelHandler, finishHandler, finishDisabled, finishLabel;
 		if ( activeTab === 'form' && isNumber( editedPaymentId ) ) {
@@ -585,7 +593,11 @@ class SimplePaymentsDialog extends Component {
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } />
 				) }
 				{ activeTab === 'form' ? (
-					<ProductForm initialValues={ initialFormValues } showError={ this.showError } />
+					<ProductForm
+						initialValues={ initialFormValues }
+						showError={ this.showError }
+						makeDirtyAfterImageEdit={ this.makeDirtyAfterImageEdit }
+					/>
 				) : (
 					<ProductList
 						siteId={ siteId }

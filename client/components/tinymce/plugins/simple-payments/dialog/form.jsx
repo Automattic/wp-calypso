@@ -176,11 +176,15 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 
 class ProductForm extends Component {
 	render() {
-		const { translate } = this.props;
+		const { translate, makeDirtyAfterImageEdit } = this.props;
 
 		return (
 			<form className="editor-simple-payments-modal__form">
-				<Field name="featuredImageId" component={ ProductImagePicker } />
+				<Field
+					name="featuredImageId"
+					component={ ProductImagePicker }
+					makeDirtyAfterImageEdit={ makeDirtyAfterImageEdit }
+				/>
 				<div className="editor-simple-payments-modal__form-fields">
 					<ReduxFormFieldset
 						name="title"
