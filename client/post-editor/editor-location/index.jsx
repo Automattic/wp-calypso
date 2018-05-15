@@ -114,6 +114,7 @@ class EditorLocation extends React.Component {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			geo_latitude: toGeoString( result.geometry.location.lat ),
 			geo_longitude: toGeoString( result.geometry.location.lng ),
+			geo_address: result.formatted_address,
 		} );
 	};
 
