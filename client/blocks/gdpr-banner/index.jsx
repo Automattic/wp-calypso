@@ -81,7 +81,9 @@ class GdprBanner extends Component {
 			path: '/',
 			maxAge: SIX_MONTHS,
 		} );
-		this.props.recordTracksEvent( 'calypso_sensitive_pixel_option_accepted' );
+		this.props.recordTracksEvent( 'a8c_cookie_banner_ok', {
+			site: 'Calypso',
+		} );
 		this.setState( { showBanner: false } );
 	};
 
@@ -119,12 +121,11 @@ class GdprBanner extends Component {
 		return (
 			<Card className={ classNames( classes ) }>
 				<TrackComponentView
-					eventName="calypso_gdpr_banner_impression"
+					eventName="a8c_cookie_banner_view"
 					eventProperties={ {
 						page: currentSection,
+						site: 'Calypso',
 					} }
-					statGroup="calypso_gdpr_banner"
-					statName="impression"
 				/>
 				<div className="gdpr-banner__text-content">{ preventWidows( decodeEntities( copy ) ) }</div>
 				<div className="gdpr-banner__buttons">
