@@ -19,7 +19,6 @@ export class EditorSidebar extends Component {
 		// passed props
 		savedPost: PropTypes.object,
 		post: PropTypes.object,
-		isNew: PropTypes.bool,
 		onSave: PropTypes.func,
 		onPublish: PropTypes.func,
 		onTrashingPost: PropTypes.func,
@@ -32,7 +31,6 @@ export class EditorSidebar extends Component {
 
 	render() {
 		const {
-			isNew,
 			onTrashingPost,
 			onPublish,
 			onSave,
@@ -47,12 +45,11 @@ export class EditorSidebar extends Component {
 		return (
 			<div className="editor-sidebar">
 				<EditorSidebarHeader />
-				<EditorActionBar isNew={ isNew } savedPost={ savedPost } />
+				<EditorActionBar savedPost={ savedPost } />
 				<EditorDrawer
 					site={ site }
 					savedPost={ savedPost }
 					post={ post }
-					isNew={ isNew }
 					setPostDate={ setPostDate }
 					onPrivatePublish={ onPublish }
 					onSave={ onSave }

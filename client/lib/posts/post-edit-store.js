@@ -26,7 +26,6 @@ let REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/,
 let _initialRawContent = null,
 	_isAutosaving = false,
 	_isLoading = false,
-	_isNew = false,
 	_loadingError = null,
 	_post = null,
 	_previewUrl = null,
@@ -42,7 +41,6 @@ function resetState() {
 	_initialRawContent = null;
 	_isAutosaving = false;
 	_isLoading = false;
-	_isNew = false;
 	_loadingError = null;
 	_post = null;
 	_previewUrl = null;
@@ -91,7 +89,6 @@ function updatePost( site, post ) {
 	_previewUrl = utils.getPreviewURL( site, post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
-	_isNew = false;
 	_loadingError = null;
 
 	// To ensure that edits made while an update is inflight are not lost, we need to apply them to the updated post.
@@ -101,10 +98,9 @@ function updatePost( site, post ) {
 }
 
 function initializeNewPost( site, options ) {
-	let args;
 	options = options || {};
 
-	args = {
+	const args = {
 		site_ID: get( site, 'ID' ),
 		status: 'draft',
 		type: options.postType || 'post',
@@ -113,7 +109,6 @@ function initializeNewPost( site, options ) {
 	};
 
 	startEditing( site, args );
-	_isNew = true;
 }
 
 function setLoadingError( error ) {
@@ -304,9 +299,7 @@ PostEditStore = {
 	},
 
 	getChangedAttributes: function() {
-		let changedAttributes, metadata;
-
-		if ( this.isNew() ) {
+		if ( _post && ! _post.ID ) {
 			return _post;
 		}
 
@@ -315,16 +308,16 @@ PostEditStore = {
 			return Object.freeze( {} );
 		}
 
-		changedAttributes = pickBy( _post, function( value, key ) {
+		const changedAttributes = pickBy( _post, function( value, key ) {
 			return value !== _savedPost[ key ] && 'metadata' !== key;
 		} );
 
 		// exclude metadata which doesn't have any operation set (means it's unchanged)
 		if ( _post.metadata ) {
-			metadata = filter( _post.metadata, 'operation' );
+			const metadata = filter( _post.metadata, 'operation' );
 
 			if ( metadata.length ) {
-				assign( changedAttributes, { metadata: metadata } );
+				assign( changedAttributes, { metadata } );
 			}
 		}
 
@@ -344,10 +337,6 @@ PostEditStore = {
 
 	isDirty: function() {
 		return _post !== _savedPost || _rawContent !== _initialRawContent;
-	},
-
-	isNew: function() {
-		return _isNew;
 	},
 
 	isLoading: function() {
