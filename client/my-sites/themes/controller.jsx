@@ -172,16 +172,17 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
  */
 export function setUpLocale( context, next ) {
 	const language = getLanguage( context.params.lang );
-	if ( language ) {
-		if ( ! context.isServerSide ) {
+	if ( language && language.langSlug ) {
+		if ( context.isServerSide ) {
+			// Ensure the html lang/dir attribute values are set
+			// prioritize parentLangSlug for locale variants
+			// See: server/render/index.js
+			context.lang = language.parentLangSlug || language.langSlug;
+			if ( language.rtl ) {
+				context.isRTL = true;
+			}
+		} else {
 			setLocale( language.langSlug );
-		}
-		// Ensure the html lang/dir attribute values are set
-		// prioritize parentLangSlug for locale variants
-		// See: server/render/index.js
-		context.lang = language.parentLangSlug || language.langSlug;
-		if ( language.rtl ) {
-			context.isRTL = true;
 		}
 	}
 	next();

@@ -136,7 +136,7 @@ class ThemeShowcase extends React.Component {
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
 
-		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }${ lang }`;
+		const url = `/themes${ lang }${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
 		return buildUrl( url, searchString );
 	};
 
