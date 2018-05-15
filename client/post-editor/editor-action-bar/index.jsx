@@ -67,7 +67,7 @@ class EditorActionBar extends Component {
 				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 
 				<div className="editor-action-bar__cell is-left">
-					<EditorStatusLabel post={ this.props.savedPost } advancedStatus />
+					<EditorStatusLabel />
 				</div>
 				<div className="editor-action-bar__cell is-center">
 					{ multiUserSite && <AsyncLoad require="post-editor/editor-author" /> }

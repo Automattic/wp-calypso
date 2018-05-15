@@ -61,7 +61,7 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
-import StatusLabel from 'post-editor/editor-status-label';
+import EditorStatusLabel from 'post-editor/editor-status-label';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
@@ -326,7 +326,7 @@ export class PostEditor extends React.Component {
 									homeLink={ true }
 									externalLink={ true }
 								/>
-								{ ( this.state.isDirty || this.props.dirty ) && (
+								{ this.state.isDirty || this.props.dirty ? (
 									<QuickSaveButtons
 										isSaving={ this.state.isSaving }
 										isSaveBlocked={ this.isSaveBlocked() }
@@ -336,9 +336,8 @@ export class PostEditor extends React.Component {
 										post={ this.state.post }
 										onSave={ this.onSave }
 									/>
-								) }
-								{ ! ( this.state.isDirty || this.props.dirty ) && (
-									<StatusLabel post={ this.state.savedPost } />
+								) : (
+									<EditorStatusLabel />
 								) }
 							</div>
 							<div className="post-editor__inner-content">
