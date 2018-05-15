@@ -93,7 +93,7 @@ class PurchasePlanDetails extends Component {
 	}
 }
 
-// hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading,
+// hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading
 export default connect( ( state, props ) => ( {
 	hasLoadedSites: ! isRequestingSites( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
