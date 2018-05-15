@@ -42,8 +42,6 @@ test:
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
         parallel: true
-    - mv ./testArtifacts/lcov-report/* $CIRCLE_ARTIFACTS
-    - bash <(curl -s https://codecov.io/bash)
 notify:
   webhooks:
     - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
