@@ -29,6 +29,9 @@ execSync(
 		'-w=2',
 		'-c="test/' + build + '/jest.config.ci.js"',
 		'--colors',
+		'--coverage',
+		'--coverageDirectory',
+		'testArtifacts',
 		...process.argv
 			.slice( 3 )
 			.filter( path => /\/test\//.test( path ) )
