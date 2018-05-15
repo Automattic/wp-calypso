@@ -78,7 +78,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		changeGoogleMyBusinessStatsInterval: PropTypes.func.isRequired,
 		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
 		chartType: PropTypes.oneOf( [ 'pie', 'line' ] ),
-		data: PropTypes.object,
+		data: PropTypes.oneOf( [ PropTypes.object, PropTypes.bool ] ),
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
@@ -97,6 +97,7 @@ class GoogleMyBusinessStatsChart extends Component {
 
 	state = {
 		data: null,
+		transformedData: null,
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {

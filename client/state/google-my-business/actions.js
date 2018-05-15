@@ -4,6 +4,7 @@
  * Internal dependencies
  */
 import {
+	GOOGLE_MY_BUSINESS_STATS_FAILURE,
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
@@ -45,4 +46,12 @@ export const receiveGoogleMyBusinessStats = ( siteId, statType, interval, aggreg
 	interval,
 	aggregation,
 	data,
+} );
+
+export const failedRequestGoogleMyBusinessStats = ( siteId, statType, interval, aggregation ) => ( {
+	type: GOOGLE_MY_BUSINESS_STATS_FAILURE,
+	siteId,
+	statType,
+	interval,
+	aggregation,
 } );
