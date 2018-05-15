@@ -93,12 +93,6 @@ export class EditorGroundControl extends React.Component {
 		}
 	}
 
-	shouldShowStatusLabel() {
-		const { isSaving, post } = this.props;
-
-		return isSaving || ( post && post.ID && ! isPublished( post ) );
-	}
-
 	isPreviewEnabled() {
 		return (
 			this.props.hasContent &&
