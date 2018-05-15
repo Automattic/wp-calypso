@@ -78,7 +78,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		changeGoogleMyBusinessStatsInterval: PropTypes.func.isRequired,
 		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
 		chartType: PropTypes.oneOf( [ 'pie', 'line' ] ),
-		data: PropTypes.oneOf( [ PropTypes.object, PropTypes.bool ] ),
+		data: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
@@ -97,7 +97,6 @@ class GoogleMyBusinessStatsChart extends Component {
 
 	state = {
 		data: null,
-		transformedData: null,
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
@@ -207,8 +206,34 @@ class GoogleMyBusinessStatsChart extends Component {
 		return sumBy( flatten( transformedData ), 'value' ) === 0;
 	}
 
+	renderChartNotice( isError = false ) {
+		const { translate } = this.props;
+
+		const emptyText = translate( 'No activity this period', {
+			context: 'Message on empty bar chart in Stats',
+			comment: 'Should be limited to 32 characters to prevent wrapping',
+		} );
+
+		const errorText = translate( 'Error loading data', {
+			context: 'Message on a chart in Stats where an error was occured while loading data',
+			comment: 'Should be limited to 32 characters to prevent wrapping',
+		} );
+
+		return (
+			<div className="chart__empty">
+				<Notice
+					className="chart__empty-notice"
+					status={ isError ? 'is-error' : 'is-warning' }
+					isCompact
+					text={ isError ? errorText : emptyText }
+					showDismiss={ false }
+				/>
+			</div>
+		);
+	}
+
 	render() {
-		const { description, interval, title, translate } = this.props;
+		const { data, description, interval, title, translate } = this.props;
 
 		const isEmptyChart = this.isChartEmpty();
 
@@ -234,20 +259,8 @@ class GoogleMyBusinessStatsChart extends Component {
 
 					<div className="gmb-stats__metric-chart">
 						{ this.renderChart() }
-						{ isEmptyChart && (
-							<div className="chart__empty">
-								<Notice
-									className="chart__empty-notice"
-									status="is-warning"
-									isCompact
-									text={ translate( 'No activity this period', {
-										context: 'Message on empty bar chart in Stats',
-										comment: 'Should be limited to 32 characters to prevent wrapping',
-									} ) }
-									showDismiss={ false }
-								/>
-							</div>
-						) }
+						{ isEmptyChart && this.renderChartNotice( false ) }
+						{ false === data && this.renderChartNotice( true ) }
 					</div>
 				</Card>
 			</div>
