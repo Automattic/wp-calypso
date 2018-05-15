@@ -271,8 +271,8 @@ function getDomainPrice( slug, productsList, currencyCode ) {
 	return price;
 }
 
-function getAvailableTlds() {
-	return wpcom.undocumented().getAvailableTlds();
+function getAvailableTlds( query = {} ) {
+	return wpcom.undocumented().getAvailableTlds( query );
 }
 
 export {
