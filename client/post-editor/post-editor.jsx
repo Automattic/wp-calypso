@@ -41,6 +41,7 @@ import {
 	getEditorPath,
 	isConfirmationSidebarEnabled,
 	isEditorSaveBlocked,
+	getEditorPostPreviewUrl,
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { editPost } from 'state/posts/actions';
@@ -120,7 +121,6 @@ export class PostEditor extends React.Component {
 			loadingError: PostEditStore.getLoadingError(),
 			isDirty: PostEditStore.isDirty(),
 			hasContent: PostEditStore.hasContent(),
-			previewUrl: PostEditStore.getPreviewUrl(),
 			post: PostEditStore.get(),
 			isAutosaving: PostEditStore.isAutosaving(),
 			isLoading: PostEditStore.isLoading(),
@@ -401,7 +401,7 @@ export class PostEditor extends React.Component {
 							isSaving={ this.state.isSaving || this.state.isAutosaving }
 							isLoading={ this.state.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
-							previewUrl={ this.getPreviewUrl() }
+							previewUrl={ this.props.previewUrl }
 							postId={ this.props.postId }
 							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
@@ -686,10 +686,6 @@ export class PostEditor extends React.Component {
 		this.setState( { isSaving: true } );
 	};
 
-	getPreviewUrl() {
-		return this.state.previewUrl;
-	}
-
 	getExternalUrl() {
 		const { post } = this.state;
 
@@ -697,7 +693,7 @@ export class PostEditor extends React.Component {
 			return post.URL;
 		}
 
-		return this.getPreviewUrl();
+		return this.props.previewUrl;
 	}
 
 	onPreview = event => {
@@ -710,11 +706,12 @@ export class PostEditor extends React.Component {
 		}
 
 		const previewPost = () => {
+			const { previewUrl } = this.props;
 			if ( this._previewWindow ) {
-				this._previewWindow.location = this.getPreviewUrl();
+				this._previewWindow.location = previewUrl;
 				this._previewWindow.focus();
 			} else {
-				this._previewWindow = window.open( this.getPreviewUrl(), 'WordPress.com Post Preview' );
+				this._previewWindow = window.open( previewUrl, 'WordPress.com Post Preview' );
 			}
 		};
 
@@ -1234,6 +1231,7 @@ const enhance = flow(
 				isSitePreviewable: isSitePreviewable( state, siteId ),
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 				isSaveBlocked: isEditorSaveBlocked( state ),
+				previewUrl: getEditorPostPreviewUrl( state ),
 			};
 		},
 		{

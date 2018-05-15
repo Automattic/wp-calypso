@@ -9,9 +9,11 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteSlug } from 'state/sites/selectors';
-import { getEditedPost } from 'state/posts/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite, getSiteSlug } from 'state/sites/selectors';
+import { getEditedPost, getSitePost } from 'state/posts/selectors';
 import { getPreference } from 'state/preferences/selectors';
+import { getPreviewURL } from 'lib/posts/utils';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
@@ -126,4 +128,12 @@ export function isEditorSaveBlocked( state, key ) {
 	}
 
 	return includes( saveBlockers, key );
+}
+
+export function getEditorPostPreviewUrl( state ) {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const site = getSite( state, siteId );
+	const post = getSitePost( state, siteId, postId );
+	return getPreviewURL( site, post, state.ui.editor.autosavePreviewUrl );
 }
