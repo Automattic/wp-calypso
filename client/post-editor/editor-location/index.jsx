@@ -142,7 +142,7 @@ class EditorLocation extends React.Component {
 	};
 
 	render() {
-		let error, buttonText;
+		let error, buttonText, options;
 
 		if ( this.state.error ) {
 			error = (
@@ -162,6 +162,22 @@ class EditorLocation extends React.Component {
 			} );
 		}
 
+		if ( this.props.coordinates ) {
+			options = (
+				<div className="editor-location__options">
+					<label htmlFor="geo_public">
+						<FormCheckbox
+							id="geo_public"
+							name="geo_public"
+							checked={ statusToBoolean( this.props.isSharedPublicly ) }
+							onChange={ this.onShareChange }
+						/>
+						<span>{ this.props.translate( 'Display location publicly' ) }</span>
+					</label>
+				</div>
+			);
+		}
+
 		return (
 			<div className="editor-location">
 				{ error }
@@ -179,15 +195,7 @@ class EditorLocation extends React.Component {
 					onError={ this.onGeolocateFailure }
 					onSelect={ this.onSearchSelect }
 				/>
-				<label htmlFor="geo_public">
-					<FormCheckbox
-						id="geo_public"
-						name="geo_public"
-						checked={ statusToBoolean( this.props.isSharedPublicly ) }
-						onChange={ this.onShareChange }
-					/>
-					<span>{ this.props.translate( 'Display location publicly' ) }</span>
-				</label>
+				{ options }
 			</div>
 		);
 	}
