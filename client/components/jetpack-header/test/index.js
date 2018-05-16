@@ -14,6 +14,7 @@ import { shallow } from 'enzyme';
  */
 import JetpackHeader from '..';
 import JetpackLogo from 'components/jetpack-logo';
+import JetpackDreamhostLogo from 'components/jetpack-header/dreamhost';
 
 describe( 'JetpackHeader', () => {
 	test( 'renders Jetpack logo when no partnerSlug prop', () => {
@@ -33,6 +34,6 @@ describe( 'JetpackHeader', () => {
 
 	test( 'should render a co-branded logo when passed a known partner slug', () => {
 		const wrapper = shallow( <JetpackHeader partnerSlug="dreamhost" /> );
-		expect( wrapper.find( '.jetpack-connect-header-logo__cobranded-logo' ) ).toHaveLength( 1 );
+		expect( wrapper.find( JetpackDreamhostLogo ) ).toHaveLength( 1 );
 	} );
 } );
