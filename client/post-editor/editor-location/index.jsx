@@ -158,12 +158,14 @@ class EditorLocation extends React.Component {
 					</label>
 				</div>
 				<div class="editor-location__option-field">
-					<label htmlFor="geo_address">Location Description</label>
-					<FormTextInput
-						name="geo_address"
-						id="geo_address"
-						value={ this.props.addressDescription }
-					/>
+					<label htmlFor="geo_address">
+						Location Description
+						<FormTextInput
+							name="geo_address"
+							id="geo_address"
+							value={ this.props.addressDescription }
+						/>
+					</label>
 				</div>
 			</div>
 		);
