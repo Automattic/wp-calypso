@@ -30,7 +30,7 @@ function statusToBoolean( status ) {
 class EditorLocationOptions extends React.Component {
 	static propTypes = {
 		isSharedPublicly: PropTypes.string,
-		addressDescription: PropTypes.string,
+		label: PropTypes.string,
 	};
 
 	state = {
@@ -89,7 +89,7 @@ class EditorLocationOptions extends React.Component {
 								<FormTextInput
 									name="geo_address"
 									id="geo_address"
-									value={ this.props.addressDescription }
+									value={ this.props.label }
 									onChange={ this.onDescriptionChange }
 								/>
 							</label>
@@ -118,9 +118,9 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
 		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( post );
-		const addressDescription = PostMetadata.geoAddressDescription( post );
+		const label = PostMetadata.geoLabel( post );
 
-		return { siteId, postId, isSharedPublicly, addressDescription };
+		return { siteId, postId, isSharedPublicly, label };
 	},
 	{
 		updatePostMetadata,
