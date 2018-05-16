@@ -94,7 +94,7 @@ class EditorLocationOptions extends React.Component {
 	renderClosed() {
 		return (
 			<Button borderless compact onClick={ this.open }>
-				<Gridicon icon="add" /> { this.props.translate( 'Display options' ) }
+				<Gridicon icon="ellipsis-circle" /> { this.props.translate( 'Display options' ) }
 			</Button>
 		);
 	}
