@@ -119,7 +119,7 @@ export function createCouponUpdateFromPromotion( promotion ) {
 	let productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
 
 	// If 'all' was selected, pass in empty arrays to reset product ids and category ids
-	if ( appliesTo.all ) {
+	if ( appliesTo && appliesTo.all ) {
 		productIds = [];
 		productCategoryIds = [];
 	}
