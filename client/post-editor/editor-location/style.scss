@@ -6,9 +6,20 @@
 	display: block;
 }
 
-.editor-location__options label {
+.editor-location__options {
 	font-size: 12px;
+}
+
+.editor-location__option-field {
 	margin: 4px 0;
+}
+
+.editor-location__option-field input[type='text'].form-text-input {
+	font-size: 12px;
+}
+
+.editor-location__search {
+  margin-bottom: 4px;
 }
 
 .editor-location__search .search-card {

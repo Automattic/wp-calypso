@@ -15,6 +15,7 @@ import { stringify } from 'qs';
  */
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormTextInput from 'components/forms/form-text-input';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import PostMetadata from 'lib/post-metadata';
 import EditorLocationSearch from './search';
@@ -54,6 +55,7 @@ class EditorLocation extends React.Component {
 			}
 		},
 		isSharedPublicly: PropTypes.string,
+		addressDescription: PropTypes.string,
 	};
 
 	state = {
@@ -141,6 +143,32 @@ class EditorLocation extends React.Component {
 		return <img src={ src } className="editor-location__map" />;
 	};
 
+	renderOptions() {
+		return (
+			<div className="editor-location__options">
+				<div class="editor-location__option-field">
+					<label htmlFor="geo_public">
+						<FormCheckbox
+							id="geo_public"
+							name="geo_public"
+							checked={ statusToBoolean( this.props.isSharedPublicly ) }
+							onChange={ this.onShareChange }
+						/>
+						<span>{ this.props.translate( 'Display location publicly' ) }</span>
+					</label>
+				</div>
+				<div class="editor-location__option-field">
+					<label htmlFor="geo_address">Location Description</label>
+					<FormTextInput
+						name="geo_address"
+						id="geo_address"
+						value={ this.props.addressDescription }
+					/>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		let error, buttonText, options;
 
@@ -163,19 +191,7 @@ class EditorLocation extends React.Component {
 		}
 
 		if ( this.props.coordinates ) {
-			options = (
-				<div className="editor-location__options">
-					<label htmlFor="geo_public">
-						<FormCheckbox
-							id="geo_public"
-							name="geo_public"
-							checked={ statusToBoolean( this.props.isSharedPublicly ) }
-							onChange={ this.onShareChange }
-						/>
-						<span>{ this.props.translate( 'Display location publicly' ) }</span>
-					</label>
-				</div>
-			);
+			options = this.renderOptions();
 		}
 
 		return (
@@ -208,8 +224,9 @@ export default connect(
 		const post = getEditedPost( state, siteId, postId );
 		const coordinates = PostMetadata.geoCoordinates( post );
 		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( post );
+		const addressDescription = PostMetadata.geoAddressDescription( post );
 
-		return { siteId, postId, coordinates, isSharedPublicly };
+		return { siteId, postId, coordinates, isSharedPublicly, addressDescription };
 	},
 	{
 		updatePostMetadata,
