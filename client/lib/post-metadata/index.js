@@ -146,6 +146,10 @@ PostMetadata = {
 	 * @returns {string}	Either "public" or "private"
 	 */
 	geoIsSharedPublicly: function( post ) {
+		if ( ! post ) {
+			return 'public';
+		}
+
 		const isSharedPublicly = getValueByKey( post.metadata, 'geo_public' );
 
 		if ( 'undefined' === typeof isSharedPublicly || isSharedPublicly ) {
