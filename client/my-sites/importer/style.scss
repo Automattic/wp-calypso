@@ -253,7 +253,24 @@
 	display: flex;
 	flex-direction: column;
 
+	& .site-importer__site-preview-column-container {
+		display:flex;
+		flex-direction: row;
+	}
+
+	& .site-importer__site-preview-import-content {
+		flex-grow: 0;
+		flex-shrink: 1;
+
+		min-width: 30%;
+
+		padding-left: 30px;
+	}
+
 	& .site-importer__site-preview-container {
+
+		max-width: 60%;
+
 		& .site-importer__site-preview-browser-chrome {
 			flex-grow: 0;
 			flex-shrink: 0;

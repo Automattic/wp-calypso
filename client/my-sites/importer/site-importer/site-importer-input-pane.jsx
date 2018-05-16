@@ -115,7 +115,7 @@ class SiteImporterInputPane extends React.Component {
 		this.setState( { loading: true }, this.resetErrors );
 
 		request
-			.get( `https://s0.wp.com/mshots/v1/${ siteURL }?${ Math.random() }` )
+			.get( `https://s0.wp.com/mshots/v1/${ siteURL }` )
 			.then( noop )
 			.catch( noop );
 

@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import request from 'superagent';
-
+import { map } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -26,7 +26,7 @@ class SiteImporterSitePreview extends React.Component {
 
 	state = {
 		previewRetries: 0,
-		siteURL: `https://s0.wp.com/mshots/v1/${ this.props.siteURL }?${ Math.random() }`, // TODO remove before going to prod
+		siteURL: `https://s0.wp.com/mshots/v1/${ this.props.siteURL }`,
 		sitePreviewImage: '',
 		sitePreviewFailed: false,
 		loadingPreviewImage: true,
@@ -39,10 +39,14 @@ class SiteImporterSitePreview extends React.Component {
 	loadSitePreview = () => {
 		this.setState( { loadingPreviewImage: true } );
 
-		const maxRetries = 40;
+		const maxRetries = 1;
 		const retryTimeout = 1500;
 		if ( this.state.previewRetries > maxRetries ) {
-			this.setState( { sitePreviewImage: '', sitePreviewFailed: true } );
+			this.setState( {
+				sitePreviewImage: '',
+				sitePreviewFailed: true,
+				loadingPreviewImage: false,
+			} );
 			return;
 		}
 
@@ -55,9 +59,6 @@ class SiteImporterSitePreview extends React.Component {
 				if ( res.type === null || res.type === 'image/gif' ) {
 					setTimeout( this.loadSitePreview, retryTimeout );
 				} else if ( res.type === 'image/jpeg' ) {
-					// TODO end loader
-
-					// const blob = new Blob( [ ], { type: 'image/jpeg' } )
 					const fReader = new FileReader();
 					fReader.onload = ev => {
 						this.setState( {
@@ -75,6 +76,7 @@ class SiteImporterSitePreview extends React.Component {
 
 	render = () => {
 		const isLoading = this.props.isLoading || this.state.loadingPreviewImage;
+		const isError = this.state.sitePreviewFailed;
 
 		const containerClass = classNames( 'site-importer__site-preview-overlay-container', {
 			isLoading,
@@ -95,22 +97,40 @@ class SiteImporterSitePreview extends React.Component {
 				</div>
 				<div className={ containerClass }>
 					{ this.state.sitePreviewImage && (
-						<div className="site-importer__site-preview-container">
-							<div className="site-importer__site-preview-browser-chrome">
-								<span>● ● ●</span>
+						<div className="site-importer__site-preview-column-container">
+							<div className="site-importer__site-preview-container">
+								<div className="site-importer__site-preview-browser-chrome">
+									<span>● ● ●</span>
+								</div>
+								<div className="site-importer__site-preview-image">
+									<img
+										className="site-importer__site-preview-favicon"
+										src={ this.state.sitePreviewImage }
+										alt="Site favicon"
+									/>
+								</div>
 							</div>
-							<div className="site-importer__site-preview-image">
-								<img
-									className="site-importer__site-preview-favicon"
-									src={ this.state.sitePreviewImage }
-									alt="Site favicon"
-								/>
+							<div className="site-importer__site-preview-import-content">
+								<p>{ this.props.translate( 'We will import:' ) }</p>
+								{ this.props.importData.supported &&
+									this.props.importData.supported.length && (
+										<ul>
+											{ map( this.props.importData.supported, ( suppApp, idx ) => (
+												<li key={ idx }>{ suppApp }</li>
+											) ) }
+										</ul>
+									) }
 							</div>
 						</div>
 					) }
 					{ isLoading && (
 						<div className="site-importer__site-preview-loading-overlay">
 							<Spinner />
+						</div>
+					) }
+					{ isError && (
+						<div className="site-importer__site-preview-error">
+							Unable to load preview, please try again later
 						</div>
 					) }
 				</div>
