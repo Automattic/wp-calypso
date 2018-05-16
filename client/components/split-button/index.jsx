@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -17,7 +17,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
 
-class SplitButton extends Component {
+class SplitButton extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		label: PropTypes.string,
@@ -61,12 +61,12 @@ class SplitButton extends Component {
 
 	hideMenu = () => this.toggleMenu( false );
 
-	toggleMenu( isMenuVisible ) {
+	toggleMenu = isMenuVisible => {
 		if ( ! this.props.disabled ) {
 			this.setState( { isMenuVisible } );
 			this.props.onToggle( isMenuVisible );
 		}
-	}
+	};
 
 	render() {
 		const {

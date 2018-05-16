@@ -73,7 +73,10 @@ describe( 'Button', () => {
 				.equal( '_blank' );
 			expect( button )
 				.to.have.prop( 'rel' )
-				.equal( 'noopener noreferrer' );
+				.match( /\bnoopener\b/ );
+			expect( button )
+				.to.have.prop( 'rel' )
+				.match( /\bnoreferrer\b/ );
 		} );
 
 		test( 'adds noopener noreferrer rel if target is specified', () => {
@@ -84,7 +87,10 @@ describe( 'Button', () => {
 				.equal( '_blank' );
 			expect( button )
 				.to.have.prop( 'rel' )
-				.equal( 'noopener noreferrer' );
+				.match( /\bnoopener\b/ );
+			expect( button )
+				.to.have.prop( 'rel' )
+				.match( /\bnoreferrer\b/ );
 		} );
 	} );
 
