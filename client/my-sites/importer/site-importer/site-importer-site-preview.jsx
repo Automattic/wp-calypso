@@ -14,6 +14,7 @@ import { map } from 'lodash';
  */
 import Spinner from 'components/spinner';
 import Button from 'components/forms/form-button';
+import ErrorPane from '../error-pane';
 
 class SiteImporterSitePreview extends React.Component {
 	static propTypes = {
@@ -28,7 +29,7 @@ class SiteImporterSitePreview extends React.Component {
 		previewRetries: 0,
 		siteURL: `https://s0.wp.com/mshots/v1/${ this.props.siteURL }`,
 		sitePreviewImage: '',
-		sitePreviewFailed: false,
+		sitePreviewFailed: true,
 		loadingPreviewImage: true,
 	};
 
@@ -84,56 +85,65 @@ class SiteImporterSitePreview extends React.Component {
 
 		return (
 			<div>
-				<div className="site-importer__site-importer-confirm-site-pane-container">
-					<div className="site-importer__site-importer-confirm-site-label">
-						{ this.props.translate( 'Is this your site?' ) }
+				{ ! isError && (
+					<div>
+						<div className="site-importer__site-importer-confirm-site-pane-container">
+							<div className="site-importer__site-importer-confirm-site-label">
+								{ this.props.translate( 'Is this your site?' ) }
+							</div>
+							<Button disabled={ isLoading } onClick={ this.props.startImport }>
+								{ this.props.translate( 'Yes! Start import' ) }
+							</Button>
+							<Button disabled={ isLoading } isPrimary={ false } onClick={ this.props.resetImport }>
+								{ this.props.translate( 'No' ) }
+							</Button>
+						</div>
+						<div className={ containerClass }>
+							{ this.state.sitePreviewImage && (
+								<div className="site-importer__site-preview-column-container">
+									<div className="site-importer__site-preview-container">
+										<div className="site-importer__site-preview-browser-chrome">
+											<span>● ● ●</span>
+										</div>
+										<div className="site-importer__site-preview-image">
+											<img
+												className="site-importer__site-preview-favicon"
+												src={ this.state.sitePreviewImage }
+												alt="Site favicon"
+											/>
+										</div>
+									</div>
+									<div className="site-importer__site-preview-import-content">
+										<p>{ this.props.translate( 'We will import:' ) }</p>
+										{ this.props.importData.supported &&
+											this.props.importData.supported.length && (
+												<ul>
+													{ map( this.props.importData.supported, ( suppApp, idx ) => (
+														<li key={ idx }>{ suppApp }</li>
+													) ) }
+												</ul>
+											) }
+									</div>
+								</div>
+							) }
+							{ isLoading && (
+								<div className="site-importer__site-preview-loading-overlay">
+									<Spinner />
+								</div>
+							) }
+						</div>
 					</div>
-					<Button disabled={ isLoading } onClick={ this.props.startImport }>
-						{ this.props.translate( 'Yes! Start import' ) }
-					</Button>
-					<Button disabled={ isLoading } isPrimary={ false } onClick={ this.props.resetImport }>
-						{ this.props.translate( 'No' ) }
-					</Button>
-				</div>
-				<div className={ containerClass }>
-					{ this.state.sitePreviewImage && (
-						<div className="site-importer__site-preview-column-container">
-							<div className="site-importer__site-preview-container">
-								<div className="site-importer__site-preview-browser-chrome">
-									<span>● ● ●</span>
-								</div>
-								<div className="site-importer__site-preview-image">
-									<img
-										className="site-importer__site-preview-favicon"
-										src={ this.state.sitePreviewImage }
-										alt="Site favicon"
-									/>
-								</div>
-							</div>
-							<div className="site-importer__site-preview-import-content">
-								<p>{ this.props.translate( 'We will import:' ) }</p>
-								{ this.props.importData.supported &&
-									this.props.importData.supported.length && (
-										<ul>
-											{ map( this.props.importData.supported, ( suppApp, idx ) => (
-												<li key={ idx }>{ suppApp }</li>
-											) ) }
-										</ul>
-									) }
-							</div>
-						</div>
-					) }
-					{ isLoading && (
-						<div className="site-importer__site-preview-loading-overlay">
-							<Spinner />
-						</div>
-					) }
-					{ isError && (
-						<div className="site-importer__site-preview-error">
-							Unable to load preview, please try again later
-						</div>
-					) }
-				</div>
+				) }
+				{ isError && (
+					<div className="site-importer__site-preview-error">
+						<ErrorPane
+							type="importError"
+							description={ this.props.translate(
+								'Unable to load site preview. Please try again later.'
+							) }
+						/>
+					</div>
+				) }
 			</div>
 		);
 	};
