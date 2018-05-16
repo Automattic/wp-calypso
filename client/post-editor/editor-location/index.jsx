@@ -114,12 +114,6 @@ class EditorLocation extends React.Component {
 		} );
 	};
 
-	onShareChange = event => {
-		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
-			geo_public: event.target.checked ? 1 : 0,
-		} );
-	};
-
 	renderCurrentLocation = () => {
 		if ( ! this.props.coordinates ) {
 			return;
