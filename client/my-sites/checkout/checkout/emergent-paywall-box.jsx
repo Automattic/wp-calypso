@@ -75,16 +75,6 @@ export class EmergentPaywallBox extends Component {
 		};
 	}
 
-	shouldComponentUpdate( nextProps, nextState ) {
-		if (
-			this.state.hasConfigLoaded !== nextState.hasConfigLoaded ||
-			this.state.iframeHeight !== nextState.iframeHeight
-		) {
-			return true;
-		}
-		return false;
-	}
-
 	/**
 	 * Determines what to do after a `PURCHASE_STATUS` message
 	 *
