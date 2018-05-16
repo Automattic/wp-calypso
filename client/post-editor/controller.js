@@ -27,7 +27,7 @@ import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
 import wpcom from 'lib/wp';
 import Dispatcher from 'dispatcher';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { getEditURL, getFeaturedImageId } from 'lib/posts/utils';
 
 const user = User();
 
@@ -247,7 +247,12 @@ export default {
 				startEditingPostCopy( site, postToCopyId, context );
 			} else if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingExisting( site, postID );
+				actions.startEditingExisting( site, postID ).then( editedPost => {
+					if ( editedPost && editedPost.type && editedPost.type !== postType ) {
+						// incorrect post type in URL
+						page.redirect( getEditURL( editedPost, site ) );
+					}
+				} );
 			} else {
 				const postOptions = { type: postType };
 

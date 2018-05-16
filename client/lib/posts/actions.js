@@ -68,15 +68,16 @@ PostActions = {
 	 *
 	 * @param {Object} site   Site object
 	 * @param {Number} postId Post ID to load
+	 * @return {Promise<?Object>} The edited post object
 	 */
 	startEditingExisting: function( site, postId ) {
 		if ( ! site || ! site.ID ) {
-			return;
+			return Promise.resolve( null );
 		}
 
 		const currentPost = PostEditStore.get();
 		if ( currentPost && currentPost.site_ID === site.ID && currentPost.ID === postId ) {
-			return; // already editing same post
+			return Promise.resolve( currentPost ); // already editing same post
 		}
 
 		Dispatcher.handleViewAction( {
@@ -85,7 +86,7 @@ PostActions = {
 			postId: postId,
 		} );
 
-		wpcom
+		return wpcom
 			.site( site.ID )
 			.post( postId )
 			.get( { context: 'edit', meta: 'autosave' } )
@@ -99,12 +100,16 @@ PostActions = {
 				// Retrieve the normalized post and use it to update Redux store
 				const receivedPost = PostEditStore.get();
 				reduxDispatch( receivePost( receivedPost ) );
+
+				return receivedPost;
 			} )
 			.catch( error => {
 				Dispatcher.handleServerAction( {
 					type: 'SET_POST_LOADING_ERROR',
 					error,
 				} );
+
+				return null;
 			} );
 	},
 
