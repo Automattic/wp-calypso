@@ -5,26 +5,24 @@
  */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import JetpackLogo from 'components/jetpack-logo';
-import JetpackDreamhostLogo from './dreamhost';
-import JetpackPressableLogo from './pressable';
-import JetpackMileswebLogo from './milesweb';
 import JetpackBluehostLogo from './bluehost';
+import JetpackDreamhostLogo from './dreamhost';
 import JetpackInmotionLogo from './inmotion';
+import JetpackLogo from 'components/jetpack-logo';
+import JetpackMileswebLogo from './milesweb';
+import JetpackPressableLogo from './pressable';
 
-export class JetpackHeader extends PureComponent {
+export default class JetpackHeader extends PureComponent {
 	static propTypes = {
 		partnerSlug: PropTypes.string,
-		translate: PropTypes.func.isRequired,
 	};
 
 	renderPartnerLogo() {
-		const { translate, partnerSlug } = this.props;
+		const { partnerSlug } = this.props;
 		const baseCobrandedAttributes = {
 			className: 'jetpack-connect-header-logo__cobranded-logo',
 		};
@@ -58,5 +56,3 @@ export class JetpackHeader extends PureComponent {
 		);
 	}
 }
-
-export default localize( JetpackHeader );
