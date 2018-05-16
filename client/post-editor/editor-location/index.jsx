@@ -14,8 +14,7 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormTextInput from 'components/forms/form-text-input';
+import EditorLocationOptions from 'post-editor/editor-location/options';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import PostMetadata from 'lib/post-metadata';
 import EditorLocationSearch from './search';
@@ -36,10 +35,6 @@ const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 // that formats float metadata values exactly this way.
 const toGeoString = coord => String( Number( coord ).toFixed( 7 ) );
 
-function statusToBoolean( status ) {
-	return 'public' === status;
-}
-
 class EditorLocation extends React.Component {
 	static displayName = 'EditorLocation';
 
@@ -54,8 +49,6 @@ class EditorLocation extends React.Component {
 				return new Error( 'Expected array pair of coordinates for prop `' + propName + '`.' );
 			}
 		},
-		isSharedPublicly: PropTypes.string,
-		addressDescription: PropTypes.string,
 	};
 
 	state = {
@@ -143,34 +136,6 @@ class EditorLocation extends React.Component {
 		return <img src={ src } className="editor-location__map" />;
 	};
 
-	renderOptions() {
-		return (
-			<div className="editor-location__options">
-				<div class="editor-location__option-field">
-					<label htmlFor="geo_public">
-						<FormCheckbox
-							id="geo_public"
-							name="geo_public"
-							checked={ statusToBoolean( this.props.isSharedPublicly ) }
-							onChange={ this.onShareChange }
-						/>
-						<span>{ this.props.translate( 'Display location publicly' ) }</span>
-					</label>
-				</div>
-				<div class="editor-location__option-field">
-					<label htmlFor="geo_address">
-						Location Description
-						<FormTextInput
-							name="geo_address"
-							id="geo_address"
-							value={ this.props.addressDescription }
-						/>
-					</label>
-				</div>
-			</div>
-		);
-	}
-
 	render() {
 		let error, buttonText, options;
 
@@ -193,7 +158,7 @@ class EditorLocation extends React.Component {
 		}
 
 		if ( this.props.coordinates ) {
-			options = this.renderOptions();
+			options = <EditorLocationOptions />;
 		}
 
 		return (
@@ -225,10 +190,8 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
 		const coordinates = PostMetadata.geoCoordinates( post );
-		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( post );
-		const addressDescription = PostMetadata.geoAddressDescription( post );
 
-		return { siteId, postId, coordinates, isSharedPublicly, addressDescription };
+		return { siteId, postId, coordinates };
 	},
 	{
 		updatePostMetadata,
