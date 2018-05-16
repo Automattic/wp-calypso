@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
@@ -62,24 +61,10 @@ class DomainProductPrice extends React.Component {
 
 	renderIncludedInPremium() {
 		const { translate } = this.props;
-		const shouldShowStrikethrough = abtest( 'signupDomainStrikethruPrice' ) === 'enabled';
 
 		return (
 			<div className="domain-product-price domain-product-price__is-with-plans-only">
-				{ shouldShowStrikethrough && (
-					<span className="domain-product-price__strikethrough-price">
-						{ this.props.translate( '%(cost)s /year', {
-							args: { cost: this.props.price },
-						} ) }
-					</span>
-				) }
-				<span
-					className={ classnames( {
-						'domain-product-price__included-in-plan': shouldShowStrikethrough,
-					} ) }
-				>
-					{ translate( 'Included in paid plans' ) }
-				</span>
+				{ translate( 'Included in paid plans' ) }
 			</div>
 		);
 	}
