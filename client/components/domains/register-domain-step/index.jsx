@@ -292,8 +292,6 @@ class RegisterDomainStep extends React.Component {
 			this.setState( state );
 		}
 
-		this.getAvailableTlds();
-
 		this._isMounted = false;
 	}
 
@@ -304,7 +302,10 @@ class RegisterDomainStep extends React.Component {
 	componentDidMount() {
 		if ( this.state.lastQuery ) {
 			this.onSearch( this.state.lastQuery );
+		} else {
+			this.getAvailableTlds();
 		}
+
 		this.props.recordSearchFormView( this.props.analyticsSection );
 
 		this._isMounted = true;
@@ -574,10 +575,12 @@ class RegisterDomainStep extends React.Component {
 		);
 	};
 
-	getAvailableTlds = () => {
-		getAvailableTlds().then( availableTlds => {
-			this.setState( { availableTlds } );
-		} );
+	getAvailableTlds = ( domain = undefined ) => {
+		return getAvailableTlds( domain ? { search: domain } : {} )
+			.then( availableTlds => {
+				this.setState( { availableTlds } );
+			} )
+			.catch( noop );
 	};
 
 	checkDomainAvailability = ( domain, timestamp ) => {
@@ -844,6 +847,7 @@ class RegisterDomainStep extends React.Component {
 
 		const timestamp = Date.now();
 
+		this.getAvailableTlds( domain );
 		const domainSuggestions = Promise.all( [
 			this.checkDomainAvailability( domain, timestamp ),
 			this.getDomainsSuggestions( domain, timestamp ),
