@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import JetpackLogo from 'components/jetpack-logo';
 import JetpackDreamhostLogo from './dreamhost';
 import JetpackPressableLogo from './pressable';
+import JetpackMileswebLogo from './milesweb';
 
 export class JetpackHeader extends PureComponent {
 	static propTypes = {
@@ -34,19 +35,7 @@ export class JetpackHeader extends PureComponent {
 				return <JetpackPressableLogo { ...baseCobrandedAttributes } />;
 
 			case 'milesweb':
-				return (
-					<img
-						{ ...baseCobrandedAttributes }
-						width="662.5px"
-						height="85px"
-						src="/calypso/images/jetpack/jetpack-milesweb-connection.png"
-						alt={ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
-							args: {
-								partnerName: 'MilesWeb',
-							},
-						} ) }
-					/>
-				);
+				return <JetpackMileswebLogo { ...baseCobrandedAttributes } />;
 
 			case 'bluehost':
 				return (
