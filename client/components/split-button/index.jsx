@@ -1,12 +1,10 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classnames from 'classnames';
+import React, { PureComponent } from 'react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -17,7 +15,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
 
-class SplitButton extends Component {
+class SplitButton extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		label: PropTypes.string,
@@ -61,12 +59,12 @@ class SplitButton extends Component {
 
 	hideMenu = () => this.toggleMenu( false );
 
-	toggleMenu( isMenuVisible ) {
+	toggleMenu = isMenuVisible => {
 		if ( ! this.props.disabled ) {
 			this.setState( { isMenuVisible } );
 			this.props.onToggle( isMenuVisible );
 		}
-	}
+	};
 
 	render() {
 		const {
@@ -86,8 +84,8 @@ class SplitButton extends Component {
 			popoverClassName,
 		} = this.props;
 		const { isMenuVisible } = this.state;
-		const popoverClasses = classnames( 'split-button__menu', 'popover', popoverClassName );
-		const classes = classnames( 'split-button', className, {
+		const popoverClasses = classNames( 'split-button__menu', 'popover', popoverClassName );
+		const classes = classNames( 'split-button', className, {
 			'is-menu-visible': isMenuVisible,
 			'is-disabled': disabled,
 			'has-icon-text': label && icon,
