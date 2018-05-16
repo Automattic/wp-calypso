@@ -32,14 +32,15 @@ const detailType = threat => {
 };
 
 const headerTitle = ( translate, threat ) => {
-	const { extension } = threat;
+	const { extension, filename } = threat;
+	const basename = s => s.replace( /.*\//, '' );
 
 	switch ( detailType( threat ) ) {
 		case 'core':
 			return translate( 'The file {{filename/}} has been modified from its original.', {
 				components: {
 					filename: (
-						<code className="activity-log__threat-alert-filename">{ threat.filename }</code>
+						<code className="activity-log__threat-alert-filename">{ basename( filename ) }</code>
 					),
 				},
 			} );
@@ -48,7 +49,7 @@ const headerTitle = ( translate, threat ) => {
 			return translate( 'The file {{filename/}} contains a malicious code pattern.', {
 				components: {
 					filename: (
-						<code className="activity-log__threat-alert-filename">{ threat.filename }</code>
+						<code className="activity-log__threat-alert-filename">{ basename( filename ) }</code>
 					),
 				},
 			} );
