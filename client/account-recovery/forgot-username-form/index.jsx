@@ -90,7 +90,6 @@ export class ForgotUsernameFormComponent extends Component {
 							onChange={ this.firstNameUpdated }
 							value={ firstName }
 							disabled={ isRequesting }
-							autoFocus
 						/>
 					</FormLabel>
 					<FormLabel>
