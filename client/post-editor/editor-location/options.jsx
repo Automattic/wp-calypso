@@ -29,7 +29,7 @@ function statusToBoolean( status ) {
 
 class EditorLocationOptions extends React.Component {
 	static propTypes = {
-		isSharedPublicly: PropTypes.string,
+		isSharedPublicly: PropTypes.oneOf( [ 'private', 'public' ] ),
 		label: PropTypes.string,
 	};
 
