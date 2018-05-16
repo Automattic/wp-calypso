@@ -509,18 +509,13 @@ class RegisterDomainStep extends React.Component {
 			tlds.delete( newTld );
 		}
 
-		this.setState(
-			{
-				filters: {
-					...this.state.filters,
-					tlds: [ ...tlds ],
-				},
+		this.repeatSearch( {
+			filters: {
+				...this.state.filters,
+				tlds: [ ...tlds ],
 			},
-			() => {
-				this.save();
-				this.repeatSearch( { pageNumber: 1 } );
-			}
-		);
+			pageNumber: 1,
+		} );
 	};
 
 	onFiltersChange = ( newFilters, { shouldSubmit = false } = {} ) => {
@@ -536,19 +531,17 @@ class RegisterDomainStep extends React.Component {
 
 	onFiltersReset = ( ...keysToReset ) => {
 		this.props.recordFiltersReset( this.state.filters, keysToReset, this.props.analyticsSection );
-		this.setState(
-			{
-				filters: {
-					...this.state.filters,
-					...( Array.isArray( keysToReset ) && keysToReset.length > 0
-						? pick( this.getInitialFiltersState(), keysToReset )
-						: this.getInitialFiltersState() ),
-				},
-			},
-			() => {
-				this.repeatSearch( { pageNumber: 1 } );
-			}
-		);
+		const filters = {
+			...this.state.filters,
+			...( Array.isArray( keysToReset ) && keysToReset.length > 0
+				? pick( this.getInitialFiltersState(), keysToReset )
+				: this.getInitialFiltersState() ),
+		};
+		this.repeatSearch( {
+			filters,
+			lastFilters: filters,
+			pageNumber: 1,
+		} );
 	};
 
 	onFiltersSubmit = () => {
@@ -660,7 +653,6 @@ class RegisterDomainStep extends React.Component {
 			vertical: this.props.surveyVertical,
 			...this.getActiveFiltersForAPI(),
 		};
-		this.setState( { lastFilters: this.state.filters } );
 
 		debug( 'Fetching domains suggestions with the following query', query );
 
@@ -830,7 +822,11 @@ class RegisterDomainStep extends React.Component {
 		const domain = getFixedDomainSearch( searchQuery );
 
 		this.setState(
-			{ lastQuery: searchQuery, lastSurveyVertical: this.props.surveyVertical },
+			{
+				lastQuery: searchQuery,
+				lastSurveyVertical: this.props.surveyVertical,
+				lastFilters: this.state.filters,
+			},
 			this.save
 		);
 
