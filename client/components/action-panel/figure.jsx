@@ -10,7 +10,7 @@ import classNames from 'classnames';
 
 const ActionPanelFigure = ( { inlineBodyText, children } ) => {
 	const figureClasses = classNames( {
-		'settings-action-panel__figure': true,
+		'action-panel__figure': true,
 		'is-inline-body-text': inlineBodyText,
 	} );
 
