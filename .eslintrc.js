@@ -43,6 +43,9 @@ module.exports = {
 		// Allows Chai `expect` expressions. Now that we're on jest, hopefully we can remove this one.
 		'no-unused-expressions': 0,
 
+		// Ignore rest siblings used to omit properties from objects: const { a, b, ...rest } = props
+		'no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
+
 		// enforce our classname namespacing rules
 		'wpcalypso/jsx-classname-namespace': [
 			2,
