@@ -149,7 +149,7 @@ export function removeLocaleFromPath( path ) {
  */
 export function getSupportLocale() {
 	const localeSlug = getLocaleSlug();
-	if ( config( 'support_locales' ).indexOf( localeSlug ) > -1 ) {
+	if ( config( 'support_site_locales' ).indexOf( localeSlug ) > -1 ) {
 		return localeSlug;
 	}
 	return 'en';
