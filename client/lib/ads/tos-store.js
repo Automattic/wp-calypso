@@ -18,13 +18,13 @@ import emitter from 'lib/mixins/emitter';
  */
 const debug = debugModule( 'calypso:wordads:store' );
 
-let _tos = {},
-	_loadingError = null,
+let _loadingError = null,
 	_notice = null,
-	_isLoading = false,
-	WordadsTosStore;
+	_isLoading = false;
 
-WordadsTosStore = {
+const _tos = {};
+
+const WordadsTosStore = {
 	get: function() {
 		return _tos;
 	},
