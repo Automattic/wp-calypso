@@ -37,6 +37,7 @@
 		"google-analytics": false,
 		"google-my-business": false,
 		"help": true,
+		"jetpack/checklist": true,
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
 		"jitms": true,
