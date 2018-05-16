@@ -95,6 +95,7 @@ import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import userDevices from './user-devices/reducer';
+import username from './username/reducer';
 import userProfileLinks from './profile-links/reducer';
 import userSettings from './user-settings/reducer';
 import wordads from './wordads/reducer';
@@ -189,6 +190,7 @@ const reducers = {
 	themes,
 	ui,
 	users,
+	username,
 	userDevices,
 	userProfileLinks,
 	userSettings,
