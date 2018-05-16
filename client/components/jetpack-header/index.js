@@ -17,6 +17,8 @@ import JetpackMileswebLogo from './milesweb';
 import JetpackPressableLogo from './pressable';
 
 export default class JetpackHeader extends PureComponent {
+	static displayName = 'JetpackHeader';
+
 	static propTypes = {
 		partnerSlug: PropTypes.string,
 	};
