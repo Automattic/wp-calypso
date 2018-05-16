@@ -71,6 +71,8 @@ class EditorLocation extends React.Component {
 			geo_latitude: toGeoString( position.coords.latitude ),
 			geo_longitude: toGeoString( position.coords.longitude ),
 			geo_public: publicValueToMetaValue( this.props.isSharedPublicly ),
+			geo_address:
+				toGeoString( position.coords.latitude ) + ', ' + toGeoString( position.coords.longitude ),
 		} );
 
 		recordStat( 'location_geolocate_success' );
