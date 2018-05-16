@@ -16,7 +16,7 @@ import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-pl
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading, recordPageView } from 'me/purchases/utils';
+import { isDataLoading } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
@@ -25,6 +25,7 @@ import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { managePurchase } from 'me/purchases/paths';
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 
 const user = userFactory();
 
@@ -41,14 +42,10 @@ class AddCardDetails extends PurchaseCardDetails {
 
 	componentWillMount() {
 		this.redirectIfDataIsInvalid();
-
-		recordPageView( 'add_card_details', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
-
-		recordPageView( 'add_card_details', this.props, nextProps );
 	}
 
 	render() {
@@ -64,6 +61,10 @@ class AddCardDetails extends PurchaseCardDetails {
 
 		return (
 			<Main>
+				<TrackPurchasePageView
+					eventName="calypso_add_card_details_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
 				<PageViewTracker
 					path="/me/purchases/:site/:purchaseId/payment/add"
 					title="Purchases > Add Card Details"

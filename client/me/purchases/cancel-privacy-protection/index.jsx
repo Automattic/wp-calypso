@@ -21,7 +21,7 @@ import {
 	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import { getPurchase, isDataLoading, recordPageView } from '../utils';
+import { getPurchase, isDataLoading } from '../utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -34,6 +34,7 @@ import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 
 const user = userFactory();
 
@@ -56,14 +57,10 @@ class CancelPrivacyProtection extends Component {
 
 	componentWillMount() {
 		this.redirectIfDataIsInvalid();
-
-		recordPageView( 'cancel_private_registration', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
-
-		recordPageView( 'cancel_private_registration', this.props, nextProps );
 	}
 
 	redirectIfDataIsInvalid = ( props = this.props ) => {
@@ -207,6 +204,10 @@ class CancelPrivacyProtection extends Component {
 
 		return (
 			<Main>
+				<TrackPurchasePageView
+					eventName="calypso_cancel_private_registration_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
 				<PageViewTracker
 					path="/me/purchases/:site/:purchaseId/cancel-privacy-protection"
 					title="Purchases > Cancel Privacy Protection"
