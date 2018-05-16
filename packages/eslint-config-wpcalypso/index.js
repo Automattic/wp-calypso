@@ -59,7 +59,8 @@ module.exports = {
 		'no-undef': 2,
 		'no-underscore-dangle': 0,
 		'no-unreachable': 2,
-		'no-unused-vars': 2,
+		// Ignore rest siblings used to omit properties from objects: const { a, b, ...rest } = props
+		'no-unused-vars': [ 2, { ignoreRestSiblings: true } ],
 		// Allows function use before declaration
 		'no-use-before-define': [ 2, 'nofunc' ],
 		'no-var': 2,
