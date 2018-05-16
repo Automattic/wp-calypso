@@ -8,10 +8,12 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import PostMetadata from 'lib/post-metadata';
@@ -31,7 +33,7 @@ class EditorLocationOptions extends React.Component {
 	};
 
 	state = {
-		error: null,
+		open: false,
 	};
 
 	onShareChange = event => {
@@ -40,10 +42,30 @@ class EditorLocationOptions extends React.Component {
 		} );
 	};
 
+	onDescriptionChange = event => {
+		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
+			geo_address: event.target.value,
+		} );
+	};
+
+	open = () => {
+		this.setState( {
+			open: true,
+		} );
+	};
+
 	render() {
+		if ( ! this.state.open ) {
+			return this.renderClosed();
+		}
+
+		return this.renderOpen();
+	}
+
+	renderOpen() {
 		return (
 			<div className="editor-location__options">
-				<div class="editor-location__option-field">
+				<div className="editor-location__option-field">
 					<label htmlFor="geo_public">
 						<FormCheckbox
 							id="geo_public"
@@ -54,17 +76,26 @@ class EditorLocationOptions extends React.Component {
 						<span>{ this.props.translate( 'Display location publicly' ) }</span>
 					</label>
 				</div>
-				<div class="editor-location__option-field">
+				<div className="editor-location__option-field">
 					<label htmlFor="geo_address">
-						Location Description
+						Description
 						<FormTextInput
 							name="geo_address"
 							id="geo_address"
 							value={ this.props.addressDescription }
+							onChange={ this.onDescriptionChange }
 						/>
 					</label>
 				</div>
 			</div>
+		);
+	}
+
+	renderClosed() {
+		return (
+			<Button borderless compact onClick={ this.open }>
+				<Gridicon icon="add" /> { this.props.translate( 'Display options' ) }
+			</Button>
 		);
 	}
 }
@@ -77,7 +108,7 @@ export default connect(
 		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( post );
 		const addressDescription = PostMetadata.geoAddressDescription( post );
 
-		return { isSharedPublicly, addressDescription };
+		return { siteId, postId, isSharedPublicly, addressDescription };
 	},
 	{
 		updatePostMetadata,
