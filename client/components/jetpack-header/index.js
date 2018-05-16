@@ -21,7 +21,7 @@ export default class JetpackHeader extends PureComponent {
 		partnerSlug: PropTypes.string,
 	};
 
-	renderPartnerLogo() {
+	renderLogo() {
 		const { partnerSlug } = this.props;
 		const baseCobrandedAttributes = {
 			className: 'jetpack-connect-header-logo__cobranded-logo',
@@ -44,15 +44,11 @@ export default class JetpackHeader extends PureComponent {
 				return <JetpackInmotionLogo { ...baseCobrandedAttributes } />;
 
 			default:
-				return null;
+				return <JetpackLogo full size={ 45 } />;
 		}
 	}
 
 	render() {
-		return (
-			<div className="jetpack-header">
-				{ this.renderPartnerLogo() || <JetpackLogo full size={ 45 } /> }
-			</div>
-		);
+		return <div className="jetpack-header">{ this.renderLogo() }</div>;
 	}
 }
