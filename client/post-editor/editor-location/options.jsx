@@ -16,6 +16,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
+import Popover from 'components/popover';
 import PostMetadata from 'lib/post-metadata';
 import { updatePostMetadata } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -54,48 +55,49 @@ class EditorLocationOptions extends React.Component {
 		} );
 	};
 
+	toggle = () => {
+		this.setState( {
+			open: ! this.state.open,
+		} );
+	};
+
 	render() {
-		if ( ! this.state.open ) {
-			return this.renderClosed();
-		}
-
-		return this.renderOpen();
-	}
-
-	renderOpen() {
 		return (
 			<div className="editor-location__options">
-				<div className="editor-location__option-field">
-					<label htmlFor="geo_public">
-						<FormCheckbox
-							id="geo_public"
-							name="geo_public"
-							checked={ statusToBoolean( this.props.isSharedPublicly ) }
-							onChange={ this.onShareChange }
-						/>
-						<span>{ this.props.translate( 'Display location publicly' ) }</span>
-					</label>
-				</div>
-				<div className="editor-location__option-field">
-					<label htmlFor="geo_address">
-						Description
-						<FormTextInput
-							name="geo_address"
-							id="geo_address"
-							value={ this.props.addressDescription }
-							onChange={ this.onDescriptionChange }
-						/>
-					</label>
-				</div>
+				<Button borderless compact onClick={ this.toggle } ref="popoverButton">
+					<Gridicon icon="ellipsis-circle" /> { this.props.translate( 'Display options' ) }
+				</Button>
+				<Popover
+					isVisible={ this.state.open }
+					context={ this.refs && this.refs.popoverButton }
+					rootClassName="editor-location__options-popover"
+				>
+					<div className="editor-location__option-fields">
+						<div className="editor-location__option-field">
+							<label htmlFor="geo_address">
+								Description
+								<FormTextInput
+									name="geo_address"
+									id="geo_address"
+									value={ this.props.addressDescription }
+									onChange={ this.onDescriptionChange }
+								/>
+							</label>
+						</div>
+						<div className="editor-location__option-field">
+							<label htmlFor="geo_public">
+								<FormCheckbox
+									id="geo_public"
+									name="geo_public"
+									checked={ statusToBoolean( this.props.isSharedPublicly ) }
+									onChange={ this.onShareChange }
+								/>
+								<span>{ this.props.translate( 'Display location publicly' ) }</span>
+							</label>
+						</div>
+					</div>
+				</Popover>
 			</div>
-		);
-	}
-
-	renderClosed() {
-		return (
-			<Button borderless compact onClick={ this.open }>
-				<Gridicon icon="ellipsis-circle" /> { this.props.translate( 'Display options' ) }
-			</Button>
 		);
 	}
 }
