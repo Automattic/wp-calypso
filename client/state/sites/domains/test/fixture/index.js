@@ -34,7 +34,7 @@ export const DOMAIN_PRIMARY = {
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
 	expirySoon: false,
-	gdprConsentStatus: 'ACCEPTED_FULL',
+	gdprConsentStatus: null,
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
@@ -79,7 +79,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	expired: false,
 	expiry: null,
 	expirySoon: false,
-	gdprConsentStatus: 'ACCEPTED_FULL',
+	gdprConsentStatus: null,
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
@@ -126,7 +126,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
 	expiry_soon: false,
-	gdprConsentStatus: 'ACCEPTED_FULL',
+	gdprConsentStatus: null,
 	google_apps_subscription: {
 		status: 'no_subscription',
 	},
@@ -168,7 +168,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	expired: false,
 	expiry: false,
 	expiry_soon: false,
-	gdprConsentStatus: 'ACCEPTED_FULL',
+	gdprConsentStatus: null,
 	google_apps_subscription: {
 		status: 'no_subscription',
 	},
