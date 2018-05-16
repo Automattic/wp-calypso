@@ -154,6 +154,16 @@ PostMetadata = {
 
 		return 'private';
 	},
+
+	/**
+	 * Given a post object, return the geo_address meta field.
+	 *
+	 * @param {Object} post Post object
+	 * @returns {string}	The geo_address meta field.
+	 */
+	geoAddressDescription: function( post ) {
+		return getValueByKey( post.metadata, 'geo_address' );
+	},
 };
 
 export default PostMetadata;
