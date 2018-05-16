@@ -42,8 +42,8 @@ class CancelPrivacyProtection extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		purchase: PropTypes.object,
 		purchaseId: PropTypes.number.isRequired,
-		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		siteSlug: PropTypes.string.isRequired,
 	};
@@ -74,8 +74,7 @@ class CancelPrivacyProtection extends Component {
 			return true;
 		}
 
-		const { selectedSite } = props;
-		const purchase = props.selectedPurchase;
+		const { purchase, selectedSite } = props;
 
 		return selectedSite && purchase && hasPrivacyProtection( purchase );
 	};
@@ -84,7 +83,7 @@ class CancelPrivacyProtection extends Component {
 		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
 		event.target.blur();
 
-		const { id, meta: domain } = this.props.selectedPurchase;
+		const { id, meta: domain } = this.props.purchase;
 
 		this.setState( {
 			disabled: true,
@@ -116,7 +115,7 @@ class CancelPrivacyProtection extends Component {
 	resetState = () => this.setState( this.constructor.initialState );
 
 	renderDescriptionText = () => {
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 
 		return (
 			<p>
@@ -134,7 +133,7 @@ class CancelPrivacyProtection extends Component {
 	};
 
 	renderWarningText = () => {
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 
 		return (
 			<strong>
@@ -237,7 +236,7 @@ export default connect(
 		error: getPurchasesError( state ),
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+		purchase: getByPurchaseId( state, props.purchaseId ),
 		selectedSite: getSelectedSite( state ),
 	} ),
 	{ cancelPrivacyProtection }

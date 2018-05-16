@@ -83,7 +83,7 @@ class ManagePurchase extends Component {
 		destinationType: PropTypes.string,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		selectedPurchase: PropTypes.object,
+		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
@@ -106,11 +106,11 @@ class ManagePurchase extends Component {
 			return true;
 		}
 
-		return Boolean( props.selectedPurchase );
+		return Boolean( props.purchase );
 	}
 
 	handleRenew = () => {
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 		const renewItem = cartItems.getRenewalItemFromProduct( purchase, {
 			domain: purchase.meta,
 		} );
@@ -141,8 +141,7 @@ class ManagePurchase extends Component {
 	};
 
 	renderRenewButton() {
-		const purchase = this.props.selectedPurchase;
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
 			return null;
@@ -174,8 +173,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderEditPaymentMethodNavItem() {
-		const purchase = this.props.selectedPurchase;
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( ! this.props.selectedSite ) {
 			return null;
@@ -202,9 +200,8 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPurchaseNavItem() {
-		const purchase = this.props.selectedPurchase;
+		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
-		const { translate, isAtomicSite } = this.props;
 
 		if ( ! isCancelable( purchase ) || ! this.props.selectedSite ) {
 			return null;
@@ -263,9 +260,8 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPrivacyProtection() {
-		const purchase = this.props.selectedPurchase;
+		const { purchase, translate } = this.props;
 		const { id } = purchase;
-		const { translate } = this.props;
 
 		if (
 			isExpired( purchase ) ||
@@ -283,7 +279,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderPlanIcon() {
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 		if ( isPlan( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
@@ -312,8 +308,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderPlanDescription() {
-		const purchase = this.props.selectedPurchase;
-		const { plan, selectedSite, theme, translate } = this.props;
+		const { plan, purchase, selectedSite, theme, translate } = this.props;
 
 		let description = purchaseType( purchase );
 		if ( isPlan( purchase ) ) {
@@ -341,7 +336,7 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					<ProductLink selectedPurchase={ purchase } selectedSite={ selectedSite } />
+					<ProductLink purchase={ purchase } selectedSite={ selectedSite } />
 				</span>
 			</div>
 		);
@@ -378,8 +373,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { selectedSiteId, selectedSite, selectedPurchase } = this.props;
-		const purchase = this.props.selectedPurchase;
+		const { purchase, selectedSiteId, selectedSite } = this.props;
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),
@@ -403,7 +397,7 @@ class ManagePurchase extends Component {
 					</header>
 					{ this.renderPlanDescription() }
 
-					<PurchaseMeta purchaseId={ selectedPurchase.id } />
+					<PurchaseMeta purchaseId={ purchase.id } />
 
 					{ this.renderRenewButton() }
 				</Card>
@@ -418,7 +412,7 @@ class ManagePurchase extends Component {
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
 					selectedSite={ selectedSite }
-					selectedPurchase={ selectedPurchase }
+					purchase={ purchase }
 				/>
 			</div>
 		);
@@ -428,16 +422,12 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { selectedSite, selectedSiteId, selectedPurchase, isPurchaseTheme } = this.props;
+		const { selectedSite, selectedSiteId, purchase, isPurchaseTheme } = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
-		if (
-			! isDataLoading( this.props ) &&
-			selectedSite &&
-			canEditPaymentDetails( selectedPurchase )
-		) {
-			editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, selectedPurchase );
+		if ( ! isDataLoading( this.props ) && selectedSite && canEditPaymentDetails( purchase ) ) {
+			editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
 		}
 
 		return (
@@ -452,7 +442,7 @@ class ManagePurchase extends Component {
 				/>
 				<QueryUserPurchases userId={ user.get().ID } />
 				{ isPurchaseTheme && (
-					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ selectedPurchase.meta } />
+					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ purchase.meta } />
 				) }
 				<Main className={ classes }>
 					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
@@ -461,7 +451,7 @@ class ManagePurchase extends Component {
 							isDataLoading={ isDataLoading( this.props ) }
 							handleRenew={ this.handleRenew }
 							selectedSite={ selectedSite }
-							selectedPurchase={ selectedPurchase }
+							purchase={ purchase }
 							editCardDetailsPath={ editCardDetailsPath }
 						/>
 					}
@@ -473,20 +463,20 @@ class ManagePurchase extends Component {
 }
 
 export default connect( ( state, props ) => {
-	const selectedPurchase = getByPurchaseId( state, props.purchaseId );
+	const purchase = getByPurchaseId( state, props.purchaseId );
 	const selectedSiteId = getSelectedSiteId( state );
-	const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
-	const isPurchaseTheme = selectedPurchase && isTheme( selectedPurchase );
+	const isPurchasePlan = purchase && isPlan( purchase );
+	const isPurchaseTheme = purchase && isTheme( purchase );
 	const selectedSite = getSelectedSite( state );
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase,
+		purchase,
 		selectedSiteId,
 		selectedSite,
-		plan: isPurchasePlan && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
+		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
 		isPurchaseTheme,
-		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, selectedPurchase.meta ),
+		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, purchase.meta ),
 		isAtomicSite: selectedSite && isSiteAtomic( state, selectedSiteId ),
 	};
 } )( localize( ManagePurchase ) );

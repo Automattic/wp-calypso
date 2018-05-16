@@ -51,7 +51,7 @@ class ConfirmCancelDomain extends React.Component {
 		isDomainOnlySite: PropTypes.bool,
 		purchaseId: PropTypes.number.isRequired,
 		receiveDeletedSite: PropTypes.func.isRequired,
-		selectedPurchase: PropTypes.object,
+		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
@@ -77,7 +77,7 @@ class ConfirmCancelDomain extends React.Component {
 			return null;
 		}
 
-		const purchase = props.selectedPurchase;
+		const { purchase } = props;
 
 		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
 			page.redirect( purchasesRoot );
@@ -97,7 +97,7 @@ class ConfirmCancelDomain extends React.Component {
 	onSubmit = event => {
 		event.preventDefault();
 
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 		const purchaseName = getDomainName( purchase );
 
 		const data = {
@@ -253,7 +253,7 @@ class ConfirmCancelDomain extends React.Component {
 			);
 		}
 
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 		const domain = getDomainName( purchase );
 		const selectedReason = this.state.selectedReason;
 
@@ -309,7 +309,7 @@ export default connect(
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
-			selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+			purchase: getByPurchaseId( state, props.purchaseId ),
 			selectedSite,
 		};
 	},

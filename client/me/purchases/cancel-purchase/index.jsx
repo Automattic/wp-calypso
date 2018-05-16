@@ -48,8 +48,8 @@ class CancelPurchase extends React.Component {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
+		purchase: PropTypes.object,
 		purchaseId: PropTypes.number.isRequired,
-		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		siteSlug: PropTypes.string.isRequired,
 	};
@@ -78,8 +78,7 @@ class CancelPurchase extends React.Component {
 			return true;
 		}
 
-		const purchase = props.selectedPurchase;
-		const selectedSite = props.selectedSite;
+		const { purchase, selectedSite } = props;
 
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
@@ -88,7 +87,7 @@ class CancelPurchase extends React.Component {
 	};
 
 	redirect = props => {
-		const purchase = props.selectedPurchase;
+		const { purchase } = props;
 		const selectedSite = props.selectedSite;
 		let redirectPath = purchasesRoot;
 
@@ -108,7 +107,7 @@ class CancelPurchase extends React.Component {
 	};
 
 	renderFooterText = () => {
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 		const { refundText, renewDate, refundAmount, currencySymbol } = purchase;
 
 		if ( isRefundable( purchase ) ) {
@@ -156,7 +155,7 @@ class CancelPurchase extends React.Component {
 			);
 		}
 
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 		const purchaseName = getName( purchase );
 		const { siteName, domain: siteDomain } = purchase;
 
@@ -199,7 +198,7 @@ class CancelPurchase extends React.Component {
 				<CompactCard className="cancel-purchase__product-information">
 					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
 					<div className="cancel-purchase__site-title">{ siteName || siteDomain }</div>
-					<ProductLink selectedPurchase={ purchase } selectedSite={ this.props.selectedSite } />
+					<ProductLink purchase={ purchase } selectedSite={ this.props.selectedSite } />
 				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">
 					<div className="cancel-purchase__refund-amount">
@@ -223,7 +222,7 @@ export default connect( ( state, props ) => {
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: purchase,
+		purchase,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		selectedSite: getSelectedSite( state ),
 	};
