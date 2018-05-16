@@ -16,7 +16,8 @@ import Card from 'components/card';
 import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
 import ActivityLogItem from 'my-sites/stats/activity-log-item';
-
+import TileGrid from 'components/tile-grid';
+import Tile from 'components/tile-grid/tile';
 import QuerySites from 'components/data/query-sites';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -125,44 +126,22 @@ class ClonePointStep extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div>
-				<div className="clone-point__column">
-					<Card className="clone-point__image-card">
-						<img
-							alt="upgrade"
-							className="clone-point__image"
-							src="/calypso/images/upgrades/thank-you.svg"
-						/>
-					</Card>
-					<Card className="clone-point__text-card">
-						<Button className="clone-point__button" onClick={ this.selectCurrent }>
-							{ translate( 'Clone current state' ) }
-						</Button>
-						<p className="clone-point__description">
-							{ translate( 'Create a clone of your site as it is right now.' ) }
-						</p>
-					</Card>
-				</div>
-				<div className="clone-point__column">
-					<Card className="clone-point__image-card">
-						<img
-							alt="upgrade"
-							className="clone-point__image"
-							src="/calypso/images/upgrades/thank-you.svg"
-						/>
-					</Card>
-					<Card className="clone-point__text-card">
-						<Button className="clone-point__button" onClick={ this.selectPrevious }>
-							{ translate( 'Clone previous state' ) }
-						</Button>
-						<p className="clone-point__description">
-							{ translate(
-								'Browse your event history and choose an earlier state to clone from.'
-							) }
-						</p>
-					</Card>
-				</div>
-			</div>
+			<TileGrid>
+				<Tile
+					buttonLabel={ 'Clone current state' }
+					description={ translate( 'Create a clone of your site as it is right now.' ) }
+					image={ '/calypso/images/upgrades/thank-you.svg' }
+					onClick={ this.selectCurrent }
+				/>
+				<Tile
+					buttonLabel={ 'Clone previous state' }
+					description={ translate(
+						'Browse your event history and choose an earlier state to clone from.'
+					) }
+					image={ '/calypso/images/upgrades/thank-you.svg' }
+					onClick={ this.selectPrevious }
+				/>
+			</TileGrid>
 		);
 	};
 

@@ -16,7 +16,8 @@ import Card from 'components/card';
 import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
 import ActivityLogItem from 'my-sites/stats/activity-log-item';
-
+import TileGrid from 'components/tile-grid';
+import Tile from 'components/tile-grid/tile';
 import QuerySites from 'components/data/query-sites';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -59,49 +60,30 @@ class CloneJetpackStep extends Component {
 		const { originSiteName, destinationSiteName, translate } = this.props;
 
 		return (
-			<div>
-				<div className="clone-jetpack__column">
-					<Card className="clone-jetpack__image-card">
-						<img
-							alt="upgrade"
-							className="clone-jetpack__image"
-							src="/calypso/images/upgrades/thank-you.svg"
-						/>
-					</Card>
-					<Card className="clone-jetpack__text-card">
-						<Button className="clone-jetpack__button" onClick={ this.selectNew }>
-							{ translate( 'Create new Jetpack connection' ) }
-						</Button>
-						<p className="clone-jetpack__description">
-							{ translate(
-								'Keep the plan on %(originSiteName)s and create a new Jetpack connection on %(destinationSiteName)s.',
-								{
-									args: { originSiteName, destinationSiteName },
-								}
-							) }
-						</p>
-					</Card>
-				</div>
-				<div className="clone-jetpack__column">
-					<Card className="clone-jetpack__image-card">
-						<img
-							alt="upgrade"
-							className="clone-jetpack__image"
-							src="/calypso/images/upgrades/thank-you.svg"
-						/>
-					</Card>
-					<Card className="clone-jetpack__text-card">
-						<Button className="clone-jetpack__button" onClick={ this.selectMigrate }>
-							{ translate( 'Migrate Jetpack plan' ) }
-						</Button>
-						<p className="clone-jetpack__description">
-							{ translate(
-								'Browse your event history and choose an earlier state to clone from.'
-							) }
-						</p>
-					</Card>
-				</div>
-			</div>
+			<TileGrid>
+				<Tile
+					buttonLabel={ 'Create new Jetpack connection' }
+					description={ translate(
+						'Keep the plan on %(originSiteName)s and create a new Jetpack connection on %(destinationSiteName)s.',
+						{
+							args: { originSiteName, destinationSiteName },
+						}
+					) }
+					image={ '/calypso/images/upgrades/thank-you.svg' }
+					onClick={ this.selectNew }
+				/>
+				<Tile
+					buttonLabel={ 'Migrate Jetpack plan' }
+					description={ translate(
+						'Move your Jetpack plan from %(originSiteName)s to %(destinationSiteName)s.',
+						{
+							args: { originSiteName, destinationSiteName },
+						}
+					) }
+					image={ '/calypso/images/upgrades/thank-you.svg' }
+					onClick={ this.selectMigrate }
+				/>
+			</TileGrid>
 		);
 	};
 
