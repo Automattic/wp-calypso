@@ -23,25 +23,22 @@ export default class JetpackHeader extends PureComponent {
 
 	renderLogo() {
 		const { partnerSlug } = this.props;
-		const baseCobrandedAttributes = {
-			className: 'jetpack-connect-header-logo__cobranded-logo',
-		};
 
 		switch ( partnerSlug ) {
 			case 'dreamhost':
-				return <JetpackDreamhostLogo { ...baseCobrandedAttributes } />;
+				return <JetpackDreamhostLogo />;
 
 			case 'pressable':
-				return <JetpackPressableLogo { ...baseCobrandedAttributes } />;
+				return <JetpackPressableLogo />;
 
 			case 'milesweb':
-				return <JetpackMileswebLogo { ...baseCobrandedAttributes } />;
+				return <JetpackMileswebLogo />;
 
 			case 'bluehost':
-				return <JetpackBluehostLogo { ...baseCobrandedAttributes } />;
+				return <JetpackBluehostLogo />;
 
 			case 'inmotion':
-				return <JetpackInmotionLogo { ...baseCobrandedAttributes } />;
+				return <JetpackInmotionLogo />;
 
 			default:
 				return <JetpackLogo full size={ 45 } />;

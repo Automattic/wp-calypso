@@ -6,10 +6,9 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
-function JetpackMileswebLogo( { translate, className } ) {
+function JetpackMileswebLogo( { translate } ) {
 	return (
 		<img
-			className={ className }
 			alt={ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
 				args: { partnerName: 'MilesWeb' },
 			} ) }

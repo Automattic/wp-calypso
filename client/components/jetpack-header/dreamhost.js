@@ -6,9 +6,9 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
-function JetpackDreamhostLogo( { translate, className } ) {
+function JetpackDreamhostLogo( { translate } ) {
 	return (
-		<svg className={ className } width="634" viewBox="0 0 1268 150">
+		<svg width="634" viewBox="0 0 1268 150">
 			<title>
 				{ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
 					args: {
