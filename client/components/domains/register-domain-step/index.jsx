@@ -333,7 +333,7 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
-		const { errorData, error, lastDomainSearched, showNotice } = this.state;
+		const { errorData = {}, error, lastDomainSearched, showNotice } = this.state;
 		const { message, severity } = showNotice
 			? getAvailabilityNotice( lastDomainSearched, error, errorData )
 			: {};
