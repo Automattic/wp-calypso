@@ -26,26 +26,19 @@ const fromApi = data => {
 	return restoreId;
 };
 
-const requestRestore = action =>
+const requestRewind = ( action, payload ) =>
 	http(
 		{
 			apiVersion: '1',
 			method: 'POST',
 			path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
+			body: payload,
 		},
 		action
 	);
 
-const requestClone = action =>
-	http(
-		{
-			apiVersion: '1',
-			method: 'POST',
-			path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
-			body: action.payload,
-		},
-		action
-	);
+const requestRestore = action => requestRewind( action );
+const requestClone = action => requestRewind( action, action.payload );
 
 export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [
 	getRewindRestoreProgress( siteId, restoreId ),
