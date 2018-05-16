@@ -35,6 +35,12 @@ const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 // that formats float metadata values exactly this way.
 const toGeoString = coord => String( Number( coord ).toFixed( 7 ) );
 
+// Convert 'public'/'private' strings to the expected 1/0 used by the
+// geo_public meta field.  When writing geo-location data, we have to
+// set geo_public as well (even if just to the default) because themes
+// check that geo_public is present and truthy before display geo data.
+const publicValueToMetaValue = value => ( 'public' === value ? 1 : 0 );
+
 class EditorLocation extends React.Component {
 	static displayName = 'EditorLocation';
 
@@ -49,6 +55,7 @@ class EditorLocation extends React.Component {
 				return new Error( 'Expected array pair of coordinates for prop `' + propName + '`.' );
 			}
 		},
+		isSharedPublicly: PropTypes.oneOf( [ 'private', 'public' ] ),
 	};
 
 	state = {
@@ -63,6 +70,7 @@ class EditorLocation extends React.Component {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			geo_latitude: toGeoString( position.coords.latitude ),
 			geo_longitude: toGeoString( position.coords.longitude ),
+			geo_public: publicValueToMetaValue( this.props.isSharedPublicly ),
 		} );
 
 		recordStat( 'location_geolocate_success' );
@@ -111,6 +119,7 @@ class EditorLocation extends React.Component {
 			geo_latitude: toGeoString( result.geometry.location.lat ),
 			geo_longitude: toGeoString( result.geometry.location.lng ),
 			geo_address: result.formatted_address,
+			geo_public: publicValueToMetaValue( this.props.isSharedPublicly ),
 		} );
 	};
 
@@ -184,8 +193,9 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
 		const coordinates = PostMetadata.geoCoordinates( post );
+		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( post );
 
-		return { siteId, postId, coordinates };
+		return { siteId, postId, coordinates, isSharedPublicly };
 	},
 	{
 		updatePostMetadata,
