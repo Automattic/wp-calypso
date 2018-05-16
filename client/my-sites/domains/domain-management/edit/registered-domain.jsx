@@ -26,6 +26,7 @@ import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import { getGdprConsentStatusMessage } from 'my-sites/domains/domain-management/edit/gdpr-consent-status-messages';
 
 const RegisteredDomain = createReactClass( {
 	displayName: 'RegisteredDomain',
@@ -69,6 +70,12 @@ const RegisteredDomain = createReactClass( {
 				</Notice>
 			</a>
 		);
+	},
+
+	getGdprConsentMessage() {
+		const { domain, translate } = this.props;
+		const message = getGdprConsentStatusMessage( domain );
+		return <Property label={ translate( 'GDPR Consent Status' ) }>{ message }</Property>;
 	},
 
 	getPrivacyProtection() {
@@ -248,6 +255,8 @@ const RegisteredDomain = createReactClass( {
 						{ this.getAutoRenewalOrExpirationDate() }
 
 						{ this.getPrivacyProtection() }
+
+						{ this.getGdprConsentMessage() }
 
 						<SubscriptionSettings
 							type={ domain.type }

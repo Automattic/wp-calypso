@@ -8,7 +8,7 @@ import { drop, isEmpty, join, find, split, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { type as domainTypes, transferStatus } from './constants';
+import { type as domainTypes, transferStatus, gdprConsentStatus } from './constants';
 import { cartItems } from 'lib/cart-values';
 import { isDomainRegistration } from 'lib/products-values';
 
@@ -51,6 +51,38 @@ function getTransferStatus( domainFromApi ) {
 
 	if ( domainFromApi.transfer_status === 'pending_start' ) {
 		return transferStatus.PENDING_START;
+	}
+
+	return null;
+}
+
+function getGdprConsentStatus( domainFromApi ) {
+	if ( domainFromApi.gdpr_consent_status === 'NONE' ) {
+		return gdprConsentStatus.NONE;
+	}
+
+	if ( domainFromApi.gdpr_consent_status === 'PENDING' ) {
+		return gdprConsentStatus.PENDING;
+	}
+
+	if ( domainFromApi.gdpr_consent_status === 'PENDING_ASYNC' ) {
+		return gdprConsentStatus.PENDING_ASYNC;
+	}
+
+	if ( domainFromApi.gdpr_consent_status === 'ACCEPTED_CONTRACTUAL_MINIMUM' ) {
+		return gdprConsentStatus.ACCEPTED_CONTRACTUAL_MINIMUM;
+	}
+
+	if ( domainFromApi.gdpr_consent_status === 'ACCEPTED_FULL' ) {
+		return gdprConsentStatus.ACCEPTED_FULL;
+	}
+
+	if ( domainFromApi.gdpr_consent_status === 'DENIED' ) {
+		return gdprConsentStatus.DENIED;
+	}
+
+	if ( domainFromApi.gdpr_consent_status === 'FORCED_ALL_CONTRACTUAL' ) {
+		return gdprConsentStatus.FORCED_ALL_CONTRACTUAL;
 	}
 
 	return null;
@@ -101,6 +133,7 @@ function parseDomainAgainstTldList( domainFragment, tldList ) {
 export {
 	getDomainNameFromReceiptOrCart,
 	getDomainType,
+	getGdprConsentStatus,
 	getTransferStatus,
 	parseDomainAgainstTldList,
 };

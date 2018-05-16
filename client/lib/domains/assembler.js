@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getDomainType, getTransferStatus } from './utils';
+import { getDomainType, getTransferStatus, getGdprConsentStatus } from './utils';
 
 export function createDomainObjects( dataTransferObject ) {
 	let domains = [];
@@ -29,6 +29,7 @@ export function createDomainObjects( dataTransferObject ) {
 			expirationMoment: domain.expiry && i18n.moment( domain.expiry ),
 			expired: domain.expired,
 			expirySoon: domain.expiry_soon,
+			gdprConsentStatus: getGdprConsentStatus( domain ),
 			googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
 			hasPrivacyProtection: domain.has_private_registration,
 			hasWpcomNameservers: domain.has_wpcom_nameservers,

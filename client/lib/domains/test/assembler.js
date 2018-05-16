@@ -41,6 +41,7 @@ describe( 'assembler', () => {
 			expirationMoment: undefined,
 			expired: undefined,
 			expirySoon: undefined,
+			gdprConsentStatus: undefined,
 			googleAppsSubscription: undefined,
 			hasPrivacyProtection: undefined,
 			isAutoRenewing: undefined,
