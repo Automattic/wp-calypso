@@ -204,4 +204,40 @@ describe( 'index', () => {
 			expect( value ).to.be.eql( [ latitude, longitude ] );
 		} );
 	} );
+
+	describe( '#geoIsSharedPublicy()', () => {
+		test( 'should return public if passed a falsey value', () => {
+			const value = PostMetadata.geoIsSharedPublicly( undefined );
+
+			expect( value ).to.be.eql( 'public' );
+		} );
+
+		test( 'should return public if metadata not assigned to post', () => {
+			const value = PostMetadata.geoIsSharedPublicly( {} );
+
+			expect( value ).to.be.eql( 'public' );
+		} );
+
+		test( 'should return public if metadata contains no geo_public field', () => {
+			const value = PostMetadata.geoIsSharedPublicly( { metadata: [] } );
+
+			expect( value ).to.be.eql( 'public' );
+		} );
+
+		test( 'should return private if geo_public meta field is falsey', () => {
+			const value = PostMetadata.geoIsSharedPublicly( {
+				metadata: [ { id: '800', key: 'geo_public', value: '0' } ],
+			} );
+
+			expect( value ).to.be.eql( 'private' );
+		} );
+
+		test( 'should return public if geo_public meta field is truthy', () => {
+			const value = PostMetadata.geoIsSharedPublicly( {
+				metadata: [ { id: '800', key: 'geo_public', value: '1' } ],
+			} );
+
+			expect( value ).to.be.eql( 'public' );
+		} );
+	} );
 } );
