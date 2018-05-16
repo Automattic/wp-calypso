@@ -35,6 +35,7 @@ class EditorLocationOptions extends React.Component {
 
 	state = {
 		open: false,
+		renderContext: null,
 	};
 
 	onShareChange = event => {
@@ -61,15 +62,24 @@ class EditorLocationOptions extends React.Component {
 		} );
 	};
 
+	setRenderContext = renderContext => {
+		if ( ! renderContext ) {
+			return;
+		}
+
+		this.setState( { renderContext } );
+	};
+
 	render() {
 		return (
 			<div className="editor-location__options">
-				<Button borderless compact onClick={ this.toggle } ref="popoverButton">
+				<Button borderless compact onClick={ this.toggle } ref={ this.setRenderContext }>
 					<Gridicon icon="ellipsis-circle" /> { this.props.translate( 'Display options' ) }
 				</Button>
 				<Popover
 					isVisible={ this.state.open }
-					context={ this.refs && this.refs.popoverButton }
+					context={ this.state.renderContext }
+					closeOnEsc={ true }
 					rootClassName="editor-location__options-popover"
 				>
 					<div className="editor-location__option-fields">
