@@ -43,14 +43,20 @@ import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { changeUsername, validateUsername, clearUsernameValidation } from 'state/username/actions';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'lib/i18n-utils';
 import isRequestingMissingSites from 'state/selectors/is-requesting-missing-sites';
+import isUsernameValid from 'state/selectors/is-username-valid';
+import getUsernameAllowedActions from 'state/selectors/get-username-allowed-actions';
+import getUsernameValidationFailureMessage from 'state/selectors/get-username-validation-failure-message';
+import getValidatedUsername from 'state/selectors/get-validated-username';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import _user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
 import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
+import { reduxDispatch } from 'lib/redux-bridge';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -64,17 +70,16 @@ const Account = createReactClass( {
 	displayName: 'Account',
 
 	// form-base mixin is needed for getDisabledState() (and possibly other uses?)
-	mixins: [ formBase, observe( 'userSettings', 'username' ) ],
+	mixins: [ formBase, observe( 'userSettings' ) ],
 
 	propTypes: {
 		userSettings: PropTypes.object.isRequired,
-		username: PropTypes.object.isRequired,
 		showNoticeInitially: PropTypes.bool,
 	},
 
 	componentWillMount() {
 		// Clear any username changes that were previously made
-		this.props.username.clearValidation();
+		reduxDispatch( clearUsernameValidation() );
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 	},
 
@@ -159,7 +164,7 @@ const Account = createReactClass( {
 	validateUsername() {
 		const username = this.getUserSetting( 'user_login' );
 		debug( 'Validating username ' + username );
-		this.props.username.validate( username );
+		reduxDispatch( validateUsername( username ) );
 	},
 
 	hasEmailValidationError() {
@@ -352,7 +357,7 @@ const Account = createReactClass( {
 			usernameAction: null,
 		} );
 
-		this.props.username.clearValidation();
+		reduxDispatch( clearUsernameValidation() );
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 
 		if ( ! this.props.userSettings.hasUnsavedSettings() ) {
@@ -365,18 +370,20 @@ const Account = createReactClass( {
 		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
 
 		this.setState( { submittingForm: true } );
-		this.props.username.change( username, action, error => {
-			this.setState( { submittingForm: false } );
-			if ( error ) {
-				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
-			} else {
-				this.props.markSaved();
+		reduxDispatch(
+			changeUsername( username, action, error => {
+				this.setState( { submittingForm: false } );
+				if ( error ) {
+					this.props.errorNotice( this.props.username.validationFailureMessage );
+				} else {
+					this.props.markSaved();
 
-				// We reload here to refresh cookies, user object, and user settings.
-				// @TODO: Do not require reload here.
-				location.reload();
-			}
-		} );
+					// We reload here to refresh cookies, user object, and user settings.
+					// @TODO: Do not require reload here.
+					location.reload();
+				}
+			} )
+		);
 	},
 
 	onSiteSelect( siteId ) {
@@ -437,24 +444,24 @@ const Account = createReactClass( {
 			return null;
 		}
 
-		if ( username.isUsernameValid() ) {
+		if ( username.isValid ) {
 			return (
 				<Notice
 					showDismiss={ false }
 					status="is-success"
 					text={ translate( '%(username)s is a valid username.', {
 						args: {
-							username: username.getValidatedUsername(),
+							username: username.validatedUsername,
 						},
 					} ) }
 				/>
 			);
-		} else if ( null !== username.getValidationFailureMessage() ) {
+		} else if ( null !== username.validationFailureMessage ) {
 			return (
 				<Notice
 					showDismiss={ false }
 					status="is-error"
-					text={ username.getValidationFailureMessage() }
+					text={ username.validationFailureMessage }
 				/>
 			);
 		}
@@ -468,7 +475,7 @@ const Account = createReactClass( {
 			? translate( 'Thanks for confirming your new username!' )
 			: translate( 'Please re-enter your new username to confirm it.' );
 
-		if ( ! username.isUsernameValid() ) {
+		if ( ! username.isValid ) {
 			return null;
 		}
 
@@ -625,7 +632,7 @@ const Account = createReactClass( {
 
 	renderBlogActionFields() {
 		const { translate, username } = this.props;
-		const actions = username.getAllowedActions();
+		const actions = username.allowedActions;
 
 		/*
 		 * If there are no actions or if there is only one action,
@@ -663,7 +670,7 @@ const Account = createReactClass( {
 
 		const isSaveButtonDisabled =
 			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
-			! username.isUsernameValid() ||
+			! username.isValid ||
 			this.state.submittingForm;
 
 		return (
@@ -816,6 +823,12 @@ export default compose(
 		state => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
 			countryCode: requestGeoLocation().data,
+			username: {
+				isValid: isUsernameValid( state ),
+				allowedActions: getUsernameAllowedActions( state ),
+				validationFailureMessage: getUsernameValidationFailureMessage( state ),
+				validatedUsername: getValidatedUsername( state ),
+			},
 		} ),
 		{ errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
 	),
