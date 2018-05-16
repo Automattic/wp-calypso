@@ -10,14 +10,12 @@
 import { combineReducers, createReducer } from 'state/utils';
 import { items as itemSchemas } from './schema';
 import {
-	SITE_KEYRINGS_RECEIVE,
 	SITE_KEYRINGS_REQUEST,
 	SITE_KEYRINGS_REQUEST_FAILURE,
 	SITE_KEYRINGS_REQUEST_SUCCESS,
 	SITE_KEYRINGS_SAVE,
 	SITE_KEYRINGS_SAVE_FAILURE,
 	SITE_KEYRINGS_SAVE_SUCCESS,
-	SITE_KEYRINGS_UPDATE,
 } from 'state/action-types';
 
 /**
@@ -74,11 +72,11 @@ export const saveRequests = createReducer(
 export const items = createReducer(
 	{},
 	{
-		[ SITE_KEYRINGS_RECEIVE ]: ( state, { siteId, keyrings } ) => ( {
+		[ SITE_KEYRINGS_REQUEST_SUCCESS ]: ( state, { siteId, keyrings } ) => ( {
 			...state,
 			[ siteId ]: keyrings,
 		} ),
-		[ SITE_KEYRINGS_UPDATE ]: ( state, { siteId, keyrings } ) => ( {
+		[ SITE_KEYRINGS_SAVE_SUCCESS ]: ( state, { siteId, keyrings } ) => ( {
 			...state,
 			[ siteId ]: {
 				...state[ siteId ],

@@ -390,35 +390,34 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
 };
 
-/**
- * GET/POST site settings
- *
- * @param {int|string} [siteId] The site ID
- * @param {string} [method] The request method
- * @param {object} [data] The POST data
- * @param {Function} fn The callback function
- *
- * @return {Promise} A promise that resolves when the request completes
- * @api public
- */
-Undocumented.prototype.keyrings = function( siteId, method = 'get', data = {}, fn ) {
-	debug( '/sites/:site_id:/keyrings query' );
-	if ( 'function' === typeof method ) {
-		fn = method;
-		method = 'get';
-		data = {};
-	}
+Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) {
+	return this.wpcom.req.get( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, fn );
+};
 
-	// If no apiVersion was specified, use the settings api version with the widest support (1.1)
-	const apiVersion = data.apiVersion || '1.1';
-	const body = omit( data, [ 'apiVersion' ] );
-	const path = '/sites/' + siteId + '/keyrings';
+Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring( siteId, keyringSiteId, fn ) {
+	return this.wpcom.req.post(
+		'/sites/' + siteId + '/keyrings/' + keyringSiteId + '/delete',
+		{ apiVersion: '1.1' },
+		fn
+	);
+};
 
-	if ( 'get' === method ) {
-		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
+Undocumented.prototype.updateSiteKeyring = function updateSiteKeyring(
+	siteId,
+	keyringSiteId,
+	data,
+	fn
+) {
+	return this.wpcom.req.post(
+		'/sites/' + siteId + '/keyrings/' + keyringSiteId,
+		{ apiVersion: '1.1' },
+		data,
+		fn
+	);
+};
 
-	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
+Undocumented.prototype.createSiteKeyring = function createSiteKeyring( siteId, data, fn ) {
+	return this.wpcom.req.post( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, data, fn );
 };
 
 Undocumented.prototype._sendRequest = function( originalParams, fn ) {

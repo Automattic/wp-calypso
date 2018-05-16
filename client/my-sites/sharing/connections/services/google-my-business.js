@@ -55,9 +55,14 @@ export class GoogleMyBusiness extends SharingService {
 	// override `removeConnection` to remove the keyring connection instead of the publicize one
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
-		this.props.disconnectGoogleMyBusinessLocation( this.props.siteId ).finally( () => {
-			this.setState( { isDisconnecting: false } );
-		} );
+		this.props
+			.disconnectGoogleMyBusinessLocation(
+				this.props.siteId,
+				this.props.siteKeyrings[ 0 ].kerying_site_id
+			)
+			.finally( () => {
+				this.setState( { isDisconnecting: false } );
+			} );
 	};
 
 	componentWillMount() {

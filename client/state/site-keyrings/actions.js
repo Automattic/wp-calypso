@@ -6,45 +6,16 @@
 
 import wpcom from 'lib/wp';
 import {
-	SITE_KEYRINGS_RECEIVE,
 	SITE_KEYRINGS_REQUEST,
 	SITE_KEYRINGS_REQUEST_FAILURE,
 	SITE_KEYRINGS_REQUEST_SUCCESS,
 	SITE_KEYRINGS_SAVE,
 	SITE_KEYRINGS_SAVE_FAILURE,
 	SITE_KEYRINGS_SAVE_SUCCESS,
-	SITE_KEYRINGS_UPDATE,
+	SITE_KEYRINGS_DELETE,
+	SITE_KEYRINGS_DELETE_FAILURE,
+	SITE_KEYRINGS_DELETE_SUCCESS,
 } from 'state/action-types';
-
-/**
- * Returns an action object to be used in signalling that site keyrings have been received.
- *
- * @param  {Number} siteId Site ID
- * @param  {Object} keyrings The site keyrings object
- * @return {Object}        Action object
- */
-export function receiveSiteKeyrings( siteId, keyrings ) {
-	return {
-		type: SITE_KEYRINGS_RECEIVE,
-		siteId,
-		keyrings,
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that some site keyrings have been update.
- *
- * @param  {Number} siteId Site ID
- * @param  {Object} keyrings The updated site settings
- * @return {Object}        Action object
- */
-export function updateSiteKeyrings( siteId, keyrings ) {
-	return {
-		type: SITE_KEYRINGS_UPDATE,
-		siteId,
-		keyrings,
-	};
-}
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
@@ -62,12 +33,12 @@ export function requestSiteKeyrings( siteId ) {
 
 		return wpcom
 			.undocumented()
-			.keyrings( siteId )
-			.then( ( { keyrings } ) => {
-				dispatch( receiveSiteKeyrings( siteId, keyrings ) );
+			.getSiteKeyrings( siteId )
+			.then( keyrings => {
 				dispatch( {
 					type: SITE_KEYRINGS_REQUEST_SUCCESS,
 					siteId,
+					keyrings,
 				} );
 			} )
 			.catch( error => {
@@ -76,6 +47,8 @@ export function requestSiteKeyrings( siteId ) {
 					siteId,
 					error,
 				} );
+
+				return Promise.reject( error );
 			} );
 	};
 }
@@ -89,12 +62,12 @@ export function saveSiteKeyrings( siteId, keyrings ) {
 
 		return wpcom
 			.undocumented()
-			.keyrings( siteId, 'post', keyrings )
+			.createSiteKeyring( siteId, keyrings )
 			.then( body => {
-				dispatch( updateSiteKeyrings( siteId, body.updated ) );
 				dispatch( {
 					type: SITE_KEYRINGS_SAVE_SUCCESS,
 					siteId,
+					keyrings,
 				} );
 
 				return body;
@@ -106,7 +79,40 @@ export function saveSiteKeyrings( siteId, keyrings ) {
 					error,
 				} );
 
-				return error;
+				return Promise.reject( error );
+			} );
+	};
+}
+
+export function deleteSiteKeyring( siteId, keyringSiteId ) {
+	return dispatch => {
+		dispatch( {
+			type: SITE_KEYRINGS_DELETE,
+			siteId,
+			keyringSiteId,
+		} );
+
+		return wpcom
+			.undocumented()
+			.deleteSiteKeyring( siteId, keyringSiteId )
+			.then( body => {
+				dispatch( {
+					type: SITE_KEYRINGS_DELETE_SUCCESS,
+					siteId,
+					keyringSiteId,
+				} );
+
+				return body;
+			} )
+			.catch( error => {
+				dispatch( {
+					type: SITE_KEYRINGS_DELETE_FAILURE,
+					error,
+					siteId,
+					keyringSiteId,
+				} );
+
+				return Promise.reject( error );
 			} );
 	};
 }

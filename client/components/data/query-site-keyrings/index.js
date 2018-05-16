@@ -15,7 +15,7 @@ import { isRequestingSiteKeyrings } from 'state/site-keyrings/selectors';
 import { requestSiteKeyrings } from 'state/site-keyrings/actions';
 
 class QuerySiteKeyrings extends Component {
-	componentWillMount() {
+	componentDidMount() {
 		this.requestKeyrings( this.props );
 	}
 

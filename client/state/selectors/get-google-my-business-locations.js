@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { filter } from 'lodash';
+import { filter, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,8 +13,8 @@ import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 
 function isConnected( externalUser, siteKeyrings ) {
 	return (
-		externalUser.keyringConnectionId === siteKeyrings.google_my_business_keyring_id &&
-		externalUser.ID === siteKeyrings.google_my_business_location_id
+		externalUser.keyringConnectionId === siteKeyrings.keyring_id &&
+		externalUser.ID === siteKeyrings.external_user_id
 	);
 }
 
@@ -25,12 +25,17 @@ export default function getGoogleMyBusinessLocations( state, siteId ) {
 		return [];
 	}
 
+	const googleMyBusinessSiteKeyring = find(
+		siteKeyrings,
+		keyring => keyring.service === 'google_my_business'
+	);
+
 	const externalUsers = filter( getAvailableExternalAccounts( state, 'google_my_business' ), {
 		isExternal: true,
 	} );
 
 	externalUsers.forEach( externalUser => {
-		externalUser.isConnected = isConnected( externalUser, siteKeyrings );
+		externalUser.isConnected = isConnected( externalUser, googleMyBusinessSiteKeyring );
 	} );
 
 	return externalUsers;
