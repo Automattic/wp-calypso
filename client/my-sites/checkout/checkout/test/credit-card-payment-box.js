@@ -34,6 +34,9 @@ import {
 
 jest.mock( 'lib/cart-values', () => ( {
 	isPaymentMethodEnabled: jest.fn( false ),
+	areInstallmentsAvailable: jest.fn( cart =>
+		require.requireActual( 'lib/cart-values' ).areInstallmentsAvailable( cart )
+	),
 	paymentMethodName: jest.fn( false ),
 	cartItems: {
 		hasRenewableSubscription: jest.fn( false ),
@@ -54,11 +57,17 @@ jest.mock( '../payment-chat-button', () => {
 	return class PaymentChatButton extends react.Component {};
 } );
 
+jest.mock( 'blocks/installments-plan-picker', () => {
+	const react = require( 'react' );
+	return class InstallmentsPlanPicker extends react.Component {};
+} );
+
 jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
-jest.mock( 'lib/cart-values', () => ( {
-	cartItems: {
-		hasRenewableSubscription: jest.fn( false ),
-	},
+
+jest.mock( 'lib/checkout/ebanx', () => ( {
+	isEbanxCreditCardProcessingEnabledForCountry: jest.fn( country => {
+		return country === 'BR';
+	} ),
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
@@ -149,6 +158,8 @@ describe( 'Credit Card Payment Box', () => {
 describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 	const defaultProps = {
 		cart: {},
+		transaction: {},
+		transactionStep: {},
 		translate: identity,
 	};
 
@@ -208,5 +219,114 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 			const wrapper = shallow( <CreditCardPaymentBox { ...props } /> );
 			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 0 );
 		} );
+	} );
+} );
+
+describe( 'Credit Card Payment Box -Installments Picker', () => {
+	const defaultCart = {
+		currency: 'BRL',
+		installments: 1,
+		allowed_payment_methods: [ 'WPCOM_Billing_Ebanx' ],
+		installments_plans: [
+			{
+				value: 1,
+				payment: 100,
+			},
+			{
+				value: 5,
+				payment: 20,
+			},
+			{
+				value: 10,
+				payment: 10,
+			},
+		],
+		products: [ { product_slug: PLAN_BUSINESS } ],
+	};
+
+	const defaultTransaction = {
+		payment: {
+			paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		},
+		newCardFormFields: {
+			country: 'BR',
+		},
+	};
+
+	const defaultProps = {
+		cart: defaultCart,
+		transaction: defaultTransaction,
+		transactionStep: {},
+		translate: identity,
+	};
+
+	test( 'should render Installments Picker with default props', () => {
+		const wrapper = shallow( <CreditCardPaymentBox { ...defaultProps } /> );
+		expect( wrapper.find( 'InstallmentsPlanPicker' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should not render Installments Picker with non BR card', () => {
+		const myProps = defaultProps;
+		myProps.transaction = {
+			...defaultTransaction,
+			newCardFormFields: {
+				country: 'US',
+			},
+		};
+
+		const wrapper = shallow( <CreditCardPaymentBox { ...myProps } /> );
+		expect( wrapper.find( 'InstallmentsPlanPicker' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should render Installments Picker with saved ebanx card', () => {
+		const myProps = defaultProps;
+		myProps.transaction = {
+			payment: {
+				storedCard: {
+					payment_partner: 'ebanx',
+				},
+			},
+		};
+
+		const wrapper = shallow( <CreditCardPaymentBox { ...myProps } /> );
+		expect( wrapper.find( 'InstallmentsPlanPicker' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should not render Installments Picker with saved stripe card', () => {
+		const myProps = defaultProps;
+		myProps.transaction = {
+			payment: {
+				storedCard: {
+					payment_partner: 'stripe',
+				},
+			},
+		};
+
+		const wrapper = shallow( <CreditCardPaymentBox { ...myProps } /> );
+		expect( wrapper.find( 'InstallmentsPlanPicker' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should not render Installments Picker when no installment plans', () => {
+		const myProps = defaultProps;
+		myProps.cart.installments_plans = [];
+
+		const wrapper = shallow( <CreditCardPaymentBox { ...myProps } /> );
+		expect( wrapper.find( 'InstallmentsPlanPicker' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should not render Installments Picker when no ebanx is not available', () => {
+		const myProps = defaultProps;
+		myProps.cart.allowed_payment_methods = [];
+
+		const wrapper = shallow( <CreditCardPaymentBox { ...myProps } /> );
+		expect( wrapper.find( 'InstallmentsPlanPicker' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should not render Installments Picker when no plan product is in cart', () => {
+		const myProps = defaultProps;
+		myProps.cart.products = [ { product_slug: 'not-empty' } ];
+
+		const wrapper = shallow( <CreditCardPaymentBox { ...myProps } /> );
+		expect( wrapper.find( 'InstallmentsPlanPicker' ) ).toHaveLength( 0 );
 	} );
 } );

@@ -190,7 +190,6 @@ export class CreditCardPaymentBox extends React.Component {
 
 	shouldRenderInstallmentsPlanPicker() {
 		const { cart, transaction } = this.props;
-
 		if ( typeof transaction.payment === 'undefined' ) {
 			return false;
 		}
