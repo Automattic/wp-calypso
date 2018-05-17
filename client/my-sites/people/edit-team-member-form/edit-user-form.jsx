@@ -32,15 +32,14 @@ class EditUserForm extends React.Component {
 	state = this.getStateObject( this.props );
 
 	componentWillReceiveProps( nextProps ) {
-		this.replaceState( this.getStateObject( nextProps ) );
+		this.setState( this.getStateObject( nextProps ) );
 	}
 
 	getRole( roles ) {
 		return roles && roles[ 0 ] ? roles[ 0 ] : null;
 	}
 
-	getStateObject( props ) {
-		props = 'undefined' !== typeof props ? props : this.props;
+	getStateObject( props = this.props ) {
 		const role = this.getRole( props.roles );
 		return assign( omit( props, 'site' ), { roles: role } );
 	}
@@ -60,7 +59,7 @@ class EditUserForm extends React.Component {
 
 	getAllowedSettingsToChange() {
 		const currentUser = this.props.currentUser;
-		let allowedSettings = []; // eslint-disable-line
+		const allowedSettings = [];
 
 		if ( ! this.state.ID ) {
 			return allowedSettings;
