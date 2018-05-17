@@ -64,13 +64,13 @@ class AccountSettingsClose extends Component {
 								{ translate( 'These items will be deleted' ) }
 							</ActionPanelFigureHeader>
 							<ActionPanelFigureList>
+								<ActionPanelFigureListItem>
+									{ translate( 'Personal details' ) }
+								</ActionPanelFigureListItem>
 								<ActionPanelFigureListItem>{ translate( 'Sites' ) }</ActionPanelFigureListItem>
 								<ActionPanelFigureListItem>{ translate( 'Posts' ) }</ActionPanelFigureListItem>
 								<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
 								<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
-								<ActionPanelFigureListItem>
-									{ translate( 'Users & Authors' ) }
-								</ActionPanelFigureListItem>
 								<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
 							</ActionPanelFigureList>
 						</ActionPanelFigure>
@@ -90,7 +90,12 @@ class AccountSettingsClose extends Component {
 								<p>
 									{ translate(
 										"If you're unsure about what account closure means or have any other questions, " +
-											'please chat with someone from our support team before proceeding.'
+											'please {{a}}chat with someone from our support team{{/a}} before proceeding.',
+										{
+											components: {
+												a: <ActionPanelLink href="/help/contact" />,
+											},
+										}
 									) }
 								</p>
 							</div>
@@ -111,11 +116,6 @@ class AccountSettingsClose extends Component {
 								</p>
 							</div>
 						) }
-						<p>
-							<ActionPanelLink href="/help/contact">
-								{ translate( 'Contact support' ) }
-							</ActionPanelLink>
-						</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						{ ! hasAtomicSites && (
