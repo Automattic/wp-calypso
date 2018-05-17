@@ -62,22 +62,19 @@ class CloneJetpackStep extends Component {
 		return (
 			<TileGrid>
 				<Tile
-					buttonLabel={ 'Create new Jetpack connection' }
-					description={ translate(
-						'Keep the plan on %(originSiteName)s and create a new Jetpack connection on %(destinationSiteName)s.',
-						{
-							args: { originSiteName, destinationSiteName },
-						}
-					) }
+					buttonLabel={ 'Keep plan where it is' }
+					description={ translate( 'Your plan would remain on %(originSiteName)s.', {
+						args: { originSiteName },
+					} ) }
 					image={ '/calypso/images/upgrades/thank-you.svg' }
 					onClick={ this.selectNew }
 				/>
 				<Tile
 					buttonLabel={ 'Migrate Jetpack plan' }
 					description={ translate(
-						'Move your Jetpack plan from %(originSiteName)s to %(destinationSiteName)s.',
+						'Your Jetpack plan would be migrated to the destination site, %(destinationSiteName)s.',
 						{
-							args: { originSiteName, destinationSiteName },
+							args: { destinationSiteName },
 						}
 					) }
 					image={ '/calypso/images/upgrades/thank-you.svg' }

@@ -1,9 +1,14 @@
 .clone-start__card {
 	text-align: center;
-	max-width: 640px;
+	max-width: 480px;
 	padding: 4rem;
 	margin-top: 1px;
 	padding-bottom: 3rem;
+}
+
+.clone-start__image {
+	max-width: 60%;
+	margin: 0 auto 2rem auto;
 }
 
 .clone-start__title {
@@ -12,12 +17,6 @@
 	font-weight: 300;
 	letter-spacing: .15rem;
 	color: $gray-text;
-}
-
-.clone-start__image {
-	max-width: 140px;
-	display: block;
-	margin: 0 auto 2rem auto;
 }
 
 .clone-start__description {

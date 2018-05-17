@@ -1,9 +1,8 @@
 .clone-destination__card {
 	text-align: center;
-	max-width: 380px;
-	padding: 4rem;
-	margin-top: 1px;
-	padding-bottom: 3rem;
+	max-width: 340px;
+	padding: 3rem;
+	padding-bottom: 2rem;
 }
 
 .clone-destination__title {
@@ -15,8 +14,6 @@
 }
 
 .clone-destination__image {
-	max-width: 140px;
-	display: block;
 	margin: 0 auto 2rem auto;
 }
 
@@ -24,11 +21,26 @@
 	color: $gray-text-min;
 	font-size: 1.15rem;
 	margin-bottom: 0;
+	padding: 0 3rem;
+}
+
+.clone-destination__description:last-child {
+	margin-bottom: 2rem;
+}
+
+.clone-destination__label {
+	display: block;
+	text-align: left;
+	margin-top: 1.7rem;
 }
 
 .clone-destination__tos {
 	margin: 2rem auto;
 	font-size: 1.15rem;
+}
+
+.clone-destination__tos-link {
+	display: block;
 }
 
 .clone-destination__button {

@@ -163,7 +163,10 @@ class ClonePointStep extends Component {
 			translate,
 		} = this.props;
 
-		const headerText = translate( "Let's clone %(origin)s", { args: { origin: originSiteName } } );
+		const headerText = translate( 'Clone point' );
+		const subHeaderText = translate(
+			"Which point in your site's history would you like to clone from?"
+		);
 
 		return (
 			<StepWrapper
@@ -171,8 +174,8 @@ class ClonePointStep extends Component {
 				stepName={ stepName }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				subHeaderText={ '' }
-				fallbackSubHeaderText={ '' }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
