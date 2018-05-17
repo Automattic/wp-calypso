@@ -16,6 +16,10 @@ import ActionPanel from 'components/action-panel';
 import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
+import ActionPanelFigureHeader from 'components/action-panel/figure-header';
+import ActionPanelFigureList from 'components/action-panel/figure-list';
+import ActionPanelFigureListItem from 'components/action-panel/figure-list-item';
+import ActionPanelLink from 'components/action-panel/link';
 import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
 
@@ -33,7 +37,7 @@ class AccountSettingsClose extends Component {
 		const hasAtomicSites = false;
 
 		return (
-			<div className="account-close" role="main">
+			<div className="account-close main" role="main">
 				<HeaderCake onClick={ this.goBack }>
 					<h1>{ translate( 'Close account' ) }</h1>
 				</HeaderCake>
@@ -43,21 +47,26 @@ class AccountSettingsClose extends Component {
 					</ActionPanelTitle>
 					<ActionPanelBody>
 						<ActionPanelFigure>
-							<h3>{ translate( 'These items will be deleted' ) }</h3>
-							<ul>
-								<li>{ translate( 'Posts' ) }</li>
-								<li>{ translate( 'Pages' ) }</li>
-								<li>{ translate( 'Media' ) }</li>
-								<li>{ translate( 'Users & Authors' ) }</li>
-								<li>{ translate( 'Domains' ) }</li>
-							</ul>
+							<ActionPanelFigureHeader>
+								{ translate( 'These items will be deleted' ) }
+							</ActionPanelFigureHeader>
+							<ActionPanelFigureList>
+								<ActionPanelFigureListItem>{ translate( 'Sites' ) }</ActionPanelFigureListItem>
+								<ActionPanelFigureListItem>{ translate( 'Posts' ) }</ActionPanelFigureListItem>
+								<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
+								<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
+								<ActionPanelFigureListItem>
+									{ translate( 'Users & Authors' ) }
+								</ActionPanelFigureListItem>
+								<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
+							</ActionPanelFigureList>
 						</ActionPanelFigure>
 						{ ! hasAtomicSites && (
 							<div>
 								<p>
 									{ translate(
 										'Account closure {{strong}}cannot{{/strong}} be undone, ' +
-											'and will remove all content, contributors and domains from your account.',
+											'and will remove all sites and content.',
 										{
 											components: {
 												strong: <strong />,
@@ -67,12 +76,9 @@ class AccountSettingsClose extends Component {
 								</p>
 								<p>
 									{ translate(
-										"If you're unsure about what deletion means or have any other questions, " +
+										"If you're unsure about what account closure means or have any other questions, " +
 											'please chat with someone from our support team before proceeding.'
 									) }
-								</p>
-								<p>
-									<a href="/help/contact">{ translate( 'Contact support' ) }</a>
 								</p>
 							</div>
 						) }
@@ -80,22 +86,27 @@ class AccountSettingsClose extends Component {
 							<div>
 								<p>
 									{ translate(
-										"To close your account, you'll need to contact our support team. Account closure cannot be undone, " +
-											'and will remove all content, contributors and domains from this site.'
+										"To close your account, you'll need to contact our support team. Account closure cannot be undone " +
+											'and will remove all sites and content.'
 									) }
 								</p>
 								<p>
 									{ translate(
-										"If you're unsure about what deletion means or have any other questions, " +
+										"If you're unsure about what account closure means or have any other questions, " +
 											"you'll have a chance to chat with someone from our support team before anything happens."
 									) }
 								</p>
 							</div>
 						) }
+						<p>
+							<ActionPanelLink href="/help/contact">
+								{ translate( 'Contact support' ) }
+							</ActionPanelLink>
+						</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						{ ! hasAtomicSites && (
-							<Button scary disabled={ true } onClick={ this.handleDeleteClick }>
+							<Button scary onClick={ this.handleDeleteClick }>
 								<Gridicon icon="trash" />
 								{ translate( 'Close account' ) }
 							</Button>
