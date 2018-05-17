@@ -10,10 +10,7 @@ describe( 'isGoogleMyBusinessLocationConnected()', () => {
 		const state = {
 			siteKeyrings: {
 				items: {
-					1234: {
-						google_my_business_keyring_id: null,
-						google_my_business_location_id: '',
-					},
+					1234: [],
 				},
 			},
 		};
@@ -25,10 +22,14 @@ describe( 'isGoogleMyBusinessLocationConnected()', () => {
 		const state = {
 			siteKeyrings: {
 				items: {
-					1234: {
-						google_my_business_keyring_id: '234523',
-						google_my_business_location_id: '2354235',
-					},
+					1234: [
+						{
+							keyring_site_id: '1234_65789',
+							keyring_id: '1234',
+							external_user_id: '65789',
+							service: 'google_my_business',
+						},
+					],
 				},
 			},
 		};
