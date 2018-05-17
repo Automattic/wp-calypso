@@ -89,10 +89,10 @@ const headerTitle = ( translate, threat ) => {
 const headerSubtitle = ( translate, threat ) => {
 	switch ( detailType( threat ) ) {
 		case 'core':
-			return translate( 'Vulnerability Found in WordPress' );
+			return translate( 'Vulnerability found in WordPress' );
 
 		case 'file':
-			return translate( 'Threat Found ({{signature/}})', {
+			return translate( 'Threat found ({{signature/}})', {
 				components: {
 					signature: (
 						<span className="activity-log__threat-alert-signature">{ threat.signature }</span>
@@ -101,10 +101,10 @@ const headerSubtitle = ( translate, threat ) => {
 			} );
 
 		case 'plugin':
-			return translate( 'Vulnerability Found in Plugin' );
+			return translate( 'Vulnerability found in plugin' );
 
 		case 'theme':
-			return translate( 'Vulnerability Found in Theme' );
+			return translate( 'Vulnerability found in theme' );
 
 		case 'none':
 		default:
