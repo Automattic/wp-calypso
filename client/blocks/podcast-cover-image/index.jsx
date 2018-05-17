@@ -48,8 +48,6 @@ class PodcastCoverImage extends PureComponent {
 		const style = {
 			height: size,
 			width: size,
-			lineHeight: size + 'px',
-			fontSize: size + 'px',
 		};
 
 		return (

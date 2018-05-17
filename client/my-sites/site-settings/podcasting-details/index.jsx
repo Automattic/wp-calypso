@@ -208,7 +208,7 @@ class PodcastingDetails extends Component {
 						</FormFieldset>
 						<div className="podcasting-details__basic-settings">
 							<FormFieldset className="podcasting-details__cover-image">
-								<FormLabel>{ translate( 'Podcast Cover Image' ) }</FormLabel>
+								<FormLabel>{ translate( 'Cover Image' ) }</FormLabel>
 								<PodcastCoverImage size={ 96 } />
 							</FormFieldset>
 							{ this.renderTextField( {
