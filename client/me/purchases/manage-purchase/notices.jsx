@@ -28,7 +28,6 @@ import {
 	subscribedWithinPastWeek,
 } from 'lib/purchases';
 import { isDomainTransfer } from 'lib/products-values';
-import { getPurchase } from '../utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isMonthly } from 'lib/plans/constants';
@@ -97,7 +96,7 @@ class PurchaseNotice extends Component {
 	}
 
 	renderRenewNoticeAction( onClick ) {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		const { editCardDetailsPath, translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
@@ -140,7 +139,7 @@ class PurchaseNotice extends Component {
 
 	renderPurchaseExpiringNotice() {
 		const { moment } = this.props;
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		let noticeStatus = 'is-info';
 		if ( ! isExpiring( purchase ) ) {
 			return null;
@@ -172,8 +171,8 @@ class PurchaseNotice extends Component {
 
 	renderCreditCardExpiringNotice() {
 		const { translate, editCardDetailsPath } = this.props;
-		const purchase = getPurchase( this.props ),
-			{ payment: { creditCard } } = purchase;
+		const purchase = this.props.selectedPurchase;
+		const { payment: { creditCard } } = purchase;
 
 		if (
 			isExpired( purchase ) ||
@@ -224,7 +223,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderExpiredRenewNotice() {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		const { translate } = this.props;
 
 		if ( ! isRenewable( purchase ) ) {
@@ -252,7 +251,7 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( isDomainTransfer( getPurchase( this.props ) ) ) {
+		if ( isDomainTransfer( this.props.selectedPurchase ) ) {
 			return null;
 		}
 

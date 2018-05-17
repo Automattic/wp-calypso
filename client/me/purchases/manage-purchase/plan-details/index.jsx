@@ -20,7 +20,7 @@ import SectionHeader from 'components/section-header';
 import PlanBillingPeriod from './billing-period';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getPurchase, isDataLoading } from 'me/purchases/utils';
+import { isDataLoading } from 'me/purchases/utils';
 import { getName, isExpired } from 'lib/purchases';
 import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
 import { getPluginsForSite } from 'state/plugins/premium/selectors';
@@ -49,7 +49,7 @@ class PurchasePlanDetails extends Component {
 
 	render() {
 		const { selectedSite, pluginList, translate } = this.props;
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 
 		// Short out as soon as we know it's not a Jetpack plan
 		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
@@ -93,8 +93,7 @@ class PurchasePlanDetails extends Component {
 	}
 }
 
-// hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading,
-// selectedPurchase is used in getPurchase
+// hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading
 export default connect( ( state, props ) => ( {
 	hasLoadedSites: ! isRequestingSites( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),

@@ -37,12 +37,7 @@ import { managePurchase } from '../paths';
 import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
-import {
-	canEditPaymentDetails,
-	isDataLoading,
-	getEditCardDetailsPath,
-	getPurchase,
-} from '../utils';
+import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -61,7 +56,7 @@ class PurchaseMeta extends Component {
 
 	renderPrice() {
 		const { translate } = this.props;
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		const { amount, currencyCode, currencySymbol, productSlug } = purchase;
 		const period =
 			productSlug && isMonthly( productSlug ) ? translate( 'month' ) : translate( 'year' );
@@ -99,7 +94,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderRenewsOrExpiresOnLabel() {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		const { translate } = this.props;
 
 		if ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
@@ -146,7 +141,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderRenewsOrExpiresOn() {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		const { translate, moment } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
@@ -180,7 +175,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentInfo() {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		const { translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
@@ -212,7 +207,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentDetails() {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		const { translate } = this.props;
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
@@ -245,7 +240,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderContactSupportToRenewMessage() {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		const { translate } = this.props;
 
 		if ( this.props.selectedSite ) {
@@ -289,7 +284,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
 		}
