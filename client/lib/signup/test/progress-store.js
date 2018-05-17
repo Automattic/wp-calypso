@@ -14,9 +14,13 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
+import flows from 'signup/config/flows';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'signup/config/flows', () => ( {
+	getFlow: jest.fn(),
+} ) );
 
 describe( 'progress-store', () => {
 	let SignupProgressStore, SignupActions;
@@ -126,5 +130,19 @@ describe( 'progress-store', () => {
 
 		SignupActions.processedSignupStep( { stepName: 'site-selection' } );
 		assert.equal( SignupProgressStore.get()[ 0 ].status, 'completed' );
+	} );
+
+	test( 'should remove unneeded steps when flow changes', () => {
+		assert.ok( SignupProgressStore.get().length > 1 );
+
+		flows.getFlow.mockReturnValueOnce( { steps: [ 'site-selection' ] } );
+		SignupActions.changeSignupFlow( 'new-flow' );
+
+		assert.equal( SignupProgressStore.get().length, 1 );
+
+		flows.getFlow.mockReturnValueOnce( { steps: [ 'no-step-matches' ] } );
+		SignupActions.changeSignupFlow( 'another-new-flow' );
+
+		assert.equal( SignupProgressStore.get().length, 0 );
 	} );
 } );
