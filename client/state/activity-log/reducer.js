@@ -11,6 +11,7 @@ import { backupRequest, backupProgress } from './backup/reducer';
 
 export const emptyFilter = {
 	page: 1,
+	group: { includes: [] },
 };
 
 export const filterState = ( state = emptyFilter, { type, filter } ) => {
