@@ -44,7 +44,7 @@ class PurchaseMeta extends Component {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
-		selectedPurchase: PropTypes.object,
+		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
@@ -55,8 +55,7 @@ class PurchaseMeta extends Component {
 	};
 
 	renderPrice() {
-		const { translate } = this.props;
-		const purchase = this.props.selectedPurchase;
+		const { purchase, translate } = this.props;
 		const { amount, currencyCode, currencySymbol, productSlug } = purchase;
 		const period =
 			productSlug && isMonthly( productSlug ) ? translate( 'month' ) : translate( 'year' );
@@ -94,8 +93,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderRenewsOrExpiresOnLabel() {
-		const purchase = this.props.selectedPurchase;
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
@@ -141,8 +139,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderRenewsOrExpiresOn() {
-		const purchase = this.props.selectedPurchase;
-		const { translate, moment } = this.props;
+		const { purchase, translate, moment } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			const attachedPlanUrl = managePurchase(
@@ -175,8 +172,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentInfo() {
-		const purchase = this.props.selectedPurchase;
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return <span className="manage-purchase__detail">{ translate( 'Included with plan' ) }</span>;
@@ -207,8 +203,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentDetails() {
-		const purchase = this.props.selectedPurchase;
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 			return null;
@@ -240,8 +235,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderContactSupportToRenewMessage() {
-		const purchase = this.props.selectedPurchase;
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( this.props.selectedSite ) {
 			return null;
@@ -256,7 +250,7 @@ class PurchaseMeta extends Component {
 					{
 						args: {
 							purchaseName: getName( purchase ),
-							siteSlug: this.props.selectedPurchase.domain,
+							siteSlug: this.props.purchase.domain,
 						},
 						components: {
 							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
@@ -284,7 +278,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
 		}
@@ -340,7 +334,7 @@ export default connect( ( state, props ) => {
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: purchase,
+		purchase,
 		selectedSite: getSelectedSite( state ),
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 	};

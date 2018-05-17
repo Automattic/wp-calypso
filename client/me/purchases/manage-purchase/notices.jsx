@@ -39,7 +39,7 @@ class PurchaseNotice extends Component {
 	static propTypes = {
 		isDataLoading: PropTypes.bool,
 		handleRenew: PropTypes.func,
-		selectedPurchase: PropTypes.object,
+		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	};
@@ -96,8 +96,7 @@ class PurchaseNotice extends Component {
 	}
 
 	renderRenewNoticeAction( onClick ) {
-		const purchase = this.props.selectedPurchase;
-		const { editCardDetailsPath, translate } = this.props;
+		const { editCardDetailsPath, purchase, translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
 			return null;
@@ -138,8 +137,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderPurchaseExpiringNotice() {
-		const { moment } = this.props;
-		const purchase = this.props.selectedPurchase;
+		const { moment, purchase } = this.props;
 		let noticeStatus = 'is-info';
 		if ( ! isExpiring( purchase ) ) {
 			return null;
@@ -170,8 +168,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderCreditCardExpiringNotice() {
-		const { translate, editCardDetailsPath } = this.props;
-		const purchase = this.props.selectedPurchase;
+		const { editCardDetailsPath, purchase, translate } = this.props;
 		const { payment: { creditCard } } = purchase;
 
 		if (
@@ -223,8 +220,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderExpiredRenewNotice() {
-		const purchase = this.props.selectedPurchase;
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( ! isRenewable( purchase ) ) {
 			return null;
@@ -251,7 +247,7 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.selectedPurchase ) ) {
+		if ( isDomainTransfer( this.props.purchase ) ) {
 			return null;
 		}
 

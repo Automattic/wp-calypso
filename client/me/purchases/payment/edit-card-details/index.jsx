@@ -39,7 +39,7 @@ class EditCardDetails extends PurchaseCardDetails {
 		hasLoadedStoredCardsFromServer: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchaseId: PropTypes.number.isRequired,
-		selectedPurchase: PropTypes.object,
+		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string.isRequired,
 	};
@@ -97,7 +97,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, purchaseId ),
+		purchase: getByPurchaseId( state, purchaseId ),
 		selectedSite: getSelectedSite( state ),
 	};
 };
