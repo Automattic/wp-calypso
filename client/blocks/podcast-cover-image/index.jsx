@@ -56,7 +56,7 @@ class PodcastCoverImage extends PureComponent {
 				{ imageSrc ? (
 					<Image className="podcast-cover-image__img" src={ imageSrc } alt="" />
 				) : (
-					<span className="podcast-cover-image__placeholder">{ translate( 'No image set.' ) }</span>
+					<span className="podcast-cover-image__placeholder">{ translate( 'No image set' ) }</span>
 				) }
 				{ isTransientIcon && <Spinner /> }
 			</div>
