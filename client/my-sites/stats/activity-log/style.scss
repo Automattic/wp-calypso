@@ -79,8 +79,17 @@
 }
 
 .activity-log__threat-alert {
+	padding: 8px 0;
+	font-size: 14px;
+	border-left: 3px solid $alert-red;
+
 	.foldable-card__main {
 		flex: unset;
+	}
+
+	.activity-log-item__activity-icon {
+		margin-right: 16px;
+		padding: 8px;
 	}
 
 	.diff-viewer,
@@ -90,26 +99,36 @@
 	}
 }
 
+.foldable-card.is-compact.activity-log__threat-alert .foldable-card__header {
+	padding: 16px;
+}
+
 .activity-log__threat-alert-header {
-	margin-left: 8px;
 	color: $gray;
+}
 
-	.activity-log__threat-alert-title {
-		color: black;
-	}
+.activity-log__threat-alert-title {
+	font-weight: 500;
+	color: $gray-dark;
 
-	.activity-log__threat-alert-slug {
-		font-weight: bold;
+	code {
+		padding: 0 2px;
+		font-size: 13px;
+		font-weight: 600;
 	}
 }
 
+.activity-log__threat-alert-slug {
+	font-weight: 500;
+}
+
 .activity-log__threat-alert-signature {
-	font-weight: bold;
+	font-weight: 500;
 }
 
 .activity-log__threat-alert-filename {
 	padding: 4px;
-	color: #000;
+	font-size: 14px;
 	font-weight: 500;
 }
 
