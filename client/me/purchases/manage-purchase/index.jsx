@@ -83,6 +83,7 @@ class ManagePurchase extends Component {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		userId: PropTypes.number,
 	};
 
 	componentWillMount() {

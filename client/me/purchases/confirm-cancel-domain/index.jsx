@@ -53,6 +53,7 @@ class ConfirmCancelDomain extends React.Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	state = {

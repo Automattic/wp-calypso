@@ -50,6 +50,7 @@ class CancelPurchase extends React.Component {
 		purchaseId: PropTypes.number.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	state = {

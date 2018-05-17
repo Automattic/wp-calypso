@@ -40,6 +40,7 @@ class EditCardDetails extends PurchaseCardDetails {
 		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	componentWillMount() {

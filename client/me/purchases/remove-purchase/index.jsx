@@ -59,6 +59,7 @@ class RemovePurchase extends Component {
 		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
+		userId: PropTypes.number.isRequired,
 	};
 
 	state = {
