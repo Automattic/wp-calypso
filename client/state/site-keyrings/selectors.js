@@ -33,7 +33,7 @@ export function isSavingSiteKeyrings( state, siteId ) {
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {String}         The request status (peding, success or error)
+ * @return {String|undefined} The request status (pending, success or error) it will return undefined if no requests were issued yet.
  */
 export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
 	return get( state.siteKeyrings.saveRequests, [ siteId, 'status' ] );
@@ -51,7 +51,7 @@ export function getSiteKeyrings( state, siteId ) {
 }
 
 /**
- * Returns true fi the save site keyrings requests is successful
+ * Returns true if the save site keyrings requests is successful
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
