@@ -11,7 +11,6 @@ import closest from 'component-closest';
  * Internal dependencies
  */
 import { recordTinyMCEButtonClick } from 'lib/posts/stats';
-import { reduxGetState } from 'lib/redux-bridge';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 function editorButtonAnalytics( editor ) {
@@ -75,7 +74,8 @@ function editorButtonAnalytics( editor ) {
 			// This is a menu item in the format dropdown.  Only track which
 			// specific item is clicked for english interfaces - the easiest
 			// way to determine which item is selected is by UI text.
-			const locale = getCurrentUserLocale( reduxGetState() );
+			const reduxStore = editor.getParam( 'redux_store' );
+			const locale = reduxStore ? getCurrentUserLocale( reduxStore.getState() ) : null;
 			if ( locale === 'en' ) {
 				const text = closest( event.target, '.mce-menu-item', true ).textContent;
 				const menuItemName = text
