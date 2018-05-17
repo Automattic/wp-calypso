@@ -24,12 +24,16 @@ import {
 } from 'my-sites/domains/paths';
 
 function getAvailabilityNotice( domain, error, errorData ) {
+	const tld = domain ? getTld( domain ) : null;
+	const { site, maintenanceEndTime } = errorData || {};
+
+	// The message is set only when there is a valid error
+	// and the conditions of the corresponding switch block are met.
+	// Consumers should check for the message prop in order
+	// to determine whether to display the notice
+	// See for e.g., client/components/domains/register-domain-step/index.jsx
 	let message,
 		severity = 'error';
-
-	const tld = getTld( domain );
-
-	const { site, maintenanceEndTime } = errorData;
 
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
@@ -197,11 +201,10 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.EMPTY_RESULTS:
 			// unavailable domains are displayed in the search results, not as a notice OR
 			// domain registrations are closed, in which case it is handled in parent
-			message = null;
 			break;
 
 		case domainAvailability.BLACKLISTED:
-			if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
+			if ( domain && domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
 						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
