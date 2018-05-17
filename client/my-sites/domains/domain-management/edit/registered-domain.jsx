@@ -75,7 +75,11 @@ const RegisteredDomain = createReactClass( {
 	getGdprConsentMessage() {
 		const { domain, translate } = this.props;
 		const message = getGdprConsentStatusMessage( domain );
-		return <Property label={ translate( 'GDPR Consent Status' ) }>{ message }</Property>;
+		return (
+			domain.gdprConsentStatus && (
+				<Property label={ translate( 'GDPR Consent Status' ) }>{ message }</Property>
+			)
+		);
 	},
 
 	getPrivacyProtection() {

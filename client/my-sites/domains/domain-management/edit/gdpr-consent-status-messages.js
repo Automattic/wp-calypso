@@ -11,35 +11,24 @@ import { translate } from 'i18n-calypso';
 import { gdprConsentStatus } from 'lib/domains/constants';
 
 function getGdprConsentStatusMessage( domain ) {
-	let message;
-
 	switch ( domain.gdprConsentStatus ) {
 		case gdprConsentStatus.NONE:
-			message = translate( 'Not available' );
-			break;
+			return translate( 'Not available' );
 		case gdprConsentStatus.PENDING:
-			message = translate( 'Pending registrar response' );
-			break;
+			return translate( 'Pending registrar response' );
 		case gdprConsentStatus.PENDING_ASYNC:
-			message = translate( 'Awaiting owner response' );
-			break;
+			return translate( 'Awaiting owner response' );
 		case gdprConsentStatus.ACCEPTED_CONTRACTUAL_MINIMUM:
-			message = translate( 'Only for contractual needs' );
-			break;
+			return translate( 'Only for contractual needs' );
 		case gdprConsentStatus.ACCEPTED_FULL:
-			message = translate( 'Full use of data allowed' );
-			break;
+			return translate( 'Full use of data allowed' );
 		case gdprConsentStatus.DENIED:
-			message = translate( 'All use of non-contract data is denied' );
-			break;
+			return translate( 'All use of non-contract data is denied' );
 		case gdprConsentStatus.FORCED_ALL_CONTRACTUAL:
-			message = translate( 'Not required--only data for contract was collected' );
-			break;
+			return translate( 'Not required--only data for contract was collected' );
 		default:
-			message = translate( 'Unavailable' );
+			return translate( 'Unavailable' );
 	}
-
-	return message;
 }
 
 export { getGdprConsentStatusMessage };

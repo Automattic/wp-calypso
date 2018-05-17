@@ -57,35 +57,24 @@ function getTransferStatus( domainFromApi ) {
 }
 
 function getGdprConsentStatus( domainFromApi ) {
-	if ( domainFromApi.gdpr_consent_status === 'NONE' ) {
-		return gdprConsentStatus.NONE;
+	switch ( domainFromApi.gdpr_consent_status ) {
+		case 'NONE':
+			return gdprConsentStatus.NONE;
+		case 'PENDING':
+			return gdprConsentStatus.PENDING;
+		case 'PENDING_ASYNC':
+			return gdprConsentStatus.PENDING_ASYNC;
+		case 'ACCEPTED_CONTRACTUAL_MINIMUM':
+			return gdprConsentStatus.ACCEPTED_CONTRACTUAL_MINIMUM;
+		case 'ACCEPTED_FULL':
+			return gdprConsentStatus.ACCEPTED_FULL;
+		case 'DENIED':
+			return gdprConsentStatus.DENIED;
+		case 'FORCED_ALL_CONTRACTUAL':
+			return gdprConsentStatus.FORCED_ALL_CONTRACTUAL;
+		default:
+			return null;
 	}
-
-	if ( domainFromApi.gdpr_consent_status === 'PENDING' ) {
-		return gdprConsentStatus.PENDING;
-	}
-
-	if ( domainFromApi.gdpr_consent_status === 'PENDING_ASYNC' ) {
-		return gdprConsentStatus.PENDING_ASYNC;
-	}
-
-	if ( domainFromApi.gdpr_consent_status === 'ACCEPTED_CONTRACTUAL_MINIMUM' ) {
-		return gdprConsentStatus.ACCEPTED_CONTRACTUAL_MINIMUM;
-	}
-
-	if ( domainFromApi.gdpr_consent_status === 'ACCEPTED_FULL' ) {
-		return gdprConsentStatus.ACCEPTED_FULL;
-	}
-
-	if ( domainFromApi.gdpr_consent_status === 'DENIED' ) {
-		return gdprConsentStatus.DENIED;
-	}
-
-	if ( domainFromApi.gdpr_consent_status === 'FORCED_ALL_CONTRACTUAL' ) {
-		return gdprConsentStatus.FORCED_ALL_CONTRACTUAL;
-	}
-
-	return null;
 }
 
 /**
