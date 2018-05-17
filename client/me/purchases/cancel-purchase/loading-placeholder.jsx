@@ -17,12 +17,8 @@ import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import { managePurchase } from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
 
-const CancelPurchaseLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
-	let path;
-
-	if ( selectedSite ) {
-		path = managePurchase( selectedSite.slug, purchaseId );
-	}
+const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug } ) => {
+	const path = managePurchase( siteSlug, purchaseId );
 
 	return (
 		<LoadingPlaceholder title={ titles.cancelPurchase } path={ path }>
@@ -42,7 +38,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
 
 CancelPurchaseLoadingPlaceholder.propTypes = {
 	purchaseId: PropTypes.number.isRequired,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+	siteSlug: PropTypes.string.isRequired,
 };
 
 export default CancelPurchaseLoadingPlaceholder;

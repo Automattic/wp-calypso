@@ -149,7 +149,7 @@ class CancelPurchase extends React.Component {
 					<QueryUserPurchases userId={ user.get().ID } />
 					<CancelPurchaseLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
-						selectedSite={ this.props.selectedSite }
+						siteSlug={ this.props.siteSlug }
 					/>
 				</div>
 			);
