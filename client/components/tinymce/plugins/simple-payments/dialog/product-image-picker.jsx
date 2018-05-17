@@ -93,7 +93,7 @@ class ProductImagePicker extends Component {
 	}
 
 	render() {
-		const { siteId, translate } = this.props;
+		const { siteId, translate, makeDirtyAfterImageEdit } = this.props;
 		const { isSelecting } = this.state;
 
 		if ( ! siteId ) {
@@ -114,6 +114,7 @@ class ProductImagePicker extends Component {
 							confirm: translate( 'Add' ),
 						} }
 						single
+						onImageEditorDoneHook={ makeDirtyAfterImageEdit }
 					/>
 				</MediaLibrarySelectedData>
 

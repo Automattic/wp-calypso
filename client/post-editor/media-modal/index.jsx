@@ -83,6 +83,7 @@ export class EditorMediaModal extends Component {
 		postId: PropTypes.number,
 		disableLargeImageSources: PropTypes.bool,
 		disabledDataSources: PropTypes.arrayOf( PropTypes.string ),
+		onImageEditorDoneHook: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -100,6 +101,7 @@ export class EditorMediaModal extends Component {
 		deleteMedia: () => {},
 		disableLargeImageSources: false,
 		disabledDataSources: [],
+		onImageEditorDoneHook: noop,
 	};
 
 	constructor( props ) {
@@ -342,6 +344,8 @@ export class EditorMediaModal extends Component {
 		resetAllImageEditorState();
 
 		this.props.setView( ModalViews.DETAIL );
+
+		this.props.onImageEditorDoneHook();
 	};
 
 	handleUpdatePoster = ( { ID, posterUrl } ) => {
