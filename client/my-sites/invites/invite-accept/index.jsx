@@ -10,7 +10,6 @@ import Debug from 'debug';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal Dependencies
@@ -241,5 +240,5 @@ export default connect(
 	state => ( {
 		user: getCurrentUser( state ),
 	} ),
-	dispatch => bindActionCreators( { successNotice, infoNotice }, dispatch )
+	{ successNotice, infoNotice }
 )( localize( InviteAccept ) );
