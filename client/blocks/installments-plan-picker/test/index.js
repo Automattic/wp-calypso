@@ -30,9 +30,7 @@ describe( 'InstallmentsPlanPicker basic tests', () => {
 	];
 
 	test( 'should have subscription-length-picker class', () => {
-		const picker = shallow(
-			<InstallmentsPlanPicker plans={ [] } currencyCode="BRL" translate={ translate } />
-		);
+		const picker = shallow( <InstallmentsPlanPicker plans={ [] } translate={ translate } /> );
 		expect( picker.find( '.installments-plan-picker' ).length ).toBe( 1 );
 	} );
 

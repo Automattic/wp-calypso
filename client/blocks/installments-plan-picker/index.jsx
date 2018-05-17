@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
@@ -15,14 +14,10 @@ import classnames from 'classnames';
  */
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import formatCurrency from 'lib/format-currency';
-import { CURRENCIES } from 'lib/format-currency/currencies';
 
 export class InstallmentsPlanPicker extends React.Component {
 	static propTypes = {
 		initialValue: PropTypes.number,
-		currencyCode: PropTypes.oneOf( Object.keys( CURRENCIES ) ).isRequired,
 		plans: PropTypes.array.isRequired,
 		onChange: PropTypes.func,
 		translate: PropTypes.func.isRequired,
@@ -38,7 +33,7 @@ export class InstallmentsPlanPicker extends React.Component {
 
 	formatPlans() {
 		return this.props.plans.map( plan => {
-			plan.label = plan.value + ' x ' + myFormatCurrency( plan.payment, this.props.currencyCode );
+			plan.label = plan.value + ' x ' + plan.payment;
 			return plan;
 		} );
 	}
@@ -95,18 +90,4 @@ export class InstallmentsPlanPicker extends React.Component {
 	}
 }
 
-export function myFormatCurrency( price, code ) {
-	const precision = CURRENCIES[ code ].precision;
-	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
-
-	const hasCents = Math.abs( price % 1 ) >= EPSILON;
-	return formatCurrency( price, code, hasCents ? {} : { precision: 0 } );
-}
-
-export const mapStateToProps = state => {
-	return {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-	};
-};
-
-export default connect( mapStateToProps )( localize( InstallmentsPlanPicker ) );
+export default localize( InstallmentsPlanPicker );
