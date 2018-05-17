@@ -26,6 +26,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
+import PodcastCoverImage from 'blocks/podcast-cover-image';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -206,6 +207,10 @@ class PodcastingDetails extends Component {
 							) }
 						</FormFieldset>
 						<div className="podcasting-details__basic-settings">
+							<FormFieldset className="podcasting-details__cover-image">
+								<FormLabel>{ translate( 'Podcast Cover Image' ) }</FormLabel>
+								<PodcastCoverImage size={ 96 } />
+							</FormFieldset>
 							{ this.renderTextField( {
 								key: 'podcasting_title',
 								label: translate( 'Title' ),
