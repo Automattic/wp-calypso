@@ -47,10 +47,8 @@ QuerySiteKeyrings.propTypes = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
-		return {
-			requestingSiteKeyrings: isRequestingSiteKeyrings( state, siteId ),
-		};
-	},
+	( state, { siteId } ) => ( {
+		requestingSiteKeyrings: isRequestingSiteKeyrings( state, siteId ),
+	} ),
 	{ requestSiteKeyrings }
 )( QuerySiteKeyrings );
