@@ -18,7 +18,6 @@ import Card from 'components/card';
 import PeopleProfile from 'my-sites/people/people-profile';
 import UsersStore from 'lib/users/store';
 import { fetchUser } from 'lib/users/actions';
-import userModule from 'lib/user';
 import { protectForm } from 'lib/protect-form';
 import DeleteUser from 'my-sites/people/delete-user';
 import PeopleNotices from 'my-sites/people/people-notices';
@@ -28,11 +27,6 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PeopleLogStore from 'lib/people/log-store';
 import { isJetpackSiteMultiSite, isJetpackSite } from 'state/sites/selectors';
 import EditUserForm from './edit-user-form';
-
-/**
- * Module Variables
- */
-const user = userModule();
 
 export class EditTeamMemberForm extends Component {
 	constructor( props ) {
@@ -176,7 +170,6 @@ export class EditTeamMemberForm extends Component {
 				{ this.state.user && (
 					<DeleteUser
 						{ ...pick( this.props, [ 'siteId', 'isJetpack', 'isMultisite' ] ) }
-						currentUser={ user.get() }
 						user={ this.state.user }
 					/>
 				) }
