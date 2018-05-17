@@ -4,15 +4,7 @@
 	display: flex;
 	margin: 0;
 	text-align: center;
-
-	// Globe icon for sites without an icon
-	&.is-blank {
-		background: $gray-lighten-20;
-		.gridicon {
-			color: $white;
-			margin: auto;
-		}
-	}
+	border: 1px solid $gray-lighten-20;
 }
 
 .podcast-cover-image.is-transient .spinner {
@@ -28,4 +20,15 @@
 	align-self: center;
 	background: $transparent;
 	position: relative;
+}
+
+.podcast-cover-image__placeholder {
+	color: $gray-text-min;
+	display: block;
+	font-size: 13px;
+	font-style: italic;
+	font-weight: 400;
+	margin: 0 7px;
+	text-align: center;
+	align-self: center;
 }

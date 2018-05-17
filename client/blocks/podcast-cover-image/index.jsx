@@ -7,8 +7,8 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -37,7 +37,7 @@ class PodcastCoverImage extends PureComponent {
 	};
 
 	render() {
-		const { siteId, coverImageUrl, size, isTransientIcon } = this.props;
+		const { siteId, coverImageUrl, size, isTransientIcon, translate } = this.props;
 		const imageSrc = resizeImageUrl( coverImageUrl, size );
 
 		const classes = classNames( 'podcast-cover-image', {
@@ -56,7 +56,7 @@ class PodcastCoverImage extends PureComponent {
 				{ imageSrc ? (
 					<Image className="podcast-cover-image__img" src={ imageSrc } alt="" />
 				) : (
-					<Gridicon icon="globe" size={ Math.round( size / 1.3 ) } />
+					<span className="podcast-cover-image__placeholder">{ translate( 'No image set.' ) }</span>
 				) }
 				{ isTransientIcon && <Spinner /> }
 			</div>
@@ -73,4 +73,4 @@ export default connect( state => {
 		coverImageUrl: getPodcastingCoverImageUrl( state, siteId ),
 		isTransientImage: isTransientMedia( state, siteId, imageId ),
 	};
-} )( PodcastCoverImage );
+} )( localize( PodcastCoverImage ) );
