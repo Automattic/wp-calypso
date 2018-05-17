@@ -96,6 +96,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         }
         countryCode="US"
         disabled={false}
+        enableStickyCountry={false}
         errorMessage=""
         eventFormName="Domain contact details form"
         isError={false}
