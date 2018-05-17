@@ -31,12 +31,10 @@ import Notice from 'components/notice';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-
-const user = userFactory();
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class CancelPrivacyProtection extends Component {
 	static propTypes = {
@@ -211,7 +209,7 @@ class CancelPrivacyProtection extends Component {
 					path="/me/purchases/:site/:purchaseId/cancel-privacy-protection"
 					title="Purchases > Cancel Privacy Protection"
 				/>
-				<QueryUserPurchases userId={ user.get().ID } />
+				<QueryUserPurchases userId={ this.props.userId } />
 				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
 					{ titles.cancelPrivacyProtection }
 				</HeaderCake>
@@ -238,6 +236,7 @@ export default connect(
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase: getByPurchaseId( state, props.purchaseId ),
 		selectedSite: getSelectedSite( state ),
+		userId: getCurrentUserId( state ),
 	} ),
 	{ cancelPrivacyProtection }
 )( localize( CancelPrivacyProtection ) );

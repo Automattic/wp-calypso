@@ -39,11 +39,9 @@ import { refreshSitePlans } from 'state/sites/plans/actions';
 import SelectDropdown from 'components/select-dropdown';
 import { setAllSitesSelected } from 'state/ui/actions';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-
-const user = userFactory();
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class ConfirmCancelDomain extends React.Component {
 	static propTypes = {
@@ -244,7 +242,7 @@ class ConfirmCancelDomain extends React.Component {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<div>
-					<QueryUserPurchases userId={ user.get().ID } />
+					<QueryUserPurchases userId={ this.props.userId } />
 					<ConfirmCancelDomainLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
 						selectedSite={ this.props.selectedSite }
@@ -311,6 +309,7 @@ export default connect(
 			isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
 			purchase: getByPurchaseId( state, props.purchaseId ),
 			selectedSite,
+			userId: getCurrentUserId( state ),
 		};
 	},
 	{
