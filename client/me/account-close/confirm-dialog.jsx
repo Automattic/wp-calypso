@@ -24,7 +24,7 @@ const AccountCloseConfirmDialog = ( {
 } ) => {
 	const deleteButtons = [
 		<Button onClick={ closeConfirmDialog }>{ translate( 'Cancel' ) }</Button>,
-		<Button primary scary onClick={ deleteAccount }>
+		<Button primary scary disabled onClick={ deleteAccount }>
 			{ translate( 'Close your account' ) }
 		</Button>,
 	];
