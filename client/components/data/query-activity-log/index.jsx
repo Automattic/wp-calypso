@@ -5,6 +5,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,13 +39,18 @@ class QueryActivityLog extends Component {
 		this.request( nextProps );
 	}
 
-	request( { dateEnd, dateStart, number, siteId } ) {
+	request( { dateEnd, dateStart, number, siteId, group } ) {
 		if ( siteId ) {
-			this.props.activityLogRequest( siteId, {
-				dateEnd,
-				dateStart,
-				number,
-			} );
+			this.props.activityLogRequest(
+				siteId,
+				Object.assign(
+					{},
+					dateEnd,
+					dateStart,
+					number,
+					group && ! isEmpty( group.includes ) && { group: group.includes }
+				)
+			);
 		}
 	}
 
