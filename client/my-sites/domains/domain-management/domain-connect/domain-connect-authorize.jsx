@@ -82,7 +82,10 @@ class DomainConnectAuthorize extends Component {
 		} );
 
 		wpcom.applyDnsTemplateSyncFlow( domain, providerId, serviceId, params ).then(
-			() => {
+			result => {
+				if ( result.redirect_uri ) {
+					window.location.assign( result.redirect_uri );
+				}
 				this.setState( {
 					action: actionType.CLOSE,
 					noticeMessage: translate( 'Hurray! Your new service is now all set up.' ),
@@ -143,6 +146,7 @@ class DomainConnectAuthorize extends Component {
 						dnsTemplateError={ this.state.dnsTemplateError }
 					/>
 					<DomainConnectAuthorizeRecords
+						domain={ domain }
 						dnsTemplateRecords={ this.state.dnsTemplateRecords }
 						dnsTemplateConflicts={ this.state.dnsTemplateConflicts }
 						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }
