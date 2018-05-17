@@ -295,7 +295,7 @@ class CancelPurchaseButton extends Component {
 
 			submitSurvey(
 				'calypso-remove-purchase',
-				this.props.selectedSite.ID,
+				purchase.siteId,
 				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
 			);
 		}
