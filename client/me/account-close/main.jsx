@@ -22,14 +22,27 @@ import ActionPanelFigureListItem from 'components/action-panel/figure-list-item'
 import ActionPanelLink from 'components/action-panel/link';
 import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
+import AccountCloseConfirmDialog from './confirm-dialog';
 
 class AccountSettingsClose extends Component {
+	state = {
+		showConfirmDialog: false,
+	};
+
 	goBack = () => {
 		page( '/me/account' );
 	};
 
 	handleDeleteClick = event => {
 		event.preventDefault();
+
+		// @todo check if purchases and sites have loaded
+
+		this.setState( { showConfirmDialog: true } );
+	};
+
+	closeConfirmDialog = () => {
+		this.setState( { showConfirmDialog: false } );
 	};
 
 	render() {
@@ -117,6 +130,10 @@ class AccountSettingsClose extends Component {
 							</Button>
 						) }
 					</ActionPanelFooter>
+					<AccountCloseConfirmDialog
+						isVisible={ this.state.showConfirmDialog }
+						closeConfirmDialog={ this.closeConfirmDialog }
+					/>
 				</ActionPanel>
 			</div>
 		);
