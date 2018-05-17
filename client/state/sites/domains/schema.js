@@ -18,7 +18,6 @@ export const itemsSchema = {
 					expired: { type: 'boolean' },
 					expiry: { type: [ 'null', 'string' ] },
 					expirySoon: { type: 'boolean' },
-					gdprConsentStatus: { type: 'string', optional: true },
 					googleAppsSubscription: { type: 'object' },
 					hasPrivacyProtection: { type: 'boolean' },
 					hasRegistration: { type: 'boolean' },
