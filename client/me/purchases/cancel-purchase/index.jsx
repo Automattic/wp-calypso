@@ -87,16 +87,11 @@ class CancelPurchase extends React.Component {
 	};
 
 	redirect = props => {
-		const { purchase } = props;
-		const selectedSite = props.selectedSite;
+		const { purchase, siteSlug } = props;
 		let redirectPath = purchasesRoot;
 
-		if (
-			selectedSite &&
-			purchase &&
-			( ! isCancelable( purchase ) || isDomainTransfer( purchase ) )
-		) {
-			redirectPath = managePurchase( this.props.siteSlug, purchase.id );
+		if ( purchase && ( ! isCancelable( purchase ) || isDomainTransfer( purchase ) ) ) {
+			redirectPath = managePurchase( siteSlug, purchase.id );
 		}
 
 		page.redirect( redirectPath );
