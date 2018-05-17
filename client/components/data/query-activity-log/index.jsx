@@ -21,6 +21,9 @@ class QueryActivityLog extends Component {
 
 		// Number of results
 		number: PropTypes.number,
+
+		// Group
+		group: PropTypes.object,
 	};
 
 	static defaultProps = {
