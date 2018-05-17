@@ -134,10 +134,12 @@ class TransferDomainStep extends React.Component {
 	};
 
 	addTransfer() {
-		const { cart, domainsWithPlansOnly, selectedSite, translate } = this.props;
+		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
 		const productSlug = getDomainProductSlug( searchQuery );
+		const domainsWithPlansOnlyButNoPlan =
+			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 
 		let domainProductPrice = getDomainPrice(
 			productSlug,
@@ -147,7 +149,7 @@ class TransferDomainStep extends React.Component {
 
 		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
 			domainProductPrice = translate( 'Free with your plan' );
-		} else if ( domainsWithPlansOnly && selectedSite && ! isPlan( selectedSite.plan ) ) {
+		} else if ( domainsWithPlansOnlyButNoPlan ) {
 			domainProductPrice = translate( 'Included in paid plans' );
 		}
 
