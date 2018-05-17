@@ -210,6 +210,7 @@ class CancelPurchase extends React.Component {
 						disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
 						selectedSite={ this.props.selectedSite }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
+						siteSlug={ this.props.siteSlug }
 					/>
 				</CompactCard>
 			</Main>
