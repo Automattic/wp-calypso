@@ -122,7 +122,11 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderProgressBar() {
-		const { suggestion: { isRecommended, isBestAlternative }, translate, isFeatured } = this.props;
+		const {
+			suggestion: { isRecommended, isBestAlternative, relevance: matchScore },
+			translate,
+			isFeatured,
+		} = this.props;
 
 		if ( ! isFeatured ) {
 			return null;
@@ -134,7 +138,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
-				value: 90,
+				value: matchScore * 100 || 90,
 			};
 		}
 
@@ -142,7 +146,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			title = translate( 'Best Alternative' );
 			progressBarProps = {
 				title,
-				value: 80,
+				value: matchScore * 100 || 80,
 			};
 		}
 
