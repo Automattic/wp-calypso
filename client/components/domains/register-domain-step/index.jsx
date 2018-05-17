@@ -62,6 +62,7 @@ import {
 	getTldWeightOverrides,
 	isNumberString,
 	isUnknownSuggestion,
+	markFeaturedSuggestions,
 } from 'components/domains/register-domain-step/utility';
 import {
 	recordDomainAvailabilityReceive,
@@ -728,35 +729,16 @@ class RegisterDomainStep extends React.Component {
 				? suggestionMap.set( domainName, { ...suggestionMap.get( domainName ), ...result } )
 				: suggestionMap.set( domainName, result );
 		} );
-		const suggestions = [ ...suggestionMap.values() ];
-
-		const strippedDomainBase = getStrippedDomainBase( domain );
-		const exactMatchBeforeTld = suggestion =>
-			suggestion.domain_name === this.state.exactMatchDomain ||
-			startsWith( suggestion.domain_name, `${ strippedDomainBase }.` );
-		const bestAlternative = suggestion =>
-			! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
-
-		const availableSuggestions = reject( suggestions, isUnknownSuggestion );
-
-		const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
-
-		if ( recommendedSuggestion ) {
-			recommendedSuggestion.isRecommended = true;
-		} else if ( availableSuggestions.length > 0 ) {
-			availableSuggestions[ 0 ].isRecommended = true;
-		}
-
-		const bestAlternativeSuggestion = find( availableSuggestions, bestAlternative );
-		if ( bestAlternativeSuggestion ) {
-			bestAlternativeSuggestion.isBestAlternative = true;
-		} else if ( availableSuggestions.length > 1 ) {
-			availableSuggestions[ 1 ].isBestAlternative = true;
-		}
+		const suggestions = reject( [ ...suggestionMap.values() ], isUnknownSuggestion );
+		const markedSuggestions = markFeaturedSuggestions(
+			suggestions,
+			this.state.exactMatchDomain,
+			getStrippedDomainBase( domain )
+		);
 
 		this.setState(
 			{
-				searchResults: suggestions,
+				searchResults: markedSuggestions,
 				loadingResults: false,
 			},
 			this.save
