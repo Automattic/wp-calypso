@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 import PayButton from './pay-button';
 import CreditCardSelector from './credit-card-selector';
 import TermsOfService from './terms-of-service';
-import cartValues, { isPaymentMethodEnabled } from 'lib/cart-values';
+import cartValues, { areInstallmentsAvailable } from 'lib/cart-values';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
@@ -191,33 +191,32 @@ export class CreditCardPaymentBox extends React.Component {
 	shouldRenderInstallmentsPlanPicker() {
 		const { cart, transaction } = this.props;
 
-		if ( ! isPaymentMethodEnabled( cart, 'ebanx' ) ) {
-			return false;
-		}
-
 		if ( typeof transaction.payment === 'undefined' ) {
 			return false;
 		}
 
-		return (
-			( typeof transaction.payment.storedCard !== 'undefined' &&
-				transaction.payment.storedCard.payment_partner === 'ebanx' ) ||
-			( isEbanxCreditCardProcessingEnabledForCountry( transaction.newCardFormFields.country ) &&
-				// TODO: if ebanx is enabled this should actually be ebanx. Look into it.
-				transaction.payment.paymentMethod === 'WPCOM_Billing_MoneyPress_Paygate' )
-		);
-	}
-
-	renderInstallmentsPlanPicker() {
 		const planInCart = this.getPlanProducts()[ 0 ];
 		if ( ! planInCart ) {
 			return false;
 		}
 
-		if ( ! this.props.cart.installments_plans ) {
+		if ( ! areInstallmentsAvailable( cart ) ) {
 			return false;
 		}
 
+		const isEbanxStoredCard =
+			typeof transaction.payment.storedCard !== 'undefined' &&
+			transaction.payment.storedCard.payment_partner === 'ebanx';
+
+		return (
+			isEbanxStoredCard ||
+			// 'WPCOM_Billing_MoneyPress_Paygate' is the default paymentMethod for new CC payments, even for ebanx
+			( transaction.payment.paymentMethod === 'WPCOM_Billing_MoneyPress_Paygate' &&
+				isEbanxCreditCardProcessingEnabledForCountry( transaction.newCardFormFields.country ) )
+		);
+	}
+
+	renderInstallmentsPlanPicker() {
 		if ( ! this.shouldRenderInstallmentsPlanPicker() ) {
 			return false;
 		}
