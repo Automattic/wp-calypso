@@ -61,7 +61,7 @@ const headerTitle = ( translate, threat ) => {
 					components: {
 						pluginSlug: <span className="activity-log__threat-alert-slug">{ extension.slug }</span>,
 						version: (
-							<code className="activity-log__threat-alert-version">{ extension.version }</code>
+							<span className="activity-log__threat-alert-version">{ extension.version }</span>
 						),
 					},
 				}
@@ -74,7 +74,7 @@ const headerTitle = ( translate, threat ) => {
 					components: {
 						themeSlug: <span className="activity-log__threat-alert-slug">{ extension.slug }</span>,
 						version: (
-							<code className="activity-log__threat-alert-version">{ extension.version }</code>
+							<span className="activity-log__threat-alert-version">{ extension.version }</span>
 						),
 					},
 				}
@@ -89,10 +89,10 @@ const headerTitle = ( translate, threat ) => {
 const headerSubtitle = ( translate, threat ) => {
 	switch ( detailType( threat ) ) {
 		case 'core':
-			return translate( 'Vulnerability found in WordPress' );
+			return translate( 'Vulnerability Found in WordPress' );
 
 		case 'file':
-			return translate( 'Threat found ({{signature/}})', {
+			return translate( 'Threat Found ({{signature/}})', {
 				components: {
 					signature: (
 						<span className="activity-log__threat-alert-signature">{ threat.signature }</span>
@@ -101,10 +101,10 @@ const headerSubtitle = ( translate, threat ) => {
 			} );
 
 		case 'plugin':
-			return translate( 'Vulnerability found in Plugin' );
+			return translate( 'Vulnerability Found in Plugin' );
 
 		case 'theme':
-			return translate( 'Vulnerability found in Theme' );
+			return translate( 'Vulnerability Found in Theme' );
 
 		case 'none':
 		default:
@@ -135,15 +135,18 @@ export class ThreatAlert extends Component {
 									dateFormat="ll"
 								/>
 							</div>
-							<span>{ headerSubtitle( translate, threat ) }</span>
+							<span className="activity-log__threat-alert-type">
+								{ headerSubtitle( translate, threat ) }
+							</span>
 						</div>
 					</Fragment>
 				}
 			>
+				<p className="activity-log__threat-alert-description">{ threat.description }</p>
 				{ threat.filename ? (
 					<Fragment>
 						<p>
-							{ translate( '{{threatSignature/}} in:', {
+							{ translate( 'Threat {{threatSignature/}} found in file:', {
 								comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
 								components: {
 									threatSignature: (
@@ -159,7 +162,6 @@ export class ThreatAlert extends Component {
 				) : (
 					<p className="activity-log__threat-alert-signature">{ threat.signature }</p>
 				) }
-				<p className="activity-log__threat-alert-description">{ threat.description }</p>
 				{ threat.context && <MarkedLines context={ threat.context } /> }
 				{ threat.diff && <DiffViewer diff={ threat.diff } /> }
 			</FoldableCard>
