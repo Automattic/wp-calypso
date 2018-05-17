@@ -49,25 +49,3 @@ export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
 export function getSiteKeyrings( state, siteId ) {
 	return get( state.siteKeyrings.items, [ siteId ], null );
 }
-
-/**
- * Returns true if the save site keyrings requests is successful
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {Boolean}         Whether the requests is successful or not
- */
-export function isSiteKeyringsSaveSuccessful( state, siteId ) {
-	return getSiteKeyringsSaveRequestStatus( state, siteId ) === 'success';
-}
-
-/**
- * Returns the error returned by the last site keyrings save request
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {String}         The request error
- */
-export function getSiteKeyringsSaveError( state, siteId ) {
-	return get( state.siteKeyrings.saveRequests, [ siteId, 'error' ], false );
-}
