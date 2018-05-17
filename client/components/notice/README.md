@@ -32,7 +32,7 @@ Name | Type | Default | Description
 `isCompact` | `bool` | false | Whether this is a compact notice (smaller and not full width).
 `duration` | `integer` | 0 | How long to show the notice for in milliseconds.
 `onDismissClick` | `function` | null | A function to call when the notice is dismissed.
-`children` | `string` | null | You can also pass the content on the notice withini children.
+`children` | `string` | null | You can also pass the content on the notice within children.
 
 
 NoticeAction (JSX)
