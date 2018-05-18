@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { moment } from 'i18n-calypso';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,8 +14,8 @@ import classNames from 'classnames';
 import InputChrono from 'components/input-chrono';
 import DatePicker from 'components/date-picker';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import User from 'lib/user';
 import EventsTooltip from 'components/date-picker/events-tooltip';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 /**
  * Local dependencies
@@ -23,7 +24,6 @@ import Clock from './clock';
 import Header from './header';
 import { convertDateToUserLocation, convertDateToGivenOffset } from './utils';
 
-const user = new User();
 const noop = () => {};
 
 class PostSchedule extends Component {
@@ -38,6 +38,7 @@ class PostSchedule extends Component {
 		onMonthChange: PropTypes.func,
 		onDayMouseEnter: PropTypes.func,
 		onDayMouseLeave: PropTypes.func,
+		userLocale: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -175,7 +176,6 @@ class PostSchedule extends Component {
 	};
 
 	renderInputChrono() {
-		const lang = user.getLanguage();
 		const date = this.getCurrentDate();
 		let chronoText;
 
@@ -196,7 +196,7 @@ class PostSchedule extends Component {
 				<InputChrono
 					value={ chronoText }
 					placeholder={ date.calendar() }
-					lang={ lang ? lang.langSlug : null }
+					lang={ this.props.userLocale }
 					onSet={ this.updateDate }
 				/>
 
@@ -272,4 +272,6 @@ class PostSchedule extends Component {
 	}
 }
 
-export default PostSchedule;
+export default connect( state => ( {
+	userLocale: getCurrentUserLocale( state ),
+} ) )( PostSchedule );
