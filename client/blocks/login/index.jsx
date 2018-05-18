@@ -36,7 +36,8 @@ import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
 import SocialConnectPrompt from './social-connect-prompt';
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackHeader from 'components/jetpack-header';
+import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 
 const user = userFactory();
 
@@ -193,7 +194,7 @@ class Login extends Component {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
 			preHeader = (
 				<div className="login__jetpack-logo">
-					<JetpackLogo full size={ 45 } />
+					<JetpackHeader partnerSlug={ this.props.partnerSlug } />
 				</div>
 			);
 		}
@@ -299,6 +300,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
 		linkingSocialService: getSocialAccountLinkService( state ),
+		partnerSlug: getPartnerSlugFromQuery( state ),
 	} ),
 	{
 		recordTracksEvent,
