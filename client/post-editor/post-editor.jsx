@@ -389,6 +389,7 @@ export class PostEditor extends React.Component {
 						site={ site }
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
+						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
 					/>
 					{ this.props.isSitePreviewable ? (

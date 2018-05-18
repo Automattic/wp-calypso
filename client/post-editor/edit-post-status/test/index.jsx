@@ -21,7 +21,7 @@ jest.mock( 'lib/user', () => () => {} );
 describe( 'EditPostStatus', () => {
 	test( 'should hide sticky option for password protected posts', () => {
 		const wrapper = shallow(
-			<EditPostStatus post={ { type: 'post', status: 'draft', password: 'password' } } />
+			<EditPostStatus post={ { password: 'password' } } isPostPrivate={ false } type={ 'post' } />
 		);
 
 		expect( wrapper.find( '.edit-post-status__sticky' ) ).to.have.lengthOf( 0 );
@@ -29,7 +29,7 @@ describe( 'EditPostStatus', () => {
 
 	test( 'should hide sticky option for private posts', () => {
 		const wrapper = shallow(
-			<EditPostStatus post={ { type: 'post', status: 'private', password: '' } } />
+			<EditPostStatus post={ { password: '' } } isPostPrivate={ true } type={ 'post' } />
 		);
 
 		expect( wrapper.find( '.edit-post-status__sticky' ) ).to.have.lengthOf( 0 );
@@ -38,7 +38,9 @@ describe( 'EditPostStatus', () => {
 	test( 'should show sticky option for published posts', () => {
 		const wrapper = shallow(
 			<EditPostStatus
-				post={ { type: 'post', status: 'published', password: '' } }
+				post={ { password: '' } }
+				type={ 'post' }
+				isPostPrivate={ false }
 				translate={ noop }
 			/>
 		);

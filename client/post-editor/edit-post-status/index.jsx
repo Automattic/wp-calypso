@@ -33,8 +33,12 @@ export class EditPostStatus extends Component {
 		onSave: PropTypes.func,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
+		site: PropTypes.object,
 		translate: PropTypes.func,
+		type: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
+		status: PropTypes.string,
+		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 	};
 
@@ -73,14 +77,11 @@ export class EditPostStatus extends Component {
 	};
 
 	render() {
-		let showSticky, isSticky, isPublished, isPending, isScheduled;
-		const { translate, canUserPublishPosts } = this.props;
+		let isSticky, isPublished, isPending, isScheduled, isPasswordProtected;
+		const { translate, isPostPrivate, canUserPublishPosts } = this.props;
 
 		if ( this.props.post ) {
-			const isPrivate = postUtils.isPrivate( this.props.post );
-			const isPasswordProtected = postUtils.getVisibility( this.props.post ) === 'password';
-
-			showSticky = this.props.post.type === 'post' && ! isPrivate && ! isPasswordProtected;
+			isPasswordProtected = postUtils.getVisibility( this.props.post ) === 'password';
 			isSticky = this.props.post.sticky;
 			isPending = postUtils.isPending( this.props.post );
 			isPublished = postUtils.isPublished( this.props.savedPost );
@@ -91,21 +92,27 @@ export class EditPostStatus extends Component {
 			<div className="edit-post-status">
 				{ this.renderPostScheduling() }
 				{ this.renderPostVisibility() }
-				{ showSticky && (
-					<label className="edit-post-status__sticky">
-						<span className="edit-post-status__label-text">
-							{ translate( 'Stick to the front page' ) }
-							<InfoPopover position="top right" gaEventCategory="Editor" popoverName="Sticky Post">
-								{ translate( 'Sticky posts will appear at the top of the posts listing.' ) }
-							</InfoPopover>
-						</span>
-						<FormToggle
-							checked={ isSticky }
-							onChange={ this.toggleStickyStatus }
-							aria-label={ translate( 'Stick post to the front page' ) }
-						/>
-					</label>
-				) }
+				{ this.props.type === 'post' &&
+					! isPostPrivate &&
+					! isPasswordProtected && (
+						<label className="edit-post-status__sticky">
+							<span className="edit-post-status__label-text">
+								{ translate( 'Stick to the front page' ) }
+								<InfoPopover
+									position="top right"
+									gaEventCategory="Editor"
+									popoverName="Sticky Post"
+								>
+									{ translate( 'Sticky posts will appear at the top of the posts listing.' ) }
+								</InfoPopover>
+							</span>
+							<FormToggle
+								checked={ isSticky }
+								onChange={ this.toggleStickyStatus }
+								aria-label={ translate( 'Stick post to the front page' ) }
+							/>
+						</label>
+					) }
 				{ ! isPublished &&
 					! isScheduled &&
 					canUserPublishPosts && (
@@ -151,13 +158,13 @@ export class EditPostStatus extends Component {
 			return;
 		}
 
-		const { password, status, type } = this.props.post;
+		const { password, type } = this.props.post || {};
 		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
 		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
 		const props = {
+			status: this.props.status,
 			onPrivatePublish: this.props.onPrivatePublish,
 			type,
-			status,
 			password,
 			savedStatus,
 			savedPassword,
