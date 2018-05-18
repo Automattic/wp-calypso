@@ -10,12 +10,15 @@
 .clone-start__image {
 	max-width: 293px;
 	display: block;
-	margin: 16px auto 32px auto;
+	margin: 8px auto 32px auto;
 }
 
 .clone-start__description {
 	color: $gray-text-min;
-	font-size: 1.4rem;
-	font-weight: 100;
-	line-height: 2.5rem;
+	font-size: 14px;
+}
+
+.clone-start__button {
+	margin-top: 24px;
+	width: 100%;
 }

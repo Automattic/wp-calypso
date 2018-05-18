@@ -49,7 +49,7 @@ class CloneStartStep extends Component {
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 512.7 180.4"
 				>
-					<g className="clone-site__origin">
+					<g className="clone-site__destination">
 						<path
 							fill="#FFFFFF"
 							d="M299.4,178.9V15.2c0-6.8,5.5-12.4,12.4-12.4h183.3c6.8,0,12.4,5.5,12.4,12.4V179H299.4V178.9z"
@@ -84,7 +84,7 @@ class CloneStartStep extends Component {
 						<circle fill="#C8D7E2" cx="261.9" cy="94.1" r="5.2" />
 						<circle fill="#C8D7E2" cx="284.5" cy="94.1" r="5.2" />
 					</g>
-					<g className="clone-site__destination">
+					<g className="clone-site__origin">
 						<path
 							fill="#FFFFFF"
 							d="M3.4,178.9V15.2c0-6.8,5.5-12.4,12.4-12.4h183.3c6.8,0,12.4,5.5,12.4,12.4V179H3.4V178.9z"
