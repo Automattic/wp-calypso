@@ -114,6 +114,7 @@ class ProductImagePicker extends Component {
 							confirm: translate( 'Add' ),
 						} }
 						single
+						imageEditorProps={ { doneButtonText: translate( 'Update Payment Button' ) } }
 					/>
 				</MediaLibrarySelectedData>
 
