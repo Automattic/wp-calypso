@@ -3,10 +3,9 @@
 /**
  * External dependencies
  */
-
 import cookie from 'cookie';
 import debugFactory from 'debug';
-import { assign, clone, cloneDeep, noop } from 'lodash';
+import { assign, clone, cloneDeep, get, includes, noop } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
@@ -503,6 +502,73 @@ function only_retarget() {
 	if ( isOutbrainEnabled ) {
 		window.obApi( 'track', 'PAGE_VIEW' );
 	}
+}
+
+/**
+ * Returns a boolean telling whether we may track the current user.
+ *
+ * @return {Boolean}        Whether we may track the current user
+ */
+export function mayWeTrackCurrentUser() {
+	const cookies = cookie.parse( document.cookie );
+	if ( cookies.sensitive_pixel_option === 'yes' ) {
+		return true;
+	}
+	if ( cookies.sensitive_pixel_option === 'no' ) {
+		return false;
+	}
+	return ! isCurrentUserMaybeInGdprZone();
+}
+
+/**
+ * Returns a boolean telling whether the current user could be in the GDPR zone.
+ *
+ * @return {Boolean}        Whether the current user could be in the GDPR zone
+ */
+export function isCurrentUserMaybeInGdprZone() {
+	const currentUser = user.get();
+	const countryCode = get( currentUser, 'user_ip_country_code' );
+	// if we don't have the country code they could be in the GDPR zone, so, yes
+	if ( ! countryCode ) {
+		return true;
+	}
+	const gdprCountries = [
+		// European Member countries
+		'AT', // Austria
+		'BE', // Belgium
+		'BG', // Bulgaria
+		'CY', // Cyprus
+		'CZ', // Czech Republic
+		'DE', // Germany
+		'DK', // Denmark
+		'EE', // Estonia
+		'ES', // Spain
+		'FI', // Finland
+		'FR', // France
+		'GR', // Greece
+		'HR', // Croatia
+		'HU', // Hungary
+		'IE', // Ireland
+		'IT', // Italy
+		'LT', // Lithuania
+		'LU', // Luxembourg
+		'LV', // Latvia
+		'MT', // Malta
+		'NL', // Netherlands
+		'PL', // Poland
+		'PT', // Portugal
+		'RO', // Romania
+		'SE', // Sweden
+		'SI', // Slovenia
+		'SK', // Slovakia
+		'GB', // United Kingdom
+		// Single Market Countries that GDPR applies to
+		'CH', // Switzerland
+		'IS', // Iceland
+		'LI', // Liechtenstein
+		'NO', // Norway
+	];
+	return includes( gdprCountries, countryCode );
 }
 
 /**
