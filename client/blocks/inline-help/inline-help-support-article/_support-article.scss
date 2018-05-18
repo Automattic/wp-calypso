@@ -1,29 +1,7 @@
 @import 'content';
 
-.inline-help-support-article {
-	margin: 0 auto;
-	padding: 0 20px;
-
-	@include breakpoint( ">1280px" ) {
-		width: 720px;
-	}
-
-	@include breakpoint( "1040px-1280px" ) {
-		width: 720px;
-	}
-
-	@include breakpoint( "660px-1040px" ) {
-		width: auto;
-		margin: 0;
-	}
-
-	@include breakpoint( "<660px" ) {
-		width: auto;
-	}
-}
-
 .inline-help-support-article__story {
-	max-width: 720px;
+	padding: 0 20px;
 
 	.inline-help-support-article__header-title {
 		margin: 12px 0 0;
@@ -35,7 +13,7 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		// margin-top: -35px;
+		width: auto;
 	}
 }
 
