@@ -8,7 +8,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,10 +37,8 @@ describe( 'JetpackHeader', () => {
 	} );
 
 	test( 'should render a co-branded logo when passed a known partner slug', () => {
-		const wrapper = shallow( <JetpackHeader partnerSlug="dreamhost" translate={ noop } /> );
+		const wrapper = shallow( <JetpackHeader partnerSlug="dreamhost" /> );
+		expect( wrapper.find( 'Localized(JetpackPartnerLogoGroup)' ) ).toHaveLength( 1 );
 		expect( wrapper.find( 'JetpackDreamhostLogo' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'JetpackLogo' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'JetpackLogo' ).props().size ).toEqual( 150 );
-		expect( wrapper.find( 't' ).props().icon ).toEqual( 'plus-small' );
 	} );
 } );

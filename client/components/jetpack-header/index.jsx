@@ -5,8 +5,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,6 +15,7 @@ import JetpackInmotionLogo from './inmotion';
 import JetpackLogo from 'components/jetpack-logo';
 import JetpackMileswebLogo from './milesweb';
 import JetpackPressableLogo from './pressable';
+import JetpackPartnerLogoGroup from './partner-logo-group';
 
 export class JetpackHeader extends PureComponent {
 	static displayName = 'JetpackHeader';
@@ -25,67 +24,36 @@ export class JetpackHeader extends PureComponent {
 		partnerSlug: PropTypes.string,
 	};
 
-	renderPartnerLogoGroup( partnerName, partnerLogo, width, viewBox ) {
-		const { translate } = this.props;
-
-		return (
-			<svg width={ width } viewBox={ viewBox }>
-				<title>
-					{ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
-						args: {
-							partnerName,
-						},
-					} ) }
-				</title>
-				<g fill="none" fillRule="evenodd">
-					<g id="SVGs">
-						<g id="Jetpack-+-Partner">
-							<g transform="translate(219 35.082353)">
-								<Gridicon icon="plus-small" size={ 72 } />
-							</g>
-							{ partnerLogo }
-							<JetpackLogo size={ 150 } />
-						</g>
-					</g>
-				</g>
-			</svg>
-		);
-	}
-
 	renderLogo() {
 		const { partnerSlug } = this.props;
 
 		switch ( partnerSlug ) {
 			case 'dreamhost':
-				return this.renderPartnerLogoGroup(
-					'DreamHost',
-					<JetpackDreamhostLogo />,
-					'662.5',
-					'0 0 1270 170'
+				return (
+					<JetpackPartnerLogoGroup width="662.5" viewBox="0 0 1270 170" partnerName="DreamHost">
+						<JetpackDreamhostLogo />
+					</JetpackPartnerLogoGroup>
 				);
 
 			case 'pressable':
-				return this.renderPartnerLogoGroup(
-					'Pressable',
-					<JetpackPressableLogo />,
-					'662.5',
-					'0 0 1150 170'
+				return (
+					<JetpackPartnerLogoGroup width="662.5" viewBox="0 0 1150 170" partnerName="Pressable">
+						<JetpackPressableLogo />
+					</JetpackPartnerLogoGroup>
 				);
 
 			case 'bluehost':
-				return this.renderPartnerLogoGroup(
-					'Bluehost',
-					<JetpackBluehostLogo />,
-					'662.5',
-					'0 0 1128 170'
+				return (
+					<JetpackPartnerLogoGroup width="662.5" viewBox="0 0 1128 170" partnerName="Bluehost">
+						<JetpackBluehostLogo />
+					</JetpackPartnerLogoGroup>
 				);
 
 			case 'inmotion':
-				return this.renderPartnerLogoGroup(
-					'InMotion',
-					<JetpackInmotionLogo />,
-					'550',
-					'0 0 936 151'
+				return (
+					<JetpackPartnerLogoGroup width="550" viewBox="0 0 936 151" partnerName="InMotion">
+						<JetpackInmotionLogo />
+					</JetpackPartnerLogoGroup>
 				);
 
 			case 'milesweb':
@@ -102,4 +70,4 @@ export class JetpackHeader extends PureComponent {
 	}
 }
 
-export default localize( JetpackHeader );
+export default JetpackHeader;
