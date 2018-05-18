@@ -49,7 +49,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import _user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
 import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
-import AccountSettingsClose from './close';
+import AccountSettingsCloseLink from './close-link';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -789,7 +789,7 @@ const Account = createReactClass( {
 					</form>
 				</Card>
 
-				{ config.isEnabled( 'me/account-close' ) && <AccountSettingsClose /> }
+				{ config.isEnabled( 'me/account-close' ) && <AccountSettingsCloseLink /> }
 			</Main>
 		);
 	},
