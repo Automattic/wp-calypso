@@ -22,7 +22,8 @@ import QueryConnectedApplications from 'components/data/query-connected-applicat
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import { getConnectedApplications, getRequest } from 'state/selectors';
+import getConnectedApplications from 'state/selectors/get-connected-applications';
+import getRequest from 'state/selectors/get-request';
 import { requestConnectedApplications } from 'state/connected-applications/actions';
 
 class ConnectedApplications extends PureComponent {
