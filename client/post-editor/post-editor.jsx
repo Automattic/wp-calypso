@@ -40,6 +40,7 @@ import {
 	getEditorPostId,
 	getEditorPath,
 	isConfirmationSidebarEnabled,
+	isEditorAutosaving,
 	isEditorSaveBlocked,
 	getEditorPostPreviewUrl,
 } from 'state/ui/editor/selectors';
@@ -123,7 +124,6 @@ export class PostEditor extends React.Component {
 			isDirty: PostEditStore.isDirty(),
 			hasContent: PostEditStore.hasContent(),
 			post: PostEditStore.get(),
-			isAutosaving: PostEditStore.isAutosaving(),
 			isLoading: PostEditStore.isLoading(),
 		};
 	}
@@ -398,7 +398,7 @@ export class PostEditor extends React.Component {
 							showPreview={ this.state.showPreview }
 							onClose={ this.onPreviewClose }
 							onEdit={ this.onPreviewEdit }
-							isSaving={ this.state.isSaving || this.state.isAutosaving }
+							isSaving={ this.state.isSaving || this.props.isAutosaving }
 							isLoading={ this.state.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
 							previewUrl={ this.props.previewUrl }
@@ -1232,6 +1232,7 @@ const enhance = flow(
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 				isSaveBlocked: isEditorSaveBlocked( state ),
 				previewUrl: getEditorPostPreviewUrl( state ),
+				isAutosaving: isEditorAutosaving( state ),
 			};
 		},
 		{

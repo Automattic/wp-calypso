@@ -14,12 +14,12 @@ import wpcom from 'lib/wp';
 import PostEditStore from './post-edit-store';
 import PreferencesStore from 'lib/preferences/store';
 import * as utils from './utils';
-import versionCompare from 'lib/version-compare';
 import Dispatcher from 'dispatcher';
 import { recordSaveEvent } from './stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { isEditorSaveBlocked } from 'state/ui/editor/selectors';
+import { editorAutosave } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { receivePost, savePostSuccess } from 'state/posts/actions';
 
@@ -118,9 +118,8 @@ PostActions = {
 	},
 
 	autosave: function( site, callback ) {
-		let post = PostEditStore.get(),
-			savedPost = PostEditStore.getSavedPost(),
-			siteHandle = wpcom.undocumented().site( post.site_ID );
+		const post = PostEditStore.get();
+		const savedPost = PostEditStore.getSavedPost();
 
 		callback = callback || function() {};
 
@@ -132,37 +131,9 @@ PostActions = {
 
 		// TODO: incorporate post locking
 		if ( utils.isPublished( savedPost ) || utils.isPublished( post ) ) {
-			if (
-				! post.ID ||
-				! site ||
-				( site.jetpack && versionCompare( site.options.jetpack_version, '3.7.0-dev', '<' ) )
-			) {
-				return callback( new Error( 'NO_AUTOSAVE' ) );
-			}
-
-			Dispatcher.handleViewAction( {
-				type: 'POST_AUTOSAVE',
-				post: post,
-			} );
-
-			siteHandle.postAutosave(
-				post.ID,
-				{
-					content: post.content,
-					title: post.title,
-					excerpt: post.excerpt,
-				},
-				function( error, data ) {
-					Dispatcher.handleServerAction( {
-						type: 'RECEIVE_POST_AUTOSAVE',
-						error: error,
-						autosave: data,
-						site,
-					} );
-
-					callback( error, data );
-				}
-			);
+			reduxDispatch( editorAutosave( post ) )
+				.then( autosave => callback( null, autosave ) )
+				.catch( error => callback( error ) );
 		} else {
 			PostActions.saveEdited( site, null, null, callback, {
 				recordSaveEvent: false,
