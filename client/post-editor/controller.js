@@ -247,8 +247,9 @@ export default {
 				startEditingPostCopy( site, postToCopyId, context );
 			} else if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+				const contextPath = context.path;
 				actions.startEditingExisting( site, postID ).then( editedPost => {
-					if ( context.path !== page.current ) {
+					if ( contextPath !== page.current ) {
 						// browser navigated elsewhere while the load was in progress
 						return;
 					}
