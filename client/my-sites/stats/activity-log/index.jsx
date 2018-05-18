@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes, isEmpty } from 'lodash';
+import { find, get, includes, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,6 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Pagination from 'components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import RewindAlerts from './rewind-alerts';
-import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
@@ -37,12 +36,11 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import UnavailabilityNotice from './unavailability-notice';
-import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
+import { adjustMoment, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
-	activityLogRequest,
 	getRewindRestoreProgress,
 	rewindRequestDismiss,
 	rewindRestore,
@@ -51,18 +49,15 @@ import {
 	updateFilter,
 } from 'state/activity-log/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
-import getActivityLog from 'state/selectors/get-activity-log';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import getActivityLogs from 'state/selectors/get-activity-logs';
 import getBackupProgress from 'state/selectors/get-backup-progress';
-import getOldestItemTs from 'state/selectors/get-oldest-item-ts';
-import getRequest from 'state/selectors/get-request';
 import getRequestedBackup from 'state/selectors/get-requested-backup';
 import getRequestedRewind from 'state/selectors/get-requested-rewind';
 import getRestoreProgress from 'state/selectors/get-restore-progress';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import { requestActivityLogs } from 'state/data-getters';
 
 const PAGE_SIZE = 20;
 
@@ -254,7 +249,6 @@ class ActivityLog extends Component {
 		const requestedRestoreId = this.props.requestedRestoreId || rewindId;
 		return (
 			<div key={ `end-banner-${ restoreId || downloadId }` }>
-				<QueryActivityLog siteId={ siteId } />
 				{ errorCode || backupError ? (
 					<ErrorBanner
 						key={ `error-${ restoreId || downloadId }` }
@@ -304,10 +298,9 @@ class ActivityLog extends Component {
 		const {
 			enableRewind,
 			filter: { page: requestedPage },
-			logRequestQuery,
 			logs,
+			logLoadingState,
 			moment,
-			requestData,
 			rewindState,
 			siteId,
 			slug,
@@ -328,24 +321,25 @@ class ActivityLog extends Component {
 
 		// Content shown when there are no logs.
 		// The network request either finished with no events or is still ongoing.
-		const noLogsContent = requestData.logs.hasLoaded ? (
-			<EmptyContent title={ translate( 'No events recorded yet.' ) } />
-		) : (
-			<section className="activity-log__wrapper">
-				{ [ 1, 2, 3 ].map( i => (
-					<FoldableCard
-						key={ i }
-						className="activity-log-day__placeholder"
-						header={
-							<div>
-								<div className="activity-log-day__day" />
-								<div className="activity-log-day__events" />
-							</div>
-						}
-					/>
-				) ) }
-			</section>
-		);
+		const noLogsContent =
+			logLoadingState === 'success' ? (
+				<EmptyContent title={ translate( 'No matching events found.' ) } />
+			) : (
+				<section className="activity-log__wrapper">
+					{ [ 1, 2, 3 ].map( i => (
+						<FoldableCard
+							key={ i }
+							className="activity-log-day__placeholder"
+							header={
+								<div>
+									<div className="activity-log-day__day" />
+									<div className="activity-log-day__events" />
+								</div>
+							}
+						/>
+					) ) }
+				</section>
+			);
 
 		const timePeriod = ( () => {
 			const today = this.applySiteOffset( moment.utc( Date.now() ) );
@@ -371,7 +365,6 @@ class ActivityLog extends Component {
 
 		return (
 			<div>
-				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				{ siteId &&
 					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
@@ -418,7 +411,7 @@ class ActivityLog extends Component {
 									{ timePeriod( log ) }
 									<ActivityLogItem
 										key={ log.activityId }
-										activityId={ log.activityId }
+										activity={ log }
 										disableRestore={ disableRestore }
 										disableBackup={ disableBackup }
 										hideRestore={ 'active' !== rewindState.state }
@@ -480,16 +473,18 @@ class ActivityLog extends Component {
 	}
 }
 
+const emptyList = [];
+
 export default connect(
-	( state, { startDate } ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const gmtOffset = getSiteGmtOffset( state, siteId );
 		const timezone = getSiteTimezoneValue( state, siteId );
 		const requestedRestoreId = getRequestedRewind( state, siteId );
 		const requestedBackupId = getRequestedBackup( state, siteId );
-		const logRequestQuery = getActivityLogQuery( { gmtOffset, startDate, timezone } );
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
+		const logs = siteId && requestActivityLogs( siteId, {} );
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
@@ -498,25 +493,19 @@ export default connect(
 				'active' === rewindState.state &&
 				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
 			filter: getActivityLogFilter( state, siteId ),
-			logRequestQuery,
-			logs: getActivityLogs(
-				state,
-				siteId,
-				getActivityLogQuery( { gmtOffset, startDate, timezone } )
-			),
-			requestedRestore: getActivityLog( state, siteId, requestedRestoreId ),
+			logs: ( siteId && logs.data ) || emptyList,
+			logLoadingState: logs.state,
+			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
 			requestedRestoreId,
-			requestedBackup: getActivityLog( state, siteId, requestedBackupId ),
+			requestedBackup: find( logs, { activityId: requestedBackupId } ),
 			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
-			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
 			rewindState,
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
-			oldestItemTs: getOldestItemTs( state, siteId ),
 		};
 	},
 	{

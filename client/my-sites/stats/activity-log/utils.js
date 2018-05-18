@@ -58,18 +58,3 @@ export function getStartMoment( { gmtOffset, startDate, timezone } ) {
 
 	return momentLib.utc( startDate );
 }
-
-/**
- * Accepts an object which contains a string date representation and optionally timezone or offset.
- * Returns an object which is Activity Log query based on the inputs.
- *
- * @param  {string}  _.startDate Date string representing start of the month (YYYY-MM-DD).
- * @param  {?string} _.timezone  Timezone representation to apply.
- * @param  {?string} _.gmtOffset Offset to apply if timezone isn't supplied.
- * @return {Object}              Start of period moment, adjusted according to timezone or gmtOffset if provided.
- */
-export function getActivityLogQuery() {
-	return {
-		number: 1000,
-	};
-}

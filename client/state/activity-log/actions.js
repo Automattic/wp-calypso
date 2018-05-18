@@ -5,8 +5,6 @@
 import {
 	ACTIVITY_LOG_FILTER_SET,
 	ACTIVITY_LOG_FILTER_UPDATE,
-	ACTIVITY_LOG_REQUEST,
-	ACTIVITY_LOG_UPDATE,
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
@@ -55,54 +53,6 @@ export function rewindActivateFailure( siteId ) {
 	return {
 		type: REWIND_ACTIVATE_FAILURE,
 		siteId,
-	};
-}
-
-/**
- * Activity endpoint query parameters.
- *
- * The API is subject to change, this documentation has been provided as a basis. For up to
- * date information, it's best to check the current state of the API.
- *
- * @typedef {Object} ActivityParams
- *
- * @property {number} dateStart Filter activity after this date (Unix millisecond timestamp).
- * @property {number} dateEnd   Filter activity before this date (Unix millisecond timestamp).
- * @property {number} number    Maximum number of results to return.
- */
-
-/**
- * Requests activity from the API
- *
- * You may optionally pass an object of parameters for the query to this action.
- * @see ActivityParams
- *
- * @param  {number}         siteId site ID
- * @param  {ActivityParams} params Optional. Parameters to pass to the endpoint
- * @return {Object}                The request action
- */
-export function activityLogRequest( siteId, params ) {
-	return {
-		type: ACTIVITY_LOG_REQUEST,
-		params,
-		siteId,
-		meta: {
-			dataLayer: {
-				trackRequest: true,
-			},
-		},
-	};
-}
-
-export function activityLogUpdate( siteId, data, found, oldestItemTs, query, { doMerge } ) {
-	return {
-		type: ACTIVITY_LOG_UPDATE,
-		siteId,
-		data,
-		found,
-		oldestItemTs,
-		query,
-		doMerge,
 	};
 }
 

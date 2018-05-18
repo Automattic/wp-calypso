@@ -6,7 +6,6 @@
 
 import { mergeHandlers } from 'state/action-watchers/utils';
 import config from 'config';
-import activity from './activity';
 import automatedTransfer from './automated-transfer';
 import blogStickers from './blog-stickers';
 import commentCounts from './comment-counts';
@@ -24,7 +23,6 @@ import users from './users';
 import statsGoogleMyBusiness from './stats/google-my-business';
 
 export default mergeHandlers(
-	activity,
 	automatedTransfer,
 	blogStickers,
 	commentCounts,

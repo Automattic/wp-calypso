@@ -5,6 +5,31 @@
 import { http as rawHttp } from 'state/http/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
+import { filterStateToApiQuery } from 'state/activity-log/utils';
+import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
+
+export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
+	const id = `activity-log-${ siteId }`;
+
+	return requestHttpData(
+		id,
+		http(
+			{
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+				path: `/sites/${ siteId }/activity`,
+				query: filterStateToApiQuery( filter ),
+			},
+			{}
+		),
+		{
+			freshness,
+			fromApi: () => data => {
+				return [ [ id, fromActivityLogApi( data ) ] ];
+			},
+		}
+	);
+};
 
 export const requestGeoLocation = () =>
 	requestHttpData(
