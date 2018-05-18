@@ -19,6 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import EditorFeaturedImagePreviewContainer from 'post-editor/editor-featured-image/preview-container';
 import RemoveButton from 'components/remove-button';
+import { requestMediaItem } from 'state/media/actions';
 
 class ProductImagePicker extends Component {
 	static propTypes = {
@@ -46,6 +47,11 @@ class ProductImagePicker extends Component {
 			}
 
 			this.props.input.onChange( value.items[ 0 ].ID );
+
+			// In case of image editing, request this media item again in order to
+			// update the image in product list and existing payment buttons in editor.
+			// This is required to fetch the new URL of edited image.
+			this.props.requestMediaItem( this.props.siteId, value.items[ 0 ].ID );
 		} );
 	};
 
@@ -127,6 +133,6 @@ class ProductImagePicker extends Component {
 	}
 }
 
-export default connect( state => ( { siteId: getSelectedSiteId( state ) } ) )(
+export default connect( state => ( { siteId: getSelectedSiteId( state ) } ), { requestMediaItem } )(
 	localize( ProductImagePicker )
 );
