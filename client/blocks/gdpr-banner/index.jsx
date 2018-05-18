@@ -4,7 +4,7 @@
  */
 import classNames from 'classnames';
 import cookie from 'cookie';
-import { identity, includes } from 'lodash';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -19,44 +19,8 @@ import { getSectionName } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { decodeEntities, preventWidows } from 'lib/formatting';
-import { requestGeoLocation } from 'state/data-getters';
+import { isCurrentUserMaybeInGdprZone } from 'lib/analytics/ad-tracking';
 
-const gdprCountries = [
-	// European Member countries
-	'AT', // Austria
-	'BE', // Belgium
-	'BG', // Bulgaria
-	'CY', // Cyprus
-	'CZ', // Czech Republic
-	'DE', // Germany
-	'DK', // Denmark
-	'EE', // Estonia
-	'ES', // Spain
-	'FI', // Finland
-	'FR', // France
-	'GR', // Greece
-	'HR', // Croatia
-	'HU', // Hungary
-	'IE', // Ireland
-	'IT', // Italy
-	'LT', // Lithuania
-	'LU', // Luxembourg
-	'LV', // Latvia
-	'MT', // Malta
-	'NL', // Netherlands
-	'PL', // Poland
-	'PT', // Portugal
-	'RO', // Romania
-	'SE', // Sweden
-	'SI', // Slovenia
-	'SK', // Slovakia
-	'GB', // United Kingdom
-	// Single Market Countries that GDPR applies to
-	'CH', // Switzerland
-	'IS', // Iceland
-	'LI', // Liechtenstein
-	'NO', // Norway
-];
 const SIX_MONTHS = 6 * 30 * 24 * 60 * 60;
 
 class GdprBanner extends Component {
@@ -92,10 +56,10 @@ class GdprBanner extends Component {
 		if ( cookies.sensitive_pixel_option === 'yes' || cookies.sensitive_pixel_option === 'no' ) {
 			return false;
 		}
-		if ( ! includes( gdprCountries, this.props.countryCode ) ) {
-			return false;
+		if ( isCurrentUserMaybeInGdprZone() ) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	render() {
@@ -140,7 +104,6 @@ class GdprBanner extends Component {
 
 const mapStateToProps = state => {
 	return {
-		countryCode: requestGeoLocation().data,
 		currentSection: getSectionName( state ),
 	};
 };
