@@ -248,6 +248,11 @@ export default {
 			} else if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingExisting( site, postID ).then( editedPost => {
+					if ( context.path !== page.current ) {
+						// browser navigated elsewhere while the load was in progress
+						return;
+					}
+
 					if ( editedPost && editedPost.type && editedPost.type !== postType ) {
 						// incorrect post type in URL
 						page.redirect( getEditURL( editedPost, site ) );
