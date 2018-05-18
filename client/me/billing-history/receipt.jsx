@@ -19,7 +19,8 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransaction from 'components/data/query-billing-transaction';
 import { groupDomainProducts } from './utils';
-import { getPastBillingTransaction, isPastBillingTransactionError } from 'state/selectors';
+import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
+import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
 import {
 	clearBillingTransactionError,
 	requestBillingTransaction,

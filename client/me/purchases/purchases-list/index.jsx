@@ -21,7 +21,7 @@ import PurchasesSite from '../purchases-site';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getPurchasesBySite } from 'lib/purchases';
-import { getSites } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,

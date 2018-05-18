@@ -23,7 +23,8 @@ import config from 'config';
 import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
-import { getThemeFilters, getThemeFilterToTermTable } from 'state/selectors';
+import getThemeFilters from 'state/selectors/get-theme-filters';
+import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
 
 //We want those taxonomies if they are used to be presented in this order
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];

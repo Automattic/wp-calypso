@@ -11,7 +11,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { fetchOrderTransaction } from 'state/order-transactions/actions';
-import { getOrderTransactionError, isFetchingOrderTransaction } from 'state/selectors';
+import getOrderTransactionError from 'state/selectors/get-order-transaction-error';
+import isFetchingOrderTransaction from 'state/selectors/is-fetching-order-transaction';
 
 class QueryOrderTransaction extends React.Component {
 	static propTypes = {

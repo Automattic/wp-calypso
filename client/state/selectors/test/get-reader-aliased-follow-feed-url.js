@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
+import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
 
 const site1UrlKey = 'discover.wordpress.com';
 const site1Aliases = [ 'site1 alias!', 'site1 second alias!' ];

@@ -8,7 +8,7 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getBillingTransactionsByType } from 'state/selectors';
+import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
 
 describe( 'getBillingTransactionsByType()', () => {
 	const state = {

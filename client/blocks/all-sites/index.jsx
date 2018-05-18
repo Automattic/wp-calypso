@@ -16,7 +16,7 @@ import classNames from 'classnames';
  */
 import AllSitesIcon from 'my-sites/all-sites-icon';
 import Count from 'components/count';
-import { getSites } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 
 class AllSites extends Component {

@@ -7,7 +7,7 @@ import freeze from 'deep-freeze';
 /**
  * Internal Dependencies
  */
-import { getReaderStreamOffsetItem as getOffsetItem } from 'state/selectors';
+import getOffsetItem from 'state/selectors/get-reader-stream-offset-item';
 
 jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
 jest.mock( 'reader/stream/utils' );

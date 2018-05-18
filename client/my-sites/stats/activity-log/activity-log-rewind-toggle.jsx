@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import { activateRewind } from 'state/activity-log/actions';
-import { isRewindActivating } from 'state/selectors';
+import isRewindActivating from 'state/selectors/is-rewind-activating';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 class ActivityLogRewindToggle extends Component {

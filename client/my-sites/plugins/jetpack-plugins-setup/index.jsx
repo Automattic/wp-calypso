@@ -38,7 +38,7 @@ import { getSiteFileModDisableReason } from 'lib/site/utils';
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getJetpackSiteRemoteManagementUrl, isRequestingSites } from 'state/sites/selectors';
-import { hasInitializedSites } from 'state/selectors';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';

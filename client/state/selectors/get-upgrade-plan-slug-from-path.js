@@ -10,7 +10,7 @@ import { find } from 'lodash';
  */
 import { PLANS_LIST } from 'lib/plans/constants';
 import { getPlanPath } from 'lib/plans';
-import { canUpgradeToPlan } from 'state/selectors';
+import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 
 /**
  * Given a route (path) fragment used to indicate a plan, return the corresponding plan slug.

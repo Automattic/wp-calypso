@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingJetpackJumpstartStatus } from 'state/selectors';
+import isRequestingJetpackJumpstartStatus from 'state/selectors/is-requesting-jetpack-jumpstart-status';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-jumpstart';
 
 describe( 'isRequestingJetpackJumpstartStatus()', () => {

@@ -30,7 +30,7 @@ import Notice from 'components/notice';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { deleteSite } from 'state/sites/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import FormLabel from 'components/forms/form-label';
 
 class DeleteSite extends Component {

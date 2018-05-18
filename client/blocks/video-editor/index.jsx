@@ -19,7 +19,9 @@ import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorControls from './video-editor-controls';
 import { updatePoster } from 'state/ui/editor/video-editor/actions';
-import { getPosterUploadProgress, getPosterUrl, shouldShowVideoEditorError } from 'state/selectors';
+import getPosterUploadProgress from 'state/selectors/get-poster-upload-progress';
+import getPosterUrl from 'state/selectors/get-poster-url';
+import shouldShowVideoEditorError from 'state/selectors/should-show-video-editor-error';
 
 class VideoEditor extends Component {
 	static propTypes = {

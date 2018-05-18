@@ -3,7 +3,9 @@
 /**
  * Internal dependencies
  */
-import { getReaderStream, getReaderFollows } from 'state/selectors';
+import getReaderFollows from 'state/selectors/get-reader-follows';
+
+import getReaderStream from 'state/selectors/get-reader-stream';
 import treeSelect from 'lib/tree-select';
 import { injectRecommendations, getDistanceBetweenRecs, combineCards } from 'reader/stream/utils';
 

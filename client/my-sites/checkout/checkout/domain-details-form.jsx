@@ -31,7 +31,7 @@ import {
 	addGoogleAppsRegistrationData,
 } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
-import { getContactDetailsCache } from 'state/selectors';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 

@@ -5,7 +5,7 @@
  */
 
 import safeImageUrl from 'lib/safe-image-url';
-import { getMediaItem } from 'state/selectors';
+import getMediaItem from 'state/selectors/get-media-item';
 
 /**
  * Returns the URL for a media item, or null if not known

@@ -13,7 +13,7 @@ import analytics from 'lib/analytics';
 import { sectionify } from 'lib/route';
 import titlecase from 'to-title-case';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 export default {
 	siteSettings( context, next ) {

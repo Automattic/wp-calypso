@@ -19,7 +19,8 @@ import i18n from 'components/tinymce/i18n';
 import { wpautop } from 'lib/formatting';
 // TinyMCE plugins & dependencies
 import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
-import { isRtl as isRtlSelector, getCurrentLocaleSlug } from 'state/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 class CompactTinyMCE extends Component {
 	static contextTypes = {

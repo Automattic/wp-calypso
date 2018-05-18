@@ -24,11 +24,9 @@ import {
 	requestSiteAddressAvailability,
 	clearValidationError,
 } from 'state/site-rename/actions';
-import {
-	isRequestingSiteRename,
-	getSiteAddressAvailabilityPending,
-	getSiteAddressValidationError,
-} from 'state/selectors';
+import getSiteAddressAvailabilityPending from 'state/selectors/get-site-address-availability-pending';
+import getSiteAddressValidationError from 'state/selectors/get-site-address-validation-error';
+import isRequestingSiteRename from 'state/selectors/is-requesting-site-rename';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;

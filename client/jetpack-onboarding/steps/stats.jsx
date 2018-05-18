@@ -16,7 +16,7 @@ import ConnectSuccess from '../connect-success';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
 import QuerySites from 'components/data/query-sites';
-import { getJetpackOnboardingPendingSteps } from 'state/selectors';
+import getJetpackOnboardingPendingSteps from 'state/selectors/get-jetpack-onboarding-pending-steps';
 import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 

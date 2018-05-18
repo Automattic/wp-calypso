@@ -33,7 +33,7 @@ import {
 	isThemeAvailableOnJetpackSite,
 } from 'state/themes/selectors';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )

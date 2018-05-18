@@ -11,7 +11,7 @@ import { get, size, takeRight, delay } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getActiveReplyCommentId } from 'state/selectors';
+import getActiveReplyCommentId from 'state/selectors/get-active-reply-comment-id';
 import {
 	getPostCommentsTree,
 	commentsFetchingStatus,

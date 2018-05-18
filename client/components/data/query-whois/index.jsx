@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingWhois } from 'state/selectors';
+import isRequestingWhois from 'state/selectors/is-requesting-whois';
 import { requestWhois } from 'state/domains/management/actions';
 
 class QueryWhois extends Component {

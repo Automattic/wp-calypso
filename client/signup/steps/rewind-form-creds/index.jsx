@@ -15,7 +15,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import SignupActions from 'lib/signup/actions';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 import SetupFooter from 'my-sites/site-settings/jetpack-credentials/credentials-setup-flow/setup-footer';
 
 class RewindFormCreds extends Component {

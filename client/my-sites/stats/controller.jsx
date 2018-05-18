@@ -18,7 +18,7 @@ import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getActivityLogFilter } from 'state/selectors';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import { isWpComFreePlan } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import FollowList from 'lib/follow-list';

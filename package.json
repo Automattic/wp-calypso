@@ -36,7 +36,6 @@
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-export-extensions": "6.22.0",
-    "babel-plugin-transform-imports": "1.4.1",
     "blob": "0.0.4",
     "body-parser": "1.17.2",
     "bounding-client-rect": "1.0.5",

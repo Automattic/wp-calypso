@@ -10,7 +10,7 @@ import { filter } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
 
 /**

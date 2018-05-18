@@ -25,7 +25,7 @@ import Actions from 'my-sites/customize/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { themeActivated } from 'state/themes/actions';
 import { getCustomizerFocus } from './panels';
-import { getMenusUrl } from 'state/selectors';
+import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import wpcom from 'lib/wp';

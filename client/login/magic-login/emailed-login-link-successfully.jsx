@@ -17,7 +17,7 @@ import { login } from 'lib/paths';
 import Card from 'components/card';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { getCurrentLocaleSlug } from 'state/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
 import Gridicon from 'gridicons';
 

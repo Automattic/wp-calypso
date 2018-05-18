@@ -28,7 +28,8 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
 import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
+import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
+import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class EditorSharingAccordion extends React.Component {

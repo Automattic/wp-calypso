@@ -87,7 +87,8 @@ import i18n from './i18n';
 import { isMobile } from 'lib/viewport';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
-import { isRtl as isRtlSelector, getCurrentLocaleSlug } from 'state/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
  * Internal Variables

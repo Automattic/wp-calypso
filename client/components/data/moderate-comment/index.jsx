@@ -19,7 +19,7 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { changeCommentStatus } from 'state/comments/actions';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 import { removeNotice, successNotice } from 'state/notices/actions';
 
 class ModerateComment extends Component {

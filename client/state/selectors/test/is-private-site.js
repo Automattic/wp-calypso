@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isPrivateSite } from 'state/selectors';
+import isPrivateSite from 'state/selectors/is-private-site';
 
 describe( 'isPrivateSite()', () => {
 	test( 'should return null if neither the site nor settings are known', () => {

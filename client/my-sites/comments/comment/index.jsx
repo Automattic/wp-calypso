@@ -24,7 +24,7 @@ import QueryComment from 'components/data/query-comment';
 import scrollTo from 'lib/scroll-to';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class Comment extends Component {

@@ -16,7 +16,7 @@ import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
 import { formatValue } from 'woocommerce/app/store-stats/utils';
 import { referrerChartTabs as tabs } from 'woocommerce/app/store-stats/constants';
-import { getStoreReferrersByReferrer } from 'state/selectors';
+import getStoreReferrersByReferrer from 'state/selectors/get-store-referrers-by-referrer';
 
 class Chart extends Component {
 	static propTypes = {

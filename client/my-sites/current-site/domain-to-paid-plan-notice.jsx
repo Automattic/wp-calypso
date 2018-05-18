@@ -14,9 +14,9 @@ import { endsWith, noop } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSite } from 'state/ui/selectors';
-import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
+import isEligibleForDomainToPaidPlanUpsell from 'state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
 import SidebarBanner from 'my-sites/current-site/sidebar-banner';
-import { isDomainOnlySite } from 'state/selectors';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { isJetpackSite } from 'state/sites/selectors';
 
 export class DomainToPaidPlanNotice extends Component {

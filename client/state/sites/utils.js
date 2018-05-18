@@ -14,7 +14,8 @@ import {
 	isSiteConflicting,
 	isSitePreviewable,
 } from 'state/sites/selectors';
-import { canCurrentUser, getSiteOptions } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getSiteOptions from 'state/selectors/get-site-options';
 import { withoutHttp } from 'lib/url';
 
 /**

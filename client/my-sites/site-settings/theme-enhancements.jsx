@@ -24,7 +24,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getCustomizerUrl } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 

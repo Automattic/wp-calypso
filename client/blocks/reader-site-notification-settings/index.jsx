@@ -16,7 +16,7 @@ import ReaderPopover from 'components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import FormToggle from 'components/forms/form-toggle';
-import { getReaderFollows } from 'state/selectors';
+import getReaderFollows from 'state/selectors/get-reader-follows';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,

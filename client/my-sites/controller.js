@@ -32,13 +32,11 @@ import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import {
-	getPrimaryDomainBySiteId,
-	getPrimarySiteId,
-	getSiteId,
-	getSites,
-	isDomainOnlySite,
-} from 'state/selectors';
+import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import getSiteId from 'state/selectors/get-site-id';
+import getSites from 'state/selectors/get-sites';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,

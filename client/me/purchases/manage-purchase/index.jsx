@@ -41,7 +41,7 @@ import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '..
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isSiteAutomatedTransfer as isSiteAtomic } from 'state/selectors';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
 import {

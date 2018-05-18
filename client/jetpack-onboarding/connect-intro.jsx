@@ -14,7 +14,7 @@ import config from 'config';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 import { addQueryArgs } from 'lib/route';
-import { getUnconnectedSiteUrl } from 'state/selectors';
+import getUnconnectedSiteUrl from 'state/selectors/get-unconnected-site-url';
 import { isJetpackSite } from 'state/sites/selectors';
 
 class ConnectIntro extends PureComponent {

@@ -25,7 +25,7 @@ import Main from 'components/main';
 import StatsFirstView from './stats-first-view';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getVisibleSites } from 'state/selectors';
+import getVisibleSites from 'state/selectors/get-visible-sites';
 
 class StatsOverview extends Component {
 	static propTypes = {

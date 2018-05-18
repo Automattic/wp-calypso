@@ -28,7 +28,7 @@ import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { isPrivateSite as isPrivateSiteSelector } from 'state/selectors';
+import isPrivateSiteSelector from 'state/selectors/is-private-site';
 
 class EditorVisibility extends React.Component {
 	static propTypes = {

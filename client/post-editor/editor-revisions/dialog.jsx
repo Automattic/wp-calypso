@@ -11,7 +11,9 @@ import { get, flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostRevisionsSelectedRevision, isPostRevisionsDialogVisible } from 'state/selectors';
+import getPostRevisionsSelectedRevision from 'state/selectors/get-post-revisions-selected-revision';
+
+import isPostRevisionsDialogVisible from 'state/selectors/is-post-revisions-dialog-visible';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';

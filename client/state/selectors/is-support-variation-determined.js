@@ -10,7 +10,8 @@ import {
 	getTicketSupportRequestError,
 } from 'state/help/ticket/selectors';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
-import { isDirectlyReady, isDirectlyFailed } from 'state/selectors';
+import isDirectlyFailed from 'state/selectors/is-directly-failed';
+import isDirectlyReady from 'state/selectors/is-directly-ready';
 import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 
 /**

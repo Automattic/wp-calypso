@@ -14,11 +14,9 @@ import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
-import {
-	isGoogleMyBusinessLocationConnected,
-	getGoogleMyBusinessLocations,
-	isSiteGoogleMyBusinessEligible,
-} from 'state/selectors';
+import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
+import isGoogleMyBusinessLocationConnected from 'state/selectors/is-google-my-business-location-connected';
+import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
 import { requestSiteSettings } from 'state/site-settings/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 

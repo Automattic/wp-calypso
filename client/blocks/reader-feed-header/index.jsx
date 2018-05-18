@@ -21,7 +21,7 @@ import BlogStickers from 'blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
 import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
 import userSettings from 'lib/user-settings';
-import { isFollowing } from 'state/selectors';
+import isFollowing from 'state/selectors/is-following';
 
 class FeedHeader extends Component {
 	static propTypes = {

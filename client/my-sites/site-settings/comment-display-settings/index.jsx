@@ -19,7 +19,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
-import { isJetpackModuleActive } from 'state/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class CommentDisplaySettings extends Component {

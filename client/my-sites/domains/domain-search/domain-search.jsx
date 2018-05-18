@@ -22,7 +22,7 @@ import Main from 'components/main';
 import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
 import cartItems from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
-import { isSiteUpgradeable } from 'state/selectors';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';

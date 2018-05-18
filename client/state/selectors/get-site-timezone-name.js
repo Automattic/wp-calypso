@@ -4,7 +4,9 @@
  * Internal dependencies
  */
 
-import { getSiteGmtOffset, getSiteTimezoneValue } from 'state/selectors';
+import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 
 /**
  * Returns either the site's timezone name (eg 'America/Araguaina').

@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getOrderTransaction } from 'state/selectors';
+import getOrderTransaction from 'state/selectors/get-order-transaction';
 
 describe( 'getOrderTransaction()', () => {
 	test( 'should default to null', () => {

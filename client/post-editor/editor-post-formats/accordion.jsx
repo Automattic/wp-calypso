@@ -19,7 +19,7 @@ import QueryPostFormats from 'components/data/query-post-formats';
 import EditorPostFormats from './';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
-import { getSiteDefaultPostFormat } from 'state/selectors';
+import getSiteDefaultPostFormat from 'state/selectors/get-site-default-post-format';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 

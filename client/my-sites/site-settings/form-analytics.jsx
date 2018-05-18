@@ -36,7 +36,7 @@ import {
 	siteSupportsGoogleAnalyticsBasicEcommerceTracking,
 	siteSupportsGoogleAnalyticsEnhancedEcommerceTracking,
 } from 'state/sites/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { FEATURE_GOOGLE_ANALYTICS, TYPE_BUSINESS, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';

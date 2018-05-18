@@ -22,7 +22,8 @@ import Pagination from 'components/pagination';
 import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { getCommentsPage, getSiteCommentCounts } from 'state/selectors';
+import getCommentsPage from 'state/selectors/get-comments-page';
+import getSiteCommentCounts from 'state/selectors/get-site-comment-counts';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { COMMENTS_PER_PAGE } from '../constants';
 

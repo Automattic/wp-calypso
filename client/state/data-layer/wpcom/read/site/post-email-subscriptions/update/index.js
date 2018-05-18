@@ -13,7 +13,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
-import { getReaderFollowForBlog } from 'state/selectors';
+import getReaderFollowForBlog from 'state/selectors/get-reader-follow-for-blog';
 import { buildBody } from '../utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 

@@ -13,7 +13,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import Button from 'components/button';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 const SetupTos = ( { autoConfigure, canAutoconfigure, reset, translate, goToNextStep } ) => (
 	<CompactCard className="credentials-setup-flow__tos" highlight="info">

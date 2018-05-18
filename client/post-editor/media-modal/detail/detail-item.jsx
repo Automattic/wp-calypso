@@ -29,7 +29,8 @@ import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
-import { isPrivateSite, canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isPrivateSite from 'state/selectors/is-private-site';
 
 export class EditorMediaModalDetailItem extends Component {
 	static propTypes = {

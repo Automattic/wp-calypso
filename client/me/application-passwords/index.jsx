@@ -27,7 +27,8 @@ import {
 	clearNewApplicationPassword,
 	createApplicationPassword,
 } from 'state/application-passwords/actions';
-import { getApplicationPasswords, getNewApplicationPassword } from 'state/selectors';
+import getApplicationPasswords from 'state/selectors/get-application-passwords';
+import getNewApplicationPassword from 'state/selectors/get-new-application-password';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ApplicationPasswords extends Component {

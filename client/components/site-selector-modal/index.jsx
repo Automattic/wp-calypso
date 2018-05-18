@@ -17,7 +17,8 @@ import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
 import SitesDropdown from 'components/sites-dropdown';
-import { getPrimarySiteId, getVisibleSites } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import getVisibleSites from 'state/selectors/get-visible-sites';
 
 class SiteSelectorModal extends Component {
 	static propTypes = {

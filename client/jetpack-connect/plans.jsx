@@ -34,12 +34,10 @@ import { JPC_PATH_PLANS } from './constants';
 import { mc } from 'lib/analytics';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	canCurrentUser,
-	hasInitializedSites,
-	isRtl,
-	isSiteAutomatedTransfer,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import isRtl from 'state/selectors/is-rtl';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';

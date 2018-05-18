@@ -15,7 +15,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import SignupActions from 'lib/signup/actions';
 import ActivityLogRewindToggle from 'my-sites/stats/activity-log/activity-log-rewind-toggle';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 class RewindMigrate extends Component {
 	static propTypes = {

@@ -16,7 +16,7 @@ import QueryPostStats from 'components/data/query-post-stats';
 import PostLikesPopover from 'blocks/post-likes/popover';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';

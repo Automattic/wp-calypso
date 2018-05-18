@@ -21,7 +21,7 @@ import {
 	getTicketSupportRequestError,
 } from 'state/help/ticket/selectors';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
-import { isDirectlyUninitialized } from 'state/selectors';
+import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
 
 class QueryInlineHelpSupportTypes extends Component {
 	componentDidMount() {

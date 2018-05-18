@@ -12,7 +12,7 @@ import { PLAN_FREE, PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlan } from 'lib/plans';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 /**
  * Whether a given site can be upgraded to a specific plan.

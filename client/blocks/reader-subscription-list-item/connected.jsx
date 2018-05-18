@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import connectSite from 'lib/reader-connect-site';
 import userSettings from 'lib/user-settings';
 import SubscriptionListItem from 'blocks/reader-subscription-list-item';
-import { isFollowing as isFollowingSelector } from 'state/selectors';
+import isFollowingSelector from 'state/selectors/is-following';
 
 class ConnectedSubscriptionListItem extends React.Component {
 	static propTypes = {

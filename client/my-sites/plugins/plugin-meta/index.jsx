@@ -42,7 +42,8 @@ import { isBusiness, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
+import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 

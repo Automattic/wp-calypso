@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
  */
 import { url as mediaUrl } from 'lib/media/utils';
 import QueryMedia from 'components/data/query-media';
-import { getMediaItem } from 'state/selectors';
+import getMediaItem from 'state/selectors/get-media-item';
 
 const ProductImage = ( { siteId, imageId, image } ) => {
 	if ( ! siteId || ! imageId ) {

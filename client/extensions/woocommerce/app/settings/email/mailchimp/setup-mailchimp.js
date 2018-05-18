@@ -17,7 +17,7 @@ import { getSiteTitle } from 'state/sites/selectors';
 import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { getSiteTimezoneValue } from 'state/selectors';
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import {
 	isSubmittingApiKey,
 	isApiKeyCorrect,

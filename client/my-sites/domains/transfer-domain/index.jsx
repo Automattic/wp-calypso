@@ -16,7 +16,7 @@ import { cartItems } from 'lib/cart-values';
 import { addItem, addItems } from 'lib/upgrades/actions';
 import Notice from 'components/notice';
 import { currentUserHasFlag } from 'state/current-user/selectors';
-import { isSiteUpgradeable } from 'state/selectors';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';

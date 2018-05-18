@@ -14,7 +14,7 @@ import {
 	READER_STREAMS_DISMISS_POST,
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'state/action-types';
-import { getReaderStream as getStream } from 'state/selectors';
+import getStream from 'state/selectors/get-reader-stream';
 import { getStreamType } from 'reader/utils';
 import wpcom from 'lib/wp';
 

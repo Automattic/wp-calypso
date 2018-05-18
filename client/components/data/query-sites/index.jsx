@@ -15,7 +15,7 @@ import { some, forEach, isEqual, without } from 'lodash';
 import { isRequestingSites, isRequestingSite, hasAllSitesList } from 'state/sites/selectors';
 import { requestSites, requestSite } from 'state/sites/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 class QuerySites extends Component {
 	componentWillMount() {

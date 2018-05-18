@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getActiveDiscount } from 'state/selectors';
+import getActiveDiscount from 'state/selectors/get-active-discount';
 import { isDiscountActive } from 'state/selectors/get-active-discount';
 import { hasActivePromotion } from 'state/active-promotions/selectors';
 import { getSitePlanSlug } from 'state/sites/selectors';

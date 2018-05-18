@@ -30,7 +30,7 @@ import {
 	isEditedPostPasswordProtectedWithValidPassword,
 	getEditedPost,
 } from 'state/posts/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 class EditorConfirmationSidebar extends Component {
 	static propTypes = {

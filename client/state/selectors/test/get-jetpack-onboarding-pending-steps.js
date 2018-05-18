@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants';
-import { getJetpackOnboardingPendingSteps } from 'state/selectors';
+import getJetpackOnboardingPendingSteps from 'state/selectors/get-jetpack-onboarding-pending-steps';
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 

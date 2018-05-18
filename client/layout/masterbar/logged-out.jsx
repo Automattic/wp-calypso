@@ -19,7 +19,8 @@ import Item from './item';
 import WordPressLogo from 'components/wordpress-logo';
 import WordPressWordmark from 'components/wordpress-wordmark';
 import { addQueryArgs } from 'lib/route';
-import { getCurrentQueryArguments, getCurrentRoute } from 'state/selectors';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 
 class MasterbarLoggedOut extends PureComponent {

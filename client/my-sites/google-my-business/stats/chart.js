@@ -23,7 +23,7 @@ import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
 import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import SectionHeader from 'components/section-header';
 import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
-import { getGoogleMyBusinessStats } from 'state/selectors';
+import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';

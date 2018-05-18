@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { hasNavigated } from 'state/selectors';
+import hasNavigated from 'state/selectors/has-navigated';
 import { ROUTE_SET } from 'state/action-types';
 
 describe( 'hasNavigated()', () => {

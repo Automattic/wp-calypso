@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getUnconnectedSite } from 'state/selectors';
+import getUnconnectedSite from 'state/selectors/get-unconnected-site';
 
 describe( '#getUnconnectedSite()', () => {
 	const site = {

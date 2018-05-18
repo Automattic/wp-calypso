@@ -21,12 +21,10 @@ import ExternalLink from 'components/external-link';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import { getUpdatesBySiteId, isJetpackSite } from 'state/sites/selectors';
-import {
-	canCurrentUser,
-	getSiteConnectionStatus,
-	isRequestingSiteConnectionStatus,
-	isSiteAutomatedTransfer,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
+import isRequestingSiteConnectionStatus from 'state/selectors/is-requesting-site-connection-status';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 const WPAdminLink = props => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
 

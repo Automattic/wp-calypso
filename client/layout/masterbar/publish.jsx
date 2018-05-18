@@ -18,7 +18,7 @@ import { isMobile } from 'lib/viewport';
 import { preload } from 'sections-helper';
 import { getSelectedSite } from 'state/ui/selectors';
 import MasterbarDrafts from './drafts';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 import TranslatableString from 'components/translatable/proptype';
 
 class MasterbarItemNew extends React.Component {

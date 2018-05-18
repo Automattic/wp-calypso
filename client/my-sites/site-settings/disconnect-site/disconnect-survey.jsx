@@ -15,7 +15,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import FormTextInput from 'components/forms/form-text-input';
 import SectionHeader from 'components/section-header';
 import { addQueryArgs } from 'lib/url';
-import { isSiteOnPaidPlan } from 'state/selectors';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class DisconnectSurvey extends PureComponent {

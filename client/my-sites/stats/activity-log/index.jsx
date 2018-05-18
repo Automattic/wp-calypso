@@ -50,21 +50,19 @@ import {
 	rewindBackup,
 	updateFilter,
 } from 'state/activity-log/actions';
-import {
-	canCurrentUser,
-	getActivityLog,
-	getActivityLogs,
-	getActivityLogFilter,
-	getBackupProgress,
-	getRequest,
-	getRequestedBackup,
-	getRequestedRewind,
-	getRestoreProgress,
-	getRewindState,
-	getSiteGmtOffset,
-	getSiteTimezoneValue,
-	getOldestItemTs,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getActivityLog from 'state/selectors/get-activity-log';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import getActivityLogs from 'state/selectors/get-activity-logs';
+import getBackupProgress from 'state/selectors/get-backup-progress';
+import getOldestItemTs from 'state/selectors/get-oldest-item-ts';
+import getRequest from 'state/selectors/get-request';
+import getRequestedBackup from 'state/selectors/get-requested-backup';
+import getRequestedRewind from 'state/selectors/get-requested-rewind';
+import getRestoreProgress from 'state/selectors/get-restore-progress';
+import getRewindState from 'state/selectors/get-rewind-state';
+import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 
 const PAGE_SIZE = 20;
 

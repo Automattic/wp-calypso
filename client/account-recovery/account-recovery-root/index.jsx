@@ -25,13 +25,11 @@ import ResetPasswordConfirmForm from 'account-recovery/reset-password-confirm-fo
 import ResetPasswordSucceeded from 'account-recovery/reset-password-succeeded';
 import ResetCodeValidation from 'account-recovery/reset-code-validation';
 import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
-import {
-	isAccountRecoveryResetOptionsReady,
-	isAccountRecoveryUserDataReady,
-	isAccountRecoveryResetPasswordSucceeded,
-	getAccountRecoveryResetSelectedMethod,
-	getAccountRecoveryValidationKey,
-} from 'state/selectors';
+import getAccountRecoveryResetSelectedMethod from 'state/selectors/get-account-recovery-reset-selected-method';
+import getAccountRecoveryValidationKey from 'state/selectors/get-account-recovery-validation-key';
+import isAccountRecoveryResetOptionsReady from 'state/selectors/is-account-recovery-reset-options-ready';
+import isAccountRecoveryResetPasswordSucceeded from 'state/selectors/is-account-recovery-reset-password-succeeded';
+import isAccountRecoveryUserDataReady from 'state/selectors/is-account-recovery-user-data-ready';
 
 const getPageInfo = ( translate, step ) => {
 	const concatHeadTitle = ( parentTitle, childTitle ) => parentTitle + ' ‹ ' + childTitle;
