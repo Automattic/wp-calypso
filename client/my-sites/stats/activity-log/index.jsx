@@ -306,6 +306,7 @@ class ActivityLog extends Component {
 		const {
 			enableRewind,
 			filter: { page: requestedPage },
+			filter: { group },
 			logRequestQuery,
 			logs,
 			moment,
@@ -373,7 +374,7 @@ class ActivityLog extends Component {
 
 		return (
 			<div>
-				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
+				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } group={ group } />
 				{ siteId &&
 					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
