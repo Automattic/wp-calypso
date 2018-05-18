@@ -1,21 +1,8 @@
-.clone-credentials__card {
-	max-width: 640px;
-	padding: 1.7rem;
-	margin-top: 1px;
+.clone-credentials {
+	max-width: 720px;
+	margin: 0 auto;
+}
+
+.clone-credentials__form .form-fieldset:last-child {
 	margin-bottom: 0;
-}
-
-.clone-credentials__form {
-	max-width: 640px;
-	padding: 3rem;
-}
-
-.clone-credentials__card p {
-	margin-bottom: 0;
-}
-
-.clone-credentials__image {
-	max-width: 320px;
-	display: block;
-	margin: 4rem auto;
 }
