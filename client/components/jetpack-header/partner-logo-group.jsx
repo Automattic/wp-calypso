@@ -35,7 +35,7 @@ class PartnerLogoGroup extends PureComponent {
 					} ) }
 				</title>
 				<g fill="none" fillRule="evenodd">
-					<g id="SVGs">
+					<g>
 						<g id="Jetpack-+-Partner">
 							<g transform="translate(219 35.082353)">
 								<Gridicon icon="plus-small" size={ 72 } />
