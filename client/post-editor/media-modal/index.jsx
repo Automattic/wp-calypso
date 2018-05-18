@@ -84,6 +84,7 @@ export class EditorMediaModal extends Component {
 		disableLargeImageSources: PropTypes.bool,
 		disabledDataSources: PropTypes.arrayOf( PropTypes.string ),
 		onImageEditorDoneHook: PropTypes.func,
+		onRestoreMediaHook: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -102,6 +103,7 @@ export class EditorMediaModal extends Component {
 		disableLargeImageSources: false,
 		disabledDataSources: [],
 		onImageEditorDoneHook: noop,
+		onRestoreMediaHook: noop,
 	};
 
 	constructor( props ) {
@@ -313,6 +315,8 @@ export class EditorMediaModal extends Component {
 		}
 
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+
+		this.props.onRestoreMediaHook();
 	};
 
 	onImageEditorDone = ( error, blob, imageEditorProps ) => {

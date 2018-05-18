@@ -122,6 +122,7 @@ class ProductImagePicker extends Component {
 						single
 						imageEditorProps={ { doneButtonText: translate( 'Update Payment Button' ) } }
 						onImageEditorDoneHook={ makeDirtyAfterImageEdit }
+						onRestoreMediaHook={ makeDirtyAfterImageEdit }
 					/>
 				</MediaLibrarySelectedData>
 
