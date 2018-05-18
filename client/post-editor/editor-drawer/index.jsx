@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flow, overSome } from 'lodash';
+import { flow, get, overSome } from 'lodash';
 
 /**
  * Internal dependencies
@@ -82,6 +82,7 @@ class EditorDrawer extends Component {
 		type: PropTypes.string,
 		setPostDate: PropTypes.func,
 		onSave: PropTypes.func,
+		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 	};
 
@@ -281,15 +282,20 @@ class EditorDrawer extends Component {
 	}
 
 	renderStatus() {
-		const { translate } = this.props;
+		const postStatus = get( this.props.post, 'status', null );
+		const { translate, type } = this.props;
 
 		return (
 			<Accordion title={ translate( 'Status' ) } e2eTitle="status">
 				<EditPostStatus
 					savedPost={ this.props.savedPost }
 					onSave={ this.props.onSave }
+					onTrashingPost={ this.props.onTrashingPost }
 					onPrivatePublish={ this.props.onPrivatePublish }
 					setPostDate={ this.props.setPostDate }
+					status={ postStatus }
+					type={ type }
+					isPostPrivate={ this.props.isPostPrivate }
 					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
 				/>
 			</Accordion>
