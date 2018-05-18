@@ -604,7 +604,12 @@ class RegisterDomainStep extends React.Component {
 					const status = get( result, 'status', error );
 					const domainChecked = get( result, 'domain_name', domain );
 
-					const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
+					const {
+						AVAILABLE,
+						MAPPED_SAME_SITE_TRANSFERRABLE,
+						TRANSFERRABLE,
+						UNKNOWN,
+					} = domainAvailability;
 					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 
@@ -620,8 +625,12 @@ class RegisterDomainStep extends React.Component {
 							errorData: null,
 						} );
 					} else {
+						let site = get( result, 'other_site_domain', null );
+						if ( MAPPED_SAME_SITE_TRANSFERRABLE === status ) {
+							site = get( this.props, 'selectedSite.slug', null );
+						}
 						this.showValidationErrorMessage( domain, status, {
-							site: get( result, 'other_site_domain', null ),
+							site,
 							maintenanceEndTime: get( result, 'maintenance_end_time', null ),
 						} );
 					}
