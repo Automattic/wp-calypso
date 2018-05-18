@@ -27,7 +27,7 @@ const ALT_TEXT = {
 	visa: 'VISA',
 };
 
-const POSSIBLE_TYPES = keys( ALT_TEXT );
+export const POSSIBLE_TYPES = keys( ALT_TEXT );
 
 class PaymentLogo extends React.Component {
 	static propTypes = {

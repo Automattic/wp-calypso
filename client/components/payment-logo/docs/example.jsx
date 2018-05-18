@@ -5,11 +5,27 @@
  */
 
 import React from 'react';
+import concat from 'lodash/fp/concat';
+import filter from 'lodash/fp/filter';
+import flow from 'lodash/fp/flow';
+import map from 'lodash/fp/map';
+import sortBy from 'lodash/fp/sortBy';
 
 /**
  * Internal dependencies
  */
-import PaymentLogo from '../index';
+import PaymentLogo, { POSSIBLE_TYPES } from '../index';
+
+const genVendors = flow(
+	// 'placeholder' is a special case that needs to be demonstrated separately
+	filter( type => type !== 'placeholder' ),
+
+	map( type => ( { type, isCompact: false } ) ),
+	concat( [ { type: 'paypal', isCompact: true } ] ),
+	sortBy( [ 'type', 'isCompact' ] )
+);
+
+const VENDORS = genVendors( POSSIBLE_TYPES );
 
 class PaymentLogoExamples extends React.PureComponent {
 	static displayName = 'PaymentLogo';
@@ -17,12 +33,11 @@ class PaymentLogoExamples extends React.PureComponent {
 	render() {
 		return (
 			<div>
-				<PaymentLogo type="alipay" /> <PaymentLogo type="amex" /> <PaymentLogo type="bancontact" />{' '}
-				<PaymentLogo type="diners" /> <PaymentLogo type="discover" /> <PaymentLogo type="eps" />{' '}
-				<PaymentLogo type="giropay" /> <PaymentLogo type="ideal" /> <PaymentLogo type="jcb" />{' '}
-				<PaymentLogo type="mastercard" /> <PaymentLogo type="p24" /> <PaymentLogo type="paypal" />
-				<PaymentLogo type="paypal" isCompact /> <PaymentLogo type="unionpay" />{' '}
-				<PaymentLogo type="visa" />
+				{ VENDORS.map( ( { type, isCompact } ) => (
+					<div key={ [ type, isCompact ].join( '_' ) }>
+						<PaymentLogo type={ type } isCompact={ isCompact } />
+					</div>
+				) ) }
 			</div>
 		);
 	}
