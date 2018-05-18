@@ -500,7 +500,12 @@ const analytics = {
 	// HotJar tracking
 	hotjar: {
 		addHotJarScript: function() {
-			if ( ! config( 'hotjar_enabled' ) || doNotTrack() || isPiiUrl() ) {
+			if (
+				! config( 'hotjar_enabled' ) ||
+				doNotTrack() ||
+				isPiiUrl() ||
+				! mayWeTrackCurrentUser()
+			) {
 				hotjarDebug( 'Not loading HotJar script' );
 				return;
 			}
