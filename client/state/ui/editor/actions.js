@@ -9,9 +9,13 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
+import wpcom from 'lib/wp';
+import versionCompare from 'lib/version-compare';
 import {
-	EDITOR_AUTOSAVE_RESET_PREVIEW_URL,
-	EDITOR_AUTOSAVE_SET_PREVIEW_URL,
+	EDITOR_AUTOSAVE,
+	EDITOR_AUTOSAVE_RESET,
+	EDITOR_AUTOSAVE_SUCCESS,
+	EDITOR_AUTOSAVE_FAILURE,
 	EDITOR_PASTE_EVENT,
 	EDITOR_START,
 	EDITOR_STOP,
@@ -21,6 +25,7 @@ import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Constants
@@ -64,19 +69,6 @@ export function stopEditingPost( siteId, postId ) {
 		type: EDITOR_STOP,
 		siteId,
 		postId,
-	};
-}
-
-export function setEditorAutosavePreviewUrl( previewUrl ) {
-	return {
-		type: EDITOR_AUTOSAVE_SET_PREVIEW_URL,
-		previewUrl,
-	};
-}
-
-export function resetEditorAutosavePreviewUrl() {
-	return {
-		type: EDITOR_AUTOSAVE_RESET_PREVIEW_URL,
 	};
 }
 
@@ -146,3 +138,46 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 		dispatch( bumpStat( 'calypso_publish_confirmation', isEnabled ? 'enabled' : 'disabled' ) );
 	};
 }
+
+export const editorAutosaveReset = () => ( {
+	type: EDITOR_AUTOSAVE_RESET,
+} );
+
+export const editorAutosaveSuccess = autosave => ( {
+	type: EDITOR_AUTOSAVE_SUCCESS,
+	autosave,
+} );
+
+export const editorAutosaveFailure = error => ( {
+	type: EDITOR_AUTOSAVE_FAILURE,
+	error,
+} );
+
+export const editorAutosave = post => ( dispatch, getState ) => {
+	const site = getSelectedSite( getState() );
+
+	if (
+		! post.ID ||
+		! site ||
+		( site.jetpack && versionCompare( site.options.jetpack_version, '3.7.0-dev', '<' ) )
+	) {
+		return Promise.reject( new Error( 'NO_AUTOSAVE' ) );
+	}
+
+	dispatch( { type: EDITOR_AUTOSAVE } );
+
+	const autosaveResult = wpcom
+		.undocumented()
+		.site( post.site_ID )
+		.postAutosave( post.ID, {
+			content: post.content,
+			title: post.title,
+			excerpt: post.excerpt,
+		} );
+
+	autosaveResult
+		.then( autosave => dispatch( editorAutosaveSuccess( autosave ) ) )
+		.catch( error => dispatch( editorAutosaveFailure( error ) ) );
+
+	return autosaveResult;
+};

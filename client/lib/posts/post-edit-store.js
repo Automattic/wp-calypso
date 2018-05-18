@@ -15,10 +15,7 @@ import Dispatcher from 'dispatcher';
 import { decodeEntities } from 'lib/formatting';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { resetSaveBlockers } from 'state/ui/editor/save-blockers/actions';
-import {
-	resetEditorAutosavePreviewUrl,
-	setEditorAutosavePreviewUrl,
-} from 'state/ui/editor/actions';
+import { editorAutosaveReset } from 'state/ui/editor/actions';
 
 /**
  * Module variables
@@ -27,7 +24,6 @@ let REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/,
 	CONTENT_LENGTH_ASSUME_SET = 50;
 
 let _initialRawContent = null,
-	_isAutosaving = false,
 	_isLoading = false,
 	_loadingError = null,
 	_post = null,
@@ -41,11 +37,10 @@ function resetState() {
 	debug( 'Reset state' );
 	reduxDispatch( resetSaveBlockers() );
 	_initialRawContent = null;
-	_isAutosaving = false;
 	_isLoading = false;
 	_loadingError = null;
 	_post = null;
-	reduxDispatch( resetEditorAutosavePreviewUrl() );
+	reduxDispatch( editorAutosaveReset() );
 	_queue = [];
 	_queueChanges = false;
 	_rawContent = null;
@@ -87,7 +82,7 @@ function updatePost( site, post ) {
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
-	reduxDispatch( resetEditorAutosavePreviewUrl() );
+	reduxDispatch( editorAutosaveReset() );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_loadingError = null;
@@ -260,19 +255,6 @@ function dispatcherCallback( payload ) {
 			_queue = [];
 			break;
 
-		case 'POST_AUTOSAVE':
-			_isAutosaving = true;
-			PostEditStore.emit( 'change' );
-			break;
-
-		case 'RECEIVE_POST_AUTOSAVE':
-			_isAutosaving = false;
-			if ( ! action.error ) {
-				reduxDispatch( setEditorAutosavePreviewUrl( action.autosave.preview_URL ) );
-			}
-			PostEditStore.emit( 'change' );
-			break;
-
 		case 'SET_POST_LOADING_ERROR':
 			_isLoading = false;
 			if ( action.error ) {
@@ -339,10 +321,6 @@ PostEditStore = {
 
 	isLoading: function() {
 		return _isLoading;
-	},
-
-	isAutosaving: function() {
-		return _isAutosaving;
 	},
 
 	hasContent: function() {

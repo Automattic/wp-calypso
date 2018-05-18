@@ -137,3 +137,7 @@ export function getEditorPostPreviewUrl( state ) {
 	const post = getSitePost( state, siteId, postId );
 	return getPreviewURL( site, post, state.ui.editor.autosavePreviewUrl );
 }
+
+export function isEditorAutosaving( state ) {
+	return state.ui.editor.isAutosaving;
+}

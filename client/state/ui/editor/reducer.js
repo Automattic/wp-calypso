@@ -3,8 +3,10 @@
  * Internal dependencies
  */
 import {
-	EDITOR_AUTOSAVE_RESET_PREVIEW_URL,
-	EDITOR_AUTOSAVE_SET_PREVIEW_URL,
+	EDITOR_AUTOSAVE,
+	EDITOR_AUTOSAVE_SUCCESS,
+	EDITOR_AUTOSAVE_FAILURE,
+	EDITOR_AUTOSAVE_RESET,
 	EDITOR_START,
 	POST_SAVE_SUCCESS,
 } from 'state/action-types';
@@ -34,12 +36,25 @@ export function postId( state = null, action ) {
 	return state;
 }
 
+export function isAutosaving( state = false, action ) {
+	switch ( action.type ) {
+		case EDITOR_AUTOSAVE:
+			return true;
+		case EDITOR_AUTOSAVE_RESET:
+		case EDITOR_AUTOSAVE_SUCCESS:
+		case EDITOR_AUTOSAVE_FAILURE:
+			return false;
+	}
+
+	return state;
+}
+
 function autosavePreviewUrl( state = null, action ) {
 	switch ( action.type ) {
-		case EDITOR_AUTOSAVE_RESET_PREVIEW_URL:
+		case EDITOR_AUTOSAVE_RESET:
 			return null;
-		case EDITOR_AUTOSAVE_SET_PREVIEW_URL:
-			return action.previewUrl;
+		case EDITOR_AUTOSAVE_SUCCESS:
+			return action.autosave.preview_URL;
 	}
 
 	return state;
@@ -47,6 +62,7 @@ function autosavePreviewUrl( state = null, action ) {
 
 export default combineReducers( {
 	postId,
+	isAutosaving,
 	autosavePreviewUrl,
 	imageEditor,
 	videoEditor,
