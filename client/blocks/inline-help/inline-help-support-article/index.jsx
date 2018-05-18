@@ -32,28 +32,24 @@ export class FullPostView extends React.Component {
 
 		/*eslint-disable react/no-danger */
 		return (
-			<div className="inline-help-support-article">
+			<Emojify className="inline-help-support-article">
 				{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 				{ post && post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				{ isLoading && <QueryReaderPost postKey={ postKey } /> }
-				<div className="inline-help-support-article__content">
-					<Emojify>
-						<article className="inline-help-support-article__story">
-							<SupportArticleHeader post={ post } isLoading={ isLoading } />
-							{ isLoading ? (
-								<Placeholders />
-							) : (
-								<EmbedContainer>
-									<div
-										className="inline-help-support-article__story-content"
-										dangerouslySetInnerHTML={ { __html: post.content } }
-									/>
-								</EmbedContainer>
-							) }
-						</article>
-					</Emojify>
-				</div>
-			</div>
+				<article className="inline-help-support-article__story">
+					<SupportArticleHeader post={ post } isLoading={ isLoading } />
+					{ isLoading ? (
+						<Placeholders />
+					) : (
+						<EmbedContainer>
+							<div
+								className="inline-help-support-article__story-content"
+								dangerouslySetInnerHTML={ { __html: post.content } }
+							/>
+						</EmbedContainer>
+					) }
+				</article>
+			</Emojify>
 		);
 		/*eslint-enable react/no-danger */
 	}
