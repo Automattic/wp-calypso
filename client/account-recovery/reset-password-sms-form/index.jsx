@@ -67,7 +67,6 @@ class ResetPasswordSmsForm extends Component {
 						disabled={ isValidating }
 						value={ this.state.candidateKey }
 						onChange={ this.updateValidationKey }
-						autoFocus
 					/>
 					{ error && <ErrorMessage error={ error } /> }
 					<FormButton

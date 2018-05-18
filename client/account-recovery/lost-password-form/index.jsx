@@ -84,7 +84,6 @@ export class LostPasswordFormComponent extends Component {
 								onChange={ this.onUserLoginChanged }
 								value={ userLoginFormValue }
 								disabled={ isRequesting }
-								autoFocus
 							/>
 						</FormLabel>
 						{ requestError && (
