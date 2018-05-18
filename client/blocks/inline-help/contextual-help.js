@@ -14,26 +14,26 @@ import { RESULT_TOUR, RESULT_VIDEO } from './constants';
  */
 const fallbackLinks = [
 	{
-		link: 'http://en.support.wordpress.com/business-plan/',
+		link: 'https://en.support.wordpress.com/business-plan/',
 		post_id: 134940,
 		title: 'Uploading custom plugins and themes',
 		description: 'Learn more about installing a custom theme or plugin using the Business plan.',
 	},
 	{
-		link: 'http://en.support.wordpress.com/all-about-domains/',
+		link: 'https://en.support.wordpress.com/all-about-domains/',
 		post_id: 41171,
 		title: 'All About Domains',
 		description: 'Set up your domain whether it’s registered with WordPress.com or elsewhere.',
 	},
 	{
-		link: 'http://en.support.wordpress.com/start/',
+		link: 'https://en.support.wordpress.com/start/',
 		post_id: 81083,
 		title: 'Get Started',
 		description:
 			'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.',
 	},
 	{
-		link: 'http://en.support.wordpress.com/settings/privacy-settings/',
+		link: 'https://en.support.wordpress.com/settings/privacy-settings/',
 		post_id: 1507,
 		title: 'Privacy Settings',
 		description: 'Limit your site’s visibility or make it completely private.',
@@ -50,21 +50,21 @@ const contextLinksForSection = {
 				'Your stats page includes a bunch of nifty graphs, charts, and lists that show you how many visits your site…',
 		},
 		{
-			link: 'http://en.support.wordpress.com/getting-more-views-and-traffic/',
+			link: 'https://en.support.wordpress.com/getting-more-views-and-traffic/',
 			post_id: 3307,
 			title: 'Getting More Views and Traffic',
 			description:
 				'Want more traffic? Here are some tips for attracting more visitors to your site: Tell people in your social networks…',
 		},
 		{
-			link: 'http://en.support.wordpress.com/increase-your-site-traffic/',
+			link: 'https://en.support.wordpress.com/increase-your-site-traffic/',
 			post_id: 132186,
 			title: 'Increase Your Site Traffic',
 			description:
 				'One of the most frequent questions our community members ask us — and themselves — is how to get more…',
 		},
 		{
-			link: 'http://en.support.wordpress.com/grow-your-community/',
+			link: 'https://en.support.wordpress.com/grow-your-community/',
 			post_id: 132190,
 			title: 'Grow Your Community',
 			description:
@@ -80,14 +80,14 @@ const contextLinksForSection = {
 				'Start sharing your site and attract more traffic and visitors to your content. Learn to activate and control the social…',
 		},
 		{
-			link: 'http://en.support.wordpress.com/sharing/',
+			link: 'https://en.support.wordpress.com/sharing/',
 			post_id: 7499,
 			title: 'Sharing',
 			description:
 				'At the bottom of each post and page you can include sharing buttons for your readers to share your content…',
 		},
 		{
-			link: 'http://en.support.wordpress.com/instagram/',
+			link: 'https://en.support.wordpress.com/instagram/',
 			post_id: 77589,
 			title: 'Instagram',
 			description:
@@ -95,7 +95,7 @@ const contextLinksForSection = {
 				'and share photos and short videos using your smartphone or other mobile device…',
 		},
 		{
-			link: 'http://en.support.wordpress.com/twitter/',
+			link: 'https://en.support.wordpress.com/twitter/',
 			post_id: 124,
 			title: 'Twitter',
 			description:
@@ -698,12 +698,12 @@ const contextLinksForSection = {
 				'but sometimes it can be difficult to determine the...',
 		},
 		{
-			link: 'http://en.support.wordpress.com/',
+			link: 'https://en.support.wordpress.com/',
 			title: 'All support articles',
 			description: 'Looking to learn more about a feature? Our docs have all the details.',
 		},
 		{
-			link: 'http://learn.wordpress.com/',
+			link: 'https://learn.wordpress.com/',
 			title: 'Self-guided online tutorial',
 			description: 'A step-by-step guide to getting familiar with the platform.',
 		},
@@ -742,7 +742,7 @@ const contextLinksForSection = {
 };
 
 /*
-source: http://www.youtube.com/playlist?list=PLQFhxUeNFfdKx9gO0a2mp9h8pKjb2y9la
+source: https://www.youtube.com/playlist?list=PLQFhxUeNFfdKx9gO0a2mp9h8pKjb2y9la
 run this in the console to get the videos into a more helpful format (also removes duplicates):
 ```JavaScript
 data = {};
@@ -756,7 +756,7 @@ const videosForSection = {
 	sharing: [
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/YVelWG3hf3o',
+			link: 'https://www.youtube.com/embed/YVelWG3hf3o',
 			title: 'Add Social Sharing Buttons to Your Website',
 			description:
 				'Find out how to add social sharing buttons to your WordPress.com site, which you can also ' +
@@ -764,7 +764,7 @@ const videosForSection = {
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/NcCe0ozmqFM',
+			link: 'https://www.youtube.com/embed/NcCe0ozmqFM',
 			title: 'Connect Your Blog to Facebook Using Publicize',
 			description:
 				'Find out how to share blog posts directly on Facebook from your WordPress.com site, ' +
@@ -772,35 +772,35 @@ const videosForSection = {
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/f44-4TgnWTs',
+			link: 'https://www.youtube.com/embed/f44-4TgnWTs',
 			title: 'Display Your Instagram Feed on Your Website',
 			description:
 				'Find out how to display your latest Instagram photos right on your WordPress.com site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/3rTooGV_mlg',
+			link: 'https://www.youtube.com/embed/3rTooGV_mlg',
 			title: 'Set Up the Social Links Menu',
 			description:
 				'Find out how to set up a social links menu on your WordPress.com or Jetpack-enabled WordPress site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/gmrOkkqMNlc',
+			link: 'https://www.youtube.com/embed/gmrOkkqMNlc',
 			title: 'Embed a Twitter Timeline in your Sidebar',
 			description:
 				'Find out how to display your Twitter timeline on your WordPress.com or Jetpack-enabled WordPress site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/vy-U5saqG9A',
+			link: 'https://www.youtube.com/embed/vy-U5saqG9A',
 			title: 'Set Up a Social Media Icons Widget',
 			description:
 				'Find out how to set up the social media icons widget on your WordPress.com or Jetpack-enabled WordPress site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/N0GRBFRkzzs',
+			link: 'https://www.youtube.com/embed/N0GRBFRkzzs',
 			title: 'Embed a Tweet from Twitter in Your Website',
 			description:
 				'Find out how to embed a Tweet in your content (including posts and pages) on your WordPress.com ' +
@@ -808,7 +808,7 @@ const videosForSection = {
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/uVRji6bKJUE',
+			link: 'https://www.youtube.com/embed/uVRji6bKJUE',
 			title: 'Embed an Instagram Photo in Your Website',
 			description:
 				'Find out how to embed an Instagram photo in your content (including posts and pages) on your WordPress.com ' +
@@ -816,7 +816,7 @@ const videosForSection = {
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/sKm3Q83JxM0',
+			link: 'https://www.youtube.com/embed/sKm3Q83JxM0',
 			title: 'Embed a Facebook Update in Your Website',
 			description:
 				'Find out how to embed a Facebook update in your content (including posts, pages, and even comments) on your ' +
@@ -824,7 +824,7 @@ const videosForSection = {
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/SBgNkre_b14',
+			link: 'https://www.youtube.com/embed/SBgNkre_b14',
 			title: 'Share Blog Posts Directly on Twitter',
 			description:
 				'Find out how to share blog posts directly on Twitter from your WordPress.com or Jetpack-enabled WordPress site.',
@@ -833,13 +833,13 @@ const videosForSection = {
 	settings: [
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/0YCZ22k4SfQ',
+			link: 'https://www.youtube.com/embed/0YCZ22k4SfQ',
 			title: 'Add a Site Logo',
 			description: 'Find out how to add a custom logo to your WordPress.com site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/vucZ1uZ2NPo',
+			link: 'https://www.youtube.com/embed/vucZ1uZ2NPo',
 			title: 'Update Your Website Title and Tagline',
 			description:
 				'Find out how to update the Title and Tagline of your WordPress.com site, which you can also ' +
@@ -847,38 +847,38 @@ const videosForSection = {
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/Y6iPsPwYD7g',
+			link: 'https://www.youtube.com/embed/Y6iPsPwYD7g',
 			title: 'Change Your Privacy Settings',
 			description: 'Find out how to change your website privacy settings on WordPress.com.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/bjxKGxW0MRA',
+			link: 'https://www.youtube.com/embed/bjxKGxW0MRA',
 			title: 'Add a Site Icon',
 			description: 'Find out how to add a site icon on WordPress.com.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/z6fCtvLB0wM',
+			link: 'https://www.youtube.com/embed/z6fCtvLB0wM',
 			title: 'Create a Multilingual Site',
 			description: 'Find out how to create a multilingual site on WordPress.com.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/D142Edhcpaw',
+			link: 'https://www.youtube.com/embed/D142Edhcpaw',
 			title: 'Customize Your Content Options',
 			description: 'Find out how to customize your content options on select WordPress.com themes.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/Vyr-g5SEuIA',
+			link: 'https://www.youtube.com/embed/Vyr-g5SEuIA',
 			title: 'Change Your Language Settings',
 			description:
 				'Find out how to change your blog or website language and your interface language settings on WordPress.com.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/EUuEuW_LCrc',
+			link: 'https://www.youtube.com/embed/EUuEuW_LCrc',
 			title: 'Activate Free Email Forwarding',
 			description:
 				'Find out how to activate free email forwarding from an address using a custom domain registered through WordPress.com.',
@@ -887,20 +887,20 @@ const videosForSection = {
 	'post-editor': [
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/hNg1rrkiAjg',
+			link: 'https://www.youtube.com/embed/hNg1rrkiAjg',
 			title: 'Set a Featured Image for a Post or Page',
 			description:
 				'Find out how to add a featured image where available on your WordPress.com or Jetpack-enabled WordPress site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/dAcEBKXPlyA',
+			link: 'https://www.youtube.com/embed/dAcEBKXPlyA',
 			title: 'Add a Contact Form to Your Website',
 			description: 'Find out how to add a contact form to your WordPress.com site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/ssfHW5lwFZg',
+			link: 'https://www.youtube.com/embed/ssfHW5lwFZg',
 			title: 'Embed a YouTube Video in Your Website',
 			description:
 				'Find out how to embed a YouTube video in your content (including posts, pages, and even comments) ' +
@@ -908,13 +908,13 @@ const videosForSection = {
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/_tpcHN6ZtKM',
+			link: 'https://www.youtube.com/embed/_tpcHN6ZtKM',
 			title: 'Schedule a Post',
 			description: 'Find out how to schedule a post on your WordPress.com website or blog.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/V8UToJoSf4Q',
+			link: 'https://www.youtube.com/embed/V8UToJoSf4Q',
 			title: 'Add a Simple Payment Button',
 			description: 'Find out how to add a payment button to your WordPress.com website.',
 		},
@@ -922,25 +922,25 @@ const videosForSection = {
 	account: [
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/aO-6yu3_xWQ',
+			link: 'https://www.youtube.com/embed/aO-6yu3_xWQ',
 			title: 'Change Your Password',
 			description: 'Find out how to change your account password on WordPress.com.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/qhsjkqFdDZo',
+			link: 'https://www.youtube.com/embed/qhsjkqFdDZo',
 			title: 'Change Your WordPress.com Username',
 			description: 'Find out how to change your username on WordPress.com.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/Tyxu_xT6q1k',
+			link: 'https://www.youtube.com/embed/Tyxu_xT6q1k',
 			title: 'Change Your WordPress.com Display Name',
 			description: 'Find out how to change your display name on WordPress.com.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/07Nf8FkjO4o',
+			link: 'https://www.youtube.com/embed/07Nf8FkjO4o',
 			title: 'Change Your Account Email Address',
 			description: 'Find out how to change your account email address WordPress.com.',
 		},
@@ -948,53 +948,53 @@ const videosForSection = {
 	customizer: [
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/pf_ST7gvY8c',
+			link: 'https://www.youtube.com/embed/pf_ST7gvY8c',
 			title: 'Add a Custom Header Image',
 			description:
 				'Find out how to add a custom header image to your WordPress.com website or blog.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/CY20IAtl2Ac',
+			link: 'https://www.youtube.com/embed/CY20IAtl2Ac',
 			title: 'Create a Custom Website Menu',
 			description:
 				'Find out how to create a custom menu on your WordPress.com or Jetpack-enabled WordPress site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/2H_Jsgh2Z3Y',
+			link: 'https://www.youtube.com/embed/2H_Jsgh2Z3Y',
 			title: 'Add a Widget',
 			description: 'Find out how to add a widget to your WordPress.com website.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/ypFF4ONBfSQ',
+			link: 'https://www.youtube.com/embed/ypFF4ONBfSQ',
 			title: 'Add a Custom Background',
 			description: 'Find out how to add a custom background to your WordPress.com site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/b8EuJDrNeOA',
+			link: 'https://www.youtube.com/embed/b8EuJDrNeOA',
 			title: 'Change Your Site Fonts',
 			description: 'Find out how to change the fonts on your WordPress.com website or blog.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/7VPgvxV78Kc',
+			link: 'https://www.youtube.com/embed/7VPgvxV78Kc',
 			title: 'Add a Gallery Widget',
 			description:
 				'Find out how to add an image gallery widget to your WordPress.com website or blog.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/oDBuaBLrwF8',
+			link: 'https://www.youtube.com/embed/oDBuaBLrwF8',
 			title: 'Use Featured Content',
 			description:
 				'Find out how to use the Featured Content option on your WordPress.com website or blog.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/3TqRr21zyiA',
+			link: 'https://www.youtube.com/embed/3TqRr21zyiA',
 			title: 'Add an Image Widget',
 			description: 'Find out how to add an image widget to your WordPress.com website or blog.',
 		},
@@ -1002,65 +1002,65 @@ const videosForSection = {
 	'posts-pages': [
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/3RPidSCQ0LI',
+			link: 'https://www.youtube.com/embed/3RPidSCQ0LI',
 			title: 'Create a Landing Page',
 			description:
 				'Find out how to create a one-page website or landing page on your WordPress.com site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/4IkFQzl5nXc',
+			link: 'https://www.youtube.com/embed/4IkFQzl5nXc',
 			title: 'Set Up a Website in 5 Steps',
 			description: 'Find out how to create a website on WordPress.com in five steps.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/mta6Y0o7yJk',
+			link: 'https://www.youtube.com/embed/mta6Y0o7yJk',
 			title: 'Set Up a Blog in 5 Steps',
 			description: 'Find out how to create a blog on WordPress.com in five steps.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/Gx7YNX1Wk5U',
+			link: 'https://www.youtube.com/embed/Gx7YNX1Wk5U',
 			title: 'Create a Page',
 			description: 'Find out how to create a page on your WordPress.com site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/mCfuh5bCOwM',
+			link: 'https://www.youtube.com/embed/mCfuh5bCOwM',
 			title: 'Create a Post',
 			description: 'Find out how to create a post on WordPress.com.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/bEVHg6nopcs',
+			link: 'https://www.youtube.com/embed/bEVHg6nopcs',
 			title: 'Use a Custom Menu in a Widget',
 			description:
 				'Find out how to use a custom menu in a widget on your WordPress.com or Jetpack-enabled WordPress site.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/nAzdUOlFoBI',
+			link: 'https://www.youtube.com/embed/nAzdUOlFoBI',
 			title: 'Configure a Static Homepage',
 			description:
 				'By default, your new WordPress.com website displays your latest posts. Find out how to create a static homepage instead.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/MPpVeMmDOhk',
+			link: 'https://www.youtube.com/embed/MPpVeMmDOhk',
 			title: 'Show Related Posts on Your WordPress Blog',
 			description:
 				'Find out how to show related posts on your WordPress.com site, which you can also do on a Jetpack-enabled WordPress blog.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/JVnltCZUKC4',
+			link: 'https://www.youtube.com/embed/JVnltCZUKC4',
 			title: 'Add Testimonials',
 			description: 'Find out how to add testimonials to your WordPress.com website or blog.',
 		},
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/yH_gapAUGAA',
+			link: 'https://www.youtube.com/embed/yH_gapAUGAA',
 			title: 'Change Your Post or Page Visibility Settings',
 			description: 'Find out how to change your page or post visibility settings WordPress.com.',
 		},
@@ -1068,7 +1068,7 @@ const videosForSection = {
 	media: [
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/VjGnEHyqVqQ',
+			link: 'https://www.youtube.com/embed/VjGnEHyqVqQ',
 			title: 'Add a Photo Gallery',
 			description:
 				'Find out how to add a photo gallery on your WordPress.com and Jetpack-enabled website.',
@@ -1077,7 +1077,7 @@ const videosForSection = {
 	themes: [
 		{
 			type: RESULT_VIDEO,
-			link: 'http://www.youtube.com/embed/yOfAuOb68Hc',
+			link: 'https://www.youtube.com/embed/yOfAuOb68Hc',
 			title: 'Change Your Website Theme on WordPress.com',
 			description: 'Find out how to change your WordPress.com theme.',
 		},
