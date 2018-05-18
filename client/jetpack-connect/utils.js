@@ -37,7 +37,6 @@ export function authQueryTransformer( queryObject ) {
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
-		partnerSlug: getPartnerSlugFromId( queryObject.partner_id ),
 		redirectAfterAuth: queryObject.redirect_after_auth || null,
 		siteIcon: queryObject.site_icon || null,
 		siteUrl: queryObject.site_url || null,
@@ -125,25 +124,4 @@ export function parseAuthorizationQuery( query ) {
 		// The parser is expected to throw SchemaError or TransformerError on bad input.
 	}
 	return null;
-}
-
-export function getPartnerSlugFromId( partnerId ) {
-	switch ( parseInt( partnerId, 10 ) ) {
-		case 51945:
-		case 51946:
-			return 'dreamhost';
-		case 49615:
-		case 49640:
-			return 'pressable';
-		case 57152:
-		case 57733:
-			return 'milesweb';
-		case 41986:
-		case 42000:
-			return 'bluehost';
-		case 51652: // Clients used for testing.
-			return 'dreamhost';
-		default:
-			return null;
-	}
 }
