@@ -478,14 +478,7 @@ export class PostEditor extends React.Component {
 				() => this.editor && this.editor.setEditorContent( this.state.post.content )
 			);
 		} else {
-			const postEditState = this.getPostEditState();
-			const post = postEditState.post;
-			const site = this.props.selectedSite;
-			if ( didLoad && site && ( this.props.type === 'page' ) !== utils.isPage( post ) ) {
-				// incorrect post type in URL
-				page.redirect( utils.getEditURL( post, site ) );
-			}
-			this.setState( postEditState, function() {
+			this.setState( this.getPostEditState(), function() {
 				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
 					this.editor.setEditorContent( this.state.post.content, { initial: true } );
 				}
