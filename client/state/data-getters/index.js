@@ -31,7 +31,7 @@ export const requestSiteAlerts = siteId => {
 		),
 		{
 			freshness: 5 * 60 * 1000,
-			fromApi: () => ( { suggestions, threats, warnings } ) => [
+			fromApi: () => ( { suggestions, threats, warnings, updates } ) => [
 				[
 					id,
 					{
@@ -55,6 +55,7 @@ export const requestSiteAlerts = siteId => {
 								: {} ),
 						} ) ),
 						warnings,
+						updates,
 					},
 				],
 			],
