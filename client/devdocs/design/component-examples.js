@@ -43,6 +43,7 @@ export ImagePreloader from 'components/image-preloader/docs/example';
 export InfoPopover from 'components/info-popover/docs/example';
 export InputChrono from 'components/input-chrono/docs/example';
 export JetpackColophonExample from 'components/jetpack-colophon/docs/example';
+export JetpackHeaderExample from 'components/jetpack-header/docs/example';
 export JetpackLogoExample from 'components/jetpack-logo/docs/example';
 export LanguagePicker from 'components/language-picker/docs/example';
 export LineChart from 'components/line-chart/docs/example';

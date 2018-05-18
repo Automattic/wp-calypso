@@ -72,6 +72,7 @@ export ImagePreloader from 'components/image-preloader';
 export InfoPopover from 'components/info-popover';
 export InputChrono from 'components/input-chrono';
 export JetpackColophon from 'components/jetpack-colophon';
+export JetpackHeader from 'components/jetpack-header';
 export JetpackLogo from 'components/jetpack-logo';
 export LanguagePicker from 'components/language-picker';
 export ListEnd from 'components/list-end';
