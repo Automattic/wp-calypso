@@ -12,23 +12,16 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
 import ActivityLogItem from 'my-sites/stats/activity-log-item';
 import TileGrid from 'components/tile-grid';
 import Tile from 'components/tile-grid/tile';
 import QuerySites from 'components/data/query-sites';
 import QueryActivityLog from 'components/data/query-activity-log';
-import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings';
 
 import { getSiteGmtOffset, getSiteTimezoneValue, getActivityLogs } from 'state/selectors';
-import {
-	adjustMoment,
-	getActivityLogQuery,
-	getStartMoment,
-} from 'my-sites/stats/activity-log/utils';
+import { adjustMoment, getActivityLogQuery } from 'my-sites/stats/activity-log/utils';
 
 class ClonePointStep extends Component {
 	static propTypes = {
@@ -128,17 +121,19 @@ class ClonePointStep extends Component {
 		return (
 			<TileGrid>
 				<Tile
+					className="clone-point__current"
 					buttonLabel={ 'Clone current state' }
 					description={ translate( 'Create a clone of your site as it is right now.' ) }
-					image={ '/calypso/images/upgrades/thank-you.svg' }
+					image={ '/calypso/images/illustrations/clone-site-origin.svg' }
 					onClick={ this.selectCurrent }
 				/>
 				<Tile
+					className="clone-point__previous"
 					buttonLabel={ 'Clone previous state' }
 					description={ translate(
 						'Browse your event history and choose an earlier state to clone from.'
 					) }
-					image={ '/calypso/images/upgrades/thank-you.svg' }
+					image={ '/calypso/images/illustrations/backup.svg' }
 					onClick={ this.selectPrevious }
 				/>
 			</TileGrid>
@@ -154,14 +149,7 @@ class ClonePointStep extends Component {
 	};
 
 	render() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			originSiteName,
-			translate,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
 		const headerText = translate( 'Clone point' );
 		const subHeaderText = translate(
