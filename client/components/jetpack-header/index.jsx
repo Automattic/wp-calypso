@@ -22,36 +22,53 @@ export class JetpackHeader extends PureComponent {
 
 	static propTypes = {
 		partnerSlug: PropTypes.string,
+		width: PropTypes.number,
 	};
 
 	renderLogo() {
-		const { partnerSlug } = this.props;
+		const { partnerSlug, width } = this.props;
 
 		switch ( partnerSlug ) {
 			case 'dreamhost':
 				return (
-					<JetpackPartnerLogoGroup width="662.5" viewBox="0 0 1270 170" partnerName="DreamHost">
+					<JetpackPartnerLogoGroup
+						width={ width || 662.5 }
+						viewBox="0 0 1270 170"
+						partnerName="DreamHost"
+					>
 						<JetpackDreamhostLogo />
 					</JetpackPartnerLogoGroup>
 				);
 
 			case 'pressable':
 				return (
-					<JetpackPartnerLogoGroup width="662.5" viewBox="0 0 1150 170" partnerName="Pressable">
+					<JetpackPartnerLogoGroup
+						width={ width || 662.5 }
+						viewBox="0 0 1150 170"
+						partnerName="Pressable"
+					>
 						<JetpackPressableLogo />
 					</JetpackPartnerLogoGroup>
 				);
 
 			case 'bluehost':
 				return (
-					<JetpackPartnerLogoGroup width="662.5" viewBox="0 0 1128 170" partnerName="Bluehost">
+					<JetpackPartnerLogoGroup
+						width={ width || 662.5 }
+						viewBox="0 0 1128 170"
+						partnerName="Bluehost"
+					>
 						<JetpackBluehostLogo />
 					</JetpackPartnerLogoGroup>
 				);
 
 			case 'inmotion':
 				return (
-					<JetpackPartnerLogoGroup width="550" viewBox="0 0 936 151" partnerName="InMotion">
+					<JetpackPartnerLogoGroup
+						width={ width || 550 }
+						viewBox="0 0 936 151"
+						partnerName="InMotion"
+					>
 						<JetpackInmotionLogo />
 					</JetpackPartnerLogoGroup>
 				);
@@ -61,7 +78,7 @@ export class JetpackHeader extends PureComponent {
 				return <JetpackMileswebLogo />;
 
 			default:
-				return <JetpackLogo full size={ 45 } />;
+				return <JetpackLogo full size={ width || 45 } />;
 		}
 	}
 

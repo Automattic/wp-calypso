@@ -41,4 +41,14 @@ describe( 'JetpackHeader', () => {
 		expect( wrapper.find( 'Localized(JetpackPartnerLogoGroup)' ) ).toHaveLength( 1 );
 		expect( wrapper.find( 'JetpackDreamhostLogo' ) ).toHaveLength( 1 );
 	} );
+
+	test( 'should override width on JetpackLogo when width provided but no partner slug', () => {
+		const wrapper = shallow( <JetpackHeader width={ 60 } /> );
+		expect( wrapper.find( 'JetpackLogo' ).props().size ).toEqual( 60 );
+	} );
+
+	test( 'should override width on logo group when width and known partner slug provided', () => {
+		const wrapper = shallow( <JetpackHeader width={ 60 } partnerSlug="dreamhost" /> );
+		expect( wrapper.find( 'Localized(JetpackPartnerLogoGroup)' ).props().width ).toEqual( 60 );
+	} );
 } );

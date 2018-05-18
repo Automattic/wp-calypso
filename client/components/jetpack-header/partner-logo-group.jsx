@@ -18,7 +18,7 @@ class PartnerLogoGroup extends PureComponent {
 
 	static propTypes = {
 		partnerName: PropTypes.string,
-		width: PropTypes.string,
+		width: PropTypes.number,
 		viewBox: PropTypes.string,
 	};
 
