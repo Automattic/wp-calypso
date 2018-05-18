@@ -24,7 +24,6 @@ export class EditorSidebar extends Component {
 		site: PropTypes.object,
 		type: PropTypes.string,
 		setPostDate: PropTypes.func,
-		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 	};
 
@@ -37,7 +36,6 @@ export class EditorSidebar extends Component {
 			savedPost,
 			site,
 			setPostDate,
-			isPostPrivate,
 			confirmationSidebarStatus,
 		} = this.props;
 
@@ -51,7 +49,6 @@ export class EditorSidebar extends Component {
 					setPostDate={ setPostDate }
 					onPrivatePublish={ onPublish }
 					onSave={ onSave }
-					isPostPrivate={ isPostPrivate }
 					confirmationSidebarStatus={ confirmationSidebarStatus }
 				/>
 				<SidebarFooter>
