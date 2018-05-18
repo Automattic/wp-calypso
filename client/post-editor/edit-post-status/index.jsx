@@ -151,7 +151,7 @@ export class EditPostStatus extends Component {
 			return;
 		}
 
-		const { password, status, type } = this.props.post;
+		const { password, status = 'draft', type } = this.props.post;
 		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
 		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
 		const props = {
