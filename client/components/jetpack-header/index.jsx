@@ -43,7 +43,7 @@ export class JetpackHeader extends PureComponent {
 			case 'pressable':
 				return (
 					<JetpackPartnerLogoGroup
-						width={ width || 662.5 }
+						width={ width || 600 }
 						viewBox="0 0 1150 170"
 						partnerName="Pressable"
 					>
@@ -54,7 +54,7 @@ export class JetpackHeader extends PureComponent {
 			case 'bluehost':
 				return (
 					<JetpackPartnerLogoGroup
-						width={ width || 662.5 }
+						width={ width || 588 }
 						viewBox="0 0 1128 170"
 						partnerName="Bluehost"
 					>
@@ -65,7 +65,7 @@ export class JetpackHeader extends PureComponent {
 			case 'inmotion':
 				return (
 					<JetpackPartnerLogoGroup
-						width={ width || 550 }
+						width={ width || 488 }
 						viewBox="0 0 936 151"
 						partnerName="InMotion"
 					>

@@ -9,3 +9,7 @@ In cases where a partner has referred a new site, we'd want to co-brand the flow
 ## partnerSlug (string) optional
 
 An optional slug for the hosting partner. This will cause a partner-specific logo to be rendered.
+
+## width (number) optional
+
+An optional width for the Jetpack logo or partner logo groups that will override the defaults.
