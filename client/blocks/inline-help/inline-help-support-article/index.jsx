@@ -10,15 +10,15 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import EmbedContainer from 'components/embed-container';
 import SupportArticleHeader from 'blocks/inline-help/inline-help-support-article/header';
 import Placeholders from 'blocks/inline-help/inline-help-support-article/placeholders';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderPost from 'components/data/query-reader-post';
+import EmbedContainer from 'components/embed-container';
 import Emojify from 'components/emojify';
-import { getPostByKey } from 'state/reader/posts/selectors';
 import QueryPostLikes from 'components/data/query-post-likes';
+import QueryReaderPost from 'components/data/query-reader-post';
+import QueryReaderSite from 'components/data/query-reader-site';
+import { getPostByKey } from 'state/reader/posts/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
