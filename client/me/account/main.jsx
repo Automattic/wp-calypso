@@ -9,7 +9,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import i18n, { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
-import { debounce, flowRight as compose, get, has, map, size, update } from 'lodash';
+import { flowRight as compose, get, has, map, size, update } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -43,7 +43,7 @@ import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { changeUsername, validateUsername, clearUsernameValidation } from 'state/username/actions';
+import { changeUsername } from 'state/username/actions';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'lib/i18n-utils';
 import isRequestingMissingSites from 'state/selectors/is-requesting-missing-sites';
 import isUsernameValid from 'state/selectors/is-username-valid';
@@ -57,6 +57,7 @@ import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
 import { reduxDispatch } from 'lib/redux-bridge';
+import QueryUsernameValidation from 'components/data/query-username-validation';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -79,13 +80,11 @@ const Account = createReactClass( {
 
 	componentWillMount() {
 		// Clear any username changes that were previously made
-		reduxDispatch( clearUsernameValidation() );
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 	},
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' component is mounted.' );
-		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
 	},
 
 	componentWillUnmount() {
@@ -159,12 +158,6 @@ const Account = createReactClass( {
 
 	updateUserLoginConfirm( event ) {
 		this.setState( { userLoginConfirm: event.target.value } );
-	},
-
-	validateUsername() {
-		const username = this.getUserSetting( 'user_login' );
-		debug( 'Validating username ' + username );
-		reduxDispatch( validateUsername( username ) );
 	},
 
 	hasEmailValidationError() {
@@ -310,7 +303,6 @@ const Account = createReactClass( {
 	 * @param {object} event Event from onChange of user_login input
 	 */
 	handleUsernameChange( event ) {
-		this.debouncedUsernameValidate();
 		this.updateUserSetting( 'user_login', event.currentTarget.value );
 		this.setState( { usernameAction: null } );
 	},
@@ -357,7 +349,6 @@ const Account = createReactClass( {
 			usernameAction: null,
 		} );
 
-		reduxDispatch( clearUsernameValidation() );
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 
 		if ( ! this.props.userSettings.hasUnsavedSettings() ) {
@@ -438,11 +429,7 @@ const Account = createReactClass( {
 	},
 
 	renderUsernameValidation() {
-		const { translate, username, userSettings } = this.props;
-
-		if ( ! userSettings.isSettingUnsaved( 'user_login' ) ) {
-			return null;
-		}
+		const { translate, username } = this.props;
 
 		if ( username.isValid ) {
 			return (
@@ -797,7 +784,12 @@ const Account = createReactClass( {
 								onChange={ this.handleUsernameChange }
 								value={ this.getUserSetting( 'user_login' ) || '' }
 							/>
-							{ this.renderUsernameValidation() }
+							{ renderUsernameForm && (
+								<div>
+									<QueryUsernameValidation username={ this.getUserSetting( 'user_login' ) } />
+									{ this.renderUsernameValidation() }
+								</div>
+							) }
 							<FormSettingExplanation>{ this.renderJoinDate() }</FormSettingExplanation>
 						</FormFieldset>
 
