@@ -38,10 +38,8 @@ import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-
-const user = userFactory();
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class CancelPurchase extends React.Component {
 	static propTypes = {
@@ -52,6 +50,7 @@ class CancelPurchase extends React.Component {
 		purchaseId: PropTypes.number.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	state = {
@@ -146,7 +145,7 @@ class CancelPurchase extends React.Component {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<div>
-					<QueryUserPurchases userId={ user.get().ID } />
+					<QueryUserPurchases userId={ this.props.userId } />
 					<CancelPurchaseLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
 						selectedSite={ this.props.selectedSite }
@@ -225,5 +224,6 @@ export default connect( ( state, props ) => {
 		purchase,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		selectedSite: getSelectedSite( state ),
+		userId: getCurrentUserId( state ),
 	};
 } )( localize( CancelPurchase ) );

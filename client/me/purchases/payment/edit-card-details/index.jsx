@@ -24,12 +24,10 @@ import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { managePurchase } from 'me/purchases/paths';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-
-const user = userFactory();
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class EditCardDetails extends PurchaseCardDetails {
 	static propTypes = {
@@ -42,6 +40,7 @@ class EditCardDetails extends PurchaseCardDetails {
 		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	componentWillMount() {
@@ -58,7 +57,7 @@ class EditCardDetails extends PurchaseCardDetails {
 				<div>
 					<QueryStoredCards />
 
-					<QueryUserPurchases userId={ user.get().ID } />
+					<QueryUserPurchases userId={ this.props.userId } />
 
 					<CreditCardFormLoadingPlaceholder title={ titles.editCardDetails } />
 				</div>
@@ -91,16 +90,15 @@ class EditCardDetails extends PurchaseCardDetails {
 	}
 }
 
-const mapStateToProps = ( state, { cardId, purchaseId } ) => {
-	return {
-		card: getStoredCardById( state, cardId ),
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		purchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSite( state ),
-	};
-};
+const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
+	card: getStoredCardById( state, cardId ),
+	hasLoadedSites: ! isRequestingSites( state ),
+	hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
+	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+	purchase: getByPurchaseId( state, purchaseId ),
+	selectedSite: getSelectedSite( state ),
+	userId: getCurrentUserId( state ),
+} );
 
 const mapDispatchToProps = {
 	clearPurchases,

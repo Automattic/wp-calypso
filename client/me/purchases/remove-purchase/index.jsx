@@ -36,15 +36,13 @@ import { removePurchase } from 'state/purchases/actions';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import userFactory from 'lib/user';
 import { isDomainOnlySite as isDomainOnly, isSiteAutomatedTransfer } from 'state/selectors';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import HappychatButton from 'components/happychat/button';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
-
-const user = userFactory();
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
  * Module dependencies
@@ -61,6 +59,7 @@ class RemovePurchase extends Component {
 		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
+		userId: PropTypes.number.isRequired,
 	};
 
 	state = {
@@ -191,7 +190,7 @@ class RemovePurchase extends Component {
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
-		this.props.removePurchase( purchase.id, user.get().ID ).then( () => {
+		this.props.removePurchase( purchase.id, this.props.userId ).then( () => {
 			const productName = getName( purchase );
 			const { purchasesError } = this.props;
 
@@ -499,6 +498,7 @@ export default connect(
 		isChatActive: hasActiveHappychatSession( state ),
 		purchasesError: getPurchasesError( state ),
 		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
+		userId: getCurrentUserId( state ),
 	} ),
 	{
 		receiveDeletedSite,

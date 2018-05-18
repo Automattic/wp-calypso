@@ -22,12 +22,10 @@ import Main from 'components/main';
 import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { managePurchase } from 'me/purchases/paths';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-
-const user = userFactory();
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class AddCardDetails extends PurchaseCardDetails {
 	static propTypes = {
@@ -38,6 +36,7 @@ class AddCardDetails extends PurchaseCardDetails {
 		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	componentWillMount() {
@@ -52,7 +51,7 @@ class AddCardDetails extends PurchaseCardDetails {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<div>
-					<QueryUserPurchases userId={ user.get().ID } />
+					<QueryUserPurchases userId={ this.props.userId } />
 
 					<CreditCardFormLoadingPlaceholder title={ titles.addCardDetails } />
 				</div>
@@ -90,6 +89,7 @@ const mapStateToProps = ( state, { purchaseId } ) => {
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase: getByPurchaseId( state, purchaseId ),
 		selectedSite: getSelectedSite( state ),
+		userId: getCurrentUserId( state ),
 	};
 };
 
