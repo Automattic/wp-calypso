@@ -230,6 +230,10 @@
 	max-width: 850px;
 }
 
+.inline-help__richresult__dialog.dialog.card.article {
+	max-width: none;
+}
+
 .inline-help__richresult__dialog__video {
 	position: relative;
 	padding-bottom: 56.25%;
