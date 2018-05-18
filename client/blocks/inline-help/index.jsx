@@ -144,6 +144,7 @@ class InlineHelp extends Component {
 		 		  fix this class and fix the linter to catch similar instances.
 		 */
 		const iframeClasses = classNames( 'inline-help__richresult__dialog__video' );
+		const dialogClasses = classNames( 'inline-help__richresult__dialog', dialogType );
 
 		const dialogButtons = dialogType === 'article' && [
 			<Button href={ dialogPostHref } target="_blank" primary>
@@ -174,7 +175,7 @@ class InlineHelp extends Component {
 				) }
 				{ showDialog && (
 					<Dialog
-						additionalClassNames="inline-help__richresult__dialog"
+						additionalClassNames={ dialogClasses }
 						isVisible
 						buttons={ dialogButtons }
 						onCancel={ this.closeDialog }
