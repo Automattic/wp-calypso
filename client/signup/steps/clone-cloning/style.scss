@@ -1,28 +1,45 @@
-.clone-cloning__card {
-	text-align: center;
-	max-width: 640px;
-	padding: 4rem;
-	margin-top: 1px;
-	padding-bottom: 3rem;
+.clone-cloning {
+	max-width: 352px;
+	margin: 0 auto;
 }
 
-.clone-cloning__title {
-	display: inline-block;
-	font-size: 2.5rem;
-	font-weight: 300;
-	letter-spacing: .15rem;
-	color: $gray-text;
+.clone-cloning__card {
+	text-align: center;
 }
 
 .clone-cloning__image {
-	max-width: 140px;
+	max-width: 293px;
 	display: block;
-	margin: 0 auto 2rem auto;
+	margin: 8px auto 32px auto;
 }
 
 .clone-cloning__description {
 	color: $gray-text-min;
-	font-size: 1.4rem;
-	font-weight: 100;
-	line-height: 2.5rem;
+	font-size: 14px;
+}
+.clone-cloning__button {
+	margin-top: 24px;
+	width: 100%;
+}
+
+.clone-site__dots circle {
+	$animation-time: 1s;
+	animation: cloneDot $animation-time steps( 3, end ) infinite;
+
+	&:nth-child(2) {
+		animation-delay: $animation-time / 3;
+	}
+
+	&:nth-child(3) {
+		animation-delay: $animation-time / 3 * 2;
+	}
+}
+
+@keyframes cloneDot {
+	0% {
+		fill: $blue-light;
+	}
+	33% {
+		fill: $gray-lighten-20;
+	}
 }
