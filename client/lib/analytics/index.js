@@ -19,6 +19,7 @@ import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 import { doNotTrack, isPiiUrl, shouldReportOmitBlogId, hashPii } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import {
+	mayWeTrackCurrentUser,
 	retarget,
 	recordAliasInFloodlight,
 	recordPageViewInFloodlight,
@@ -125,7 +126,12 @@ loadScript( '//stats.wp.com/w.js?56', function( error ) {
  * @returns {Boolean} true if GA is allowed.
  */
 function isGoogleAnalyticsAllowed() {
-	return config.isEnabled( 'google-analytics' ) && ! doNotTrack() && ! isPiiUrl();
+	return (
+		config.isEnabled( 'google-analytics' ) &&
+		! doNotTrack() &&
+		! isPiiUrl() &&
+		mayWeTrackCurrentUser()
+	);
 }
 
 function buildQuerystring( group, name ) {
