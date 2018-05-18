@@ -37,7 +37,9 @@ export function fromApi( response ) {
 }
 
 export function receiveAccountCloseError() {
-	return errorNotice( translate( 'Sorry, there was a problem closing your account.' ) );
+	return errorNotice(
+		translate( 'Sorry, there was a problem closing your account. Please contact support.' )
+	);
 }
 
 export default {
