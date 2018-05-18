@@ -93,11 +93,12 @@ class GdprBanner extends Component {
 }
 
 const mapDispatchToProps = {
-	recordCookieBannerOk: recordTracksEvent( 'a8c_cookie_banner_ok', { site: 'Calypso' } ),
-	recordCookieBannerView: bumpStat(
-		'cookie-banner-view',
-		'total,' + document.location.host.replace( /[^a-zA-Z0-9]/g, '-' )
-	),
+	recordCookieBannerOk: () => recordTracksEvent( 'a8c_cookie_banner_ok', { site: 'Calypso' } ),
+	recordCookieBannerView: () =>
+		bumpStat(
+			'cookie-banner-view',
+			'total,' + document.location.host.replace( /[^a-zA-Z0-9]/g, '-' )
+		),
 };
 
 export default connect( null, mapDispatchToProps )( localize( GdprBanner ) );
