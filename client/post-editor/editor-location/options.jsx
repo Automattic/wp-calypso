@@ -38,6 +38,8 @@ class EditorLocationOptions extends React.Component {
 		renderContext: null,
 	};
 
+	buttonPopoverContext = React.createRef();
+
 	onShareChange = event => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			geo_public: event.target.checked ? 1 : 0,
@@ -47,12 +49,6 @@ class EditorLocationOptions extends React.Component {
 	onDescriptionChange = event => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			geo_address: event.target.value,
-		} );
-	};
-
-	open = () => {
-		this.setState( {
-			open: true,
 		} );
 	};
 
@@ -73,12 +69,12 @@ class EditorLocationOptions extends React.Component {
 	render() {
 		return (
 			<div className="editor-location__options">
-				<Button borderless compact onClick={ this.toggle } ref={ this.setRenderContext }>
+				<Button borderless compact onClick={ this.toggle } ref={ this.buttonPopoverContext }>
 					<Gridicon icon="ellipsis-circle" /> { this.props.translate( 'Display options' ) }
 				</Button>
 				<Popover
 					isVisible={ this.state.open }
-					context={ this.state.renderContext }
+					context={ this.buttonPopoverContext.current }
 					closeOnEsc={ true }
 					rootClassName="editor-location__options-popover"
 				>
