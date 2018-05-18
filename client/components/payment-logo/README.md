@@ -6,6 +6,12 @@ PaymentLogo
 ```js
 import PaymentLogo from 'components/payment-logo';
 
+<p>Empty Placeholder</p>
+
+<PaymentLogo type="placeholder" />
+
+<p>Supported Vendors</p>
+
 <PaymentLogo type="alipay" />
 
 <PaymentLogo type="amex" />
@@ -34,7 +40,6 @@ import PaymentLogo from 'components/payment-logo';
 <PaymentLogo type="unionpay" />
 
 <PaymentLogo type="visa" />
-
 ```
 
 ## Required props
