@@ -32,7 +32,7 @@ class PaymentLogoExamples extends React.PureComponent {
 
 	render() {
 		return (
-			<div>
+			<div className="payment-logo-example">
 				{ VENDORS.map( ( { type, isCompact } ) => (
 					<div key={ [ type, isCompact ].join( '_' ) }>
 						<PaymentLogo type={ type } isCompact={ isCompact } />

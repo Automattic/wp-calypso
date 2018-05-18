@@ -31,17 +31,21 @@ export const POSSIBLE_TYPES = keys( ALT_TEXT );
 
 class PaymentLogo extends React.Component {
 	static propTypes = {
+		className: PropTypes.string,
 		type: PropTypes.oneOf( POSSIBLE_TYPES ),
 		altText: PropTypes.string,
 		isCompact: PropTypes.bool,
 	};
 
 	render() {
-		const { altText, isCompact, type } = this.props;
+		const { altText, className, isCompact, type } = this.props;
 
-		const classes = classNames( 'payment-logo', `is-${ type }`, {
-			'is-compact': isCompact,
-		} );
+		const classes = classNames(
+			'payment-logo',
+			`is-${ type }`,
+			{ 'is-compact': isCompact },
+			className
+		);
 
 		return <div className={ classes } aria-label={ altText || ALT_TEXT[ type ] || '' } />;
 	}
