@@ -48,10 +48,9 @@ class ProductImagePicker extends Component {
 
 			this.props.input.onChange( value.items[ 0 ].ID );
 
-			// In case of image editing request this media item again in order to
-			// update the image in product list and existing buttons in editor.
-			// This is required to fetch the new URL of edited image, since its
-			// media id remains the same as for the original.
+			// In case of image editing, request this media item again in order to
+			// update the image in product list and existing payment buttons in editor.
+			// This is required to fetch the new URL of edited image.
 			this.props.requestMediaItem( this.props.siteId, value.items[ 0 ].ID );
 		} );
 	};
