@@ -156,6 +156,7 @@ class CloneStartStep extends Component {
 
 		return (
 			<StepWrapper
+				className="clone-start"
 				flowName={ flowName }
 				stepName={ stepName }
 				headerText={ headerText }

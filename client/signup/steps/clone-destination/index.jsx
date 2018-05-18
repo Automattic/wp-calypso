@@ -60,7 +60,7 @@ class CloneDestinationStep extends Component {
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 512.7 180.4"
 				>
-					<g className="clone-site__origin">
+					<g className="clone-site__destination">
 						<path
 							fill="#FFFFFF"
 							d="M299.4,178.9V15.2c0-6.8,5.5-12.4,12.4-12.4h183.3c6.8,0,12.4,5.5,12.4,12.4V179H299.4V178.9z"
@@ -95,7 +95,7 @@ class CloneDestinationStep extends Component {
 						<circle fill="#C8D7E2" cx="261.9" cy="94.1" r="5.2" />
 						<circle fill="#C8D7E2" cx="284.5" cy="94.1" r="5.2" />
 					</g>
-					<g className="clone-site__destination">
+					<g className="clone-site__origin">
 						<path
 							fill="#FFFFFF"
 							d="M3.4,178.9V15.2c0-6.8,5.5-12.4,12.4-12.4h183.3c6.8,0,12.4,5.5,12.4,12.4V179H3.4V178.9z"
@@ -136,12 +136,6 @@ class CloneDestinationStep extends Component {
 						/>
 					</g>
 				</svg>
-				<p className="clone-destination__description">{ translate( "Let's get started." ) }</p>
-				<p className="clone-destination__description">
-					{ translate(
-						' First, what would you like to name your destination site and where is it located?'
-					) }
-				</p>
 
 				<FormLabel className="clone-destination__label">Destination site title</FormLabel>
 				<FormTextInput name="siteName" onChange={ this.handleFieldChange } />
@@ -167,13 +161,19 @@ class CloneDestinationStep extends Component {
 		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
 		const headerText = translate( 'Getting started' );
+		const subHeaderText = translate(
+			"Let's get started. What would you like to name your destination site and where is it located?"
+		);
 
 		return (
 			<StepWrapper
+				className="clone-destination"
 				flowName={ flowName }
 				stepName={ stepName }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
