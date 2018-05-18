@@ -75,7 +75,7 @@ function editorButtonAnalytics( editor ) {
 			// specific item is clicked for english interfaces - the easiest
 			// way to determine which item is selected is by UI text.
 			const reduxStore = editor.getParam( 'redux_store' );
-			const locale = reduxStore ? getCurrentUserLocale( reduxStore.getState() ) : null;
+			const locale = reduxStore ? getCurrentUserLocale( reduxStore.getState() ) : 'en';
 			if ( locale === 'en' ) {
 				const text = closest( event.target, '.mce-menu-item', true ).textContent;
 				const menuItemName = text
