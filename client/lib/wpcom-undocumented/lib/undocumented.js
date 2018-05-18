@@ -390,34 +390,60 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
 };
 
+/**
+ * Get site keyrings
+ *
+ * @param {int|string} [siteId] The site ID
+ * @param {Function} fn The callback function
+ * @api public
+ */
 Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) {
 	return this.wpcom.req.get( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, fn );
 };
 
-Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring( siteId, keyringSiteId, fn ) {
-	return this.wpcom.req.post(
-		'/sites/' + siteId + '/keyrings/' + keyringSiteId + '/delete',
-		{ apiVersion: '1.1' },
-		fn
-	);
+/**
+ * Update or create a site keyring
+ *
+ * @param {int|string} [siteId] The site ID
+ * @param {Object} [data] site keyring object with properties:
+ * 	- keyring_id {int} the keyring id to update or create,
+ * 	- external_user_id {string} Optional. The external user id to link the site to
+ * 	- service {string} service name for this keyring id
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.updateSiteKeyrings = function updateSiteKeyring( siteId, data, fn ) {
+	return this.wpcom.req.post( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, data, fn );
 };
 
-Undocumented.prototype.updateSiteKeyring = function updateSiteKeyring(
+/**
+ * Delete a site keyring
+ *
+ * @param {int|string} [siteId] The site ID
+ * @param {int} keyringId The keyring id
+ * @param {string|null} externalUserId Optional, the external user id
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring(
 	siteId,
-	keyringSiteId,
-	data,
+	keyringId,
+	externalUserId,
 	fn
 ) {
+	if ( ! fn && typeof externalUserId === 'function' ) {
+		fn = externalUserId;
+		externalUserId = null;
+	}
+
 	return this.wpcom.req.post(
-		'/sites/' + siteId + '/keyrings/' + keyringSiteId,
+		'/sites/' + siteId + '/keyrings/' + keyringId + '/delete',
 		{ apiVersion: '1.1' },
-		data,
+		{
+			external_user_id: externalUserId,
+		},
 		fn
 	);
-};
-
-Undocumented.prototype.createSiteKeyring = function createSiteKeyring( siteId, data, fn ) {
-	return this.wpcom.req.post( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, data, fn );
 };
 
 Undocumented.prototype._sendRequest = function( originalParams, fn ) {

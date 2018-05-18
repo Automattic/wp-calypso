@@ -7,7 +7,7 @@ import {
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
-import { saveSiteKeyrings, deleteSiteKeyring } from 'state/site-keyrings/actions';
+import { saveSiteKeyring, deleteSiteKeyring } from 'state/site-keyrings/actions';
 
 export const connectGoogleMyBusinessLocation = (
 	siteId,
@@ -15,7 +15,7 @@ export const connectGoogleMyBusinessLocation = (
 	locationId
 ) => dispatch =>
 	dispatch(
-		saveSiteKeyrings( siteId, {
+		saveSiteKeyring( siteId, {
 			keyring_id: keyringConnectionId,
 			external_user_id: locationId,
 			service: 'google_my_business',

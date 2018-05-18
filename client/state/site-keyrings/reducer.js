@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import { keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import {
 	SITE_KEYRINGS_SAVE,
 	SITE_KEYRINGS_SAVE_FAILURE,
 	SITE_KEYRINGS_SAVE_SUCCESS,
+	SITE_KEYRINGS_DELETE_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -74,14 +76,18 @@ export const items = createReducer(
 	{
 		[ SITE_KEYRINGS_REQUEST_SUCCESS ]: ( state, { siteId, keyrings } ) => ( {
 			...state,
-			[ siteId ]: keyrings,
+			[ siteId ]: keyBy( keyrings, 'keyring_id' ),
 		} ),
-		[ SITE_KEYRINGS_SAVE_SUCCESS ]: ( state, { siteId, keyrings } ) => ( {
+		[ SITE_KEYRINGS_SAVE_SUCCESS ]: ( state, { siteId, keyring } ) => ( {
 			...state,
 			[ siteId ]: {
 				...state[ siteId ],
-				...keyrings,
+				[ keyring.keyring_id ]: keyring,
 			},
+		} ),
+		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { siteId, keyringId } ) => ( {
+			...state,
+			[ siteId ]: omit( state[ siteId ], [ keyringId ] ),
 		} ),
 	},
 	itemSchemas

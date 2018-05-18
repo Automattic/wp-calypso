@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get } from 'lodash';
+import { get, filter } from 'lodash';
 
 /**
  * Returns true if we are requesting keyrings for the specified site ID, false otherwise.
@@ -44,8 +44,20 @@ export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {Object}        Site keyrings
+ * @return {Object}  Site keyrings indexed by keyring ids
  */
 export function getSiteKeyrings( state, siteId ) {
 	return get( state.siteKeyrings.items, [ siteId ], null );
+}
+
+/**
+ * Returns the keyrings for the specified site ID and service
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {String}  service The service name to filter with
+ * @return {Array}   Site keyrings list
+ */
+export function getSiteKeyringsForService( state, siteId, service ) {
+	return filter( getSiteKeyrings( state, siteId ), { service } );
 }

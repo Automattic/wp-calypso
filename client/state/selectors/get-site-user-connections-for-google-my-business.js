@@ -3,18 +3,18 @@
 /**
  * External dependencies
  */
-import { filter } from 'lodash';
+import { filter, last } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSiteKeyrings } from 'state/site-keyrings/selectors';
+import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 
-function isConnected( keyringConnection, externalUser, siteKeyrings ) {
+function isConnected( keyringConnection, externalUser, siteKeyring ) {
 	return (
-		keyringConnection.ID === siteKeyrings.google_my_business_keyring_id &&
-		externalUser.external_ID === siteKeyrings.google_my_business_location_id
+		keyringConnection.ID === siteKeyring.keyring_id &&
+		externalUser.external_ID === siteKeyring.external_user_id
 	);
 }
 
@@ -30,9 +30,12 @@ function isConnected( keyringConnection, externalUser, siteKeyrings ) {
  * @return {Object}        List of GMB connections for this site
  */
 export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId ) {
-	const siteKeyrings = getSiteKeyrings( state, siteId );
+	// Google My Business can only have one location connected at a time
+	const googleMyBusinessSiteKeyring = last(
+		getSiteKeyringsForService( state, siteId, 'google_my_business' )
+	);
 
-	if ( ! siteKeyrings ) {
+	if ( ! googleMyBusinessSiteKeyring ) {
 		return [];
 	}
 
@@ -48,7 +51,7 @@ export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId
 					external_ID: externalUser.external_ID,
 					external_display: externalUser.external_name,
 					external_profile_picture: externalUser.external_profile_picture,
-					isConnected: isConnected( keyringConnection, externalUser, siteKeyrings ),
+					isConnected: isConnected( keyringConnection, externalUser, googleMyBusinessSiteKeyring ),
 				} );
 			} );
 		}
