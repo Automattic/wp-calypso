@@ -9,7 +9,8 @@ import { some } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getSitesItems, isSiteAutomatedTransfer as isAtomicSite } from 'state/selectors';
+import getSitesItems from 'state/selectors/get-sites-items';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 /**
  * Whether the user currently has any Atomic sites

@@ -17,7 +17,7 @@ import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import {
 	isEditedPostPasswordProtected,
 	isEditedPostPasswordProtectedWithValidPassword,

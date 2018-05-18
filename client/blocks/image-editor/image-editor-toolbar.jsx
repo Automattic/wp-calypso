@@ -24,7 +24,7 @@ import {
 	imageEditorFlip,
 	setImageEditorAspectRatio,
 } from 'state/ui/editor/image-editor/actions';
-import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
+import getImageEditorIsGreaterThanMinimumDimensions from 'state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 
 export class ImageEditorToolbar extends Component {
 	static propTypes = {

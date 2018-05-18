@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getLocaleSuggestions } from 'state/selectors';
+import getLocaleSuggestions from 'state/selectors/get-locale-suggestions';
 import { requestLocaleSuggestions } from 'state/i18n/locale-suggestions/actions';
 
 class QueryLocaleSuggestions extends Component {

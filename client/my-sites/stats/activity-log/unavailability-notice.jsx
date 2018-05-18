@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Banner from 'components/banner';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 export const UnavailabilityNotice = ( {
 	adminUrl,

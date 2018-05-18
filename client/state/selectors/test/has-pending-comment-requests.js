@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { hasPendingCommentRequests } from 'state/selectors';
+import hasPendingCommentRequests from 'state/selectors/has-pending-comment-requests';
 import { COMMENTS_CHANGE_STATUS } from 'state/action-types';
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 

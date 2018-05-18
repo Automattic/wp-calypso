@@ -13,7 +13,8 @@ import { get } from 'lodash';
  */
 import { next } from 'lib/shortcode';
 import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
-import { getMediaItem, getSimplePayments } from 'state/selectors';
+import getMediaItem from 'state/selectors/get-media-item';
+import getSimplePayments from 'state/selectors/get-simple-payments';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import formatCurrency from 'lib/format-currency';
 import QuerySimplePayments from 'components/data/query-simple-payments';

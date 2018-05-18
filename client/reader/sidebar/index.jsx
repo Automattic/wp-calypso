@@ -38,7 +38,7 @@ import { isAutomatticTeamMember } from 'reader/lib/teams';
 import { getTagStreamUrl } from 'reader/route';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
-import { getReaderTeams } from 'state/selectors';
+import getReaderTeams from 'state/selectors/get-reader-teams';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 

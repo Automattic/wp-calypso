@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import PurchaseDetail from 'components/purchase-detail';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 const JetpackBackupSecurity = ( { backupEngine, site, siteId, translate } ) => (
 	<div className="product-purchase-features-list__item">

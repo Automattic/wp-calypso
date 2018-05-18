@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSites } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
 
 const currentUserState = {
 	currentUser: {

@@ -24,15 +24,13 @@ import QuerySiteMonitorSettings from 'components/data/query-site-monitor-setting
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import {
-	getSiteMonitorSettings,
-	isActivatingJetpackModule,
-	isDeactivatingJetpackModule,
-	isFetchingJetpackModules,
-	isJetpackModuleActive,
-	isRequestingSiteMonitorSettings,
-	isUpdatingSiteMonitorSettings,
-} from 'state/selectors';
+import getSiteMonitorSettings from 'state/selectors/get-site-monitor-settings';
+import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
+import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
+import isFetchingJetpackModules from 'state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isRequestingSiteMonitorSettings from 'state/selectors/is-requesting-site-monitor-settings';
+import isUpdatingSiteMonitorSettings from 'state/selectors/is-updating-site-monitor-settings';
 
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};

@@ -14,7 +14,7 @@ import { get } from 'lodash';
 import { stripHTML } from 'lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 import Emojify from 'components/emojify';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 

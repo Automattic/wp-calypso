@@ -27,7 +27,7 @@ import {
 } from 'state/analytics/actions';
 import { editComment } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 

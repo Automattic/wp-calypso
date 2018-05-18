@@ -19,7 +19,7 @@ import ExternalLink from 'components/external-link';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import { getSiteConnectionStatus } from 'state/selectors';
+import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
 
 export class PluginInstallButton extends Component {
 	installAction = () => {

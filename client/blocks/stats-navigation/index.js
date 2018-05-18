@@ -15,10 +15,8 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
-import {
-	isGoogleMyBusinessLocationConnected as isGoogleMyBusinessLocationConnectedSelector,
-	isSiteStore,
-} from 'state/selectors';
+import isGoogleMyBusinessLocationConnectedSelector from 'state/selectors/is-google-my-business-location-connected';
+import isSiteStore from 'state/selectors/is-site-store';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { navItems, intervals as intervalConstants } from './constants';

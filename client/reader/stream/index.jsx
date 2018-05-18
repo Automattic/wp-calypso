@@ -22,11 +22,9 @@ import {
 	selectPrevItem,
 	showUpdates,
 } from 'state/reader/streams/actions';
-import {
-	getReaderStream as getStream,
-	getReaderStreamTransformedItems as getTransformedStreamItems,
-	getReaderStreamShouldRequestRecommendations as shouldRequestRecs,
-} from 'state/selectors';
+import getStream from 'state/selectors/get-reader-stream';
+import shouldRequestRecs from 'state/selectors/get-reader-stream-should-request-recommendations';
+import getTransformedStreamItems from 'state/selectors/get-reader-stream-transformed-items';
 
 import { shouldShowLikes } from 'reader/like-helper';
 import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';

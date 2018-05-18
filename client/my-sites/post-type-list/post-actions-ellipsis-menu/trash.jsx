@@ -15,7 +15,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { trashPost, deletePost } from 'state/posts/actions';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getPost } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 

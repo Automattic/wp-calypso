@@ -26,11 +26,9 @@ import {
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
 import userFactory from 'lib/user';
-import {
-	isNotificationsOpen,
-	hasSitePendingAutomatedTransfer,
-	isFetchingAutomatedTransferStatus,
-} from 'state/selectors';
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
+import isFetchingAutomatedTransferStatus from 'state/selectors/is-fetching-automated-transfer-status';
+import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';

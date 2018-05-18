@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { state } from './fixtures/theme-filters';
-import { getThemeFilterTermsTable } from 'state/selectors';
+import getThemeFilterTermsTable from 'state/selectors/get-theme-filter-terms-table';
 
 describe( 'getThemeFilterTermsTable()', () => {
 	test( 'should return a dictionary mapping terms to taxonomies', () => {

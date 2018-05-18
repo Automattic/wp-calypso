@@ -14,10 +14,8 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import FormattedHeader from 'components/formatted-header';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
-import {
-	getJetpackOnboardingCompletedSteps,
-	getJetpackOnboardingPendingSteps,
-} from 'state/selectors';
+import getJetpackOnboardingCompletedSteps from 'state/selectors/get-jetpack-onboarding-completed-steps';
+import getJetpackOnboardingPendingSteps from 'state/selectors/get-jetpack-onboarding-pending-steps';
 
 class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	handleWooCommerceInstallation = () => {

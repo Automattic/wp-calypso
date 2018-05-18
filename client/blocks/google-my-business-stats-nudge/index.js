@@ -17,10 +17,8 @@ import Card from 'components/card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SectionHeader from 'components/section-header';
 import QueryPreferences from 'components/data/query-preferences';
-import {
-	isGoogleMyBusinessStatsNudgeDismissed,
-	getGoogleMyBusinessStatsNudgeDismissCount,
-} from 'state/selectors';
+import getGoogleMyBusinessStatsNudgeDismissCount from 'state/selectors/get-google-my-business-stats-nudge-dismiss-count';
+import isGoogleMyBusinessStatsNudgeDismissed from 'state/selectors/is-google-my-business-stats-nudge-dismissed';
 import { dismissNudge } from './actions';
 
 class GoogleMyBusinessStatsNudge extends Component {

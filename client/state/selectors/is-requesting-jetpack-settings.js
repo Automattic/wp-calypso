@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRequest } from 'state/selectors';
+import getRequest from 'state/selectors/get-request';
 import { requestJetpackSettings } from 'state/jetpack/settings/actions';
 
 /**

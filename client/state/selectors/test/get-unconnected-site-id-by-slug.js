@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getUnconnectedSiteIdBySlug } from 'state/selectors';
+import getUnconnectedSiteIdBySlug from 'state/selectors/get-unconnected-site-id-by-slug';
 
 describe( '#getUnconnectedSiteIdBySlug()', () => {
 	test( 'should return null if we have no credentials for the current site slug', () => {

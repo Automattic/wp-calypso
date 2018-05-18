@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getRestoreError } from 'state/selectors';
+import getRestoreError from 'state/selectors/get-restore-error';
 
 const SITE_ID = 1234;
 

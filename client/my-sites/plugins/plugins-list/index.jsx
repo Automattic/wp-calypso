@@ -26,7 +26,7 @@ import PluginNotices from 'lib/plugins/notices';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 function checkPropsChange( nextProps, propArr ) {

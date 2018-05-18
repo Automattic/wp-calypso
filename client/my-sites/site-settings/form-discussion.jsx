@@ -27,7 +27,7 @@ import SectionHeader from 'components/section-header';
 import Subscriptions from './subscriptions';
 import wrapSettingsForm from './wrap-settings-form';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import JetpackModuleToggle from './jetpack-module-toggle';
 

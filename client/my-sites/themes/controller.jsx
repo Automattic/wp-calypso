@@ -20,7 +20,7 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
 import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
-import { getThemeFilters } from 'state/selectors';
+import getThemeFilters from 'state/selectors/get-theme-filters';
 
 const debug = debugFactory( 'calypso:themes' );
 

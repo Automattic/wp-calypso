@@ -16,7 +16,8 @@ import page from 'page';
 import notices from 'notices';
 import { login } from 'lib/paths';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
-import { getCurrentLocaleSlug, getMagicLoginCurrentView } from 'state/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import LocaleSuggestions from 'components/locale-suggestions';
 import {

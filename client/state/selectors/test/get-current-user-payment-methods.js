@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { update } from 'state/data-layer/http-data';
-import { getCurrentUserPaymentMethods } from 'state/selectors';
+import getCurrentUserPaymentMethods from 'state/selectors/get-current-user-payment-methods';
 
 describe( 'getCurrentUserPaymentMethods()', () => {
 	const enLangUsCountryState = {

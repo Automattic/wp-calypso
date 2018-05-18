@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryResetSelectedMethod } from 'state/selectors';
+import getAccountRecoveryResetSelectedMethod from 'state/selectors/get-account-recovery-reset-selected-method';
 
 describe( 'getAccountRecoveryResetSelectedMethod()', () => {
 	test( 'should return the method field under the account recovery state tree.', () => {

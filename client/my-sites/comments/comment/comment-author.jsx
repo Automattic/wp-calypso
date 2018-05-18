@@ -20,7 +20,7 @@ import Gravatar from 'components/gravatar';
 import Tooltip from 'components/tooltip';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CommentAuthor extends Component {

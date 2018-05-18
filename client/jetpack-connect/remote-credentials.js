@@ -34,11 +34,9 @@ import {
 	jetpackRemoteInstall,
 	jetpackRemoteInstallUpdateError,
 } from 'state/jetpack-remote-install/actions';
-import {
-	getJetpackRemoteInstallErrorCode,
-	getJetpackRemoteInstallErrorMessage,
-	isJetpackRemoteInstallComplete,
-} from 'state/selectors';
+import getJetpackRemoteInstallErrorCode from 'state/selectors/get-jetpack-remote-install-error-code';
+import getJetpackRemoteInstallErrorMessage from 'state/selectors/get-jetpack-remote-install-error-message';
+import isJetpackRemoteInstallComplete from 'state/selectors/is-jetpack-remote-install-complete';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from './constants';

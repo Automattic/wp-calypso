@@ -18,7 +18,8 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser, canCurrentUserEditPost } from 'state/selectors';
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
+import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 import {
 	isSharePanelOpen,
 	isMultiSelectEnabled,

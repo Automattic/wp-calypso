@@ -8,7 +8,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { canUpgradeToPlan } from 'state/selectors';
+import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,

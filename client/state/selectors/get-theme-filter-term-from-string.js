@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { isAmbiguousThemeFilterTerm } from 'state/selectors';
+import isAmbiguousThemeFilterTerm from 'state/selectors/is-ambiguous-theme-filter-term';
 
 /**
  * return term from a taxonomy:term string

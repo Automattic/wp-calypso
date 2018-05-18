@@ -16,7 +16,7 @@ import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import { getSimplePayments } from 'state/selectors';
+import getSimplePayments from 'state/selectors/get-simple-payments';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
 import Dialog from 'components/dialog';

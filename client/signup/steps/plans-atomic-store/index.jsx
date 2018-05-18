@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
-import { getSiteId } from 'state/selectors';
+import getSiteId from 'state/selectors/get-site-id';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import QueryPlans from 'components/data/query-plans';

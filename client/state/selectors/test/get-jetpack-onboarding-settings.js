@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getJetpackOnboardingSettings } from 'state/selectors';
+import getJetpackOnboardingSettings from 'state/selectors/get-jetpack-onboarding-settings';
 
 describe( '#getJetpackOnboardingSettings()', () => {
 	const onboardingSettings = {

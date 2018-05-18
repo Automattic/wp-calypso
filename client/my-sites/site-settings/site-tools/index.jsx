@@ -19,7 +19,8 @@ import SectionHeader from 'components/section-header';
 import SiteToolsLink from './link';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer, isVipSite } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isVipSite from 'state/selectors/is-vip-site';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,

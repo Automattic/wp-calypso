@@ -19,11 +19,9 @@ import DropdownLabel from 'components/select-dropdown/label';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setApp, setDate } from 'state/ui/billing-transactions/actions';
-import {
-	getBillingTransactionAppFilterValues,
-	getBillingTransactionDateFilterValues,
-	getBillingTransactionFilters,
-} from 'state/selectors';
+import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
+import getBillingTransactionDateFilterValues from 'state/selectors/get-billing-transaction-date-filter-values';
+import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 
 class TransactionsHeader extends React.Component {
 	state = {

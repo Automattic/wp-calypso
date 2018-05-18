@@ -27,7 +27,7 @@ import ProgressBar from 'components/progress-bar';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
-import { hasSitePendingAutomatedTransfer } from 'state/selectors';
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { recordTrack } from 'woocommerce/lib/analytics';

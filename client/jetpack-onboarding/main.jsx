@@ -27,15 +27,13 @@ import {
 	JETPACK_ONBOARDING_STEPS as STEPS,
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 } from './constants';
-import {
-	getJetpackOnboardingCompletedSteps,
-	getJetpackOnboardingSettings,
-	getJpoUserHash,
-	getSiteId,
-	getUnconnectedSite,
-	getUnconnectedSiteIdBySlug,
-	isRequestingJetpackSettings,
-} from 'state/selectors';
+import getJetpackOnboardingCompletedSteps from 'state/selectors/get-jetpack-onboarding-completed-steps';
+import getJetpackOnboardingSettings from 'state/selectors/get-jetpack-onboarding-settings';
+import getJpoUserHash from 'state/selectors/get-jpo-user-hash';
+import getSiteId from 'state/selectors/get-site-id';
+import getUnconnectedSite from 'state/selectors/get-unconnected-site';
+import getUnconnectedSiteIdBySlug from 'state/selectors/get-unconnected-site-id-by-slug';
+import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { saveJetpackSettings } from 'state/jetpack/settings/actions';

@@ -35,7 +35,7 @@ import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import ChecklistBanner from './checklist-banner';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
-import { isGoogleMyBusinessStatsNudgeVisible as isGoogleMyBusinessStatsNudgeVisibleSelector } from 'state/selectors';
+import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 
 class StatsSite extends Component {
 	constructor( props ) {

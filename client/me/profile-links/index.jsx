@@ -20,7 +20,8 @@ import Notice from 'components/notice';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
 import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile-links/actions';
-import { getProfileLinks, getProfileLinksErrorType } from 'state/selectors';
+import getProfileLinks from 'state/selectors/get-profile-links';
+import getProfileLinksErrorType from 'state/selectors/get-profile-links-error-type';
 
 class ProfileLinks extends React.Component {
 	state = {

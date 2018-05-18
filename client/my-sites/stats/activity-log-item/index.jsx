@@ -32,14 +32,12 @@ import {
 	rewindRestore,
 } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import {
-	getActivityLog,
-	getRequestedBackup,
-	getRequestedRewind,
-	getSiteGmtOffset,
-	getSiteTimezoneValue,
-	getRewindState,
-} from 'state/selectors';
+import getActivityLog from 'state/selectors/get-activity-log';
+import getRequestedBackup from 'state/selectors/get-requested-backup';
+import getRequestedRewind from 'state/selectors/get-requested-rewind';
+import getRewindState from 'state/selectors/get-rewind-state';
+import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { adjustMoment } from '../activity-log/utils';
 import { getSite } from 'state/sites/selectors';
 import { updatePlugin } from 'state/plugins/installed/actions';

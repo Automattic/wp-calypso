@@ -16,7 +16,7 @@ import HappychatButton from 'components/happychat/button';
 import Gridicon from 'gridicons';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteUrl } from 'state/selectors';
+import getSiteUrl from 'state/selectors/get-site-url';
 import {
 	dismissRewindRestoreProgress,
 	dismissRewindBackupProgress,

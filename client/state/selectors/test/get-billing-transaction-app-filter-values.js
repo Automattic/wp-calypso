@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { getBillingTransactionAppFilterValues } from 'state/selectors';
+import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
 
 describe( 'getBillingTransactionAppFilterValues()', () => {
 	const state = {

@@ -21,7 +21,7 @@ import {
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
-import { getContactDetailsCache } from 'state/selectors';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import {
 	areLocationsLoaded,

@@ -29,7 +29,7 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import { canUpgradeToPlan } from 'state/selectors';
+import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import getActiveDiscount from 'state/selectors/get-active-discount';
 import {
 	planMatches,

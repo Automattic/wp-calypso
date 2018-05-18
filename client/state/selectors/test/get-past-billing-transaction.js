@@ -8,7 +8,7 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPastBillingTransaction } from 'state/selectors';
+import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
 
 describe( 'getPastBillingTransaction()', () => {
 	const state = {

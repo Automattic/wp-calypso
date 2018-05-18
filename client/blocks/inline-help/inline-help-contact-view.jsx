@@ -15,7 +15,7 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_FORUM,
 } from 'state/selectors/get-inline-help-support-variation';
 import { getHelpSelectedSite } from 'state/help/selectors';
-import { isSupportVariationDetermined } from 'state/selectors';
+import isSupportVariationDetermined from 'state/selectors/is-support-variation-determined';
 
 const InlineHelpContactView = ( {
 	/* eslint-disable no-unused-vars, no-shadow */

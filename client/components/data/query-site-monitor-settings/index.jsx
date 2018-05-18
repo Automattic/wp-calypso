@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteMonitorSettings } from 'state/selectors';
+import isRequestingSiteMonitorSettings from 'state/selectors/is-requesting-site-monitor-settings';
 import { requestSiteMonitorSettings } from 'state/sites/monitor/actions';
 
 class QuerySiteMonitorSettings extends Component {

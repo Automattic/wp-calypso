@@ -20,7 +20,7 @@ import Card from 'components/card';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import { getWidgetPath, formatValue } from 'woocommerce/app/store-stats/utils';
 import Pagination from 'components/pagination';
-import { getStoreReferrersByDate } from 'state/selectors';
+import getStoreReferrersByDate from 'state/selectors/get-store-referrers-by-date';
 
 class StoreStatsReferrerWidget extends Component {
 	static propTypes = {

@@ -36,7 +36,9 @@ import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/map
 import versionCompare from 'lib/version-compare';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
 import { getSiteComputedAttributes } from './utils';
-import { isSiteUpgradeable, getSiteOptions, getSitesItems } from 'state/selectors';
+import getSiteOptions from 'state/selectors/get-site-options';
+import getSitesItems from 'state/selectors/get-sites-items';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 
 /**
  * Returns a raw site object by its ID.

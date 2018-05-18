@@ -21,7 +21,8 @@ import TransactionsHeader from './transactions-header';
 import { groupDomainProducts } from './utils';
 import SearchCard from 'components/search-card';
 import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
-import { getFilteredBillingTransactions, getBillingTransactionFilters } from 'state/selectors';
+import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
+import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';

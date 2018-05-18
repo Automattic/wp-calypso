@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getTimezonesLabels } from 'state/selectors';
+import getTimezonesLabels from 'state/selectors/get-timezones-labels';
 
 /**
  * Return timezone `label` according to the given timezone key (value)

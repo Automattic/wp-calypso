@@ -25,7 +25,7 @@ import StoreStatsReferrerWidget from 'woocommerce/app/store-stats/store-stats-re
 import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
-import { getStoreReferrersByDate } from 'state/selectors';
+import getStoreReferrersByDate from 'state/selectors/get-store-referrers-by-date';
 import Chart from './chart';
 import { UNITS, noDataMsg } from 'woocommerce/app/store-stats/constants';
 

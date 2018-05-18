@@ -23,7 +23,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getGoogleMyBusinessLocations } from 'state/selectors';
+import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';

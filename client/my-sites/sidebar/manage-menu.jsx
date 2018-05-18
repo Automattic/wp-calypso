@@ -30,7 +30,8 @@ import {
 	isJetpackSite,
 	isSingleUserSite,
 } from 'state/sites/selectors';
-import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 

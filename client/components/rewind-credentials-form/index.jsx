@@ -24,7 +24,8 @@ import Gridicon from 'gridicons';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getRewindState, getJetpackCredentialsUpdateStatus } from 'state/selectors';
+import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 export class RewindCredentialsForm extends Component {
 	static propTypes = {

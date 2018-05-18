@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getFilteredBillingTransactions } from 'state/selectors';
+import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
 
 describe( 'getBillingTransactionAppFilterValues()', () => {
 	const PAGE_SIZE = 5;

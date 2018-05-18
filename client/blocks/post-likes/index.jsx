@@ -13,7 +13,8 @@ import { localize } from 'i18n-calypso';
  */
 import Gravatar from 'components/gravatar';
 import QueryPostLikes from 'components/data/query-post-likes';
-import { getPostLikes, countPostLikes } from 'state/selectors';
+import countPostLikes from 'state/selectors/count-post-likes';
+import getPostLikes from 'state/selectors/get-post-likes';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class PostLikes extends React.PureComponent {

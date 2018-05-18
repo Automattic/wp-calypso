@@ -25,7 +25,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getGoogleMyBusinessConnectedLocation } from 'state/selectors';
+import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 

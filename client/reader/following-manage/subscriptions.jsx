@@ -21,7 +21,8 @@ import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers
 import SyncReaderFollows from 'components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
-import { getReaderFollows, getReaderFollowsCount } from 'state/selectors';
+import getReaderFollows from 'state/selectors/get-reader-follows';
+import getReaderFollowsCount from 'state/selectors/get-reader-follows-count';
 import UrlSearch from 'lib/url-search';
 import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
 import EllipsisMenu from 'components/ellipsis-menu';

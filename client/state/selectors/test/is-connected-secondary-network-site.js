@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isConnectedSecondaryNetworkSite } from 'state/selectors';
+import isConnectedSecondaryNetworkSite from 'state/selectors/is-connected-secondary-network-site';
 
 describe( 'isConnectedSecondaryNetworkSite()', () => {
 	test( 'should return false if no sites exist in state', () => {

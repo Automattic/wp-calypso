@@ -16,7 +16,7 @@ import { sectionify } from 'lib/route';
 import Main from 'components/main';
 import { addItem } from 'lib/upgrades/actions';
 import productsFactory from 'lib/products-list';
-import { getSites } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import CartData from 'components/data/cart';

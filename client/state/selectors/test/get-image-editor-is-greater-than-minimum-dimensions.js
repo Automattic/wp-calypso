@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
+import getImageEditorIsGreaterThanMinimumDimensions from 'state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 
 describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 	test( 'should return false if the image has not loaded yet and therefore originalAspectRatio not set', () => {

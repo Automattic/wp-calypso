@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import UsersStore from 'lib/users/store';

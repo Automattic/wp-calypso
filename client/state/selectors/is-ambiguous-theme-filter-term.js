@@ -10,7 +10,7 @@ import { filter, get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getThemeFilters } from 'state/selectors';
+import getThemeFilters from 'state/selectors/get-theme-filters';
 
 /**
  * Returns true if a theme filter term belongs to more

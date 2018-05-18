@@ -26,7 +26,8 @@ import Dialog from 'components/dialog';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { isPrivateSite, canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isPrivateSite from 'state/selectors/is-private-site';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,

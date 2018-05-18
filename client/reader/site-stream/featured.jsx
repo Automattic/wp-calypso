@@ -17,7 +17,7 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
 import QueryReaderPost from 'components/data/query-reader-post';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
-import { getReaderStream as getStream } from 'state/selectors';
+import getStream from 'state/selectors/get-reader-stream';
 import { requestPage } from 'state/reader/streams/actions';
 import { keyToString } from 'reader/post-key';
 

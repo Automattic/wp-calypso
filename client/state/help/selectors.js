@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedOrPrimarySiteId } from 'state/selectors';
+import getSelectedOrPrimarySiteId from 'state/selectors/get-selected-or-primary-site-id';
 import { getSite } from 'state/sites/selectors';
 
 export const getHelpSiteId = state => state.help.selectedSiteId;

@@ -23,7 +23,7 @@ import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
 import { preload } from 'sections-helper';
 import SiteSelector from 'components/site-selector';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 function preloadEditor() {
 	preload( 'post-editor' );

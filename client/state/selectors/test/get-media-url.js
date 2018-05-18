@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMediaUrl } from 'state/selectors';
+import getMediaUrl from 'state/selectors/get-media-url';
 import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'getMediaUrl()', () => {

@@ -9,7 +9,7 @@ import { findIndex } from 'lodash';
  * Internal dependencie
  */
 import { keysAreEqual } from 'reader/post-key';
-import { getReaderCurrentStream as getCurrentStream } from 'state/selectors';
+import getCurrentStream from 'state/selectors/get-reader-current-stream';
 
 /*
  * given state, an item, and an offset: return the item that is offset away from the currentItem in the list.

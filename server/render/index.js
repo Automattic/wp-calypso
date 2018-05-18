@@ -22,7 +22,8 @@ import {
 	getDocumentHeadLink,
 } from 'state/document-head/selectors';
 import isRTL from 'state/selectors/is-rtl';
-import { getCurrentLocaleSlug, getCurrentLocaleVariant } from 'state/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';

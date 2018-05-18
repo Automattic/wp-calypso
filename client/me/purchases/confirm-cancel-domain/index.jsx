@@ -23,7 +23,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
-import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
+import isDomainOnly from 'state/selectors/is-domain-only-site';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getName as getDomainName } from 'lib/purchases';
 import { isDataLoading } from '../utils';

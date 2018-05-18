@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 class ModuleChartBar extends Component {
 	static propTypes = {

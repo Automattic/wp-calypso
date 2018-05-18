@@ -31,15 +31,13 @@ import { isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-val
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins,
-	getPrimarySiteId,
-	hasJetpackSites,
-	isDomainOnlySite,
-	isSiteAutomatedTransfer,
-	hasSitePendingAutomatedTransfer,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import hasJetpackSites from 'state/selectors/has-jetpack-sites';
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import {
 	getCustomizerUrl,
 	getSite,

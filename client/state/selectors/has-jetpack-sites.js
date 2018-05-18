@@ -6,7 +6,7 @@
 
 import createSelector from 'lib/create-selector';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSitesItems } from 'state/selectors';
+import getSitesItems from 'state/selectors/get-sites-items';
 
 /**
  * Returns true if the user has one or more Jetpack sites, and false otherwise.

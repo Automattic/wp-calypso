@@ -4,7 +4,7 @@
  */
 import config from 'config';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { isDirectlyReady } from 'state/selectors';
+import isDirectlyReady from 'state/selectors/is-directly-ready';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import { isTicketSupportEligible } from 'state/help/ticket/selectors';

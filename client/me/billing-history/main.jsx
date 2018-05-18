@@ -21,7 +21,7 @@ import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
-import { getPastBillingTransactions } from 'state/selectors';
+import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
 
 const BillingHistory = ( { pastTransactions, translate } ) => (
 	<Main className="billing-history">

@@ -25,7 +25,8 @@ import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser, isPrivateSite } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isPrivateSite from 'state/selectors/is-private-site';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 

@@ -13,7 +13,7 @@ import classnames from 'classnames';
  */
 import Popover from 'components/popover';
 import PostLikes from './index';
-import { getPostLikes } from 'state/selectors';
+import getPostLikes from 'state/selectors/get-post-likes';
 
 function PostLikesPopover( props ) {
 	const {

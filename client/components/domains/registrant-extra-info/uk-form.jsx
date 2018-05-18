@@ -13,7 +13,7 @@ import { camelCase, difference, filter, get, includes, isEmpty, keys, map, pick 
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormFieldset from 'components/forms/form-fieldset';

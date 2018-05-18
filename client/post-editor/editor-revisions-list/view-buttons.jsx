@@ -17,7 +17,7 @@ import {
 	splitPostRevisionsDiffView,
 	unifyPostRevisionsDiffView,
 } from 'state/posts/revisions/actions';
-import { getPostRevisionsDiffView } from 'state/selectors';
+import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-view';
 
 const EditorRevisionsListViewButtons = ( { translate, diffView, viewSplit, viewUnified } ) => {
 	return (

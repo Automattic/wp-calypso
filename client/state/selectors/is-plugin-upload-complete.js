@@ -4,7 +4,9 @@
  * Internal dependencies
  */
 
-import { isPluginUploadInProgress, getUploadedPluginId } from 'state/selectors';
+import getUploadedPluginId from 'state/selectors/get-uploaded-plugin-id';
+
+import isPluginUploadInProgress from 'state/selectors/is-plugin-upload-in-progress';
 
 /**
  * Indicates whether a plugin upload has completed

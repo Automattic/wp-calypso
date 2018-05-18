@@ -11,7 +11,7 @@ import { get } from 'lodash';
 import { addQueryArgs } from 'lib/url';
 import { ACTIVITY_LOG_FILTER_SET, ACTIVITY_LOG_FILTER_UPDATE, NAVIGATE } from 'state/action-types';
 import { filterStateToQuery } from 'state/activity-log/utils';
-import { getActivityLogFilter } from 'state/selectors';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 
 export const navigationMiddleware = store => {
 	return next => action => {

@@ -30,13 +30,11 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode,
-	getMediaStorageLimit,
-	getMediaStorageUsed,
-} from 'state/selectors';
+import getMediaStorageLimit from 'state/selectors/get-media-storage-limit';
+import getMediaStorageUsed from 'state/selectors/get-media-storage-used';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
 import QueryMediaStorage from 'components/data/query-media-storage';

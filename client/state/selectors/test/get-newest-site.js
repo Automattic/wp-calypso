@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getNewestSite } from 'state/selectors';
+import getNewestSite from 'state/selectors/get-newest-site';
 
 const site = { ID: 2916288, name: 'WordPress.com Example Blog' };
 const currentUserState = {

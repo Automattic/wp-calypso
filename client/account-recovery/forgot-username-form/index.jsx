@@ -18,10 +18,8 @@ import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 import { fetchResetOptionsByNameAndUrl } from 'state/account-recovery/reset/actions';
 
-import {
-	isRequestingAccountRecoveryResetOptions,
-	getAccountRecoveryResetOptionsError,
-} from 'state/selectors';
+import getAccountRecoveryResetOptionsError from 'state/selectors/get-account-recovery-reset-options-error';
+import isRequestingAccountRecoveryResetOptions from 'state/selectors/is-requesting-account-recovery-reset-options';
 
 export class ForgotUsernameFormComponent extends Component {
 	constructor( props ) {

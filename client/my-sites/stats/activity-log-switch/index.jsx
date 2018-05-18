@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 import { getSiteUrl } from 'state/sites/selectors';
 
 class ActivityLogSwitch extends Component {

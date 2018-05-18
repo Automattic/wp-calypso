@@ -34,7 +34,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import Button from 'components/button';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
-import { hasNavigated } from 'state/selectors';
+import hasNavigated from 'state/selectors/has-navigated';
 import WebPreview from 'components/web-preview';
 
 class StatsPostDetail extends Component {

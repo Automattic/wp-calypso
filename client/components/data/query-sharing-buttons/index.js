@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSharingButtons } from 'state/selectors';
+import isRequestingSharingButtons from 'state/selectors/is-requesting-sharing-buttons';
 import { requestSharingButtons } from 'state/sites/sharing-buttons/actions';
 
 class QuerySharingButtons extends Component {

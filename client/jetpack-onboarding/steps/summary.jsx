@@ -15,7 +15,8 @@ import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import CompletedSteps from '../summary-completed-steps';
 import NextSteps from '../summary-next-steps';
-import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
+import getSiteUrl from 'state/selectors/get-site-url';
+import getUnconnectedSiteUrl from 'state/selectors/get-unconnected-site-url';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	handleSummaryStepClick = ( stepName, stepType ) => () => {

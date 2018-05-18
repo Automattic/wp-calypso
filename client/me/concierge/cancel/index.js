@@ -22,7 +22,8 @@ import {
 	CONCIERGE_STATUS_CANCELLED,
 	CONCIERGE_STATUS_CANCELLING,
 } from '../constants';
-import { getConciergeAppointmentDetails, getConciergeSignupForm } from 'state/selectors';
+import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
+import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 

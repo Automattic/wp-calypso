@@ -23,7 +23,7 @@ import ListNoContent from './list-no-content';
 import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 const GOOGLE_MAX_RESULTS = 1000;
 

@@ -16,7 +16,7 @@ import CompactCard from 'components/card/compact';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import Button from 'components/button';
 import { deleteCredentials } from 'state/jetpack/credentials/actions';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 class CredentialsConfigured extends Component {
 	state = {

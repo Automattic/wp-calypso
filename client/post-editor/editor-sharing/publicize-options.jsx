@@ -28,7 +28,8 @@ import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
-import { canCurrentUser, isPublicizeEnabled } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
 import { updatePostMetadata } from 'state/posts/actions';
 
 class EditorSharingPublicizeOptions extends React.Component {

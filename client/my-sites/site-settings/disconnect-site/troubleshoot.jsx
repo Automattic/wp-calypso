@@ -16,7 +16,8 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import { addQueryArgs } from 'lib/route';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { getSiteUrl, isSiteOnFreePlan } from 'state/selectors';
+import getSiteUrl from 'state/selectors/get-site-url';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Troubleshoot = ( { isFreePlan, siteUrl, trackDebugClick, translate } ) => (

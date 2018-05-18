@@ -51,12 +51,10 @@ import {
 	initialize as initializeDirectly,
 } from 'state/help/directly/actions';
 import { getSitePlan, isRequestingSites } from 'state/sites/selectors';
-import {
-	hasUserAskedADirectlyQuestion,
-	isDirectlyReady,
-	isDirectlyUninitialized,
-	getLocalizedLanguageNames,
-} from 'state/selectors';
+import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
+import hasUserAskedADirectlyQuestion from 'state/selectors/has-user-asked-a-directly-question';
+import isDirectlyReady from 'state/selectors/is-directly-ready';
+import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
 import { isDefaultLocale } from 'lib/i18n-utils';

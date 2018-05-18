@@ -26,7 +26,7 @@ import titlecase from 'to-title-case';
 import QueryMedia from 'components/data/query-media';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getMediaItem } from 'state/selectors';
+import getMediaItem from 'state/selectors/get-media-item';
 import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
 
 const StatsStrings = statsStringsFactory();

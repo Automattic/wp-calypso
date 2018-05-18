@@ -40,12 +40,10 @@ import {
 	getImageEditorCrop,
 	getImageEditorTransform,
 } from 'state/ui/editor/image-editor/selectors';
-import {
-	getSiteIconId,
-	getSiteIconUrl,
-	isPrivateSite,
-	isSiteSupportingImageEditor,
-} from 'state/selectors';
+import getSiteIconId from 'state/selectors/get-site-icon-id';
+import getSiteIconUrl from 'state/selectors/get-site-icon-url';
+import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteSupportingImageEditor from 'state/selectors/is-site-supporting-image-editor';
 import { errorNotice } from 'state/notices/actions';
 
 class SiteIconSetting extends Component {

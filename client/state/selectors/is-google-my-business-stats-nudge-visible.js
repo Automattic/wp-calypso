@@ -3,11 +3,10 @@
 /**
  * Internal dependencies
  */
-import {
-	isGoogleMyBusinessLocationConnected,
-	isSiteGoogleMyBusinessEligible,
-	getSiteOptions,
-} from 'state/selectors';
+import getSiteOptions from 'state/selectors/get-site-options';
+
+import isGoogleMyBusinessLocationConnected from 'state/selectors/is-google-my-business-location-connected';
+import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
 import { isRequestingSiteSettings, getSiteSettings } from 'state/site-settings/selectors';
 import versionCompare from 'lib/version-compare';
 import { isJetpackSite } from 'state/sites/selectors';

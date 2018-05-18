@@ -22,7 +22,8 @@ import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { saveDomainIpsTag } from 'state/domains/transfer/actions';
-import { getGainingRegistrar, getIpsTagSaveStatus } from 'state/selectors';
+import getGainingRegistrar from 'state/selectors/get-gaining-registrar';
+import getIpsTagSaveStatus from 'state/selectors/get-ips-tag-save-status';
 
 const debug = debugFactory( 'calypso:domains:select-ips-tag' );
 
