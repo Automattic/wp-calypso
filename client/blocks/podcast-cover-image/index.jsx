@@ -17,7 +17,7 @@ import Image from 'components/image';
 import Spinner from 'components/spinner';
 import QuerySites from 'components/data/query-sites';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isTransientMedia } from 'state/selectors';
+import isTransientMedia from 'state/selectors/is-transient-media';
 import {
 	getPodcastingCoverImageUrl,
 	getPodcastingCoverImageId,
