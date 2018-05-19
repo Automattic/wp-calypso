@@ -4,8 +4,7 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -16,23 +15,33 @@ import translator from 'lib/translator-jumpstart';
 import localStorageHelper from 'store';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
+import userSettings from 'lib/user-settings';
 
 class TranslatorLauncher extends React.PureComponent {
 	static displayName = 'TranslatorLauncher';
 
-	static propTypes = {
-		isActive: PropTypes.bool.isRequired,
-		isEnabled: PropTypes.bool.isRequired,
-	};
-
 	state = {
 		infoDialogVisible: false,
 		firstActivation: true,
+		isActive: translator.isActivated(),
+		isEnabled: translator.isEnabled(),
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.isActive && nextProps.isActive ) {
+	componentDidMount() {
+		i18n.on( 'change', this.onI18nChange );
+		userSettings.on( 'change', this.onUserSettingsChange );
+	}
+
+	componentWillUnmount() {
+		i18n.off( 'change', this.onI18nChange );
+		userSettings.off( 'change', this.onUserSettingsChange );
+	}
+
+	onI18nChange = () => {
+		if ( ! this.state.isActive && translator.isActivated() ) {
 			// Activating
+			this.setState( { isActive: true } );
+
 			if ( ! localStorageHelper.get( 'translator_hide_infodialog' ) ) {
 				this.setState( { infoDialogVisible: true } );
 			}
@@ -41,8 +50,17 @@ class TranslatorLauncher extends React.PureComponent {
 				analytics.mc.bumpStat( 'calypso_translator_toggle', 'intial_activation' );
 				this.setState( { firstActivation: false } );
 			}
+		} else if ( this.state.isActive && ! translator.isActivated() ) {
+			// Deactivating
+			this.setState( { isActive: false } );
 		}
-	}
+	};
+
+	onUserSettingsChange = () => {
+		if ( this.state.isEnabled !== translator.isEnabled() ) {
+			this.setState( { isEnabled: translator.isEnabled() } );
+		}
+	};
 
 	toggleInfoCheckbox = event => {
 		localStorageHelper.set( 'translator_hide_infodialog', event.target.checked );
@@ -54,7 +72,7 @@ class TranslatorLauncher extends React.PureComponent {
 
 	toggle = event => {
 		event.preventDefault();
-		analytics.mc.bumpStat( 'calypso_translator_toggle', this.props.isActive ? 'off' : 'on' );
+		analytics.mc.bumpStat( 'calypso_translator_toggle', this.state.isActive ? 'off' : 'on' );
 		translator.toggle();
 	};
 
@@ -62,11 +80,11 @@ class TranslatorLauncher extends React.PureComponent {
 		let launcherClasses = 'community-translator';
 		let toggleString;
 
-		if ( ! this.props.isEnabled ) {
+		if ( ! this.state.isEnabled ) {
 			return null;
 		}
 
-		if ( this.props.isActive ) {
+		if ( this.state.isActive ) {
 			toggleString = this.props.translate( 'Disable Translator' );
 			launcherClasses += ' is-active';
 		} else {
