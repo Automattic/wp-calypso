@@ -16,8 +16,6 @@ import {
 	USERNAME_CLEAR_VALIDATION,
 } from 'state/action-types';
 import wpcom from 'lib/wp';
-import userFactory from 'lib/user';
-const user = userFactory();
 
 export function changeUsername( username, action, callback ) {
 	return dispatch =>
@@ -26,7 +24,6 @@ export function changeUsername( username, action, callback ) {
 			.me()
 			.changeUsername( username, action )
 			.then( () => {
-				user.fetch();
 				callback && callback();
 			} )
 			.catch( error => {
@@ -41,10 +38,6 @@ export function changeUsername( username, action, callback ) {
 
 export function validateUsername( username ) {
 	return dispatch => {
-		if ( username === user.get().username ) {
-			dispatch( { type: USERNAME_CLEAR_VALIDATION } );
-		}
-
 		if ( username.length < 4 ) {
 			dispatch( {
 				type: USERNAME_VALIDATION_FAILURE,

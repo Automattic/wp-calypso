@@ -367,6 +367,7 @@ const Account = createReactClass( {
 				if ( error ) {
 					this.props.errorNotice( this.props.username.validationFailureMessage );
 				} else {
+					user.fetch();
 					this.props.markSaved();
 
 					// We reload here to refresh cookies, user object, and user settings.
@@ -762,6 +763,7 @@ const Account = createReactClass( {
 		const { markChanged, translate, userSettings } = this.props;
 		// Is a username change in progress?
 		const renderUsernameForm = userSettings.isSettingUnsaved( 'user_login' );
+		const unsavedUsername = this.getUserSetting( 'user_login' );
 
 		return (
 			<Main className="account">
@@ -786,7 +788,9 @@ const Account = createReactClass( {
 							/>
 							{ renderUsernameForm && (
 								<div>
-									<QueryUsernameValidation username={ this.getUserSetting( 'user_login' ) } />
+									{ unsavedUsername !== user.get().username && (
+										<QueryUsernameValidation username={ unsavedUsername } />
+									) }
 									{ this.renderUsernameValidation() }
 								</div>
 							) }
