@@ -15,6 +15,7 @@ import { stringify } from 'qs';
  */
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import EditorLocationOptions from 'post-editor/editor-location/options';
+import { reverseGeocode } from '../../lib/geocoding';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import PostMetadata from 'lib/post-metadata';
 import EditorLocationSearch from './search';
@@ -63,19 +64,44 @@ class EditorLocation extends React.Component {
 	};
 
 	onGeolocateSuccess = position => {
-		this.setState( {
-			locating: false,
-		} );
+		const latitude = toGeoString( position.coords.latitude ),
+			longitude = toGeoString( position.coords.longitude );
 
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
-			geo_latitude: toGeoString( position.coords.latitude ),
-			geo_longitude: toGeoString( position.coords.longitude ),
+			geo_latitude: latitude,
+			geo_longitude: longitude,
 			geo_public: publicValueToMetaValue( this.props.isSharedPublicly ),
-			geo_address:
-				toGeoString( position.coords.latitude ) + ', ' + toGeoString( position.coords.longitude ),
+			geo_address: latitude + ', ' + longitude,
 		} );
 
 		recordStat( 'location_geolocate_success' );
+
+		reverseGeocode( latitude, longitude )
+			.then( results => {
+				const localityResults = results.filter( result => {
+					return -1 !== result.types.indexOf( 'locality' );
+				} );
+
+				if ( localityResults.length ) {
+					this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
+						geo_address: localityResults[ 0 ].formatted_address,
+					} );
+				}
+
+				recordStat( 'location_reverse_geocode_success' );
+			} )
+			.catch( () => {
+				this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
+					geo_address: latitude + ', ' + longitude,
+				} );
+
+				recordStat( 'location_reverse_geocode_failed' );
+			} )
+			.finally( () => {
+				this.setState( {
+					locating: false,
+				} );
+			} );
 	};
 
 	onGeolocateFailure = error => {
