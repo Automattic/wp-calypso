@@ -21,15 +21,20 @@ class AccountCloseConfirmDialog extends React.Component {
 		inputValue: '',
 	};
 
+	handleCancel = () => {
+		this.setState( { inputValue: '' } );
+		this.props.closeConfirmDialog();
+	};
+
 	handleInputChange = event => {
 		this.setState( { inputValue: event.target.value.toLowerCase() } );
 	};
 
 	render() {
-		const { isVisible, currentUsername, onConfirm, translate, closeConfirmDialog } = this.props;
-		const isButtonDisabled = this.state.inputValue !== currentUsername;
+		const { isVisible, currentUsername, onConfirm, translate } = this.props;
+		const isButtonDisabled = currentUsername && this.state.inputValue !== currentUsername;
 		const deleteButtons = [
-			<Button onClick={ closeConfirmDialog }>{ translate( 'Cancel' ) }</Button>,
+			<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary scary disabled={ isButtonDisabled } onClick={ onConfirm }>
 				{ translate( 'Close your account' ) }
 			</Button>,
