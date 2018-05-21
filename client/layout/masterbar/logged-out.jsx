@@ -55,7 +55,7 @@ class MasterbarLoggedOut extends PureComponent {
 
 		const isJetpack = 'jetpack-connect' === sectionName;
 
-		const loginUrl = login( {
+		let loginUrl = login( {
 			// We may know the email from Jetpack connection details
 			emailAddress: isJetpack && get( currentQuery, 'user_email', false ),
 			isJetpack,
@@ -63,6 +63,10 @@ class MasterbarLoggedOut extends PureComponent {
 			locale: getLocaleSlug(),
 			redirectTo,
 		} );
+
+		if ( currentQuery && currentQuery.partner_id ) {
+			loginUrl = addQueryArgs( { partner_id: currentQuery.partner_id }, loginUrl );
+		}
 
 		return (
 			<Item url={ loginUrl }>
