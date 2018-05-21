@@ -88,10 +88,7 @@ export class DesignTypeStep extends Component {
 	renderChoices() {
 		return (
 			<div className="design-type__list">
-				<TileGrid>
-					{ this.getChoices().map( this.renderChoice ) }
-					<div className="design-type__choice is-spacergif" />
-				</TileGrid>
+				<TileGrid>{ this.getChoices().map( this.renderChoice ) }</TileGrid>
 
 				<p className="design-type__disclaimer">
 					{ this.props.translate(
