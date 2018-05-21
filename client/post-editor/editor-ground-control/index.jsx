@@ -22,7 +22,8 @@ import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import Drafts from 'layout/masterbar/drafts';
 import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { canCurrentUser, isVipSite } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
 
@@ -91,12 +92,6 @@ export class EditorGroundControl extends React.Component {
 			default:
 				return null;
 		}
-	}
-
-	shouldShowStatusLabel() {
-		const { isSaving, post } = this.props;
-
-		return isSaving || ( post && post.ID && ! isPublished( post ) );
 	}
 
 	isPreviewEnabled() {

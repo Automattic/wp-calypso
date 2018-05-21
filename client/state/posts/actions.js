@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { isNumber, toArray } from 'lodash';
+import { isNumber, map, toArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -184,6 +184,40 @@ export function editPost( siteId, postId = null, post ) {
 		post,
 		siteId,
 		postId,
+	};
+}
+
+export function updatePostMetadata( siteId, postId = null, metaKey, metaValue ) {
+	if ( typeof metaKey === 'string' ) {
+		metaKey = { [ metaKey ]: metaValue };
+	}
+
+	return {
+		type: POST_EDIT,
+		siteId,
+		postId,
+		post: {
+			metadata: map( metaKey, ( value, key ) => ( {
+				key,
+				value,
+				operation: 'update',
+			} ) ),
+		},
+	};
+}
+
+export function deletePostMetadata( siteId, postId = null, metaKeys ) {
+	if ( ! Array.isArray( metaKeys ) ) {
+		metaKeys = [ metaKeys ];
+	}
+
+	return {
+		type: POST_EDIT,
+		siteId,
+		postId,
+		post: {
+			metadata: map( metaKeys, key => ( { key, operation: 'delete' } ) ),
+		},
 	};
 }
 

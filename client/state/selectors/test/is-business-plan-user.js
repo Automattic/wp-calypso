@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { isBusinessPlanUser } from 'state/selectors';
+import isBusinessPlanUser from 'state/selectors/is-business-plan-user';
 import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'lib/plans/constants';
 
 describe( 'isBusinessPlanUser()', () => {

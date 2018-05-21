@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,19 +15,19 @@ import { isRequestingSyncStatus, isRequestingResync as isResync } from './select
 
 class QueryMailChimpSyncStatus extends Component {
 	static propTypes = {
-		siteId:	PropTypes.number.isRequired,
+		siteId: PropTypes.number.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		isRequestingResync: PropTypes.bool.isRequired,
 		request: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount = () => {
 		this.createUpdateTimer();
-	}
+	};
 
 	componentWillUnmount = () => {
 		this.destroyUpdateTimer();
-	}
+	};
 
 	createUpdateTimer = () => {
 		if ( this.updateTimer ) {
@@ -40,25 +42,24 @@ class QueryMailChimpSyncStatus extends Component {
 		this.updateTimer = window.setInterval( () => {
 			this.triggerRequest( this.props );
 		}, 60000 );
-	}
+	};
 
 	destroyUpdateTimer = () => {
 		if ( this.updateTimer ) {
 			window.clearInterval( this.updateTimer );
 			this.updateTimer = false;
 		}
-	}
+	};
 
-	triggerRequest = ( props ) => {
+	triggerRequest = props => {
 		if ( ! props.isRequesting && ! props.isRequestingResync && props.siteId ) {
 			props.request( props.siteId );
 		}
-	}
+	};
 
 	render() {
 		return null;
 	}
-
 }
 
 export default connect(

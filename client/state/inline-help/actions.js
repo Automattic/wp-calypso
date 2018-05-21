@@ -7,8 +7,11 @@ import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
+	INLINE_HELP_CONTACT_FORM_RESET,
+	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 } from 'state/action-types';
 
 /**
@@ -41,6 +44,46 @@ export function requestInlineHelpSearchResults( searchQuery ) {
 					error,
 				} );
 			} );
+	};
+}
+/**
+ * Selects a specific result in the inline help results list.
+ *
+ * @param  {Number}  resultIndex Index of the result to select
+ * @return {Function}        Action thunk
+ */
+export function selectResult( resultIndex ) {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_SELECT_RESULT,
+			resultIndex,
+		} );
+	};
+}
+
+/**
+ * Resets the inline contact form state.
+ *
+ * @return {Function}  Action thunk
+ */
+export function resetInlineHelpContactForm() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_CONTACT_FORM_RESET,
+		} );
+	};
+}
+
+/**
+ * Shows the Q&A suggestions on the contact form.
+ *
+ * @return {Function}  Action thunk
+ */
+export function showQandAOnInlineHelpContactForm() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
+		} );
 	};
 }
 

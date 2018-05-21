@@ -75,7 +75,7 @@ class ImporterHeader extends React.PureComponent {
 		}
 
 		if ( includes( stopStates, importerState ) ) {
-			return this.props.translate( 'Importing...' );
+			return this.props.translate( 'Importing…' );
 		}
 
 		if ( includes( doneStates, importerState ) ) {

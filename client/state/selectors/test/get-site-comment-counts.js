@@ -7,7 +7,7 @@
 /**
  * Internal dependencies
  */
-import { getSiteCommentCounts } from 'state/selectors';
+import getSiteCommentCounts from 'state/selectors/get-site-comment-counts';
 
 describe( 'getSiteCommentCounts()', () => {
 	const siteId = 2916284;

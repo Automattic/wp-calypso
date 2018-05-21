@@ -23,7 +23,7 @@ import {
 	constrainLeft,
 	offset,
 } from './util';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
  * Module variables

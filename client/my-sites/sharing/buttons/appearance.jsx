@@ -18,7 +18,7 @@ import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isPrivateSite } from 'state/selectors';
+import isPrivateSite from 'state/selectors/is-private-site';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class SharingButtonsAppearance extends Component {

@@ -24,7 +24,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 export class EditPostStatus extends Component {
 	static propTypes = {
@@ -36,7 +36,6 @@ export class EditPostStatus extends Component {
 		site: PropTypes.object,
 		translate: PropTypes.func,
 		type: PropTypes.string,
-		postDate: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
 		status: PropTypes.string,
 		isPostPrivate: PropTypes.bool,

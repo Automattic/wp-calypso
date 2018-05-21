@@ -9,10 +9,6 @@
 
 	@include breakpoint( '>660px' ) {
 		padding: 15px 20px;
-
-		.domain-product-price {
-			margin-left: 5%;
-		}
 	}
 
 	&.is-clickable {
@@ -45,7 +41,6 @@
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
-		margin: 8px 0 0 0;
 	}
 
 	.notice.is-compact {
@@ -84,8 +79,6 @@
 		.is-placeholder & {
 			margin-right: 50%;
 			min-height: 22px;
-			margin-top: 9px;
-			margin-bottom: 9px;
 		}
 
 		.is-placeholder:nth-of-type(2n + 1) & {
@@ -110,18 +103,20 @@
 	}
 }
 
+.domain-registration-suggestion__title {
+	align-self: center;
+}
+
 .button.domain-suggestion__action {
 	flex: 1 0 auto;
 	min-width: 66px;
 	text-align: center;
 	color: $blue-medium;
 
-	// NOTE: .is-kracken-ui can be removed once feature is deployed.
-	.is-kracken-ui &.is-primary {
+	&.is-primary {
 		color: $white;
-		padding-left: 3em;
-		padding-right: 3em;
 		margin-left: 1em;
+		padding: 0.25em 3em;
 		transition: all 0.1s linear;
 
 		&:hover {

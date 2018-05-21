@@ -422,7 +422,7 @@ describe( 'index', () => {
 			normalizer(
 				{
 					content:
-						'<div class="gallery" style="width: 100000px"><style>.gallery{}</style><div style="width:100px">some content</div></div>', //eslint-disable-line max-len
+						'<div class="gallery" style="width: 100000px"><style>.gallery{}</style><div style="width:100px">some content</div></div>',
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ],
 				function( err, normalized ) {
@@ -440,7 +440,7 @@ describe( 'index', () => {
 			normalizer(
 				{
 					content:
-						'<div class="embed-twitter"><blockquote class="twitter-tweet"><p lang="en" dir="ltr"></p></blockquote><script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>', //eslint-disable-line max-len
+						'<div class="embed-twitter"><blockquote class="twitter-tweet"><p lang="en" dir="ltr"></p></blockquote><script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>',
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ],
 				function( err, normalized ) {
@@ -460,7 +460,7 @@ describe( 'index', () => {
 			normalizer(
 				{
 					content:
-						'<blockquote class="instagram-media" style="background:#FFF;"><div style="padding:8px;"><p style="margin:8px 0 0 0;"> <a style="color:#000;"></a></p></div></blockquote>', //eslint-disable-line max-len
+						'<blockquote class="instagram-media" style="background:#FFF;"><div style="padding:8px;"><p style="margin:8px 0 0 0;"> <a style="color:#000;"></a></p></div></blockquote>',
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ],
 				function( err, normalized ) {
@@ -634,7 +634,7 @@ describe( 'index', () => {
 			normalizer(
 				{
 					content:
-						'<img src="http://example.com/example.jpg" srcset="http://example.com/example-100.jpg 100w, http://example.com/example-600.jpg 600w">', //eslint-disable-line max-len
+						'<img src="http://example.com/example.jpg" srcset="http://example.com/example-100.jpg 100w, http://example.com/example-600.jpg 600w">',
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ],
 				function( err, normalized ) {
@@ -648,7 +648,7 @@ describe( 'index', () => {
 			normalizer(
 				{
 					content:
-						'<img src="http://example.com/example.jpg" srcset="http://example.com/example-100-and-a-half.jpg 100.5w, http://example.com/example-600.jpg 600w">', //eslint-disable-line max-len
+						'<img src="http://example.com/example.jpg" srcset="http://example.com/example-100-and-a-half.jpg 100.5w, http://example.com/example-600.jpg 600w">',
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ],
 				function( err, normalized ) {
@@ -1086,7 +1086,7 @@ describe( 'index', () => {
 				function( err, normalized ) {
 					assert.include(
 						normalized.content,
-						'<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>' //eslint-disable-line max-len
+						'<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>'
 					);
 					done( err );
 				}

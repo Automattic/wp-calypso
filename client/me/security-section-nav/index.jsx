@@ -57,12 +57,12 @@ export default class extends React.Component {
 	};
 
 	getFilteredPath = () => {
-		var paramIndex = this.props.path.indexOf( '?' );
+		const paramIndex = this.props.path.indexOf( '?' );
 		return paramIndex < 0 ? this.props.path : this.props.path.substring( 0, paramIndex );
 	};
 
 	getSelectedText = () => {
-		var text = '',
+		let text = '',
 			filteredPath = this.getFilteredPath(),
 			found = find( this.getNavtabs(), { path: filteredPath } );
 

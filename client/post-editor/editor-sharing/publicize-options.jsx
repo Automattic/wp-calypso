@@ -22,12 +22,15 @@ import PopupMonitor from 'lib/popup-monitor';
 import Button from 'components/button';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
+import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
-import { canCurrentUser, isPublicizeEnabled } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
+import { updatePostMetadata } from 'state/posts/actions';
 
 class EditorSharingPublicizeOptions extends React.Component {
 	static propTypes = {
@@ -81,9 +84,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 			return;
 		}
 
-		return (
-			<PublicizeServices post={ this.props.post } newConnectionPopup={ this.newConnectionPopup } />
-		);
+		return <PublicizeServices newConnectionPopup={ this.newConnectionPopup } />;
 	};
 
 	renderMessage = () => {
@@ -104,11 +105,16 @@ class EditorSharingPublicizeOptions extends React.Component {
 		return (
 			<PublicizeMessage
 				message={ PostMetadata.publicizeMessage( this.props.post ) || '' }
+				onChange={ this.onMessageChange }
 				requireCount={ requireCount }
 				acceptableLength={ acceptableLength }
 				preFilledMessage={ preFilledMessage }
 			/>
 		);
+	};
+
+	onMessageChange = message => {
+		this.props.updatePostMetadata( this.props.siteId, this.props.postId, '_wpas_mess', message );
 	};
 
 	renderAddNewButton = () => {
@@ -170,16 +176,24 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );
+		const site = getSite( state, siteId );
+		const post = getEditedPost( state, siteId, postId );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 
 		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
 
 		return {
 			siteId,
+			postId,
+			site,
+			post,
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
 			canUserPublishPosts,
 			connections: getSiteUserConnections( state, siteId, userId ),
 		};
 	},
-	{ requestConnections }
+	{
+		requestConnections,
+		updatePostMetadata,
+	}
 )( localize( EditorSharingPublicizeOptions ) );

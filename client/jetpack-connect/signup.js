@@ -169,10 +169,6 @@ export class JetpackSignup extends Component {
 		);
 	};
 
-	handleClickHelp = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
-	};
-
 	renderLoginUser() {
 		const { newUsername, bearerToken } = this.state;
 		return (
@@ -200,14 +196,15 @@ export class JetpackSignup extends Component {
 				<LoggedOutFormLinkItem href={ this.getLoginRoute() }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
-				<HelpButton onClick={ this.handleClickHelp } />
+				<HelpButton />
 			</LoggedOutFormLinks>
 		);
 	}
 	render() {
+		const { partnerSlug } = this.props.authQuery;
 		const { isCreatingAccount } = this.state;
 		return (
-			<MainWrapper>
+			<MainWrapper partnerSlug={ partnerSlug }>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader authQuery={ this.props.authQuery } />

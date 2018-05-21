@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -15,45 +14,44 @@ import { clearPurchases } from 'state/purchases/actions';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading, recordPageView } from 'me/purchases/utils';
+import { isDataLoading } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-
-const user = userFactory();
+import { managePurchase } from 'me/purchases/paths';
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class AddCardDetails extends PurchaseCardDetails {
 	static propTypes = {
 		clearPurchases: PropTypes.func.isRequired,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		selectedPurchase: PropTypes.object,
+		purchaseId: PropTypes.number.isRequired,
+		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	componentWillMount() {
 		this.redirectIfDataIsInvalid();
-
-		recordPageView( 'add_card_details', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
-
-		recordPageView( 'add_card_details', this.props, nextProps );
 	}
 
 	render() {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<div>
-					<QueryUserPurchases userId={ user.get().ID } />
+					<QueryUserPurchases userId={ this.props.userId } />
 
 					<CreditCardFormLoadingPlaceholder title={ titles.addCardDetails } />
 				</div>
@@ -62,11 +60,17 @@ class AddCardDetails extends PurchaseCardDetails {
 
 		return (
 			<Main>
+				<TrackPurchasePageView
+					eventName="calypso_add_card_details_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
 				<PageViewTracker
 					path="/me/purchases/:site/:purchaseId/payment/add"
 					title="Purchases > Add Card Details"
 				/>
-				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.addCardDetails }</HeaderCake>
+				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
+					{ titles.addCardDetails }
+				</HeaderCake>
 
 				<CreditCardForm
 					apiParams={ this.getApiParams() }
@@ -83,8 +87,9 @@ const mapStateToProps = ( state, { purchaseId } ) => {
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSiteSelector( state ),
+		purchase: getByPurchaseId( state, purchaseId ),
+		selectedSite: getSelectedSite( state ),
+		userId: getCurrentUserId( state ),
 	};
 };
 

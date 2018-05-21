@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { isEmpty, filter, get } from 'lodash';
+import { isEmpty, filter } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
-import { getSiteBySlug } from 'state/sites/selectors';
+import getSiteId from 'state/selectors/get-site-id';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import QueryPlans from 'components/data/query-plans';
@@ -39,7 +39,7 @@ export class PlansAtomicStoreStep extends Component {
 		additionalStepData: PropTypes.object,
 		goToNextStep: PropTypes.func.isRequired,
 		hideFreePlan: PropTypes.bool,
-		selectedSite: PropTypes.object,
+		siteId: PropTypes.number,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -114,7 +114,7 @@ export class PlansAtomicStoreStep extends Component {
 	}
 
 	plansFeaturesList() {
-		const { hideFreePlan, selectedSite, designType } = this.props;
+		const { hideFreePlan, siteId, designType } = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
@@ -135,13 +135,13 @@ export class PlansAtomicStoreStep extends Component {
 		return (
 			<div>
 				<QueryPlans />
-				<QuerySitePlans siteId={ get( selectedSite, 'ID' ) } />
+				<QuerySitePlans siteId={ siteId } />
 
 				<PlanFeatures
 					plans={ plans }
 					onUpgradeClick={ this.onSelectPlan }
 					isInSignup={ true }
-					site={ selectedSite || {} }
+					siteId={ siteId }
 					domainName={ this.getDomainName() }
 					displayJetpackPlans={ false }
 				/>
@@ -193,6 +193,6 @@ export class PlansAtomicStoreStep extends Component {
 }
 
 export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
-	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+	siteId: getSiteId( state, siteSlug ),
 	designType: getDesignType( state ),
 } ) )( localize( PlansAtomicStoreStep ) );

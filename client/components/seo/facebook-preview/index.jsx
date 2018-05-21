@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -10,9 +9,10 @@ import { compact } from 'lodash';
 import { firstValid, hardTruncation, shortEnough } from '../helpers';
 
 const TITLE_LENGTH = 80;
-const DESCRIPTION_LENGTH = 270;
+const DESCRIPTION_LENGTH = 200;
 
 const baseDomain = url =>
+	url &&
 	url
 		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol
 		.replace( /\/.*$/, '' ); // strip everything after the domain
@@ -31,11 +31,9 @@ export class FacebookPreview extends PureComponent {
 		return (
 			<div className={ `facebook-preview facebook-preview__${ type }` }>
 				<div className="facebook-preview__content">
-					{ image && (
-						<div className="facebook-preview__image">
-							<img src={ image } />
-						</div>
-					) }
+					<div className="facebook-preview__image">
+						{ image && <img alt="Facebook Preview Thumbnail" src={ image } /> }
+					</div>
 					<div className="facebook-preview__body">
 						<div className="facebook-preview__title">{ facebookTitle( title || '' ) }</div>
 						<div className="facebook-preview__description">

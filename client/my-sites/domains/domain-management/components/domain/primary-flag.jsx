@@ -12,7 +12,7 @@ import { flow } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isDomainOnlySite } from 'state/selectors';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { localize } from 'i18n-calypso';
 
 const DomainPrimaryFlag = ( { isDomainOnly, domain, translate } ) => {

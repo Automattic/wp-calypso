@@ -14,7 +14,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import QueryTimezones from 'components/data/query-timezones';
-import { getRawOffsets, getTimezones } from 'state/selectors';
+import getRawOffsets from 'state/selectors/get-raw-offsets';
+import getTimezones from 'state/selectors/get-timezones';
 
 class Timezone extends Component {
 	onSelect = event => {

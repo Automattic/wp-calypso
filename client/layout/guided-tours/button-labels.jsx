@@ -22,6 +22,7 @@ function button( label, icon ) {
 // Localized texts need to be wrapped in a `translate` function to be found by the l10n bot
 const translate = identity;
 
+export const AddContentButton = button( translate( 'Add' ), <Gridicon icon="add-outline" /> );
 export const AddMediaButton = button( translate( 'Add Media' ) );
 export const AddNewButton = button( translate( 'Add New' ), <Gridicon icon="add-image" /> );
 export const AllThemesButton = button( translate( 'All Themes' ) );

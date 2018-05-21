@@ -16,7 +16,7 @@ import PluginsActions from 'lib/plugins/actions';
 import versionCompare from 'lib/version-compare';
 import { normalizePluginData } from 'lib/plugins/utils';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
-import { getNetworkSites } from 'state/selectors';
+import getNetworkSites from 'state/selectors/get-network-sites';
 import { getSite } from 'state/sites/selectors';
 import { sitePluginUpdated } from 'state/sites/actions';
 

@@ -20,6 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 
 /**
@@ -27,6 +28,7 @@ import SearchCard from 'components/search-card';
  */
 import Accordions from 'components/accordion/docs/example';
 import ActionCard from 'components/action-card/docs/example';
+import ActionPanel from 'components/action-panel/docs/example';
 import Animate from 'components/animate/docs/example';
 import BackButton from 'components/back-button/docs/example';
 import Badge from 'components/badge/docs/example';
@@ -43,6 +45,7 @@ import Collection from 'devdocs/design/search-collection';
 import Count from 'components/count/docs/example';
 import CountedTextareas from 'components/forms/counted-textarea/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
+import DiffViewerExample from 'components/diff-viewer/docs/example';
 import DropZones from 'components/drop-zone/docs/example';
 import EllipsisMenu from 'components/ellipsis-menu/docs/example';
 import EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
@@ -65,14 +68,18 @@ import ImagePreloader from 'components/image-preloader/docs/example';
 import InfoPopover from 'components/info-popover/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
 import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
+import JetpackHeaderExample from 'components/jetpack-header/docs/example';
 import JetpackLogoExample from 'components/jetpack-logo/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
+import LineChart from 'components/line-chart/docs/example';
 import ListEnd from 'components/list-end/docs/example';
+import MarkedLinesExample from 'components/marked-lines/docs/example';
 import Notices from 'components/notice/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
 import PieChart from 'components/pie-chart/docs/example';
 import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
+import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
 import ProgressBar from 'components/progress-bar/docs/example';
 import Ranges from 'components/forms/range/docs/example';
@@ -141,17 +148,21 @@ class DesignAssets extends React.Component {
 						{ slugToCamelCase( component ) }
 					</HeaderCake>
 				) : (
-					<SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs"
-						className="design__ui-components-search"
-					/>
+					<div>
+						<ReadmeViewer readmeFilePath="/client/devdocs/design/README.md" />
+						<SearchCard
+							onSearch={ this.onSearch }
+							initialValue={ filter }
+							placeholder="Search components…"
+							analyticsGroup="Docs"
+							className="design__ui-components-search"
+						/>
+					</div>
 				) }
 
 				<Collection component={ component } filter={ filter }>
 					<ActionCard readmeFilePath="action-card" />
+					<ActionPanel readmeFilePath="action-panel" />
 					<Accordions
 						componentUsageStats={ componentsUsageStats.accordion }
 						readmeFilePath="accordion"
@@ -172,6 +183,7 @@ class DesignAssets extends React.Component {
 					<Count readmeFilePath="count" />
 					<CountedTextareas readmeFilePath="forms/counted-textarea" />
 					<DatePicker readmeFilePath="date-picker" />
+					<DiffViewerExample readmeFilePath="diff-viewer" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmbedDialog readmeFilePath="tinymce/plugins/embed" />
@@ -195,14 +207,18 @@ class DesignAssets extends React.Component {
 					<InfoPopover readmeFilePath="info-popover" />
 					<InputChrono readmeFilePath="input-chrono" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
+					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
 					<LanguagePicker readmeFilePath="language-picker" />
+					<LineChart />
 					<ListEnd readmeFilePath="list-end" />
+					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
 					<PieChart readmeFilePath="pie-chart" />
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
+					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
 					<ProgressBar readmeFilePath="progress-bar" />
 					<Ranges readmeFilePath="forms/range" />

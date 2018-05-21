@@ -35,19 +35,20 @@ import { recordStat, recordEvent } from 'lib/posts/stats';
 import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
-import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import {
 	getEditorPostId,
 	getEditorPath,
 	isConfirmationSidebarEnabled,
 	isEditorSaveBlocked,
+	getEditorPostPreviewUrl,
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
+import { editPost } from 'state/posts/actions';
 import { getEditedPostValue, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { hasBrokenSiteUserConnection, editedPostHasContent } from 'state/selectors';
+import editedPostHasContent from 'state/selectors/edited-post-has-content';
+import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
 import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -62,7 +63,7 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
-import StatusLabel from 'post-editor/editor-status-label';
+import EditorStatusLabel from 'post-editor/editor-status-label';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
@@ -70,6 +71,8 @@ import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+
+const isPostNew = post => !! ( post && ! post.ID );
 
 export class PostEditor extends React.Component {
 	static propTypes = {
@@ -110,7 +113,6 @@ export class PostEditor extends React.Component {
 			isTitleFocused: false,
 			showPreview: false,
 			isPostPublishPreview: false,
-			previewAction: null,
 		};
 	}
 
@@ -120,9 +122,7 @@ export class PostEditor extends React.Component {
 			loadingError: PostEditStore.getLoadingError(),
 			isDirty: PostEditStore.isDirty(),
 			hasContent: PostEditStore.hasContent(),
-			previewUrl: PostEditStore.getPreviewUrl(),
 			post: PostEditStore.get(),
-			isNew: PostEditStore.isNew(),
 			isAutosaving: PostEditStore.isAutosaving(),
 			isLoading: PostEditStore.isLoading(),
 		};
@@ -136,8 +136,6 @@ export class PostEditor extends React.Component {
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
-		this.onPreviewClick = this.onPreview.bind( this, 'preview' );
-		this.onViewClick = this.onPreview.bind( this, 'view' );
 		this.useDefaultSidebarFocus();
 		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
@@ -147,14 +145,9 @@ export class PostEditor extends React.Component {
 	}
 
 	componentWillUpdate( nextProps, nextState ) {
-		const { isNew, savedPost, isSaving } = nextState;
-		if ( ! isNew && savedPost && savedPost !== this.state.savedPost ) {
-			nextProps.receivePost( savedPost );
-		}
-
 		// Cancel pending changes or autosave when user initiates a save. These
 		// will have been reflected in the save payload.
-		if ( isSaving && ! this.state.isSaving ) {
+		if ( nextState.isSaving && ! this.state.isSaving ) {
 			this.debouncedAutosave.cancel();
 			this.throttledAutosave.cancel();
 		}
@@ -271,14 +264,11 @@ export class PostEditor extends React.Component {
 		const site = this.props.selectedSite || undefined;
 		const mode = this.getEditorMode();
 		const isInvalidURL = this.state.loadingError;
-		const siteURL = site ? site.URL + '/' : null;
 
-		let isPage;
 		let isTrashed;
 		let hasAutosave;
 
 		if ( this.state.post ) {
-			isPage = utils.isPage( this.state.post );
 			isTrashed = this.state.post.status === 'trash';
 			hasAutosave = get( this.state.post.meta, [ 'data', 'autosave' ] );
 		}
@@ -314,7 +304,7 @@ export class PostEditor extends React.Component {
 						isPublishing={ this.state.isPublishing }
 						isSaving={ this.state.isSaving }
 						loadRevision={ this.loadRevision }
-						onPreview={ this.onPreviewClick }
+						onPreview={ this.onPreview }
 						onPublish={ this.onPublish }
 						onSave={ this.onSave }
 						onSaveDraft={ this.props.onSaveDraft }
@@ -328,12 +318,7 @@ export class PostEditor extends React.Component {
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
-							<EditorActionBar
-								isNew={ this.state.isNew }
-								savedPost={ this.state.savedPost }
-								site={ site }
-								isPostPrivate={ utils.isPrivate( this.state.post ) }
-							/>
+							<EditorActionBar savedPost={ this.state.savedPost } />
 							<div className="post-editor__site">
 								<Site
 									compact
@@ -342,7 +327,7 @@ export class PostEditor extends React.Component {
 									homeLink={ true }
 									externalLink={ true }
 								/>
-								{ ( this.state.isDirty || this.props.dirty ) && (
+								{ this.state.isDirty || this.props.dirty ? (
 									<QuickSaveButtons
 										isSaving={ this.state.isSaving }
 										isSaveBlocked={ this.isSaveBlocked() }
@@ -352,24 +337,15 @@ export class PostEditor extends React.Component {
 										post={ this.state.post }
 										onSave={ this.onSave }
 									/>
-								) }
-								{ ! ( this.state.isDirty || this.props.dirty ) && (
-									<StatusLabel post={ this.state.savedPost } />
+								) : (
+									<EditorStatusLabel />
 								) }
 							</div>
 							<div className="post-editor__inner-content">
 								<FeaturedImage maxWidth={ 1462 } hasDropZone />
 								<div className="post-editor__header">
 									<EditorTitle onChange={ this.onEditorTitleChange } tabIndex={ 1 } />
-									{ this.state.post && isPage && site ? (
-										<EditorPageSlug
-											path={
-												this.state.post.URL && this.state.post.URL !== siteURL
-													? utils.getPagePath( this.state.post )
-													: siteURL
-											}
-										/>
-									) : null }
+									<EditorPageSlug />
 									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
 										<SegmentedControlItem
 											selected={ mode === 'tinymce' }
@@ -392,7 +368,7 @@ export class PostEditor extends React.Component {
 									ref={ this.storeEditor }
 									mode={ mode }
 									tabIndex={ 2 }
-									isNew={ this.state.isNew }
+									isNew={ isPostNew( this.state.savedPost ) }
 									onSetContent={ this.debouncedSaveRawContent }
 									onInit={ this.onEditorInitialized }
 									onChange={ this.onEditorContentChange }
@@ -409,7 +385,6 @@ export class PostEditor extends React.Component {
 					<EditorSidebar
 						savedPost={ this.state.savedPost }
 						post={ this.state.post }
-						isNew={ this.state.isNew }
 						onPublish={ this.onPublish }
 						onTrashingPost={ this.onTrashingPost }
 						site={ site }
@@ -426,18 +401,14 @@ export class PostEditor extends React.Component {
 							isSaving={ this.state.isSaving || this.state.isAutosaving }
 							isLoading={ this.state.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
-							previewUrl={ this.getPreviewUrl() }
+							previewUrl={ this.props.previewUrl }
 							postId={ this.props.postId }
 							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 					) : null }
-					<EditorNotice
-						{ ...this.state.notice }
-						onDismissClick={ this.hideNotice }
-						onViewClick={ this.onPreview }
-					/>
+					<EditorNotice { ...this.state.notice } onDismissClick={ this.hideNotice } />
 				</div>
 				{ isTrashed ? (
 					<RestorePostDialog onClose={ this.onClose } onRestore={ this.onSaveTrashed } />
@@ -485,21 +456,20 @@ export class PostEditor extends React.Component {
 	};
 
 	onEditedPostChange = () => {
-		var didLoad = this.state.isLoading && ! PostEditStore.isLoading(),
-			loadingError = PostEditStore.getLoadingError(),
-			postEditState,
-			post,
-			site;
+		const wasNew = isPostNew( this.state.savedPost );
+		const isNew = isPostNew( PostEditStore.getSavedPost() );
+		const didLoad = this.state.isLoading && ! PostEditStore.isLoading();
+		const loadingError = PostEditStore.getLoadingError();
 
 		if ( loadingError ) {
 			this.setState( { loadingError } );
-		} else if ( ( PostEditStore.isNew() && ! this.state.isNew ) || PostEditStore.isLoading() ) {
+		} else if ( ( isNew && ! wasNew ) || PostEditStore.isLoading() ) {
 			// is new or loading
 			this.setState(
 				this.getDefaultState(),
 				() => this.editor && this.editor.setEditorContent( '' )
 			);
-		} else if ( this.state.isNew && this.state.hasContent && ! this.state.isDirty ) {
+		} else if ( wasNew && this.state.hasContent && ! this.state.isDirty ) {
 			// Is a copy of an existing post.
 			// When copying a post, the created draft is new and the editor is not yet dirty, but it already has content.
 			// Once the content is set, the editor becomes dirty and the following setState won't trigger anymore.
@@ -508,14 +478,7 @@ export class PostEditor extends React.Component {
 				() => this.editor && this.editor.setEditorContent( this.state.post.content )
 			);
 		} else {
-			postEditState = this.getPostEditState();
-			post = postEditState.post;
-			site = this.props.selectedSite;
-			if ( didLoad && site && ( this.props.type === 'page' ) !== utils.isPage( post ) ) {
-				// incorrect post type in URL
-				page.redirect( utils.getEditURL( post, site ) );
-			}
-			this.setState( postEditState, function() {
+			this.setState( this.getPostEditState(), function() {
 				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
 					this.editor.setEditorContent( this.state.post.content, { initial: true } );
 				}
@@ -581,7 +544,7 @@ export class PostEditor extends React.Component {
 	};
 
 	autosave = () => {
-		var callback;
+		let callback;
 
 		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
@@ -716,36 +679,17 @@ export class PostEditor extends React.Component {
 		this.setState( { isSaving: true } );
 	};
 
-	getPreviewUrl = () => {
-		const { post, previewAction, previewUrl } = this.state;
-
-		if ( previewAction === 'view' && post ) {
-			return post.URL;
-		}
-
-		return previewUrl;
-	};
-
-	getExternalUrl = () => {
+	getExternalUrl() {
 		const { post } = this.state;
 
 		if ( post ) {
 			return post.URL;
 		}
 
-		return this.getPreviewUrl();
-	};
+		return this.props.previewUrl;
+	}
 
-	onPreview = ( action, event ) => {
-		var status = 'draft',
-			previewPost;
-
-		if ( this.state.previewAction !== action ) {
-			this.setState( {
-				previewAction: action,
-			} );
-		}
-
+	onPreview = event => {
 		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
 			return this.iframePreview();
 		}
@@ -754,20 +698,17 @@ export class PostEditor extends React.Component {
 			this._previewWindow = window.open( 'about:blank', 'WordPress.com Post Preview' );
 		}
 
-		if ( this.state.savedPost && this.state.savedPost.status ) {
-			status = this.state.savedPost.status;
-		}
-
-		previewPost = function() {
+		const previewPost = () => {
+			const { previewUrl } = this.props;
 			if ( this._previewWindow ) {
-				this._previewWindow.location = this.getPreviewUrl();
+				this._previewWindow.location = previewUrl;
 				this._previewWindow.focus();
 			} else {
-				this._previewWindow = window.open( this.getPreviewUrl(), 'WordPress.com Post Preview' );
+				this._previewWindow = window.open( previewUrl, 'WordPress.com Post Preview' );
 			}
-		}.bind( this );
+		};
 
-		if ( status === 'publish' ) {
+		if ( this.state.savedPost && this.state.savedPost.status === 'publish' ) {
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.edit( { content: this.editor.getContent() } );
 			actions.autosave( this.props.selectedSite, previewPost );
@@ -799,7 +740,6 @@ export class PostEditor extends React.Component {
 			this.setState( {
 				showPreview: false,
 				isPostPublishPreview: false,
-				previewAction: null,
 			} );
 		}
 	};
@@ -819,7 +759,6 @@ export class PostEditor extends React.Component {
 		this.setState( {
 			showPreview: false,
 			isPostPublishPreview: false,
-			previewAction: null,
 		} );
 
 		return false;
@@ -941,66 +880,12 @@ export class PostEditor extends React.Component {
 		analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
 			context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
 		} );
-
-		this.checkForDateChange( dateValue );
-	};
-
-	checkForDateChange = date => {
-		const { savedPost } = this.state;
-
-		if ( ! savedPost ) {
-			return;
-		}
-
-		const currentDate = this.props.moment( date );
-		const modifiedDate = this.props.moment( savedPost.date );
-		const dateChange = ! (
-			currentDate.get( 'date' ) === modifiedDate.get( 'date' ) &&
-			currentDate.get( 'month' ) === modifiedDate.get( 'month' ) &&
-			currentDate.get( 'year' ) === modifiedDate.get( 'year' )
-		);
-		const diff = !! currentDate.diff( modifiedDate ) && !! dateChange;
-
-		if ( savedPost.type === 'post' && utils.isPublished( savedPost ) && diff ) {
-			this.warnPublishDateChange();
-		} else {
-			this.warnPublishDateChange( { clearWarning: true } );
-		}
-	};
-
-	// when a post that is published, modifies its date, this updates the post url
-	// we should warn users of this case
-	warnPublishDateChange = ( { clearWarning = false } = {} ) => {
-		if ( clearWarning ) {
-			if ( get( this.state, 'notice.message' ) === 'warnPublishDateChange' ) {
-				this.hideNotice();
-			}
-			return;
-		}
-		this.setState( {
-			notice: {
-				status: 'is-warning',
-				message: 'warnPublishDateChange',
-			},
-		} );
 	};
 
 	onSaveSuccess = message => {
 		const post = PostEditStore.get();
 		const isNotPrivateOrIsConfirmed =
 			'private' !== post.status || 'closed' !== this.state.confirmationSidebar;
-
-		if ( 'draft' === post.status ) {
-			this.props.setEditorLastDraft( post.site_ID, post.ID );
-		} else {
-			this.props.resetEditorLastDraft();
-		}
-
-		// Remove this when the editor is completely reduxified ( When using Redux actions for all post saving requests )
-		this.props.savePostSuccess( post.site_ID, this.props.postId, post, {} );
-
-		// Receive updated post into state
-		this.props.receivePost( post );
 
 		const nextState = {
 			isSaving: false,
@@ -1027,7 +912,7 @@ export class PostEditor extends React.Component {
 	};
 
 	getEditorMode = () => {
-		var editorMode = 'tinymce';
+		let editorMode = 'tinymce';
 		if ( this.props.editorModePreference ) {
 			editorMode = this.props.editorModePreference;
 
@@ -1339,14 +1224,11 @@ const enhance = flow(
 				isSitePreviewable: isSitePreviewable( state, siteId ),
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 				isSaveBlocked: isEditorSaveBlocked( state ),
+				previewUrl: getEditorPostPreviewUrl( state ),
 			};
 		},
 		{
-			setEditorLastDraft,
-			resetEditorLastDraft,
-			receivePost,
 			editPost,
-			savePostSuccess,
 			setEditorModePreference: partial( savePreference, 'editor-mode' ),
 			setLayoutFocus,
 			setNextLayoutFocus,

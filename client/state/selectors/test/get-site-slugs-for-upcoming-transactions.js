@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteSlugsForUpcomingTransactions } from 'state/selectors';
+import getSiteSlugsForUpcomingTransactions from 'state/selectors/get-site-slugs-for-upcoming-transactions';
 
 describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 	beforeEach( () => {

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -15,9 +17,12 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import { userCanManagePayments } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import { closeDetailsDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import {
+	isLoaded,
+	getShippingLabel,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const DetailsDialog = ( props ) => {
+const DetailsDialog = props => {
 	const {
 		orderId,
 		siteId,
@@ -32,20 +37,18 @@ const DetailsDialog = ( props ) => {
 	} = props;
 
 	const onClose = () => props.closeDetailsDialog( orderId, siteId );
-	const buttons = [
-		{ action: 'close', label: translate( 'Close' ), onClick: onClose },
-	];
+	const buttons = [ { action: 'close', label: translate( 'Close' ), onClick: onClose } ];
 
 	const renderReceiptLink = () => {
 		if ( ! canManagePayments || ! receiptId ) {
 			return null;
 		}
 
-		return <a
-			href={ `${ getOrigin() }/me/purchases/billing/${ receiptId }` }
-			target="_blank">
-			{ translate( 'Receipt' ) }
-		</a>;
+		return (
+			<a href={ `${ getOrigin() }/me/purchases/billing/${ receiptId }` } target="_blank">
+				{ translate( 'Receipt' ) }
+			</a>
+		);
 	};
 
 	return (
@@ -53,7 +56,8 @@ const DetailsDialog = ( props ) => {
 			additionalClassNames="label-details-modal woocommerce wcc-root"
 			isVisible={ isVisible }
 			onClose={ onClose }
-			buttons={ buttons }>
+			buttons={ buttons }
+		>
 			<FormSectionHeading className="shipping-label__label-details-modal-heading">
 				<span className="shipping-label__label-details-modal-heading-title">
 					{ translate( 'Label #%(labelIndex)s details', { args: { labelIndex: labelIndex + 1 } } ) }
@@ -69,9 +73,7 @@ const DetailsDialog = ( props ) => {
 
 				<dt>{ translate( 'Items' ) }</dt>
 				<dd>
-					<ul>
-						{ productNames.map( ( productName, i ) => <li key={ i }>{ productName }</li> ) }
-					</ul>
+					<ul>{ productNames.map( ( productName, i ) => <li key={ i }>{ productName }</li> ) }</ul>
 				</dd>
 			</dl>
 		</Dialog>
@@ -98,7 +100,7 @@ const mapStateToProps = ( state, { orderId, siteId, labelId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeDetailsDialog }, dispatch );
 };
 

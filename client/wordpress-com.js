@@ -34,6 +34,13 @@ const sections = [
 		secondary: true,
 	},
 	{
+		name: 'account-close',
+		paths: [ '/me/account/close' ],
+		module: 'me/account-close',
+		group: 'me',
+		secondary: true,
+	},
+	{
 		name: 'security',
 		paths: [ '/me/security' ],
 		module: 'me/security',
@@ -53,6 +60,7 @@ const sections = [
 		module: 'me/purchases',
 		group: 'me',
 		secondary: true,
+		enableLoggedOut: true,
 	},
 	{
 		name: 'notification-settings',

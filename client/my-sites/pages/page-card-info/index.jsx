@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
  */
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 const getContentLink = ( state, siteId, page ) => {

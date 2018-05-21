@@ -19,7 +19,7 @@ import ExternalLink from 'components/external-link';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import { addQueryArgs } from 'lib/url';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { getCurrentQueryArguments } from 'state/selectors';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isEnabled } from 'config';
 import { login } from 'lib/paths';

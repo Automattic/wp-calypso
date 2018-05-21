@@ -69,6 +69,7 @@ export class EditorMediaModal extends Component {
 		visible: PropTypes.bool,
 		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
 		onClose: PropTypes.func,
+		isBackdropVisible: PropTypes.bool,
 		isParentReady: PropTypes.func,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -81,12 +82,14 @@ export class EditorMediaModal extends Component {
 		resetView: PropTypes.func,
 		postId: PropTypes.number,
 		disableLargeImageSources: PropTypes.bool,
+		disabledDataSources: PropTypes.arrayOf( PropTypes.string ),
 	};
 
 	static defaultProps = {
 		visible: false,
 		mediaLibrarySelectedItems: Object.freeze( [] ),
 		onClose: noop,
+		isBackdropVisible: true,
 		isParentReady: () => true,
 		labels: Object.freeze( {} ),
 		setView: noop,
@@ -96,6 +99,7 @@ export class EditorMediaModal extends Component {
 		imageEditorProps: {},
 		deleteMedia: () => {},
 		disableLargeImageSources: false,
+		disabledDataSources: [],
 	};
 
 	constructor( props ) {
@@ -133,7 +137,6 @@ export class EditorMediaModal extends Component {
 		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );
 		}
-
 	}
 
 	componentWillUnmount() {
@@ -609,6 +612,7 @@ export class EditorMediaModal extends Component {
 						mediaLibrarySelectedItems={ this.props.mediaLibrarySelectedItems }
 						postId={ this.props.postId }
 						disableLargeImageSources={ this.props.disableLargeImageSources }
+						disabledDataSources={ this.props.disabledDataSources }
 						scrollable
 					/>
 				);
@@ -625,6 +629,7 @@ export class EditorMediaModal extends Component {
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
 				additionalClassNames="editor-media-modal"
+				isBackdropVisible={ this.props.isBackdropVisible }
 				shouldCloseOnOverlayClick={ this.shouldClose() }
 				shouldCloseOnEsc={ false }
 			>

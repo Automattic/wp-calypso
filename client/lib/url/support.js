@@ -24,7 +24,7 @@ export const DESIGNATED_AGENT = `${ root }/designated-agent/`;
 export const DOMAIN_HELPER_PREFIX = `${ root }/domain-helper/?host=`;
 export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agreements/`;
 export const DOMAINS = `${ root }/domains`;
-export const INCOMING_DOMAIN_TRANSFER_STATUSES_PENDING_CONFIRMATION = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#confirmation`; // eslint-disable-line max-len
+export const INCOMING_DOMAIN_TRANSFER_STATUSES_PENDING_CONFIRMATION = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#confirmation`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#pending`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#failed`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_CANCEL = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#cancel`;
@@ -58,7 +58,7 @@ export const JETPACK_SERVICE_POLLDADDY = 'https://support.polldaddy.com/';
 export const LIVE_CHAT = `${ root }/live-chat`;
 export const MANAGE_PURCHASES = `${ root }/manage-purchases`;
 export const MAP_EXISTING_DOMAIN = `${ root }/domains/map-existing-domain`;
-export const MAP_EXISTING_DOMAIN_UPDATE_DNS = `${ root }/domains/map-existing-domain#2-ask-your-domain-provider-to-update-your-dns-settings`; // eslint-disable-line max-len
+export const MAP_EXISTING_DOMAIN_UPDATE_DNS = `${ root }/domains/map-existing-domain#2-ask-your-domain-provider-to-update-your-dns-settings`;
 export const MAP_SUBDOMAIN = `${ root }/domains/map-subdomain`;
 export const MEDIA = `${ root }/media`;
 export const PUBLICIZE = `${ root }/publicize`;

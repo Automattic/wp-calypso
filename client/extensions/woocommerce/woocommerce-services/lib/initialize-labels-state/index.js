@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,16 +10,22 @@ import { forEach, isEmpty, mapValues } from 'lodash';
  * @param {Object} address the address object
  * @returns {Boolean} true if all required fields are not empty
  */
-const addressFilled = ( address ) => Boolean(
-	address && address.name && address.address && address.city && address.postcode && address.country
-);
+const addressFilled = address =>
+	Boolean(
+		address &&
+			address.name &&
+			address.address &&
+			address.city &&
+			address.postcode &&
+			address.country
+	);
 
 /**
  * Parses the data passed from the backed into a Redux state to be used in the label purchase flow
  * @param {Object} data data to initialize the labels state from
  * @returns {Object} labels Redux state
  */
-export default ( data ) => {
+export default data => {
 	if ( ! data ) {
 		return {
 			loaded: false,
@@ -26,13 +34,7 @@ export default ( data ) => {
 		};
 	}
 
-	const {
-		formData,
-		labelsData,
-		paperSize,
-		storeOptions,
-		canChangeCountries,
-	} = data;
+	const { formData, labelsData, paperSize, storeOptions, canChangeCountries } = data;
 
 	//old WCS required a phone number and detected normalization status based on the existence of the phone field
 	//newer versions send the normalized flag
@@ -42,19 +44,31 @@ export default ( data ) => {
 
 	const customsItemsData = {};
 	forEach( formData.selected_packages, ( { items } ) => {
-		items.map( ( { product_id, weight, name, attributes, description, value, hs_tariff_code, origin_country, parent_product_id } ) => {
-			const attributesStr = attributes ? ( ' (' + attributes + ')' ) : '';
-			const defaultDescription = name.substring( name.indexOf( '-' ) + 1 ).trim() + attributesStr;
-			customsItemsData[ product_id ] = {
-				defaultDescription,
-				description: description || defaultDescription,
+		items.map(
+			( {
+				product_id,
 				weight,
+				name,
+				attributes,
+				description,
 				value,
-				tariffNumber: hs_tariff_code || '',
-				originCountry: origin_country || formData.origin.country,
-				parentProductId: parent_product_id,
-			};
-		} );
+				hs_tariff_code,
+				origin_country,
+				parent_product_id,
+			} ) => {
+				const attributesStr = attributes ? ' (' + attributes + ')' : '';
+				const defaultDescription = name.substring( name.indexOf( '-' ) + 1 ).trim() + attributesStr;
+				customsItemsData[ product_id ] = {
+					defaultDescription,
+					description: description || defaultDescription,
+					weight,
+					value,
+					tariffNumber: hs_tariff_code || '',
+					originCountry: origin_country || formData.origin.country,
+					parentProductId: parent_product_id,
+				};
+			}
+		);
 	} );
 
 	return {
@@ -86,7 +100,9 @@ export default ( data ) => {
 				normalized: formData.destination_normalized ? formData.destination : null,
 				// If no destination address is stored, mark all fields as "ignore validation"
 				// so the UI doesn't immediately show errors
-				ignoreValidation: hasDestinationAddress ? null : mapValues( formData.destination, () => true ),
+				ignoreValidation: hasDestinationAddress
+					? null
+					: mapValues( formData.destination, () => true ),
 				selectNormalized: true,
 				normalizationInProgress: false,
 				allowChangeCountry: Boolean( canChangeCountries ),
@@ -101,7 +117,10 @@ export default ( data ) => {
 			customs: {
 				items: customsItemsData,
 				// Ignore validation in all the tariff number fields that are empty so the user doesn't see everything red from the start
-				ignoreTariffNumberValidation: mapValues( customsItemsData, ( { tariffNumber } ) => ! tariffNumber ),
+				ignoreTariffNumberValidation: mapValues(
+					customsItemsData,
+					( { tariffNumber } ) => ! tariffNumber
+				),
 				saved: true,
 			},
 			rates: {

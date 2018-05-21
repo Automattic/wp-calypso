@@ -32,8 +32,9 @@ export class AuthFormHeader extends Component {
 
 	getState() {
 		const { user, authorize } = this.props;
+		const { partnerSlug } = this.props.authQuery;
 
-		if ( this.getPartnerSlug() ) {
+		if ( partnerSlug ) {
 			return 'partner';
 		}
 
@@ -48,60 +49,31 @@ export class AuthFormHeader extends Component {
 		return 'logged-in';
 	}
 
-	getPartnerSlug() {
-		const { partnerId } = this.props.authQuery;
-
-		switch ( partnerId ) {
-			case 51945:
-			case 51946:
-				return 'dreamhost';
-			case 49615:
-			case 49640:
-				return 'pressable';
-			case 51652: // Clients used for testing.
-				return 'dreamhost';
-			default:
-				return '';
-		}
-	}
-
-	getHeaderImage() {
-		const partnerSlug = this.getPartnerSlug();
-
-		let image = false;
-		switch ( partnerSlug ) {
-			case 'dreamhost':
-				image = '/calypso/images/jetpack/dreamhost-jetpack-logo-group.png';
-				break;
-			case 'pressable':
-				image = '/calypso/images/jetpack/pressable-jetpack-logo-group.png';
-				break;
-		}
-
-		if ( ! image ) {
-			return null;
-		}
-
-		return (
-			<div className="jetpack-connect__auth-form-header-image">
-				<img width={ 128 } height={ 42.5 } src={ image } />
-			</div>
-		);
-	}
-
 	getHeaderText() {
 		const { translate } = this.props;
-		const partnerSlug = this.getPartnerSlug();
+		const { partnerSlug } = this.props.authQuery;
 
-		if ( partnerSlug ) {
-			switch ( partnerSlug ) {
-				case 'dreamhost':
-					return translate( 'In partnership with Dreamhost' );
-				case 'pressable':
-					return translate( 'In partnership with Pressable' );
-				default:
-					return translate( 'Completing set up' );
-			}
+		let host = '';
+		switch ( partnerSlug ) {
+			case 'dreamhost':
+				host = 'Dreamhost';
+				break;
+			case 'pressable':
+				host = 'Pressable';
+				break;
+			case 'milesweb':
+				host = 'Milesweb';
+				break;
+			case 'bluehost':
+				host = 'Bluehost';
+				break;
+		}
+
+		if ( host ) {
+			return translate( 'Jetpack, in partnership with %(host)s', {
+				args: { host },
+				comment: '%(host)s is the company name of a hosting partner. Ex. - Pressable',
+			} );
 		}
 
 		switch ( this.getState() ) {
@@ -163,7 +135,6 @@ export class AuthFormHeader extends Component {
 	render() {
 		return (
 			<div>
-				{ this.getHeaderImage() }
 				<FormattedHeader
 					headerText={ this.getHeaderText() }
 					subHeaderText={ this.getSubHeaderText() }

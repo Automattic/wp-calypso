@@ -26,11 +26,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import {
-	isEditedPostPrivate,
-	isPrivateEditedPostPasswordValid,
+	isEditedPostPasswordProtected,
+	isEditedPostPasswordProtectedWithValidPassword,
 	getEditedPost,
 } from 'state/posts/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 class EditorConfirmationSidebar extends Component {
 	static propTypes = {
@@ -39,8 +39,7 @@ class EditorConfirmationSidebar extends Component {
 		onPublish: PropTypes.func,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
-		isPrivatePost: PropTypes.bool,
-		isPrivatePostPasswordValid: PropTypes.bool,
+		isPasswordProtectedWithInvalidPassword: PropTypes.bool,
 		setPostDate: PropTypes.func,
 		setStatus: PropTypes.func,
 		status: PropTypes.string,
@@ -77,7 +76,7 @@ class EditorConfirmationSidebar extends Component {
 			this.props.canUserPublishPosts
 		);
 		const buttonLabel = this.getPublishButtonLabel( publishButtonStatus );
-		const enabled = ! this.props.isPrivatePost || this.props.isPrivatePostPasswordValid;
+		const enabled = ! this.props.isPasswordProtectedWithInvalidPassword;
 
 		return (
 			<Button disabled={ ! enabled } onClick={ this.closeAndPublish }>
@@ -227,17 +226,17 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
-		const isPrivatePost = isEditedPostPrivate( state, siteId, postId );
-		const isPrivatePostPasswordValid = isPrivateEditedPostPasswordValid( state, siteId, postId );
 		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+		const isPasswordProtectedWithInvalidPassword =
+			isEditedPostPasswordProtected( state, siteId, postId ) &&
+			! isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId );
 
 		return {
 			siteId,
 			postId,
 			post,
-			isPrivatePost,
-			isPrivatePostPasswordValid,
 			canUserPublishPosts,
+			isPasswordProtectedWithInvalidPassword,
 		};
 	},
 	{ editPost }

@@ -3,8 +3,6 @@
  * @jest-environment jsdom
  */
 
-/* eslint-disable max-len */
-
 /**
  * External dependencies
  */
@@ -120,7 +118,7 @@ describe( 'markup', () => {
 
 				expect( value ).to.equal(
 					'<img src="http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71" class="alignnone size-full wp-image-media-4"/>'
-				); // eslint-disable-line max-len
+				);
 			} );
 
 			test( 'should return an img element for an image', () => {
@@ -316,7 +314,7 @@ describe( 'markup', () => {
 
 				expect( value ).to.equal(
 					'<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="2760" height="300" class="alignnone size-full wp-image-1" data-istransient="istransient"/>'
-				); // eslint-disable-line max-len
+				);
 			} );
 
 			test( 'should not include a data-istransient attribute when media.transient is falsy', () => {
@@ -332,7 +330,7 @@ describe( 'markup', () => {
 
 				expect( value ).to.equal(
 					'<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="2760" height="300" class="alignnone size-full wp-image-1"/>'
-				); // eslint-disable-line max-len
+				);
 			} );
 		} );
 

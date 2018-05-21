@@ -24,15 +24,15 @@ export const getEditURL = function( post, site ) {
 	return `${ basePath }/${ postType }/${ site.slug }/${ post.ID }`;
 };
 
-export const getPreviewURL = function( site, post ) {
+export const getPreviewURL = function( site, post, autosavePreviewUrl ) {
 	let parsed, previewUrl;
 
 	if ( ! post || ! post.URL || post.status === 'trash' ) {
 		return '';
 	}
 
-	if ( post.preview_URL ) {
-		previewUrl = post.preview_URL;
+	if ( autosavePreviewUrl ) {
+		previewUrl = autosavePreviewUrl;
 	} else if ( post.status === 'publish' ) {
 		previewUrl = post.URL;
 	} else {

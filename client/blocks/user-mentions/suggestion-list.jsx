@@ -6,19 +6,20 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { bind, noop } from 'lodash';
+import { bind } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import UserMentionSuggestion from './suggestion';
+import UserMentionsSuggestion from 'blocks/user-mentions/suggestion';
 
-const UserMentionSuggestionList = ( {
+const UserMentionsSuggestionList = ( {
 	onClick,
 	onClose,
 	popoverContext,
+	popoverPosition,
 	query,
 	selectedSuggestionId,
 	suggestions,
@@ -30,6 +31,7 @@ const UserMentionSuggestionList = ( {
 		autoPosition={ false }
 		position="bottom right"
 		onClose={ onClose }
+		customPosition={ popoverPosition }
 	>
 		{ suggestions.map( suggestion => (
 			<PopoverMenuItem
@@ -38,7 +40,7 @@ const UserMentionSuggestionList = ( {
 				isSelected={ suggestion.ID === selectedSuggestionId }
 				onClick={ bind( onClick, null, suggestion ) }
 			>
-				<UserMentionSuggestion
+				<UserMentionsSuggestion
 					avatarUrl={ suggestion.image_URL }
 					username={ suggestion.user_login }
 					fullName={ suggestion.display_name }
@@ -49,22 +51,28 @@ const UserMentionSuggestionList = ( {
 	</PopoverMenu>
 );
 
-UserMentionSuggestionList.propTypes = {
+UserMentionsSuggestionList.propTypes = {
 	onClick: PropTypes.func,
 	onClose: PropTypes.func,
 	query: PropTypes.string,
 	popoverContext: PropTypes.object,
+	popoverPosition: PropTypes.shape( {
+		top: PropTypes.number,
+		left: PropTypes.number,
+		positionClass: PropTypes.oneOf( [ 'top', 'right', 'bottom', 'left' ] ),
+	} ),
 	selectedSuggestionId: PropTypes.number,
 	suggestions: PropTypes.array,
 };
 
-UserMentionSuggestionList.defaultProps = {
-	onClick: noop,
-	onClose: noop,
+UserMentionsSuggestionList.defaultProps = {
+	onClick: () => {},
+	onClose: () => {},
 	query: '',
 	popoverContext: {},
+	popoverPosition: null,
 	selectedSuggestionId: 0,
 	suggestions: [],
 };
 
-export default UserMentionSuggestionList;
+export default UserMentionsSuggestionList;

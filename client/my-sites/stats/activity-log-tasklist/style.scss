@@ -1,0 +1,71 @@
+.card.activity-log-tasklist {
+	padding-bottom: 4px;
+	font-size: 14px;
+
+	.activity-log-tasklist__heading {
+		display: flex;
+		font-weight: 600;
+		justify-content: space-between;
+		margin-bottom: 16px;
+
+		.ellipsis-menu {
+			position: relative;
+			top: -4px;
+		}
+
+		.ellipsis-menu__toggle {
+			padding: 0;
+		}
+	}
+}
+
+.card.activity-log-tasklist__task {
+	align-items: center;
+	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, .5 );
+	display: flex;
+	justify-content: flex-end;
+	padding: 16px 0;
+
+	.activity-log-item__activity-icon {
+		margin-right: 16px;
+		padding: 8px;
+	}
+}
+
+.activity-log-tasklist__update-item {
+	flex-grow: 1;
+
+	& > div {
+		line-height: 100%;
+	}
+}
+
+.activity-log-tasklist__update-text {
+	font-weight: 500;
+
+	.button.is-borderless {
+		vertical-align: middle;
+		line-height: 1;
+	}
+}
+
+.activity-log-tasklist__update-version,
+.activity-log-tasklist__update-type,
+.activity-log-tasklist__update-bullet {
+	color: $gray;
+}
+
+.activity-log-tasklist__update-bullet {
+	font-size: 7px;
+	margin: 0 7px;
+	vertical-align: middle;
+}
+
+.activity-log-tasklist__update-action {
+	white-space: pre;
+}
+
+.activity-log-tasklist__menu-item {
+	display: flex;
+	align-items: center;
+}

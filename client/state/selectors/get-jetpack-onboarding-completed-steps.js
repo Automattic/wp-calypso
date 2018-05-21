@@ -8,7 +8,7 @@ import { reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isJetpackOnboardingStepCompleted } from 'state/selectors';
+import isJetpackOnboardingStepCompleted from 'state/selectors/is-jetpack-onboarding-step-completed';
 
 /**
  * Returns the Jetpack onboarding progress of a site for the specified steps.

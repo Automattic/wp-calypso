@@ -12,7 +12,7 @@ import { filter, isFunction, noop, omit } from 'lodash';
  * Internal dependencies
  */
 import CountrySelect from 'my-sites/domains/components/form/country-select';
-import { getPaymentCountryCode } from 'state/selectors';
+import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
 import { setPaymentCountryCode } from 'state/ui/payment/actions';
 
 export class PaymentCountrySelect extends Component {

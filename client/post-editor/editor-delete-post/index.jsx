@@ -22,7 +22,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { trashPost } from 'state/posts/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 class EditorDeletePost extends React.Component {
 	static displayName = 'EditorDeletePost';

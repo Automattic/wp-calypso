@@ -41,11 +41,10 @@ import steps from './config/steps';
 import stepComponents from './config/step-components';
 import flows from './config/flows';
 import WpcomLoginForm from './wpcom-login-form';
-import userModule from 'lib/user';
 import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
 import { getDestination, canResumeFlow, getStepUrl } from './utils';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
 import DocumentHead from 'components/data/document-head';
@@ -62,7 +61,6 @@ import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/pro
  */
 const debug = debugModule( 'calypso:signup' );
 const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
-const user = userModule();
 class Signup extends React.Component {
 	static displayName = 'Signup';
 
@@ -80,7 +78,6 @@ class Signup extends React.Component {
 			dependencies: props.signupDependencies,
 			loadingScreenStartTime: undefined,
 			resumingStep: undefined,
-			user: user.get(),
 			loginHandler: null,
 			hasCartItems: false,
 			plans: false,
@@ -263,7 +260,7 @@ class Signup extends React.Component {
 	};
 
 	handleLogin = ( dependencies, destination, event ) => {
-		const userIsLoggedIn = Boolean( user.get() );
+		const userIsLoggedIn = this.props.isLoggedIn;
 
 		if ( event && event.redirectTo ) {
 			destination = event.redirectTo;
@@ -435,7 +432,7 @@ class Signup extends React.Component {
 	};
 
 	localeSuggestions = () => {
-		return 0 === this.positionInFlow() && ! user.get() ? (
+		return 0 === this.positionInFlow() && ! this.props.isLoggedIn ? (
 			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 		) : null;
 	};
@@ -458,7 +455,7 @@ class Signup extends React.Component {
 	};
 
 	currentStep = () => {
-		const userIsLoggedIn = Boolean( user.get() );
+		const userIsLoggedIn = this.props.isLoggedIn;
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
@@ -481,7 +478,6 @@ class Signup extends React.Component {
 					<SignupProcessingScreen
 						hasCartItems={ this.state.hasCartItems }
 						steps={ this.state.progress }
-						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
 						signupDependencies={ this.props.signupDependencies }
 						flowName={ this.props.flowName }
@@ -553,6 +549,7 @@ export default connect(
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
 		signupDependencies: getSignupDependencyStore( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{ setSurvey, loadTrackingTool, affiliateReferral },
 	undefined,

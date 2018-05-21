@@ -11,7 +11,9 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { getReaderFeedsCountForQuery, getReaderFeedsForQuery } from 'state/selectors';
+import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';
+
+import getReaderFeedsForQuery from 'state/selectors/get-reader-feeds-for-query';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import ReaderInfiniteStream from 'components/reader-infinite-stream';

@@ -190,12 +190,10 @@ describe( '#authorize()', () => {
 				} )
 				.reply(
 					400,
-					/* eslint-disable indent */
 					{
 						error: 'not_verified',
 						message: 'Could not verify your request.',
 					},
-					/* eslint-enable indent */
 					{ 'Content-Type': 'application/json' }
 				);
 		} );
@@ -256,13 +254,11 @@ describe( '#validateSSONonce()', () => {
 				} )
 				.reply(
 					200,
-					/* eslint-disable indent */
 					{
 						success: true,
 						blog_details: blogDetails,
 						shared_details: sharedDetails,
 					},
-					/* eslint-enable indent */
 					{ 'Content-Type': 'application/json' }
 				);
 		} );
@@ -301,12 +297,10 @@ describe( '#validateSSONonce()', () => {
 				} )
 				.reply(
 					400,
-					/* eslint-disable indent */
 					{
 						error: 'invalid_input',
 						message: 'sso_nonce is a required parameter for this endpoint',
 					},
-					/* eslint-enable indent */
 					{ 'Content-Type': 'application/json' }
 				);
 		} );
@@ -374,16 +368,10 @@ describe( '#authorizeSSO()', () => {
 				.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-authorize', {
 					sso_nonce: ssoNonce,
 				} )
-				.reply(
-					400,
-					/* eslint-disable indent */
-					{
-						error: 'invalid_input',
-						message: 'sso_nonce is a required parameter for this endpoint',
-					},
-					/* eslint-enable indent */
-					{ 'Content-Type': 'application/json' }
-				);
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'sso_nonce is a required parameter for this endpoint',
+				} );
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {

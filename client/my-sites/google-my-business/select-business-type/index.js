@@ -9,6 +9,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,12 +26,16 @@ import HeaderCake from 'components/header-cake';
 import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { canCurrentUser, getGoogleMyBusinessLocations } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import { recordTracksEvent } from 'state/analytics/actions';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
@@ -42,7 +47,17 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	handleConnect = () => {
 		const { googleMyBusinessLocations, siteSlug } = this.props;
 
-		if ( googleMyBusinessLocations.length === 0 ) {
+		const locationCount = googleMyBusinessLocations.length;
+		const verifiedLocationCount = googleMyBusinessLocations.filter( location => {
+			return get( location, 'meta.state.isVerified', false );
+		} ).length;
+
+		this.props.recordTracksEvent( 'calypso_google_my_business_select_business_type_connect', {
+			location_count: locationCount,
+			verified_location_count: verifiedLocationCount,
+		} );
+
+		if ( locationCount === 0 ) {
 			page.redirect( `/google-my-business/new/${ siteSlug }` );
 		} else {
 			page.redirect( `/google-my-business/select-location/${ siteSlug }` );
@@ -76,7 +91,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 			connectButton = (
 				<KeyringConnectButton
 					serviceId="google_my_business"
-					onClick={ this.trackCreateMyListingClick }
+					onClick={ this.trackCreateYourListingClick }
 					onConnect={ this.handleConnect }
 				>
 					{ translate( 'Create Your Listing', {
@@ -90,7 +105,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					primary
 					href="https://business.google.com/create"
 					target="_blank"
-					onClick={ this.trackCreateMyListingClick }
+					onClick={ this.trackCreateYourListingClick }
 				>
 					{ translate( 'Create Your Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
@@ -134,7 +149,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { siteId, translate } = this.props;
 
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
@@ -144,6 +159,9 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				/>
 
 				<DocumentHead title={ translate( 'Google My Business' ) } />
+
+				<QuerySiteSettings siteId={ siteId } />
+				<QueryKeyringConnections />
 
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
@@ -197,6 +215,7 @@ export default connect(
 		return {
 			googleMyBusinessLocations: getGoogleMyBusinessLocations( state, siteId ),
 			canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
 		};
 	},

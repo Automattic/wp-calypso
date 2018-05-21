@@ -20,7 +20,7 @@ import Card from 'components/card';
 import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getSiteChecklist } from 'state/selectors';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
 import ChecklistShowShare from 'my-sites/checklist/checklist-show/share';

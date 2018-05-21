@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import PaymentLogo from 'components/payment-logo';
-import { getCurrentUserPaymentMethods } from 'state/selectors';
+import getCurrentUserPaymentMethods from 'state/selectors/get-current-user-payment-methods';
 
 class PaymentMethods extends Component {
 	renderPaymentMethods = methods => {

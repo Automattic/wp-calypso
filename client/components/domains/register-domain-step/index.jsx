@@ -33,20 +33,22 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
+import StickyPanel from 'components/sticky-panel';
 import { checkDomainAvailability, getFixedDomainSearch, getAvailableTlds } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import SearchCard from 'components/search-card';
+import Search from 'components/search';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
-import SearchFilters from 'components/domains/search-filters';
+import DropdownFilters from 'components/domains/search-filters/dropdown-filters';
+import FilterResetNotice from 'components/domains/search-filters/filter-reset-notice';
+import TldFilterBar from 'components/domains/search-filters/tld-filter-bar';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
@@ -58,21 +60,27 @@ import {
 import {
 	getStrippedDomainBase,
 	getTldWeightOverrides,
-	isFreeSuggestion,
 	isNumberString,
 	isUnknownSuggestion,
+	markFeaturedSuggestions,
 } from 'components/domains/register-domain-step/utility';
 import {
 	recordDomainAvailabilityReceive,
+	recordFiltersReset,
+	recordFiltersSubmit,
 	recordMapDomainButtonClick,
 	recordSearchFormSubmit,
 	recordSearchFormView,
 	recordSearchResultsReceive,
+	recordShowMoreResults,
 	recordTransferDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
+
+// TODO: Enable A/B test handling for M2.1 release
+const isPaginationEnabled = config.isEnabled( 'domains/kracken-ui/pagination' );
 
 const domains = wpcom.domains();
 
@@ -80,11 +88,9 @@ const domains = wpcom.domains();
 const INITIAL_SUGGESTION_QUANTITY = 2;
 const PAGE_SIZE = 10;
 const MAX_PAGES = 3;
-const SUGGESTION_QUANTITY = config.isEnabled( 'domains/kracken-ui/pagination' )
-	? PAGE_SIZE * MAX_PAGES
-	: PAGE_SIZE;
+const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
 
-let searchVendor = 'group_1';
+const searchVendor = 'group_1';
 const fetchAlgo = searchVendor + '/v1';
 
 let searchQueue = [];
@@ -166,6 +172,8 @@ class RegisterDomainStep extends React.Component {
 		onAddDomain: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
+		recordFiltersSubmit: PropTypes.func.isRequired,
+		recordFiltersReset: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -191,6 +199,8 @@ class RegisterDomainStep extends React.Component {
 		return {
 			availableTlds: [],
 			clickedExampleSuggestion: false,
+			error: null,
+			errorData: null,
 			filters: this.getInitialFiltersState(),
 			lastFilters: this.getInitialFiltersState(),
 			lastQuery: suggestion,
@@ -199,7 +209,7 @@ class RegisterDomainStep extends React.Component {
 			lastDomainIsTransferrable: false,
 			loadingResults,
 			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
-			notice: null,
+			showNotice: false,
 			pageNumber: 1,
 			searchResults: null,
 			subdomainSearchResults: null,
@@ -210,7 +220,7 @@ class RegisterDomainStep extends React.Component {
 		return {
 			includeDashes: false,
 			maxCharacters: '',
-			showExactMatchesOnly: false,
+			exactSldMatchesOnly: false,
 			tlds: [],
 		};
 	}
@@ -244,7 +254,10 @@ class RegisterDomainStep extends React.Component {
 			return nextProps.onDomainsAvailabilityChange( true );
 		}
 		if ( error && error.statusCode === 503 ) {
-			return nextProps.onDomainsAvailabilityChange( false );
+			return nextProps.onDomainsAvailabilityChange(
+				false,
+				get( nextProps, 'defaultSuggestionsError.data.maintenance_end_time', 0 )
+			);
 		}
 
 		if ( error && error.error ) {
@@ -280,8 +293,6 @@ class RegisterDomainStep extends React.Component {
 			this.setState( state );
 		}
 
-		this.getAvailableTlds();
-
 		this._isMounted = false;
 	}
 
@@ -292,7 +303,10 @@ class RegisterDomainStep extends React.Component {
 	componentDidMount() {
 		if ( this.state.lastQuery ) {
 			this.onSearch( this.state.lastQuery );
+		} else {
+			this.getAvailableTlds();
 		}
+
 		this.props.recordSearchFormView( this.props.analyticsSection );
 
 		this._isMounted = true;
@@ -321,36 +335,37 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
-
+		const { errorData, error, lastDomainSearched, showNotice } = this.state;
+		const { message, severity } = showNotice
+			? getAvailabilityNotice( lastDomainSearched, error, errorData )
+			: {};
 		return (
-			<div className={ `register-domain-step ${ isKrackenUi ? 'is-kracken-ui' : '' }` }>
-				<div className="register-domain-step__search">
-					<SearchCard
-						ref={ this.bindSearchCardReference }
-						additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
-						initialValue={ this.state.lastQuery }
-						onSearch={ this.onSearch }
-						onSearchChange={ this.onSearchChange }
-						onBlur={ this.save }
-						placeholder={ this.props.translate( 'Enter a name or keyword' ) }
-						autoFocus={ true }
-						describedBy={ 'step-header' }
-						delaySearch={ true }
-						delayTimeout={ 1000 }
-						dir="ltr"
-						maxLength={ 60 }
-					/>
-				</div>
-				{ this.renderSearchFilters() }
-				{ this.state.notice && (
-					<Notice
-						text={ this.state.notice }
-						status={ `is-${ this.state.noticeSeverity }` }
-						showDismiss={ false }
-					/>
+			<div className="register-domain-step">
+				<StickyPanel className="register-domain-step__search">
+					<CompactCard>
+						<Search
+							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+							delaySearch={ true }
+							delayTimeout={ 1000 }
+							describedBy={ 'step-header' }
+							dir="ltr"
+							initialValue={ this.state.lastQuery }
+							maxLength={ 60 }
+							onBlur={ this.save }
+							onSearch={ this.onSearch }
+							onSearchChange={ this.onSearchChange }
+							placeholder={ this.props.translate( 'Enter a name or keyword' ) }
+							ref={ this.bindSearchCardReference }
+						/>
+						{ this.renderSearchFilters() }
+					</CompactCard>
+				</StickyPanel>
+				{ message && (
+					<Notice text={ message } status={ `is-${ severity }` } showDismiss={ false } />
 				) }
 				{ this.renderContent() }
+				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
@@ -359,52 +374,42 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderSearchFilters() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
+		const isKrackenUi =
+			config.isEnabled( 'domains/kracken-ui/dashes-filter' ) ||
+			config.isEnabled( 'domains/kracken-ui/exact-match-filter' ) ||
+			config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
+		const showFilters = isKrackenUi && ! isRenderingInitialSuggestions;
 		return (
-			isKrackenUi &&
-			! isRenderingInitialSuggestions && (
-				<div className="register-domain-step__filter">
-					<SearchFilters
-						availableTlds={ this.state.availableTlds }
-						filters={ this.state.filters }
-						onChange={ this.onFiltersChange }
-						onFiltersReset={ this.onFiltersReset }
-						onFiltersSubmit={ this.onFiltersSubmit }
-					/>
-				</div>
+			showFilters && (
+				<DropdownFilters
+					filters={ this.state.filters }
+					lastFilters={ this.state.lastFilters }
+					onChange={ this.onFiltersChange }
+					onReset={ this.onFiltersReset }
+					onSubmit={ this.onFiltersSubmit }
+				/>
 			)
 		);
 	}
 
-	renderTldButtons() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
-		const { availableTlds, lastFilters: { tlds: selectedTlds } } = this.state;
+	renderFilterResetNotice() {
 		return (
-			isKrackenUi && (
-				<CompactCard className="register-domain-step__tld-buttons">
-					{ availableTlds.slice( 0, 8 ).map( tld => (
-						<Button
-							className={ classNames( { 'is-active': includes( selectedTlds, tld ) } ) }
-							data-selected={ includes( selectedTlds, tld ) }
-							key={ tld }
-							onClick={ this.toggleTldInFilter }
-							value={ tld }
-						>
-							.{ tld }
-						</Button>
-					) ) }
-				</CompactCard>
-			)
+			<FilterResetNotice
+				className="register-domain-step__filter-reset-notice"
+				isLoading={ this.state.loadingResults }
+				lastFilters={ this.state.lastFilters }
+				onReset={ this.onFiltersReset }
+				suggestions={ this.state.searchResults }
+			/>
 		);
 	}
 
 	renderPaginationControls() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
-		if ( ! isKrackenUi ) {
+		if ( ! isPaginationEnabled ) {
 			return null;
 		}
 
@@ -471,11 +476,13 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( getFixedDomainSearch( lastQuery ) );
 
 		const nextState = {
+			error: null,
+			errorData: null,
 			exactMatchDomain: null,
 			lastDomainSearched: null,
 			loadingResults,
 			loadingSubdomainResults: loadingResults,
-			notice: null,
+			showNotice: false,
 			...stateOverride,
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
@@ -504,41 +511,43 @@ class RegisterDomainStep extends React.Component {
 			tlds.delete( newTld );
 		}
 
-		this.setState(
-			{
-				filters: {
-					...this.state.filters,
-					tlds: [ ...tlds ],
-				},
+		this.repeatSearch( {
+			filters: {
+				...this.state.filters,
+				tlds: [ ...tlds ],
 			},
-			() => {
-				this.save();
-				this.repeatSearch( { pageNumber: 1 } );
-			}
-		);
-	};
-
-	onFiltersChange = newFilters => {
-		this.setState( {
-			filters: newFilters,
+			pageNumber: 1,
 		} );
 	};
 
-	onFiltersReset = ( ...keysToReset ) => {
+	onFiltersChange = ( newFilters, { shouldSubmit = false } = {} ) => {
 		this.setState(
 			{
-				filters: {
-					...this.state.filters,
-					...pick( this.getInitialFiltersState(), keysToReset ),
-				},
+				filters: { ...this.state.filters, ...newFilters },
 			},
 			() => {
-				this.repeatSearch();
+				shouldSubmit && this.onFiltersSubmit();
 			}
 		);
 	};
 
+	onFiltersReset = ( ...keysToReset ) => {
+		this.props.recordFiltersReset( this.state.filters, keysToReset, this.props.analyticsSection );
+		const filters = {
+			...this.state.filters,
+			...( Array.isArray( keysToReset ) && keysToReset.length > 0
+				? pick( this.getInitialFiltersState(), keysToReset )
+				: this.getInitialFiltersState() ),
+		};
+		this.repeatSearch( {
+			filters,
+			lastFilters: filters,
+			pageNumber: 1,
+		} );
+	};
+
 	onFiltersSubmit = () => {
+		this.props.recordFiltersSubmit( this.state.filters, this.props.analyticsSection );
 		this.repeatSearch( { pageNumber: 1 } );
 	};
 
@@ -551,12 +560,14 @@ class RegisterDomainStep extends React.Component {
 
 		this.setState(
 			{
+				error: null,
+				errorData: null,
 				exactMatchDomain: null,
 				lastQuery: searchQuery,
 				lastDomainSearched: null,
 				loadingResults,
 				loadingSubdomainResults: loadingResults,
-				notice: null,
+				showNotice: false,
 				pageNumber: 1,
 				searchResults: null,
 				subdomainSearchResults: null,
@@ -565,10 +576,12 @@ class RegisterDomainStep extends React.Component {
 		);
 	};
 
-	getAvailableTlds = () => {
-		getAvailableTlds().then( availableTlds => {
-			this.setState( { availableTlds } );
-		} );
+	getAvailableTlds = ( domain = undefined ) => {
+		return getAvailableTlds( domain ? { search: domain } : {} )
+			.then( availableTlds => {
+				this.setState( { availableTlds } );
+			} )
+			.catch( noop );
 	};
 
 	checkDomainAvailability = ( domain, timestamp ) => {
@@ -592,7 +605,12 @@ class RegisterDomainStep extends React.Component {
 					const status = get( result, 'status', error );
 					const domainChecked = get( result, 'domain_name', domain );
 
-					const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
+					const {
+						AVAILABLE,
+						MAPPED_SAME_SITE_TRANSFERRABLE,
+						TRANSFERRABLE,
+						UNKNOWN,
+					} = domainAvailability;
 					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 
@@ -602,13 +620,20 @@ class RegisterDomainStep extends React.Component {
 						lastDomainIsTransferrable: isDomainTransferrable,
 					} );
 					if ( isDomainAvailable ) {
-						this.setState( { notice: null } );
+						this.setState( {
+							showNotice: false,
+							error: null,
+							errorData: null,
+						} );
 					} else {
-						this.showValidationErrorMessage(
-							domain,
-							status,
-							get( result, 'other_site_domain', null )
-						);
+						let site = get( result, 'other_site_domain', null );
+						if ( MAPPED_SAME_SITE_TRANSFERRABLE === status ) {
+							site = get( this.props, 'selectedSite.slug', null );
+						}
+						this.showValidationErrorMessage( domain, status, {
+							site,
+							maintenanceEndTime: get( result, 'maintenance_end_time', null ),
+						} );
 					}
 
 					this.props.recordDomainAvailabilityReceive(
@@ -641,7 +666,6 @@ class RegisterDomainStep extends React.Component {
 			vertical: this.props.surveyVertical,
 			...this.getActiveFiltersForAPI(),
 		};
-		this.setState( { lastFilters: this.state.filters } );
 
 		debug( 'Fetching domains suggestions with the following query', query );
 
@@ -664,11 +688,13 @@ class RegisterDomainStep extends React.Component {
 			} )
 			.catch( error => {
 				const timeDiff = Date.now() - timestamp;
-
-				if ( error && error.statusCode === 503 ) {
-					this.props.onDomainsAvailabilityChange( false );
+				if ( error && error.statusCode === 503 && ! this.props.isSignupStep ) {
+					const maintenanceEndTime = get( error, 'data.maintenance_end_time', 0 );
+					this.props.onDomainsAvailabilityChange( false, maintenanceEndTime );
 				} else if ( error && error.error ) {
-					this.showValidationErrorMessage( domain, error.error );
+					this.showValidationErrorMessage( domain, error.error, {
+						maintenanceEndTime: get( error, 'data.maintenance_end_time', null ),
+					} );
 				}
 
 				const analyticsResults = [
@@ -696,8 +722,6 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui' );
-
 		const suggestionMap = new Map();
 		flatten( compact( results ) ).forEach( result => {
 			const { domain_name: domainName } = result;
@@ -705,38 +729,16 @@ class RegisterDomainStep extends React.Component {
 				? suggestionMap.set( domainName, { ...suggestionMap.get( domainName ), ...result } )
 				: suggestionMap.set( domainName, result );
 		} );
-		const suggestions = [ ...suggestionMap.values() ];
-
-		const strippedDomainBase = getStrippedDomainBase( domain );
-		const exactMatchBeforeTld = suggestion =>
-			suggestion.domain_name === this.state.exactMatchDomain ||
-			startsWith( suggestion.domain_name, `${ strippedDomainBase }.` );
-		const bestAlternative = suggestion =>
-			! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
-
-		let availableSuggestions = reject( suggestions, isUnknownSuggestion );
-		if ( ! isKrackenUi ) {
-			availableSuggestions = reject( suggestions, isFreeSuggestion );
-		}
-
-		const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
-
-		if ( recommendedSuggestion ) {
-			recommendedSuggestion.isRecommended = true;
-		} else if ( availableSuggestions.length > 0 ) {
-			availableSuggestions[ 0 ].isRecommended = true;
-		}
-
-		const bestAlternativeSuggestion = find( availableSuggestions, bestAlternative );
-		if ( bestAlternativeSuggestion ) {
-			bestAlternativeSuggestion.isBestAlternative = true;
-		} else if ( availableSuggestions.length > 1 ) {
-			availableSuggestions[ 1 ].isBestAlternative = true;
-		}
+		const suggestions = reject( [ ...suggestionMap.values() ], isUnknownSuggestion );
+		const markedSuggestions = markFeaturedSuggestions(
+			suggestions,
+			this.state.exactMatchDomain,
+			getStrippedDomainBase( domain )
+		);
 
 		this.setState(
 			{
-				searchResults: suggestions,
+				searchResults: markedSuggestions,
 				loadingResults: false,
 			},
 			this.save
@@ -814,7 +816,11 @@ class RegisterDomainStep extends React.Component {
 		const domain = getFixedDomainSearch( searchQuery );
 
 		this.setState(
-			{ lastQuery: searchQuery, lastSurveyVertical: this.props.surveyVertical },
+			{
+				lastQuery: searchQuery,
+				lastSurveyVertical: this.props.surveyVertical,
+				lastFilters: this.state.filters,
+			},
 			this.save
 		);
 
@@ -832,6 +838,7 @@ class RegisterDomainStep extends React.Component {
 
 		const timestamp = Date.now();
 
+		this.getAvailableTlds( domain );
 		const domainSuggestions = Promise.all( [
 			this.checkDomainAvailability( domain, timestamp ),
 			this.getDomainsSuggestions( domain, timestamp ),
@@ -850,9 +857,21 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	showNextPage = () => {
-		debug( 'showNextPage was triggered' );
+		const pageNumber = this.state.pageNumber + 1;
 
-		this.setState( { pageNumber: this.state.pageNumber + 1 }, this.save );
+		debug(
+			`Showing page ${ pageNumber } with query "${ this.state.lastQuery }" in section "${
+				this.props.analyticsSection
+			}"`
+		);
+
+		this.props.recordShowMoreResults(
+			this.state.lastQuery,
+			pageNumber,
+			this.props.analyticsSection
+		);
+
+		this.setState( { pageNumber }, this.save );
 	};
 
 	renderInitialSuggestions() {
@@ -930,7 +949,7 @@ class RegisterDomainStep extends React.Component {
 
 		const searchResults = this.state.searchResults || [];
 
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/pagination' );
+		const isKrackenUi = isPaginationEnabled;
 
 		let suggestions;
 		if ( isKrackenUi ) {
@@ -947,14 +966,16 @@ class RegisterDomainStep extends React.Component {
 			}
 		}
 
-		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
-			// the search returned no results
-			if ( this.props.showExampleSuggestions ) {
-				return this.renderExampleSuggestions();
-			}
-
-			suggestions = this.props.defaultSuggestions || [];
+		// the search returned no results
+		if (
+			suggestions.length === 0 &&
+			! this.state.loadingResults &&
+			this.props.showExampleSuggestions
+		) {
+			return this.renderExampleSuggestions();
 		}
+
+		const showTldFilterBar = config.isEnabled( 'domains/kracken-ui/tld-filter' );
 
 		return (
 			<DomainSearchResults
@@ -981,7 +1002,18 @@ class RegisterDomainStep extends React.Component {
 				fetchAlgo={ fetchAlgo }
 				cart={ this.props.cart }
 			>
-				{ this.renderTldButtons() }
+				{ showTldFilterBar && (
+					<TldFilterBar
+						availableTlds={ this.state.availableTlds }
+						filters={ this.state.filters }
+						isSignupStep={ this.props.isSignupStep }
+						lastFilters={ this.state.lastFilters }
+						onChange={ this.onFiltersChange }
+						onReset={ this.onFiltersReset }
+						onSubmit={ this.onFiltersSubmit }
+						showPlaceholder={ this.state.loadingResults || ! suggestions }
+					/>
+				) }
 			</DomainSearchResults>
 		);
 	}
@@ -1036,18 +1068,12 @@ class RegisterDomainStep extends React.Component {
 		page( this.getTransferDomainUrl() );
 	};
 
-	showValidationErrorMessage( domain, error, site ) {
+	showValidationErrorMessage( domain, error, errorData ) {
 		const { TRANSFERRABLE } = domainAvailability;
 		if ( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) {
 			return;
 		}
-
-		if ( ! site ) {
-			site = get( this.props, 'selectedSite.slug', null );
-		}
-
-		const { message, severity } = getAvailabilityNotice( domain, error, site );
-		this.setState( { notice: message, noticeSeverity: severity } );
+		this.setState( { showNotice: true, error, errorData } );
 	}
 }
 
@@ -1062,10 +1088,13 @@ export default connect(
 	},
 	{
 		recordDomainAvailabilityReceive,
+		recordFiltersReset,
+		recordFiltersSubmit,
 		recordMapDomainButtonClick,
 		recordSearchFormSubmit,
 		recordSearchFormView,
 		recordSearchResultsReceive,
+		recordShowMoreResults,
 		recordTransferDomainButtonClick,
 	}
 )( localize( RegisterDomainStep ) );

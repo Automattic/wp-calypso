@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -89,22 +91,33 @@ describe( 'Shipping label Actions', () => {
 			);
 
 			it( 'toggle origin', () => {
-				expect( dispatchSpy.calledWith( {
-					stepName: 'origin', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
-				} ) )
-					.to.equal( true );
+				expect(
+					dispatchSpy.calledWith( {
+						stepName: 'origin',
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+						orderId,
+						siteId,
+					} )
+				).to.equal( true );
 			} );
 			it( 'do not toggle destination', () => {
-				expect( dispatchSpy.calledWith( {
-					stepName: 'destination', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
-				} ) )
-					.to.equal( false );
+				expect(
+					dispatchSpy.calledWith( {
+						stepName: 'destination',
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+						orderId,
+						siteId,
+					} )
+				).to.equal( false );
 			} );
 			it( 'open printing flow', () => {
-				expect( dispatchSpy.calledWith( {
-					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
-				} ) )
-					.to.equal( true );
+				expect(
+					dispatchSpy.calledWith( {
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
+						orderId,
+						siteId,
+					} )
+				).to.equal( true );
 			} );
 		} );
 
@@ -113,25 +126,36 @@ describe( 'Shipping label Actions', () => {
 
 			const errorStub = sinon.stub( selectors, 'getFormErrors' ).returns( { origin: true } );
 
-			openPrintingFlow( orderId, siteId )(
-				dispatchSpy,
-				createGetStateFn()
-			);
+			openPrintingFlow( orderId, siteId )( dispatchSpy, createGetStateFn() );
 
 			it( 'toggles origin', () => {
-				expect( dispatchSpy.calledWith( {
-					stepName: 'origin', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
-				} ) ).to.equal( true );
+				expect(
+					dispatchSpy.calledWith( {
+						stepName: 'origin',
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+						orderId,
+						siteId,
+					} )
+				).to.equal( true );
 			} );
 			it( 'do not toggle destination', () => {
-				expect( dispatchSpy.calledWith( {
-					stepName: 'destination', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
-				} ) ).to.equal( false );
+				expect(
+					dispatchSpy.calledWith( {
+						stepName: 'destination',
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+						orderId,
+						siteId,
+					} )
+				).to.equal( false );
 			} );
 			it( 'open printing flow', () => {
-				expect( dispatchSpy.calledWith( {
-					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
-				} ) ).to.equal( true );
+				expect(
+					dispatchSpy.calledWith( {
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
+						orderId,
+						siteId,
+					} )
+				).to.equal( true );
 			} );
 
 			errorStub.restore();
@@ -148,19 +172,33 @@ describe( 'Shipping label Actions', () => {
 			);
 
 			it( 'toggle destination', () => {
-				expect( dispatchSpy.calledWith( {
-					stepName: 'destination', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
-				} ) ).to.equal( true );
+				expect(
+					dispatchSpy.calledWith( {
+						stepName: 'destination',
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+						orderId,
+						siteId,
+					} )
+				).to.equal( true );
 			} );
 			it( 'do not toggle origin', () => {
-				expect( dispatchSpy.calledWith( {
-					stepName: 'origin', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
-				} ) ).to.equal( false );
+				expect(
+					dispatchSpy.calledWith( {
+						stepName: 'origin',
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+						orderId,
+						siteId,
+					} )
+				).to.equal( false );
 			} );
 			it( 'open printing flow', () => {
-				expect( dispatchSpy.calledWith( {
-					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
-				} ) ).to.equal( true );
+				expect(
+					dispatchSpy.calledWith( {
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
+						orderId,
+						siteId,
+					} )
+				).to.equal( true );
 			} );
 		} );
 
@@ -169,25 +207,36 @@ describe( 'Shipping label Actions', () => {
 
 			const errorStub = sinon.stub( selectors, 'getFormErrors' ).returns( { destination: true } );
 
-			openPrintingFlow( orderId, siteId )(
-				dispatchSpy,
-				createGetStateFn()
-			);
+			openPrintingFlow( orderId, siteId )( dispatchSpy, createGetStateFn() );
 
 			it( 'toggle destination', () => {
-				expect( dispatchSpy.calledWith( {
-					stepName: 'destination', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
-				} ) ).to.equal( true );
+				expect(
+					dispatchSpy.calledWith( {
+						stepName: 'destination',
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+						orderId,
+						siteId,
+					} )
+				).to.equal( true );
 			} );
 			it( 'do not toggle origin', () => {
-				expect( dispatchSpy.calledWith( {
-					stepName: 'origin', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
-				} ) ).to.equal( false );
+				expect(
+					dispatchSpy.calledWith( {
+						stepName: 'origin',
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+						orderId,
+						siteId,
+					} )
+				).to.equal( false );
 			} );
 			it( 'open printing flow', () => {
-				expect( dispatchSpy.calledWith( {
-					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
-				} ) ).to.equal( true );
+				expect(
+					dispatchSpy.calledWith( {
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
+						orderId,
+						siteId,
+					} )
+				).to.equal( true );
 			} );
 
 			errorStub.restore();

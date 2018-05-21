@@ -21,10 +21,8 @@ import {
 	validateRequestError,
 } from 'state/account-recovery/reset/actions';
 
-import {
-	getAccountRecoveryValidationError,
-	getAccountRecoveryValidationKey,
-} from 'state/selectors';
+import getAccountRecoveryValidationError from 'state/selectors/get-account-recovery-validation-error';
+import getAccountRecoveryValidationKey from 'state/selectors/get-account-recovery-validation-key';
 
 class ResetPasswordEmailValidation extends Component {
 	getQueryString = () => {

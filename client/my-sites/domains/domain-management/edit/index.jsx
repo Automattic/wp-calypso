@@ -73,7 +73,12 @@ class Edit extends React.Component {
 		const { REGISTERED, TRANSFER } = domainTypes;
 
 		if ( includes( [ REGISTERED, TRANSFER ], domain.type ) && domain.registrar === MAINTENANCE ) {
-			return <MaintenanceCard { ...this.props } />;
+			return (
+				<MaintenanceCard
+					selectedDomainName={ this.props.selectedDomainName }
+					tldMaintenanceEndTime={ domain.tldMaintenanceEndTime }
+				/>
+			);
 		}
 
 		return (

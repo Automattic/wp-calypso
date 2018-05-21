@@ -22,7 +22,6 @@ function buildVersionCheckMessage( engine, engines, results ) {
 	const expected = `expecting ${ engine }: ${ chalk.blue( engines[ engine ] ) }`;
 	const actual = results[ engine ].isSatisfied
 		? `(Your version: ${ chalk.green( results[ engine ].version.version ) })`
-		// eslint-disable-next-line max-len
 		: `(Your version: ${ chalk.red( results[ engine ].version.version ) } is not in valid range: ${ chalk.blue( results[ engine ].wanted.range ) })`;
 
 	return `${ icon } ${ expected } ${ actual }`;

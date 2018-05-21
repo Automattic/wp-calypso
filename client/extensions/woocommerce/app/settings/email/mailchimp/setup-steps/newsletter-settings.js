@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -25,29 +27,30 @@ const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, t
 			<QueryMailChimpLists siteId={ siteId } />
 			<p>{ translate( 'Finally, choose a mailing list to sync with your store.' ) }</p>
 			<Notice>
-				<p>{ translate(
-					'Choose your list carefully as you won\'t be able to change it later. ' +
-					'Create a list in MailChimp if you have not already done so.'
-				) }
+				<p>
+					{ translate(
+						"Choose your list carefully as you won't be able to change it later. " +
+							'Create a list in MailChimp if you have not already done so.'
+					) }
 				</p>
 			</Notice>
-			<FormLabel>
-				{ translate( 'Mailing list' ) }
-			</FormLabel>
+			<FormLabel>{ translate( 'Mailing list' ) }</FormLabel>
 			<FormSelect
 				name={ 'mailchimp_list' }
 				onChange={ onChange }
 				value={ storeData.mailchimp_list }
-				disabled={ isRequesting }>
+				disabled={ isRequesting }
+			>
 				{ storeData.mailchimp_lists &&
 					map( storeData.mailchimp_lists, ( list, key ) => (
-						<option key={ key } value={ key }>{ list }</option>
-					) )
-				}
+						<option key={ key } value={ key }>
+							{ list }
+						</option>
+					) ) }
 			</FormSelect>
 			<FormSettingExplanation className="setup-steps__sync-explanation">
 				{ translate(
-					'We\'ll sync your orders with this list so you can segment based on purchase history. We\'ll also ' +
+					"We'll sync your orders with this list so you can segment based on purchase history. We'll also " +
 						'sync products so you can add relevant product information to customer emails.'
 				) }
 			</FormSettingExplanation>
@@ -62,14 +65,12 @@ NewsletterSettings.propTypes = {
 	isRequesting: PropTypes.bool,
 };
 
-const NewsletterSettingsConnected = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		return {
-			siteId,
-			isRequesting: isRequestingLists( state, siteId ),
-		};
-	}
-)( NewsletterSettings );
+const NewsletterSettingsConnected = connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		isRequesting: isRequestingLists( state, siteId ),
+	};
+} )( NewsletterSettings );
 
 export default localize( NewsletterSettingsConnected );

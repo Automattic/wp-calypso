@@ -5,7 +5,7 @@
  */
 
 import { find } from 'lodash';
-import { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
@@ -29,21 +29,13 @@ import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selec
 import { planMatches } from 'lib/plans';
 import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import config from 'config';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getSupportLocale } from 'lib/i18n-utils';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:help-search' );
-
-const getSupportLocale = () => {
-	const localeSlug = getLocaleSlug();
-	if ( config( 'support_locales' ).indexOf( localeSlug ) > -1 ) {
-		return localeSlug;
-	}
-	return 'en';
-};
 
 class Help extends React.PureComponent {
 	static displayName = 'Help';

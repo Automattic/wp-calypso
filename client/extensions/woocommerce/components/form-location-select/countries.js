@@ -98,6 +98,22 @@ class FormCountrySelectFromApi extends Component {
 	}
 }
 
+// TODO Move this to a proper selector (with tests)
+// https://github.com/Automattic/wp-calypso/pull/24571#discussion_r185268996
+const getContinentsWithCountries = ( state, continents, siteId ) => {
+	const locationsList = [];
+	continents.forEach( continent => {
+		const countries = getCountriesByContinent( state, continent.code, siteId );
+		locationsList.push(
+			...countries.map( country => ( {
+				...country,
+				continent: continent.code,
+			} ) )
+		);
+	} );
+	return locationsList;
+};
+
 export default connect(
 	( state, props ) => {
 		const site = getSelectedSiteWithFallback( state );
@@ -106,18 +122,9 @@ export default connect(
 		const areSettingsLoaded = areSettingsGeneralLoaded( state );
 		const value = ! props.value ? address.country : props.value;
 
-		const locationsList = [];
 		const isLoaded = areLocationsLoaded( state, siteId );
 		const continents = getContinents( state, siteId );
-		continents.forEach( continent => {
-			const countries = getCountriesByContinent( state, continent.code, siteId );
-			locationsList.push(
-				...countries.map( country => ( {
-					...country,
-					continent: continent.code,
-				} ) )
-			);
-		} );
+		const locationsList = getContinentsWithCountries( state, continents, siteId );
 
 		return {
 			areSettingsLoaded,

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,10 +18,7 @@ export default class InfoTooltip extends Component {
 		className: PropTypes.string,
 		position: PropTypes.string,
 		anchor: PropTypes.node,
-		maxWidth: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.number,
-		] ),
+		maxWidth: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 	};
 
 	static defaultProps = {
@@ -53,10 +52,12 @@ export default class InfoTooltip extends Component {
 		const anchor = this.props.anchor || <Gridicon icon="info-outline" size={ 18 } />;
 
 		return (
-			<span className={ classNames( 'info-tooltip', this.props.className ) } >
-				<span ref={ this.saveAnchorRef }
+			<span className={ classNames( 'info-tooltip', this.props.className ) }>
+				<span
+					ref={ this.saveAnchorRef }
 					onMouseEnter={ this.openTooltip }
-					onMouseLeave={ this.closeTooltip } >
+					onMouseLeave={ this.closeTooltip }
+				>
 					{ anchor }
 				</span>
 				<Tooltip
@@ -65,9 +66,9 @@ export default class InfoTooltip extends Component {
 					showOnMobile
 					onClose={ this.closeTooltip }
 					position={ this.props.position }
-					context={ this.anchorRef }>
-					<div className="info-tooltip__contents"
-						style={ { maxWidth: this.props.maxWidth } } >
+					context={ this.anchorRef }
+				>
+					<div className="info-tooltip__contents" style={ { maxWidth: this.props.maxWidth } }>
 						{ this.props.children }
 					</div>
 				</Tooltip>

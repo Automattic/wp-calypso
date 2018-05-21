@@ -24,8 +24,8 @@ import {
 	isPostsLastPageForQuery,
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQueryIgnoringPage,
-	isEditedPostPrivate,
-	isPrivateEditedPostPasswordValid,
+	isEditedPostPasswordProtected,
+	isEditedPostPasswordProtectedWithValidPassword,
 	getEditedPost,
 	getPostEdits,
 	getEditedPostValue,
@@ -1199,6 +1199,176 @@ describe( 'selectors', () => {
 				},
 			} );
 		} );
+
+		test( 'should memoize the merged post if there are no changes from previous call', () => {
+			const postObject = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				status: 'draft',
+				title: 'Hello',
+			};
+
+			const state = {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+					},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: postObject,
+							},
+						} ),
+					},
+					edits: {
+						2916284: {
+							841: {
+								title: 'Hello World',
+							},
+						},
+					},
+				},
+			};
+
+			const editedPost1 = getEditedPost( state, 2916284, 841 );
+			const editedPost2 = getEditedPost( state, 2916284, 841 );
+
+			// check for exact (===) equality
+			expect( editedPost1 ).to.equal( editedPost2 );
+		} );
+
+		test( 'should return updated post object if the original post changes', () => {
+			// items key will not change
+			const items = {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+			};
+
+			// edits key will not change
+			const edits = {
+				2916284: {
+					841: {
+						title: 'Hello World',
+					},
+				},
+			};
+
+			// queries are different for each state
+			const queries1 = {
+				2916284: new PostQueryManager( {
+					items: {
+						841: {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							status: 'draft',
+							title: 'Hello',
+						},
+					},
+				} ),
+			};
+
+			const queries2 = {
+				2916284: new PostQueryManager( {
+					items: {
+						841: {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							status: 'trash',
+							title: 'Hello',
+						},
+					},
+				} ),
+			};
+
+			const state1 = {
+				posts: {
+					items,
+					queries: queries1,
+					edits,
+				},
+			};
+
+			const state2 = {
+				posts: {
+					items,
+					queries: queries2,
+					edits,
+				},
+			};
+
+			const editedPost1 = getEditedPost( state1, 2916284, 841 );
+			const editedPost2 = getEditedPost( state2, 2916284, 841 );
+
+			// check that the values are different
+			expect( editedPost1 ).to.not.equal( editedPost2 );
+			expect( editedPost1.status ).to.equal( 'draft' );
+			expect( editedPost2.status ).to.equal( 'trash' );
+		} );
+
+		test( 'should return updated post object if the post edits change', () => {
+			// items key will not change
+			const items = {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+			};
+
+			// queries key will not change
+			const queries = {
+				2916284: new PostQueryManager( {
+					items: {
+						841: {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							status: 'draft',
+							title: 'Hello',
+						},
+					},
+				} ),
+			};
+
+			// edits are different for each state
+			const edits1 = {
+				2916284: {
+					841: {
+						title: 'Hello World',
+					},
+				},
+			};
+
+			const edits2 = {
+				2916284: {
+					841: {
+						title: 'Hello World!',
+					},
+				},
+			};
+
+			const state1 = {
+				posts: {
+					items,
+					queries,
+					edits: edits1,
+				},
+			};
+
+			const state2 = {
+				posts: {
+					items,
+					queries,
+					edits: edits2,
+				},
+			};
+
+			const editedPost1 = getEditedPost( state1, 2916284, 841 );
+			const editedPost2 = getEditedPost( state2, 2916284, 841 );
+
+			// check that the values are different
+			expect( editedPost1 ).to.not.equal( editedPost2 );
+			expect( editedPost1.title ).to.equal( 'Hello World' );
+			expect( editedPost2.title ).to.equal( 'Hello World!' );
+		} );
 	} );
 
 	describe( 'getPostEdits()', () => {
@@ -1374,9 +1544,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'isEditedPostPrivate()', () => {
+	describe( 'isEditedPostPasswordProtected()', () => {
 		test( 'should return false if the post does not exist', () => {
-			const privatePost = isEditedPostPrivate(
+			const protectedPost = isEditedPostPasswordProtected(
 				{
 					posts: {
 						items: {},
@@ -1388,7 +1558,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( privatePost ).to.be.false;
+			expect( protectedPost ).to.be.false;
 		} );
 
 		test( 'should return false if post password is a zero length string', () => {
@@ -1399,7 +1569,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: 'secret',
 			};
-			const privatePost = isEditedPostPrivate(
+			const protectedPost = isEditedPostPasswordProtected(
 				{
 					posts: {
 						items: {
@@ -1423,7 +1593,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( privatePost ).to.be.false;
+			expect( protectedPost ).to.be.false;
 		} );
 
 		test( 'should return true if post password is a non-zero length string', () => {
@@ -1434,7 +1604,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: '',
 			};
-			const privatePost = isEditedPostPrivate(
+			const protectedPost = isEditedPostPasswordProtected(
 				{
 					posts: {
 						items: {
@@ -1458,7 +1628,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( privatePost ).to.be.true;
+			expect( protectedPost ).to.be.true;
 		} );
 
 		test( 'should return true if post password is whitespace only', () => {
@@ -1469,7 +1639,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: '',
 			};
-			const privatePost = isEditedPostPrivate(
+			const protectedPost = isEditedPostPasswordProtected(
 				{
 					posts: {
 						items: {
@@ -1493,13 +1663,13 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( privatePost ).to.be.true;
+			expect( protectedPost ).to.be.true;
 		} );
 	} );
 
-	describe( 'isPrivateEditedPostPasswordValid()', () => {
+	describe( 'isEditedPostPasswordProtectedWithValidPassword()', () => {
 		test( 'should return false if the post does not exist', () => {
-			const isPasswordValid = isPrivateEditedPostPasswordValid(
+			const isPasswordValid = isEditedPostPasswordProtectedWithValidPassword(
 				{
 					posts: {
 						items: {},
@@ -1522,7 +1692,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: 'secret',
 			};
-			const isPasswordValid = isPrivateEditedPostPasswordValid(
+			const isPasswordValid = isEditedPostPasswordProtectedWithValidPassword(
 				{
 					posts: {
 						items: {
@@ -1557,7 +1727,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: '',
 			};
-			const isPasswordValid = isPrivateEditedPostPasswordValid(
+			const isPasswordValid = isEditedPostPasswordProtectedWithValidPassword(
 				{
 					posts: {
 						items: {
@@ -1592,7 +1762,7 @@ describe( 'selectors', () => {
 				title: 'Hello World',
 				password: '',
 			};
-			const isPasswordValid = isPrivateEditedPostPasswordValid(
+			const isPasswordValid = isEditedPostPasswordProtectedWithValidPassword(
 				{
 					posts: {
 						items: {
@@ -2106,6 +2276,172 @@ describe( 'selectors', () => {
 			);
 
 			expect( isDirty ).to.be.false;
+		} );
+
+		test( 'should return true if there are unapplied metadata edits', () => {
+			const queries = {
+				2916284: new PostQueryManager( {
+					items: {
+						841: {
+							ID: 841,
+							site_ID: 2916284,
+							metadata: [ { key: 'seo_description', value: 'Hello' } ],
+						},
+					},
+				} ),
+			};
+
+			// check unapplied metadata update
+			const updateEdits = {
+				2916284: {
+					841: {
+						metadata: [
+							{
+								key: 'seo_description',
+								value: 'Hello World',
+								operation: 'update',
+							},
+						],
+					},
+				},
+			};
+
+			expect(
+				isEditedPostDirty(
+					{
+						posts: {
+							queries,
+							edits: updateEdits,
+						},
+					},
+					2916284,
+					841
+				)
+			).to.be.true;
+
+			// check unapplied metadata delete
+			const deleteEdits = {
+				2916284: {
+					841: {
+						metadata: [ { key: 'seo_description', operation: 'delete' } ],
+					},
+				},
+			};
+
+			expect(
+				isEditedPostDirty(
+					{
+						posts: {
+							queries,
+							edits: deleteEdits,
+						},
+					},
+					2916284,
+					841
+				)
+			).to.be.true;
+		} );
+
+		test( 'should return false if all metadata edits are already applied', () => {
+			expect(
+				isEditedPostDirty(
+					{
+						posts: {
+							queries: {
+								2916284: new PostQueryManager( {
+									items: {
+										841: {
+											ID: 841,
+											site_ID: 2916284,
+											metadata: [ { key: 'seo_description', value: 'Hello World' } ],
+										},
+									},
+								} ),
+							},
+							edits: {
+								2916284: {
+									841: {
+										metadata: [
+											{
+												key: 'seo_description',
+												value: 'Hello World',
+												operation: 'update',
+											},
+											{ key: 'geo_latitude', operation: 'delete' },
+										],
+									},
+								},
+							},
+						},
+					},
+					2916284,
+					841
+				)
+			).to.be.false;
+		} );
+
+		test( 'should start returning false after update to original post makes the edits noop', () => {
+			// items key will not change
+			const items = {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+			};
+
+			// edits key will not change
+			const edits = {
+				2916284: {
+					841: {
+						title: 'Hello World',
+					},
+				},
+			};
+
+			// queries are different for each state
+			const queries1 = {
+				2916284: new PostQueryManager( {
+					items: {
+						841: {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello',
+						},
+					},
+				} ),
+			};
+
+			const queries2 = {
+				2916284: new PostQueryManager( {
+					items: {
+						841: {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+						},
+					},
+				} ),
+			};
+
+			const state1 = {
+				posts: {
+					items,
+					queries: queries1,
+					edits,
+				},
+			};
+
+			const state2 = {
+				posts: {
+					items,
+					queries: queries2,
+					edits,
+				},
+			};
+
+			// there are edits that change the post
+			expect( isEditedPostDirty( state1, 2916284, 841 ) ).to.be.true;
+			// the edits became noops and memoization cache was cleared
+			expect( isEditedPostDirty( state2, 2916284, 841 ) ).to.be.false;
 		} );
 	} );
 

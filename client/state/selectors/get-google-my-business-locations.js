@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,8 +12,10 @@ import { getSiteSettings } from 'state/site-settings/selectors';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 
 function isConnected( externalUser, siteSettings ) {
-	return externalUser.keyringConnectionId === siteSettings.google_my_business_keyring_id &&
-		externalUser.ID === siteSettings.google_my_business_location_id;
+	return (
+		externalUser.keyringConnectionId === siteSettings.google_my_business_keyring_id &&
+		externalUser.ID === siteSettings.google_my_business_location_id
+	);
 }
 
 export default function getGoogleMyBusinessLocations( state, siteId ) {

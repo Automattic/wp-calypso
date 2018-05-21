@@ -31,7 +31,7 @@ import {
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
 import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
-import { isReaderCardExpanded } from 'state/selectors';
+import isReaderCardExpanded from 'state/selectors/is-reader-card-expanded';
 
 class ReaderPostCard extends React.Component {
 	static propTypes = {
@@ -154,6 +154,7 @@ class ReaderPostCard extends React.Component {
 			);
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const readerPostActions = (
 			<ReaderPostActions
 				post={ discoverPost || post }
@@ -169,6 +170,7 @@ class ReaderPostCard extends React.Component {
 				iconSize={ 18 }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		// Set up post byline
 		let postByline;

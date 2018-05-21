@@ -18,9 +18,9 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransaction from 'components/data/query-billing-transaction';
-import tableRows from './table-rows';
 import { groupDomainProducts } from './utils';
-import { getPastBillingTransaction, isPastBillingTransactionError } from 'state/selectors';
+import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
+import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
 import {
 	clearBillingTransactionError,
 	requestBillingTransaction,
@@ -203,7 +203,7 @@ class BillingReceipt extends React.Component {
 	}
 
 	renderBillingHistory() {
-		const { transaction, translate } = this.props;
+		const { transaction, translate, moment } = this.props;
 		const title = translate( 'Visit %(url)s', { args: { url: transaction.url } } );
 		const serviceLink = <a href={ transaction.url } title={ title } />;
 
@@ -233,7 +233,7 @@ class BillingReceipt extends React.Component {
 									'Screenshot: https://cloudup.com/isX-WEFYlOs',
 							} ) }
 							<div className="billing-history__transaction-date">
-								{ tableRows.formatDate( transaction.date ) }
+								{ moment( transaction.date ).format( 'll' ) }
 							</div>
 						</h2>
 					</div>

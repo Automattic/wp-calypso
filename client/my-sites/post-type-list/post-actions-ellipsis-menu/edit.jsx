@@ -15,7 +15,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
-import { canCurrentUserEditPost } from 'state/selectors';
+import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { preload } from 'sections-helper';
 

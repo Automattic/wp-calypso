@@ -37,11 +37,6 @@ export default class D3Base extends Component {
 
 	chartRef = React.createRef();
 
-	/**
-	 * Determines if new props were provided, and updates the local state accordingly. This basically stores any new
-	 * prop in the local state (so it can be used for comparison in future calls), and resets the list of params in that
-	 * case (in order to indicate that the chart should be drawn again).
-	 */
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		let state = {};
 
@@ -71,7 +66,10 @@ export default class D3Base extends Component {
 	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		return nextState.params !== null && this.state.params !== nextState.params;
+		return (
+			( nextState.params !== null && this.state.params !== nextState.params ) ||
+			this.state.data !== nextState.data
+		);
 	}
 
 	componentDidUpdate() {
@@ -85,23 +83,25 @@ export default class D3Base extends Component {
 	}
 
 	deleteChart() {
-		d3Select( this.chartRef.current ).selectAll( 'svg' ).remove();
+		d3Select( this.chartRef.current )
+			.selectAll( 'svg' )
+			.remove();
 	}
 
 	/**
 	 * Renders the chart, or triggers a rendering by updating the list of params.
 	 */
 	drawChart() {
-		if ( this.state.params === null ) {
+		if ( ! this.state.params ) {
 			this.updateParams();
-		} else {
-			const svg = this.drawContainer();
-
-			this.props.drawChart( svg, this.state.params );
+			return;
 		}
+
+		const svg = this.getContainer();
+		this.props.drawChart( svg, this.state.params );
 	}
 
-	drawContainer() {
+	getContainer() {
 		const { className } = this.props;
 		const { width, height } = this.state.params;
 
@@ -120,7 +120,8 @@ export default class D3Base extends Component {
 	}
 
 	updateParams = () => {
-		this.setState( { params: this.state.getParams( this.chartRef.current ) } );
+		const params = this.state.getParams( this.chartRef.current );
+		this.setState( { params } );
 	};
 
 	render() {

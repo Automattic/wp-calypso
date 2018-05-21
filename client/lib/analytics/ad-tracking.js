@@ -16,7 +16,7 @@ import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
 import { loadScript as loadScriptCallback } from 'lib/load-script';
-import { shouldSkipAds } from 'lib/analytics/utils';
+import { shouldSkipAds, hashPii } from 'lib/analytics/utils';
 import { promisify } from '../../utils';
 
 /**
@@ -47,6 +47,7 @@ const isAtlasEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
 const isMediaWallahEnabled = false;
+const isNanigansEnabled = true;
 
 // Retargeting events are fired once every `retargetingPeriod` seconds.
 const retargetingPeriod = 60 * 60 * 24;
@@ -89,6 +90,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
 	YANDEX_SCRIPT_URL = 'https://mc.yandex.ru/metrika/watch.js',
 	OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js',
+	NANIGANS_SCRIPT_URL = 'https://cdn.nanigans.com/NaN_tracker.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -104,6 +106,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		linkedInPartnerId: '195308',
 		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
+		nanigansAppId: '653793',
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
@@ -253,6 +256,33 @@ function setupOutbrainGlobal() {
 	api.queue = [];
 }
 
+/**
+ * For Nanigans, we delay the configuration until an actual purchase is made.
+ *
+ * Becomes true when the global configuration has been added to the window.NaN_api
+ *
+ * @type {boolean}
+ */
+let isNanigansConfigured = false;
+
+/**
+ * Defines the global variables required by Nanigans
+ * (app tracking ID, user's hashed e-mail)
+ */
+function setupNanigansGlobal() {
+	isNanigansConfigured = true;
+
+	const currentUser = user.get();
+	const normalizedEmail =
+		currentUser && currentUser.email ? currentUser.email.toLowerCase().replace( /\s/g, '' ) : '';
+
+	window.NaN_api = [
+		[ TRACKING_IDS.nanigansAppId, normalizedEmail ? hashPii( normalizedEmail ) : '' ],
+	];
+
+	debug( 'Nanigans setup: ', window.NaN_api, ', for e-mail: ' + normalizedEmail );
+}
+
 const loadScript = promisify( loadScriptCallback );
 
 async function loadTrackingScripts( callback ) {
@@ -324,7 +354,7 @@ async function loadTrackingScripts( callback ) {
 
 	// init Facebook
 	if ( isFacebookEnabled ) {
-		window.fbq( 'init', TRACKING_IDS.facebookInit );
+		initFacebook();
 	}
 
 	// init Bing
@@ -580,6 +610,8 @@ export function recordOrder( cart, orderId ) {
 	recordOrderInAtlas( cart, orderId );
 	recordOrderInCriteo( cart, orderId );
 	recordOrderInFloodlight( cart, orderId );
+	recordOrderInFacebook( cart, orderId );
+	recordOrderInNanigans( cart, orderId );
 
 	// This has to come before we add the items to the Google Analytics cart
 	recordOrderInGoogleAnalytics( cart, orderId );
@@ -644,7 +676,7 @@ function recordProduct( product, orderId ) {
 	}
 
 	const currentUser = user.get();
-	const userId = currentUser ? currentUser.ID : 0;
+	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
 
 	try {
 		// Google Analytics
@@ -679,17 +711,6 @@ function recordProduct( product, orderId ) {
 					google_remarketing_only: false,
 				} );
 			}
-		}
-
-		// Facebook
-		if ( isFacebookEnabled ) {
-			window.fbq( 'track', 'Purchase', {
-				currency: product.currency,
-				product_slug: product.product_slug,
-				value: product.cost,
-				user_id: userId,
-				order_id: orderId,
-			} );
 		}
 
 		// Twitter
@@ -791,7 +812,7 @@ function recordOrderInAtlas( cart, orderId ) {
 		product_slugs: cart.products.map( product => product.product_slug ).join( ', ' ),
 		revenue: cart.total_cost,
 		currency_code: cart.currency,
-		user_id: currentUser ? currentUser.ID : 0,
+		user_id: currentUser ? hashPii( currentUser.ID ) : 0,
 		order_id: orderId,
 	};
 
@@ -838,6 +859,89 @@ function recordOrderInFloodlight( cart, orderId ) {
 	};
 
 	recordParamsInFloodlight( params );
+}
+
+/**
+ * Records an order in Nanigans. If nanigans is not already loaded and configured, it configures it now (delayed load
+ * until the moment when we actually need this pixel).
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInNanigans( cart, orderId ) {
+	if ( ! isAdTrackingAllowed() || ! isNanigansEnabled ) {
+		return;
+	}
+
+	// As for the FB pixel, we have decided to skip negative or 0-value carts.
+	if ( cart.total_cost < 0.01 ) {
+		debug( 'recordOrderInNanigans: Skipping due to a 0-value cart.' );
+		return;
+	}
+
+	debug( 'recordOrderInNanigans: Record purchase' );
+
+	const productPrices = cart.products.map( product => product.cost * 100 ); // VALUE is in cents, [ 0, 9600 ]
+	const eventDetails = {
+		sku: cart.products.map( product => product.product_slug ), // [ 'blog_domain', 'plan_premium' ]
+		qty: cart.products.map( () => 1 ), // [ 1, 1 ]
+		currency: cart.currency,
+		unique: orderId, // unique transaction id
+	};
+
+	const eventStruct = [
+		'purchase', // EVENT_TYPE
+		'main', // EVENT_NAME
+		productPrices,
+		eventDetails,
+	];
+
+	if ( ! isNanigansConfigured ) {
+		setupNanigansGlobal();
+		loadScript( NANIGANS_SCRIPT_URL );
+	}
+
+	debug( 'Nanigans push:', eventStruct );
+	window.NaN_api.push( eventStruct ); // NaN api is either an array that supports push, either the real Nanigans API
+}
+
+/**
+ * Records an order in Facebook (a single event for the entire order)
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInFacebook( cart, orderId ) {
+	if ( ! isAdTrackingAllowed() || ! isFacebookEnabled ) {
+		return;
+	}
+
+	/**
+	 * We have made a conscioius decision to ignore the 0 cost carts, such that these carts are not considered
+	 * a conversion. We will analyze the results and make a final decision on this.
+	 */
+	if ( cart.total_cost < 0.01 ) {
+		debug( 'recordOrderInFacebook: Skipping due to a 0-value cart.' );
+		return;
+	}
+
+	debug( 'recordOrderInFacebook: Record purchase' );
+
+	const currentUser = user.get();
+
+	const fbParams = {
+		currency: cart.currency,
+		product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
+		value: cart.total_cost,
+		user_id: currentUser ? currentUser.ID : 0,
+		order_id: orderId,
+	};
+
+	debug( 'recordParamsInFacebook: ', fbParams );
+
+	window.fbq( 'track', 'Purchase', fbParams );
 }
 
 /**
@@ -972,7 +1076,7 @@ function floodlightUserParams() {
 
 	const currentUser = user.get();
 	if ( currentUser ) {
-		params.u4 = currentUser.ID.toString();
+		params.u4 = hashPii( currentUser.ID );
 	}
 
 	const anonymousUserId = tracksAnonymousUserId();
@@ -1142,7 +1246,7 @@ function recordInCriteo( eventName, eventProps ) {
 	events.push( { event: 'setSiteType', type: criteoSiteType() } );
 
 	if ( user.get() ) {
-		events.push( { event: 'setEmail', email: [ user.get().email ] } );
+		events.push( { event: 'setEmail', email: [ hashPii( user.get().email ) ] } );
 	}
 
 	const conversionEvent = clone( eventProps );
@@ -1239,6 +1343,38 @@ function costToUSD( cost, currency ) {
  */
 function isSupportedCurrency( currency ) {
 	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;
+}
+
+/**
+ * Initializes the Facebook pixel.
+ *
+ * When the user is logged in, additional hashed data is being forwarded.
+ */
+function initFacebook() {
+	if ( user.get() ) {
+		initFacebookAdvancedMatching();
+	} else {
+		window.fbq( 'init', TRACKING_IDS.facebookInit ); // simple data set, no advanced matching
+	}
+}
+
+/**
+ * See https://developers.facebook.com/docs/facebook-pixel/pixel-with-ads/conversion-tracking#advanced_match
+ */
+function initFacebookAdvancedMatching() {
+	// All data must be in lowercase. Remove all spaces.
+	const fbRequirementsFormatter = function( str ) {
+		return str.toLowerCase().replace( / /g, '' );
+	};
+
+	const currentUser = user.get();
+	const advancedMatching = {
+		em: fbRequirementsFormatter( currentUser.email ),
+	};
+
+	debug( 'FB Advanced Matching', advancedMatching );
+
+	window.fbq( 'init', TRACKING_IDS.facebookInit, advancedMatching );
 }
 
 /**

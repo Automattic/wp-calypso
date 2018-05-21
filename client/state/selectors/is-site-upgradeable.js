@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getRawSite } from 'state/sites/selectors';
 

@@ -21,7 +21,7 @@ import TextareaAutosize from 'components/textarea-autosize';
 import { isMobile } from 'lib/viewport';
 import * as stats from 'lib/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { areSitePermalinksEditable } from 'state/selectors';
+import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
 import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';

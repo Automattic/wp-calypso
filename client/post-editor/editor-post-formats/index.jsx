@@ -23,7 +23,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { getSiteDefaultPostFormat } from 'state/selectors';
+import getSiteDefaultPostFormat from 'state/selectors/get-site-default-post-format';
 import { editPost } from 'state/posts/actions';
 
 const ICONS = {

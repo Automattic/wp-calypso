@@ -26,7 +26,6 @@ class DomainSuggestionsExample extends React.Component {
 
 		const showDomainOption = siteDesignType !== DESIGN_TYPE_STORE;
 
-		/* eslint-disable max-len */
 		return (
 			<div className="example-domain-suggestions">
 				<p className="example-domain-suggestions__explanation">
@@ -66,7 +65,6 @@ class DomainSuggestionsExample extends React.Component {
 				</div>
 			</div>
 		);
-		/* eslint-enable max-len */
 	}
 }
 

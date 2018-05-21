@@ -17,8 +17,7 @@ import CreditCardNumberInput from 'components/upgrades/credit-card-number-input'
 import PaymentCountrySelect from 'components/payment-country-select';
 import EbanxPaymentFields from 'my-sites/checkout/checkout/ebanx-payment-fields';
 import { Input } from 'my-sites/domains/components/form';
-import { maskField, unmaskField } from 'lib/credit-card-details';
-import { getCreditCardType } from 'lib/checkout';
+import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalEbanxFields } from 'lib/checkout/ebanx';
 
 export class CreditCardFormFields extends React.Component {
@@ -121,8 +120,8 @@ export class CreditCardFormFields extends React.Component {
 				<div className={ creditCardFormFieldsExtrasClassNames }>
 					{ this.createField( 'expiration-date', Input, {
 						inputMode: 'numeric',
-						label: translate( 'MM/YY', {
-							context: 'Expiry label on credit card form',
+						label: translate( 'Expiry: MM/YY', {
+							comment: 'Expiry label on credit card form',
 						} ),
 					} ) }
 

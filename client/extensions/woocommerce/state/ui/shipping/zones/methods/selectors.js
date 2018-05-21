@@ -132,6 +132,7 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 					getShippingMethodSchema( state, method.methodType, siteId ).formSchema
 				)
 			: {};
+
 		return merge( {}, defaultValues, method, { enabled: false !== enabled } );
 	} );
 	return sortShippingZoneMethods( state, siteId, allMethods );

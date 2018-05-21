@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,11 +19,11 @@ import { localize } from 'i18n-calypso';
 const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } ) => (
 	<FormFieldset className="setup-steps__mailchimp-key-input">
 		<p>
-			{ translate( 'Now that you\'re signed in to MailChimp, you need an API key to start the connection process.' ) }
+			{ translate(
+				"Now that you're signed in to MailChimp, you need an API key to start the connection process."
+			) }
 		</p>
-		<FormLabel required >
-			{ translate( 'Mailchimp API Key:' ) }
-		</FormLabel>
+		<FormLabel required>{ translate( 'Mailchimp API Key:' ) }</FormLabel>
 		<FormTextInput
 			name={ 'api_key' }
 			isError={ ! isKeyCorrect }
@@ -29,14 +31,20 @@ const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } )
 			onChange={ onChange }
 			value={ apiKey }
 		/>
-		{ ! isKeyCorrect && (
-			apiKey
-				? <FormInputValidation isError text={ translate( 'Key appears to be invalid.' ) } />
-				: <FormInputValidation isError text={ translate( 'An API key is required to make a connection.' ) } />
-		) }
+		{ ! isKeyCorrect &&
+			( apiKey ? (
+				<FormInputValidation isError text={ translate( 'Key appears to be invalid.' ) } />
+			) : (
+				<FormInputValidation
+					isError
+					text={ translate( 'An API key is required to make a connection.' ) }
+				/>
+			) ) }
 		<FormSettingExplanation>
-			{ translate( 'To find your MailChimp API key click your profile picture, select Account and go to Extras ' +
-			'> API keys. From there, grab an existing key or generate a new one for your store.' ) }
+			{ translate(
+				'To find your MailChimp API key click your profile picture, select Account and go to Extras ' +
+					'> API keys. From there, grab an existing key or generate a new one for your store.'
+			) }
 		</FormSettingExplanation>
 	</FormFieldset>
 ) );

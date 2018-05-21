@@ -61,7 +61,6 @@ class DomainConnectAuthorizeFooter extends Component {
 					busy={ notReadyToSubmit }
 					className="domain-connect__button"
 					disabled={ notReadyToSubmit }
-					icon
 					onClick={ onConfirm }
 					primary
 				>
@@ -71,7 +70,6 @@ class DomainConnectAuthorizeFooter extends Component {
 					busy={ notReadyToSubmit }
 					className="domain-connect__button"
 					disabled={ notReadyToSubmit }
-					icon
 					onClick={ onClose }
 				>
 					<Gridicon icon="cross" /> { cancel }

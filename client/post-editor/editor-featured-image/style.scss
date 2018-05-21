@@ -104,3 +104,21 @@
 .editor-featured-image__preview-image {
 	display: block;
 }
+
+.editor-featured-image__preview .editor-featured-image__edit-icon {
+	position: absolute;
+	color: $white;
+	opacity: 0.9;
+	top: auto;
+	bottom: 8px;
+	right: 8px;
+	line-height: 0;
+	padding: 4px;
+	border: none;
+	background: rgba(0, 0, 0, 0.2);
+	border-radius: 50%;
+
+	&:hover {
+		opacity: 1;
+	}
+}

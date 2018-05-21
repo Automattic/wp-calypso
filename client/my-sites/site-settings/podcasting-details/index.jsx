@@ -26,6 +26,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
+import PodcastCoverImage from 'blocks/podcast-cover-image';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -80,12 +81,13 @@ class PodcastingDetails extends Component {
 		);
 	}
 
-	renderTextField( { FormComponent = FormInput, key, label } ) {
+	renderTextField( { FormComponent = FormInput, key, label, explanation } ) {
 		const { fields, isRequestingSettings, onChangeField, isPodcastingEnabled } = this.props;
 
 		return (
 			<FormFieldset>
 				<FormLabel htmlFor={ key }>{ label }</FormLabel>
+				{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 				<FormComponent
 					id={ key }
 					name={ key }
@@ -205,6 +207,10 @@ class PodcastingDetails extends Component {
 							) }
 						</FormFieldset>
 						<div className="podcasting-details__basic-settings">
+							<FormFieldset className="podcasting-details__cover-image">
+								<FormLabel>{ translate( 'Cover Image' ) }</FormLabel>
+								<PodcastCoverImage size={ 96 } />
+							</FormFieldset>
 							{ this.renderTextField( {
 								key: 'podcasting_title',
 								label: translate( 'Title' ),
@@ -224,6 +230,13 @@ class PodcastingDetails extends Component {
 							FormComponent: FormTextarea,
 							key: 'podcasting_summary',
 							label: translate( 'Summary' ),
+						} ) }
+						{ this.renderTextField( {
+							key: 'podcasting_email',
+							label: translate( 'Email Address' ),
+							explanation: translate(
+								'This email address will be displayed in the feed and is required for some services such as Google Play.'
+							),
 						} ) }
 						{ this.renderTextField( {
 							key: 'podcasting_copyright',
@@ -273,6 +286,7 @@ const getFormSettings = settings => {
 		'podcasting_category_1',
 		'podcasting_category_2',
 		'podcasting_category_3',
+		'podcasting_email',
 	] );
 };
 

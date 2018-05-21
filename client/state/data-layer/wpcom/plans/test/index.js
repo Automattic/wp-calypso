@@ -20,7 +20,7 @@ describe( 'wpcom-api', () => {
 				expect( requestPlans( action ) ).toEqual(
 					http(
 						{
-							apiVersion: '1.4',
+							apiVersion: '1.5',
 							method: 'GET',
 							path: '/plans',
 						},

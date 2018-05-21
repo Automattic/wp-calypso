@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -23,22 +25,20 @@ import {
 	isLoaded,
 	getFormErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import { toggleStep, confirmPackages } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	toggleStep,
+	confirmPackages,
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
-const PackagesStep = ( props ) => {
-	const {
-		siteId,
-		orderId,
-		selected,
-		weightUnit,
-		errors,
-		expanded,
-		translate,
-	} = props;
+const PackagesStep = props => {
+	const { siteId, orderId, selected, weightUnit, errors, expanded, translate } = props;
 
 	const packageIds = Object.keys( selected );
-	const itemsCount = packageIds.reduce( ( result, pId ) => ( result + selected[ pId ].items.length ), 0 );
-	const totalWeight = packageIds.reduce( ( result, pId ) => ( result + selected[ pId ].weight ), 0 );
+	const itemsCount = packageIds.reduce(
+		( result, pId ) => result + selected[ pId ].items.length,
+		0
+	);
+	const totalWeight = packageIds.reduce( ( result, pId ) => result + selected[ pId ].weight, 0 );
 	const isValidPackages = 0 < packageIds.length;
 
 	const getContainerState = () => {
@@ -49,7 +49,7 @@ const PackagesStep = ( props ) => {
 			};
 		}
 
-		const errorPackage = find( errors, ( pckg ) => ( ! isEmpty( pckg ) ) );
+		const errorPackage = find( errors, pckg => ! isEmpty( pckg ) );
 		if ( errorPackage ) {
 			return {
 				isError: true,
@@ -75,14 +75,17 @@ const PackagesStep = ( props ) => {
 				},
 			} );
 		} else {
-			summary = translate( '%(itemsCount)d items in %(packageCount)d packages: %(weight)f %(unit)s total', {
-				args: {
-					itemsCount,
-					packageCount: packageIds.length,
-					weight: totalWeight,
-					unit: weightUnit,
-				},
-			} );
+			summary = translate(
+				'%(itemsCount)d items in %(packageCount)d packages: %(weight)f %(unit)s total',
+				{
+					args: {
+						itemsCount,
+						packageCount: packageIds.length,
+						weight: totalWeight,
+						unit: weightUnit,
+					},
+				}
+			);
 		}
 
 		return { isSuccess: true, summary };
@@ -95,33 +98,28 @@ const PackagesStep = ( props ) => {
 			title={ translate( 'Packages' ) }
 			{ ...getContainerState() }
 			expanded={ expanded }
-			toggleStep={ toggleStepHandler } >
+			toggleStep={ toggleStepHandler }
+		>
 			<div className="packages-step__contents">
-				<PackageList
-					siteId={ props.siteId }
-					orderId={ props.orderId } />
-				{ packageIds.length
-					? <PackageInfo
-						siteId={ props.siteId }
-						orderId={ props.orderId } />
-					: ( <div key="no-packages" className="packages-step__package">
+				<PackageList siteId={ props.siteId } orderId={ props.orderId } />
+				{ packageIds.length ? (
+					<PackageInfo siteId={ props.siteId } orderId={ props.orderId } />
+				) : (
+					<div key="no-packages" className="packages-step__package">
 						{ translate( 'There are no packages or items associated with this order' ) }
-					</div> )
-				}
+					</div>
+				) }
 			</div>
 
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || ! packageIds.length }
-				onClick={ confirmPackagesHandler } >
+				onClick={ confirmPackagesHandler }
+			>
 				{ translate( 'Use these packages' ) }
 			</StepConfirmationButton>
 
-			<MoveItemDialog
-				siteId={ props.siteId }
-				orderId={ props.orderId } />
-			<AddItemDialog
-				siteId={ props.siteId }
-				orderId={ props.orderId } />
+			<MoveItemDialog siteId={ props.siteId } orderId={ props.orderId } />
+			<AddItemDialog siteId={ props.siteId } orderId={ props.orderId } />
 		</StepContainer>
 	);
 };
@@ -147,7 +145,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { toggleStep, confirmPackages }, dispatch );
 };
 

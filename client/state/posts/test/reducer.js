@@ -1277,6 +1277,124 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove metadata edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							metadata: [
+								{ key: 'tobeupdated', value: 'newvalue', operation: 'update' },
+								{ key: 'tobedeleted', operation: 'delete' },
+								{
+									key: 'notyetupdated',
+									value: 'newvalue',
+									operation: 'update',
+								},
+								{ key: 'notyetdeleted', operation: 'delete' },
+							],
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							metadata: [
+								{ key: 'tobeupdated', value: 'newvalue' },
+								{ key: 'notyetupdated', value: 'oldvalue' },
+								{ key: 'notyetdeleted', value: 'value' },
+							],
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						metadata: [
+							{ key: 'notyetupdated', value: 'newvalue', operation: 'update' },
+							{ key: 'notyetdeleted', operation: 'delete' },
+						],
+					},
+				},
+			} );
+		} );
+
+		test( 'should remove date edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							date: '2018-05-01T10:36:41+02:00',
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							date: '2018-05-01T08:36:41+00:00',
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {},
+				},
+			} );
+		} );
+
+		test( 'should remove status edits after they are saved', () => {
+			const emptyEditsState = {
+				2916284: {
+					841: {},
+				},
+			};
+
+			const editsStateWithStatus = status =>
+				deepFreeze( {
+					2916284: {
+						841: {
+							status,
+						},
+					},
+				} );
+
+			const receivePostActionWithStatus = status => ( {
+				type: POSTS_RECEIVE,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						type: 'post',
+						status,
+					},
+				],
+			} );
+
+			expect(
+				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'future' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'publish' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'future' ), receivePostActionWithStatus( 'publish' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'draft' ), receivePostActionWithStatus( 'draft' ) )
+			).to.eql( emptyEditsState );
+		} );
+
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {

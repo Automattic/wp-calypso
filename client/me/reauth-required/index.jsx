@@ -67,7 +67,7 @@ const ReauthRequired = createReactClass( {
 	},
 
 	getCodeMessage: function() {
-		var codeMessage = '';
+		let codeMessage = '';
 
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
 			codeMessage = this.props.translate(
@@ -185,7 +185,7 @@ const ReauthRequired = createReactClass( {
 	},
 
 	render: function() {
-		var codePlaceholder = this.props.twoStepAuthorization.isTwoStepSMSEnabled()
+		const codePlaceholder = this.props.twoStepAuthorization.isTwoStepSMSEnabled()
 			? constants.sevenDigit2faPlaceholder
 			: constants.sixDigit2faPlaceholder;
 

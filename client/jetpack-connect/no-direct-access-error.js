@@ -23,8 +23,6 @@ class NoDirectAccessError extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	handleClickHelp = () => this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
-
 	render() {
 		const { translate } = this.props;
 
@@ -38,7 +36,7 @@ class NoDirectAccessError extends PureComponent {
 				/>
 				<LoggedOutFormLinks>
 					<JetpackConnectHappychatButton eventName="calypso_jpc_noqueryarguments_chat_initiated">
-						<HelpButton onClick={ this.handleClickHelp } />
+						<HelpButton />
 					</JetpackConnectHappychatButton>
 				</LoggedOutFormLinks>
 			</Main>

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import DetailsDialog from './label-details-modal';
@@ -21,7 +24,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 class LabelItem extends Component {
-	renderRefund = ( label ) => {
+	renderRefund = label => {
 		const { orderId, siteId, translate } = this.props;
 
 		const today = new Date();
@@ -30,7 +33,7 @@ class LabelItem extends Component {
 			return null;
 		}
 
-		const openDialog = ( e ) => {
+		const openDialog = e => {
 			e.preventDefault();
 			this.props.openRefundDialog( orderId, siteId, label.labelId );
 		};
@@ -38,21 +41,22 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'Request refund' ) }</a>
+				<Button onClick={ openDialog } borderless className="shipping-label__button">
+					{ translate( 'Request refund' ) }
+				</Button>
 			</span>
 		);
 	};
 
-	renderReprint = ( label ) => {
+	renderReprint = label => {
 		const todayTime = new Date().getTime();
-		if ( label.usedDate ||
-			( label.expiryDate && label.expiryDate < todayTime ) ) {
+		if ( label.usedDate || ( label.expiryDate && label.expiryDate < todayTime ) ) {
 			return null;
 		}
 
 		const { orderId, siteId, translate } = this.props;
 
-		const openDialog = ( e ) => {
+		const openDialog = e => {
 			e.preventDefault();
 			this.props.openReprintDialog( orderId, siteId, label.labelId );
 		};
@@ -60,15 +64,17 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'Reprint' ) }</a>
+				<Button onClick={ openDialog } borderless className="shipping-label__button">
+					{ translate( 'Reprint' ) }
+				</Button>
 			</span>
 		);
 	};
 
-	renderLabelDetails = ( label ) => {
+	renderLabelDetails = label => {
 		const { orderId, siteId, translate } = this.props;
 
-		const openDialog = ( e ) => {
+		const openDialog = e => {
 			e.preventDefault();
 			this.props.openDetailsDialog( orderId, siteId, label.labelId );
 		};
@@ -76,7 +82,9 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ translate( 'View details' ) }</a>
+				<Button onClick={ openDialog } borderless className="shipping-label__button">
+					{ translate( 'View details' ) }
+				</Button>
 			</span>
 		);
 	};
@@ -85,7 +93,7 @@ class LabelItem extends Component {
 		const { label, translate } = this.props;
 
 		return (
-			<div key={ label.labelId } className="shipping-label__item" >
+			<div key={ label.labelId } className="shipping-label__item">
 				<p className="shipping-label__item-detail">
 					<span>
 						{ translate( 'Label #%(labelIndex)s printed', {
@@ -96,17 +104,19 @@ class LabelItem extends Component {
 					</span>
 					{ label.showDetails && this.renderLabelDetails( label ) }
 				</p>
-				{ label.showDetails &&
+				{ label.showDetails && (
 					<p className="shipping-label__item-tracking">
-						{ translate( 'Tracking #: {{trackingLink/}}', { components: { trackingLink: <TrackingLink { ...label } /> } } ) }
+						{ translate( 'Tracking #: {{trackingLink/}}', {
+							components: { trackingLink: <TrackingLink { ...label } /> },
+						} ) }
 					</p>
-				}
-				{ label.showDetails &&
+				) }
+				{ label.showDetails && (
 					<p className="shipping-label__item-actions">
 						{ this.renderRefund( label ) }
 						{ this.renderReprint( label ) }
 					</p>
-				}
+				) }
 			</div>
 		);
 	}
@@ -121,7 +131,7 @@ LabelItem.propTypes = {
 	openDetailsDialog: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch );
 };
 

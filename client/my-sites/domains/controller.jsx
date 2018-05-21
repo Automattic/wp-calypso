@@ -16,7 +16,7 @@ import { sectionify } from 'lib/route';
 import Main from 'components/main';
 import { addItem } from 'lib/upgrades/actions';
 import productsFactory from 'lib/products-list';
-import { getSites } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import CartData from 'components/data/cart';
@@ -71,7 +71,7 @@ const domainSearch = ( context, next ) => {
 	}
 
 	context.primary = (
-		<Main>
+		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
 			<DocumentHead title={ translate( 'Domain Search' ) } />
 			<CartData>
@@ -100,7 +100,7 @@ const siteRedirect = ( context, next ) => {
 
 const mapDomain = ( context, next ) => {
 	context.primary = (
-		<Main>
+		<Main wideLayout>
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
 			<CartData>
@@ -113,7 +113,7 @@ const mapDomain = ( context, next ) => {
 
 const transferDomain = ( context, next ) => {
 	context.primary = (
-		<Main>
+		<Main wideLayout>
 			<PageViewTracker
 				path={ domainTransferIn( ':site' ) }
 				title="Domain Search > Domain Transfer"

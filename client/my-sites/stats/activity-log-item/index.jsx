@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import scrollTo from 'lib/scroll-to';
 import { localize } from 'i18n-calypso';
-import { get, map, merge, forEach, every, includes, isEmpty } from 'lodash';
+import { get, map, forEach, every, includes, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,14 +32,12 @@ import {
 	rewindRestore,
 } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import {
-	getActivityLog,
-	getRequestedBackup,
-	getRequestedRewind,
-	getSiteGmtOffset,
-	getSiteTimezoneValue,
-	getRewindState,
-} from 'state/selectors';
+import getActivityLog from 'state/selectors/get-activity-log';
+import getRequestedBackup from 'state/selectors/get-requested-backup';
+import getRequestedRewind from 'state/selectors/get-requested-rewind';
+import getRewindState from 'state/selectors/get-rewind-state';
+import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { adjustMoment } from '../activity-log/utils';
 import { getSite } from 'state/sites/selectors';
 import { updatePlugin } from 'state/plugins/installed/actions';
@@ -98,7 +96,7 @@ class ActivityLogItem extends Component {
 
 		if ( ! isEmpty( noticesToShow ) ) {
 			this.setState( {
-				pluginUpdateNotice: merge( {}, this.state.pluginUpdateNotice, noticesToShow ),
+				pluginUpdateNotice: { ...this.state.pluginUpdateNotice, ...noticesToShow },
 			} );
 		}
 	};
@@ -159,7 +157,7 @@ class ActivityLogItem extends Component {
 
 		if ( ! isEmpty( noticesToShow ) ) {
 			this.setState( {
-				pluginUpdateNotice: merge( {}, this.state.pluginUpdateNotice, noticesToShow ),
+				pluginUpdateNotice: { ...this.state.pluginUpdateNotice, ...noticesToShow },
 			} );
 		}
 	}
@@ -424,26 +422,26 @@ class ActivityLogItem extends Component {
  * 		pluginSlug string       Plugin directory
  * 		status     object|false Current update status
  * }
- * @param {array}  pluginList List of plugins that will be updated
- * @param {object} state      Progress of plugin update as found in status.plugins.installed.state.
- * @param {number} siteId     ID of the site where the plugin is installed
+ * @param {array}  plugins List of plugins that will be updated
+ * @param {object} state   Progress of plugin update as found in status.plugins.installed.state.
+ * @param {number} siteId  ID of the site where the plugin is installed
  *
  * @returns {array} List of plugins to update with their status.
  */
-const makeListPluginsToUpdate = ( pluginList, state, siteId ) =>
-	map( pluginList, plugin =>
-		merge(
-			{ updateStatus: getStatusForPlugin( state, siteId, plugin.pluginId ) },
-			getPluginOnSite( state, siteId, plugin.pluginSlug )
-		)
-	);
+const makeListPluginsToUpdate = ( plugins, state, siteId ) =>
+	plugins.map( plugin => ( {
+		updateStatus: getStatusForPlugin( state, siteId, plugin.pluginId ),
+		...getPluginOnSite( state, siteId, plugin.pluginSlug ),
+	} ) );
 
 const mapStateToProps = ( state, { activityId, siteId } ) => {
 	const rewindState = getRewindState( state, siteId );
 	const activity = getActivityLog( state, siteId, activityId );
-	const pluginSlug = get( activity.activityMeta, 'pluginSlug', {} );
-	const pluginId = get( activity.activityMeta, 'pluginId', {} );
+	const pluginSlug = activity.activityMeta.pluginSlug;
+	const pluginId = activity.activityMeta.pluginId;
+	const plugins = activity.activityMeta.pluginsToUpdate;
 	const site = getSite( state, siteId );
+
 	return {
 		activity,
 		gmtOffset: getSiteGmtOffset( state, siteId ),
@@ -454,13 +452,9 @@ const mapStateToProps = ( state, { activityId, siteId } ) => {
 		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
 		canAutoconfigure: rewindState.canAutoconfigure,
 		site,
-		plugin: getPluginOnSite( state, siteId, pluginSlug ),
-		pluginStatus: getStatusForPlugin( state, siteId, pluginId ),
-		pluginsToUpdate: makeListPluginsToUpdate(
-			get( activity.activityMeta, 'pluginsToUpdate', [] ),
-			state,
-			siteId
-		),
+		plugin: pluginSlug && getPluginOnSite( state, siteId, pluginSlug ),
+		pluginStatus: pluginId && getStatusForPlugin( state, siteId, pluginId ),
+		pluginsToUpdate: plugins && makeListPluginsToUpdate( plugins, state, siteId ),
 	};
 };
 

@@ -27,7 +27,7 @@ import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
-import { getPurchase, isDataLoading } from '../utils';
+import { isDataLoading } from '../utils';
 import { isDomainRegistration, isPlan, isBusiness, isGoogleApps } from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
@@ -36,15 +36,14 @@ import { removePurchase } from 'state/purchases/actions';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import userFactory from 'lib/user';
-import { isDomainOnlySite as isDomainOnly, isSiteAutomatedTransfer } from 'state/selectors';
+import isDomainOnly from 'state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import HappychatButton from 'components/happychat/button';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
-
-const user = userFactory();
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
  * Module dependencies
@@ -58,9 +57,10 @@ class RemovePurchase extends Component {
 		isDomainOnlySite: PropTypes.bool,
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
-		selectedPurchase: PropTypes.object,
+		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
+		userId: PropTypes.number.isRequired,
 	};
 
 	state = {
@@ -71,7 +71,7 @@ class RemovePurchase extends Component {
 	};
 
 	recordChatEvent( eventAction ) {
-		const purchase = this.props.selectedPurchase;
+		const { purchase } = this.props;
 		this.props.recordTracksEvent( eventAction, {
 			survey_step: this.state.surveyStep,
 			purchase: purchase.productSlug,
@@ -82,7 +82,7 @@ class RemovePurchase extends Component {
 	}
 
 	recordEvent = ( name, properties = {} ) => {
-		const product_slug = get( this.props, 'selectedPurchase.productSlug' );
+		const product_slug = get( this.props, [ 'purchase', 'productSlug' ] );
 		const cancellation_flow = 'remove';
 		const is_atomic = this.props.isAutomatedTransferSite;
 		this.props.recordTracksEvent(
@@ -120,16 +120,11 @@ class RemovePurchase extends Component {
 	};
 
 	changeSurveyStep = stepFunction => {
-		const {
-			selectedPurchase,
-			isChatAvailable,
-			isChatActive,
-			precancellationChatAvailable,
-		} = this.props;
+		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
 		const { surveyStep, survey } = this.state;
 		const steps = stepsForProductAndSurvey(
 			survey,
-			selectedPurchase,
+			purchase,
 			isChatAvailable || isChatActive,
 			precancellationChatAvailable
 		);
@@ -161,8 +156,7 @@ class RemovePurchase extends Component {
 	removePurchase = closeDialog => {
 		this.setState( { isRemoving: true } );
 
-		const purchase = getPurchase( this.props );
-		const { isDomainOnlySite, selectedSite, translate } = this.props;
+		const { isDomainOnlySite, purchase, selectedSite, translate } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom
@@ -197,7 +191,7 @@ class RemovePurchase extends Component {
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
-		this.props.removePurchase( purchase.id, user.get().ID ).then( () => {
+		this.props.removePurchase( purchase.id, this.props.userId ).then( () => {
 			const productName = getName( purchase );
 			const { purchasesError } = this.props;
 
@@ -237,7 +231,7 @@ class RemovePurchase extends Component {
 
 	renderCard = () => {
 		const { translate } = this.props;
-		const productName = getName( getPurchase( this.props ) );
+		const productName = getName( this.props.purchase );
 
 		return (
 			<CompactCard className="remove-purchase__card" onClick={ this.openDialog }>
@@ -281,7 +275,7 @@ class RemovePurchase extends Component {
 				onClick: this.removePurchase,
 			},
 		];
-		const productName = getName( getPurchase( this.props ) );
+		const productName = getName( this.props.purchase );
 
 		if (
 			config.isEnabled( 'upgrades/precancellation-chat' ) &&
@@ -306,9 +300,8 @@ class RemovePurchase extends Component {
 	}
 
 	renderDomainDialogText() {
-		const { translate } = this.props;
-		const purchase = getPurchase( this.props ),
-			productName = getName( purchase );
+		const { purchase, translate } = this.props;
+		const productName = getName( purchase );
 
 		return (
 			<p>
@@ -323,7 +316,7 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { selectedPurchase, selectedSite, translate } = this.props;
+		const { purchase, selectedSite, translate } = this.props;
 		const buttons = {
 			cancel: {
 				action: 'cancel',
@@ -381,7 +374,7 @@ class RemovePurchase extends Component {
 					chatInitiated={ this.chatInitiated }
 					defaultContent={ this.renderPlanDialogText() }
 					onInputChange={ this.onSurveyChange }
-					purchase={ selectedPurchase }
+					purchase={ purchase }
 					selectedSite={ selectedSite }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					surveyStep={ this.state.surveyStep }
@@ -391,18 +384,17 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialogText() {
-		const { translate } = this.props;
-		const purchase = getPurchase( this.props ),
-			productName = getName( purchase ),
-			includedDomainText = (
-				<p>
-					{ translate(
-						'The domain associated with this plan, {{domain/}}, will not be removed. ' +
-							'It will remain active on your site, unless also removed.',
-						{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-					) }
-				</p>
-			);
+		const { purchase, translate } = this.props;
+		const productName = getName( purchase );
+		const includedDomainText = (
+			<p>
+				{ translate(
+					'The domain associated with this plan, {{domain/}}, will not be removed. ' +
+						'It will remain active on your site, unless also removed.',
+					{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
+				) }
+			</p>
+		);
 
 		return (
 			<div>
@@ -485,7 +477,7 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.purchase;
 		if ( ! isRemovable( purchase ) ) {
 			return null;
 		}
@@ -507,6 +499,7 @@ export default connect(
 		isChatActive: hasActiveHappychatSession( state ),
 		purchasesError: getPurchasesError( state ),
 		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
+		userId: getCurrentUserId( state ),
 	} ),
 	{
 		receiveDeletedSite,

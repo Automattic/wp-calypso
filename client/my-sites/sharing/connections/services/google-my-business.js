@@ -15,10 +15,8 @@ import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
 import { getSiteSettings, isRequestingSiteSettings } from 'state/site-settings/selectors';
-import {
-	getGoogleMyBusinessLocations,
-	getSiteUserConnectionsForGoogleMyBusiness,
-} from 'state/selectors';
+import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
+import getSiteUserConnectionsForGoogleMyBusiness from 'state/selectors/get-site-user-connections-for-google-my-business';
 import {
 	connectGoogleMyBusinessLocation,
 	disconnectGoogleMyBusinessLocation,

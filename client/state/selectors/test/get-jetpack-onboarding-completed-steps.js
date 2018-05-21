@@ -4,10 +4,8 @@
  * Internal dependencies
  */
 import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants';
-import {
-	getJetpackOnboardingCompletedSteps,
-	isJetpackOnboardingStepCompleted,
-} from 'state/selectors';
+import getJetpackOnboardingCompletedSteps from 'state/selectors/get-jetpack-onboarding-completed-steps';
+import isJetpackOnboardingStepCompleted from 'state/selectors/is-jetpack-onboarding-step-completed';
 
 describe( 'getJetpackOnboardingCompletedSteps()', () => {
 	test( 'should return onboading progress for the specified steps', () => {

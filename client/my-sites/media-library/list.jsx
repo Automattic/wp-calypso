@@ -23,7 +23,7 @@ import ListNoContent from './list-no-content';
 import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 const GOOGLE_MAX_RESULTS = 1000;
 
@@ -82,7 +82,7 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	getMediaItemStyle = index => {
-		var itemsPerRow = this.getItemsPerRow(),
+		let itemsPerRow = this.getItemsPerRow(),
 			isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale,
 			isLastInRow = 0 === ( index + 1 ) % itemsPerRow,
 			style,
@@ -131,7 +131,7 @@ export class MediaLibraryList extends React.Component {
 		}
 
 		for ( let i = start; i <= end; i++ ) {
-			let interimIndex = findIndex( selectedItems, {
+			const interimIndex = findIndex( selectedItems, {
 				ID: this.props.media[ i ].ID,
 			} );
 
@@ -170,7 +170,7 @@ export class MediaLibraryList extends React.Component {
 		min( [ item.date.slice( 0, 10 ), moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
 
 	renderItem = item => {
-		var index = findIndex( this.props.media, { ID: item.ID } ),
+		let index = findIndex( this.props.media, { ID: item.ID } ),
 			selectedItems = this.props.mediaLibrarySelectedItems,
 			selectedIndex = findIndex( selectedItems, { ID: item.ID } ),
 			ref = this.getItemRef( item ),
@@ -199,7 +199,7 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	renderLoadingPlaceholders = () => {
-		var itemsPerRow = this.getItemsPerRow(),
+		let itemsPerRow = this.getItemsPerRow(),
 			itemsVisible = ( this.props.media || [] ).length,
 			placeholders = itemsPerRow - itemsVisible % itemsPerRow;
 
@@ -240,7 +240,7 @@ export class MediaLibraryList extends React.Component {
 	}
 
 	render() {
-		var onFetchNextPage;
+		let onFetchNextPage;
 		let getItemGroup = this.getItemGroup;
 		let getGroupLabel = this.getGroupLabel;
 

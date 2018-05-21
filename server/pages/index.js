@@ -583,6 +583,8 @@ module.exports = function() {
 
 					if ( config.isEnabled( 'code-splitting' ) ) {
 						req.context.chunkFiles = getFilesForChunk( section.name );
+					} else {
+						req.context.chunkFiles = [];
 					}
 
 					if ( section.secondary && req.context ) {

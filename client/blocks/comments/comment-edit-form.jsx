@@ -19,6 +19,7 @@ import AutoDirection from 'components/auto-direction';
 import Notice from 'components/notice';
 import { editComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent } from 'reader/stats';
+import PostCommentFormTextarea from './form-textarea';
 
 class PostCommentForm extends Component {
 	constructor( props ) {
@@ -36,13 +37,6 @@ class PostCommentForm extends Component {
 		} );
 	}
 
-	componentDidMount() {
-		// If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
-		if ( this.props.parentCommentId && this._textareaNode ) {
-			this._textareaNode.focus();
-		}
-	}
-
 	componentDidUpdate() {
 		const commentTextNode = this.refs.commentText;
 
@@ -56,10 +50,6 @@ class PostCommentForm extends Component {
 			? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px'
 			: null;
 	}
-
-	handleTextAreaNode = textareaNode => {
-		this._textareaNode = textareaNode;
-	};
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -165,6 +155,8 @@ class PostCommentForm extends Component {
 			'expanding-area': true,
 		} );
 
+		const isReply = !! this.props.parentCommentId;
+
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
@@ -177,14 +169,14 @@ class PostCommentForm extends Component {
 								<br />
 							</pre>
 							<AutoDirection>
-								<textarea
+								<PostCommentFormTextarea
 									value={ this.state.commentText }
-									ref={ this.handleTextAreaNode }
 									onKeyUp={ this.handleKeyUp }
 									onKeyDown={ this.handleKeyDown }
 									onFocus={ this.handleFocus }
 									onBlur={ this.handleBlur }
 									onChange={ this.handleTextChange }
+									enableAutoFocus={ isReply }
 								/>
 							</AutoDirection>
 						</div>

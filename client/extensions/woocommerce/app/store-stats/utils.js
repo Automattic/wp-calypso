@@ -1,12 +1,10 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { find, includes, forEach, findIndex, round } from 'lodash';
 import classnames from 'classnames';
-import { moment, translate } from 'i18n-calypso';
+import { moment, translate, numberFormat } from 'i18n-calypso';
 import qs from 'qs';
 
 /**
@@ -148,14 +146,15 @@ export function getStartPeriod( date, unit ) {
  * @param {(string|number)} value - string or number to be formatted
  * @param {string} format - string of 'text', 'number' or 'currency'
  * @param {string} [code] - optional currency code
+ * @param {number} [decimals] - optional number of decimal places
  * @return {string|number} - formatted number or string value
  */
-export function formatValue( value, format, code ) {
+export function formatValue( value, format, code, decimals ) {
 	switch ( format ) {
 		case 'currency':
 			return formatCurrency( value, code );
 		case 'number':
-			return Math.round( value * 100 ) / 100;
+			return numberFormat( value, decimals );
 		case 'percent':
 			return translate( '%(percentage)s%% ', { args: { percentage: value }, context: 'percent' } );
 		case 'text':

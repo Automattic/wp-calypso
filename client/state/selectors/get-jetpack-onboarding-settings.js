@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getJetpackSettings } from 'state/selectors';
+import getJetpackSettings from 'state/selectors/get-jetpack-settings';
 
 /**
  * Returns the Jetpack onboarding settings of a given site.

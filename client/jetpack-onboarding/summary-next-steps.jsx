@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import QuerySites from 'components/data/query-sites';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
-import { getJetpackOnboardingSettings } from 'state/selectors';
+import getJetpackOnboardingSettings from 'state/selectors/get-jetpack-onboarding-settings';
 import { isJetpackSite } from 'state/sites/selectors';
 
 const NextSteps = ( { onClick, siteId, steps } ) => (

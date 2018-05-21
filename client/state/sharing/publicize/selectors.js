@@ -10,7 +10,7 @@ import { filter, get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 

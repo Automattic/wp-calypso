@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,6 +9,8 @@ import { filter } from 'lodash';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { areOrderNotesLoaded, areOrderNotesLoading, getOrderNotes } from '../notes/selectors';
+import { getOrder } from '../selectors';
+import { getOrderRefunds } from '../refunds/selectors';
 import {
 	isError as areShippingLabelsErrored,
 	isLoaded as areShippingLabelsLoaded,
@@ -20,14 +24,14 @@ import * as plugins from 'woocommerce/state/selectors/plugins';
  */
 export const EVENT_TYPES = {
 	/**
-	 * Note made by the admin
-	 */
-	INTERNAL_NOTE: 'INTERNAL_NOTE',
-
-	/**
 	 * Note made by the admin *and* sent to the customer via e-mail
 	 */
 	CUSTOMER_NOTE: 'CUSTOMER_NOTE',
+
+	/**
+	 * Note made by the admin
+	 */
+	INTERNAL_NOTE: 'INTERNAL_NOTE',
 
 	/**
 	 * "Shipping label purchased" event, which will include tracking number, buttons to refund & reprint, and other info
@@ -48,6 +52,11 @@ export const EVENT_TYPES = {
 	 * Logged when a shipping label refund was rejected.
 	 */
 	LABEL_REFUND_REJECTED: 'LABEL_REFUND_REJECTED',
+
+	/**
+	 * A refund record for the given order
+	 */
+	REFUND_NOTE: 'REFUND_NOTE',
 };
 
 /**
@@ -62,7 +71,10 @@ export const isActivityLogLoaded = ( state, orderId, siteId = getSelectedSiteId(
 		return false;
 	}
 
-	if ( ! plugins.isWcsEnabled( state, siteId ) || areShippingLabelsErrored( state, orderId, siteId ) ) {
+	if (
+		! plugins.isWcsEnabled( state, siteId ) ||
+		areShippingLabelsErrored( state, orderId, siteId )
+	) {
 		return true;
 	}
 
@@ -81,7 +93,10 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
 		return true;
 	}
 
-	if ( ! plugins.isWcsEnabled( state, siteId ) || areShippingLabelsErrored( state, orderId, siteId ) ) {
+	if (
+		! plugins.isWcsEnabled( state, siteId ) ||
+		areShippingLabelsErrored( state, orderId, siteId )
+	) {
 		return false;
 	}
 
@@ -98,12 +113,24 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
  * - {Number} timestamp The time of the event.
  */
 export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const order = getOrder( state, orderId, siteId );
 	const events = getOrderNotes( state, orderId, siteId ).map( note => ( {
 		key: note.id,
 		type: note.customer_note ? EVENT_TYPES.CUSTOMER_NOTE : EVENT_TYPES.INTERNAL_NOTE,
 		timestamp: new Date( note.date_created_gmt + 'Z' ).getTime(),
 		content: note.note,
 	} ) );
+
+	getOrderRefunds( state, orderId, siteId ).forEach( refund => {
+		events.push( {
+			key: refund.id,
+			type: EVENT_TYPES.REFUND_NOTE,
+			timestamp: new Date( refund.date_created_gmt + 'Z' ).getTime(),
+			amount: refund.amount,
+			reason: refund.reason,
+			currency: order.currency,
+		} );
+	} );
 
 	if ( plugins.isWcsEnabled( state, siteId ) ) {
 		const labels = getLabels( state, orderId, siteId );
@@ -162,7 +189,8 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				refundableAmount: label.refundable_amount,
 				currency: label.currency,
 				// If there's a refund in progress or completed, the Reprint/Refund buttons or the tracking number must *not* be shown
-				showDetails: ! label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,
+				showDetails:
+					! label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,
 			} );
 		} );
 	}

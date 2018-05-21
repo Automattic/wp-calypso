@@ -23,7 +23,6 @@
 
 .simple-site-rename-form__info {
 	color: $gray-text-min;
-	flex-basis: 400px;
 	flex-shrink: 1;
 	margin: 5px 0 0 0;
 	padding: 0;
@@ -76,8 +75,6 @@
 	border-top-color: $gray-light;
 	display: flex;
 	justify-content: space-between;
-
-	margin-top: 24px;
 
 	button {
 		flex-shrink: 0;

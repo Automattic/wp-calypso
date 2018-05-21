@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -27,9 +29,9 @@ const FormField = ( {
 	validationErrorText,
 } ) => {
 	const isValueValid = ! ( 'undefined' === typeof value );
-	const showChildren = ( isEnableable ? isValueValid : true );
+	const showChildren = isEnableable ? isValueValid : true;
 
-	const explanation = ( explanationText &&
+	const explanation = explanationText && (
 		<FormSettingExplanation id={ fieldName + '-description' }>
 			{ explanationText }
 		</FormSettingExplanation>
@@ -38,21 +40,15 @@ const FormField = ( {
 	let enableCheckbox = null;
 
 	if ( isEnableable ) {
-		const enableCheckboxChanged =
-			() => edit( fieldName, ( isValueValid ? undefined : ( defaultValue || null ) ) );
+		const enableCheckboxChanged = () =>
+			edit( fieldName, isValueValid ? undefined : defaultValue || null );
 
-		enableCheckbox = (
-			<FormCheckbox
-				checked={ isValueValid }
-				onChange={ enableCheckboxChanged }
-			/>
-		);
+		enableCheckbox = <FormCheckbox checked={ isValueValid } onChange={ enableCheckboxChanged } />;
 	}
 
-	const childrenClassNames = classNames(
-		'fields__fieldset-children',
-		{ 'fields__fieldset-children-enableable': enableCheckbox }
-	);
+	const childrenClassNames = classNames( 'fields__fieldset-children', {
+		'fields__fieldset-children-enableable': enableCheckbox,
+	} );
 
 	const formLabel = ( enableCheckbox || labelText ) && (
 		<FormLabel htmlFor={ enableCheckbox ? null : `${ fieldName }-label` } required={ isRequired }>

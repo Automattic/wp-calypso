@@ -4,26 +4,33 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import { handleGapClicked } from 'reader/utils';
+import { fillGap } from 'state/reader/streams/actions';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class Gap extends React.Component {
 	static propTypes = {
 		gap: PropTypes.object.isRequired,
-		postsStore: PropTypes.object.isRequired,
+		streamKey: PropTypes.string.isRequired,
 		selected: PropTypes.bool,
 	};
 
 	state = { isFilling: false };
 
 	handleClick = () => {
+		const { streamKey, gap } = this.props;
+		this.props.fillGap( { streamKey, gap } );
+		recordAction( 'fill_gap' );
+		recordGaEvent( 'Clicked Fill Gap' );
+		recordTrack( 'calypso_reader_filled_gap', { stream: streamKey } );
+
 		this.setState( { isFilling: true } );
-		handleGapClicked( this.props.gap, this.props.postsStore.id );
 	};
 
 	render() {
@@ -44,4 +51,4 @@ class Gap extends React.Component {
 	}
 }
 
-export default localize( Gap );
+export default localize( connect( null, { fillGap } )( Gap ) );

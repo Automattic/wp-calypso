@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isDeactivatingJetpackModule } from 'state/selectors';
+import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-modules';
 
 describe( 'isDeactivatingJetpackModule()', () => {

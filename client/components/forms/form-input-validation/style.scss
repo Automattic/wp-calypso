@@ -15,6 +15,11 @@
 		color: $alert-yellow;
 	}
 
+	&.is-hidden{
+		animation: none;
+		visibility: hidden;
+	}
+
 	.gridicon {
 		float: left;
 		margin-left: -34px;

@@ -15,9 +15,10 @@ import WindowScroller from 'react-virtualized/WindowScroller';
  */
 import {
 	areAnyProductCategoriesLoading,
-	getProductCategoriesLastPage,
-	getAllProductCategories,
 	areProductCategoriesLoaded,
+	getAllProductCategories,
+	getAllProductCategoriesBySearch,
+	getProductCategoriesLastPage,
 	getTotalProductCategories,
 } from 'woocommerce/state/sites/product-categories/selectors';
 import Count from 'components/count';
@@ -179,15 +180,17 @@ class ProductCategories extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	const { searchQuery } = ownProps;
-	let query = {};
+	const query = {};
 	if ( searchQuery && searchQuery.length ) {
-		query = { search: searchQuery, ...query };
+		query.search = searchQuery;
 	}
 
 	const site = getSelectedSiteWithFallback( state );
-	const loading = areAnyProductCategoriesLoading( state, query );
+	const loading = areAnyProductCategoriesLoading( state );
 	const isInitialRequestLoaded = areProductCategoriesLoaded( state, query ); // first page request
-	const categories = getAllProductCategories( state, query );
+	const categories = query.search
+		? getAllProductCategoriesBySearch( state, query.search )
+		: getAllProductCategories( state );
 	const totalCategories = getTotalProductCategories( state, query );
 	const lastPage = getProductCategoriesLastPage( state, query );
 	return {

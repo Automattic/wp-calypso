@@ -1,7 +1,7 @@
 .domain-transfer-suggestion {
 	display: flex;
 
-	&.is-kracken-ui .button.domain-suggestion__action {
+	.button.domain-suggestion__action {
 		color: $blue-medium;
 	}
 }

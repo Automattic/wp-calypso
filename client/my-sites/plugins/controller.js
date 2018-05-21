@@ -20,7 +20,7 @@ import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
-import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
+import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 
 /**
  * Module variables

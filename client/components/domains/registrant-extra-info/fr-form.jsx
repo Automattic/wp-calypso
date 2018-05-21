@@ -14,7 +14,7 @@ import { defaults, get, identity, isEmpty, isString, map, noop, set, toUpper } f
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

@@ -24,12 +24,10 @@ import {
 	fetchMagicLoginAuthenticate,
 	showMagicLoginLinkExpiredPage,
 } from 'state/login/magic-login/actions';
-import {
-	getMagicLoginCurrentView,
-	getMagicLoginRequestAuthError,
-	getMagicLoginRequestedAuthSuccessfully,
-	isFetchingMagicLoginAuth,
-} from 'state/selectors';
+import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestAuthError from 'state/selectors/get-magic-login-request-auth-error';
+import getMagicLoginRequestedAuthSuccessfully from 'state/selectors/get-magic-login-requested-auth-successfully';
+import isFetchingMagicLoginAuth from 'state/selectors/is-fetching-magic-login-auth';
 import {
 	getRedirectToOriginal,
 	getRedirectToSanitized,

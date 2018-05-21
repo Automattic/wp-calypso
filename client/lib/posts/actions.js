@@ -5,7 +5,7 @@
  */
 
 import store from 'store';
-import { assign, clone, defer, fromPairs, map } from 'lodash';
+import { assign, clone, defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,58 +18,12 @@ import versionCompare from 'lib/version-compare';
 import Dispatcher from 'dispatcher';
 import { recordSaveEvent } from './stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
-import { reduxGetState } from 'lib/redux-bridge';
+import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { isEditorSaveBlocked } from 'state/ui/editor/selectors';
+import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
+import { receivePost, savePostSuccess } from 'state/posts/actions';
 
 let PostActions;
-
-/**
- * Helper for performing a metadata operation on the currently edited post.
- * Accepts a key, value, and operation, where key may be a string or array
- * of string keys. Alternatively, specify an object of key value pairs as the
- * first parameter. Dispatches an `EDIT_POST` action.
- *
- * @param  {(String|String[]|Object)} key       The metadata key(s) or object
- *                                              of metadata key-value pairs
- * @param  {*}                        value     The metadata value
- * @param  {String}                   operation The metadata operation to
- *                                              perform (`add`, `update`,
- *                                              or `delete`)
- */
-function handleMetadataOperation( key, value, operation ) {
-	// Normalize a string or array of string keys to an object of key value pairs.
-	if ( 'string' === typeof key ) {
-		// case of handleMetadataOperation( 'excerpt', 'text', 'update' )
-		key = { [ key ]: value };
-	} else if ( Array.isArray( key ) ) {
-		// case of handleMetadataOperation( [ 'geo_latitude', 'geo_longitude' ], null, 'delete' )
-		key = fromPairs( key.map( meta => [ meta, value ] ) );
-	}
-
-	const metadata = map( key, function( objectValue, objectKey ) {
-		// `update` is a sufficient operation for new metadata, as it will add
-		// the metadata if it does not already exist. Similarly, we're not
-		// concerned with deleting a key which was added during previous edits,
-		// since this will effectively noop.
-		const meta = {
-			key: objectKey,
-			operation,
-		};
-
-		if ( 'delete' !== operation ) {
-			meta.value = objectValue;
-		}
-
-		return meta;
-	} );
-
-	Dispatcher.handleViewAction( {
-		type: 'EDIT_POST',
-		post: {
-			metadata,
-		},
-	} );
-}
 
 /**
  * Normalizes attributes to API expectations
@@ -114,17 +68,16 @@ PostActions = {
 	 *
 	 * @param {Object} site   Site object
 	 * @param {Number} postId Post ID to load
+	 * @return {Promise<?Object>} The edited post object
 	 */
 	startEditingExisting: function( site, postId ) {
-		let currentPost = PostEditStore.get(),
-			postHandle;
-
 		if ( ! site || ! site.ID ) {
-			return;
+			return Promise.resolve( null );
 		}
 
+		const currentPost = PostEditStore.get();
 		if ( currentPost && currentPost.site_ID === site.ID && currentPost.ID === postId ) {
-			return; // already editing same post
+			return Promise.resolve( currentPost ); // already editing same post
 		}
 
 		Dispatcher.handleViewAction( {
@@ -133,16 +86,31 @@ PostActions = {
 			postId: postId,
 		} );
 
-		postHandle = wpcom.site( site.ID ).post( postId );
+		return wpcom
+			.site( site.ID )
+			.post( postId )
+			.get( { context: 'edit', meta: 'autosave' } )
+			.then( post => {
+				Dispatcher.handleServerAction( {
+					type: 'RECEIVE_POST_TO_EDIT',
+					post,
+					site,
+				} );
 
-		postHandle.get( { context: 'edit', meta: 'autosave' }, function( error, data ) {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_POST_TO_EDIT',
-				error: error,
-				post: data,
-				site,
+				// Retrieve the normalized post and use it to update Redux store
+				const receivedPost = PostEditStore.get();
+				reduxDispatch( receivePost( receivedPost ) );
+
+				return receivedPost;
+			} )
+			.catch( error => {
+				Dispatcher.handleServerAction( {
+					type: 'SET_POST_LOADING_ERROR',
+					error,
+				} );
+
+				return null;
 			} );
-		} );
 	},
 
 	/**
@@ -239,25 +207,6 @@ PostActions = {
 		Dispatcher.handleViewAction( {
 			type: 'RESET_POST_RAW_CONTENT',
 		} );
-	},
-
-	/**
-	 * Edits metadata attributes on a post
-	 *
-	 * @param {(string|object)} key The metadata key, or an object of key-value pairs
-	 * @param {*} value The metadata value
-	 */
-	updateMetadata: function( key, value ) {
-		handleMetadataOperation( key, value, 'update' );
-	},
-
-	/**
-	 * Deletes a metadata attribute from a post
-	 *
-	 * @param {string} key The metadata key
-	 */
-	deleteMetadata: function( key ) {
-		handleMetadataOperation( key, null, 'delete' );
 	},
 
 	/**
@@ -360,60 +309,28 @@ PostActions = {
 				site,
 			} );
 
+			// Retrieve the normalized post and use it to update Redux store
+			if ( ! error ) {
+				const receivedPost = PostEditStore.get();
+
+				if ( receivedPost.status === 'draft' ) {
+					// If a draft was successfully saved, set it as "last edited draft"
+					// There's UI in masterbar for one-click "continue editing"
+					reduxDispatch( setEditorLastDraft( receivedPost.site_ID, receivedPost.ID ) );
+				} else {
+					// Draft was published or trashed: reset the "last edited draft" record
+					reduxDispatch( resetEditorLastDraft() );
+				}
+
+				// `post.ID` can be null/undefined, which means we're saving new post.
+				// `savePostSuccess` will convert the temporary ID (empty string key) in Redux
+				// to the newly assigned ID in `receivedPost.ID`.
+				reduxDispatch( savePostSuccess( receivedPost.site_ID, post.ID, receivedPost, {} ) );
+				reduxDispatch( receivePost( receivedPost ) );
+			}
+
 			callback( error, data );
 		} );
-	},
-
-	/**
-	 * Calls out to API to update Post object with any changed attributes
-	 *
-	 * @param {Object} site Site object
-	 * @param {object} post to be changed
-	 * @param {object} attributes only send the attributes to be changed
-	 * @param {function} callback callback receives ( err, post ) arguments
-
-	 */
-	update: function( site, post, attributes, callback ) {
-		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.update( attributes, PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	/**
-	 * Sends `delete` request to the API. The first request
-	 * updates status to `trash`, the second request deletes the post.
-	 *
-	 * @param {Object} site Site object
-	 * @param {object} post to be trashed
-	 * @param {function} callback that receives ( err, post ) arguments
-	 */
-	trash: function( site, post, callback ) {
-		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.delete( PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	/**
-	 * Restores post/page from trash
-	 *
-	 * @param {object} post to be trashed
-	 * @param {function} callback that receives ( err, post ) arguments
-	 * @param {Object} site Site object
-	 */
-	restore: function( site, post, callback ) {
-		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
-
-		postHandle.restore( PostActions.receiveUpdate.bind( null, site, callback ) );
-	},
-
-	receiveUpdate: function( site, callback, error, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_UPDATED_POST',
-			error: error,
-			post: data,
-			site,
-		} );
-		callback( error, data );
 	},
 };
 

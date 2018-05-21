@@ -19,11 +19,9 @@ import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers'
 import SiteIcon from 'blocks/site-icon';
 import BlogStickers from 'blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
-import ReaderEmailSettings from 'blocks/reader-email-settings';
 import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
-import config from 'config';
 import userSettings from 'lib/user-settings';
-import { isFollowing } from 'state/selectors';
+import isFollowing from 'state/selectors/is-following';
 
 class FeedHeader extends Component {
 	static propTypes = {
@@ -59,12 +57,6 @@ class FeedHeader extends Component {
 			'has-back-button': showBack,
 		} );
 
-		const notificationSettings = config.isEnabled( 'reader/new-post-notifications' ) ? (
-			<ReaderSiteNotificationSettings siteId={ siteId } />
-		) : (
-			<ReaderEmailSettings siteId={ siteId } />
-		);
-
 		return (
 			<div className={ classes }>
 				<div className="reader-feed-header__back-and-follow">
@@ -89,7 +81,9 @@ class FeedHeader extends Component {
 							{ site &&
 								following &&
 								! isEmailBlocked && (
-									<div className="reader-feed-header__email-settings">{ notificationSettings }</div>
+									<div className="reader-feed-header__email-settings">
+										<ReaderSiteNotificationSettings siteId={ siteId } />
+									</div>
 								) }
 						</div>
 					</div>

@@ -21,28 +21,30 @@ import {
 	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { isDataLoading } from '../utils';
+import { getSelectedSite } from 'state/ui/selectors';
 import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
 import Notice from 'components/notice';
-import { managePurchase, purchasesRoot } from '../paths';
+import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-
-const user = userFactory();
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class CancelPrivacyProtection extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		selectedPurchase: PropTypes.object,
+		purchase: PropTypes.object,
+		purchaseId: PropTypes.number.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	static initialState = {
@@ -54,14 +56,10 @@ class CancelPrivacyProtection extends Component {
 
 	componentWillMount() {
 		this.redirectIfDataIsInvalid();
-
-		recordPageView( 'cancel_private_registration', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
-
-		recordPageView( 'cancel_private_registration', this.props, nextProps );
 	}
 
 	redirectIfDataIsInvalid = ( props = this.props ) => {
@@ -75,8 +73,7 @@ class CancelPrivacyProtection extends Component {
 			return true;
 		}
 
-		const { selectedSite } = props,
-			purchase = getPurchase( props );
+		const { purchase, selectedSite } = props;
 
 		return selectedSite && purchase && hasPrivacyProtection( purchase );
 	};
@@ -85,7 +82,7 @@ class CancelPrivacyProtection extends Component {
 		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
 		event.target.blur();
 
-		const { id, meta: domain } = getPurchase( this.props );
+		const { id, meta: domain } = this.props.purchase;
 
 		this.setState( {
 			disabled: true,
@@ -117,7 +114,7 @@ class CancelPrivacyProtection extends Component {
 	resetState = () => this.setState( this.constructor.initialState );
 
 	renderDescriptionText = () => {
-		const purchase = getPurchase( this.props );
+		const { purchase } = this.props;
 
 		return (
 			<p>
@@ -135,7 +132,7 @@ class CancelPrivacyProtection extends Component {
 	};
 
 	renderWarningText = () => {
-		const purchase = getPurchase( this.props );
+		const { purchase } = this.props;
 
 		return (
 			<strong>
@@ -205,12 +202,16 @@ class CancelPrivacyProtection extends Component {
 
 		return (
 			<Main>
+				<TrackPurchasePageView
+					eventName="calypso_cancel_private_registration_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
 				<PageViewTracker
 					path="/me/purchases/:site/:purchaseId/cancel-privacy-protection"
 					title="Purchases > Cancel Privacy Protection"
 				/>
-				<QueryUserPurchases userId={ user.get().ID } />
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
+				<QueryUserPurchases userId={ this.props.userId } />
+				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
 					{ titles.cancelPrivacyProtection }
 				</HeaderCake>
 				{ notice }
@@ -234,8 +235,9 @@ export default connect(
 		error: getPurchasesError( state ),
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state ),
+		purchase: getByPurchaseId( state, props.purchaseId ),
+		selectedSite: getSelectedSite( state ),
+		userId: getCurrentUserId( state ),
 	} ),
 	{ cancelPrivacyProtection }
 )( localize( CancelPrivacyProtection ) );

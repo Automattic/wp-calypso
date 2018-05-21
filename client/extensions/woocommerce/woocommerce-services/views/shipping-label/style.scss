@@ -24,6 +24,10 @@
 		margin-top: 16px;
 	}
 
+	.shipping-label__button {
+		color: $blue-wordpress;
+	}
+
 	.shipping-label__item-detail, .shipping-label__item-actions {
 		display: flex;
 		justify-content: space-between;

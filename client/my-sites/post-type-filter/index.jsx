@@ -11,7 +11,7 @@ import { compact, find, flow, includes, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { areAllSitesSingleUser } from 'state/selectors';
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
 import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';

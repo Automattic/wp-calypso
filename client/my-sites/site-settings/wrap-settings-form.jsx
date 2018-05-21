@@ -22,12 +22,10 @@ import {
 	getSiteSettingsSaveError,
 	getSiteSettings,
 } from 'state/site-settings/selectors';
-import {
-	isRequestingJetpackSettings,
-	isUpdatingJetpackSettings,
-	isJetpackSettingsSaveFailure,
-	getJetpackSettings,
-} from 'state/selectors';
+import getJetpackSettings from 'state/selectors/get-jetpack-settings';
+import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
+import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
+import isUpdatingJetpackSettings from 'state/selectors/is-updating-jetpack-settings';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { saveJetpackSettings } from 'state/jetpack/settings/actions';
@@ -265,7 +263,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		( state, { fields } ) => {
 			const siteId = getSelectedSiteId( state );
 			let isSavingSettings = isSavingSiteSettings( state, siteId );
-			let isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
+			const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 			let settings = getSiteSettings( state, siteId );
 			let isRequestingSettings = isRequestingSiteSettings( state, siteId ) && ! settings;
 			let isJetpackSaveRequestSuccessful;

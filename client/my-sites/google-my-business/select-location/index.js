@@ -23,16 +23,18 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getGoogleMyBusinessLocations } from 'state/selectors';
+import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
 		connectedLocation: PropTypes.object,
 		locations: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		requestKeyringConnections: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
@@ -51,6 +53,10 @@ class GoogleMyBusinessSelectLocation extends Component {
 			'calypso_google_my_business_select_location_add_your_business_link_click'
 		);
 	};
+
+	componentDidMount() {
+		this.props.requestKeyringConnections( true );
+	}
 
 	render() {
 		const { locations, siteId, translate } = this.props;
@@ -120,5 +126,6 @@ export default connect(
 	{
 		connectGoogleMyBusinessLocation,
 		recordTracksEvent,
+		requestKeyringConnections,
 	}
 )( localize( GoogleMyBusinessSelectLocation ) );

@@ -23,7 +23,7 @@ import replies from './replies';
 import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 import {
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,

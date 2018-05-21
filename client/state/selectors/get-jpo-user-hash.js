@@ -10,7 +10,7 @@ import { get } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { getUnconnectedSite } from 'state/selectors';
+import getUnconnectedSite from 'state/selectors/get-unconnected-site';
 
 /**
  * Returns a hashed userEmail of a Jetpack onboarding site indexed by the siteID.

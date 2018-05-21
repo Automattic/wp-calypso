@@ -27,7 +27,7 @@ export default class FeaturedImage extends React.Component {
 
 		return (
 			<div className="reader-full-post__featured-image">
-				<img src={ this.state.src } onError={ this.handleImageError } />
+				<img src={ this.state.src } onError={ this.handleImageError } alt="" />
 			</div>
 		);
 	}

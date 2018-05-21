@@ -494,12 +494,12 @@ Undocumented.prototype.resendInboundTransferEmail = function( domain, fn ) {
 /**
  * Fetches a list of available top-level domain names ordered by popularity.
  *
- * @param {Function} fn The callback function
+ * @param {object} query Optional query parameters
  * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
-Undocumented.prototype.getAvailableTlds = function( fn ) {
-	return this.wpcom.req.get( '/domains/suggestions/tlds', fn );
+Undocumented.prototype.getAvailableTlds = function( query = {} ) {
+	return this.wpcom.req.get( '/domains/suggestions/tlds', query );
 };
 
 /**
@@ -861,13 +861,18 @@ Undocumented.prototype.saveSharingButtons = function( siteId, buttons, fn ) {
  * @api public
  * @return {Promise} A Promise to resolve when complete.
  */
-Undocumented.prototype.mekeyringConnections = function( fn ) {
+Undocumented.prototype.mekeyringConnections = function( forceExternalUsersRefetch, fn ) {
 	debug( '/me/keyring-connections query' );
+
+	// set defaults, first argument is actually a callback
+	if ( typeof forceExternalUsersRefetch === 'function' ) {
+		fn = forceExternalUsersRefetch;
+		forceExternalUsersRefetch = false;
+	}
+
 	return this.wpcom.req.get(
-		{
-			path: '/me/keyring-connections',
-			apiVersion: '1.1',
-		},
+		'/me/keyring-connections',
+		forceExternalUsersRefetch ? { force_external_users_refetch: forceExternalUsersRefetch } : {},
 		fn
 	);
 };
@@ -1804,31 +1809,22 @@ Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
 };
 
 Undocumented.prototype.requestTransferCode = function( options, fn ) {
-	const { domainName, unlock, disablePrivacy } = options,
+	const { domainName } = options,
 		data = {
 			domainStatus: JSON.stringify( {
 				command: 'send-code',
-				payload: {
-					unlock,
-					disable_privacy: disablePrivacy,
-				},
 			} ),
 		};
 
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
-Undocumented.prototype.cancelTransferRequest = function(
-	{ domainName, enablePrivacy, declineTransfer, lockDomain },
-	fn
-) {
+Undocumented.prototype.cancelTransferRequest = function( { domainName, declineTransfer }, fn ) {
 	const data = {
 		domainStatus: JSON.stringify( {
 			command: 'cancel-transfer-request',
 			payload: {
-				enable_privacy: enablePrivacy,
 				decline_transfer: declineTransfer,
-				lock_domain: lockDomain,
 			},
 		} ),
 	};

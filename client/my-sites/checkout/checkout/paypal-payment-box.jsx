@@ -60,7 +60,7 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	redirectToPayPal = event => {
-		var cart,
+		let cart,
 			transaction,
 			dataForApi,
 			origin = getLocationOrigin( window.location );
@@ -93,7 +93,7 @@ export class PaypalPaymentBox extends React.Component {
 		wpcom.paypalExpressUrl(
 			dataForApi,
 			function( error, paypalExpressURL ) {
-				var errorMessage;
+				let errorMessage;
 				if ( error ) {
 					if ( error.message ) {
 						errorMessage = error.message;

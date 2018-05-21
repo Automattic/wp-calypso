@@ -12,7 +12,9 @@ import { noop, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteGmtOffset, getSiteTimezoneValue } from 'state/selectors';
+import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
 

@@ -1,12 +1,10 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classnames from 'classnames';
+import React, { PureComponent } from 'react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -17,7 +15,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
 
-class SplitButton extends Component {
+class SplitButton extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		label: PropTypes.string,
@@ -49,42 +47,24 @@ class SplitButton extends Component {
 		scary: false,
 	};
 
-	constructor() {
-		super( ...arguments );
+	state = {
+		isMenuVisible: false,
+	};
 
-		this.state = {
-			isMenuVisible: false,
-			popoverContext: null,
-		};
-
-		this.showMenu = this.toggleMenu.bind( this, true );
-		this.hideMenu = this.toggleMenu.bind( this, false );
-
-		this.setPopoverContext = this.setPopoverContext.bind( this );
-	}
+	popoverContext = React.createRef();
 
 	handleMainClick = event => this.props.onClick( event );
 
-	handleMenuClick = () => {
-		if ( this.state.isMenuVisible ) {
-			this.hideMenu();
-		} else {
-			this.showMenu();
-		}
-	};
+	handleMenuClick = () => this.toggleMenu( ! this.state.isMenuVisible );
 
-	setPopoverContext( popoverContext ) {
-		if ( popoverContext ) {
-			this.setState( { popoverContext } );
-		}
-	}
+	hideMenu = () => this.toggleMenu( false );
 
-	toggleMenu( isMenuVisible ) {
+	toggleMenu = isMenuVisible => {
 		if ( ! this.props.disabled ) {
 			this.setState( { isMenuVisible } );
 			this.props.onToggle( isMenuVisible );
 		}
-	}
+	};
 
 	render() {
 		const {
@@ -103,9 +83,9 @@ class SplitButton extends Component {
 			className,
 			popoverClassName,
 		} = this.props;
-		const { isMenuVisible, popoverContext } = this.state;
-		const popoverClasses = classnames( 'split-button__menu', 'popover', popoverClassName );
-		const classes = classnames( 'split-button', className, {
+		const { isMenuVisible } = this.state;
+		const popoverClasses = classNames( 'split-button__menu', 'popover', popoverClassName );
+		const classes = classNames( 'split-button', className, {
 			'is-menu-visible': isMenuVisible,
 			'is-disabled': disabled,
 			'has-icon-text': label && icon,
@@ -128,7 +108,7 @@ class SplitButton extends Component {
 					compact={ compact }
 					primary={ primary }
 					scary={ scary }
-					ref={ this.setPopoverContext }
+					ref={ this.popoverContext }
 					onClick={ this.handleMenuClick }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					disabled={ disabled || disableMenu }
@@ -140,7 +120,7 @@ class SplitButton extends Component {
 					isVisible={ isMenuVisible }
 					onClose={ this.hideMenu }
 					position={ position }
-					context={ popoverContext }
+					context={ this.popoverContext.current }
 					className={ popoverClasses }
 				>
 					{ children }

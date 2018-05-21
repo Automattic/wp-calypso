@@ -32,7 +32,6 @@ import { managePurchase } from 'me/purchases/paths';
 import SubscriptionLengthPicker from 'blocks/subscription-length-picker';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
-import QueryGeo from 'components/data/query-geo';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryPlans from 'components/data/query-plans';
 import SecurePaymentForm from './secure-payment-form';
@@ -44,19 +43,18 @@ import {
 } from 'lib/store-transactions/step-types';
 import {
 	addItem,
-	removeItem,
+	replaceItem,
 	applyCoupon,
 	resetTransaction,
 	setDomainDetails,
 } from 'lib/upgrades/actions';
-import {
-	getContactDetailsCache,
-	getCurrentUserPaymentMethods,
-	isDomainOnlySite,
-	isEligibleForCheckoutToChecklist,
-} from 'state/selectors';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import getCurrentUserPaymentMethods from 'state/selectors/get-current-user-payment-methods';
+import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isEligibleForCheckoutToChecklist from 'state/selectors/is-eligible-for-checkout-to-checklist';
 import { getStoredCards } from 'state/stored-cards/selectors';
-import { isValidFeatureKey, getUpgradePlanSlugFromPath, getPlan, findPlansKeys } from 'lib/plans';
+import { isValidFeatureKey, getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
@@ -216,7 +214,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const planSlug = getUpgradePlanSlugFromPath( this.props.product, this.props.selectedSite );
+		const { planSlug } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -552,17 +550,16 @@ export class Checkout extends React.Component {
 	}
 
 	handleTermChange = ( { value: planSlug } ) => {
-		const products = this.getPlanProducts();
+		const product = this.getPlanProducts()[ 0 ];
 		const cartItem = getCartItemForPlan( planSlug, {
-			domainToBundle: get( products, '[0].extra.domain_to_bundle', '' ),
+			domainToBundle: get( product, 'extra.domain_to_bundle', '' ),
 		} );
-		products.forEach( removeItem );
 		analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
 			product_slug: cartItem.product_slug,
 			free_trial: cartItem.free_trial,
 			from_section: 'checkout',
 		} );
-		addItem( cartItem );
+		replaceItem( product, cartItem );
 	};
 
 	paymentMethodsAbTestFilter() {
@@ -610,7 +607,6 @@ export class Checkout extends React.Component {
 					<QueryProducts />
 					<QueryContactDetailsCache />
 					<QueryStoredCards />
-					<QueryGeo />
 
 					{ this.content() }
 				</div>
@@ -642,6 +638,7 @@ export default connect(
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
+			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
 		};
 	},
 	{

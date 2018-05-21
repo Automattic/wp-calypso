@@ -20,8 +20,11 @@ import { getPreference } from 'state/preferences/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSite, hasAllSitesList } from 'state/sites/selectors';
-import { areAllSitesSingleUser, getSites, getVisibleSites, hasLoadedSites } from 'state/selectors';
-import AllSites from 'my-sites/all-sites';
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
+import getSites from 'state/selectors/get-sites';
+import getVisibleSites from 'state/selectors/get-visible-sites';
+import hasLoadedSites from 'state/selectors/has-loaded-sites';
+import AllSites from 'blocks/all-sites';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
@@ -66,6 +69,7 @@ class SiteSelector extends Component {
 		onClose: noop,
 		onSiteSelect: noop,
 		groups: false,
+		autoFocus: false,
 	};
 
 	state = {

@@ -89,7 +89,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	initiateFromForm = event => {
-		let fileSelector = this.refs.fileSelector;
+		const fileSelector = this.refs.fileSelector;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -105,7 +105,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	openFileSelector = () => {
-		let fileSelector = this.refs.fileSelector;
+		const fileSelector = this.refs.fileSelector;
 
 		fileSelector.click();
 	};

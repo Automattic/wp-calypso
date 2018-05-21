@@ -18,7 +18,7 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { deleteComment } from 'state/comments/actions';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 

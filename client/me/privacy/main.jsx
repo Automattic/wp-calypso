@@ -14,15 +14,16 @@ import React from 'react';
  */
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
+import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
 import FormToggle from 'components/forms/form-toggle';
 import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import ReauthRequired from 'me/reauth-required';
+import SectionHeader from 'components/section-header';
 import formBase from 'me/form-base';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -56,23 +57,69 @@ const Privacy = createReactClass( {
 			TRACKS_OPT_OUT_USER_SETTINGS_KEY
 		);
 
+		const cookiePolicyLink = (
+			<ExternalLink href="https://www.automattic.com/cookies" target="_blank" />
+		);
+		const privacyPolicyLink = (
+			<ExternalLink href="https://www.automattic.com/privacy" target="_blank" />
+		);
+
 		return (
 			<Main className="privacy">
 				<PageViewTracker path="/me/privacy" title="Me > Privacy" />
-				<DocumentHead title={ this.props.translate( 'Privacy Settings' ) } />
+				<DocumentHead title={ translate( 'Privacy Settings' ) } />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<SectionHeader label={ translate( 'Usage Information' ) } />
 				<Card className="privacy__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
+						<p>{ translate( 'We are committed to your privacy and security.' ) }</p>
+
 						<FormFieldset>
-							<FormLegend>{ translate( 'Usage Statistics' ) }</FormLegend>
-							<FormToggle
-								id="tracks_opt_out"
-								checked={ isSendingTracksEvent }
-								onChange={ this.updateTracksOptOut }
-							>
-								{ translate( 'Send usage statistics to help us improve our products.' ) }
-							</FormToggle>
+							<p>
+								<FormToggle
+									id="tracks_opt_out"
+									checked={ isSendingTracksEvent }
+									onChange={ this.updateTracksOptOut }
+								>
+									{ translate(
+										'Share information with our analytics tool about your use of services while ' +
+											'logged in to your WordPress.com account. {{cookiePolicyLink}}Learn more' +
+											'{{/cookiePolicyLink}}',
+										{
+											components: {
+												cookiePolicyLink,
+											},
+										}
+									) }
+								</FormToggle>
+							</p>
+
+							<p>
+								{ translate(
+									'This information helps us improve our products, make marketing to you more ' +
+										'relevant, personalize your WordPress.com experience, and more as detailed in ' +
+										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}',
+									{
+										components: {
+											privacyPolicyLink,
+										},
+									}
+								) }
+							</p>
+
+							<p>
+								{ translate(
+									'We use other tracking tools, including some from third parties. ' +
+										'{{cookiePolicyLink}}Read about those{{/cookiePolicyLink}} these and how to ' +
+										'control them.',
+									{
+										components: {
+											cookiePolicyLink,
+										},
+									}
+								) }
+							</p>
 						</FormFieldset>
 
 						<FormButton

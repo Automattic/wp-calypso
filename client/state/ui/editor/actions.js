@@ -9,7 +9,13 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { EDITOR_PASTE_EVENT, EDITOR_START, EDITOR_STOP } from 'state/action-types';
+import {
+	EDITOR_AUTOSAVE_RESET_PREVIEW_URL,
+	EDITOR_AUTOSAVE_SET_PREVIEW_URL,
+	EDITOR_PASTE_EVENT,
+	EDITOR_START,
+	EDITOR_STOP,
+} from 'state/action-types';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
@@ -58,6 +64,19 @@ export function stopEditingPost( siteId, postId ) {
 		type: EDITOR_STOP,
 		siteId,
 		postId,
+	};
+}
+
+export function setEditorAutosavePreviewUrl( previewUrl ) {
+	return {
+		type: EDITOR_AUTOSAVE_SET_PREVIEW_URL,
+		previewUrl,
+	};
+}
+
+export function resetEditorAutosavePreviewUrl() {
+	return {
+		type: EDITOR_AUTOSAVE_RESET_PREVIEW_URL,
 	};
 }
 

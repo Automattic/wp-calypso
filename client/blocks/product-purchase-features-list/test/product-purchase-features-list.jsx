@@ -1,11 +1,8 @@
 /** @format */
-jest.mock( '../google-vouchers', () => 'GoogleVouchers' );
-jest.mock( '../video-audio-posts', () => 'VideoAudioPosts' );
 
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 import {
@@ -30,6 +27,9 @@ import {
  */
 import { ProductPurchaseFeaturesList } from '../index';
 
+jest.mock( 'blocks/product-purchase-features-list/google-vouchers', () => 'GoogleVouchers' );
+jest.mock( 'blocks/product-purchase-features-list/video-audio-posts', () => 'VideoAudioPosts' );
+
 describe( 'ProductPurchaseFeaturesList basic tests', () => {
 	const props = {
 		plan: PLAN_FREE,
@@ -41,7 +41,7 @@ describe( 'ProductPurchaseFeaturesList basic tests', () => {
 
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
-		assert.lengthOf( comp.find( '.product-purchase-features-list' ), 1 );
+		expect( comp.find( '.product-purchase-features-list' ) ).toHaveLength( 1 );
 	} );
 } );
 
@@ -67,12 +67,12 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 
 	test( 'should not render features if is placeholder', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } isPlaceholder={ true } /> );
-		assert.lengthOf( comp.find( '.product-purchase-features-list' ).children(), 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children() ).toHaveLength( 0 );
 	} );
 
 	test( 'should render no features for WP free plan', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_FREE } /> );
-		assert.equal( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children() ).toHaveLength( 0 );
 	} );
 
 	test( 'should render WP personal features for WP personal plans - 1y', () => {
@@ -82,7 +82,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_PERSONAL } /> );
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render WP personal features for WP personal plans - 2y', () => {
@@ -94,7 +94,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render WP premium features for WP premium plans - 1y', () => {
@@ -104,7 +104,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM } /> );
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render WP premium features for WP premium plans - 2y', () => {
@@ -116,7 +116,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render WP business features for WP business plans - 1y', () => {
@@ -126,7 +126,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS } /> );
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render WP business features for WP business plans - 2y', () => {
@@ -138,7 +138,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render Jetpack free features for jetpack free plans', () => {
@@ -148,7 +148,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_FREE } /> );
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render Jetpack personal features for jetpack personal plans - 1y', () => {
@@ -160,7 +160,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render Jetpack personal features for jetpack personal plans - monthly', () => {
@@ -172,7 +172,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render Jetpack premium features for jetpack premium plans - yearly', () => {
@@ -184,7 +184,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render Jetpack premium features for jetpack premium plans - monthly', () => {
@@ -196,7 +196,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render Jetpack business features for jetpack business plans - yearly', () => {
@@ -208,7 +208,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render Jetpack business features for jetpack business plans - monthly', () => {
@@ -220,7 +220,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 } );
 
@@ -236,8 +236,8 @@ describe( 'ProductPurchaseFeaturesList feature functions', () => {
 	test( 'getBusinessFeatures() should pass proper plan type to VideoAudioPosts child component', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS } /> );
 		const audioPosts = comp.find( 'VideoAudioPosts' );
-		assert.lengthOf( audioPosts, 1 );
-		assert.equal( audioPosts.props().plan, PLAN_BUSINESS );
+		expect( audioPosts ).toHaveLength( 1 );
+		expect( audioPosts.prop( 'plan' ) ).toBe( PLAN_BUSINESS );
 	} );
 
 	test( 'getBusinessFeatures() should pass proper plan type to VideoAudioPosts child component when 2-years plan is used', () => {
@@ -245,15 +245,15 @@ describe( 'ProductPurchaseFeaturesList feature functions', () => {
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS_2_YEARS } />
 		);
 		const audioPosts = comp.find( 'VideoAudioPosts' );
-		assert.lengthOf( audioPosts, 1 );
-		assert.equal( audioPosts.props().plan, PLAN_BUSINESS_2_YEARS );
+		expect( audioPosts ).toHaveLength( 1 );
+		expect( audioPosts.prop( 'plan' ) ).toBe( PLAN_BUSINESS_2_YEARS );
 	} );
 
 	test( 'getPremiumFeatures() should pass proper plan type to VideoAudioPosts child component', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM } /> );
 		const audioPosts = comp.find( 'VideoAudioPosts' );
-		assert.lengthOf( audioPosts, 1 );
-		assert.equal( audioPosts.props().plan, PLAN_PREMIUM );
+		expect( audioPosts ).toHaveLength( 1 );
+		expect( audioPosts.prop( 'plan' ) ).toBe( PLAN_PREMIUM );
 	} );
 } );
 

@@ -13,7 +13,7 @@ import config from 'config';
 import userSettings from 'lib/user-settings';
 import PrivacyComponent from 'me/privacy/main';
 
-export default function privacyController( context, next ) {
+export function privacy( context, next ) {
 	if ( ! config.isEnabled( 'me/privacy' ) ) {
 		return page.redirect( '/me' );
 	}

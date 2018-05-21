@@ -31,7 +31,7 @@ class Viewers extends React.PureComponent {
 	};
 
 	fetchNextPage = () => {
-		var paginationData = ViewersStore.getPaginationData( this.props.siteId ),
+		let paginationData = ViewersStore.getPaginationData( this.props.siteId ),
 			currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0,
 			page = currentPage + 1;
 
@@ -98,7 +98,7 @@ class Viewers extends React.PureComponent {
 	};
 
 	render() {
-		var viewers,
+		let viewers,
 			emptyContentArgs = {
 				title:
 					this.props.site && this.props.site.jetpack

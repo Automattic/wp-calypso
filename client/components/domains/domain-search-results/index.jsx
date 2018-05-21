@@ -16,7 +16,6 @@ import { endsWith, get, includes, times, first } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
@@ -76,6 +75,7 @@ class DomainSearchResults extends React.Component {
 		let availabilityElement, domainSuggestionElement, offer;
 
 		if (
+			domain &&
 			suggestions.length !== 0 &&
 			includes(
 				[ TRANSFERRABLE, MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, UNKNOWN ],
@@ -190,31 +190,26 @@ class DomainSearchResults extends React.Component {
 				</div>
 			);
 
-			const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
-			let regularSuggestions = suggestions;
-
-			if ( isKrackenUI && this.props.isSignupStep ) {
-				regularSuggestions = suggestions.filter(
-					suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
-				);
-				const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
-				const bestAlternativeSuggestions = suggestions.filter(
-					suggestion => suggestion.isBestAlternative
-				);
-				featuredSuggestionElement = (
-					<FeaturedDomainSuggestions
-						cart={ this.props.cart }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						isSignupStep={ this.props.isSignupStep }
-						key="featured"
-						onButtonClick={ this.props.onClickResult }
-						primarySuggestion={ first( bestMatchSuggestions ) }
-						query={ this.props.lastDomainSearched }
-						secondarySuggestion={ first( bestAlternativeSuggestions ) }
-						selectedSite={ this.props.selectedSite }
-					/>
-				);
-			}
+			const regularSuggestions = suggestions.filter(
+				suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+			);
+			const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
+			const bestAlternativeSuggestions = suggestions.filter(
+				suggestion => suggestion.isBestAlternative
+			);
+			featuredSuggestionElement = (
+				<FeaturedDomainSuggestions
+					cart={ this.props.cart }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					isSignupStep={ this.props.isSignupStep }
+					key="featured"
+					onButtonClick={ this.props.onClickResult }
+					primarySuggestion={ first( bestMatchSuggestions ) }
+					query={ this.props.lastDomainSearched }
+					secondarySuggestion={ first( bestAlternativeSuggestions ) }
+					selectedSite={ this.props.selectedSite }
+				/>
+			);
 
 			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
 				if ( suggestion.is_placeholder ) {
@@ -249,8 +244,7 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 		} else {
-			featuredSuggestionElement = config.isEnabled( 'domains/kracken-ui' ) &&
-				this.props.isSignupStep && <FeaturedDomainSuggestions showPlaceholders />;
+			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
 			suggestionElements = this.renderPlaceholders();
 		}
 

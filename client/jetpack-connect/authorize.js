@@ -74,7 +74,6 @@ import {
  */
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 const MAX_AUTH_ATTEMPTS = 3;
-const PRESSABLE_PARTNER_ID = 49640;
 
 export class JetpackAuthorize extends Component {
 	static propTypes = {
@@ -255,7 +254,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
-		const { partnerId } = props.authQuery;
+		const { partnerSlug } = props.authQuery;
 		const partnerRedirectFlag = config.isEnabled(
 			'jetpack/connect-redirect-pressable-credential-approval'
 		);
@@ -263,12 +262,8 @@ export class JetpackAuthorize extends Component {
 		// If the redirect flag is set, then we conditionally redirect the Pressable client to
 		// a credential approval screen. Otherwise, we need to redirect all other partners back
 		// to wp-admin.
-		return partnerRedirectFlag ? partnerId && PRESSABLE_PARTNER_ID !== partnerId : partnerId;
+		return partnerRedirectFlag ? partnerSlug && 'pressable' !== partnerSlug : partnerSlug;
 	}
-
-	handleClickHelp = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
-	};
 
 	handleSignOut = () => {
 		const { recordTracksEvent } = this.props;
@@ -536,12 +531,12 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { clientId, homeUrl, partnerId, redirectAfterAuth } = this.props.authQuery;
+		const { clientId, homeUrl, partnerSlug, redirectAfterAuth } = this.props.authQuery;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
 			config.isEnabled( 'jetpack/connect-redirect-pressable-credential-approval' ) &&
-			PRESSABLE_PARTNER_ID === partnerId
+			'pressable' === partnerSlug
 		) {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
@@ -585,7 +580,7 @@ export class JetpackAuthorize extends Component {
 					{ translate( 'Create a new account' ) }
 				</LoggedOutFormLinkItem>
 				<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
-					<HelpButton onClick={ this.handleClickHelp } />
+					<HelpButton />
 				</JetpackConnectHappychatButton>
 			</LoggedOutFormLinks>
 		);
@@ -623,8 +618,9 @@ export class JetpackAuthorize extends Component {
 	}
 
 	render() {
+		const { partnerSlug } = this.props.authQuery;
 		return (
-			<MainWrapper>
+			<MainWrapper partnerSlug={ partnerSlug }>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection

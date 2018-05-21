@@ -19,6 +19,7 @@ import { ChecklistSiteTaglineTour } from 'layout/guided-tours/tours/checklist-si
 import { ChecklistSiteTitleTour } from 'layout/guided-tours/tours/checklist-site-title-tour';
 import { ChecklistUserAvatarTour } from 'layout/guided-tours/tours/checklist-user-avatar-tour';
 import { JetpackBasicTour } from 'layout/guided-tours/tours/jetpack-basic-tour';
+import { SimplePaymentsEmailTour } from 'layout/guided-tours/tours/simple-payments-email-tour';
 
 export default combineTours( {
 	checklistAboutPage: ChecklistAboutPageTour,
@@ -35,4 +36,5 @@ export default combineTours( {
 	tutorialSitePreview: TutorialSitePreviewTour,
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	simplePaymentsTour: SimplePaymentsTour,
+	simplePaymentsEmailTour: SimplePaymentsEmailTour,
 } );

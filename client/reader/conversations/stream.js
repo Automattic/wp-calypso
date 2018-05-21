@@ -19,8 +19,8 @@ export default function( props ) {
 	const intro = <ConversationsIntro isInternal={ isInternal } />;
 	return (
 		<Stream
-			postsStore={ props.store }
 			key="conversations"
+			streamKey={ props.streamKey }
 			shouldCombineCards={ false }
 			className="conversations__stream"
 			followSource="conversations"

@@ -16,7 +16,7 @@ import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
 import { toggleSharePanel } from 'state/ui/post-type-list/actions';
-import { isPublicizeEnabled } from 'state/selectors';
+import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
 
 class PostActionsEllipsisMenuShare extends Component {
 	static propTypes = {

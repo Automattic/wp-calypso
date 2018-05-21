@@ -11,7 +11,7 @@ import { sortBy, sumBy } from 'lodash';
  * Internal dependencies
  */
 import DataType from './data-type';
-import LegendItem from './legend-item';
+import LegendItem from 'components/legend-item';
 
 const NUM_COLOR_SECTIONS = 3;
 
@@ -55,8 +55,8 @@ class PieChartLegend extends Component {
 						<LegendItem
 							key={ datum.name }
 							name={ datum.name }
-							value={ datum.value }
-							sectionNumber={ datum.sectionNum }
+							value={ datum.value.toString() }
+							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum }` }
 							percent={
 								dataTotal > 0 ? Math.round( datum.value / dataTotal * 100 ).toString() : '0'
 							}

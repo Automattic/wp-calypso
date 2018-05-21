@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -34,7 +36,7 @@ import {
 	getCountriesData,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const AddressFields = ( props ) => {
+const AddressFields = props => {
 	const {
 		siteId,
 		orderId,
@@ -51,8 +53,10 @@ const AddressFields = ( props ) => {
 	} = props;
 
 	if ( isNormalized && normalized && ! isEqual( normalized, values ) ) {
-		const selectNormalizedAddressHandler = ( select ) => props.selectNormalizedAddress( orderId, siteId, group, select );
-		const confirmAddressSuggestionHandler = () => props.confirmAddressSuggestion( orderId, siteId, group );
+		const selectNormalizedAddressHandler = select =>
+			props.selectNormalizedAddress( orderId, siteId, group, select );
+		const confirmAddressSuggestionHandler = () =>
+			props.confirmAddressSuggestion( orderId, siteId, group );
 		const editAddressHandler = () => props.editAddress( orderId, siteId, group );
 		return (
 			<AddressSuggestion
@@ -62,16 +66,20 @@ const AddressFields = ( props ) => {
 				selectNormalizedAddress={ selectNormalizedAddressHandler }
 				confirmAddressSuggestion={ confirmAddressSuggestionHandler }
 				editAddress={ editAddressHandler }
-				countriesData={ countriesData } />
+				countriesData={ countriesData }
+			/>
 		);
 	}
 
 	const fieldErrors = isObject( errors ) ? errors : {};
 	const generalErrorOnly = fieldErrors.general && size( fieldErrors ) === 1;
-	const getId = ( fieldName ) => group + '_' + fieldName;
-	const getValue = ( fieldName ) => values[ fieldName ] ? decodeEntities( values[ fieldName ] ) : '';
-	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
-	const submitAddressForNormalizationHandler = () => props.submitAddressForNormalization( orderId, siteId, group );
+	const getId = fieldName => group + '_' + fieldName;
+	const getValue = fieldName =>
+		values[ fieldName ] ? decodeEntities( values[ fieldName ] ) : '';
+	const updateValue = fieldName => newValue =>
+		props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
+	const submitAddressForNormalizationHandler = () =>
+		props.submitAddressForNormalization( orderId, siteId, group );
 
 	return (
 		<div>
@@ -80,7 +88,8 @@ const AddressFields = ( props ) => {
 				title={ translate( 'Name' ) }
 				value={ getValue( 'name' ) }
 				updateValue={ updateValue( 'name' ) }
-				error={ fieldErrors.name } />
+				error={ fieldErrors.name }
+			/>
 			<div className="address-step__company-phone">
 				<TextField
 					id={ getId( 'company' ) }
@@ -88,29 +97,37 @@ const AddressFields = ( props ) => {
 					value={ getValue( 'company' ) }
 					updateValue={ updateValue( 'company' ) }
 					className="address-step__company"
-					error={ fieldErrors.company } />
+					error={ fieldErrors.company }
+				/>
 				<TextField
 					id={ getId( 'phone' ) }
 					title={ translate( 'Phone' ) }
 					value={ getValue( 'phone' ) }
 					updateValue={ updateValue( 'phone' ) }
-					className="address-step__phone" />
+					className="address-step__phone"
+				/>
 			</div>
-			{ generalErrorOnly && <Notice status="is-error" showDismiss={ false }>
-				{ translate( '%(message)s. Please modify the address and try again.', { args: { message: fieldErrors.general } } ) }
-			</Notice> }
+			{ generalErrorOnly && (
+				<Notice status="is-error" showDismiss={ false }>
+					{ translate( '%(message)s. Please modify the address and try again.', {
+						args: { message: fieldErrors.general },
+					} ) }
+				</Notice>
+			) }
 			<TextField
 				id={ getId( 'address' ) }
 				title={ translate( 'Address' ) }
 				value={ getValue( 'address' ) }
 				updateValue={ updateValue( 'address' ) }
 				className="address-step__address-1"
-				error={ fieldErrors.address || generalErrorOnly } />
+				error={ fieldErrors.address || generalErrorOnly }
+			/>
 			<TextField
 				id={ getId( 'address_2' ) }
 				value={ getValue( 'address_2' ) }
 				updateValue={ updateValue( 'address_2' ) }
-				error={ fieldErrors.address_2 || generalErrorOnly } />
+				error={ fieldErrors.address_2 || generalErrorOnly }
+			/>
 			<div className="address-step__city-state-postal-code">
 				<TextField
 					id={ getId( 'city' ) }
@@ -118,7 +135,8 @@ const AddressFields = ( props ) => {
 					value={ getValue( 'city' ) }
 					updateValue={ updateValue( 'city' ) }
 					className="address-step__city"
-					error={ fieldErrors.city || generalErrorOnly } />
+					error={ fieldErrors.city || generalErrorOnly }
+				/>
 				<StateDropdown
 					id={ getId( 'state' ) }
 					title={ translate( 'State' ) }
@@ -127,14 +145,16 @@ const AddressFields = ( props ) => {
 					countriesData={ countriesData }
 					updateValue={ updateValue( 'state' ) }
 					className="address-step__state"
-					error={ fieldErrors.state || generalErrorOnly } />
+					error={ fieldErrors.state || generalErrorOnly }
+				/>
 				<TextField
 					id={ getId( 'postcode' ) }
 					title={ translate( 'Postal code' ) }
 					value={ getValue( 'postcode' ) }
 					updateValue={ updateValue( 'postcode' ) }
 					className="address-step__postal-code"
-					error={ fieldErrors.postcode || generalErrorOnly } />
+					error={ fieldErrors.postcode || generalErrorOnly }
+				/>
 			</div>
 			<CountryDropdown
 				id={ getId( 'country' ) }
@@ -143,10 +163,12 @@ const AddressFields = ( props ) => {
 				disabled={ ! allowChangeCountry }
 				countriesData={ countriesData }
 				updateValue={ updateValue( 'country' ) }
-				error={ fieldErrors.country || generalErrorOnly } />
+				error={ fieldErrors.country || generalErrorOnly }
+			/>
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
-				onClick={ submitAddressForNormalizationHandler } >
+				onClick={ submitAddressForNormalizationHandler }
+			>
 				{ translate( 'Validate address' ) }
 			</StepConfirmationButton>
 		</div>
@@ -161,10 +183,7 @@ AddressFields.propTypes = {
 	normalized: PropTypes.object,
 	selectNormalized: PropTypes.bool.isRequired,
 	allowChangeCountry: PropTypes.bool.isRequired,
-	errors: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.bool,
-	] ).isRequired,
+	errors: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	group: PropTypes.string.isRequired,
 };
 
@@ -182,14 +201,17 @@ const mapStateToProps = ( state, { group, orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
-	return bindActionCreators( {
-		selectNormalizedAddress,
-		confirmAddressSuggestion,
-		editAddress,
-		updateAddressValue,
-		submitAddressForNormalization,
-	}, dispatch );
+const mapDispatchToProps = dispatch => {
+	return bindActionCreators(
+		{
+			selectNormalizedAddress,
+			confirmAddressSuggestion,
+			editAddress,
+			updateAddressValue,
+			submitAddressForNormalization,
+		},
+		dispatch
+	);
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( AddressFields ) );

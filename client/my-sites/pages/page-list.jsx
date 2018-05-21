@@ -25,7 +25,7 @@ import Placeholder from './placeholder';
 import { mapPostStatus as mapStatus } from 'lib/route';
 import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
-import { hasInitializedSites } from 'state/selectors';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import {
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQuery,

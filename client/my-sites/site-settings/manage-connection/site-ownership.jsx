@@ -22,11 +22,9 @@ import QueryJetpackUserConnection from 'components/data/query-jetpack-user-conne
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import {
-	isJetpackSiteConnected,
-	isJetpackSiteInDevelopmentMode,
-	isJetpackUserMaster,
-} from 'state/selectors';
+import isJetpackSiteConnected from 'state/selectors/is-jetpack-site-connected';
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
+import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
 
 class SiteOwnership extends Component {
 	renderPlaceholder() {

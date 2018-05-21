@@ -33,6 +33,7 @@ import checklist from './checklist/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import concierge from './concierge/reducer';
+import connectedApplications from './connected-applications/reducer';
 import consoleDispatcher from './console-dispatch';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
@@ -40,10 +41,10 @@ import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
-import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import googleMyBusiness from './google-my-business/reducer';
 import help from './help/reducer';
+import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
@@ -56,6 +57,7 @@ import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import login from './login/reducer';
 import media from './media/reducer';
+import memberships from './memberships/reducer';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
@@ -73,7 +75,7 @@ import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
-import { rewindAlerts, rewindReducer as rewind } from './rewind';
+import { rewindReducer as rewind } from './rewind';
 import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
@@ -121,6 +123,7 @@ const reducers = {
 	comments,
 	componentsUsageStats,
 	concierge,
+	connectedApplications,
 	countries,
 	countryStates,
 	currentUser,
@@ -129,12 +132,12 @@ const reducers = {
 	domains,
 	extensions,
 	form,
-	geo,
 	googleAppsUsers,
 	googleMyBusiness,
 	happinessEngineers,
 	happychat,
 	help,
+	httpData,
 	i18n,
 	inlineHelpSearchResults,
 	invites,
@@ -163,7 +166,6 @@ const reducers = {
 	reader,
 	receipts,
 	rewind,
-	rewindAlerts,
 	sharing,
 	shortcodes,
 	signup,
@@ -186,6 +188,9 @@ const reducers = {
 	wordads,
 };
 
+if ( config.isEnabled( 'memberships' ) ) {
+	reducers.memberships = memberships;
+}
 export const reducer = combineReducers( reducers );
 
 /**
@@ -229,6 +234,7 @@ export function createReduxStore( initialState = {} ) {
 
 	const enhancers = [
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
+		httpDataEnhancer,
 		applyMiddleware( ...middlewares ),
 		isBrowser && window.app && window.app.isDebug && actionLogger,
 		isBrowser && window.devToolsExtension && window.devToolsExtension(),

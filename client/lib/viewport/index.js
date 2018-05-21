@@ -11,10 +11,18 @@
 // Valid breakpoints include:
 // - '<480px'
 // - '<660px'
+// - '<800px'
 // - '<960px'
+// - '<1040px'
+// - '<1280px'
+// - '<1400px'
 // - '>480px'
 // - '>660px'
+// - '>800px'
 // - '>960px'
+// - '>1040px'
+// - '>1280px'
+// - '>1400px'
 // - '480px-660px'
 // - '480px-960px'
 // - '660px-960px'
@@ -28,15 +36,24 @@
 //
 // [1] https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines/css.md#media-queries
 //
+
 export function isWithinBreakpoint( breakpoint ) {
-	let screenWidth = getWindowInnerWidth(),
+	const screenWidth = getWindowInnerWidth(),
 		breakpoints = {
 			'<480px': () => screenWidth <= 480,
 			'<660px': () => screenWidth <= 660,
+			'<800px': () => screenWidth <= 800,
 			'<960px': () => screenWidth <= 960,
+			'<1040px': () => screenWidth <= 1040,
+			'<1280px': () => screenWidth <= 1280,
+			'<1400px': () => screenWidth <= 1400,
 			'>480px': () => screenWidth > 480,
 			'>660px': () => screenWidth > 660,
+			'>800px': () => screenWidth > 800,
 			'>960px': () => screenWidth > 960,
+			'>1040px': () => screenWidth > 1040,
+			'>1280px': () => screenWidth > 1280,
+			'>1400px': () => screenWidth > 1400,
 			'480px-660px': () => screenWidth > 480 && screenWidth <= 660,
 			'660px-960px': () => screenWidth > 660 && screenWidth <= 960,
 			'480px-960px': () => screenWidth > 480 && screenWidth <= 960,

@@ -16,7 +16,7 @@ import ReaderPopover from 'components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import FormToggle from 'components/forms/form-toggle';
-import { getReaderFollows } from 'state/selectors';
+import getReaderFollows from 'state/selectors/get-reader-follows';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
@@ -124,7 +124,7 @@ class ReaderSiteNotificationSettings extends Component {
 
 		return (
 			<div className="reader-site-notification-settings">
-				<span
+				<button
 					className="reader-site-notification-settings__button"
 					onClick={ this.togglePopoverVisibility }
 					ref={ this.saveSpanRef }
@@ -136,7 +136,7 @@ class ReaderSiteNotificationSettings extends Component {
 					>
 						{ translate( 'Settings' ) }
 					</span>
-				</span>
+				</button>
 
 				<ReaderPopover
 					onClose={ this.closePopover }

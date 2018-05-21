@@ -1,32 +1,10 @@
-# Banner
+
+Banner
+===
 
 This component renders a customizable banner.
 
-## Props:
-
-- *callToAction* - shows a CTA text.
-- *className* - any additional CSS classes.
-- *description* - the banner description.
-- *disableHref* - when true, prevent the Banner to be linked either via the `href` props or as a side effect of the `siteSlug` connected prop.
-- *dismissPreferenceName*: the user preference name that we store a boolean against, prefixed with 'dismissible-card-' to avoid namespace collisions.
-- *dismissTemporary*: when true, clicking on the cross will dismiss the card for the current page load.
-- *event* - event to distinguish the nudge in tracks. Used as `cta_name` event property.
-- *feature* - slug of the feature to highlight in the plans compare card.
-- *href* - the component target URL.
-- *icon* - the component icon.
-- *list* - a list of the upgrade features.
-- *onClick* - a function associated to the click on the whole banner or just the CTA or dismiss button.
-- *plan* - PlanSlug of the plan that upgrade leads to.
-- *price* - one or two (original/discounted) upgrade prices.
-- *title* - (required) the banner title.
-
-If `href` is not provided, `feature` can auto-generate it.
-
-If `callToAction` is provided, `href` and `onClick` are not applied to the whole banner, but to the `callToAction` button only.
-
-If `dismissPreferenceName` is provided, `href` is only applied if `callToAction` is provided.
-
-## Usage:
+## Usage
 
 ```jsx
 import { PLAN_BUSINESS, FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
@@ -53,3 +31,32 @@ render() {
 	);
 }
 ```
+
+### Props
+
+
+| Name | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `callToAction` | `string` | null | Shows a CTA text. |
+| `className` | `string` | null | Any additional CSS classes. |
+| `description` | `string` | null | The banner description. |
+| `disableHref` | `bool` | false | When true, prevent the Banner to be linked either via the `href` props or as a side effect of the `siteSlug` connected prop. |
+| `dismissPreferenceName` | `bool` | false | The user preference name that we store a boolean against, prefixed with `dismissible-card-` to avoid namespace collisions. |
+| `dismissTemporary` | `bool` | false | When true, clicking on the cross will dismiss the card for the current page load. |
+| `event` | `string` | null | Event to distinguish the nudge in tracks. Used as <code>cta_name</code> event property. |
+| `feature` | `string` | null | Slug of the feature to highlight in the plans compare card. |
+| `href` | `string` | null | The component target URL. |
+| `icon` | `string` | null | The component icon. |
+| `list` | `string` | null | A list of the upgrade features. |
+| `onClick` | `string` | null | A function associated to the click on the whole banner or just the CTA or dismiss button. |
+| `plan` | `string` | null | PlanSlug of the plan that upgrade leads to. |
+| `price` | `string` | null | One or two (original/discounted) upgrade prices. |
+| `title` | `string` | null | (required) The banner title. |
+
+### General guidelines
+
+* If `href` is not provided, `feature` can auto-generate it.
+* If `callToAction` is provided, `href` and `onClick` are not applied to the whole banner, but to the `callToAction` button only.
+* If `dismissPreferenceName` is provided, `href` is only applied if `callToAction` is provided.
+
+

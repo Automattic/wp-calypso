@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -21,42 +23,51 @@ import {
 	getFormErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const renderSummary = ( {
-	values,
-	isNormalized,
-	normalizationInProgress,
-	normalized,
-	selectNormalized,
-	storeOptions,
-	errors,
-	translate,
-	expandStateName = false,
-}, showCountry ) => {
+const renderSummary = (
+	{
+		values,
+		isNormalized,
+		normalizationInProgress,
+		normalized,
+		selectNormalized,
+		storeOptions,
+		errors,
+		translate,
+		expandStateName = false,
+	},
+	showCountry
+) => {
 	if ( normalizationInProgress ) {
 		return translate( 'Validating address…' );
 	}
 	if ( hasNonEmptyLeaves( errors ) || ( isNormalized && ! normalized ) ) {
-		return errors && errors.general || translate( 'Invalid address' );
+		return ( errors && errors.general ) || translate( 'Invalid address' );
 	}
 	if ( ! isNormalized ) {
 		return translate( "You've edited the address, please revalidate it for accurate rates" );
 	}
 	const { countriesData } = storeOptions;
-	const { city, postcode, state, country } = ( normalized && selectNormalized ) ? normalized : values;
+	const { city, postcode, state, country } = normalized && selectNormalized ? normalized : values;
 	// Summary format: "city, state  postcode [, country]"
 	let str = city + ', ';
 	if ( state ) {
 		const statesMap = ( expandStateName && ( countriesData[ country ] || {} ).states ) || {};
 		str += ( statesMap[ state ] || state ) + '\xa0 '; // append two spaces: non-breaking and normal
 	}
-	str += ( 'US' === country ? postcode.split( '-' )[ 0 ] : postcode );
+	str += 'US' === country ? postcode.split( '-' )[ 0 ] : postcode;
 	if ( showCountry ) {
 		str += ', ' + ( countriesData[ country ] ? countriesData[ country ].name : country );
 	}
 	return str;
 };
 
-const getNormalizationStatus = ( { normalizationInProgress, errors, isNormalized, values, normalized } ) => {
+const getNormalizationStatus = ( {
+	normalizationInProgress,
+	errors,
+	isNormalized,
+	values,
+	normalized,
+} ) => {
 	if ( normalizationInProgress ) {
 		return { isProgress: true };
 	}
@@ -69,17 +80,21 @@ const getNormalizationStatus = ( { normalizationInProgress, errors, isNormalized
 	return {};
 };
 
-const AddressStep = ( props ) => {
+const AddressStep = props => {
 	const toggleStepHandler = () => props.toggleStep( props.orderId, props.siteId, props.type );
 	const { form, storeOptions, errors, showCountryInSummary, translate } = props;
 
 	return (
 		<StepContainer
 			title={ props.title }
-			summary={ renderSummary( { ...form, storeOptions, errors, translate }, showCountryInSummary ) }
+			summary={ renderSummary(
+				{ ...form, storeOptions, errors, translate },
+				showCountryInSummary
+			) }
 			expanded={ props.expanded }
 			toggleStep={ toggleStepHandler }
-			{ ...props.normalizationStatus } >
+			{ ...props.normalizationStatus }
+		>
 			<AddressFields group={ props.type } siteId={ props.siteId } orderId={ props.orderId } />
 		</StepContainer>
 	);
@@ -95,10 +110,7 @@ AddressStep.propTypes = {
 		normalizationInProgress: PropTypes.bool.isRequired,
 	} ).isRequired,
 	storeOptions: PropTypes.object.isRequired,
-	errors: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.bool,
-	] ).isRequired,
+	errors: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	toggleStep: PropTypes.func.isRequired,
 };
 
@@ -110,8 +122,8 @@ const mapStateToProps = ( state, { orderId, siteId, type } ) => {
 	const form = shippingLabel.form[ type ];
 	const errors = loaded && getFormErrors( state, orderId, siteId )[ type ];
 
-	const showCountryInSummary = type === 'destination' &&
-		shippingLabel.form.origin.values.country !== form.values.country;
+	const showCountryInSummary =
+		type === 'destination' && shippingLabel.form.origin.values.country !== form.values.country;
 
 	return {
 		errors,
@@ -123,7 +135,7 @@ const mapStateToProps = ( state, { orderId, siteId, type } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { toggleStep }, dispatch );
 };
 

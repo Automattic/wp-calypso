@@ -16,6 +16,7 @@ import {
 	getProductCategory,
 	getProductCategories,
 	getAllProductCategories,
+	getAllProductCategoriesBySearch,
 	getProductCategoriesLastPage,
 	getTotalProductCategories,
 } from '../selectors';
@@ -23,11 +24,12 @@ import woocommerce from './fixtures/categories';
 const state = deepFreeze( { extensions: { woocommerce } } );
 
 /*
- * state.extensions.woocommerce.sites has four sites:
+ * state.extensions.woocommerce.sites has five sites:
  *  - site.one: nothing loaded yet
  *  - site.two: 1 page of categories loaded, 1 still loadingState
  *  - site.three: 2 pages of categories loaded
  *  - site.four: first page of categories is loading
+ *  - site.five: all results for a given search are loaded
  */
 
 describe( 'selectors', () => {
@@ -61,21 +63,16 @@ describe( 'selectors', () => {
 
 	describe( '#areAnyProductCategoriesLoading', () => {
 		test( 'should be false when state is not available.', () => {
-			expect( areAnyProductCategoriesLoading( state, {}, 'site.one' ) ).to.be.false;
+			expect( areAnyProductCategoriesLoading( state, 'site.one' ) ).to.be.false;
 		} );
 
 		test( 'should be true when any page of categories are currently being fetched.', () => {
 			// page 2 is currently being fetched, but this selector ignores page
-			expect( areAnyProductCategoriesLoading( state, {}, 'site.two' ) ).to.be.true;
-		} );
-
-		test( 'should be true when categories are currently being fetched, and passed a page parameter.', () => {
-			// page 2 is currently being fetched, but this selector ignores page
-			expect( areAnyProductCategoriesLoading( state, { page: 2 }, 'site.two' ) ).to.be.true;
+			expect( areAnyProductCategoriesLoading( state, 'site.two' ) ).to.be.true;
 		} );
 
 		test( 'should be false when categories are loaded.', () => {
-			expect( areAnyProductCategoriesLoading( state, {}, 'site.three' ) ).to.be.false;
+			expect( areAnyProductCategoriesLoading( state, 'site.three' ) ).to.be.false;
 		} );
 	} );
 
@@ -123,20 +120,46 @@ describe( 'selectors', () => {
 
 	describe( '#getAllProductCategories()', () => {
 		test( 'should return an empty array if data is not available.', () => {
-			expect( getAllProductCategories( state, {}, 'site.one' ) ).to.eql( [] );
+			expect( getAllProductCategories( state, 'site.one' ) ).to.eql( [] );
 		} );
 
-		test( 'should return an empty array if data is still loading.', () => {
-			expect( getAllProductCategories( state, {}, 'site.two' ) ).to.eql( [] );
+		test( 'should return the existing categories as an array if more data is loading.', () => {
+			expect( getAllProductCategories( state, 'site.two' ) ).to.eql( [
+				{ id: 1, label: 'cat1', name: 'cat1', slug: 'cat-1', parent: 0 },
+				{ id: 2, label: 'cat2', name: 'cat2', slug: 'cat-2', parent: 0 },
+			] );
 		} );
 
 		test( 'should get all product categories from specified site', () => {
-			expect( getAllProductCategories( state, {}, 'site.three' ) ).to.have.lengthOf( 6 );
-			expect( getAllProductCategories( state, {}, 'site.three' ) ).to.eql( [
+			expect( getAllProductCategories( state, 'site.three' ) ).to.have.lengthOf( 6 );
+			expect( getAllProductCategories( state, 'site.three' ) ).to.eql( [
 				{ id: 1, label: 'cat1', name: 'cat1', slug: 'cat-1', parent: 0 },
 				{ id: 2, label: 'cat2', name: 'cat2', slug: 'cat-2', parent: 0 },
 				{ id: 3, label: 'cat2 - cat3', name: 'cat3', slug: 'cat-3', parent: 2 },
 				{ id: 4, label: 'cat2 - cat3 - cat4', name: 'cat4', slug: 'cat-4', parent: 3 },
+				{ id: 5, label: 'cat5', name: 'cat5', slug: 'cat-5', parent: 0 },
+				{ id: 6, label: 'cat6', name: 'cat6', slug: 'cat-6', parent: 0 },
+			] );
+		} );
+	} );
+
+	describe( '#getAllProductCategoriesBySearch()', () => {
+		test( 'should return an empty array if no search queries are loaded.', () => {
+			expect( getAllProductCategoriesBySearch( state, 'test', 'site.one' ) ).to.eql( [] );
+		} );
+
+		test( 'should return the existing categories as an array if more data is loading.', () => {
+			expect( getAllProductCategoriesBySearch( state, 'test', 'site.six' ) ).to.eql( [
+				{ id: 1, label: 'cat1', name: 'cat1', slug: 'cat-1', parent: 0 },
+				{ id: 2, label: 'cat2', name: 'cat2', slug: 'cat-2', parent: 0 },
+			] );
+		} );
+
+		test( 'should get all product categories from specified site', () => {
+			expect( getAllProductCategoriesBySearch( state, 'test', 'site.five' ) ).to.have.lengthOf( 4 );
+			expect( getAllProductCategoriesBySearch( state, 'test', 'site.five' ) ).to.eql( [
+				{ id: 1, label: 'cat1', name: 'cat1', slug: 'cat-1', parent: 0 },
+				{ id: 2, label: 'cat2', name: 'cat2', slug: 'cat-2', parent: 0 },
 				{ id: 5, label: 'cat5', name: 'cat5', slug: 'cat-5', parent: 0 },
 				{ id: 6, label: 'cat6', name: 'cat6', slug: 'cat-6', parent: 0 },
 			] );

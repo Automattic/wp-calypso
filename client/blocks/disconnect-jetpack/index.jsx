@@ -28,7 +28,7 @@ import { setAllSitesSelected, navigate } from 'state/ui/actions';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 import { getPlanClass } from 'lib/plans/constants';
 import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'state/sites/selectors';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 class DisconnectJetpack extends PureComponent {
 	static propTypes = {

@@ -1955,8 +1955,8 @@ describe( 'utils', () => {
 		describe( 'parseStoreStatsReferrers', () => {
 			const validData = {
 				data: [
-					{ date: 'monday', data: [ [ 'green', 4 ], [ 'red', 8 ] ] },
-					{ date: 'tuesday', data: [ [ 'orange', 12 ], [ 'blue', 16 ] ] },
+					{ date: '2018-04-10', data: [ [ 'green', 4 ], [ 'red', 8 ] ] },
+					{ date: '2018-04-09', data: [ [ 'orange', 12 ], [ 'blue', 16 ] ] },
 				],
 				fields: [ 'color', 'age' ],
 			};
@@ -1994,7 +1994,7 @@ describe( 'utils', () => {
 					expect( d.age ).to.eql( validData.data[ 0 ].data[ idx ][ 1 ] );
 				} );
 
-				expect( firstRecord.date ).to.eql( 'monday' );
+				expect( firstRecord.date ).to.eql( '2018-04-10' );
 			} );
 		} );
 	} );

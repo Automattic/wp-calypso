@@ -1,3 +1,9 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import { isPlainObject, values } from 'lodash';
+
 /**
  * Normalize API Settings
  *
@@ -11,6 +17,13 @@ export function normalizeSettings( settings ) {
 		switch ( key ) {
 			case 'default_category':
 				memo[ key ] = parseInt( settings[ key ] );
+				break;
+			case 'sharing_show':
+				if ( isPlainObject( settings[ key ] ) ) {
+					memo[ key ] = values( settings[ key ] );
+				} else {
+					memo[ key ] = settings[ key ];
+				}
 				break;
 			default:
 				memo[ key ] = settings[ key ];

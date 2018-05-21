@@ -14,7 +14,7 @@ import page from 'page';
  */
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 const redirectNonJetpack = redirectRoute => WrappedComponent => {
 	class RedirectNonJetpack extends Component {

@@ -132,7 +132,7 @@ class HelpModal extends React.Component {
 	};
 
 	renderRow = ( row, rowIndex ) => {
-		let columns = [];
+		const columns = [];
 
 		forEach( row, cellPair => {
 			columns.push(

@@ -39,12 +39,14 @@
 	padding: 6px 12px;
 	cursor: pointer;
 	align-items: center;
+	width: 100%;
 
 	&.is-selected {
 		background-color: $gray-light;
+	}
 
-		.packages-step__list-package-count {
-		}
+	.gridicon {
+		top: 0;
 	}
 }
 
@@ -54,6 +56,8 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-right: 2px;
+	text-align: left;
+	color: $gray-text;
 }
 
 .packages-step__list-package-count {
@@ -64,7 +68,7 @@
 	font-size: 11px;
 	font-weight: 600;
 	line-height: 14px;
-	color: $gray;
+	color: $gray-text;
 	text-align: center;
 }
 

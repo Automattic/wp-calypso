@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { isEmpty } from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -12,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Image from 'components/image';
 import resizeImageUrl from 'lib/resize-image-url';
 
@@ -94,9 +93,13 @@ class StripeConnectAccount extends Component {
 			);
 		} else {
 			deauthorize = (
-				<a href="#" className="stripe__connect-account-disconnect" onClick={ this.onDeauthorize }>
+				<Button
+					borderless
+					className="stripe__connect-account-disconnect"
+					onClick={ this.onDeauthorize }
+				>
 					{ translate( 'Disconnect' ) }
-				</a>
+				</Button>
 			);
 		}
 

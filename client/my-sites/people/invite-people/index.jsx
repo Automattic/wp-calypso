@@ -42,7 +42,8 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isJetpackSite } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
-import { isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
+import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 

@@ -17,8 +17,11 @@ import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import {
+	isEditedPostPasswordProtected,
+	isEditedPostPasswordProtectedWithValidPassword,
+} from 'state/posts/selectors';
 
 export const getPublishButtonStatus = ( post, savedPost, canUserPublishPosts ) => {
 	if (
@@ -56,8 +59,7 @@ export class EditorPublishButton extends Component {
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool,
 		needsVerification: PropTypes.bool,
-		privatePost: PropTypes.bool,
-		privatePostPasswordValid: PropTypes.bool,
+		isPasswordProtectedWithInvalidPassword: PropTypes.bool,
 		busy: PropTypes.bool,
 		isConfirmationSidebarEnabled: PropTypes.bool,
 	};
@@ -145,7 +147,7 @@ export class EditorPublishButton extends Component {
 			! this.props.isSaveBlocked &&
 			this.props.hasContent &&
 			! this.props.needsVerification &&
-			( ! this.props.privatePost || this.props.privatePostPasswordValid )
+			! this.props.isPasswordProtectedWithInvalidPassword
 		);
 	}
 
@@ -169,13 +171,13 @@ export class EditorPublishButton extends Component {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
-	const privatePost = isEditedPostPrivate( state, siteId, postId );
-	const privatePostPasswordValid = isPrivateEditedPostPasswordValid( state, siteId, postId );
 	const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+	const isPasswordProtectedWithInvalidPassword =
+		isEditedPostPasswordProtected( state, siteId, postId ) &&
+		! isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId );
 
 	return {
-		privatePost,
-		privatePostPasswordValid,
 		canUserPublishPosts,
+		isPasswordProtectedWithInvalidPassword,
 	};
 } )( localize( EditorPublishButton ) );

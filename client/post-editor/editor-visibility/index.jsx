@@ -28,7 +28,7 @@ import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { isPrivateSite as isPrivateSiteSelector } from 'state/selectors';
+import isPrivateSiteSelector from 'state/selectors/is-private-site';
 
 class EditorVisibility extends React.Component {
 	static propTypes = {
@@ -77,13 +77,6 @@ class EditorVisibility extends React.Component {
 		return 'public';
 	};
 
-	updatePostStatus = () => {
-		const defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
-		const postEdits = { status: defaultVisibility };
-
-		postActions.edit( postEdits );
-	};
-
 	recordStats = newVisibility => {
 		if ( this.getVisibility() !== newVisibility ) {
 			recordStat( 'visibility-set-' + newVisibility );
@@ -95,37 +88,35 @@ class EditorVisibility extends React.Component {
 		}
 	};
 
-	updateVisibility = newVisibility => {
-		const { siteId, postId } = this.props;
-		let reduxPostEdits;
+	updateVisibility( newVisibility ) {
+		const { siteId, postId, status } = this.props;
+
+		// This is necessary for cases when the post is changed from private
+		// to another visibility since private has its own post status.
+		const newStatus = status === 'draft' ? 'draft' : 'publish';
+
+		const postEdits = { status: newStatus };
 
 		switch ( newVisibility ) {
 			case 'public':
-				reduxPostEdits = { password: '' };
+				postEdits.password = '';
 				break;
 
 			case 'password':
-				reduxPostEdits = {
-					password: this.props.savedPassword || ' ',
-					// Password protected posts cannot be sticky
-					sticky: false,
-				};
+				postEdits.password = this.props.savedPassword || ' ';
+				// Password protected posts cannot be sticky
+				postEdits.sticky = false;
 				this.setState( { passwordIsValid: true } );
 				break;
 		}
 
+		// Make sure that status edits are applied both to Flux and Redux stores
+		postActions.edit( { status: newStatus } );
+		this.props.editPost( siteId, postId, postEdits );
 		this.recordStats( newVisibility );
+	}
 
-		// This is necessary for cases when the post is changed from private to another visibility
-		// since private has its own post status.
-		this.updatePostStatus();
-
-		if ( reduxPostEdits ) {
-			this.props.editPost( siteId, postId, reduxPostEdits );
-		}
-	};
-
-	setPostToPrivate = () => {
+	setPostToPrivate() {
 		const { siteId, postId } = this.props;
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( {
@@ -134,12 +125,13 @@ class EditorVisibility extends React.Component {
 
 		// Private posts cannot be sticky
 		this.props.editPost( siteId, postId, {
+			status: 'private',
 			password: '',
 			sticky: false,
 		} );
 
 		this.recordStats( 'private' );
-	};
+	}
 
 	onPrivatePublish = () => {
 		this.setPostToPrivate();

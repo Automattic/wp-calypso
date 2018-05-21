@@ -12,20 +12,22 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { isBusinessPlan, translate } ) => {
+export default localize( ( { isBusinessPlan, selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/upgrades/advertising-removed.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/ads-removed.svg" /> }
 				title={ translate( 'Advertising removed' ) }
 				description={
 					isBusinessPlan
 						? translate( 'All WordPress.com advertising has been removed from your site.' )
 						: translate(
-								'All WordPress.com advertising has been removed from your site. ' +
-									'Upgrade to remove the WordPress.com footer credit.'
+								'All WordPress.com advertising has been removed from your site. Upgrade to Business ' +
+									'to remove the WordPress.com footer credit.'
 							)
 				}
+				buttonText={ ! isBusinessPlan && translate( 'Upgrade to Business' ) }
+				href={ ! isBusinessPlan && '/checkout/' + selectedSite.slug + '/business' }
 			/>
 		</div>
 	);

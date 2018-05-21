@@ -5,10 +5,13 @@
  */
 
 import {
+	concat,
 	get,
 	isEmpty,
 	isPlainObject,
+	filter,
 	flow,
+	includes,
 	map,
 	mapValues,
 	mergeWith,
@@ -22,7 +25,10 @@ import {
 	every,
 	unset,
 	xor,
+	find,
+	reject,
 } from 'lodash';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -116,17 +122,84 @@ export function getSerializedPostsQueryWithoutPage( query, siteId ) {
 	return getSerializedPostsQuery( omit( query, 'page' ), siteId );
 }
 
+/*
+ * Applies a metadata edit operation (either update or delete) to an existing array of
+ * metadata values.
+ */
+function applyMetadataEdit( metadata, edit ) {
+	switch ( edit.operation ) {
+		case 'update': {
+			// Either update existing key's value or append a new one at the end
+			const { key, value } = edit;
+			if ( find( metadata, { key } ) ) {
+				return map( metadata, m => ( m.key === key ? { key, value } : m ) );
+			}
+			return concat( metadata || [], { key, value } );
+		}
+		case 'delete': {
+			// Remove a value from the metadata array. If the key is not present,
+			// return unmodified original value.
+			const { key } = edit;
+			if ( find( metadata, { key } ) ) {
+				return reject( metadata, { key } );
+			}
+			return metadata;
+		}
+	}
+
+	return metadata;
+}
+
+function applyMetadataEdits( metadata, edits ) {
+	return reduce( edits, applyMetadataEdit, metadata );
+}
+
 /**
- * Merges two post edits objects into one or a post edit into a post object. Essentially
- * performs a deep merge of two objects, except that arrays are treated as atomic values
- * and overwritten rather than merged. That's important especially for term removals.
+ * Merges edits into a post object. Essentially performs a deep merge of two objects,
+ * except that arrays are treated as atomic values and overwritten rather than merged.
+ * That's important especially for term removals.
+ *
+ * @param  {Object} post  Destination post for merge
+ * @param  {Object} edits Objects with edits
+ * @return {Object}       Merged post with applied edits
+ */
+export function applyPostEdits( post, edits ) {
+	return mergeWith( cloneDeep( post ), edits, ( objValue, srcValue, key, obj, src, stack ) => {
+		// Merge metadata specially. Only a `metadata` key at top level gets special treatment,
+		// keys with the same name in nested objects do not.
+		if ( key === 'metadata' && stack.size === 0 ) {
+			return applyMetadataEdits( objValue, srcValue );
+		}
+
+		if ( Array.isArray( srcValue ) ) {
+			return srcValue;
+		}
+	} );
+}
+
+function mergeMetadataEdits( edits, nextEdits ) {
+	// remove existing edits that get updated in `nextEdits`
+	const newEdits = reject( edits, edit => find( nextEdits, { key: edit.key } ) );
+	// append the new edits at the end
+	return concat( newEdits, nextEdits );
+}
+
+/**
+ * Merges two post edits objects into one. Essentially performs a deep merge of two objects,
+ * except that arrays are treated as atomic values and overwritten rather than merged.
+ * That's important especially for term removals.
  *
  * @param  {Object} edits     Destination edits object for merge
  * @param  {Object} nextEdits Edits object to be merged
  * @return {Object}           Merged edits object with changes from both sources
  */
 export function mergePostEdits( edits, nextEdits ) {
-	return mergeWith( cloneDeep( edits ), nextEdits, ( objValue, srcValue ) => {
+	return mergeWith( cloneDeep( edits ), nextEdits, ( objValue, srcValue, key, obj, src, stack ) => {
+		if ( key === 'metadata' && stack.size === 0 ) {
+			// merge metadata specially
+			return mergeMetadataEdits( objValue, srcValue );
+		}
+
 		if ( Array.isArray( srcValue ) ) {
 			return srcValue;
 		}
@@ -307,6 +380,57 @@ export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
  */
 export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
 	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );
+}
+
+export function isDateEqual( localDateEdit, savedDate ) {
+	return moment( localDateEdit ).isSame( savedDate );
+}
+
+export function isStatusEqual( localStatusEdit, savedStatus ) {
+	// When receiving a request to change the `status` attribute, the server
+	// treats `publish` and `future` as synonyms. It's really the post's `date`
+	// that determines the resulting status, not the requested value.
+	// Therefore, the `status` edit is considered saved and removed from the
+	// local edits even if the value returned by server is different.
+	if ( includes( [ 'publish', 'future' ], localStatusEdit ) ) {
+		return includes( [ 'publish', 'future' ], savedStatus );
+	}
+
+	// All other statuses (draft, private, pending) are 1:1. The only possible
+	// exception is requesting `publish` and not having rights to publish new
+	// posts. Then the server sets a `pending` status. But we check for this case
+	// in the UI and request `pending` instead of `publish` if the user doesn't
+	// have the rights.
+	return localStatusEdit === savedStatus;
+}
+
+function isUnappliedMetadataEdit( edit, savedMetadata ) {
+	const savedRecord = find( savedMetadata, { key: edit.key } );
+
+	// is an update already performed?
+	if ( edit.operation === 'update' ) {
+		return ! savedRecord || savedRecord.value !== edit.value;
+	}
+
+	// is a property already deleted?
+	if ( edit.operation === 'delete' ) {
+		return !! savedRecord;
+	}
+
+	return false;
+}
+
+/*
+ * Returns edits that are not yet applied, i.e.:
+ * - when updating, the property doesn't already have the desired value in `savedMetadata`
+ * - when deleting, the property is still present in `savedMetadata`
+ */
+export function getUnappliedMetadataEdits( edits, savedMetadata ) {
+	return filter( edits, edit => isUnappliedMetadataEdit( edit, savedMetadata ) );
+}
+
+export function areAllMetadataEditsApplied( edits, savedMetadata ) {
+	return every( edits, edit => ! isUnappliedMetadataEdit( edit, savedMetadata ) );
 }
 
 /**

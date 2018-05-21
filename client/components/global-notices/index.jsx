@@ -86,20 +86,16 @@ const NoticesList = createReactClass( {
 		//and from the old component. When all notices are moved to redux store, this component
 		//needs to be updated.
 		noticesList = noticesList.concat(
-			this.props.storeNotices.map( function( notice ) {
+			this.props.storeNotices.map( function( { button, href, onClick, ...notice } ) {
 				return (
 					<Notice
-						key={ 'notice-' + notice.noticeId }
-						status={ notice.status }
-						duration={ notice.duration || null }
-						showDismiss={ notice.showDismiss }
+						{ ...notice }
+						key={ `notice-${ notice.noticeId }` }
 						onDismissClick={ this.removeReduxNotice( notice ) }
-						text={ notice.text }
-						icon={ notice.icon }
 					>
-						{ notice.button && (
-							<NoticeAction href={ notice.href } onClick={ notice.onClick }>
-								{ notice.button }
+						{ button && (
+							<NoticeAction href={ href } onClick={ onClick }>
+								{ button }
 							</NoticeAction>
 						) }
 					</Notice>

@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getReaderFollows } from 'state/selectors';
+import getReaderFollows from 'state/selectors/get-reader-follows';
 import { userState } from './fixtures/user-state';
 
 describe( 'getReaderFollows()', () => {

@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  */
 import HeaderCake from 'components/header-cake';
 import CompactCard from 'components/card/compact';
-import { getConciergeSignupForm } from 'state/selectors';
+import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
 import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
 import { bookConciergeAppointment, requestConciergeAvailableTimes } from 'state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';

@@ -19,6 +19,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { isCommentableDiscoverPost } from 'blocks/comments/helper';
+import PostCommentFormTextarea from './form-textarea';
 
 class PostCommentForm extends React.Component {
 	constructor( props ) {
@@ -42,13 +43,6 @@ class PostCommentForm extends React.Component {
 		} );
 	}
 
-	componentDidMount() {
-		// If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
-		if ( this.props.parentCommentId && this._textareaNode ) {
-			this._textareaNode.focus();
-		}
-	}
-
 	componentDidUpdate() {
 		const commentTextNode = this.refs.commentText;
 
@@ -61,10 +55,6 @@ class PostCommentForm extends React.Component {
 		commentTextNode.style.height = commentText.length
 			? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px'
 			: null;
-	}
-
-	handleTextAreaNode( textareaNode ) {
-		this._textareaNode = textareaNode;
 	}
 
 	handleSubmit( event ) {
@@ -202,6 +192,8 @@ class PostCommentForm extends React.Component {
 			'expanding-area': true,
 		} );
 
+		const isReply = !! this.props.parentCommentId;
+
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
@@ -215,16 +207,16 @@ class PostCommentForm extends React.Component {
 								<br />
 							</pre>
 							<AutoDirection>
-								<textarea
-									className="comments__form-textarea"
+								<PostCommentFormTextarea
 									value={ this.state.commentText }
 									placeholder={ translate( 'Enter your comment here…' ) }
-									ref={ this.handleTextAreaNode }
 									onKeyUp={ this.handleKeyUp }
 									onKeyDown={ this.handleKeyDown }
 									onFocus={ this.handleFocus }
 									onBlur={ this.handleBlur }
 									onChange={ this.handleTextChange }
+									siteId={ post.site_ID }
+									enableAutoFocus={ isReply }
 								/>
 							</AutoDirection>
 						</div>

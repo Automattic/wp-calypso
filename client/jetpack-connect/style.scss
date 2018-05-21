@@ -12,6 +12,15 @@
 		}
 	}
 
+	.signup-form__social-top {
+		.logged-out-form__links {
+			margin-top: 0px;
+			@include breakpoint( '>480px' ) {
+				margin-top: 0px;
+			}
+		}
+	}
+
 	.formatted-header {
 		margin-bottom: 16px;
 	}
@@ -598,10 +607,6 @@
 	}
 }
 
-.jetpack-connect__auth-form-header-image {
-	text-align: center;
-}
-
 .jetpack-connect__hide-plan-icons {
 	.plans-skip-button {
 		margin-bottom: 0;
@@ -693,9 +698,9 @@
 .jetpack-connect__plan-info {
 	text-align: center;
 	max-width: 500px;
-	margin-top: 20px;
-	padding-top: 30px;
-	padding-bottom: 30px;
+	margin-top: 40px;
+	padding-top: 40px;
+	padding-bottom: 40px;
 }
 
 .jetpack-connect__plan-info-illustration {

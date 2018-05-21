@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { flatten, get, sumBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,16 +16,18 @@ import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import LineChart from 'components/line-chart';
 import LineChartPlaceholder from 'components/line-chart/placeholder';
+import Notice from 'components/notice';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
-import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
+import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import SectionHeader from 'components/section-header';
-import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
-import { getGoogleMyBusinessStats } from 'state/selectors';
 import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
-import { getStatsInterval } from 'state/ui/google-my-business/selectors';
+import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getStatsInterval } from 'state/ui/google-my-business/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 
 function transformData( props ) {
 	const { data } = props;
@@ -48,10 +50,23 @@ function transformData( props ) {
 		return metric.dimensionalValues.map( datum => {
 			return {
 				date: Date.parse( datum.time ),
-				value: datum.value,
+				value: datum.value || 0,
 			};
 		} );
 	} );
+}
+
+function createLegendInfo( props ) {
+	const { data } = props;
+
+	if ( ! data ) {
+		return data;
+	}
+
+	return data.metricValues.map( metric => ( {
+		description: get( props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
+		name: get( props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
+	} ) );
 }
 
 function getAggregation( props ) {
@@ -67,6 +82,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
+		recordTracksEvent: PropTypes.func.isRequired,
 		renderTooltipForDatanum: PropTypes.func,
 		requestGoogleMyBusinessStats: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -88,6 +104,7 @@ class GoogleMyBusinessStatsChart extends Component {
 			return {
 				data: nextProps.data,
 				transformedData: transformData( nextProps ),
+				legendInfo: createLegendInfo( nextProps ),
 			};
 		}
 
@@ -120,12 +137,17 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 	}
 
-	handleIntervalChange = event =>
-		this.props.changeGoogleMyBusinessStatsInterval(
-			this.props.siteId,
-			this.props.statType,
-			event.target.value
-		);
+	handleIntervalChange = event => {
+		const { interval, statType, siteId } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_google_my_business_stats_chart_interval_change', {
+			previous_interval: interval,
+			new_interval: event.target.value,
+			stat_type: statType,
+		} );
+
+		this.props.changeGoogleMyBusinessStatsInterval( siteId, statType, event.target.value );
+	};
 
 	renderPieChart() {
 		const { chartTitle, dataSeriesInfo } = this.props;
@@ -150,18 +172,21 @@ class GoogleMyBusinessStatsChart extends Component {
 
 	renderLineChart() {
 		const { renderTooltipForDatanum } = this.props;
-		const { transformedData } = this.state;
+		const { transformedData, legendInfo } = this.state;
 
 		if ( ! transformedData ) {
 			return <LineChartPlaceholder />;
 		}
 
 		return (
-			<LineChart
-				fillArea
-				data={ transformedData }
-				renderTooltipForDatanum={ renderTooltipForDatanum }
-			/>
+			<Fragment>
+				<LineChart
+					fillArea
+					data={ transformedData }
+					renderTooltipForDatanum={ renderTooltipForDatanum }
+					legendInfo={ legendInfo }
+				/>
+			</Fragment>
 		);
 	}
 
@@ -171,8 +196,20 @@ class GoogleMyBusinessStatsChart extends Component {
 		return chartType === 'pie' ? this.renderPieChart() : this.renderLineChart();
 	}
 
+	isChartEmpty() {
+		const { transformedData } = this.state;
+
+		if ( ! transformedData ) {
+			return false;
+		}
+
+		return sumBy( flatten( transformedData ), 'value' ) === 0;
+	}
+
 	render() {
 		const { description, interval, title, translate } = this.props;
+
+		const isEmptyChart = this.isChartEmpty();
 
 		return (
 			<div>
@@ -194,7 +231,23 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
 					</select>
 
-					<div className="gmb-stats__metric-chart">{ this.renderChart() }</div>
+					<div className="gmb-stats__metric-chart">
+						{ this.renderChart() }
+						{ isEmptyChart && (
+							<div className="chart__empty">
+								<Notice
+									className="chart__empty-notice"
+									status="is-warning"
+									isCompact
+									text={ translate( 'No activity this period', {
+										context: 'Message on empty bar chart in Stats',
+										comment: 'Should be limited to 32 characters to prevent wrapping',
+									} ) }
+									showDismiss={ false }
+								/>
+							</div>
+						) }
+					</div>
 				</Card>
 			</div>
 		);
@@ -219,6 +272,7 @@ export default connect(
 	},
 	{
 		changeGoogleMyBusinessStatsInterval,
+		recordTracksEvent,
 		requestGoogleMyBusinessStats,
 	}
 )( localize( GoogleMyBusinessStatsChart ) );

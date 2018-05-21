@@ -21,16 +21,6 @@ const site1 = {
 	totalPages: {},
 };
 
-const site4 = {
-	isQueryLoading: {
-		'{}': true,
-	},
-	items: [],
-	queries: {},
-	total: {},
-	totalPages: {},
-};
-
 const site2 = {
 	isQueryLoading: {
 		'{}': false,
@@ -69,6 +59,58 @@ const site3 = {
 	},
 };
 
+const site4 = {
+	isQueryLoading: {
+		'{}': true,
+	},
+	items: [],
+	queries: {},
+	total: {},
+	totalPages: {},
+};
+
+const site5 = {
+	isQueryLoading: {
+		'{"search":"test"}': false,
+		'{"search":"test","page":2}': false,
+	},
+	items: {
+		1: categories[ 0 ],
+		2: categories[ 1 ],
+		5: categories[ 4 ],
+		6: categories[ 5 ],
+	},
+	queries: {
+		'{"search":"test"}': [ 1, 2 ],
+		'{"search":"test","page":2}': [ 5, 6 ],
+	},
+	total: {
+		'{"search":"test"}': 4,
+	},
+	totalPages: {
+		'{"search":"test"}': 2,
+	},
+};
+
+const site6 = {
+	isQueryLoading: {
+		'{"search":"test"}': false,
+	},
+	items: {
+		1: categories[ 0 ],
+		2: categories[ 1 ],
+	},
+	queries: {
+		'{"search":"test"}': [ 1, 2 ],
+	},
+	total: {
+		'{"search":"test"}': 8,
+	},
+	totalPages: {
+		'{"search":"test"}': 4,
+	},
+};
+
 export default {
 	sites: {
 		'site.one': {
@@ -82,6 +124,12 @@ export default {
 		},
 		'site.four': {
 			productCategories: site4,
+		},
+		'site.five': {
+			productCategories: site5,
+		},
+		'site.six': {
+			productCategories: site6,
 		},
 	},
 };

@@ -27,17 +27,15 @@ import {
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
-import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
 import { plansLink, findPlansKeys, getPlan } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-import PlanFooter from 'blocks/plan-footer';
+import PaymentMethods from 'blocks/payment-methods';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
@@ -50,8 +48,8 @@ export class PlansFeaturesMain extends Component {
 		 *
 		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
-		const siteId = get( this.props, [ 'site', 'ID' ] );
-		const nextSiteId = get( nextProps, [ 'site', 'ID' ] );
+		const { siteId } = this.props;
+		const { siteId: nextSiteId } = nextProps;
 		if ( siteId !== nextSiteId && nextSiteId ) {
 			this.props.selectHappychatSiteId( nextSiteId );
 		}
@@ -67,8 +65,8 @@ export class PlansFeaturesMain extends Component {
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
-			withSaleInfo,
-			site,
+			withDiscount,
+			siteId,
 		} = this.props;
 
 		return (
@@ -86,8 +84,8 @@ export class PlansFeaturesMain extends Component {
 					plans={ this.getPlansForPlanFeatures() }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
-					withSaleInfo={ withSaleInfo }
-					site={ site }
+					withDiscount={ withDiscount }
+					siteId={ siteId }
 				/>
 			</div>
 		);
@@ -171,12 +169,8 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	handleFreePlanButtonClick = () => {
-		this.props.onUpgradeClick( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
-	};
-
 	render() {
-		const { domainName, site, displayJetpackPlans, isInSignup, isLoggedIn } = this.props;
+		const { displayJetpackPlans, isInSignup, siteId } = this.props;
 		let faqs = null;
 
 		if ( ! isInSignup ) {
@@ -189,13 +183,10 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__notice" />
 				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
-				<QuerySitePlans siteId={ get( site, 'ID' ) } />
+				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
-				<PlanFooter isInSignup={ isInSignup } isJetpack={ displayJetpackPlans } />
+				<PaymentMethods />
 				{ faqs }
-				{ isInSignup &&
-					! isLoggedIn &&
-					! domainName && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
 			</div>
 		);
 	}
@@ -209,12 +200,11 @@ PlansFeaturesMain.propTypes = {
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-	isLoggedIn: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	showFAQ: PropTypes.bool,
-	site: PropTypes.object,
+	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 };
 
@@ -223,16 +213,15 @@ PlansFeaturesMain.defaultProps = {
 	hideFreePlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
-	isLoggedIn: false,
 	showFAQ: true,
-	site: {},
+	siteId: null,
 	siteSlug: '',
 };
 
 export default connect(
 	( state, { site } ) => ( {
 		isChatAvailable: isHappychatAvailable( state ),
-		isLoggedIn: !! getCurrentUserId( state ),
+		siteId: get( site, [ 'ID' ] ),
 		siteSlug: getSiteSlug( state, get( site, [ 'ID' ] ) ),
 	} ),
 	{ selectHappychatSiteId }

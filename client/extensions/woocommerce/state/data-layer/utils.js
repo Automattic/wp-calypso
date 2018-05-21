@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Verify that this response has data (is not an error).
  *

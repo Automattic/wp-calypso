@@ -16,26 +16,24 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import formatCurrency from 'lib/format-currency';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
-import PlanFeaturesSummary from './summary';
 import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import isEligibleForSpringDiscount from 'state/selectors/is-current-user-eligible-for-spring-discount';
+import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
+import getActiveDiscount from 'state/selectors/get-active-discount';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
-	canUpgradeToPlan,
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
@@ -78,13 +76,12 @@ class PlanFeatures extends Component {
 	}
 
 	render() {
-		const { isInSignup, isJetpack, planProperties, showModifiedPricingDisplay } = this.props;
+		const { isInSignup, planProperties } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
-			'abtest-pricing-display': showModifiedPricingDisplay,
 			'has-mobile-table': abtest( 'mobilePlansTablesOnSignup' ) === 'vertical',
 			'plan-features--signup': isInSignup,
 		} );
@@ -107,17 +104,15 @@ class PlanFeatures extends Component {
 		return (
 			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
 				<QueryActivePromotions />
-				{ showModifiedPricingDisplay && ! isJetpack && this.renderCreditNotice() }
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
-					{ this.render30PercentOffNotice() }
+					{ this.renderDiscountNotice() }
 					<div className="plan-features__content">
 						{ mobileView }
 						<table className={ tableClasses }>
 							<tbody>
 								<tr>{ this.renderPlanHeaders() }</tr>
 								{ planDescriptions }
-								<tr>{ showModifiedPricingDisplay && this.renderCreditSummary() }</tr>
 								<tr>{ this.renderTopButtons() }</tr>
 								{ this.renderPlanFeatureRows() }
 								{ bottomButtons }
@@ -138,52 +133,16 @@ class PlanFeatures extends Component {
 		}
 	};
 
-	renderCreditNotice() {
-		const { canPurchase, hasPlaceholders, maxCredits, translate } = this.props;
+	renderDiscountNotice() {
+		const { canPurchase, hasPlaceholders, withDiscount, activeDiscount } = this.props;
+
 		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
-
-		if ( hasPlaceholders || ! canPurchase || ! bannerContainer || ! maxCredits.amount ) {
-			return null;
-		}
-
-		return ReactDOM.createPortal(
-			<Notice
-				className="plan-features__notice-credits"
-				showDismiss={ false }
-				icon="info-outline"
-				status="is-success"
-			>
-				{ translate(
-					'You have {{b}}%(credits)s{{/b}} in upgrade credits available! ' +
-						'Apply the value of your current plan towards an upgrade before your credits expire!',
-					{
-						args: {
-							credits: formatCurrency( maxCredits.amount, maxCredits.currencyCode ),
-						},
-						components: {
-							b: <strong />,
-						},
-					}
-				) }
-			</Notice>,
-			bannerContainer
-		);
-	}
-
-	render30PercentOffNotice() {
-		const {
-			canPurchase,
-			hasPlaceholders,
-			withSaleInfo,
-			isEligibleForSpringDiscount: eligible,
-		} = this.props;
-		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
-
 		if ( ! bannerContainer ) {
 			return false;
 		}
 
-		if ( ! eligible || ! withSaleInfo || hasPlaceholders || ! canPurchase ) {
+		const showActiveDiscount = activeDiscount && withDiscount === activeDiscount.name;
+		if ( ! showActiveDiscount || hasPlaceholders || ! canPurchase ) {
 			return ReactDOM.createPortal( <div />, bannerContainer );
 		}
 
@@ -194,45 +153,10 @@ class PlanFeatures extends Component {
 				icon="info-outline"
 				status="is-success"
 			>
-				{ /* no translate() since we're launching this just for EN audience */ }
-				{ 'Enter coupon code “SPRING30” during checkout to claim your 30% discount' }
+				{ activeDiscount.plansPageNoticeText }
 			</Notice>,
 			bannerContainer
 		);
-	}
-
-	renderCreditSummary() {
-		const { canPurchase, isJetpack, planProperties } = this.props;
-
-		return map( planProperties, properties => {
-			const {
-				available,
-				currencyCode,
-				current,
-				discountPrice,
-				planConstantObj,
-				planName,
-				rawPrice,
-				relatedMonthlyPlan,
-			} = properties;
-
-			return (
-				<td key={ planName } className="plan-features__table-item">
-					<PlanFeaturesSummary
-						available={ available }
-						canPurchase={ canPurchase }
-						currencyCode={ currencyCode }
-						current={ current }
-						discountPrice={ discountPrice }
-						isJetpackSite={ isJetpack }
-						planTitle={ planConstantObj.getTitle() }
-						planType={ planName }
-						rawPrice={ rawPrice }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
-					/>
-				</td>
-			);
-		} );
 	}
 
 	renderUpgradeDisabledNotice() {
@@ -255,6 +179,7 @@ class PlanFeatures extends Component {
 			canPurchase,
 			isInSignup,
 			isLandingPage,
+			isJetpack,
 			planProperties,
 			selectedPlan,
 			translate,
@@ -290,15 +215,14 @@ class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
-				showModifiedPricingDisplay,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
-						available={ available }
 						current={ current }
 						currencyCode={ currencyCode }
+						isJetpack={ isJetpack }
 						popular={ popular }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
@@ -306,14 +230,13 @@ class PlanFeatures extends Component {
 						planType={ planName }
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
-						billingTimeFrame={ planConstantObj.getBillingTimeFrame( getABTestVariation ) }
+						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
 						hideMonthly={ hideMonthly }
 						isPlaceholder={ isPlaceholder }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
-						showModifiedPricingDisplay={ showModifiedPricingDisplay }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -351,15 +274,14 @@ class PlanFeatures extends Component {
 			basePlansPath,
 			displayJetpackPlans,
 			isInSignup,
+			isJetpack,
 			planProperties,
 			selectedPlan,
 			siteType,
-			showModifiedPricingDisplay,
 		} = this.props;
 
 		return map( planProperties, properties => {
 			const {
-				available,
 				currencyCode,
 				current,
 				planConstantObj,
@@ -374,7 +296,7 @@ class PlanFeatures extends Component {
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame( getABTestVariation );
+			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			if ( isInSignup && ! displayJetpackPlans ) {
 				switch ( siteType ) {
@@ -393,14 +315,13 @@ class PlanFeatures extends Component {
 			}
 
 			if ( isInSignup && displayJetpackPlans ) {
-				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame( abtest );
+				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
 
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
 						audience={ audience }
-						available={ available }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
 						current={ current }
@@ -408,6 +329,7 @@ class PlanFeatures extends Component {
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
 						isInSignup={ isInSignup }
+						isJetpack={ isJetpack }
 						isPlaceholder={ isPlaceholder }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
@@ -417,7 +339,6 @@ class PlanFeatures extends Component {
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						selectedPlan={ selectedPlan }
 						title={ planConstantObj.getTitle() }
-						showModifiedPricingDisplay={ showModifiedPricingDisplay }
 					/>
 				</td>
 			);
@@ -632,7 +553,7 @@ PlanFeatures.propTypes = {
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
-	site: PropTypes.object,
+	siteId: PropTypes.number,
 };
 
 PlanFeatures.defaultProps = {
@@ -641,35 +562,9 @@ PlanFeatures.defaultProps = {
 	isInSignup: false,
 	isJetpack: false,
 	selectedSiteSlug: '',
-	site: {},
+	siteId: null,
 	onUpgradeClick: noop,
 };
-
-function getMaxCredits( planProperties, isJetpack ) {
-	return planProperties.reduce(
-		( prev, prop ) => {
-			let current = 0;
-			if ( prop.discountPrice ) {
-				current = prop.rawPrice - prop.discountPrice;
-				if ( ! isJetpack ) {
-					current = current * 12;
-				}
-			} else if ( prop.relatedMonthlyPlan ) {
-				current = prop.relatedMonthlyPlan.raw_price * 12 - prop.rawPrice;
-			}
-
-			if ( current > prev.amount ) {
-				return {
-					amount: current,
-					currencyCode: prop.currencyCode,
-				};
-			}
-
-			return prev;
-		},
-		{ amount: 0, currencyCode: '' }
-	);
-}
 
 export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 	( planMatches( currentPlan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) &&
@@ -685,12 +580,13 @@ export default connect(
 			plans,
 			onUpgradeClick,
 			isLandingPage,
-			site,
+			siteId,
 			displayJetpackPlans,
 		} = ownProps;
-		const selectedSiteId = site ? site.ID : null;
+		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-		const isJetpack = isJetpackSite( state, selectedSiteId );
+		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
+		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -706,7 +602,9 @@ export default connect(
 				const planObject = getPlan( state, planProductId );
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
-				const available = isInSignup ? true : canUpgradeToPlan( plan, site ) && canPurchase;
+				const available = isInSignup
+					? true
+					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
@@ -792,24 +690,14 @@ export default connect(
 			} )
 		);
 
-		const maxCredits = getMaxCredits( planProperties, isJetpack );
-		const showModifiedPricingDisplay =
-			! isInSignup &&
-			isPaid &&
-			!! maxCredits.amount &&
-			abtest( 'upgradePricingDisplayV3' ) === 'modified';
-
 		return {
 			canPurchase,
 			isJetpack,
-			maxCredits,
 			planProperties,
 			selectedSiteSlug,
-			showModifiedPricingDisplay,
-			sitePlan,
 			siteType,
 
-			isEligibleForSpringDiscount: isEligibleForSpringDiscount( state ),
+			activeDiscount: getActiveDiscount( state ),
 		};
 	},
 	{

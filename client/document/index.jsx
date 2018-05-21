@@ -12,10 +12,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import ExternalLink from 'components/external-link';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
+import { jsonStringifyForHtml } from '../../server/sanitize';
 
 class Document extends React.Component {
 	render() {
@@ -141,14 +142,14 @@ class Document extends React.Component {
 								</span>
 							) }
 							<span className={ `environment is-${ badge } is-env` }>{ badge }</span>
-							<a
+							<ExternalLink
 								className="bug-report"
 								href={ feedbackURL }
-								title="Report an issue"
 								target="_blank"
+								title="Report an issue"
 							>
 								<Gridicon icon="bug" size={ 18 } />
-							</a>
+							</ExternalLink>
 						</div>
 					) }
 

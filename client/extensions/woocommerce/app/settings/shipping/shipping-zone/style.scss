@@ -326,7 +326,11 @@
 	list-style: none;
 	padding: 3px 6px;
 	margin: 1px 0;
-	cursor: pointer;
+
+	label {
+		display: block;
+		cursor: pointer;
+	}
 
 	small {
 		margin-left: 4px;
@@ -365,5 +369,11 @@
 
 	&.is-country {
 		margin-left: 24px;
+	}
+}
+
+.shipping-zone__location-dialog-settings {
+	label {
+		display: block;
 	}
 }

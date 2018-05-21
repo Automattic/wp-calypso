@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isPluginUploadInProgress } from 'state/selectors';
+import isPluginUploadInProgress from 'state/selectors/is-plugin-upload-in-progress';
 
 const siteId = 77203074;
 

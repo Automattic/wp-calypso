@@ -11,11 +11,9 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { areAllRequiredPluginsActive } from 'woocommerce/state/selectors/plugins';
-import {
-	canCurrentUser,
-	isSiteAutomatedTransfer,
-	hasSitePendingAutomatedTransfer,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import Card from 'components/card';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';

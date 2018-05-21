@@ -15,7 +15,8 @@ import { map, take } from 'lodash';
 import Comment from 'my-sites/comments/comment';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { getSiteCommentParentDepth, getSiteCommentRepliesTree } from 'state/selectors';
+import getSiteCommentParentDepth from 'state/selectors/get-site-comment-parent-depth';
+import getSiteCommentRepliesTree from 'state/selectors/get-site-comment-replies-tree';
 
 export class CommentRepliesList extends Component {
 	constructor( props ) {

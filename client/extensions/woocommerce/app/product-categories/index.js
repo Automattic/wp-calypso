@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -44,7 +46,7 @@ class ProductCategories extends Component {
 
 	componentWillReceiveProps( newProps ) {
 		const { siteId } = this.props;
-		const newSiteId = ( newProps.siteId ) || null;
+		const newSiteId = newProps.siteId || null;
 		if ( siteId !== newSiteId ) {
 			this.props.fetchProductCategories( newSiteId, { page: 1 } );
 		}
@@ -54,8 +56,12 @@ class ProductCategories extends Component {
 		const { site } = this.props;
 		const { searchQuery } = this.state;
 
-		const requestedPages = searchQuery && searchQuery.length && this.state.requestedSearchPages || this.state.requestedPages;
-		const stateName = searchQuery && searchQuery.length && 'requestedSearchPages' || 'requestedPages';
+		let stateName = 'requestedPages';
+		if ( searchQuery && searchQuery.length ) {
+			// We're viewing search results, and should use the search value
+			stateName = 'requestedSearchPages';
+		}
+		const requestedPages = this.state[ stateName ];
 
 		pages.forEach( page => {
 			if ( ! includes( requestedPages, page ) ) {
@@ -90,10 +96,12 @@ class ProductCategories extends Component {
 
 		return (
 			<Main className={ classes } wideLayout>
-				<ActionHeader breadcrumbs={ [
-					<a href={ getLink( '/store/products/:site/', site ) }>{ productsLabel }</a>,
-					<span>{ categoriesLabel }</span>,
-				] }>
+				<ActionHeader
+					breadcrumbs={ [
+						<a href={ getLink( '/store/products/:site/', site ) }>{ productsLabel }</a>,
+						<span>{ categoriesLabel }</span>,
+					] }
+				>
 					<Button primary href={ getLink( '/store/products/category/:site/', site ) }>
 						{ translate( 'Add category' ) }
 					</Button>
@@ -113,10 +121,7 @@ class ProductCategories extends Component {
 						placeholder={ translate( 'Search categories…' ) }
 					/>
 				</SectionNav>
-				<ProductCategoriesList
-					searchQuery={ searchQuery }
-					requestPages={ this.requestPages }
-				/>
+				<ProductCategoriesList searchQuery={ searchQuery } requestPages={ this.requestPages } />
 			</Main>
 		);
 	}
@@ -132,10 +137,11 @@ function mapStateToProps( state ) {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	searchProductCategories: ( siteId, query ) => withAnalytics(
-		recordTrack( 'calypso_woocommerce_product_category_search', query ),
-		fetchProductCategories( siteId, query )( dispatch ),
-	),
+	searchProductCategories: ( siteId, query ) =>
+		withAnalytics(
+			recordTrack( 'calypso_woocommerce_product_category_search', query ),
+			fetchProductCategories( siteId, query )( dispatch )
+		),
 	fetchProductCategories: ( ...args ) => fetchProductCategories( ...args )( dispatch ),
 } );
 

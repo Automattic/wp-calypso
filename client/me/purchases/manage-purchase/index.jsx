@@ -3,13 +3,12 @@
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 /**
  * Internal Dependencies
@@ -38,19 +37,11 @@ import {
 	purchaseType,
 	cardProcessorSupportsUpdates,
 } from 'lib/purchases';
-import {
-	canEditPaymentDetails,
-	isDataLoading,
-	getEditCardDetailsPath,
-	getPurchase,
-	getSelectedSite,
-	goToList,
-	recordPageView,
-} from '../utils';
+import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
-import { isSiteAutomatedTransfer as isSiteAtomic } from 'state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
 import {
@@ -80,19 +71,19 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import { cancelPurchase, cancelPrivacyProtection, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import { addItems } from 'lib/upgrades/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-
-const user = userFactory();
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class ManagePurchase extends Component {
 	static propTypes = {
 		destinationType: PropTypes.string,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		selectedPurchase: PropTypes.object,
+		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		userId: PropTypes.number,
 	};
 
 	componentWillMount() {
@@ -100,8 +91,6 @@ class ManagePurchase extends Component {
 			page.redirect( purchasesRoot );
 			return;
 		}
-
-		recordPageView( 'manage', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -109,8 +98,6 @@ class ManagePurchase extends Component {
 			page.redirect( purchasesRoot );
 			return;
 		}
-
-		recordPageView( 'manage', this.props, nextProps );
 	}
 
 	isDataValid( props = this.props ) {
@@ -118,15 +105,15 @@ class ManagePurchase extends Component {
 			return true;
 		}
 
-		return Boolean( getPurchase( props ) );
+		return Boolean( props.purchase );
 	}
 
 	handleRenew = () => {
-		const purchase = getPurchase( this.props ),
-			renewItem = cartItems.getRenewalItemFromProduct( purchase, {
-				domain: purchase.meta,
-			} ),
-			renewItems = [ renewItem ];
+		const { purchase } = this.props;
+		const renewItem = cartItems.getRenewalItemFromProduct( purchase, {
+			domain: purchase.meta,
+		} );
+		const renewItems = [ renewItem ];
 
 		// Track the renew now submit
 		analytics.tracks.recordEvent( 'calypso_purchases_renew_now_click', {
@@ -153,8 +140,7 @@ class ManagePurchase extends Component {
 	};
 
 	renderRenewButton() {
-		const purchase = getPurchase( this.props );
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
 			return null;
@@ -164,7 +150,7 @@ class ManagePurchase extends Component {
 			! isRenewable( purchase ) ||
 			isExpired( purchase ) ||
 			isExpiring( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.selectedSite
 		) {
 			return null;
 		}
@@ -186,15 +172,14 @@ class ManagePurchase extends Component {
 	}
 
 	renderEditPaymentMethodNavItem() {
-		const purchase = getPurchase( this.props );
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
-		if ( ! getSelectedSite( this.props ) ) {
+		if ( ! this.props.selectedSite ) {
 			return null;
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = getEditCardDetailsPath( this.props.selectedSite, purchase );
+			const path = getEditCardDetailsPath( this.props.selectedSite.slug, purchase );
 			const renewing = isRenewing( purchase );
 
 			if (
@@ -214,11 +199,10 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPurchaseNavItem() {
-		const purchase = getPurchase( this.props ),
-			{ id } = purchase;
-		const { translate, isAtomicSite } = this.props;
+		const { isAtomicSite, purchase, translate } = this.props;
+		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || ! getSelectedSite( this.props ) ) {
+		if ( ! isCancelable( purchase ) || ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -275,14 +259,13 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPrivacyProtection() {
-		const purchase = getPurchase( this.props ),
-			{ id } = purchase;
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
+		const { id } = purchase;
 
 		if (
 			isExpired( purchase ) ||
 			! hasPrivacyProtection( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.selectedSite
 		) {
 			return null;
 		}
@@ -295,7 +278,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderPlanIcon() {
-		const purchase = getPurchase( this.props );
+		const { purchase } = this.props;
 		if ( isPlan( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
@@ -324,8 +307,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderPlanDescription() {
-		const purchase = getPurchase( this.props );
-		const { plan, selectedSite, theme, translate } = this.props;
+		const { plan, purchase, selectedSite, theme, translate } = this.props;
 
 		let description = purchaseType( purchase );
 		if ( isPlan( purchase ) ) {
@@ -353,7 +335,7 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					<ProductLink selectedPurchase={ purchase } selectedSite={ selectedSite } />
+					<ProductLink purchase={ purchase } selectedSite={ selectedSite } />
 				</span>
 			</div>
 		);
@@ -390,8 +372,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { selectedSiteId, selectedSite, selectedPurchase } = this.props;
-		const purchase = getPurchase( this.props );
+		const { purchase, selectedSiteId, selectedSite } = this.props;
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),
@@ -415,7 +396,7 @@ class ManagePurchase extends Component {
 					</header>
 					{ this.renderPlanDescription() }
 
-					<PurchaseMeta purchaseId={ selectedPurchase.id } />
+					<PurchaseMeta purchaseId={ purchase.id } />
 
 					{ this.renderRenewButton() }
 				</Card>
@@ -430,7 +411,7 @@ class ManagePurchase extends Component {
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
 					selectedSite={ selectedSite }
-					selectedPurchase={ selectedPurchase }
+					purchase={ purchase }
 				/>
 			</div>
 		);
@@ -440,61 +421,62 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { selectedSite, selectedSiteId, selectedPurchase, isPurchaseTheme } = this.props;
+		const { selectedSite, selectedSiteId, purchase, isPurchaseTheme } = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
-		if (
-			! isDataLoading( this.props ) &&
-			selectedSite &&
-			canEditPaymentDetails( selectedPurchase )
-		) {
-			editCardDetailsPath = getEditCardDetailsPath( selectedSite, selectedPurchase );
+		if ( ! isDataLoading( this.props ) && selectedSite && canEditPaymentDetails( purchase ) ) {
+			editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
 		}
 
 		return (
-			<span>
-				<QueryUserPurchases userId={ user.get().ID } />
+			<Fragment>
+				<TrackPurchasePageView
+					eventName="calypso_manage_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
+				<PageViewTracker
+					path="/me/purchases/:site/:purchaseId"
+					title="Purchases > Manage Purchase"
+				/>
+				<QueryUserPurchases userId={ this.props.userId } />
 				{ isPurchaseTheme && (
-					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ selectedPurchase.meta } />
+					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ purchase.meta } />
 				) }
 				<Main className={ classes }>
-					<PageViewTracker
-						path="/me/purchases/:site/:purchaseId"
-						title="Purchases > Manage Purchase"
-					/>
-					<HeaderCake onClick={ goToList }>{ titles.managePurchase }</HeaderCake>
+					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
 					{
 						<PurchaseNotice
 							isDataLoading={ isDataLoading( this.props ) }
 							handleRenew={ this.handleRenew }
 							selectedSite={ selectedSite }
-							selectedPurchase={ selectedPurchase }
+							purchase={ purchase }
 							editCardDetailsPath={ editCardDetailsPath }
 						/>
 					}
 					{ this.renderPurchaseDetail() }
 				</Main>
-			</span>
+			</Fragment>
 		);
 	}
 }
 
 export default connect( ( state, props ) => {
-	const selectedPurchase = getByPurchaseId( state, props.purchaseId );
+	const purchase = getByPurchaseId( state, props.purchaseId );
 	const selectedSiteId = getSelectedSiteId( state );
-	const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
-	const isPurchaseTheme = selectedPurchase && isTheme( selectedPurchase );
-	const selectedSite = getSelectedSiteSelector( state );
+	const isPurchasePlan = purchase && isPlan( purchase );
+	const isPurchaseTheme = purchase && isTheme( purchase );
+	const selectedSite = getSelectedSite( state );
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase,
+		purchase,
 		selectedSiteId,
 		selectedSite,
-		plan: isPurchasePlan && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
+		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
 		isPurchaseTheme,
-		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, selectedPurchase.meta ),
+		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, purchase.meta ),
 		isAtomicSite: selectedSite && isSiteAtomic( state, selectedSiteId ),
+		userId: getCurrentUserId( state ),
 	};
 } )( localize( ManagePurchase ) );

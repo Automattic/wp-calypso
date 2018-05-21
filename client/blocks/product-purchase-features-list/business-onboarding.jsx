@@ -17,7 +17,7 @@ export default localize( ( { translate, link, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon="help"
+				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-concierge.svg" /> }
 				title={ translate( 'Concierge orientation' ) }
 				description={ translate(
 					'Schedule a one-on-one orientation session to set up your site ' +

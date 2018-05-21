@@ -15,12 +15,14 @@ import Collection from 'devdocs/design/search-collection';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 import { isEnabled } from 'config';
 
 /**
  * Docs examples
  */
+import AllSites from 'blocks/all-sites/docs/example';
 import CreditCardForm from 'blocks/credit-card-form/docs/example';
 import CalendarButton from 'blocks/calendar-button/docs/example';
 import CalendarPopover from 'blocks/calendar-popover/docs/example';
@@ -29,11 +31,9 @@ import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/docs/example';
 import FollowButton from 'blocks/follow-button/docs/example';
-import FollowMenu from 'blocks/follow-menu/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
-import AllSites from 'my-sites/all-sites/docs/example';
 import Site from 'blocks/site/docs/example';
 import SitePlaceholder from 'blocks/site/docs/placeholder-example';
 import SitesDropdown from 'components/sites-dropdown/docs/example';
@@ -78,7 +78,6 @@ import ReaderImportButton from 'blocks/reader-import-button/docs/example';
 import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
 import ReaderShare from 'blocks/reader-share/docs/example';
 import Login from 'blocks/login/docs/example';
-import ReaderEmailSettings from 'blocks/reader-email-settings/docs/example';
 import UploadImage from 'blocks/upload-image/docs/example';
 import ConversationCommentList from 'blocks/conversations/docs/example';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog/docs/example';
@@ -108,23 +107,28 @@ export default class AppComponents extends React.Component {
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Blocks" />
+
 				{ this.props.component ? (
 					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 						{ slugToCamelCase( this.props.component ) }
 					</HeaderCake>
 				) : (
-					<SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ this.state.filter }
-						placeholder="Search blocks…"
-						analyticsGroup="Docs"
-					/>
+					<div>
+						<ReadmeViewer readmeFilePath="/client/devdocs/blocks/README.md" />
+						<SearchCard
+							onSearch={ this.onSearch }
+							initialValue={ this.state.filter }
+							placeholder="Search blocks…"
+							analyticsGroup="Docs"
+						/>
+					</div>
 				) }
 				<Collection
 					component={ this.props.component }
 					filter={ this.state.filter }
 					section="blocks"
 				>
+					<AllSites readmeFilePath="all-sites" />
 					<AuthorSelector readmeFilePath="author-selector" />
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
@@ -133,7 +137,6 @@ export default class AppComponents extends React.Component {
 					<DisconnectJetpackDialog />
 					<CreditCardForm readmeFilePath="credit-card-form" />
 					<FollowButton readmeFilePath="follow-button" />
-					<FollowMenu readmeFilePath="follow-menu" />
 					<HappinessSupport />
 					<ImageEditor readmeFilePath="image-editor" />
 					<VideoEditor readmeFilePath="video-editor" />
@@ -143,7 +146,6 @@ export default class AppComponents extends React.Component {
 					<PlanStorage readmeFilePath="plan-storage" />
 					<PostSchedule />
 					<PostSelector />
-					<AllSites />
 					<Site readmeFilePath="site" />
 					<SitePlaceholder />
 					<SitesDropdown />
@@ -182,14 +184,15 @@ export default class AppComponents extends React.Component {
 					<SimplePaymentsDialog />
 					<SubscriptionLengthPicker />
 					<ReaderShare readmeFilePath="reader-share" />
-					<ReaderEmailSettings readmeFilePath="reader-email-settings" />
 					<UploadImage readmeFilePath="upload-image" />
 					<ConversationCommentList />
 					<PostComment />
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
 					<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					{ isEnabled( 'reader/user-mention-suggestions' ) && <UserMentions /> }
+					{ isEnabled( 'reader/user-mention-suggestions' ) && (
+						<UserMentions readmeFilePath="user-mentions" />
+					) }
 				</Collection>
 			</Main>
 		);

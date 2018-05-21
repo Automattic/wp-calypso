@@ -23,7 +23,7 @@ import FeaturedImageDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import Button from 'components/button';
 import RemoveButton from 'components/remove-button';
-import { getMediaItem } from 'state/selectors';
+import getMediaItem from 'state/selectors/get-media-item';
 import { getFeaturedImageId } from 'lib/posts/utils';
 import QueryMedia from 'components/data/query-media';
 import { localize } from 'i18n-calypso';

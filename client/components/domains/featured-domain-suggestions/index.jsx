@@ -18,6 +18,7 @@ import DomainRegistrationSuggestion from 'components/domains/domain-registration
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		isSignupStep: PropTypes.bool,
 		primarySuggestion: PropTypes.object,
 		secondarySuggestion: PropTypes.object,
 		showPlaceholders: PropTypes.bool,
@@ -40,7 +41,9 @@ export class FeaturedDomainSuggestions extends Component {
 		const { domain_name: primaryDomainName = '' } = primarySuggestion;
 		const { domain_name: secondaryDomainName = '' } = secondarySuggestion;
 		const longestDomainName =
-			primaryDomainName.length >= secondaryDomainName ? primaryDomainName : secondaryDomainName;
+			primaryDomainName.length >= secondaryDomainName.length
+				? primaryDomainName
+				: secondaryDomainName;
 		return longestDomainName.length;
 	}
 
@@ -66,11 +69,12 @@ export class FeaturedDomainSuggestions extends Component {
 			return `${ classNamePrefix }-10em`;
 		}
 
-		return 'featured-domain-suggestions--title-cases-overflow';
+		return 'featured-domain-suggestions--title-causes-overflow';
 	}
 
 	getClassNames() {
 		return classNames( 'featured-domain-suggestions', this.getTextSizeClass(), {
+			'featured-domain-suggestions__is-domain-management': ! this.props.isSignupStep,
 			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
 		} );
 	}

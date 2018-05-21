@@ -17,7 +17,6 @@ import AccordionSection from 'components/accordion/section';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
-import PostMetadata from 'lib/post-metadata';
 import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryPostTypes from 'components/data/query-post-types';
@@ -33,7 +32,7 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import config from 'config';
-import { areSitePermalinksEditable } from 'state/selectors';
+import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
@@ -80,7 +79,6 @@ class EditorDrawer extends Component {
 		post: PropTypes.object,
 		canJetpackUseTaxonomies: PropTypes.bool,
 		typeObject: PropTypes.object,
-		isNew: PropTypes.bool,
 		type: PropTypes.string,
 		setPostDate: PropTypes.func,
 		onSave: PropTypes.func,
@@ -142,13 +140,7 @@ class EditorDrawer extends Component {
 	}
 
 	renderSharing() {
-		return (
-			<AsyncLoad
-				require="post-editor/editor-sharing/accordion"
-				site={ this.props.site }
-				post={ this.props.post }
-			/>
-		);
+		return <AsyncLoad require="post-editor/editor-sharing/accordion" />;
 	}
 
 	renderFeaturedImage() {
@@ -195,10 +187,7 @@ class EditorDrawer extends Component {
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel labelText={ translate( 'Location' ) } />
-				<AsyncLoad
-					require="post-editor/editor-location"
-					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
-				/>
+				<AsyncLoad require="post-editor/editor-location" />
 			</AccordionSection>
 		);
 	}
@@ -210,7 +199,7 @@ class EditorDrawer extends Component {
 
 		return (
 			<AccordionSection>
-				<AsyncLoad require="post-editor/editor-discussion" isNew={ this.props.isNew } />
+				<AsyncLoad require="post-editor/editor-discussion" />
 			</AccordionSection>
 		);
 	}
@@ -245,12 +234,7 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return (
-			<AsyncLoad
-				require="post-editor/editor-seo-accordion"
-				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
-			/>
-		);
+		return <AsyncLoad require="post-editor/editor-seo-accordion" />;
 	}
 
 	renderCopyPost() {
@@ -298,8 +282,6 @@ class EditorDrawer extends Component {
 	}
 
 	renderStatus() {
-		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
-		const postDate = get( this.props.post, 'date', null );
 		const postStatus = get( this.props.post, 'status', null );
 		const { translate, type } = this.props;
 
@@ -307,7 +289,6 @@ class EditorDrawer extends Component {
 			<Accordion title={ translate( 'Status' ) } e2eTitle="status">
 				<EditPostStatus
 					savedPost={ this.props.savedPost }
-					postDate={ postDate }
 					onSave={ this.props.onSave }
 					onTrashingPost={ this.props.onTrashingPost }
 					onPrivatePublish={ this.props.onPrivatePublish }

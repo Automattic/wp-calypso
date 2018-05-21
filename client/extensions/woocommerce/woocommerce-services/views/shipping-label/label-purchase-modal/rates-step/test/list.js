@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -22,10 +24,12 @@ const allPackages = {
 		outer_dimensions: '8.63 x 5.38 x 1.63',
 		id: 'small_flat_box',
 		name: 'Small Flat Rate Box',
-		dimensions: [ {
-			inner: '8.63 x 5.38: x 1.63',
-			outer: '8.63 x 5.38 x 1.63',
-		} ],
+		dimensions: [
+			{
+				inner: '8.63 x 5.38: x 1.63',
+				outer: '8.63 x 5.38 x 1.63',
+			},
+		],
 		box_weight: 0,
 		max_weight: 70,
 		is_letter: false,
@@ -37,10 +41,12 @@ const allPackages = {
 		outer_dimensions: '11.25 x 8.75 x 6',
 		id: 'medium_flat_box_top',
 		name: 'Medium Flat Rate Box 1, Top Loading',
-		dimensions: [ {
-			inner: '11 x 8.5 x 5.5',
-			outer: '11.25 x 8.75 x 6',
-		} ],
+		dimensions: [
+			{
+				inner: '11 x 8.5 x 5.5',
+				outer: '11.25 x 8.75 x 6',
+			},
+		],
 		box_weight: 0,
 		max_weight: 70,
 		is_letter: false,
@@ -51,13 +57,15 @@ const allPackages = {
 
 const package_1_rate = {
 	shipment_id: 'abcdef',
-	rates: [ {
-		title: 'USPS - Priority Mail translated',
-		rate_id: 'rate_123',
-		carrier_id: 'usps',
-		rate: 2.87,
-		service_id: 'priority',
-	} ],
+	rates: [
+		{
+			title: 'USPS - Priority Mail translated',
+			rate_id: 'rate_123',
+			carrier_id: 'usps',
+			rate: 2.87,
+			service_id: 'priority',
+		},
+	],
 };
 
 const package_1_error = {
@@ -66,13 +74,15 @@ const package_1_error = {
 
 const package_2_rate = {
 	shipment_id: 'abcdef',
-	rates: [ {
-		title: 'USPS - Priority Mail translated',
-		rate_id: 'rate_123',
-		carrier_id: 'usps',
-		rate: 2.87,
-		service_id: 'priority',
-	} ],
+	rates: [
+		{
+			title: 'USPS - Priority Mail translated',
+			rate_id: 'rate_123',
+			carrier_id: 'usps',
+			rate: 2.87,
+			service_id: 'priority',
+		},
+	],
 };
 
 const package_2_error = {
@@ -87,16 +97,18 @@ const selectedPackage_1 = {
 		width: 2,
 		height: 3,
 		weight: 1,
-		items: [ {
-			product_id: 1,
-			length: 1,
-			width: 2,
-			height: 3,
-			weight: 1,
-			quantity: 1,
-			name: '#1 - Package 1 Name',
-			url: 'http://example.com/wp-admin/post.php?post=1&action=edit',
-		} ],
+		items: [
+			{
+				product_id: 1,
+				length: 1,
+				width: 2,
+				height: 3,
+				weight: 1,
+				quantity: 1,
+				name: '#1 - Package 1 Name',
+				url: 'http://example.com/wp-admin/post.php?post=1&action=edit',
+			},
+		],
 		service_id: 'pri',
 	},
 };
@@ -109,16 +121,18 @@ const selectedPackage_2 = {
 		width: 2,
 		height: 1,
 		weight: 1,
-		items: [ {
-			product_id: 2,
-			length: 2,
-			width: 2,
-			height: 1,
-			weight: 1,
-			quantity: 1,
-			name: '#2 - Package 2 Name',
-			url: 'http://example.com/wp-admin/post.php?post=2&action=edit',
-		} ],
+		items: [
+			{
+				product_id: 2,
+				length: 2,
+				width: 2,
+				height: 1,
+				weight: 1,
+				quantity: 1,
+				name: '#2 - Package 2 Name',
+				url: 'http://example.com/wp-admin/post.php?post=2&action=edit',
+			},
+		],
 		service_id: 'pri',
 	},
 };
@@ -149,57 +163,33 @@ const props = {
 	errors: {},
 };
 
-const singlePackageProps = Object.assign(
-	{},
-	props,
-	{
-		selectedRates: {
-			weight_0_individual: '',
-		},
-		selectedPackages: selectedPackage_1,
-	}
-);
-
-const multiPackageProps = Object.assign(
-	{},
-	props,
-	{
-		selectedRates: {
-			weight_0_individual: '',
-			weight_1_individual: '',
-		},
-		selectedPackages: Object.assign(
-			{},
-			selectedPackage_1,
-			selectedPackage_2
-		),
-		availableRates: {
-			weight_0_individual: Object.assign( {}, package_1_rate, package_1_error ),
-			weight_1_individual: Object.assign( {}, package_2_rate, package_2_error ),
-		},
-		errors: {
-			server: Object.assign(
-				{},
-				server_error_1,
-				server_error_2
-			),
-			form: Object.assign(
-				{},
-				form_error_1,
-				form_error_2,
-			),
-		},
+const singlePackageProps = Object.assign( {}, props, {
+	selectedRates: {
+		weight_0_individual: '',
 	},
-);
+	selectedPackages: selectedPackage_1,
+} );
+
+const multiPackageProps = Object.assign( {}, props, {
+	selectedRates: {
+		weight_0_individual: '',
+		weight_1_individual: '',
+	},
+	selectedPackages: Object.assign( {}, selectedPackage_1, selectedPackage_2 ),
+	availableRates: {
+		weight_0_individual: Object.assign( {}, package_1_rate, package_1_error ),
+		weight_1_individual: Object.assign( {}, package_2_rate, package_2_error ),
+	},
+	errors: {
+		server: Object.assign( {}, server_error_1, server_error_2 ),
+		form: Object.assign( {}, form_error_1, form_error_2 ),
+	},
+} );
 
 describe( '<ShippingRates />', () => {
 	it( 'handles empty available rates', () => {
 		const wrapper = shallow(
-			<ShippingRates
-				translate={ identity }
-				{ ...singlePackageProps }
-				availableRates={ {} }
-			/>
+			<ShippingRates translate={ identity } { ...singlePackageProps } availableRates={ {} } />
 		);
 		expect( wrapper ).to.have.length( 1 );
 	} );
@@ -346,7 +336,9 @@ describe( '<ShippingRates />', () => {
 				expect( wrapper.find( FieldError ) ).to.have.length( 2 );
 			} );
 			it( 'should display extra heading for package title', () => {
-				const packageNames = wrapper.find( '.rates-step__package-heading' ).map( node => node.text() );
+				const packageNames = wrapper
+					.find( '.rates-step__package-heading' )
+					.map( node => node.text() );
 				expect( packageNames ).to.have.length( 2 );
 				expect( packageNames ).to.eql( [ '#1 - Package 1 Name', '#2 - Package 2 Name' ] );
 			} );
@@ -355,12 +347,7 @@ describe( '<ShippingRates />', () => {
 		describe( 'Both rates and errors for all packages', () => {
 			// this case is not expected to come from the server
 			// but the client should be able to handle it without error just in case
-			const wrapper = shallow(
-				<ShippingRates
-					translate={ identity }
-					{ ...multiPackageProps }
-				/>
-			);
+			const wrapper = shallow( <ShippingRates translate={ identity } { ...multiPackageProps } /> );
 			it( 'should display dropdowns for each package', () => {
 				expect( wrapper.find( Dropdown ) ).to.have.length( 2 );
 			} );

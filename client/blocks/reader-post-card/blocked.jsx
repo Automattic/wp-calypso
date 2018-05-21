@@ -32,18 +32,20 @@ class PostBlocked extends React.Component {
 	render() {
 		const { post, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Card className="reader-post-card is-blocked">
 				<p className="reader-post-card__blocked-description">
 					{ translate( 'You have blocked %(site_name)s.', {
 						args: { site_name: post.site_name },
 					} ) }
-					<a onClick={ this.unblock } className="reader-post-card__blocked-undo">
+					<button onClick={ this.unblock } className="reader-post-card__blocked-undo">
 						{ translate( 'Undo?' ) }
-					</a>
+					</button>
 				</p>
 			</Card>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

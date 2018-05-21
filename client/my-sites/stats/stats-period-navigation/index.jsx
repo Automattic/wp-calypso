@@ -17,7 +17,7 @@ import qs from 'qs';
  * Internal dependencies
  */
 import { recordGoogleEvent as recordGoogleEventAction } from 'state/analytics/actions';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 class StatsPeriodNavigation extends PureComponent {
 	static propTypes = {

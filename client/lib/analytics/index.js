@@ -16,7 +16,7 @@ import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } fr
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-import { doNotTrack, isPiiUrl, shouldReportOmitBlogId } from 'lib/analytics/utils';
+import { doNotTrack, isPiiUrl, shouldReportOmitBlogId, hashPii } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import {
 	retarget,
@@ -34,6 +34,12 @@ const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 let _superProps, _user, _selectedSite, _siteCount, _dispatch, _loadTracksError;
+
+/**
+ * Tracks uses a bunch of special query params that should not be used as property name
+ * See internal Nosara repo?
+ */
+const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
 
 // Load tracking scripts
 window._tkq = window._tkq || [];
@@ -267,7 +273,7 @@ const analytics = {
 
 			eventProperties = eventProperties || {};
 
-			if ( process.env.NODE_ENV !== 'production' ) {
+			if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 				if ( ! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) ) {
 					//eslint-disable-next-line no-console
 					console.error(
@@ -278,21 +284,31 @@ const analytics = {
 				}
 
 				for ( const key in eventProperties ) {
-					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
+					if ( isObjectLike( eventProperties[ key ] ) ) {
 						const errorMessage =
 							`Tracks: Unable to record event "${ eventName }" because nested ` +
 							`properties are not supported by Tracks. Check '${ key }' on`;
 						console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
-
 						return;
 					}
 
 					if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
 						//eslint-disable-next-line no-console
 						console.error(
-							'Tracks: Event property `%s` will be ignored because it does not match /^[a-z_][a-z0-9_]*$/. ' +
+							'Tracks: Event `%s` will be rejected because property name `%s` does not match /^[a-z_][a-z0-9_]*$/. ' +
 								'Please use a compliant property name.',
+							eventName,
 							key
+						);
+					}
+
+					if ( TRACKS_SPECIAL_PROPS_NAMES.indexOf( key ) !== -1 ) {
+						//eslint-disable-next-line no-console
+						console.error(
+							"Tracks: Event property `%s` will be overwritten because it uses one of Tracks' internal prop name: %s. " +
+								'Please use another property name.',
+							key,
+							TRACKS_SPECIAL_PROPS_NAMES.join( ', ' )
 						);
 					}
 				}
@@ -417,11 +433,10 @@ const analytics = {
 			const parameters = {};
 			if ( ! analytics.ga.initialized ) {
 				if ( _user && _user.get() ) {
-					parameters.userId = 'u-' + _user.get().ID;
+					parameters.userId = hashPii( _user.get().ID );
 				}
 
 				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
-
 				analytics.ga.initialized = true;
 			}
 		},

@@ -23,11 +23,9 @@ import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import untrailingslashit from 'lib/route/untrailingslashit';
-import {
-	getJetpackModule,
-	isActivatingJetpackModule,
-	isJetpackModuleActive,
-} from 'state/selectors';
+import getJetpackModule from 'state/selectors/get-jetpack-module';
+import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isBusiness, isEnterprise, isVipPlan, isJetpackBusiness } from 'lib/products-values';
 

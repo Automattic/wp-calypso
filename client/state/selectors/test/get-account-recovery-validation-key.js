@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryValidationKey } from 'state/selectors';
+import getAccountRecoveryValidationKey from 'state/selectors/get-account-recovery-validation-key';
 
 describe( 'getAccountRecoveryValidationKey()', () => {
 	test( 'should return the key field under the account recovery state tree.', () => {

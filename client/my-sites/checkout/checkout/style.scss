@@ -318,7 +318,6 @@
 		.payment-box-section.selected:not( .no-stored-cards ) {
 			.payment-box-section-inner {
 				border-left: 3px solid $alert-green;
-				padding-top: 15px;
 			}
 			.checkout__new-card-fields {
 				background-color: #fafdf6;
@@ -348,6 +347,7 @@
 		.payment-box-section.selected .checkout__new-card-fields {
 			max-height: 100%;
 			margin-bottom: 0;
+			padding-top: 15px;
 		}
 
 		.checkout__new-card-toggle {
@@ -863,6 +863,11 @@
 		margin-right: 5px;
 	}
 
+	.checkout__brazil-tef {
+		width: 100px;
+		margin-right: 4px;
+	}
+
 	.select-dropdown__item-text {
 		top: 4px;
 		font-weight: bold;
@@ -927,6 +932,9 @@
 	}
 	select {
 		width: 100%;
+	}
+	&.checkout__ebanx-mx .checkout__form-state-field {
+		display: none;
 	}
 }
 

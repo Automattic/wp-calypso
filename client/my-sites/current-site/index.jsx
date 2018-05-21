@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import AllSites from 'my-sites/all-sites';
+import AllSites from 'blocks/all-sites';
 import AsyncLoad from 'components/async-load';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
@@ -22,7 +22,8 @@ import SiteNotice from './notice';
 import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSectionName, getSelectedSite } from 'state/ui/selectors';
-import { getSelectedOrAllSites, getVisibleSites } from 'state/selectors';
+import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
+import getVisibleSites from 'state/selectors/get-visible-sites';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';

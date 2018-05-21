@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -52,20 +54,20 @@ Object.freeze( EMPTY_ERROR );
  * 	}
  * }
  */
-const parseErrorsList = ( errantFields ) => {
+const parseErrorsList = errantFields => {
 	if ( ! isObject( errantFields ) ) {
 		return {};
 	}
 
 	const parsedErrors = {};
-	Object.keys( errantFields ).forEach( ( fieldName ) => {
+	Object.keys( errantFields ).forEach( fieldName => {
 		const errorPath = ObjectPath.parse( fieldName );
 		let newName = errorPath;
 		if ( 'data' === errorPath[ 0 ] ) {
 			newName = errorPath.slice( 1 );
 		}
 		let currentNode = parsedErrors;
-		newName.forEach( ( pathChunk ) => {
+		newName.forEach( pathChunk => {
 			if ( ! currentNode[ pathChunk ] ) {
 				currentNode[ pathChunk ] = {};
 			}
@@ -76,7 +78,7 @@ const parseErrorsList = ( errantFields ) => {
 	return parsedErrors;
 };
 
-const getFirstFieldPathNode = ( fieldPath ) => {
+const getFirstFieldPathNode = fieldPath => {
 	const fieldPathPieces = ObjectPath.parse( fieldPath );
 
 	if ( 'data' === fieldPathPieces[ 0 ] ) {
@@ -93,7 +95,7 @@ const getRawFormErrors = ( schema, data, fieldsToCheck ) => {
 	const rawErrors = {};
 
 	if ( ! success && validate.errors && validate.errors.length ) {
-		validate.errors.forEach( ( error ) => {
+		validate.errors.forEach( error => {
 			// Ignore validation errors for fields that haven't been interacted with
 			const errorField = getFirstFieldPathNode( error.field );
 
@@ -119,15 +121,16 @@ export default createSelector(
 		}
 		const method = getCurrentlyOpenShippingZoneMethod( state, siteId );
 		const schema = getShippingMethodSchema( state, method.methodType, siteId ).formSchema;
-		const editedFields = omit( zone.methods.currentlyEditingChanges, [ 'id', 'methodType', 'enabled' ] );
+		const editedFields = omit( zone.methods.currentlyEditingChanges, [
+			'id',
+			'methodType',
+			'enabled',
+		] );
 		const fieldsToCheck = mapValues( editedFields, () => true );
 		const rawErrors = getRawFormErrors( schema, method, fieldsToCheck );
 		return parseErrorsList( rawErrors );
 	},
 	( state, siteId = getSelectedSiteId( state ) ) => {
-		return [
-			siteId,
-			getCurrentlyEditingShippingZone( state, siteId ),
-		];
+		return [ siteId, getCurrentlyEditingShippingZone( state, siteId ) ];
 	}
 );

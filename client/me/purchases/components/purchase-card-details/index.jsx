@@ -11,14 +11,13 @@ import { curry } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import { createCardToken } from 'lib/store-transactions';
-import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
+import { isDataLoading } from 'me/purchases/utils';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 
 class PurchaseCardDetails extends Component {
 	constructor( props ) {
 		super( props );
 		this.createCardToken = curry( createCardToken )( 'card_update' );
-		this.goToManagePurchase = this.goToManagePurchase.bind( this );
 		this.recordFormSubmitEvent = this.recordFormSubmitEvent.bind( this );
 		this.successCallback = this.successCallback.bind( this );
 	}
@@ -34,30 +33,25 @@ class PurchaseCardDetails extends Component {
 	}
 
 	isDataValid( props = this.props ) {
-		const purchase = getPurchase( props ),
-			{ selectedSite } = props;
+		const { purchase, selectedSite } = props;
 
 		return purchase && selectedSite;
 	}
 
 	getApiParams() {
 		return {
-			purchaseId: getPurchase( this.props ).id,
+			purchaseId: this.props.purchase.id,
 		};
-	}
-
-	goToManagePurchase() {
-		goToManagePurchase( this.props );
 	}
 
 	recordFormSubmitEvent() {
 		analytics.tracks.recordEvent( 'calypso_purchases_credit_card_form_submit', {
-			product_slug: getPurchase( this.props ).productSlug,
+			product_slug: this.props.purchase.productSlug,
 		} );
 	}
 
 	successCallback() {
-		const { id } = getPurchase( this.props );
+		const { id } = this.props.purchase;
 
 		this.props.clearPurchases();
 

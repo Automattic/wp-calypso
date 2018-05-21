@@ -33,7 +33,6 @@ export default class GoogleIcon extends PureComponent {
 				{ ...props }
 			>
 				<g fill="none" fillRule="evenodd">
-					{ /* eslint-disable max-len */ }
 					<path
 						d="M19.6 10.227c0-.709-.064-1.39-.182-2.045H10v3.868h5.382a4.6 4.6 0 0 1-1.996 3.018v2.51h3.232c1.891-1.742 2.982-4.305 2.982-7.35z"
 						fill="#4285F4"
@@ -50,7 +49,6 @@ export default class GoogleIcon extends PureComponent {
 						d="M10 3.977c1.468 0 2.786.505 3.823 1.496l2.868-2.868C14.959.99 12.695 0 10 0 6.09 0 2.71 2.24 1.064 5.51l3.34 2.59C5.192 5.736 7.396 3.977 10 3.977z"
 						fill="#EA4335"
 					/>
-					{ /* eslint-enable max-len */ }
 				</g>
 			</svg>
 		);

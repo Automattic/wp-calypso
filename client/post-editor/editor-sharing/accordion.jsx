@@ -25,17 +25,18 @@ import QueryPublicizeConnections from 'components/data/query-publicize-connectio
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
+import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
+import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
+import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
+import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class EditorSharingAccordion extends React.Component {
 	static propTypes = {
-		site: PropTypes.object,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 		post: PropTypes.object,
-		isNew: PropTypes.bool,
 		connections: PropTypes.array,
 		hasBrokenConnection: PropTypes.bool,
 		isPublicizeEnabled: PropTypes.bool,
@@ -43,9 +44,9 @@ class EditorSharingAccordion extends React.Component {
 		isLikesActive: PropTypes.bool,
 	};
 
-	getSubtitle = () => {
-		const { isPublicizeEnabled, post, connections } = this.props;
-		if ( ! isPublicizeEnabled || ! post || ! connections ) {
+	getSubtitle() {
+		const { post, connections } = this.props;
+		if ( ! this.props.isPublicizeEnabled || ! post || ! connections ) {
 			return;
 		}
 
@@ -63,9 +64,9 @@ class EditorSharingAccordion extends React.Component {
 			},
 			[]
 		).join( ', ' );
-	};
+	}
 
-	renderShortUrl = () => {
+	renderShortUrl() {
 		const classes = classNames( 'editor-sharing__shortlink', {
 			'is-standalone': this.hideSharing(),
 		} );
@@ -89,12 +90,13 @@ class EditorSharingAccordion extends React.Component {
 				/>
 			</div>
 		);
-	};
+	}
 
-	hideSharing = () => {
-		const { isSharingActive, isLikesActive, isPublicizeEnabled } = this.props;
-		return ! isSharingActive && ! isLikesActive && ! isPublicizeEnabled;
-	};
+	hideSharing() {
+		return (
+			! this.props.isSharingActive && ! this.props.isLikesActive && ! this.props.isPublicizeEnabled
+		);
+	}
 
 	render() {
 		const hideSharing = this.hideSharing();
@@ -115,7 +117,7 @@ class EditorSharingAccordion extends React.Component {
 				text: this.props.translate( 'A broken connection requires repair', {
 					comment: 'Publicize connection deauthorized, needs user action to fix',
 				} ),
-				url: `/sharing/${ this.props.site.slug }`,
+				url: `/sharing/${ this.props.siteSlug }`,
 				position: isMobile() ? 'top left' : 'top',
 				onClick: this.props.onStatusClick,
 			};
@@ -129,9 +131,9 @@ class EditorSharingAccordion extends React.Component {
 				className={ classes }
 				e2eTitle="sharing"
 			>
-				{ this.props.site && <QueryPublicizeConnections siteId={ this.props.site.ID } /> }
+				{ this.props.siteId && <QueryPublicizeConnections siteId={ this.props.siteId } /> }
 				<AccordionSection>
-					{ ! hideSharing && <Sharing site={ this.props.site } post={ this.props.post } /> }
+					{ ! hideSharing && <Sharing /> }
 					{ this.renderShortUrl() }
 				</AccordionSection>
 			</Accordion>
@@ -144,11 +146,15 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 		const isSharingActive = false !== isJetpackModuleActive( state, siteId, 'sharedaddy' );
 		const isLikesActive = false !== isJetpackModuleActive( state, siteId, 'likes' );
 
 		return {
+			siteId,
+			siteSlug: getSiteSlug( state, siteId ),
+			post,
 			connections: getSiteUserConnections( state, siteId, userId ),
 			hasBrokenConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 			isSharingActive,

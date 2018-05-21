@@ -3,8 +3,8 @@ export default {
 	multiyearSubscriptions: {
 		datestamp: '20180417',
 		variations: {
-			show: 10,
-			hide: 90,
+			show: 50,
+			hide: 50,
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
@@ -83,14 +83,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	upgradePricingDisplayV3: {
-		datestamp: '20180402',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-	},
 	mobilePlansTablesOnSignup: {
 		datestamp: '20180330',
 		variations: {
@@ -100,12 +92,12 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
-	showMoneyBackGuarantee: {
-		datestamp: '20180409',
+	jetpackSignupGoogleTop: {
+		datestamp: '20180427',
 		variations: {
-			no: 1,
-			yes: 1,
+			original: 50,
+			top: 50,
 		},
-		defaultVariation: 'no',
+		defaultVariation: 'original',
 	},
 };

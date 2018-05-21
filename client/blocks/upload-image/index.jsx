@@ -23,7 +23,7 @@ import {
 	ERROR_UPLOADING_IMAGE,
 } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { getMediaItem } from 'state/selectors';
+import getMediaItem from 'state/selectors/get-media-item';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import Dialog from 'components/dialog';

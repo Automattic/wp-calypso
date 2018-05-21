@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { hasLoadedSites } from 'state/selectors';
+import hasLoadedSites from 'state/selectors/has-loaded-sites';
 
 describe( 'hasLoadedSites()', () => {
 	it( 'should return false if site items are null', () => {

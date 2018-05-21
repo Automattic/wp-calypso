@@ -16,6 +16,7 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { purchasesRoot } from 'me/purchases/paths';
+import { getSupportLocale } from 'lib/i18n-utils';
 
 const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	const helpLink =
@@ -52,9 +53,17 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 				answer={ translate(
 					'Yes! With the WordPress.com Business plan you can search for and install external plugins.' +
 						' All plans already come with a custom set of plugins tailored just for them.' +
-						' {{a}}Check out all included plugins{{/a}}.',
+						' {{a}}Find out more about plugins{{/a}}.',
 					{
-						components: { a: <a href={ `/plugins/${ siteSlug }` } /> },
+						components: {
+							a: (
+								<a
+									href={ 'https://' + getSupportLocale() + '.support.wordpress.com/plugins/' }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
 					}
 				) }
 			/>

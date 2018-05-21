@@ -71,19 +71,11 @@ export class EditorNotice extends Component {
 	}
 
 	getText( key ) {
-		/* eslint-disable max-len */
 		const { translate, type, typeObject, site, postUrl, postDate, moment } = this.props;
 		const formattedPostDate = moment( postDate ).format( 'lll' );
 		const typeLabel = get( typeObject, 'labels.singular_name', type );
 
 		switch ( key ) {
-			case 'warnPublishDateChange':
-				// This message can only appear for type === 'post'.  See
-				// PostEditor#checkForDateChange().
-				return translate(
-					'Are you sure about that? If you change the date, existing links to your post will stop working.'
-				);
-
 			case 'publishFailure':
 				return translate( 'Publishing of %(typeLabel)s failed.', {
 					args: { typeLabel: typeLabel.toLowerCase() },
@@ -163,7 +155,6 @@ export class EditorNotice extends Component {
 						'Editor: Message displayed when a page, post, or post of a custom type is updated, with a link to the updated post.',
 				} );
 		}
-		/* eslint-enable max-len */
 	}
 
 	render() {

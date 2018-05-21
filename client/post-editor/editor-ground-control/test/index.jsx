@@ -48,7 +48,7 @@ describe( 'EditorGroundControl', () => {
 			// (as opposed to directly visiting your site outside of Calypso)
 			// previously, this test checked for two different possible labels
 			// now leaving this here to ensure that it returns "Preview" in different situations
-			var tree = shallow(
+			const tree = shallow(
 				<EditorGroundControl savedPost={ { status: 'publish' } } site={ { jetpack: true } } />
 			).instance();
 
@@ -56,7 +56,7 @@ describe( 'EditorGroundControl', () => {
 		} );
 
 		test( 'should return Preview if the post was not originally published', () => {
-			var tree = shallow(
+			const tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft' } }
 					post={ { status: 'publish' } }
@@ -70,31 +70,37 @@ describe( 'EditorGroundControl', () => {
 
 	describe( '#isPreviewEnabled()', () => {
 		test( 'should return true if post is not empty', () => {
-			var tree = shallow( <EditorGroundControl post={ {} } isNew hasContent isDirty /> ).instance();
+			const tree = shallow(
+				<EditorGroundControl post={ {} } isNew hasContent isDirty />
+			).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.true;
 		} );
 
 		test( 'should return false if saving is blocked', () => {
-			var tree = shallow( <EditorGroundControl isSaveBlocked /> ).instance();
+			const tree = shallow( <EditorGroundControl isSaveBlocked /> ).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.false;
 		} );
 
 		test( 'should return true even if form is publishing', () => {
-			var tree = shallow( <EditorGroundControl post={ {} } hasContent isPublishing /> ).instance();
+			const tree = shallow(
+				<EditorGroundControl post={ {} } hasContent isPublishing />
+			).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.true;
 		} );
 
 		test( 'should return false if not dirty', () => {
-			var tree = shallow( <EditorGroundControl post={ {} } isDirty={ false } isNew /> ).instance();
+			const tree = shallow(
+				<EditorGroundControl post={ {} } isDirty={ false } isNew />
+			).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.false;
 		} );
 
 		test( 'should return false if post has no content', () => {
-			var tree = shallow( <EditorGroundControl post={ {} } hasContent={ false } /> ).instance();
+			const tree = shallow( <EditorGroundControl post={ {} } hasContent={ false } /> ).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.false;
 		} );

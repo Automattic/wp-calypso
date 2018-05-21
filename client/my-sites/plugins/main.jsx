@@ -31,12 +31,10 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins,
-	getSelectedOrAllSitesWithPlugins,
-	hasJetpackSites,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
+import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
+import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import {
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,

@@ -30,7 +30,7 @@ import {
 	didInviteDeletionSucceed,
 } from 'state/invites/selectors';
 import { deleteInvite } from 'state/invites/actions';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class PeopleInviteDetails extends React.PureComponent {

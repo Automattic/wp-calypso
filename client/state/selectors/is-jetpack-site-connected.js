@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getJetpackConnectionStatus } from 'state/selectors';
+import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
 
 /**
  * Returns true if we the Jetpack site is connected. False otherwise.

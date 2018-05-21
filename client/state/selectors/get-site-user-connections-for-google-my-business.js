@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,8 +12,10 @@ import { getSiteSettings } from 'state/site-settings/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 
 function isConnected( keyringConnection, externalUser, siteSettings ) {
-	return keyringConnection.ID === siteSettings.google_my_business_keyring_id &&
-		externalUser.external_ID === siteSettings.google_my_business_location_id;
+	return (
+		keyringConnection.ID === siteSettings.google_my_business_keyring_id &&
+		externalUser.external_ID === siteSettings.google_my_business_location_id
+	);
 }
 
 /**

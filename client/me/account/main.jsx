@@ -44,9 +44,12 @@ import SitesDropdown from 'components/sites-dropdown';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'lib/i18n-utils';
-import { isRequestingMissingSites } from 'state/selectors';
+import isRequestingMissingSites from 'state/selectors/is-requesting-missing-sites';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import _user from 'lib/user';
+import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
+import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
+import AccountSettingsCloseLink from './close-link';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -97,6 +100,13 @@ const Account = createReactClass( {
 
 	updateUserSettingCheckbox( event ) {
 		this.updateUserSetting( event.target.name, event.target.checked );
+	},
+
+	updateCommunityTranslatorSetting( event ) {
+		const { name, checked } = event.target;
+		this.updateUserSetting( name, checked );
+		const redirect = '/me/account';
+		this.setState( { redirect } );
 	},
 
 	updateLanguage( event ) {
@@ -185,13 +195,13 @@ const Account = createReactClass( {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
-				<FormLabel>
+				<FormLabel htmlFor={ ENABLE_TRANSLATOR_KEY }>
 					<FormCheckbox
-						checked={ this.getUserSetting( 'enable_translator' ) }
-						onChange={ this.updateUserSettingCheckbox }
+						checked={ this.getUserSetting( ENABLE_TRANSLATOR_KEY ) }
+						onChange={ this.updateCommunityTranslatorSetting }
 						disabled={ this.getDisabledState() }
-						id="enable_translator"
-						name="enable_translator"
+						id={ ENABLE_TRANSLATOR_KEY }
+						name={ ENABLE_TRANSLATOR_KEY }
 						onClick={ this.getCheckboxHandler( 'Community Translator' ) }
 					/>
 					<span>
@@ -573,7 +583,8 @@ const Account = createReactClass( {
 					{ this.thankTranslationContributors() }
 				</FormFieldset>
 
-				{ this.communityTranslator() }
+				{ canDisplayCommunityTranslator( this.getUserSetting( 'language' ) ) &&
+					this.communityTranslator() }
 
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 					supportsCssCustomProperties() && (
@@ -777,6 +788,8 @@ const Account = createReactClass( {
 						</ReactCSSTransitionGroup>
 					</form>
 				</Card>
+
+				{ config.isEnabled( 'me/account-close' ) && <AccountSettingsCloseLink /> }
 			</Main>
 		);
 	},

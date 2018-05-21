@@ -3,11 +3,10 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import debugModule from 'debug';
 import { assign, filter, omit, pick } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -19,37 +18,31 @@ import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import analytics from 'lib/analytics';
 import { updateUser } from 'lib/users/actions';
-import userModule from 'lib/user';
 import RoleSelect from 'my-sites/people/role-select';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * Module Variables
  */
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
-const user = userModule();
 
-const EditUserForm = createReactClass( {
-	displayName: 'EditUserForm',
+class EditUserForm extends React.Component {
+	displayName = 'EditUserForm';
 
-	mixins: [ PureRenderMixin ],
-
-	getInitialState() {
-		return this.getStateObject( this.props );
-	},
+	state = this.getStateObject( this.props );
 
 	componentWillReceiveProps( nextProps ) {
-		this.replaceState( this.getStateObject( nextProps ) );
-	},
+		this.setState( this.getStateObject( nextProps ) );
+	}
 
 	getRole( roles ) {
 		return roles && roles[ 0 ] ? roles[ 0 ] : null;
-	},
+	}
 
-	getStateObject( props ) {
-		props = 'undefined' !== typeof props ? props : this.props;
+	getStateObject( props = this.props ) {
 		const role = this.getRole( props.roles );
 		return assign( omit( props, 'site' ), { roles: role } );
-	},
+	}
 
 	getChangedSettings() {
 		const originalUser = this.getStateObject( this.props.user );
@@ -62,11 +55,11 @@ const EditUserForm = createReactClass( {
 		} );
 
 		return pick( this.state, changedKeys );
-	},
+	}
 
 	getAllowedSettingsToChange() {
-		const currentUser = user.get();
-		let allowedSettings = []; // eslint-disable-line
+		const currentUser = this.props.currentUser;
+		const allowedSettings = [];
 
 		if ( ! this.state.ID ) {
 			return allowedSettings;
@@ -86,13 +79,13 @@ const EditUserForm = createReactClass( {
 		}
 
 		return allowedSettings;
-	},
+	}
 
 	hasUnsavedSettings() {
 		return Object.keys( this.getChangedSettings() ).length;
-	},
+	}
 
-	updateUser( event ) {
+	updateUser = event => {
 		event.preventDefault();
 
 		const changedSettings = this.getChangedSettings();
@@ -111,17 +104,19 @@ const EditUserForm = createReactClass( {
 				: changedSettings
 		);
 		analytics.ga.recordEvent( 'People', 'Clicked Save Changes Button on User Edit' );
-	},
+	};
 
 	recordFieldFocus( fieldId ) {
-		analytics.ga.recordEvent( 'People', 'Focused on field on User Edit', 'Field', fieldId );
-	},
+		return () => {
+			analytics.ga.recordEvent( 'People', 'Focused on field on User Edit', 'Field', fieldId );
+		};
+	}
 
-	handleChange( event ) {
+	handleChange = event => {
 		this.setState( {
 			[ event.target.name ]: event.target.value,
 		} );
-	},
+	};
 
 	renderField( fieldId ) {
 		let returnField = null;
@@ -196,7 +191,7 @@ const EditUserForm = createReactClass( {
 		}
 
 		return returnField;
-	},
+	}
 
 	render() {
 		let editableFields;
@@ -231,7 +226,9 @@ const EditUserForm = createReactClass( {
 				</FormButtonsBar>
 			</form>
 		);
-	},
-} );
+	}
+}
 
-export default localize( EditUserForm );
+export default localize(
+	connect( state => ( { currentUser: getCurrentUser( state ) } ) )( EditUserForm )
+);

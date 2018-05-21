@@ -12,7 +12,7 @@ import { isEmpty, keys, mapValues, noop } from 'lodash';
 import profileLinks from './profile-links';
 import { decodeEntities } from 'lib/formatting';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { getUnsavedUserSettings } from 'state/selectors';
+import getUnsavedUserSettings from 'state/selectors/get-unsaved-user-settings';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';

@@ -34,11 +34,9 @@ import {
 	jetpackRemoteInstall,
 	jetpackRemoteInstallUpdateError,
 } from 'state/jetpack-remote-install/actions';
-import {
-	getJetpackRemoteInstallErrorCode,
-	getJetpackRemoteInstallErrorMessage,
-	isJetpackRemoteInstallComplete,
-} from 'state/selectors';
+import getJetpackRemoteInstallErrorCode from 'state/selectors/get-jetpack-remote-install-error-code';
+import getJetpackRemoteInstallErrorMessage from 'state/selectors/get-jetpack-remote-install-error-message';
+import isJetpackRemoteInstallComplete from 'state/selectors/is-jetpack-remote-install-complete';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from './constants';
@@ -301,11 +299,17 @@ export class OrgCredentialsForm extends Component {
 			{ url: siteToConnect },
 			'/jetpack/connect/instructions'
 		);
+		const manualInstallClick = () => {
+			this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_instructionsclick', {
+				url: siteToConnect,
+			} );
+		};
 
 		return (
 			<LoggedOutFormLinks>
 				{ ( this.isInvalidCreds() || ! installError ) && (
-					<LoggedOutFormLinkItem href={ manualInstallUrl }>
+					// eslint-disable-next-line react/no-jsx-bind
+					<LoggedOutFormLinkItem href={ manualInstallUrl } onClick={ manualInstallClick }>
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
 				) }

@@ -13,7 +13,9 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getOrderTransaction, getOrderTransactionError } from 'state/selectors';
+import getOrderTransaction from 'state/selectors/get-order-transaction';
+
+import getOrderTransactionError from 'state/selectors/get-order-transaction-error';
 import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
 import { errorNotice } from 'state/notices/actions';
 import QueryOrderTransaction from 'components/data/query-order-transaction';

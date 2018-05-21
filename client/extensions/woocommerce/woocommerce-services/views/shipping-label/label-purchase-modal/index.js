@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -20,7 +22,11 @@ import RatesStep from './rates-step';
 import Sidebar from './sidebar';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import formatCurrency from 'lib/format-currency';
-import { confirmPrintLabel, purchaseLabel, exitPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	confirmPrintLabel,
+	purchaseLabel,
+	exitPrintingFlow,
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
 	isLoaded,
@@ -30,7 +36,7 @@ import {
 	needsCustomsForm,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const PurchaseDialog = ( props ) => {
+const PurchaseDialog = props => {
 	const { loaded, translate } = props;
 
 	if ( ! loaded ) {
@@ -46,7 +52,7 @@ const PurchaseDialog = ( props ) => {
 			return translate( 'Purchasing…' );
 		}
 
-		const noNativePDFSupport = ( 'addon' === getPDFSupport() );
+		const noNativePDFSupport = 'addon' === getPDFSupport();
 
 		if ( props.canPurchase ) {
 			const ratesTotal = props.ratesTotal;
@@ -73,14 +79,17 @@ const PurchaseDialog = ( props ) => {
 	};
 
 	const buttons = [
-		( <Button
+		<Button
 			key="purchase"
-			disabled={ ! props.form.needsPrintConfirmation && ( ! props.canPurchase || props.form.isSubmitting ) }
+			disabled={
+				! props.form.needsPrintConfirmation && ( ! props.canPurchase || props.form.isSubmitting )
+			}
 			onClick={ getPurchaseButtonAction() }
 			primary
-			busy={ props.form.isSubmitting && ! props.form.needsPrintConfirmation }>
+			busy={ props.form.isSubmitting && ! props.form.needsPrintConfirmation }
+		>
 			{ getPurchaseButtonLabel() }
-		</Button> ),
+		</Button>,
 	];
 
 	const onClose = () => props.exitPrintingFlow( props.orderId, props.siteId, false );
@@ -98,7 +107,8 @@ const PurchaseDialog = ( props ) => {
 			additionalClassNames="woocommerce label-purchase-modal wcc-root"
 			isVisible={ props.showPurchaseDialog }
 			onClose={ onClose }
-			buttons={ buttons } >
+			buttons={ buttons }
+		>
 			<div className="label-purchase-modal__content">
 				<FormSectionHeading>
 					{ 1 === props.form.packages.selected.length
@@ -111,26 +121,21 @@ const PurchaseDialog = ( props ) => {
 							type="origin"
 							title={ translate( 'Origin address' ) }
 							siteId={ props.siteId }
-							orderId={ props.orderId } />
+							orderId={ props.orderId }
+						/>
 						<AddressStep
 							type="destination"
 							title={ translate( 'Destination address' ) }
 							siteId={ props.siteId }
-							orderId={ props.orderId } />
-						<PackagesStep
-							siteId={ props.siteId }
-							orderId={ props.orderId } />
-						{ props.needsCustomsForm &&
-						<CustomsStep
-							siteId={ props.siteId }
-							orderId={ props.orderId } /> }
-						<RatesStep
-							siteId={ props.siteId }
-							orderId={ props.orderId } />
+							orderId={ props.orderId }
+						/>
+						<PackagesStep siteId={ props.siteId } orderId={ props.orderId } />
+						{ props.needsCustomsForm && (
+							<CustomsStep siteId={ props.siteId } orderId={ props.orderId } />
+						) }
+						<RatesStep siteId={ props.siteId } orderId={ props.orderId } />
 					</div>
-					<Sidebar
-						siteId={ props.siteId }
-						orderId={ props.orderId } />
+					<Sidebar siteId={ props.siteId } orderId={ props.orderId } />
 				</div>
 			</div>
 		</Dialog>
@@ -160,7 +165,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { confirmPrintLabel, purchaseLabel, exitPrintingFlow }, dispatch );
 };
 

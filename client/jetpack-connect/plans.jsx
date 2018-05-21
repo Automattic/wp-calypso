@@ -34,12 +34,10 @@ import { JPC_PATH_PLANS } from './constants';
 import { mc } from 'lib/analytics';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	canCurrentUser,
-	hasInitializedSites,
-	isRtl,
-	isSiteAutomatedTransfer,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import isRtl from 'state/selectors/is-rtl';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -110,10 +108,6 @@ class Plans extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
 
 		this.selectFreeJetpackPlan();
-	};
-
-	handleHelpButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
 	redirectToWpAdmin() {
@@ -227,7 +221,7 @@ class Plans extends Component {
 							label={ helpButtonLabel }
 							eventName="calypso_jpc_plans_chat_initiated"
 						>
-							<HelpButton onClick={ this.handleHelpButtonClick } label={ helpButtonLabel } />
+							<HelpButton label={ helpButtonLabel } />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>

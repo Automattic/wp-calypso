@@ -6,14 +6,16 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { debounce, isEqual, find } from 'lodash';
+import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { preventWidows } from 'lib/formatting';
 import config from 'config';
 import FormLabel from 'components/forms/form-label';
 import SegmentedControl from 'components/segmented-control';
@@ -24,6 +26,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
+import InlineHelpCompactResults from 'blocks/inline-help/inline-help-compact-results';
 import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
 import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors';
@@ -31,6 +34,8 @@ import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
 import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { isShowingQandAInlineHelpContactForm } from 'state/inline-help/selectors';
+import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
 import { generateSubjectFromMessage } from './utils';
 
 /**
@@ -83,6 +88,8 @@ export class HelpContactForm extends React.PureComponent {
 			value: null,
 			requestChange: () => {},
 		},
+		showingQandAStep: false,
+		showQandAOnInlineHelpContactForm: () => {},
 	};
 
 	/**
@@ -129,7 +136,13 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	doQandASearch = () => {
-		const query = this.state.subject + ' ' + this.state.message;
+		const query = ( this.state.subject + ' ' + this.state.message ).trim();
+
+		if ( '' === query ) {
+			this.setState( { qanda: [] } );
+			return;
+		}
+
 		const areSameQuestions = ( existingQuestions, newQuestions ) => {
 			const existingIDs = existingQuestions.map( question => question.id );
 			existingIDs.sort();
@@ -145,7 +158,7 @@ export class HelpContactForm extends React.PureComponent {
 			.getQandA( query, site )
 			.then( qanda =>
 				this.setState( {
-					qanda,
+					qanda: isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
 					// we don't want to track "questions -> question click -> different questions -> support click",
 					// so we need to set sibylClicked to false here if the questions have changed
@@ -300,7 +313,10 @@ export class HelpContactForm extends React.PureComponent {
 			showQASuggestions,
 			showHelpLanguagePrompt,
 			translate,
+			showingQandAStep,
 		} = this.props;
+		const hasQASuggestions = ! isEmpty( this.state.qanda );
+
 		const howCanWeHelpOptions = [
 			{
 				value: 'gettingStarted',
@@ -326,6 +342,24 @@ export class HelpContactForm extends React.PureComponent {
 			{ value: 'upset', label: translate( 'Upset' ) },
 			{ value: 'panicked', label: translate( 'Panicked' ) },
 		];
+
+		if ( showingQandAStep && hasQASuggestions ) {
+			return (
+				<div className="help-contact-form">
+					<h2 className="help-contact-form__title">
+						{ preventWidows( translate( 'Did you want the answer to any of these questions?' ) ) }
+					</h2>
+					<InlineHelpCompactResults
+						helpLinks={ this.state.qanda }
+						onClick={ this.trackSibylClick }
+					/>
+					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
+						{ buttonLabel }
+						<Gridicon icon="chevron-right" />
+					</FormButton>
+				</div>
+			);
+		}
 
 		return (
 			<div className="help-contact-form">
@@ -397,9 +431,18 @@ export class HelpContactForm extends React.PureComponent {
 					/>
 				) }
 
-				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
-					{ buttonLabel }
-				</FormButton>
+				{ ! showQASuggestions &&
+					hasQASuggestions && (
+						<FormButton type="button" onClick={ this.props.showQandAOnInlineHelpContactForm }>
+							{ translate( 'Continue' ) }
+						</FormButton>
+					) }
+
+				{ ( showQASuggestions || ! hasQASuggestions ) && (
+					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
+						{ buttonLabel }
+					</FormButton>
+				) }
 
 				{ additionalSupportOption &&
 					additionalSupportOption.enabled && (
@@ -425,6 +468,7 @@ const mapStateToProps = state => ( {
 	currentUserLocale: getCurrentUserLocale( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
+	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
 } );
 
 const mapDispatchToProps = {
@@ -432,6 +476,7 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	trackSibylClick,
 	trackSupportAfterSibylClick,
+	showQandAOnInlineHelpContactForm,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

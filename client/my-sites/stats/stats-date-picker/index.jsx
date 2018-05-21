@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
-import { getSiteStatsQueryDate } from 'state/selectors';
+import getSiteStatsQueryDate from 'state/selectors/get-site-stats-query-date';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';

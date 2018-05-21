@@ -35,7 +35,7 @@ export default class extends React.Component {
 	};
 
 	getIcons = () => {
-		let sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
+		const sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
 		return sites.map( function( site ) {
 			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 14 } />;
 		} );

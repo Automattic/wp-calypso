@@ -76,7 +76,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import { GROUP_WPCOM, GROUP_JETPACK, TYPE_BUSINESS } from 'lib/plans/constants';
 
-import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 
 function getPurchases( props ) {

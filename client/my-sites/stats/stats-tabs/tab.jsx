@@ -23,6 +23,7 @@ class StatsTabsTab extends React.Component {
 		tabClick: PropTypes.func,
 		compact: PropTypes.bool,
 		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+		format: PropTypes.func,
 	};
 
 	clickHandler = event => {
@@ -33,13 +34,13 @@ class StatsTabsTab extends React.Component {
 	};
 
 	ensureValue = value => {
-		const { loading, children } = this.props;
+		const { loading, children, numberFormat, format } = this.props;
 		if ( children ) {
 			return null;
 		}
 
 		if ( ! loading && ( value || value === 0 ) ) {
-			return this.props.numberFormat( value );
+			return format ? format( value ) : numberFormat( value );
 		}
 
 		return String.fromCharCode( 8211 );

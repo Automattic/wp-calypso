@@ -18,7 +18,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import { getSectionName } from 'state/ui/selectors';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
-import { isNotificationsOpen } from 'state/selectors';
+import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import {
 	bumpStat,
 	composeAnalytics,

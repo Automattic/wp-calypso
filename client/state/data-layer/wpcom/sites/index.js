@@ -14,6 +14,7 @@ import comments from './comments';
 import commentsTree from './comments-tree';
 import jitm from './jitm';
 import media from './media';
+import memberships from './memberships';
 import plugins from './plugins';
 import postTypes from './post-types';
 import posts from './posts';
@@ -31,6 +32,7 @@ export default mergeHandlers(
 	commentsTree,
 	config.isEnabled( 'jitms' ) ? jitm : null,
 	media,
+	config.isEnabled( 'memberships' ) ? memberships : null,
 	plugins,
 	postTypes,
 	posts,
