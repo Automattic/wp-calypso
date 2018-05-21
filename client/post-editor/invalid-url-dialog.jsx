@@ -30,11 +30,11 @@ class EditorTrashedDialog extends React.Component {
 		isPage: this.isPage(),
 	};
 
-	isPage = () => {
+	isPage() {
 		return startsWith( page.current, '/page/' );
-	};
+	}
 
-	getDialogButtons = () => {
+	getDialogButtons() {
 		const newText = this.state.isPage
 			? this.props.translate( 'New Page' )
 			: this.props.translate( 'New Post' );
@@ -46,7 +46,7 @@ class EditorTrashedDialog extends React.Component {
 				{ this.props.translate( 'Close' ) }
 			</FormButton>,
 		];
-	};
+	}
 
 	startNewPage = () => {
 		const siteFragment = getSiteFragment( page.current );
@@ -54,7 +54,7 @@ class EditorTrashedDialog extends React.Component {
 		page( postSegment + siteFragment );
 	};
 
-	getStrings = isPage => {
+	getStrings( isPage ) {
 		if ( isPage ) {
 			return {
 				dialogTitle: this.props.translate( 'Invalid Page Address' ),
@@ -69,7 +69,7 @@ class EditorTrashedDialog extends React.Component {
 				'This post cannot be found. Check the web address or start a new post.'
 			),
 		};
-	};
+	}
 
 	render() {
 		const strings = this.getStrings( this.state.isPage );
