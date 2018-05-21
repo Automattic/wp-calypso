@@ -1,11 +1,9 @@
 Section Navigation
-==================
+===
 
-React component used to display a particular section's navigation bar. Or more traditionally, the sub navigation most commonly seen near the top of a page.
+Navigation element that is used to alternate among related views within the same section.
 
 ![Section Nav example screenshot](https://cldup.com/fu2XX6KTu6.png)
-
----
 
 ## Usage
 
@@ -16,7 +14,7 @@ import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 
-export default class extends React.Component { 
+export default class extends React.Component {
 	// ...
 
 	render() {
@@ -58,9 +56,7 @@ export default class extends React.Component {
 
 Keep in mind that every `prop` referenced in the example can and *should* be dynamic. The parent component decides selection logic, text display, and hierarchy. Take a look at [pages](/client/my-sites/pages/pages.jsx) & [post types]((/client/my-sites/post-type-filter/index.jsx)) for more working examples.
 
----
-
-## Section Nav
+### Section Nav
 
 The base component is `SectionNav` and acts as the wrapper for various control groups / other elements.
 
@@ -69,11 +65,9 @@ The base component is `SectionNav` and acts as the wrapper for various control g
 Name | Type | Required | Default | Description
 --- | --- | --- | --- | ---
 `selectedText` | `node` | yes | `null` | Text displayed in the header of the panel when rendered on mobile. See [example](https://cldup.com/796J06ggf0.png).
-`selectedCount` | `number` | no | `null` | Count displayed in the header of the panel.
+`selectedCount` | `number` | no | `null` | Count displayed in the header section.
 
----
-
-## Nav Tabs
+### Nav Tabs
 
 The tabs sub component will render items inline when there is enough horizontal room to do so. Otherwise it will render them as a dropdown beyond a certain screen size. The mobile version displays them vertically inside the panel.
 
@@ -87,10 +81,7 @@ Name | Type | Required | Default | Description
 `selectedCount` | `number` | no | `null` | Count displayed in the header when rendered as dropdown.
 `label` | `string` | no | `null` | Text displayed above tabs group on Mobile (`<480px`) or when `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`). See [example](https://cldup.com/OeWSPtifYY.png).
 
-
----
-
-## Nav Segmented
+### Nav Segmented
 
 The segmented sub component utilizes [`SegmentedControl`](/client/components/segmented-control) to display `NavItems` inline.
 
@@ -104,9 +95,7 @@ Name | Type | Required | Default | Description
 --- | --- | --- | --- | ---
 `label` | `string` | no | `null` | Text displayed above tabs group on Mobile (`<480px`) or when `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`). See [example](https://cldup.com/OeWSPtifYY.png).
 
----
-
-## Nav Item
+### Nav Item
 
 These are the sub components that make up the children of both `NavTabs` & `NavSegmented`. They represent the options under each control group.
 
@@ -121,3 +110,13 @@ Name | Type | Required | Default | Description
 `disabled` | `bool` | no | `false` | Prevents the item from being selected.
 `count` | `number` | no | `null` | Add an extra `item-count` element into nav item.
 
+### General guidelines
+
+* Tabs should represent the same kind of content, such as a list-view with different filters applied. Don’t use tabs to group content that is dissimilar.
+* Only one active tab at a time.
+* Counts should be abbreviated if it's longer than 3 digits.
+
+## Related components
+
+* To use a simple navigation header without tabs, use the [Headers](./headers) component.
+* To use a simple header with actions, use the [SectionHeader](./section-header) component.
