@@ -85,6 +85,7 @@ export default data => {
 				isPacked: formData.is_packed,
 				saved: true,
 			},
+			customs: {},
 			rates: {
 				values: isEmpty( formData.rates.selected )
 					? mapValues( formData.packages, () => '' )

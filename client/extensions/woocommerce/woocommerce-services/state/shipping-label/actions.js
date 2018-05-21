@@ -91,6 +91,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
 } from '../action-types.js';
 
 export const fetchLabelsData = ( orderId, siteId ) => dispatch => {
@@ -547,6 +548,20 @@ export const removeItem = ( orderId, siteId, packageId, itemIndex ) => ( dispatc
 export const confirmPackages = ( orderId, siteId ) => ( dispatch, getState ) => {
 	dispatch( toggleStep( orderId, siteId, 'packages' ) );
 	dispatch( savePackages( orderId, siteId ) );
+	tryGetLabelRates( orderId, siteId, dispatch, getState );
+};
+
+export const saveCustoms = ( orderId, siteId ) => {
+	return {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
+		siteId,
+		orderId,
+	};
+};
+
+export const confirmCustoms = ( orderId, siteId ) => ( dispatch, getState ) => {
+	dispatch( toggleStep( orderId, siteId, 'customs' ) );
+	dispatch( saveCustoms( orderId, siteId ) );
 	tryGetLabelRates( orderId, siteId, dispatch, getState );
 };
 

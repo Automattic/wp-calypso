@@ -76,6 +76,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
 } from '../action-types';
 import { WOOCOMMERCE_ORDER_UPDATE_SUCCESS } from 'woocommerce/state/action-types';
 import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
@@ -680,6 +681,32 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_PACKAGES ] = state => {
 			packages: {
 				...state.form.packages,
 				saved: true,
+			},
+		},
+	};
+};
+
+reducers.WCS_TOGGLE_DUMMY_FIELD = ( state, { value } ) => {
+	return {
+		...state,
+		form: {
+			...state.form,
+			customs: {
+				...state.form.customs,
+				dummyFieldChecked: value,
+			},
+		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS ] = state => {
+	return {
+		...state,
+		form: {
+			...state.form,
+			customs: {
+				...state.form.customs,
+				submitted: true,
 			},
 		},
 	};
