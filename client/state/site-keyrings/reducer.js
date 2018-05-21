@@ -8,8 +8,8 @@ import { keyBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-import { items as itemSchemas } from './schema';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { siteKeyrings as siteKeyringsSchema } from './schema';
 import {
 	SITE_KEYRINGS_REQUEST,
 	SITE_KEYRINGS_REQUEST_FAILURE,
@@ -63,6 +63,19 @@ export const saveRequests = createReducer(
 	}
 );
 
+const siteKeyrings = createReducer(
+	{},
+	{
+		[ SITE_KEYRINGS_REQUEST_SUCCESS ]: ( state, { keyrings } ) => keyBy( keyrings, 'keyring_id' ),
+		[ SITE_KEYRINGS_SAVE_SUCCESS ]: ( state, { keyring } ) => ( {
+			...state,
+			[ keyring.keyring_id ]: keyring,
+		} ),
+		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { keyringId } ) => omit( state, [ keyringId ] ),
+	},
+	siteKeyringsSchema
+);
+
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID to the site keyrings object.
@@ -71,27 +84,7 @@ export const saveRequests = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
-	{},
-	{
-		[ SITE_KEYRINGS_REQUEST_SUCCESS ]: ( state, { siteId, keyrings } ) => ( {
-			...state,
-			[ siteId ]: keyBy( keyrings, 'keyring_id' ),
-		} ),
-		[ SITE_KEYRINGS_SAVE_SUCCESS ]: ( state, { siteId, keyring } ) => ( {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				[ keyring.keyring_id ]: keyring,
-			},
-		} ),
-		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { siteId, keyringId } ) => ( {
-			...state,
-			[ siteId ]: omit( state[ siteId ], [ keyringId ] ),
-		} ),
-	},
-	itemSchemas
-);
+export const items = keyedReducer( 'siteId', siteKeyrings );
 
 export default combineReducers( {
 	items,

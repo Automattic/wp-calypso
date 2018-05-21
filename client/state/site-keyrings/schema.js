@@ -1,11 +1,16 @@
 /** @format */
-export const items = {
+export const siteKeyrings = {
 	type: 'object',
 	additionalProperties: false,
 	patternProperties: {
-		// Site Id
+		// Keyring Id
 		'^\\d+$': {
-			type: 'array',
+			type: 'object',
+			properties: {
+				keyring_id: { type: 'number' },
+				service: { type: 'string' },
+				external_user_id: { type: 'string' },
+			},
 		},
 	},
 };
