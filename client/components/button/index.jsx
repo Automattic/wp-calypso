@@ -33,7 +33,6 @@ export default class Button extends PureComponent {
 		} );
 
 		if ( this.props.href ) {
-			// eslint-disable-next-line no-unused-vars
 			const { compact, primary, scary, busy, borderless, type, ...props } = this.props;
 
 			// block referrers when external link
@@ -44,7 +43,6 @@ export default class Button extends PureComponent {
 			return <a { ...props } rel={ rel } className={ className } />;
 		}
 
-		// eslint-disable-next-line no-unused-vars
 		const { compact, primary, scary, busy, borderless, target, rel, ...props } = this.props;
 
 		return <button { ...props } className={ className } />;
