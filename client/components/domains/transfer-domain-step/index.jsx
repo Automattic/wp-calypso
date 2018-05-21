@@ -43,6 +43,8 @@ import { fetchDomains } from 'lib/upgrades/actions';
 import { domainManagementTransferIn } from 'my-sites/domains/paths';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
+import { isPlan } from 'lib/products-values';
+import { isDomainBundledWithPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -132,15 +134,24 @@ class TransferDomainStep extends React.Component {
 	};
 
 	addTransfer() {
-		const { translate } = this.props;
+		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
 		const productSlug = getDomainProductSlug( searchQuery );
-		const domainProductPrice = getDomainPrice(
+		const domainsWithPlansOnlyButNoPlan =
+			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+
+		let domainProductPrice = getDomainPrice(
 			productSlug,
 			this.props.productsList,
 			this.props.currencyCode
 		);
+
+		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+			domainProductPrice = translate( 'Free with your plan' );
+		} else if ( domainsWithPlansOnlyButNoPlan ) {
+			domainProductPrice = translate( 'Included in paid plans' );
+		}
 
 		return (
 			<div>

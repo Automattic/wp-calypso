@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import update from 'immutability-helper';
 import {
 	assign,
@@ -19,6 +18,7 @@ import {
 	merge,
 	reject,
 	some,
+	toLower,
 	uniq,
 } from 'lodash';
 
@@ -922,6 +922,12 @@ export function getIncludedDomain( cartItem ) {
 
 export function isNextDomainFree( cart ) {
 	return !! ( cart && cart.next_domain_is_free );
+}
+
+export function isDomainBundledWithPlan( cart, domain ) {
+	const bundledDomain = get( cart, 'bundled_domain', '' );
+
+	return '' !== bundledDomain && toLower( domain ) === toLower( get( cart, 'bundled_domain', '' ) );
 }
 
 export function isDomainBeingUsedForPlan( cart, domain ) {
