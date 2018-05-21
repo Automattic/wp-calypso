@@ -34,9 +34,7 @@ export function getDocumentHeadTitle( state ) {
  */
 export const getDocumentHeadFormattedTitle = createSelector(
 	state => {
-		let title = '';
-
-		title += compact( [
+		let title = compact( [
 			getDocumentHeadTitle( state ),
 			isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) ),
 		] ).join( ' ‹ ' );
