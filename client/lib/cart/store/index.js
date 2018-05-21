@@ -54,6 +54,9 @@ const CartStore = {
 
 		_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
 	},
+	fetch: function() {
+		return _synchronizer && _synchronizer.fetch();
+	},
 };
 
 emitter( CartStore );
