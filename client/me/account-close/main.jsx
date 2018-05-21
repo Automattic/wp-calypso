@@ -92,23 +92,52 @@ class AccountSettingsClose extends Component {
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
-						{ ! hasAtomicSites && (
+						{ hasAtomicSites && (
 							<Fragment>
-								<p class="account-close__body-copy">
+								<p className="account-close__body-copy">
 									{ translate(
-										'Account closure {{strong}}cannot{{/strong}} be undone, ' +
-											'and will remove all sites and content.',
-										{
-											components: {
-												strong: <strong />,
-											},
-										}
+										"To close your account, you'll need to contact our support team. Account closure cannot be undone " +
+											'and will remove all sites and content.'
 									) }
 								</p>
-								<p class="account-close__body-copy">
+								<p className="account-close__body-copy">
 									{ translate(
 										"If you're unsure about what account closure means or have any other questions, " +
-											'please {{a}}chat with someone from our support team{{/a}} before proceeding.',
+											"you'll have a chance to chat with someone from our support team before anything happens."
+									) }
+								</p>
+							</Fragment>
+						) }
+						{ hasPurchases &&
+							! hasAtomicSites && (
+								<Fragment>
+									<p className="account-close__body-copy">
+										{ translate( 'You still have active purchases on your account.' ) }
+									</p>
+									<p className="account-close__body-copy">
+										{ translate(
+											"To delete your account, you'll need to cancel any active purchases " +
+												'in {{a}}Manage Purchases{{/a}} before proceeding.',
+											{
+												components: {
+													a: <ActionPanelLink href="/me/purchases" />,
+												},
+											}
+										) }
+									</p>
+								</Fragment>
+							) }
+						{ ( isLoading || isDeletePossible ) && (
+							<Fragment>
+								<p className="account-close__body-copy">
+									{ translate(
+										'Account closure cannot be undone and will remove all sites and content.'
+									) }
+								</p>
+								<p className="account-close__body-copy">
+									{ translate(
+										"If you're unsure about what account closure means or have any other questions, " +
+											'{a}chat with someone from our support team{/a} before going ahead.',
 										{
 											components: {
 												a: <ActionPanelLink href="/help/contact" />,
@@ -118,35 +147,25 @@ class AccountSettingsClose extends Component {
 								</p>
 							</Fragment>
 						) }
-						{ hasAtomicSites && (
-							<Fragment>
-								<p>
-									{ translate(
-										"To close your account, you'll need to contact our support team. Account closure cannot be undone " +
-											'and will remove all sites and content.'
-									) }
-								</p>
-								<p>
-									{ translate(
-										"If you're unsure about what account closure means or have any other questions, " +
-											"you'll have a chance to chat with someone from our support team before anything happens."
-									) }
-								</p>
-							</Fragment>
-						) }
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						{ isDeletePossible && (
 							<Button scary onClick={ this.handleDeleteClick }>
 								<Gridicon icon="trash" />
-								{ translate( 'Close account' ) }
+								{ translate( 'Close Account' ) }
 							</Button>
 						) }
-						{ ! isDeletePossible && (
+						{ ( isLoading || hasAtomicSites ) && (
 							<Button primary href="/help/contact">
-								{ translate( 'Contact support' ) }
+								{ translate( 'Contact Support' ) }
 							</Button>
 						) }
+						{ hasPurchases &&
+							! hasAtomicSites && (
+								<Button primary href="/me/purchases">
+									{ translate( 'Manage Purchases' ) }
+								</Button>
+							) }
 					</ActionPanelFooter>
 					<AccountCloseConfirmDialog
 						isVisible={ this.state.showConfirmDialog }
