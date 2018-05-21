@@ -15,23 +15,40 @@ import { isRequestingSiteKeyrings } from 'state/site-keyrings/selectors';
 import { requestSiteKeyrings } from 'state/site-keyrings/actions';
 
 class QuerySiteKeyrings extends Component {
-	componentDidMount() {
-		this.requestKeyrings( this.props );
-	}
+	static propTypes = {
+		siteId: PropTypes.number,
+		requestingSiteKeyrings: PropTypes.bool.isRequired,
+		requestSiteKeyrings: PropTypes.func.isRequired,
+	};
 
-	componentWillReceiveProps( nextProps ) {
-		const { siteId } = this.props;
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
-			return;
+	state = {
+		siteId: null,
+	};
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( ! nextProps.siteId || prevState.siteId === nextProps.siteId ) {
+			return null;
 		}
 
-		this.requestKeyrings( nextProps );
+		return { siteId: nextProps.siteId };
 	}
 
-	requestKeyrings( props ) {
-		const { requestingSiteKeyrings, siteId } = props;
-		if ( ! requestingSiteKeyrings && siteId ) {
-			props.requestSiteKeyrings( siteId );
+	shouldComponentUpdate( nextProps, nextState ) {
+		return nextProps.siteId !== nextState.siteId;
+	}
+
+	componentDidMount() {
+		this.requestKeyrings();
+	}
+
+	componentDidUpdate() {
+		this.requestKeyrings();
+	}
+
+	requestKeyrings() {
+		const { siteId } = this.state;
+		if ( ! this.props.requestingSiteKeyrings && siteId ) {
+			this.props.requestSiteKeyrings( siteId );
 		}
 	}
 
@@ -39,12 +56,6 @@ class QuerySiteKeyrings extends Component {
 		return null;
 	}
 }
-
-QuerySiteKeyrings.propTypes = {
-	siteId: PropTypes.number,
-	requestingSiteKeyrings: PropTypes.bool,
-	requestSiteKeyrings: PropTypes.func,
-};
 
 export default connect(
 	( state, { siteId } ) => ( {
