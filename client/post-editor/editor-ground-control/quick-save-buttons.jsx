@@ -6,13 +6,17 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import * as postUtils from 'lib/posts/utils';
+import { isPage, isPublished } from 'lib/posts/utils';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 import { recordEvent, recordStat } from 'lib/posts/stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
 export const isSaveAvailableFn = ( {
 	isSaving = false,
@@ -20,13 +24,7 @@ export const isSaveAvailableFn = ( {
 	isDirty = false,
 	hasContent = false,
 	post = null,
-} ) =>
-	! isSaving &&
-	! isSaveBlocked &&
-	isDirty &&
-	hasContent &&
-	!! post &&
-	! postUtils.isPublished( post );
+} ) => ! isSaving && ! isSaveBlocked && isDirty && hasContent && !! post && ! isPublished( post );
 
 const QuickSaveButtons = ( {
 	isSaving,
@@ -40,9 +38,7 @@ const QuickSaveButtons = ( {
 } ) => {
 	const onSaveButtonClick = () => {
 		onSave();
-		const eventLabel = postUtils.isPage( post )
-			? 'Clicked Save Page Button'
-			: 'Clicked Save Post Button';
+		const eventLabel = isPage( post ) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
 		recordEvent( eventLabel );
 		recordStat( 'save_draft_clicked' );
 	};
@@ -55,7 +51,7 @@ const QuickSaveButtons = ( {
 		post,
 	} );
 
-	const showingStatusLabel = isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
+	const showingStatusLabel = isSaving || ( post && post.ID && ! isPublished( post ) );
 	const showingSaveStatus = isSaveAvailable || showingStatusLabel;
 	const hasRevisions = showRevisions && get( post, 'revisions.length' );
 
@@ -112,4 +108,10 @@ QuickSaveButtons.defaultProps = {
 	post: null,
 };
 
-export default localize( QuickSaveButtons );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const post = getEditedPost( state, siteId, postId );
+
+	return { post };
+} )( localize( QuickSaveButtons ) );

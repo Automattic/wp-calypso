@@ -173,7 +173,6 @@ export class EditorGroundControl extends React.Component {
 			isSaveBlocked,
 			isDirty,
 			hasContent,
-			post,
 			onSave,
 			translate,
 			userNeedsVerification,
@@ -218,7 +217,6 @@ export class EditorGroundControl extends React.Component {
 					isSaveBlocked={ isSaveBlocked }
 					isDirty={ isDirty }
 					hasContent={ hasContent }
-					post={ post }
 					onSave={ onSave }
 				/>
 				{ this.renderGroundControlActionButtons() }

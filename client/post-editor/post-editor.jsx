@@ -332,7 +332,6 @@ export class PostEditor extends React.Component {
 										isSaveBlocked={ this.isSaveBlocked() }
 										isDirty={ this.state.isDirty || this.props.dirty }
 										hasContent={ this.state.hasContent }
-										post={ this.state.post }
 										onSave={ this.onSave }
 									/>
 								) : (
