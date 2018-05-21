@@ -181,6 +181,10 @@ class PurchaseMeta extends Component {
 		if ( typeof purchase.payment.type !== 'undefined' ) {
 			let paymentInfo = null;
 
+			if ( purchase.payment.type === 'credits' ) {
+				return <span className="manage-purchase__detail">{ translate( 'Credits' ) }</span>;
+			}
+
 			if ( isPaidWithCreditCard( purchase ) ) {
 				paymentInfo = purchase.payment.creditCard.number;
 			} else if ( isPaidWithPayPalDirect( purchase ) ) {
