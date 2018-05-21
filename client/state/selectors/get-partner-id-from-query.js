@@ -8,7 +8,7 @@ import { get, toNumber, isInteger } from 'lodash';
 /**
  * Internal dependencies
  */
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 
 /**
  * Returns the partner_id query param if present or null.
@@ -17,7 +17,7 @@ import getInitialQueryArguments from 'state/selectors/get-initial-query-argument
  * @return {?number}       The partner ID as an integer or null
  */
 export const getPartnerIdFromQuery = function( state ) {
-	const partnerId = toNumber( get( getInitialQueryArguments( state ), 'partner_id' ) );
+	const partnerId = toNumber( get( getCurrentQueryArguments( state ), 'partner_id' ) );
 	return isInteger( partnerId ) ? partnerId : null;
 };
 
