@@ -92,23 +92,28 @@ class AccountSettingsClose extends Component {
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
-						{ hasAtomicSites && (
-							<Fragment>
-								<p className="account-close__body-copy">
-									{ translate(
-										"To close your account, you'll need to contact our support team. Account closure cannot be undone " +
-											'and will remove all sites and content.'
-									) }
-								</p>
-								<p className="account-close__body-copy">
-									{ translate(
-										"If you're unsure about what account closure means or have any other questions, " +
-											"you'll have a chance to chat with someone from our support team before anything happens."
-									) }
-								</p>
-							</Fragment>
-						) }
-						{ hasPurchases &&
+						{ ! isLoading &&
+							hasAtomicSites && (
+								<Fragment>
+									<p className="account-close__body-copy">
+										{ translate(
+											'Account closure cannot be undone and will remove all sites and content.'
+										) }
+									</p>
+									<p className="account-close__body-copy">
+										{ translate(
+											"To close your account, you'll need to {{a}}contact our support team{{/a}}.",
+											{
+												components: {
+													a: <ActionPanelLink href="/help/contact" />,
+												},
+											}
+										) }
+									</p>
+								</Fragment>
+							) }
+						{ ! isLoading &&
+							hasPurchases &&
 							! hasAtomicSites && (
 								<Fragment>
 									<p className="account-close__body-copy">
@@ -149,13 +154,13 @@ class AccountSettingsClose extends Component {
 						) }
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						{ isDeletePossible && (
+						{ ( isLoading || isDeletePossible ) && (
 							<Button scary onClick={ this.handleDeleteClick }>
 								<Gridicon icon="trash" />
 								{ translate( 'Close Account' ) }
 							</Button>
 						) }
-						{ ( isLoading || hasAtomicSites ) && (
+						{ hasAtomicSites && (
 							<Button primary href="/help/contact">
 								{ translate( 'Contact Support' ) }
 							</Button>
