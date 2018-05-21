@@ -9,10 +9,9 @@ import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 	ROUTE_SET,
 } from 'state/action-types';
-import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema';
+import { titleSchema, linkSchema, metaSchema } from './schema';
 
 /**
  * Constants
@@ -26,15 +25,6 @@ export const title = createReducer(
 		[ ROUTE_SET ]: () => '',
 	},
 	titleSchema
-);
-
-export const unreadCount = createReducer(
-	0,
-	{
-		[ DOCUMENT_HEAD_UNREAD_COUNT_SET ]: ( state, action ) => action.count,
-		[ ROUTE_SET ]: () => 0,
-	},
-	unreadCountSchema
 );
 
 export const meta = createReducer(
@@ -59,5 +49,4 @@ export default combineReducers( {
 	link,
 	meta,
 	title,
-	unreadCount,
 } );

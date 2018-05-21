@@ -13,11 +13,10 @@ import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 	ROUTE_SET,
 } from 'state/action-types';
 
-import { DEFAULT_META_STATE, link, meta, title, unreadCount } from '../reducer';
+import { DEFAULT_META_STATE, link, meta, title } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#title()', () => {
@@ -38,30 +37,6 @@ describe( 'reducer', () => {
 			const state = title( original, { type: ROUTE_SET } );
 
 			expect( state ).to.equal( '' );
-		} );
-	} );
-
-	describe( '#unreadCount()', () => {
-		test( 'should default to a zero', () => {
-			const state = unreadCount( undefined, {} );
-
-			expect( state ).to.equal( 0 );
-		} );
-
-		test( 'should properly set a new unread count', () => {
-			const newState = unreadCount( undefined, {
-				type: DOCUMENT_HEAD_UNREAD_COUNT_SET,
-				count: 123,
-			} );
-
-			expect( newState ).to.equal( 123 );
-		} );
-
-		it( 'should return initial state on route set action', () => {
-			const original = 123;
-			const state = unreadCount( original, { type: ROUTE_SET } );
-
-			expect( state ).to.equal( 0 );
 		} );
 	} );
 
