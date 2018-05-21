@@ -13,7 +13,7 @@ import { getRewindRestoreProgress } from 'state/activity-log/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { requestRewindState } from 'state/rewind/actions';
-import { REWIND_RESTORE } from 'state/action-types';
+import { REWIND_RESTORE, REWIND_CLONE } from 'state/action-types';
 import { SchemaError } from 'lib/make-json-schema-parser';
 
 const fromApi = data => {
@@ -26,15 +26,19 @@ const fromApi = data => {
 	return restoreId;
 };
 
-const requestRestore = action =>
+const requestRewind = ( action, payload ) =>
 	http(
 		{
 			apiVersion: '1',
 			method: 'POST',
 			path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
+			body: payload,
 		},
 		action
 	);
+
+const requestRestore = action => requestRewind( action );
+const requestClone = action => requestRewind( action, action.payload );
 
 export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [
 	getRewindRestoreProgress( siteId, restoreId ),
@@ -64,6 +68,14 @@ export default {
 	[ REWIND_RESTORE ]: [
 		dispatchRequestEx( {
 			fetch: requestRestore,
+			onSuccess: receiveRestoreSuccess,
+			onError: receiveRestoreError,
+			fromApi,
+		} ),
+	],
+	[ REWIND_CLONE ]: [
+		dispatchRequestEx( {
+			fetch: requestClone,
 			onSuccess: receiveRestoreSuccess,
 			onError: receiveRestoreError,
 			fromApi,

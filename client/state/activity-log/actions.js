@@ -10,6 +10,7 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
+	REWIND_CLONE,
 	REWIND_DEACTIVATE_FAILURE,
 	REWIND_DEACTIVATE_REQUEST,
 	REWIND_DEACTIVATE_SUCCESS,
@@ -172,6 +173,15 @@ export function rewindRestore( siteId, timestamp ) {
 		type: REWIND_RESTORE,
 		siteId,
 		timestamp,
+	};
+}
+
+export function rewindClone( siteId, timestamp, payload ) {
+	return {
+		type: REWIND_CLONE,
+		siteId,
+		timestamp,
+		payload,
 	};
 }
 
