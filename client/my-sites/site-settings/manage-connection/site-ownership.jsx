@@ -21,6 +21,7 @@ import Gravatar from 'components/gravatar';
 import SectionHeader from 'components/section-header';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
+import { changeOwner } from 'state/jetpack/connection/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -47,8 +48,12 @@ class SiteOwnership extends Component {
 	};
 
 	transformUser( user ) {
-		return user.linked_user_info;
+		return { ...user.linked_user_info, ...{ ID: user.ID } };
 	}
+
+	onSelect = user => {
+		this.props.changeOwner( this.props.siteId, user.ID, user.name );
+	};
 
 	renderCurrentUser() {
 		const { currentUser, siteId } = this.props;
@@ -62,6 +67,7 @@ class SiteOwnership extends Component {
 				exclude={ this.isUserExcludedFromSelector }
 				transformAuthor={ this.transformUser }
 				allowSingleUser
+				onSelect={ this.onSelect }
 			>
 				<div className="manage-connection__user">
 					<Gravatar user={ currentUser } size={ 24 } />
@@ -131,15 +137,18 @@ class SiteOwnership extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
 
-	return {
-		currentUser: getCurrentUser( state ),
-		siteId,
-		siteIsConnected: isJetpackSiteConnected( state, siteId ),
-		siteIsJetpack: isJetpackSite( state, siteId ),
-		siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
-		userIsMaster: isJetpackUserMaster( state, siteId ),
-	};
-} )( localize( SiteOwnership ) );
+		return {
+			currentUser: getCurrentUser( state ),
+			siteId,
+			siteIsConnected: isJetpackSiteConnected( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
+			userIsMaster: isJetpackUserMaster( state, siteId ),
+		};
+	},
+	{ changeOwner }
+)( localize( SiteOwnership ) );
