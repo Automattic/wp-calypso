@@ -33,7 +33,6 @@ const QuickSaveButtons = ( {
 	isSaveBlocked,
 	isDirty,
 	hasContent,
-	loadRevision,
 	post,
 	translate,
 	onSave,
@@ -66,7 +65,7 @@ const QuickSaveButtons = ( {
 
 	return (
 		<div className="editor-ground-control__quick-save">
-			{ hasRevisions && <HistoryButton loadRevision={ loadRevision } /> }
+			{ hasRevisions && <HistoryButton /> }
 			{ showingSaveStatus && (
 				<div className="editor-ground-control__status">
 					{ isSaveAvailable && (
@@ -98,7 +97,6 @@ QuickSaveButtons.propTypes = {
 	isSaveBlocked: PropTypes.bool,
 	isDirty: PropTypes.bool,
 	hasContent: PropTypes.bool,
-	loadRevision: PropTypes.func.isRequired,
 	post: PropTypes.object,
 	onSave: PropTypes.func,
 

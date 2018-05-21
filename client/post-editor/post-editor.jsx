@@ -303,7 +303,6 @@ export class PostEditor extends React.Component {
 						isSaveBlocked={ this.isSaveBlocked() }
 						isPublishing={ this.state.isPublishing }
 						isSaving={ this.state.isSaving }
-						loadRevision={ this.loadRevision }
 						onPreview={ this.onPreview }
 						onPublish={ this.onPublish }
 						onSave={ this.onSave }
@@ -333,7 +332,6 @@ export class PostEditor extends React.Component {
 										isSaveBlocked={ this.isSaveBlocked() }
 										isDirty={ this.state.isDirty || this.props.dirty }
 										hasContent={ this.state.hasContent }
-										loadRevision={ this.loadRevision }
 										post={ this.state.post }
 										onSave={ this.onSave }
 									/>
