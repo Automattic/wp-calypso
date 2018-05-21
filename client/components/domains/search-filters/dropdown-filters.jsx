@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { isEqual, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +21,8 @@ import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';
 import Button from 'components/button';
+
+const HANDLED_FILTER_KEYS = [ 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
 
 export class DropdownFilters extends Component {
 	static propTypes = {
@@ -117,9 +120,16 @@ export class DropdownFilters extends Component {
 
 		this.setState( { showOverallValidationError: false }, () => {
 			this.togglePopover( { discardChanges: false } );
-			this.props.onSubmit();
+			this.hasFiltersChanged() && this.props.onSubmit();
 		} );
 	};
+
+	hasFiltersChanged() {
+		return ! isEqual(
+			pick( this.props.filters, HANDLED_FILTER_KEYS ),
+			pick( this.props.lastFilters, HANDLED_FILTER_KEYS )
+		);
+	}
 
 	render() {
 		const hasFilterValues = this.getFiltercounts() > 0;
