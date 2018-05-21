@@ -3,11 +3,12 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import page from 'page';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -56,11 +57,14 @@ class AccountSettingsClose extends Component {
 	};
 
 	render() {
-		const { translate, currentUserId, hasAtomicSites, hasPurchases } = this.props;
-		const isDeletePossible = ! hasAtomicSites && ! hasPurchases;
+		const { translate, currentUserId, hasAtomicSites, hasPurchases, isLoading } = this.props;
+		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasPurchases;
+		const containerClasses = classnames( 'account-close', 'main', {
+			'is-loading': isLoading,
+		} );
 
 		return (
-			<div className="account-close main" role="main">
+			<div className={ containerClasses } role="main">
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				<QuerySites allSites />
 				<HeaderCake onClick={ this.goBack }>
@@ -89,8 +93,8 @@ class AccountSettingsClose extends Component {
 							</ActionPanelFigure>
 						) }
 						{ ! hasAtomicSites && (
-							<div>
-								<p>
+							<Fragment>
+								<p class="account-close__body-copy">
 									{ translate(
 										'Account closure {{strong}}cannot{{/strong}} be undone, ' +
 											'and will remove all sites and content.',
@@ -101,7 +105,7 @@ class AccountSettingsClose extends Component {
 										}
 									) }
 								</p>
-								<p>
+								<p class="account-close__body-copy">
 									{ translate(
 										"If you're unsure about what account closure means or have any other questions, " +
 											'please {{a}}chat with someone from our support team{{/a}} before proceeding.',
@@ -112,10 +116,10 @@ class AccountSettingsClose extends Component {
 										}
 									) }
 								</p>
-							</div>
+							</Fragment>
 						) }
 						{ hasAtomicSites && (
-							<div>
+							<Fragment>
 								<p>
 									{ translate(
 										"To close your account, you'll need to contact our support team. Account closure cannot be undone " +
@@ -128,7 +132,7 @@ class AccountSettingsClose extends Component {
 											"you'll have a chance to chat with someone from our support team before anything happens."
 									) }
 								</p>
-							</div>
+							</Fragment>
 						) }
 					</ActionPanelBody>
 					<ActionPanelFooter>
@@ -157,8 +161,9 @@ class AccountSettingsClose extends Component {
 export default connect( state => {
 	const user = getCurrentUser( state );
 	const currentUserId = user && user.ID;
-	const isLoading = ! hasLoadedSites( state ) || ! hasLoadedUserPurchasesFromServer( state );
 	const purchases = getUserPurchases( state, currentUserId );
+	const isLoading =
+		! purchases || ! hasLoadedSites( state ) || ! hasLoadedUserPurchasesFromServer( state );
 
 	return {
 		currentUserId: user && user.ID,

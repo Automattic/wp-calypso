@@ -31,3 +31,15 @@ h1.account-close__confirm-dialog-header {
 .account-close__confirm-dialog-target-username {
 	color: $alert-red;
 }
+
+// Placeholders
+.account-close.is-loading .account-close__body-copy,
+.account-close.is-loading .account-close__body-copy a,
+.account-close.is-loading .action-panel__footer .button {
+	@include placeholder();
+}
+
+.account-close.is-loading .action-panel__footer .button {
+	border: 0;
+}
+
