@@ -5,9 +5,9 @@ Segmented Control manipulates the content shown following an exclusive or “eit
 
 ## Usage
 
-It can be utilized via two different techniques: **children components** or an **options array**. These techniques are available because certain use cases prefer the "selection" logic to be built into `SegmentedControl`, while others prefer to explicitly define that logic elsewhere.
+It can be utilized via two different techniques: **child components** or an **options array**. These techniques are available because certain use cases prefer the "selection" logic to be built into `SegmentedControl`, while others prefer to explicitly define that logic elsewhere.
 
-### Children components
+### Child components
 
 The children technique is appropriate when you'd like to define the "selection" logic at the same point where `<SegmentedControl>` is implemented.
 
