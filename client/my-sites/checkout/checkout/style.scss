@@ -900,6 +900,10 @@
 		flex-grow: 1;
 		flex-shrink: 0;
 		margin-left: 15px;
+		margin-top: 15px;
+		&.state {
+			margin-top: 0;
+		}
 	}
 	.checkout__form-state-field {
 		margin-left: 0;
