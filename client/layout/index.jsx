@@ -142,11 +142,11 @@ const Layout = createReactClass( {
 						{ this.props.primary }
 					</div>
 				</div>
-				{ config.isEnabled( 'i18n/community-translator' ) &&
-					isCommunityTranslatorEnabled() && (
-						<AsyncLoad require="components/community-translator" />
-					) }
-				<TranslatorLauncher />
+				{ config.isEnabled( 'i18n/community-translator' ) ? (
+					isCommunityTranslatorEnabled() && <AsyncLoad require="components/community-translator" />
+				) : (
+					<TranslatorLauncher />
+				) }
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) &&
 					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
