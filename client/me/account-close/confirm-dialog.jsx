@@ -21,13 +21,27 @@ class AccountCloseConfirmDialog extends React.Component {
 		inputValue: '',
 	};
 
+	componentDidMount() {
+		document.addEventListener( 'keydown', this.handleDialogKeydown );
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener( 'keydown', this.handleDialogKeydown );
+	}
+
 	handleCancel = () => {
-		this.setState( { inputValue: '' } );
 		this.props.closeConfirmDialog();
+		this.setState( { inputValue: '' } );
 	};
 
 	handleInputChange = event => {
 		this.setState( { inputValue: event.target.value.toLowerCase() } );
+	};
+
+	handleDialogKeydown = event => {
+		if ( event.key === 'Escape' ) {
+			this.handleCancel();
+		}
 	};
 
 	render() {
