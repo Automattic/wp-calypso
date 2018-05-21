@@ -1,0 +1,13 @@
+.support-info {
+	float: right;
+	margin: 0 0 20px 20px;
+}
+
+.popover {
+	.support-info__privacy {
+		display: block;
+		margin-top: 14px;
+		padding-top: 12px;
+		border-top: 1px solid rgba( $gray, 0.5 );
+	}
+}
