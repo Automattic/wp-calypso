@@ -132,6 +132,45 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 		: null;
 };
 
+export const needsCustomsForm = createSelector(
+	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+		const form = getForm( state, orderId, siteId );
+		if ( isEmpty( form ) ) {
+			return false;
+		}
+		const originStatus = form.origin;
+		const origin =
+			originStatus.isNormalized && originStatus.selectNormalized && originStatus.normalized
+				? originStatus.normalized
+				: originStatus.values;
+		const destinationStatus = form.destination;
+		const destination =
+			destinationStatus.isNormalized &&
+			destinationStatus.selectNormalized &&
+			destinationStatus.normalized
+				? destinationStatus.normalized
+				: destinationStatus.values;
+
+		// Special case: Any shipment from/to military addresses must have Customs
+		if ( 'US' === origin.country && includes( [ 'AA', 'AE', 'AP' ], origin.state ) ) {
+			return true;
+		}
+		if ( 'US' === destination.country && includes( [ 'AA', 'AE', 'AP' ], destination.state ) ) {
+			return true;
+		}
+		// No need to have Customs if shipping inside the same territory (for example, from Guam to Guam)
+		if ( origin.country === destination.country ) {
+			return false;
+		}
+		// Shipments between US, Puerto Rico and Virgin Islands don't need Customs, everything else does
+		return (
+			! includes( [ 'US', 'PR', 'VI' ], origin.country ) ||
+			! includes( [ 'US', 'PR', 'VI' ], destination.country )
+		);
+	},
+	( state, orderId, siteId = getSelectedSiteId( state ) ) => [ getForm( state, orderId, siteId ) ]
+);
+
 export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! isLoaded( state, orderId, siteId ) ) {
 		return null;
@@ -232,6 +271,13 @@ const getPackagesErrors = values =>
 		return errors;
 	} );
 
+export const getCustomsErrors = customs => {
+	if ( ! customs.dummyFieldChecked && customs.submitted ) {
+		return { dummyField: 'This must be selected to continue' };
+	}
+	return {};
+};
+
 export const getRatesErrors = ( { values: selectedRates, available: allRates } ) => {
 	return {
 		server: mapValues( allRates, rate => {
@@ -274,6 +320,7 @@ export const getFormErrors = createSelector(
 			origin: getAddressErrors( form.origin, countriesData ),
 			destination: getAddressErrors( form.destination, countriesData ),
 			packages: getPackagesErrors( form.packages.selected ),
+			customs: getCustomsErrors( form.customs ),
 			rates: getRatesErrors( form.rates ),
 			sidebar: getSidebarErrors( paperSize ),
 		};
@@ -282,6 +329,19 @@ export const getFormErrors = createSelector(
 		getShippingLabel( state, orderId, siteId ),
 	]
 );
+
+export const isCustomsFormStepSubmitted = (
+	state,
+	orderId,
+	siteId = getSelectedSiteId( state )
+) => {
+	const form = getForm( state, orderId, siteId );
+	if ( ! form ) {
+		return false;
+	}
+
+	return form.customs.submitted;
+};
 
 /**
  * Checks the form for errors and returns a step with an error in it or null
@@ -317,6 +377,14 @@ export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteI
 
 	if ( hasNonEmptyLeaves( errors.packages ) ) {
 		return 'packages';
+	}
+
+	if (
+		needsCustomsForm( state, orderId, siteId ) &&
+		( hasNonEmptyLeaves( errors.customs ) ||
+			! isCustomsFormStepSubmitted( state, orderId, siteId ) )
+	) {
+		return 'customs';
 	}
 
 	if ( hasNonEmptyLeaves( errors.rates ) ) {
