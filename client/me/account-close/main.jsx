@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import page from 'page';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -23,6 +24,11 @@ import ActionPanelLink from 'components/action-panel/link';
 import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
 import AccountCloseConfirmDialog from './confirm-dialog';
+import QueryUserPurchases from 'components/data/query-user-purchases';
+import QuerySites from 'components/data/query-sites';
+import { getCurrentUser } from 'state/current-user/selectors';
+import hasLoadedSites from 'state/selectors/has-loaded-sites';
+import { hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 
 class AccountSettingsClose extends Component {
 	state = {
@@ -36,7 +42,10 @@ class AccountSettingsClose extends Component {
 	handleDeleteClick = event => {
 		event.preventDefault();
 
-		// @todo check if purchases and sites have loaded
+		// Check if purchases and sites have loaded
+		if ( this.props.isLoading ) {
+			return false;
+		}
 
 		this.setState( { showConfirmDialog: true } );
 	};
@@ -46,11 +55,15 @@ class AccountSettingsClose extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, currentUserId } = this.props;
 		const hasAtomicSites = false;
+		const hasPurchases = false;
+		const isDeletePossible = ! hasAtomicSites && ! hasPurchases;
 
 		return (
 			<div className="account-close main" role="main">
+				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				<QuerySites allSites />
 				<HeaderCake onClick={ this.goBack }>
 					<h1>{ translate( 'Close account' ) }</h1>
 				</HeaderCake>
@@ -59,21 +72,23 @@ class AccountSettingsClose extends Component {
 						{ translate( 'Close account' ) }
 					</ActionPanelTitle>
 					<ActionPanelBody>
-						<ActionPanelFigure>
-							<ActionPanelFigureHeader>
-								{ translate( 'These items will be deleted' ) }
-							</ActionPanelFigureHeader>
-							<ActionPanelFigureList>
-								<ActionPanelFigureListItem>
-									{ translate( 'Personal details' ) }
-								</ActionPanelFigureListItem>
-								<ActionPanelFigureListItem>{ translate( 'Sites' ) }</ActionPanelFigureListItem>
-								<ActionPanelFigureListItem>{ translate( 'Posts' ) }</ActionPanelFigureListItem>
-								<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
-								<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
-								<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
-							</ActionPanelFigureList>
-						</ActionPanelFigure>
+						{ isDeletePossible && (
+							<ActionPanelFigure>
+								<ActionPanelFigureHeader>
+									{ translate( 'These items will be deleted' ) }
+								</ActionPanelFigureHeader>
+								<ActionPanelFigureList>
+									<ActionPanelFigureListItem>
+										{ translate( 'Personal details' ) }
+									</ActionPanelFigureListItem>
+									<ActionPanelFigureListItem>{ translate( 'Sites' ) }</ActionPanelFigureListItem>
+									<ActionPanelFigureListItem>{ translate( 'Posts' ) }</ActionPanelFigureListItem>
+									<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
+									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
+									<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
+								</ActionPanelFigureList>
+							</ActionPanelFigure>
+						) }
 						{ ! hasAtomicSites && (
 							<div>
 								<p>
@@ -140,4 +155,12 @@ class AccountSettingsClose extends Component {
 	}
 }
 
-export default localize( AccountSettingsClose );
+export default connect( state => {
+	const user = getCurrentUser( state );
+	const isLoading = ! hasLoadedSites( state ) || ! hasLoadedUserPurchasesFromServer( state );
+
+	return {
+		currentUserId: user && user.ID,
+		isLoading,
+	};
+} )( localize( AccountSettingsClose ) );
