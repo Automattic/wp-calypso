@@ -17,20 +17,15 @@ import {
 	setDocumentHeadTitle as setTitle,
 	setDocumentHeadLink as setLink,
 	setDocumentHeadMeta as setMeta,
-	setDocumentHeadUnreadCount as setUnreadCount,
 } from 'state/document-head/actions';
 import TranslatableString from 'components/translatable/proptype';
 
 class DocumentHead extends Component {
 	componentWillMount() {
-		const { title, unreadCount } = this.props;
+		const { title } = this.props;
 
 		if ( this.props.title !== undefined ) {
 			this.props.setTitle( title );
-		}
-
-		if ( this.props.unreadCount !== undefined ) {
-			this.props.setUnreadCount( unreadCount );
 		}
 
 		if ( this.props.link !== undefined ) {
@@ -49,10 +44,6 @@ class DocumentHead extends Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.title !== undefined && this.props.title !== nextProps.title ) {
 			this.props.setTitle( nextProps.title );
-		}
-
-		if ( nextProps.unreadCount !== undefined && this.props.unreadCount !== nextProps.unreadCount ) {
-			this.props.setUnreadCount( nextProps.unreadCount );
 		}
 
 		if ( nextProps.link !== undefined && ! isEqual( this.props.link, nextProps.link ) ) {
@@ -83,13 +74,11 @@ class DocumentHead extends Component {
 
 DocumentHead.propTypes = {
 	title: TranslatableString,
-	unreadCount: PropTypes.number,
 	link: PropTypes.array,
 	meta: PropTypes.array,
 	setTitle: PropTypes.func.isRequired,
 	setLink: PropTypes.func.isRequired,
 	setMeta: PropTypes.func.isRequired,
-	setUnreadCount: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -100,6 +89,5 @@ export default connect(
 		setTitle,
 		setLink,
 		setMeta,
-		setUnreadCount,
 	}
 )( DocumentHead );
