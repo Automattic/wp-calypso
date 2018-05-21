@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -157,6 +158,7 @@ export class TldFilterBar extends Component {
 
 	renderPopover() {
 		const { translate } = this.props;
+		const filterOnClose = abtest( 'domainSearchFilterOnClose' ) === 'enabled';
 
 		return (
 			<Popover
@@ -164,7 +166,7 @@ export class TldFilterBar extends Component {
 				className="search-filters__popover"
 				context={ this.button }
 				isVisible={ this.state.showPopover }
-				onClose={ this.togglePopover }
+				onClose={ filterOnClose ? this.handleFiltersSubmit : this.togglePopover }
 				position="bottom left"
 			>
 				<FormFieldset className="search-filters__token-field-fieldset">
