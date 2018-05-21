@@ -137,7 +137,7 @@ class AccountSettingsClose extends Component {
 								<p className="account-close__body-copy">
 									{ translate(
 										"If you're unsure about what account closure means or have any other questions, " +
-											'{a}chat with someone from our support team{/a} before going ahead.',
+											'{{a}}chat with someone from our support team{{/a}} before going ahead.',
 										{
 											components: {
 												a: <ActionPanelLink href="/help/contact" />,
@@ -187,7 +187,7 @@ export default connect( state => {
 	return {
 		currentUserId: user && user.ID,
 		isLoading,
-		hasPurchases: !! purchases,
+		hasPurchases: purchases && purchases.length > 0,
 		hasAtomicSites: userHasAnyAtomicSites( state ),
 	};
 } )( localize( AccountSettingsClose ) );
