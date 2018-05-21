@@ -1,24 +1,23 @@
 DocumentHead
-====
+============
 
-`<DocumentHead />` is a React component used in assigning a title, unread count, link, or meta to the global application state. It also sets `document.title` on the client, based on those parameters.
+`<DocumentHead />` is a React component used in assigning a title, link, or meta to the global application state. It also sets `document.title` on the client, based on those parameters.
 
 ## Usage
 
-Render the component, passing `title`, `unreadCount`, `link` or `meta`. It does not accept any children, nor does it render any elements to the page.
+Render the component, passing `title`, `link`, or `meta`. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
 import React from 'react';
 import DocumentHead from 'components/data/document-head';
 
 export default function HomeSection() {
-	let count = 123;
 	let metas = [ { rel: 'some-rel', content: 'some-content' } ];
 	let links = [ { href: 'https://automattic.com', 'rel': 'some-rel' } ];
 
 	return (
 		<main>
-			<DocumentHead title="Home" link={ links } meta={ metas } unreadCount={ count } />
+			<DocumentHead title="Home" link={ links } meta={ metas } />
 		</main>
 	);
 }
@@ -32,14 +31,6 @@ export default function HomeSection() {
 	<tr><th>Type</th><td>String</td></tr>
 	<tr><th>Required</th><td>No</td></tr>
 	<tr><th>Default</th><td>""</td></tr>
-</table>
-
-### `unreadCount`
-
-<table>
-	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td>0</td></tr>
 </table>
 
 ### `meta`
