@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import Gridicon from 'gridicons';
@@ -31,11 +32,16 @@ class ComponentPlayground extends Component {
 
 	showCode = () => {
 		this.setState( {
-			showCode: true,
+			showCode: ! this.state.showCode,
 		} );
 	};
 
 	render() {
+		const toggleCode = this.props.code.length > 200;
+		const codeClassName = classNames( {
+			'design__component-playground-code': true,
+			'show-code': toggleCode ? this.state.showCode : true,
+		} );
 		return (
 			<LiveProvider
 				code={ this.props.code }
@@ -51,29 +57,28 @@ class ComponentPlayground extends Component {
 					<LivePreview />
 				</DocsExampleWrapper>
 
+				{ this.props.component && (
+					<div className={ codeClassName }>
+						<ClipboardButton
+							text={ this.props.code }
+							borderless
+							onClick={ this.handleClick }
+							className="design__component-playground-clipboard"
+						>
+							<Gridicon icon="clipboard" />
+						</ClipboardButton>
+
+						<LiveError />
+						<LiveEditor />
+					</div>
+				) }
+
 				{ this.props.component &&
-					! this.state.showCode && (
+					toggleCode && (
 						<div className="design__component-playground-show-code">
-							<Button borderless onClick={ this.showCode }>
-								Show code <Gridicon icon="code" />
+							<Button onClick={ this.showCode }>
+								{ this.state.showCode ? 'Hide' : 'Show' } code <Gridicon icon="code" />
 							</Button>
-						</div>
-					) }
-
-				{ this.props.component &&
-					this.state.showCode && (
-						<div className="design__component-playground-code">
-							<ClipboardButton
-								text={ this.props.code }
-								borderless
-								onClick={ this.handleClick }
-								className="design__component-playground-clipboard"
-							>
-								<Gridicon icon="clipboard" />
-							</ClipboardButton>
-
-							<LiveError />
-							<LiveEditor />
 						</div>
 					) }
 			</LiveProvider>
