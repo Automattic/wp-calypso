@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -175,14 +175,14 @@ class PurchaseMeta extends Component {
 		const { purchase, translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			return <span className="manage-purchase__detail">{ translate( 'Included with plan' ) }</span>;
+			return translate( 'Included with plan' );
 		}
 
 		if ( typeof purchase.payment.type !== 'undefined' ) {
 			let paymentInfo = null;
 
 			if ( purchase.payment.type === 'credits' ) {
-				return <span className="manage-purchase__detail">{ translate( 'Credits' ) }</span>;
+				return translate( 'Credits' );
 			}
 
 			if ( isPaidWithCreditCard( purchase ) ) {
@@ -196,14 +196,14 @@ class PurchaseMeta extends Component {
 			}
 
 			return (
-				<span className="manage-purchase__detail">
+				<Fragment>
 					<PaymentLogo type={ paymentLogoType( purchase ) } />
 					{ paymentInfo }
-				</span>
+				</Fragment>
 			);
 		}
 
-		return <span className="manage-purchase__detail">{ translate( 'None' ) }</span>;
+		return translate( 'None' );
 	}
 
 	renderPaymentDetails() {
@@ -216,7 +216,7 @@ class PurchaseMeta extends Component {
 		const paymentDetails = (
 			<span>
 				<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
-				{ this.renderPaymentInfo() }
+				<span className="manage-purchase__detail">{ this.renderPaymentInfo() }</span>
 			</span>
 		);
 
