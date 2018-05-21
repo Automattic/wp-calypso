@@ -283,7 +283,6 @@ export class PostEditor extends React.Component {
 					handlePreferenceChange={ this.handleConfirmationSidebarPreferenceChange }
 					onPrivatePublish={ this.onPublish }
 					onPublish={ this.onPublish }
-					post={ this.state.post }
 					savedPost={ this.state.savedPost }
 					setPostDate={ this.setPostDate }
 					setStatus={ this.setConfirmationSidebar }
