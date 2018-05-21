@@ -396,6 +396,8 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
  * @param {int|string} [siteId] The site ID
  * @param {Function} fn The callback function
  * @api public
+ *
+ * @returns {Promise} A promise that resolves when the request completes
  */
 Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) {
 	return this.wpcom.req.get( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, fn );
@@ -411,6 +413,8 @@ Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) 
  * 	- service {string} service name for this keyring id
  * @param {Function} fn The callback function
  * @api public
+ *
+ * @returns {Promise} A promise that resolves when the request completes
  */
 Undocumented.prototype.updateSiteKeyrings = function updateSiteKeyring( siteId, data, fn ) {
 	return this.wpcom.req.post( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, data, fn );
@@ -424,6 +428,8 @@ Undocumented.prototype.updateSiteKeyrings = function updateSiteKeyring( siteId, 
  * @param {string|null} externalUserId Optional, the external user id
  * @param {Function} fn The callback function
  * @api public
+ *
+ * @returns {Promise} A promise that resolves when the request completes
  */
 Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring(
 	siteId,
