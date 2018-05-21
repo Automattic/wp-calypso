@@ -1,5 +1,5 @@
 Query Site Keyrings
-===================
+===
 
 `<QuerySiteKeyrings />` is a React component used in managing network requests for site keyrings.
 
@@ -21,13 +21,15 @@ export default function MyKeyringsPage( { keyrings } ) {
 }
 ```
 
-## Props
+### Props
 
-### `siteId`
+Props are displayed as a table with Name, Type, Default, and Description as headings. Required props are marked with `*`.
 
-<table>
-	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-</table>
+Name | Type | Default | Description
+--- | --- | --- | ---
+`siteId` | `number` | `null` | The site ID for which the keyrings should be requested.
 
-The site ID for which the keyrings should be requested.
+
+### General guidelines
+
+Add this component to the `render()` method wherever you need to have `state.siteKeyrings` populated for your site. 
