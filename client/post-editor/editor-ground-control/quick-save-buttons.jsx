@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -34,7 +34,6 @@ const QuickSaveButtons = ( {
 	post,
 	translate,
 	onSave,
-	showRevisions = true,
 } ) => {
 	const onSaveButtonClick = () => {
 		onSave();
@@ -53,7 +52,7 @@ const QuickSaveButtons = ( {
 
 	const showingStatusLabel = isSaving || ( post && post.ID && ! isPublished( post ) );
 	const showingSaveStatus = isSaveAvailable || showingStatusLabel;
-	const hasRevisions = showRevisions && get( post, 'revisions.length' );
+	const hasRevisions = post && ! isEmpty( post.revisions );
 
 	if ( ! ( showingSaveStatus || hasRevisions ) ) {
 		return null;
