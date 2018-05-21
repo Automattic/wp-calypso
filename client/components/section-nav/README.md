@@ -7,10 +7,10 @@ React component used to display a particular section's navigation bar. Or more t
 
 ---
 
-## Example Usage
+## Usage
 
 ```js
-import SectionNav from 'components/section-nav' );
+import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
@@ -66,15 +66,11 @@ The base component is `SectionNav` and acts as the wrapper for various control g
 
 #### Props
 
-`selectedText` - **required** (node - anything that can be rendered)
+Name | Type | Required | Default | Description
+--- | --- | --- | --- | ---
+`selectedText` | `node` | yes | `null` | Text displayed in the header of the panel when rendered on mobile. See [example](https://cldup.com/796J06ggf0.png).
+`selectedCount` | `number` | no | `null` | Count displayed in the header of the panel.
 
-Text displayed in the header of the panel when rendered on mobile.
-
-![selectedText example](https://cldup.com/796J06ggf0.png)
-
-`selectedCount` - **optional** (Number)
-
-Count displayed in the header of the panel.
 ---
 
 ## Nav Tabs
@@ -85,24 +81,12 @@ The tabs sub component will render items inline when there is enough horizontal 
 
 #### Props
 
-`selectedText` - **required** (string)
+Name | Type | Required | Default | Description
+--- | --- | --- | --- | ---
+`selectedText` | `string` | yes | `null` | Text displayed in the header when rendered as dropdown. See [example](https://cldup.com/Pdu7ypcBLS.png).
+`selectedCount` | `number` | no | `null` | Count displayed in the header when rendered as dropdown.
+`label` | `string` | no | `null` | Text displayed above tabs group on Mobile (`<480px`) or when `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`). See [example](https://cldup.com/OeWSPtifYY.png).
 
-Text displayed in the header when rendered as dropdown.
-
-![selectedText example](https://cldup.com/Pdu7ypcBLS.png)
-
-`selectedCount` - **optional** (Number)
-
-Count displayed in the header when rendered as dropdown.
-
-`label` - *optional* (string)
-
-Text displayed above tabs group when:
-
-* Mobile (`<480px`)
-* `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
-
-![label example](https://cldup.com/OeWSPtifYY.png)
 
 ---
 
@@ -116,14 +100,9 @@ The segmented sub component utilizes [`SegmentedControl`](/client/components/seg
 
 #### Props
 
-`label` - *optional* (string)
-
-Text displayed above tabs group when:
-
-* Mobile (`<480px`)
-* `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
-
-![label example](https://cldup.com/OeWSPtifYY.png)
+Name | Type | Required | Default | Description
+--- | --- | --- | --- | ---
+`label` | `string` | no | `null` | Text displayed above tabs group on Mobile (`<480px`) or when `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`). See [example](https://cldup.com/OeWSPtifYY.png).
 
 ---
 
@@ -133,28 +112,12 @@ These are the sub components that make up the children of both `NavTabs` & `NavS
 
 #### Props
 
-`path` - *optional* (string)
+Name | Type | Required | Default | Description
+--- | --- | --- | --- | ---
+`path` | `string` | no | `null` | URL to navigate to when clicked.
+`selected` | `bool` | no | `false` | Used for marking an item selected visually.
+`onClick` | `function` | no | `null` | Additional function to be executed when item is clicked. **Note**:  _If `SectionNav` needs to execute some additional functionality on click, this function will still be executed and *not* overridden._
+`tabIndex` | `number` | no | `null` | Used for accessibility and places option in a different `tab-index`.
+`disabled` | `bool` | no | `false` | Prevents the item from being selected.
+`count` | `number` | no | `null` | Add an extra `item-count` element into nav item.
 
-URL to navigate to when clicked.
-
-`selected` - *optional* (boolean)
-
-Used for marking an item selected visually.
-
-`onClick` - *optional* (function)
-
-Additional function to be executed when item is clicked.
-
-> Note: if `SectionNav` needs to execute some additional functionality on click, this function will still be executed and *not* overridden.
-
-`tabIndex` - *optional* (number)
-
-Used for accessibility and places option in a different `tab-index`. Default is `0`.
-
-`disabled` - *optional* (boolean)
-
-Prevents the item from being selected. Default is `false`.
-
-`count` - *optional* (number)
-
-Add an extra `item-count` element into nav item.
