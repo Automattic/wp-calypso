@@ -34,7 +34,7 @@
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-    "happychat_support_locales": [ "en", "es", "pt-br" ],
+    "livechat_support_locales": [ "en", "es", "pt-br" ],
     "support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
     "english_locales": [ "en", "en-gb"],
     "languages": [

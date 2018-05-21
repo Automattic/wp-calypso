@@ -16,7 +16,7 @@ import {
 	removeLocaleFromPath,
 	isLocaleVariant,
 	canBeTranslated,
-	getSupportLocale,
+	getSupportSiteLocale,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -258,19 +258,19 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( '#getSupportLocale', () => {
+	describe( '#getSupportSiteLocale', () => {
 		test( 'should return `en` by default', () => {
-			expect( getSupportLocale() ).to.equal( 'en' );
+			expect( getSupportSiteLocale() ).to.equal( 'en' );
 		} );
 
 		test( 'should return support slug for current i18n locale slug if available in config', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'ja' );
-			expect( getSupportLocale() ).to.equal( 'ja' );
+			expect( getSupportSiteLocale() ).to.equal( 'ja' );
 		} );
 
 		test( 'should return `en` for current i18n locale slug if not available in config', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'ar' );
-			expect( getSupportLocale() ).to.equal( 'en' );
+			expect( getSupportSiteLocale() ).to.equal( 'en' );
 		} );
 	} );
 } );
