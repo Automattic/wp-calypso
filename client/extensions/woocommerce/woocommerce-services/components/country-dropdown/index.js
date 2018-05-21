@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import Dropdown from '../dropdown';
 
 const CountryDropdown = props => {
-	const valuesMap = {};
+	const valuesMap = { [ props.value ]: props.value };
 	Object.keys( props.countriesData ).forEach( countryCode => {
 		valuesMap[ countryCode ] = props.countriesData[ countryCode ].name;
 	} );

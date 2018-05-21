@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { first } from 'lodash';
+import { first, includes } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -23,6 +23,7 @@ import {
 	getCountriesData,
 	getLabels,
 	isLabelDataFetchError,
+	USPS_COUNTRIES,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import {
 	areSettingsGeneralLoaded,
@@ -44,6 +45,7 @@ import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shippin
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
+import { isEnabled } from 'config';
 
 class OrderFulfillment extends Component {
 	static propTypes = {
@@ -141,7 +143,11 @@ class OrderFulfillment extends Component {
 		}
 	};
 
-	isAddressValidForLabels( address ) {
+	isAddressValidForLabels( address, type ) {
+		if ( isEnabled( 'woocommerce/extension-wcservices/international-labels' ) ) {
+			return 'destination' === type || includes( USPS_COUNTRIES, address.country );
+		}
+
 		const { labelCountriesData } = this.props;
 		if ( ! labelCountriesData ) {
 			return false;
@@ -154,7 +160,7 @@ class OrderFulfillment extends Component {
 			return false;
 		}
 
-		//supported country doesn't have a states data
+		//supported country doesn't have states data
 		if ( ! countryData.states ) {
 			return true;
 		}
@@ -164,7 +170,7 @@ class OrderFulfillment extends Component {
 	}
 
 	shouldShowLabels() {
-		const { labelsLoaded, labelsEnabled, order, storeAddress, hasLabelsPaymentMethod } = this.props;
+		const { labelsLoaded, labelsEnabled, storeAddress, order, hasLabelsPaymentMethod } = this.props;
 
 		if ( ! labelsLoaded ) {
 			return false;
@@ -175,8 +181,8 @@ class OrderFulfillment extends Component {
 		return (
 			labelsEnabled &&
 			hasLabelsPaymentMethod &&
-			this.isAddressValidForLabels( storeAddress ) &&
-			this.isAddressValidForLabels( shipping )
+			this.isAddressValidForLabels( storeAddress, 'origin' ) &&
+			this.isAddressValidForLabels( shipping, 'destination' )
 		);
 	}
 

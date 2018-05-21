@@ -56,7 +56,7 @@ const renderSummary = (
 	}
 	str += 'US' === country ? postcode.split( '-' )[ 0 ] : postcode;
 	if ( showCountry ) {
-		str += ', ' + countriesData[ country ].name;
+		str += ', ' + ( countriesData[ country ] ? countriesData[ country ].name : country );
 	}
 	return str;
 };
