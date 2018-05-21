@@ -376,6 +376,7 @@ export class ContactDetailsFormFields extends Component {
 					onChange: this.handlePhoneChange,
 					countriesList,
 					countryCode: this.state.phoneCountryCode,
+					enableStickyCountry: false,
 				} ) }
 
 				{ needsFax &&
