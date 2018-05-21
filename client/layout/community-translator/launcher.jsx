@@ -77,8 +77,9 @@ class TranslatorLauncher extends React.PureComponent {
 
 	toggle = event => {
 		event.preventDefault();
-		analytics.mc.bumpStat( 'calypso_translator_toggle', this.state.isActive ? 'off' : 'on' );
-		translator.toggle();
+		const nextIsActive = translator.toggle();
+		analytics.mc.bumpStat( 'calypso_translator_toggle', nextIsActive ? 'on' : 'off' );
+		this.setState( { isActive: nextIsActive } );
 	};
 
 	render() {
