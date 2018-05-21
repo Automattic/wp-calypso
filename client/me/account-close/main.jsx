@@ -28,7 +28,8 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import QuerySites from 'components/data/query-sites';
 import { getCurrentUser } from 'state/current-user/selectors';
 import hasLoadedSites from 'state/selectors/has-loaded-sites';
-import { hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
+import { hasLoadedUserPurchasesFromServer, getUserPurchases } from 'state/purchases/selectors';
 
 class AccountSettingsClose extends Component {
 	state = {
@@ -55,9 +56,7 @@ class AccountSettingsClose extends Component {
 	};
 
 	render() {
-		const { translate, currentUserId } = this.props;
-		const hasAtomicSites = false;
-		const hasPurchases = false;
+		const { translate, currentUserId, hasAtomicSites, hasPurchases } = this.props;
 		const isDeletePossible = ! hasAtomicSites && ! hasPurchases;
 
 		return (
@@ -133,13 +132,13 @@ class AccountSettingsClose extends Component {
 						) }
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						{ ! hasAtomicSites && (
+						{ isDeletePossible && (
 							<Button scary onClick={ this.handleDeleteClick }>
 								<Gridicon icon="trash" />
 								{ translate( 'Close account' ) }
 							</Button>
 						) }
-						{ hasAtomicSites && (
+						{ ! isDeletePossible && (
 							<Button primary href="/help/contact">
 								{ translate( 'Contact support' ) }
 							</Button>
@@ -157,10 +156,14 @@ class AccountSettingsClose extends Component {
 
 export default connect( state => {
 	const user = getCurrentUser( state );
+	const currentUserId = user && user.ID;
 	const isLoading = ! hasLoadedSites( state ) || ! hasLoadedUserPurchasesFromServer( state );
+	const purchases = getUserPurchases( state, currentUserId );
 
 	return {
 		currentUserId: user && user.ID,
 		isLoading,
+		hasPurchases: !! purchases,
+		hasAtomicSites: userHasAnyAtomicSites( state ),
 	};
 } )( localize( AccountSettingsClose ) );
