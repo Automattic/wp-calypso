@@ -4,6 +4,7 @@
  * External dependencies
  */
 
+import PropTypes from 'prop-types';
 import i18n, { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
@@ -19,6 +20,10 @@ import userSettings from 'lib/user-settings';
 
 class TranslatorLauncher extends React.PureComponent {
 	static displayName = 'TranslatorLauncher';
+
+	static propTypes = {
+		translate: PropTypes.func,
+	};
 
 	state = {
 		infoDialogVisible: false,
