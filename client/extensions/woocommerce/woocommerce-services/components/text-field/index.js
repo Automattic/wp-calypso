@@ -46,7 +46,7 @@ const TextField = ( {
 
 TextField.propTypes = {
 	id: PropTypes.string.isRequired,
-	title: PropTypes.string,
+	title: PropTypes.node,
 	description: PropTypes.string,
 	value: PropTypes.string.isRequired,
 	updateValue: PropTypes.func,

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, mapValues } from 'lodash';
+import { forEach, isEmpty, mapValues } from 'lodash';
 
 /**
  * Checks the address object for the required fields
@@ -41,6 +41,35 @@ export default data => {
 	const originNormalized = Boolean( formData.origin_normalized || formData.origin.phone );
 	const hasOriginAddress = addressFilled( formData.origin );
 	const hasDestinationAddress = addressFilled( formData.destination );
+
+	const customsItemsData = {};
+	forEach( formData.selected_packages, ( { items } ) => {
+		items.map(
+			( {
+				product_id,
+				weight,
+				name,
+				attributes,
+				description,
+				value,
+				hs_tariff_code,
+				origin_country,
+				parent_product_id,
+			} ) => {
+				const attributesStr = attributes ? ' (' + attributes + ')' : '';
+				const defaultDescription = name.substring( name.indexOf( '-' ) + 1 ).trim() + attributesStr;
+				customsItemsData[ product_id ] = {
+					defaultDescription,
+					description: description || defaultDescription,
+					weight,
+					value,
+					tariffNumber: hs_tariff_code || '',
+					originCountry: origin_country || formData.origin.country,
+					parentProductId: parent_product_id,
+				};
+			}
+		);
+	} );
 
 	return {
 		loaded: true,
@@ -85,7 +114,15 @@ export default data => {
 				isPacked: formData.is_packed,
 				saved: true,
 			},
-			customs: {},
+			customs: {
+				items: customsItemsData,
+				// Ignore validation in all the tariff number fields that are empty so the user doesn't see everything red from the start
+				ignoreTariffNumberValidation: mapValues(
+					customsItemsData,
+					( { tariffNumber } ) => ! tariffNumber
+				),
+				saved: true,
+			},
 			rates: {
 				values: isEmpty( formData.rates.selected )
 					? mapValues( formData.packages, () => '' )

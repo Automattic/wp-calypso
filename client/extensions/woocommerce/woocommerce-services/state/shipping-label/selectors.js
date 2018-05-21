@@ -4,17 +4,23 @@
  * External dependencies
  */
 import {
+	fill,
 	find,
+	flatten,
+	forEach,
 	get,
 	includes,
 	isEmpty,
 	isEqual,
 	isFinite,
+	map,
 	mapValues,
 	omit,
 	pick,
 	round,
 	some,
+	uniq,
+	zipObject,
 } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
@@ -23,6 +29,7 @@ import { translate } from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
+import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import {
 	areSettingsLoaded,
 	areSettingsErrored,
@@ -162,6 +169,26 @@ export const needsCustomsForm = createSelector(
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => [ getForm( state, orderId, siteId ) ]
 );
 
+export const getProductValueFromOrder = createSelector(
+	( state, productId, orderId, siteId = getSelectedSiteId( state ) ) => {
+		const order = getOrder( state, orderId, siteId );
+		if ( ! order ) {
+			return 0;
+		}
+		for ( let i = 0; i < order.line_items.length; i++ ) {
+			const item = order.line_items[ i ];
+			const id = item.variation_id || item.product_id;
+			if ( id === productId ) {
+				return round( item.total / item.quantity, 2 );
+			}
+		}
+		return 0;
+	},
+	( state, productId, orderId, siteId = getSelectedSiteId( state ) ) => [
+		getOrder( state, orderId, siteId ),
+	]
+);
+
 export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! isLoaded( state, orderId, siteId ) ) {
 		return null;
@@ -260,11 +287,99 @@ const getPackagesErrors = values =>
 		return errors;
 	} );
 
-export const getCustomsErrors = customs => {
-	if ( ! customs.dummyFieldChecked && customs.submitted ) {
-		return { dummyField: 'This must be selected to continue' };
-	}
-	return {};
+export const getCustomsErrors = (
+	packages,
+	customs,
+	destinationCountryCode,
+	destinationCountryName
+) => {
+	const usedProductIds = uniq(
+		flatten( map( packages, pckg => map( pckg.items, 'product_id' ) ) )
+	);
+
+	const valuesByProductId = zipObject( usedProductIds, fill( Array( usedProductIds.length ), 0 ) );
+	forEach( packages, pckg => {
+		forEach(
+			pckg.items,
+			( { quantity, product_id } ) =>
+				( valuesByProductId[ product_id ] += quantity * customs.items[ product_id ].value )
+		);
+	} );
+
+	const valuesByTariffNumber = {};
+	forEach( pick( customs.items, usedProductIds ), ( itemData, productId ) => {
+		if ( 6 === itemData.tariffNumber.length ) {
+			if ( ! valuesByTariffNumber[ itemData.tariffNumber ] ) {
+				valuesByTariffNumber[ itemData.tariffNumber ] = 0;
+			}
+			valuesByTariffNumber[ itemData.tariffNumber ] += valuesByProductId[ productId ];
+		}
+	} );
+
+	return {
+		packages: mapValues( packages, pckg => {
+			const errors = {};
+
+			if ( 'other' === pckg.contentsType && ! pckg.contentsExplanation ) {
+				errors.contentsExplanation = translate(
+					'Please describe what kind of goods this package contains'
+				);
+			}
+
+			if ( 'other' === pckg.restrictionType && ! pckg.restrictionExplanation ) {
+				errors.restrictionExplanation = translate(
+					'Please describe what kind of restrictions this package must have'
+				);
+			}
+
+			const classesAbove2500usd = new Set();
+			forEach( pckg.items, ( { product_id } ) => {
+				const { tariffNumber } = customs.items[ product_id ];
+				if ( 2500 < valuesByTariffNumber[ tariffNumber ] ) {
+					classesAbove2500usd.add( tariffNumber );
+				}
+			} );
+
+			if ( pckg.itn ) {
+				if ( ! /^AES X\d{14}$/.test( pckg.itn ) ) {
+					errors.itn = translate( 'Invalid format' );
+				}
+			} else if ( 'CA' !== destinationCountryCode ) {
+				if ( ! isEmpty( classesAbove2500usd ) ) {
+					errors.itn = translate(
+						'International Transaction Number is required for shipping items valued over $2,500 per tariff code. ' +
+							'Products with tariff code %(code)s add up to more than $2,500.',
+						{
+							args: { code: classesAbove2500usd.values().next().value }, // Just pick the first code
+						}
+					);
+				} else if ( includes( [ 'IR', 'SY', 'KP', 'CU', 'SD' ], destinationCountryCode ) ) {
+					errors.itn = translate(
+						'International Transaction Number is required for shipments to %(country)s',
+						{
+							args: { country: destinationCountryName },
+						}
+					);
+				}
+			}
+
+			return errors;
+		} ),
+
+		items: mapValues( pick( customs.items, usedProductIds ), ( itemData, productId ) => {
+			const itemErrors = {};
+			if ( ! itemData.description ) {
+				itemErrors.description = translate( 'This field is required' );
+			}
+			if (
+				! customs.ignoreTariffNumberValidation[ productId ] &&
+				6 !== itemData.tariffNumber.length
+			) {
+				itemErrors.tariffNumber = translate( 'The tariff code must be 6 digits long' );
+			}
+			return itemErrors;
+		} ),
+	};
 };
 
 export const getRatesErrors = ( { values: selectedRates, available: allRates } ) => {
@@ -305,11 +420,20 @@ export const getFormErrors = createSelector(
 		if ( isEmpty( form ) ) {
 			return;
 		}
+		const destinationCountryCode = form.destination.values.country;
+		const destinationCountryName = getCountriesData( state, orderId, siteId )[
+			destinationCountryCode
+		];
 		return {
 			origin: getAddressErrors( form.origin, countriesData ),
 			destination: getAddressErrors( form.destination, countriesData ),
 			packages: getPackagesErrors( form.packages.selected ),
-			customs: getCustomsErrors( form.customs ),
+			customs: getCustomsErrors(
+				form.packages.selected,
+				form.customs,
+				destinationCountryCode,
+				destinationCountryName
+			),
 			rates: getRatesErrors( form.rates ),
 			sidebar: getSidebarErrors( paperSize ),
 		};
@@ -329,7 +453,12 @@ export const isCustomsFormStepSubmitted = (
 		return false;
 	}
 
-	return form.customs.submitted;
+	const usedProductIds = uniq(
+		flatten( map( form.packages.selected, pckg => map( pckg.items, 'product_id' ) ) )
+	);
+	return ! some(
+		usedProductIds.map( productId => form.customs.ignoreTariffNumberValidation[ productId ] )
+	);
 };
 
 /**

@@ -9,15 +9,19 @@ import { translate } from 'i18n-calypso';
 import {
 	every,
 	fill,
+	filter,
 	find,
 	first,
 	flatten,
 	includes,
 	isBoolean,
 	isEqual,
+	isNil,
 	map,
 	noop,
 	pick,
+	sumBy,
+	uniqBy,
 } from 'lodash';
 
 /**
@@ -37,6 +41,8 @@ import {
 	getFormErrors,
 	shouldFulfillOrder,
 	shouldEmailDetails,
+	needsCustomsForm,
+	getProductValueFromOrder,
 } from './selectors';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
@@ -92,6 +98,15 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_TYPE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_EXPLANATION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ABANDON_ON_NON_DELIVERY,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ITN,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_DESCRIPTION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_TARIFF_NUMBER,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
 } from '../action-types.js';
 
@@ -168,8 +183,8 @@ export const submitStep = ( orderId, siteId, stepName ) => ( dispatch, getState 
 	expandFirstErroneousStep( orderId, siteId, dispatch, getState );
 };
 
-const convertToApiPackage = pckg => {
-	return pick( pckg, [
+const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems ) => {
+	const apiPckg = pick( pckg, [
 		'id',
 		'box_id',
 		'service_id',
@@ -179,6 +194,31 @@ const convertToApiPackage = pckg => {
 		'weight',
 		'signature',
 	] );
+	if ( customsItems ) {
+		apiPckg.contents_type =
+			'other' !== pckg.contentsType ? pckg.contentsType || 'merchandise' : pckg.contentsExplanation;
+		apiPckg.restriction_type =
+			'other' !== pckg.restrictionType
+				? pckg.restrictionType || 'none'
+				: pckg.restrictionExplanation;
+		apiPckg.abandon_on_non_delivery = Boolean( pckg.abandonOnNonDelivery );
+		apiPckg.itn = pckg.itn || '';
+		const getProductValue = productId =>
+			isNil( customsItems[ productId ].value )
+				? getProductValueFromOrder( state, productId, orderId, siteId )
+				: customsItems[ productId ].value;
+
+		apiPckg.items = uniqBy( pckg.items, 'product_id' ).map( ( { product_id } ) => ( {
+			description: customsItems[ product_id ].description,
+			quantity: sumBy( filter( pckg.items, { product_id } ), 'quantity' ),
+			value: getProductValue( product_id ),
+			weight: customsItems[ product_id ].weight,
+			hs_tariff_code: customsItems[ product_id ].tariffNumber,
+			origin_country: customsItems[ product_id ].originCountry,
+			product_id,
+		} ) );
+	}
+	return apiPckg;
 };
 
 export const clearAvailableRates = ( orderId, siteId ) => {
@@ -190,9 +230,7 @@ export const clearAvailableRates = ( orderId, siteId ) => {
  * @param {Number} orderId order ID
  * @param {Number} siteId site ID
  * @param {Function} dispatch dispatch function
- * @param {Function} getState getState functuon
- *
- * @returns {Promise} getRates promise
+ * @param {Function} getState getState function
  */
 const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	const state = getState();
@@ -203,18 +241,15 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	}
 
 	const formState = getShippingLabel( state, orderId, siteId ).form;
-	const { origin, destination, packages } = formState;
+	const { origin, destination, packages, customs } = formState;
 
 	dispatch( NoticeActions.removeNotice( 'wcs-label-rates' ) );
 
-	return getRates(
-		orderId,
-		siteId,
-		dispatch,
-		origin.values,
-		destination.values,
-		map( packages.selected, convertToApiPackage )
-	)
+	const customsItems = needsCustomsForm( getState(), orderId, siteId ) ? customs.items : null;
+	const apiPackages = map( packages.selected, pckg =>
+		convertToApiPackage( pckg, siteId, orderId, state, customsItems )
+	);
+	getRates( orderId, siteId, dispatch, origin.values, destination.values, apiPackages )
 		.then( () => expandFirstErroneousStep( orderId, siteId, dispatch, getState ) )
 		.catch( error => {
 			console.error( error );
@@ -552,6 +587,78 @@ export const confirmPackages = ( orderId, siteId ) => ( dispatch, getState ) => 
 	tryGetLabelRates( orderId, siteId, dispatch, getState );
 };
 
+export const setContentsType = ( orderId, siteId, packageId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_TYPE,
+	siteId,
+	orderId,
+	packageId,
+	value,
+} );
+
+export const setContentsExplanation = ( orderId, siteId, packageId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_EXPLANATION,
+	siteId,
+	orderId,
+	packageId,
+	value,
+} );
+
+export const setRestrictionType = ( orderId, siteId, packageId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE,
+	siteId,
+	orderId,
+	packageId,
+	value,
+} );
+
+export const setRestrictionExplanation = ( orderId, siteId, packageId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION,
+	siteId,
+	orderId,
+	packageId,
+	value,
+} );
+
+export const setAbandonOnNonDelivery = ( orderId, siteId, packageId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ABANDON_ON_NON_DELIVERY,
+	siteId,
+	orderId,
+	packageId,
+	value,
+} );
+
+export const setITN = ( orderId, siteId, packageId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ITN,
+	siteId,
+	orderId,
+	packageId,
+	value,
+} );
+
+export const setCustomsItemDescription = ( orderId, siteId, productId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_DESCRIPTION,
+	siteId,
+	orderId,
+	productId,
+	value,
+} );
+
+export const setCustomsItemTariffNumber = ( orderId, siteId, productId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_TARIFF_NUMBER,
+	siteId,
+	orderId,
+	productId,
+	value,
+} );
+
+export const setCustomsItemOriginCountry = ( orderId, siteId, productId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY,
+	siteId,
+	orderId,
+	productId,
+	value,
+} );
+
 const saveCustoms = ( orderId, siteId ) => {
 	return {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
@@ -817,16 +924,18 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 			}
 			const state = getShippingLabel( getState(), orderId, siteId );
 			form = state.form;
+			const customsItems = needsCustomsForm( state, orderId, siteId ) ? form.customs.items : null;
 			const formData = {
 				async: true,
 				origin: getAddressValues( form.origin ),
 				destination: getAddressValues( form.destination ),
 				packages: map( form.packages.selected, ( pckg, pckgId ) => {
+					const packageFields = convertToApiPackage( pckg, siteId, orderId, state, customsItems );
 					const rate = find( form.rates.available[ pckgId ].rates, {
 						service_id: form.rates.values[ pckgId ],
 					} );
 					return {
-						...convertToApiPackage( pckg ),
+						...packageFields,
 						shipment_id: form.rates.available[ pckgId ].shipment_id,
 						rate_id: rate.rate_id,
 						service_id: form.rates.values[ pckgId ],
