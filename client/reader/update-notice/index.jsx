@@ -14,21 +14,22 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
 import { getCommentById } from 'state/comments/selectors';
 import getStream from 'state/selectors/get-reader-stream';
+
+const UNREAD_COUNT_CAP = 40;
 
 class UpdateNotice extends React.PureComponent {
 	static propTypes = {
 		streamKey: PropTypes.string,
 		onClick: PropTypes.func,
-		cappedUnreadCount: PropTypes.string,
 	};
 
 	static defaultProps = { onClick: noop };
 
 	render() {
 		const { count } = this.props;
+		const cappedCount = count <= UNREAD_COUNT_CAP ? String( count ) : `${ UNREAD_COUNT_CAP }+`;
 
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
@@ -40,7 +41,7 @@ class UpdateNotice extends React.PureComponent {
 				<DocumentHead unreadCount={ count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
 				{ this.props.translate( '%s new post', '%s new posts', {
-					args: [ this.props.cappedUnreadCount ],
+					args: [ cappedCount ],
 					count,
 				} ) }
 			</div>
@@ -75,10 +76,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const isConversations = !! get( pendingItems, [ 0, 'comments' ] );
 	const count = isConversations ? countNewComments( state, pendingItems ) : updateCount;
 
-	return {
-		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
-		count,
-	};
+	return { count };
 };
 
 export default connect( mapStateToProps )( localize( UpdateNotice ) );
