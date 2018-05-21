@@ -5,6 +5,7 @@
  */
 
 import {
+	JETPACK_CONNECTION_CHANGE_OWNER,
 	JETPACK_CONNECTION_STATUS_RECEIVE,
 	JETPACK_CONNECTION_STATUS_REQUEST,
 	JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
@@ -110,5 +111,22 @@ export const disconnect = siteId => {
 					error: error.message,
 				} );
 			} );
+	};
+};
+
+/**
+ * Change the jetpack master user.
+ *
+ * @param {number} siteId the site ID
+ * @param {number} newOwnerDotorgId the dotorg user ID of the new owner
+ * @param {string} newOwnerWpcomDisplayName display name for UI messages
+ * @return {Object} action object
+ */
+export const changeOwner = ( siteId, newOwnerDotorgId, newOwnerWpcomDisplayName ) => {
+	return {
+		type: JETPACK_CONNECTION_CHANGE_OWNER,
+		siteId,
+		newOwnerDotorgId,
+		newOwnerWpcomDisplayName,
 	};
 };
