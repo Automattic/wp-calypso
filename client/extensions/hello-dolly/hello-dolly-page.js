@@ -32,11 +32,7 @@ class HelloDollyPage extends Component {
 
 		return (
 			<Main className="hello-dolly__main">
-				<SectionHeader label="Hello, Dolly!">
-					<span role="img" aria-label="sheep">
-						🐑
-					</span>
-				</SectionHeader>
+				<SectionHeader label="Hello, Dolly!"><span role="img" aria-label="sheep">🐑</span></SectionHeader>
 				<Card>
 					<p style={ { fontSize: 18, fontWeight: 300 } }>
 						This is not just an extension, it symbolizes the hope and enthusiasm of an entire
