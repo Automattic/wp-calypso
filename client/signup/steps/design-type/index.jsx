@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, memoize, transform } from 'lodash';
@@ -87,15 +87,17 @@ export class DesignTypeStep extends Component {
 
 	renderChoices() {
 		return (
-			<div className="design-type__list">
-				<TileGrid>{ this.getChoices().map( this.renderChoice ) }</TileGrid>
+			<Fragment>
+				<TileGrid className="design-type__list">
+					{ this.getChoices().map( this.renderChoice ) }
+				</TileGrid>
 
 				<p className="design-type__disclaimer">
 					{ this.props.translate(
 						'Not sure? Pick the closest option. You can always change your settings later.'
 					) }
 				</p>
-			</div>
+			</Fragment>
 		);
 	}
 

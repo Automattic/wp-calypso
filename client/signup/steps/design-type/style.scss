@@ -1,6 +1,7 @@
 .design-type__list {
 	display: flex;
 	flex-flow: row wrap;
+	max-width: 100%;
 }
 
 .design-type__disclaimer {
