@@ -39,9 +39,9 @@ class Card extends PureComponent {
 	render() {
 		const {
 			children,
-			compact, // eslint-disable-line no-unused-vars
-			highlight, // eslint-disable-line no-unused-vars
-			highlightClass, // eslint-disable-line no-unused-vars
+			compact,
+			highlight,
+			highlightClass,
 			tagName: TagName,
 			href,
 			target,
