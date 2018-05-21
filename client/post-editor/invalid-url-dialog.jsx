@@ -20,12 +20,14 @@ class EditorTrashedDialog extends React.Component {
 
 	static defaultProps = {
 		onClose: noop,
-		onSave: noop,
 	};
 
 	static propTypes = {
 		onClose: PropTypes.func,
-		onSave: PropTypes.func,
+	};
+
+	state = {
+		isPage: this.isPage(),
 	};
 
 	isPage = () => {
@@ -67,10 +69,6 @@ class EditorTrashedDialog extends React.Component {
 				'This post cannot be found. Check the web address or start a new post.'
 			),
 		};
-	};
-
-	state = {
-		isPage: this.isPage(),
 	};
 
 	render() {

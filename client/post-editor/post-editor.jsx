@@ -416,9 +416,7 @@ export class PostEditor extends React.Component {
 				{ this.state.showVerifyEmailDialog ? (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) : null }
-				{ isInvalidURL ? (
-					<InvalidURLDialog post={ this.state.post } onClose={ this.onClose } />
-				) : null }
+				{ isInvalidURL && <InvalidURLDialog onClose={ this.onClose } /> }
 				{ hasAutosave && this.state.showAutosaveDialog ? (
 					<RestorePostDialog
 						onRestore={ this.restoreAutosave }
