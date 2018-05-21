@@ -8,17 +8,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	setDocumentHeadTitle,
-	setDocumentHeadLink,
-	setDocumentHeadMeta,
-	setDocumentHeadUnreadCount,
-} from '../actions';
+import { setDocumentHeadTitle, setDocumentHeadLink, setDocumentHeadMeta } from '../actions';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 } from 'state/action-types';
 
 describe( 'actions', () => {
@@ -29,17 +23,6 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: DOCUMENT_HEAD_TITLE_SET,
 				title: 'Home',
-			} );
-		} );
-	} );
-
-	describe( '#setDocumentHeadUnreadCount()', () => {
-		test( 'should return an action object', () => {
-			const action = setDocumentHeadUnreadCount( 123 );
-
-			expect( action ).to.eql( {
-				type: DOCUMENT_HEAD_UNREAD_COUNT_SET,
-				count: 123,
 			} );
 		} );
 	} );
