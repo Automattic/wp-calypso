@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { ACCOUNT_CLOSE } from 'state/action-types';
-import { closeAccount } from 'state/account/close/actions';
+import { closeAccount } from 'state/account/actions';
 
 describe( 'actions', () => {
 	describe( '#closeAccount', () => {
