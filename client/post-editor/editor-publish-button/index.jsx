@@ -24,31 +24,6 @@ import {
 	isEditedPostPasswordProtectedWithValidPassword,
 } from 'state/posts/selectors';
 
-export const getPublishButtonStatus = ( post, savedPost, canUserPublishPosts ) => {
-	if (
-		( postUtils.isPublished( savedPost ) &&
-			! postUtils.isBackDatedPublished( savedPost ) &&
-			! postUtils.isFutureDated( post ) ) ||
-		( savedPost && savedPost.status === 'future' && postUtils.isFutureDated( post ) )
-	) {
-		return 'update';
-	}
-
-	if ( postUtils.isFutureDated( post ) ) {
-		return 'schedule';
-	}
-
-	if ( canUserPublishPosts ) {
-		return 'publish';
-	}
-
-	if ( savedPost && savedPost.status === 'pending' ) {
-		return 'update';
-	}
-
-	return 'requestReview';
-};
-
 const POST_EVENTS = {
 	update: 'Clicked Update Post Button',
 	schedule: 'Clicked Schedule Post Button',
