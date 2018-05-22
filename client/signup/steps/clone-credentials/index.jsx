@@ -16,7 +16,8 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import SignupActions from 'lib/signup/actions';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
-import { getRewindState, getJetpackCredentialsUpdateStatus } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
+import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
 
 class CloneCredentialsStep extends Component {
 	static propTypes = {

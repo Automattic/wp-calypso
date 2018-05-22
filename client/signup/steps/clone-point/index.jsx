@@ -19,8 +19,9 @@ import Tile from 'components/tile-grid/tile';
 import QuerySites from 'components/data/query-sites';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QuerySiteSettings from 'components/data/query-site-settings';
-
-import { getSiteGmtOffset, getSiteTimezoneValue, getActivityLogs } from 'state/selectors';
+import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import getActivityLogs from 'state/selectors/get-activity-logs';
 import { adjustMoment, getActivityLogQuery } from 'my-sites/stats/activity-log/utils';
 
 class ClonePointStep extends Component {

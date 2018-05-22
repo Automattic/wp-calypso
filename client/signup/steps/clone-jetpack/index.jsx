@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -12,23 +12,9 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
-import ActivityLogItem from 'my-sites/stats/activity-log-item';
 import TileGrid from 'components/tile-grid';
 import Tile from 'components/tile-grid/tile';
-import QuerySites from 'components/data/query-sites';
-import QueryActivityLog from 'components/data/query-activity-log';
-import QueryRewindState from 'components/data/query-rewind-state';
-import QuerySiteSettings from 'components/data/query-site-settings';
-
-import { getSiteGmtOffset, getSiteTimezoneValue, getActivityLogs } from 'state/selectors';
-import {
-	adjustMoment,
-	getActivityLogQuery,
-	getStartMoment,
-} from 'my-sites/stats/activity-log/utils';
 
 class CloneJetpackStep extends Component {
 	static propTypes = {
@@ -87,14 +73,7 @@ class CloneJetpackStep extends Component {
 	};
 
 	render() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			originSiteName,
-			translate,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
 		const headerText = translate( 'Your Jetpack connection' );
 		const subHeaderText = translate(

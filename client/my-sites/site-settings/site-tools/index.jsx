@@ -22,7 +22,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
-import { getRewindState } from 'state/selectors/get-rewind-state';
+import getRewindState from 'state/selectors/get-rewind-state';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
