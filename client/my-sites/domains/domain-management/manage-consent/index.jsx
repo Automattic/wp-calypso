@@ -49,31 +49,31 @@ class ManageConsent extends React.Component {
 					onClick={ this.goToContactsPrivacy }
 					selectedDomainName={ this.props.selectedDomainName }
 				>
-					{ translate( 'Manage Personal Data Use' ) }
+					{ translate( 'Manage Personal Data Consent' ) }
 				</Header>
 				{ this.state.error && (
 					<Notice status="is-error" icon="notice" onDismissClick={ this.dismissError }>
 						{ translate(
-							'An error occurred while trying to send you the consent management link. ' +
-								'If this is persistent please contact our support staff.'
+							'An error occured while sending you the Personal Data Consent Link. ' +
+								'If the issue persists please contact our support staff.'
 						) }
 					</Notice>
 				) }
 				{ this.state.success && (
 					<Notice status="is-success" icon="checkmark" showDismiss={ false }>
 						{ translate(
-							'Consent management link was successfully sent to the domain owners email.'
+							'Personal Data Consent Link was successfully sent to the domain owner email.'
 						) }
 					</Notice>
 				) }
 				<div>
-					<SectionHeader label={ translate( 'Manage Personal Data Use' ) } />
+					<SectionHeader label={ translate( 'Manage Personal Data Consent' ) } />
 					<Card>
 						<div>
 							<p>
 								{ translate(
 									'You can manage how your personal data is used ' +
-										'using the consent management link you have received via email.'
+										'using the consent management link you have received via email during domain registration.'
 								) }
 							</p>
 							<p>
@@ -85,7 +85,7 @@ class ManageConsent extends React.Component {
 								primary
 								disabled={ this.state.submitting }
 							>
-								{ translate( 'Request Consent Management Link' ) }
+								{ translate( 'Re-send the Personal Data Consent Link' ) }
 							</Button>
 						</div>
 					</Card>

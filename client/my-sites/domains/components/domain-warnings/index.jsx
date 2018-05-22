@@ -1023,22 +1023,22 @@ export class DomainWarnings extends React.PureComponent {
 
 			if ( isCompact ) {
 				noticeText = translate(
-					'The domain {{strong}}%(domain)s{{/strong}} requires user consent confirmation to complete the registration.',
+					'The domain {{strong}}%(domain)s{{/strong}} requires explicit user consent to complete the registration.',
 					translateOptions
 				);
 			} else {
 				noticeText = translate(
-					'The domain {{strong}}%(domain)s{{/strong}} is still pending registration. Please check the domain owner email since explicit consent is required for the registration to complete. {{a}}More info{{/a}}',
+					'The domain {{strong}}%(domain)s{{/strong}} is still pending registration. Please check the domain owner email since explicit consent is required for the registration to complete or go to the {{a}}Consent Management{{/a}} page for more details.',
 					translateOptions
 				);
 			}
 		} else if ( isCompact ) {
 			noticeText = translate(
-				'Some domains require user consent confirmation to complete the registration.'
+				'Some domains require explicit user consent to complete the registration.'
 			);
 		} else {
 			noticeText = translate(
-				'Some domains are still pending registration. User consent is required before the registration can be completed.'
+				'Some domains are still pending registration. Please check the domain owner email to give explicit consent before the registration can be completed.'
 			);
 		}
 

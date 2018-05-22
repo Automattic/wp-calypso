@@ -159,7 +159,7 @@ class ListItem extends React.PureComponent {
 		) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
-					{ translate( 'Registration pending' ) }
+					{ translate( 'Action Required' ) }
 				</Notice>
 			);
 		}
