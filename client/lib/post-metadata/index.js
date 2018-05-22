@@ -152,7 +152,20 @@ PostMetadata = {
 
 		const isSharedPublicly = getValueByKey( post.metadata, 'geo_public' );
 
-		if ( 'undefined' === typeof isSharedPublicly || parseInt( isSharedPublicly, 10 ) ) {
+		if ( parseInt( isSharedPublicly, 10 ) ) {
+			return 'public';
+		}
+
+		if ( 'undefined' === typeof isSharedPublicly ) {
+			// If they have no geo_public value but they do have a lat/long, then we assume they saved with Calypso
+			// before it supported geo_public, in which case we should treat it as private.
+			if (
+				getValueByKey( post.metadata, 'geo_latitude' ) ||
+				getValueByKey( post.metadata, 'geo_longitude' )
+			) {
+				return 'private';
+			}
+
 			return 'public';
 		}
 

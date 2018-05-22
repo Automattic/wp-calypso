@@ -60,7 +60,25 @@ class EditorLocation extends React.Component {
 
 	state = {
 		error: null,
+		previouslyPrivatePostBeingModified: false,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		this.originalProps = props;
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if (
+			'private' === this.originalProps.isSharedPublicly &&
+			( this.originalProps.coordinates && nextProps.coordinates ) &&
+			( this.originalProps.coordinates[ 0 ] !== nextProps.coordinates[ 0 ] ||
+				this.originalProps.coordinates[ 1 ] !== nextProps.coordinates[ 1 ] )
+		) {
+			this.setState( { previouslyPrivatePostBeingModified: true } );
+		}
+	}
 
 	onGeolocateSuccess = position => {
 		const latitude = toGeoString( position.coords.latitude ),
@@ -166,7 +184,17 @@ class EditorLocation extends React.Component {
 	};
 
 	render() {
-		let error, buttonText;
+		let error, publicNotice, buttonText;
+
+		if ( this.state.previouslyPrivatePostBeingModified ) {
+			publicNotice = (
+				<Notice status="is-warning" onDismissClick={ this.resetError } isCompact>
+					{ this.props.translate( 'Location will be displayed publicly.', {
+						context: 'Post editor geolocation',
+					} ) }
+				</Notice>
+			);
+		}
 
 		if ( this.state.error ) {
 			error = (
@@ -188,6 +216,7 @@ class EditorLocation extends React.Component {
 
 		return (
 			<div className="editor-location">
+				{ publicNotice }
 				{ error }
 				<EditorDrawerWell
 					icon="location"
