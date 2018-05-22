@@ -37,7 +37,6 @@ export class EditorGroundControl extends React.Component {
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isSidebarOpened: PropTypes.bool,
-		loadRevision: PropTypes.func.isRequired,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
@@ -174,8 +173,6 @@ export class EditorGroundControl extends React.Component {
 			isSaveBlocked,
 			isDirty,
 			hasContent,
-			loadRevision,
-			post,
 			onSave,
 			translate,
 			userNeedsVerification,
@@ -220,8 +217,6 @@ export class EditorGroundControl extends React.Component {
 					isSaveBlocked={ isSaveBlocked }
 					isDirty={ isDirty }
 					hasContent={ hasContent }
-					loadRevision={ loadRevision }
-					post={ post }
 					onSave={ onSave }
 				/>
 				{ this.renderGroundControlActionButtons() }

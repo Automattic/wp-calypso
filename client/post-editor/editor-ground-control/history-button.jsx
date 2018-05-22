@@ -29,14 +29,11 @@ HistoryButton.propTypes = {
 	translate: PropTypes.func,
 };
 
-const mapDispatchToProps = dispatch => ( {
-	selectHistory: () =>
-		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_editor_history_button_click' ),
-				openPostRevisionsDialog()
-			)
-		),
-} );
+// Action creator to call openPostRevisionsDialog wrapped with analytics call
+const selectHistory = () =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_editor_history_button_click' ),
+		openPostRevisionsDialog()
+	);
 
-export default connect( null, mapDispatchToProps )( localize( HistoryButton ) );
+export default connect( null, { selectHistory } )( localize( HistoryButton ) );
