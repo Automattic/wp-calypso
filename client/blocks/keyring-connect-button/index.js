@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { isEqual, noop, some } from 'lodash';
@@ -38,11 +38,15 @@ class KeyringConnectButton extends Component {
 		keyringConnections: PropTypes.array,
 		onClick: PropTypes.func,
 		onConnect: PropTypes.func,
+		forceReconnect: PropTypes.bool,
+		primary: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onClick: noop,
 		onConnect: noop,
+		forceReconnect: false,
+		primary: false,
 	};
 
 	state = {
@@ -84,11 +88,12 @@ class KeyringConnectButton extends Component {
 	}
 
 	performAction = () => {
+		const { forceReconnect } = this.props;
 		const connectionStatus = this.getConnectionStatus();
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
-		if ( 'connected' === connectionStatus ) {
+		if ( 'connected' === connectionStatus && ! forceReconnect ) {
 			this.props.onConnect();
 		} else {
 			this.addConnection();
@@ -163,10 +168,10 @@ class KeyringConnectButton extends Component {
 	}
 
 	render() {
-		const { service, translate } = this.props;
+		const { primary, service, translate } = this.props;
 		const { isConnecting, isRefreshing } = this.state;
 		const status = service ? this.getConnectionStatus() : 'unknown';
-		let primary = false,
+		let localPrimary = false,
 			warning = false,
 			label;
 
@@ -181,21 +186,21 @@ class KeyringConnectButton extends Component {
 			label = translate( 'Connecting…' );
 		} else {
 			label = this.props.children;
-			primary = true;
+			localPrimary = primary;
 		}
 
 		return (
-			<div>
+			<Fragment>
 				<QueryKeyringServices />
 				<Button
-					primary={ primary }
+					primary={ localPrimary }
 					scary={ warning }
 					onClick={ this.onClick }
 					disabled={ isPending }
 				>
 					{ label }
 				</Button>
-			</div>
+			</Fragment>
 		);
 	}
 }

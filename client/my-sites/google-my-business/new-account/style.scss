@@ -12,27 +12,3 @@
 		max-width: 300px;
 	}
 }
-
-.gmb-new-account__actions {
-	display: flex;
-
-	@include breakpoint( '<480px' ) {
-		flex-direction: column;
-	}
-}
-
-.gmb-new-account__actions .button {
-	@include breakpoint( '<480px' ) {
-		text-align: center;
-	}
-
-	&.is-primary {
-		@include breakpoint( '<480px' ) {
-			margin-bottom: 10px;
-		}
-
-		@include breakpoint( '>480px' ) {
-			margin-right: 10px;
-		}
-	}
-}
