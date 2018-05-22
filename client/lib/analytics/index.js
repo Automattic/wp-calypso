@@ -28,7 +28,7 @@ import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 import { doNotTrack, isPiiUrl, shouldReportOmitBlogId, hashPii } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import {
-	mayWeTrackCurrentUser,
+	mayWeTrackCurrentUserGdpr,
 	retarget,
 	recordAliasInFloodlight,
 	recordPageViewInFloodlight,
@@ -141,7 +141,7 @@ function isGoogleAnalyticsAllowed() {
 		config.isEnabled( 'google-analytics' ) &&
 		! doNotTrack() &&
 		! isPiiUrl() &&
-		mayWeTrackCurrentUser()
+		mayWeTrackCurrentUserGdpr()
 	);
 }
 
@@ -523,7 +523,7 @@ const analytics = {
 				! config( 'hotjar_enabled' ) ||
 				doNotTrack() ||
 				isPiiUrl() ||
-				! mayWeTrackCurrentUser()
+				! mayWeTrackCurrentUserGdpr()
 			) {
 				hotjarDebug( 'Not loading HotJar script' );
 				return;

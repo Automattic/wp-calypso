@@ -28,7 +28,7 @@ jest.mock( 'config', () => {
 } );
 
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
-	mayWeTrackCurrentUser: () => {
+	mayWeTrackCurrentUserGdpr: () => {
 		return true;
 	},
 	retarget: () => {},

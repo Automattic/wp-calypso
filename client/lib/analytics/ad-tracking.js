@@ -415,7 +415,7 @@ async function loadTrackingScripts( callback ) {
  * @returns {Boolean} Is ad tracking is allowed?
  */
 function isAdTrackingAllowed() {
-	return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds() && mayWeTrackCurrentUser();
+	return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds() && mayWeTrackCurrentUserGdpr();
 }
 
 /**
@@ -510,7 +510,7 @@ function only_retarget() {
  *
  * @return {Boolean}        Whether we may track the current user
  */
-export function mayWeTrackCurrentUser() {
+export function mayWeTrackCurrentUserGdpr() {
 	const cookies = cookie.parse( document.cookie );
 	if ( cookies.sensitive_pixel_option === 'yes' ) {
 		return true;
