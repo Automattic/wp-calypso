@@ -12,6 +12,8 @@ import React from 'react';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 
+Card.displayName = 'Card';
+
 class Cards extends React.Component {
 	static displayName = 'Card';
 

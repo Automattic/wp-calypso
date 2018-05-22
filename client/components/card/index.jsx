@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
-const getClassName = ( { className, compact, highlightClass, href, onClick } ) =>
+const getClassName = ( { className, compact, highlight, href, onClick } ) =>
 	classNames(
 		'card',
 		className,
@@ -16,9 +16,9 @@ const getClassName = ( { className, compact, highlightClass, href, onClick } ) =
 			'is-card-link': !! href,
 			'is-clickable': !! onClick,
 			'is-compact': compact,
-			'is-highlight': highlightClass,
+			'is-highlight': highlight,
 		},
-		highlightClass
+		highlight ? 'is-' + highlight : false
 	);
 
 class Card extends PureComponent {
@@ -37,16 +37,7 @@ class Card extends PureComponent {
 	};
 
 	render() {
-		const {
-			children,
-			compact,
-			highlight,
-			highlightClass,
-			tagName: TagName,
-			href,
-			target,
-			...props
-		} = this.props;
+		const { children, compact, highlight, tagName: TagName, href, target, ...props } = this.props;
 
 		return href ? (
 			<a { ...props } href={ href } target={ target } className={ getClassName( this.props ) }>
