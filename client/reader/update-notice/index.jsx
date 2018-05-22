@@ -13,8 +13,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
 import { getCommentById } from 'state/comments/selectors';
+import { getDocumentHeadTitle } from 'state/document-head/selectors';
+import { setDocumentHeadTitle } from 'state/document-head/actions';
 import getStream from 'state/selectors/get-reader-stream';
 
 const UNREAD_COUNT_CAP = 40;
@@ -27,9 +28,32 @@ class UpdateNotice extends React.PureComponent {
 
 	static defaultProps = { onClick: noop };
 
+	componentDidMount() {
+		this.setCount();
+	}
+
+	componentDidUpdate() {
+		this.setCount();
+	}
+
+	setCount = () => {
+		const { count, documentTitle } = this.props;
+		if ( ! count ) {
+			return;
+		}
+		// Replace e.g. a leading `(3) ` with a leading `(4) `.
+		// If there's currently no `(3) `, just prepend the current title with `(4) `.
+		const title = documentTitle.replace( /^(\(\d+\+?\) )?/, `(${ this.countString() }) ` );
+		this.props.setDocumentHeadTitle( title );
+	};
+
+	countString = () => {
+		const { count } = this.props;
+		return count <= UNREAD_COUNT_CAP ? String( count ) : `${ UNREAD_COUNT_CAP }+`;
+	};
+
 	render() {
 		const { count } = this.props;
-		const cappedCount = count <= UNREAD_COUNT_CAP ? String( count ) : `${ UNREAD_COUNT_CAP }+`;
 
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
@@ -38,10 +62,9 @@ class UpdateNotice extends React.PureComponent {
 
 		return (
 			<div className={ counterClasses } onClick={ this.handleClick }>
-				<DocumentHead unreadCount={ count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
 				{ this.props.translate( '%s new post', '%s new posts', {
-					args: [ cappedCount ],
+					args: [ this.countString() ],
 					count,
 				} ) }
 			</div>
@@ -76,7 +99,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const isConversations = !! get( pendingItems, [ 0, 'comments' ] );
 	const count = isConversations ? countNewComments( state, pendingItems ) : updateCount;
 
-	return { count };
+	return { count, documentTitle: getDocumentHeadTitle( state ) };
 };
 
-export default connect( mapStateToProps )( localize( UpdateNotice ) );
+export default connect( mapStateToProps, { setDocumentHeadTitle } )( localize( UpdateNotice ) );
