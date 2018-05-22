@@ -316,7 +316,7 @@ export class PostEditor extends React.Component {
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
-							<EditorActionBar savedPost={ this.state.savedPost } />
+							<EditorActionBar />
 							<div className="post-editor__site">
 								<Site
 									compact
