@@ -63,6 +63,8 @@ class EditorLocation extends React.Component {
 		error: null,
 	};
 
+	search = null;
+
 	onGeolocateSuccess = position => {
 		const latitude = toGeoString( position.coords.latitude ),
 			longitude = toGeoString( position.coords.longitude );
@@ -140,6 +142,8 @@ class EditorLocation extends React.Component {
 			'geo_public',
 			'geo_address',
 		] );
+
+		this.search.clear();
 	};
 
 	onSearchSelect = result => {
@@ -208,6 +212,8 @@ class EditorLocation extends React.Component {
 				<EditorLocationSearch
 					onError={ this.onGeolocateFailure }
 					onSelect={ this.onSearchSelect }
+					value={ this.props.label }
+					ref={ ref => ( this.search = ref ) }
 				/>
 				{ options }
 			</div>
@@ -222,8 +228,9 @@ export default connect(
 		const post = getEditedPost( state, siteId, postId );
 		const coordinates = PostMetadata.geoCoordinates( post );
 		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( post );
+		const label = PostMetadata.geoLabel( post );
 
-		return { siteId, postId, coordinates, isSharedPublicly };
+		return { siteId, postId, coordinates, isSharedPublicly, label };
 	},
 	{
 		updatePostMetadata,
