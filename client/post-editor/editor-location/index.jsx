@@ -87,7 +87,7 @@ class EditorLocation extends React.Component {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			geo_latitude: latitude,
 			geo_longitude: longitude,
-			geo_public: publicValueToMetaValue( this.props.isSharedPublicly ),
+			geo_public: publicValueToMetaValue( 'public' ),
 		} );
 
 		recordStat( 'location_geolocate_success' );
@@ -163,7 +163,7 @@ class EditorLocation extends React.Component {
 			geo_latitude: toGeoString( result.geometry.location.lat ),
 			geo_longitude: toGeoString( result.geometry.location.lng ),
 			geo_address: result.formatted_address,
-			geo_public: publicValueToMetaValue( this.props.isSharedPublicly ),
+			geo_public: publicValueToMetaValue( 'public' ),
 		} );
 	};
 
