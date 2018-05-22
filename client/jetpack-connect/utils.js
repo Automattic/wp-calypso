@@ -53,7 +53,6 @@ export const authQueryPropTypes = PropTypes.shape( {
 	homeUrl: PropTypes.string.isRequired,
 	jpVersion: PropTypes.string,
 	nonce: PropTypes.string.isRequired,
-	partnerSlug: PropTypes.string,
 	redirectAfterAuth: PropTypes.string,
 	redirectUri: PropTypes.string.isRequired,
 	scope: PropTypes.string.isRequired,
