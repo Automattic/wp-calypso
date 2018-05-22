@@ -76,15 +76,12 @@ class PodcastCoverImageSetting extends PureComponent {
 		}
 	};
 
-	uploadSiteIcon( blob, fileName ) {
+	uploadCoverImage( blob, fileName ) {
 		const { siteId, site } = this.props;
 
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
 		const transientMediaId = uniqueId( 'podcast-cover-image' );
-
-		// Set into state without yet saving to show upload progress indicator
-		//this.props.updateSiteIcon( siteId, transientMediaId );
 
 		const checkUploadComplete = () => {
 			// MediaStore tracks pointers from transient media to the persisted
@@ -153,7 +150,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		debug( 'isImageEdited', isImageEdited );
 
 		if ( isImageEdited ) {
-			this.uploadSiteIcon( blob, `cropped-${ selectedItem.file }` );
+			this.uploadCoverImage( blob, `cropped-${ selectedItem.file }` );
 		} else {
 			this.props.onSelect( selectedItem.ID );
 		}
