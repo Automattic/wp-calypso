@@ -71,7 +71,6 @@ class EditorLocation extends React.Component {
 			geo_latitude: latitude,
 			geo_longitude: longitude,
 			geo_public: publicValueToMetaValue( this.props.isSharedPublicly ),
-			geo_address: latitude + ', ' + longitude,
 		} );
 
 		recordStat( 'location_geolocate_success' );
