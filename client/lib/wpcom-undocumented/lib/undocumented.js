@@ -390,6 +390,68 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
 };
 
+/**
+ * Get site keyrings
+ *
+ * @param {int|string} [siteId] The site ID
+ * @param {Function} fn The callback function
+ * @api public
+ *
+ * @returns {Promise} A promise that resolves when the request completes
+ */
+Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) {
+	return this.wpcom.req.get( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, fn );
+};
+
+/**
+ * Update or create a site keyring
+ *
+ * @param {int|string} [siteId] The site ID
+ * @param {Object} [data] site keyring object with properties:
+ * 	- keyring_id {int} the keyring id to update or create,
+ * 	- external_user_id {string} Optional. The external user id to link the site to
+ * 	- service {string} service name for this keyring id
+ * @param {Function} fn The callback function
+ * @api public
+ *
+ * @returns {Promise} A promise that resolves when the request completes
+ */
+Undocumented.prototype.updateSiteKeyrings = function updateSiteKeyring( siteId, data, fn ) {
+	return this.wpcom.req.post( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, data, fn );
+};
+
+/**
+ * Delete a site keyring
+ *
+ * @param {int|string} [siteId] The site ID
+ * @param {int} keyringId The keyring id
+ * @param {string|null} externalUserId Optional, the external user id
+ * @param {Function} fn The callback function
+ * @api public
+ *
+ * @returns {Promise} A promise that resolves when the request completes
+ */
+Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring(
+	siteId,
+	keyringId,
+	externalUserId,
+	fn
+) {
+	if ( ! fn && typeof externalUserId === 'function' ) {
+		fn = externalUserId;
+		externalUserId = null;
+	}
+
+	return this.wpcom.req.post(
+		'/sites/' + siteId + '/keyrings/' + keyringId + '/delete',
+		{ apiVersion: '1.1' },
+		{
+			external_user_id: externalUserId,
+		},
+		fn
+	);
+};
+
 Undocumented.prototype._sendRequest = function( originalParams, fn ) {
 	const { apiVersion, method } = originalParams,
 		updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );

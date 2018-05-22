@@ -26,7 +26,7 @@ import StatsNavigation from 'blocks/stats-navigation';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 
 class GoogleMyBusinessStats extends Component {
@@ -211,7 +211,7 @@ class GoogleMyBusinessStats extends Component {
 
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 
-				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
 				<QueryKeyringConnections />
 
 				{ ! isLocationVerified && (
