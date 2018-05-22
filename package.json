@@ -188,6 +188,7 @@
     "build-css": "run-p -s build-css:*",
     "build-css:debug": "node-sass --include-path client --source-map \"public/style-debug.css.map\" assets/stylesheets/style.scss public/style-debug.css && npm run -s postcss -- public/style-debug.css && rtlcss public/style-debug.css public/style-debug-rtl.css",
     "build-css:directly": "node-sass --include-path client assets/stylesheets/directly.scss public/directly.css --output-style compressed && npm run -s autoprefixer -- public/directly.css",
+    "build-css:emergent-paywall": "node-sass --include-path client assets/stylesheets/emergent-paywall.scss public/emergent-paywall.css --output-style compressed && npm run -s autoprefixer -- public/emergent-paywall.css",
     "build-css:editor": "node-sass --include-path client assets/stylesheets/editor.scss public/editor.css --output-style compressed && npm run -s autoprefixer -- public/editor.css",
     "build-css:style": "node-sass --include-path client assets/stylesheets/style.scss public/style.css --output-style compressed && npm run -s postcss -- public/style.css && rtlcss public/style.css public/style-rtl.css",
     "build-css:sections": "node-sass assets/stylesheets/sections --include-path client -o public/sections --source-map public/sections --output-style compressed && node bin/process-extensions-scss.js && npm run -s autoprefixer -- public/sections/*.css && rtlcss -d public/sections public/sections-rtl",

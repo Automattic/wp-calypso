@@ -1,0 +1,148 @@
+// The Emergent Paywall loads in an iframe, so we can't adjust its internal styles
+// with the primary Calypso stylesheet. This file is bundled as a separate CSS file to be
+// linked from inside the iframe.
+//
+// Emergent requires that all custom CSS files exist at a public web address
+// So the CSS files Directlyhard-set to:
+//
+// Sandbox:    https://wpcalypso.wordpress.com/calypso/emergent-paywall.css
+// Production: https://wordpress.com/calypso/emegent-paywall.css
+//
+// ## DEVELOPMENT ENVIRONMENT INSTRUCTIONS:
+//
+// To see local CSS changes you'll need to
+// make your browser rewrite those CSS URLs to the local version:
+//
+// https://.wordpress.com/calypso/emergent-paywall.css -> http://calypso.localhost:3000/calypso/emergent-paywall.css
+//
+// You can accomplish this using a browser extension such as Switcharoo Redirector
+// for Chrome: https://chrome.google.com/webstore/detail/switcheroo-redirector/cnmciclhnghalnpfhhleggldniplelbg
+//
+// An unfortunate side-effect is that the widget's iframe src is https, but this local
+// CSS file is http. So most browsers will block the CSS by default to prevent mixed
+// content. In order to see the custom CSS you will need to temporarily allow insecure
+// content on the page. In Chrome for Mac you can issue this Terminal command:
+//
+// open -a Google\ Chrome --args --allow-running-insecure-content
+//
+// QUIT AND RESTART YOUR BROWSER NORMALLY WHEN YOU'RE DONE MAKING LOCAL CSS CHANGES.
+
+@import 'shared/mixins/mixins';
+@import 'shared/colors';
+@import 'shared/forms';
+@import 'shared/typography';
+
+* {
+	font-family: $sans;
+}
+
+body {
+	color: $gray-dark;
+	-webkit-font-smoothing: subpixel-antialiased;
+}
+
+html,
+input,
+select,
+textarea {
+	font-family: $sans;
+}
+
+.body-hosted {
+	min-width: 562px; // we allow it to grow for embedded off site iframe
+	min-height: 100px;
+	border: none;
+	background-color: $white;
+
+	.header {
+		display: none;
+	}
+
+	.method-header {
+		margin: 16px 0 24px 0;
+
+		@include breakpoint( ">960px" ) {
+			margin-bottom: 24px;
+		}
+
+		span {
+			font-size: 24px;
+			margin: 0 0 5px 0;
+
+			@include breakpoint( "<480px" ) {
+				line-height: 1.2em;
+				padding: 0 10px;
+			}
+		}
+
+	}
+
+	.row {
+		.btn-tile-cont {
+			float: left;
+			margin: 5px 0 10px;
+			width: 50%;
+			height: 100px;
+
+			.btn-tile {
+				text-align:center;
+
+				.btn-tile-aggregates {
+					overflow: hidden;
+					height: 60px;
+
+					img {
+						object-fit: contain;
+						padding: 3px 1px;
+						margin: 1px;
+						width: 72px;
+						height: 28px;
+
+					}
+				}
+
+				.btn-tile-footer {
+					font-size: 14px;
+				}
+			}
+
+		}
+	}
+
+	.checkbox {
+		clear: both;
+		text-align:center
+	}
+
+
+	.content-alerts .alert {
+		border: 1px solid lighten( $gray, 25% );
+		font-size: 14px;
+		margin-right: 0;
+		border-radius: 8px;
+		background: $alert-yellow;
+		border-color: transparent;
+		color: $white;
+		a {
+			color: $white;
+		}
+	}
+
+	.footer {
+		margin-top: 10px;
+		background-color: $white;
+		border: none;
+		border-top: 1px solid $gray-light;
+
+		.footer-inner {
+			padding-bottom: 10px;
+			text-align: center;
+			font-size: 11px;
+
+			.logo {
+				display: none;
+			}
+		}
+	}
+
+}
