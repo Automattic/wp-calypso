@@ -18,8 +18,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
 const Masterbar = ( {
@@ -35,22 +34,13 @@ const Masterbar = ( {
 
 			<Card className="masterbar__card site-settings__security-settings">
 				<FormFieldset>
-					<div className="masterbar__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate(
-								'Adds a toolbar with links to all your sites, notifications, ' +
-									'your WordPress.com profile, and the Reader.'
-							) }{' '}
-							<ExternalLink
-								href="https://jetpack.com/support/masterbar/"
-								icon={ false }
-								target="_blank"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
-
+					<SupportInfo
+						text={ translate(
+							'Adds a toolbar with links to all your sites, notifications, ' +
+								'your WordPress.com profile, and the Reader.'
+						) }
+						link="https://jetpack.com/support/masterbar/"
+					/>
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }
 						moduleSlug="masterbar"
