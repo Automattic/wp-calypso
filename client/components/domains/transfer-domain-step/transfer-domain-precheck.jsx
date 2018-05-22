@@ -315,7 +315,7 @@ class TransferDomainPrecheck extends React.Component {
 	}
 
 	render() {
-		const { translate, unlocked } = this.props;
+		const { authCodeValid, translate, unlocked } = this.props;
 		const { currentStep } = this.state;
 
 		return (
@@ -338,7 +338,7 @@ class TransferDomainPrecheck extends React.Component {
 						</p>
 					</div>
 					<Button
-						disabled={ false === unlocked || currentStep < 3 }
+						disabled={ false === unlocked || ! authCodeValid || currentStep < 3 }
 						onClick={ this.onClick }
 						primary={ true }
 					>
