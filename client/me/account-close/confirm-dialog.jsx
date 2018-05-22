@@ -15,6 +15,7 @@ import Dialog from 'components/dialog';
 import FormLabel from 'components/forms/form-label';
 import Button from 'components/button';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { closeAccount } from 'state/account/actions';
 
 class AccountCloseConfirmDialog extends React.Component {
 	state = {
@@ -44,12 +45,17 @@ class AccountCloseConfirmDialog extends React.Component {
 		}
 	};
 
+	handleConfirm = () => {
+		this.props.closeAccount();
+		this.props.closeConfirmDialog();
+	};
+
 	render() {
-		const { isVisible, currentUsername, onConfirm, translate } = this.props;
+		const { isVisible, currentUsername, translate } = this.props;
 		const isButtonDisabled = currentUsername && this.state.inputValue !== currentUsername;
 		const deleteButtons = [
 			<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>,
-			<Button primary scary disabled={ isButtonDisabled } onClick={ onConfirm }>
+			<Button primary scary disabled={ isButtonDisabled } onClick={ this.handleConfirm }>
 				{ translate( 'Close your account' ) }
 			</Button>,
 		];
@@ -99,10 +105,15 @@ AccountCloseConfirmDialog.defaultProps = {
 	onConfirm: noop,
 };
 
-export default connect( state => {
-	const user = getCurrentUser( state );
+export default connect(
+	state => {
+		const user = getCurrentUser( state );
 
-	return {
-		currentUsername: user && user.username,
-	};
-} )( localize( AccountCloseConfirmDialog ) );
+		return {
+			currentUsername: user && user.username,
+		};
+	},
+	{
+		closeAccount,
+	}
+)( localize( AccountCloseConfirmDialog ) );
