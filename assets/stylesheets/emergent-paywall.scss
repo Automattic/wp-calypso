@@ -58,6 +58,16 @@ textarea {
 		display: none;
 	}
 
+	// Seen in the 2nd step, displays the payment method type
+	.header2 {
+		margin: 0 0 20px 0;
+
+		strong {
+			font-size: 24px !important;
+			font-weight: 300;
+		}
+	}
+
 	.method-header {
 		margin: 16px 0 24px 0;
 
@@ -78,6 +88,8 @@ textarea {
 	}
 
 	.row {
+		height: 300px;
+
 		.btn-tile-cont {
 			float: left;
 			margin: 5px 0 10px;
@@ -86,10 +98,12 @@ textarea {
 
 			.btn-tile {
 				text-align:center;
+				cursor: pointer;
+				padding: 10px;
 
 				.btn-tile-aggregates {
 					overflow: hidden;
-					height: 60px;
+					height: 70px;
 
 					img {
 						object-fit: contain;
@@ -99,6 +113,11 @@ textarea {
 						height: 28px;
 
 					}
+				}
+
+				&:hover {
+					transition: all .15s ease-in-out;
+					border: 1px solid #c8d7e1;
 				}
 
 				.btn-tile-footer {
@@ -111,7 +130,79 @@ textarea {
 
 	.checkbox {
 		clear: both;
-		text-align:center
+		text-align:left;
+
+		checkbox {
+			margin-right: 10px;
+		}
+	}
+
+	.content {
+		form {
+			margin-bottom: 15px;
+
+			.form-group {
+				position: relative;
+				margin-top: 15px;
+
+				label {
+					display: block;
+					font-size: 14px;
+					font-weight: 600;
+					margin-bottom: 5px;
+				}
+
+				.form-control {
+					margin: 0;
+					padding: 7px 14px;
+					width: 100%;
+					color: $gray-dark;
+					font-size: 16px;
+					line-height: 1.5;
+					border: 1px solid #c8d7e1;
+					background-color: #fff;
+					transition: all .15s ease-in-out;
+					box-sizing: border-box;
+				}
+			}
+		}
+
+		.btn-block {
+			background: $white;
+			border-color: $gray-lighten-20;
+			border-style: solid;
+			border-width: 1px 1px 2px;
+			color: $gray-dark;
+			cursor: pointer;
+			display: inline-block;
+			margin: 0;
+			outline: 0;
+			overflow: hidden;
+			font-weight: 500;
+			text-overflow: ellipsis;
+			text-decoration: none;
+			vertical-align: top;
+			box-sizing: border-box;
+			font-size: 14px;
+			line-height: 21px;
+			border-radius: 4px;
+			padding: 7px 14px 9px;
+			appearance: none;
+
+			&:hover {
+				border-color: $gray-lighten-10;
+			}
+
+			&.primary {
+				background: $blue-medium;
+				border-color: #008ab3;
+				color: $white;
+
+				&:hover {
+					border-color: $blue-dark;
+				}
+			}
+		}
 	}
 
 
