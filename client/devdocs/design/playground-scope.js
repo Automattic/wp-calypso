@@ -24,6 +24,7 @@ export Checklist from 'blocks/checklist';
 export ClipboardButtonInput from 'components/clipboard-button-input';
 export ClipboardButton from 'components/forms/clipboard-button';
 export Collection from 'devdocs/design/search-collection';
+export CompactCard from 'components/card/compact';
 export Count from 'components/count';
 export CountedTextarea from 'components/forms/counted-textarea';
 export DatePicker from 'components/date-picker';

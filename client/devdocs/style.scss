@@ -146,7 +146,7 @@ $devdocs-max-width: 720px;
 
 		// Some components use a card and the extra margin
 		// looks strange.
-		.card {
+		.card:last-child {
 			margin-bottom: 0;
 		}
 	}
