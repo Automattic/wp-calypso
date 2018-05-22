@@ -241,7 +241,7 @@ class TransferDomainPrecheck extends React.Component {
 	}
 
 	getEppMessage() {
-		const { translate } = this.props;
+		const { authCodeValid, translate } = this.props;
 		const { authCode } = this.state;
 
 		const heading = translate( 'Get a domain authorization code.' );
@@ -269,16 +269,23 @@ class TransferDomainPrecheck extends React.Component {
 				<FormTextInput
 					value={ authCode }
 					onChange={ this.setAuthCode }
-					isError={ false === this.props.authCodeValid }
+					isError={ false === authCodeValid }
 				/>
-				{ false === this.props.authCodeValid && (
+				{ false === authCodeValid && (
 					<FormInputValidation text={ translate( 'Auth Code invalid' ) } isError />
 				) }
 			</div>
 		);
 		const buttonText = translate( 'Check my authorization code' );
 
-		return this.getSection( heading, message, buttonText, 2, null, this.checkAuthCode );
+		const stepStatus = authCodeValid && (
+			<div className="transfer-domain-step__lock-status transfer-domain-step__auth-code-valid">
+				<Gridicon icon="checkmark" size={ 12 } />
+				<span>{ translate( 'Valid' ) } </span>
+			</div>
+		);
+
+		return this.getSection( heading, message, buttonText, 2, stepStatus, this.checkAuthCode );
 	}
 
 	setAuthCode = event => {

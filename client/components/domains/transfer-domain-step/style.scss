@@ -179,7 +179,7 @@
 		color: $gray;
 	}
 
-	&.transfer-domain-step__unlocked {
+	&.transfer-domain-step__unlocked, &.transfer-domain-step__auth-code-valid {
 		color: $alert-green;
 	}
 
