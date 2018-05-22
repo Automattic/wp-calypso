@@ -28,6 +28,7 @@ RUN        bash /tmp/env-config.sh
 # to be limited only by the Calypso build speed.
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
 RUN        true \
+           && npm install -g npm@6.1.0 \
            && npm install --production \
            && rm -rf /root/.npm \
            && true
