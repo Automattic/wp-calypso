@@ -8,15 +8,11 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import FormCheckbox from 'components/forms/form-checkbox';
-import FormTextInput from 'components/forms/form-text-input';
-import Popover from 'components/popover';
 import PostMetadata from 'lib/post-metadata';
 import { updatePostMetadata } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -30,15 +26,7 @@ function statusToBoolean( status ) {
 class EditorLocationOptions extends React.Component {
 	static propTypes = {
 		isSharedPublicly: PropTypes.oneOf( [ 'private', 'public' ] ),
-		label: PropTypes.string,
 	};
-
-	state = {
-		open: false,
-		renderContext: null,
-	};
-
-	buttonPopoverContext = React.createRef();
 
 	onShareChange = event => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
@@ -46,63 +34,20 @@ class EditorLocationOptions extends React.Component {
 		} );
 	};
 
-	onDescriptionChange = event => {
-		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
-			geo_address: event.target.value,
-		} );
-	};
-
-	toggle = () => {
-		this.setState( {
-			open: ! this.state.open,
-		} );
-	};
-
-	setRenderContext = renderContext => {
-		if ( ! renderContext ) {
-			return;
-		}
-
-		this.setState( { renderContext } );
-	};
-
 	render() {
 		return (
 			<div className="editor-location__options">
-				<Button borderless compact onClick={ this.toggle } ref={ this.buttonPopoverContext }>
-					<Gridicon icon="ellipsis-circle" /> { this.props.translate( 'Display options' ) }
-				</Button>
-				<Popover
-					isVisible={ this.state.open }
-					context={ this.buttonPopoverContext.current }
-					closeOnEsc={ true }
-					rootClassName="editor-location__options-popover"
-				>
-					<div className="editor-location__option-fields">
-						<div className="editor-location__option-field">
-							<label htmlFor="geo_address">
-								{ this.props.translate( 'Description' ) }
-								<FormTextInput
-									name="geo_address"
-									id="geo_address"
-									value={ this.props.label }
-									onChange={ this.onDescriptionChange }
-								/>
-							</label>
-						</div>
-						<div className="editor-location__option-field">
-							<label htmlFor="geo_public">
-								<FormCheckbox
-									id="geo_public"
-									name="geo_public"
-									checked={ statusToBoolean( this.props.isSharedPublicly ) }
-									onChange={ this.onShareChange }
-								/>
-								<span>{ this.props.translate( 'Display location publicly' ) }</span>
-							</label>
-						</div>
-					</div>
-				</Popover>
+				<div className="editor-location__option-field">
+					<label htmlFor="geo_public">
+						<FormCheckbox
+							id="geo_public"
+							name="geo_public"
+							checked={ statusToBoolean( this.props.isSharedPublicly ) }
+							onChange={ this.onShareChange }
+						/>
+						<span>{ this.props.translate( 'Display location publicly' ) }</span>
+					</label>
+				</div>
 			</div>
 		);
 	}
@@ -114,9 +59,8 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
 		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( post );
-		const label = PostMetadata.geoLabel( post );
 
-		return { siteId, postId, isSharedPublicly, label };
+		return { siteId, postId, isSharedPublicly };
 	},
 	{
 		updatePostMetadata,
