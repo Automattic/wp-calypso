@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, partial } from 'lodash';
+import { head, isEqual, partial, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,11 +19,25 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaStore from 'lib/media/store';
+import { isItemBeingUploaded } from 'lib/media/utils';
+import MediaActions from 'lib/media/actions';
+import { receiveMedia, deleteMedia } from 'state/media/actions';
 import PodcastCoverImage from 'blocks/podcast-cover-image';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
+import {
+	getImageEditorCrop,
+	getImageEditorTransform,
+} from 'state/ui/editor/image-editor/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
+
+/**
+ * Debug
+ */
+import debugModule from 'debug';
+const debug = debugModule( 'calypso:podcast-image' );
 
 class PodcastCoverImageSetting extends PureComponent {
 	static propTypes = {
@@ -62,6 +76,51 @@ class PodcastCoverImageSetting extends PureComponent {
 		}
 	};
 
+	uploadSiteIcon( blob, fileName ) {
+		const { siteId, site } = this.props;
+
+		// Upload media using a manually generated ID so that we can continue
+		// to reference it within this function
+		const transientMediaId = uniqueId( 'podcast-cover-image' );
+
+		// Set into state without yet saving to show upload progress indicator
+		//this.props.updateSiteIcon( siteId, transientMediaId );
+
+		const checkUploadComplete = () => {
+			// MediaStore tracks pointers from transient media to the persisted
+			// copy, so if our request is for a media which is not transient,
+			// we can assume the upload has finished.
+			const media = MediaStore.get( siteId, transientMediaId );
+			const isUploadInProgress = media && isItemBeingUploaded( media );
+			const isFailedUpload = ! media;
+
+			if ( isFailedUpload ) {
+				this.props.deleteMedia( siteId, transientMediaId );
+			} else {
+				this.props.receiveMedia( siteId, media );
+			}
+
+			if ( isUploadInProgress ) {
+				return;
+			}
+
+			MediaStore.off( 'change', checkUploadComplete );
+
+			if ( ! isFailedUpload ) {
+				debug( 'upload media', media );
+				this.props.onSelect( media.ID );
+			}
+		};
+
+		MediaStore.on( 'change', checkUploadComplete );
+
+		MediaActions.add( site, {
+			ID: transientMediaId,
+			fileContents: blob,
+			fileName,
+		} );
+	}
+
 	setCoverImage = ( error, blob ) => {
 		if ( error || ! blob ) {
 			return;
@@ -73,9 +132,31 @@ class PodcastCoverImageSetting extends PureComponent {
 			return;
 		}
 
-		//@TODO Check for edit
-		//@TODO If edited, upload new image
-		//@TODO Update settings w/ attachment id
+		debug( 'selectedItem', selectedItem );
+
+		const { crop, transform } = this.props;
+		const isImageEdited = ! isEqual(
+			{
+				...crop,
+				...transform,
+			},
+			{
+				topRatio: 0,
+				leftRatio: 0,
+				widthRatio: 1,
+				heightRatio: 1,
+				degrees: 0,
+				scaleX: 1,
+				scaleY: 1,
+			}
+		);
+		debug( 'isImageEdited', isImageEdited );
+
+		if ( isImageEdited ) {
+			this.uploadSiteIcon( blob, `cropped-${ selectedItem.file }` );
+		} else {
+			this.props.onSelect( selectedItem.ID );
+		}
 
 		this.hideModal();
 		this.props.resetAllImageEditorState();
@@ -181,11 +262,16 @@ export default connect(
 
 		return {
 			siteId,
+			site: getSelectedSite( state ),
+			crop: getImageEditorCrop( state ),
+			transform: getImageEditorTransform( state ),
 		};
 	},
 	{
 		resetAllImageEditorState,
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		onCancelEditingCoverImage: partial( setEditorMediaModalView, ModalViews.LIST ),
+		receiveMedia,
+		deleteMedia,
 	}
 )( localize( PodcastCoverImageSetting ) );
