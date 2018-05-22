@@ -31,9 +31,6 @@ class DomainTransferFlag extends PureComponent {
 		let message = translate( 'Transfer in Progress' );
 
 		switch ( domain.transferStatus ) {
-			case transferStatus.PENDING_OWNER:
-				message = translate( 'Email Confirmation Required' );
-				break;
 			case transferStatus.PENDING_START:
 				message = translate( 'Action Required' );
 				break;

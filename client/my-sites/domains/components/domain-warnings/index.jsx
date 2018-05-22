@@ -886,37 +886,6 @@ export class DomainWarnings extends React.PureComponent {
 		);
 
 		switch ( domainInTransfer.transferStatus ) {
-			case transferStatus.PENDING_OWNER:
-				compactMessage = translate( 'Transfer confirmation required' );
-
-				const translateParams = {
-					components: {
-						strong: <strong />,
-						a: <a href={ domainManagementLink } rel="noopener noreferrer" />,
-					},
-					args: { domain: domainInTransfer.name },
-				};
-
-				if ( domainInTransfer.manualWhois ) {
-					message = translate(
-						"We'll send an email to confirm the transfer of {{strong}}%(domain)s{{/strong}} " +
-							'as soon as we get the correct address. {{a}}More Info{{/a}}',
-						translateParams
-					);
-				} else if ( domainInTransfer.adminEmail ) {
-					translateParams.args.email = domainInTransfer.adminEmail;
-					message = translate(
-						'We sent an email to {{strong}}%(email)s{{/strong}} to confirm the transfer of ' +
-							'{{strong}}%(domain)s{{/strong}}. {{a}}More Info{{/a}}',
-						translateParams
-					);
-				} else {
-					message = translate(
-						"We'll send an email shortly to confirm the transfer of {{strong}}%(domain)s{{/strong}}. {{a}}More Info{{/a}}",
-						translateParams
-					);
-				}
-				break;
 			case transferStatus.PENDING_REGISTRY:
 				message = translate(
 					'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. We are waiting ' +
