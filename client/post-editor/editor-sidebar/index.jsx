@@ -52,7 +52,7 @@ export class EditorSidebar extends Component {
 					confirmationSidebarStatus={ confirmationSidebarStatus }
 				/>
 				<SidebarFooter>
-					<EditorDeletePost post={ post } onTrashingPost={ onTrashingPost } />
+					<EditorDeletePost onTrashingPost={ onTrashingPost } />
 				</SidebarFooter>
 			</div>
 		);

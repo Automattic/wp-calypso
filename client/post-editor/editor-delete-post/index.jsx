@@ -28,8 +28,11 @@ class EditorDeletePost extends React.Component {
 	static displayName = 'EditorDeletePost';
 
 	static propTypes = {
-		site: PropTypes.object,
-		post: PropTypes.object,
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
+		postType: PropTypes.string,
+		postStatus: PropTypes.string,
+		canDelete: PropTypes.bool,
 		onTrashingPost: PropTypes.func,
 	};
 
@@ -54,14 +57,14 @@ class EditorDeletePost extends React.Component {
 	};
 
 	onSendToTrash = () => {
-		const { translate, post } = this.props;
+		const { translate, postType } = this.props;
 
 		if ( this.state.isTrashing ) {
 			return;
 		}
 
 		let message;
-		if ( post.type === 'page' ) {
+		if ( postType === 'page' ) {
 			message = translate( 'Are you sure you want to trash this page?' );
 		} else {
 			message = translate( 'Are you sure you want to trash this post?' );
@@ -117,8 +120,8 @@ export default connect(
 
 		return {
 			siteId,
-			post,
 			postId,
+			postType: get( post, 'type', null ),
 			postStatus: get( post, 'status', null ),
 			canDelete: canCurrentUser( state, siteId, isAuthor ? 'delete_posts' : 'delete_others_posts' ),
 		};
