@@ -31,6 +31,7 @@ import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import { isJetpackSite } from 'state/sites/selectors';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {

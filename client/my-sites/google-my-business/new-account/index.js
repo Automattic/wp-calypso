@@ -23,7 +23,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import KeyringConnectButton from 'blocks/keyring-connect-button';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getGoogleMyBusinessLocations } from 'state/selectors';
+import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import { dismissNudge } from 'blocks/google-my-business-stats-nudge/actions';
 
 class GoogleMyBusinessNewAccount extends Component {
