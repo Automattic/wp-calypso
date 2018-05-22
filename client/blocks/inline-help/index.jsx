@@ -148,7 +148,7 @@ class InlineHelp extends Component {
 
 		const dialogButtons = dialogType === 'article' && [
 			<Button href={ dialogPostHref } target="_blank" primary>
-				{ translate( 'Visit Article' ) }
+				{ translate( 'Visit Article' ) } <Gridicon icon="external" size={ 12 } />
 			</Button>,
 			<Button onClick={ this.closeDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
 		];
