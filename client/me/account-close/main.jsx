@@ -30,11 +30,20 @@ import QuerySites from 'components/data/query-sites';
 import { getCurrentUser } from 'state/current-user/selectors';
 import hasLoadedSites from 'state/selectors/has-loaded-sites';
 import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
+import isAccountClosed from 'state/selectors/is-account-closed';
 import { hasLoadedUserPurchasesFromServer, getUserPurchases } from 'state/purchases/selectors';
+import userUtils from 'lib/user/utils';
 
 class AccountSettingsClose extends Component {
 	state = {
 		showConfirmDialog: false,
+	};
+
+	componentWillReceiveProps = nextProps => {
+		// If the account is closed, logout
+		if ( nextProps.isAccountClosed === true ) {
+			userUtils.logout();
+		}
 	};
 
 	goBack = () => {
@@ -194,5 +203,6 @@ export default connect( state => {
 		isLoading,
 		hasPurchases: purchases && purchases.length > 0,
 		hasAtomicSites: userHasAnyAtomicSites( state ),
+		isAccountClosed: isAccountClosed( state ),
 	};
 } )( localize( AccountSettingsClose ) );
