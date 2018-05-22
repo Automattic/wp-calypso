@@ -75,3 +75,13 @@ export const domainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
 	TRANSFER_IN_PRIVACY: 'domain_transfer_privacy',
 };
+
+export const gdprConsentStatus = {
+	NONE: 'NONE',
+	PENDING: 'PENDING',
+	PENDING_ASYNC: 'PENDING_ASYNC',
+	ACCEPTED_CONTRACTUAL_MINIMUM: 'ACCEPTED_CONTRACTUAL_MINIMUM',
+	ACCEPTED_FULL: 'ACCEPTED_FULL',
+	DENIED: 'DENIED',
+	FORCED_ALL_CONTRACTUAL: 'FORCED_ALL_CONTRACTUAL',
+};

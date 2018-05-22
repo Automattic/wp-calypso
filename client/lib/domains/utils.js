@@ -8,7 +8,7 @@ import { drop, isEmpty, join, find, split, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { type as domainTypes, transferStatus } from './constants';
+import { type as domainTypes, transferStatus, gdprConsentStatus } from './constants';
 import { cartItems } from 'lib/cart-values';
 import { isDomainRegistration } from 'lib/products-values';
 
@@ -56,6 +56,27 @@ function getTransferStatus( domainFromApi ) {
 	return null;
 }
 
+function getGdprConsentStatus( domainFromApi ) {
+	switch ( domainFromApi.gdpr_consent_status ) {
+		case 'NONE':
+			return gdprConsentStatus.NONE;
+		case 'PENDING':
+			return gdprConsentStatus.PENDING;
+		case 'PENDING_ASYNC':
+			return gdprConsentStatus.PENDING_ASYNC;
+		case 'ACCEPTED_CONTRACTUAL_MINIMUM':
+			return gdprConsentStatus.ACCEPTED_CONTRACTUAL_MINIMUM;
+		case 'ACCEPTED_FULL':
+			return gdprConsentStatus.ACCEPTED_FULL;
+		case 'DENIED':
+			return gdprConsentStatus.DENIED;
+		case 'FORCED_ALL_CONTRACTUAL':
+			return gdprConsentStatus.FORCED_ALL_CONTRACTUAL;
+		default:
+			return null;
+	}
+}
+
 /**
  * Depending on the current step in checkout, the user's domain can be found in
  * either the cart or the receipt.
@@ -101,6 +122,7 @@ function parseDomainAgainstTldList( domainFragment, tldList ) {
 export {
 	getDomainNameFromReceiptOrCart,
 	getDomainType,
+	getGdprConsentStatus,
 	getTransferStatus,
 	parseDomainAgainstTldList,
 };
