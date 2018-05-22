@@ -63,8 +63,6 @@ class EditorLocation extends React.Component {
 		error: null,
 	};
 
-	search = null;
-
 	onGeolocateSuccess = position => {
 		const latitude = toGeoString( position.coords.latitude ),
 			longitude = toGeoString( position.coords.longitude );
@@ -142,8 +140,6 @@ class EditorLocation extends React.Component {
 			'geo_public',
 			'geo_address',
 		] );
-
-		this.search.clear();
 	};
 
 	onSearchSelect = result => {
@@ -213,7 +209,6 @@ class EditorLocation extends React.Component {
 					onError={ this.onGeolocateFailure }
 					onSelect={ this.onSearchSelect }
 					value={ this.props.label }
-					ref={ ref => ( this.search = ref ) }
 				/>
 				{ options }
 			</div>

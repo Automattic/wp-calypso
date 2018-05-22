@@ -34,8 +34,6 @@ export default class extends React.Component {
 		isSearching: false,
 	};
 
-	search = null;
-
 	componentDidMount() {
 		this.mounted = true;
 		this.hasTrackedStats = false;
@@ -86,22 +84,12 @@ export default class extends React.Component {
 		} );
 	};
 
-	onSelect = result => {
-		this.search.clear();
-		this.props.onSelect( result );
-	};
-
-	clear = () => {
-		this.search.clear();
-	};
-
 	render() {
 		const { results, isSearching } = this.state;
 
 		return (
 			<div className="editor-location__search">
 				<SearchCard
-					ref={ ref => ( this.search = ref ) }
 					onSearch={ this.geocode }
 					searching={ isSearching }
 					delaySearch
@@ -115,7 +103,7 @@ export default class extends React.Component {
 							<li key={ result.formatted_address }>
 								<EditorLocationSearchResult
 									result={ result }
-									onClick={ this.onSelect.bind( null, result ) }
+									onClick={ this.props.onSelect.bind( null, result ) }
 								/>
 							</li>
 						);

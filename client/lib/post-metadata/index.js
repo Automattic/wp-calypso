@@ -96,7 +96,7 @@ PostMetadata = {
 			return;
 		}
 
-		return getValueByKey( post.metadata, 'geo_address' );
+		return getValueByKey( post.metadata, 'geo_address' ) || '';
 	},
 
 	/**
