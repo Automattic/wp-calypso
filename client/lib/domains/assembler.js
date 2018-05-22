@@ -39,7 +39,6 @@ export function createDomainObjects( dataTransferObject ) {
 			isPrimary: domain.primary_domain,
 			isPendingWhoisUpdate: domain.pending_whois_update,
 			manualTransferRequired: domain.manual_transfer_required,
-			manualWhois: domain.manual_whois,
 			name: domain.domain,
 			owner: domain.owner,
 			privacyAvailable: domain.privacy_available,

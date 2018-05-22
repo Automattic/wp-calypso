@@ -33,7 +33,6 @@ export const createSiteDomainObject = domain => {
 		isPrivate: Boolean( domain.private_domain ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
-		manualWhois: Boolean( domain.manual_whois ),
 		newRegistration: Boolean( domain.new_registration ),
 		name: String( domain.domain ),
 		owner: String( domain.owner ),
