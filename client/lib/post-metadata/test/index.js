@@ -132,22 +132,22 @@ describe( 'index', () => {
 	} );
 
 	describe( '#geoLabel()', () => {
-		test( 'should return undefined if passed a falsey value', () => {
+		test( 'should return empty string if passed a falsey value', () => {
 			const value = PostMetadata.geoLabel( undefined );
 
-			expect( value ).to.be.undefined;
+			expect( value ).to.be.eq( '' );
 		} );
 
-		test( 'should return undefined if metadata not assigned to post', () => {
+		test( 'should return empty string if metadata not assigned to post', () => {
 			const value = PostMetadata.geoLabel( {} );
 
-			expect( value ).to.be.undefined;
+			expect( value ).to.be.eq( '' );
 		} );
 
-		test( 'should return undefined if metadata contains no geolocation address', () => {
+		test( 'should return empty string if metadata contains no geolocation address', () => {
 			const value = PostMetadata.geoLabel( { metadata: [] } );
 
-			expect( value ).to.be.undefined;
+			expect( value ).to.be.eq( '' );
 		} );
 
 		test( 'should return the address if metadata contains geolocation address', () => {

@@ -93,7 +93,7 @@ PostMetadata = {
 	 */
 	geoLabel: function( post ) {
 		if ( ! post ) {
-			return;
+			return '';
 		}
 
 		return getValueByKey( post.metadata, 'geo_address' ) || '';
