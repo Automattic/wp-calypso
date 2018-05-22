@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { keyBy, omit } from 'lodash';
+import { remove } from 'lodash';
 
 /**
  * Internal dependencies
@@ -66,12 +66,13 @@ export const saveRequests = createReducer(
 const siteKeyrings = createReducer(
 	{},
 	{
-		[ SITE_KEYRINGS_REQUEST_SUCCESS ]: ( state, { keyrings } ) => keyBy( keyrings, 'keyring_id' ),
-		[ SITE_KEYRINGS_SAVE_SUCCESS ]: ( state, { keyring } ) => ( {
-			...state,
-			[ keyring.keyring_id ]: keyring,
-		} ),
-		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { keyringId } ) => omit( state, [ keyringId ] ),
+		[ SITE_KEYRINGS_REQUEST_SUCCESS ]: ( state, { keyrings } ) => keyrings,
+		[ SITE_KEYRINGS_SAVE_SUCCESS ]: ( state, { keyring } ) => state.concat( [ keyring ] ),
+		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { keyringId, externalUserId } ) =>
+			remove(
+				state,
+				keyring => keyring.keyring_id === keyringId && keyring.external_user_id === externalUserId
+			),
 	},
 	siteKeyringsSchema
 );

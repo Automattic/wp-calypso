@@ -101,6 +101,7 @@ export function deleteSiteKeyring( siteId, keyringId, externalUserId = null ) {
 					type: SITE_KEYRINGS_DELETE_SUCCESS,
 					siteId,
 					keyringId,
+					externalUserId,
 				} );
 
 				return body;

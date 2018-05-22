@@ -9,7 +9,7 @@ export const siteKeyrings = {
 			properties: {
 				keyring_id: { type: 'number' },
 				service: { type: 'string' },
-				external_user_id: { type: 'string' },
+				external_user_id: { type: [ 'string', 'null' ] },
 			},
 		},
 	},
