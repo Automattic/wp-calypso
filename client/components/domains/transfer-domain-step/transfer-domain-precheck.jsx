@@ -41,6 +41,7 @@ class TransferDomainPrecheck extends React.Component {
 	};
 
 	state = {
+		authCode: '',
 		currentStep: 1,
 		unlockCheckClicked: false,
 	};
@@ -65,8 +66,7 @@ class TransferDomainPrecheck extends React.Component {
 
 		this.props.recordContinueButtonClick( domain, losingRegistrar, losingRegistrarIanaId );
 
-		const authCode = 'testing';
-		this.props.setValid( domain, authCode, supportsPrivacy );
+		this.props.setValid( domain, this.state.authCode, supportsPrivacy );
 	};
 
 	resetSteps = () => {
@@ -230,6 +230,7 @@ class TransferDomainPrecheck extends React.Component {
 
 	getEppMessage() {
 		const { translate } = this.props;
+		const { authCode } = this.state;
 
 		const heading = translate( 'Get a domain authorization code.' );
 		const explanation = translate(
@@ -253,13 +254,17 @@ class TransferDomainPrecheck extends React.Component {
 		const message = (
 			<div>
 				{ explanation }
-				<FormTextInput />
+				<FormTextInput value={ authCode } onChange={ this.setAuthCode } />
 			</div>
 		);
 		const buttonText = translate( 'Check my authorization code' );
 
 		return this.getSection( heading, message, buttonText, 2 );
 	}
+
+	setAuthCode = event => {
+		this.setState( { authCode: event.target.value } );
+	};
 
 	getHeader() {
 		const { translate, domain } = this.props;
