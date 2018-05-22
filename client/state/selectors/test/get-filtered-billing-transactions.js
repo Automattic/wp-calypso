@@ -19,7 +19,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			items: {
 				past: [
 					{
-						date: '2018-05-01T12:00:00+0000',
+						date: '2018-05-01T12:00:00',
 						service: 'WordPress.com',
 						cc_name: 'name1 surname1',
 						cc_type: 'mastercard',
@@ -32,7 +32,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 						],
 					},
 					{
-						date: '2018-04-11T13:11:27+0000',
+						date: '2018-04-11T13:11:27',
 						service: 'WordPress.com',
 						cc_name: 'name2',
 						cc_type: 'visa',
@@ -50,7 +50,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 						],
 					},
 					{
-						date: '2018-03-11T21:00:00+0000',
+						date: '2018-03-11T21:00:00',
 						service: 'Store Services',
 						cc_name: 'name1 surname1',
 						cc_type: 'visa',
@@ -68,7 +68,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 						],
 					},
 					{
-						date: '2018-03-15T10:39:27+0000',
+						date: '2018-03-15T10:39:27',
 						service: 'Store Services',
 						cc_name: 'name2',
 						cc_type: 'mastercard',
@@ -86,7 +86,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 						],
 					},
 					{
-						date: '2018-03-13T16:10:45+0000',
+						date: '2018-03-13T16:10:45',
 						service: 'WordPress.com',
 						cc_name: 'name1 surname1',
 						cc_type: 'visa',
@@ -99,7 +99,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 						],
 					},
 					{
-						date: '2018-01-10T14:24:38+0000',
+						date: '2018-01-10T14:24:38',
 						service: 'WordPress.com',
 						cc_name: 'name2',
 						cc_type: 'mastercard',
@@ -112,7 +112,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 						],
 					},
 					{
-						date: '2017-12-10T10:30:38+0000',
+						date: '2017-12-10T10:30:38',
 						service: 'Store Services',
 						cc_name: 'name1 surname1',
 						cc_type: 'visa',
@@ -125,7 +125,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 						],
 					},
 					{
-						date: '2017-12-01T07:20:00+0000',
+						date: '2017-12-01T07:20:00',
 						service: 'Store Services',
 						cc_name: 'name1 surname1',
 						cc_type: 'visa',
@@ -138,7 +138,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 						],
 					},
 					{
-						date: '2017-11-24T05:13:00+0000',
+						date: '2017-11-24T05:13:00',
 						service: 'WordPress.com',
 						cc_name: 'name1 surname1',
 						cc_type: 'visa',
@@ -151,7 +151,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 						],
 					},
 					{
-						date: '2017-01-01T00:00:00+0000',
+						date: '2017-01-01T00:00:00',
 						service: 'Store Services',
 						cc_name: 'name2',
 						cc_type: 'mastercard',
