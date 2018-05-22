@@ -19,11 +19,7 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { transferStatus } from 'lib/domains/constants';
-import {
-	CALYPSO_CONTACT,
-	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
-	INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED,
-} from 'lib/url/support';
+import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED } from 'lib/url/support';
 import { restartInboundTransfer } from 'lib/domains';
 import { fetchDomains } from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -49,35 +45,6 @@ class Transfer extends React.PureComponent {
 
 		let transferNotice;
 		let cancelNavItem;
-
-		if ( domain.transferStatus === transferStatus.PENDING_OWNER ) {
-			transferNotice = (
-				<Notice status={ 'is-warning' } showDismiss={ false }>
-					{ translate(
-						'Your registrar will send an email to confirm the transfer of {{strong}}%(domain)s{{/strong}}. ' +
-							'Please confirm in 5 days or the transfer will be canceled. ' +
-							'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
-						{
-							args: {
-								domain: domain.name,
-							},
-							components: {
-								learnMoreLink: (
-									<a
-										href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
-										rel="noopener noreferrer"
-										target="_blank"
-									/>
-								),
-								strong: <strong />,
-							},
-						}
-					) }{' '}
-					}
-				</Notice>
-			);
-		}
-
 		if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
 			transferNotice = (
 				<Notice status={ 'is-info' } showDismiss={ false }>
