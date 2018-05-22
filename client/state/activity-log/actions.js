@@ -185,15 +185,6 @@ export function rewindClone( siteId, timestamp, payload ) {
 	};
 }
 
-export function rewindClone( siteId, timestamp, payload ) {
-	return {
-		type: REWIND_CLONE,
-		siteId,
-		timestamp,
-		payload,
-	};
-}
-
 export function dismissRewindRestoreProgress( siteId ) {
 	return {
 		type: REWIND_RESTORE_DISMISS_PROGRESS,
