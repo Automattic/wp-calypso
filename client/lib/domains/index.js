@@ -35,6 +35,22 @@ function canAddGoogleApps( domainName ) {
 	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
 }
 
+function checkAuthCode( domainName, authCode, onComplete ) {
+	if ( ! domainName || ! authCode ) {
+		onComplete( null );
+		return;
+	}
+
+	wpcom.undocumented().checkAuthCode( domainName, authCode, function( serverError, result ) {
+		if ( serverError ) {
+			onComplete( serverError.error );
+			return;
+		}
+
+		onComplete( null, result );
+	} );
+}
+
 function checkDomainAvailability( params, onComplete ) {
 	const { domainName, blogId } = params;
 	if ( ! domainName ) {
@@ -280,6 +296,7 @@ function getAvailableTlds( query = {} ) {
 export {
 	canAddGoogleApps,
 	canRedirect,
+	checkAuthCode,
 	checkDomainAvailability,
 	checkInboundTransferStatus,
 	getDomainPrice,

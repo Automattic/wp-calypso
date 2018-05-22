@@ -488,6 +488,26 @@ Undocumented.prototype.isDomainAvailable = function( domain, blogId, fn ) {
  * Get the inbound transfer status for this domain
  *
  * @param {string} domain - The domain name to check.
+ * @param {string} authCode - The auth code for the given domain to check.
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.checkAuthCode = function( domain, authCode, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/domains/${ encodeURIComponent(
+				domain
+			) }/inbound-transfer-check-auth-code/${ authCode }`,
+		},
+		fn
+	);
+};
+
+/**
+ * Get the inbound transfer status for this domain
+ *
+ * @param {string} domain - The domain name to check.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
  * @api public

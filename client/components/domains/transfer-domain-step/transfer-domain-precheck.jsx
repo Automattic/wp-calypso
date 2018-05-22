@@ -24,9 +24,12 @@ import {
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
 } from 'lib/url/support';
 import FormTextInput from 'components/forms/form-text-input';
+import FormInputValidation from 'components/forms/form-input-validation';
 
 class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
+		authCodeValid: PropTypes.bool,
+		checkAuthCode: PropTypes.func,
 		domain: PropTypes.string,
 		email: PropTypes.string,
 		loading: PropTypes.bool,
@@ -59,6 +62,10 @@ class TransferDomainPrecheck extends React.Component {
 		if ( nextProps.unlocked && 1 === this.state.currentStep ) {
 			this.showNextStep();
 		}
+
+		if ( nextProps.authCodeValid && 2 === this.state.currentStep ) {
+			this.showNextStep();
+		}
 	}
 
 	onClick = () => {
@@ -88,9 +95,13 @@ class TransferDomainPrecheck extends React.Component {
 		this.props.refreshStatus( this.statusRefreshed );
 	};
 
-	getSection( heading, message, buttonText, step, stepStatus ) {
+	checkAuthCode = () => {
+		this.props.checkAuthCode( this.props.domain, this.state.authCode );
+	};
+
+	getSection( heading, message, buttonText, step, stepStatus, onButtonClick ) {
 		const { currentStep } = this.state;
-		const { loading, unlocked } = this.props;
+		const { loading } = this.props;
 		const isAtCurrentStep = step === currentStep;
 		const isStepFinished = currentStep > step;
 		const sectionClasses = classNames( 'transfer-domain-step__section', {
@@ -99,8 +110,6 @@ class TransferDomainPrecheck extends React.Component {
 		} );
 
 		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
-		const onButtonClick =
-			true === unlocked || null === unlocked ? this.showNextStep : this.refreshStatus;
 
 		return (
 			<Card compact>
@@ -225,7 +234,10 @@ class TransferDomainPrecheck extends React.Component {
 			</div>
 		);
 
-		return this.getSection( heading, message, buttonText, step, lockStatus );
+		const onButtonClick =
+			true === unlocked || null === unlocked ? this.showNextStep : this.refreshStatus;
+
+		return this.getSection( heading, message, buttonText, step, lockStatus, onButtonClick );
 	}
 
 	getEppMessage() {
@@ -254,12 +266,19 @@ class TransferDomainPrecheck extends React.Component {
 		const message = (
 			<div>
 				{ explanation }
-				<FormTextInput value={ authCode } onChange={ this.setAuthCode } />
+				<FormTextInput
+					value={ authCode }
+					onChange={ this.setAuthCode }
+					isError={ false === this.props.authCodeValid }
+				/>
+				{ false === this.props.authCodeValid && (
+					<FormInputValidation text={ translate( 'Auth Code invalid' ) } isError />
+				) }
 			</div>
 		);
 		const buttonText = translate( 'Check my authorization code' );
 
-		return this.getSection( heading, message, buttonText, 2 );
+		return this.getSection( heading, message, buttonText, 2, null, this.checkAuthCode );
 	}
 
 	setAuthCode = event => {
