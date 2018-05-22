@@ -18,6 +18,7 @@ import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business
 import isGoogleMyBusinessLocationConnected from 'state/selectors/is-google-my-business-location-connected';
 import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
 import { requestSiteKeyrings } from 'state/site-keyrings/actions';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
 const loadKeyringsMiddleware = ( context, next ) => {
@@ -27,6 +28,18 @@ const loadKeyringsMiddleware = ( context, next ) => {
 		context.store.dispatch( requestKeyringConnections() ),
 		context.store.dispatch( requestSiteKeyrings( siteId ) ),
 	] ).then( next );
+};
+
+const redirectUnauthorized = ( context, next ) => {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const siteIsGMBEligible = isSiteGoogleMyBusinessEligible( state, siteId );
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	if ( ! siteIsGMBEligible || ! canUserManageOptions ) {
+		context.redirect( `/stats/${ context.params.site }` );
+	}
+
+	next();
 };
 
 export default function( router ) {
@@ -39,6 +52,7 @@ export default function( router ) {
 			'/google-my-business/new/:site',
 			redirectLoggedOut,
 			siteSelection,
+			redirectUnauthorized,
 			newAccount,
 			navigation,
 			makeLayout
@@ -56,6 +70,7 @@ export default function( router ) {
 			'/google-my-business/select-location/:site',
 			redirectLoggedOut,
 			siteSelection,
+			redirectUnauthorized,
 			selectLocation,
 			navigation,
 			makeLayout
@@ -67,6 +82,7 @@ export default function( router ) {
 			'/google-my-business/stats/:site',
 			redirectLoggedOut,
 			siteSelection,
+			redirectUnauthorized,
 			loadKeyringsMiddleware,
 			( context, next ) => {
 				const state = context.store.getState();
@@ -98,6 +114,7 @@ export default function( router ) {
 		'/google-my-business/select-business-type/:site',
 		redirectLoggedOut,
 		siteSelection,
+		redirectUnauthorized,
 		selectBusinessType,
 		navigation,
 		makeLayout
@@ -106,6 +123,7 @@ export default function( router ) {
 	router(
 		'/google-my-business/:site',
 		siteSelection,
+		redirectUnauthorized,
 		loadKeyringsMiddleware,
 		context => {
 			const state = context.store.getState();
