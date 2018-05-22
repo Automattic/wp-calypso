@@ -27,6 +27,7 @@ import titles from './titles';
 import userFactory from 'lib/user';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import CartStore from 'lib/cart/store';
 
 const user = userFactory();
 
@@ -67,6 +68,14 @@ export function addCardDetails( context, next ) {
 }
 
 export function addCreditCard( context, next ) {
+	// Here we check if there's been a first call to get the shopping cart.
+	// If none has been made, it means we don't have any stored payment methods
+	// against which to check before adding a credit card.
+	if ( ! CartStore.get().hasLoadedFromServer ) {
+		CartStore.setSelectedSiteId( null );
+		CartStore.fetch();
+	}
+
 	context.primary = <AddCreditCard />;
 	next();
 }
