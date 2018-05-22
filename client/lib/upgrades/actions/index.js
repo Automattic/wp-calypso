@@ -56,6 +56,7 @@ export {
 	updateNameservers,
 	updateSiteRedirect,
 	updateWhois,
+	requestGdprConsentManagement,
 } from './domain-management';
 
 export { goToDomainCheckout } from './domain-search';

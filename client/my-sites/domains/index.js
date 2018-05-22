@@ -105,6 +105,14 @@ export default function() {
 	);
 
 	page(
+		paths.domainManagementManageConsent( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementManageConsent,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		paths.domainManagementDns( ':site', ':domain' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementDns,

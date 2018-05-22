@@ -2495,4 +2495,18 @@ Undocumented.prototype.updateSiteAddress = function( siteId, blogname, discard, 
 	);
 };
 
+Undocumented.prototype.gdprConsentManagement = function( domain, callback ) {
+	return this.wpcom.req.get( `/domains/${ domain }/gdpr-consent-management`, function(
+		error,
+		response
+	) {
+		if ( error ) {
+			callback( error );
+			return;
+		}
+
+		callback( null, response );
+	} );
+};
+
 export default Undocumented;

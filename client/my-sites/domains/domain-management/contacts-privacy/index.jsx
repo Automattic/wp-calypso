@@ -20,7 +20,9 @@ import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementPrivacyProtection,
+	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
+import { registrar as registrarNames } from 'lib/domains/constants';
 import { getSelectedDomain } from 'lib/domains';
 import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
 
@@ -40,6 +42,7 @@ class ContactsPrivacy extends React.PureComponent {
 		const { translate, whois } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
+		const canManageConsent = domain.registrar !== registrarNames.WWD;
 		const contactInformation = privateDomain
 			? findPrivacyServiceWhois( whois.data )
 			: findRegistrantWhois( whois.data );
@@ -69,6 +72,17 @@ class ContactsPrivacy extends React.PureComponent {
 					>
 						{ translate( 'Edit Contact Info' ) }
 					</VerticalNavItem>
+
+					{ canManageConsent && (
+						<VerticalNavItem
+							path={ domainManagementManageConsent(
+								this.props.selectedSite.slug,
+								this.props.selectedDomainName
+							) }
+						>
+							{ translate( 'Manage Personal Data Use' ) }
+						</VerticalNavItem>
+					) }
 
 					{ ! hasPrivacyProtection &&
 						privacyAvailable && (

@@ -32,6 +32,7 @@ import {
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
+	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
 import ProductsList from 'lib/products-list';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
@@ -93,6 +94,20 @@ export default {
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementManageConsent( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementManageConsent( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Contacts and Privacy > Manage Personal Data Use"
+				component={ DomainManagement.ManageConsent }
+				context={ pageContext }
+				productsList={ productsList }
+				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);
 		next();
