@@ -263,15 +263,17 @@ class TransferDomainPrecheck extends React.Component {
 			}
 		);
 
+		const authCodeInvalid = false === authCodeValid;
+
 		const message = (
 			<div>
 				{ explanation }
 				<FormTextInput
 					value={ authCode }
 					onChange={ this.setAuthCode }
-					isError={ false === authCodeValid }
+					isError={ authCodeInvalid }
 				/>
-				{ false === authCodeValid && (
+				{ authCodeInvalid && (
 					<FormInputValidation text={ translate( 'Auth Code invalid' ) } isError />
 				) }
 			</div>
