@@ -27,6 +27,8 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { cancelPurchase as cancelPurchaseLink } from 'me/purchases/paths';
 import { Notice } from 'components/notice';
+import { get } from 'lodash';
+import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-management/components/inbound-transfer-verification';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 
 class Transfer extends React.PureComponent {
@@ -108,6 +110,7 @@ class Transfer extends React.PureComponent {
 
 		return (
 			<div className="edit__domain-details-card">
+				{ this.renderInboundTransferEmailNotice() }
 				{ transferNotice }
 				<Header domain={ domain } />
 				{ content }
@@ -115,6 +118,22 @@ class Transfer extends React.PureComponent {
 			</div>
 		);
 	}
+
+	renderInboundTransferEmailNotice = () => {
+		const domain = this.props.domain;
+		const isPendingVerification = transferStatus.PENDING_OWNER === get( domain, 'transferStatus' );
+
+		if ( ! isPendingVerification ) {
+			return null;
+		}
+
+		return (
+			<InboundTransferEmailVerificationCard
+				domain={ domain }
+				selectedSiteSlug={ this.props.selectedSite.slug }
+			/>
+		);
+	};
 
 	handlePaymentSettingsClick = () => {
 		this.props.paymentSettingsClick( this.props.domain );

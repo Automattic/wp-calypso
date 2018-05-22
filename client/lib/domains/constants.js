@@ -9,6 +9,7 @@ export const type = {
 };
 
 export const transferStatus = {
+	PENDING_OWNER: 'PENDING_OWNER',
 	PENDING_REGISTRY: 'PENDING_REGISTRY',
 	CANCELLED: 'CANCELLED',
 	COMPLETED: 'COMPLETED',

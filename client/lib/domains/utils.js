@@ -33,6 +33,10 @@ function getDomainType( domainFromApi ) {
 }
 
 function getTransferStatus( domainFromApi ) {
+	if ( domainFromApi.transfer_status === 'pending_owner' ) {
+		return transferStatus.PENDING_OWNER;
+	}
+
 	if ( domainFromApi.transfer_status === 'pending_registry' ) {
 		return transferStatus.PENDING_REGISTRY;
 	}
