@@ -94,7 +94,7 @@ class ClonePointStep extends Component {
 				<QuerySites siteId={ siteId } />
 				<QueryActivityLog siteId={ siteId } />
 				<QuerySiteSettings siteId={ siteId } />
-				<section>
+				<section className="clone-point__wrapper">
 					{ theseLogs.map( log => (
 						<Fragment key={ log.activityId }>
 							{ timePeriod( log ) }
