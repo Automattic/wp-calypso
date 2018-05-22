@@ -278,7 +278,7 @@ class TransferDomainPrecheck extends React.Component {
 		);
 		const buttonText = translate( 'Check my authorization code' );
 
-		const stepStatus = authCodeValid && (
+		const stepStatus = true === authCodeValid && (
 			<div className="transfer-domain-step__lock-status transfer-domain-step__auth-code-valid">
 				<Gridicon icon="checkmark" size={ 12 } />
 				<span>{ translate( 'Valid' ) } </span>

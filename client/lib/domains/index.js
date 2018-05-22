@@ -37,7 +37,7 @@ function canAddGoogleApps( domainName ) {
 
 function checkAuthCode( domainName, authCode, onComplete ) {
 	if ( ! domainName || ! authCode ) {
-		onComplete( null );
+		onComplete( null, { success: false } );
 		return;
 	}
 
