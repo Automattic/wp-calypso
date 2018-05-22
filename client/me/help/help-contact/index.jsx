@@ -408,14 +408,14 @@ class HelpContact extends React.Component {
 		//    requests are sent to the language specific forums (for popular languages)
 		//    we don't tell the user that support is only offered in English.
 		const showHelpLanguagePrompt =
-			config( 'support_locales' ).indexOf( currentUserLocale ) === -1 &&
+			config( 'livechat_support_locales' ).indexOf( currentUserLocale ) === -1 &&
 			SUPPORT_FORUM !== variationSlug;
 
 		return {
 			compact: this.props.compact,
 			selectedSite: this.props.selectedSite,
 			disabled: isSubmitting,
-			showHelpLanguagePrompt: showHelpLanguagePrompt,
+			showHelpLanguagePrompt,
 			valueLink: {
 				value: savedContactForm,
 				requestChange: contactForm => ( savedContactForm = contactForm ),

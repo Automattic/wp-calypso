@@ -15,7 +15,7 @@ export {
 	addLocaleToWpcomUrl,
 	getLanguage,
 	getLocaleFromPath,
-	getSupportLocale,
+	getSupportSiteLocale,
 	isDefaultLocale,
 	isLocaleVariant,
 	canBeTranslated,

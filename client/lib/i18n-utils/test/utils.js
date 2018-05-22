@@ -4,7 +4,7 @@
  */
 import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { expect } from 'chai';
-
+import { getLocaleSlug } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
@@ -16,11 +16,16 @@ import {
 	removeLocaleFromPath,
 	isLocaleVariant,
 	canBeTranslated,
+	getSupportSiteLocale,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'en';
+	}
+
+	if ( 'support_site_locales' === key ) {
+		return [ 'en', 'es', 'de', 'ja', 'pt-br' ];
 	}
 
 	if ( 'languages' === key ) {
@@ -87,6 +92,10 @@ jest.mock( 'config', () => key => {
 		];
 	}
 } );
+
+jest.mock( 'i18n-calypso', () => ( {
+	getLocaleSlug: jest.fn( () => 'en' ),
+} ) );
 
 describe( 'utils', () => {
 	describe( '#isDefaultLocale', () => {
@@ -246,6 +255,22 @@ describe( 'utils', () => {
 
 		test( 'should return true for languages not in the exception list', () => {
 			expect( canBeTranslated( 'de' ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#getSupportSiteLocale', () => {
+		test( 'should return `en` by default', () => {
+			expect( getSupportSiteLocale() ).to.equal( 'en' );
+		} );
+
+		test( 'should return support slug for current i18n locale slug if available in config', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'ja' );
+			expect( getSupportSiteLocale() ).to.equal( 'ja' );
+		} );
+
+		test( 'should return `en` for current i18n locale slug if not available in config', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'ar' );
+			expect( getSupportSiteLocale() ).to.equal( 'en' );
 		} );
 	} );
 } );

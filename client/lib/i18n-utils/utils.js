@@ -147,9 +147,9 @@ export function removeLocaleFromPath( path ) {
  *
  * @returns {string} A slug which is a valid subdomain of *.support.wordpress.com.
  */
-export function getSupportLocale() {
+export function getSupportSiteLocale() {
 	const localeSlug = getLocaleSlug();
-	if ( config( 'support_locales' ).indexOf( localeSlug ) > -1 ) {
+	if ( config( 'support_site_locales' ).indexOf( localeSlug ) > -1 ) {
 		return localeSlug;
 	}
 	return 'en';

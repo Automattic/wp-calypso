@@ -16,7 +16,7 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { purchasesRoot } from 'me/purchases/paths';
-import { getSupportLocale } from 'lib/i18n-utils';
+import { getSupportSiteLocale } from 'lib/i18n-utils';
 
 const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	const helpLink =
@@ -58,7 +58,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ 'https://' + getSupportLocale() + '.support.wordpress.com/plugins/' }
+									href={ 'https://' + getSupportSiteLocale() + '.support.wordpress.com/plugins/' }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
