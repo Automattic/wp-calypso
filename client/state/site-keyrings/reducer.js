@@ -64,9 +64,9 @@ export const saveRequests = createReducer(
 );
 
 const siteKeyrings = createReducer(
-	{},
+	[],
 	{
-		[ SITE_KEYRINGS_REQUEST_SUCCESS ]: ( state, { keyrings } ) => keyrings,
+		[ SITE_KEYRINGS_REQUEST_SUCCESS ]: ( _, { keyrings } ) => keyrings,
 		[ SITE_KEYRINGS_SAVE_SUCCESS ]: ( state, { keyring } ) => state.concat( [ keyring ] ),
 		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { keyringId, externalUserId } ) =>
 			remove(
