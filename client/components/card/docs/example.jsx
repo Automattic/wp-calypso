@@ -13,6 +13,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 
 Card.displayName = 'Card';
+CompactCard.displayName = 'CompactCard';
 
 class Cards extends React.Component {
 	static displayName = 'Card';
