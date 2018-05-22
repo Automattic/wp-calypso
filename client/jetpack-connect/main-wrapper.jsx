@@ -4,18 +4,18 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
+import JetpackHeader from 'components/jetpack-header';
 import Main from 'components/main';
 import { retrieveMobileRedirect } from './persistence-utils';
-import JetpackHeader from 'components/jetpack-header';
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 
 export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
