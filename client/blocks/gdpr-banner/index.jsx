@@ -65,7 +65,6 @@ class GdprBanner extends Component {
 		const { translate } = this.props;
 		const copy = translate(
 			'Our websites and dashboards use cookies. By continuing, you agree to their use. ' +
-				'By using our website, you agree to our use of cookies in accordance with our cookie policy. ' +
 				'{{a}}Learn more{{/a}}, including how to control cookies.',
 			{
 				components: {
