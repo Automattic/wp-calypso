@@ -21,9 +21,9 @@ import FormattedHeader from 'components/formatted-header';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
-	INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
 } from 'lib/url/support';
+import FormTextInput from 'components/forms/form-text-input';
 
 class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
@@ -65,7 +65,8 @@ class TransferDomainPrecheck extends React.Component {
 
 		this.props.recordContinueButtonClick( domain, losingRegistrar, losingRegistrarIanaId );
 
-		this.props.setValid( domain, supportsPrivacy );
+		const authCode = 'testing';
+		this.props.setValid( domain, authCode, supportsPrivacy );
 	};
 
 	resetSteps = () => {
@@ -227,120 +228,11 @@ class TransferDomainPrecheck extends React.Component {
 		return this.getSection( heading, message, buttonText, step, lockStatus );
 	}
 
-	getPrivacyMessage() {
-		const { email, loading, privacy, translate } = this.props;
-		const { currentStep } = this.state;
-		const step = 2;
-		const isStepFinished = currentStep > step;
-
-		const heading = translate( 'Verify we can get in touch.' );
-		let message = translate(
-			"{{notice}}We couldn't get the email address listed for this domain's owner and we " +
-				'need to send an important email to start the process.{{/notice}}' +
-				'{{strong}}Make sure you can access the email address listed for your domain and ' +
-				'privacy protection is disabled.{{/strong}}' +
-				'{{br/}}{{br/}}' +
-				'Log in to your current domain provider to double check the domain contact email address and ' +
-				"make sure to disable privacy protection. {{a}}Here's how to do that{{/a}}.",
-			{
-				components: {
-					notice: <Notice showDismiss={ false } status="is-warning" />,
-					strong: <strong />,
-					br: <br />,
-					a: (
-						<a
-							href={ INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
-							rel="noopener noreferrer"
-							target="_blank"
-						/>
-					),
-				},
-			}
-		);
-		let buttonText = translate( 'I can access the email address' );
-
-		if ( email ) {
-			message = translate(
-				"{{card}}Make sure you can access the email address listed for this domain's owner. " +
-					"We'll send a link to start the process to the following email address: {{strong}}%(email)s{{/strong}}{{/card}}" +
-					"Don't recognize that address? You may have privacy protection enabled. It has to be " +
-					'disabled temporarily for the transfer to work. Log in to your current domain provider to ' +
-					"disable privacy protection. {{a}}Here's how to do that{{/a}}.",
-				{
-					args: { email },
-					components: {
-						card: (
-							<Card
-								className="transfer-domain-step__section-callout"
-								compact={ true }
-								highlight="warning"
-							/>
-						),
-						strong: <strong className="transfer-domain-step__admin-email" />,
-						a: (
-							<a
-								href={ INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
-								rel="noopener noreferrer"
-								target="_blank"
-							/>
-						),
-					},
-				}
-			);
-
-			buttonText = translate( 'I can access the email address listed' );
-		}
-
-		if ( privacy && email ) {
-			message = translate(
-				'{{notice}}It looks like you may have privacy protection enabled. It must be turned off to ' +
-					'transfer your domain.{{/notice}}' +
-					"{{card}}You must be able to access the email address listed for this domain's owner below. " +
-					"We'll send a link to start the process to the following email address: {{strong}}%(email)s{{/strong}}{{/card}}" +
-					'It looks like you have privacy protection enabled, which may prevent you from successfully ' +
-					'transferring your domain. Please contact your current domain provider or log into your ' +
-					"account to disable privacy protection. {{a}}Here's how to do that{{/a}}.",
-				{
-					args: { email },
-					components: {
-						notice: <Notice showDismiss={ false } status="is-error" />,
-						card: <Card className="transfer-domain-step__section-callout" compact={ true } />,
-						strong: <strong className="transfer-domain-step__admin-email" />,
-						a: (
-							<a
-								href={ INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
-								rel="noopener noreferrer"
-								target="_blank"
-							/>
-						),
-					},
-				}
-			);
-
-			buttonText = translate( 'I can access the email address listed' );
-		}
-
-		const statusClasses = loading
-			? 'transfer-domain-step__lock-status transfer-domain-step__checking'
-			: 'transfer-domain-step__lock-status transfer-domain-step__refresh';
-		const statusIcon = 'sync';
-		const statusText = loading ? translate( 'Checking…' ) : translate( 'Refresh email address' );
-
-		const stepStatus = ! isStepFinished && (
-			<a className={ statusClasses } onClick={ this.props.refreshStatus }>
-				<Gridicon icon={ statusIcon } size={ 12 } />
-				<span>{ statusText }</span>
-			</a>
-		);
-
-		return this.getSection( heading, message, buttonText, step, stepStatus );
-	}
-
 	getEppMessage() {
 		const { translate } = this.props;
 
 		const heading = translate( 'Get a domain authorization code.' );
-		const message = translate(
+		const explanation = translate(
 			'A domain authorization code is a unique code linked only to your domain — kind of like a ' +
 				"password for your domain. Log in to your current domain provider to get one. We'll send you an email " +
 				'with a link to enter it and officially okay the transfer. We call it a domain authorization code, ' +
@@ -357,9 +249,16 @@ class TransferDomainPrecheck extends React.Component {
 				},
 			}
 		);
-		const buttonText = translate( 'I have my authorization code' );
 
-		return this.getSection( heading, message, buttonText, 3 );
+		const message = (
+			<div>
+				{ explanation }
+				<FormTextInput />
+			</div>
+		);
+		const buttonText = translate( 'Check my authorization code' );
+
+		return this.getSection( heading, message, buttonText, 2 );
 	}
 
 	getHeader() {
@@ -392,7 +291,6 @@ class TransferDomainPrecheck extends React.Component {
 			<div className="transfer-domain-step__precheck">
 				{ this.getHeader() }
 				{ this.getStatusMessage() }
-				{ this.getPrivacyMessage() }
 				{ this.getEppMessage() }
 				<Card className="transfer-domain-step__continue">
 					<div className="transfer-domain-step__continue-text">
@@ -409,7 +307,7 @@ class TransferDomainPrecheck extends React.Component {
 						</p>
 					</div>
 					<Button
-						disabled={ false === unlocked || currentStep < 4 }
+						disabled={ false === unlocked || currentStep < 3 }
 						onClick={ this.onClick }
 						primary={ true }
 					>

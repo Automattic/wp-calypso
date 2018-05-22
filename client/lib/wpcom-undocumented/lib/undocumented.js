@@ -524,14 +524,17 @@ Undocumented.prototype.restartInboundTransfer = function( siteId, domain, fn ) {
  *
  * @param {int|string} siteId The site ID
  * @param {string} domain The domain name
+ * @param {string} authCode The auth code for the transfer
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
-Undocumented.prototype.startInboundTransfer = function( siteId, domain, fn ) {
+Undocumented.prototype.startInboundTransfer = function( siteId, domain, authCode, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
+			path: `/domains/${ encodeURIComponent(
+				domain
+			) }/inbound-transfer-start/${ siteId }/${ authCode }`,
 		},
 		fn
 	);

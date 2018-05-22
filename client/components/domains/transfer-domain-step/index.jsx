@@ -231,10 +231,10 @@ class TransferDomainStep extends React.Component {
 		);
 	}
 
-	startPendingInboundTransfer = domain => {
+	startPendingInboundTransfer = ( domain, authCode ) => {
 		const { selectedSite, translate } = this.props;
 
-		startInboundTransfer( selectedSite.ID, domain, ( error, result ) => {
+		startInboundTransfer( selectedSite.ID, domain, authCode, ( error, result ) => {
 			if ( result ) {
 				fetchDomains( domain );
 				page( domainManagementTransferIn( selectedSite.slug, domain ) );

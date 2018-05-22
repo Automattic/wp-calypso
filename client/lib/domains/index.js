@@ -84,20 +84,22 @@ function restartInboundTransfer( siteId, domainName, onComplete ) {
 	} );
 }
 
-function startInboundTransfer( siteId, domainName, onComplete ) {
+function startInboundTransfer( siteId, domainName, authCode, onComplete ) {
 	if ( ! domainName || ! siteId ) {
 		onComplete( null );
 		return;
 	}
 
-	wpcom.undocumented().startInboundTransfer( siteId, domainName, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
+	wpcom
+		.undocumented()
+		.startInboundTransfer( siteId, domainName, authCode, function( serverError, result ) {
+			if ( serverError ) {
+				onComplete( serverError.error );
+				return;
+			}
 
-		onComplete( null, result );
-	} );
+			onComplete( null, result );
+		} );
 }
 
 function resendInboundTransferEmail( domainName, onComplete ) {
