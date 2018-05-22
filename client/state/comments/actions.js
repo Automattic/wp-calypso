@@ -6,6 +6,7 @@ import { isEnabled } from 'config';
 import {
 	COMMENT_COUNTS_REQUEST,
 	COMMENT_REQUEST,
+	COMMENTS_BULK_CHANGE_STATUS,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
@@ -326,4 +327,28 @@ export const setActiveReply = ( { siteId, postId, commentId } ) => ( {
 		postId,
 		commentId,
 	},
+} );
+
+/**
+ * Update the status of multiple comments.
+ *
+ * @param {Number} siteId Site identifier
+ * @param {Array} comments Array of comments
+ * @param {Number} comments.commentId Comment identifier
+ * @param {Number} comments.postId Post identifier
+ * @param {String} status New status
+ * @param {Object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
+ * @returns {Object} Action to update the status of multiple comments.
+ */
+export const bulkChangeCommentsStatus = (
+	siteId,
+	comments,
+	status,
+	refreshCommentListQuery = null
+) => ( {
+	type: COMMENTS_BULK_CHANGE_STATUS,
+	siteId,
+	comments,
+	status,
+	refreshCommentListQuery,
 } );

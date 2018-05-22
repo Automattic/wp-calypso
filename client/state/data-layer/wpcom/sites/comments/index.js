@@ -19,6 +19,7 @@ import {
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest, dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import bulkUpdate from './bulk-update';
 import replies from './replies';
 import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
@@ -283,4 +284,4 @@ export const fetchHandler = {
 	[ COMMENTS_EDIT ]: [ dispatchRequest( editComment, updateComment, announceEditFailure ) ],
 };
 
-export default mergeHandlers( fetchHandler, replies, likes );
+export default mergeHandlers( fetchHandler, bulkUpdate, replies, likes );

@@ -33,6 +33,7 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import {
+	bulkChangeCommentsStatus,
 	changeCommentStatus,
 	deleteComment,
 	requestCommentsList,
@@ -121,27 +122,20 @@ export class CommentNavigation extends Component {
 
 	setBulkStatus = newStatus => () => {
 		const {
-			changeStatus,
+			bulkChangeStatus,
 			deletePermanently,
 			postId: isPostView,
 			recordBulkAction,
 			selectedComments,
 			status: queryStatus,
 			toggleBulkMode,
-			unlike,
 		} = this.props;
-		this.props.removeNotice( 'comment-notice' );
-		each( selectedComments, ( { commentId, isLiked, postId, status } ) => {
-			if ( 'delete' === newStatus ) {
-				deletePermanently( postId, commentId );
-				return;
-			}
-			const alsoUnlike = isLiked && 'approved' !== status;
-			changeStatus( postId, commentId, newStatus, { alsoUnlike, previousStatus: status } );
-			if ( alsoUnlike ) {
-				unlike( postId, commentId );
-			}
-		} );
+
+		if ( 'delete' === newStatus ) {
+			each( selectedComments, ( { commentId, postId } ) => deletePermanently( postId, commentId ) );
+		} else {
+			bulkChangeStatus( selectedComments, newStatus );
+		}
 
 		recordBulkAction(
 			newStatus,
@@ -149,7 +143,6 @@ export class CommentNavigation extends Component {
 			queryStatus,
 			!! isPostView ? 'post' : 'site'
 		);
-		this.showBulkNotice( newStatus );
 		toggleBulkMode();
 	};
 
@@ -358,6 +351,8 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
+	bulkChangeStatus: ( comments, status ) =>
+		dispatch( bulkChangeCommentsStatus( siteId, comments, status, commentsListQuery ) ),
 	changeStatus: ( postId, commentId, status, analytics = { alsoUnlike: false } ) =>
 		dispatch(
 			extendAction(
