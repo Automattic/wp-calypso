@@ -5,7 +5,7 @@
  */
 import { requestAccountClose, receiveAccountCloseError, fromApi } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { closeAccount } from 'state/account/close/actions';
+import { closeAccount } from 'state/account/actions';
 
 describe( 'account-close', () => {
 	describe( 'requestAccountClose', () => {
