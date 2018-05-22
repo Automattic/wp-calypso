@@ -266,11 +266,9 @@ class TransferDomainStep extends React.Component {
 				authCodeValid={ authCodeValid }
 				checkAuthCode={ this.getAuthCodeStatus }
 				domain={ domain || searchQuery }
-				email={ inboundTransferStatus.email }
 				loading={ submittingWhois || submittingAuthCodeCheck }
 				losingRegistrar={ inboundTransferStatus.losingRegistrar }
 				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
-				privacy={ inboundTransferStatus.privacy }
 				refreshStatus={ this.getInboundTransferStatus }
 				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
 				setValid={ onSetValid }
