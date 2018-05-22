@@ -53,13 +53,16 @@ class ManageConsent extends React.Component {
 				</Header>
 				{ this.state.error && (
 					<Notice status="is-error" icon="notice" onDismissClick={ this.dismissError }>
-						{ this.state.error }
+						{ translate(
+							'An error occurred while trying to send you the consent management link. ' +
+								'If this is persistent please contact our support staff.'
+						) }
 					</Notice>
 				) }
 				{ this.state.success && (
 					<Notice status="is-success" icon="checkmark" showDismiss={ false }>
 						{ translate(
-							'Consent management link was successfully sent to the domain owners email'
+							'Consent management link was successfully sent to the domain owners email.'
 						) }
 					</Notice>
 				) }
@@ -74,9 +77,7 @@ class ManageConsent extends React.Component {
 								) }
 							</p>
 							<p>
-								{ translate(
-									'You can request the link again by clicking on ' + 'the button below.'
-								) }
+								{ translate( 'You can request the link again by clicking on the button below.' ) }
 							</p>
 							<Button
 								className="manage-consent__action-button"
