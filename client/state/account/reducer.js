@@ -2,13 +2,13 @@
 /**
  * Internal dependencies
  */
-import { ACCOUNT_CLOSE } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
+import { createReducer, combineReducers } from 'state/utils';
 
 export const isClosed = createReducer( false, {
-	[ ACCOUNT_CLOSE ]: ( state, action ) => {
-		return !! action.payload.success;
+	[ ACCOUNT_CLOSE_SUCCESS ]: () => {
+		return true;
 	},
 } );
 
-export default isClosed;
+export default combineReducers( { isClosed } );

@@ -6,7 +6,6 @@
  * External Dependencies
  */
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -15,6 +14,7 @@ import { ACCOUNT_CLOSE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
+import { closeAccountSuccess } from 'state/account/actions';
 
 export function requestAccountClose( action ) {
 	return http(
@@ -36,6 +36,10 @@ export function fromApi( response ) {
 	return response;
 }
 
+export function receiveAccountCloseSuccess() {
+	return closeAccountSuccess();
+}
+
 export function receiveAccountCloseError() {
 	return errorNotice(
 		translate( 'Sorry, there was a problem closing your account. Please contact support.' )
@@ -46,7 +50,7 @@ export default {
 	[ ACCOUNT_CLOSE ]: [
 		dispatchRequestEx( {
 			fetch: requestAccountClose,
-			onSuccess: noop,
+			onSuccess: receiveAccountCloseSuccess,
 			onError: receiveAccountCloseError,
 			fromApi,
 		} ),
