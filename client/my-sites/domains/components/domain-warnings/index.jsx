@@ -1006,29 +1006,42 @@ export class DomainWarnings extends React.PureComponent {
 
 		if ( pendingConsentDomains.length === 1 ) {
 			const currentDomain = pendingConsentDomains[ 0 ].name;
+			const translateOptions = {
+				components: {
+					strong: <strong />,
+					a: (
+						<a
+							href={ domainManagementManageConsent( selectedSite.slug, currentDomain ) }
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+				args: {
+					domain: currentDomain,
+				},
+			};
 
+			if ( isCompact ) {
+				noticeText = translate(
+					'The domain {{strong}}%(domain)s{{/strong}} requires user consent confirmation to complete the registration.',
+					translateOptions
+				);
+			} else {
+				noticeText = translate(
+					'The domain {{strong}}%(domain)s{{/strong}} is still pending registration. Please check the domain owner email since explicit consent is required for the registration to complete. {{a}}More info{{/a}}',
+					translateOptions
+				);
+			}
+		} else if ( isCompact ) {
 			noticeText = translate(
-				'The domain {{strong}}%(domain)s{{/strong}} is still pending registration. Please check the domain owner email since explicit consent is required for the registration to complete. {{a}}More info{{/a}}',
-				{
-					components: {
-						strong: <strong />,
-						a: (
-							<a
-								href={ domainManagementManageConsent( selectedSite.slug, currentDomain ) }
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-					args: {
-						domain: currentDomain,
-					},
-				}
+				'Some domains require user consent confirmation to complete the registration.'
 			);
 		} else {
 			noticeText = translate(
 				'Some domains are still pending registration. User consent is required before the registration can be completed.'
 			);
 		}
+
 		return (
 			<Notice
 				isCompact={ isCompact }
