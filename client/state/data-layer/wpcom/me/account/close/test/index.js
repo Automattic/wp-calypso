@@ -3,9 +3,15 @@
 /**
  * Internal dependencies
  */
-import { requestAccountClose, receiveAccountCloseError, fromApi } from '../';
+import {
+	requestAccountClose,
+	receiveAccountCloseSuccess,
+	receiveAccountCloseError,
+	fromApi,
+} from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { closeAccount } from 'state/account/close/actions';
+import { closeAccount } from 'state/account/actions';
+import { ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
 
 describe( 'account-close', () => {
 	describe( 'requestAccountClose', () => {
@@ -31,6 +37,18 @@ describe( 'account-close', () => {
 		} );
 		it( 'should return original response for an successful closure', () => {
 			expect( fromApi( { success: true } ) ).toEqual( { success: true } );
+		} );
+	} );
+
+	describe( 'receiveAccountCloseSuccess', () => {
+		test( 'should fire a success action', () => {
+			const result = receiveAccountCloseSuccess();
+
+			expect( result ).toEqual(
+				expect.objectContaining( {
+					type: ACCOUNT_CLOSE_SUCCESS,
+				} )
+			);
 		} );
 	} );
 
