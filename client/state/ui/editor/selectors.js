@@ -13,7 +13,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { getEditedPost, getSitePost } from 'state/posts/selectors';
 import { getPreference } from 'state/preferences/selectors';
-import { getPreviewURL } from 'lib/posts/utils';
+import canCurrentUser from 'state/selectors/can-current-user';
+import { isPublished, isBackDatedPublished, isFutureDated, getPreviewURL } from 'lib/posts/utils';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
@@ -140,4 +141,41 @@ export function getEditorPostPreviewUrl( state ) {
 
 export function isEditorAutosaving( state ) {
 	return state.ui.editor.isAutosaving;
+}
+
+export function getEditorPublishButtonStatus( state ) {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const currentPost = getSitePost( state, siteId, postId );
+	const editedPost = getEditedPost( state, siteId, postId );
+	const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+
+	// Return `null` (means "unknown") if the site or the post to edit is not available.
+	// Typically happens when async-loading them is in progress.
+	if ( ! siteId || ! currentPost || ! editedPost ) {
+		return null;
+	}
+
+	if (
+		( isPublished( currentPost ) &&
+			! isBackDatedPublished( currentPost ) &&
+			! isFutureDated( editedPost ) ) ||
+		( currentPost && currentPost.status === 'future' && isFutureDated( editedPost ) )
+	) {
+		return 'update';
+	}
+
+	if ( isFutureDated( editedPost ) ) {
+		return 'schedule';
+	}
+
+	if ( canUserPublishPosts ) {
+		return 'publish';
+	}
+
+	if ( currentPost && currentPost.status === 'pending' ) {
+		return 'update';
+	}
+
+	return 'requestReview';
 }
