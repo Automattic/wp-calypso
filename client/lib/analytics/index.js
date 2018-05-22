@@ -8,7 +8,16 @@ import cookie from 'cookie';
 import debug from 'debug';
 import { parse } from 'qs';
 import url from 'url';
-import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
+import {
+	assign,
+	includes,
+	isObjectLike,
+	isUndefined,
+	omit,
+	pickBy,
+	startsWith,
+	times,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,6 +50,7 @@ let _superProps, _user, _selectedSite, _siteCount, _dispatch, _loadTracksError;
  * See internal Nosara repo?
  */
 const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
+const EVENT_NAME_EXCEPTIONS = [ 'a8c_cookie_banner_ok' ];
 
 // Load tracking scripts
 window._tkq = window._tkq || [];
@@ -281,11 +291,14 @@ const analytics = {
 			eventProperties = eventProperties || {};
 
 			if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
-				if ( ! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) ) {
+				if (
+					! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) &&
+					! includes( EVENT_NAME_EXCEPTIONS, eventName )
+				) {
 					//eslint-disable-next-line no-console
 					console.error(
-						'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,}$/. ' +
-							'Please use a compliant event name.',
+						'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,}$/ and is ' +
+							'not a listed exception. Please use a compliant event name.',
 						eventName
 					);
 				}
@@ -323,8 +336,13 @@ const analytics = {
 
 			tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
-			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
-				tracksDebug( '- Event name must be prefixed by "calypso_"' );
+			if (
+				eventName.indexOf( 'calypso_' ) !== 0 &&
+				! includes( EVENT_NAME_EXCEPTIONS, eventName )
+			) {
+				tracksDebug(
+					'- Event name must be prefixed by "calypso_" or added to `EVENT_NAME_EXCEPTIONS`'
+				);
 				return;
 			}
 
