@@ -5,13 +5,15 @@
  */
 
 import { domainConnectAuthorize, notFoundError } from './controller';
-import { makeLayout } from 'controller';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 
 export default router => {
 	router(
 		'/domain-connect/authorize/v2/domainTemplates/providers/:providerId/services/:serviceId/apply',
+		redirectLoggedOut,
 		domainConnectAuthorize,
-		makeLayout
+		makeLayout,
+		clientRender
 	);
-	router( '/*', notFoundError, makeLayout );
+	router( '/domain-connect/*', notFoundError, makeLayout, clientRender );
 };
