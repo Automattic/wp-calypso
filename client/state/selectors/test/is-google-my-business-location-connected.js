@@ -24,7 +24,6 @@ describe( 'isGoogleMyBusinessLocationConnected()', () => {
 				items: {
 					1234: [
 						{
-							keyring_site_id: '1234_65789',
 							keyring_id: '1234',
 							external_user_id: '65789',
 							service: 'google_my_business',
