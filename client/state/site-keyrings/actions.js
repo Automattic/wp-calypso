@@ -40,6 +40,8 @@ export function requestSiteKeyrings( siteId ) {
 					siteId,
 					keyrings,
 				} );
+
+				return keyrings;
 			} )
 			.catch( error => {
 				dispatch( {
