@@ -14,7 +14,6 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
-import EditorLocationOptions from 'post-editor/editor-location/options';
 import { reverseGeocode } from '../../lib/geocoding';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import PostMetadata from 'lib/post-metadata';
@@ -167,7 +166,7 @@ class EditorLocation extends React.Component {
 	};
 
 	render() {
-		let error, buttonText, options;
+		let error, buttonText;
 
 		if ( this.state.error ) {
 			error = (
@@ -185,10 +184,6 @@ class EditorLocation extends React.Component {
 			buttonText = this.props.translate( 'Get current location', {
 				context: 'Post editor geolocation',
 			} );
-		}
-
-		if ( this.props.coordinates ) {
-			options = <EditorLocationOptions />;
 		}
 
 		return (
@@ -209,7 +204,6 @@ class EditorLocation extends React.Component {
 					onSelect={ this.onSearchSelect }
 					value={ this.props.label }
 				/>
-				{ options }
 			</div>
 		);
 	}
