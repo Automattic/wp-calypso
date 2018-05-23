@@ -24,6 +24,7 @@ import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import SectionHeader from 'components/section-header';
 import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
 import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
+import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -78,7 +79,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		changeGoogleMyBusinessStatsInterval: PropTypes.func.isRequired,
 		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
 		chartType: PropTypes.oneOf( [ 'pie', 'line' ] ),
-		data: PropTypes.object,
+		data: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
@@ -206,8 +207,34 @@ class GoogleMyBusinessStatsChart extends Component {
 		return sumBy( flatten( transformedData ), 'value' ) === 0;
 	}
 
+	renderChartNotice( isError = false ) {
+		const { translate } = this.props;
+
+		const emptyText = translate( 'No activity this period', {
+			context: 'Message on empty bar chart in Stats',
+			comment: 'Should be limited to 32 characters to prevent wrapping',
+		} );
+
+		const errorText = translate( 'Error loading data', {
+			context: 'Message on a chart in Stats where an error was occured while loading data',
+			comment: 'Should be limited to 32 characters to prevent wrapping',
+		} );
+
+		return (
+			<div className="chart__empty">
+				<Notice
+					className="chart__empty-notice"
+					status={ isError ? 'is-error' : 'is-warning' }
+					isCompact
+					text={ isError ? errorText : emptyText }
+					showDismiss={ false }
+				/>
+			</div>
+		);
+	}
+
 	render() {
-		const { description, interval, title, translate } = this.props;
+		const { description, interval, statsError, title, translate } = this.props;
 
 		const isEmptyChart = this.isChartEmpty();
 
@@ -233,20 +260,8 @@ class GoogleMyBusinessStatsChart extends Component {
 
 					<div className="gmb-stats__metric-chart">
 						{ this.renderChart() }
-						{ isEmptyChart && (
-							<div className="chart__empty">
-								<Notice
-									className="chart__empty-notice"
-									status="is-warning"
-									isCompact
-									text={ translate( 'No activity this period', {
-										context: 'Message on empty bar chart in Stats',
-										comment: 'Should be limited to 32 characters to prevent wrapping',
-									} ) }
-									showDismiss={ false }
-								/>
-							</div>
-						) }
+						{ isEmptyChart && this.renderChartNotice( false ) }
+						{ !! statsError && this.renderChartNotice( true ) }
 					</div>
 				</Card>
 			</div>
@@ -258,15 +273,17 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const interval = getStatsInterval( state, siteId, ownProps.statType );
+		const aggregation = getAggregation( ownProps );
 		return {
 			siteId,
 			interval,
-			data: getGoogleMyBusinessStats(
+			data: getGoogleMyBusinessStats( state, siteId, ownProps.statType, interval, aggregation ),
+			statsError: getGoogleMyBusinessStatsError(
 				state,
 				siteId,
 				ownProps.statType,
 				interval,
-				getAggregation( ownProps )
+				aggregation
 			),
 		};
 	},
