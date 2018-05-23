@@ -477,7 +477,7 @@ const mapStateToProps = ( state, { activity, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
+const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) => ( {
 	createBackup: () =>
 		dispatch(
 			withAnalytics(
