@@ -209,7 +209,7 @@ class PodcastingDetails extends Component {
 						</FormFieldset>
 						<div className="podcasting-details__basic-settings">
 							<PodcastCoverImageSetting
-								coverImageId={ fields.podcasting_image_id || 0 }
+								coverImageId={ parseInt( fields.podcasting_image_id, 10 ) || 0 }
 								coverImageUrl={ fields.podcasting_image }
 								onRemove={ this.onCoverImageRemoved }
 								onSelect={ this.onCoverImageSelected }
