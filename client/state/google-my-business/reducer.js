@@ -13,7 +13,13 @@ import {
 const stats = createReducer( null, {
 	[ GOOGLE_MY_BUSINESS_STATS_RECEIVE ]: ( state, { data } ) => data,
 	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: () => null,
-	[ GOOGLE_MY_BUSINESS_STATS_FAILURE ]: () => false,
+	[ GOOGLE_MY_BUSINESS_STATS_FAILURE ]: () => null,
+} );
+
+const statsError = createReducer( null, {
+	[ GOOGLE_MY_BUSINESS_STATS_RECEIVE ]: () => null,
+	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: () => null,
+	[ GOOGLE_MY_BUSINESS_STATS_FAILURE ]: ( state, { error } ) => error,
 } );
 
 export default keyedReducer(
@@ -22,6 +28,10 @@ export default keyedReducer(
 		stats: keyedReducer(
 			'statType',
 			keyedReducer( 'interval', keyedReducer( 'aggregation', stats ) )
+		),
+		statsError: keyedReducer(
+			'statType',
+			keyedReducer( 'interval', keyedReducer( 'aggregation', statsError ) )
 		),
 	} )
 );

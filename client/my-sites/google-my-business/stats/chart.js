@@ -24,6 +24,7 @@ import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import SectionHeader from 'components/section-header';
 import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
 import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
+import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -233,7 +234,7 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	render() {
-		const { data, description, interval, title, translate } = this.props;
+		const { description, interval, statsError, title, translate } = this.props;
 
 		const isEmptyChart = this.isChartEmpty();
 
@@ -260,7 +261,7 @@ class GoogleMyBusinessStatsChart extends Component {
 					<div className="gmb-stats__metric-chart">
 						{ this.renderChart() }
 						{ isEmptyChart && this.renderChartNotice( false ) }
-						{ false === data && this.renderChartNotice( true ) }
+						{ !! statsError && this.renderChartNotice( true ) }
 					</div>
 				</Card>
 			</div>
@@ -272,15 +273,17 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const interval = getStatsInterval( state, siteId, ownProps.statType );
+		const aggregation = getAggregation( ownProps );
 		return {
 			siteId,
 			interval,
-			data: getGoogleMyBusinessStats(
+			data: getGoogleMyBusinessStats( state, siteId, ownProps.statType, interval, aggregation ),
+			statsError: getGoogleMyBusinessStatsError(
 				state,
 				siteId,
 				ownProps.statType,
 				interval,
-				getAggregation( ownProps )
+				aggregation
 			),
 		};
 	},

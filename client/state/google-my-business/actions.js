@@ -48,10 +48,17 @@ export const receiveGoogleMyBusinessStats = ( siteId, statType, interval, aggreg
 	data,
 } );
 
-export const failedRequestGoogleMyBusinessStats = ( siteId, statType, interval, aggregation ) => ( {
+export const failedRequestGoogleMyBusinessStats = (
+	siteId,
+	statType,
+	interval,
+	aggregation,
+	error
+) => ( {
 	type: GOOGLE_MY_BUSINESS_STATS_FAILURE,
 	siteId,
 	statType,
 	interval,
 	aggregation,
+	error,
 } );

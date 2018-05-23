@@ -53,10 +53,10 @@ export const receiveStats = ( { dispatch }, action, data ) => {
  * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
  */
-export const receiveStatsError = ( { dispatch }, action ) => {
+export const receiveStatsError = ( { dispatch }, action, error ) => {
 	const { siteId, statType, interval, aggregation } = action;
 
-	dispatch( failedRequestGoogleMyBusinessStats( siteId, statType, interval, aggregation ) );
+	dispatch( failedRequestGoogleMyBusinessStats( siteId, statType, interval, aggregation, error ) );
 };
 
 export default {
