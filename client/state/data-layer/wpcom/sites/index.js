@@ -3,7 +3,6 @@
 /**
  * Internal dependencies
  */
-
 import { mergeHandlers } from 'state/action-watchers/utils';
 import config from 'config';
 import activity from './activity';
@@ -22,6 +21,7 @@ import rewind from './rewind';
 import simplePayments from './simple-payments';
 import users from './users';
 import statsGoogleMyBusiness from './stats/google-my-business';
+import settings from './settings';
 
 export default mergeHandlers(
 	activity,
@@ -39,5 +39,6 @@ export default mergeHandlers(
 	rewind,
 	simplePayments,
 	users,
-	statsGoogleMyBusiness
+	statsGoogleMyBusiness,
+	settings
 );

@@ -8,8 +8,6 @@ import wpcom from 'lib/wp';
 import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
-	SITE_SETTINGS_REQUEST_FAILURE,
-	SITE_SETTINGS_REQUEST_SUCCESS,
 	SITE_SETTINGS_SAVE,
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
@@ -55,36 +53,40 @@ export function updateSiteSettings( siteId, settings ) {
  * @return {Function}      Action thunk
  */
 export function requestSiteSettings( siteId ) {
-	return dispatch => {
-		dispatch( {
-			type: SITE_SETTINGS_REQUEST,
-			siteId,
-		} );
-
-		return wpcom
-			.undocumented()
-			.settings( siteId )
-			.then( ( { name, description, settings } ) => {
-				const savedSettings = {
-					...normalizeSettings( settings ),
-					blogname: name,
-					blogdescription: description,
-				};
-
-				dispatch( receiveSiteSettings( siteId, savedSettings ) );
-				dispatch( {
-					type: SITE_SETTINGS_REQUEST_SUCCESS,
-					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: SITE_SETTINGS_REQUEST_FAILURE,
-					siteId,
-					error,
-				} );
-			} );
+	return {
+		type: SITE_SETTINGS_REQUEST,
+		siteId,
 	};
+	// return dispatch => {
+	// 	dispatch( {
+	// 		type: SITE_SETTINGS_REQUEST,
+	// 		siteId,
+	// 	} );
+
+	// 	return wpcom
+	// 		.undocumented()
+	// 		.settings( siteId )
+	// 		.then( ( { name, description, settings } ) => {
+	// 			const savedSettings = {
+	// 				...normalizeSettings( settings ),
+	// 				blogname: name,
+	// 				blogdescription: description,
+	// 			};
+
+	// 			dispatch( receiveSiteSettings( siteId, savedSettings ) );
+	// 			dispatch( {
+	// 				type: SITE_SETTINGS_REQUEST_SUCCESS,
+	// 				siteId,
+	// 			} );
+	// 		} )
+	// 		.catch( error => {
+	// 			dispatch( {
+	// 				type: SITE_SETTINGS_REQUEST_FAILURE,
+	// 				siteId,
+	// 				error,
+	// 			} );
+	// 		} );
+	// };
 }
 
 export function saveSiteSettings( siteId, settings ) {
