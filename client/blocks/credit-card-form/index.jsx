@@ -37,6 +37,8 @@ class CreditCardForm extends Component {
 		successCallback: PropTypes.func.isRequired,
 		showUsedForExistingPurchasesInfo: PropTypes.bool,
 		autoFocus: PropTypes.bool,
+		heading: PropTypes.string,
+		onCancel: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -232,10 +234,11 @@ class CreditCardForm extends Component {
 	}
 
 	render() {
-		const { translate, autoFocus } = this.props;
+		const { translate, autoFocus, heading, onCancel } = this.props;
 		return (
 			<form onSubmit={ this.onSubmit } ref={ this.storeForm }>
 				<Card className="credit-card-form__content">
+					{ heading && <div className="credit-card-form__heading">{ heading }</div> }
 					<CreditCardFormFields
 						card={ this.getCardDetails() }
 						countriesList={ countriesList }
@@ -277,6 +280,11 @@ class CreditCardForm extends Component {
 				</Card>
 				<CompactCard className="credit-card-form__footer">
 					<em>{ translate( 'All fields required' ) }</em>
+					{ onCancel && (
+						<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
+							{ translate( 'Cancel' ) }
+						</FormButton>
+					) }
 					<FormButton disabled={ this.state.formSubmitting } type="submit">
 						{ this.state.formSubmitting
 							? translate( 'Saving Card…', {
