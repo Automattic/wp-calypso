@@ -44,7 +44,7 @@ import {
 	isEditorSaveBlocked,
 	getEditorPostPreviewUrl,
 } from 'state/ui/editor/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { editPost } from 'state/posts/actions';
 import { getEditedPostValue, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -682,7 +682,24 @@ export class PostEditor extends React.Component {
 		return this.props.previewUrl;
 	}
 
+	recordPreviewButtonClick() {
+		const isPage = this.props.type === 'page';
+		this.props.recordTracksEvent(
+			isPage
+				? 'calypso_editor_page_preview_button_click'
+				: 'calypso_editor_post_preview_button_click'
+		);
+		this.props.recordGoogleEvent(
+			'Editor',
+			isPage ? 'Clicked Preview Page Button' : 'Clicked Preview Post Button',
+			isPage ? 'Editor Preview Page Button Clicked' : 'Editor Preview Post Button Clicked',
+			isPage ? 'editorPageButtonClicked' : 'editorPostButtonClicked'
+		);
+	}
+
 	onPreview = event => {
+		this.recordPreviewButtonClick();
+
 		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
 			return this.iframePreview();
 		}
@@ -1228,6 +1245,7 @@ const enhance = flow(
 			setNextLayoutFocus,
 			saveConfirmationSidebarPreference,
 			recordTracksEvent,
+			recordGoogleEvent,
 			closeEditorSidebar,
 			openEditorSidebar,
 		}
