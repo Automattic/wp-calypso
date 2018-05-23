@@ -184,15 +184,15 @@ class EditorLocation extends React.Component {
 	};
 
 	render() {
-		let error, publicNotice, buttonText;
+		let error, publicWarning, buttonText;
 
 		if ( this.state.previouslyPrivatePostBeingModified ) {
-			publicNotice = (
-				<Notice status="is-warning" onDismissClick={ this.resetError } isCompact>
-					{ this.props.translate( 'Location will be displayed publicly.', {
+			publicWarning = (
+				<div class="editor-location__public-warning">
+					{ this.props.translate( 'Note: the location will be displayed publicly.', {
 						context: 'Post editor geolocation',
 					} ) }
-				</Notice>
+				</div>
 			);
 		}
 
@@ -216,7 +216,6 @@ class EditorLocation extends React.Component {
 
 		return (
 			<div className="editor-location">
-				{ publicNotice }
 				{ error }
 				<EditorDrawerWell
 					icon="location"
@@ -233,6 +232,7 @@ class EditorLocation extends React.Component {
 					onSelect={ this.onSearchSelect }
 					value={ this.props.label }
 				/>
+				{ publicWarning }
 			</div>
 		);
 	}
