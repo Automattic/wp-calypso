@@ -462,7 +462,6 @@ const analytics = {
 				}
 
 				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
-				window.ga( 'set', 'anonymizeIp', true );
 				analytics.ga.initialized = true;
 			}
 		},
