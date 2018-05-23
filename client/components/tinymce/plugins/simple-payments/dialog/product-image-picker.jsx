@@ -99,7 +99,7 @@ class ProductImagePicker extends Component {
 	}
 
 	render() {
-		const { siteId, translate } = this.props;
+		const { siteId, translate, makeDirtyAfterImageEdit } = this.props;
 		const { isSelecting } = this.state;
 
 		if ( ! siteId ) {
@@ -121,6 +121,8 @@ class ProductImagePicker extends Component {
 						} }
 						single
 						imageEditorProps={ { doneButtonText: translate( 'Update Payment Button' ) } }
+						onImageEditorDoneHook={ makeDirtyAfterImageEdit }
+						onRestoreMediaHook={ makeDirtyAfterImageEdit }
 					/>
 				</MediaLibrarySelectedData>
 
