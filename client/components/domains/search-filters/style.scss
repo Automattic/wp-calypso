@@ -175,4 +175,12 @@
 		padding-top: 0;
 		overflow-y: scroll;
 	}
+
+	.token-field__suggestion-match {
+		color: inherit;
+	}
+
+	.token-field__suggestion {
+		color: $gray-dark;
+	}
 }

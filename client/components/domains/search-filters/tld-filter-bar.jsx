@@ -161,6 +161,8 @@ export class TldFilterBar extends Component {
 				<FormFieldset className="search-filters__token-field-fieldset">
 					<TokenField
 						isExpanded
+						displayTransform={ item => `.${ item }` }
+						saveTransform={ query => ( query[ 0 ] === '.' ? query.substr( 1 ) : query ) }
 						maxSuggestions={ 500 }
 						onChange={ this.handleTokenChange }
 						placeholder={ translate( 'Select an extension' ) }
