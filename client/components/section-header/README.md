@@ -36,4 +36,4 @@ export default localize( MyHeader );
 Name | Type | Default | Description
 ---- | ---- | ---- | ----
 `className` | `string` | null | (Optional) Classes to be added to the rendered component.
-`label` | `string` | null | The text to be displayed in the header.
+`label` | `string` | '' | The text to be displayed in the header.
