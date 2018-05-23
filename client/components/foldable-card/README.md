@@ -29,8 +29,8 @@ Name | Type | Default | Description
 `content` | `string` | null | HTML or component to show in the expandable section of the box when it's expanded.
 `actionButton` | `component` | null | A component to substitute the regular expand button.
 `actionButtonExpanded` | `component` | null | A component to substitute the regular expand button when the card is expanded. If not provided, we use `actionButton`.
-`icon` | `string` | null | Sets the Gridicon slug for the regular expand button. Defaults to `chevron-down`. Only applies when the `actionButton` or `actionButtonExpanded` props are not set.
-`cardKey` | `string` | null | A unique identifier for the card that can be used to help track its state outside the component (for example, to record which cards are open).
+`icon` | `string` | `chevron-down` | Sets the Gridicon slug for the regular expand button. Retains the default value when the `actionButton` or `actionButtonExpanded` props are not set.
+`cardKey` | `string` | '' | A unique identifier for the card that can be used to help track its state outside the component (for example, to record which cards are open).
 `compact` | `bool` | false | Indicates if the foldable card is compact.
 `disabled` | `bool` | false | Indicates if the component is not interactive.
 `expandedSummary` | `string` | null | A string or component to show next to the action button when expanded.
