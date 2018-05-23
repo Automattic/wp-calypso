@@ -52,6 +52,7 @@ export const receiveStats = ( { dispatch }, action, data ) => {
  *
  * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
+ * @param {Object} error raw error from stats API
  */
 export const receiveStatsError = ( { dispatch }, action, error ) => {
 	const { siteId, statType, interval, aggregation } = action;
