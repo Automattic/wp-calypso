@@ -342,7 +342,12 @@ const SecurePaymentForm = createReactClass( {
 					</div>
 				);
 			case 'emergent-paywall':
-				return <div>{ this.renderEmergentPaywallBox() }</div>;
+				return (
+					<div>
+						{ this.renderGreatChoiceHeader() }
+						{ this.renderEmergentPaywallBox() }
+					</div>
+				);
 			case 'alipay':
 			case 'bancontact':
 			case 'eps':

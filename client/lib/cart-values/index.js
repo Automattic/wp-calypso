@@ -14,6 +14,7 @@ import config from 'config';
  */
 import cartItems from './cart-items';
 import productsValues from 'lib/products-values';
+import { requestGeoLocation } from 'state/data-getters';
 
 /**
  * Create a new empty cart.
@@ -177,7 +178,7 @@ function paymentMethodName( method ) {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
 		'credit-card': i18n.translate( 'Credit or debit card' ),
-		'emergent-paywall': 'Emergent Paywall',
+		'emergent-paywall': 'Net Banking / Paytm / Debit card',
 		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
@@ -185,6 +186,15 @@ function paymentMethodName( method ) {
 		p24: 'Przelewy24',
 		'brazil-tef': 'Transferência bancária',
 	};
+
+	// Temporarily override 'credit or debit' with just 'credit' for india
+	// while debit cards are served by the paywall
+	if ( method === 'credit-card' ) {
+		const userCountryCode = requestGeoLocation().data;
+		if ( 'IN' === userCountryCode ) {
+			return i18n.translate( 'Credit card' );
+		}
+	}
 
 	return paymentMethodsNames[ method ] || method;
 }

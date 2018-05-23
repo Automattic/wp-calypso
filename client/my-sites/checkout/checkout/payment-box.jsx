@@ -53,8 +53,20 @@ export class PaymentBox extends PureComponent {
 				labelAdditionalText = paymentMethodName( method );
 				break;
 			case 'emergent-paywall':
-				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
-				labelAdditionalText = paymentMethodName( method );
+				const paytmLogo = (
+					<img
+						src="/calypso/images/upgrades/paytm.svg"
+						alt="paytm"
+						className="checkout__paytm"
+						key="paytm"
+					/>
+				);
+
+				labelLogo = (
+					<span className="checkout__emergent-paywall">
+						{ paytmLogo } / Net banking / Debit card
+					</span>
+				);
 				break;
 			case 'ideal':
 				labelAdditionalText = paymentMethodName( method );
