@@ -2495,8 +2495,8 @@ Undocumented.prototype.updateSiteAddress = function( siteId, blogname, discard, 
 	);
 };
 
-Undocumented.prototype.gdprConsentManagement = function( domain, callback ) {
-	return this.wpcom.req.get( `/domains/${ domain }/gdpr-consent-management`, function(
+Undocumented.prototype.requestGdprConsentManagementLink = function( domain, callback ) {
+	return this.wpcom.req.get( `/domains/${ domain }/request-gdpr-consent-management-link`, function(
 		error,
 		response
 	) {

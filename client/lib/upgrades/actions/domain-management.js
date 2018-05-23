@@ -581,6 +581,6 @@ export function declineTransfer( domainName, onComplete ) {
 	} );
 }
 
-export function requestGdprConsentManagement( domainName, onComplete ) {
-	wpcom.gdprConsentManagement( domainName, onComplete );
+export function requestGdprConsentManagementLink( domainName, onComplete ) {
+	wpcom.requestGdprConsentManagementLink( domainName, onComplete );
 }

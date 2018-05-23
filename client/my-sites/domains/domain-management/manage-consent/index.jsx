@@ -21,7 +21,7 @@ import Button from 'components/button';
 import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
-import { requestGdprConsentManagement } from 'lib/upgrades/actions';
+import { requestGdprConsentManagementLink } from 'lib/upgrades/actions';
 
 class ManageConsent extends React.Component {
 	static propTypes = {
@@ -104,7 +104,7 @@ class ManageConsent extends React.Component {
 
 	requestConsentManagementLink = () => {
 		this.setState( { submitting: true } );
-		requestGdprConsentManagement( this.props.selectedDomainName, error => {
+		requestGdprConsentManagementLink( this.props.selectedDomainName, error => {
 			if ( error ) {
 				this.setState( { error: error.message, success: false, submitting: false } );
 			} else {
