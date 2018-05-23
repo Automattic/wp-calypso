@@ -103,7 +103,7 @@ export default {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementManageConsent( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts and Privacy > Manage Personal Data Consent"
+				analyticsTitle="Domain Management > Contacts and Privacy > Manage Consent for Personal Data Use"
 				component={ DomainManagement.ManageConsent }
 				context={ pageContext }
 				productsList={ productsList }

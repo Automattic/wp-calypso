@@ -49,7 +49,7 @@ class ManageConsent extends React.Component {
 					onClick={ this.goToContactsPrivacy }
 					selectedDomainName={ this.props.selectedDomainName }
 				>
-					{ translate( 'Manage Personal Data Consent' ) }
+					{ translate( 'Manage Consent for Personal Data Use' ) }
 				</Header>
 				{ this.state.error && (
 					<Notice status="is-error" icon="notice" onDismissClick={ this.dismissError }>
@@ -67,17 +67,18 @@ class ManageConsent extends React.Component {
 					</Notice>
 				) }
 				<div>
-					<SectionHeader label={ translate( 'Manage Personal Data Consent' ) } />
+					<SectionHeader label={ translate( 'Manage Consent for Personal Data Use' ) } />
 					<Card>
 						<div>
 							<p>
 								{ translate(
-									'You can manage how your personal data is used ' +
-										'using the consent management link you have received via email during domain registration.'
+									'You can view or change your consent for how we use or share personally identifiable data related to your domain registration at any time.'
 								) }
 							</p>
 							<p>
-								{ translate( 'You can request the link again by clicking on the button below.' ) }
+								{ translate(
+									'Click the button below to receive an email with a unique link to manage your consent options. Please note that this email will be sent to the registrant contact email address, which may be different than your WordPress.com account email address.'
+								) }
 							</p>
 							<Button
 								className="manage-consent__action-button"
@@ -85,7 +86,7 @@ class ManageConsent extends React.Component {
 								primary
 								disabled={ this.state.submitting }
 							>
-								{ translate( 'Re-send the Personal Data Consent Link' ) }
+								{ translate( 'Request Consent Management Email' ) }
 							</Button>
 						</div>
 					</Card>

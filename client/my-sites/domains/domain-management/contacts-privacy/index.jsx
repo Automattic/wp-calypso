@@ -82,7 +82,7 @@ class ContactsPrivacy extends React.PureComponent {
 								this.props.selectedDomainName
 							) }
 						>
-							{ translate( 'Manage Personal Data Consent' ) }
+							{ translate( 'Manage Consent for Personal Data Use' ) }
 						</VerticalNavItem>
 					) }
 
