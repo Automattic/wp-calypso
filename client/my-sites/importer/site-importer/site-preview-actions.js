@@ -13,7 +13,6 @@ const querymShotsEndpoint = ( options ) => {
 	const resolve = options.resolve || noop;
 	const reject = options.reject || noop;
 
-
 	if ( ! url ) {
 		// TODO translate
 		reject( 'You must specify a site URL to be able to generate a preview of the site' );
@@ -37,15 +36,15 @@ const querymShotsEndpoint = ( options ) => {
 			}
 			else if ( res.type === 'image/jpeg' ) {
 				// Successfully generated the preview
-				const fReader = new FileReader();
-				fReader.onload = ev => {
-					resolve( ev.target.result );
-				};
-				fReader.readAsDataURL( res.xhr.response );
+				try {
+					resolve( window.URL.createObjectURL( res.xhr.response ) );
+				}
+				catch ( e ) {
+					reject( e );
+				}
 			}
 			else {
-				// TODO translate
-				reject( );
+				reject();
 			}
 		} )
 		.catch( reject ); // Pass through the reject notice
