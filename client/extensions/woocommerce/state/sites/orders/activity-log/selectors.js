@@ -134,7 +134,10 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 
 	if ( plugins.isWcsEnabled( state, siteId ) ) {
 		const labels = getLabels( state, orderId, siteId );
-		const renderableLabels = filter( labels, { status: 'PURCHASED' } );
+		const renderableLabels = filter(
+			labels,
+			label => 'PURCHASED' === label.status || 'ANONYMIZED' === label.status
+		);
 		renderableLabels.forEach( ( label, index, allLabels ) => {
 			const labelIndex = allLabels.length - 1 - index;
 			if ( label.refund ) {
@@ -188,6 +191,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				amount: label.rate,
 				refundableAmount: label.refundable_amount,
 				currency: label.currency,
+				anonymized: 'ANONYMIZED' === label.status,
 				// If there's a refund in progress or completed, the Reprint/Refund buttons or the tracking number must *not* be shown
 				showDetails:
 					! label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,
