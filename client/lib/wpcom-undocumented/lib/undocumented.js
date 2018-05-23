@@ -551,10 +551,9 @@ Undocumented.prototype.restartInboundTransfer = function( siteId, domain, fn ) {
  */
 Undocumented.prototype.startInboundTransfer = function( siteId, domain, authCode, fn ) {
 	return this.wpcom.req.get(
+		`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
 		{
-			path: `/domains/${ encodeURIComponent(
-				domain
-			) }/inbound-transfer-start/${ siteId }/${ authCode }`,
+			auth_code: authCode,
 		},
 		fn
 	);
