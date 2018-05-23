@@ -8,10 +8,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { isEqual, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
@@ -20,6 +22,8 @@ import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';
 import Button from 'components/button';
+
+const HANDLED_FILTER_KEYS = [ 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
 
 export class DropdownFilters extends Component {
 	static propTypes = {
@@ -117,9 +121,16 @@ export class DropdownFilters extends Component {
 
 		this.setState( { showOverallValidationError: false }, () => {
 			this.togglePopover( { discardChanges: false } );
-			this.props.onSubmit();
+			this.hasFiltersChanged() && this.props.onSubmit();
 		} );
 	};
+
+	hasFiltersChanged() {
+		return ! isEqual(
+			pick( this.props.filters, HANDLED_FILTER_KEYS ),
+			pick( this.props.lastFilters, HANDLED_FILTER_KEYS )
+		);
+	}
 
 	render() {
 		const hasFilterValues = this.getFiltercounts() > 0;
@@ -149,6 +160,7 @@ export class DropdownFilters extends Component {
 			translate,
 		} = this.props;
 
+		const filterOnClose = abtest( 'domainSearchFilterOnClose' ) === 'enabled';
 		const isDashesFilterEnabled = config.isEnabled( 'domains/kracken-ui/dashes-filter' );
 		const isExactMatchFilterEnabled = config.isEnabled( 'domains/kracken-ui/exact-match-filter' );
 		const isLengthFilterEnabled = config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
@@ -159,7 +171,7 @@ export class DropdownFilters extends Component {
 				className="search-filters__popover"
 				context={ this.button.current }
 				isVisible={ this.state.showPopover }
-				onClose={ this.togglePopover }
+				onClose={ filterOnClose ? this.handleFiltersSubmit : this.togglePopover }
 				position="bottom left"
 			>
 				{ isLengthFilterEnabled && (

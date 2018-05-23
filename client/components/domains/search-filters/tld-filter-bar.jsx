@@ -7,19 +7,22 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import React, { Component } from 'react';
-import { includes } from 'lodash';
+import { includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';
 import TokenField from 'components/token-field';
 import { recordTldFilterSelected } from './analytics';
+
+const HANDLED_FILTER_KEYS = [ 'tlds' ];
 
 export class TldFilterBar extends Component {
 	static propTypes = {
@@ -75,7 +78,7 @@ export class TldFilterBar extends Component {
 	};
 	handleFiltersSubmit = () => {
 		this.togglePopover();
-		this.props.onSubmit();
+		this.hasFiltersChanged() && this.props.onSubmit();
 	};
 	handleTokenChange = newTlds => {
 		const tlds = newTlds.filter( tld => includes( this.props.availableTlds, tld ) );
@@ -87,6 +90,13 @@ export class TldFilterBar extends Component {
 			showPopover: ! this.state.showPopover,
 		} );
 	};
+
+	hasFiltersChanged() {
+		return ! isEqual(
+			pick( this.props.filters, HANDLED_FILTER_KEYS ),
+			pick( this.props.lastFilters, HANDLED_FILTER_KEYS )
+		);
+	}
 
 	render() {
 		if ( this.props.showPlaceholder ) {
@@ -148,6 +158,7 @@ export class TldFilterBar extends Component {
 
 	renderPopover() {
 		const { translate } = this.props;
+		const filterOnClose = abtest( 'domainSearchFilterOnClose' ) === 'enabled';
 
 		return (
 			<Popover
@@ -155,7 +166,7 @@ export class TldFilterBar extends Component {
 				className="search-filters__popover"
 				context={ this.button }
 				isVisible={ this.state.showPopover }
-				onClose={ this.togglePopover }
+				onClose={ filterOnClose ? this.handleFiltersSubmit : this.togglePopover }
 				position="bottom left"
 			>
 				<FormFieldset className="search-filters__token-field-fieldset">
