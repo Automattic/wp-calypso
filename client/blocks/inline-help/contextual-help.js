@@ -28,9 +28,9 @@ const fallbackLinks = [
 	{
 		link: 'https://en.support.wordpress.com/start/',
 		post_id: 81083,
-		title: 'Get Started',
+		title: 'Quick-Start Guide',
 		description:
-			'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.',
+			"Use our five-step checklist to get set up and ready to publish, no matter what kind of site you're building.",
 	},
 	{
 		link: 'https://en.support.wordpress.com/settings/privacy-settings/',
@@ -44,31 +44,33 @@ const contextLinksForSection = {
 	stats: [
 		{
 			link: 'http://en.support.wordpress.com/stats/',
-			post_id: 4454,
-			title: 'Stats',
+            post_id: 4454,
+			title: 'Understanding the Stats Page',
 			description:
-				'Your stats page includes a bunch of nifty graphs, charts, and lists that show you how many visits your site…',
+				'Your stats page includes a bunch of nifty graphs, charts, and lists that show you how many ' +
+				'visits your site gets, what posts and pages are the most popular ones, and much more. Learn what it all means.',
 		},
 		{
 			link: 'https://en.support.wordpress.com/getting-more-views-and-traffic/',
 			post_id: 3307,
 			title: 'Getting More Views and Traffic',
 			description:
-				'Want more traffic? Here are some tips for attracting more visitors to your site: Tell people in your social networks…',
+				'Want more traffic? Here are some tips for attracting more visitors to your site.',
 		},
 		{
 			link: 'https://en.support.wordpress.com/increase-your-site-traffic/',
 			post_id: 132186,
 			title: 'Increase Your Site Traffic',
 			description:
-				'One of the most frequent questions our community members ask us — and themselves — is how to get more…',
+				'One of the most frequent questions our community members ask us — and themselves — ' +
+				'is how to get more traffic. Here are a few best practices.',
 		},
 		{
 			link: 'https://en.support.wordpress.com/grow-your-community/',
 			post_id: 132190,
 			title: 'Grow Your Community',
 			description:
-				"You've worked hard on building your site, now it's time to explore the community and get noticed. On WordPress.com, we…",
+				'You’ve worked hard on building your site, now it’s time to explore the community and get noticed. Learn how.',
 		},
 	],
 	sharing: [
@@ -77,63 +79,64 @@ const contextLinksForSection = {
 			post_id: 130825,
 			title: 'Integrate and Connect to Social Media',
 			description:
-				'Start sharing your site and attract more traffic and visitors to your content. Learn to activate and control the social…',
+				'Start sharing your site and attract more traffic and visitors to your content! ' +
+				'Learn to activate and control the social media and sharing options on your website or blog through these videos.',
 		},
 		{
 			link: 'https://en.support.wordpress.com/sharing/',
 			post_id: 7499,
-			title: 'Sharing',
+			title: 'Sharing Your Content',
 			description:
-				'At the bottom of each post and page you can include sharing buttons for your readers to share your content…',
+				'At the bottom of each post or page, you can include sharing buttons for your readers ' +
+				'to make it easier to share your content.',
 		},
 		{
 			link: 'https://en.support.wordpress.com/instagram/',
 			post_id: 77589,
-			title: 'Instagram',
+			title: 'Using Instagram',
 			description:
 				'Instagram is a simple way to capture, customize, ' +
-				'and share photos and short videos using your smartphone or other mobile device…',
+				'and share photos and short videos using your smartphone or other mobile device. Learn how to use it with your website!',
 		},
 		{
 			link: 'https://en.support.wordpress.com/twitter/',
 			post_id: 124,
-			title: 'Twitter',
+			title: 'Using Twitter',
 			description:
 				'Twitter is a service for the exchange of brief messages, commonly ' +
-				'called "tweets", between users. You can integrate your site…',
+				'called "tweets", between users. Learn how to use it with your website!',
 		},
 	],
 	me: [
 		{
 			link: 'http://en.support.wordpress.com/manage-my-profile/',
 			post_id: 19775,
-			title: 'Manage My Profile',
+			title: 'Managing Your Profile',
 			description:
-				"Your profile is the information you'd like to be shown along with your " +
-				'name when you comment on WordPress.com sites. You can...',
+				'Your profile is the information you’d like to be shown along with your ' +
+				'name when you publish content or comment on WordPress.com sites.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/gravatars/',
 			post_id: 1338,
-			title: 'The Gravatar – Your Profile Picture',
+			title: 'Your Profile Picture',
 			description:
 				'WordPress.com associates an Avatar with your email address. Gravatar ' +
-				'powers the user avatars on WordPress.com. Your WordPress.com and Gravatar ' +
-				'accounts are linked automatically. Once you configure...',
+				'powers the user avatars on WordPress.com.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-deactivation/',
 			post_id: 138080,
-			title: 'Account Deactivation',
-			description:
-				'If you are finished with your WordPress.com account and would like to shut it down, please follow the steps outlined...',
+			title: 'Account Closure',
+			description: 'Need a fresh start? Learn how to close your account.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/change-your-username/',
 			post_id: 2116,
 			title: 'Change Your Username',
 			description:
-				'You can change both your WordPress.com account username (the name you use to login) and your display name (the name...',
+				'You can change both your WordPress.com account username (the name you use to login) ' +
+				'and your display name (the name that is seen on your posts and comments). Learn how!',
 		},
 	],
 	account: [
@@ -141,49 +144,47 @@ const contextLinksForSection = {
 			link: 'http://en.support.wordpress.com/change-your-username/',
 			title: 'Change Your Username',
 			description:
-				'You can change both your WordPress.com account username (the name you use to login) and your display name (the name...',
+				'You can change both your WordPress.com account username (the name you use to login) ' +
+				'and your display name (the name that is seen on your posts and comments). Learn how!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/video-tutorials/manage-your-account/',
 			post_id: 130826,
 			title: 'Manage Your Account',
-			description:
-				'Learn the ins and outs of managing your WordPress.com account and site. Learn how to change your account password and...',
+			description: 'Learn the ins and outs of managing your WordPress.com account and site.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-settings/',
 			post_id: 80368,
 			title: 'Account Settings',
-			description:
-				'You can review and edit basic account information in Account Settings. ' +
-				'To go to Account Settings, click on your Gravatar in...',
+			description: 'You can review and edit basic account information in Account Settings. ',
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-deactivation/',
 			title: 'Account Deactivation',
-			description:
-				'If you are finished with your WordPress.com account and would like to shut it down, please follow the steps outlined...',
+			description: 'Finished with your WordPress.com account? Would you like to shut it down?',
 		},
 	],
 	security: [
 		{
 			link: 'http://en.support.wordpress.com/security/two-step-authentication/',
 			post_id: 58847,
-			title: 'Two Step Authentication',
+			title: 'Two-Step Authentication',
 			description:
-				"Your WordPress.com site is your home on the internet, and you want to keep that home safe. Hopefully, you've already...",
+				'Your WordPress.com site is your home on the internet, and you want to keep that home safe. ' +
+				'Learn how to add an additional "lock" to your account!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-recovery/',
 			post_id: 46365,
 			title: 'Account Recovery',
 			description:
-				'At some point, you may run into a situation in which you’ve lost access to your account. We want to...',
+				'At some point, you may run into a situation in which you’ve lost access to your account. Learn how to get back on track!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/passwords/',
 			post_id: 89,
-			title: 'Passwords',
+			title: 'Passwords And How To Use Them',
 			description:
 				'Passwords are very important to user accounts, and there may come a time when you need to change your password.',
 		},
@@ -193,7 +194,7 @@ const contextLinksForSection = {
 			title: 'Third Party Applications',
 			description:
 				'WordPress.com allows you to connect with third-party applications that ' +
-				'extend your WordPress.com site in new and cool ways. This is...',
+				'extend your WordPress.com site in new and cool ways.',
 		},
 	],
 	purchases: [
@@ -202,8 +203,7 @@ const contextLinksForSection = {
 			post_id: 111349,
 			title: 'Manage Purchases',
 			description:
-				'You can manage all of your WordPress.com purchases by navigating to the ' +
-				'Me section of WordPress.com and then choosing the...',
+				'Have a question or need to change something about a purchase you have made? Learn how.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/auto-renewal/',
@@ -216,58 +216,57 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/discover-the-wordpress-com-plans/',
 			post_id: 140323,
-			title: 'Discover the WordPress.com Plans',
+			title: 'Explore the WordPress.com Plans',
 			description:
-				'Thank you for building your site on WordPress.com! Upgrading to a plan unlocks a ton of features.',
+				"Upgrading your plan unlocks a ton of features! We'll help you pick the best fit for your needs and goals.",
 		},
 	],
 	'notification-settings': [
 		{
-			link:
-				'Stuff happens all the time on WordPress.com. You’re blogging, commenting, ' +
-				'liking, and following like never before. Every hour a record...',
+			link: 'http://en.support.wordpress.com/notifications/',
 			title: 'Notifications',
-			description: 'http://en.support.wordpress.com/notifications/',
+			description:
+				'Notifications help you stay on top of the activity on your site and all the things happening on ' +
+				'WordPress.com — learn how to use them.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/email-notifications/',
 			post_id: 9443,
 			title: 'Email Notifications',
 			description:
-				'Notifications from WordPress.com will be sent to the email address registered ' +
-				'to your WordPress.com account. To update your email address,...',
+				'WordPress.com sends email notifications to the email address registered to your account. Learn how to manage them.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/following-comments/',
 			post_id: 4576,
 			title: 'Following Comments',
 			description:
-				'When you leave a comment on a WordPress.com blog, you can choose to automatically ' +
-				'receive email updates about other comments...',
+				'When you leave a comment, you can automatically get email notifications for other new comments ' +
+				"on the same post or page — you'll never be out of the loop.",
 		},
 		{
 			link: 'http://en.support.wordpress.com/following/',
 			post_id: 4899,
 			title: 'Following Blogs',
 			description:
-				'When you follow a blog on WordPress.com, the new posts from that site will appear in your Reader, where you...',
+				'When you follow a blog on WordPress.com, new posts from that site will automatically appear in your Reader.',
 		},
 	],
 	media: [
 		{
 			link: 'http://en.support.wordpress.com/media/',
 			post_id: 853,
-			title: 'Media Library',
+			title: 'The Media Library',
 			description:
 				'The Media Library is where you can manage your images, audio, videos, and documents ' +
-				'all in one place. Navigating to the Media...',
+				'all in one place.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/add-media/finding-free-images-and-other-media/',
 			post_id: 78425,
 			title: 'Finding Free Images and other Media',
 			description:
-				"What do we mean by 'free media'? While much content on the internet is subject to copyright laws, there are...",
+				'Use free images (and other media) to make your pages and posts more interesting and engaging when on a budget!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/add-media/',
@@ -275,23 +274,22 @@ const contextLinksForSection = {
 			title: 'Add Media',
 			description:
 				'Dress up your text-based posts and pages with individual images, image galleries, ' +
-				'slideshows, videos, and audio. Add Single Media Items (Uploading Images, Video,...',
+				'slideshows, videos, and audio.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/videos/',
 			post_id: 4744,
-			title: 'Videos',
+			title: 'Including Videos',
 			description:
-				'Videos are a great way to enhance your blog posts. We use videos all the time on the WordPress.com News...',
+				'Videos are a great way to enhance your site pages and blog posts. Learn how to include them.',
 		},
 	],
 	people: [
 		{
-			link:
-				'User roles determine the access level or permissions of a person authorized ' +
-				'(invited by an Administrator) to use a WordPress.com...',
+			link: 'http://en.support.wordpress.com/user-roles/',
 			title: 'User Roles',
-			description: 'http://en.support.wordpress.com/user-roles/',
+			description:
+				'User roles determine the access level or permissions of a person authorized to use a WordPress.com site.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/user-mentions/',
@@ -299,52 +297,54 @@ const contextLinksForSection = {
 			title: 'User Mentions',
 			description:
 				'User mentions are a great way to include other WordPress.com users within your ' +
-				'posts and comments, and ensure that they...',
+				'posts and comments.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/adding-users/',
 			post_id: 2160,
 			title: 'Inviting Contributors, Followers, and Viewers',
 			description:
-				"On WordPress.com, you are able to add users to your website by sending invitations. To send an invitation, you'll want...",
+				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/followers/',
 			post_id: 5444,
-			title: 'My Followers',
+			title: 'Your Followers',
 			description:
-				'When someone follows your site, each time you publish new content on your blog they receive an update in their...',
+				'When someone follows your site, each time you publish new content on your blog they ' +
+				'receive an update in their Reader, via email, or both depending on their settings.',
 		},
 	],
 	plugins: [
 		{
 			link: 'http://en.support.wordpress.com/plugins/',
 			post_id: 2108,
-			title: 'Plugins',
+			title: 'Using Plugins',
 			description:
 				'On WordPress.com, we include the most popular plugin functionality within our ' +
-				'sites automatically. Additionally, the Business plan allows you to...',
+				'sites automatically. Additionally, the Business plan allows you to choose from many ' +
+				'thousands of plugins, and install them on your site.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/plugins/managing-plugins/',
 			post_id: 134818,
 			title: 'Managing plugins',
-			description:
-				'After you install a plugin, it will appear in a list at My Sites → Plugins. This list will display any...',
+			description: 'After you install a plugin, it will appear in a list at My Sites → Plugins.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/plugins/adding-plugins/',
 			post_id: 134719,
-			title: 'Adding plugins',
+			title: 'Adding Plugins',
 			description:
-				'Installing and using plugins In addition to built-in plugin functionality, WordPress.com ' +
-				'Business allows you to install other plugins. With many thousands...',
+				'Along with all the tools and features built right into WordPress.com, the Business plan ' +
+				'allows you to install other plugins.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/business-plan/',
 			title: 'Business Plan',
 			description:
-				'WordPress.com provides users with a great experience out of the box. From superb SEO to social media sharing to custom...',
+				"When you want to build a one-of-a-kind website, it's time for WordPress.com Business: " +
+				'upload plugins and themes to create a truly tailored experience for your visitors.',
 		},
 	],
 	'posts-pages': [
@@ -353,63 +353,60 @@ const contextLinksForSection = {
 			post_id: 100856,
 			title: 'Build Your Website in Five Steps',
 			description:
-				"Great, you've registered a website on wordpress.com. Now what? Whether you're building " +
-				'a small business website or a personal...',
+				'You’ve registered a website on WordPress.com. But now what? ' +
+				'Learn five steps that will get the framework of your new website all set up, ' +
+				'leaving it ready and waiting for your great content',
 		},
 		{
 			link: 'http://en.support.wordpress.com/pages/landing-pages/',
 			post_id: 124077,
 			title: 'Landing Pages',
 			description:
-				'Landing pages are pages with a single purpose: encouraging your visitors to sign up for ' +
-				'a service, buy a product, or...',
+				'Landing pages are pages with a single purpose: encouraging your visitors to, for example, sign up for ' +
+				'a service, buy a product, or join a mailing list.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/posts/',
 			post_id: 84,
-			title: 'Posts',
+			title: 'About Blog Posts',
 			description:
-				'Posts are what make your blog a blog — they’re servings of content that are listed in reverse chronological order on...',
+				'Posts are what make your blog a blog — they’re servings of content that are listed in reverse chronological order.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/posts/post-formats/',
 			post_id: 10382,
 			title: 'Post Formats',
 			description:
-				'Learn how to make gallery, video, audio, and other post types pop with post formats. ' +
-				'If your theme supports post formats, you...',
+				'Learn how to make gallery, video, audio, and other post types pop with post formats. ',
 		},
 	],
 	'settings-writing': [
 		{
 			link: 'http://en.support.wordpress.com/settings/writing-settings/',
 			post_id: 1502,
-			title: '"Writing Settings',
-			description:
-				'To change these settings, go to My Sites → Settings → Writing. Manage Categories and Tags Open the Categories or Tags...',
+			title: 'Writing Settings',
+			description: 'Learn how to manage categories, date format, content types, and more.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/posts/categories-vs-tags/',
 			post_id: 2135,
 			title: 'Categories vs. Tags',
-			description:
-				'Once upon a time, WordPress.com only provided a Category option. Categories allowed ' +
-				'for a broad grouping of post topics, but...',
+			description: 'Learn the differences between categories and tags.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/feeds/',
 			post_id: 3589,
 			title: 'Feeds',
 			description:
-				'A feed (often called RSS) is a stream of posts or comments that is updated when new content is published. This...',
+				'A feed (often called RSS) is a stream of posts or comments that is updated when new content is published.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/portfolios/',
 			post_id: 84808,
 			title: 'Portfolios',
 			description:
-				"If you're hoping to use your WordPress.com site to show off your portfolio separate " +
-				'from your blog posts and pages, the...',
+				'To show off your portfolio separate from your blog posts and pages, the Portfolio content type will let you' +
+				' manage all your portfolio projects in one place.',
 		},
 	],
 	'settings-discussion': [
@@ -418,38 +415,35 @@ const contextLinksForSection = {
 			post_id: 1504,
 			title: 'Discussion Settings',
 			description:
-				'The Discussion Settings are used to control how visitors and other blogs interact ' +
-				"with your site. To change your site's...",
+				'The Discussion Settings are used to control how visitors and other blogs interact with your site.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/enable-disable-comments-for-future-posts/',
 			post_id: 5997,
 			title: 'Enable and Disable Comments for Future Posts',
 			description:
-				'You can enable/disable comments on future posts by going into your Discussion settings. ' +
-				'If you have more than one site, go...',
+				'You can enable/disable comments on future posts by going into your Discussion settings. ',
 		},
 		{
 			link: 'http://en.support.wordpress.com/comments/',
 			post_id: 113,
 			title: 'Comments',
-			description:
-				'Comments are a way for visitors to add feedback to your posts and pages. If you choose to enable comments...',
+			description: 'Comments are a way for visitors to add feedback to your posts and pages.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/subscriptions-and-newsletters/',
 			post_id: 67810,
 			title: 'Subscriptions and Newsletters',
 			description:
-				'This article explains how readers can subscribe to your blog to receive email notifications of all of your posts.  On...',
+				'Learn how readers can subscribe to your blog to receive email notifications of all of your posts.',
 		},
 	],
 	'settings-traffic': [
 		{
 			link: 'http://en.support.wordpress.com/getting-more-views-and-traffic/',
-			title: 'Getting More Views and Traffic',
+			title: 'Get More Views and Traffic',
 			description:
-				'Want more traffic? Here are some tips for attracting more visitors to your site: Tell people in your social networks...',
+				'Want more traffic? Here are some tips for attracting more visitors to your site!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/related-posts/',
@@ -463,16 +457,15 @@ const contextLinksForSection = {
 			post_id: 5022,
 			title: 'Webmaster Tools',
 			description:
-				'WordPress.com provides you with built-in stats that give you lots of information ' +
-				"about your traffic, but if you're a stats junkie and...",
+				'Learn how to verify your WordPress.com site for the webmaster tools that many search engines provide.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/amp-accelerated-mobile-pages/',
 			post_id: 122516,
-			title: 'AMP (Accelerated Mobile Pages)',
+			title: 'Accelerated Mobile Pages (AMP)',
 			description:
-				'AMP (Accelerated Mobile Pages) is an open-source framework that allows browsers ' +
-				"and apps to load your site's blog posts quickly...",
+				'Accelerated Mobile Pages (AMP) allows browsers and apps to load your site more quickly on mobile devices. ' +
+				'By default, it is enabled for every WordPress.com site.',
 		},
 	],
 	'settings-security': [
@@ -481,22 +474,22 @@ const contextLinksForSection = {
 			post_id: 10977,
 			title: 'Security',
 			description:
-				'The security of your site and your personal data is always a priority. This page describes what we do to...',
+				'Learn what we do to help protect your site and your personal data, along with added steps ' +
+				'we recommend you take to do the same.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/unwanted-comments/',
 			post_id: 5882,
 			title: 'Unwanted Comments and Comment Spam',
 			description:
-				'There are many ways to protect your WordPress.com blogs from unwanted comments: ' +
-				'WordPress.com blogs are protected by the Akismet comment...',
+				'There are many ways to protect your WordPress.com blogs from unwanted comments. Learn all about them!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/selecting-a-strong-password/',
 			post_id: 35364,
-			title: 'Selecting a Strong Password',
+			title: 'Selecting A Strong Password',
 			description:
-				'The weakest point in any security for your online accounts is usually your password. At WordPress.com, we go to great...',
+				'The weakest point in any security for your online accounts is usually your password. Learn how to select a strong one.',
 		},
 	],
 	settings: [
@@ -505,7 +498,7 @@ const contextLinksForSection = {
 			post_id: 497,
 			title: 'Settings',
 			description:
-				'The Settings menu of your site is where you will configure everything about how the blog works and functions. You...',
+				'The Settings menu of your site is where you will configure everything about how the blog works and functions.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/settings/general-settings/',
@@ -513,38 +506,39 @@ const contextLinksForSection = {
 			title: 'General Settings',
 			description:
 				'The General Settings let you control how your site is displayed, such as the ' +
-				'title, tagline, language, and visibility. To change...',
+				'title, tagline, language, and visibility.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/site-icons/',
 			post_id: 1327,
 			title: 'Site Icons',
-			description: '',
+			description:
+				'A Site Icon is a unique icon for your site that is shown in your visitor’s browser tab ' +
+				'and other places around WordPress.com.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/five-step-blog-setup/',
 			post_id: 100846,
-			title: 'Set Up Your Blog in Five Steps',
+			title: 'Five Steps to Your Great New Blog',
 			description:
-				"Congrats, you've registered your blog -- maybe you've even published your first " +
-				'post! Run through these five steps to make...',
+				'Get ready to publish! Our five-step checklist walks you through all the fundamentals.',
 		},
 	],
 	themes: [
 		{
 			link: 'http://en.support.wordpress.com/themes/',
 			post_id: 2278,
-			title: 'Themes',
+			title: 'Themes: An Overview',
 			description:
 				'A theme controls the general look and feel of your site including things like ' +
-				'page layout, widget locations, and default font...',
+				'page layout, widget locations, and default font.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/themes/mobile-themes/',
 			post_id: 4925,
 			title: 'Mobile Themes',
 			description:
-				'When a visitor browses to a WordPress.com blog on a mobile device, we show ' +
+				'When a visitor browses to a WordPress.com site on a mobile device, we show ' +
 				'special themes designed to work on small screens focusing on fast load times.',
 		},
 		{
@@ -552,60 +546,62 @@ const contextLinksForSection = {
 			post_id: 12112,
 			title: 'Premium Themes',
 			description:
-				'Purchasing a Premium Theme On a site with the Premium or Business plan, you can switch to any premium theme...',
+				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
+				'no extra cost, as many times as you’d like.',
 		},
 		{
 			link:
 				'http://en.support.wordpress.com/themes/uploading-setting-up-custom-themes/child-themes/',
 			title: 'Child Themes',
 			description:
-				"WordPress.com Business enables you to make many changes to your theme's appearance " +
-				'using custom CSS and to build upon its...',
+				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
+				'time to go beyond them. Learn to use child themes to customize and extend your website.',
 		},
 	],
 	theme: [
 		{
 			link: 'http://en.support.wordpress.com/themes/',
-			title: 'Themes',
+			title: 'Themes: An Overview',
 			description:
-				'A theme controls the general look and feel of your site including things like page ' +
-				'layout, widget locations, and default font...',
+				'A theme controls the general look and feel of your site including things like ' +
+				'page layout, widget locations, and default font.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/themes/mobile-themes/',
 			title: 'Mobile Themes',
 			description:
-				'When a visitor browses to a WordPress.com blog on a mobile device, we show special ' +
-				'themes designed to work on small screens focusing on fast load times.',
+				'When a visitor browses to a WordPress.com site on a mobile device, we show ' +
+				'special themes designed to work on small screens focusing on fast load times.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/premium-themes/',
 			title: 'Premium Themes',
 			description:
-				'Purchasing a Premium Theme On a site with the Premium or Business plan, you can switch to any premium theme...',
+				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
+				'no extra cost, as many times as you’d like.',
 		},
 		{
 			link:
 				'http://en.support.wordpress.com/themes/uploading-setting-up-custom-themes/child-themes/',
 			title: 'Child Themes',
 			description:
-				"WordPress.com Business enables you to make many changes to your theme's appearance " +
-				'using custom CSS and to build upon its...',
+				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
+				'time to go beyond them. Learn to use child themes to customize and extend your website.',
 		},
 	],
 	plans: [
 		{
 			link: 'http://en.support.wordpress.com/discover-the-wordpress-com-plans/',
-			title: 'Discover the WordPress.com Plans',
+			title: 'Explore the WordPress.com Plans',
 			description:
-				'Thank you for building your site on WordPress.com! Upgrading to a plan unlocks a ton of features...',
+				"Upgrading your plan unlocks a ton of features! We'll help you pick the best fit for your needs and goals.",
 		},
 		{
 			link: 'http://en.support.wordpress.com/plan-features/',
 			post_id: 134698,
 			title: 'WordPress.com Plans',
 			description:
-				'All WordPress.com sites are packed with awesome features, and if you would like to take yours to the next level, ...',
+				'Learn about the capabilities and features that the different plans unlock for your site.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/auto-renewal/',
@@ -619,65 +615,68 @@ const contextLinksForSection = {
 			post_id: 115025,
 			title: 'Jetpack Plans',
 			description:
-				'What is Jetpack and do I need it? Jetpack is a feature-rich plugin for self-hosted WordPress sites. If your site...',
+				'Learn about the free Jetpack plugin, its benefits, and the useful capabilities and features that a Jetpack plan unlocks.',
 		},
 	],
 	'post-editor': [
 		{
 			link: 'http://en.support.wordpress.com/editors/',
 			post_id: 3347,
-			title: 'Editors',
+			title: 'The Visual Editor and the HTML Editor',
 			description:
-				'When creating a post or page on your WordPress.com blog, you have two editing modes available to you. Visual Editor...',
+				'When creating a post or page on your WordPress.com blog, you have two editing modes ' +
+				'available to you: the Visual Editor and the HTML Editor.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/visual-editor/',
 			post_id: 3644,
-			title: 'Visual Editor',
+			title: 'The Visual Editor',
 			description:
-				'The visual editor provides a semi-WYSIWYG (What You See is What You Get) content editor that allows you to easily...',
+				'The visual editor provides a semi-WYSIWYG (What You See is What You Get) content editor that ' +
+				'allows you to easily create, edit, and format your content in a view similar to that of a word processor.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/xml-rpc/',
 			post_id: 3595,
 			title: 'Offline Editing',
 			description:
-				'There are several desktop applications which you can use to write and publish ' +
-				'content for your WordPress.com blog, even without...',
+				'Learn how to create and edit content for your WordPress.com site even without being connected to the internet!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/adding-users/',
 			title: 'Inviting Contributors, Followers, and Viewers',
 			description:
-				"On WordPress.com, you are able to add users to your website by sending invitations. To send an invitation, you'll want...",
+				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!',
 		},
 	],
 	reader: [
 		{
 			link: 'http://en.support.wordpress.com/reader/',
 			post_id: 32011,
-			title: 'Reader',
+			title: 'The Reader: An Overview',
 			description:
-				'Read posts from all the sites you follow (even the ones that aren’t on WordPress.com), find great new reads, and keep...',
+				'Read posts from all the sites you follow — even ones that aren’t on WordPress.com! ' +
+				'Discover great new reads and keep track of your comments and replies in one convenient place.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/following/',
-			title: 'Following Blogs',
+			title: 'Follow Blogs',
 			description:
-				'When you follow a blog on WordPress.com, the new posts from that site will appear in your Reader, where you...',
+				'When you follow a blog on WordPress.com, new posts from that site will automatically appear in your Reader.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/topics/',
 			post_id: 2166,
-			title: 'Tags in the Reader',
+			title: 'Following Specific Topics in the Reader',
 			description:
-				'Looking for posts on a specific topic? Besides following entire blogs, you can also follow posts on a specific subject...',
+				'Looking for posts on a specific topic? Besides following entire blogs, you can also follow posts on a specific subject ' +
+				'from across WordPress.com. You do this by adding the topic you’re interested in under the Tags heading in the Reader.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/grow-your-community/',
 			title: 'Grow Your Community',
 			description:
-				"You've worked hard on building your site, now it's time to explore the community and get noticed. On WordPress.com, we...",
+				'You’ve worked hard on building your site, now it’s time to explore the community and get noticed.',
 		},
 	],
 	help: [
@@ -686,25 +685,24 @@ const contextLinksForSection = {
 			post_id: 117437,
 			title: 'Blogging U.',
 			description:
-				'Blogging U. courses deliver expert advice, pro tips, and inspiration right to your ' +
-				'email inbox. Reach your own creative goals...',
+				'Blogging U. courses deliver free expert advice, pro tips, and inspiration right to your ' +
+				'email inbox. Sign up now!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/help-support-options/',
 			post_id: 149,
 			title: 'Help! Getting WordPress.com Support',
 			description:
-				'WordPress.com offers a number of avenues for reaching helpful, individualized support, ' +
-				'but sometimes it can be difficult to determine the...',
+				'WordPress.com offers a number of avenues for reaching helpful, individualized support.',
 		},
 		{
 			link: 'https://en.support.wordpress.com/',
-			title: 'All support articles',
+			title: 'All Support Articles',
 			description: 'Looking to learn more about a feature? Our docs have all the details.',
 		},
 		{
 			link: 'https://learn.wordpress.com/',
-			title: 'Self-guided online tutorial',
+			title: 'Self-guided Online Tutorial',
 			description: 'A step-by-step guide to getting familiar with the platform.',
 		},
 	],
@@ -712,8 +710,7 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/comments/',
 			title: 'Comments',
-			description:
-				'Comments are a way for visitors to add feedback to your posts and pages. If you choose to enable comments...',
+			description: 'Comments are a way for visitors to add feedback to your posts and pages.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/comment-display-options/',
@@ -721,22 +718,20 @@ const contextLinksForSection = {
 			title: 'Comment Display Options',
 			description:
 				'You can control comment threading, paging, and comment order settings from the ' +
-				"Discussion Settings page in your site's settings. Threaded Comments...",
+				'Discussion Settings page in your site’s settings.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/unwanted-comments/',
 			title: 'Unwanted Comments and Comment Spam',
 			description:
-				'There are many ways to protect your WordPress.com blogs from unwanted comments: ' +
-				'WordPress.com blogs are protected by the Akismet comment...',
+				'There are many ways to protect your WordPress.com blogs from unwanted comments. Learn all about them!',
 		},
 		{
 			link: 'http://en.support.wordpress.com/comment-likes/',
 			post_id: 88757,
 			title: 'Comment Likes',
 			description:
-				"Comment Likes: how to like others' comments and control how Comment Likes " +
-				'appear on your site. The Comment Like button is an...',
+				'Comment Likes: how to like others’ comments and control how Comment Likes appear on your site.',
 		},
 	],
 };
@@ -1091,7 +1086,7 @@ const toursForSection = {
 			tour: 'simplePaymentsTour',
 			key: 'tour:simplePaymentsTour',
 			title: 'Collect Payments and Donations',
-			description: "It's easy to add a button that can collect payments or donations. See how!",
+			description: 'It’s easy to add a button that can collect payments or donations. See how!',
 		},
 	],
 	media: [
