@@ -9,7 +9,6 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -101,27 +100,12 @@ class EditorConfirmationSidebar extends Component {
 	}
 
 	renderPrivacyControl() {
-		const { post, onPrivatePublish } = this.props;
-
-		if ( ! post ) {
-			return;
-		}
-
-		const { password, type } = post || {};
-		const status = get( post, 'status', 'draft' );
-		const savedStatus = get( this.props, 'savedPost.status' );
-		const savedPassword = get( this.props, 'savedPost.password' );
-		const props = {
-			onPrivatePublish,
-			type,
-			password,
-			status,
-			savedStatus,
-			savedPassword,
-			context: 'confirmation-sidebar',
-		};
-
-		return <EditorVisibility { ...props } />;
+		return (
+			<EditorVisibility
+				onPrivatePublish={ this.props.onPrivatePublish }
+				context="confirmation-sidebar"
+			/>
+		);
 	}
 
 	renderPublishingBusyButton() {

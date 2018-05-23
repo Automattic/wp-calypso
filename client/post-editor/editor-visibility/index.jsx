@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
@@ -26,6 +26,7 @@ import { recordEvent, recordStat } from 'lib/posts/stats';
 import { tracks } from 'lib/analytics';
 import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
+import { getEditedPost, getSitePost } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import isPrivateSiteSelector from 'state/selectors/is-private-site';
@@ -35,6 +36,7 @@ class EditorVisibility extends React.Component {
 		context: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
 		isPrivateSite: PropTypes.bool,
+		hasPost: PropTypes.bool,
 		type: PropTypes.string,
 		status: PropTypes.string,
 		password: PropTypes.string,
@@ -181,7 +183,6 @@ class EditorVisibility extends React.Component {
 			newPassword = ' ';
 		}
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		this.props.editPost( siteId, postId, { password: newPassword } );
 	};
 
@@ -277,6 +278,11 @@ class EditorVisibility extends React.Component {
 	};
 
 	render() {
+		// don't render anything until the edited post is loaded
+		if ( ! this.props.hasPost ) {
+			return null;
+		}
+
 		const visibility = this.getVisibility();
 		const classes = classNames( 'editor-visibility', {
 			'is-touch': hasTouch(),
@@ -290,12 +296,19 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
-		const isPrivateSite = isPrivateSiteSelector( state, siteId );
+		const currentPost = getSitePost( state, siteId, postId );
+		const post = getEditedPost( state, siteId, postId );
 
 		return {
 			siteId,
 			postId,
-			isPrivateSite,
+			hasPost: !! post,
+			type: get( post, 'type', null ),
+			status: get( post, 'status', 'draft' ),
+			password: get( post, 'password', null ),
+			savedStatus: get( currentPost, 'status', null ),
+			savedPassword: get( currentPost, 'password', null ),
+			isPrivateSite: isPrivateSiteSelector( state, siteId ),
 		};
 	},
 	{ editPost }

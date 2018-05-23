@@ -141,30 +141,15 @@ export class EditPostStatus extends Component {
 	}
 
 	renderPostVisibility() {
-		if ( ! this.props.post ) {
-			return;
-		}
-
 		// Do not render the editor visibility component on both the editor sidebar and the confirmation sidebar
 		// at the same time so that it is predictable which one gets the focus / shows the validation error message.
 		if ( 'open' === this.props.confirmationSidebarStatus ) {
 			return;
 		}
 
-		const { password, status = 'draft', type } = this.props.post;
-		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
-		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
-		const props = {
-			onPrivatePublish: this.props.onPrivatePublish,
-			type,
-			status,
-			password,
-			savedStatus,
-			savedPassword,
-			context: 'post-settings',
-		};
-
-		return <EditorVisibility { ...props } />;
+		return (
+			<EditorVisibility onPrivatePublish={ this.props.onPrivatePublish } context="post-settings" />
+		);
 	}
 }
 
