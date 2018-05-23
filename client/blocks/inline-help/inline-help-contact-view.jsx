@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -16,6 +16,7 @@ import getInlineHelpSupportVariation, {
 } from 'state/selectors/get-inline-help-support-variation';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import isSupportVariationDetermined from 'state/selectors/is-support-variation-determined';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 const InlineHelpContactView = ( {
 	/* eslint-disable no-unused-vars, no-shadow */
@@ -28,11 +29,21 @@ const InlineHelpContactView = ( {
 		return <PlaceholderLines />;
 	}
 
-	if ( supportVariation === SUPPORT_FORUM ) {
-		return <InlineHelpForumView />;
-	}
-
-	return <HelpContact compact selectedSite={ selectedSite } />;
+	return (
+		<Fragment>
+			<TrackComponentView
+				eventName="calypso_inlinehelp_contact_view"
+				eventProperties={ {
+					support_variation: supportVariation,
+				} }
+			/>
+			{ supportVariation === SUPPORT_FORUM ? (
+				<InlineHelpForumView />
+			) : (
+				<HelpContact compact selectedSite={ selectedSite } />
+			) }
+		</Fragment>
+	);
 };
 
 export default connect( state => ( {
