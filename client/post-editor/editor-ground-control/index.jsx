@@ -16,12 +16,12 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import Site from 'blocks/site';
-import { isPage, isPublished } from 'lib/posts/utils';
+import { isPublished } from 'lib/posts/utils';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import Drafts from 'layout/masterbar/drafts';
-import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
@@ -104,7 +104,6 @@ export class EditorGroundControl extends React.Component {
 	onPreviewButtonClick = event => {
 		if ( this.isPreviewEnabled() ) {
 			this.props.onPreview( event );
-			this.props.recordPreviewButtonClick( this.props.post );
 		}
 	};
 
@@ -237,18 +236,6 @@ const mapStateToProps = ( state, ownProps ) => {
 };
 
 const mapDispatchToProps = {
-	recordPreviewButtonClick: post => {
-		const postIsPage = isPage( post );
-		return composeAnalytics(
-			recordTracksEvent( `calypso_editor_${ postIsPage ? 'page' : 'post' }_preview_button_click` ),
-			recordGoogleEvent(
-				'Editor',
-				`Clicked Preview ${ postIsPage ? 'Page' : 'Post' } Button`,
-				`Editor Preview ${ postIsPage ? 'Page' : 'Post' } Button Clicked`,
-				`editor${ postIsPage ? 'Page' : 'Post' }ButtonClicked`
-			)
-		);
-	},
 	recordSiteButtonClick: () => recordTracksEvent( 'calypso_editor_site_button_click' ),
 	recordCloseButtonClick: () => recordTracksEvent( 'calypso_editor_close_button_click' ),
 };
