@@ -43,8 +43,8 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#getVisibility', () => {
-		test( 'should return undefined when no post is supplied', () => {
-			expect( postUtils.getVisibility() ).toBeUndefined();
+		test( 'should return null when no post is supplied', () => {
+			expect( postUtils.getVisibility() ).toBeNull();
 		} );
 
 		test( 'should return public when password and private are not set', () => {
