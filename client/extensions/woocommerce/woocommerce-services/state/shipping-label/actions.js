@@ -862,7 +862,7 @@ export const openRefundDialog = ( orderId, siteId, labelId ) => {
 export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) => {
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
 
-	shippingLabel.labels.forEach( label => {
+	const labelRequests = shippingLabel.labels.map( label => {
 		if ( label.statusUpdated ) {
 			return;
 		}
@@ -873,31 +873,33 @@ export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) =
 		const setSuccess = json => {
 			response = json.label;
 		};
-		const setIsSaving = saving => {
-			if ( ! saving ) {
-				dispatch( {
-					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE,
-					orderId,
-					siteId,
-					labelId,
-					response,
-					error,
-				} );
-				if ( error ) {
-					dispatch( NoticeActions.errorNotice(
-						`Failed to retrieve shipping label refund status. ${ error }`,
-						{ id: 'wcs-fetch-label-status' }
-					) );
-				}
+
+		const setIsSaving = () => {
+			dispatch( {
+				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE,
+				orderId,
+				siteId,
+				labelId,
+				response,
+				error,
+			} );
+			if ( error ) {
+				throw error;
 			}
 		};
 
-		setIsSaving( true );
-		api
+		return api
 			.get( siteId, api.url.labelStatus( orderId, labelId ) )
 			.then( setSuccess )
 			.catch( setError )
-			.then( () => setIsSaving( false ) );
+			.then( setIsSaving );
+	} );
+
+	// Handle error with a single notice
+	Promise.all( labelRequests ).catch( error => {
+		dispatch(
+			NoticeActions.errorNotice( `Failed to retrieve shipping label refund status: ${ error }` )
+		);
 	} );
 };
 
