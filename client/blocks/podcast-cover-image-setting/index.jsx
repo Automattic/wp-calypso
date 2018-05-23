@@ -17,13 +17,13 @@ import Button from 'components/button';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import Image from 'components/image';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaStore from 'lib/media/store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import MediaActions from 'lib/media/actions';
 import { receiveMedia, deleteMedia } from 'state/media/actions';
-import PodcastCoverImage from 'blocks/podcast-cover-image';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
 import {
@@ -32,6 +32,7 @@ import {
 } from 'state/ui/editor/image-editor/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
+import resizeImageUrl from 'lib/resize-image-url';
 
 /**
  * Debug
@@ -105,7 +106,7 @@ class PodcastCoverImageSetting extends PureComponent {
 
 			if ( ! isFailedUpload ) {
 				debug( 'upload media', media );
-				this.props.onSelect( media.ID );
+				this.props.onSelect( media.ID, media.URL );
 			}
 		};
 
@@ -152,7 +153,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		if ( isImageEdited ) {
 			this.uploadCoverImage( blob, `cropped-${ selectedItem.file }` );
 		} else {
-			this.props.onSelect( selectedItem.ID );
+			this.props.onSelect( selectedItem.ID, selectedItem.URL );
 		}
 
 		this.hideModal();
@@ -186,6 +187,23 @@ class PodcastCoverImageSetting extends PureComponent {
 			>
 				{ isCoverSet ? translate( 'Change' ) : translate( 'Add' ) }
 			</Button>
+		);
+	}
+
+	renderCoverPreview() {
+		const { coverImageUrl, translate } = this.props;
+		const imageSrc = coverImageUrl && resizeImageUrl( coverImageUrl, 96 );
+
+		return (
+			<div>
+				{ imageSrc ? (
+					<Image className="podcast-cover-image-setting__img" src={ imageSrc } alt="" />
+				) : (
+					<span className="podcast-cover-image-setting__placeholder">
+						{ translate( 'No image set' ) }
+					</span>
+				) }
+			</div>
 		);
 	}
 
@@ -244,7 +262,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		return (
 			<FormFieldset className="podcast-cover-image-setting">
 				<FormLabel>{ translate( 'Cover Image' ) }</FormLabel>
-				<PodcastCoverImage size={ 96 } />
+				{ this.renderCoverPreview() }
 				{ this.renderChangeButton() }
 				{ this.renderRemoveButton() }
 				{ this.renderMediaModal() }

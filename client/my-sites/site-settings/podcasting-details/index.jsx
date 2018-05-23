@@ -269,8 +269,9 @@ class PodcastingDetails extends Component {
 		this.setFieldForcingString( 'podcasting_image' )( '' );
 	};
 
-	onCoverImageSelected = coverId => {
+	onCoverImageSelected = ( coverId, coverUrl ) => {
 		this.setFieldForcingString( 'podcasting_image_id' )( coverId );
+		this.setFieldForcingString( 'podcasting_image' )( coverUrl );
 	};
 
 	setFieldForcingString = field => value => {
