@@ -1,3 +1,38 @@
+.podcast-cover-image-setting__preview {
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	margin: 0;
+	text-align: center;
+	border: 1px solid $gray-lighten-20;
+
+	&.is-transient .spinner {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background-color: rgba( $white, 0.75 );
+	}
+}
+
+.podcast-cover-image-setting__img {
+	align-self: center;
+	background: $transparent;
+	position: relative;
+}
+
+.podcast-cover-image-setting__placeholder {
+	color: $gray-text-min;
+	display: block;
+	font-size: 13px;
+	font-style: italic;
+	font-weight: 400;
+	margin: 0 7px;
+	text-align: center;
+	align-self: center;
+}
+
 .podcast-cover-image-setting {
 	width: 98px;
 }

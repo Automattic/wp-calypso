@@ -196,7 +196,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		const imageSrc = coverImageUrl && resizeImageUrl( coverImageUrl, 96 );
 
 		return (
-			<div>
+			<div className="podcast-cover-image-setting__preview">
 				{ imageSrc ? (
 					<Image className="podcast-cover-image-setting__img" src={ imageSrc } alt="" />
 				) : (
