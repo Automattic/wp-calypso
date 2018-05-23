@@ -86,6 +86,10 @@ export const isPublished = function( post ) {
 	);
 };
 
+export const isScheduled = function( post ) {
+	return post && 'future' === post.status;
+};
+
 export const isPrivate = function( post ) {
 	return post && 'private' === post.status;
 };
@@ -153,7 +157,7 @@ export const normalizeSync = function( post, callback ) {
 
 export const getVisibility = function( post ) {
 	if ( ! post ) {
-		return;
+		return null;
 	}
 
 	if ( post.password ) {
