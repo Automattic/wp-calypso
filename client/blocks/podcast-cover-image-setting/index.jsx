@@ -33,6 +33,7 @@ import {
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import resizeImageUrl from 'lib/resize-image-url';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
 /**
  * Debug
@@ -226,6 +227,7 @@ class PodcastCoverImageSetting extends PureComponent {
 						{ ...( isEditingCoverImage
 							? {
 									imageEditorProps: {
+										allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
 										onDone: this.setCoverImage,
 										onCancel: this.cancelEditingCoverImage,
 									},
