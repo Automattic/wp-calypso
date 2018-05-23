@@ -31,6 +31,7 @@
 @import 'shared/colors';
 @import 'shared/forms';
 @import 'shared/typography';
+@import 'shared/functions';
 
 * {
 	font-family: $sans;
@@ -59,32 +60,18 @@ textarea {
 	}
 
 	// Seen in the 2nd step, displays the payment method type
-	.header2 {
+	.header2, .method-header {
 		margin: 0 0 20px 0;
 
-		strong {
+		strong, span {
 			font-size: 24px !important;
 			font-weight: 300;
 		}
-	}
 
-	.method-header {
-		margin: 16px 0 24px 0;
-
-		@include breakpoint( ">960px" ) {
-			margin-bottom: 24px;
+		img {
+			max-height: 20px;
+			margin-left: 10px;
 		}
-
-		span {
-			font-size: 24px;
-			margin: 0 0 5px 0;
-
-			@include breakpoint( "<480px" ) {
-				line-height: 1.2em;
-				padding: 0 10px;
-			}
-		}
-
 	}
 
 	.row {
@@ -92,7 +79,7 @@ textarea {
 
 		.btn-tile-cont {
 			float: left;
-			margin: 5px 0 10px;
+			margin: 10px 0;
 			width: 50%;
 			height: 100px;
 
@@ -101,9 +88,14 @@ textarea {
 				cursor: pointer;
 				padding: 10px;
 
+				img {
+					max-width: 220px;
+				}
+
 				.btn-tile-aggregates {
 					overflow: hidden;
 					height: 70px;
+					margin-bottom: 15px;
 
 					img {
 						object-fit: contain;
@@ -122,40 +114,109 @@ textarea {
 
 				.btn-tile-footer {
 					font-size: 14px;
+					text-transform: capitalize;
+					font-weight: 500;
 				}
 			}
 
 		}
 	}
 
-	.checkbox {
+	.checkbox, div[ng-show='updateAddressCheckbox'] {
 		clear: both;
 		text-align:left;
+		font-size: 14px;
 
-		checkbox {
-			margin-right: 10px;
+		input {
+			margin-right: 8px;
+			height: 14px;
 		}
 	}
 
 	.content {
+
 		form {
 			margin-bottom: 15px;
 
-			.form-group {
+			div[simple-template='link-instrument'] {
+				.display-icons {
+					//Move the CC brands icons to the right of the cardNumber field
+					position: absolute;
+					top: 6px;
+					left: 250px;
+
+					.radio-highlight {
+						display: inline-block;
+						padding: 4px;
+
+						&[title='rupayDebit'] {
+							margin-right: 6px;
+						}
+
+						&[title='masterCardDebit'] {
+							margin: 0 -10px;
+						}
+
+						img {
+							height: 20px;
+						}
+					}
+				}
+			}
+
+			div[simple-template='link-expiration'] {
+				display: inline-flex;
+				margin: 0 20px 5px 0;
 				position: relative;
-				margin-top: 15px;
+				top: -25px;
+
+				// Hide a couple of empty fields on the card form so that the CVV can be next to the expiration
+				~ div[simple-replace="{FIELD:'expirationMonth'}"] {
+					display:none;
+				}
+
+				~ div[simple-replace="{FIELD:'expirationYear'}"] {
+					display:none;
+				}
+			}
+
+			div[simple-template='link-security-code'] {
+				position: relative;
+				top: -25px;
+				margin-bottom: -5px;
+			}
+
+			div[simple-template='link-security-code'], div[simple-template='link-billToCity-and-billToPostalCode'],  div[simple-template='link-province'] {
+				display: inline-flex;
+			}
+
+			.form-group {
+				margin: 5px 0 10px;
 
 				label {
 					display: block;
 					font-size: 14px;
 					font-weight: 600;
 					margin-bottom: 5px;
+
+					// Labels are lowercase.
+					&:first-letter {
+						text-transform: capitalize;
+					}
+				}
+
+
+
+				&.select-inline {
+					select {
+						display: inline-block;
+						min-width:100px;
+					}
 				}
 
 				.form-control {
 					margin: 0;
 					padding: 7px 14px;
-					width: 100%;
 					color: $gray-dark;
 					font-size: 16px;
 					line-height: 1.5;
@@ -163,46 +224,101 @@ textarea {
 					background-color: #fff;
 					transition: all .15s ease-in-out;
 					box-sizing: border-box;
+
+					&#accountHolder, &#email, &#document, &#companyName, &#billToStreetAddress, &#billToStreetAddress2  {
+						width: 100%;
+					}
+
+					&#creditCardNumber {
+						width: 310px;
+					}
+
+					&#billToCity {
+						width: 300px;
+						margin-right:20px;
+					}
 				}
-			}
-		}
 
-		.btn-block {
-			background: $white;
-			border-color: $gray-lighten-20;
-			border-style: solid;
-			border-width: 1px 1px 2px;
-			color: $gray-dark;
-			cursor: pointer;
-			display: inline-block;
-			margin: 0;
-			outline: 0;
-			overflow: hidden;
-			font-weight: 500;
-			text-overflow: ellipsis;
-			text-decoration: none;
-			vertical-align: top;
-			box-sizing: border-box;
-			font-size: 14px;
-			line-height: 21px;
-			border-radius: 4px;
-			padding: 7px 14px 9px;
-			appearance: none;
+				// Error label below each field
+				.text-danger {
+					color: $alert-red;
+					margin: 0;
+					padding: 4px 0;
+				}
 
-			&:hover {
-				border-color: $gray-lighten-10;
 			}
 
-			&.primary {
-				background: $blue-medium;
-				border-color: #008ab3;
-				color: $white;
+			// Bottom block of text displayed when there are errors
+			.alert-warning {
+				margin-top:30px;
+
+				ul {
+					list-style: disc;
+					font-size: 12px;
+					padding: 10px;
+					margin-left: 20px;
+				}
+
+			}
+
+			// Separator after the form fields
+			.row-apart {
+				height:20px;
+			}
+
+
+			// Back link
+			a.btn-block {
+				float:right;
+				color: $blue-wordpress;
+				cursor: pointer;
+				margin-top: 5px;
 
 				&:hover {
-					border-color: $blue-dark;
+					color: mix( white, $blue-medium, 20 );
+				}
+			}
+
+			// Buy button
+			button.btn-block {
+				text-transform: capitalize;
+				background: $white;
+				border-color: $gray-lighten-20;
+				border-style: solid;
+				border-width: 1px 1px 2px;
+				color: $gray-dark;
+				cursor: pointer;
+				display: inline-block;
+				margin: 0;
+				outline: 0;
+				overflow: hidden;
+				font-weight: 500;
+				text-overflow: ellipsis;
+				text-decoration: none;
+				vertical-align: top;
+				box-sizing: border-box;
+				font-size: 14px;
+				line-height: 21px;
+				border-radius: 4px;
+				padding: 7px 14px 9px;
+				appearance: none;
+
+				&:hover {
+					border-color: $gray-lighten-10;
+				}
+
+				&.btn-primary {
+					background: $blue-medium;
+					border-color: #008ab3;
+					color: $white;
+
+					&:hover {
+						border-color: $blue-dark;
+					}
 				}
 			}
 		}
+
 	}
 
 
