@@ -49,6 +49,8 @@
 .gdpr-banner__text-content {
 	font-size: 12px;
 	line-height: 1.4;
+	max-width: 50em;
+	margin: 0 auto;
 	@include breakpoint( ">660px" ) {
 		font-size: 16px;
 	}
