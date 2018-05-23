@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { isEmpty, noop } from 'lodash';
+import { isEmpty, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +28,7 @@ export class CreditCardFormFields extends React.Component {
 		onFieldChange: PropTypes.func,
 		getErrorMessage: PropTypes.func,
 		autoFocus: PropTypes.bool,
+		transaction: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -35,6 +36,7 @@ export class CreditCardFormFields extends React.Component {
 		onFieldChange: noop,
 		getErrorMessage: noop,
 		autoFocus: true,
+		transaction: null,
 	};
 
 	createField = ( fieldName, componentClass, props ) => {
@@ -90,7 +92,13 @@ export class CreditCardFormFields extends React.Component {
 	};
 
 	shouldRenderEbanxFields() {
-		return shouldRenderAdditionalEbanxFields( this.getFieldValue( 'country' ) );
+		// The add/update card endpoints do not yet process Ebanx payment details
+		// so we only show Ebanx fields at checkout,
+		// i.e., when there is a current transaction.
+		return (
+			get( this.props.transaction, 'step', null ) &&
+			shouldRenderAdditionalEbanxFields( this.getFieldValue( 'country' ) )
+		);
 	}
 
 	render() {
