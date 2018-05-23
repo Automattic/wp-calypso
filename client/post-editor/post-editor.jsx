@@ -307,7 +307,6 @@ export class PostEditor extends React.Component {
 						onSave={ this.onSave }
 						onSaveDraft={ this.props.onSaveDraft }
 						post={ this.state.post }
-						savedPost={ this.state.savedPost }
 						site={ site }
 						toggleSidebar={ this.toggleSidebar }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }

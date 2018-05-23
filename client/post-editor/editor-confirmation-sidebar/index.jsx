@@ -23,14 +23,12 @@ import FormLabel from 'components/forms/form-label';
 import EditorConfirmationSidebarHeader from './header';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
+import { getEditorPostId, getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
 import {
 	isEditedPostPasswordProtected,
 	isEditedPostPasswordProtectedWithValidPassword,
 	getEditedPost,
 } from 'state/posts/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
 
 class EditorConfirmationSidebar extends Component {
 	static propTypes = {
@@ -66,20 +64,15 @@ class EditorConfirmationSidebar extends Component {
 	}
 
 	renderPublishButton() {
-		if ( ! this.props.siteId || ! this.props.post || ! this.props.savedPost ) {
-			return;
+		if ( this.props.publishButtonStatus === null ) {
+			return null;
 		}
 
-		const publishButtonStatus = getPublishButtonStatus(
-			this.props.post,
-			this.props.savedPost,
-			this.props.canUserPublishPosts
-		);
-		const buttonLabel = this.getPublishButtonLabel( publishButtonStatus );
-		const enabled = ! this.props.isPasswordProtectedWithInvalidPassword;
+		const buttonLabel = this.getPublishButtonLabel( this.props.publishButtonStatus );
+		const disabled = this.props.isPasswordProtectedWithInvalidPassword;
 
 		return (
-			<Button disabled={ ! enabled } onClick={ this.closeAndPublish }>
+			<Button disabled={ disabled } onClick={ this.closeAndPublish }>
 				{ buttonLabel }
 			</Button>
 		);
@@ -125,20 +118,11 @@ class EditorConfirmationSidebar extends Component {
 	}
 
 	renderPublishingBusyButton() {
-		if ( 'publishing' !== this.props.status ) {
-			return;
+		if ( 'publishing' !== this.props.status || this.props.publishButtonStatus === null ) {
+			return null;
 		}
 
-		if ( ! this.props.site || ! this.props.post || ! this.props.savedPost ) {
-			return;
-		}
-
-		const publishButtonStatus = getPublishButtonStatus(
-			this.props.post,
-			this.props.savedPost,
-			this.props.canUserPublishPosts
-		);
-		const buttonLabel = this.getBusyButtonLabel( publishButtonStatus );
+		const buttonLabel = this.getBusyButtonLabel( this.props.publishButtonStatus );
 
 		return (
 			<Button
@@ -226,17 +210,17 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
-		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
 		const isPasswordProtectedWithInvalidPassword =
 			isEditedPostPasswordProtected( state, siteId, postId ) &&
 			! isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId );
+		const publishButtonStatus = getEditorPublishButtonStatus( state );
 
 		return {
 			siteId,
 			postId,
 			post,
-			canUserPublishPosts,
 			isPasswordProtectedWithInvalidPassword,
+			publishButtonStatus,
 		};
 	},
 	{ editPost }

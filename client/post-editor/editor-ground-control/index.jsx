@@ -16,13 +16,12 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import Site from 'blocks/site';
-import { isPublished } from 'lib/posts/utils';
-import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
+import EditorPublishButton from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import Drafts from 'layout/masterbar/drafts';
 import { recordTracksEvent } from 'state/analytics/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
@@ -44,7 +43,6 @@ export class EditorGroundControl extends React.Component {
 		onSaveDraft: PropTypes.func,
 		onMoreInfoAboutEmailVerify: PropTypes.func,
 		post: PropTypes.object,
-		savedPost: PropTypes.object,
 		setPostDate: PropTypes.func,
 		site: PropTypes.object,
 		toggleSidebar: PropTypes.func,
@@ -62,7 +60,6 @@ export class EditorGroundControl extends React.Component {
 		onPublish: noop,
 		onSaveDraft: noop,
 		post: null,
-		savedPost: null,
 		site: {},
 		translate: identity,
 		setPostDate: noop,
@@ -73,13 +70,9 @@ export class EditorGroundControl extends React.Component {
 	}
 
 	getVerificationNoticeLabel() {
-		const { translate } = this.props;
-		const primaryButtonState = getPublishButtonStatus(
-			this.props.post,
-			this.props.savedPost,
-			this.props.canUserPublishPosts
-		);
-		switch ( primaryButtonState ) {
+		const { translate, publishButtonStatus } = this.props;
+
+		switch ( publishButtonStatus ) {
 			case 'update':
 				return translate( 'To update, check your email and confirm your address.' );
 			case 'schedule':
@@ -131,21 +124,15 @@ export class EditorGroundControl extends React.Component {
 				</Button>
 				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
-						site={ this.props.site }
-						post={ this.props.post }
-						savedPost={ this.props.savedPost }
 						onSave={ this.props.onSave }
 						onPublish={ this.props.onPublish }
 						tabIndex={ 5 }
 						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
+						isSaving={ this.props.isSaving }
 						isPublishing={ this.props.isPublishing }
 						isSaveBlocked={ this.props.isSaveBlocked }
 						hasContent={ this.props.hasContent }
 						needsVerification={ this.props.userNeedsVerification }
-						busy={
-							this.props.isPublishing ||
-							( isPublished( this.props.savedPost ) && this.props.isSaving )
-						}
 					/>
 				</div>
 			</div>
@@ -228,7 +215,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const siteId = get( ownProps, 'site.ID', null );
 
 	return {
-		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
+		publishButtonStatus: getEditorPublishButtonStatus( state ),
 		routeHistory: getRouteHistory( state ),
 		// do not allow publish for unverified e-mails, but allow if the site is VIP
 		userNeedsVerification: ! isCurrentUserEmailVerified( state ) && ! isVipSite( state, siteId ),
