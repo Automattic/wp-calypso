@@ -20,6 +20,7 @@ import { authQueryPropTypes } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 
 export class AuthFormHeader extends Component {
 	static propTypes = {
@@ -31,8 +32,7 @@ export class AuthFormHeader extends Component {
 	};
 
 	getState() {
-		const { user, authorize } = this.props;
-		const { partnerSlug } = this.props.authQuery;
+		const { user, authorize, partnerSlug } = this.props;
 
 		if ( partnerSlug ) {
 			return 'partner';
@@ -50,8 +50,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getHeaderText() {
-		const { translate } = this.props;
-		const { partnerSlug } = this.props.authQuery;
+		const { translate, partnerSlug } = this.props;
 
 		let host = '';
 		switch ( partnerSlug ) {
@@ -149,5 +148,6 @@ export default connect( state => {
 	return {
 		authorize: getAuthorizationData( state ),
 		user: getCurrentUser( state ),
+		partnerSlug: getPartnerSlugFromQuery( state ),
 	};
 } )( localize( AuthFormHeader ) );

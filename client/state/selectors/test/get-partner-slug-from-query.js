@@ -15,7 +15,7 @@ describe( '#getPartnerSlugFromQuery', () => {
 			ui: {
 				route: {
 					query: {
-						initial: {
+						current: {
 							email_address: 'user@wordpress.com',
 						},
 					},
@@ -30,7 +30,7 @@ describe( '#getPartnerSlugFromQuery', () => {
 			ui: {
 				route: {
 					query: {
-						initial: {
+						current: {
 							email_address: 'user@wordpress.com',
 							partner_id: 'meh',
 						},
@@ -47,7 +47,7 @@ describe( '#getPartnerSlugFromQuery', () => {
 			ui: {
 				route: {
 					query: {
-						initial: {
+						current: {
 							email_address: 'user@wordpress.com',
 							partner_id: '49640',
 						},

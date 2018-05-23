@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`JetpackSignup should render 1`] = `
-<Localized(JetpackConnectMainWrapper)>
+<Connect(Localized(JetpackConnectMainWrapper))>
   <div
     className="jetpack-connect__authorize-form"
   >
@@ -49,11 +49,11 @@ exports[`JetpackSignup should render 1`] = `
       suggestedUsername=""
     />
   </div>
-</Localized(JetpackConnectMainWrapper)>
+</Connect(Localized(JetpackConnectMainWrapper))>
 `;
 
 exports[`JetpackSignup should render with locale suggestions 1`] = `
-<Localized(JetpackConnectMainWrapper)>
+<Connect(Localized(JetpackConnectMainWrapper))>
   <div
     className="jetpack-connect__authorize-form"
   >
@@ -106,5 +106,5 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
       suggestedUsername=""
     />
   </div>
-</Localized(JetpackConnectMainWrapper)>
+</Connect(Localized(JetpackConnectMainWrapper))>
 `;
