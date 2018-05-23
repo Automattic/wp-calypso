@@ -126,16 +126,11 @@ class EditorDrawer extends Component {
 	}
 
 	renderPostFormats() {
-		if ( ! this.props.post || ! this.currentPostTypeSupports( 'post-formats' ) ) {
+		if ( ! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
 
-		return (
-			<AsyncLoad
-				require="post-editor/editor-post-formats/accordion"
-				className="editor-drawer__accordion"
-			/>
-		);
+		return <AsyncLoad require="post-editor/editor-post-formats/accordion" />;
 	}
 
 	renderSharing() {
