@@ -172,11 +172,11 @@ textarea {
 
 				// Hide a couple of empty fields on the card form so that the CVV can be next to the expiration
 				~ div[simple-replace="{FIELD:'expirationMonth'}"] {
-					display:none;
+					display: none;
 				}
 
 				~ div[simple-replace="{FIELD:'expirationYear'}"] {
-					display:none;
+					display: none;
 				}
 			}
 
@@ -266,58 +266,72 @@ textarea {
 				height:20px;
 			}
 
+		}
 
-			// Back link
-			a.btn-block {
-				float:right;
-				color: $blue-wordpress;
-				cursor: pointer;
-				margin-top: 5px;
+		// Back link
+		a.btn-block {
+			float:right;
+			color: $blue-wordpress;
+			cursor: pointer;
+			margin-top: 5px;
 
-				&:hover {
-					color: mix( white, $blue-medium, 20 );
-				}
+			&:hover {
+				color: mix( white, $blue-medium, 20 );
+			}
+		}
+
+		// Buy/continue/resend OTP button
+		button.btn-block, div[simple-template='link-password'] a.text-capitalize {
+			text-transform: capitalize;
+			background: $white;
+			border-color: $gray-lighten-20;
+			border-style: solid;
+			border-width: 1px 1px 2px;
+			color: $gray-dark;
+			cursor: pointer;
+			display: inline-block;
+			margin: 0;
+			outline: 0;
+			overflow: hidden;
+			font-weight: 500;
+			text-overflow: ellipsis;
+			text-decoration: none;
+			vertical-align: top;
+			box-sizing: border-box;
+			font-size: 14px;
+			line-height: 21px;
+			border-radius: 4px;
+			padding: 7px 14px 9px;
+			appearance: none;
+
+			&:hover {
+				border-color: $gray-lighten-10;
 			}
 
-			// Buy button
-			button.btn-block {
-				text-transform: capitalize;
-				background: $white;
-				border-color: $gray-lighten-20;
-				border-style: solid;
-				border-width: 1px 1px 2px;
-				color: $gray-dark;
-				cursor: pointer;
-				display: inline-block;
-				margin: 0;
-				outline: 0;
-				overflow: hidden;
-				font-weight: 500;
-				text-overflow: ellipsis;
-				text-decoration: none;
-				vertical-align: top;
-				box-sizing: border-box;
-				font-size: 14px;
-				line-height: 21px;
-				border-radius: 4px;
-				padding: 7px 14px 9px;
-				appearance: none;
+			&.btn-primary {
+				background: $blue-medium;
+				border-color: #008ab3;
+				color: $white;
 
 				&:hover {
-					border-color: $gray-lighten-10;
-				}
-
-				&.btn-primary {
-					background: $blue-medium;
-					border-color: #008ab3;
-					color: $white;
-
-					&:hover {
-						border-color: $blue-dark;
-					}
+					border-color: $blue-dark;
 				}
 			}
+		}
 
+		div[simple-template='link-password'] a.text-capitalize {
+			margin-top: 10px;
+		}
+
+		// Used to notify the user about enabling pop-ups
+		.alert-info {
+			margin-bottom: 20px;
+		}
+
+		// "Link your wallet"
+		h2 {
+			font-size: 20px;
+			font-weight: 300;
 		}
 
 	}
@@ -352,9 +366,50 @@ textarea {
 			}
 		}
 	}
-
 }
 
+.busy-container {
+	text-align: center;
+	.busy-text {
+		display: none;
+	}
+}
+
+@keyframes rotate-spinner {
+	100% {
+		transform: rotate( 360deg );
+	}
+}
+
+div[ng-show='busyIndicator'] {
+	display: flex;
+	align-items: center;
+}
+
+.busy-indicator, .less-busy-indicator,  .less-busy-indicator:after, .busy-indicator:after {
+	display:block;
+	margin: auto;
+	box-sizing: border-box;
+	border: 0.1em solid transparent;
+	border-radius: 50%;
+	animation: 3s linear infinite;
+	animation-name: rotate-spinner;
+}
+
+.busy-indicator, .less-busy-indicator {
+	border-top-color: $blue-medium;
+	width: 35px;
+	height: 35px;
+}
+
+.busy-indicator:after, .less-busy-indicator:after  {
+	content: '';
+	width: 100%;
+	height: 100%;
+	border-top-color: $blue-medium;
+	border-right-color: $blue-medium;
+	opacity: 0.4;
+}
 
 /*!
  * ui-select
