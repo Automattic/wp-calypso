@@ -419,5 +419,29 @@ describe( 'selectors', () => {
 			const state = editorState( { status: 'draft' }, null, false );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'requestReview' );
 		} );
+
+		test( 'should return null if no site is selected', () => {
+			const state = {
+				posts: { queries: {}, edits: {} },
+				ui: {
+					selectedSiteId: null,
+					editor: { postId: null },
+				},
+				currentUser: { capabilities: {} },
+			};
+			expect( getEditorPublishButtonStatus( state ) ).to.be.null;
+		} );
+
+		test( 'should return null if site and post selected, but post not yet loaded', () => {
+			const state = {
+				posts: { queries: {}, edits: {} },
+				ui: {
+					selectedSiteId: siteId,
+					editor: { postId },
+				},
+				currentUser: { capabilities: {} },
+			};
+			expect( getEditorPublishButtonStatus( state ) ).to.be.null;
+		} );
 	} );
 } );
