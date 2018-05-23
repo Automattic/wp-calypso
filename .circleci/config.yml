@@ -10,6 +10,10 @@ jobs:
           CIRCLE_TEST_REPORTS: /tmp/test_results
 
     steps:
+	  - run:
+	      name: Install greenkeeper's lockfile management
+		  command: npm install -g greenkeeper-lockfile@1
+
       - checkout
 
       - run:
@@ -27,6 +31,10 @@ jobs:
           key: v1-{{ .Branch }}-{{ checksum "npm-shrinkwrap.json" }}
           paths:
             - "node_modules"
+
+	  - run:
+	      name: Update the lockfile
+		  command: greenkeeper-lockfile-update
 
       - run: NODE_ENV=test npm run build-server
 
@@ -66,6 +74,10 @@ jobs:
               npm run test-server:ci $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
 
       - run:
+	      name: Upload lockfile changes
+		  command: greenkeeper-lockfile-update
+
+	  - run:
           name: Gather Test Results
           command: |
             find . -type f -regex  ".*/test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/ \;
