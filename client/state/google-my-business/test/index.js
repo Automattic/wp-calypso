@@ -37,6 +37,7 @@ describe( 'reducer', () => {
 							},
 						},
 					},
+					statsError: {},
 				},
 			} );
 		} );
@@ -133,6 +134,7 @@ describe( 'reducer', () => {
 							},
 						},
 					},
+					statsError: {},
 				},
 			} );
 		} );
