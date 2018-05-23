@@ -1,0 +1,68 @@
+.card.gdpr-banner {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	margin-bottom: 0;
+	background-color: $blue-light;
+	color: $blue-dark;
+	z-index: z-index( 'root', '.gdpr-banner' );
+
+	animation-duration: 0.5s;
+	animation-name: gdpr-banner__slideup;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes gdpr-banner__slideup {
+	0% {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY( 100% );
+	}
+
+	100% {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateY( 0 );
+	}
+}
+
+.card.gdpr-banner__hiding {
+	pointer-events: none;
+	animation-duration: 0.3s;
+	animation-name: gdpr-banner__fadeout;
+	animation-timing-function: ease-in-out;
+	animation-fill-mode: forwards;
+}
+
+@keyframes gdpr-banner__fadeout {
+	0% {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+
+	100% {
+		opacity: 0;
+		transform: translateY( 100% );
+	}
+}
+
+.gdpr-banner__text-content {
+	font-size: 12px;
+	line-height: 1.4;
+	@include breakpoint( ">660px" ) {
+		font-size: 16px;
+	}
+}
+
+.gdpr-banner__buttons {
+	margin-top: 14px;
+	text-align: center;
+}
+
+.gdpr-banner__acknowledge-button {
+	width: 100%;
+	text-align: center;
+	@include breakpoint( ">660px" ) {
+		width: auto;
+	}
+}

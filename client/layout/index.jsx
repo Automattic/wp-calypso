@@ -42,6 +42,7 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
+import GdprBanner from 'blocks/gdpr-banner';
 import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
@@ -155,6 +156,7 @@ const Layout = createReactClass( {
 				) }
 				<InlineHelp />
 				<AppBanner />
+				<GdprBanner />
 			</div>
 		);
 	},
