@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { noop, every, has, defer, get } from 'lodash';
-import request from 'superagent';
 
 /**
  * Internal dependencies
@@ -29,6 +28,8 @@ import TextInput from 'components/forms/form-text-input';
 
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { connectDispatcher } from '../dispatcher-converter';
+
+import { loadmShotsPreview } from './site-preview-actions';
 
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
@@ -114,10 +115,10 @@ class SiteImporterInputPane extends React.Component {
 
 		this.setState( { loading: true }, this.resetErrors );
 
-		request
-			.get( `https://s0.wp.com/mshots/v1/${ siteURL }` )
-			.then( noop )
-			.catch( noop );
+		loadmShotsPreview( {
+			url: siteURL,
+			maxRetries: 1,
+		} ).catch( noop ); // We don't care about the error, this is just a preload
 
 		wpcom.wpcom.req
 			.get( {

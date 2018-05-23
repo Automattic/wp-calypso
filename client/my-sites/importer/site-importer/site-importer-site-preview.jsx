@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
-import request from 'superagent';
 import { map } from 'lodash';
 /**
  * Internal dependencies
@@ -15,6 +14,7 @@ import { map } from 'lodash';
 import Spinner from 'components/spinner';
 import Button from 'components/forms/form-button';
 import ErrorPane from '../error-pane';
+import { loadmShotsPreview } from './site-preview-actions';
 
 class SiteImporterSitePreview extends React.Component {
 	static propTypes = {
@@ -27,9 +27,9 @@ class SiteImporterSitePreview extends React.Component {
 
 	state = {
 		previewRetries: 0,
-		siteURL: `https://s0.wp.com/mshots/v1/${ this.props.siteURL }`,
+		siteURL: this.props.siteURL,
 		sitePreviewImage: '',
-		sitePreviewFailed: true,
+		sitePreviewFailed: false,
 		loadingPreviewImage: true,
 	};
 
@@ -40,38 +40,24 @@ class SiteImporterSitePreview extends React.Component {
 	loadSitePreview = () => {
 		this.setState( { loadingPreviewImage: true } );
 
-		const maxRetries = 1;
-		const retryTimeout = 1500;
-		if ( this.state.previewRetries > maxRetries ) {
-			this.setState( {
-				sitePreviewImage: '',
-				sitePreviewFailed: true,
-				loadingPreviewImage: false,
-			} );
-			return;
-		}
-
-		this.setState( { previewRetries: this.state.previewRetries + 1 } );
-
-		request
-			.get( this.state.siteURL )
-			.responseType( 'blob' )
-			.then( res => {
-				if ( res.type === null || res.type === 'image/gif' ) {
-					setTimeout( this.loadSitePreview, retryTimeout );
-				} else if ( res.type === 'image/jpeg' ) {
-					const fReader = new FileReader();
-					fReader.onload = ev => {
-						this.setState( {
-							sitePreviewImage: ev.target.result,
-							loadingPreviewImage: false,
-						} );
-					};
-					fReader.readAsDataURL( res.xhr.response );
-				}
-			} )
+		loadmShotsPreview( {
+			url: this.state.siteURL,
+			maxRetries: 30,
+			retryTimeout: 1000,
+		} )
+			.then( imageBlob =>
+				this.setState( {
+					loadingPreviewImage: false,
+					sitePreviewImage: imageBlob,
+					sitePreviewFailed: false,
+				} )
+			)
 			.catch( () => {
-				// todo error or retry? - test with possible 4xx, 5xx errors
+				this.setState( {
+					loadingPreviewImage: false,
+					sitePreviewImage: '',
+					sitePreviewFailed: true,
+				} );
 			} );
 	};
 
