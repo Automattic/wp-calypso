@@ -396,6 +396,9 @@
 
 		a {
 			color: $white;
+			&:hover {
+				background: none;
+			}
 		}
 	}
 
@@ -411,13 +414,13 @@
 }
 
 .inline-help__empty-results {
-	padding: 16px 0 0 0;
+	padding: 16px 0 0;
 	margin: 0;
 	font-size: 14px;
 	color: $gray;
 	font-style: italic;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 16px;
 	}
 }
