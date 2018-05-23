@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import ContactsPrivacyCard from './card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/domains/domain-management/components/header';
@@ -42,7 +43,8 @@ class ContactsPrivacy extends React.PureComponent {
 		const { translate, whois } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
-		const canManageConsent = domain.registrar !== registrarNames.WWD;
+		const canManageConsent =
+			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.registrar !== registrarNames.WWD;
 		const contactInformation = privateDomain
 			? findPrivacyServiceWhois( whois.data )
 			: findRegistrantWhois( whois.data );
