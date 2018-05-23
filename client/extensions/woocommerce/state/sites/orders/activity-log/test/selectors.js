@@ -216,6 +216,29 @@ const labelsErrorSubtree = {
 	error: true,
 };
 
+const anonymizedLabelsSubtree = {
+	isFetching: false,
+	loaded: true,
+	labels: [
+		{
+			label_id: 4,
+			refundable_amount: 10,
+			rate: 10,
+			status: 'ANONYMIZED',
+			currency: 'CAD',
+			created_date: 4000000,
+			used_date: null,
+			expiry_date: 4500000,
+			product_names: [ 'poutine' ],
+			package_name: 'box',
+			tracking: '12345',
+			carrier_id: 'canada_post',
+			service_name: 'Xpress',
+			main_receipt_id: 12345,
+		},
+	],
+};
+
 const notesAndLabelsLoadingState = getState( notesLoadingSubtree, labelsLoadingSubtree );
 const notesLoadingState = getState( notesLoadingSubtree, labelsLoadedSubtree );
 const labelsLoadingState = getState( notesLoadedSubtree, labelsLoadingSubtree );
@@ -395,6 +418,7 @@ describe( 'selectors', () => {
 					carrierId: 'canada_post',
 					serviceName: 'Xpress',
 					receiptId: 12345,
+					anonymized: false,
 				},
 				{
 					key: 3,
@@ -423,6 +447,7 @@ describe( 'selectors', () => {
 					carrierId: 'usps',
 					serviceName: 'First Class',
 					receiptId: 12345,
+					anonymized: false,
 				},
 				{
 					key: 2,
@@ -451,6 +476,7 @@ describe( 'selectors', () => {
 					carrierId: 'canada_post',
 					serviceName: 'Xpress',
 					receiptId: 67890,
+					anonymized: false,
 				},
 				{
 					key: 1,
@@ -471,6 +497,7 @@ describe( 'selectors', () => {
 					carrierId: 'usps',
 					serviceName: 'First Class',
 					receiptId: 654321,
+					anonymized: false,
 				},
 			] );
 		} );
@@ -485,6 +512,15 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getActivityLogEvents( loadedStateWithUi, 45 ) ).to.not.be.empty;
+		} );
+
+		it( 'should mark anonymized labels as not available for reprint', () => {
+			const result = getActivityLogEvents(
+				getState( emptyNotesSubtree, anonymizedLabelsSubtree ),
+				45,
+				123
+			);
+			expect( result[ 0 ].anonymized ).to.be.true;
 		} );
 	} );
 } );
