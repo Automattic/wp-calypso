@@ -12,7 +12,7 @@ jobs:
     steps:
       - run:
           name: Install greenkeeper's lockfile management
-          command: npm install -g greenkeeper-lockfile@1
+          command: sudo npm install -g greenkeeper-lockfile@1
 
       - checkout
 
