@@ -27,10 +27,10 @@ const fallbackLinks = [
 	},
 	{
 		link: 'https://en.support.wordpress.com/start/',
-        post_id: 81083,
-		title: 'Five Steps to Getting Started',
+		post_id: 81083,
+		title: 'Quick-Start Guide',
 		description:
-			'No matter what kind of site you want to build, our five-step checklist will get you set up and ready to publish.',
+			"Use our five-step checklist to get set up and ready to publish, no matter what kind of site you're building.",
 	},
 	{
 		link: 'https://en.support.wordpress.com/settings/privacy-settings/',
@@ -127,8 +127,8 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/account-deactivation/',
 			post_id: 138080,
-			title: 'Account Deactivation',
-			description: 'Sometimes you need a fresh start. Learn how to deactivate your account.',
+			title: 'Account Closure',
+			description: 'Need a fresh start? Learn how to close your account.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/change-your-username/',
@@ -216,9 +216,9 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/discover-the-wordpress-com-plans/',
 			post_id: 140323,
-			title: 'Discover the WordPress.com Plans',
+			title: 'Explore the WordPress.com Plans',
 			description:
-				'Upgrading to a plan unlocks a ton of features. Read more to understand which one would be the best fit for your needs.',
+				"Upgrading your plan unlocks a ton of features! We'll help you pick the best fit for your needs and goals.",
 		},
 	],
 	'notification-settings': [
@@ -226,30 +226,30 @@ const contextLinksForSection = {
 			link: 'http://en.support.wordpress.com/notifications/',
 			title: 'Notifications',
 			description:
-				'Learn how to use notifications to stay on top of all the things happening on WordPress.com.',
+				'Notifications help you stay on top of the activity on your site and all the things happening on ' +
+				'WordPress.com — learn how to use them.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/email-notifications/',
 			post_id: 9443,
 			title: 'Email Notifications',
 			description:
-				'Notifications from WordPress.com will be sent to the email address registered ' +
-				'to your WordPress.com account. Learn how to manage them.',
+				'WordPress.com sends email notifications to the email address registered to your account. Learn how to manage them.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/following-comments/',
 			post_id: 4576,
 			title: 'Following Comments',
 			description:
-				'When you leave a comment on a WordPress.com blog, you can choose to automatically ' +
-				'receive email updates about other comments.',
+				'When you leave a comment, you can automatically get email notifications for other new comments ' +
+				"on the same post or page — you'll never be out of the loop.",
 		},
 		{
 			link: 'http://en.support.wordpress.com/following/',
 			post_id: 4899,
 			title: 'Following Blogs',
 			description:
-				'When you follow a blog on WordPress.com, the new posts from that site will appear in your Reader.',
+				'When you follow a blog on WordPress.com, new posts from that site will automatically appear in your Reader.',
 		},
 	],
 	media: [
@@ -334,16 +334,17 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/plugins/adding-plugins/',
 			post_id: 134719,
-			title: 'Adding plugins',
+			title: 'Adding Plugins',
 			description:
-				'In addition to built-in plugin functionality, WordPress.com ' +
-				'Business allows you to install other plugins!',
+				'Along with all the tools and features built right into WordPress.com, the Business plan ' +
+				'allows you to install other plugins.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/business-plan/',
 			title: 'Business Plan',
 			description:
-				'Need to upload your own plugins or themes? The Business plan allows you to do just that.',
+				"When you want to build a one-of-a-kind website, it's time for WordPress.com Business: " +
+				'upload plugins and themes to create a truly tailored experience for your visitors.',
 		},
 	],
 	'posts-pages': [
@@ -486,7 +487,7 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/selecting-a-strong-password/',
 			post_id: 35364,
-			title: 'Selecting a Strong Password',
+			title: 'Selecting A Strong Password',
 			description:
 				'The weakest point in any security for your online accounts is usually your password. Learn how to select a strong one.',
 		},
@@ -518,8 +519,9 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/five-step-blog-setup/',
 			post_id: 100846,
-			title: 'Set Up Your Blog in Five Steps',
-			description: 'Our five-step checklist will get you set up and ready to publish to your blog.',
+			title: 'Five Steps to Your Great New Blog',
+			description:
+				'Get ready to publish! Our five-step checklist walks you through all the fundamentals.',
 		},
 	],
 	themes: [
@@ -552,7 +554,8 @@ const contextLinksForSection = {
 				'http://en.support.wordpress.com/themes/uploading-setting-up-custom-themes/child-themes/',
 			title: 'Child Themes',
 			description:
-				'Child themes allow you to extend your site beyond what’s possible with the existing tools. Learn how to use them!',
+				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
+				'time to go beyond them. Learn to use child themes to customize and extend your website.',
 		},
 	],
 	theme: [
@@ -582,16 +585,16 @@ const contextLinksForSection = {
 				'http://en.support.wordpress.com/themes/uploading-setting-up-custom-themes/child-themes/',
 			title: 'Child Themes',
 			description:
-				'Child themes allow you to extend your site beyond what’s possible with the existing tools. Learn how to use them!',
+				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
+				'time to go beyond them. Learn to use child themes to customize and extend your website.',
 		},
 	],
 	plans: [
 		{
 			link: 'http://en.support.wordpress.com/discover-the-wordpress-com-plans/',
-			title: 'Discover the WordPress.com Plans',
+			title: 'Explore the WordPress.com Plans',
 			description:
-				'Upgrading to a plan unlocks a ton of features that can help you get more visitors to your site ' +
-				'and drive business. Learn more to make the best choice.',
+				"Upgrading your plan unlocks a ton of features! We'll help you pick the best fit for your needs and goals.",
 		},
 		{
 			link: 'http://en.support.wordpress.com/plan-features/',
@@ -659,7 +662,7 @@ const contextLinksForSection = {
 			link: 'http://en.support.wordpress.com/following/',
 			title: 'Follow Blogs',
 			description:
-				'When you follow a blog on WordPress.com, the new posts from that site will appear in your Reader.',
+				'When you follow a blog on WordPress.com, new posts from that site will automatically appear in your Reader.',
 		},
 		{
 			link: 'http://en.support.wordpress.com/topics/',
