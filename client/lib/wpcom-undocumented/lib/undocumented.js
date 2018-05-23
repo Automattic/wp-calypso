@@ -495,11 +495,8 @@ Undocumented.prototype.isDomainAvailable = function( domain, blogId, fn ) {
  */
 Undocumented.prototype.checkAuthCode = function( domain, authCode, fn ) {
 	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent(
-				domain
-			) }/inbound-transfer-check-auth-code/${ authCode }`,
-		},
+		`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-check-auth-code`,
+		{ auth_code: authCode },
 		fn
 	);
 };

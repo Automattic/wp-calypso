@@ -266,16 +266,18 @@ class TransferDomainPrecheck extends React.Component {
 		const message = (
 			<div>
 				{ explanation }
-				<FormTextInput
-					placeholder={ translate( 'Auth Code' ) }
-					className="transfer-domain-step__auth-code-input"
-					value={ authCode }
-					onChange={ this.setAuthCode }
-					isError={ authCodeInvalid }
-				/>
-				{ authCodeInvalid && (
-					<FormInputValidation text={ translate( 'Auth Code invalid' ) } isError />
-				) }
+				<div>
+					<FormTextInput
+						placeholder={ translate( 'Auth Code' ) }
+						className="transfer-domain-step__auth-code-input"
+						value={ authCode }
+						onChange={ this.setAuthCode }
+						isError={ authCodeInvalid }
+					/>
+					{ authCodeInvalid && (
+						<FormInputValidation text={ translate( 'Auth Code invalid' ) } isError />
+					) }
+				</div>
 			</div>
 		);
 		const buttonText = translate( 'Check my authorization code' );
