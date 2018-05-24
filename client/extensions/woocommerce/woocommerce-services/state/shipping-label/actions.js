@@ -215,11 +215,13 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 		.then( () => expandFirstErroneousStep( orderId, siteId, dispatch, getState ) )
 		.catch( error => {
 			console.error( error );
-			dispatch( NoticeActions.errorNotice( error.toString(), {
-				id: 'wcs-label-rates',
-				button: translate( 'Retry' ),
-				onClick: () => tryGetLabelRates( orderId, siteId, dispatch, getState ),
-			} ) );
+			dispatch(
+				NoticeActions.errorNotice( error.toString(), {
+					id: 'wcs-label-rates',
+					button: translate( 'Retry' ),
+					onClick: () => tryGetLabelRates( orderId, siteId, dispatch, getState ),
+				} )
+			);
 		} );
 };
 
@@ -874,25 +876,23 @@ export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) =
 			response = json.label;
 		};
 
-		const setIsSaving = () => {
-			dispatch( {
-				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE,
-				orderId,
-				siteId,
-				labelId,
-				response,
-				error,
-			} );
-			if ( error ) {
-				throw error;
-			}
-		};
-
 		return api
 			.get( siteId, api.url.labelStatus( orderId, labelId ) )
 			.then( setSuccess )
 			.catch( setError )
-			.then( setIsSaving );
+			.then( () => {
+				dispatch( {
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE,
+					orderId,
+					siteId,
+					labelId,
+					response,
+					error,
+				} );
+				if ( error ) {
+					throw error;
+				}
+			} );
 	} );
 
 	// Handle error with a single notice
