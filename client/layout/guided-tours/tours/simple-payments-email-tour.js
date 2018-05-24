@@ -84,6 +84,7 @@ export const SimplePaymentsEmailTour = makeTour(
 			style={ { animationDelay: '2s', marginTop: '-5px' } }
 			onTargetDisappear={ handleTargetDisappear }
 			when={ sectionHasSidebar }
+			keepRepositioning
 		>
 			{ ( { translate } ) => (
 				<Fragment>

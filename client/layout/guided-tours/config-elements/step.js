@@ -62,6 +62,7 @@ export default class Step extends Component {
 		canSkip: PropTypes.bool,
 		wait: PropTypes.func,
 		onTargetDisappear: PropTypes.func,
+		keepRepositioning: PropTypes.bool,
 		children: PropTypes.func.isRequired,
 	};
 
@@ -102,6 +103,7 @@ export default class Step extends Component {
 		this.wait( this.props, this.context ).then( () => {
 			window.addEventListener( 'resize', this.onScrollOrResize );
 			this.watchTarget();
+			this.repositionInterval = setInterval( this.forceReposition, 3000 );
 		} );
 	}
 
@@ -127,7 +129,7 @@ export default class Step extends Component {
 		if ( this.scrollContainer ) {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		}
-
+		clearInterval( this.repositionInterval );
 		this.unwatchTarget();
 	}
 
@@ -304,6 +306,15 @@ export default class Step extends Component {
 	shouldSkipAnalytics() {
 		return this.lastTransitionTimestamp && Date.now() - this.lastTransitionTimestamp < 500;
 	}
+
+	forceReposition = () => {
+		if ( ! window || ! this.props.keepRepositioning ) {
+			return;
+		}
+		const scrollY = window.scrollY;
+		window.scrollTo( window.scrollX, scrollY + 1 );
+		window.scrollTo( window.scrollX, scrollY );
+	};
 
 	onScrollOrResize = () => {
 		if ( ! this.isUpdatingPosition ) {
