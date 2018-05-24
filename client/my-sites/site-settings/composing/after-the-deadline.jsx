@@ -217,7 +217,7 @@ class AfterTheDeadline extends Component {
 				<div className="composing__module-settings site-settings__child-settings">
 					<SupportInfo
 						text={ translate(
-							'Checks your content for correct grammar and spelling, misused words, and style.'
+							'Checks your content for correct grammar and spelling, misused words, and style while you write.'
 						) }
 						link="https://jetpack.com/support/spelling-and-grammar/"
 					/>
