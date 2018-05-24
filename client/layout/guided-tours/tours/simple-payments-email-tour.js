@@ -34,6 +34,11 @@ const handleTargetDisappear = () => {
 	tourFirstStep.style.left = '-9999px';
 };
 
+// IE9+ polyfill for `Element.matches()` used in `DelegatingQuit`
+if ( ! Element.prototype.matches ) {
+	Element.prototype.matches = Element.prototype.msMatchesSelector;
+}
+
 class DelegatingQuit extends Quit {
 	addTargetListener = () => {
 		const { parentTarget } = this.props;
