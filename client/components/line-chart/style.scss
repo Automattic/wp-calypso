@@ -125,8 +125,10 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: flex-start;
-	cursor: pointer;
-	margin-right: 20px;
+
+	.legend-item {
+		cursor: pointer;
+	}
 
 	.legend-item:not( :first-child ) {
 		margin-left: 20px;
