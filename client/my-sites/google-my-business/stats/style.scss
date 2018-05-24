@@ -6,7 +6,8 @@
 
 	.pie-chart__chart-drawing,
 	.pie-chart__placeholder-drawing {
-		max-width: 200px;
+		min-width: 110px;
+		max-width: 25%;
 	}
 }
 
