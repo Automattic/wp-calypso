@@ -20,6 +20,7 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { AddContentButton } from '../button-labels';
 import { getSectionName, hasSidebar } from 'state/ui/selectors';
+import { targetForSlug } from '../positioning';
 
 const sectionHasSidebar = state =>
 	hasSidebar( state ) && ! includes( [ 'customize' ], getSectionName( state ) );
@@ -32,6 +33,41 @@ const handleTargetDisappear = () => {
 	const tourFirstStep = document.querySelector( '.guided-tours__step-first' );
 	tourFirstStep.style.left = '-9999px';
 };
+
+class DelegatingQuit extends Quit {
+	addTargetListener = () => {
+		const { parentTarget } = this.props;
+		const container = targetForSlug( parentTarget );
+
+		if ( container && container.addEventListener ) {
+			container.addEventListener( 'click', this.onClick );
+			container.addEventListener( 'touchstart', this.onClick );
+		}
+	};
+
+	removeTargetListener = () => {
+		const { parentTarget } = this.props;
+		const container = targetForSlug( parentTarget );
+
+		if ( container && container.addEventListener ) {
+			container.removeEventListener( 'click', this.onClick );
+			container.removeEventListener( 'touchstart', this.onClick );
+		}
+	};
+
+	onClick = event => {
+		let eventTarget = event.target;
+		while ( eventTarget !== event.currentTarget ) {
+			if ( eventTarget.matches( this.props.target ) ) {
+				this.props.onClick && this.props.onClick( event );
+				const { quit, tour, tourVersion, step, isLastStep } = this.context;
+				quit( { tour, tourVersion, step, isLastStep } );
+				return;
+			}
+			eventTarget = eventTarget.parentNode;
+		}
+	};
+}
 
 export const SimplePaymentsEmailTour = makeTour(
 	<Tour name="simplePaymentsEmailTour" version="20180501" path="/" when={ noop }>
@@ -89,12 +125,13 @@ export const SimplePaymentsEmailTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Quit
+						<DelegatingQuit
 							primary
+							parentTarget=".tinymce-container"
 							target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
 						>
 							{ translate( 'Got it, thanks!' ) }
-						</Quit>
+						</DelegatingQuit>
 					</ButtonRow>
 					<Link href="https://en.support.wordpress.com/simple-payments">
 						{ translate( 'Learn more about Simple Payments.' ) }
