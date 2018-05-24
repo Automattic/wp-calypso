@@ -70,6 +70,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_ERROR,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG,
@@ -201,6 +202,8 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	const formState = getShippingLabel( state, orderId, siteId ).form;
 	const { origin, destination, packages } = formState;
 
+	dispatch( NoticeActions.removeNotice( 'wcs-label-rates' ) );
+
 	return getRates(
 		orderId,
 		siteId,
@@ -212,7 +215,13 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 		.then( () => expandFirstErroneousStep( orderId, siteId, dispatch, getState ) )
 		.catch( error => {
 			console.error( error );
-			dispatch( NoticeActions.errorNotice( error.toString() ) );
+			dispatch(
+				NoticeActions.errorNotice( error.toString(), {
+					id: 'wcs-label-rates',
+					button: translate( 'Retry' ),
+					onClick: () => tryGetLabelRates( orderId, siteId, dispatch, getState ),
+				} )
+			);
 		} );
 };
 
@@ -855,7 +864,7 @@ export const openRefundDialog = ( orderId, siteId, labelId ) => {
 export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) => {
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
 
-	shippingLabel.labels.forEach( label => {
+	const labelRequests = shippingLabel.labels.map( label => {
 		if ( label.statusUpdated ) {
 			return;
 		}
@@ -866,8 +875,12 @@ export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) =
 		const setSuccess = json => {
 			response = json.label;
 		};
-		const setIsSaving = saving => {
-			if ( ! saving ) {
+
+		return api
+			.get( siteId, api.url.labelStatus( orderId, labelId ) )
+			.then( setSuccess )
+			.catch( setError )
+			.then( () => {
 				dispatch( {
 					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE,
 					orderId,
@@ -877,17 +890,16 @@ export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) =
 					error,
 				} );
 				if ( error ) {
-					dispatch( NoticeActions.errorNotice( error.toString() ) );
+					throw error;
 				}
-			}
-		};
+			} );
+	} );
 
-		setIsSaving( true );
-		api
-			.get( siteId, api.url.labelStatus( orderId, labelId ) )
-			.then( setSuccess )
-			.catch( setError )
-			.then( () => setIsSaving( false ) );
+	// Handle error with a single notice
+	Promise.all( labelRequests ).catch( error => {
+		dispatch(
+			NoticeActions.errorNotice( `Failed to retrieve shipping label refund status: ${ error }` )
+		);
 	} );
 };
 
@@ -944,21 +956,40 @@ export const openReprintDialog = ( orderId, siteId, labelId ) => ( dispatch, get
 		orderId,
 		siteId,
 	} );
+
+	dispatch( NoticeActions.removeNotice( 'wcs-reprint-label' ) );
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
 	const printUrl = getPrintURL( shippingLabel.paperSize, [ { labelId } ] );
 
-	api.get( siteId, printUrl ).then( fileData => {
-		const shippingLabelAfter = getShippingLabel( getState(), orderId, siteId );
-		if ( shippingLabel.paperSize === shippingLabelAfter.paperSize ) {
+	api
+		.get( siteId, printUrl )
+		.then( fileData => {
+			const shippingLabelAfter = getShippingLabel( getState(), orderId, siteId );
+			if ( shippingLabel.paperSize === shippingLabelAfter.paperSize ) {
+				dispatch( {
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY,
+					labelId,
+					orderId,
+					siteId,
+					fileData,
+				} );
+			}
+		} )
+		.catch( error => {
 			dispatch( {
-				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY,
+				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_ERROR,
 				labelId,
 				orderId,
 				siteId,
-				fileData,
 			} );
-		}
-	} );
+			dispatch(
+				NoticeActions.errorNotice( error.toString(), {
+					id: 'wcs-reprint-label',
+					button: translate( 'Retry' ),
+					onClick: () => dispatch( openReprintDialog( orderId, siteId, labelId ) ),
+				} )
+			);
+		} );
 };
 
 export const closeReprintDialog = ( orderId, siteId ) => {
