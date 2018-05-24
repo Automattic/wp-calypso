@@ -18,11 +18,10 @@ class PieChartPlaceholder extends Component {
 	};
 
 	render() {
-		const { title } = this.props;
 		return (
-			<div className={ 'pie-chart__placeholder' }>
+			<div className="pie-chart__placeholder">
 				<svg
-					className={ 'pie-chart__placeholder-drawing' }
+					className="pie-chart__placeholder-drawing"
 					viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
 					preserveAspectRatio={ 'xMidYMid meet' }
 				>
@@ -35,7 +34,8 @@ class PieChartPlaceholder extends Component {
 						/>
 					</g>
 				</svg>
-				{ title && <div className={ 'pie-chart__placeholder-title' } /> }
+
+				{ this.props && <div className="pie-chart__placeholder-title" /> }
 			</div>
 		);
 	}

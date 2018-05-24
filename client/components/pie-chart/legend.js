@@ -48,18 +48,19 @@ class PieChartLegend extends Component {
 
 	render() {
 		const { transformedData, dataTotal } = this.state;
+
 		return (
-			<div className={ 'pie-chart__legend' }>
+			<div className="pie-chart__legend">
 				{ transformedData.map( datum => {
+					const percent = dataTotal > 0 ? Math.round( datum.value / dataTotal * 100 ).toString() : '0';
+
 					return (
 						<LegendItem
 							key={ datum.name }
 							name={ datum.name }
 							value={ datum.value.toString() }
 							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum }` }
-							percent={
-								dataTotal > 0 ? Math.round( datum.value / dataTotal * 100 ).toString() : '0'
-							}
+							percent={ percent }
 							description={ datum.description }
 						/>
 					);
