@@ -73,51 +73,57 @@ class SiteImporterSitePreview extends React.Component {
 			<div>
 				{ ! isError && (
 					<div>
-						<div className="site-importer__site-importer-confirm-site-pane-container">
-							<div className="site-importer__site-importer-confirm-site-label">
-								{ this.props.translate( 'Is this your site?' ) }
+						{ ! isLoading && (
+							<div>
+								<div className="site-importer__site-importer-confirm-site-pane-container">
+									<div className="site-importer__site-importer-confirm-site-label">
+										{ this.props.translate( 'Is this your site?' ) }
+									</div>
+									<Button disabled={ isLoading } onClick={ this.props.startImport }>
+										{ this.props.translate( 'Yes! Start import' ) }
+									</Button>
+									<Button
+										disabled={ isLoading }
+										isPrimary={ false }
+										onClick={ this.props.resetImport }
+									>
+										{ this.props.translate( 'No' ) }
+									</Button>
+								</div>
+								<div className={ containerClass }>
+									<div className="site-importer__site-preview-column-container">
+										<div className="site-importer__site-preview-container">
+											<div className="site-importer__site-preview-browser-chrome">
+												<span>● ● ●</span>
+											</div>
+											<div className="site-importer__site-preview-image">
+												<img
+													className="site-importer__site-preview-favicon"
+													src={ this.state.sitePreviewImage }
+													alt="Site favicon"
+												/>
+											</div>
+										</div>
+										<div className="site-importer__site-preview-import-content">
+											<p>{ this.props.translate( 'We will import:' ) }</p>
+											{ this.props.importData.supported &&
+												this.props.importData.supported.length && (
+													<ul>
+														{ map( this.props.importData.supported, ( suppApp, idx ) => (
+															<li key={ idx }>{ suppApp }</li>
+														) ) }
+													</ul>
+												) }
+										</div>
+									</div>
+								</div>
 							</div>
-							<Button disabled={ isLoading } onClick={ this.props.startImport }>
-								{ this.props.translate( 'Yes! Start import' ) }
-							</Button>
-							<Button disabled={ isLoading } isPrimary={ false } onClick={ this.props.resetImport }>
-								{ this.props.translate( 'No' ) }
-							</Button>
-						</div>
-						<div className={ containerClass }>
-							{ this.state.sitePreviewImage && (
-								<div className="site-importer__site-preview-column-container">
-									<div className="site-importer__site-preview-container">
-										<div className="site-importer__site-preview-browser-chrome">
-											<span>● ● ●</span>
-										</div>
-										<div className="site-importer__site-preview-image">
-											<img
-												className="site-importer__site-preview-favicon"
-												src={ this.state.sitePreviewImage }
-												alt="Site favicon"
-											/>
-										</div>
-									</div>
-									<div className="site-importer__site-preview-import-content">
-										<p>{ this.props.translate( 'We will import:' ) }</p>
-										{ this.props.importData.supported &&
-											this.props.importData.supported.length && (
-												<ul>
-													{ map( this.props.importData.supported, ( suppApp, idx ) => (
-														<li key={ idx }>{ suppApp }</li>
-													) ) }
-												</ul>
-											) }
-									</div>
-								</div>
-							) }
-							{ isLoading && (
-								<div className="site-importer__site-preview-loading-overlay">
-									<Spinner />
-								</div>
-							) }
-						</div>
+						) }
+						{ isLoading && (
+							<div className="site-importer__site-preview-loading-overlay">
+								<Spinner />
+							</div>
+						) }
 					</div>
 				) }
 				{ isError && (
