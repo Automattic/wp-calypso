@@ -10,7 +10,14 @@ export function handleAccountClosed( handler ) {
 		handler( params, ( err, response ) => {
 			if ( err ) {
 				const { statusCode, message } = err;
-				if ( +statusCode === 400 && startsWith( message, 'The user account has been closed' ) ) {
+				if (
+					( +statusCode === 400 && startsWith( message, 'The user account has been closed' ) ) ||
+					( +statusCode === 403 &&
+						startsWith(
+							message,
+							'An active access token must be used to query information about the current user'
+						) )
+				) {
 					require( 'lib/user/utils' ).default.logout();
 					return;
 				}
