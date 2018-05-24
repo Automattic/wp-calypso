@@ -12,8 +12,7 @@ import { identity } from 'lodash';
 import Button from 'components/button';
 import { preventWidows } from 'lib/formatting';
 import analytics from 'lib/analytics';
-
-const FORUM_LINK = '//en.forums.wordpress.com';
+import { getForumUrl } from 'lib/i18n-utils';
 
 const trackForumOpen = () => analytics.tracks.recordEvent( 'calypso_inlinehelp_forums_open' );
 
@@ -37,7 +36,7 @@ const InlineHelpForumView = ( { translate = identity } ) => (
 			) }
 		</p>
 		<Button
-			href={ FORUM_LINK }
+			href={ getForumUrl() }
 			target="_blank"
 			rel="noopener noreferrer"
 			primary
