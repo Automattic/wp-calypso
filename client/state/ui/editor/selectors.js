@@ -152,7 +152,7 @@ export function getEditorPublishButtonStatus( state ) {
 
 	// Return `null` (means "unknown") if the site or the post to edit is not available.
 	// Typically happens when async-loading them is in progress.
-	if ( ! siteId || ! currentPost || ! editedPost ) {
+	if ( ! siteId || ! editedPost ) {
 		return null;
 	}
 

@@ -89,6 +89,8 @@ export class EditorPublishButton extends Component {
 				} );
 			case 'requestReview':
 				return translate( 'Submit for Review' );
+			default:
+				return translate( 'Loading…' );
 		}
 	}
 
