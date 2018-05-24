@@ -245,9 +245,9 @@ class TransferDomainPrecheck extends React.Component {
 		const heading = translate( 'Get a domain authorization code.' );
 		const explanation = translate(
 			'A domain authorization code is a unique code linked only to your domain — kind of like a ' +
-				"password for your domain. Log in to your current domain provider to get one. We'll send you an email " +
-				'with a link to enter it and officially okay the transfer. We call it a domain authorization code, ' +
-				'but it might be called a secret code, auth code, or EPP code. {{a}}Learn more{{/a}}.',
+				'password for your domain. Log in to your current domain provider to get one. We call ' +
+				'it a domain authorization code, but it might be called a secret code, auth code, or ' +
+				'EPP code. {{a}}Learn more{{/a}}.',
 			{
 				components: {
 					a: (
