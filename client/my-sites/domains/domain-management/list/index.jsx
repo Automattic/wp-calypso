@@ -78,6 +78,7 @@ export class List extends React.Component {
 						'wrongNSMappedDomains',
 						'transferStatus',
 						'newTransfersWrongNS',
+						'pendingConsent',
 					] }
 				/>
 			);

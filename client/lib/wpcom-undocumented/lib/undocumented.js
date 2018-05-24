@@ -2557,4 +2557,18 @@ Undocumented.prototype.updateSiteAddress = function( siteId, blogname, discard, 
 	);
 };
 
+Undocumented.prototype.requestGdprConsentManagementLink = function( domain, callback ) {
+	return this.wpcom.req.get( `/domains/${ domain }/request-gdpr-consent-management-link`, function(
+		error,
+		response
+	) {
+		if ( error ) {
+			callback( error );
+			return;
+		}
+
+		callback( null, response );
+	} );
+};
+
 export default Undocumented;

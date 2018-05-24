@@ -46,6 +46,10 @@ export function domainManagementEditContactInfo( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'edit-contact-info' );
 }
 
+export function domainManagementManageConsent( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'manage-consent' );
+}
+
 export function domainManagementEmail( siteName, domainName ) {
 	let path;
 

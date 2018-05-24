@@ -9,6 +9,7 @@ import Dns from './dns';
 import Edit from './edit';
 import TransferIn from './edit/transfer-in';
 import EditContactInfo from './edit-contact-info';
+import ManageConsent from './manage-consent';
 import Email from './email';
 import EmailForwarding from './email-forwarding';
 import List from './list';
@@ -27,6 +28,7 @@ export default {
 	Dns,
 	Edit,
 	EditContactInfo,
+	ManageConsent,
 	Email,
 	EmailForwarding,
 	List,
