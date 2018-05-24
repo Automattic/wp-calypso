@@ -31,6 +31,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import wpcom from 'lib/wp';
 import Card from 'components/card';
@@ -75,7 +76,6 @@ import {
 	recordTransferDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
-import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
@@ -332,12 +332,37 @@ class RegisterDomainStep extends React.Component {
 		this.searchCard = searchCard;
 	};
 
+	getSuggestionsFromProps() {
+		const { pageNumber } = this.state;
+		const searchResults = this.state.searchResults || [];
+		const isKrackenUi = isPaginationEnabled;
+
+		let suggestions;
+		if ( isKrackenUi ) {
+			suggestions = searchResults.slice( 0, pageNumber * PAGE_SIZE );
+		} else {
+			suggestions = [ ...searchResults ];
+		}
+
+		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
+			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
+				suggestions.unshift( { is_placeholder: true } );
+			} else if ( this.state.subdomainSearchResults && this.state.subdomainSearchResults.length ) {
+				suggestions.unshift( this.state.subdomainSearchResults[ 0 ] );
+			}
+		}
+		return suggestions;
+	}
+
 	render() {
 		const queryObject = getQueryObject( this.props );
 		const { errorData, error, lastDomainSearched, showNotice } = this.state;
 		const { message, severity } = showNotice
 			? getAvailabilityNotice( lastDomainSearched, error, errorData )
 			: {};
+		const showTldFilterBar =
+			config.isEnabled( 'domains/kracken-ui/tld-filter' ) &&
+			abtest( 'domainSearchTLDFilterPlacement' ) === 'aboveFeatured';
 		return (
 			<div className="register-domain-step">
 				<StickyPanel className="register-domain-step__search">
@@ -360,6 +385,18 @@ class RegisterDomainStep extends React.Component {
 						{ this.renderSearchFilters() }
 					</CompactCard>
 				</StickyPanel>
+				{ showTldFilterBar && (
+					<TldFilterBar
+						availableTlds={ this.state.availableTlds }
+						filters={ this.state.filters }
+						isSignupStep={ this.props.isSignupStep }
+						lastFilters={ this.state.lastFilters }
+						onChange={ this.onFiltersChange }
+						onReset={ this.onFiltersReset }
+						onSubmit={ this.onFiltersSubmit }
+						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+					/>
+				) }
 				{ message && (
 					<Notice text={ message } status={ `is-${ severity }` } showDismiss={ false } />
 				) }
@@ -941,7 +978,6 @@ class RegisterDomainStep extends React.Component {
 			lastDomainIsTransferrable,
 			lastDomainSearched,
 			lastDomainStatus,
-			pageNumber,
 		} = this.state;
 
 		const matchesSearchedDomain = suggestion => suggestion.domain_name === exactMatchDomain;
@@ -950,24 +986,7 @@ class RegisterDomainStep extends React.Component {
 			find( this.state.searchResults, matchesSearchedDomain );
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
-		const searchResults = this.state.searchResults || [];
-
-		const isKrackenUi = isPaginationEnabled;
-
-		let suggestions;
-		if ( isKrackenUi ) {
-			suggestions = searchResults.slice( 0, pageNumber * PAGE_SIZE );
-		} else {
-			suggestions = [ ...searchResults ];
-		}
-
-		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
-			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
-				suggestions.unshift( { is_placeholder: true } );
-			} else if ( this.state.subdomainSearchResults && this.state.subdomainSearchResults.length ) {
-				suggestions.unshift( this.state.subdomainSearchResults[ 0 ] );
-			}
-		}
+		const suggestions = this.getSuggestionsFromProps();
 
 		// the search returned no results
 		if (
@@ -978,7 +997,9 @@ class RegisterDomainStep extends React.Component {
 			return this.renderExampleSuggestions();
 		}
 
-		const showTldFilterBar = config.isEnabled( 'domains/kracken-ui/tld-filter' );
+		const showTldFilterBar =
+			config.isEnabled( 'domains/kracken-ui/tld-filter' ) &&
+			abtest( 'domainSearchTLDFilterPlacement' ) === 'belowFeatured';
 
 		return (
 			<DomainSearchResults

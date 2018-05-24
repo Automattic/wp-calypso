@@ -110,4 +110,12 @@ export default {
 		},
 		defaultVariation: 'domainsbot',
 	},
+	domainSearchTLDFilterPlacement: {
+		datestamp: '20180528',
+		variations: {
+			belowFeatured: 50,
+			aboveFeatured: 50,
+		},
+		defaultVariation: 'belowFeatured',
+	},
 };
