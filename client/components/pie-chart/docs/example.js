@@ -9,11 +9,8 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import CardHeading from 'components/card-heading';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
-import PieChartPlaceholder from 'components/pie-chart/placeholder';
-import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
 
 class PieChartExample extends Component {
 	static displayName = 'PieChart';
@@ -78,8 +75,8 @@ class PieChartExample extends Component {
 
 	render() {
 		const data = [];
+
 		for ( let seriesName of [ 'direct', 'discovery', 'referral' ] ) {
-			const series = this.state[ seriesName ];
 			if ( this.state[ seriesName ].show ) {
 				data.push( {
 					value: this.state[ seriesName ].value || 0,
@@ -94,23 +91,28 @@ class PieChartExample extends Component {
 				<a className="docs__design-toggle button" onClick={ this.changeShowDataControls }>
 					{ this.state.showDataControls ? 'Hide Data Controls' : 'Show Data Controls' }
 				</a>
+
 				<Card>
 					<PieChart data={ data } title={ this.titleFunc } />
 					<PieChartLegend data={ data } />
 				</Card>
+
 				{ this.state.showDataControls && (
 					<Card>
 						{ [ 'direct', 'discovery', 'referral' ].map( seriesName => {
 							return (
 								<div key={ seriesName }>
 									<h2>{ this.state[ seriesName ].name }</h2>
+
 									<input
 										name={ seriesName }
 										type="number"
 										value={ this.state[ seriesName ].value }
 										onChange={ this.changeValue }
 									/>
-									<label>{ 'Show' }</label>{' '}
+
+									<label>{ 'Show' }</label>{ ' ' }
+
 									<input
 										name={ seriesName }
 										type="checkbox"

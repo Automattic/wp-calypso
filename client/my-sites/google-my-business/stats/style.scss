@@ -1,13 +1,12 @@
 .gmb-stats__metrics {
-	@include breakpoint( '>1280px' ) {
+	@include breakpoint( '>1040px' ) {
 		column-count: 2;
 		column-gap: 16px;
 	}
 
 	.pie-chart__chart-drawing,
 	.pie-chart__placeholder-drawing {
-		min-width: 110px;
-		max-width: 25%;
+		max-width: 30%;
 	}
 }
 
