@@ -253,7 +253,11 @@ class GoogleMyBusinessStatsChart extends Component {
 						</div>
 					) }
 
-					<select value={ interval } onChange={ this.handleIntervalChange }>
+					<select
+						className="gmb-stats__chart-interval"
+						onChange={ this.handleIntervalChange }
+						value={ interval }
+					>
 						<option value="week">{ translate( 'Week' ) }</option>
 						<option value="month">{ translate( 'Month' ) }</option>
 						<option value="quarter">{ translate( 'Quarter' ) }</option>

@@ -63,5 +63,12 @@
 }
 
 .gmb-stats__chart {
+	margin-top: 20px;
 	position: relative;
+}
+
+.gmb-stats__chart-interval {
+	@include breakpoint( '<480px' ) {
+		width: 100%;
+	}
 }
