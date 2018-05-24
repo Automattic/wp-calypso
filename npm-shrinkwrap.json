@@ -12503,8 +12503,8 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "2.1.9",
-      "integrity": "sha512-8bkVfKcMy9b2YNQ52oETkvDDe2tHf8L8xCi4LXVDxUhrjamzfWsHe2UkSFk9Hvau9K4mbtRz5D0KVZhwwUXGow=="
+      "version": "2.1.10",
+      "integrity": "sha512-lGQocN7VDL5aue1SMwLifFe88UT1zqcLJ6v0x+QtL3Ws5yYfLC3sM+qaHVGrRdqFh3GZsc4PG4gzt+oGZgX+7Q=="
     },
     "npm-run-all": {
       "version": "4.0.2",
