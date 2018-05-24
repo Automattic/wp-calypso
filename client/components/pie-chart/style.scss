@@ -13,7 +13,7 @@
 
 .pie-chart__title {
 	margin-top: 15px;
-	font-size: 24px;
+	font-size: 21px;
 	text-align: center;
 }
 
@@ -42,12 +42,8 @@
 	align-items: flex-start;
 	margin-top: 20px;
 
-	.legend-item {
+	.legend-item:not( :first-child ) {
 		margin-top: 20px;
-	}
-
-	.legend-item__title-name {
-		font-size: 21px;
 	}
 }
 
