@@ -27,12 +27,9 @@ class SupportInfo extends Component {
 	};
 
 	render() {
-		const { text, link, translate } = this.props;
-		let { privacyLink } = this.props;
-
-		if ( ! privacyLink && privacyLink !== false && link ) {
-			privacyLink = link + '#privacy';
-		}
+		const { text, link, privacyLink, translate } = this.props;
+		const actualPrivacyLink =
+			! privacyLink && privacyLink !== false && link ? link + '#privacy' : privacyLink;
 
 		return (
 			<div className="support-info">
@@ -45,9 +42,9 @@ class SupportInfo extends Component {
 							</ExternalLink>
 						</span>
 					) }
-					{ privacyLink && (
+					{ actualPrivacyLink && (
 						<span className="support-info__privacy">
-							<ExternalLink href={ privacyLink } target="_blank" rel="noopener noreferrer">
+							<ExternalLink href={ actualPrivacyLink } target="_blank" rel="noopener noreferrer">
 								{ translate( 'Privacy Information' ) }
 							</ExternalLink>
 						</span>

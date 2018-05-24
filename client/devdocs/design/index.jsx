@@ -99,6 +99,7 @@ import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
+import SupportInfoExample from 'components/support-info/docs/example';
 import TextareaAutosize from 'components/textarea-autosize/docs/example';
 import TextDiff from 'components/text-diff/docs/example';
 import TileGrid from 'components/tile-grid/docs/example';
@@ -237,6 +238,7 @@ class DesignAssets extends React.Component {
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<Suggestions readmeFilePath="suggestions" />
+					<SupportInfoExample />
 					<TextareaAutosize readmeFilePath="textarea-autosize" />
 					<TextDiff readmeFilePath="text-diff" />
 					<TileGrid readmeFilePath="tile-grid" />
