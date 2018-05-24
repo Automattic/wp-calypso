@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ import classNames from 'classnames';
 import * as postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
 
 class EditorStatusLabel extends React.Component {
@@ -46,23 +47,23 @@ class EditorStatusLabel extends React.Component {
 	}
 
 	render() {
-		if ( ! this.props.post ) {
+		if ( ! this.props.post && ! this.props.isNew ) {
 			return <EditorStatusLabelPlaceholder className="editor-status-label" />;
 		}
 
 		const className = classNames(
 			'editor-status-label',
 			'is-plain',
-			'is-' + this.props.post.status
+			'is-' + get( this.props.post, 'status', 'draft' )
 		);
 
 		return <span className={ className }>{ this.renderLabel() }</span>;
 	}
 
 	renderLabel() {
-		const { post, translate, moment } = this.props;
+		const { isNew, post, translate, moment } = this.props;
 
-		if ( ! post.modified ) {
+		if ( isNew ) {
 			return translate( 'New Draft' );
 		}
 
@@ -133,5 +134,7 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const post = getSitePost( state, siteId, postId );
-	return { post };
+	const isNew = isEditorNewPost( state );
+
+	return { isNew, post };
 } )( localize( EditorStatusLabel ) );
