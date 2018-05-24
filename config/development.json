@@ -118,7 +118,6 @@
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/notifications": true,
-		"me/privacy": true,
 		"me/trophies": false,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,

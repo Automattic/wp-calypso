@@ -111,7 +111,7 @@ const Privacy = createReactClass( {
 							<p>
 								{ translate(
 									'We use other tracking tools, including some from third parties. ' +
-										'{{cookiePolicyLink}}Read about those{{/cookiePolicyLink}} these and how to ' +
+										'{{cookiePolicyLink}}Read about these{{/cookiePolicyLink}} and how to ' +
 										'control them.',
 									{
 										components: {
