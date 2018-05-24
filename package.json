@@ -114,7 +114,7 @@
     "morgan": "1.2.0",
     "ms": "0.7.1",
     "node-sass": "4.5.3",
-    "notifications-panel": "2.1.9",
+    "notifications-panel": "2.1.10",
     "npm-run-all": "4.0.2",
     "object-path-immutable": "0.5.2",
     "objectpath": "1.2.1",
