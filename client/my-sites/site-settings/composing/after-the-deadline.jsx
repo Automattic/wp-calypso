@@ -19,8 +19,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TokenField from 'components/token-field';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
@@ -216,22 +215,12 @@ class AfterTheDeadline extends Component {
 				<QueryJetpackConnection siteId={ selectedSiteId } />
 
 				<div className="composing__module-settings site-settings__child-settings">
-					<div className="composing__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate(
-								'Checks your content for correct grammar and spelling, ' +
-									'misused words, and style while you write.'
-							) }{' '}
-							<ExternalLink
-								href="https://jetpack.com/support/spelling-and-grammar/"
-								icon={ false }
-								target="_blank"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
-
+					<SupportInfo
+						text={ translate(
+							'Checks your content for correct grammar and spelling, ' + 'misused words, and style.'
+						) }
+						link="https://jetpack.com/support/spelling-and-grammar/"
+					/>
 					{ this.renderProofreadingSection() }
 					{ this.renderAutoLanguageDetectionSection() }
 					{ this.renderEnglishOptionsSection() }

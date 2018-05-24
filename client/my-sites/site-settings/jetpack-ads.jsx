@@ -19,7 +19,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
+import SupportInfo from 'components/support-info';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -81,15 +81,12 @@ class JetpackAds extends Component {
 
 		return (
 			<div>
-				<div className="site-settings__info-link-container">
-					<InfoPopover position="left">
-						{ translate( 'Displays high-quality ads on your site that allow you to earn income.' ) }{' '}
-						<ExternalLink href="https://jetpack.com/support/ads" icon={ false } target="_blank">
-							{ translate( 'Learn more' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
-
+				<SupportInfo
+					text={ translate(
+						'Displays high-quality ads on your site that allow you to earn income.'
+					) }
+					link="https://jetpack.com/support/ads/"
+				/>
 				<div>
 					{ translate(
 						'Show ads on the first article on your home page or at the end of every page and post. ' +

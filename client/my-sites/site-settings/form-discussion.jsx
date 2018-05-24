@@ -13,6 +13,7 @@ import { flowRight, pick } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import SupportInfo from 'components/support-info';
 import CommentDisplaySettings from './comment-display-settings';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -185,12 +186,28 @@ class SiteSettingsFormDiscussion extends Component {
 						'Comments should be displayed with the older comments at the top of each page'
 					) }
 				</CompactFormToggle>
+
+				{ this.props.isJetpack && (
+					<SupportInfo
+						text={ translate( 'Hovercards appear when you place your mouse over any Gravatar.' ) }
+						link="https://jetpack.com/support/gravatar-hovercards/"
+					/>
+				) }
 				<JetpackModuleToggle
 					disabled={ isRequestingSettings || isSavingSettings }
 					label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
 					moduleSlug="gravatar-hovercards"
 					siteId={ siteId }
 				/>
+
+				{ this.props.isJetpack && (
+					<SupportInfo
+						text={ translate(
+							'Comment Likes are a fun, easy way to demonstrate your appreciation or agreement.'
+						) }
+						link="https://jetpack.com/support/comment-likes/"
+					/>
+				) }
 				<JetpackModuleToggle
 					disabled={ isRequestingSettings || isSavingSettings }
 					label={ translate( 'Enable comment likes' ) }

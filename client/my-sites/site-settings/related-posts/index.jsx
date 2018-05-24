@@ -15,8 +15,7 @@ import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import RelatedContentPreview from './related-content-preview';
 
 const RelatedPosts = ( {
@@ -32,18 +31,12 @@ const RelatedPosts = ( {
 
 			<Card className="related-posts__card site-settings__traffic-settings">
 				<FormFieldset>
-					<div className="related-posts__info site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate( 'Automatically displays similar content at the end of each post.' ) }{' '}
-							<ExternalLink
-								href="https://jetpack.com/support/related-posts/"
-								icon={ false }
-								target="_blank"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate(
+							'Automatically displays similar content (related posts) at the end of each post.'
+						) }
+						link="https://jetpack.com/support/related-posts/"
+					/>
 
 					<CompactFormToggle
 						checked={ !! fields.jetpack_relatedposts_enabled }

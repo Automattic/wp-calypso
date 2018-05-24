@@ -17,8 +17,7 @@ import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SectionHeader from 'components/section-header';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -137,18 +136,10 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<SectionHeader label={ translate( 'Downtime Monitoring' ) } />
 
 				<Card className="jetpack-monitor-settings">
-					<div className="site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate( "Notifies you when there's an issue with your site." ) }{' '}
-							<ExternalLink
-								href="https://jetpack.com/support/monitor/"
-								icon={ false }
-								target="_blank"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate( "Notifies you when there's an issue with your site." ) }
+						link="https://jetpack.com/support/monitor/"
+					/>
 
 					<JetpackModuleToggle
 						siteId={ siteId }

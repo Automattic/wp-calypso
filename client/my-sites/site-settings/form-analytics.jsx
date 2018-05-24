@@ -16,6 +16,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import Banner from 'components/banner';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -179,6 +180,14 @@ export class GoogleAnalyticsForm extends Component {
 					<Card className="analytics-settings site-settings__analytics-settings">
 						{ siteIsJetpack && (
 							<fieldset>
+								<SupportInfo
+									text={ translate(
+										'Reports help you track the path visitors take' +
+											' through your site, and goal conversion lets you' +
+											' measure how visitors complete specific tasks.'
+									) }
+									link="https://jetpack.com/support/google-analytics/"
+								/>
 								<JetpackModuleToggle
 									siteId={ siteId }
 									moduleSlug="google-analytics"
