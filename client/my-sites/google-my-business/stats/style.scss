@@ -18,10 +18,24 @@
 
 .gmb-stats__chart {
 	margin-top: 20px;
-	position: relative;
+	position: relative; // Used to position error and empty data notices
 
 	.pie-chart__legend {
 		margin-top: 20px;
+	}
+}
+
+.gmb-stats__pie-chart {
+	position: relative; // Used to position error and empty data notices
+
+	.chart__empty-notice {
+		margin-top: -35px;
+	}
+}
+
+.gmb-stats__line-chart {
+	.chart__empty-notice {
+		margin-top: 16px;
 	}
 }
 
