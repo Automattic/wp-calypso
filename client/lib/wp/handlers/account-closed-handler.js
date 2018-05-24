@@ -1,16 +1,11 @@
 /** @format */
 
-/**
- * Internal Dependencies
- */
-import userUtils from 'lib/user/utils';
-
 export function handleAccountClosed( handler ) {
 	return ( params, fn ) =>
 		handler( params, ( err, response = {} ) => {
 			const { code, message } = response;
 			if ( +code === 400 && message === 'The user account has been closed...' ) {
-				userUtils.logout();
+				require( 'lib/user/utils' ).logout();
 			}
 			return fn( err, response );
 		} );
