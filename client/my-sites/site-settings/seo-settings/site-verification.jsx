@@ -310,8 +310,7 @@ class SiteVerification extends Component {
 						<FormFieldset>
 							<SupportInfo
 								text={ translate(
-									'Provides hidden tags needed to verify your' +
-										' WordPress site with various services.'
+									'Provides hidden tags needed to verify your WordPress site with various services.'
 								) }
 								link="https://jetpack.com/support/site-verification-tools/"
 							/>
