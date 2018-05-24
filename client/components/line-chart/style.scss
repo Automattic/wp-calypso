@@ -1,7 +1,3 @@
-.line-chart {
-	margin-top: 10px;
-}
-
 .line-chart__line-color-0 {
 	fill: none;
 	stroke: $blue-dark;
@@ -132,7 +128,7 @@
 	cursor: pointer;
 	margin-right: 20px;
 
-	.legend-item {
+	.legend-item:not( :first-child ) {
 		margin-left: 20px;
 	}
 }

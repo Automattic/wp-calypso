@@ -19,12 +19,14 @@
 .gmb-stats__chart {
 	margin-top: 20px;
 	position: relative;
+
+	.pie-chart__legend {
+		margin-top: 20px;
+	}
 }
 
 .gmb-stats__chart-interval {
-	&:not( :first-child ) {
-		margin-top: 10px;
-	}
+	margin-top: 10px;
 
 	@include breakpoint( '<480px' ) {
 		width: 100%;
