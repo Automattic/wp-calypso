@@ -213,7 +213,11 @@ class PodcastCoverImageSetting extends PureComponent {
 		} );
 
 		return (
-			<div className={ classNames }>
+			<button
+				className={ classNames }
+				onClick={ this.showModal }
+				onMouseEnter={ this.preloadModal }
+			>
 				{ imageSrc ? (
 					<Image className="podcast-cover-image-setting__img" src={ imageSrc } alt="" />
 				) : (
@@ -222,7 +226,7 @@ class PodcastCoverImageSetting extends PureComponent {
 					</span>
 				) }
 				{ isTransient && <Spinner /> }
-			</div>
+			</button>
 		);
 	}
 
