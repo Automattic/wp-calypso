@@ -1,11 +1,16 @@
 /** @format */
 
+/**
+ * External Dependencies
+ */
+import { startsWith } from 'lodash';
+
 export function handleAccountClosed( handler ) {
 	return ( params, fn ) =>
 		handler( params, ( err, response ) => {
 			if ( err ) {
 				const { statusCode, message } = err;
-				if ( +statusCode === 400 && message === 'The user account has been closed...' ) {
+				if ( +statusCode === 400 && startsWith( message, 'The user account has been closed' ) ) {
 					require( 'lib/user/utils' ).logout();
 					return;
 				}
