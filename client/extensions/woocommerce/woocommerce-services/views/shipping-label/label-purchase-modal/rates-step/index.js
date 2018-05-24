@@ -126,7 +126,9 @@ const showCheckoutShippingInfo = props => {
 
 		return (
 			<div className="rates-step__shipping-info">
-				<Notice showDismiss={ false }>{ shippingInfo }</Notice>
+				<Notice status="is-info" showDismiss={ false }>
+					{ shippingInfo }
+				</Notice>
 			</div>
 		);
 	}
