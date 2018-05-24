@@ -26,6 +26,7 @@ import {
 	selectNormalizedAddress,
 	confirmAddressSuggestion,
 	editAddress,
+	editUnverifiableAddress,
 	updateAddressValue,
 	submitAddressForNormalization,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
@@ -56,9 +57,9 @@ const AddressFields = props => {
 	if ( isNormalized ) {
 		const confirmAddressSuggestionHandler = () =>
 			props.confirmAddressSuggestion( orderId, siteId, group );
-		const editAddressHandler = () => props.editAddress( orderId, siteId, group );
 
 		if ( normalized && ! isEqual( normalized, values ) ) {
+			const editAddressHandler = () => props.editAddress( orderId, siteId, group );
 			const selectNormalizedAddressHandler = select =>
 				props.selectNormalizedAddress( orderId, siteId, group, select );
 
@@ -76,11 +77,14 @@ const AddressFields = props => {
 		}
 
 		if ( 0 < size( fieldErrors ) ) {
+			const editUnverifiableAddressHandler = () =>
+				props.editUnverifiableAddress( orderId, siteId, group );
+
 			return (
 				<UnverifiedAddress
 					values={ values }
 					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
-					editAddress={ editAddressHandler }
+					editUnverifiableAddress={ editUnverifiableAddressHandler }
 					countriesData={ storeOptions.countriesData }
 				/>
 			);
@@ -220,6 +224,7 @@ const mapDispatchToProps = dispatch => {
 			selectNormalizedAddress,
 			confirmAddressSuggestion,
 			editAddress,
+			editUnverifiableAddress,
 			updateAddressValue,
 			submitAddressForNormalization,
 		},

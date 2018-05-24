@@ -20,7 +20,7 @@ import AddressSummary from './summary';
 const UnverifiedAddress = ( {
 	values,
 	countriesData,
-	editAddress,
+	editUnverifiableAddress,
 	confirmAddressSuggestion,
 	translate,
 } ) => {
@@ -85,7 +85,7 @@ const UnverifiedAddress = ( {
 				<FormButton type="button" isPrimary={ false } onClick={ confirmAddressSuggestion }>
 					{ translate( 'Use address as entered' ) }
 				</FormButton>
-				<FormButton type="button" onClick={ editAddress }>
+				<FormButton type="button" onClick={ editUnverifiableAddress }>
 					{ translate( 'Edit address' ) }
 				</FormButton>
 			</div>
@@ -96,7 +96,7 @@ const UnverifiedAddress = ( {
 UnverifiedAddress.propTypes = {
 	values: PropTypes.object.isRequired,
 	confirmAddressSuggestion: PropTypes.func.isRequired,
-	editAddress: PropTypes.func.isRequired,
+	editUnverifiableAddress: PropTypes.func.isRequired,
 	countriesData: PropTypes.object.isRequired,
 };
 
