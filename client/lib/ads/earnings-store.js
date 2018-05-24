@@ -17,12 +17,12 @@ import emitter from 'lib/mixins/emitter';
  */
 const debug = debugModule( 'calypso:wordads:store' );
 
-let _earnings = {},
-	_loadingError = null,
-	_isLoading = false,
-	EarningsStore;
+let _loadingError = null,
+	_isLoading = false;
 
-EarningsStore = {
+const _earnings = {};
+
+const EarningsStore = {
 	get: function() {
 		return _earnings;
 	},
