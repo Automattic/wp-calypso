@@ -248,8 +248,6 @@ class GoogleMyBusinessStatsChart extends Component {
 							<CardHeading tagName={ 'h2' } size={ 16 }>
 								{ description }
 							</CardHeading>
-
-							<hr className="gmb-stats__chart-hr" />
 						</div>
 					) }
 
