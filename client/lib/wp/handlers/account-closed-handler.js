@@ -11,7 +11,7 @@ export function handleAccountClosed( handler ) {
 			if ( err ) {
 				const { statusCode, message } = err;
 				if ( +statusCode === 400 && startsWith( message, 'The user account has been closed' ) ) {
-					require( 'lib/user/utils' ).logout();
+					require( 'lib/user/utils' ).default.logout();
 					return;
 				}
 			}
