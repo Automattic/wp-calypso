@@ -1,5 +1,5 @@
 /**
- * Detect error looking in the reponse data object.
+ * Detect error looking in the response data object.
  *
  *
  * @format

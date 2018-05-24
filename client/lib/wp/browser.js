@@ -16,6 +16,7 @@ import config from 'config';
 import wpcomSupport from 'lib/wp/support';
 import { injectLocalization } from './localization';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
+import { injectAccountClosedHandler } from './handlers/account-closed-handler';
 import * as oauthToken from 'lib/oauth-token';
 import wpcomXhrWrapper from 'lib/wpcom-xhr-wrapper';
 import wpcomProxyRequest from 'wpcom-proxy-request';
@@ -71,6 +72,8 @@ if ( 'development' === process.env.NODE_ENV ) {
 injectLocalization( wpcom );
 
 injectGuestSandboxTicketHandler( wpcom );
+
+injectAccountClosedHandler( wpcom );
 
 /**
  * Expose `wpcom`
