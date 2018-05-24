@@ -10,7 +10,15 @@ jobs:
           CIRCLE_TEST_REPORTS: /tmp/test_results
 
     steps:
+      - restore_cache:
+          key: v1-20180524-git
+
       - checkout
+
+      - save_cache:
+          key: v1-20180524-git
+          paths:
+            - ".git"
 
       - run:
           name: Create Directories for Results and Artifacts
