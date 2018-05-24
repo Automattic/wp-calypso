@@ -2,9 +2,8 @@
 /**
  * External dependencies
  */
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
-import { expect } from 'chai';
 import { getLocaleSlug } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -105,26 +104,25 @@ jest.mock( 'i18n-calypso', () => ( {
 describe( 'utils', () => {
 	describe( '#isDefaultLocale', () => {
 		test( 'should return false when a non-default locale provided', () => {
-			expect( isDefaultLocale( 'fr' ) ).to.be.false;
+			expect( isDefaultLocale( 'fr' ) ).toEqual( false );
 		} );
 
 		test( 'should return true when a default locale provided', () => {
-			expect( isDefaultLocale( 'en' ) ).to.be.true;
+			expect( isDefaultLocale( 'en' ) ).toEqual( true );
 		} );
 	} );
 
 	describe( '#addLocaleToPath', () => {
 		test( 'adds a locale to the path', () => {
-			assert.equal( addLocaleToPath( '/start/flow/step', 'fr' ), '/start/flow/step/fr' );
+			expect( addLocaleToPath( '/start/flow/step', 'fr' ) ).toEqual( '/start/flow/step/fr' );
 		} );
 
 		test( 'adds a locale to the path, replacing any previous locale', () => {
-			assert.equal( addLocaleToPath( '/start/flow/step/de', 'fr' ), '/start/flow/step/fr' );
+			expect( addLocaleToPath( '/start/flow/step/de', 'fr' ) ).toEqual( '/start/flow/step/fr' );
 		} );
 
 		test( 'adds a locale to the path, keeping query string intact', () => {
-			assert.equal(
-				addLocaleToPath( '/start/flow/step?foo=bar', 'fr' ),
+			expect( addLocaleToPath( '/start/flow/step?foo=bar', 'fr' ) ).toEqual(
 				'/start/flow/step/fr?foo=bar'
 			);
 		} );
@@ -132,166 +130,161 @@ describe( 'utils', () => {
 
 	describe( '#removeLocaleFromPath', () => {
 		test( 'should remove the :lang part of the URL', () => {
-			assert.equal( removeLocaleFromPath( '/start/fr' ), '/start' );
-			assert.equal( removeLocaleFromPath( '/start/flow/fr' ), '/start/flow' );
-			assert.equal( removeLocaleFromPath( '/start/flow/step' ), '/start/flow/step' );
+			expect( removeLocaleFromPath( '/start/fr' ) ).toEqual( '/start' );
+			expect( removeLocaleFromPath( '/start/flow/fr' ) ).toEqual( '/start/flow' );
+			expect( removeLocaleFromPath( '/start/flow/step' ) ).toEqual( '/start/flow/step' );
 		} );
 
 		test( 'should remove the :lang part of the URL, keeping any query string', () => {
-			assert.equal( removeLocaleFromPath( '/log-in/pl?foo=bar' ), '/log-in?foo=bar' );
-			assert.equal(
-				removeLocaleFromPath( '/start/flow/step/fr?foo=bar' ),
+			expect( removeLocaleFromPath( '/log-in/pl?foo=bar' ) ).toEqual( '/log-in?foo=bar' );
+			expect( removeLocaleFromPath( '/start/flow/step/fr?foo=bar' ) ).toEqual(
 				'/start/flow/step?foo=bar'
 			);
 		} );
 
 		test( 'should not change the URL if no lang is present', () => {
-			assert.equal( removeLocaleFromPath( '/log-in' ), '/log-in' );
-			assert.equal(
-				removeLocaleFromPath( '/start/flow/step?foo=bar' ),
+			expect( removeLocaleFromPath( '/log-in' ) ).toEqual( '/log-in' );
+			expect( removeLocaleFromPath( '/start/flow/step?foo=bar' ) ).toEqual(
 				'/start/flow/step?foo=bar'
 			);
 		} );
 
 		test( 'should not remove the :flow part of the URL', () => {
-			assert.equal( removeLocaleFromPath( '/start' ), '/start' );
-			assert.equal( removeLocaleFromPath( '/start/flow' ), '/start/flow' );
+			expect( removeLocaleFromPath( '/start' ) ).toEqual( '/start' );
+			expect( removeLocaleFromPath( '/start/flow' ) ).toEqual( '/start/flow' );
 		} );
 
 		test( 'should not remove the :step part of the URL', () => {
-			assert.equal( removeLocaleFromPath( '/start/flow/step' ), '/start/flow/step' );
+			expect( removeLocaleFromPath( '/start/flow/step' ) ).toEqual( '/start/flow/step' );
 		} );
 
 		test( 'should not remove keys from an invite', () => {
-			assert.equal(
-				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/es' ),
+			expect( removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/es' ) ).toEqual(
 				'/accept-invite/site.wordpress.com/123456'
 			);
-			assert.equal(
-				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ),
-				'/accept-invite/site.wordpress.com/123456/123456/123456'
-			);
+			expect(
+				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' )
+			).toEqual( '/accept-invite/site.wordpress.com/123456/123456/123456' );
 		} );
 	} );
 
 	describe( '#getLocaleFromPath', () => {
 		test( 'should return undefined when no locale at end of path', () => {
-			assert.equal( getLocaleFromPath( '/start' ), undefined );
+			expect( getLocaleFromPath( '/start' ) ).toBeUndefined();
 		} );
 
 		test( 'should return locale string when at end of path', () => {
-			assert.equal( getLocaleFromPath( '/start/es' ), 'es' );
-			assert.equal(
-				getLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ),
-				'es'
-			);
+			expect( getLocaleFromPath( '/start/es' ) ).toEqual( 'es' );
+			expect(
+				getLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' )
+			).toEqual( 'es' );
 		} );
 
 		test( 'should correctly handle paths with query string', () => {
-			assert.equal( getLocaleFromPath( '/start/es?query=string' ), 'es' );
+			expect( getLocaleFromPath( '/start/es?query=string' ) ).toEqual( 'es' );
 		} );
 	} );
 
 	describe( '#getLanguage', () => {
 		test( 'should return a language', () => {
-			expect( getLanguage( 'ja' ).langSlug ).to.equal( 'ja' );
+			expect( getLanguage( 'ja' ).langSlug ).toEqual( 'ja' );
 		} );
 
 		test( 'should return a language with a country code', () => {
-			expect( getLanguage( 'pt-br' ).langSlug ).to.equal( 'pt-br' );
+			expect( getLanguage( 'pt-br' ).langSlug ).toEqual( 'pt-br' );
 		} );
 
 		test( 'should fall back to the language code when a country code is not available', () => {
-			expect( getLanguage( 'fr-zz' ).langSlug ).to.equal( 'fr' );
+			expect( getLanguage( 'fr-zz' ).langSlug ).toEqual( 'fr' );
 		} );
 
 		test( 'should return undefined when no arguments are given', () => {
 			//note that removeLocaleFromPath is dependant on getLanguage returning undefined in this case.
-			expect( getLanguage() ).to.equal( undefined );
+			expect( getLanguage() ).toBeUndefined();
 		} );
 
 		test( 'should return undefined when the locale is invalid', () => {
 			//note that removeLocaleFromPath is dependant on getLanguage returning undefined in this case.
-			expect( getLanguage( 'zz' ) ).to.equal( undefined );
+			expect( getLanguage( 'zz' ) ).toBeUndefined();
 		} );
 
 		test( 'should return undefined when we lookup random words', () => {
-			expect( getLanguage( 'themes' ) ).to.equal( undefined );
-			expect( getLanguage( 'log-in' ) ).to.equal( undefined );
+			expect( getLanguage( 'themes' ) ).toBeUndefined();
+			expect( getLanguage( 'log-in' ) ).toBeUndefined();
 		} );
 
 		test( 'should return a language with a three letter country code', () => {
-			expect( getLanguage( 'ast' ).langSlug ).to.equal( 'ast' );
+			expect( getLanguage( 'ast' ).langSlug ).toEqual( 'ast' );
 		} );
 
 		test( 'should return the variant', () => {
-			expect( getLanguage( 'de', 'de_formal' ).langSlug ).to.equal( 'de_formal' );
+			expect( getLanguage( 'de', 'de_formal' ).langSlug ).toEqual( 'de_formal' );
 		} );
 
 		test( 'should return the parent slug since the given variant does not exist', () => {
-			expect( getLanguage( 'fr', 'fr_formal' ).langSlug ).to.equal( 'fr' );
+			expect( getLanguage( 'fr', 'fr_formal' ).langSlug ).toEqual( 'fr' );
 		} );
 	} );
 
 	describe( '#isLocaleVariant', () => {
 		test( 'should return false by default', () => {
-			expect( isLocaleVariant( 'lol' ) ).to.be.false;
-			expect( isLocaleVariant() ).to.be.false;
+			expect( isLocaleVariant( 'lol' ) ).toEqual( false );
+			expect( isLocaleVariant() ).toEqual( false );
 		} );
 
 		test( 'should detect a locale variant', () => {
-			expect( isLocaleVariant( 'de_formal' ) ).to.be.true;
+			expect( isLocaleVariant( 'de_formal' ) ).toEqual( true );
 		} );
 
 		test( 'should detect a root language', () => {
-			expect( isLocaleVariant( 'de' ) ).to.be.false;
+			expect( isLocaleVariant( 'de' ) ).toEqual( false );
 		} );
 	} );
 
 	describe( '#canBeTranslated', () => {
 		test( 'should return true by default', () => {
-			expect( canBeTranslated() ).to.be.true;
+			expect( canBeTranslated() ).toEqual( true );
 		} );
 
 		test( 'should return false for elements in the exception list', () => {
-			expect( canBeTranslated( 'en' ) ).to.be.false;
-			expect( canBeTranslated( 'sr_latin' ) ).to.be.false;
+			expect( canBeTranslated( 'en' ) ).toEqual( false );
+			expect( canBeTranslated( 'sr_latin' ) ).toEqual( false );
 		} );
 
 		test( 'should return true for languages not in the exception list', () => {
-			expect( canBeTranslated( 'de' ) ).to.be.true;
+			expect( canBeTranslated( 'de' ) ).toEqual( true );
 		} );
 	} );
 
 	describe( '#getSupportSiteLocale', () => {
 		test( 'should return `en` by default', () => {
-			expect( getSupportSiteLocale() ).to.equal( 'en' );
+			expect( getSupportSiteLocale() ).toEqual( 'en' );
 		} );
 
 		test( 'should return support slug for current i18n locale slug if available in config', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'ja' );
-			expect( getSupportSiteLocale() ).to.equal( 'ja' );
+			expect( getSupportSiteLocale() ).toEqual( 'ja' );
 		} );
 
 		test( 'should return `en` for current i18n locale slug if not available in config', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'ar' );
-			expect( getSupportSiteLocale() ).to.equal( 'en' );
+			expect( getSupportSiteLocale() ).toEqual( 'en' );
 		} );
 	} );
 
 	describe( '#getForumUrl', () => {
 		test( 'should return `en` forum url by default', () => {
-			expect( getForumUrl() ).to.equal( '//en.forums.wordpress.com' );
+			expect( getForumUrl() ).toEqual( '//en.forums.wordpress.com' );
 		} );
 
 		test( 'should return forum url for current i18n locale slug if available in config', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( getForumUrl() ).to.equal( '//de.forums.wordpress.com' );
+			expect( getForumUrl() ).toEqual( '//de.forums.wordpress.com' );
 		} );
 
 		test( 'should return `en` for current i18n locale slug if not available in config', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'xxxx' );
-			expect( getForumUrl() ).to.equal( '//en.forums.wordpress.com' );
+			expect( getForumUrl() ).toEqual( '//en.forums.wordpress.com' );
 		} );
 	} );
 } );
