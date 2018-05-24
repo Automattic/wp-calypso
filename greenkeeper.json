@@ -1,0 +1,38 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "client/controller/package.json",
+        "client/extensions/hello-dolly/package.json",
+        "client/extensions/sensei/package.json",
+        "client/extensions/woocommerce/package.json",
+        "client/extensions/wp-job-manager/package.json",
+        "client/extensions/wp-super-cache/package.json",
+        "client/extensions/zoninator/package.json",
+        "client/layout/package.json",
+        "client/lib/formatting/decode-entities/package.json",
+        "client/lib/i18n-utils/package.json",
+        "client/lib/wp/package.json",
+        "client/login/package.json",
+        "client/me/sidebar-navigation/package.json",
+        "client/my-sites/checkout/checkout/package.json",
+        "client/my-sites/customize/package.json",
+        "client/my-sites/domains/domain-management/package.json",
+        "client/my-sites/domains/domain-search/package.json",
+        "client/my-sites/jetpack-manage-error-page/package.json",
+        "client/my-sites/navigation/package.json",
+        "client/my-sites/picker/package.json",
+        "client/my-sites/sidebar-navigation/package.json",
+        "client/my-sites/sidebar/package.json",
+        "client/my-sites/site-indicator/package.json",
+        "client/my-sites/sites/package.json",
+        "client/my-sites/theme/package.json",
+        "client/my-sites/themes/package.json",
+        "client/my-sites/welcome/package.json",
+        "client/signup/package.json",
+        "package.json",
+        "server/bundler/babel/babel-plugin-transform-wpcalypso-async/package.json"
+      ]
+    }
+  }
+}
