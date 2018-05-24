@@ -5,6 +5,9 @@
 	margin: 0;
 	text-align: center;
 	border: 1px solid $gray-lighten-20;
+	cursor: pointer;
+	height: 96px;
+	width: 96px;
 
 	&.is-transient .spinner {
 		position: absolute;

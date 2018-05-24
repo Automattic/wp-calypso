@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { head, isEqual, partial, uniqueId } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -34,6 +35,7 @@ import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import resizeImageUrl from 'lib/resize-image-url';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import Spinner from 'components/spinner';
 
 /**
  * Debug
@@ -53,6 +55,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		hasToggledModal: false,
 		isEditingCoverImage: false,
 		isModalVisible: false,
+		transientMediaId: null,
 	};
 
 	toggleModal = isModalVisible => {
@@ -85,6 +88,8 @@ class PodcastCoverImageSetting extends PureComponent {
 		// to reference it within this function
 		const transientMediaId = uniqueId( 'podcast-cover-image' );
 
+		this.setState( { transientMediaId } );
+
 		const checkUploadComplete = () => {
 			// MediaStore tracks pointers from transient media to the persisted
 			// copy, so if our request is for a media which is not transient,
@@ -109,6 +114,9 @@ class PodcastCoverImageSetting extends PureComponent {
 				debug( 'upload media', media );
 				this.props.onSelect( media.ID, media.URL );
 			}
+
+			// Remove transient image so that new image shows or if failed upload, the prior image
+			this.setState( { transientMediaId: null } );
 		};
 
 		MediaStore.on( 'change', checkUploadComplete );
@@ -192,11 +200,20 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	renderCoverPreview() {
-		const { coverImageUrl, translate } = this.props;
-		const imageSrc = coverImageUrl && resizeImageUrl( coverImageUrl, 96 );
+		const { coverImageUrl, siteId, translate } = this.props;
+		const { transientMediaId } = this.state;
+		const media = transientMediaId && MediaStore.get( siteId, transientMediaId );
+		const imageUrl = ( media && media.URL ) || coverImageUrl;
+		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
+		const isTransient = !! transientMediaId;
+
+		const classNames = classnames( 'podcast-cover-image-setting__preview', {
+			'is-blank': ! imageSrc,
+			'is-transient': isTransient,
+		} );
 
 		return (
-			<div className="podcast-cover-image-setting__preview">
+			<div className={ classNames }>
 				{ imageSrc ? (
 					<Image className="podcast-cover-image-setting__img" src={ imageSrc } alt="" />
 				) : (
@@ -204,6 +221,7 @@ class PodcastCoverImageSetting extends PureComponent {
 						{ translate( 'No image set' ) }
 					</span>
 				) }
+				{ isTransient && <Spinner /> }
 			</div>
 		);
 	}
