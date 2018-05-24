@@ -2,10 +2,13 @@
 
 export function handleAccountClosed( handler ) {
 	return ( params, fn ) =>
-		handler( params, ( err, response = {} ) => {
-			const { code, message } = response;
-			if ( +code === 400 && message === 'The user account has been closed...' ) {
-				require( 'lib/user/utils' ).logout();
+		handler( params, ( err, response ) => {
+			if ( err ) {
+				const { statusCode, message } = err;
+				if ( +statusCode === 400 && message === 'The user account has been closed...' ) {
+					require( 'lib/user/utils' ).logout();
+					return;
+				}
 			}
 			return fn( err, response );
 		} );
@@ -13,8 +16,6 @@ export function handleAccountClosed( handler ) {
 
 export function injectAccountClosedHandler( wpcom ) {
 	const request = wpcom.request.bind( wpcom );
-	return {
-		...wpcom,
-		request: handleAccountClosed( request ),
-	};
+	wpcom.request = handleAccountClosed( request );
+	return wpcom;
 }
