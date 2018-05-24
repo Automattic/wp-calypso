@@ -17,6 +17,7 @@ import {
 	isLocaleVariant,
 	canBeTranslated,
 	getSupportSiteLocale,
+	getForumUrl,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -25,6 +26,10 @@ jest.mock( 'config', () => key => {
 	}
 
 	if ( 'support_site_locales' === key ) {
+		return [ 'en', 'es', 'de', 'ja', 'pt-br' ];
+	}
+
+	if ( 'forum_locales' === key ) {
 		return [ 'en', 'es', 'de', 'ja', 'pt-br' ];
 	}
 
@@ -271,6 +276,22 @@ describe( 'utils', () => {
 		test( 'should return `en` for current i18n locale slug if not available in config', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'ar' );
 			expect( getSupportSiteLocale() ).to.equal( 'en' );
+		} );
+	} );
+
+	describe( '#getForumUrl', () => {
+		test( 'should return `en` forum url by default', () => {
+			expect( getForumUrl() ).to.equal( '//en.forums.wordpress.com' );
+		} );
+
+		test( 'should return forum url for current i18n locale slug if available in config', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( getForumUrl() ).to.equal( '//de.forums.wordpress.com' );
+		} );
+
+		test( 'should return `en` for current i18n locale slug if not available in config', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'xxxx' );
+			expect( getForumUrl() ).to.equal( '//en.forums.wordpress.com' );
 		} );
 	} );
 } );

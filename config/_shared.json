@@ -36,6 +36,7 @@
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
     "livechat_support_locales": [ "en", "es", "pt-br" ],
     "support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
+    "forum_locales": [ "ar", "de", "el", "en", "es", "fa", "fi", "fr", "he", "id", "it", "ja", "nl", "pt", "pt-br", "ru", "sv", "th", "tl", "tr" ],
     "english_locales": [ "en", "en-gb"],
     "languages": [
         { "value": 2, "langSlug": "af", "name": "Afrikaans", "wpLocale": "af", "territories": [ "002" ] },
