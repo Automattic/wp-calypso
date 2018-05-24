@@ -16,6 +16,7 @@ const AssetsWriter = require( './server/bundler/assets-writer' );
 const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 
 /**
  * Internal dependencies
@@ -201,6 +202,17 @@ const webpackConfig = {
 		new AssetsWriter( {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
+		} ),
+		new CircularDependencyPlugin( {
+			// exclude detection of files based on a RegExp
+			exclude: /node_modules/,
+			// add errors to webpack instead of warnings
+			failOnError: false,
+			// allow import cycles that include an asyncronous import,
+			// e.g. via import(/* webpackMode: "weak" */ './file.js')
+			allowAsyncCycles: false,
+			// set the current working directory for displaying module paths
+			cwd: process.cwd(),
 		} ),
 		shouldEmitStats &&
 			new StatsWriter( {

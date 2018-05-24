@@ -3337,6 +3337,10 @@
         "safe-buffer": "5.1.2"
       }
     },
+    "circular-dependency-plugin": {
+      "version": "5.0.2",
+      "integrity": "sha512-oC7/DVAyfcY3UWKm0sN/oVoDedQDQiw/vIiAnuTWTpE5s0zWf7l3WY417Xw/Fbi/QbAjctAkxgMiS9P0s3zkmA=="
+    },
     "circular-json": {
       "version": "0.3.3",
       "integrity": "sha512-UZK3NBx2Mca+b5LsG7bY183pHWt5Y1xts4P3Pz7ENTwGVnJOUWbRb3ocjvX7hx9tq/yTAdclXm9sZ38gNuem4A==",
