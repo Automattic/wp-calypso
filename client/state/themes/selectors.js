@@ -33,7 +33,6 @@ import {
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
-import { getForumUrl } from 'lib/i18n-utils';
 
 /**
  * Returns a theme object by site ID, theme ID pair.
@@ -503,7 +502,7 @@ export function getThemeForumUrl( state, themeId ) {
 		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
 	}
 	if ( isWpcomTheme( state, themeId ) ) {
-		return `${ getForumUrl() }/forum/themes`;
+		return '//en.forums.wordpress.com/forum/themes';
 	}
 	if ( isWporgTheme( state, themeId ) ) {
 		return '//wordpress.org/support/theme/' + themeId;
