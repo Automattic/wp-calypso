@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -13,7 +12,7 @@ import { invokeMap } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import AddressSummary from './summary';
@@ -72,14 +71,12 @@ const UnverifiedAddress = ( {
 								'You can use the tools below to manually verify.'
 						) }
 					</p>
-					<Button href={ uspsUrl } compact={ true } target="_blank">
-						<span>{ translate( 'Verify with USPS' ) }</span>
-						<Gridicon icon="external" />
-					</Button>
-					<Button href={ googleMapsUrl } compact={ true } target="_blank">
-						<span>{ translate( 'View on Google Maps' ) }</span>
-						<Gridicon icon="external" />
-					</Button>
+					<ExternalLink icon={ true } href={ uspsUrl } target="_blank">
+						{ translate( 'Verify with USPS' ) }
+					</ExternalLink>
+					<ExternalLink icon={ true } href={ googleMapsUrl } target="_blank">
+						{ translate( 'View on Google Maps' ) }
+					</ExternalLink>
 				</div>
 			</div>
 			<div>
