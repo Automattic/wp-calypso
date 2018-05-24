@@ -440,8 +440,8 @@ class TransferDomainStep extends React.Component {
 
 							this.setState( {
 								notice: this.props.translate(
-									'We are temporarily unable to support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}. ' +
-										'Please try again later or {{a}}map it{{/a}} instead.',
+									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
+										'but you can {{a}}map it{{/a}} instead.',
 									{
 										args: { tld },
 										components: {
