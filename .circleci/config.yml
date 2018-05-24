@@ -10,10 +10,6 @@ jobs:
           CIRCLE_TEST_REPORTS: /tmp/test_results
 
     steps:
-      - run:
-          name: Install greenkeeper's lockfile management
-          command: sudo npm install -g greenkeeper-lockfile@1
-
       - checkout
 
       - run:
@@ -34,7 +30,7 @@ jobs:
 
       - run:
           name: Update the lockfile
-          command: greenkeeper-lockfile-update
+          command: npx greenkeeper-lockfile-update
 
       - run: NODE_ENV=test npm run build-server
 
@@ -75,7 +71,7 @@ jobs:
 
       - run:
           name: Upload lockfile changes
-          command: greenkeeper-lockfile-update
+          command: npx greenkeeper-lockfile-update
 
       - run:
           name: Gather Test Results
