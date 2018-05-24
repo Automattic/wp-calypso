@@ -249,16 +249,17 @@ class GoogleMyBusinessStatsChart extends Component {
 								{ description }
 							</CardHeading>
 
-							<hr className="gmb-stats__metric-hr" />
+							<hr className="gmb-stats__chart-hr" />
 						</div>
 					) }
+
 					<select value={ interval } onChange={ this.handleIntervalChange }>
 						<option value="week">{ translate( 'Week' ) }</option>
 						<option value="month">{ translate( 'Month' ) }</option>
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
 					</select>
 
-					<div className="gmb-stats__metric-chart">
+					<div className="gmb-stats__chart">
 						{ this.renderChart() }
 						{ isEmptyChart && this.renderChartNotice( false ) }
 						{ !! statsError && this.renderChartNotice( true ) }
