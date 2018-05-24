@@ -13,6 +13,8 @@ const querymShotsEndpoint = ( options ) => {
 	const resolve = options.resolve || noop;
 	const reject = options.reject || noop;
 
+	const mShotsEndpointUrl = `https://s0.wp.com/mshots/v1/${url}`;
+
 	if ( ! url ) {
 		// TODO translate
 		reject( 'You must specify a site URL to be able to generate a preview of the site' );
@@ -20,7 +22,7 @@ const querymShotsEndpoint = ( options ) => {
 	}
 
 	request
-		.get( `https://s0.wp.com/mshots/v1/${url}` )
+		.get( mShotsEndpointUrl )
 		.responseType( 'blob' )
 		.then( res => {
 			if (
@@ -40,7 +42,7 @@ const querymShotsEndpoint = ( options ) => {
 					resolve( window.URL.createObjectURL( res.xhr.response ) );
 				}
 				catch ( e ) {
-					reject( e );
+					resolve( mShotsEndpointUrl );
 				}
 			}
 			else {
