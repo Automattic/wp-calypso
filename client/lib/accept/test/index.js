@@ -38,7 +38,7 @@ describe( '#accept()', () => {
 			done();
 		} );
 
-		document.querySelector( '.button:not( .is-primary )' ).click();
+		document.querySelector( '.button.is-cancel' ).click();
 	} );
 
 	test( 'should clean up after itself once the prompt is closed', () => {
