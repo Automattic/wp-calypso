@@ -57,18 +57,20 @@ const UnverifiedAddress = ( {
 	return (
 		<div>
 			<Notice status="is-info" showDismiss={ false }>
-				{ translate( 'We were unable to verify the address.' ) }
+				{ translate( 'We were unable to automatically verify the address.' ) }
 			</Notice>
-			<div>
-				<div>
-					<span>{ translate( 'Address entered' ) }</span>
+			<div className="address-step__unverifiable-container">
+				<div className="address-step__unverifiable-info">
+					<span className="address-step__unverifiable-title">
+						{ translate( 'Address entered' ) }
+					</span>
 					<AddressSummary values={ values } countriesData={ countriesData } />
 				</div>
-				<div>
+				<div className="address-step__unverifiable-info">
 					<p>
 						{ translate(
 							'Automatic verification failed for this address. ' +
-								'You can use the tools below to manually verify.'
+								'It may still be a valid address — use the tools below to manually verify.'
 						) }
 					</p>
 					<ExternalLink icon={ true } href={ uspsUrl } target="_blank">
@@ -79,7 +81,7 @@ const UnverifiedAddress = ( {
 					</ExternalLink>
 				</div>
 			</div>
-			<div>
+			<div className="address-step__unverifiable-actions step-confirmation-button">
 				<FormButton type="button" isPrimary={ false } onClick={ confirmAddressSuggestion }>
 					{ translate( 'Use address as entered' ) }
 				</FormButton>
