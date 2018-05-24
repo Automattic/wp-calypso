@@ -26,7 +26,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
-import PodcastCoverImageSetting from 'blocks/podcast-cover-image-setting';
+import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
