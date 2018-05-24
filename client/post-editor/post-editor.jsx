@@ -110,7 +110,6 @@ export class PostEditor extends React.Component {
 			selectedText: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
-			isLoadingRevision: false,
 			isTitleFocused: false,
 			showPreview: false,
 			isPostPublishPreview: false,
@@ -424,7 +423,6 @@ export class PostEditor extends React.Component {
 	};
 
 	restoreRevision = revision => {
-		this.setState( { isLoadingRevision: true } );
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( {
 			content: revision.content,
@@ -433,6 +431,9 @@ export class PostEditor extends React.Component {
 			excerpt: revision.excerpt,
 			title: revision.title,
 		} );
+		if ( this.editor ) {
+			this.editor.setEditorContent( revision.content, { initial: true } );
+		}
 	};
 
 	closeAutosaveDialog = () => {
@@ -467,12 +468,8 @@ export class PostEditor extends React.Component {
 			);
 		} else {
 			this.setState( this.getPostEditState(), function() {
-				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
+				if ( this.editor && didLoad ) {
 					this.editor.setEditorContent( this.state.post.content, { initial: true } );
-				}
-
-				if ( this.state.isLoadingRevision ) {
-					this.setState( { isLoadingRevision: false } );
 				}
 			} );
 		}
