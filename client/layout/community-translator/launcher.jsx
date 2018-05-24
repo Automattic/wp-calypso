@@ -8,15 +8,18 @@ import PropTypes from 'prop-types';
 import i18n, { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import translator from 'lib/translator-jumpstart';
+import translator, { trackTranslatorStatus } from 'lib/translator-jumpstart';
 import localStorageHelper from 'store';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
-import userSettings from 'lib/user-settings';
+import getUserSettings from 'state/selectors/get-user-settings';
+import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
+import QueryUserSettings from 'components/data/query-user-settings';
 
 class TranslatorLauncher extends React.PureComponent {
 	static displayName = 'TranslatorLauncher';
@@ -24,6 +27,16 @@ class TranslatorLauncher extends React.PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 	};
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		translator.init( nextProps.isUserSettingsReady );
+		trackTranslatorStatus( nextProps.isTranslatorEnabled );
+
+		if ( prevState.isEnabled !== translator.isEnabled() )
+			return { ...prevState, isEnabled: translator.isEnabled() };
+
+		return null;
+	}
 
 	state = {
 		infoDialogVisible: false,
@@ -34,12 +47,10 @@ class TranslatorLauncher extends React.PureComponent {
 
 	componentDidMount() {
 		i18n.on( 'change', this.onI18nChange );
-		userSettings.on( 'change', this.onUserSettingsChange );
 	}
 
 	componentWillUnmount() {
 		i18n.off( 'change', this.onI18nChange );
-		userSettings.off( 'change', this.onUserSettingsChange );
 	}
 
 	onI18nChange = () => {
@@ -58,12 +69,6 @@ class TranslatorLauncher extends React.PureComponent {
 		} else if ( this.state.isActive && ! translator.isActivated() ) {
 			// Deactivating
 			this.setState( { isActive: false } );
-		}
-	};
-
-	onUserSettingsChange = () => {
-		if ( this.state.isEnabled !== translator.isEnabled() ) {
-			this.setState( { isEnabled: translator.isEnabled() } );
 		}
 	};
 
@@ -86,10 +91,6 @@ class TranslatorLauncher extends React.PureComponent {
 		let launcherClasses = 'community-translator';
 		let toggleString;
 
-		if ( ! this.state.isEnabled ) {
-			return null;
-		}
-
 		if ( this.state.isActive ) {
 			toggleString = this.props.translate( 'Disable Translator' );
 			launcherClasses += ' is-active';
@@ -101,38 +102,46 @@ class TranslatorLauncher extends React.PureComponent {
 
 		return (
 			<div>
-				<Dialog
-					isVisible={ this.state.infoDialogVisible }
-					buttons={ infoDialogButtons }
-					onClose={ this.infoDialogClose }
-					additionalClassNames="community-translator__modal"
-				>
-					<h1>{ this.props.translate( 'Community Translator' ) }</h1>
-					<p>
-						{ this.props.translate(
-							'You have now enabled the translator. Right click the text to translate it.'
-						) }
-					</p>
-					<p>
-						<label>
-							<input type="checkbox" onClick={ this.toggleInfoCheckbox } />
-							<span>{ this.props.translate( "Don't show again" ) }</span>
-						</label>
-					</p>
-				</Dialog>
-				<div className={ launcherClasses }>
-					<a
-						className="community-translator__button"
-						onClick={ this.toggle }
-						title={ this.props.translate( 'Community Translator' ) }
+				<QueryUserSettings />
+				{ this.state.isEnabled && (
+					<Dialog
+						isVisible={ this.state.infoDialogVisible }
+						buttons={ infoDialogButtons }
+						onClose={ this.infoDialogClose }
+						additionalClassNames="community-translator__modal"
 					>
-						<Gridicon icon="globe" />
-						<div className="community-translator__text">{ toggleString }</div>
-					</a>
-				</div>
+						<h1>{ this.props.translate( 'Community Translator' ) }</h1>
+						<p>
+							{ this.props.translate(
+								'You have now enabled the translator. Right click the text to translate it.'
+							) }
+						</p>
+						<p>
+							<label htmlFor="toggle">
+								<input type="checkbox" id="toggle" onClick={ this.toggleInfoCheckbox } />
+								<span>{ this.props.translate( "Don't show again" ) }</span>
+							</label>
+						</p>
+					</Dialog>
+				) }
+				{ this.state.isEnabled && (
+					<div className={ launcherClasses }>
+						<button
+							className="community-translator__button"
+							onClick={ this.toggle }
+							title={ this.props.translate( 'Community Translator' ) }
+						>
+							<Gridicon icon="globe" />
+							<div className="community-translator__text">{ toggleString }</div>
+						</button>
+					</div>
+				) }
 			</div>
 		);
 	}
 }
 
-export default localize( TranslatorLauncher );
+export default connect( state => ( {
+	isUserSettingsReady: !! getUserSettings( state ),
+	isTranslatorEnabled: getOriginalUserSetting( state, 'enable_translator' ),
+} ) )( localize( TranslatorLauncher ) );
