@@ -20,6 +20,7 @@ import CountryDropdown from 'woocommerce/woocommerce-services/components/country
 import StateDropdown from 'woocommerce/woocommerce-services/components/state-dropdown';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
+import UnverifiedAddress from './unverified';
 import { decodeEntities } from 'lib/formatting';
 import {
 	selectNormalizedAddress,
@@ -50,26 +51,42 @@ const AddressFields = props => {
 		translate,
 	} = props;
 
-	if ( isNormalized && normalized && ! isEqual( normalized, values ) ) {
-		const selectNormalizedAddressHandler = select =>
-			props.selectNormalizedAddress( orderId, siteId, group, select );
+	const fieldErrors = isObject( errors ) ? errors : {};
+
+	if ( isNormalized ) {
 		const confirmAddressSuggestionHandler = () =>
 			props.confirmAddressSuggestion( orderId, siteId, group );
 		const editAddressHandler = () => props.editAddress( orderId, siteId, group );
-		return (
-			<AddressSuggestion
-				values={ values }
-				normalized={ normalized }
-				selectNormalized={ selectNormalized }
-				selectNormalizedAddress={ selectNormalizedAddressHandler }
-				confirmAddressSuggestion={ confirmAddressSuggestionHandler }
-				editAddress={ editAddressHandler }
-				countriesData={ storeOptions.countriesData }
-			/>
-		);
+
+		if ( normalized && ! isEqual( normalized, values ) ) {
+			const selectNormalizedAddressHandler = select =>
+				props.selectNormalizedAddress( orderId, siteId, group, select );
+
+			return (
+				<AddressSuggestion
+					values={ values }
+					normalized={ normalized }
+					selectNormalized={ selectNormalized }
+					selectNormalizedAddress={ selectNormalizedAddressHandler }
+					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
+					editAddress={ editAddressHandler }
+					countriesData={ storeOptions.countriesData }
+				/>
+			);
+		}
+
+		if ( 0 < size( fieldErrors ) ) {
+			return (
+				<UnverifiedAddress
+					values={ values }
+					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
+					editAddress={ editAddressHandler }
+					countriesData={ storeOptions.countriesData }
+				/>
+			);
+		}
 	}
 
-	const fieldErrors = isObject( errors ) ? errors : {};
 	const generalErrorOnly = fieldErrors.general && size( fieldErrors ) === 1;
 	const getId = fieldName => group + '_' + fieldName;
 	const getValue = fieldName =>

@@ -30,8 +30,6 @@ const RadioButton = props => {
 	);
 };
 
-
-
 const AddressSuggestion = ( {
 	values,
 	normalized,
