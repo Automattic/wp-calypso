@@ -35,7 +35,6 @@ class EditorConfirmationSidebar extends Component {
 		onPrivatePublish: PropTypes.func,
 		onPublish: PropTypes.func,
 		post: PropTypes.object,
-		savedPost: PropTypes.object,
 		isPasswordProtectedWithInvalidPassword: PropTypes.bool,
 		setPostDate: PropTypes.func,
 		setStatus: PropTypes.func,

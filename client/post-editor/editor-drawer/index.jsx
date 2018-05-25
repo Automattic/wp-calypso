@@ -75,8 +75,6 @@ const POST_TYPE_SUPPORTS = {
 class EditorDrawer extends Component {
 	static propTypes = {
 		site: PropTypes.object,
-		savedPost: PropTypes.object,
-		post: PropTypes.object,
 		canJetpackUseTaxonomies: PropTypes.bool,
 		typeObject: PropTypes.object,
 		type: PropTypes.string,
@@ -281,7 +279,6 @@ class EditorDrawer extends Component {
 		return (
 			<Accordion title={ translate( 'Status' ) } e2eTitle="status">
 				<EditPostStatus
-					savedPost={ this.props.savedPost }
 					onSave={ this.props.onSave }
 					onPrivatePublish={ this.props.onPrivatePublish }
 					setPostDate={ this.props.setPostDate }

@@ -16,13 +16,10 @@ import EditorDeletePost from 'post-editor/editor-delete-post';
 export class EditorSidebar extends Component {
 	static propTypes = {
 		// passed props
-		savedPost: PropTypes.object,
-		post: PropTypes.object,
 		onSave: PropTypes.func,
 		onPublish: PropTypes.func,
 		onTrashingPost: PropTypes.func,
 		site: PropTypes.object,
-		type: PropTypes.string,
 		setPostDate: PropTypes.func,
 		confirmationSidebarStatus: PropTypes.string,
 	};
@@ -32,8 +29,6 @@ export class EditorSidebar extends Component {
 			onTrashingPost,
 			onPublish,
 			onSave,
-			post,
-			savedPost,
 			site,
 			setPostDate,
 			confirmationSidebarStatus,
@@ -44,8 +39,6 @@ export class EditorSidebar extends Component {
 				<EditorSidebarHeader />
 				<EditorDrawer
 					site={ site }
-					savedPost={ savedPost }
-					post={ post }
 					setPostDate={ setPostDate }
 					onPrivatePublish={ onPublish }
 					onSave={ onSave }

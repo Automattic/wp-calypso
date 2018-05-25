@@ -283,7 +283,6 @@ export class PostEditor extends React.Component {
 					handlePreferenceChange={ this.handleConfirmationSidebarPreferenceChange }
 					onPrivatePublish={ this.onPublish }
 					onPublish={ this.onPublish }
-					savedPost={ this.state.savedPost }
 					setPostDate={ this.setPostDate }
 					setStatus={ this.setConfirmationSidebar }
 					status={ this.state.confirmationSidebar }
@@ -306,7 +305,6 @@ export class PostEditor extends React.Component {
 						onPublish={ this.onPublish }
 						onSave={ this.onSave }
 						onSaveDraft={ this.props.onSaveDraft }
-						post={ this.state.post }
 						site={ site }
 						toggleSidebar={ this.toggleSidebar }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
@@ -378,8 +376,6 @@ export class PostEditor extends React.Component {
 						</div>
 					</div>
 					<EditorSidebar
-						savedPost={ this.state.savedPost }
-						post={ this.state.post }
 						onPublish={ this.onPublish }
 						onTrashingPost={ this.onTrashingPost }
 						site={ site }
