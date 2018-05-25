@@ -144,7 +144,7 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'draft', date: nextMonth } }
+						currentPost={ { status: 'draft', date: nextMonth } }
 						post={ { title: 'change', status: 'draft', date: nextMonth } }
 						onPublish={ onPublish }
 						site={ MOCK_SITE }
@@ -164,7 +164,7 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'future', date: nextMonth } }
+						currentPost={ { status: 'future', date: nextMonth } }
 						post={ { title: 'change', status: 'future', date: nextMonth } }
 						onPublish={ onPublish }
 						canUserPublishPosts
@@ -183,7 +183,7 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'future', date: lastMonth } }
+						currentPost={ { status: 'future', date: lastMonth } }
 						post={ { title: 'change', status: 'future', date: lastMonth } }
 						onPublish={ onPublish }
 						canUserPublishPosts
@@ -200,10 +200,11 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'publish' } }
+						currentPost={ { status: 'publish' } }
 						post={ { title: 'change', status: 'draft' } }
 						onSave={ onSave }
 						site={ MOCK_SITE }
+						canUserPublishPosts
 					/>
 				).instance();
 
@@ -217,7 +218,7 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'draft' } }
+						currentPost={ { status: 'draft' } }
 						onSave={ onSave }
 					/>
 				).instance();
