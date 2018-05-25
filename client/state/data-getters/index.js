@@ -55,7 +55,14 @@ export const requestSiteAlerts = siteId => {
 								: {} ),
 						} ) ),
 						warnings,
-						updates,
+						updates: {
+							themes: updates.themes.map( theme => ( {
+								name: theme.name,
+								slug: theme.slug,
+								type: theme.type,
+								version: theme.version,
+							} ) ),
+						},
 					},
 				],
 			],
