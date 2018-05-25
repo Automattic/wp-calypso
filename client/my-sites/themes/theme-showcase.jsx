@@ -27,6 +27,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getThemeFilterTerms from 'state/selectors/get-theme-filter-terms';
 import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
 import getThemeShowcaseDescription from 'state/selectors/get-theme-showcase-description';
@@ -119,7 +120,7 @@ class ThemeShowcase extends React.Component {
 	 * @returns {String} Theme showcase url
 	 */
 	constructUrl = sections => {
-		const { vertical, tier, filter, siteSlug, searchString } = {
+		const { vertical, tier, filter, siteSlug, searchString, localeSlug, isLoggedIn } = {
 			...this.props,
 			...sections,
 		};
@@ -127,11 +128,15 @@ class ThemeShowcase extends React.Component {
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
-
+		// Logged-in users will have their preferred UI lang stored in user settings
+		const lang =
+			! isLoggedIn && localeSlug && localeSlug !== config( 'i18n_default_locale_slug' )
+				? `/${ localeSlug }`
+				: '';
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
 
-		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		const url = `/themes${ lang }${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
 		return buildUrl( url, searchString );
 	};
 
@@ -304,6 +309,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
+	localeSlug: getCurrentLocaleSlug( state ),
 } );
 
 const mapDispatchToProps = {

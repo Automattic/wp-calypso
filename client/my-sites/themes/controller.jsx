@@ -21,8 +21,8 @@ import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/ac
 import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import { getLanguage } from 'lib/i18n-utils';
-import getThemeFilters from 'state/selectors/get-theme-filters';
 import { setLocale } from 'state/ui/language/actions';
+import getThemeFilters from 'state/selectors/get-theme-filters';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -78,6 +78,9 @@ export function loggedOut( context, next ) {
 		// Don't server-render URLs with query params
 		return next();
 	}
+
+	// Store previous path in order that we can return from a theme preview
+	context.store.dispatch( setBackPath( context.pathname ) );
 
 	const props = getProps( context );
 
