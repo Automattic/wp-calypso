@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    parallelism: 4
+    parallelism: 6
     working_directory: ~/wp-calypso
     docker:
       - image: circleci/node:8.11-browsers
