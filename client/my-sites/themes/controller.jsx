@@ -20,7 +20,9 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
 import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
+import { getLanguage } from 'lib/i18n-utils';
 import getThemeFilters from 'state/selectors/get-theme-filters';
+import { setLocale } from 'state/ui/language/actions';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -41,6 +43,7 @@ function getProps( context ) {
 		analyticsPath,
 		search: context.query.s,
 		pathName: context.pathname,
+		langSlug: context.lang,
 		trackScrollPage: boundTrackScrollPage,
 	};
 }
@@ -156,4 +159,28 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 		redirectedSection = 'setup';
 	}
 	res.redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
+}
+
+/**
+ * Searches for a valid lang param and switches locale
+ *
+ * @param {object} context - route context object
+ * @param {function} next - page.js call to the next registered callback
+ */
+export function setUpLocale( context, next ) {
+	const language = getLanguage( context.params.lang );
+	if ( language && language.langSlug ) {
+		if ( context.isServerSide ) {
+			// Ensure the html lang/dir attribute values are set
+			// prioritize parentLangSlug for locale variants
+			// See: server/render/index.js
+			context.lang = language.parentLangSlug || language.langSlug;
+			if ( language.rtl ) {
+				context.isRTL = true;
+			}
+		} else {
+			setLocale( language.langSlug );
+		}
+	}
+	next();
 }

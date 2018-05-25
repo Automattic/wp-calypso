@@ -119,7 +119,10 @@ class ThemeShowcase extends React.Component {
 	 * @returns {String} Theme showcase url
 	 */
 	constructUrl = sections => {
-		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
+		const { vertical, tier, filter, siteSlug, searchString } = {
+			...this.props,
+			...sections,
+		};
 
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';

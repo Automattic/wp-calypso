@@ -6,7 +6,7 @@
 import page from 'page';
 import { parse } from 'qs';
 import React from 'react';
-import { includes, map } from 'lodash';
+import { includes } from 'lodash';
 import { parse as parseUrl } from 'url';
 
 /**
@@ -37,11 +37,6 @@ const enhanceContextWithLogin = context => {
 		/>
 	);
 };
-
-// Defining this here so it can be used by both ./index.node.js and ./index.web.js
-// We cannot export it from either of those (to import it from the other) because of
-// the way that `server/bundler/loader` expects only a default export and nothing else.
-export const lang = `:lang(${ map( config( 'languages' ), 'langSlug' ).join( '|' ) })?`;
 
 export function login( context, next ) {
 	const { query: { client_id, redirect_to } } = context;

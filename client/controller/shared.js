@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { noop } from 'lodash';
+import { map, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,3 +72,9 @@ export function setUpLocale( context, next ) {
 
 	loadSectionCSS( context, next );
 }
+
+// Creates valid locale options for routes containing locale slugs
+// Defining this here so it can be used by both ./index.node.js and ./index.web.js
+// We cannot export it from either of those (to import it from the other) because of
+// the way that `server/bundler/loader` expects only a default export and nothing else.
+export const langRouteParams = `:lang(${ map( config( 'languages' ), 'langSlug' ).join( '|' ) })?`;

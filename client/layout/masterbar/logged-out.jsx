@@ -21,6 +21,7 @@ import WordPressWordmark from 'components/wordpress-wordmark';
 import { addQueryArgs } from 'lib/route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { login } from 'lib/paths';
 
 class MasterbarLoggedOut extends PureComponent {
@@ -79,7 +80,7 @@ class MasterbarLoggedOut extends PureComponent {
 	}
 
 	renderSignupItem() {
-		const { currentQuery, currentRoute, sectionName, translate } = this.props;
+		const { currentQuery, currentRoute, sectionName, localeSlug, translate } = this.props;
 
 		// Hide for some sections
 		if ( includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) ) {
@@ -126,6 +127,10 @@ class MasterbarLoggedOut extends PureComponent {
 			signupUrl = '/jetpack/new';
 		} else if ( signupFlow ) {
 			signupUrl += '/' + signupFlow;
+		} else if ( ! signupFlow && localeSlug ) {
+			// if a localeSlug exists in logged-out
+			// attach it to the signup url
+			signupUrl += '/' + localeSlug;
 		}
 
 		return (
@@ -159,4 +164,5 @@ class MasterbarLoggedOut extends PureComponent {
 export default connect( state => ( {
 	currentQuery: getCurrentQueryArguments( state ),
 	currentRoute: getCurrentRoute( state ),
+	localeSlug: getCurrentLocaleSlug( state ),
 } ) )( localize( MasterbarLoggedOut ) );
