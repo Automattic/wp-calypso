@@ -89,6 +89,10 @@ export default class extends React.Component {
 	render() {
 		const { results, isSearching } = this.state;
 
+		// Cast undefined "value" to empty string because Search treats the two
+		// differently in componentWillReceiveProps().
+		const value = this.props.value || '';
+
 		return (
 			<div className="editor-location__search">
 				<SearchCard
@@ -96,8 +100,8 @@ export default class extends React.Component {
 					searching={ isSearching }
 					delaySearch
 					compact
-					value={ this.props.value }
-					initialValue={ this.props.value }
+					value={ value }
+					initialValue={ value }
 				/>
 				<ul className="editor-location__search-results">
 					{ results.map( result => {
