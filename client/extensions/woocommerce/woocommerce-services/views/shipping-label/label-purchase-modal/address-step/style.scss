@@ -73,7 +73,7 @@
 	font-weight: bold;
 }
 
-.address-step__suggestion-summary {
+.address-step__summary {
 	margin: 8px 0 8px 24px;
 	font-weight: normal;
 
@@ -90,6 +90,10 @@
 	.external-link {
 		float: left;
 		clear: both;
+	}
+
+	.address-step__summary {
+		margin-left: 0px;
 	}
 }
 
