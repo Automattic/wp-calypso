@@ -103,7 +103,7 @@ class HelpSearch extends React.PureComponent {
 					helpLinks={ this.state.helpLinks.wordpress_forum_links }
 					footer={ this.props.translate( 'See more from Community Forum…' ) }
 					iconTypeDescription="comment"
-					searchLink={ getForumUrl() + '/search.php?search=' + this.state.searchQuery }
+					searchLink={ getForumUrl() + '/search/' + this.state.searchQuery }
 				/>
 				<HelpResults
 					header={ this.props.translate( 'Jetpack Documentation' ) }
