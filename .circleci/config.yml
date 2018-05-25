@@ -38,7 +38,7 @@ jobs:
 
       - run:
           name: Update the lockfile
-          command: npx greenkeeper-lockfile-update
+          command: CI_PULL_REQUEST='' npx greenkeeper-lockfile-update
 
       - run: NODE_ENV=test npm run build-server
 
