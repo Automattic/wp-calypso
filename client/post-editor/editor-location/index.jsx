@@ -70,6 +70,8 @@ class EditorLocation extends React.Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
+		// When geo data was originally private and its coordinates have changed, we track that change
+		// so we can warn the user that after saving the information will be publicly visible.
 		if (
 			'private' === this.originalProps.isSharedPublicly &&
 			( this.originalProps.coordinates && nextProps.coordinates ) &&

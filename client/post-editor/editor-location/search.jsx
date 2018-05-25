@@ -52,6 +52,8 @@ export default class extends React.Component {
 			this.hasTrackedStats = true;
 		}
 
+		// If the address query matches value in props, we want to just display, not search, so we return
+		// no results in that case.
 		if ( ! address || address === this.props.value ) {
 			this.setState( {
 				results: [],
