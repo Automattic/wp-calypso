@@ -32,6 +32,7 @@ const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
 const shouldMinify = process.env.MINIFY_JS === 'true' || bundleEnv === 'production';
 const shouldEmitStats = process.env.EMIT_STATS === 'true';
+const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 
 /**
@@ -203,17 +204,13 @@ const webpackConfig = {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
 		} ),
-		new CircularDependencyPlugin( {
-			// exclude detection of files based on a RegExp
-			exclude: /node_modules/,
-			// add errors to webpack instead of warnings
-			failOnError: false,
-			// allow import cycles that include an asyncronous import,
-			// e.g. via import(/* webpackMode: "weak" */ './file.js')
-			allowAsyncCycles: false,
-			// set the current working directory for displaying module paths
-			cwd: process.cwd(),
-		} ),
+		shouldCheckForCycles &&
+			new CircularDependencyPlugin( {
+				exclude: /node_modules/,
+				failOnError: false,
+				allowAsyncCycles: false,
+				cwd: process.cwd(),
+			} ),
 		shouldEmitStats &&
 			new StatsWriter( {
 				filename: 'stats.json',
