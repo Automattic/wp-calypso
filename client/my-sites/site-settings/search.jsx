@@ -18,8 +18,7 @@ import SectionHeader from 'components/section-header';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import untrailingslashit from 'lib/route/untrailingslashit';
@@ -44,20 +43,17 @@ class Search extends Component {
 		fields: PropTypes.object,
 	};
 
-	renderInfoLink( url ) {
+	renderInfoLink( link, privacyLink ) {
 		const { translate } = this.props;
 
 		return (
-			<div className="search__info-link-container site-settings__info-link-container">
-				<InfoPopover position="left">
-					{ translate(
-						'Replaces the default WordPress search with a faster, filterable search experience.'
-					) }{' '}
-					<ExternalLink href={ url } icon={ false } target="_blank">
-						{ translate( 'Learn more' ) }
-					</ExternalLink>
-				</InfoPopover>
-			</div>
+			<SupportInfo
+				text={ translate(
+					'Replaces the default WordPress search with a faster, filterable search experience.'
+				) }
+				link={ link }
+				privacyLink={ privacyLink }
+			/>
 		);
 	}
 
@@ -92,7 +88,7 @@ class Search extends Component {
 
 		return (
 			<FormFieldset>
-				{ this.renderInfoLink( 'https://jetpack.com/support/search' ) }
+				{ this.renderInfoLink( 'https://jetpack.com/support/search/' ) }
 
 				<JetpackModuleToggle
 					siteId={ siteId }
