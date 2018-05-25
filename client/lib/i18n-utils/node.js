@@ -13,6 +13,7 @@ import config from 'config';
 export {
 	addLocaleToPath,
 	addLocaleToWpcomUrl,
+	getForumUrl,
 	getLanguage,
 	getLocaleFromPath,
 	getSupportSiteLocale,

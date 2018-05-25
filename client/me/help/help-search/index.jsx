@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { isEmpty } from 'lodash';
-import { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ import NoResults from 'my-sites/no-results';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
+import { getForumUrl } from 'lib/i18n-utils';
 
 class HelpSearch extends React.PureComponent {
 	static displayName = 'HelpSearch';
@@ -88,8 +89,6 @@ class HelpSearch extends React.PureComponent {
 			);
 		}
 
-		const localizedForumUrl = 'https://' + getLocaleSlug() + '.forums.wordpress.com';
-
 		return (
 			<div>
 				<HelpResults
@@ -104,7 +103,7 @@ class HelpSearch extends React.PureComponent {
 					helpLinks={ this.state.helpLinks.wordpress_forum_links }
 					footer={ this.props.translate( 'See more from Community Forum…' ) }
 					iconTypeDescription="comment"
-					searchLink={ localizedForumUrl + '/search.php?search=' + this.state.searchQuery }
+					searchLink={ getForumUrl() + '/search.php?search=' + this.state.searchQuery }
 				/>
 				<HelpResults
 					header={ this.props.translate( 'Jetpack Documentation' ) }
