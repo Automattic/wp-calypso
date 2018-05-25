@@ -12,13 +12,24 @@ import httpHandlers from 'state/http';
 import thirdPartyHandlers from './third-party';
 import wpcomHandlers from './wpcom';
 
-const mergedHandlers = mergeHandlers(
-	httpData,
-	httpHandlers,
-	wpcomHttpHandlers,
-	thirdPartyHandlers,
-	wpcomHandlers
-);
+const moduleState = {
+	mergedHandlers: mergeHandlers(
+		httpData,
+		httpHandlers,
+		wpcomHttpHandlers,
+		thirdPartyHandlers,
+		wpcomHandlers
+	),
+};
+
+const requiredHandlers = new Set();
+
+export const requireHandlers = ( ...requires ) => {
+	for ( const [ id, handlers ] in requires ) {
+		moduleState.mergedHandlers = mergeHandlers( moduleState.mergedHandlers, handlers );
+		requiredHandlers.add( id );
+	}
+};
 
 const shouldNext = action => {
 	const meta = action.meta;
@@ -46,7 +57,7 @@ const shouldNext = action => {
  * WordPress.com API and passes them off to the
  * appropriate handler.
  *
- * @see state/utils/local indicates that action should bypass data layer
+ * @see moduleState/utils/local indicates that action should bypass data layer
  *
  * Note:
  *
@@ -60,10 +71,10 @@ const shouldNext = action => {
  * The optimizations reduce function-calling and object
  * property lookup where possible.
  *
- * @param {Object<String,Function[]>} handlers map of action types to handlers
+ * @param {Object<String,Object<String,Function[]>>} handlerState map of action types to handlers
  * @returns {Function} middleware handler
  */
-export const middleware = handlers => store => next => {
+export const middleware = handlerState => store => next => {
 	/**
 	 * Middleware handler
 	 *
@@ -72,7 +83,7 @@ export const middleware = handlers => store => next => {
 	 * @returns {undefined} please do not use
 	 */
 	return action => {
-		const handlerChain = handlers[ action.type ];
+		const handlerChain = handlerState.mergedHandlers[ action.type ];
 
 		// if no handler is defined for the action type
 		// then pass it along the chain untouched
@@ -100,4 +111,4 @@ export const middleware = handlers => store => next => {
 	};
 };
 
-export default middleware( mergedHandlers );
+export default middleware( moduleState );

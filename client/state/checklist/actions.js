@@ -3,11 +3,15 @@
 /**
  * Internal dependencies
  */
+import { requireHandlers } from 'state/data-layer/wpcom-api-middleware';
+import { handlers } from 'state/data-layer/wpcom/checklist';
 import {
 	SITE_CHECKLIST_RECEIVE,
 	SITE_CHECKLIST_REQUEST,
 	SITE_CHECKLIST_TASK_UPDATE,
 } from 'state/action-types';
+
+requireHandlers( handlers );
 
 /**
  * Action creator function: SITE_CHECKLIST_RECEIVE

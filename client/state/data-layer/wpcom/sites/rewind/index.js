@@ -99,13 +99,16 @@ const setUnknownState = ( { siteId }, error ) => {
 	);
 };
 
-export default mergeHandlers( downloads, {
-	[ REWIND_STATE_REQUEST ]: [
-		dispatchRequestEx( {
-			fetch: fetchRewindState,
-			onSuccess: updateRewindState,
-			onError: setUnknownState,
-			fromApi: makeJsonSchemaParser( rewindStatus, transformApi ),
-		} ),
-	],
-} );
+export const handlers = [
+	__filename,
+	mergeHandlers( downloads, {
+		[ REWIND_STATE_REQUEST ]: [
+			dispatchRequestEx( {
+				fetch: fetchRewindState,
+				onSuccess: updateRewindState,
+				onError: setUnknownState,
+				fromApi: makeJsonSchemaParser( rewindStatus, transformApi ),
+			} ),
+		],
+	} ),
+];

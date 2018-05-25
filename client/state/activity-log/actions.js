@@ -2,6 +2,8 @@
 /**
  * Internal dependencies
  */
+import { requireHandlers } from 'state/data-layer/wpcom-api-middleware';
+import { handlers } from 'state/data-layer/wpcom/sites/rewind';
 import {
 	ACTIVITY_LOG_FILTER_SET,
 	ACTIVITY_LOG_FILTER_UPDATE,
@@ -26,6 +28,8 @@ import {
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_DISMISS_PROGRESS,
 } from 'state/action-types';
+
+requireHandlers( handlers );
 
 /**
  * Turn the 'rewind' feature on for a site.
