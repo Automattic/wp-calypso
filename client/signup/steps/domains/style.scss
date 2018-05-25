@@ -2,3 +2,13 @@
 	margin: 0 auto;
 	max-width: 650px;
 }
+
+.domains__step-content-enter {
+	opacity: 0.01;
+
+	&.domains__step-content-enter-active {
+		opacity: 1;
+		pointer-events: none;
+		transition: opacity 0.2s ease-in-out;
+	}
+}

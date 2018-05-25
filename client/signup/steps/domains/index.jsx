@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, endsWith, get } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
  * Internal dependencies
@@ -251,6 +252,7 @@ class DomainsStep extends React.Component {
 
 		return (
 			<RegisterDomainStep
+				key="domainForm"
 				path={ this.props.path }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
@@ -280,7 +282,7 @@ class DomainsStep extends React.Component {
 				this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
 
 		return (
-			<div className="domains__step-section-wrapper">
+			<div className="domains__step-section-wrapper" key="mappingForm">
 				<MapDomainStep
 					initialState={ initialState }
 					path={ this.props.path }
@@ -305,7 +307,7 @@ class DomainsStep extends React.Component {
 			this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
 
 		return (
-			<div className="domains__step-section-wrapper">
+			<div className="domains__step-section-wrapper" key="transferForm">
 				<TransferDomainStep
 					analyticsSection="signup"
 					basePath={ this.props.path }
@@ -322,16 +324,19 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	render() {
-		let content;
+	getSubHeaderText() {
 		const { translate } = this.props;
-		const backUrl = this.props.stepSectionName
-			? getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() )
-			: undefined;
-		let fallbackSubHeaderText = translate(
-			"Enter your site's name, or some key words that describe it - " +
-				"we'll use this to create your new site's address."
-		);
+
+		return 'transfer' === this.props.stepSectionName
+			? translate( 'Use a domain you already own with your new WordPress.com site.' )
+			: translate(
+					"Enter your site's name, or some key words that describe it - " +
+						"we'll use this to create your new site's address."
+				);
+	}
+
+	renderContent() {
+		let content;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
@@ -339,9 +344,6 @@ class DomainsStep extends React.Component {
 
 		if ( 'transfer' === this.props.stepSectionName ) {
 			content = this.transferForm();
-			fallbackSubHeaderText = translate(
-				'Use a domain you already own with your new WordPress.com site.'
-			);
 		}
 
 		if ( ! this.props.stepSectionName ) {
@@ -359,6 +361,17 @@ class DomainsStep extends React.Component {
 			);
 		}
 
+		return content;
+	}
+
+	render() {
+		const { translate } = this.props;
+		const backUrl = this.props.stepSectionName
+			? getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() )
+			: undefined;
+
+		const fallbackSubHeaderText = this.getSubHeaderText();
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -366,10 +379,18 @@ class DomainsStep extends React.Component {
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
-				subHeaderText={ translate( "First up, let's find a domain." ) }
 				fallbackHeaderText={ translate( "Let's give your site an address." ) }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				stepContent={ content }
+				stepContent={
+					<ReactCSSTransitionGroup
+						component="div"
+						transitionEnterTimeout={ 200 }
+						transitionLeave={ false }
+						transitionName="domains__step-content"
+					>
+						{ this.renderContent() }
+					</ReactCSSTransitionGroup>
+				}
 			/>
 		);
 	}
