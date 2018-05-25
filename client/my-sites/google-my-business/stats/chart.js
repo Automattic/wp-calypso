@@ -86,12 +86,12 @@ class GoogleMyBusinessStatsChart extends Component {
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
 		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
-		recordTracksEvent: PropTypes.func.isRequired,
 		renderTooltipForDatanum: PropTypes.func,
 		requestGoogleMyBusinessStats: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		statType: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
+		trackIntervalChange: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -142,13 +142,9 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	handleIntervalChange = event => {
-		const { interval, statType, siteId } = this.props;
+		const { statType, siteId } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_google_my_business_stats_chart_interval_change', {
-			previous_interval: interval,
-			new_interval: event.target.value,
-			stat_type: statType,
-		} );
+		this.props.trackIntervalChange( event.target.value );
 
 		this.props.changeGoogleMyBusinessStatsInterval( siteId, statType, event.target.value );
 	};
@@ -315,5 +311,17 @@ export default connect(
 		changeGoogleMyBusinessStatsInterval,
 		recordTracksEvent,
 		requestGoogleMyBusinessStats,
-	}
+	},
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		trackIntervalChange: ( newInterval ) =>
+			dispatchProps.recordTracksEvent( 'calypso_google_my_business_stats_chart_interval_change', {
+				path: '/google-my-business/stats/:site',
+				previous_interval: stateProps.interval,
+				new_interval: newInterval,
+				stat_type: ownProps.statType,
+			} ),
+	} )
 )( localize( GoogleMyBusinessStatsChart ) );

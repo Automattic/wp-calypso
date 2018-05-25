@@ -9,7 +9,6 @@ import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,57 +16,47 @@ import { get } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
+import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import HeaderCake from 'components/header-cake';
+import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import KeyringConnectButton from 'blocks/keyring-connect-button';
+import { dismissNudge } from 'blocks/google-my-business-stats-nudge/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
-import { dismissNudge } from 'blocks/google-my-business-stats-nudge/actions';
+import { recordTracksEventWithLocationCounts } from 'my-sites/google-my-business/utils';
 
 class GoogleMyBusinessNewAccount extends Component {
 	static propTypes = {
-		recordTracksEvent: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string,
-		translate: PropTypes.func.isRequired,
 		locations: PropTypes.arrayOf( PropTypes.object ).isRequired,
+		siteSlug: PropTypes.string,
+		trackConnect: PropTypes.func.isRequired,
+		trackCreateListingClick: PropTypes.func.isRequired,
+		trackNoThanksClick: PropTypes.func.isRequired,
+		trackUseAnotherGoogleAccountClick: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 	};
 
 	goBack = () => {
 		page.back( `/google-my-business/select-business-type/${ this.props.siteSlug }` );
 	};
 
-	trackUseAnotherAccountButtonClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_new_account_use_another_account_button_click'
-		);
+	trackUseAnotherGoogleAccountClick = () => {
+		this.props.trackUseAnotherGoogleAccountClick();
 	};
 
-	trackCreateMyListingClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_new_account_create_my_listing_button_click'
-		);
+	trackCreateListingClick = () => {
+		this.props.trackCreateListingClick();
 	};
 
 	handleConnect = () => {
-		const { locations } = this.props;
-
-		const locationCount = locations.length;
-		const verifiedLocationCount = locations.filter( location =>
-			get( location, 'meta.state.isVerified', false )
-		).length;
-
-		this.props.recordTracksEvent( 'calypso_google_my_business_new_connect', {
-			location_count: locationCount,
-			verified_location_count: verifiedLocationCount,
-		} );
+		this.props.trackConnect();
 
 		page.redirect( `/google-my-business/${ this.props.siteSlug }` );
 	};
 
 	handleNoThanksClick = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_new_account_no_thanks_button_click' );
+		this.props.trackNoThanksClick();
 		this.props.dismissNudge();
 	};
 
@@ -107,7 +96,7 @@ class GoogleMyBusinessNewAccount extends Component {
 							<Button
 								href={ 'https://business.google.com/create' }
 								target="_blank"
-								onClick={ this.trackCreateMyListingClick }
+								onClick={ this.trackCreateListingClick }
 								primary
 							>
 								{ translate( 'Create Listing' ) } <Gridicon icon="external" />
@@ -116,7 +105,7 @@ class GoogleMyBusinessNewAccount extends Component {
 							<KeyringConnectButton
 								serviceId="google_my_business"
 								forceReconnect={ true }
-								onClick={ this.trackUseAnotherAccountButtonClick }
+								onClick={ this.trackUseAnotherGoogleAccountClick }
 								onConnect={ this.handleConnect }
 							>
 								{ translate( 'Use another Google Account' ) }
@@ -141,5 +130,33 @@ export default connect(
 	{
 		dismissNudge,
 		recordTracksEvent,
+	},
+	( stateProps, dispatchProps, ownProps ) => {
+		const path = '/google-my-business/new/:site';
+
+		return {
+			...ownProps,
+			...stateProps,
+			...dispatchProps,
+			trackConnect: () =>
+				recordTracksEventWithLocationCounts(
+					stateProps,
+					dispatchProps,
+					'calypso_google_my_business_new_account_connect',
+					path
+				),
+			trackCreateListingClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_new_account_create_listing_button_click', {
+					path,
+				} ),
+			trackNoThanksClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_new_account_no_thanks_button_click', {
+					path,
+				} ),
+			trackUseAnotherGoogleAccountClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_new_account_use_another_google_account_button_click', {
+					path,
+				} ),
+		};
 	}
 )( localize( GoogleMyBusinessNewAccount ) );

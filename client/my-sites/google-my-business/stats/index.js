@@ -31,14 +31,14 @@ import QueryKeyringConnections from 'components/data/query-keyring-connections';
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
 		locationData: PropTypes.object,
-		recordTracksEvent: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
+		trackUpdateListingClick: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	trackUpdateListingClick = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_stats_update_listing_button_click' );
+		this.props.trackUpdateListingClick();
 	};
 
 	searchChartTitleFunc = ( translate, dataTotal ) => {
@@ -228,5 +228,14 @@ export default connect(
 	},
 	{
 		recordTracksEvent,
-	}
+	},
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		trackUpdateListingClick: () =>
+			dispatchProps.recordTracksEvent( 'calypso_google_my_business_stats_update_listing_button_click', {
+				path: '/google-my-business/stats/:site'
+			} ),
+	} )
 )( localize( GoogleMyBusinessStats ) );

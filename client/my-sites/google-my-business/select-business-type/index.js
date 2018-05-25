@@ -9,37 +9,41 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActionCard from 'components/action-card';
 import Button from 'components/button';
+import canCurrentUser from 'state/selectors/can-current-user';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import HeaderCake from 'components/header-cake';
 import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
-import { recordTracksEvent } from 'state/analytics/actions';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithLocationCounts } from 'my-sites/google-my-business/utils';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
-		googleMyBusinessLocations: PropTypes.array.isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
+		locations: PropTypes.array.isRequired,
 		siteId: PropTypes.number,
 		siteIsJetpack: PropTypes.bool.isRequired,
 		siteSlug: PropTypes.string,
+		trackConnect: PropTypes.func.isRequired,
+		trackConnectToGoogleMyBusinessClick: PropTypes.func.isRequired,
+		trackCreateListingClick: PropTypes.func.isRequired,
+		trackGoogleMyBusinessClick: PropTypes.func.isRequired,
+		trackLearnMoreAboutSEOClick: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -48,47 +52,31 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	handleConnect = () => {
-		const { googleMyBusinessLocations, siteSlug } = this.props;
+		const { locations, siteSlug } = this.props;
 
-		const locationCount = googleMyBusinessLocations.length;
-		const verifiedLocationCount = googleMyBusinessLocations.filter( location => {
-			return get( location, 'meta.state.isVerified', false );
-		} ).length;
+		this.props.trackConnect();
 
-		this.props.recordTracksEvent( 'calypso_google_my_business_select_business_type_connect', {
-			location_count: locationCount,
-			verified_location_count: verifiedLocationCount,
-		} );
-
-		if ( locationCount === 0 ) {
+		if ( locations.length === 0 ) {
 			page.redirect( `/google-my-business/new/${ siteSlug }` );
 		} else {
 			page.redirect( `/google-my-business/select-location/${ siteSlug }` );
 		}
 	};
 
-	trackCreateYourListingClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_business_type_create_my_listing_button_click'
-		);
+	trackCreateListingClick = () => {
+		this.props.trackCreateListingClick();
 	};
 
 	trackConnectToGoogleMyBusinessClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_business_type_connect_to_google_my_business_button_click'
-		);
+		this.props.trackConnectToGoogleMyBusinessClick();
 	};
 
-	trackOptimizeYourSEOClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_business_type_optimize_your_seo_button_click'
-		);
+	trackLearnMoreAboutSEOClick = () => {
+		this.props.trackLearnMoreAboutSEOClick();
 	};
 
 	trackGoogleMyBusinessClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_business_type_google_my_business_link_click'
-		);
+		this.props.trackGoogleMyBusinessClick();
 	};
 
 	renderLocalBusinessCard() {
@@ -116,11 +104,11 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					primary
 					href="https://business.google.com/create"
 					target="_blank"
-					onClick={ this.trackCreateYourListingClick }
+					onClick={ this.trackCreateListingClick }
 				>
 					{ translate( 'Create Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }{' '}
+					} ) }{ ' ' }
 					<Gridicon icon="external" />
 				</Button>
 			);
@@ -159,7 +147,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				buttonText={ translate( 'Learn More about SEO', { comment: 'Call to Action button' } ) }
 				buttonHref={ seoHelpLink }
 				buttonIcon="external"
-				buttonOnClick={ this.trackOptimizeYourSEOClick }
+				buttonOnClick={ this.trackLearnMoreAboutSEOClick }
 			/>
 		);
 	}
@@ -230,7 +218,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			googleMyBusinessLocations: getGoogleMyBusinessLocations( state, siteId ),
+			locations: getGoogleMyBusinessLocations( state, siteId ),
 			canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 			siteId,
 			siteIsJetpack: isJetpackSite( state, siteId ),
@@ -239,5 +227,37 @@ export default connect(
 	},
 	{
 		recordTracksEvent,
+	},
+	( stateProps, dispatchProps, ownProps ) => {
+		const path = '/google-my-business/select-business-type/:site';
+
+		return {
+			...ownProps,
+			...stateProps,
+			...dispatchProps,
+			trackConnect: () =>
+				recordTracksEventWithLocationCounts(
+					stateProps,
+					dispatchProps,
+					'calypso_google_my_business_select_business_type_connect',
+					path
+				),
+			trackConnectToGoogleMyBusinessClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_business_type_connect_to_google_my_business_button_click', {
+					path,
+				} ),
+			trackCreateListingClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_business_type_create_listing_button_click', {
+					path,
+				} ),
+			trackGoogleMyBusinessClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_business_type_google_my_business_link_click', {
+					path,
+				} ),
+			trackLearnMoreAboutSEOClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_business_type_learn_more_about_seo_button_click', {
+					path,
+				} ),
+		};
 	}
 )( localize( GoogleMyBusinessSelectBusinessType ) );

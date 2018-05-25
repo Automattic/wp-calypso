@@ -23,10 +23,10 @@ import { dismissNudge } from './actions';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
-		siteSlug: PropTypes.string.isRequired,
-		siteId: PropTypes.number.isRequired,
-		isDismissed: PropTypes.bool.isRequired,
 		dismissCount: PropTypes.number.isRequired,
+		isDismissed: PropTypes.bool.isRequired,
+		siteId: PropTypes.number.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		trackNudgeDismissClick: PropTypes.func.isRequired,
 		trackNudgeStartNowClick: PropTypes.func.isRequired,
 		trackNudgeView: PropTypes.func.isRequired,
@@ -35,17 +35,17 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 	componentWillMount() {
 		if ( ! this.props.isDismissed ) {
-			this.props.trackNudgeView( this.props.dismissCount );
+			this.props.trackNudgeView();
 		}
 	}
 
 	onDismissClick = () => {
-		this.props.trackNudgeDismissClick( this.props.dismissCount );
+		this.props.trackNudgeDismissClick();
 		this.props.dismissNudge();
 	};
 
 	onStartNowClick = () => {
-		this.props.trackNudgeStartNowClick( this.props.dismissCount );
+		this.props.trackNudgeStartNowClick();
 	};
 
 	render() {
@@ -56,11 +56,13 @@ class GoogleMyBusinessStatsNudge extends Component {
 		return (
 			<Card className="google-my-business-stats-nudge">
 				<QueryPreferences />
+
 				<Gridicon
 					icon="cross"
 					className="google-my-business-stats-nudge__close-icon"
 					onClick={ this.onDismissClick }
 				/>
+
 				<SectionHeader
 					className="google-my-business-stats-nudge__header"
 					label={ this.props.translate( 'Recommendations from WordPress.com' ) }
@@ -108,18 +110,30 @@ export default connect(
 		dismissCount: getGoogleMyBusinessStatsNudgeDismissCount( state, ownProps.siteId ),
 	} ),
 	{
-		trackNudgeView: dismissCount =>
-			recordTracksEvent( 'calypso_google_my_business_stats_nudge_view', {
-				dismiss_count: dismissCount,
-			} ),
-		trackNudgeDismissClick: dismissCount =>
-			recordTracksEvent( 'calypso_google_my_business_stats_nudge_dismiss_icon_click', {
-				dismiss_count: dismissCount,
-			} ),
-		trackNudgeStartNowClick: dismissCount =>
-			recordTracksEvent( 'calypso_google_my_business_stats_nudge_start_now_button_click', {
-				dismiss_count: dismissCount,
-			} ),
 		dismissNudge,
+		recordTracksEvent,
+	},
+	( stateProps, dispatchProps, ownProps ) => {
+		return {
+			...ownProps,
+			...stateProps,
+			...dispatchProps,
+			trackNudgeView: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_stats_nudge_view', {
+					dismiss_count: stateProps.dismissCount,
+					path: ownProps.path,
+				} ),
+			trackNudgeDismissClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_stats_nudge_dismiss_icon_click', {
+					dismiss_count: stateProps.dismissCount,
+					path: ownProps.path,
+				} ),
+			trackNudgeStartNowClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_stats_nudge_start_now_button_click', {
+					dismiss_count: stateProps.dismissCount,
+					path: ownProps.path,
+				} ),
+			dismissNudge,
+		};
 	}
 )( localize( GoogleMyBusinessStatsNudge ) );

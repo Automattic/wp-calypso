@@ -133,12 +133,14 @@ class StatsSite extends Component {
 			);
 		}
 
+		const path = `/stats/${ period }/:site`;
+
 		return (
 			<Main wideLayout={ true }>
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Stats' ) } />
 				<PageViewTracker
-					path={ `/stats/${ period }/:site` }
+					path={ path }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				<PrivacyPolicyBanner />
@@ -153,7 +155,7 @@ class StatsSite extends Component {
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
 					{ isGoogleMyBusinessStatsNudgeVisible && (
-						<GoogleMyBusinessStatsNudge siteSlug={ slug } siteId={ siteId } />
+						<GoogleMyBusinessStatsNudge siteSlug={ slug } siteId={ siteId } path={ path } />
 					) }
 					<ChartTabs
 						barClick={ this.barClick }

@@ -22,7 +22,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 	static propTypes = {
 		connectGoogleMyBusinessLocation: PropTypes.func.isRequired,
 		location: PropTypes.object.isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
+		trackConnectLocation: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 		onSelected: PropTypes.func,
@@ -35,9 +35,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 	connectLocation = () => {
 		const { location, onSelected, siteId } = this.props;
 
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_location_connect_location_button_click'
-		);
+		this.props.trackConnectLocation();
 
 		this.props
 			.connectGoogleMyBusinessLocation( siteId, location.keyringConnectionId, location.ID )
@@ -77,5 +75,14 @@ export default connect(
 	{
 		connectGoogleMyBusinessLocation,
 		recordTracksEvent,
-	}
+	},
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		trackConnectLocation: () =>
+			dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_location_connect_location_button_click', {
+				path: '/google-my-business/select-location/:site'
+			} ),
+	} )
 )( localize( GoogleMyBusinessSelectLocationButton ) );

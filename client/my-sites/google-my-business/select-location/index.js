@@ -5,7 +5,6 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -18,27 +17,30 @@ import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessSelectLocationButton from './button';
 import HeaderCake from 'components/header-cake';
 import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
-import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithLocationCounts } from 'my-sites/google-my-business/utils';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
 		connectedLocation: PropTypes.object,
 		locations: PropTypes.arrayOf( PropTypes.object ).isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
 		requestKeyringConnections: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string,
+		trackAddYourBusinessClick: PropTypes.func.isRequired,
+		trackConnect: PropTypes.func.isRequired,
+		trackUseAnotherGoogleAccountClick: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -52,29 +54,15 @@ class GoogleMyBusinessSelectLocation extends Component {
 	};
 
 	trackAddYourBusinessClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_location_add_your_business_button_click'
-		);
+		this.props.trackAddYourBusinessClick();
 	};
 
 	handleConnect = () => {
-		const { locations } = this.props;
-
-		const locationCount = locations.length;
-		const verifiedLocationCount = locations.filter( location => {
-			return get( location, 'meta.state.isVerified', false );
-		} ).length;
-
-		this.props.recordTracksEvent( 'calypso_google_my_business_select_location_connect', {
-			location_count: locationCount,
-			verified_location_count: verifiedLocationCount,
-		} );
+		this.props.trackConnect();
 	};
 
-	trackAddListingClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_location_use_another_account_button_click'
-		);
+	trackUseAnotherGoogleAccountClick = () => {
+		this.props.trackUseAnotherGoogleAccountClick();
 	};
 
 	componentDidMount() {
@@ -128,7 +116,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 						<KeyringConnectButton
 							serviceId="google_my_business"
 							forceReconnect={ true }
-							onClick={ this.trackAddListingClick }
+							onClick={ this.trackUseAnotherGoogleAccountClick }
 							onConnect={ this.handleConnect }
 						>
 							{ translate( 'Use another Google Account' ) }
@@ -155,5 +143,29 @@ export default connect(
 		connectGoogleMyBusinessLocation,
 		recordTracksEvent,
 		requestKeyringConnections,
+	},
+	( stateProps, dispatchProps, ownProps ) => {
+		const path = '/google-my-business/new/:site';
+
+		return {
+			...ownProps,
+			...stateProps,
+			...dispatchProps,
+			trackAddYourBusinessClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_location_add_your_business_button_click', {
+					path,
+				} ),
+			trackConnect: () =>
+				recordTracksEventWithLocationCounts(
+					stateProps,
+					dispatchProps,
+					'calypso_google_my_business_select_location_connect',
+					path
+				),
+			trackUseAnotherGoogleAccountClick: () =>
+				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_location_use_another_google_account_button_click', {
+					path,
+				} ),
+		};
 	}
 )( localize( GoogleMyBusinessSelectLocation ) );
