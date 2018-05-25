@@ -245,6 +245,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED ] 
 				isNormalized: completed,
 				normalizationInProgress: false,
 				fieldErrors,
+				selectNormalized: ! fieldErrors,
 			},
 		},
 	};
