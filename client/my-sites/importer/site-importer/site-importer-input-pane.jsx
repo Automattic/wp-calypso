@@ -13,6 +13,7 @@ import { noop, every, has, defer, get } from 'lodash';
  * Internal dependencies
  */
 import wpLib from 'lib/wp';
+
 const wpcom = wpLib.undocumented();
 
 import { toApi, fromApi } from 'lib/importer/common';
@@ -27,6 +28,8 @@ import TextInput from 'components/forms/form-text-input';
 
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { connectDispatcher } from '../dispatcher-converter';
+
+import { loadmShotsPreview } from './site-preview-actions';
 
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
@@ -111,6 +114,11 @@ class SiteImporterInputPane extends React.Component {
 		const siteURL = this.state.siteURLInput;
 
 		this.setState( { loading: true }, this.resetErrors );
+
+		loadmShotsPreview( {
+			url: siteURL,
+			maxRetries: 1,
+		} ).catch( noop ); // We don't care about the error, this is just a preload
 
 		wpcom.wpcom.req
 			.get( {
@@ -210,19 +218,9 @@ class SiteImporterInputPane extends React.Component {
 							siteURL={ this.state.importSiteURL }
 							importData={ this.state.importData }
 							isLoading={ this.state.loading }
+							resetImport={ this.resetImport }
+							startImport={ this.importSite }
 						/>
-						<div className="site-importer__site-importer-confirm-site-pane-container">
-							<Button disabled={ this.state.loading } onClick={ this.importSite }>
-								{ this.props.translate( 'Yes! Start import' ) }
-							</Button>
-							<Button
-								disabled={ this.state.loading }
-								isPrimary={ false }
-								onClick={ this.resetImport }
-							>
-								{ this.props.translate( 'No' ) }
-							</Button>
-						</div>
 					</div>
 				) }
 				{ this.state.error && (
