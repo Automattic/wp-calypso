@@ -5,7 +5,7 @@
  */
 
 import store from 'store';
-import { assign, clone, defer } from 'lodash';
+import { assign, clone } from 'lodash';
 
 /**
  * Internal dependencies
@@ -122,25 +122,21 @@ PostActions = {
 		} );
 	},
 
-	autosave: function( site, callback ) {
+	autosave: async function( site ) {
 		const post = PostEditStore.get();
 		const savedPost = PostEditStore.getSavedPost();
 
-		callback = callback || function() {};
-
 		if ( ! PostEditStore.isDirty() ) {
-			return callback( new Error( 'NOT_DIRTY' ) );
+			throw new Error( 'NOT_DIRTY' );
 		}
 
 		store.set( 'wpcom-autosave:' + post.site_ID + ':' + post.ID, post );
 
 		// TODO: incorporate post locking
 		if ( utils.isPublished( savedPost ) || utils.isPublished( post ) ) {
-			reduxDispatch( editorAutosave( post ) )
-				.then( autosave => callback( null, autosave ) )
-				.catch( error => callback( error ) );
+			await reduxDispatch( editorAutosave( post ) );
 		} else {
-			PostActions.saveEdited( site, null, null, callback, {
+			await PostActions.saveEdited( site, null, null, {
 				recordSaveEvent: false,
 				autosave: true,
 			} );
@@ -186,12 +182,9 @@ PostActions = {
 	 * @param {Object} site Site object
 	 * @param {object} attributes post attributes to change before saving
 	 * @param {object} context additional properties for recording the save event
-	 * @param {function} callback receives ( err, post ) arguments
 	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
 	 */
-	saveEdited: function( site, attributes, context, callback, options ) {
-		let post, postHandle, query, changedAttributes, rawContent, mode, isNew;
-
+	saveEdited: async function( site, attributes, context, options ) {
 		// TODO: skip this edit if `attributes` are `null`. That means
 		// we don't want to do any additional edit before saving.
 		Dispatcher.handleViewAction( {
@@ -199,34 +192,31 @@ PostActions = {
 			post: attributes,
 		} );
 
-		post = PostEditStore.get();
+		const post = PostEditStore.get();
 
 		// Don't send a request to the API if the post has no content (title,
 		// content, or excerpt). A post without content is invalid.
 		if ( ! PostEditStore.hasContent() ) {
-			defer( callback, new Error( 'NO_CONTENT' ), post );
-			return;
+			throw new Error( 'NO_CONTENT' );
 		}
 
 		// Prevent saving post if another module has blocked saving.
 		if ( isEditorSaveBlocked( reduxGetState() ) ) {
-			defer( callback, new Error( 'SAVE_BLOCKED' ), post );
-			return;
+			throw new Error( 'SAVE_BLOCKED' );
 		}
 
-		changedAttributes = PostEditStore.getChangedAttributes();
+		let changedAttributes = PostEditStore.getChangedAttributes();
 
-		// Don't send a request to the API if the post is unchanged. An empty
-		// post request is invalid.
+		// Don't send a request to the API if the post is unchanged. An empty  post request is invalid.
+		// This case is not treated as error, but rather as a successful save.
 		if ( ! Object.keys( changedAttributes ).length ) {
-			defer( callback, new Error( 'NO_CHANGE' ), post );
 			return;
 		}
 
 		changedAttributes = normalizeApiAttributes( changedAttributes );
-		rawContent = PostEditStore.getRawContent();
-		mode = PreferencesStore.get( 'editor-mode' );
-		isNew = ! post.ID;
+		const rawContent = PostEditStore.getRawContent();
+		const mode = PreferencesStore.get( 'editor-mode' );
+		const isNew = ! post.ID;
 
 		// There is a separate action dispatched here because we need to queue changes
 		// that occur while the subsequent AJAX request is in-flight
@@ -234,8 +224,8 @@ PostActions = {
 			type: 'EDIT_POST_SAVE',
 		} );
 
-		postHandle = wpcom.site( post.site_ID ).post( post.ID );
-		query = {
+		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
+		const query = {
 			context: 'edit',
 			apiVersion: '1.2',
 		};
@@ -265,43 +255,46 @@ PostActions = {
 			} );
 		}
 
-		postHandle[ isNew ? 'add' : 'update' ]( query, changedAttributes, function( error, data ) {
+		try {
+			const data = await postHandle[ isNew ? 'add' : 'update' ]( query, changedAttributes );
+
 			const currentMode = PreferencesStore.get( 'editor-mode' );
 
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_POST_BEING_EDITED',
-				error: error,
 				// Only pass the rawContent if the mode hasn't changed since the request
 				// was initiated. Changing the mode re-initializes the rawContent, so we don't want to stomp on
 				// it
 				rawContent: mode === currentMode ? rawContent : null,
-				isNew: isNew,
 				post: data,
 				site,
 			} );
 
 			// Retrieve the normalized post and use it to update Redux store
-			if ( ! error ) {
-				const receivedPost = PostEditStore.get();
+			const receivedPost = PostEditStore.get();
 
-				if ( receivedPost.status === 'draft' ) {
-					// If a draft was successfully saved, set it as "last edited draft"
-					// There's UI in masterbar for one-click "continue editing"
-					reduxDispatch( setEditorLastDraft( receivedPost.site_ID, receivedPost.ID ) );
-				} else {
-					// Draft was published or trashed: reset the "last edited draft" record
-					reduxDispatch( resetEditorLastDraft() );
-				}
-
-				// `post.ID` can be null/undefined, which means we're saving new post.
-				// `savePostSuccess` will convert the temporary ID (empty string key) in Redux
-				// to the newly assigned ID in `receivedPost.ID`.
-				reduxDispatch( savePostSuccess( receivedPost.site_ID, post.ID, receivedPost, {} ) );
-				reduxDispatch( receivePost( receivedPost ) );
+			if ( receivedPost.status === 'draft' ) {
+				// If a draft was successfully saved, set it as "last edited draft"
+				// There's UI in masterbar for one-click "continue editing"
+				reduxDispatch( setEditorLastDraft( receivedPost.site_ID, receivedPost.ID ) );
+			} else {
+				// Draft was published or trashed: reset the "last edited draft" record
+				reduxDispatch( resetEditorLastDraft() );
 			}
 
-			callback( error, data );
-		} );
+			// `post.ID` can be null/undefined, which means we're saving new post.
+			// `savePostSuccess` will convert the temporary ID (empty string key) in Redux
+			// to the newly assigned ID in `receivedPost.ID`.
+			reduxDispatch( savePostSuccess( receivedPost.site_ID, post.ID, receivedPost, {} ) );
+			reduxDispatch( receivePost( receivedPost ) );
+		} catch ( error ) {
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_POST_BEING_EDITED',
+				error,
+			} );
+
+			throw error;
+		}
 	},
 };
 

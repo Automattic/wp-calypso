@@ -5,9 +5,7 @@ export default {
 	} ),
 	site: () => ( {
 		post: () => ( {
-			add: ( query, attributes, callback ) => {
-				callback( null, attributes );
-			},
+			add: async ( query, attributes ) => attributes,
 		} ),
 	} ),
 };

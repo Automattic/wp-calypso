@@ -532,8 +532,10 @@ export class PostEditor extends React.Component {
 		this.debouncedSaveRawContent.cancel();
 	};
 
-	autosave = () => {
-		let callback;
+	autosave = async () => {
+		// If debounced / throttled autosave was pending, consider it flushed
+		this.throttledAutosave.cancel();
+		this.debouncedAutosave.cancel();
 
 		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
@@ -552,25 +554,25 @@ export class PostEditor extends React.Component {
 			return;
 		}
 
-		if ( utils.isPublished( this.state.savedPost ) || utils.isPublished( this.state.post ) ) {
-			callback = function() {};
-		} else {
+		// The post is either already published or the current modifications are going to publish it
+		const savingPublishedPost =
+			utils.isPublished( this.state.savedPost ) || utils.isPublished( this.state.post );
+
+		if ( ! savingPublishedPost ) {
 			this.setState( { isSaving: true } );
-			callback = function( error ) {
-				if ( error && 'NO_CHANGE' !== error.message ) {
-					this.onSaveDraftFailure( error );
-				} else {
-					this.onSaveDraftSuccess();
-				}
-			}.bind( this );
 		}
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.autosave( this.props.selectedSite, callback );
-
-		// If debounced / throttled autosave was pending, consider it flushed
-		this.throttledAutosave.cancel();
-		this.debouncedAutosave.cancel();
+		try {
+			await actions.autosave( this.props.selectedSite );
+			if ( ! savingPublishedPost ) {
+				this.onSaveDraftSuccess();
+			}
+		} catch ( error ) {
+			if ( ! savingPublishedPost ) {
+				this.onSaveDraftFailure( error );
+			}
+		}
 	};
 
 	onClose = () => {
@@ -625,7 +627,7 @@ export class PostEditor extends React.Component {
 		page( this.getAllPostsUrl( 'trashed' ) );
 	};
 
-	onSave = ( status, callback ) => {
+	onSave = status => {
 		const edits = { ...this.props.edits };
 		if ( status ) {
 			edits.status = status;
@@ -638,30 +640,18 @@ export class PostEditor extends React.Component {
 			return;
 		}
 
+		this.setState( { isSaving: true } );
+
 		// Flush any pending raw content saves
 		this.saveRawContent();
-
 		edits.content = this.editor.getContent();
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.saveEdited(
-			this.props.selectedSite,
-			edits,
-			{ isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled },
-			function( error ) {
-				if ( error && 'NO_CHANGE' !== error.message ) {
-					this.onSaveDraftFailure( error );
-				} else {
-					this.onSaveDraftSuccess();
-				}
-
-				if ( 'function' === typeof callback ) {
-					callback( error );
-				}
-			}.bind( this )
-		);
-
-		this.setState( { isSaving: true } );
+		actions
+			.saveEdited( this.props.selectedSite, edits, {
+				isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled,
+			} )
+			.then( this.onSaveDraftSuccess, this.onSaveDraftFailure );
 	};
 
 	getExternalUrl() {
@@ -689,7 +679,7 @@ export class PostEditor extends React.Component {
 		);
 	}
 
-	onPreview = event => {
+	onPreview = async event => {
 		this.recordPreviewButtonClick();
 
 		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
@@ -700,39 +690,27 @@ export class PostEditor extends React.Component {
 			this._previewWindow = window.open( 'about:blank', 'WordPress.com Post Preview' );
 		}
 
-		const previewPost = () => {
-			const { previewUrl } = this.props;
-			if ( this._previewWindow ) {
-				this._previewWindow.location = previewUrl;
-				this._previewWindow.focus();
-			} else {
-				this._previewWindow = window.open( previewUrl, 'WordPress.com Post Preview' );
-			}
-		};
+		if ( this.state.isDirty || this.props.dirty ) {
+			await this.autosave();
+		}
 
-		if ( this.state.savedPost && this.state.savedPost.status === 'publish' ) {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.edit( { content: this.editor.getContent() } );
-			actions.autosave( this.props.selectedSite, previewPost );
+		const { previewUrl } = this.props;
+		if ( this._previewWindow ) {
+			this._previewWindow.location = previewUrl;
+			this._previewWindow.focus();
 		} else {
-			this.onSave( null, previewPost );
+			this._previewWindow = window.open( previewUrl, 'WordPress.com Post Preview' );
 		}
 	};
 
-	iframePreview = () => {
+	iframePreview = async () => {
+		// to avoid a weird UX we clear the iframe when (auto)saving so we need to delay
+		// opening the preview frame until the save is done to avoid flickering
 		if ( this.state.isDirty || this.props.dirty ) {
 			this.autosave();
-			// to avoid a weird UX we clear the iframe when (auto)saving
-			// so we need to delay opening it a bit to avoid flickering
-			setTimeout(
-				function() {
-					this.setState( { showPreview: true } );
-				}.bind( this ),
-				150
-			);
-		} else {
-			this.setState( { showPreview: true } );
 		}
+
+		this.setState( { showPreview: true } );
 	};
 
 	onPreviewClose = () => {
@@ -781,11 +759,6 @@ export class PostEditor extends React.Component {
 	};
 
 	onPublish = ( isConfirmed = false ) => {
-		const edits = {
-			...this.props.edits,
-			status: 'publish',
-		};
-
 		if ( this.props.isConfirmationSidebarEnabled && false === isConfirmed ) {
 			this.setConfirmationSidebar( { status: 'open' } );
 			return;
@@ -795,37 +768,33 @@ export class PostEditor extends React.Component {
 			this.setConfirmationSidebar( { status: 'publishing' } );
 		}
 
+		this.setState( {
+			isSaving: true,
+			isPublishing: true,
+		} );
+
+		const edits = { ...this.props.edits };
+
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
 			edits.status = 'private';
 		} else if ( utils.isFutureDated( this.state.post ) ) {
 			edits.status = 'future';
+		} else {
+			edits.status = 'publish';
 		}
 
 		// Flush any pending raw content saves
-		this.saveRawContent();
-
 		// Update content on demand to avoid unnecessary lag and because it is expensive
 		// to serialize when TinyMCE is the active mode
+		this.saveRawContent();
 		edits.content = this.editor.getContent();
 
-		actions.saveEdited(
-			this.props.selectedSite,
-			edits,
-			{ isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled },
-			function( error ) {
-				if ( error && 'NO_CHANGE' !== error.message ) {
-					this.onPublishFailure( error );
-				} else {
-					this.onPublishSuccess();
-				}
-			}.bind( this )
-		);
-
-		this.setState( {
-			isSaving: true,
-			isPublishing: true,
-		} );
+		actions
+			.saveEdited( this.props.selectedSite, edits, {
+				isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled,
+			} )
+			.then( this.onPublishSuccess, this.onPublishFailure );
 	};
 
 	onPublishFailure = error => {
