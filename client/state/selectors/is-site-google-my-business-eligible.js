@@ -10,7 +10,7 @@
 import createSelector from 'lib/create-selector';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { planMatches } from 'lib/plans';
-import { TYPE_BUSINESS, GROUP_WPCOM, GROUP_JETPACK, TYPE_PREMIUM } from 'lib/plans/constants';
+import { TYPE_BUSINESS, GROUP_WPCOM, GROUP_JETPACK } from 'lib/plans/constants';
 
 /**
  * Returns true if site has business plan
@@ -39,10 +39,7 @@ export const siteHasEligibleJetpackPlan = createSelector(
 	( state, siteId ) => {
 		const slug = getSitePlanSlug( state, siteId );
 
-		return (
-			planMatches( slug, { group: GROUP_JETPACK, type: TYPE_PREMIUM } ) ||
-			planMatches( slug, { group: GROUP_JETPACK, type: TYPE_BUSINESS } )
-		);
+		return planMatches( slug, { group: GROUP_JETPACK, type: TYPE_BUSINESS } );
 	},
 	( state, siteId ) => [ getSitePlanSlug( state, siteId ) ]
 );
