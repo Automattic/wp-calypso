@@ -9,7 +9,7 @@
     "url": "https://github.com/Automattic/wp-calypso.git"
   },
   "main": "index.js",
-  "browserlist": [
+  "browserslist": [
     "last 2 versions",
     "Safari >= 10",
     "iOS >= 10",
