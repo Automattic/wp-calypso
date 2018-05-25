@@ -45,7 +45,7 @@ class InlineHelpPopover extends Component {
 		const { selectedResult } = this.props;
 		event.preventDefault();
 
-		if ( 'undefined' != typeof selectedResult ) {
+		if ( 'undefined' !== typeof selectedResult ) {
 			this.openSecondaryView( VIEW_RICH_RESULT );
 		}
 	};
