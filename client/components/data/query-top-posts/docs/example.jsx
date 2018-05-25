@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { moment } from 'i18n-calypso';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { isRequestingTopPosts, getTopPosts } from 'state/stats/top-posts/selectors';
 import QueryTopPosts from 'components/data/query-top-posts';
 import SegmentedControl from 'components/segmented-control';
