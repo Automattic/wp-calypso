@@ -68,15 +68,19 @@ class EditContactInfo extends React.Component {
 			return <PendingWhoisUpdateCard />;
 		}
 
-		if ( ! includes( [ OPENHRS, OPENSRS ], domain.registrar ) && domain.privateDomain ) {
+		const isTucowsDomain = includes( [ OPENHRS, OPENSRS ], domain.registrar );
+		if ( ! isTucowsDomain && domain.privateDomain ) {
 			return <EditContactInfoPrivacyEnabledCard />;
 		}
+
+		// Empty state while Tucows figures out their stuff...
+		const contactInformation = isTucowsDomain ? {} : findRegistrantWhois( this.props.whois.data );
 
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
-					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
+					contactInformation={ contactInformation }
 					selectedDomain={ getSelectedDomain( this.props ) }
 					selectedSite={ this.props.selectedSite }
 				/>
