@@ -32,7 +32,6 @@ export class EditPostStatus extends Component {
 		setPostDate: PropTypes.func,
 		onSave: PropTypes.func,
 		post: PropTypes.object,
-		savedPost: PropTypes.object,
 		currentPost: PropTypes.object,
 		translate: PropTypes.func,
 		onPrivatePublish: PropTypes.func,
