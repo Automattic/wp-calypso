@@ -400,7 +400,7 @@ export class PostEditor extends React.Component {
 					<EditorNotice { ...this.state.notice } onDismissClick={ this.hideNotice } />
 				</div>
 				{ isTrashed ? (
-					<RestorePostDialog onClose={ this.onClose } onRestore={ this.onSaveTrashed } />
+					<RestorePostDialog onClose={ this.onClose } onRestore={ this.restoreTrashed } />
 				) : null }
 				{ this.state.showVerifyEmailDialog ? (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
@@ -416,6 +416,10 @@ export class PostEditor extends React.Component {
 			</div>
 		);
 	}
+
+	restoreTrashed = () => {
+		this.onSave( 'draft' );
+	};
 
 	restoreAutosave = () => {
 		this.setState( { showAutosaveDialog: false } );
@@ -619,10 +623,6 @@ export class PostEditor extends React.Component {
 		this.props.markSaved();
 
 		page( this.getAllPostsUrl( 'trashed' ) );
-	};
-
-	onSaveTrashed = ( status, callback ) => {
-		this.onSave( status, callback );
 	};
 
 	onSave = ( status, callback ) => {
