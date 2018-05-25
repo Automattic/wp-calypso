@@ -14,6 +14,7 @@ import { get, unionBy, extend } from 'lodash';
 import { getPluginsWithUpdates } from 'state/plugins/installed/selectors';
 import { requestSiteAlerts } from 'state/data-getters';
 
+const emptyList = [];
 const mapUpdateNewVersionToVersion = plugin =>
 	extend( plugin, {
 		version: plugin.update.new_version,
@@ -32,7 +33,7 @@ export default WrappedComponent => {
 
 		state = {
 			// Plugins already updated + those with pending updates
-			plugins: [],
+			plugins: emptyList,
 			siteId: this.props.siteId,
 		};
 
@@ -41,7 +42,7 @@ export default WrappedComponent => {
 				plugins:
 					nextProps.siteId === prevState.siteId
 						? unionBy( nextProps.plugins, prevState.plugins, 'slug' )
-						: [],
+						: emptyList,
 				siteId: nextProps.siteId,
 			};
 		}
@@ -60,7 +61,7 @@ export default WrappedComponent => {
 	return connect( ( state, { siteId } ) => {
 		return {
 			plugins: getPluginsWithUpdates( state, [ siteId ] ).map( mapUpdateNewVersionToVersion ),
-			themes: get( requestSiteAlerts( siteId ), 'data.updates.themes', [] ),
+			themes: get( requestSiteAlerts( siteId ), 'data.updates.themes', emptyList ),
 		};
 	} )( ToUpdate );
 };
