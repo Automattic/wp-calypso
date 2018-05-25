@@ -155,34 +155,32 @@ class TopPostsConfigurator extends Component {
 				</div>
 				<div className="docs-data__config-block">
 					<h3>Period</h3>
-					<p>
-						<SegmentedControl>
-							<SegmentedControlItem
-								selected={ period === 'day' }
-								onClick={ () => onPeriodUpdate( 'day' ) }
-							>
-								day
-							</SegmentedControlItem>
-							<SegmentedControlItem
-								selected={ period === 'week' }
-								onClick={ () => onPeriodUpdate( 'week' ) }
-							>
-								week
-							</SegmentedControlItem>
-							<SegmentedControlItem
-								selected={ period === 'month' }
-								onClick={ () => onPeriodUpdate( 'month' ) }
-							>
-								month
-							</SegmentedControlItem>
-							<SegmentedControlItem
-								selected={ period === 'year' }
-								onClick={ () => onPeriodUpdate( 'year' ) }
-							>
-								year
-							</SegmentedControlItem>
-						</SegmentedControl>
-					</p>
+					<SegmentedControl>
+						<SegmentedControlItem
+							selected={ period === 'day' }
+							onClick={ () => onPeriodUpdate( 'day' ) }
+						>
+							day
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ period === 'week' }
+							onClick={ () => onPeriodUpdate( 'week' ) }
+						>
+							week
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ period === 'month' }
+							onClick={ () => onPeriodUpdate( 'month' ) }
+						>
+							month
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ period === 'year' }
+							onClick={ () => onPeriodUpdate( 'year' ) }
+						>
+							year
+						</SegmentedControlItem>
+					</SegmentedControl>
 				</div>
 				<div className="docs-data__config-block">
 					<h3>Most recent day to include</h3>
