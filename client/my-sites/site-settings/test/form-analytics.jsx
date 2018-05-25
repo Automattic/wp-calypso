@@ -1,7 +1,4 @@
-/**
- * @format
- * @jest-environment jsdom
- */
+/** @format */
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
