@@ -67,6 +67,7 @@ class PieChart extends Component {
 
 	renderPieChart() {
 		const { transformedData } = this.state;
+
 		return transformedData.map( datum => {
 			return (
 				<path
@@ -89,9 +90,9 @@ class PieChart extends Component {
 		const { dataTotal } = this.state;
 
 		return (
-			<div className={ 'pie-chart' }>
+			<div className="pie-chart">
 				<svg
-					className={ 'pie-chart__chart-drawing' }
+					className="pie-chart__chart-drawing"
 					viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
 					preserveAspectRatio={ 'xMidYMid meet' }
 				>
@@ -99,8 +100,9 @@ class PieChart extends Component {
 						{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }
 					</g>
 				</svg>
+
 				{ title && (
-					<h2 className={ 'pie-chart__title' }>
+					<h2 className="pie-chart__title">
 						{ 'string' === typeof title ? title : title( translate, dataTotal ) }
 					</h2>
 				) }

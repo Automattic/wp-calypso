@@ -165,7 +165,12 @@ class GoogleMyBusinessStatsChart extends Component {
 
 		return (
 			<Fragment>
-				<PieChart data={ transformedData } title={ chartTitle } />
+				<div className="gmb-stats__pie-chart">
+					<PieChart data={ transformedData } title={ chartTitle } />
+
+					{ this.renderChartNotice() }
+				</div>
+
 				<PieChartLegend data={ transformedData } />
 			</Fragment>
 		);
@@ -181,12 +186,16 @@ class GoogleMyBusinessStatsChart extends Component {
 
 		return (
 			<Fragment>
-				<LineChart
-					fillArea
-					data={ transformedData }
-					renderTooltipForDatanum={ renderTooltipForDatanum }
-					legendInfo={ legendInfo }
-				/>
+				<div className="gmb-stats__line-chart">
+					<LineChart
+						fillArea
+						data={ transformedData }
+						renderTooltipForDatanum={ renderTooltipForDatanum }
+						legendInfo={ legendInfo }
+					/>
+
+					{ this.renderChartNotice() }
+				</div>
 			</Fragment>
 		);
 	}
@@ -207,26 +216,38 @@ class GoogleMyBusinessStatsChart extends Component {
 		return sumBy( flatten( transformedData ), 'value' ) === 0;
 	}
 
-	renderChartNotice( isError = false ) {
-		const { translate } = this.props;
+	renderChartNotice() {
+		const { statsError, translate } = this.props;
 
-		const emptyText = translate( 'No activity this period', {
-			context: 'Message on empty bar chart in Stats',
-			comment: 'Should be limited to 32 characters to prevent wrapping',
-		} );
+		const isEmptyChart = this.isChartEmpty();
 
-		const errorText = translate( 'Error loading data', {
+		if ( ! isEmptyChart && ! statsError ) {
+			return;
+		}
+
+		let text = translate( 'Error loading data', {
 			context: 'Message on a chart in Stats where an error was occured while loading data',
 			comment: 'Should be limited to 32 characters to prevent wrapping',
 		} );
+
+		let status = 'is-error';
+
+		if ( isEmptyChart ) {
+			text = translate( 'No activity this period', {
+				context: 'Message on empty bar chart in Stats',
+				comment: 'Should be limited to 32 characters to prevent wrapping',
+			} );
+
+			status = 'is-warning';
+		}
 
 		return (
 			<div className="chart__empty">
 				<Notice
 					className="chart__empty-notice"
-					status={ isError ? 'is-error' : 'is-warning' }
+					status={ status }
 					isCompact
-					text={ isError ? errorText : emptyText }
+					text={ text }
 					showDismiss={ false }
 				/>
 			</div>
@@ -234,9 +255,7 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	render() {
-		const { description, interval, statsError, title, translate } = this.props;
-
-		const isEmptyChart = this.isChartEmpty();
+		const { description, interval, title, translate } = this.props;
 
 		return (
 			<div>
@@ -248,20 +267,21 @@ class GoogleMyBusinessStatsChart extends Component {
 							<CardHeading tagName={ 'h2' } size={ 16 }>
 								{ description }
 							</CardHeading>
-
-							<hr className="gmb-stats__metric-hr" />
 						</div>
 					) }
-					<select value={ interval } onChange={ this.handleIntervalChange }>
+
+					<select
+						className="gmb-stats__chart-interval"
+						onChange={ this.handleIntervalChange }
+						value={ interval }
+					>
 						<option value="week">{ translate( 'Week' ) }</option>
 						<option value="month">{ translate( 'Month' ) }</option>
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
 					</select>
 
-					<div className="gmb-stats__metric-chart">
+					<div className="gmb-stats__chart">
 						{ this.renderChart() }
-						{ isEmptyChart && this.renderChartNotice( false ) }
-						{ !! statsError && this.renderChartNotice( true ) }
 					</div>
 				</Card>
 			</div>

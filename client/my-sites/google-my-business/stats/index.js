@@ -17,7 +17,6 @@ import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
-import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -116,18 +115,6 @@ class GoogleMyBusinessStats extends Component {
 				</div>
 
 				<div className="gmb-stats__metric">
-					<GoogleMyBusinessStatsTip
-						buttonHref="https://business.google.com/"
-						buttonText={ translate( 'Post Photos' ) }
-						eventName="calypso_google_my_business_stats_post_photos_button_click"
-						illustration="reviews"
-						text={ translate(
-							'Listings with recent photos typically drive more view to their business websites.'
-						) }
-					/>
-				</div>
-
-				<div className="gmb-stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'Where your customers view your business on Google' ) }
 						description={ translate(
@@ -165,30 +152,6 @@ class GoogleMyBusinessStats extends Component {
 								name: translate( 'Call You' ),
 							},
 						} }
-					/>
-				</div>
-
-				<div className="gmb-stats__metric">
-					<GoogleMyBusinessStatsTip
-						buttonHref="https://business.google.com/"
-						buttonText={ translate( 'Complete Your Listing' ) }
-						eventName="calypso_google_my_business_stats_complete_your_listing_button_click"
-						illustration="complete-listing"
-						text={ translate(
-							'Complete business listings get on average 7x more clicks than empty listings.'
-						) }
-					/>
-				</div>
-
-				<div className="gmb-stats__metric">
-					<GoogleMyBusinessStatsTip
-						buttonHref="https://business.google.com/"
-						buttonText={ translate( 'Complete Your Listing' ) }
-						eventName="calypso_google_my_business_stats_complete_your_listing_button_click"
-						illustration="compare"
-						text={ translate(
-							'Customers compare business listings on Google to make decisions. Make your listing count.'
-						) }
 					/>
 				</div>
 			</div>

@@ -71,7 +71,7 @@ class LineChart extends Component {
 		aspectRatio: 2,
 		fillArea: false,
 		margin: {
-			top: 10,
+			top: 30,
 			right: 30,
 			bottom: 30,
 			left: 30,

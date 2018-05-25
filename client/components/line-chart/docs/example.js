@@ -35,11 +35,18 @@ class LineChartExample extends Component {
 		} );
 	}
 
+	static createLegendInfo() {
+		return range( NUM_DATA_SERIES ).map( index => ( {
+			name: `Line #${ index + 1 }`,
+		} ) );
+	}
+
 	state = {
 		data: LineChartExample.createData( 1, 50, 10 ),
 		dataMax: 50,
 		dataMin: 1,
 		fillArea: false,
+		legendInfo: LineChartExample.createLegendInfo(),
 		seriesLength: 10,
 		showDataControls: false,
 	};
@@ -94,6 +101,7 @@ class LineChartExample extends Component {
 					<LineChart
 						data={ this.state.data }
 						fillArea={ this.state.fillArea }
+						legendInfo={ this.state.legendInfo }
 					/>
 				</Card>
 
