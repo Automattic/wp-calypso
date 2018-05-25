@@ -36,6 +36,7 @@
 		"fluid-width": true,
 		"gdpr-banner": true,
 		"google-analytics": true,
+		"google-my-business": false,
 		"help": true,
 		"help/courses": true,
 		"jetpack/connect/remote-install": true,

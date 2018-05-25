@@ -43,72 +43,69 @@ const redirectUnauthorized = ( context, next ) => {
 };
 
 export default function( router ) {
+	if ( ! config.isEnabled( 'google-my-business' ) ) {
+		return;
+	}
+
 	router( '/google-my-business', siteSelection, sites, navigation, makeLayout );
 
-	if ( config.isEnabled( 'google-my-business' ) ) {
-		router( '/google-my-business/new', redirectLoggedOut, siteSelection, sites, makeLayout );
+	router( '/google-my-business/new', redirectLoggedOut, siteSelection, sites, makeLayout );
 
-		router(
-			'/google-my-business/new/:site',
-			redirectLoggedOut,
-			siteSelection,
-			redirectUnauthorized,
-			newAccount,
-			navigation,
-			makeLayout
-		);
+	router(
+		'/google-my-business/new/:site',
+		redirectLoggedOut,
+		siteSelection,
+		redirectUnauthorized,
+		newAccount,
+		navigation,
+		makeLayout
+	);
 
-		router(
-			'/google-my-business/select-location',
-			redirectLoggedOut,
-			siteSelection,
-			sites,
-			makeLayout
-		);
+	router(
+		'/google-my-business/select-location',
+		redirectLoggedOut,
+		siteSelection,
+		sites,
+		makeLayout
+	);
 
-		router(
-			'/google-my-business/select-location/:site',
-			redirectLoggedOut,
-			siteSelection,
-			redirectUnauthorized,
-			selectLocation,
-			navigation,
-			makeLayout
-		);
+	router(
+		'/google-my-business/select-location/:site',
+		redirectLoggedOut,
+		siteSelection,
+		redirectUnauthorized,
+		selectLocation,
+		navigation,
+		makeLayout
+	);
 
-		router( '/google-my-business/stats', redirectLoggedOut, siteSelection, sites, makeLayout );
+	router( '/google-my-business/stats', redirectLoggedOut, siteSelection, sites, makeLayout );
 
-		router(
-			'/google-my-business/stats/:site',
-			redirectLoggedOut,
-			siteSelection,
-			redirectUnauthorized,
-			loadKeyringsMiddleware,
-			( context, next ) => {
-				const state = context.store.getState();
-				const siteId = getSelectedSiteId( state );
-				const siteIsGMBEligible = isSiteGoogleMyBusinessEligible( state, siteId );
-				const hasConnectedLocation = isGoogleMyBusinessLocationConnected( state, siteId );
-				const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
+	router(
+		'/google-my-business/stats/:site',
+		redirectLoggedOut,
+		siteSelection,
+		redirectUnauthorized,
+		loadKeyringsMiddleware,
+		( context, next ) => {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+			const siteIsGMBEligible = isSiteGoogleMyBusinessEligible( state, siteId );
+			const hasConnectedLocation = isGoogleMyBusinessLocationConnected( state, siteId );
+			const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
 
-				if ( ! config.isEnabled( 'google-my-business' ) ) {
-					page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
-					return;
-				}
-
-				if ( hasConnectedLocation ) {
-					next();
-				} else if ( hasLocationsAvailable && siteIsGMBEligible ) {
-					page.redirect( `/google-my-business/select-location/${ context.params.site }` );
-				} else {
-					page.redirect( `/stats/${ context.params.site }` );
-				}
-			},
-			stats,
-			navigation,
-			makeLayout
-		);
-	}
+			if ( hasConnectedLocation ) {
+				next();
+			} else if ( hasLocationsAvailable && siteIsGMBEligible ) {
+				page.redirect( `/google-my-business/select-location/${ context.params.site }` );
+			} else {
+				page.redirect( `/stats/${ context.params.site }` );
+			}
+		},
+		stats,
+		navigation,
+		makeLayout
+	);
 
 	router(
 		'/google-my-business/select-business-type/:site',
@@ -132,11 +129,6 @@ export default function( router ) {
 			const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
 			const hasAuthenticated =
 				getKeyringConnectionsByName( state, 'google_my_business' ).length > 0;
-
-			if ( ! config.isEnabled( 'google-my-business' ) ) {
-				page.redirect( `/google-my-business/select-business-type/${ context.params.site }` );
-				return;
-			}
 
 			if ( hasConnectedLocation ) {
 				page.redirect( `/google-my-business/stats/${ context.params.site }` );

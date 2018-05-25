@@ -12,7 +12,7 @@ const requestExternalAccess = ( url, cb ) => {
 	popupMonitor.open(
 		url,
 		null,
-		'toolbar=0,location=0,status=0,menubar=0,' + popupMonitor.getScreenCenterSpecs( 780, 500 )
+		'toolbar=0,location=0,status=0,menubar=0,' + popupMonitor.getScreenCenterSpecs( 780, 700 )
 	);
 
 	popupMonitor.once( 'close', cb );
