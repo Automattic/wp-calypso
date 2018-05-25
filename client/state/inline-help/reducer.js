@@ -41,11 +41,13 @@ export const search = createReducer(
 			} );
 		},
 		[ INLINE_HELP_SEARCH_REQUEST_SUCCESS ]: ( state, action ) => {
+			const results = action.searchResults;
+
 			return Object.assign( {}, state, {
-				selectedResult: -1,
+				selectedResult: results.length ? 0 : -1,
 				items: {
 					...state.items,
-					[ action.searchQuery ]: action.searchResults,
+					[ action.searchQuery ]: results,
 				},
 			} );
 		},
