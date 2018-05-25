@@ -21,7 +21,7 @@ import { recordStat, recordEvent } from 'lib/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
+import { getEditedPost, getSitePost } from 'state/posts/selectors';
 import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -33,6 +33,7 @@ export class EditPostStatus extends Component {
 		onSave: PropTypes.func,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
+		currentPost: PropTypes.object,
 		translate: PropTypes.func,
 		onPrivatePublish: PropTypes.func,
 		confirmationSidebarStatus: PropTypes.string,
@@ -73,20 +74,20 @@ export class EditPostStatus extends Component {
 	};
 
 	render() {
-		let showSticky, isSticky, isPublished, isPending, isScheduled;
-		const { translate, canUserPublishPosts } = this.props;
+		const { translate, canUserPublishPosts, post, currentPost } = this.props;
 
-		if ( this.props.post ) {
-			const isPrivate = postUtils.isPrivate( this.props.post );
-			const isPasswordProtected = postUtils.getVisibility( this.props.post ) === 'password';
+		const isPending = postUtils.isPending( post );
+		const isPrivate = postUtils.isPrivate( post );
+		const isPasswordProtected = postUtils.getVisibility( post ) === 'password';
+		const isPublished = postUtils.isPublished( currentPost );
+		const isScheduled = postUtils.isScheduled( currentPost );
 
-			showSticky = this.props.post.type === 'post' && ! isPrivate && ! isPasswordProtected;
-			isSticky = this.props.post.sticky;
-			isPending = postUtils.isPending( this.props.post );
-			isPublished = postUtils.isPublished( this.props.savedPost );
-			isScheduled = this.props.savedPost && this.props.savedPost.status === 'future';
-		}
+		const showSticky = post && post.type === 'post' && ! isPrivate && ! isPasswordProtected;
+		const showPending = post && ! isPublished && ! isScheduled && canUserPublishPosts;
+		const showRevertToDraft = isPublished || isScheduled || ( isPending && ! canUserPublishPosts );
 
+		/* TODO: fix the label a11y and enable the ESLint rule again */
+		/* eslint-disable jsx-a11y/label-has-for */
 		return (
 			<div className="edit-post-status">
 				{ this.renderPostScheduling() }
@@ -100,30 +101,28 @@ export class EditPostStatus extends Component {
 							</InfoPopover>
 						</span>
 						<FormToggle
-							checked={ isSticky }
+							checked={ post.sticky }
 							onChange={ this.toggleStickyStatus }
 							aria-label={ translate( 'Stick post to the front page' ) }
 						/>
 					</label>
 				) }
-				{ ! isPublished &&
-					! isScheduled &&
-					canUserPublishPosts && (
-						<label className="edit-post-status__pending-review">
-							<span className="edit-post-status__label-text">
-								{ translate( 'Pending review' ) }
-								<InfoPopover position="top right">
-									{ translate( 'Flag this post to be reviewed for approval.' ) }
-								</InfoPopover>
-							</span>
-							<FormToggle
-								checked={ isPending }
-								onChange={ this.togglePendingStatus }
-								aria-label={ translate( 'Request review for post' ) }
-							/>
-						</label>
-					) }
-				{ ( isPublished || isScheduled || ( isPending && ! canUserPublishPosts ) ) && (
+				{ showPending && (
+					<label className="edit-post-status__pending-review">
+						<span className="edit-post-status__label-text">
+							{ translate( 'Pending review' ) }
+							<InfoPopover position="top right">
+								{ translate( 'Flag this post to be reviewed for approval.' ) }
+							</InfoPopover>
+						</span>
+						<FormToggle
+							checked={ isPending }
+							onChange={ this.togglePendingStatus }
+							aria-label={ translate( 'Request review for post' ) }
+						/>
+					</label>
+				) }
+				{ showRevertToDraft && (
 					<Button
 						className="edit-post-status__revert-to-draft"
 						onClick={ this.revertToDraft }
@@ -134,6 +133,7 @@ export class EditPostStatus extends Component {
 				) }
 			</div>
 		);
+		/* eslint-enable jsx-a11y/label-has-for */
 	}
 
 	renderPostScheduling() {
@@ -158,12 +158,14 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
+		const currentPost = getSitePost( state, siteId, postId );
 		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
 
 		return {
 			siteId,
 			postId,
 			post,
+			currentPost,
 			canUserPublishPosts,
 		};
 	},
