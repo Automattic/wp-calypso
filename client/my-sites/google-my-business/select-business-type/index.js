@@ -75,7 +75,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 	trackConnectToGoogleMyBusinessClick = () => {
 		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_business_type_create_my_listing_button_click'
+			'calypso_google_my_business_select_business_type_connect_to_google_my_business_button_click'
 		);
 	};
 
