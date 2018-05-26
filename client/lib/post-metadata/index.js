@@ -138,9 +138,8 @@ PostMetadata = {
 	},
 
 	/**
-	 * Given a post object, return either "public" or "private", indicating whether
-	 * the geo-location data associated with the post is allowed to be displayed
-	 * publicly.
+	 * Given a post object, return a boolean, indicating whether the geo-location data
+	 * associated with the post is allowed to be displayed publicly.
 	 *
 	 * @param {Object} post Post object
 	 * @returns {boolean} Whether the geo-location data is shared publicly.
