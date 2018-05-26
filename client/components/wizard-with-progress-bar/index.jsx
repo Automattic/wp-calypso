@@ -6,6 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,16 +17,25 @@ import ProgressBar from 'components/progress-bar';
 
 class WizardWithProgressBar extends Component {
 	static propTypes = {
+		currentStep: PropTypes.number.isRequired,
+		nextButtonClick: PropTypes.func,
 		nextButtonText: PropTypes.string,
+		numberOfSteps: PropTypes.number.isRequired,
+		previousButtonClick: PropTypes.func,
 		previousButtonText: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		nextButtonClick: noop,
+		previousButtonClick: noop,
 	};
 
 	renderNextButton() {
 		const text = this.props.nextButtonText || this.props.translate( 'Next' );
 
 		return (
-			<Button primary>
+			<Button primary onClick={ this.props.nextButtonClick }>
 				{ text }
 			</Button>
 		);
@@ -35,20 +45,18 @@ class WizardWithProgressBar extends Component {
 		const text = this.props.previousButtonText || this.props.translate( 'Back' );
 
 		return (
-			<Button>
+			<Button onClick={ this.props.previousButtonClick }>
 				{ text }
 			</Button>
 		);
 	}
 
 	render() {
-		const value = 10, total = 100;
-
 		return (
 			<CompactCard className="wizard-with-progress-bar">
 				{ this.renderPreviousButton() }
 
-				<ProgressBar value={ value } total={ total } />
+				<ProgressBar value={ this.props.currentStep } total={ this.props.numberOfSteps } />
 
 				{ this.renderNextButton() }
 			</CompactCard>
