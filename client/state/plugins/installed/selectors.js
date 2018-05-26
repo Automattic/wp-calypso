@@ -87,7 +87,11 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 }
 
 export function getPluginsWithUpdates( state, siteIds ) {
-	return filter( getPlugins( state, siteIds ), _filters.updates );
+	return filter( getPlugins( state, siteIds ), _filters.updates ).map( plugin => ( {
+		...plugin,
+		version: plugin.update.new_version,
+		type: 'plugin',
+	} ) );
 }
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
