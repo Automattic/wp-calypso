@@ -16,6 +16,7 @@
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"support_locales": [ "en", "es", "pt-br" ],
 	"features": {
+		"activity-log-theme-update": true,
 		"activity-log-wpcom-free": true,
 		"ad-tracking": false,
 		"automated-transfer": true,
