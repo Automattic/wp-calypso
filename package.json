@@ -165,7 +165,7 @@
     "uuid": "3.2.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
-    "webpack": "4.5.0",
+    "webpack": "4.9.0",
     "webpack-cli": "2.0.9",
     "webpack-dev-middleware": "3.1.2",
     "wpcom": "5.4.1",
@@ -297,17 +297,17 @@
   },
   "greenkeeper": {
     "ignore": [
-    "@babel/cli",
-    "@babel/core",
-    "@babel/plugin-proposal-export-default-from",
-    "@babel/plugin-syntax-jsx",
-    "@babel/plugin-transform-runtime",
-    "@babel/polyfill",
-    "@babel/preset-env",
-    "@babel/preset-react",
-    "@babel/preset-stage-2",
-    "@babel/runtime",
-    "jquery"
+      "@babel/cli",
+      "@babel/core",
+      "@babel/plugin-proposal-export-default-from",
+      "@babel/plugin-syntax-jsx",
+      "@babel/plugin-transform-runtime",
+      "@babel/polyfill",
+      "@babel/preset-env",
+      "@babel/preset-react",
+      "@babel/preset-stage-2",
+      "@babel/runtime",
+      "jquery"
     ]
   }
 }
