@@ -206,38 +206,38 @@ describe( 'index', () => {
 	} );
 
 	describe( '#geoIsSharedPublicy()', () => {
-		test( 'should return public if passed a falsey value', () => {
+		test( 'should return true if passed a falsey value', () => {
 			const value = PostMetadata.geoIsSharedPublicly( undefined );
 
-			expect( value ).to.be.eql( 'public' );
+			expect( value ).to.be.true;
 		} );
 
-		test( 'should return public if metadata not assigned to post', () => {
+		test( 'should return true if metadata not assigned to post', () => {
 			const value = PostMetadata.geoIsSharedPublicly( {} );
 
-			expect( value ).to.be.eql( 'public' );
+			expect( value ).to.be.true;
 		} );
 
-		test( 'should return public if metadata contains no geo_public field', () => {
+		test( 'should return true if metadata contains no geo_public field', () => {
 			const value = PostMetadata.geoIsSharedPublicly( { metadata: [] } );
 
-			expect( value ).to.be.eql( 'public' );
+			expect( value ).to.be.true;
 		} );
 
-		test( 'should return private if geo_public meta field is falsey', () => {
+		test( 'should return false if geo_public meta field is falsey', () => {
 			const value = PostMetadata.geoIsSharedPublicly( {
 				metadata: [ { id: '800', key: 'geo_public', value: '0' } ],
 			} );
 
-			expect( value ).to.be.eql( 'private' );
+			expect( value ).to.be.false;
 		} );
 
-		test( 'should return public if geo_public meta field is truthy', () => {
+		test( 'should return true if geo_public meta field is truthy', () => {
 			const value = PostMetadata.geoIsSharedPublicly( {
 				metadata: [ { id: '800', key: 'geo_public', value: '1' } ],
 			} );
 
-			expect( value ).to.be.eql( 'public' );
+			expect( value ).to.be.true;
 		} );
 	} );
 } );
