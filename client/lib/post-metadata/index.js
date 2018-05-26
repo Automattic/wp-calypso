@@ -156,7 +156,7 @@ PostMetadata = {
 			return true;
 		}
 
-		if ( 'undefined' === typeof isSharedPublicly ) {
+		if ( undefined === isSharedPublicly ) {
 			// If they have no geo_public value but they do have a lat/long, then we assume they saved with Calypso
 			// before it supported geo_public, in which case we should treat it as private.
 			if (
