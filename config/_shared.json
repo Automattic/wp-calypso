@@ -191,6 +191,6 @@
 	"wpcom_concierge_schedule_id": 1,
 	"wpcom_signup_id": false,
 	"wpcom_signup_key": false,
-    "statsd_analytics_response_time_max_logs_per_second": 50,
-    "google_maps_api_key": "AIzaSyBO5-y0uPC5DhwrcKy-NHUkLUmFQpNj-1g"
+	"statsd_analytics_response_time_max_logs_per_second": 50,
+	"google_maps_api_key": "AIzaSyBO5-y0uPC5DhwrcKy-NHUkLUmFQpNj-1g"
 }
