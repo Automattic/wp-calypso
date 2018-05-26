@@ -38,6 +38,11 @@
 	display: flex;
 	align-items: flex-start;
 	margin-top: 24px;
+	flex-direction: column;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
 }
 
 .address-step__suggestion-title,
@@ -49,11 +54,15 @@
 .address-step__unverifiable-info {
 	padding: 16px;
 	flex-grow: 1;
-	width: 50%;
 
-	&:first-child {
-		margin-right: 16px;
-		margin-bottom: 24px;
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+		width: 50%;
+
+		&:first-child {
+			margin-right: 16px;
+			margin-bottom: 24px;
+		}
 	}
 }
 
@@ -61,6 +70,7 @@
 	border: 1px solid transparent;
 	border-radius: 4px;
 	cursor: pointer;
+	width: 100%;
 
 	&.is-selected {
 		border-color: $blue-medium;
