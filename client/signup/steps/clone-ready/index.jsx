@@ -14,10 +14,9 @@ import { connect } from 'react-redux';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
-import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { rewindRestore } from 'state/activity-log/actions';
+import { rewindClone } from 'state/activity-log/actions';
 
 class CloneReadyStep extends Component {
 	static propTypes = {
@@ -139,14 +138,7 @@ class CloneReadyStep extends Component {
 	};
 
 	render() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			originSiteName,
-			translate,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
 		const headerText = translate( 'Ready to clone!' );
 
@@ -179,7 +171,7 @@ export default connect(
 			dispatch(
 				withAnalytics(
 					recordTracksEvent( 'calypso_activitylog_clone_request' ),
-					rewindRestore( blogId, timestamp, payload )
+					rewindClone( blogId, timestamp, payload )
 				)
 			),
 	} )
