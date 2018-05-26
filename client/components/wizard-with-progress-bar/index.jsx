@@ -44,11 +44,7 @@ class WizardWithProgressBar extends Component {
 	renderPreviousButton() {
 		const text = this.props.previousButtonText || this.props.translate( 'Back' );
 
-		return (
-			<Button onClick={ this.props.previousButtonClick }>
-				{ text }
-			</Button>
-		);
+		return <Button onClick={ this.props.previousButtonClick }>{ text }</Button>;
 	}
 
 	render() {
@@ -56,7 +52,11 @@ class WizardWithProgressBar extends Component {
 			<CompactCard className="wizard-with-progress-bar">
 				{ this.renderPreviousButton() }
 
-				<ProgressBar value={ this.props.currentStep } total={ this.props.numberOfSteps } />
+				<ProgressBar
+					value={ this.props.currentStep }
+					total={ this.props.numberOfSteps }
+					canGoBackwards={ true }
+				/>
 
 				{ this.renderNextButton() }
 			</CompactCard>
