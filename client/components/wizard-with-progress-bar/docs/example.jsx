@@ -12,7 +12,9 @@ import WizardWithProgressBar from '../index';
 
 const WizardWithProgressBarExample = () => (
 	<div>
-		<WizardWithProgressBar />
+		<WizardWithProgressBar
+			previousButtonText="Reset"
+		/>
 	</div>
 );
 

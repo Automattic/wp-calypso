@@ -16,25 +16,41 @@ import ProgressBar from 'components/progress-bar';
 
 class WizardWithProgressBar extends Component {
 	static propTypes = {
+		nextButtonText: PropTypes.string,
+		previousButtonText: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
-	render() {
-		const { translate } = this.props;
+	renderNextButton() {
+		const text = this.props.nextButtonText || this.props.translate( 'Next' );
 
+		return (
+			<Button primary>
+				{ text }
+			</Button>
+		);
+	}
+
+	renderPreviousButton() {
+		const text = this.props.previousButtonText || this.props.translate( 'Back' );
+
+		return (
+			<Button>
+				{ text }
+			</Button>
+		);
+	}
+
+	render() {
 		const value = 10, total = 100;
 
 		return (
 			<CompactCard className="wizard-with-progress-bar">
-				<Button>
-					{ translate( 'Back' ) }
-				</Button>
+				{ this.renderPreviousButton() }
 
 				<ProgressBar value={ value } total={ total } />
 
-				<Button primary>
-					{ translate( 'Next' ) }
-				</Button>
+				{ this.renderNextButton() }
 			</CompactCard>
 		);
 	}
