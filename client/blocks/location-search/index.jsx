@@ -6,6 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { loadScript } from 'lib/load-script';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import CompactCard from 'components/card/compact';
 import SearchCard from 'components/search-card';
 
 let autocompleteService = null;
-const googleMapsKey = 'AIzaSyBO5-y0uPC5DhwrcKy-NHUkLUmFQpNj-1g';
 
 class LocationSearch extends Component {
 	static propTypes = {
@@ -28,7 +28,9 @@ class LocationSearch extends Component {
 		if ( ! autocompleteService ) {
 			autocompleteService = {};
 			loadScript(
-				`//maps.googleapis.com/maps/api/js?key=${ googleMapsKey }&libraries=places`,
+				`//maps.googleapis.com/maps/api/js?key=${ config(
+					'google_maps_api_key'
+				) }&libraries=places`,
 				function() {
 					// eslint-disable-next-line no-undef
 					autocompleteService = new google.maps.places.AutocompleteService();
@@ -47,7 +49,13 @@ class LocationSearch extends Component {
 		} );
 
 		if ( query ) {
-			autocompleteService.getQueryPredictions( { input: query }, this.updatePredictions );
+			autocompleteService.getPlacePredictions(
+				{
+					input: query,
+					types: [ 'establishment' ],
+				},
+				this.updatePredictions
+			);
 		} else {
 			this.updatePredictions( [] );
 		}
