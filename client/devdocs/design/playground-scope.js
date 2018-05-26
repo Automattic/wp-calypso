@@ -117,3 +117,4 @@ export VerticalMenu from 'components/vertical-menu';
 export VerticalNav from 'components/vertical-nav';
 export VerticalNavItem from 'components/vertical-nav/item';
 export Wizard from 'components/wizard';
+export WizardWithProgressBar from 'components/wizard-with-progress-bar';
