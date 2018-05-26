@@ -204,7 +204,7 @@ class ActivityLogTasklist extends Component {
 				args: { item: item.name, siteName },
 			} ),
 			{
-				id: item.slug,
+				id: `alitemupdate-${ item.slug }`,
 				showDismiss: false,
 			}
 		);
@@ -260,7 +260,7 @@ class ActivityLogTasklist extends Component {
 					showErrorNotice(
 						translate( 'An error occurred while updating %(item)s on %(siteName)s.', noticeArgs ),
 						{
-							id: slug,
+							id: `alitemupdate-${ slug }`,
 							button: translate( 'Try again' ),
 							onClick: () => this.enqueue( item, 'notice' ),
 						}
@@ -271,7 +271,7 @@ class ActivityLogTasklist extends Component {
 					showSuccessNotice(
 						translate( 'Successfully updated %(item)s in %(siteName)s.', noticeArgs ),
 						{
-							id: slug,
+							id: `alitemupdate-${ slug }`,
 							duration: 3000,
 						}
 					);

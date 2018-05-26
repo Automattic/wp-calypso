@@ -42,7 +42,7 @@ import { getSite } from 'state/sites/selectors';
 import { updatePlugin } from 'state/plugins/installed/actions';
 import { getPluginOnSite, getStatusForPlugin } from 'state/plugins/installed/selectors';
 import PluginNotices from 'lib/plugins/notices';
-import { errorNotice, infoNotice, successNotice, removeNotice } from 'state/notices/actions';
+import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
 
 class ActivityLogItem extends Component {
 	static propTypes = {
@@ -65,29 +65,20 @@ class ActivityLogItem extends Component {
 	confirmRewind = () => this.props.confirmRewind( this.props.activity.rewindId );
 
 	updatePlugins = ( singlePlugin = false ) => {
-		const { removeThisNotice, showInfoNotice, site, updateSinglePlugin } = this.props;
+		const { showInfoNotice, site, updateSinglePlugin } = this.props;
 		const noticesToShow = {};
 
 		forEach( singlePlugin.id ? [ singlePlugin ] : this.props.pluginsToUpdate, plugin => {
 			// Use id: "hello-dolly/hello", slug: "hello-dolly", name: "Hello Dolly", updateStatus: bool|object,
-			const updateNoticeId = get(
-				this.state.pluginUpdateNotice,
-				[ plugin.id, 'notice', 'noticeId' ],
-				null
-			);
-
-			if ( updateNoticeId ) {
-				removeThisNotice( updateNoticeId );
-			}
-
 			updateSinglePlugin( plugin );
 
-			noticesToShow[ plugin.id ] = showInfoNotice(
+			showInfoNotice(
 				PluginNotices.inProgressMessage( 'UPDATE_PLUGIN', '1 site 1 plugin', {
 					plugin: plugin.name,
 					site: site.name,
 				} ),
 				{
+					id: `alitemupdate-${ plugin.slug }`,
 					showDismiss: false,
 				}
 			);
@@ -100,10 +91,8 @@ class ActivityLogItem extends Component {
 		}
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		const noticesToShow = {};
-
-		forEach( nextProps.pluginsToUpdate, ( plugin, key ) => {
+	componentDidUpdate() {
+		forEach( this.props.pluginsToUpdate, ( plugin, key ) => {
 			if (
 				get( this.props.pluginsToUpdate, [ key, 'updateStatus', 'status' ], false ) ===
 					plugin.updateStatus.status ||
@@ -113,18 +102,8 @@ class ActivityLogItem extends Component {
 			}
 
 			const updateStatus = plugin.updateStatus;
-			const updateNoticeId = get(
-				this.state.pluginUpdateNotice,
-				[ plugin.id, 'notice', 'noticeId' ],
-				null
-			);
 
-			// If there is no notice displayed
-			if ( ! updateNoticeId ) {
-				return;
-			}
-
-			const { removeThisNotice, showErrorNotice, showSuccessNotice, site, translate } = nextProps;
+			const { showErrorNotice, showSuccessNotice, site, translate } = this.props;
 
 			// If it errored, clear and show error notice
 			const pluginData = {
@@ -134,31 +113,28 @@ class ActivityLogItem extends Component {
 
 			switch ( updateStatus.status ) {
 				case 'error':
-					removeThisNotice( updateNoticeId );
-					noticesToShow[ plugin.id ] = showErrorNotice(
+					showErrorNotice(
 						PluginNotices.singleErrorMessage( 'UPDATE_PLUGIN', pluginData, {
 							error: updateStatus,
 						} ),
 						{
+							id: `alitemupdate-${ plugin.slug }`,
 							button: translate( 'Try again' ),
 							onClick: () => this.updatePlugins( plugin ),
 						}
 					);
 					break;
 				case 'completed':
-					removeThisNotice( updateNoticeId );
-					noticesToShow[ plugin.id ] = showSuccessNotice(
-						PluginNotices.successMessage( 'UPDATE_PLUGIN', '1 site 1 plugin', pluginData )
+					showSuccessNotice(
+						PluginNotices.successMessage( 'UPDATE_PLUGIN', '1 site 1 plugin', pluginData ),
+						{
+							id: `alitemupdate-${ plugin.slug }`,
+							duration: 3000,
+						}
 					);
 					break;
 			}
 		} );
-
-		if ( ! isEmpty( noticesToShow ) ) {
-			this.setState( {
-				pluginUpdateNotice: { ...this.state.pluginUpdateNotice, ...noticesToShow },
-			} );
-		}
 	}
 
 	renderHeader() {
@@ -533,7 +509,6 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 	showErrorNotice: ( error, options ) => dispatch( errorNotice( error, options ) ),
 	showInfoNotice: ( info, options ) => dispatch( infoNotice( info, options ) ),
 	showSuccessNotice: ( success, options ) => dispatch( successNotice( success, options ) ),
-	removeThisNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );
