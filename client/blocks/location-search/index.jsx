@@ -85,6 +85,8 @@ class LocationSearch extends Component {
 			<Fragment>
 				<SearchCard
 					onSearch={ this.handleSearch }
+					delaySearch={ true }
+					delayTimeout={ 500 }
 					className="location-search__search-card is-compact"
 				/>
 				{ predictions && predictions.map( this.renderPrediction ) }

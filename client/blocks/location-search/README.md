@@ -8,7 +8,7 @@ A search component for searching locations via the Google Places API.
 ```jsx
 import LocationSearch from 'blocks/location-search';
 
-export default function RockOnButton() {
+export default function AwesomeLocationSearch() {
 	return (
 		<LocationSearch />
 	);
