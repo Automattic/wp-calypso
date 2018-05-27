@@ -32,7 +32,6 @@ import {
 	rewindRestore,
 } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import getActivityLog from 'state/selectors/get-activity-log';
 import getRequestedBackup from 'state/selectors/get-requested-backup';
 import getRequestedRewind from 'state/selectors/get-requested-rewind';
 import getRewindState from 'state/selectors/get-rewind-state';
@@ -455,9 +454,8 @@ const makeListPluginsToUpdate = ( plugins, state, siteId ) =>
 		...getPluginOnSite( state, siteId, plugin.pluginSlug ),
 	} ) );
 
-const mapStateToProps = ( state, { activityId, siteId } ) => {
+const mapStateToProps = ( state, { activity, siteId } ) => {
 	const rewindState = getRewindState( state, siteId );
-	const activity = getActivityLog( state, siteId, activityId );
 	const pluginSlug = activity.activityMeta.pluginSlug;
 	const pluginId = activity.activityMeta.pluginId;
 	const plugins = activity.activityMeta.pluginsToUpdate;
@@ -466,8 +464,8 @@ const mapStateToProps = ( state, { activityId, siteId } ) => {
 	return {
 		activity,
 		gmtOffset: getSiteGmtOffset( state, siteId ),
-		mightBackup: activityId && activityId === getRequestedBackup( state, siteId ),
-		mightRewind: activityId && activityId === getRequestedRewind( state, siteId ),
+		mightBackup: activity && activity.activityId === getRequestedBackup( state, siteId ),
+		mightRewind: activity && activity.activityId === getRequestedRewind( state, siteId ),
 		timezone: getSiteTimezoneValue( state, siteId ),
 		siteSlug: site.slug,
 		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
@@ -479,7 +477,7 @@ const mapStateToProps = ( state, { activityId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
+const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) => ( {
 	createBackup: () =>
 		dispatch(
 			withAnalytics(
