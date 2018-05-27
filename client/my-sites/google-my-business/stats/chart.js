@@ -74,6 +74,9 @@ function getAggregation( props ) {
 	return props.chartType === 'pie' ? 'total' : 'daily';
 }
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+/* eslint-disable jsx-a11y/no-onchange */
+
 class GoogleMyBusinessStatsChart extends Component {
 	static propTypes = {
 		changeGoogleMyBusinessStatsInterval: PropTypes.func.isRequired,
@@ -280,14 +283,15 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
 					</select>
 
-					<div className="gmb-stats__chart">
-						{ this.renderChart() }
-					</div>
+					<div className="gmb-stats__chart">{ this.renderChart() }</div>
 				</Card>
 			</div>
 		);
 	}
 }
+
+/* eslint-enable wpcalypso/jsx-classname-namespace */
+/* eslint-enable jsx-a11y/no-onchange */
 
 export default connect(
 	( state, ownProps ) => {
