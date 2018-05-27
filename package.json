@@ -270,7 +270,7 @@
     "husky": "0.13.3",
     "ignore": "3.3.5",
     "jest": "22.4.2",
-    "jest-docblock": "22.0.3",
+    "jest-docblock": "23.0.1",
     "jest-junit-reporter": "1.1.0",
     "jscodeshift": "0.3.30",
     "md5-file": "3.1.0",
