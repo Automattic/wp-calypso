@@ -27,20 +27,19 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
+import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent, withEnhancers } from 'state/analytics/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { recordTracksEventWithLocationCounts } from 'my-sites/google-my-business/utils';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
-		connectedLocation: PropTypes.object,
 		locations: PropTypes.arrayOf( PropTypes.object ).isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		recordTracksEventWithLocationCounts: PropTypes.func.isRequired,
 		requestKeyringConnections: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
-		trackAddYourBusinessClick: PropTypes.func.isRequired,
-		trackConnect: PropTypes.func.isRequired,
-		trackUseAnotherGoogleAccountClick: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -49,20 +48,25 @@ class GoogleMyBusinessSelectLocation extends Component {
 	};
 
 	handleLocationSelected = () => {
-		const { siteSlug } = this.props;
-		page.redirect( `/google-my-business/stats/${ siteSlug }` );
+		page.redirect( `/google-my-business/stats/${ this.props.siteSlug }` );
 	};
 
 	trackAddYourBusinessClick = () => {
-		this.props.trackAddYourBusinessClick();
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_location_add_your_business_button_click'
+		);
 	};
 
 	handleConnect = () => {
-		this.props.trackConnect();
+		this.props.recordTracksEventWithLocationCounts(
+			'calypso_google_my_business_select_location_connect'
+		);
 	};
 
 	trackUseAnotherGoogleAccountClick = () => {
-		this.props.trackUseAnotherGoogleAccountClick();
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_location_use_another_google_account_button_click'
+		);
 	};
 
 	componentDidMount() {
@@ -141,31 +145,8 @@ export default connect(
 	},
 	{
 		connectGoogleMyBusinessLocation,
-		recordTracksEvent,
+		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [enhanceWithLocationCounts, enhanceWithSiteType] ),
 		requestKeyringConnections,
-	},
-	( stateProps, dispatchProps, ownProps ) => {
-		const path = '/google-my-business/new/:site';
-
-		return {
-			...ownProps,
-			...stateProps,
-			...dispatchProps,
-			trackAddYourBusinessClick: () =>
-				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_location_add_your_business_button_click', {
-					path,
-				} ),
-			trackConnect: () =>
-				recordTracksEventWithLocationCounts(
-					stateProps,
-					dispatchProps,
-					'calypso_google_my_business_select_location_connect',
-					path
-				),
-			trackUseAnotherGoogleAccountClick: () =>
-				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_location_use_another_google_account_button_click', {
-					path,
-				} ),
-		};
 	}
 )( localize( GoogleMyBusinessSelectLocation ) );

@@ -28,22 +28,19 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent, withEnhancers } from 'state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { recordTracksEventWithLocationCounts } from 'my-sites/google-my-business/utils';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
 		locations: PropTypes.array.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		recordTracksEventWithLocationCounts: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		siteIsJetpack: PropTypes.bool.isRequired,
 		siteSlug: PropTypes.string,
-		trackConnect: PropTypes.func.isRequired,
-		trackConnectToGoogleMyBusinessClick: PropTypes.func.isRequired,
-		trackCreateListingClick: PropTypes.func.isRequired,
-		trackGoogleMyBusinessClick: PropTypes.func.isRequired,
-		trackLearnMoreAboutSEOClick: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -54,7 +51,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	handleConnect = () => {
 		const { locations, siteSlug } = this.props;
 
-		this.props.trackConnect();
+		this.props.recordTracksEventWithLocationCounts( 'calypso_google_my_business_select_business_type_connect' );
 
 		if ( locations.length === 0 ) {
 			page.redirect( `/google-my-business/new/${ siteSlug }` );
@@ -64,19 +61,27 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	trackCreateListingClick = () => {
-		this.props.trackCreateListingClick();
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_business_type_create_listing_button_click'
+		);
 	};
 
 	trackConnectToGoogleMyBusinessClick = () => {
-		this.props.trackConnectToGoogleMyBusinessClick();
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_business_type_connect_to_google_my_business_button_click'
+		);
 	};
 
 	trackLearnMoreAboutSEOClick = () => {
-		this.props.trackLearnMoreAboutSEOClick();
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_business_type_learn_more_about_seo_button_click'
+		);
 	};
 
 	trackGoogleMyBusinessClick = () => {
-		this.props.trackGoogleMyBusinessClick();
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_business_type_google_my_business_link_click'
+		);
 	};
 
 	renderLocalBusinessCard() {
@@ -226,38 +231,7 @@ export default connect(
 		};
 	},
 	{
-		recordTracksEvent,
-	},
-	( stateProps, dispatchProps, ownProps ) => {
-		const path = '/google-my-business/select-business-type/:site';
-
-		return {
-			...ownProps,
-			...stateProps,
-			...dispatchProps,
-			trackConnect: () =>
-				recordTracksEventWithLocationCounts(
-					stateProps,
-					dispatchProps,
-					'calypso_google_my_business_select_business_type_connect',
-					path
-				),
-			trackConnectToGoogleMyBusinessClick: () =>
-				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_business_type_connect_to_google_my_business_button_click', {
-					path,
-				} ),
-			trackCreateListingClick: () =>
-				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_business_type_create_listing_button_click', {
-					path,
-				} ),
-			trackGoogleMyBusinessClick: () =>
-				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_business_type_google_my_business_link_click', {
-					path,
-				} ),
-			trackLearnMoreAboutSEOClick: () =>
-				dispatchProps.recordTracksEvent( 'calypso_google_my_business_select_business_type_learn_more_about_seo_button_click', {
-					path,
-				} ),
-		};
+		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [ enhanceWithLocationCounts, enhanceWithSiteType ] ),
 	}
 )( localize( GoogleMyBusinessSelectBusinessType ) );

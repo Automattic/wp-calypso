@@ -14,16 +14,15 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { recordTracksEvent } from 'state/analytics/actions';
-import SectionHeader from 'components/section-header';
-import QueryPreferences from 'components/data/query-preferences';
 import getGoogleMyBusinessStatsNudgeDismissCount from 'state/selectors/get-google-my-business-stats-nudge-dismiss-count';
 import isGoogleMyBusinessStatsNudgeDismissed from 'state/selectors/is-google-my-business-stats-nudge-dismissed';
+import QueryPreferences from 'components/data/query-preferences';
+import SectionHeader from 'components/section-header';
 import { dismissNudge } from './actions';
+import { enhanceWithSiteType, recordTracksEvent, withEnhancers } from 'state/analytics/actions';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
-		dismissCount: PropTypes.number.isRequired,
 		isDismissed: PropTypes.bool.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
@@ -111,7 +110,7 @@ export default connect(
 	} ),
 	{
 		dismissNudge,
-		recordTracksEvent,
+		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 	},
 	( stateProps, dispatchProps, ownProps ) => {
 		return {
@@ -121,17 +120,14 @@ export default connect(
 			trackNudgeView: () =>
 				dispatchProps.recordTracksEvent( 'calypso_google_my_business_stats_nudge_view', {
 					dismiss_count: stateProps.dismissCount,
-					path: ownProps.path,
 				} ),
 			trackNudgeDismissClick: () =>
 				dispatchProps.recordTracksEvent( 'calypso_google_my_business_stats_nudge_dismiss_icon_click', {
 					dismiss_count: stateProps.dismissCount,
-					path: ownProps.path,
 				} ),
 			trackNudgeStartNowClick: () =>
 				dispatchProps.recordTracksEvent( 'calypso_google_my_business_stats_nudge_start_now_button_click', {
 					dismiss_count: stateProps.dismissCount,
-					path: ownProps.path,
 				} ),
 			dismissNudge,
 		};

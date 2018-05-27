@@ -17,8 +17,8 @@ import {
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_OPT_OUT,
 } from 'state/action-types';
-
 import { getCurrentOAuth2ClientId } from 'state/ui/oauth2-clients/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const mergedMetaData = ( a, b ) => [
 	...get( a, 'meta.analytics', [] ),
@@ -147,3 +147,57 @@ const withClientId = actionCreator => ( ...args ) => ( dispatch, getState ) => {
 
 export const recordTracksEventWithClientId = withClientId( recordTracksEvent );
 export const recordPageViewWithClientId = withClientId( recordPageView );
+
+/**
+ * Dispatches the specified Redux action creator once enhancers have been applied to the result of its call. This
+ * function can be seen as an alternative to Redux middlewares with a more focused/local scope.
+ */
+export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => ( dispatch, getState ) => {
+	const action = actionCreator( ...args );
+
+	if ( typeof action !== 'object' ) {
+		throw new Error( 'withEnhancers only works with an action creator that returns a plain action object' );
+	}
+
+	if ( ! Array.isArray( enhancers ) ) {
+		enhancers = [ enhancers ];
+	}
+
+	return dispatch( enhancers.reduce(
+		( result, enhancer ) => {
+			return merge( result, enhancer( result, getState ) );
+		},
+		action
+	) );
+};
+
+/**
+ * Enhances any Redux action that aims at recording an analytics event with an additional property that specifies the
+ * type of the current selected site.
+ *
+ * @param {Object} action - Redux action as a plain object
+ * @param {Function} getState - Redux function that can be used to retrieve the current state tree
+ * @returns {Object|null} a set of properties that should be merged into the original Redux action, or null otherwise
+ * @see client/state/analytics/actions/withEnhancers
+ */
+export const enhanceWithSiteType = ( action, getState ) => {
+	if ( action.type === ANALYTICS_EVENT_RECORD ) {
+		const site = getSelectedSite( getState() );
+
+		if ( site !== null ) {
+			return {
+				meta: {
+					analytics: [ {
+						payload: {
+							properties: {
+								site_type: site.jetpack ? 'jetpack' : 'wpcom',
+							}
+						}
+					} ]
+				}
+			};
+		}
+	}
+
+	return null;
+};
