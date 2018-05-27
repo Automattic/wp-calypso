@@ -88,26 +88,24 @@ class ClonePointStep extends Component {
 			};
 		} )();
 
-		const theseLogs = logs;
-
 		return (
 			<div>
 				<QuerySites siteId={ siteId } />
 				<QueryActivityLog siteId={ siteId } />
 				<QuerySiteSettings siteId={ siteId } />
 				<section className="clone-point__wrapper">
-					{ theseLogs.map( log => (
+					{ logs.map( log => (
 						<Fragment key={ log.activityId }>
 							{ timePeriod( log ) }
 							<ActivityLogItem
 								key={ log.activityId }
-								activityId={ log.activityId }
-								disableRestore={ true }
-								disableBackup={ true }
-								hideRestore={ true }
-								enableClone={ true }
-								cloneOnClick={ this.selectedPoint }
 								siteId={ siteId }
+								activityId={ log.activityId }
+								cloneOnClick={ this.selectedPoint }
+								disableRestore
+								disableBackup
+								hideRestore
+								enableClone
 							/>
 						</Fragment>
 					) ) }
@@ -123,14 +121,14 @@ class ClonePointStep extends Component {
 			<TileGrid>
 				<Tile
 					className="clone-point__current"
-					buttonLabel={ 'Clone current state' }
+					buttonLabel={ translate( 'Clone current state' ) }
 					description={ translate( 'Create a clone of your site as it is right now.' ) }
 					image={ '/calypso/images/illustrations/clone-site-origin.svg' }
 					onClick={ this.selectCurrent }
 				/>
 				<Tile
 					className="clone-point__previous"
-					buttonLabel={ 'Clone previous state' }
+					buttonLabel={ translate( 'Clone previous state' ) }
 					description={ translate(
 						'Browse your event history and choose an earlier state to clone from.'
 					) }
@@ -175,9 +173,6 @@ class ClonePointStep extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
-
-	const startDate = 'today';
-
 	const gmtOffset = getSiteGmtOffset( state, siteId );
 	const timezone = getSiteTimezoneValue( state, siteId );
 	const logRequestQuery = getActivityLogQuery( state, siteId );
@@ -188,7 +183,7 @@ export default connect( ( state, ownProps ) => {
 		logs: getActivityLogs(
 			state,
 			siteId,
-			getActivityLogQuery( { gmtOffset, startDate, timezone } )
+			getActivityLogQuery( { gmtOffset, startDate: 'today', timezone } )
 		),
 	};
 } )( localize( ClonePointStep ) );
