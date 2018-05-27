@@ -56,10 +56,7 @@ const dispatchChecklistTaskUpdate = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export const handlers = [
-	__filename,
-	{
-		[ SITE_CHECKLIST_REQUEST ]: [ dispatchChecklistRequest ],
-		[ SITE_CHECKLIST_TASK_UPDATE ]: [ dispatchChecklistTaskUpdate ],
-	},
-];
+export default {
+	[ SITE_CHECKLIST_REQUEST ]: [ dispatchChecklistRequest ],
+	[ SITE_CHECKLIST_TASK_UPDATE ]: [ dispatchChecklistTaskUpdate ],
+};

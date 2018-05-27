@@ -18,7 +18,6 @@ import planTransfer from './plan-transfer';
 import plugins from './plugins';
 import postTypes from './post-types';
 import posts from './posts';
-import rewind from './rewind';
 import simplePayments from './simple-payments';
 import users from './users';
 import statsGoogleMyBusiness from './stats/google-my-business';
@@ -36,7 +35,6 @@ export default mergeHandlers(
 	plugins,
 	postTypes,
 	posts,
-	rewind,
 	simplePayments,
 	users,
 	statsGoogleMyBusiness

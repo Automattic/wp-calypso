@@ -100,7 +100,7 @@ const setUnknownState = ( { siteId }, error ) => {
 };
 
 export const handlers = [
-	__filename,
+	'state/data-layer/wpcom/sites/rewind',
 	mergeHandlers( downloads, {
 		[ REWIND_STATE_REQUEST ]: [
 			dispatchRequestEx( {

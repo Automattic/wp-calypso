@@ -68,8 +68,6 @@ export default store => next => {
 	configuration.store = store;
 	configuration.next = next;
 
-	return action => next( action );
-
 	// Re-generate configuration.handleAction.
 	configureMiddleware( configuration.handlers, configuration );
 
