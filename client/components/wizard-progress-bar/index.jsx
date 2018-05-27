@@ -15,7 +15,7 @@ import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ProgressBar from 'components/progress-bar';
 
-class WizardWithProgressBar extends Component {
+class WizardProgressBar extends Component {
 	static propTypes = {
 		currentStep: PropTypes.number.isRequired,
 		nextButtonClick: PropTypes.func,
@@ -49,7 +49,7 @@ class WizardWithProgressBar extends Component {
 
 	render() {
 		return (
-			<CompactCard className="wizard-with-progress-bar">
+			<CompactCard className="wizard-progress-bar">
 				{ this.renderPreviousButton() }
 
 				<ProgressBar
@@ -64,4 +64,4 @@ class WizardWithProgressBar extends Component {
 	}
 }
 
-export default localize( WizardWithProgressBar );
+export default localize( WizardProgressBar );

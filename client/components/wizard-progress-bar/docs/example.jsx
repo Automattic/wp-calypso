@@ -8,10 +8,10 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import WizardWithProgressBar from '../index';
+import WizardProgressBar from '../index';
 
-export default class WizardWithProgressBarExample extends Component {
-	static displayName = 'WizardWithProgressBar';
+export default class WizardProgressBarExample extends Component {
+	static displayName = 'WizardProgressBar';
 
 	static defaultProps = {
 		numberOfSteps: 5,
@@ -36,7 +36,7 @@ export default class WizardWithProgressBarExample extends Component {
 	render() {
 		return (
 			<div>
-				<WizardWithProgressBar
+				<WizardProgressBar
 					currentStep={ this.state.currentStep }
 					nextButtonClick={ this.handleNextButtonClick }
 					numberOfSteps={ this.props.numberOfSteps }

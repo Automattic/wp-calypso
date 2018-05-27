@@ -111,7 +111,7 @@ import Version from 'components/version/docs/example';
 import VerticalMenu from 'components/vertical-menu/docs/example';
 import VerticalNav from 'components/vertical-nav/docs/example';
 import Wizard from 'components/wizard/docs/example';
-import WizardWithProgressBar from 'components/wizard-with-progress-bar/docs/example';
+import WizardProgressBar from 'components/wizard-progress-bar/docs/example';
 
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
@@ -251,7 +251,7 @@ class DesignAssets extends React.Component {
 					<VerticalNav readmeFilePath="vertical-nav" />
 					<Version readmeFilePath="version" />
 					<Wizard readmeFilePath="wizard" />
-					<WizardWithProgressBar />
+					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
 				</Collection>
 			</Main>
 		);

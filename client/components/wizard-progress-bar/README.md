@@ -16,9 +16,9 @@ First, display a `jsx` code block to show an example of usage, including import 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import WizardWithProgressBar from 'components/wizard-with-progress-bar';
+import WizardProgressBar from 'components/wizard-progress-bar';
 
-export default class WizardWithProgressBarExample extends Component {
+export default class WizardProgressBarExample extends Component {
 
 	static defaultProps = {
 		numberOfSteps: PropTypes.number.isRequired,
@@ -43,7 +43,7 @@ export default class WizardWithProgressBarExample extends Component {
 	render() {
 		return (
 			<div>
-				<WizardWithProgressBar
+				<WizardProgressBar
 					currentStep={ this.state.currentStep }
 					nextButtonClick={ this.handleNextButtonClick }
 					numberOfSteps={ this.props.numberOfSteps }
