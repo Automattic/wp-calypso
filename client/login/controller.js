@@ -57,7 +57,9 @@ export function login( context, next ) {
 		const redirectQueryString = parse( parsedRedirectUrl.query );
 
 		if ( client_id !== redirectQueryString.client_id ) {
-			recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
+			context.store.dispatch(
+				recordTracksEvent( 'calypso_login_phishing_attempt', context.query )
+			);
 
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
