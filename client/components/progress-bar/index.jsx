@@ -33,7 +33,9 @@ export default class ProgressBar extends PureComponent {
 	};
 
 	static getDerivedStateFromProps( props, state ) {
-		return Math.max( state.allTimeMax, props.value );
+		return {
+			allTimeMax: Math.max( state.allTimeMax, props.value ),
+		};
 	}
 
 	state = {
