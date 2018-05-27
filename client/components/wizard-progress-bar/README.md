@@ -1,16 +1,9 @@
-Component Documentation Template
+Wizard Progress Bar
 ===
 
-_Use this as a README.md template when documenting components. If you are creating a new component, you can copy and paste this entire document as a starting point. See the [Button documentation](../design/buttons) for a good example._
-
-Write a short, high-level explanation of the component with a focus on what problem it solves in the interface. Do not include any technical information in this description.
-Example:
-
-> Buttons express what action will occur when the user clicks or taps it. Buttons are used to trigger an action, and they can be used for any type of action, including navigation.
+A Progress Bar for use with a custom wizard. It has buttons to go backward and forward through the steps of the wizard and will display the progress. This Component is unrelated to the `Wizard` Component.
 
 ## Usage
-
-First, display a `jsx` code block to show an example of usage, including import statements and a React component.
 
 ```jsx
 import React, { Component } from 'react';

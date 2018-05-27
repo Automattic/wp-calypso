@@ -29,7 +29,7 @@ export default class WizardProgressBarExample extends Component {
 
 	handlePreviousButtonClick = () => {
 		this.setState( {
-			currentStep: Math.max( 0, this.state.currentStep - 1 ),
+			currentStep: Math.max( 1, this.state.currentStep - 1 ),
 		} );
 	};
 
