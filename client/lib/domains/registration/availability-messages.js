@@ -197,6 +197,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.MAPPABLE:
 		case domainAvailability.AVAILABLE:
 		case domainAvailability.TLD_NOT_SUPPORTED:
+		case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
 		case domainAvailability.UNKNOWN:
 		case domainAvailability.EMPTY_RESULTS:
 			// unavailable domains are displayed in the search results, not as a notice OR
