@@ -27,7 +27,7 @@ export class RewindAlerts extends Component {
 			<Fragment>
 				{ threats.length > 0 && (
 					<Fragment>
-						<Card highlight="error">
+						<Card className="activity-log__threat-alert" highlight="error" compact>
 							{ translate( 'These items require your immediate attention' ) }
 						</Card>
 						{ threats.map( threat => <ThreatAlert key={ threat.id } threat={ threat } /> ) }

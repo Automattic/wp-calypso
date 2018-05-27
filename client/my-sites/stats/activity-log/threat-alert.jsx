@@ -117,54 +117,59 @@ export class ThreatAlert extends Component {
 		const { threat, translate } = this.props;
 
 		return (
-			<FoldableCard
-				className="activity-log__threat-alert"
-				clickableHeader
-				compact
-				header={
-					<Fragment>
-						<ActivityIcon activityIcon="notice-outline" activityStatus="error" />
-						<div className="activity-log__threat-alert-header">
-							<div>
-								<span className="activity-log__threat-alert-title">
-									{ headerTitle( translate, threat ) }
+			<Fragment>
+				<FoldableCard
+					className="activity-log__threat-alert"
+					highlight="error"
+					compact
+					header={
+						<Fragment>
+							<ActivityIcon activityIcon="notice-outline" activityStatus="error" />
+							<div className="activity-log__threat-alert-header">
+								<div>
+									<span className="activity-log__threat-alert-title">
+										{ headerTitle( translate, threat ) }
+									</span>
+									<TimeSince
+										className="activity-log__threat-alert-time-since"
+										date={ threat.firstDetected }
+										dateFormat="ll"
+									/>
+								</div>
+								<span className="activity-log__threat-alert-type">
+									{ headerSubtitle( translate, threat ) }
 								</span>
-								<TimeSince
-									className="activity-log__threat-alert-time-since"
-									date={ threat.firstDetected }
-									dateFormat="ll"
-								/>
 							</div>
-							<span className="activity-log__threat-alert-type">
-								{ headerSubtitle( translate, threat ) }
-							</span>
-						</div>
-					</Fragment>
-				}
-			>
-				<p className="activity-log__threat-alert-description">{ threat.description }</p>
-				{ threat.filename ? (
+						</Fragment>
+					}
+				>
 					<Fragment>
-						<p>
-							{ translate( 'Threat {{threatSignature/}} found in file:', {
-								comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
-								components: {
-									threatSignature: (
-										<span className="activity-log__threat-alert-signature">
-											{ threat.signature }
-										</span>
-									),
-								},
-							} ) }
-						</p>
-						<pre className="activity-log__threat-alert-filename">{ threat.filename }</pre>
+						<p className="activity-log__threat-alert-description">{ threat.description }</p>
+						{ threat.filename ? (
+							<Fragment>
+								<p>
+									{ translate( 'Threat {{threatSignature/}} found in file:', {
+										comment:
+											'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
+										components: {
+											threatSignature: (
+												<span className="activity-log__threat-alert-signature">
+													{ threat.signature }
+												</span>
+											),
+										},
+									} ) }
+								</p>
+								<pre className="activity-log__threat-alert-filename">{ threat.filename }</pre>
+							</Fragment>
+						) : (
+							<p className="activity-log__threat-alert-signature">{ threat.signature }</p>
+						) }
+						{ threat.context && <MarkedLines context={ threat.context } /> }
+						{ threat.diff && <DiffViewer diff={ threat.diff } /> }
 					</Fragment>
-				) : (
-					<p className="activity-log__threat-alert-signature">{ threat.signature }</p>
-				) }
-				{ threat.context && <MarkedLines context={ threat.context } /> }
-				{ threat.diff && <DiffViewer diff={ threat.diff } /> }
-			</FoldableCard>
+				</FoldableCard>
+			</Fragment>
 		);
 	}
 }
