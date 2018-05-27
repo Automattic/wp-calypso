@@ -11,22 +11,21 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
 import SearchCard from 'components/search-card';
+import Prediction from './prediction';
 
 let autocompleteService = null;
 
 class LocationSearch extends Component {
 	static propTypes = {
 		onPredictionClick: PropTypes.func,
-		predictionHref: PropTypes.string,
 	};
 
-	state = { predictions: [] };
+	state = { predictions: [], loading: false };
 
 	componentDidMount() {
 		if ( ! autocompleteService ) {
-			autocompleteService = {};
+			autocompleteService = {}; // if multiple components are initialized on the page, we'd want the script to load only once
 			loadScript(
 				`//maps.googleapis.com/maps/api/js?key=${ config(
 					'google_maps_api_key'
@@ -40,15 +39,12 @@ class LocationSearch extends Component {
 	}
 
 	updatePredictions = predictions => {
-		this.setState( { predictions } );
+		this.setState( { predictions, loading: false } );
 	};
 
 	handleSearch = query => {
-		this.setState( {
-			query: query,
-		} );
-
 		if ( query ) {
+			this.setState( { loading: true } );
 			autocompleteService.getPlacePredictions(
 				{
 					input: query,
@@ -62,24 +58,19 @@ class LocationSearch extends Component {
 	};
 
 	renderPrediction = prediction => {
-		const { predictionHref, onPredictionClick } = this.props;
+		const { onPredictionClick } = this.props;
 
 		return (
-			<CompactCard
+			<Prediction
 				key={ prediction.place_id }
-				href={ predictionHref }
-				onClick={ onPredictionClick }
-				className="location-search__result"
-			>
-				<strong>{ prediction.structured_formatting.main_text }</strong>
-				<br />
-				{ prediction.structured_formatting.secondary_text }
-			</CompactCard>
+				onPredictionClick={ onPredictionClick }
+				prediction={ prediction }
+			/>
 		);
 	};
 
 	render() {
-		const { predictions } = this.state;
+		const { predictions, loading } = this.state;
 
 		return (
 			<Fragment>
@@ -87,6 +78,8 @@ class LocationSearch extends Component {
 					onSearch={ this.handleSearch }
 					delaySearch={ true }
 					delayTimeout={ 500 }
+					disableAutocorrect={ true }
+					searching={ loading }
 					className="location-search__search-card is-compact"
 				/>
 				{ predictions && predictions.map( this.renderPrediction ) }

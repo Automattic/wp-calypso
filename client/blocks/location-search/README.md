@@ -1,7 +1,7 @@
 LocationSearch
 ===
 
-A search component for searching locations via the Google Places API.
+A search component for searching locations via the [Google Places API](https://cloud.google.com/maps-platform/places/).
 
 ## Usage
 
@@ -17,15 +17,10 @@ export default function AwesomeLocationSearch() {
 
 ### Props
 
-Props are displayed as a table with Name, Type, Default, and Description as headings.
-
-**Required props are marked with `*`.**
-
 Name | Type | Default | Description
 --- | --- | --- | ---
 `onPredictionClick` | `func` | `undefined` | Click handler for a search suggestion
 `predictionHref` | `string` | `undefined` | If provided, renders `a` instead of `button` for a suggestion
-
 
 ## Related components
 
