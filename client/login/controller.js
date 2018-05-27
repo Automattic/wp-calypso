@@ -18,7 +18,6 @@ import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 const enhanceContextWithLogin = context => {
 	const { params: { flow, isJetpack, socialService, twoFactorAuthType }, path } = context;
@@ -57,10 +56,6 @@ export function login( context, next ) {
 		const redirectQueryString = parse( parsedRedirectUrl.query );
 
 		if ( client_id !== redirectQueryString.client_id ) {
-			context.store.dispatch(
-				recordTracksEvent( 'calypso_login_phishing_attempt', context.query )
-			);
-
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);
