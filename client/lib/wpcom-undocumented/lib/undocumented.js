@@ -373,11 +373,11 @@ Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) 
 };
 
 /**
- * Update or create a site keyring
+ * Create a site keyring
  *
  * @param {int|string} [siteId] The site ID
- * @param {Object} [data] site keyring object with properties:
- * 	- keyring_id {int} the keyring id to update or create,
+ * @param {Object} [data] site keyring object to create with properties:
+ * 	- keyring_id {int} the keyring id link the site to
  * 	- external_user_id {string} Optional. The external user id to link the site to
  * 	- service {string} service name for this keyring id
  * @param {Function} fn The callback function
@@ -385,8 +385,35 @@ Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) 
  *
  * @returns {Promise} A promise that resolves when the request completes
  */
-Undocumented.prototype.updateSiteKeyrings = function updateSiteKeyring( siteId, data, fn ) {
+Undocumented.prototype.createSiteKeyring = function createSiteKeyring( siteId, data, fn ) {
 	return this.wpcom.req.post( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, data, fn );
+};
+
+/**
+ * Update a site keyring
+ *
+ * @param {int|string} [siteId] The site ID
+ * @param {int} [keyringId] The keyring id to update,
+ * @param {string} [externalUserId] The external user id to update on the site keyring
+ * @param {Function} fn The callback function
+ * @api public
+ *
+ * @returns {Promise} A promise that resolves when the request completes
+ */
+Undocumented.prototype.updateSiteKeyring = function updateSiteKeyring(
+	siteId,
+	keyringId,
+	externalUserId,
+	fn
+) {
+	return this.wpcom.req.post(
+		'/sites/' + siteId + '/keyrings/' + keyringId,
+		{ apiVersion: '1.1' },
+		{
+			external_user_id: externalUserId,
+		},
+		fn
+	);
 };
 
 /**

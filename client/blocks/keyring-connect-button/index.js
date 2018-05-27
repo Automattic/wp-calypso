@@ -6,7 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { isEqual, noop, some } from 'lodash';
+import { differenceBy, find, isEqual, last, noop, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -88,13 +88,13 @@ class KeyringConnectButton extends Component {
 	}
 
 	performAction = () => {
-		const { forceReconnect } = this.props;
+		const { forceReconnect, keyringConnections } = this.props;
 		const connectionStatus = this.getConnectionStatus();
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
 		if ( 'connected' === connectionStatus && ! forceReconnect ) {
-			this.props.onConnect();
+			this.props.onConnect( last( keyringConnections ) );
 		} else {
 			this.addConnection();
 		}
@@ -108,14 +108,14 @@ class KeyringConnectButton extends Component {
 		if ( this.props.service ) {
 			// Attempt to create a new connection. If a Keyring connection ID
 			// is not provided, the user will need to authorize the app
-			requestExternalAccess( this.props.service.connect_URL, () => {
+			requestExternalAccess( this.props.service.connect_URL, keyringId => {
 				// When the user has finished authorizing the connection
 				// (or otherwise closed the window), force a refresh
 				this.props.requestKeyringConnections( true );
 
 				// In the case that a Keyring connection doesn't exist, wait for app
 				// authorization to occur, then display with the available connections
-				this.setState( { isAwaitingConnections: true } );
+				this.setState( { isAwaitingConnections: true, keyringId } );
 			} );
 		} else {
 			this.setState( { isConnecting: false } );
@@ -139,8 +139,20 @@ class KeyringConnectButton extends Component {
 		} );
 
 		if ( this.didKeyringConnectionSucceed( nextProps.keyringConnections ) ) {
-			this.setState( { isConnecting: false } );
-			this.props.onConnect();
+			const keyringId = this.state.keyringId || null;
+			this.setState( { isConnecting: false, keyringId: null } );
+			let newKeyringConnection = null;
+			if ( keyringId ) {
+				newKeyringConnection = find( nextProps.keyringConnections, { ID: keyringId } );
+			} else {
+				// if no keyring id is given from the popup,
+				// fallback to less reliable ways of determining the new connection
+				newKeyringConnection =
+					differenceBy( this.props.keyringConnections, nextProps.keyringConnections, 'ID' )[ 0 ] ||
+					last( nextProps.keyringConnections );
+			}
+
+			this.props.onConnect( newKeyringConnection );
 		}
 	}
 

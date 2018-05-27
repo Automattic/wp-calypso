@@ -8,23 +8,43 @@ import {
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
-import { saveSiteKeyring, deleteSiteKeyring } from 'state/site-keyrings/actions';
+import {
+	createSiteKeyring,
+	updateSiteKeyring,
+	deleteSiteKeyring,
+} from 'state/site-keyrings/actions';
+import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
 
-export const connectGoogleMyBusinessLocation = (
-	siteId,
-	keyringConnectionId,
-	locationId
-) => dispatch =>
-	dispatch(
-		saveSiteKeyring( siteId, {
-			keyring_id: keyringConnectionId,
-			external_user_id: locationId,
-			service: 'google_my_business',
-		} )
+export const disconnectGoogleMyBusinessAccount = ( siteId, keyringId ) => dispatch =>
+	dispatch( deleteSiteKeyring( siteId, keyringId ) );
+
+export const disconnectAllGoogleMyBusinessAccounts = siteId => ( dispatch, getState ) =>
+	Promise.all(
+		getSiteKeyringsForService( getState(), siteId, 'google_my_business' ).map( siteKeyring =>
+			dispatch( disconnectGoogleMyBusinessAccount( siteId, siteKeyring.keyring_id ) )
+		)
 	);
 
-export const disconnectGoogleMyBusinessLocation = ( siteId, keyringSiteId ) => dispatch =>
-	dispatch( deleteSiteKeyring( siteId, keyringSiteId ) );
+export const connectGoogleMyBusinessAccount = (
+	siteId,
+	keyringId,
+	locationId = null
+) => dispatch =>
+	dispatch( disconnectAllGoogleMyBusinessAccounts( siteId ) ).then( () =>
+		dispatch(
+			createSiteKeyring( siteId, {
+				keyring_id: keyringId,
+				service: 'google_my_business',
+				external_user_id: locationId,
+			} )
+		)
+	);
+
+export const connectGoogleMyBusinessLocation = ( siteId, keyringId, locationId ) => dispatch =>
+	dispatch( updateSiteKeyring( siteId, keyringId, locationId ) );
+
+export const disconnectGoogleMyBusinessLocation = ( siteId, keyringId ) => dispatch =>
+	dispatch( updateSiteKeyring( siteId, keyringId, null ) );
 
 export const requestGoogleMyBusinessStats = (
 	siteId,
