@@ -20,8 +20,9 @@ import SiteIcon from 'blocks/site-icon';
 import BlogStickers from 'blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
 import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
-import userSettings from 'lib/user-settings';
+import getUserSetting from 'state/selectors/get-user-setting';
 import isFollowing from 'state/selectors/is-following';
+import QueryUserSettings from 'components/data/query-user-settings';
 
 class FeedHeader extends Component {
 	static propTypes = {
@@ -43,13 +44,12 @@ class FeedHeader extends Component {
 	};
 
 	render() {
-		const { site, feed, showBack, translate, following } = this.props;
+		const { site, feed, showBack, translate, following, isEmailBlocked } = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
 		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
 		const description = getSiteDescription( { site, feed } );
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
-		const isEmailBlocked = userSettings.getSetting( 'subscription_delivery_email_blocked' );
 		const siteId = site && site.ID;
 
 		const classes = classnames( 'reader-feed-header', {
@@ -59,6 +59,7 @@ class FeedHeader extends Component {
 
 		return (
 			<div className={ classes }>
+				<QueryUserSettings />
 				<div className="reader-feed-header__back-and-follow">
 					{ showBack && <HeaderBack /> }
 					<div className="reader-feed-header__follow">
@@ -124,4 +125,5 @@ class FeedHeader extends Component {
 
 export default connect( ( state, ownProps ) => ( {
 	following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
+	isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 } ) )( localize( FeedHeader ) );
