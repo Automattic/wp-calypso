@@ -142,11 +142,11 @@ PostMetadata = {
 	 * associated with the post is allowed to be displayed publicly.
 	 *
 	 * @param {Object} post Post object
-	 * @returns {boolean} Whether the geo-location data is shared publicly.
+	 * @returns {boolean|null} Whether the geo-location data is shared publicly.
 	 */
 	geoIsSharedPublicly: function( post ) {
 		if ( ! post ) {
-			return true;
+			return null;
 		}
 
 		const isSharedPublicly = getValueByKey( post.metadata, 'geo_public' );

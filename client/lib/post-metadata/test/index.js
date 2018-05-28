@@ -209,7 +209,7 @@ describe( 'index', () => {
 		test( 'should return true if passed a falsey value', () => {
 			const value = PostMetadata.geoIsSharedPublicly( undefined );
 
-			expect( value ).to.be.true;
+			expect( value ).to.be.null;
 		} );
 
 		test( 'should return true if metadata not assigned to post', () => {
