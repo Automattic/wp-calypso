@@ -110,7 +110,7 @@ class EditorLocation extends React.Component {
 
 				recordStat( 'location_reverse_geocode_failed' );
 			} )
-			.finally( () => {
+			.then( () => {
 				this.setState( {
 					locating: false,
 				} );
