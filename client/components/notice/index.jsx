@@ -53,6 +53,14 @@ export class Notice extends Component {
 		}
 	}
 
+	componentDidUpdate() {
+		clearTimeout( this.dismissTimeout );
+
+		if ( this.props.duration > 0 ) {
+			this.dismissTimeout = setTimeout( this.props.onDismissClick, this.props.duration );
+		}
+	}
+
 	getIcon() {
 		let icon;
 
