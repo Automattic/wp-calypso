@@ -87,6 +87,10 @@
 	margin-bottom: 16px;
 	font-weight: 600;
 	color: $alert-red;
+
+	@include breakpoint( '>480px' ) {
+		margin-bottom: 24px;
+	}
 }
 
 .activity-log__threat-alert {
