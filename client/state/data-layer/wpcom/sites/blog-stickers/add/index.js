@@ -12,58 +12,53 @@ import { translate } from 'i18n-calypso';
  */
 import { SITES_BLOG_STICKER_ADD } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
-export function requestBlogStickerAdd( { dispatch }, action ) {
-	dispatch(
-		http( {
+export const requestBlogStickerAdd = action =>
+	http(
+		{
 			method: 'POST',
 			path: `/sites/${ action.payload.blogId }/blog-stickers/add/${ action.payload.stickerName }`,
 			body: {}, // have to have an empty body to make wpcom-http happy
 			apiVersion: '1.1',
-			onSuccess: action,
-			onFailure: action,
-		} )
+		},
+		action
 	);
-}
 
-export function receiveBlogStickerAdd( store, action, response ) {
+export const receiveBlogStickerAddError = action => [
+	errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) ),
+	bypassDataLayer( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) ),
+];
+
+export const receiveBlogStickerAdd = ( action, response ) => {
 	// validate that it worked
 	const isAdded = !! ( response && response.success );
 	if ( ! isAdded ) {
-		receiveBlogStickerAddError( store, action );
-		return;
+		return receiveBlogStickerAddError( action );
 	}
 
-	store.dispatch(
-		successNotice(
-			translate( 'The sticker {{i}}%s{{/i}} has been successfully added.', {
-				args: action.payload.stickerName,
-				components: {
-					i: <i />,
-				},
-			} ),
-			{
-				duration: 5000,
-			}
-		)
+	return successNotice(
+		translate( 'The sticker {{i}}%s{{/i}} has been successfully added.', {
+			args: action.payload.stickerName,
+			components: {
+				i: <i />,
+			},
+		} ),
+		{
+			duration: 5000,
+		}
 	);
-}
-
-export function receiveBlogStickerAddError( { dispatch }, action ) {
-	dispatch(
-		errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) )
-	);
-	dispatch(
-		bypassDataLayer( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) )
-	);
-}
+};
 
 export default {
 	[ SITES_BLOG_STICKER_ADD ]: [
-		dispatchRequest( requestBlogStickerAdd, receiveBlogStickerAdd, receiveBlogStickerAddError ),
+		dispatchRequestEx( {
+			fetch: requestBlogStickerAdd,
+			onSuccess: receiveBlogStickerAdd,
+			onError: receiveBlogStickerAddError,
+		} ),
 	],
 };
