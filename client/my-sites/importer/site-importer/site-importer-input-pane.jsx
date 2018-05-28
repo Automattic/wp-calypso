@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
+import React from 'react';
+import { connect } from 'react-redux';
 import Dispatcher from 'dispatcher';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { noop, every, has, defer, get } from 'lodash';
 
 /**
@@ -30,6 +31,8 @@ import SiteImporterSitePreview from './site-importer-site-preview';
 import { connectDispatcher } from '../dispatcher-converter';
 
 import { loadmShotsPreview } from './site-preview-actions';
+
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
@@ -80,6 +83,10 @@ class SiteImporterInputPane extends React.Component {
 				}, nextProps );
 			} else {
 				defer( props => startMappingAuthors( props.importerStatus.importerId ), nextProps );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
+					site_url: this.state.importSiteURL,
+				} );
 			}
 
 			// Do not continue execution of the function as the rest should be executed on the next update.
@@ -95,6 +102,10 @@ class SiteImporterInputPane extends React.Component {
 				defer( props => {
 					startImporting( props.importerStatus );
 				}, nextProps );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_map_authors_single', {
+					site_url: this.state.importSiteURL,
+				} );
 			}
 		}
 	};
@@ -118,6 +129,10 @@ class SiteImporterInputPane extends React.Component {
 		const siteURL = this.state.siteURLInput;
 
 		this.setState( { loading: true }, this.resetErrors );
+
+		this.props.recordTracksEvent( 'calypso_site_importer_validate_site', {
+			site_url: siteURL,
+		} );
 
 		loadmShotsPreview( {
 			url: siteURL,
@@ -144,6 +159,13 @@ class SiteImporterInputPane extends React.Component {
 					loading: false,
 					importSiteURL: siteURL,
 				} );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_done', {
+					site_url: this.state.importSiteURL,
+					supported_content: resp.supported_content,
+					unsupported_content: resp.unsupported_content,
+					site_engine: resp.engine,
+				} );
 			} )
 			.catch( err => {
 				this.setState( {
@@ -151,11 +173,22 @@ class SiteImporterInputPane extends React.Component {
 					error: true,
 					errorMessage: `${ err.message }`,
 				} );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
+					site_url: this.state.importSiteURL,
+				} );
 			} );
 	};
 
 	importSite = () => {
 		this.setState( { loading: true }, this.resetErrors );
+
+		this.props.recordTracksEvent( 'calypso_site_importer_start_import', {
+			site_url: this.state.importSiteURL,
+			supported_content: this.state.importData.supported,
+			unsupported_content: this.state.importData.unsupported,
+			site_engine: this.state.importData.engine,
+		} );
 
 		wpcom.wpcom.req
 			.post( {
@@ -169,6 +202,13 @@ class SiteImporterInputPane extends React.Component {
 			.then( resp => {
 				this.setState( { loading: false } );
 
+				this.props.recordTracksEvent( 'calypso_site_importer_start_import_done', {
+					site_url: this.state.importSiteURL,
+					supported_content: this.state.importData.supported,
+					unsupported_content: this.state.importData.unsupported,
+					site_engine: this.state.importData.engine,
+				} );
+
 				const data = fromApi( resp );
 				const action = finishUpload( this.props.importerStatus.importerId )( data );
 				defer( () => {
@@ -176,6 +216,13 @@ class SiteImporterInputPane extends React.Component {
 				} );
 			} )
 			.catch( err => {
+				this.props.recordTracksEvent( 'calypso_site_importer_start_import_fail', {
+					site_url: this.state.importSiteURL,
+					supported_content: this.state.importData.supported,
+					unsupported_content: this.state.importData.unsupported,
+					site_engine: this.state.importData.engine,
+				} );
+
 				this.setState( {
 					loading: false,
 					error: true,
@@ -185,6 +232,11 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	resetImport = () => {
+		this.props.recordTracksEvent( 'calypso_site_importer_reset_import', {
+			site_url: this.state.importSiteURL || this.state.siteURLInput,
+			previous_stage: this.state.importStage,
+		} );
+
 		this.setState(
 			{
 				loading: false,
@@ -243,4 +295,6 @@ const mapDispatchToProps = dispatch => ( {
 		} ),
 } );
 
-export default connectDispatcher( null, mapDispatchToProps )( localize( SiteImporterInputPane ) );
+export default connect( null, { recordTracksEvent } )(
+	connectDispatcher( null, mapDispatchToProps )( localize( SiteImporterInputPane ) )
+);

@@ -3,9 +3,10 @@
 /**
  * External dependencies
  */
+import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import classNames from 'classnames';
 import { map } from 'lodash';
 /**
@@ -15,6 +16,8 @@ import Spinner from 'components/spinner';
 import Button from 'components/forms/form-button';
 import ErrorPane from '../error-pane';
 import { loadmShotsPreview } from './site-preview-actions';
+
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteImporterSitePreview extends React.Component {
 	static propTypes = {
@@ -31,6 +34,7 @@ class SiteImporterSitePreview extends React.Component {
 		sitePreviewImage: '',
 		sitePreviewFailed: false,
 		loadingPreviewImage: true,
+		previewStartTime: 0,
 	};
 
 	componentDidMount() {
@@ -38,25 +42,35 @@ class SiteImporterSitePreview extends React.Component {
 	}
 
 	loadSitePreview = () => {
-		this.setState( { loadingPreviewImage: true } );
+		this.setState( { loadingPreviewImage: true, previewStartTime: Date.now() } );
 
 		loadmShotsPreview( {
 			url: this.state.siteURL,
 			maxRetries: 30,
 			retryTimeout: 1000,
 		} )
-			.then( imageBlob =>
+			.then( imageBlob => {
 				this.setState( {
 					loadingPreviewImage: false,
 					sitePreviewImage: imageBlob,
 					sitePreviewFailed: false,
-				} )
-			)
+				} );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_done', {
+					site_url: this.state.siteURL,
+					time_taken_ms: Date.now() - this.state.previewStartTime,
+				} );
+			} )
 			.catch( () => {
 				this.setState( {
 					loadingPreviewImage: false,
 					sitePreviewImage: '',
 					sitePreviewFailed: true,
+				} );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_failed', {
+					site_url: this.state.siteURL,
+					time_taken_ms: Date.now() - this.state.previewStartTime,
 				} );
 			} );
 	};
@@ -141,4 +155,4 @@ class SiteImporterSitePreview extends React.Component {
 	};
 }
 
-export default localize( SiteImporterSitePreview );
+export default connect( null, { recordTracksEvent } )( localize( SiteImporterSitePreview ) );
