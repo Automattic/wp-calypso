@@ -108,6 +108,8 @@
 
 	.foldable-card__main {
 		flex: unset;
+		max-width: 100%;
+		width: 100%;
 	}
 
 	.activity-log-item__activity-icon {
@@ -148,6 +150,17 @@
 
 .activity-log__threat-alert-header {
 	color: $gray;
+	width: 100%;
+}
+
+.activity-log__threat-header-top {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+
+	.split-button {
+		white-space: pre;
+	}
 }
 
 .activity-log__threat-alert-title {
@@ -183,6 +196,7 @@
 	margin-left: 2px;
 	padding-left: 4px;
 	color: $gray;
+	font-weight: 400;
 
 	&:before {
 		// cdot three-per-em-space
