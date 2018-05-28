@@ -39,7 +39,7 @@ import SuccessBanner from '../activity-log-banner/success-banner';
 import UnavailabilityNotice from './unavailability-notice';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
+import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	activityLogRequest,
@@ -63,6 +63,13 @@ import getRestoreProgress from 'state/selectors/get-restore-progress';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import FeatureExample from 'components/feature-example';
+import {
+	FEATURE_JETPACK_ESSENTIAL,
+	PLAN_PERSONAL,
+	PLAN_JETPACK_PERSONAL,
+	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+} from 'lib/plans/constants';
 
 const PAGE_SIZE = 20;
 
@@ -300,6 +307,43 @@ class ActivityLog extends Component {
 		);
 	}
 
+	renderUpgradeBanner() {
+		return (
+			<div className="activity-log__upgrade-banner">
+				{ isJetpackSite ? (
+					<Banner
+						callToAction="Upgrade"
+						description="Secure your site with daily off-site backups for just €3.50/month."
+						dismissPreferenceName="activity-upgrade-banner-jetpack"
+						event="track_event"
+						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
+						list={ [
+							"See a 30-day history of your site's activity",
+							'Rewind your site to any point in the last month',
+							'We automatically scan your files for threats',
+						] }
+						plan={ PLAN_JETPACK_PERSONAL }
+						title="Get daily backups now!"
+					/>
+				) : (
+					<div>
+						<Banner
+							callToAction="Upgrade"
+							description="Obtain more features."
+							dismissPreferenceName="activity-upgrade-banner"
+							event="track_event"
+							feature={ FEATURE_JETPACK_ESSENTIAL }
+							list={ [ 'A feature', 'Another feature' ] }
+							plan={ PLAN_PERSONAL }
+							title="See all the activity on your site!"
+						/>
+						<FeatureExample>Content goes here</FeatureExample>
+					</div>
+				) }
+			</div>
+		);
+	}
+
 	getActivityLog() {
 		const {
 			enableRewind,
@@ -412,6 +456,7 @@ class ActivityLog extends Component {
 					noLogsContent
 				) : (
 					<div>
+						{ this.renderUpgradeBanner() }
 						<section className="activity-log__wrapper">
 							{ theseLogs.map( log => (
 								<Fragment key={ log.activityId }>
@@ -517,6 +562,7 @@ export default connect(
 			slug: getSiteSlug( state, siteId ),
 			timezone,
 			oldestItemTs: getOldestItemTs( state, siteId ),
+			isJetpackSite: isJetpackSite( state, siteId ),
 		};
 	},
 	{
