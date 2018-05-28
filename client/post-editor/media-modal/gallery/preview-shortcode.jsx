@@ -43,8 +43,12 @@ export default createReactClass( {
 		} );
 	},
 
+	componentDidMount() {
+		this.isMounted = true;
+	},
+
 	setLoaded() {
-		if ( ! this.isMounted() ) {
+		if ( ! this.isMounted ) {
 			return;
 		}
 
