@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { find, includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { stringify } from 'qs';
@@ -90,13 +91,13 @@ class EditorLocation extends React.Component {
 
 		reverseGeocode( latitude, longitude )
 			.then( results => {
-				const localityResults = results.filter( result => {
-					return -1 !== result.types.indexOf( 'locality' );
+				const localityResult = find( results, result => {
+					return includes( result.types, 'locality' );
 				} );
 
-				if ( localityResults.length ) {
+				if ( localityResult ) {
 					this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
-						geo_address: localityResults[ 0 ].formatted_address,
+						geo_address: localityResult.formatted_address,
 					} );
 				}
 
