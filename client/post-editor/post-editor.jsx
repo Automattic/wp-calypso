@@ -564,7 +564,7 @@ export class PostEditor extends React.Component {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		try {
-			await actions.autosave( this.props.selectedSite );
+			await actions.autosave();
 			if ( ! savingPublishedPost ) {
 				this.onSaveDraftSuccess();
 			}
@@ -647,11 +647,7 @@ export class PostEditor extends React.Component {
 		edits.content = this.editor.getContent();
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions
-			.saveEdited( this.props.selectedSite, edits, {
-				isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled,
-			} )
-			.then( this.onSaveDraftSuccess, this.onSaveDraftFailure );
+		actions.saveEdited( edits ).then( this.onSaveDraftSuccess, this.onSaveDraftFailure );
 	};
 
 	getExternalUrl() {
@@ -790,11 +786,7 @@ export class PostEditor extends React.Component {
 		this.saveRawContent();
 		edits.content = this.editor.getContent();
 
-		actions
-			.saveEdited( this.props.selectedSite, edits, {
-				isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled,
-			} )
-			.then( this.onPublishSuccess, this.onPublishFailure );
+		actions.saveEdited( edits ).then( this.onPublishSuccess, this.onPublishFailure );
 	};
 
 	onPublishFailure = error => {
