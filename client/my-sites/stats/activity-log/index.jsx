@@ -63,6 +63,7 @@ import getRestoreProgress from 'state/selectors/get-restore-progress';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import ActivityLogDemo from './activity-log-demo';
 import FeatureExample from 'components/feature-example';
 import {
 	FEATURE_JETPACK_ESSENTIAL,
@@ -310,34 +311,38 @@ class ActivityLog extends Component {
 	renderUpgradeBanner() {
 		return (
 			<div className="activity-log__upgrade-banner">
-				{ isJetpackSite ? (
+				{ this.props.isJetpackSite ? (
 					<Banner
-						callToAction="Upgrade"
-						description="Secure your site with daily off-site backups for just €3.50/month."
+						callToAction="Get daily backups"
 						dismissPreferenceName="activity-upgrade-banner-jetpack"
 						event="track_event"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
 						list={ [
-							"See a 30-day history of your site's activity",
-							'Rewind your site to any point in the last month',
-							'We automatically scan your files for threats',
+							'See all site activity over the past month',
+							'Rewind your site back to any point',
+							'Automatic threat scanning',
 						] }
 						plan={ PLAN_JETPACK_PERSONAL }
-						title="Get daily backups now!"
+						title="Secure your site with daily backups"
 					/>
 				) : (
 					<div>
+						<FeatureExample>
+							<ActivityLogDemo />
+						</FeatureExample>
 						<Banner
-							callToAction="Upgrade"
-							description="Obtain more features."
-							dismissPreferenceName="activity-upgrade-banner"
+							callToAction="See all activity"
+							dismissPreferenceName="activity-upgrade-banner-simple"
 							event="track_event"
 							feature={ FEATURE_JETPACK_ESSENTIAL }
-							list={ [ 'A feature', 'Another feature' ] }
+							list={ [
+								'Changes made to your posts and pages',
+								'Historical record of site costumizations',
+								'Comments, pingbacks, and more',
+							] }
 							plan={ PLAN_PERSONAL }
-							title="See all the activity on your site!"
+							title="See all your site activity"
 						/>
-						<FeatureExample>Content goes here</FeatureExample>
 					</div>
 				) }
 			</div>
