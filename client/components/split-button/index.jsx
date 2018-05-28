@@ -53,9 +53,15 @@ class SplitButton extends PureComponent {
 
 	popoverContext = React.createRef();
 
-	handleMainClick = event => this.props.onClick( event );
+	handleMainClick = event => {
+		event.stopPropagation();
+		return this.props.onClick( event );
+	};
 
-	handleMenuClick = () => this.toggleMenu( ! this.state.isMenuVisible );
+	handleMenuClick = event => {
+		event.stopPropagation();
+		return this.toggleMenu( ! this.state.isMenuVisible );
+	};
 
 	hideMenu = () => this.toggleMenu( false );
 
