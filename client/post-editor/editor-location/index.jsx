@@ -24,7 +24,7 @@ import RemoveButton from 'components/remove-button';
 import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
+import { getSitePost, getEditedPost } from 'state/posts/selectors';
 
 /**
  * Module variables
@@ -36,46 +36,30 @@ const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 // that formats float metadata values exactly this way.
 const toGeoString = coord => String( Number( coord ).toFixed( 7 ) );
 
+const coordinatePropType = function( props, propName ) {
+	const prop = props[ propName ];
+	if (
+		prop &&
+		( ! Array.isArray( prop ) || 2 !== prop.length || 2 !== prop.filter( Number ).length )
+	) {
+		return new Error( 'Expected array pair of coordinates for prop `' + propName + '`.' );
+	}
+};
+
 class EditorLocation extends React.Component {
 	static displayName = 'EditorLocation';
 
 	static propTypes = {
-		label: PropTypes.string,
-		coordinates: function( props, propName ) {
-			const prop = props[ propName ];
-			if (
-				prop &&
-				( ! Array.isArray( prop ) || 2 !== prop.length || 2 !== prop.filter( Number ).length )
-			) {
-				return new Error( 'Expected array pair of coordinates for prop `' + propName + '`.' );
-			}
-		},
+		savedCoordinates: coordinatePropType,
+		savedIsSharedPublicly: PropTypes.bool,
+		coordinates: coordinatePropType,
 		isSharedPublicly: PropTypes.bool,
+		label: PropTypes.string,
 	};
 
 	state = {
 		error: null,
-		previouslyPrivatePostBeingModified: false,
 	};
-
-	constructor( props ) {
-		super( props );
-
-		this.originalProps = props;
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		// When geo data was originally private and its coordinates have changed, we track that change
-		// so we can warn the user that after saving the information will be publicly visible.
-		if (
-			'private' === this.originalProps.isSharedPublicly &&
-			( this.originalProps.coordinates && nextProps.coordinates ) &&
-			( this.originalProps.coordinates[ 0 ] !== nextProps.coordinates[ 0 ] ||
-				this.originalProps.coordinates[ 1 ] !== nextProps.coordinates[ 1 ] )
-		) {
-			this.setState( { previouslyPrivatePostBeingModified: true } );
-		}
-	}
 
 	onGeolocateSuccess = position => {
 		const latitude = toGeoString( position.coords.latitude ),
@@ -180,18 +164,28 @@ class EditorLocation extends React.Component {
 		return <img src={ src } className="editor-location__map" />;
 	};
 
+	privateCoordinatesHaveBeenEdited() {
+		// Saved location was already public
+		if ( this.props.savedIsSharedPublicly ) {
+			return false;
+		}
+
+		// Either the saved location or the new location is missing coordinates so we're not revealing
+		// private location data.
+		if ( ! this.props.savedCoordinates || ! this.props.coordinates ) {
+			return false;
+		}
+
+		// A previously private location has been edited, which will result in it being set to public
+		// when saved.
+		return (
+			this.props.savedCoordinates[ 0 ] !== this.props.coordinates[ 0 ] ||
+			this.props.savedCoordinates[ 1 ] !== this.props.coordinates[ 1 ]
+		);
+	}
+
 	render() {
 		let error, publicWarning, buttonText;
-
-		if ( this.state.previouslyPrivatePostBeingModified ) {
-			publicWarning = (
-				<div className="editor-location__public-warning">
-					{ this.props.translate( 'Note: the location will be displayed publicly.', {
-						context: 'Post editor geolocation',
-					} ) }
-				</div>
-			);
-		}
 
 		if ( this.state.error ) {
 			error = (
@@ -209,6 +203,16 @@ class EditorLocation extends React.Component {
 			buttonText = this.props.translate( 'Get current location', {
 				context: 'Post editor geolocation',
 			} );
+		}
+
+		if ( this.privateCoordinatesHaveBeenEdited() ) {
+			publicWarning = (
+				<div className="editor-location__public-warning">
+					{ this.props.translate( 'Note: the location will be displayed publicly.', {
+						context: 'Post editor geolocation',
+					} ) }
+				</div>
+			);
 		}
 
 		return (
@@ -239,12 +243,25 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
-		const post = getEditedPost( state, siteId, postId );
-		const coordinates = PostMetadata.geoCoordinates( post );
-		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( post );
-		const label = PostMetadata.geoLabel( post );
 
-		return { siteId, postId, coordinates, isSharedPublicly, label };
+		const savedPost = getSitePost( state, siteId, postId );
+		const savedCoordinates = PostMetadata.geoCoordinates( savedPost );
+		const savedIsSharedPublicly = PostMetadata.geoIsSharedPublicly( savedPost );
+
+		const editedPost = getEditedPost( state, siteId, postId );
+		const coordinates = PostMetadata.geoCoordinates( editedPost );
+		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( editedPost );
+		const label = PostMetadata.geoLabel( editedPost );
+
+		return {
+			siteId,
+			postId,
+			savedCoordinates,
+			savedIsSharedPublicly,
+			coordinates,
+			isSharedPublicly,
+			label,
+		};
 	},
 	{
 		updatePostMetadata,
