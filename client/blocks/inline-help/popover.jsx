@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
+import { noop, isUndefined } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -45,7 +45,7 @@ class InlineHelpPopover extends Component {
 		const { selectedResult } = this.props;
 		event.preventDefault();
 
-		if ( 'undefined' !== typeof selectedResult ) {
+		if ( ! isUndefined( selectedResult ) ) {
 			this.openSecondaryView( VIEW_RICH_RESULT );
 		}
 	};
