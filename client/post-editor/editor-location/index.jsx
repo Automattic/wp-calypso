@@ -184,7 +184,7 @@ class EditorLocation extends React.Component {
 
 		if ( this.state.previouslyPrivatePostBeingModified ) {
 			publicWarning = (
-				<div class="editor-location__public-warning">
+				<div className="editor-location__public-warning">
 					{ this.props.translate( 'Note: the location will be displayed publicly.', {
 						context: 'Post editor geolocation',
 					} ) }
