@@ -56,7 +56,6 @@ import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
-
 import {
 	getStrippedDomainBase,
 	getTldWeightOverrides,
@@ -76,6 +75,7 @@ import {
 	recordTransferDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
@@ -90,8 +90,7 @@ const PAGE_SIZE = 10;
 const MAX_PAGES = 3;
 const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
 
-const searchVendor = 'group_1';
-const fetchAlgo = searchVendor + '/v1';
+let searchVendor = 'domainsbot';
 
 let searchQueue = [];
 let searchStackTimer = null;
@@ -829,6 +828,10 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
+		if ( this.props.isSignupStep ) {
+			searchVendor = abtest( 'domainSuggestionKrakenV321' );
+		}
+
 		enqueueSearchStatReport( { query: searchQuery, section: this.props.analyticsSection } );
 
 		this.setState( {
@@ -999,7 +1002,7 @@ class RegisterDomainStep extends React.Component {
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
 				railcarSeed={ this.state.railcarSeed }
-				fetchAlgo={ fetchAlgo }
+				fetchAlgo={ searchVendor + '/v1' }
 				cart={ this.props.cart }
 			>
 				{ showTldFilterBar && (
