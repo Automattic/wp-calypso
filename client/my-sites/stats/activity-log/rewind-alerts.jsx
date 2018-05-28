@@ -26,12 +26,12 @@ export class RewindAlerts extends Component {
 		return (
 			<Fragment>
 				{ threats.length > 0 && (
-					<Fragment>
-						<Card highlight="error">
+					<div className="activity-log__threats">
+						<Card className="activity-log__threat-alert " highlight="error" compact>
 							{ translate( 'These items require your immediate attention' ) }
 						</Card>
 						{ threats.map( threat => <ThreatAlert key={ threat.id } threat={ threat } /> ) }
-					</Fragment>
+					</div>
 				) }
 			</Fragment>
 		);

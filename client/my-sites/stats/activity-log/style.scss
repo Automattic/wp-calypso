@@ -78,6 +78,19 @@
 	margin: 14px 0 48px;
 }
 
+.activity-log__threats {
+	margin-bottom: 10px;
+
+	@include breakpoint( '>480px' ) {
+		margin-bottom: 16px;
+	}
+
+	.activity-log__threat-alert:first-of-type {
+		font-weight: 600;
+		color: $alert-red;
+	}
+}
+
 .activity-log__threat-alert {
 	padding: 8px 0;
 	font-size: 14px;
