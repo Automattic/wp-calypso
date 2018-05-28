@@ -117,4 +117,4 @@ export default connect( ( state, ownProps ) => {
 		rewind: getRewindState( state, originBlogId ),
 		updateStatus: getJetpackCredentialsUpdateStatus( state, originBlogId ),
 	};
-}, null )( localize( CloneCredentialsStep ) );
+} )( localize( CloneCredentialsStep ) );

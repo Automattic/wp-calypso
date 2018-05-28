@@ -181,4 +181,4 @@ export default connect( ( state, ownProps ) => {
 		originSiteName,
 		originSiteSlug,
 	};
-}, null )( localize( CloneStartStep ) );
+} )( localize( CloneStartStep ) );

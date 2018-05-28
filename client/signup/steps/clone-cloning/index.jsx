@@ -15,8 +15,6 @@ import page from 'page';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
-import { getSiteBySlug } from 'state/sites/selectors';
-import SignupActions from 'lib/signup/actions';
 
 class CloneCloningStep extends Component {
 	static propTypes = {
@@ -170,4 +168,4 @@ export default connect( ( state, ownProps ) => {
 		originSiteName: get( ownProps, [ 'signupDependencies', 'originSiteName' ], '' ),
 		originSiteSlug: get( ownProps, [ 'signupDependencies', 'originSiteSlug' ], '' ),
 	};
-}, null )( localize( CloneCloningStep ) );
+} )( localize( CloneCloningStep ) );

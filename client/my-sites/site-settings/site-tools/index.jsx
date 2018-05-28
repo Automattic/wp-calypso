@@ -95,7 +95,7 @@ class SiteTools extends Component {
 		const exportText = translate(
 			'Export content from your site. You own your data — take it anywhere!'
 		);
-		const cloneTitle = translate( 'Clone' );
+		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
 		let changeAddressText = translate( "Register a new domain or change your site's address." );
