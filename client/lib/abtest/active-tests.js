@@ -111,7 +111,7 @@ export default {
 	domainSuggestionKrakenV321: {
 		datestamp: '20180524',
 		variations: {
-			domainsbot: 1,
+			domainsbot: 0,
 			group_1: 10000,
 			group_3: 10000,
 			group_4: 10000,
