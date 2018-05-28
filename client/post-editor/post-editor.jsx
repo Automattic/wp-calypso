@@ -631,6 +631,8 @@ export class PostEditor extends React.Component {
 		const edits = { ...this.props.edits };
 		if ( status ) {
 			edits.status = status;
+			// Sync the status edit to Redux to ensure that Flux and Redux stores have the same info
+			this.props.editPost( this.props.siteId, this.props.postId, { status } );
 		}
 
 		if (
@@ -779,6 +781,9 @@ export class PostEditor extends React.Component {
 		} else {
 			edits.status = 'publish';
 		}
+
+		// Sync the status edit to Redux to ensure that Flux and Redux stores have the same info
+		this.props.editPost( this.props.siteId, this.props.postId, { status: edits.status } );
 
 		// Flush any pending raw content saves
 		// Update content on demand to avoid unnecessary lag and because it is expensive
