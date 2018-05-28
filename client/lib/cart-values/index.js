@@ -178,7 +178,7 @@ function paymentMethodName( method ) {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
 		'credit-card': i18n.translate( 'Credit or debit card' ),
-		'emergent-paywall': 'Net Banking / Paytm / Debit card',
+		'emergent-paywall': 'Net Banking / Paytm / Debit Card',
 		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
@@ -192,7 +192,7 @@ function paymentMethodName( method ) {
 	if ( method === 'credit-card' ) {
 		const userCountryCode = requestGeoLocation().data;
 		if ( 'IN' === userCountryCode ) {
-			return i18n.translate( 'Credit card' );
+			return i18n.translate( 'Credit Card' );
 		}
 	}
 
