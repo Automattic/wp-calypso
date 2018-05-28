@@ -267,7 +267,6 @@ PostActions = {
 				// it
 				rawContent: mode === currentMode ? rawContent : null,
 				post: data,
-				site,
 			} );
 
 			// Retrieve the normalized post and use it to update Redux store
