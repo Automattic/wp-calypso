@@ -78,23 +78,21 @@
 	margin: 14px 0 48px;
 }
 
-.activity-log__threats {
-	margin-bottom: 10px;
+.card.activity-log__threats {
+	padding-bottom: 4px;
+	font-size: 14px;
+}
 
-	@include breakpoint( '>480px' ) {
-		margin-bottom: 16px;
-	}
-
-	.activity-log__threat-alert:first-of-type {
-		font-weight: 600;
-		color: $alert-red;
-	}
+.activity-log__threats-heading {
+	margin-bottom: 16px;
+	font-weight: 600;
+	color: $alert-red;
 }
 
 .activity-log__threat-alert {
 	padding: 8px 0;
 	font-size: 14px;
-	border-left: 3px solid $alert-red;
+	box-shadow: 0 -1px 0 transparentize($gray-lighten-20, 0.5);
 
 	.foldable-card__main {
 		flex: unset;
@@ -113,7 +111,19 @@
 }
 
 .foldable-card.is-compact.activity-log__threat-alert .foldable-card__header {
-	padding: 16px;
+	padding: 16px 0;
+}
+
+.foldable-card.is-expanded.activity-log__threat-alert {
+	margin: 0;
+
+	.foldable-card__content {
+		padding-left: 56px;
+
+		p:last-of-type {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .activity-log__threat-alert-header {
