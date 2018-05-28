@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
@@ -74,7 +74,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 		} = this.props;
 
 		return (
-			<div>
+			<Fragment>
 				<QueryUserSettings />
 				<SubscriptionListItem
 					translate={ translate }
@@ -89,7 +89,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 					followSource={ followSource }
 					railcar={ railcar }
 				/>
-			</div>
+			</Fragment>
 		);
 	}
 }
