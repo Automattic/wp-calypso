@@ -117,9 +117,10 @@ class SiteTools extends Component {
 				) }
 				<SiteToolsLink href={ importUrl } title={ importTitle } description={ importText } />
 				<SiteToolsLink href={ exportUrl } title={ exportTitle } description={ exportText } />
-				{ showClone && (
-					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
-				) }
+				{ showClone &&
+					config.isEnabled( 'rewind/clone-site' ) && (
+						<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
+					) }
 				{ showThemeSetup && (
 					<SiteToolsLink
 						href={ themeSetupLink }

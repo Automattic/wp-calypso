@@ -289,8 +289,10 @@ const flows = {
 		allowContinue: false,
 		hideFlowProgress: true,
 	},
+};
 
-	'clone-site': {
+if ( config.isEnabled( 'rewind/clone-site' ) ) {
+	flows[ 'clone-site' ] = {
 		steps: [
 			'clone-start',
 			'clone-destination',
@@ -303,11 +305,11 @@ const flows = {
 			return '/stats/activity';
 		},
 		description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
-		lastModified: '2018-05-07',
+		lastModified: '2018-05-28',
 		disallowResume: true,
 		allowContinue: false,
-	},
-};
+	};
+}
 
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
 	flows[ 'store-nux' ] = {
