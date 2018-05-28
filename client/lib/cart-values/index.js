@@ -14,6 +14,7 @@ import config from 'config';
  */
 import cartItems from './cart-items';
 import productsValues from 'lib/products-values';
+import { requestGeoLocation } from 'state/data-getters';
 
 /**
  * Create a new empty cart.
@@ -154,6 +155,7 @@ function paymentMethodClassName( method ) {
 		bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
 		'credit-card': 'WPCOM_Billing_MoneyPress_Paygate',
 		ebanx: 'WPCOM_Billing_Ebanx',
+		'emergent-paywall': 'WPCOM_Billing_Emergent_Paywall',
 		eps: 'WPCOM_Billing_Stripe_Source_Eps',
 		giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
 		ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
@@ -176,6 +178,7 @@ function paymentMethodName( method ) {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
 		'credit-card': i18n.translate( 'Credit or debit card' ),
+		'emergent-paywall': 'Net Banking / Paytm / Debit Card',
 		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
@@ -183,6 +186,15 @@ function paymentMethodName( method ) {
 		p24: 'Przelewy24',
 		'brazil-tef': 'Transferência bancária',
 	};
+
+	// Temporarily override 'credit or debit' with just 'credit' for india
+	// while debit cards are served by the paywall
+	if ( method === 'credit-card' ) {
+		const userCountryCode = requestGeoLocation().data;
+		if ( 'IN' === userCountryCode ) {
+			return i18n.translate( 'Credit Card' );
+		}
+	}
 
 	return paymentMethodsNames[ method ] || method;
 }
@@ -192,6 +204,7 @@ function isPaymentMethodEnabled( cart, method ) {
 		'alipay',
 		'bancontact',
 		'eps',
+		'emergent-paywall',
 		'giropay',
 		'ideal',
 		'paypal',

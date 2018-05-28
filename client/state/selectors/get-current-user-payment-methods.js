@@ -19,6 +19,7 @@ import { requestGeoLocation } from 'state/data-getters';
  * digit GeoIP country code, or a WP.com "locale" code (more of a
  * two letter lang code really). Return value precedence is in that order.
  */
+
 const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
 
 const paymentMethods = {
@@ -31,6 +32,7 @@ const paymentMethods = {
 		BR: [ 'credit-card', 'brazil-tef', 'paypal' ],
 		CN: [ 'credit-card', 'alipay', 'paypal' ],
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
+		IN: [ 'credit-card', 'emergent-paywall', 'paypal' ],
 		NL: [ 'credit-card', 'ideal', 'paypal' ],
 		PL: [ 'credit-card', 'p24', 'paypal' ],
 	},
