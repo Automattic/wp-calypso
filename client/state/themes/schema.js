@@ -113,6 +113,4 @@ export const themeFiltersSchema = {
 	additionalProperties: false,
 };
 
-export const themesBannerVisibleSchema = {
-	type: [ 'boolean', 'null' ],
-};
+export const themesBannerVisibleSchema = { type: 'boolean' };
