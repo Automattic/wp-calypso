@@ -74,6 +74,7 @@ class EditorMediaModalGalleryEdit extends React.Component {
 								key={ item.ID }
 								site={ site }
 								item={ item }
+								selected={ true }
 								showRemoveButton={ settings.items.length > 1 }
 							/>
 						);

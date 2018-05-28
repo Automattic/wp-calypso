@@ -35,6 +35,7 @@ export default class extends React.Component {
 		onToggle: PropTypes.func,
 		onEditItem: PropTypes.func,
 		style: PropTypes.object,
+		photon: PropTypes.bool,
 	};
 
 	static defaultProps = {

@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ class EditorMediaModalGalleryEditItem extends Component {
 		site: PropTypes.object,
 		item: PropTypes.object,
 		showRemoveButton: PropTypes.bool,
+		selected: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -37,10 +39,15 @@ class EditorMediaModalGalleryEditItem extends Component {
 	};
 
 	render() {
-		const { site, item, showRemoveButton } = this.props;
+		const { site, item, selected, showRemoveButton } = this.props;
+
+		const className = classNames(
+			'editor-media-modal-gallery__edit-item',
+			selected && 'editor-media-modal-gallery__edit-item--selected'
+		);
 
 		return (
-			<div className="editor-media-modal-gallery__edit-item">
+			<div className={ className }>
 				<MediaLibraryListItem media={ item } scale={ 1 } photon={ false } />
 				{ this.renderCaption() }
 				{ showRemoveButton && (
