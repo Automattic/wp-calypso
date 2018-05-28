@@ -195,6 +195,7 @@ class PodcastingDetails extends Component {
 							<TermTreeSelector
 								taxonomy="category"
 								selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
+								podcastingCategoryId={ podcastingCategoryId }
 								onChange={ this.onCategorySelected }
 								addTerm={ true }
 								onAddTermSuccess={ this.onCategorySelected }

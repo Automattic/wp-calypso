@@ -465,6 +465,8 @@ export default connect( ( state, ownProps ) => {
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		query,
-		podcastingCategoryId: taxonomy === 'category' && getPodcastingCategoryId( state, siteId ),
+		podcastingCategoryId:
+			ownProps.podcastingCategoryId ||
+			( taxonomy === 'category' && getPodcastingCategoryId( state, siteId ) ),
 	};
 } )( localize( TermTreeSelectorList ) );
