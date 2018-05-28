@@ -163,8 +163,11 @@ export class EmergentPaywallBox extends Component {
 
 	fetchIframeConfiguration = () => {
 		notices.clearNotices( 'notices' );
-		// TODO: we can use this.props.userCountryCode ( user IP geo code )?
-		wpcom.emergentPaywallConfiguration( 'IN', this.props.cart, this.loadIframe );
+		wpcom.emergentPaywallConfiguration(
+			this.props.userCountryCode,
+			this.props.cart,
+			this.loadIframe
+		);
 	};
 
 	loadIframe = ( error, iframeConfig ) => {
@@ -202,7 +205,6 @@ export class EmergentPaywallBox extends Component {
 		const iframeContainerClasses = classNames( 'checkout__emergent-paywall-frame-container', {
 			'iframe-loaded': hasConfigLoaded,
 		} );
-
 		return (
 			<div>
 				<TermsOfService />
@@ -237,6 +239,8 @@ export class EmergentPaywallBox extends Component {
 }
 
 export default connect(
-	state => ( { userCountryCode: getCurrentUserCountryCode( state ) } ),
+	state => ( {
+		userCountryCode: getCurrentUserCountryCode( state ),
+	} ),
 	null
 )( localize( EmergentPaywallBox ) );

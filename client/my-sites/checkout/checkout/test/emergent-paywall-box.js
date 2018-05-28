@@ -15,19 +15,6 @@ import { identity } from 'lodash';
 
 import { EmergentPaywallBox } from '../emergent-paywall-box';
 
-/*
-jest.mock( 'lib/wp', () => ( {
-	undocumented: () => ( {
-		transactions: () => {},
-		emergentPaywallConfiguration: () => {},
-		me: () => ( {
-			transactions: () => {},
-			emergentPaywallConfiguration: () => {},
-		} ),
-	} ),
-} ) );
-*/
-
 const defaultProps = {
 	cart: {},
 	transaction: {},
