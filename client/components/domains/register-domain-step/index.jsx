@@ -361,6 +361,7 @@ class RegisterDomainStep extends React.Component {
 			? getAvailabilityNotice( lastDomainSearched, error, errorData )
 			: {};
 		const showTldFilterBar =
+			( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) &&
 			config.isEnabled( 'domains/kracken-ui/tld-filter' ) &&
 			abtest( 'domainSearchTLDFilterPlacement' ) === 'aboveFeatured';
 		return (
