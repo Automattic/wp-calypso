@@ -217,26 +217,31 @@ export function extendAction( action, data ) {
  *
  * @param {Function} actionCreator - Redux action creator function
  * @param {Function|Array} enhancers - either a single function or a list of functions that can be used to modify a Redux action
+ * @returns {Function} enhanced action creator
  * @see client/state/analytics/actions/enhanceWithSiteType for an example
  * @see client/state/extendAction for a simpler alternative
  */
-export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => ( dispatch, getState ) => {
+export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
+	dispatch,
+	getState
+) => {
 	const action = actionCreator( ...args );
 
 	if ( typeof action !== 'object' ) {
-		throw new Error( 'withEnhancers only works with an action creator that returns a plain action object' );
+		throw new Error(
+			'withEnhancers only works with an action creator that returns a plain action object'
+		);
 	}
 
 	if ( ! Array.isArray( enhancers ) ) {
 		enhancers = [ enhancers ];
 	}
 
-	return dispatch( enhancers.reduce(
-		( result, enhancer ) => {
+	return dispatch(
+		enhancers.reduce( ( result, enhancer ) => {
 			return enhancer( result, getState );
-		},
-		action
-	) );
+		}, action )
+	);
 };
 
 function getInitialState( reducer ) {
