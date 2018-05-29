@@ -18,6 +18,7 @@ import {
 	combineReducers,
 	isValidStateWithSchema,
 	withoutPersistence,
+	withEnhancers,
 } from 'state/utils';
 import warn from 'lib/warn';
 
@@ -901,6 +902,67 @@ describe( 'utils', () => {
 			await callActionCreator();
 
 			expect( failingWorker ).toHaveBeenCalledTimes( 2 );
+		} );
+	} );
+
+	describe( '#withEnhancers', () => {
+		it( 'should enhance action creator', () => {
+			const actionCreator = () => ( { type: 'HELLO' } );
+			const enhancedActionCreator = withEnhancers( actionCreator, action =>
+				Object.assign( { name: 'test' }, action )
+			);
+			const thunk = enhancedActionCreator();
+			const getState = () => ( {} );
+			let dispatchedAction = null;
+			const dispatch = action => ( dispatchedAction = action );
+			thunk( dispatch, getState );
+
+			expect( dispatchedAction ).toEqual( {
+				name: 'test',
+				type: 'HELLO',
+			} );
+		} );
+
+		it( 'should enhance with multiple enhancers, from last to first', () => {
+			const actionCreator = () => ( { type: 'HELLO' } );
+			const enhancedActionCreator = withEnhancers( actionCreator, [
+				action => Object.assign( { name: 'test' }, action ),
+				action => Object.assign( { name: 'test!!!' }, action ),
+				action => Object.assign( { meetup: 'akumal' }, action ),
+			] );
+			const thunk = enhancedActionCreator();
+			const getState = () => ( {} );
+			let dispatchedAction = null;
+			const dispatch = action => ( dispatchedAction = action );
+			thunk( dispatch, getState );
+
+			expect( dispatchedAction ).toEqual( {
+				name: 'test',
+				type: 'HELLO',
+				meetup: 'akumal',
+			} );
+		} );
+
+		it( 'should provider enhancers with getState function', () => {
+			let providedGetState = null;
+			const actionCreator = () => ( { type: 'HELLO' } );
+			const enhancedActionCreator = withEnhancers( actionCreator, [
+				( action, getState ) => {
+					providedGetState = getState;
+					Object.assign( { name: 'test' }, action );
+				},
+			] );
+			const thunk = enhancedActionCreator();
+			const getState = () => ( {} );
+			const dispatch = action => action;
+			thunk( dispatch, getState );
+
+			expect( providedGetState ).toEqual( getState );
+		} );
+
+		it( 'should warn about supporting only plain object actions', () => {
+			const actionCreator = () => () => ( {} ); // returns thunk
+			expect( withEnhancers( actionCreator, [] )() ).toThrow();
 		} );
 	} );
 } );
