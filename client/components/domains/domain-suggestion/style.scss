@@ -105,6 +105,10 @@
 
 .domain-registration-suggestion__title {
 	align-self: center;
+
+	@include breakpoint( '<800px' ) {
+		padding-right: 2em;
+	}
 }
 
 .button.domain-suggestion__action {
