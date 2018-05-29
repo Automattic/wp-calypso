@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
+import FormToggle from 'components/forms/form-toggle';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import WizardProgressBar from 'components/wizard-progress-bar';
@@ -26,8 +27,18 @@ class GoogleMyBusinessEnterAddress extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	state = {
+		isServiceAreaBusiness: false
+	};
+
 	goBack = () => {
 		page.back( `/google-my-business/new/${ this.props.siteSlug }` );
+	};
+
+	toggleServiceAreaBusiness = () => {
+		this.setState( {
+			isServiceAreaBusiness: ! this.state.isServiceAreaBusiness
+		} );
 	};
 
 	render() {
@@ -50,6 +61,17 @@ class GoogleMyBusinessEnterAddress extends Component {
 					<h1>
 						{ translate( 'Where are you located?' ) }
 					</h1>
+
+					<FormToggle
+						checked={ this.state.isServiceAreaBusiness }
+						onChange={ this.toggleServiceAreaBusiness }
+					>
+						{ translate( 'I deliver goods and services to my customers. {{link}}Learn more{{/link}}.', {
+							components: {
+								link: <a href="https://support.google.com/business/answer/3038163" rel="noopener noreferrer" target="_blank" />,
+							}
+						} ) }
+					</FormToggle>
 				</Card>
 
 				<WizardProgressBar
