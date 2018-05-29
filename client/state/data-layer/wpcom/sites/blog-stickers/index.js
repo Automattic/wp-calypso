@@ -20,14 +20,15 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
 export const requestBlogStickerList = action =>
-	http( {
-		method: 'GET',
-		path: `/sites/${ action.payload.blogId }/blog-stickers`,
-		body: {}, // have to have an empty body to make wpcom-http happy
-		apiVersion: '1.1',
-		onSuccess: action,
-		onFailure: action,
-	} );
+	http(
+		{
+			method: 'GET',
+			path: `/sites/${ action.payload.blogId }/blog-stickers`,
+			body: {}, // have to have an empty body to make wpcom-http happy
+			apiVersion: '1.1',
+		},
+		action
+	);
 
 export const receiveBlogStickerListError = () =>
 	errorNotice( translate( 'Sorry, we had a problem retrieving blog stickers. Please try again.' ) );
