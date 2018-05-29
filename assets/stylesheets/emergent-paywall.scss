@@ -6,7 +6,7 @@
 // So the CSS files Directlyhard-set to:
 //
 // Sandbox:    https://wpcalypso.wordpress.com/calypso/emergent-paywall.css
-// Production: https://wordpress.com/calypso/emegent-paywall.css
+// Production: https://wordpress.com/calypso/emergent-paywall.css
 //
 // ## DEVELOPMENT ENVIRONMENT INSTRUCTIONS:
 //
@@ -61,7 +61,7 @@ textarea {
 
 	// Seen in the 2nd step, displays the payment method type
 	.header2, .method-header {
-		margin: 0 0 20px 0;
+		margin: 0 0 20px;
 
 		strong, span {
 			font-size: 24px !important;
@@ -108,7 +108,7 @@ textarea {
 				}
 
 				&:hover {
-					transition: all .15s ease-in-out;
+					transition: all 150ms ease-in-out;
 					border: 1px solid #c8d7e1;
 				}
 
@@ -171,11 +171,11 @@ textarea {
 				top: -25px;
 
 				// Hide a couple of empty fields on the card form so that the CVV can be next to the expiration
-				~ div[simple-replace="{FIELD:'expirationMonth'}"] {
+				~ div[simple-replace='{FIELD:\'expirationMonth\'}'] {
 					display: none;
 				}
 
-				~ div[simple-replace="{FIELD:'expirationYear'}"] {
+				~ div[simple-replace='{FIELD:\'expirationYear\'}'] {
 					display: none;
 				}
 			}
@@ -200,7 +200,7 @@ textarea {
 					margin-bottom: 5px;
 
 					// Labels are lowercase.
-					&:first-letter {
+					&::first-letter {
 						text-transform: capitalize;
 					}
 				}
@@ -222,18 +222,23 @@ textarea {
 					line-height: 1.5;
 					border: 1px solid #c8d7e1;
 					background-color: #fff;
-					transition: all .15s ease-in-out;
+					transition: all 150ms ease-in-out;
 					box-sizing: border-box;
 
-					&#accountHolder, &#email, &#document, &#companyName, &#billToStreetAddress, &#billToStreetAddress2  {
+					&[name='accountHolder'],
+					&[name='email'],
+					&[name='document'],
+					&[name='companyName'],
+					&[name='billToStreetAddress'],
+					&[name='billToStreetAddress2'] {
 						width: 100%;
 					}
 
-					&#creditCardNumber {
+					&[name='creditCardNumber'] {
 						width: 310px;
 					}
 
-					&#billToCity {
+					&[name='billToCity'] {
 						width: 300px;
 						margin-right:20px;
 					}
@@ -386,13 +391,13 @@ div[ng-show='busyIndicator'] {
 	align-items: center;
 }
 
-.busy-indicator, .less-busy-indicator,  .less-busy-indicator:after, .busy-indicator:after {
+.busy-indicator, .less-busy-indicator,  .less-busy-indicator::after, .busy-indicator::after {
 	display:block;
 	margin: auto;
 	box-sizing: border-box;
 	border: 0.1em solid transparent;
 	border-radius: 50%;
-	animation: 3s linear infinite;
+	animation: 3000ms linear infinite;
 	animation-name: rotate-spinner;
 }
 
@@ -402,7 +407,7 @@ div[ng-show='busyIndicator'] {
 	height: 35px;
 }
 
-.busy-indicator:after, .less-busy-indicator:after  {
+.busy-indicator::after, .less-busy-indicator::after {
 	content: '';
 	width: 100%;
 	height: 100%;
@@ -445,8 +450,8 @@ div[ng-show='busyIndicator'] {
 	overflow: hidden !important;
 	position: absolute !important;
 	outline: 0 !important;
-	left: 0px !important;
-	top: 0px !important;
+	left: 0 !important;
+	top: 0 !important;
 }
 
 
@@ -459,8 +464,8 @@ div[ng-show='busyIndicator'] {
 /* Helper class to show styles when focus */
 .btn-default-focus {
 	color: #333;
-	background-color: #EBEBEB;
-	border-color: #ADADAD;
+	background-color: #ebebeb;
+	border-color: #adadad;
 	text-decoration: none;
 	outline: 5px auto -webkit-focus-ring-color;
 	outline-offset: -2px;
@@ -496,7 +501,7 @@ div[ng-show='busyIndicator'] {
 	border-bottom-right-radius: 0 !important;
 }
 
-.ui-select-bootstrap .ui-select-search-hidden{
+.ui-select-bootstrap .ui-select-search-hidden {
 	opacity: 0;
 	height: 0;
 	min-height: 0;
@@ -505,7 +510,7 @@ div[ng-show='busyIndicator'] {
 	border:0;
 }
 
-.ui-select-bootstrap > .ui-select-match > .btn{
+.ui-select-bootstrap > .ui-select-match > .btn {
 	/* Instead of center because of .btn */
 	text-align: left !important;
 }
@@ -531,7 +536,7 @@ body > .ui-select-bootstrap.open {
 
 .ui-select-multiple.ui-select-bootstrap {
 	height: auto;
-	padding: 3px 3px 0 3px;
+	padding: 3px 3px 0;
 }
 
 .ui-select-multiple.ui-select-bootstrap input.ui-select-search {
@@ -560,8 +565,8 @@ body > .ui-select-bootstrap.open {
 	pointer-events: none;
 }
 
-.ui-select-multiple:hover .ui-select-match-item.dropping-before:before {
-	content: "";
+.ui-select-multiple:hover .ui-select-match-item.dropping-before::before {
+	content: '';
 	position: absolute;
 	top: 0;
 	right: 100%;
@@ -570,8 +575,8 @@ body > .ui-select-bootstrap.open {
 	border-left: 1px solid #428bca;
 }
 
-.ui-select-multiple:hover .ui-select-match-item.dropping-after:after {
-	content: "";
+.ui-select-multiple:hover .ui-select-match-item.dropping-after::after {
+	content: '';
 	position: absolute;
 	top: 0;
 	left: 100%;
@@ -580,7 +585,7 @@ body > .ui-select-bootstrap.open {
 	border-right: 1px solid #428bca;
 }
 
-.ui-select-bootstrap .ui-select-choices-row>span {
+.ui-select-bootstrap .ui-select-choices-row > span {
 	cursor: pointer;
 	display: block;
 	padding: 3px 20px;
@@ -591,21 +596,21 @@ body > .ui-select-bootstrap.open {
 	white-space: nowrap;
 }
 
-.ui-select-bootstrap .ui-select-choices-row>span:hover, .ui-select-bootstrap .ui-select-choices-row>span:focus {
+.ui-select-bootstrap .ui-select-choices-row > span:hover, .ui-select-bootstrap .ui-select-choices-row > span:focus {
 	text-decoration: none;
 	color: #262626;
 	background-color: #f5f5f5;
 }
 
-.ui-select-bootstrap .ui-select-choices-row.active>span {
+.ui-select-bootstrap .ui-select-choices-row.active > span {
 	color: #fff;
 	text-decoration: none;
 	outline: 0;
 	background-color: #428bca;
 }
 
-.ui-select-bootstrap .ui-select-choices-row.disabled>span,
-.ui-select-bootstrap .ui-select-choices-row.active.disabled>span {
+.ui-select-bootstrap .ui-select-choices-row.disabled > span,
+.ui-select-bootstrap .ui-select-choices-row.active.disabled > span {
 	color: #777;
 	cursor: not-allowed;
 	background-color: #fff;
@@ -619,11 +624,11 @@ body > .ui-select-bootstrap.open {
 
 /* Mark invalid Bootstrap */
 .ui-select-bootstrap.ng-dirty.ng-invalid > button.btn.ui-select-match {
-	border-color: #D44950;
+	border-color: $alert-red;
 }
 
 /* Handle up direction Bootstrap */
-.ui-select-container[theme="bootstrap"].direction-up .ui-select-dropdown {
+.ui-select-container[theme='bootstrap'].direction-up .ui-select-dropdown {
 	box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.25);
 }
 
@@ -678,10 +683,10 @@ body > .ui-select-bootstrap.open {
 }
 
 .ui-select-spin {
-	-webkit-animation: ui-select-spin 2s infinite linear;
-	animation: ui-select-spin 2s infinite linear;
+	-webkit-animation: ui-select-spin 2000ms infinite linear;
+	animation: ui-select-spin 2000ms infinite linear;
 }
 
 .ui-select-refreshing.ng-animate {
-	-webkit-animation: none 0s;
+	-webkit-animation: none 0ms;
 }
