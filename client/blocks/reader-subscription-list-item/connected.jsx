@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
@@ -12,9 +12,10 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import connectSite from 'lib/reader-connect-site';
-import userSettings from 'lib/user-settings';
 import SubscriptionListItem from 'blocks/reader-subscription-list-item';
+import getUserSetting from 'state/selectors/get-user-setting';
 import isFollowingSelector from 'state/selectors/is-following';
+import QueryUserSettings from 'components/data/query-user-settings';
 
 class ConnectedSubscriptionListItem extends React.Component {
 	static propTypes = {
@@ -27,6 +28,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 		onComponentMountWithNewRailcar: PropTypes.func,
 		showNotificationSettings: PropTypes.bool,
 		showLastUpdatedDate: PropTypes.bool,
+		isEmailBlocked: PropTypes.bool,
 		isFollowing: PropTypes.bool,
 		followSource: PropTypes.string,
 		railcar: PropTypes.object,
@@ -65,30 +67,34 @@ class ConnectedSubscriptionListItem extends React.Component {
 			siteId,
 			showNotificationSettings,
 			showLastUpdatedDate,
+			isEmailBlocked,
 			isFollowing,
 			followSource,
 			railcar,
 		} = this.props;
-		const isEmailBlocked = userSettings.getSetting( 'subscription_delivery_email_blocked' );
 
 		return (
-			<SubscriptionListItem
-				translate={ translate }
-				feedId={ feedId }
-				siteId={ siteId }
-				site={ site }
-				feed={ feed }
-				url={ url }
-				showNotificationSettings={ showNotificationSettings && ! isEmailBlocked }
-				showLastUpdatedDate={ showLastUpdatedDate }
-				isFollowing={ isFollowing }
-				followSource={ followSource }
-				railcar={ railcar }
-			/>
+			<Fragment>
+				<QueryUserSettings />
+				<SubscriptionListItem
+					translate={ translate }
+					feedId={ feedId }
+					siteId={ siteId }
+					site={ site }
+					feed={ feed }
+					url={ url }
+					showNotificationSettings={ showNotificationSettings && ! isEmailBlocked }
+					showLastUpdatedDate={ showLastUpdatedDate }
+					isFollowing={ isFollowing }
+					followSource={ followSource }
+					railcar={ railcar }
+				/>
+			</Fragment>
 		);
 	}
 }
 
 export default connect( ( state, ownProps ) => ( {
+	isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 	isFollowing: isFollowingSelector( state, { feedId: ownProps.feedId, blogId: ownProps.siteId } ),
 } ) )( localize( connectSite( ConnectedSubscriptionListItem ) ) );
