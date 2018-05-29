@@ -37,6 +37,7 @@
 		"gdpr-banner": false,
 		"google-analytics": false,
 		"google-my-business": true,
+		"google-my-business-m3": false,
 		"help": true,
 		"jetpack/checklist": true,
 		"jetpack/connect/remote-install": true,

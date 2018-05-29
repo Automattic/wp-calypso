@@ -38,6 +38,7 @@
 		"gdpr-banner": true,
 		"google-analytics": true,
 		"google-my-business": false,
+		"google-my-business-m3": false,
 		"help": true,
 		"help/courses": true,
 		"jetpack/connect/remote-install": true,

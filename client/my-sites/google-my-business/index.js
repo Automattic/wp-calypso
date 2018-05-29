@@ -11,7 +11,7 @@ import page from 'page';
 import config from 'config';
 import { makeLayout, redirectLoggedOut } from 'controller';
 import { navigation, sites, siteSelection } from 'my-sites/controller';
-import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
+import { enterAddress, newAccount, selectBusinessType, selectLocation, stats } from './controller';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
@@ -48,6 +48,25 @@ export default function( router ) {
 	}
 
 	router( '/google-my-business', siteSelection, sites, navigation, makeLayout );
+
+	if ( config.isEnabled( 'google-my-business-m3' ) ) {
+		router( '/google-my-business/create/enter-address',
+			redirectLoggedOut,
+			siteSelection,
+			sites,
+			makeLayout
+		);
+
+		router(
+			'/google-my-business/create/enter-address/:site',
+			redirectLoggedOut,
+			siteSelection,
+			redirectUnauthorized,
+			enterAddress,
+			navigation,
+			makeLayout
+		);
+	}
 
 	router( '/google-my-business/new', redirectLoggedOut, siteSelection, sites, makeLayout );
 
