@@ -50,8 +50,6 @@ export default class WizardProgressBarExample extends Component {
 
 ### Props
 
-Props are displayed as a table with Name, Type, Default, and Description as headings.
-
 **Required props are marked with `*`.**
 
 Name | Type | Default | Description
@@ -64,7 +62,5 @@ Name | Type | Default | Description
 `previousButtonText` | `string` | `none` | The text to display on the previous button
 
 ### Additional usage information
-
-If the component has many states, or if a technical aspect needs more explanation, use this section. Example:
 
 * **Button Handlers**: Should generally to check if the Wizard can proceed, then update the `currentStep` property.
