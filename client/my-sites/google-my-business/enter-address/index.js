@@ -17,6 +17,7 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import WizardProgressBar from 'components/wizard-progress-bar';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class GoogleMyBusinessEnterAddress extends Component {
@@ -45,11 +46,16 @@ class GoogleMyBusinessEnterAddress extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card>
+				<Card className="gmb-enter-address__form">
 					<h1>
 						{ translate( 'Where are you located?' ) }
 					</h1>
 				</Card>
+
+				<WizardProgressBar
+					currentStep={ 2 }
+					numberOfSteps={ 5 }
+				/>
 			</Main>
 		);
 	}
