@@ -21,16 +21,14 @@ function main() {
 		'assets',
 		'bin',
 		'client',
-		'CODE-OF-CONDUCT.md',
 		'config',
-		'CREDITS.md',
 		'docs',
-		'LICENSE.md',
-		'README.md',
 		'server',
 		'test',
 		'.github',
-	].map( dir => /\.md/.test( dir ) ? dir : dir + '/**/*.md' );
+	].map( dir => dir + '/**/*.md' );
+	// ... and the current directory
+	dirList.push( '*.md' );
 
 	const documents = globby.sync( dirList ).map( fileWithPath => {
 		return documentFromFile( root, fileWithPath );
