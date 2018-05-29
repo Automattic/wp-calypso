@@ -16,6 +16,7 @@ const AssetsWriter = require( './server/bundler/assets-writer' );
 const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 
 /**
  * Internal dependencies
@@ -31,6 +32,7 @@ const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
 const shouldMinify = process.env.MINIFY_JS === 'true' || bundleEnv === 'production';
 const shouldEmitStats = process.env.EMIT_STATS === 'true';
+const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 
 /**
@@ -202,6 +204,13 @@ const webpackConfig = {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
 		} ),
+		shouldCheckForCycles &&
+			new CircularDependencyPlugin( {
+				exclude: /node_modules/,
+				failOnError: false,
+				allowAsyncCycles: false,
+				cwd: process.cwd(),
+			} ),
 		shouldEmitStats &&
 			new StatsWriter( {
 				filename: 'stats.json',
