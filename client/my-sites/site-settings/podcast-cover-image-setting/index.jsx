@@ -157,7 +157,7 @@ class PodcastCoverImageSetting extends PureComponent {
 				scaleY: 1,
 			}
 		);
-		debug( 'isImageEdited', isImageEdited );
+		debug( 'isImageEdited', isImageEdited, { crop, transform } );
 
 		if ( isImageEdited ) {
 			this.uploadCoverImage( blob, `cropped-${ selectedItem.file }` );
