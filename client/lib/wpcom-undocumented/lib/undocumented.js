@@ -488,6 +488,23 @@ Undocumented.prototype.isDomainAvailable = function( domain, blogId, fn ) {
  * Get the inbound transfer status for this domain
  *
  * @param {string} domain - The domain name to check.
+ * @param {string} authCode - The auth code for the given domain to check.
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.checkAuthCode = function( domain, authCode, fn ) {
+	return this.wpcom.req.get(
+		`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-check-auth-code`,
+		{ auth_code: authCode },
+		fn
+	);
+};
+
+/**
+ * Get the inbound transfer status for this domain
+ *
+ * @param {string} domain - The domain name to check.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
  * @api public
@@ -524,15 +541,20 @@ Undocumented.prototype.restartInboundTransfer = function( siteId, domain, fn ) {
  *
  * @param {int|string} siteId The site ID
  * @param {string} domain The domain name
+ * @param {string} authCode The auth code for the transfer
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
-Undocumented.prototype.startInboundTransfer = function( siteId, domain, fn ) {
+Undocumented.prototype.startInboundTransfer = function( siteId, domain, authCode, fn ) {
+	let query = {};
+	if ( authCode && authCode !== '' ) {
+		query = { auth_code: authCode };
+	}
+
 	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
-		},
+		`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
+		query,
 		fn
 	);
 };

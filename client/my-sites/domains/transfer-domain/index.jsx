@@ -62,7 +62,7 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	handleTransferDomain = ( domain, supportsPrivacy ) => {
+	handleTransferDomain = ( domain, authCode, supportsPrivacy ) => {
 		const { selectedSiteSlug } = this.props;
 
 		this.setState( { errorMessage: null } );
@@ -72,7 +72,10 @@ export class TransferDomain extends Component {
 		transferItems.push(
 			cartItems.domainTransfer( {
 				domain,
-				extra: { privacy_available: supportsPrivacy },
+				extra: {
+					auth_code: authCode,
+					privacy_available: supportsPrivacy,
+				},
 			} )
 		);
 

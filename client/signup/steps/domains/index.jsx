@@ -189,8 +189,14 @@ class DomainsStep extends React.Component {
 		this.props.goToNextStep();
 	};
 
-	handleAddTransfer = domain => {
-		const domainItem = cartItems.domainTransfer( { domain, extra: { signup: true } } );
+	handleAddTransfer = ( domain, authCode ) => {
+		const domainItem = cartItems.domainTransfer( {
+			domain,
+			extra: {
+				auth_code: authCode,
+				signup: true,
+			},
+		} );
 		const isPurchasingItem = true;
 
 		this.props.recordAddDomainButtonClickInTransferDomain( domain, 'signup' );

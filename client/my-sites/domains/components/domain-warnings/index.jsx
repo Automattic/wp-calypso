@@ -897,13 +897,7 @@ export class DomainWarnings extends React.PureComponent {
 					args: { domain: domainInTransfer.name },
 				};
 
-				if ( domainInTransfer.manualWhois ) {
-					message = translate(
-						"We'll send an email to confirm the transfer of {{strong}}%(domain)s{{/strong}} " +
-							'as soon as we get the correct address. {{a}}More Info{{/a}}',
-						translateParams
-					);
-				} else if ( domainInTransfer.adminEmail ) {
+				if ( domainInTransfer.adminEmail ) {
 					translateParams.args.email = domainInTransfer.adminEmail;
 					message = translate(
 						'We sent an email to {{strong}}%(email)s{{/strong}} to confirm the transfer of ' +

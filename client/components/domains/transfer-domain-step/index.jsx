@@ -16,6 +16,7 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import {
+	checkAuthCode,
 	checkDomainAvailability,
 	checkInboundTransferStatus,
 	getDomainPrice,
@@ -71,11 +72,13 @@ class TransferDomainStep extends React.Component {
 
 	getDefaultState() {
 		return {
+			authCodeValid: null,
 			domain: null,
 			domainsWithPlansOnly: false,
 			inboundTransferStatus: {},
 			precheck: get( this.props, 'forcePrecheck', false ),
 			searchQuery: this.props.initialQuery || '',
+			submittingAuthCodeCheck: false,
 			submittingAvailability: false,
 			submittingWhois: get( this.props, 'forcePrecheck', false ),
 			supportsPrivacy: false,
@@ -231,10 +234,10 @@ class TransferDomainStep extends React.Component {
 		);
 	}
 
-	startPendingInboundTransfer = domain => {
+	startPendingInboundTransfer = ( domain, authCode ) => {
 		const { selectedSite, translate } = this.props;
 
-		startInboundTransfer( selectedSite.ID, domain, ( error, result ) => {
+		startInboundTransfer( selectedSite.ID, domain, authCode, ( error, result ) => {
 			if ( result ) {
 				fetchDomains( domain );
 				page( domainManagementTransferIn( selectedSite.slug, domain ) );
@@ -245,7 +248,14 @@ class TransferDomainStep extends React.Component {
 	};
 
 	getTransferDomainPrecheck() {
-		const { domain, inboundTransferStatus, submittingWhois, searchQuery } = this.state;
+		const {
+			authCodeValid,
+			domain,
+			inboundTransferStatus,
+			submittingAuthCodeCheck,
+			submittingWhois,
+			searchQuery,
+		} = this.state;
 
 		const onSetValid = this.props.forcePrecheck
 			? this.startPendingInboundTransfer
@@ -253,12 +263,12 @@ class TransferDomainStep extends React.Component {
 
 		return (
 			<TransferDomainPrecheck
+				authCodeValid={ authCodeValid }
+				checkAuthCode={ this.getAuthCodeStatus }
 				domain={ domain || searchQuery }
-				email={ inboundTransferStatus.email }
-				loading={ submittingWhois }
+				loading={ submittingWhois || submittingAuthCodeCheck }
 				losingRegistrar={ inboundTransferStatus.losingRegistrar }
 				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
-				privacy={ inboundTransferStatus.privacy }
 				refreshStatus={ this.getInboundTransferStatus }
 				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
 				setValid={ onSetValid }
@@ -526,6 +536,26 @@ class TransferDomainStep extends React.Component {
 					resolve();
 				}
 			);
+		} );
+	};
+
+	getAuthCodeStatus = ( domain, authCode ) => {
+		this.setState( { submittingAuthCodeCheck: true } );
+
+		return new Promise( resolve => {
+			checkAuthCode( domain, authCode, ( error, result ) => {
+				this.setState( { submittingAuthCodeCheck: false } );
+
+				if ( ! isEmpty( error ) ) {
+					resolve();
+					return;
+				}
+
+				this.setState( {
+					authCodeValid: result.success,
+				} );
+				resolve();
+			} );
 		} );
 	};
 }

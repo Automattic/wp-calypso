@@ -35,6 +35,22 @@ function canAddGoogleApps( domainName ) {
 	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
 }
 
+function checkAuthCode( domainName, authCode, onComplete ) {
+	if ( ! domainName || ! authCode ) {
+		onComplete( null, { success: false } );
+		return;
+	}
+
+	wpcom.undocumented().checkAuthCode( domainName, authCode, function( serverError, result ) {
+		if ( serverError ) {
+			onComplete( serverError.error );
+			return;
+		}
+
+		onComplete( null, result );
+	} );
+}
+
 function checkDomainAvailability( params, onComplete ) {
 	const { domainName, blogId } = params;
 	if ( ! domainName ) {
@@ -84,20 +100,22 @@ function restartInboundTransfer( siteId, domainName, onComplete ) {
 	} );
 }
 
-function startInboundTransfer( siteId, domainName, onComplete ) {
+function startInboundTransfer( siteId, domainName, authCode, onComplete ) {
 	if ( ! domainName || ! siteId ) {
 		onComplete( null );
 		return;
 	}
 
-	wpcom.undocumented().startInboundTransfer( siteId, domainName, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
+	wpcom
+		.undocumented()
+		.startInboundTransfer( siteId, domainName, authCode, function( serverError, result ) {
+			if ( serverError ) {
+				onComplete( serverError.error );
+				return;
+			}
 
-		onComplete( null, result );
-	} );
+			onComplete( null, result );
+		} );
 }
 
 function resendInboundTransferEmail( domainName, onComplete ) {
@@ -278,6 +296,7 @@ function getAvailableTlds( query = {} ) {
 export {
 	canAddGoogleApps,
 	canRedirect,
+	checkAuthCode,
 	checkDomainAvailability,
 	checkInboundTransferStatus,
 	getDomainPrice,
