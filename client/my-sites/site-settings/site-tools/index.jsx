@@ -197,7 +197,7 @@ export default connect( state => {
 
 	let importUrl = `/settings/import/${ siteSlug }`;
 	let exportUrl = `/settings/export/${ siteSlug }`;
-	let cloneUrl = `/start/clone-site/${ siteSlug }`;
+	const cloneUrl = `/start/clone-site/${ siteSlug }`;
 	if ( isJetpack ) {
 		importUrl = getSiteAdminUrl( state, siteId, 'import.php' );
 		exportUrl = getSiteAdminUrl( state, siteId, 'export.php' );

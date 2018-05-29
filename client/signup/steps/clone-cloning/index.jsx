@@ -120,7 +120,7 @@ class CloneCloningStep extends Component {
 				</svg>
 				<p className="clone-cloning__description">
 					{ translate(
-						'Alrighy, Jetpack is cloning your site. You will be notified when the ' +
+						'Alrighty, Jetpack is cloning your site. You will be notified when the ' +
 							'clone process is finished or you can watch the progress in ' +
 							'real-time on the Activity Log.'
 					) }
@@ -142,7 +142,7 @@ class CloneCloningStep extends Component {
 			translate,
 		} = this.props;
 
-		const headerText = translate( "We're cloning %(originSiteName)s - sit tight!", {
+		const headerText = translate( "We're cloning %(originSiteName)s — sit tight!", {
 			args: { originSiteName },
 		} );
 
