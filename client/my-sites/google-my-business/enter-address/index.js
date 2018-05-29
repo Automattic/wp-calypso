@@ -15,14 +15,18 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
+import FormCountrySelect from 'components/forms/form-country-select';
 import FormToggle from 'components/forms/form-toggle';
+import getCountries from 'state/selectors/get-countries';
 import Main from 'components/main';
+import QueryDomainCountries from 'components/data/query-countries/domains';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import WizardProgressBar from 'components/wizard-progress-bar';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class GoogleMyBusinessEnterAddress extends Component {
 	static propTypes = {
+		countriesList: PropTypes.array.isRequired,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
@@ -62,6 +66,9 @@ class GoogleMyBusinessEnterAddress extends Component {
 						{ translate( 'Where are you located?' ) }
 					</h1>
 
+					<QueryDomainCountries />
+					<FormCountrySelect countriesList={ this.props.countriesList } />
+
 					<FormToggle
 						checked={ this.state.isServiceAreaBusiness }
 						onChange={ this.toggleServiceAreaBusiness }
@@ -85,6 +92,7 @@ class GoogleMyBusinessEnterAddress extends Component {
 
 export default connect(
 	state => ( {
+		countriesList: getCountries( state, 'domains' ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} )
 )( localize( GoogleMyBusinessEnterAddress ) );

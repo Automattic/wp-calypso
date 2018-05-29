@@ -1,8 +1,12 @@
 .gmb-enter-address__form {
 	margin-bottom: 0;
 
+	.form-country-select,
+	.form-toggle__wrapper {
+		margin-top: 20px;
+	}
+
 	.form-toggle__wrapper {
 		display: block;
-		margin-top: 15px;
 	}
 }
