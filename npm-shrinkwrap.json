@@ -15222,8 +15222,8 @@
       }
     },
     "redux-form": {
-      "version": "7.0.2",
-      "integrity": "sha512-R1H9APwnBiJE31FWS2vBlM6NplH7AQb+3FJ3Z2e5B1flbgAZbFr7S0R9yrL8P4yy1liIAJcLreI1Ji4KA6KMtA==",
+      "version": "7.3.0",
+      "integrity": "sha512-WcZRsRsVG25l8Cih3bEeeoZFxSIvoHqTpBRe5Ifl1ob7xvEpYLXyYYHAFER1DpTfMZPgTPHZ4UkR4ILFP3hzkw==",
       "requires": {
         "deep-equal": "1.0.1",
         "es6-error": "4.1.1",
@@ -19726,7 +19726,7 @@
         "mkdirp": "0.5.1",
         "p-each-series": "1.0.0",
         "p-lazy": "1.0.0",
-        "prettier": "1.13.3",
+        "prettier": "1.13.4",
         "recast": "0.13.2",
         "resolve-cwd": "2.0.0",
         "supports-color": "4.5.0",
@@ -19879,8 +19879,8 @@
           }
         },
         "prettier": {
-          "version": "1.13.3",
-          "integrity": "sha512-CIWJNU+cFFdeA0GJSzzFkxiq2WuMvWZMlz6cV/EXhPlRnI3esSFMh+lNmyZ8z/X8O8C1U60Sc8puXALj4/WmZw=="
+          "version": "1.13.4",
+          "integrity": "sha512-emsEZ2bAigL1lq6ssgkpPm1MIBqgeTvcp90NxOP5XDqprub/V/WS2Hfgih3mS7/1dqTUvhG+sxx1Dv8crnVexA=="
         },
         "read-pkg": {
           "version": "2.0.0",
