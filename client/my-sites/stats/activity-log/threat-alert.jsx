@@ -13,6 +13,8 @@ import DiffViewer from 'components/diff-viewer';
 import FoldableCard from 'components/foldable-card';
 import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
+import PopoverMenuItem from 'components/popover/menu-item';
+import SplitButton from 'components/split-button';
 
 const detailType = threat => {
 	if ( threat.hasOwnProperty( 'diff' ) ) {
@@ -122,19 +124,50 @@ export class ThreatAlert extends Component {
 					className="activity-log__threat-alert"
 					highlight="error"
 					compact
+					clickableHeader={ true }
+					actionButton={ <span /> }
 					header={
 						<Fragment>
 							<ActivityIcon activityIcon="notice-outline" activityStatus="error" />
 							<div className="activity-log__threat-alert-header">
-								<div>
+								<div className="activity-log__threat-header-top">
 									<span className="activity-log__threat-alert-title">
 										{ headerTitle( translate, threat ) }
+										<TimeSince
+											className="activity-log__threat-alert-time-since"
+											date={ threat.firstDetected }
+											dateFormat="ll"
+										/>
 									</span>
-									<TimeSince
-										className="activity-log__threat-alert-time-since"
-										date={ threat.firstDetected }
-										dateFormat="ll"
-									/>
+									<SplitButton
+										compact
+										primary
+										label={ translate( 'Fix threat' ) }
+										onClick={ () => console.log( 'main button clicked' ) }
+										disabled={ false }
+									>
+										<PopoverMenuItem
+											onClick={ () => console.log( 'documentation clicked' ) }
+											className="activity-log__threat-menu-item"
+											icon="help"
+										>
+											<span>{ translate( 'Documentation' ) }</span>
+										</PopoverMenuItem>
+										<PopoverMenuItem
+											onClick={ () => console.log( 'get help clicked' ) }
+											className="activity-log__threat-menu-item"
+											icon="chat"
+										>
+											<span>{ translate( 'Get help' ) }</span>
+										</PopoverMenuItem>
+										<PopoverMenuItem
+											onClick={ () => console.log( 'ignore threat clicked' ) }
+											className="activity-log__threat-menu-item"
+											icon="trash"
+										>
+											<span>{ translate( 'Ignore threat' ) }</span>
+										</PopoverMenuItem>
+									</SplitButton>
 								</div>
 								<span className="activity-log__threat-alert-type">
 									{ headerSubtitle( translate, threat ) }
