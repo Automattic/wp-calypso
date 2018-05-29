@@ -17,12 +17,10 @@ import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import SiteToolsLink from './link';
-import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
-import getRewindState from 'state/selectors/get-rewind-state';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
@@ -54,14 +52,11 @@ class SiteTools extends Component {
 			siteSlug,
 			importUrl,
 			exportUrl,
-			cloneUrl,
 			showChangeAddress,
-			showClone,
 			showDeleteContent,
 			showDeleteSite,
 			showThemeSetup,
 			showManageConnection,
-			siteId,
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
@@ -95,8 +90,6 @@ class SiteTools extends Component {
 		const exportText = translate(
 			'Export content from your site. You own your data — take it anywhere!'
 		);
-		const cloneTitle = translate( 'Clone', { context: 'verb' } );
-		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
 		let changeAddressText = translate( "Register a new domain or change your site's address." );
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
@@ -105,7 +98,6 @@ class SiteTools extends Component {
 
 		return (
 			<div className="site-tools">
-				<QueryRewindState siteId={ siteId } />
 				<SectionHeader label={ translate( 'Site Tools' ) } />
 				{ showChangeAddress && (
 					<SiteToolsLink
@@ -117,10 +109,6 @@ class SiteTools extends Component {
 				) }
 				<SiteToolsLink href={ importUrl } title={ importTitle } description={ importText } />
 				<SiteToolsLink href={ exportUrl } title={ exportTitle } description={ exportText } />
-				{ showClone &&
-					config.isEnabled( 'rewind/clone-site' ) && (
-						<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
-					) }
 				{ showThemeSetup && (
 					<SiteToolsLink
 						href={ themeSetupLink }
@@ -192,12 +180,10 @@ export default connect( state => {
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isVip = isVipSite( state, siteId );
-	const rewindState = getRewindState( state, siteId );
 	const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
 	let importUrl = `/settings/import/${ siteSlug }`;
 	let exportUrl = `/settings/export/${ siteSlug }`;
-	const cloneUrl = `/start/clone-site/${ siteSlug }`;
 	if ( isJetpack ) {
 		importUrl = getSiteAdminUrl( state, siteId, 'import.php' );
 		exportUrl = getSiteAdminUrl( state, siteId, 'export.php' );
@@ -210,13 +196,10 @@ export default connect( state => {
 		purchasesError: getPurchasesError( state ),
 		importUrl,
 		exportUrl,
-		cloneUrl,
 		showChangeAddress: ! isJetpack && ! isVip,
-		showClone: 'active' === rewindState.state,
 		showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 		showDeleteContent: ! isJetpack && ! isVip,
 		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 		showManageConnection: isJetpack && ! isAtomic,
-		siteId,
 	};
 } )( localize( SiteTools ) );

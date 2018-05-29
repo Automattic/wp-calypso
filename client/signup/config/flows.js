@@ -291,26 +291,6 @@ const flows = {
 	},
 };
 
-if ( config.isEnabled( 'rewind/clone-site' ) ) {
-	flows[ 'clone-site' ] = {
-		steps: [
-			'clone-start',
-			'clone-destination',
-			'clone-credentials',
-			'clone-point',
-			'clone-ready',
-			'clone-cloning',
-		],
-		destination: () => {
-			return '/stats/activity';
-		},
-		description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
-		lastModified: '2018-05-28',
-		disallowResume: true,
-		allowContinue: false,
-	};
-}
-
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
 	flows[ 'store-nux' ] = {
 		steps: [ 'about', 'themes', 'domains', 'plans-store-nux', 'user' ],
