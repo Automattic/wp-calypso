@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { filter } from 'lodash';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,9 +16,14 @@ import {
 	EDITOR_AUTOSAVE_RESET,
 	EDITOR_AUTOSAVE_SUCCESS,
 	EDITOR_AUTOSAVE_FAILURE,
+	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
+	EDITOR_RESET,
 	EDITOR_START,
 	EDITOR_STOP,
+	EDITOR_EDIT_RAW_CONTENT,
+	EDITOR_RESET_RAW_CONTENT,
+	EDITOR_INIT_RAW_CONTENT,
 } from 'state/action-types';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
@@ -26,6 +31,7 @@ import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/acti
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { editPost } from 'state/posts/actions';
 
 /**
  * Constants
@@ -44,15 +50,20 @@ export const MODAL_VIEW_STATS = {
  *
  * @param  {Number}  siteId   Site ID
  * @param  {?Number} postId   Post ID
- * @param  {String}  postType Post Type
- * @return {Object}           Action object
+ * @return {Action}           Action object
  */
-export function startEditingPost( siteId, postId, postType = 'post' ) {
-	return {
-		type: EDITOR_START,
-		siteId,
-		postId,
-		postType,
+export function startEditingPost( siteId, postId ) {
+	return dispatch => {
+		dispatch( editorReset( { isLoading: true } ) );
+		dispatch( { type: EDITOR_START, siteId, postId } );
+	};
+}
+
+export function startEditingNewPost( siteId, post ) {
+	return dispatch => {
+		dispatch( { type: EDITOR_START, siteId, postId: null } );
+		dispatch( editPost( siteId, null, post ) );
+		dispatch( editorReset() );
 	};
 }
 
@@ -62,13 +73,12 @@ export function startEditingPost( siteId, postId, postType = 'post' ) {
  *
  * @param  {Number}  siteId Site ID
  * @param  {?Number} postId Post ID
- * @return {Object}         Action object
+ * @return {Action}         Action object
  */
 export function stopEditingPost( siteId, postId ) {
-	return {
-		type: EDITOR_STOP,
-		siteId,
-		postId,
+	return dispatch => {
+		dispatch( editorReset() );
+		dispatch( { type: EDITOR_STOP, siteId, postId } );
 	};
 }
 
@@ -181,3 +191,51 @@ export const editorAutosave = post => ( dispatch, getState ) => {
 
 	return autosaveResult;
 };
+
+/**
+ * Edits the raw TinyMCE content of a post
+ *
+ * @param {string} content Raw content
+ * @returns {Action} Action object
+ */
+export function editorEditRawContent( content ) {
+	return {
+		type: EDITOR_EDIT_RAW_CONTENT,
+		content,
+	};
+}
+
+/**
+ * Unsets the raw TinyMCE content value
+ * @returns {Action} Action object
+ */
+export function editorResetRawContent() {
+	return {
+		type: EDITOR_RESET_RAW_CONTENT,
+	};
+}
+
+export function editorInitRawContent( content ) {
+	return {
+		type: EDITOR_INIT_RAW_CONTENT,
+		content,
+	};
+}
+
+export function editorReset( options ) {
+	return {
+		type: EDITOR_RESET,
+		isLoading: get( options, 'isLoading', false ),
+		loadingError: get( options, 'loadingError', null ),
+	};
+}
+
+export function editorSetLoadingError( loadingError ) {
+	return editorReset( { loadingError } );
+}
+
+export function editorLoadingErrorReset() {
+	return {
+		type: EDITOR_LOADING_ERROR_RESET,
+	};
+}

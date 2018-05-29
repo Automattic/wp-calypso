@@ -472,7 +472,6 @@ export function edits( state = {}, action ) {
 			const postId = action.postId || '';
 			const postEdits = get( state, [ siteId, postId ] );
 			const mergedEdits = mergePostEdits( postEdits, action.post );
-
 			return {
 				...state,
 				[ siteId ]: {
@@ -486,7 +485,7 @@ export function edits( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: {
 					...state[ action.siteId ],
-					[ action.postId || '' ]: { type: action.postType },
+					[ action.postId || '' ]: {},
 				},
 			} );
 

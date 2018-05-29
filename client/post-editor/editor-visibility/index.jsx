@@ -21,7 +21,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import { hasTouch } from 'lib/touch-detect';
-import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import { tracks } from 'lib/analytics';
 import accept from 'lib/accept';
@@ -112,18 +111,12 @@ class EditorVisibility extends React.Component {
 				break;
 		}
 
-		// Make sure that status edits are applied both to Flux and Redux stores
-		postActions.edit( { status: newStatus } );
 		this.props.editPost( siteId, postId, postEdits );
 		this.recordStats( newVisibility );
 	}
 
 	setPostToPrivate() {
 		const { siteId, postId } = this.props;
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		postActions.edit( {
-			status: 'private',
-		} );
 
 		// Private posts cannot be sticky
 		this.props.editPost( siteId, postId, {

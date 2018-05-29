@@ -143,6 +143,10 @@ export function isEditorAutosaving( state ) {
 	return state.ui.editor.isAutosaving;
 }
 
+export function isEditorLoading( state ) {
+	return state.ui.editor.isLoading;
+}
+
 export function getEditorPublishButtonStatus( state ) {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
@@ -178,4 +182,12 @@ export function getEditorPublishButtonStatus( state ) {
 	}
 
 	return 'requestReview';
+}
+
+export function getEditorRawContent( state ) {
+	return state.ui.editor.rawContent.current;
+}
+
+export function getEditorLoadingError( state ) {
+	return state.ui.editor.loadingError;
 }

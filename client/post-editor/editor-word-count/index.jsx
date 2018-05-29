@@ -5,43 +5,22 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import PostEditStore from 'lib/posts/post-edit-store';
 import { countWords } from 'lib/text-utils';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getEditorRawContent } from 'state/ui/editor/selectors';
 
-export class EditorWordCount extends PureComponent {
+export class EditorWordCount extends Component {
 	static propTypes = {
 		selectedText: PropTypes.string,
+		rawContent: PropTypes.string,
 		localeSlug: PropTypes.string,
-	};
-
-	state = {
-		rawContent: '',
-	};
-
-	componentWillMount() {
-		PostEditStore.on( 'rawContentChange', this.onRawContentChange );
-	}
-
-	componentDidMount() {
-		this.onRawContentChange();
-	}
-
-	componentWillUnmount() {
-		PostEditStore.removeListener( 'rawContentChange', this.onRawContentChange );
-	}
-
-	onRawContentChange = () => {
-		this.setState( {
-			rawContent: PostEditStore.getRawContent(),
-		} );
 	};
 
 	getSelectedTextCount() {
@@ -57,7 +36,7 @@ export class EditorWordCount extends PureComponent {
 			{
 				count: selectedText,
 				args: {
-					selectedText: selectedText,
+					selectedText,
 					separator: '/ ',
 				},
 				components: {
@@ -83,7 +62,7 @@ export class EditorWordCount extends PureComponent {
 				return null;
 		}
 
-		const wordCount = countWords( this.state.rawContent );
+		const wordCount = countWords( this.props.rawContent );
 
 		return (
 			<div className="editor-word-count">
@@ -101,4 +80,5 @@ export class EditorWordCount extends PureComponent {
 
 export default connect( state => ( {
 	localeSlug: getCurrentUserLocale( state ) || 'en',
+	rawContent: getEditorRawContent( state ),
 } ) )( localize( EditorWordCount ) );

@@ -13,7 +13,6 @@ import { defer, noop } from 'lodash';
  */
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
-import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
 
 export default class extends React.Component {
@@ -84,9 +83,9 @@ export default class extends React.Component {
 
 			if ( image && image.ID !== this.props.itemId ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				PostActions.edit( {
-					featured_image: image.ID,
-				} );
+				// PostActions.edit( {
+				// 	featured_image: image.ID,
+				// } );
 			}
 		} );
 	};
