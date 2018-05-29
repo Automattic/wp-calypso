@@ -87,9 +87,16 @@ class LineChart extends Component {
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( prevState.data !== nextProps.data ) {
+			return { data: nextProps.data };
+		}
+
 		// force refresh D3Base if fillArea has changed
-		if ( prevState.data !== nextProps.data || prevState.fillArea !== nextProps.fillArea ) {
-			return { data: [ ...nextProps.data ], fillArea: nextProps.fillArea };
+		if ( prevState.fillArea !== nextProps.fillArea ) {
+			return {
+				data: [ ...nextProps.data ],
+				fillArea: nextProps.fillArea,
+			};
 		}
 
 		return null;
