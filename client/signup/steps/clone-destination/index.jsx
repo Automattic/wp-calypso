@@ -36,7 +36,7 @@ class CloneDestinationStep extends Component {
 
 	handleFieldChange = ( { target: { name, value } } ) =>
 		this.setState( {
-			form: Object.assign( this.state.form, { [ name ]: value } ),
+			form: Object.assign( {}, this.state.form, { [ name ]: value } ),
 		} );
 
 	goToNextStep = () => {
@@ -144,10 +144,19 @@ class CloneDestinationStep extends Component {
 				<FormTextInput name="siteUrl" onChange={ this.handleFieldChange } />
 
 				<p className="clone-destination__tos">
-					{ translate( 'By continuing, you agree to our' ) }
-					<ExternalLink className="clone-destination__tos-link" href="https://wordpress.com/tos/">
-						{ translate( 'Terms of Service.' ) }
-					</ExternalLink>
+					{ translate( 'By continuing, you agree to our {{TOS /}}', {
+						components: {
+							TOS: (
+								<ExternalLink
+									className="clone-destination__tos-link"
+									href="https://wordpress.com/tos/"
+									target="_blank"
+								>
+									{ translate( 'Terms of Service.' ) }
+								</ExternalLink>
+							),
+						},
+					} ) }
 				</p>
 
 				<Button primary className="clone-destination__button" onClick={ this.goToNextStep }>

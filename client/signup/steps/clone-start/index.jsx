@@ -151,7 +151,7 @@ class CloneStartStep extends Component {
 
 		const headerText = translate( "Let's clone %(origin)s", { args: { origin: originSiteName } } );
 		const subHeaderText = translate(
-			"You can use this to create a test or staging site, or just back up your data for safekeeping - it's up to you!"
+			"You can use this to create a test or staging site, or just back up your data for safekeeping — it's up to you!"
 		);
 
 		return (
@@ -177,7 +177,7 @@ export default connect( ( state, ownProps ) => {
 	const originSiteName = get( site, 'name', '' );
 
 	return {
-		originBlogId: get( site, 'ID', 0 ),
+		originBlogId: get( site, 'ID', -Infinity ),
 		originSiteName,
 		originSiteSlug,
 	};
