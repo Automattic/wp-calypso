@@ -17,8 +17,8 @@ import {
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_OPT_OUT,
 } from 'state/action-types';
-
 import { getCurrentOAuth2ClientId } from 'state/ui/oauth2-clients/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const mergedMetaData = ( a, b ) => [
 	...get( a, 'meta.analytics', [] ),
@@ -147,3 +147,32 @@ const withClientId = actionCreator => ( ...args ) => ( dispatch, getState ) => {
 
 export const recordTracksEventWithClientId = withClientId( recordTracksEvent );
 export const recordPageViewWithClientId = withClientId( recordPageView );
+
+/**
+ * Enhances any Redux action that denotes the recording of an analytics event with an additional property which
+ * specifies the type of the current selected site.
+ *
+ * @param {Object} action - Redux action as a plain object
+ * @param {Function} getState - Redux function that can be used to retrieve the current state tree
+ * @returns {Object} the new Redux action
+ * @see client/state/utils/withEnhancers
+ */
+export const enhanceWithSiteType = ( action, getState ) => {
+	const site = getSelectedSite( getState() );
+
+	if ( site !== null ) {
+		return merge( action, {
+			meta: {
+				analytics: [ {
+					payload: {
+						properties: {
+							site_type: site.jetpack ? 'jetpack' : 'wpcom',
+						}
+					}
+				} ]
+			}
+		} );
+	}
+
+	return action;
+};

@@ -14,6 +14,8 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
+import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
+import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';
 import LineChart from 'components/line-chart';
 import LineChartPlaceholder from 'components/line-chart/placeholder';
 import Notice from 'components/notice';
@@ -23,12 +25,11 @@ import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
 import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import SectionHeader from 'components/section-header';
 import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
-import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
-import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatsInterval } from 'state/ui/google-my-business/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
+import { withEnhancers } from 'state/utils';
 
 function transformData( props ) {
 	const { data } = props;
@@ -313,7 +314,7 @@ export default connect(
 	},
 	{
 		changeGoogleMyBusinessStatsInterval,
-		recordTracksEvent,
+		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 		requestGoogleMyBusinessStats,
 	}
 )( localize( GoogleMyBusinessStatsChart ) );

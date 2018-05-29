@@ -15,18 +15,19 @@ import { get } from 'lodash';
  */
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
+import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import { withEnhancers } from 'state/utils';
 
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
@@ -219,6 +220,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const locationData = getGoogleMyBusinessConnectedLocation( state, siteId );
 		const isLocationVerified = get( locationData, 'meta.state.isVerified', false );
+
 		return {
 			isLocationVerified,
 			locationData,
@@ -227,6 +229,6 @@ export default connect(
 		};
 	},
 	{
-		recordTracksEvent,
+		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 	}
 )( localize( GoogleMyBusinessStats ) );
