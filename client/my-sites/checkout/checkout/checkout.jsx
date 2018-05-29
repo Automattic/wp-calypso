@@ -70,6 +70,8 @@ import { getProductsList, isProductsListFetching } from 'state/products-list/sel
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
+import { planMatches } from '../../../lib/plans';
+import { TYPE_BUSINESS } from '../../../lib/plans/constants';
 
 export class Checkout extends React.Component {
 	static propTypes = {
@@ -506,11 +508,23 @@ export class Checkout extends React.Component {
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
 			>
-				{ config.isEnabled( 'upgrades/2-year-plans' ) &&
-					abtest( 'multiyearSubscriptions' ) === 'show' &&
-					this.renderSubscriptionLengthPicker() }
+				{ this.shouldDisplayLengthPicker() && this.renderSubscriptionLengthPicker() }
 			</SecurePaymentForm>
 		);
+	}
+
+	shouldDisplayLengthPicker() {
+		const planInCart = this.getPlanProducts()[ 0 ];
+		if ( ! planInCart ) {
+			return false;
+		}
+
+		const enabled2YearPlans = config.isEnabled( 'upgrades/2-year-plans' );
+
+		const buyingNonBusinessPlan = ! planMatches( planInCart.product_slug, { type: TYPE_BUSINESS } );
+		const testingMultiYearBusiness = abtest( 'multiyearSubscriptionsBusinessPriceTest' ) === 'show';
+
+		return enabled2YearPlans && ( buyingNonBusinessPlan || testingMultiYearBusiness );
 	}
 
 	renderSubscriptionLengthPicker() {
