@@ -156,7 +156,7 @@ const Layout = createReactClass( {
 				) }
 				<InlineHelp />
 				<AppBanner />
-				<GdprBanner />
+				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
 			</div>
 		);
 	},
