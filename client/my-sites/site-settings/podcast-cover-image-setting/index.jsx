@@ -217,6 +217,7 @@ class PodcastCoverImageSetting extends PureComponent {
 				className={ classNames }
 				onClick={ this.showModal }
 				onMouseEnter={ this.preloadModal }
+				type="button" // default is "submit" which saves settings on click
 			>
 				{ imageSrc ? (
 					<Image className="podcast-cover-image-setting__img" src={ imageSrc } alt="" />
