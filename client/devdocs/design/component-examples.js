@@ -83,3 +83,4 @@ export Version from 'components/version/docs/example';
 export VerticalMenu from 'components/vertical-menu/docs/example';
 export VerticalNav from 'components/vertical-nav/docs/example';
 export Wizard from 'components/wizard/docs/example';
+export WizardProgressBar from 'components/wizard-progress-bar/docs/example';

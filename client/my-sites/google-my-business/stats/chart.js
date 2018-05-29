@@ -173,7 +173,6 @@ class GoogleMyBusinessStatsChart extends Component {
 
 					{ this.renderChartNotice() }
 				</div>
-
 				<PieChartLegend data={ transformedData } />
 			</Fragment>
 		);
@@ -272,7 +271,6 @@ class GoogleMyBusinessStatsChart extends Component {
 							</CardHeading>
 						</div>
 					) }
-
 					<select
 						className="gmb-stats__chart-interval"
 						onChange={ this.handleIntervalChange }
@@ -289,6 +287,8 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 	}
 }
+/* eslint-enable wpcalypso/jsx-classname-namespace */
+/* eslint-enable jsx-a11y/no-onchange */
 
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 /* eslint-enable jsx-a11y/no-onchange */
