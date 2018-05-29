@@ -944,6 +944,199 @@
       "integrity": "sha512-GiCx7dRvta0hbxXoJFAUxz+CKX6bZSCKjM5slq2vPp/5zwK01T4ibYZkGr6EN4F2QmxDQR76/ZHg6q+7iFWCWw==",
       "dev": true
     },
+    "@webassemblyjs/ast": {
+      "version": "1.4.3",
+      "integrity": "sha512-S6npYhPcTHDYe9nlsKa9CyWByFi8Vj8HovcAgtmMAQZUOczOZbQ8CnwMYKYC5HEZzxEE+oY0jfQk4cVlI3J59Q==",
+      "requires": {
+        "@webassemblyjs/helper-wasm-bytecode": "1.4.3",
+        "@webassemblyjs/wast-parser": "1.4.3",
+        "debug": "3.1.0",
+        "webassemblyjs": "1.4.3"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "3.1.0",
+          "integrity": "sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==",
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
+        }
+      }
+    },
+    "@webassemblyjs/floating-point-hex-parser": {
+      "version": "1.4.3",
+      "integrity": "sha512-3zTkSFswwZOPNHnzkP9ONq4bjJSeKVMcuahGXubrlLmZP8fmTIJ58dW7h/zOVWiFSuG2em3/HH3BlCN7wyu9Rw=="
+    },
+    "@webassemblyjs/helper-buffer": {
+      "version": "1.4.3",
+      "integrity": "sha512-e8+KZHh+RV8MUvoSRtuT1sFXskFnWG9vbDy47Oa166xX+l0dD5sERJ21g5/tcH8Yo95e9IN3u7Jc3NbhnUcSkw==",
+      "requires": {
+        "debug": "3.1.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "3.1.0",
+          "integrity": "sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==",
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
+        }
+      }
+    },
+    "@webassemblyjs/helper-code-frame": {
+      "version": "1.4.3",
+      "integrity": "sha512-9FgHEtNsZQYaKrGCtsjswBil48Qp1agrzRcPzCbQloCoaTbOXLJ9IRmqT+uEZbenpULLRNFugz3I4uw18hJM8w==",
+      "requires": {
+        "@webassemblyjs/wast-printer": "1.4.3"
+      }
+    },
+    "@webassemblyjs/helper-fsm": {
+      "version": "1.4.3",
+      "integrity": "sha512-JINY76U+702IRf7ePukOt037RwmtH59JHvcdWbTTyHi18ixmQ+uOuNhcdCcQHTquDAH35/QgFlp3Y9KqtyJsCQ=="
+    },
+    "@webassemblyjs/helper-wasm-bytecode": {
+      "version": "1.4.3",
+      "integrity": "sha512-I7bS+HaO0K07Io89qhJv+z1QipTpuramGwUSDkwEaficbSvCcL92CUZEtgykfNtk5wb0CoLQwWlmXTwGbNZUeQ=="
+    },
+    "@webassemblyjs/helper-wasm-section": {
+      "version": "1.4.3",
+      "integrity": "sha512-p0yeeO/h2r30PyjnJX9xXSR6EDcvJd/jC6xa/Pxg4lpfcNi7JUswOpqDToZQ55HMMVhXDih/yqkaywHWGLxqyQ==",
+      "requires": {
+        "@webassemblyjs/ast": "1.4.3",
+        "@webassemblyjs/helper-buffer": "1.4.3",
+        "@webassemblyjs/helper-wasm-bytecode": "1.4.3",
+        "@webassemblyjs/wasm-gen": "1.4.3",
+        "debug": "3.1.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "3.1.0",
+          "integrity": "sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==",
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
+        }
+      }
+    },
+    "@webassemblyjs/leb128": {
+      "version": "1.4.3",
+      "integrity": "sha512-4u0LJLSPzuRDWHwdqsrThYn+WqMFVqbI2ltNrHvZZkzFPO8XOZ0HFQ5eVc4jY/TNHgXcnwrHjONhPGYuuf//KQ==",
+      "requires": {
+        "leb": "0.3.0"
+      }
+    },
+    "@webassemblyjs/validation": {
+      "version": "1.4.3",
+      "integrity": "sha512-R+rRMKfhd9mq0rj2mhU9A9NKI2l/Rw65vIYzz4lui7eTKPcCu1l7iZNi4b9Gen8D42Sqh/KGiaQNk/x5Tn/iBQ==",
+      "requires": {
+        "@webassemblyjs/ast": "1.4.3"
+      }
+    },
+    "@webassemblyjs/wasm-edit": {
+      "version": "1.4.3",
+      "integrity": "sha512-qzuwUn771PV6/LilqkXcS0ozJYAeY/OKbXIWU3a8gexuqb6De2p4ya/baBeH5JQ2WJdfhWhSvSbu86Vienttpw==",
+      "requires": {
+        "@webassemblyjs/ast": "1.4.3",
+        "@webassemblyjs/helper-buffer": "1.4.3",
+        "@webassemblyjs/helper-wasm-bytecode": "1.4.3",
+        "@webassemblyjs/helper-wasm-section": "1.4.3",
+        "@webassemblyjs/wasm-gen": "1.4.3",
+        "@webassemblyjs/wasm-opt": "1.4.3",
+        "@webassemblyjs/wasm-parser": "1.4.3",
+        "@webassemblyjs/wast-printer": "1.4.3",
+        "debug": "3.1.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "3.1.0",
+          "integrity": "sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==",
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
+        }
+      }
+    },
+    "@webassemblyjs/wasm-gen": {
+      "version": "1.4.3",
+      "integrity": "sha512-eR394T8dHZfpLJ7U/Z5pFSvxl1L63JdREebpv9gYc55zLhzzdJPAuxjBYT4XqevUdW67qU2s0nNA3kBuNJHbaQ==",
+      "requires": {
+        "@webassemblyjs/ast": "1.4.3",
+        "@webassemblyjs/helper-wasm-bytecode": "1.4.3",
+        "@webassemblyjs/leb128": "1.4.3"
+      }
+    },
+    "@webassemblyjs/wasm-opt": {
+      "version": "1.4.3",
+      "integrity": "sha512-7Gp+nschuKiDuAL1xmp4Xz0rgEbxioFXw4nCFYEmy+ytynhBnTeGc9W9cB1XRu1w8pqRU2lbj2VBBA4cL5Z2Kw==",
+      "requires": {
+        "@webassemblyjs/ast": "1.4.3",
+        "@webassemblyjs/helper-buffer": "1.4.3",
+        "@webassemblyjs/wasm-gen": "1.4.3",
+        "@webassemblyjs/wasm-parser": "1.4.3",
+        "debug": "3.1.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "3.1.0",
+          "integrity": "sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==",
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
+        }
+      }
+    },
+    "@webassemblyjs/wasm-parser": {
+      "version": "1.4.3",
+      "integrity": "sha512-KXBjtlwA3BVukR/yWHC9GF+SCzBcgj0a7lm92kTOaa4cbjaTaa47bCjXw6cX4SGQpkncB9PU2hHGYVyyI7wFRg==",
+      "requires": {
+        "@webassemblyjs/ast": "1.4.3",
+        "@webassemblyjs/helper-wasm-bytecode": "1.4.3",
+        "@webassemblyjs/leb128": "1.4.3",
+        "@webassemblyjs/wasm-parser": "1.4.3",
+        "webassemblyjs": "1.4.3"
+      }
+    },
+    "@webassemblyjs/wast-parser": {
+      "version": "1.4.3",
+      "integrity": "sha512-QhCsQzqV0CpsEkRYyTzQDilCNUZ+5j92f+g35bHHNqS22FppNTywNFfHPq8ZWZfYCgbectc+PoghD+xfzVFh1Q==",
+      "requires": {
+        "@webassemblyjs/ast": "1.4.3",
+        "@webassemblyjs/floating-point-hex-parser": "1.4.3",
+        "@webassemblyjs/helper-code-frame": "1.4.3",
+        "@webassemblyjs/helper-fsm": "1.4.3",
+        "long": "3.2.0",
+        "webassemblyjs": "1.4.3"
+      }
+    },
+    "@webassemblyjs/wast-printer": {
+      "version": "1.4.3",
+      "integrity": "sha512-EgXk4anf8jKmuZJsqD8qy5bz2frEQhBvZruv+bqwNoLWUItjNSFygk8ywL3JTEz9KtxTlAmqTXNrdD1d9gNDtg==",
+      "requires": {
+        "@webassemblyjs/ast": "1.4.3",
+        "@webassemblyjs/wast-parser": "1.4.3",
+        "long": "3.2.0"
+      }
+    },
     "JSONStream": {
       "version": "0.8.4",
       "integrity": "sha1-kWV9/m/4V0gwZhMrRhi2Lo9Ih70=",
@@ -10582,6 +10775,10 @@
       "version": "0.5.4",
       "integrity": "sha1-i6oTZaYy9Yo8RtIBdfxgAsluN94="
     },
+    "json-parse-better-errors": {
+      "version": "1.0.2",
+      "integrity": "sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw=="
+    },
     "json-schema": {
       "version": "0.2.3",
       "integrity": "sha1-tIDIkuWaLwWVTOcnvT8qTogvnhM="
@@ -10854,6 +11051,10 @@
           }
         }
       }
+    },
+    "leb": {
+      "version": "0.3.0",
+      "integrity": "sha1-Mr7p+tFoMo1q6oUi2DP0GA7tHaM="
     },
     "left-pad": {
       "version": "1.3.0",
@@ -11424,6 +11625,10 @@
       "version": "1.3.2",
       "integrity": "sha1-fD2mL/yzDw9agKJWbKJORdigHzE=",
       "dev": true
+    },
+    "long": {
+      "version": "3.2.0",
+      "integrity": "sha1-2CG3E4yhy1gcFymQ7xTbIAtcR0s="
     },
     "longest": {
       "version": "1.0.1",
@@ -19061,15 +19266,29 @@
         }
       }
     },
+    "webassemblyjs": {
+      "version": "1.4.3",
+      "integrity": "sha512-4lOV1Lv6olz0PJkDGQEp82HempAn147e6BXijWDzz9g7/2nSebVP9GVg62Fz5ZAs55mxq13GA0XLyvY8XkyDjg==",
+      "requires": {
+        "@webassemblyjs/ast": "1.4.3",
+        "@webassemblyjs/validation": "1.4.3",
+        "@webassemblyjs/wasm-parser": "1.4.3",
+        "@webassemblyjs/wast-parser": "1.4.3",
+        "long": "3.2.0"
+      }
+    },
     "webidl-conversions": {
       "version": "4.0.2",
       "integrity": "sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==",
       "dev": true
     },
     "webpack": {
-      "version": "4.5.0",
-      "integrity": "sha512-6GrZsvQJnG7o7mjbfjp6s5CyMfdopjt1A/X8LcYwceis9ySjqBX6Lusso2wNZ06utHj2ZvfL6L3f7hfgVeJP6g==",
+      "version": "4.9.1",
+      "integrity": "sha512-7wiiJrqbcoOziQeQmhUInnDgW53JIjysr4Wsl3DQeNxMq7YfWqi30kcIcW6pj10ch43AJ7mgiBJhHvYDfun9Pw==",
       "requires": {
+        "@webassemblyjs/ast": "1.4.3",
+        "@webassemblyjs/wasm-edit": "1.4.3",
+        "@webassemblyjs/wasm-parser": "1.4.3",
         "acorn": "5.5.3",
         "acorn-dynamic-import": "3.0.0",
         "ajv": "6.5.0",
@@ -19077,6 +19296,7 @@
         "chrome-trace-event": "0.1.3",
         "enhanced-resolve": "4.0.0",
         "eslint-scope": "3.7.1",
+        "json-parse-better-errors": "1.0.2",
         "loader-runner": "2.3.0",
         "loader-utils": "1.1.0",
         "memory-fs": "0.4.1",
