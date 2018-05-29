@@ -49,8 +49,13 @@ textarea {
 	font-family: $sans;
 }
 
+.html-iframe body {
+	display: block;
+}
+
 .body-hosted {
-	min-width: 562px; // we allow it to grow for embedded off site iframe
+	min-width: auto; // we allow it to grow for embedded off site iframe
+	width: 100%;
 	min-height: 100px;
 	border: none;
 	background-color: $white;
@@ -75,22 +80,19 @@ textarea {
 	}
 
 	.row {
-		height: 300px;
+		display: flex;
+		flex-wrap: wrap;
+		margin-bottom: 10px;
 
 		.btn-tile-cont {
-			float: left;
-			margin: 10px 0;
-			width: 50%;
-			height: 100px;
+			flex: 1 0 50%;
+			box-sizing: border-box;
+			border: 1px solid $white;
 
 			.btn-tile {
 				text-align:center;
 				cursor: pointer;
-				padding: 10px;
-
-				img {
-					max-width: 220px;
-				}
+				margin: 10px 0;
 
 				.btn-tile-aggregates {
 					overflow: hidden;
@@ -101,15 +103,9 @@ textarea {
 						object-fit: contain;
 						padding: 3px 1px;
 						margin: 1px;
-						width: 72px;
+						width: 80px;
 						height: 28px;
-
 					}
-				}
-
-				&:hover {
-					transition: all 150ms ease-in-out;
-					border: 1px solid #c8d7e1;
 				}
 
 				.btn-tile-footer {
@@ -119,7 +115,38 @@ textarea {
 				}
 			}
 
+			&:hover {
+				transition: all 150ms ease-in-out;
+				border: 1px solid $gray-lighten-10;
+			}
+
 		}
+
+
+		@include breakpoint( '<480px' ) {
+			height: auto;
+
+			.btn-tile-cont {
+				flex: 100%;
+				height: auto;
+				border: 1px solid $gray-lighten-20;
+				padding: 4px;
+				margin: 0 auto 25px;
+
+				.btn-tile {
+					.btn-tile-aggregates {
+						max-height: 70px;
+						height: auto;
+						margin-bottom: 10px;
+					}
+
+					.btn-tile-footer {
+						font-size: 16px;
+					}
+				}
+			}
+		}
+
 	}
 
 	.checkbox, div[ng-show='updateAddressCheckbox'] {
