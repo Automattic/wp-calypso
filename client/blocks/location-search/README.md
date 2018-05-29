@@ -7,11 +7,41 @@ A search component for searching locations via the [Google Places API](https://c
 
 ```jsx
 import LocationSearch from 'blocks/location-search';
+import { createNotice } from 'state/notices/actions'
 
-export default function AwesomeLocationSearch() {
-	return (
-		<LocationSearch />
-	);
+class LocationSearchExample extends Component {
+	static propTypes = {
+		createNotice: PropTypes.func.isRequired,
+	};
+
+	handlePredictionClick = prediction => {
+		this.props.createNotice(
+			'is-info',
+			`You clicked the '${ prediction.structured_formatting.main_text }' location`
+		);
+	};
+
+	predictionTransformer( predictions, query ) {
+		return [
+			{
+				place_id: 'my_special_place',
+				structured_formatting: {
+					main_text: query,
+					secondary_text: 'Create a business with this name',
+				},
+			},
+			...( predictions || [] ),
+		];
+	}
+
+	render() {
+		return (
+			<LocationSearch
+				onPredictionClick={ this.handlePredictionClick }
+				predictionsTransformation={ this.predictionTransformer }
+			/>
+		);
+	}
 }
 ```
 
