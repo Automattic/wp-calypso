@@ -166,8 +166,12 @@ const WPComGetBillingTimeframe = () => {
 	return i18n.translate( 'per month, billed yearly' );
 };
 
-const WPComGetBiennialOnlyBillingTimeframe = () =>
-	i18n.translate( '/month, billed every two years' );
+const WPComGetBiennialOnlyBillingTimeframe = () => {
+	if ( isEnabled( 'upgrades/2-year-plans' ) ) {
+		return i18n.translate( '/month, billed every two years' );
+	}
+	return WPComGetBillingTimeframe();
+};
 
 const getPlanPersonalDetails = () => ( {
 	group: GROUP_WPCOM,
