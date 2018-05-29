@@ -15,7 +15,6 @@
 	"boom_analytics_enabled": false,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "desktop",
-	"google_analytics_enabled": false,
 	"google_analytics_key": "UA-10673494-15",
 	"google_adwords_conversion_id": 1067250390,
 	"google_adwords_conversion_id_jetpack": 937115306,
@@ -27,7 +26,6 @@
 	"discover_logged_out_redirect_url": "/",
 	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
-	"support_locales": ["en", "es", "pt-br"],
 	"readerFollowingSource": "desktop",
 	"features": {
 		"account-recovery": true,
