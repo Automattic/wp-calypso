@@ -53,7 +53,7 @@ class CloneCredentialsStep extends Component {
 				/>
 				<Card className="clone-credentials__form">
 					<RewindCredentialsForm
-						role="alternate"
+						role={ 'alternate' /* eslint-disable-line */ }
 						siteId={ originBlogId }
 						siteUrl={ destinationSiteUrl }
 					/>

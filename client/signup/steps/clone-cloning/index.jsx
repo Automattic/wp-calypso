@@ -42,7 +42,7 @@ class CloneCloningStep extends Component {
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 512.7 180.4"
 				>
-					<g className="clone-site__destination">
+					<g className="clone-cloning__destination">
 						<path
 							fill="#FFFFFF"
 							d="M299.4,178.9V15.2c0-6.8,5.5-12.4,12.4-12.4h183.3c6.8,0,12.4,5.5,12.4,12.4V179H299.4V178.9z"
@@ -72,12 +72,12 @@ class CloneCloningStep extends Component {
 							d="M510.8,35.5c-8.9,1.2-17.9,1.9-26.8,2.2c-9,0.3-17.9,0.3-26.9,0.4c-17.9,0.2-35.8,0.3-53.7,0.4 c-17.9,0.1-35.8-0.1-53.7-0.4c-9-0.1-17.9-0.1-26.9-0.4c-9-0.3-18-1-26.9-2.2V34c8.9-1.2,17.9-1.9,26.9-2.2 c8.9-0.3,17.9-0.3,26.9-0.4c17.9-0.2,35.8-0.3,53.7-0.4s35.8,0.1,53.7,0.4c9,0.1,17.9,0.1,26.9,0.4s18,1,26.9,2.2v1.5H510.8z"
 						/>
 					</g>
-					<g className="clone-site__dots">
+					<g className="clone-cloning__dots">
 						<circle fill="#C8D7E2" cx="238.8" cy="94.1" r="5.2" />
 						<circle fill="#C8D7E2" cx="261.9" cy="94.1" r="5.2" />
 						<circle fill="#C8D7E2" cx="284.5" cy="94.1" r="5.2" />
 					</g>
-					<g className="clone-site__origin">
+					<g className="clone-cloning__origin">
 						<path
 							fill="#FFFFFF"
 							d="M3.4,178.9V15.2c0-6.8,5.5-12.4,12.4-12.4h183.3c6.8,0,12.4,5.5,12.4,12.4V179H3.4V178.9z"

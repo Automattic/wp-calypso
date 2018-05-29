@@ -76,7 +76,7 @@ class ClonePointStep extends Component {
 				if ( null === last || ! ts.isSame( last, 'day' ) ) {
 					last = ts;
 					return (
-						<h2 className="activity-log__time-period" key={ `time-period-${ ts }` }>
+						<h2 className="clone-point__time-period" key={ `time-period-${ ts }` }>
 							{ ts.isSame( today, 'day' )
 								? ts.format( translate( 'LL[ — Today]', { context: 'moment format string' } ) )
 								: ts.format( 'LL' ) }
