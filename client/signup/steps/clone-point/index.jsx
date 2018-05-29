@@ -17,12 +17,9 @@ import ActivityLogItem from 'my-sites/stats/activity-log-item';
 import TileGrid from 'components/tile-grid';
 import Tile from 'components/tile-grid/tile';
 import QuerySites from 'components/data/query-sites';
-import QueryActivityLog from 'components/data/query-activity-log';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import getActivityLogs from 'state/selectors/get-activity-logs';
-import { adjustMoment, getActivityLogQuery } from 'my-sites/stats/activity-log/utils';
+import { adjustMoment } from 'my-sites/stats/activity-log/utils';
+import { requestActivityLogs } from 'state/data-getters';
 
 class ClonePointStep extends Component {
 	static propTypes = {
@@ -91,7 +88,6 @@ class ClonePointStep extends Component {
 		return (
 			<div>
 				<QuerySites siteId={ siteId } />
-				<QueryActivityLog siteId={ siteId } />
 				<QuerySiteSettings siteId={ siteId } />
 				<section className="clone-point__wrapper">
 					{ logs.map( log => (
@@ -100,7 +96,7 @@ class ClonePointStep extends Component {
 							<ActivityLogItem
 								key={ log.activityId }
 								siteId={ siteId }
-								activityId={ log.activityId }
+								activity={ log }
 								cloneOnClick={ this.selectedPoint }
 								disableRestore
 								disableBackup
@@ -173,17 +169,10 @@ class ClonePointStep extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
-	const gmtOffset = getSiteGmtOffset( state, siteId );
-	const timezone = getSiteTimezoneValue( state, siteId );
-	const logRequestQuery = getActivityLogQuery( state, siteId );
+	const logs = siteId && requestActivityLogs( siteId, {} );
 
 	return {
 		siteId,
-		logRequestQuery,
-		logs: getActivityLogs(
-			state,
-			siteId,
-			getActivityLogQuery( { gmtOffset, startDate: 'today', timezone } )
-		),
+		logs: ( siteId && logs.data ) || [],
 	};
 } )( localize( ClonePointStep ) );
