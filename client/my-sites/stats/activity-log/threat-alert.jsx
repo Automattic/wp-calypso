@@ -4,6 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -15,6 +16,11 @@ import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
+
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:stats:activity-log' );
 
 const detailType = threat => {
 	if ( threat.hasOwnProperty( 'diff' ) ) {
@@ -143,25 +149,25 @@ export class ThreatAlert extends Component {
 										compact
 										primary
 										label={ translate( 'Fix threat' ) }
-										onClick={ () => console.log( 'main button clicked' ) }
+										onClick={ () => debug( 'main button clicked' ) }
 										disabled={ false }
 									>
 										<PopoverMenuItem
-											onClick={ () => console.log( 'documentation clicked' ) }
+											onClick={ () => debug( 'documentation clicked' ) }
 											className="activity-log__threat-menu-item"
 											icon="help"
 										>
 											<span>{ translate( 'Documentation' ) }</span>
 										</PopoverMenuItem>
 										<PopoverMenuItem
-											onClick={ () => console.log( 'get help clicked' ) }
+											onClick={ () => debug( 'get help clicked' ) }
 											className="activity-log__threat-menu-item"
 											icon="chat"
 										>
 											<span>{ translate( 'Get help' ) }</span>
 										</PopoverMenuItem>
 										<PopoverMenuItem
-											onClick={ () => console.log( 'ignore threat clicked' ) }
+											onClick={ () => debug( 'ignore threat clicked' ) }
 											className="activity-log__threat-menu-item"
 											icon="trash"
 										>
