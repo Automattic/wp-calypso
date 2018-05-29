@@ -165,39 +165,37 @@ export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => ( di
 
 	return dispatch( enhancers.reduce(
 		( result, enhancer ) => {
-			return merge( result, enhancer( result, getState ) );
+			return enhancer( result, getState );
 		},
 		action
 	) );
 };
 
 /**
- * Enhances any Redux action that aims at recording an analytics event with an additional property that specifies the
- * type of the current selected site.
+ * Enhances any Redux action that denotes the recording of an analytics event with an additional property which
+ * specifies the type of the current selected site.
  *
  * @param {Object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
- * @returns {Object|null} a set of properties that should be merged into the original Redux action, or null otherwise
+ * @returns {Object} the new Redux action
  * @see client/state/analytics/actions/withEnhancers
  */
 export const enhanceWithSiteType = ( action, getState ) => {
-	if ( action.type === ANALYTICS_EVENT_RECORD ) {
-		const site = getSelectedSite( getState() );
+	const site = getSelectedSite( getState() );
 
-		if ( site !== null ) {
-			return {
-				meta: {
-					analytics: [ {
-						payload: {
-							properties: {
-								site_type: site.jetpack ? 'jetpack' : 'wpcom',
-							}
+	if ( site !== null ) {
+		return merge( action, {
+			meta: {
+				analytics: [ {
+					payload: {
+						properties: {
+							site_type: site.jetpack ? 'jetpack' : 'wpcom',
 						}
-					} ]
-				}
-			};
-		}
+					}
+				} ]
+			}
+		} );
 	}
 
-	return null;
+	return action;
 };
