@@ -45,10 +45,6 @@ class SectionNav extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( isEqual( this.props, nextProps ) ) {
-			return;
-		}
-
 		this.checkForSiblingControls( nextProps.children );
 
 		if ( ! this.hasSiblingControls ) {
