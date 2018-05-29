@@ -18,14 +18,17 @@ import { errorNotice, plainNotice } from 'state/notices/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
 export const requestBlogStickerRemove = action =>
-	http( {
-		method: 'POST',
-		path: `/sites/${ action.payload.blogId }/blog-stickers/remove/${ action.payload.stickerName }`,
-		body: {}, // have to have an empty body to make wpcom-http happy
-		apiVersion: '1.1',
-		onSuccess: action,
-		onFailure: action,
-	} );
+	http(
+		{
+			method: 'POST',
+			path: `/sites/${ action.payload.blogId }/blog-stickers/remove/${
+				action.payload.stickerName
+			}`,
+			body: {}, // have to have an empty body to make wpcom-http happy
+			apiVersion: '1.1',
+		},
+		action
+	);
 
 export const receiveBlogStickerRemoveError = action => [
 	errorNotice( translate( 'Sorry, we had a problem removing that sticker. Please try again.' ) ),
@@ -45,10 +48,12 @@ export const receiveBlogStickerRemove = action =>
 		}
 	);
 
-const fromApi = ( { success } ) => {
-	if ( ! success ) {
-		throw new Error( 'Remove was unsuccessful on the server' );
+export const fromApi = response => {
+	if ( ! response.success ) {
+		throw new Error( 'Blog sticker removal was unsuccessful on the server' );
 	}
+
+	return response;
 };
 
 export default {
