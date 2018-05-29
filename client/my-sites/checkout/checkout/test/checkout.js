@@ -56,9 +56,7 @@ jest.mock( 'lib/cart-values', () => ( {
 describe( 'Checkout', () => {
 	const defaultProps = {
 		cards: [],
-		cart: {
-			products: [],
-		},
+		cart: {},
 		translate: identity,
 		loadTrackingTool: identity,
 		recordApplePayStatus: identity,

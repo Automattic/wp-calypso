@@ -169,7 +169,8 @@ export class Checkout extends React.Component {
 	}
 
 	getPlanProducts() {
-		return this.props.cart.products.filter( ( { product_slug } ) => getPlan( product_slug ) );
+		const products = this.props.cart.products || [];
+		return products.filter( ( { product_slug } ) => getPlan( product_slug ) );
 	}
 
 	getProductSlugFromSynonym( slug ) {
