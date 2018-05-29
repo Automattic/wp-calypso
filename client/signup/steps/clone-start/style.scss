@@ -1,0 +1,24 @@
+.clone-start {
+	max-width: 352px;
+	margin: 0 auto;
+}
+
+.clone-start__card {
+	text-align: center;
+}
+
+.clone-start__image {
+	max-width: 293px;
+	display: block;
+	margin: 8px auto 32px auto;
+}
+
+.clone-start__description {
+	color: $gray-text-min;
+	font-size: 14px;
+}
+
+.clone-start__button {
+	margin-top: 24px;
+	width: 100%;
+}
