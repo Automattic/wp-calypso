@@ -19,6 +19,11 @@ let autocompleteService = null;
 class LocationSearch extends Component {
 	static propTypes = {
 		onPredictionClick: PropTypes.func,
+		predictionsTransformation: PropTypes.func,
+	};
+
+	static defaultProps = {
+		predictionsTransformation: predictions => predictions,
 	};
 
 	state = { predictions: [], loading: false };
@@ -39,12 +44,18 @@ class LocationSearch extends Component {
 	}
 
 	updatePredictions = predictions => {
-		this.setState( { predictions, loading: false } );
+		const { predictionsTransformation } = this.props;
+		const { query } = this.state;
+
+		this.setState( {
+			predictions: predictionsTransformation( predictions, query ),
+			loading: false,
+		} );
 	};
 
 	handleSearch = query => {
 		if ( query ) {
-			this.setState( { loading: true } );
+			this.setState( { loading: true, query } );
 			autocompleteService.getPlacePredictions(
 				{
 					input: query,

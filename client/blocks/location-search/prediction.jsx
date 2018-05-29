@@ -5,6 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -14,7 +15,12 @@ import CompactCard from 'components/card/compact';
 export default class Prediction extends Component {
 	static propTypes = {
 		onPredictionClick: PropTypes.func,
-		prediction: PropTypes.object.isRequired,
+		prediction: PropTypes.shape( {
+			structured_formatting: PropTypes.shape( {
+				main_text: PropTypes.string,
+				secondary_text: PropTypes.string,
+			} ).isRequired,
+		} ).isRequired,
 	};
 
 	handlePredictionClick = () => {
@@ -28,10 +34,11 @@ export default class Prediction extends Component {
 		const { prediction } = this.props;
 
 		return (
-			<CompactCard onClick={ this.handlePredictionClick }>
+			<CompactCard className="location-search__prediction" onClick={ this.handlePredictionClick }>
 				<strong>{ prediction.structured_formatting.main_text }</strong>
 				<br />
 				{ prediction.structured_formatting.secondary_text }
+				<Gridicon className="location-search__prediction-icon" icon="chevron-right" />
 			</CompactCard>
 		);
 	}

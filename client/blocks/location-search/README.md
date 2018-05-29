@@ -20,7 +20,6 @@ export default function AwesomeLocationSearch() {
 Name | Type | Default | Description
 --- | --- | --- | ---
 `onPredictionClick` | `func` | `undefined` | Click handler for a search suggestion
-`predictionHref` | `string` | `undefined` | If provided, renders `a` instead of `button` for a suggestion
 
 ## Related components
 

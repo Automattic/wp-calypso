@@ -14,20 +14,36 @@ import LocationSearch from 'blocks/location-search';
 import { createNotice } from 'state/notices/actions';
 
 class LocationSearchExample extends Component {
-	propTypes = {
+	static propTypes = {
 		createNotice: PropTypes.func.isRequired,
 	};
 
-	handlePredictionClick = ( prediction ) => {
+	handlePredictionClick = prediction => {
 		this.props.createNotice(
 			'is-info',
 			`You clicked the '${ prediction.structured_formatting.main_text }' location`
 		);
 	};
 
+	predictionTransformer( predictions, query ) {
+		return [
+			{
+				place_id: 'my_special_place',
+				structured_formatting: {
+					main_text: query,
+					secondary_text: 'Create a business with this name',
+				},
+			},
+			...( predictions || [] ),
+		];
+	}
+
 	render() {
 		return (
-			<LocationSearch onPredictionClick={ this.handlePredictionClick } />
+			<LocationSearch
+				onPredictionClick={ this.handlePredictionClick }
+				predictionsTransformation={ this.predictionTransformer }
+			/>
 		);
 	}
 }
