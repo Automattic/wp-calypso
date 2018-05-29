@@ -33,13 +33,7 @@ export const receiveBlogStickerAddError = action => [
 	bypassDataLayer( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) ),
 ];
 
-export const receiveBlogStickerAdd = ( action, response ) => {
-	// validate that it worked
-	const isAdded = !! ( response && response.success );
-	if ( ! isAdded ) {
-		return receiveBlogStickerAddError( action );
-	}
-
+export const receiveBlogStickerAdd = action => {
 	return successNotice(
 		translate( 'The sticker {{i}}%s{{/i}} has been successfully added.', {
 			args: action.payload.stickerName,
@@ -53,12 +47,20 @@ export const receiveBlogStickerAdd = ( action, response ) => {
 	);
 };
 
+export function fromApi( response ) {
+	if ( ! response.success ) {
+		throw new Error( 'Adding blog sticker was unsuccessful', response );
+	}
+	return response;
+}
+
 export default {
 	[ SITES_BLOG_STICKER_ADD ]: [
 		dispatchRequestEx( {
 			fetch: requestBlogStickerAdd,
 			onSuccess: receiveBlogStickerAdd,
 			onError: receiveBlogStickerAddError,
+			fromApi,
 		} ),
 	],
 };
