@@ -2498,24 +2498,24 @@
       "integrity": "sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA=="
     },
     "body-parser": {
-      "version": "1.17.2",
-      "integrity": "sha1-+IkqvI+eYn1Crtr7yma/WrmRBO4=",
+      "version": "1.18.3",
+      "integrity": "sha1-WykhmP/dVTs6DyDe0FkrlWlVyLQ=",
       "requires": {
-        "bytes": "2.4.0",
+        "bytes": "3.0.0",
         "content-type": "1.0.4",
-        "debug": "2.6.7",
+        "debug": "2.6.9",
         "depd": "1.1.2",
         "http-errors": "1.6.3",
-        "iconv-lite": "0.4.15",
+        "iconv-lite": "0.4.23",
         "on-finished": "2.3.0",
-        "qs": "6.4.0",
-        "raw-body": "2.2.0",
+        "qs": "6.5.2",
+        "raw-body": "2.3.3",
         "type-is": "1.6.16"
       },
       "dependencies": {
         "debug": {
-          "version": "2.6.7",
-          "integrity": "sha1-krrR9tBbu2u6Isyoi80OyJTChh4=",
+          "version": "2.6.9",
+          "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
           "requires": {
             "ms": "2.0.0"
           }
@@ -2525,8 +2525,8 @@
           "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
         },
         "qs": {
-          "version": "6.4.0",
-          "integrity": "sha1-E+JtKK1rD/qpExLNO/cI7TUecjM="
+          "version": "6.5.2",
+          "integrity": "sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA=="
         }
       }
     },
@@ -2725,8 +2725,8 @@
       "integrity": "sha1-hZgoeOIbmOHGZCXgPQF0eI9Wnug="
     },
     "bytes": {
-      "version": "2.4.0",
-      "integrity": "sha1-fZcZb51br39pNeJZhVSe3SpsIzk="
+      "version": "3.0.0",
+      "integrity": "sha1-0ygVQE1olpn4Wk6k+odV3ROpYEg="
     },
     "cacache": {
       "version": "10.0.4",
@@ -3643,7 +3643,7 @@
         "detective": "4.7.1",
         "glob": "5.0.15",
         "graceful-fs": "4.1.11",
-        "iconv-lite": "0.4.15",
+        "iconv-lite": "0.4.23",
         "mkdirp": "0.5.1",
         "private": "0.1.8",
         "q": "1.5.1",
@@ -3802,16 +3802,22 @@
       "integrity": "sha1-cv7D0k5Io0Mgc9kMEmQgBQYQBLE="
     },
     "cookie-parser": {
-      "version": "1.3.2",
-      "integrity": "sha1-UiEcyCyVXXn/DAiJVEB3JOGc9WI=",
+      "version": "1.4.3",
+      "integrity": "sha1-D+MfoZ0AC5X0qt8fU/3CuKIDuqU=",
       "requires": {
-        "cookie": "0.1.2",
-        "cookie-signature": "1.0.4"
+        "cookie": "0.3.1",
+        "cookie-signature": "1.0.6"
+      },
+      "dependencies": {
+        "cookie": {
+          "version": "0.3.1",
+          "integrity": "sha1-5+Ch+e9DtMi6klxcWpboBtFoc7s="
+        }
       }
     },
     "cookie-signature": {
-      "version": "1.0.4",
-      "integrity": "sha1-Dt0iKG46ERuaKnDbNj6SXoZ/aso="
+      "version": "1.0.6",
+      "integrity": "sha1-4wOogrNCzD7oylE6eZmXNNqzriw="
     },
     "cookiejar": {
       "version": "2.1.1",
@@ -4880,7 +4886,7 @@
       "version": "0.1.12",
       "integrity": "sha1-U4tm8+5izRq1HsMjgp0flIDHS+s=",
       "requires": {
-        "iconv-lite": "0.4.15"
+        "iconv-lite": "0.4.23"
       }
     },
     "end-of-stream": {
@@ -5905,17 +5911,9 @@
             "type-is": "1.6.16"
           }
         },
-        "bytes": {
-          "version": "3.0.0",
-          "integrity": "sha1-0ygVQE1olpn4Wk6k+odV3ROpYEg="
-        },
         "cookie": {
           "version": "0.3.1",
           "integrity": "sha1-5+Ch+e9DtMi6klxcWpboBtFoc7s="
-        },
-        "cookie-signature": {
-          "version": "1.0.6",
-          "integrity": "sha1-4wOogrNCzD7oylE6eZmXNNqzriw="
         },
         "debug": {
           "version": "2.6.9",
@@ -6008,15 +6006,6 @@
         "chardet": "0.4.2",
         "iconv-lite": "0.4.23",
         "tmp": "0.0.33"
-      },
-      "dependencies": {
-        "iconv-lite": {
-          "version": "0.4.23",
-          "integrity": "sha512-neyTUVFtahjf0mB3dZT77u+8O0QB89jFdnBkd5P1JgYPbPaia3gXXOVL2fq8VyU2gMMD7SaN7QukTB/pmXYvDA==",
-          "requires": {
-            "safer-buffer": "2.1.2"
-          }
-        }
       }
     },
     "extglob": {
@@ -8485,8 +8474,11 @@
       }
     },
     "iconv-lite": {
-      "version": "0.4.15",
-      "integrity": "sha1-/iZaIYrGpXz+hUkn6dBMGYJe3es="
+      "version": "0.4.23",
+      "integrity": "sha512-neyTUVFtahjf0mB3dZT77u+8O0QB89jFdnBkd5P1JgYPbPaia3gXXOVL2fq8VyU2gMMD7SaN7QukTB/pmXYvDA==",
+      "requires": {
+        "safer-buffer": "2.1.2"
+      }
     },
     "ieee754": {
       "version": "1.1.11",
@@ -13821,11 +13813,12 @@
       "integrity": "sha1-9JvmtIeJTdxA3MlKMi9hEJLgDV4="
     },
     "raw-body": {
-      "version": "2.2.0",
-      "integrity": "sha1-mUl2z2pQlqQRYoQEkvC9xdbn+5Y=",
+      "version": "2.3.3",
+      "integrity": "sha512-9esiElv1BrZoI3rCDuOuKCBRbuApGGaDPQfjSflGxdy4oyzqghxu6klEkkVIvBje+FF0BX9coEv8KqW6X/7njw==",
       "requires": {
-        "bytes": "2.4.0",
-        "iconv-lite": "0.4.15",
+        "bytes": "3.0.0",
+        "http-errors": "1.6.3",
+        "iconv-lite": "0.4.23",
         "unpipe": "1.0.0"
       }
     },
