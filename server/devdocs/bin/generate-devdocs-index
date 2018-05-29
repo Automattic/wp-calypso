@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * This script generates a Lunr.js index and document array suitable
- * for server-side documentation search. It accepts a newline-delimited list of .md files
- * as its input, and writes the index to server/devdocs/search-index.js
+ * This script generates a Lunr.js index and document array suitable for server-side
+ * documentation search. It finds all .md files that are part of the Calypso repository
+ * and writes the index to server/devdocs/search-index.js .
  *
  * The design is currently limited by available RAM, both during indexing and serving the
  * content. A more scalable solution would need to use a separate indexing service like Sphinx.
