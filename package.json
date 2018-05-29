@@ -198,7 +198,7 @@
     "build-devdocs:components-usage-stats": "npm run -s env -- npm run -s build-devdocs:components-usage-stats:_env",
     "build-devdocs:components-usage-stats:_env": "node server/devdocs/bin/generate-components-usage-stats.js \"client/**/*.js\" \"client/**/*.jsx\" \"!**/docs/**\" \"!**/test/**\" \"!**/docs-example/**\"",
     "build-devdocs:index": "npm run -s env -- npm run -s build-devdocs:index:_env",
-    "build-devdocs:index:_env": "node server/devdocs/bin/generate-devdocs-index \"**/*.md\" \".github/**.md\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
+    "build-devdocs:index:_env": "node server/devdocs/bin/generate-devdocs-index",
     "build-docker": "node bin/build-docker.js",
     "prebuild-server": "mkdirp build",
     "build-server": "CALYPSO_SERVER=true npm run -s env -- webpack --display-error-details --config webpack.config.node.js",

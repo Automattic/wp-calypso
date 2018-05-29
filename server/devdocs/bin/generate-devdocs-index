@@ -16,14 +16,23 @@ const globby = require( 'globby' );
 const root = fspath.dirname( fspath.join( __dirname, '..', '..' ) );
 
 function main() {
-	const fileList = globby.sync( process.argv.slice( 2 ) );
+	// Build a list of all .md files in allowed subdirectories...
+	const dirList = [
+		'assets',
+		'bin',
+		'client',
+		'CODE-OF-CONDUCT.md',
+		'config',
+		'CREDITS.md',
+		'docs',
+		'LICENSE.md',
+		'README.md',
+		'server',
+		'test',
+		'.github',
+	].map( dir => /\.md/.test( dir ) ? dir : dir + '/**/*.md' );
 
-	if ( fileList.length === 0 ) {
-		process.stderr.write( 'You must pass a list of files to process (try "npm run build-devdocs:index"' );
-		process.exit( 1 );
-	}
-
-	const documents = fileList.map( fileWithPath => {
+	const documents = globby.sync( dirList ).map( fileWithPath => {
 		return documentFromFile( root, fileWithPath );
 	} ).filter( doc => {
 		// skip empty/invalid files
