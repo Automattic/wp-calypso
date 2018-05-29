@@ -25,10 +25,11 @@ import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
 import PieChartPlaceholder from 'components/pie-chart/placeholder';
 import SectionHeader from 'components/section-header';
 import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
-import { enhanceWithSiteType, recordTracksEvent, withEnhancers } from 'state/analytics/actions';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
+import { withEnhancers } from 'state/utils';
 
 function transformData( props ) {
 	const { data } = props;

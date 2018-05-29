@@ -23,7 +23,8 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { dismissNudge } from 'blocks/google-my-business-stats-nudge/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent, withEnhancers } from 'state/analytics/actions';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 
 class GoogleMyBusinessNewAccount extends Component {
 	static propTypes = {

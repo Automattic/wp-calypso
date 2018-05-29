@@ -28,9 +28,10 @@ import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
 import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent, withEnhancers } from 'state/analytics/actions';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { withEnhancers } from 'state/utils';
 
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {

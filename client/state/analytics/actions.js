@@ -149,36 +149,13 @@ export const recordTracksEventWithClientId = withClientId( recordTracksEvent );
 export const recordPageViewWithClientId = withClientId( recordPageView );
 
 /**
- * Dispatches the specified Redux action creator once enhancers have been applied to the result of its call. This
- * function can be seen as an alternative to Redux middlewares with a more focused/local scope.
- */
-export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => ( dispatch, getState ) => {
-	const action = actionCreator( ...args );
-
-	if ( typeof action !== 'object' ) {
-		throw new Error( 'withEnhancers only works with an action creator that returns a plain action object' );
-	}
-
-	if ( ! Array.isArray( enhancers ) ) {
-		enhancers = [ enhancers ];
-	}
-
-	return dispatch( enhancers.reduce(
-		( result, enhancer ) => {
-			return enhancer( result, getState );
-		},
-		action
-	) );
-};
-
-/**
  * Enhances any Redux action that denotes the recording of an analytics event with an additional property which
  * specifies the type of the current selected site.
  *
  * @param {Object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
  * @returns {Object} the new Redux action
- * @see client/state/analytics/actions/withEnhancers
+ * @see client/state/utils/withEnhancers
  */
 export const enhanceWithSiteType = ( action, getState ) => {
 	const site = getSelectedSite( getState() );

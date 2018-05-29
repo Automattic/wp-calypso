@@ -16,8 +16,9 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { enhanceWithSiteType, recordTracksEvent, withEnhancers } from 'state/analytics/actions';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
+import { withEnhancers } from 'state/utils';
 
 class GoogleMyBusinessSelectLocationButton extends Component {
 	static propTypes = {

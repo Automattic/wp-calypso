@@ -29,9 +29,10 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent, withEnhancers } from 'state/analytics/actions';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { withEnhancers } from 'state/utils';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {

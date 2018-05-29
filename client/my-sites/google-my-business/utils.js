@@ -19,7 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param {Object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
  * @returns {Object} the new Redux action
- * @see client/state/analytics/actions/withEnhancers
+ * @see client/state/utils/withEnhancers
  */
 export const enhanceWithDismissCount = ( action, getState ) => {
 	const siteId = getSelectedSiteId( getState() );
@@ -50,7 +50,7 @@ export const enhanceWithDismissCount = ( action, getState ) => {
  * @param {Object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
  * @returns {Object} the new Redux action
- * @see client/state/analytics/actions/withEnhancers
+ * @see client/state/utils/withEnhancers
  */
 export const enhanceWithLocationCounts = ( action, getState ) => {
 	const siteId = getSelectedSiteId( getState() );

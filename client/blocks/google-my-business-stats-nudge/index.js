@@ -19,7 +19,8 @@ import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
 import { dismissNudge } from './actions';
 import { enhanceWithDismissCount } from 'my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent, withEnhancers } from 'state/analytics/actions';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
