@@ -187,6 +187,12 @@ textarea {
 						img {
 							height: 20px;
 						}
+
+						@include breakpoint( '<480px' ) {
+							img {
+								height: 10px;
+							}
+						}
 					}
 				}
 			}
@@ -213,7 +219,7 @@ textarea {
 				margin-bottom: -5px;
 			}
 
-			div[simple-template='link-security-code'], div[simple-template='link-billToCity-and-billToPostalCode'],  div[simple-template='link-province'] {
+			div[simple-template='link-security-code'], div[simple-template='link-billToCity-and-billToPostalCode'], div[simple-template='link-province'] {
 				display: inline-flex;
 			}
 
@@ -268,6 +274,11 @@ textarea {
 					&[name='billToCity'] {
 						width: 300px;
 						margin-right:20px;
+					}
+
+					&[name='pin'] {
+						width: 120px;
+						margin-right: 20px;
 					}
 				}
 
@@ -351,10 +362,6 @@ textarea {
 			}
 		}
 
-		div[simple-template='link-password'] a.text-capitalize {
-			margin-top: 10px;
-		}
-
 		// Used to notify the user about enabling pop-ups
 		.alert-info {
 			margin-bottom: 20px;
@@ -402,6 +409,7 @@ textarea {
 
 .busy-container {
 	text-align: center;
+	margin: 0 auto;
 	.busy-text {
 		display: none;
 	}
@@ -418,7 +426,7 @@ div[ng-show='busyIndicator'] {
 	align-items: center;
 }
 
-.busy-indicator, .less-busy-indicator,  .less-busy-indicator::after, .busy-indicator::after {
+.busy-indicator, .less-busy-indicator, .less-busy-indicator::after, .busy-indicator::after {
 	display:block;
 	margin: auto;
 	box-sizing: border-box;
