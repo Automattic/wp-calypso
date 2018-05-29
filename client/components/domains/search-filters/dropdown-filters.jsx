@@ -13,7 +13,6 @@ import { isEqual, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import config from 'config';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
@@ -160,7 +159,6 @@ export class DropdownFilters extends Component {
 			translate,
 		} = this.props;
 
-		const filterOnClose = abtest( 'domainSearchFilterOnClose' ) === 'enabled';
 		const isDashesFilterEnabled = config.isEnabled( 'domains/kracken-ui/dashes-filter' );
 		const isExactMatchFilterEnabled = config.isEnabled( 'domains/kracken-ui/exact-match-filter' );
 		const isLengthFilterEnabled = config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
@@ -171,7 +169,7 @@ export class DropdownFilters extends Component {
 				className="search-filters__popover"
 				context={ this.button.current }
 				isVisible={ this.state.showPopover }
-				onClose={ filterOnClose ? this.handleFiltersSubmit : this.togglePopover }
+				onClose={ this.handleFiltersSubmit }
 				position="bottom left"
 			>
 				{ isLengthFilterEnabled && (

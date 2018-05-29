@@ -100,14 +100,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSearchFilterOnClose: {
-		datestamp: '20180524',
-		variations: {
-			disabled: 50,
-			enabled: 50,
-		},
-		defaultVariation: 'disabled',
-	},
 	domainSuggestionKrakenV321: {
 		datestamp: '20180524',
 		variations: {
