@@ -157,7 +157,6 @@
 		"republicize": true,
 		"restore-last-location": false,
 		"rewind-alerts": true,
-		"rewind/clone-site": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
