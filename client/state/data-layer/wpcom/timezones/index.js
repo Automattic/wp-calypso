@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import { fromPairs, map, mapValues } from 'lodash';
+import { fromPairs, map, mapValues, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,6 +59,7 @@ export default {
 		dispatchRequestEx( {
 			fetch: fetchTimezones,
 			onSuccess: addTimezones,
+			onError: noop,
 			fromApi,
 		} ),
 	],
