@@ -11545,11 +11545,17 @@
       "dev": true
     },
     "markdown-loader": {
-      "version": "2.0.1",
-      "integrity": "sha1-7ti+rYKXi6zxe3ahHFWToBPi2XY=",
+      "version": "3.0.0",
+      "integrity": "sha512-ENNCYU7iINBYpCDeYFlaxKhxmjrsWzw/duhFoj7+VVoHBdla78Pqo6r5/txNH6m1lduMsjrq13EddBdGM+gSVg==",
       "requires": {
         "loader-utils": "1.1.0",
-        "marked": "0.3.9"
+        "marked": "0.4.0"
+      },
+      "dependencies": {
+        "marked": {
+          "version": "0.4.0",
+          "integrity": "sha512-tMsdNBgOsrUophCAFQl0XPe6Zqk/uy9gnue+jIIKhykO51hxyu6uNx7zBPy0+y/WKYVZZMspV9YeXLNdKk+iYw=="
+        }
       }
     },
     "marked": {
