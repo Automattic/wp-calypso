@@ -54,8 +54,8 @@ import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-fr
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isEligibleForCheckoutToChecklist from 'state/selectors/is-eligible-for-checkout-to-checklist';
 import { getStoredCards } from 'state/stored-cards/selectors';
-import { isValidFeatureKey, getPlan, findPlansKeys } from 'lib/plans';
-import { GROUP_WPCOM } from 'lib/plans/constants';
+import { isValidFeatureKey, getPlan, findPlansKeys, planMatches } from 'lib/plans';
+import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
@@ -70,8 +70,6 @@ import { getProductsList, isProductsListFetching } from 'state/products-list/sel
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
-import { planMatches } from '../../../lib/plans';
-import { TYPE_BUSINESS } from '../../../lib/plans/constants';
 
 export class Checkout extends React.Component {
 	static propTypes = {
