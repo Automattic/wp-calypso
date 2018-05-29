@@ -7,6 +7,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { loadScript } from 'lib/load-script';
 import config from 'config';
+import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -60,6 +61,7 @@ class LocationSearch extends Component {
 				{
 					input: query,
 					types: [ 'establishment' ],
+					language: getLocaleSlug(),
 				},
 				this.updatePredictions
 			);
