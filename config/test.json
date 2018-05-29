@@ -36,7 +36,7 @@
 		"devdocs/components-usage-stats": false,
 		"gdpr-banner": false,
 		"google-analytics": false,
-		"google-my-business": false,
+		"google-my-business": true,
 		"help": true,
 		"jetpack/checklist": true,
 		"jetpack/connect/remote-install": true,
