@@ -103,6 +103,13 @@ jobs:
       - store_artifacts:
           path: /tmp/artifacts
 
+      - run:
+          name: Add code coverage status check to PR
+          command: |
+             - curl -XPOST https://code-coverage.herokuapp.com/report |
+               -dL "branch=$CIRCLE_BRANCH&commit_sha=$CIRCLE_SHA1&pr_number=$CIRCLE_PR_NUMBER&repo=$CIRCLE_PR_REPONAME&user=$CIRCLE_PR_USERNAME" |
+               -F report=@./coverage/test-results.*.xml
+
 # We need to work around this bit because
 # the notification system in 2.0 is a bit flakey
 # and is not yet working as expected.
