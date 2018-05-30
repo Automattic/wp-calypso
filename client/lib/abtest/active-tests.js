@@ -111,7 +111,7 @@ export default {
 		defaultVariation: 'domainsbot',
 	},
 	domainSearchTLDFilterPlacement: {
-		datestamp: '20180528',
+		datestamp: '20180531',
 		variations: {
 			belowFeatured: 50,
 			aboveFeatured: 50,
