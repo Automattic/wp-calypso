@@ -19501,7 +19501,7 @@
         "mkdirp": "0.5.1",
         "p-each-series": "1.0.0",
         "p-lazy": "1.0.0",
-        "prettier": "1.13.2",
+        "prettier": "1.13.3",
         "recast": "0.13.2",
         "resolve-cwd": "2.0.0",
         "supports-color": "4.5.0",
@@ -19654,8 +19654,8 @@
           }
         },
         "prettier": {
-          "version": "1.13.2",
-          "integrity": "sha512-D9oFKkJ7g76fRxkRh9MWBh4j2vbNGO4rtEUJbj46zId5wnm0dwHruoyg4Od9Zqh3WNl0jwxnWSlEGAnl+/thWA=="
+          "version": "1.13.3",
+          "integrity": "sha512-CIWJNU+cFFdeA0GJSzzFkxiq2WuMvWZMlz6cV/EXhPlRnI3esSFMh+lNmyZ8z/X8O8C1U60Sc8puXALj4/WmZw=="
         },
         "read-pkg": {
           "version": "2.0.0",
