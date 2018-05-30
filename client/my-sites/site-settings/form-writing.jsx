@@ -240,6 +240,7 @@ const connectComponent = connect(
 
 const getFormSettings = settings => {
 	const formSettings = pick( settings, [
+		'blog_enabled',
 		'posts_per_page',
 		'posts_per_rss',
 		'rss_use_excerpt',

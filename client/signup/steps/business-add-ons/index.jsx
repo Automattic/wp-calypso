@@ -66,7 +66,7 @@ class BusinessAddOnsStep extends React.Component {
 		const { goToNextStep, stepName, translate, signupDependencies } = this.props;
 
 		const stepOptionInformation = {
-			blogEnabled: formState.getFieldValue( this.state.form, 'blogEnabled' ),
+			blog_enabled: formState.getFieldValue( this.state.form, 'blogEnabled' ),
 		};
 
 		const stepHeadstartInformation = {

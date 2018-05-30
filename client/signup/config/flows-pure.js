@@ -31,7 +31,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			},
 		},
 
-		'business-quicksilver': {
+		'business-site-setup': {
 			steps: [
 				'about',
 				'business-information',

@@ -33,6 +33,7 @@ import {
 } from 'state/sites/selectors';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import canCurrentUser from 'state/selectors/can-current-user';
+import isBlogEnabled from 'state/selectors/is-blog-enabled';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -72,7 +73,7 @@ class ManageMenu extends PureComponent {
 	}
 
 	getDefaultMenuItems() {
-		const { siteSlug, translate } = this.props;
+		const { siteSlug, hasBlog, translate } = this.props;
 
 		return [
 			{
@@ -86,7 +87,7 @@ class ManageMenu extends PureComponent {
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			},
-			{
+			hasBlog && {
 				name: 'post',
 				label: translate( 'Blog Posts' ),
 				capability: 'edit_posts',
@@ -373,6 +374,8 @@ export default connect(
 		site: getSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		//Hack to remove 'Blog Posts' for sites that choose not to include a blog in Signup.
+		hasBlog: isBlogEnabled( state, siteId ),
 	} ),
 	{
 		recordTracksEvent,

@@ -363,6 +363,7 @@ export function generateSteps( {
 			},
 			dependencies: [ 'themeSlugWithRepo', 'siteInformation' ],
 			delayApiRequestUntilComplete: true,
+		},
 	};
 }
 
