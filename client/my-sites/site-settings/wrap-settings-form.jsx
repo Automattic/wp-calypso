@@ -251,6 +251,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				setFieldValue: this.setFieldValue,
 				submitForm: this.submitForm,
 				uniqueEventTracker: this.uniqueEventTracker,
+				updateFields: this.props.updateFields,
 			};
 
 			return (
