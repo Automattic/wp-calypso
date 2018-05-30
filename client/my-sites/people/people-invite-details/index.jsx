@@ -66,7 +66,7 @@ export class PeopleInviteDetails extends React.PureComponent {
 		const { isPending } = invite;
 		const revokeMessage = translate(
 			'Revoking an invite will no longer allow this person to become a member of ' +
-				'your site. You can always invite them again if your change your mind.'
+				'your site. You can always invite them again if you change your mind.'
 		);
 		const clearMessage = translate(
 			'If you no longer wish to see this record, you can clear it. ' +
