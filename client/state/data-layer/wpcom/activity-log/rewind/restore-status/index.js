@@ -26,7 +26,8 @@ const recentRequests = new Map();
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param {Object} action Redux action
+ * @param  {Object} action Redux action
+ * @return {Object}        Redux action
  */
 const fetchProgress = action => {
 	const { restoreId, siteId } = action;
