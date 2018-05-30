@@ -15,6 +15,7 @@ import {
 	EDITOR_AUTOSAVE_RESET,
 	EDITOR_RESET,
 	EDITOR_START,
+	EDITOR_STOP,
 	POST_SAVE_SUCCESS,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
@@ -37,6 +38,8 @@ export function postId( state = null, action ) {
 	switch ( action.type ) {
 		case EDITOR_START:
 			return action.postId;
+		case EDITOR_STOP:
+			return null;
 		case POST_SAVE_SUCCESS:
 			return state === action.postId ? action.savedPost.ID : state;
 	}

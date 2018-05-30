@@ -485,7 +485,7 @@ export function edits( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: {
 					...state[ action.siteId ],
-					[ action.postId || '' ]: {},
+					[ action.postId || '' ]: null,
 				},
 			} );
 

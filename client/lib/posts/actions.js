@@ -282,7 +282,7 @@ export const autosave = () => async ( dispatch, getState ) => {
 	const savedPost = getSitePost( state, siteId, postId );
 	const post = getEditedPost( state, siteId, postId );
 
-	store.set( 'wpcom-autosave:' + post.site_ID + ':' + post.ID, post );
+	store.set( 'wpcom-autosave:' + siteId + ':' + postId, post );
 
 	// TODO: incorporate post locking
 	if ( utils.isPublished( savedPost ) || utils.isPublished( post ) ) {

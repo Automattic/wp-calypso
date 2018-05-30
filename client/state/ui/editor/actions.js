@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { filter, get } from 'lodash';
+import { defaults, filter, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,8 +61,15 @@ export function startEditingPost( siteId, postId ) {
 
 export function startEditingNewPost( siteId, post ) {
 	return dispatch => {
+		const postAttributes = defaults( post, {
+			status: 'draft',
+			type: 'post',
+			content: '',
+			title: '',
+		} );
+
 		dispatch( { type: EDITOR_START, siteId, postId: null } );
-		dispatch( editPost( siteId, null, post ) );
+		dispatch( editPost( siteId, null, postAttributes ) );
 		dispatch( editorReset() );
 	};
 }
