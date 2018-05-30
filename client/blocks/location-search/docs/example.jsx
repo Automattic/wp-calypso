@@ -26,6 +26,10 @@ class LocationSearchExample extends Component {
 	};
 
 	predictionTransformer( predictions, query ) {
+		if ( ! query ) {
+			return predictions;
+		}
+
 		return [
 			{
 				place_id: 'my_special_place',

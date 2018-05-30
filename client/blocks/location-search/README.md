@@ -7,7 +7,7 @@ A search component for searching locations via the [Google Places API](https://c
 
 ```jsx
 import LocationSearch from 'blocks/location-search';
-import { createNotice } from 'state/notices/actions'
+import { createNotice } from 'state/notices/actions';
 
 class LocationSearchExample extends Component {
 	static propTypes = {
@@ -22,6 +22,10 @@ class LocationSearchExample extends Component {
 	};
 
 	predictionTransformer( predictions, query ) {
+		if ( ! query ) {
+			return predictions;
+		}
+
 		return [
 			{
 				place_id: 'my_special_place',

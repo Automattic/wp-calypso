@@ -27,7 +27,11 @@ class LocationSearch extends Component {
 		predictionsTransformation: predictions => predictions,
 	};
 
-	state = { predictions: [], loading: false };
+	state = {
+		loading: false,
+		predictions: [],
+		query: '',
+	};
 
 	componentDidMount() {
 		if ( ! autocompleteService ) {
@@ -55,19 +59,20 @@ class LocationSearch extends Component {
 	};
 
 	handleSearch = query => {
-		if ( query ) {
-			this.setState( { loading: true, query } );
-			autocompleteService.getPlacePredictions(
-				{
-					input: query,
-					types: [ 'establishment' ],
-					language: getLocaleSlug(),
-				},
-				this.updatePredictions
-			);
-		} else {
-			this.updatePredictions( [] );
-		}
+		this.setState( { loading: true, query }, () => {
+			if ( query ) {
+				autocompleteService.getPlacePredictions(
+					{
+						input: query,
+						types: [ 'establishment' ],
+						language: getLocaleSlug(),
+					},
+					this.updatePredictions
+				);
+			} else {
+				this.updatePredictions( [] );
+			}
+		} );
 	};
 
 	renderPrediction = prediction => {
@@ -95,6 +100,7 @@ class LocationSearch extends Component {
 					searching={ loading }
 					className="location-search__search-card is-compact"
 				/>
+
 				{ predictions && predictions.map( this.renderPrediction ) }
 			</Fragment>
 		);
