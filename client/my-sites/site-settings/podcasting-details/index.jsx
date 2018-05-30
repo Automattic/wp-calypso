@@ -265,14 +265,20 @@ class PodcastingDetails extends Component {
 	};
 
 	onCoverImageRemoved = () => {
-		this.setFieldForcingString( 'podcasting_image_id' )( 0 );
-		// When we remove the image, we want to clear the legacy value as well.
-		this.setFieldForcingString( 'podcasting_image' )( '' );
+		// Do not call setFieldForcingString / onChangeField multiple times in
+		// the same render cycle - this breaks dirty detection in
+		// wrapSettingsForm.
+		this.props.updateFields( {
+			podcasting_image_id: '0',
+			podcasting_image: '',
+		} );
 	};
 
 	onCoverImageSelected = ( coverId, coverUrl ) => {
-		this.setFieldForcingString( 'podcasting_image_id' )( coverId );
-		this.setFieldForcingString( 'podcasting_image' )( coverUrl );
+		this.props.updateFields( {
+			podcasting_image_id: String( coverId ),
+			podcasting_image: coverUrl,
+		} );
 	};
 
 	setFieldForcingString = field => value => {
