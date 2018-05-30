@@ -53,17 +53,13 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	handleConnect = keyringConnection => {
-		const { locations, siteId, siteSlug } = this.props;
+		const { siteId, siteSlug } = this.props;
 
 		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
 			this.props.recordTracksEventWithLocationCounts(
 				'calypso_google_my_business_select_business_type_connect'
 			);
-			if ( locations.length === 0 ) {
-				page.redirect( `/google-my-business/new/${ siteSlug }` );
-			} else {
-				page.redirect( `/google-my-business/select-location/${ siteSlug }` );
-			}
+			page.redirect( `/google-my-business/${ siteSlug }` );
 		} );
 	};
 
