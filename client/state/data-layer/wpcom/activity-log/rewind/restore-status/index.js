@@ -19,6 +19,9 @@ const POLL_INTERVAL = 1500;
 /** @type {Map<String, Number>} stores most-recent polling times */
 const recentRequests = new Map();
 
+/** @type {string} Request error notice id. Prevents polling from creating endless notices */
+const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
+
 /**
  * Fetch status updates for restore operations
  *
@@ -75,7 +78,8 @@ export const updateProgress = ( { siteId, restoreId, timestamp }, data ) =>
 
 export const announceFailure = () =>
 	errorNotice(
-		translate( "Hmm, we can't update the status of your restore. Please refresh this page." )
+		translate( "Hmm, we can't update the status of your restore. Please refresh this page." ),
+		{ id: ERROR_NOTICE_ID }
 	);
 
 export default {
