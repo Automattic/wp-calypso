@@ -334,13 +334,9 @@ export class PluginMeta extends Component {
 	}
 
 	maybeDisplayUnsupportedNotice() {
-		const { selectedSite, automatedTransferSite } = this.props;
+		const { selectedSite } = this.props;
 
-		if (
-			selectedSite &&
-			this.isUnsupportedPluginForAT() &&
-			( ! selectedSite.jetpack || automatedTransferSite )
-		) {
+		if ( selectedSite && this.isUnsupportedPluginForAT() ) {
 			return (
 				<Notice
 					text={ this.props.translate(
@@ -616,7 +612,8 @@ export class PluginMeta extends Component {
 					this.props.selectedSite.plan &&
 					! get( this.props.selectedSite, 'jetpack' ) &&
 					! this.hasBusinessPlan() &&
-					! this.isWpcomPreinstalled() && (
+					! this.isWpcomPreinstalled() &&
+					( this.maybeDisplayUnsupportedNotice() || (
 						<div className="plugin-meta__upgrade_nudge">
 							<Banner
 								feature={ FEATURE_UPLOAD_PLUGINS }
@@ -627,7 +624,7 @@ export class PluginMeta extends Component {
 								title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
 							/>
 						</div>
-					) }
+					) ) }
 
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }
