@@ -6,6 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -18,6 +19,8 @@ import safeImageUrl from 'lib/safe-image-url';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getActiveTheme, getThemeDetailsUrl } from 'state/themes/selectors';
+import { isThemesBannerVisible } from 'state/themes/themes-ui/selectors';
+import { hideThemesBanner as hideThemesBannerAction } from 'state/themes/themes-ui/actions';
 
 class ThemesBanner extends PureComponent {
 	static propTypes = {
@@ -34,6 +37,7 @@ class ThemesBanner extends PureComponent {
 		siteId: PropTypes.number,
 		themeUrl: PropTypes.string,
 		activeThemeId: PropTypes.string,
+		isBannerVisible: PropTypes.bool,
 	};
 
 	recordEvent = () => {
@@ -46,6 +50,12 @@ class ThemesBanner extends PureComponent {
 		recordTracksEvent( 'calypso_showcase_banner_click', tracksData );
 	};
 
+	// eslint-disable-next-line no-undef
+	handleBannerClose = e => {
+		this.props.hideThemesBanner();
+		e.preventDefault();
+	};
+
 	render() {
 		const {
 			title,
@@ -54,10 +64,14 @@ class ThemesBanner extends PureComponent {
 			image,
 			imageWidth,
 			imageTransform = 'auto',
+			isBannerVisible,
 			themeName,
 			themeUrl,
 			translate,
 		} = this.props;
+		if ( ! isBannerVisible ) {
+			return null; // Do not show banner if the user has closed it.
+		}
 		const backgroundStyle = backgroundColor ? { backgroundColor } : {};
 		return (
 			<a
@@ -71,6 +85,9 @@ class ThemesBanner extends PureComponent {
 				<p className="themes-banner__description">{ description }</p>
 				<Button className="themes-banner__cta" compact primary>
 					{ translate( 'See the theme' ) }
+				</Button>
+				<Button className="themes-banner__close" onClick={ this.handleBannerClose }>
+					<Gridicon icon="cross-small" size={ 18 } />
 				</Button>
 				{ image && (
 					<img
@@ -92,13 +109,16 @@ const mapStateToProps = ( state, { themeId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const themeUrl = getThemeDetailsUrl( state, themeId, siteId );
 	const activeThemeId = getActiveTheme( state, siteId );
+	const isBannerVisible = isThemesBannerVisible( state );
 	return {
 		siteId,
 		themeUrl,
 		activeThemeId,
+		isBannerVisible,
 	};
 };
 
 export default connect( mapStateToProps, {
 	recordTracksEvent: recordTracksEventAction,
+	hideThemesBanner: hideThemesBannerAction,
 } )( localize( ThemesBanner ) );

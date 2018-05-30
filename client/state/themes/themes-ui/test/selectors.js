@@ -1,14 +1,9 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
-import { getBackPath } from '../selectors';
+import { getBackPath, isThemesBannerVisible } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getBackPath', () => {
@@ -21,7 +16,7 @@ describe( 'selectors', () => {
 				},
 				ui: {},
 			};
-			expect( getBackPath( state ) ).to.eql( '/themes' );
+			expect( getBackPath( state ) ).toBe( '/themes' );
 		} );
 
 		test( 'should return stored path if it includes current selected site', () => {
@@ -43,7 +38,7 @@ describe( 'selectors', () => {
 					selectedSiteId: 2916284,
 				},
 			};
-			expect( getBackPath( state ) ).to.eql( '/themes/premium/example.wordpress.com?s=blue' );
+			expect( getBackPath( state ) ).toBe( '/themes/premium/example.wordpress.com?s=blue' );
 		} );
 
 		test( 'should return default path with selected site if selected site not in stored path', () => {
@@ -65,7 +60,20 @@ describe( 'selectors', () => {
 					selectedSiteId: 2916284,
 				},
 			};
-			expect( getBackPath( state ) ).to.eql( '/themes/example.wordpress.com' );
+			expect( getBackPath( state ) ).toBe( '/themes/example.wordpress.com' );
+		} );
+	} );
+
+	describe( '#isThemesBannerVisible', () => {
+		test( 'Should return the showcase banner visible state', () => {
+			const state = {
+				themes: {
+					themesUI: {
+						themesBannerVisible: false,
+					},
+				},
+			};
+			expect( isThemesBannerVisible( state ) ).toBe( false );
 		} );
 	} );
 } );
