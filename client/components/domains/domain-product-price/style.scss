@@ -3,6 +3,7 @@
 .domain-product-price {
 	color: $gray-darken-30;
 	font-weight: 600;
+	line-height: 1;
 
 	@include breakpoint( '>660px' ) {
 		align-items: center;
