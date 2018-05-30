@@ -32,10 +32,7 @@ import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions'
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { withEnhancers } from 'state/utils';
-import {
-	connectGoogleMyBusinessAccount,
-	disconnectAllGoogleMyBusinessAccounts,
-} from 'state/google-my-business/actions';
+import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
@@ -241,6 +238,5 @@ export default connect(
 			enhanceWithSiteType,
 		] ),
 		connectGoogleMyBusinessAccount,
-		disconnectAllGoogleMyBusinessAccounts,
 	}
 )( localize( GoogleMyBusinessSelectBusinessType ) );
