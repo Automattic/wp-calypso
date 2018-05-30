@@ -17,14 +17,15 @@ export default class Prediction extends Component {
 		onPredictionClick: PropTypes.func,
 		prediction: PropTypes.shape( {
 			structured_formatting: PropTypes.shape( {
-				main_text: PropTypes.string,
-				secondary_text: PropTypes.string,
+				main_text: PropTypes.string.isRequired,
+				secondary_text: PropTypes.string.isRequired,
 			} ).isRequired,
 		} ).isRequired,
 	};
 
 	handlePredictionClick = () => {
 		const { onPredictionClick } = this.props;
+
 		if ( typeof onPredictionClick === 'function' ) {
 			onPredictionClick( this.props.prediction );
 		}
