@@ -59,6 +59,8 @@ class LocationSearch extends Component {
 	};
 
 	handleSearch = query => {
+		query = query.trim();
+
 		this.setState( { loading: true, query }, () => {
 			if ( query ) {
 				autocompleteService.getPlacePredictions(
