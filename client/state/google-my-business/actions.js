@@ -13,7 +13,7 @@ import {
 	updateSiteKeyring,
 	deleteSiteKeyring,
 } from 'state/site-keyrings/actions';
-import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
+import { getSiteKeyringsForService, getSiteKeyringConnection } from 'state/site-keyrings/selectors';
 
 export const disconnectGoogleMyBusinessAccount = ( siteId, keyringId ) => dispatch =>
 	dispatch( deleteSiteKeyring( siteId, keyringId ) );
@@ -25,20 +25,22 @@ export const disconnectAllGoogleMyBusinessAccounts = siteId => ( dispatch, getSt
 		)
 	);
 
-export const connectGoogleMyBusinessAccount = (
-	siteId,
-	keyringId,
-	locationId = null
-) => dispatch =>
-	dispatch( disconnectAllGoogleMyBusinessAccounts( siteId ) ).then( () =>
-		dispatch(
-			createSiteKeyring( siteId, {
-				keyring_id: keyringId,
-				service: 'google_my_business',
-				external_user_id: locationId,
-			} )
-		)
-	);
+export const connectGoogleMyBusinessAccount = ( siteId, keyringId, locationId = null ) => (
+	dispatch,
+	getState
+) => {
+	if ( ! getSiteKeyringConnection( getState(), siteId, keyringId ) ) {
+		return dispatch( disconnectAllGoogleMyBusinessAccounts( siteId ) ).then( () =>
+			dispatch(
+				createSiteKeyring( siteId, {
+					keyring_id: keyringId,
+					service: 'google_my_business',
+					external_user_id: locationId,
+				} )
+			)
+		);
+	}
+};
 
 export const connectGoogleMyBusinessLocation = ( siteId, keyringId, locationId ) => dispatch =>
 	dispatch( updateSiteKeyring( siteId, keyringId, locationId ) );
