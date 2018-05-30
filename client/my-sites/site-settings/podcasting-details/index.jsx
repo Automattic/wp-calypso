@@ -26,7 +26,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
-import PodcastCoverImage from 'blocks/podcast-cover-image';
+import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -158,6 +158,7 @@ class PodcastingDetails extends Component {
 			podcastingCategoryId,
 			translate,
 			isPodcastingEnabled,
+			fields,
 		} = this.props;
 		if ( ! siteId ) {
 			return null;
@@ -207,10 +208,12 @@ class PodcastingDetails extends Component {
 							) }
 						</FormFieldset>
 						<div className="podcasting-details__basic-settings">
-							<FormFieldset className="podcasting-details__cover-image">
-								<FormLabel>{ translate( 'Cover Image' ) }</FormLabel>
-								<PodcastCoverImage size={ 96 } />
-							</FormFieldset>
+							<PodcastCoverImageSetting
+								coverImageId={ parseInt( fields.podcasting_image_id, 10 ) || 0 }
+								coverImageUrl={ fields.podcasting_image }
+								onRemove={ this.onCoverImageRemoved }
+								onSelect={ this.onCoverImageSelected }
+							/>
 							{ this.renderTextField( {
 								key: 'podcasting_title',
 								label: translate( 'Title' ),
@@ -253,22 +256,33 @@ class PodcastingDetails extends Component {
 	}
 
 	onCategorySelected = category => {
-		this.setPodcastingCategoryId( category.ID );
+		this.setFieldForcingString( 'podcasting_category_id' )( category.ID );
 	};
 
 	onCategoryCleared = () => {
-		this.setPodcastingCategoryId( 0 );
+		this.setFieldForcingString( 'podcasting_category_id' )( 0 );
 	};
 
-	setPodcastingCategoryId = newCategoryId => {
+	onCoverImageRemoved = () => {
+		this.setFieldForcingString( 'podcasting_image_id' )( 0 );
+		// When we remove the image, we want to clear the legacy value as well.
+		this.setFieldForcingString( 'podcasting_image' )( '' );
+	};
+
+	onCoverImageSelected = ( coverId, coverUrl ) => {
+		this.setFieldForcingString( 'podcasting_image_id' )( coverId );
+		this.setFieldForcingString( 'podcasting_image' )( coverUrl );
+	};
+
+	setFieldForcingString = field => value => {
 		const { onChangeField } = this.props;
 
-		// Always send and save category IDs as strings because this is what
+		// Always send and save IDs as strings because this is what
 		// the settings form wrapper expects (otherwise the settings form will
 		// be marked dirty again immediately after saving).
-		const event = { target: { value: String( newCategoryId ) } };
+		const event = { target: { value: String( value ) } };
 
-		onChangeField( 'podcasting_category_id' )( event );
+		onChangeField( field )( event );
 	};
 }
 
@@ -287,6 +301,7 @@ const getFormSettings = settings => {
 		'podcasting_category_2',
 		'podcasting_category_3',
 		'podcasting_email',
+		'podcasting_image_id',
 	] );
 };
 

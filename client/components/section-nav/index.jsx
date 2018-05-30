@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isEqual, includes } from 'lodash';
+import { includes } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -45,10 +45,6 @@ class SectionNav extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( isEqual( this.props, nextProps ) ) {
-			return;
-		}
-
 		this.checkForSiblingControls( nextProps.children );
 
 		if ( ! this.hasSiblingControls ) {
