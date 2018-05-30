@@ -87,6 +87,7 @@
 		"reader/following-intro": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
+		"reader/paste-to-link": true,
 		"reader/user-mention-suggestions": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
