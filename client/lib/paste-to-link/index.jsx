@@ -36,9 +36,16 @@ export default WrappedComponent => {
 
 		handlePaste = event => {
 			const clipboardText = event.clipboardData && event.clipboardData.getData( 'text/plain' );
+			const node = this.textareaRef.current;
 
-			// If we have a URL in the clipboard, pass it to insertLink to wrap in an <a> element
-			if ( clipboardText && clipboardText.length > 0 && resemblesUrl( clipboardText ) ) {
+			// If we have a URL in the clipboard and a current selection, pass the URL to insertLink to wrap in an <a> element
+			if (
+				clipboardText &&
+				clipboardText.length > 0 &&
+				node &&
+				node.selectionStart !== node.selectionEnd &&
+				resemblesUrl( clipboardText )
+			) {
 				event.preventDefault();
 				this.insertLink( clipboardText );
 			}
@@ -52,22 +59,25 @@ export default WrappedComponent => {
 				return;
 			}
 
-			// If selectionStart and selectionEnd are the same, we don't have a selection
-			if ( node.selectionStart === node.selectionEnd ) {
-				return;
-			}
-
 			const textBeforeSelection = node.value.slice( 0, node.selectionStart );
 			const selectionText = node.value.slice( node.selectionStart, node.selectionEnd );
 			const textAfterSelectionEnd = node.value.slice( node.selectionEnd, node.value.length + 1 );
 
 			const newLink = '<a href="' + encodeURI( url ) + '">' + selectionText + '</a>';
+			const textLengthBefore = node.value.length;
 
-			// Set the new text field value, including the link
-			node.value = textBeforeSelection + newLink + textAfterSelectionEnd;
+			// Replace the selected text. Uses execCommand to preserve undo history
+			document.execCommand( 'insertText', false, newLink );
 
-			// Move the caret to the end of the inserted string
-			node.selectionEnd = textBeforeSelection.length + newLink.length;
+			// If the text length hasn't changed, try directly adjusting the value for Firefox's benefit
+			// see https://bugzilla.mozilla.org/show_bug.cgi?id=1220696
+			if ( textLengthBefore === node.value.length ) {
+				// Set the new text field value, including the link
+				node.value = textBeforeSelection + newLink + textAfterSelectionEnd;
+
+				// Move the caret to the end of the inserted string
+				node.selectionEnd = textBeforeSelection.length + newLink.length;
+			}
 		}
 
 		render() {
