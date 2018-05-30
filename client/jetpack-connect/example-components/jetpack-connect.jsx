@@ -33,7 +33,7 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) =
 					<Gridicon size={ 24 } icon="globe" />
 					<FormTextInput
 						className="example-components__browser-chrome-url"
-						disabled="true"
+						disabled
 						placeholder={ url }
 					/>
 				</div>
@@ -44,11 +44,11 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) =
 				<div className="example-components__content-wp-admin-main">
 					<div className="example-components__content-wp-admin-connect-banner">
 						{ ! isLegacy ? (
-							<div className="example-components__content-wp-admin-plugin-name" aria-hidden="true">
+							<div className="example-components__content-wp-admin-plugin-name" aria-hidden>
 								{ translate( 'Connect Jetpack to WordPress.com' ) }
 							</div>
 						) : null }
-						<div className="example-components__content-wp-admin-connect-button" aria-hidden="true">
+						<div className="example-components__content-wp-admin-connect-button" aria-hidden>
 							{ translate( 'Set up Jetpack' ) }
 						</div>
 					</div>

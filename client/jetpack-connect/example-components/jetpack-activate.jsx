@@ -25,7 +25,7 @@ const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick } )
 					<Gridicon size={ 24 } icon="globe" />
 					<FormTextInput
 						className="example-components__browser-chrome-url"
-						disabled="true"
+						disabled
 						placeholder={ url }
 					/>
 				</div>
@@ -36,10 +36,7 @@ const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick } )
 				<div className="example-components__content-wp-admin-main">
 					{ isInstall ? (
 						<div className="example-components__content-wp-admin-activate-view">
-							<div
-								className="example-components__content-wp-admin-activate-link"
-								aria-hidden="true"
-							>
+							<div className="example-components__content-wp-admin-activate-link" aria-hidden>
 								{ translate( 'Activate Plugin', {
 									context: 'Jetpack Connect activate plugin instructions, activate link',
 								} ) }
@@ -47,14 +44,14 @@ const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick } )
 						</div>
 					) : (
 						<div className="example-components__content-wp-admin-plugin-card">
-							<div className="example-components__content-wp-admin-plugin-name" aria-hidden="true">
+							<div className="example-components__content-wp-admin-plugin-name" aria-hidden>
 								{ translate( 'Jetpack by WordPress.com', {
 									context: 'Jetpack Connect activate plugin instructions, plugin title',
 								} ) }
 							</div>
 							<div
 								className="example-components__content-wp-admin-plugin-activate-link"
-								aria-hidden="true"
+								aria-hidden
 							>
 								{ translate( 'Activate', {
 									context: 'Jetpack Connect activate plugin instructions, activate link',

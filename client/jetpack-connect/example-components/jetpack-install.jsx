@@ -25,7 +25,7 @@ const JetpackConnectExampleInstall = ( { url, translate, onClick } ) => {
 					<Gridicon size={ 24 } icon="globe" />
 					<FormTextInput
 						className="example-components__browser-chrome-url"
-						disabled="true"
+						disabled
 						placeholder={ url }
 					/>
 				</div>
@@ -34,7 +34,7 @@ const JetpackConnectExampleInstall = ( { url, translate, onClick } ) => {
 				<div className="example-components__install-plugin-header" />
 				<div className="example-components__install-plugin-body" />
 				<div className="example-components__install-plugin-footer">
-					<div className="example-components__install-plugin-footer-button" aria-hidden="true">
+					<div className="example-components__install-plugin-footer-button" aria-hidden>
 						{ translate( 'Install Now', {
 							context: 'Jetpack Connect install plugin instructions, install button',
 						} ) }
