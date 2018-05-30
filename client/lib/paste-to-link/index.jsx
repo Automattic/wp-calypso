@@ -25,6 +25,15 @@ export default WrappedComponent => {
 			WrappedComponent.name } )`;
 		static propTypes = {};
 
+		constructor( props ) {
+			super( props );
+
+			this.textareaRef = this.props.forwardedRef;
+			if ( ! this.textareaRef ) {
+				this.textareaRef = React.createRef();
+			}
+		}
+
 		handlePaste = event => {
 			const clipboardText = event.clipboardData && event.clipboardData.getData( 'text/plain' );
 
@@ -37,13 +46,11 @@ export default WrappedComponent => {
 
 		// Insert a link from the clipboard into the textbox
 		insertLink( url ) {
-			const { forwardedRef } = this.props;
+			const node = this.textareaRef.current;
 
-			if ( ! forwardedRef ) {
+			if ( ! node ) {
 				return;
 			}
-
-			const node = forwardedRef.current;
 
 			// If selectionStart and selectionEnd are the same, we don't have a selection
 			if ( node.selectionStart === node.selectionEnd ) {
@@ -65,11 +72,7 @@ export default WrappedComponent => {
 
 		render() {
 			return (
-				<WrappedComponent
-					{ ...this.props }
-					onPaste={ this.handlePaste }
-					ref={ this.props.forwardedRef }
-				/>
+				<WrappedComponent { ...this.props } onPaste={ this.handlePaste } ref={ this.textareaRef } />
 			);
 		}
 	}
