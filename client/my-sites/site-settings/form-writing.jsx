@@ -27,6 +27,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import FeedSettings from 'my-sites/site-settings/feed-settings';
 import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
@@ -69,6 +70,7 @@ class SiteSettingsFormWriting extends Component {
 			handleAutosavingToggle,
 			handleAutosavingRadio,
 			handleSubmitForm,
+			isAtomicSite,
 			isRequestingSettings,
 			isSavingSettings,
 			jetpackMasterbarSupported,
@@ -91,7 +93,8 @@ class SiteSettingsFormWriting extends Component {
 				className="site-settings__general-settings"
 			>
 				{ siteIsJetpack &&
-					jetpackMasterbarSupported && (
+					jetpackMasterbarSupported &&
+					! isAtomicSite && (
 						<div>
 							{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
 							<Masterbar
@@ -225,6 +228,7 @@ const connectComponent = connect(
 			siteIsJetpack: isJetpackSite( state, siteId ),
 			siteId,
 			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
+			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
 	{ requestPostTypes },
