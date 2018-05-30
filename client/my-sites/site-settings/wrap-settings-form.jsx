@@ -3,12 +3,12 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -38,6 +38,8 @@ import {
 } from 'state/sites/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+
+const debug = debugFactory( 'calypso:site-settings' );
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {
@@ -155,6 +157,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				jetpackSettingsUISupported,
 			} = this.props;
 			this.props.removeNotice( 'site-settings-save' );
+			debug( 'submitForm', { fields, settingsFields } );
 
 			// Support site settings for older Jetpacks as needed
 			const siteFields = pick( fields, settingsFields.site );
@@ -205,12 +208,15 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		onChangeField = field => event => {
+			const value = event.target.value;
+			debug( 'onChangeField', { field, value } );
 			this.props.updateFields( {
-				[ field ]: event.target.value,
+				[ field ]: value,
 			} );
 		};
 
 		setFieldValue = ( field, value, autosave = false ) => {
+			debug( 'setFieldValue', { field, value } );
 			this.props.updateFields(
 				{
 					[ field ]: value,
