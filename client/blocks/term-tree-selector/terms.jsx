@@ -459,14 +459,20 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const { taxonomy, query } = ownProps;
 
+	// A parent component may pass in the podcasting category ID (like in the
+	// settings page, where the user may not have saved their selection yet)...
+	let podcastingCategoryId = ownProps.podcastingCategoryId;
+	if ( typeof podcastingCategoryId === 'undefined' && taxonomy === 'category' ) {
+		// ... or we may fetch it from state ourselves (like in the editor).
+		podcastingCategoryId = getPodcastingCategoryId( state, siteId );
+	}
+
 	return {
 		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		terms: getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		query,
-		podcastingCategoryId:
-			ownProps.podcastingCategoryId ||
-			( taxonomy === 'category' && getPodcastingCategoryId( state, siteId ) ),
+		podcastingCategoryId,
 	};
 } )( localize( TermTreeSelectorList ) );
