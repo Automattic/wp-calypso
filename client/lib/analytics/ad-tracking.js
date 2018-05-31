@@ -5,7 +5,7 @@
  */
 import cookie from 'cookie';
 import debugFactory from 'debug';
-import { assign, clone, cloneDeep, get, includes, noop } from 'lodash';
+import { assign, clone, cloneDeep, get, some, includes, noop } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
@@ -93,6 +93,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
+		facebookJetpackInit: '919484458159593',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
 		atlasUniveralTagId: '11187200770563',
@@ -226,6 +227,16 @@ function setUpFacebookGlobal() {
 	if ( ! window._fbq ) {
 		window._fbq = facebookEvents;
 	}
+
+	/*
+	 * Disable automatic PageView pushState tracking. It causes problems when we're using multiple FB pixel IDs.
+	 * The objective here is to avoid firing a PageView against multiple FB pixel IDs. By disabling pushState tracking,
+	 * we can do PageView tracking for FB on our own. See: `only_retarget()` in this file.
+	 *
+	 * There's more about the `disablePushState` flag here:
+	 * <https://developers.facebook.com/ads/blog/post/2017/05/29/tagging-a-single-page-application-facebook-pixel/>
+	 */
+	window._fbq.disablePushState = true;
 
 	facebookEvents.push = facebookEvents;
 	facebookEvents.loaded = true;
@@ -440,7 +451,7 @@ function only_retarget() {
 	}
 
 	// Non rate limited retargeting
-	debug( 'Retargeting: Quantcast' );
+	debug( 'Retargeting: Quantcast & Facebook' );
 
 	// Quantcast
 	if ( isQuantcastEnabled ) {
@@ -448,6 +459,11 @@ function only_retarget() {
 			qacct: TRACKING_IDS.quantcast,
 			event: 'refresh',
 		} );
+	}
+
+	// Facebook
+	if ( isFacebookEnabled ) {
+		window.fbq( 'trackSingle', TRACKING_IDS.facebookInit, 'PageView' );
 	}
 
 	// Rate limited retargeting
@@ -458,11 +474,6 @@ function only_retarget() {
 	lastRetargetTime = nowTimestamp;
 
 	debug( 'Retargeting: others (rate limited)' );
-
-	// Facebook
-	if ( isFacebookEnabled ) {
-		window.fbq( 'track', 'PageView' );
-	}
 
 	// Twitter
 	if ( isTwitterEnabled ) {
@@ -580,7 +591,7 @@ export function isCurrentUserMaybeInGdprZone() {
  * @returns {void}
  */
 export function trackCustomFacebookConversionEvent( name, properties ) {
-	window.fbw && window.fbq( 'trackCustom', name, properties );
+	window.fbq && window.fbq( 'trackSingleCustom', TRACKING_IDS.facebookInit, name, properties );
 }
 
 /**
@@ -626,13 +637,24 @@ export function recordAddToCart( cartItem ) {
 		return loadTrackingScripts( recordAddToCart.bind( null, cartItem ) );
 	}
 
-	debug( 'Recorded that this item was added to the cart', cartItem );
+	const isJetpackPlan = productsValues.isJetpackPlan( cartItem );
+
+	if ( isJetpackPlan ) {
+		debug( 'Recorded that this Jetpack item was added to the cart', cartItem );
+	} else {
+		debug( 'Recorded that this item was added to the cart', cartItem );
+	}
 
 	if ( isFacebookEnabled ) {
-		window.fbq( 'track', 'AddToCart', {
-			product_slug: cartItem.product_slug,
-			free_trial: Boolean( cartItem.free_trial ),
-		} );
+		window.fbq(
+			'trackSingle',
+			isJetpackPlan ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
+			'AddToCart',
+			{
+				product_slug: cartItem.product_slug,
+				free_trial: Boolean( cartItem.free_trial ),
+			}
+		);
 	}
 
 	if ( isCriteoEnabled ) {
@@ -779,6 +801,23 @@ function recordProduct( product, orderId ) {
 				} );
 			}
 		}
+
+		// Facebook (disabled for now as we are not sure this works as intended).
+		// The entire order is already reported to Facebook, so not absolutely necessary.
+		/* if ( isFacebookEnabled ) {
+			window.fbq(
+				'trackSingle',
+				isJetpackPlan ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
+				'Purchase',
+				{
+					currency: product.currency,
+					product_slug: product.product_slug,
+					value: product.cost,
+					user_id: userId,
+					order_id: orderId,
+				}
+			);
+		} */
 
 		// Twitter
 		if ( isTwitterEnabled ) {
@@ -994,7 +1033,18 @@ function recordOrderInFacebook( cart, orderId ) {
 		return;
 	}
 
-	debug( 'recordOrderInFacebook: Record purchase' );
+	const containsJetpackPlan = some( cart.products, productsValues.isJetpackPlan );
+	const containsNonJetpackProduct = some( cart.products, p => {
+		return ! productsValues.isJetpackPlan( p );
+	} );
+
+	if ( containsJetpackPlan && containsNonJetpackProduct ) {
+		debug( 'recordOrderInFacebook: Record purchase containing Jetpack and non-Jetpack products' );
+	} else if ( containsJetpackPlan ) {
+		debug( 'recordOrderInFacebook: Record purchase containing Jetpack' );
+	} else {
+		debug( 'recordOrderInFacebook: Record purchase' );
+	}
 
 	const currentUser = user.get();
 
@@ -1008,7 +1058,17 @@ function recordOrderInFacebook( cart, orderId ) {
 
 	debug( 'recordParamsInFacebook: ', fbParams );
 
-	window.fbq( 'track', 'Purchase', fbParams );
+	if ( containsJetpackPlan && containsNonJetpackProduct ) {
+		window.fbq( 'track', 'Purchase', fbParams ); // Track both FB pixel IDs.
+	} else {
+		// Track only the appropriate FB pixel ID.
+		window.fbq(
+			'trackSingle',
+			containsJetpackPlan ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
+			'Purchase',
+			fbParams
+		);
+	}
 }
 
 /**
@@ -1421,7 +1481,15 @@ function initFacebook() {
 	if ( user.get() ) {
 		initFacebookAdvancedMatching();
 	} else {
-		window.fbq( 'init', TRACKING_IDS.facebookInit ); // simple data set, no advanced matching
+		window.fbq( 'init', TRACKING_IDS.facebookInit );
+
+		/*
+		 * Also initialize the FB pixel for Jetpack.
+		 * However, disable auto-config for this secondary pixel ID.
+		 * See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
+		 */
+		window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
+		window.fbq( 'init', TRACKING_IDS.facebookJetpackInit );
 	}
 }
 
@@ -1442,6 +1510,14 @@ function initFacebookAdvancedMatching() {
 	debug( 'FB Advanced Matching', advancedMatching );
 
 	window.fbq( 'init', TRACKING_IDS.facebookInit, advancedMatching );
+
+	/*
+	 * Also initialize the FB pixel for Jetpack.
+	 * However, disable auto-config for this secondary pixel ID.
+	 * See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
+	 */
+	window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
+	window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
 }
 
 /**
