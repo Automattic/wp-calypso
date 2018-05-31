@@ -312,6 +312,7 @@ class DomainsStep extends React.Component {
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					isSignupStep
+					mapDomainUrl={ this.getMapDomainUrl() }
 					onRegisterDomain={ this.handleAddDomain }
 					onTransferDomain={ this.handleAddTransfer }
 					onSave={ this.onTransferSave }
