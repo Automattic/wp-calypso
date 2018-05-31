@@ -22,10 +22,3 @@
 		margin-top: 8px;
 	}
 }
-
-// To remove margin top sticky panel on domain registration
-.sticky-panel.register-domain-step__search {
-	>.sticky-panel__content {
-		margin-top: 0;
-	}
-}
