@@ -41,6 +41,19 @@ class EditorMediaModalGalleryPreview extends Component {
 		isEditing: false,
 	};
 
+	setEditingState( isEditing ) {
+		// Save the normal state
+		this.setState( {
+			isEditing,
+		} );
+
+		// Deselect the selected item if one is not being edited anymore
+		if ( ! isEditing ) {
+			const { onItemSelected } = this.props;
+			onItemSelected( -1 );
+		}
+	}
+
 	renderPreviewModeToggle() {
 		const { translate } = this.props;
 
@@ -63,7 +76,7 @@ class EditorMediaModalGalleryPreview extends Component {
 	}
 
 	renderPreview() {
-		const { site, settings, onUpdateSetting } = this.props;
+		const { site, settings, activeItem, onUpdateSetting, onItemSelected } = this.props;
 
 		if ( ! site || ! settings.items ) {
 			return;
@@ -75,6 +88,8 @@ class EditorMediaModalGalleryPreview extends Component {
 					site={ site }
 					settings={ settings }
 					onUpdateSetting={ onUpdateSetting }
+					activeItem={ activeItem }
+					onItemSelected={ onItemSelected }
 				/>
 			);
 		}

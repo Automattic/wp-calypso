@@ -47,8 +47,19 @@ class EditorMediaModalGalleryEditItem extends Component {
 		);
 
 		return (
-			<div className={ className }>
-				<MediaLibraryListItem media={ item } scale={ 1 } photon={ false } />
+			<div
+				className={ className }
+				onClick={ this.onClick }
+				onKeyUp={ this.onKeyUp }
+				tabIndex="0"
+				role="button"
+			>
+				<MediaLibraryListItem
+					media={ item }
+					scale={ 1 }
+					photon={ false }
+					onClick={ this.onClick }
+				/>
 				{ this.renderCaption() }
 				{ showRemoveButton && (
 					<EditorMediaModalGalleryRemoveButton siteId={ site.ID } itemId={ item.ID } />
@@ -56,6 +67,27 @@ class EditorMediaModalGalleryEditItem extends Component {
 			</div>
 		);
 	}
+
+	onSelect = () => {
+		const { item, onSelect } = this.props;
+		onSelect( item.ID );
+	};
+
+	onClick = e => {
+		const { selected } = this.props;
+
+		if ( selected && 'INPUT' === e.target.tagName ) {
+			return;
+		}
+
+		this.onSelect();
+	};
+
+	onKeyUp = e => {
+		if ( 'Enter' === e.key ) {
+			this.onSelect();
+		}
+	};
 }
 
 export default connect( ( state, { site = {} } ) => {

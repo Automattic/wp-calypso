@@ -66,13 +66,28 @@
 	margin: 3%;
 
 	@include breakpoint( ">660px" ) {
-		width: 160px;
+		width: 166px;
 		margin: 16px 0 0 16px;
 	}
 }
 
+.editor-media-modal-gallery .sortable-list__item.is-active {
+	margin: 0;
+}
+
 .editor-media-modal-gallery__edit-item {
+	display: block;
 	position: relative;
+	border: 3px solid transparent;
+}
+
+.editor-media-modal-gallery__edit-item--selected,
+.editor-media-modal-gallery__edit-item:focus {
+	border-color: $blue-medium;
+}
+
+.editor-media-modal-gallery__edit-item .media-library__list-item:hover .media-library__list-item-figure {
+    box-shadow: none;
 }
 
 .editor-media-modal-gallery__remove {

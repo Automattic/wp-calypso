@@ -34,6 +34,9 @@ class SortableList extends React.Component {
 		activeIndex: null,
 		activeOrder: null,
 		position: null,
+		initialCursorPosition: null,
+		dragStarted: false,
+		enqueuedIndex: null,
 	};
 
 	componentWillMount() {
@@ -52,11 +55,25 @@ class SortableList extends React.Component {
 		document.removeEventListener( 'mouseup', this.onMouseUp );
 	}
 
-	getPositionForCursorElement = ( element, event ) => {
+	getPositionForCursorElement = ( element, event, offset ) => {
+		offset = offset || this.state.offset;
+
 		return {
-			top: event.clientY - element.clientHeight / 2,
-			left: event.clientX - element.clientWidth / 2,
+			top: event.clientY - element.clientHeight / 2 - offset.top,
+			left: event.clientX - element.clientWidth / 2 - offset.left,
 		};
+	};
+
+	getCursorOffset = ( element, event ) => {
+		const bodyRect = document.body.getBoundingClientRect();
+		const rect = element.getBoundingClientRect();
+
+		const offset = {
+			top: event.clientY - rect.top - element.clientHeight / 2 - bodyRect.top,
+			left: event.clientX - rect.left - element.clientWidth / 2 - bodyRect.left,
+		};
+
+		return offset;
 	};
 
 	compareCursorVerticalToElement = ( element, event ) => {
@@ -186,15 +203,45 @@ class SortableList extends React.Component {
 		} );
 	};
 
+	getCursorPosition( event ) {
+		return {
+			left: event.clientX,
+			top: event.clientY,
+		};
+	}
+
 	onMouseDown = ( index, event ) => {
+		const offset = this.getCursorOffset( event.currentTarget.firstChild, event );
+
 		this.setState( {
-			activeIndex: index,
-			position: this.getPositionForCursorElement( event.currentTarget.firstChild, event ),
+			offset,
+			dragStarted: false,
+			enqueuedIndex: index,
+			position: this.getPositionForCursorElement( event.currentTarget.firstChild, event, offset ),
+			initialCursorPosition: this.getCursorPosition( event ),
 		} );
 	};
 
 	onMouseMove = event => {
 		let activeOrder, newIndex;
+
+		if ( null !== this.state.enqueuedIndex && ! this.state.dragStarted ) {
+			const { initialCursorPosition } = this.state;
+			const cursorPosition = this.getCursorPosition( event );
+			const distance = Math.max(
+				Math.abs( initialCursorPosition.left - cursorPosition.left ),
+				Math.abs( initialCursorPosition.top - cursorPosition.top )
+			);
+
+			if ( distance > 5 ) {
+				this.setState( {
+					dragStarted: true,
+					activeIndex: this.state.enqueuedIndex,
+					enqueuedIndex: null,
+				} );
+			}
+		}
+
 		if ( null === this.state.activeIndex || ! this.props.allowDrag || hasTouch() ) {
 			return;
 		}
@@ -249,6 +296,8 @@ class SortableList extends React.Component {
 			activeIndex: null,
 			activeOrder: null,
 			position: null,
+			dragStarted: false,
+			enqueuedIndex: null,
 		} );
 	};
 

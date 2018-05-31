@@ -43,7 +43,7 @@ class EditorMediaModalGalleryEdit extends React.Component {
 	};
 
 	render() {
-		const { onUpdateSetting, site, settings, translate } = this.props;
+		const { onUpdateSetting, site, settings, translate, activeItem, onItemSelected } = this.props;
 
 		if ( ! site || ! settings.items ) {
 			return null;
@@ -67,14 +67,15 @@ class EditorMediaModalGalleryEdit extends React.Component {
 						);
 					} ) }
 				</EllipsisMenu>
-				<SortableList onChange={ this.onOrderChanged }>
+				<SortableList onChange={ this.onOrderChanged } minimumDistance={ 10 }>
 					{ settings.items.map( item => {
 						return (
 							<EditorMediaModalGalleryEditItem
 								key={ item.ID }
 								site={ site }
 								item={ item }
-								selected={ true }
+								selected={ activeItem === item.ID }
+								onSelect={ onItemSelected }
 								showRemoveButton={ settings.items.length > 1 }
 							/>
 						);

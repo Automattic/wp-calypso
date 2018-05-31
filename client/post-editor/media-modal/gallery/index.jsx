@@ -38,6 +38,7 @@ class EditorMediaModalGallery extends React.Component {
 
 	state = {
 		invalidItemDropped: false,
+		activeItem: -1,
 	};
 
 	componentWillMount() {
@@ -123,6 +124,7 @@ class EditorMediaModalGallery extends React.Component {
 
 	render() {
 		const { site, items, settings } = this.props;
+		const { activeItem } = this.state;
 
 		return (
 			<div className="editor-media-modal-gallery">
@@ -142,6 +144,8 @@ class EditorMediaModalGallery extends React.Component {
 						onUpdateSetting={ this.updateSetting }
 						invalidItemDropped={ this.state.invalidItemDropped }
 						onDismissInvalidItemDropped={ () => this.setState( { invalidItemDropped: false } ) }
+						activeItem={ activeItem }
+						onItemSelected={ this.selectItem }
 					/>
 					<div className="editor-media-modal-gallery__sidebar">
 						<EditorMediaModalGalleryFields
@@ -150,11 +154,21 @@ class EditorMediaModalGallery extends React.Component {
 							onUpdateSetting={ this.updateSetting }
 							numberOfItems={ items.length }
 						/>
+
+						{ this.state.activeItem }
 					</div>
 				</div>
 			</div>
 		);
 	}
+
+	selectItem = item => {
+		const { activeItem } = this.state;
+
+		this.setState( {
+			activeItem: ! item || activeItem === item ? -1 : item,
+		} );
+	};
 }
 
 export default connect( null, {
