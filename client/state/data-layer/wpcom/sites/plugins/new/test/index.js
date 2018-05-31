@@ -92,7 +92,7 @@ describe( 'receiveError', () => {
 } );
 
 describe( 'updateUploadProgress', () => {
-	test( 'should return a  plugin upload progress update action', () => {
+	test( 'should return a plugin upload progress update action', () => {
 		const action = updateUploadProgress( { siteId }, { loaded: 200, total: 400 } );
 		expect( action ).toEqual( updatePluginUploadProgress( siteId, 50 ) );
 	} );
