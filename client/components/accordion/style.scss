@@ -25,7 +25,6 @@ $accordion-background-expanded: $white;
 	color: $gray-dark;
 	background-color: $accordion-background-collapsed;
 	text-align: left;
-	transition: all 150ms ease-in;
 
 	&:hover {
 		background-color: $accordion-background-hover;
