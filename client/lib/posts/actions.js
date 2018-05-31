@@ -5,7 +5,7 @@
  */
 
 import store from 'store';
-import { assign, clone, includes, map, pick, reduce } from 'lodash';
+import { assign, clone, includes, pick, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -135,7 +135,6 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
 				'type',
 			] );
 
-			postAttributes.tags = map( postToCopy.tags, 'name' );
 			postAttributes.title = decodeEntities( postToCopy.title );
 			postAttributes.featured_image = utils.getFeaturedImageId( postToCopy );
 
