@@ -1,25 +1,40 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import { createReducer, combineReducers } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
+	COUNTRIES_DOMAINS_FETCH,
 	COUNTRIES_DOMAINS_UPDATED,
+	COUNTRIES_PAYMENTS_FETCH,
 	COUNTRIES_PAYMENTS_UPDATED,
+	COUNTRIES_SMS_FETCH,
 	COUNTRIES_SMS_UPDATED,
 } from 'state/action-types';
 
-const domains = createReducer( [], {
-	[ COUNTRIES_DOMAINS_UPDATED ]: ( countries, action ) => action.countries,
-} );
+const createListReducer = ( fetchActionType, updatedActionType ) => createReducer(
+	{
+		isFetching: false,
+		items: [],
+	},
+	{
+		[ fetchActionType ]: ( state ) => ( {
+			...state,
+			isFetching: true
+		} ),
+		[ updatedActionType ]: ( state, action ) => ( {
+			isFetching: false,
+			items: action.countries,
+		} )
+	}
+);
 
-const payments = createReducer( [], {
-	[ COUNTRIES_PAYMENTS_UPDATED ]: ( countries, action ) => action.countries,
-} );
+const domains = createListReducer( COUNTRIES_DOMAINS_FETCH, COUNTRIES_DOMAINS_UPDATED );
 
-const sms = createReducer( [], {
-	[ COUNTRIES_SMS_UPDATED ]: ( countries, action ) => action.countries,
-} );
+const payments = createListReducer( COUNTRIES_PAYMENTS_FETCH, COUNTRIES_PAYMENTS_UPDATED );
+
+const sms = createListReducer( COUNTRIES_SMS_FETCH, COUNTRIES_SMS_UPDATED );
 
 export default combineReducers( {
 	domains,
