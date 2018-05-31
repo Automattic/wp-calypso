@@ -98,6 +98,7 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
+									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
