@@ -56,6 +56,7 @@ class TransferDomainStep extends React.Component {
 		goBack: PropTypes.func,
 		initialQuery: PropTypes.string,
 		isSignupStep: PropTypes.bool,
+		mapDomainUrl: PropTypes.string,
 		onRegisterDomain: PropTypes.func,
 		onTransferDomain: PropTypes.func,
 		onSave: PropTypes.func,
@@ -112,20 +113,23 @@ class TransferDomainStep extends React.Component {
 	}
 
 	getMapDomainUrl() {
-		const { basePath, selectedSite } = this.props;
-		let mapDomainUrl;
+		const { basePath, mapDomainUrl, selectedSite } = this.props;
+		if ( mapDomainUrl ) {
+			return mapDomainUrl;
+		}
 
+		let buildMapDomainUrl;
 		const basePathForMapping = endsWith( basePath, '/transfer' )
 			? basePath.substring( 0, basePath.length - 9 )
 			: basePath;
 
-		const query = stringify( { initialQuery: this.state.searchQuery.trim() } );
-		mapDomainUrl = `${ basePathForMapping }/mapping`;
+		buildMapDomainUrl = `${ basePathForMapping }/mapping`;
 		if ( selectedSite ) {
-			mapDomainUrl += `/${ selectedSite.slug }?${ query }`;
+			const query = stringify( { initialQuery: this.state.searchQuery.trim() } );
+			buildMapDomainUrl += `/${ selectedSite.slug }?${ query }`;
 		}
 
-		return mapDomainUrl;
+		return buildMapDomainUrl;
 	}
 
 	goToMapDomainStep = event => {
@@ -451,8 +455,8 @@ class TransferDomainStep extends React.Component {
 
 							this.setState( {
 								notice: this.props.translate(
-									'We are temporarily unable to support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}. ' +
-										'Please try again later or {{a}}map it{{/a}} instead.',
+									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
+										'but you can {{a}}map it{{/a}} instead.',
 									{
 										args: { tld },
 										components: {

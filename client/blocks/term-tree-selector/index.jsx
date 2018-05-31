@@ -30,6 +30,7 @@ export default class extends React.Component {
 		addTerm: PropTypes.bool,
 		postType: PropTypes.string,
 		onAddTermSuccess: PropTypes.func,
+		podcastingCategoryId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -74,6 +75,7 @@ export default class extends React.Component {
 			addTerm,
 			postType,
 			onAddTermSuccess,
+			podcastingCategoryId,
 		} = this.props;
 
 		const classes = classNames( className );
@@ -95,6 +97,7 @@ export default class extends React.Component {
 					multiple={ multiple }
 					height={ height }
 					compact={ compact }
+					podcastingCategoryId={ podcastingCategoryId }
 				/>
 				{ addTerm && (
 					<TermSelectorAddTerm
