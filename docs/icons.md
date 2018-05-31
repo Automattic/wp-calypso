@@ -20,6 +20,16 @@ render() {
 }
 ```
 
+If your project is using a small number of icons, the recommendation is to import them individually. By doing so, your JavaScript bundle will be smaller because only the icons you actually use will be added to your bundle.
+
+```
+import GridiconExternal from 'gridicons/dist/external';
+//...
+render() {
+	<GridiconExternal />
+}
+```
+
 **Props**
 
 - `icon`: String - the icon name. This is ignored when importing icons individually.
