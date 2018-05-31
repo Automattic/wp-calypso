@@ -65,7 +65,7 @@ function maybeRedirect( context ) {
 			if ( context.querystring ) {
 				path += `?${ context.querystring }`;
 			}
-			page.redirect( path );
+			page.replace( path, null, false, false );
 			return true;
 		}
 	}

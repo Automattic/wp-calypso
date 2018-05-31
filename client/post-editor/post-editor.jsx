@@ -41,7 +41,6 @@ import {
 import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import {
 	getEditorPostId,
-	getEditorPath,
 	isConfirmationSidebarEnabled,
 	isEditorNewPost,
 	isEditorAutosaving,
@@ -93,7 +92,6 @@ export class PostEditor extends React.Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
-		editPath: PropTypes.string,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -172,10 +170,6 @@ export class PostEditor extends React.Component {
 
 	componentWillReceiveProps( nextProps ) {
 		const { siteId, postId } = this.props;
-		if ( nextProps.siteId === siteId && nextProps.postId !== postId ) {
-			// make sure the history entry has the post ID in it, but don't dispatch
-			page.replace( nextProps.editPath, null, false, false );
-		}
 
 		if ( nextProps.siteId !== siteId || nextProps.postId !== postId ) {
 			this.useDefaultSidebarFocus( nextProps );
@@ -380,7 +374,6 @@ export class PostEditor extends React.Component {
 							previewUrl={ this.props.previewUrl }
 							postId={ this.props.postId }
 							externalUrl={ this.getExternalUrl() }
-							editUrl={ this.props.editPath }
 							revision={ get( this.props.post, 'revisions.length', 0 ) }
 						/>
 					) : null }
@@ -707,14 +700,8 @@ export class PostEditor extends React.Component {
 		this.onSaveFailure( error, 'saveFailure' );
 	};
 
-	onSaveDraftSuccess = () => {
-		const { post } = this.props;
-
-		if ( utils.isPublished( post ) ) {
-			this.onSaveSuccess( 'updated' );
-		} else {
-			this.onSaveSuccess();
-		}
+	onSaveDraftSuccess = saveResult => {
+		this.onSaveSuccess( saveResult, 'save' );
 	};
 
 	onPublish = ( isConfirmed = false ) => {
@@ -760,23 +747,14 @@ export class PostEditor extends React.Component {
 	};
 
 	onPublishFailure = error => {
-		this.onSaveFailure( error, 'publishFailure' );
-
 		if ( this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
+
+		this.onSaveFailure( error, 'publishFailure' );
 	};
 
-	onPublishSuccess = () => {
-		let message;
-		if ( utils.isPrivate( this.props.savedPost ) ) {
-			message = 'publishedPrivately';
-		} else if ( utils.isFutureDated( this.props.savedPost ) ) {
-			message = 'scheduled';
-		} else {
-			message = 'published';
-		}
-
+	onPublishSuccess = saveResult => {
 		if ( ! this.state.confirmationSidebarPreference ) {
 			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
@@ -785,7 +763,7 @@ export class PostEditor extends React.Component {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 
-		this.onSaveSuccess( message );
+		this.onSaveSuccess( saveResult, 'publish' );
 	};
 
 	onSaveFailure = ( error, message ) => {
@@ -811,10 +789,26 @@ export class PostEditor extends React.Component {
 		} );
 	};
 
-	onSaveSuccess = message => {
-		const { post } = this.props;
-		const isNotPrivateOrIsConfirmed =
-			'private' !== post.status || 'closed' !== this.state.confirmationSidebar;
+	onSaveSuccess = ( saveResult, type ) => {
+		let message = null;
+
+		if ( saveResult ) {
+			const { receivedPost } = saveResult;
+
+			if ( type === 'save' ) {
+				if ( utils.isPublished( receivedPost ) ) {
+					message = 'updated';
+				}
+			} else if ( type === 'publish' ) {
+				if ( utils.isPrivate( receivedPost ) ) {
+					message = 'publishedPrivately';
+				} else if ( utils.isFutureDated( receivedPost ) ) {
+					message = 'scheduled';
+				} else {
+					message = 'published';
+				}
+			}
+		}
 
 		const nextState = {
 			isSaving: false,
@@ -829,7 +823,7 @@ export class PostEditor extends React.Component {
 
 			window.scrollTo( 0, 0 );
 
-			if ( this.props.isSitePreviewable && isNotPrivateOrIsConfirmed && 'published' === message ) {
+			if ( this.props.isSitePreviewable && message === 'published' ) {
 				this.setState( { isPostPublishPreview: true } );
 				this.iframePreview();
 			}
@@ -838,6 +832,12 @@ export class PostEditor extends React.Component {
 		}
 
 		this.setState( nextState );
+
+		// make sure the history entry has the post ID in it, but don't dispatch
+		if ( saveResult && saveResult.idAssigned ) {
+			const editUrl = utils.getEditURL( saveResult.receivedPost, this.props.selectedSite );
+			page.replace( editUrl, null, false, false );
+		}
 	};
 
 	getEditorMode = () => {
@@ -1131,7 +1131,6 @@ const enhance = flow(
 				selectedSite: getSelectedSite( state ),
 				editorModePreference: getPreference( state, 'editor-mode' ),
 				editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
-				editPath: getEditorPath( state, siteId, postId ),
 				isNew: isEditorNewPost( state ),
 				isDirty: isEditedPostDirty( state, siteId, postId ),
 				hasContent: editedPostHasContent( state, siteId, postId ),

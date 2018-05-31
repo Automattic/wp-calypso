@@ -175,10 +175,22 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
 };
 
 /*
-	 * Calls out to API to save a Post object
-	 *
-	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
-	 */
+ * Construct a "save result" object that contains the received post object and a boolean
+ * flag that tells whether a post ID was assigned during this save. Happens when a new draft
+ * has been just saved for the first time.
+ */
+function saveResult( localPost, receivedPost = localPost ) {
+	return {
+		receivedPost,
+		idAssigned: localPost.ID !== receivedPost.ID,
+	};
+}
+
+/*
+ * Calls out to API to save a Post object
+ *
+ * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
+ */
 export const saveEdited = options => async ( dispatch, getState ) => {
 	const siteId = getSelectedSiteId( getState() );
 	const postId = getEditorPostId( getState() );
@@ -200,7 +212,7 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 	// Don't send a request to the API if the post is unchanged. An empty  post request is invalid.
 	// This case is not treated as error, but rather as a successful save.
 	if ( ! Object.keys( changedAttributes ).length ) {
-		return;
+		return saveResult( post );
 	}
 
 	changedAttributes = normalizeApiAttributes( changedAttributes );
@@ -267,6 +279,8 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 	if ( mode === currentMode ) {
 		dispatch( editorInitRawContent( rawContent ) );
 	}
+
+	return saveResult( post, receivedPost );
 };
 
 export const autosave = () => async ( dispatch, getState ) => {
@@ -287,7 +301,8 @@ export const autosave = () => async ( dispatch, getState ) => {
 	// TODO: incorporate post locking
 	if ( utils.isPublished( savedPost ) || utils.isPublished( post ) ) {
 		await dispatch( editorAutosave( post ) );
-	} else {
-		await dispatch( saveEdited( { recordSaveEvent: false, autosave: true } ) );
+		return null;
 	}
+
+	return await dispatch( saveEdited( { recordSaveEvent: false, autosave: true } ) );
 };

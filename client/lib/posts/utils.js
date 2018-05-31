@@ -6,7 +6,7 @@
 
 import url from 'url';
 import { moment } from 'i18n-calypso';
-import { includes } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,14 +14,36 @@ import { includes } from 'lodash';
 import postNormalizer from 'lib/post-normalizer';
 
 export const getEditURL = function( post, site ) {
-	let basePath = '';
-	const postType = post.type || 'post';
-
-	if ( ! includes( [ 'post', 'page' ], postType ) ) {
-		basePath = '/edit';
+	if ( ! site ) {
+		return '/post';
 	}
 
-	return `${ basePath }/${ postType }/${ site.slug }/${ post.ID }`;
+	if ( ! post ) {
+		return `/post/${ site.slug }`;
+	}
+
+	let path;
+
+	const type = get( post, 'type', 'post' );
+	switch ( type ) {
+		case 'post':
+			path = '/post';
+			break;
+		case 'page':
+			path = '/page';
+			break;
+		default:
+			path = `/edit/${ type }`;
+			break;
+	}
+
+	path += `/${ site.slug }`;
+
+	if ( post.ID ) {
+		path += `/${ post.ID }`;
+	}
+
+	return path;
 };
 
 export const getPreviewURL = function( site, post, autosavePreviewUrl ) {
