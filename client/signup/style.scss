@@ -13,6 +13,14 @@
 	left: 0;
 	right: 0;
 	overflow: hidden;
+
+
+	// To remove margin top sticky panel on domain registration
+	.sticky-panel.register-domain-step__search {
+		>.sticky-panel__content {
+			margin-top: 0;
+		}
+	}
 }
 
 .signup__step-enter {
