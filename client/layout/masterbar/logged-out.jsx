@@ -40,10 +40,6 @@ class MasterbarLoggedOut extends PureComponent {
 		title: '',
 	};
 
-	getRedirectToFromCurrentQuery() {
-		return get( this.props.currentQuery, 'redirect_to', '' );
-	}
-
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
 
