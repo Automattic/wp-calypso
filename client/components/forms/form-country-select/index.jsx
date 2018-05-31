@@ -23,7 +23,6 @@ export default localize(
 					{
 						key: '',
 						label: this.props.translate( 'Loading…' ),
-						disabled: true,
 					},
 				];
 			}
