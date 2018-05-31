@@ -61,13 +61,13 @@ class EditorMediaModalGalleryPreview extends Component {
 			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact>
 				<SegmentedControlItem
 					selected={ ! this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: false } ) }
+					onClick={ () => this.setEditingState( false ) }
 				>
 					{ translate( 'Preview' ) }
 				</SegmentedControlItem>
 				<SegmentedControlItem
 					selected={ this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: true } ) }
+					onClick={ () => this.setEditingState( true ) }
 				>
 					{ translate( 'Edit' ) }
 				</SegmentedControlItem>
