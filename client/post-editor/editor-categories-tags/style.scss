@@ -12,3 +12,9 @@
 		justify-content: flex-end;
 	}
 }
+
+.editor-categories-tags__accordion {
+	.accordion__toggle {
+		transition: none;
+	}
+}
