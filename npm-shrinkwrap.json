@@ -15015,8 +15015,8 @@
       }
     },
     "redux-thunk": {
-      "version": "1.0.0",
-      "integrity": "sha1-41VEoQ/NnJ47qWCDrBbHAjlPQAk="
+      "version": "2.3.0",
+      "integrity": "sha512-km6dclyFnmcvxhAcrQV2AkZmPQjzPDjgVlQtR0EQjxZPyJ0BnMf3in1ryuR8A2qU0HldVRfxYXbFSKlI3N7Slw=="
     },
     "regenerate": {
       "version": "1.4.0",
