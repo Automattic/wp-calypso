@@ -27,6 +27,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import FeedSettings from 'my-sites/site-settings/feed-settings';
 import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
@@ -69,9 +70,9 @@ class SiteSettingsFormWriting extends Component {
 			handleAutosavingToggle,
 			handleAutosavingRadio,
 			handleSubmitForm,
+			isMasterbarSectionVisible,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackMasterbarSupported,
 			jetpackSettingsUISupported,
 			onChangeField,
 			setFieldValue,
@@ -90,16 +91,15 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__general-settings"
 			>
-				{ siteIsJetpack &&
-					jetpackMasterbarSupported && (
-						<div>
-							{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
-							<Masterbar
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-							/>
-						</div>
-					) }
+				{ isMasterbarSectionVisible && (
+					<div>
+						{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
+						<Masterbar
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+						/>
+					</div>
+				) }
 
 				{ config.isEnabled( 'manage/site-settings/categories' ) && (
 					<div className="site-settings__taxonomies">
@@ -218,13 +218,18 @@ class SiteSettingsFormWriting extends Component {
 const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const siteIsJetpack = isJetpackSite( state, siteId );
 
 		return {
 			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
-			jetpackMasterbarSupported: isJetpackMinimumVersion( state, siteId, '4.8' ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteIsJetpack,
 			siteId,
 			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
+			isMasterbarSectionVisible:
+				siteIsJetpack &&
+				isJetpackMinimumVersion( state, siteId, '4.8' ) &&
+				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
+				! isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
 	{ requestPostTypes },
