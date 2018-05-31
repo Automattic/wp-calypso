@@ -521,9 +521,9 @@ export class PostEditor extends React.Component {
 		}
 
 		try {
-			await this.props.autosave();
+			const saveResult = await this.props.autosave();
 			if ( ! savingPublishedPost ) {
-				this.onSaveDraftSuccess();
+				this.onSaveDraftSuccess( saveResult );
 			}
 		} catch ( error ) {
 			if ( ! savingPublishedPost ) {
