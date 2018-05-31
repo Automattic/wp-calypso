@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { parse as parseUrl } from 'url';
 
@@ -69,11 +69,18 @@ export class LoginLinks extends React.Component {
 	};
 
 	renderBackLink() {
-		// If we seem to be in a Jetpack connection flow, provide some special handling
-		// so users can go back to their site rather than WordPress.com
 		const redirectTo = get( this.props, [ 'query', 'redirect_to' ] );
 		if ( redirectTo ) {
 			const { pathname, query: redirectToQuery } = parseUrl( redirectTo, true );
+
+			// If we are in a Domain Connect authorization flow, don't show the back link
+			// since this page was loaded by a redirect from a third party service provider.
+			if ( startsWith( pathname, '/domain-connect/authorize/' ) ) {
+				return null;
+			}
+
+			// If we seem to be in a Jetpack connection flow, provide some special handling
+			// so users can go back to their site rather than WordPress.com
 			if ( pathname === '/jetpack/connect/authorize' && redirectToQuery.client_id ) {
 				const returnToSiteUrl = addQueryArgs(
 					{ client_id: redirectToQuery.client_id },

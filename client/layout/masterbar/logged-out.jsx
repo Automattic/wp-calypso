@@ -102,6 +102,15 @@ class MasterbarLoggedOut extends PureComponent {
 			return null;
 		}
 
+		/**
+		 * Hide signup from the screen when we have been sent to the login page from a redirect
+		 * by a service provider to authorize a Domain Connect template application.
+		 */
+		const redirectTo = get( currentQuery, 'redirect_to', '' );
+		if ( startsWith( redirectTo, '/domain-connect/authorize/' ) ) {
+			return null;
+		}
+
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
 		if (
