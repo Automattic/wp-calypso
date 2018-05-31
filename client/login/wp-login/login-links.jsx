@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, startsWith } from 'lodash';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { parse as parseUrl } from 'url';
 
@@ -25,6 +25,7 @@ import { isEnabled } from 'config';
 import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -75,7 +76,7 @@ export class LoginLinks extends React.Component {
 
 			// If we are in a Domain Connect authorization flow, don't show the back link
 			// since this page was loaded by a redirect from a third party service provider.
-			if ( startsWith( pathname, '/domain-connect/authorize/' ) ) {
+			if ( isDomainConnectAuthorizePath( redirectTo ) ) {
 				return null;
 			}
 

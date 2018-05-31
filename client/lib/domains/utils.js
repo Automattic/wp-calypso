@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { drop, isEmpty, join, find, split, values } from 'lodash';
+import { drop, isEmpty, join, find, split, startsWith, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -104,6 +104,10 @@ function getDomainNameFromReceiptOrCart( receipt, cart ) {
 	return null;
 }
 
+function isDomainConnectAuthorizePath( path ) {
+	return startsWith( path, '/domain-connect/authorize/' );
+}
+
 function parseDomainAgainstTldList( domainFragment, tldList ) {
 	if ( ! domainFragment ) {
 		return '';
@@ -124,5 +128,6 @@ export {
 	getDomainType,
 	getGdprConsentStatus,
 	getTransferStatus,
+	isDomainConnectAuthorizePath,
 	parseDomainAgainstTldList,
 };

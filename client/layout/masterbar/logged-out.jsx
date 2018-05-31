@@ -22,6 +22,7 @@ import { addQueryArgs } from 'lib/route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
+import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 
 class MasterbarLoggedOut extends PureComponent {
 	static propTypes = {
@@ -38,6 +39,10 @@ class MasterbarLoggedOut extends PureComponent {
 		sectionName: '',
 		title: '',
 	};
+
+	getRedirectToFromCurrentQuery() {
+		return get( this.props.currentQuery, 'redirect_to', '' );
+	}
 
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
@@ -107,7 +112,7 @@ class MasterbarLoggedOut extends PureComponent {
 		 * by a service provider to authorize a Domain Connect template application.
 		 */
 		const redirectTo = get( currentQuery, 'redirect_to', '' );
-		if ( startsWith( redirectTo, '/domain-connect/authorize/' ) ) {
+		if ( isDomainConnectAuthorizePath( redirectTo ) ) {
 			return null;
 		}
 
