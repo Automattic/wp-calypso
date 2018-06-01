@@ -37,7 +37,7 @@ class Transfer extends React.PureComponent {
 	};
 
 	render() {
-		const { domain, selectedSite, translate } = this.props;
+		const { domain, translate } = this.props;
 		const { isSubmitting } = this.state;
 		let content = this.getDomainDetailsCard();
 
@@ -59,7 +59,7 @@ class Transfer extends React.PureComponent {
 		} else {
 			cancelNavItem = (
 				<VerticalNav>
-					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
+					<VerticalNavItem path={ cancelPurchaseLink( domain.subscriptionId ) }>
 						{ translate( 'Cancel Transfer' ) }
 					</VerticalNavItem>
 				</VerticalNav>

@@ -194,7 +194,7 @@ class CancelPurchaseButton extends Component {
 		const { id } = this.props.purchase,
 			{ slug } = this.props.selectedSite;
 
-		page( confirmCancelDomain( slug, id ) );
+		page( confirmCancelDomain( id ) );
 	};
 
 	cancelPurchase = () => {

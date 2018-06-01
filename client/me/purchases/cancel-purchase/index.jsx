@@ -95,7 +95,7 @@ class CancelPurchase extends React.Component {
 			purchase &&
 			( ! isCancelable( purchase ) || isDomainTransfer( purchase ) )
 		) {
-			redirectPath = managePurchase( selectedSite.slug, purchase.id );
+			redirectPath = managePurchase( purchase.id );
 		}
 
 		page.redirect( redirectPath );
@@ -184,7 +184,7 @@ class CancelPurchase extends React.Component {
 					eventName="calypso_cancel_purchase_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake backHref={ managePurchase( this.props.purchaseId ) }>
 					{ titles.cancelPurchase }
 				</HeaderCake>
 

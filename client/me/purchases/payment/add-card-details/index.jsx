@@ -68,7 +68,7 @@ class AddCardDetails extends PurchaseCardDetails {
 					path="/me/purchases/:site/:purchaseId/payment/add"
 					title="Purchases > Add Card Details"
 				/>
-				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake backHref={ managePurchase( this.props.purchaseId ) }>
 					{ titles.addCardDetails }
 				</HeaderCake>
 
