@@ -27,9 +27,11 @@ import HeaderCake from 'components/header-cake';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
+import PodcastingPrivateSiteMessage from './private-site';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import isPrivateSite from 'state/selectors/is-private-site';
 import { isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
 
 class PodcastingDetails extends Component {
@@ -155,20 +157,39 @@ class PodcastingDetails extends Component {
 			handleSubmitForm,
 			siteSlug,
 			siteId,
+			isPrivate,
 			podcastingCategoryId,
 			translate,
 			isPodcastingEnabled,
 			fields,
 		} = this.props;
+
 		if ( ! siteId ) {
 			return null;
+		}
+
+		const writingHref = `/settings/writing/${ siteSlug }`;
+
+		if ( isPrivate ) {
+			return (
+				<div
+					className="main main-column" // eslint-disable-line
+					role="main"
+				>
+					<DocumentHead title={ translate( 'Podcasting Settings' ) } />
+					<HeaderCake backHref={ writingHref } backText={ translate( 'Writing' ) }>
+						<h1>{ translate( 'Podcasting Settings' ) }</h1>
+					</HeaderCake>
+					<Card>
+						<PodcastingPrivateSiteMessage />
+					</Card>
+				</div>
+			);
 		}
 
 		const classes = classNames( 'podcasting-details__wrapper', {
 			'is-disabled': ! isPodcastingEnabled,
 		} );
-
-		const writingHref = `/settings/writing/${ siteSlug }`;
 
 		return (
 			<div
@@ -326,6 +347,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
+		isPrivate: isPrivateSite( state, siteId ),
 		podcastingCategoryId,
 		isPodcastingEnabled,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
