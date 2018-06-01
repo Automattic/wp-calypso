@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -38,10 +37,24 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
+import scrollTo from 'lib/scroll-to';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
 		this._showWarning( this.props.site );
+	}
+
+	componentDidMount() {
+		// Wait for page.js to update the URL, then see if we are linking
+		// directly to a section of this page.
+		setTimeout( () => {
+			const hash = window.location.hash;
+			const el = hash && document.getElementById( hash.substring( 1 ) );
+			if ( hash && el ) {
+				const y = el.offsetTop - document.getElementById( 'header' ).offsetHeight - 15;
+				scrollTo( { y } );
+			}
+		} );
 	}
 
 	onTimezoneSelect = timezone => {
@@ -475,7 +488,7 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				<SectionHeader label={ translate( 'Privacy' ) }>
+				<SectionHeader label={ translate( 'Privacy' ) } id="site-privacy-settings">
 					<Button
 						compact={ true }
 						onClick={ handleSubmitForm }
