@@ -59,7 +59,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.managePurchase(),
+		paths.managePurchase( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
