@@ -19,6 +19,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import InfoPopover from 'components/info-popover';
 import PostSchedule from 'components/post-schedule';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import { decodeEntities } from 'lib/formatting';
 import {
 	bumpStat,
@@ -29,6 +30,7 @@ import {
 import { editComment } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
 import getSiteComment from 'state/selectors/get-site-comment';
+import getSiteSetting from 'state/selectors/get-site-setting';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -49,6 +51,11 @@ export class CommentEdit extends Component {
 		const { authorDisplayName, authorUrl, commentContent, commentDate } = this.props;
 		this.setState( { authorDisplayName, authorUrl, commentContent, commentDate } );
 	}
+
+	getTimezoneForPostSchedule = () => ( {
+		timezone: this.props.siteTimezone || undefined,
+		gmtOffset: parseInt( this.props.siteGmtOffset, 10 ),
+	} );
 
 	setAuthorDisplayNameValue = event => this.setState( { authorDisplayName: event.target.value } );
 
@@ -101,7 +108,10 @@ export class CommentEdit extends Component {
 		const {
 			isAuthorRegistered,
 			isEditCommentSupported,
+			siteGmtOffset,
+			siteId,
 			siteSlug,
+			siteTimezone,
 			toggleEditMode,
 			translate,
 		} = this.props;
@@ -109,6 +119,7 @@ export class CommentEdit extends Component {
 
 		return (
 			<div className="comment__edit">
+				{ ! siteTimezone && ! siteGmtOffset && <QuerySiteSettings siteId={ siteId } /> }
 				<div className="comment__edit-header">{ translate( 'Edit Comment' ) }</div>
 
 				<div className="comment__edit-wrapper">
@@ -144,7 +155,11 @@ export class CommentEdit extends Component {
 
 					<FormFieldset>
 						<FormLabel htmlFor="date">{ translate( 'Submitted on' ) }</FormLabel>
-						<PostSchedule selectedDay={ commentDate } onDateChange={ this.setCommentDateValue } />
+						<PostSchedule
+							selectedDay={ commentDate }
+							onDateChange={ this.setCommentDateValue }
+							{ ...this.getTimezoneForPostSchedule() }
+						/>
 					</FormFieldset>
 
 					<CommentHtmlEditor
@@ -195,8 +210,10 @@ const mapStateToProps = ( state, { commentId } ) => {
 		isAuthorRegistered: 0 !== get( comment, 'author.ID' ),
 		isEditCommentSupported,
 		postId: get( comment, 'post.ID' ),
+		siteGmtOffset: getSiteSetting( state, siteId, 'gmt_offset' ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		siteTimezone: getSiteSetting( state, siteId, 'timezone_string' ),
 	};
 };
 
