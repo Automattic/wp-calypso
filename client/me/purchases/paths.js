@@ -15,10 +15,13 @@ export function billingHistoryReceipt( receiptId ) {
 	return billingHistory + `/${ receiptId }`;
 }
 
-export function managePurchase( purchaseId ) {
+export function managePurchase( purchaseId, __guard__ ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof purchaseId ) {
 			throw new Error( 'purchaseId must be provided' );
+		}
+		if ( 'undefined' !== typeof purchaseId ) {
+			throw new Error( `Unexpected parameter found: \`${ JSON.stringify( __guard__ ) }\`` );
 		}
 	}
 	return purchasesRoot + `/${ purchaseId }`;
