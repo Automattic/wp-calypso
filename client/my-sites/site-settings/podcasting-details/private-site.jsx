@@ -19,7 +19,7 @@ function PodcastingPrivateSiteMessage( { siteSlug, translate } ) {
 				{ translate( "This site's visibility is currently set to {{strong}}Private{{/strong}}.", {
 					components: { strong: <strong /> },
 					comment:
-						'The translations for "Private", "Public", and "Hidden" should match the strings on the Settings > General page.',
+						'The translation for "Private" should match the string on the Settings > General page.',
 				} ) }
 			</p>
 			<p>
