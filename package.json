@@ -27,7 +27,7 @@
     "@babel/preset-react": "7.0.0-beta.44",
     "@babel/preset-stage-2": "7.0.0-beta.44",
     "@babel/runtime": "7.0.0-beta.44",
-    "assets-webpack-plugin": "3.5.1",
+    "assets-webpack-plugin": "4.0.0",
     "autoprefixer": "6.3.5",
     "autosize": "3.0.15",
     "babel-core": "7.0.0-bridge.0",
