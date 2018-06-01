@@ -127,7 +127,6 @@ export class MediaLibraryFilterBar extends Component {
 				{ tabs.map( filter => (
 					<SectionNavTabItem
 						key={ 'filter-tab-' + filter }
-						value={ filter }
 						selected={ this.props.filter === filter }
 						onClick={ this.changeFilter( filter ) }
 						disabled={ this.isFilterDisabled( filter ) }
