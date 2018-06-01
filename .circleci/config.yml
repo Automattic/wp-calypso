@@ -96,19 +96,20 @@ jobs:
             find . -type f -regex  ".*/test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/ \;
           when: always
 
+      - run:
+          name: Add code coverage status check to PR
+          command: |
+             set +o pipefail
+             cat coverage/clover.xml | grep '<metrics' | head -n 1 > $CIRCLE_ARTIFACTS/clover-short.xml
+             echo '</metrics>' >> $CIRCLE_ARTIFACTS/clover-short.xml
+             curl -XPOST "https://code-coverage.herokuapp.com/report?branch=$CIRCLE_BRANCH&commit_sha1=$CIRCLE_SHA1&pr_number=$(echo $CIRCLE_PULL_REQUEST | awk -F '/' '{print $NF}')&repo=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME&pr=$CIRCLE_PULL_REQUEST" -F report=@$CIRCLE_ARTIFACTS/clover-short.xml
+
       - store_test_results:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/artifacts
-
-      - run:
-          name: Add code coverage status check to PR
-          command: |
-             - curl -XPOST https://code-coverage.herokuapp.com/report |
-               -dL "branch=$CIRCLE_BRANCH&commit_sha=$CIRCLE_SHA1&pr_number=$CIRCLE_PR_NUMBER&repo=$CIRCLE_PR_REPONAME&user=$CIRCLE_PR_USERNAME" |
-               -F report=@./coverage/test-results.*.xml
 
 # We need to work around this bit because
 # the notification system in 2.0 is a bit flakey
