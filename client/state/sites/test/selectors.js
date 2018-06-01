@@ -55,6 +55,7 @@ import {
 	getJetpackComputedAttributes,
 	hasDefaultSiteTitle,
 	siteSupportsJetpackSettingsUi,
+	getSiteComputedAttributes,
 } from '../selectors';
 import config from 'config';
 import { userState } from 'state/selectors/test/fixtures/user-state';
@@ -3884,6 +3885,87 @@ describe( 'selectors', () => {
 			expect( noNewAttributes.isMainNetworkSite ).to.have.property;
 			expect( noNewAttributes.isSecondaryNetworkSite ).to.have.property;
 			expect( noNewAttributes.isSiteUpgradeable ).to.have.property;
+		} );
+	} );
+	describe( 'getSiteComputedAttributes()', () => {
+		test( 'should return null if site is not found', () => {
+			const state = {
+				...userState,
+				sites: {
+					items: {},
+				},
+			};
+			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
+			expect( computedAttributes ).to.be.null;
+		} );
+
+		test( 'should return the "mandatory" attributes', () => {
+			const state = {
+				...userState,
+				sites: {
+					items: {
+						2916288: {
+							ID: 2916288,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.wordpress.com',
+							jetpack: false,
+						},
+					},
+				},
+			};
+
+			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
+			expect( computedAttributes ).to.eql( {
+				title: 'WordPress.com Example Blog',
+				is_previewable: false,
+				is_customizable: false,
+				hasConflict: false,
+				domain: 'example.wordpress.com',
+				slug: 'example.wordpress.com',
+				options: {},
+			} );
+		} );
+
+		test( 'should return the "mandatory" and optional attributes if conditions for those are met', () => {
+			const options = {
+				default_post_format: 'test',
+				is_mapped_domain: true,
+				unmapped_url: 'https://unmapped-url.wordpress.com',
+				is_redirect: true,
+			};
+			const state = {
+				...userState,
+				sites: {
+					items: {
+						2916288: {
+							ID: 2916288,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.wordpress.com',
+							jetpack: false,
+							options,
+						},
+						2916289: {
+							ID: 2916289,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.wordpress.com',
+							jetpack: true,
+						},
+					},
+				},
+			};
+
+			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
+			expect( computedAttributes ).to.eql( {
+				title: 'WordPress.com Example Blog',
+				is_previewable: false,
+				is_customizable: false,
+				hasConflict: true,
+				domain: 'unmapped-url.wordpress.com',
+				slug: 'unmapped-url.wordpress.com',
+				options,
+				wpcom_url: 'unmapped-url.wordpress.com',
+				URL: 'https://unmapped-url.wordpress.com',
+			} );
 		} );
 	} );
 } );
