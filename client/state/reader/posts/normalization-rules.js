@@ -39,16 +39,15 @@ import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-
 import makeLinksSafe from 'lib/post-normalizer/rule-make-links-safe';
 import makeContentLinksSafe from 'lib/post-normalizer/rule-content-make-links-safe';
 
-/**
- * Module vars
- */
-export const READER_CONTENT_WIDTH = 800,
-	PHOTO_ONLY_MIN_WIDTH = 440,
-	PHOTO_ONLY_MAX_CHARACTER_COUNT = 85,
-	GALLERY_MIN_IMAGES = 4,
-	GALLERY_MIN_IMAGE_WIDTH = 300,
-	MIN_IMAGE_WIDTH = 144,
-	MIN_IMAGE_HEIGHT = 72;
+import {
+	READER_CONTENT_WIDTH,
+	PHOTO_ONLY_MIN_WIDTH,
+	PHOTO_ONLY_MAX_CHARACTER_COUNT,
+	GALLERY_MIN_IMAGES,
+	GALLERY_MIN_IMAGE_WIDTH,
+	MIN_IMAGE_WIDTH,
+	MIN_IMAGE_HEIGHT,
+} from './sizes';
 
 function getCharacterCount( post ) {
 	if ( ! post || ! post.content_no_html ) {
