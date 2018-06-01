@@ -55,6 +55,15 @@ export function addCardDetails( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/payment/add';
 }
 
-export function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
+export function editCardDetails( siteName, purchaseId, cardId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if (
+			'undefined' === typeof siteName ||
+			'undefined' === typeof purchaseId ||
+			'undefined' === typeof cardId
+		) {
+			throw new Error( 'siteName, purchaseId, and cardId must be provided' );
+		}
+	}
 	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }
