@@ -8,6 +8,10 @@
 	font-size: 13px;
 }
 
+.editor-media-modal__fieldset .form-text-input[readonly] {
+	background: #eee;
+}
+
 .editor-media-modal__fieldset textarea {
 	min-height: 76px;
 }

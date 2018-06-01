@@ -8,16 +8,18 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
+import { noop, assign, omitBy, some, isEqual, isEmpty, partial, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
 import MediaStore from 'lib/media/store';
+import MediaActions from 'lib/media/actions';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
+import EditorMediaModalgalleryItemFields from './item-fields';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
@@ -39,6 +41,7 @@ class EditorMediaModalGallery extends React.Component {
 	state = {
 		invalidItemDropped: false,
 		activeItem: -1,
+		updatedItemProps: {},
 	};
 
 	componentWillMount() {
@@ -155,7 +158,7 @@ class EditorMediaModalGallery extends React.Component {
 							numberOfItems={ items.length }
 						/>
 
-						{ this.state.activeItem }
+						{ this.renderItemFields() }
 					</div>
 				</div>
 			</div>
@@ -167,8 +170,64 @@ class EditorMediaModalGallery extends React.Component {
 
 		this.setState( {
 			activeItem: ! item || activeItem === item ? -1 : item,
+			updatedItemProps: {},
 		} );
 	};
+
+	renderItemFields() {
+		const { items } = this.props;
+		const { activeItem } = this.state;
+
+		if ( activeItem < 1 ) {
+			return null;
+		}
+
+		const item = find( items, existing => existing.ID === activeItem );
+
+		return (
+			<EditorMediaModalgalleryItemFields
+				item={ item }
+				updateSetting={ this.updateItemProp.bind( this ) }
+				onBlur={ this.saveItemProps.bind( this ) }
+			/>
+		);
+	}
+
+	updateItemProp( name, value ) {
+		const { site: { ID: siteId } } = this.props;
+		const { activeItem } = this.state;
+
+		const diff = {
+			[ name ]: value,
+		};
+
+		this.setState( {
+			updatedItemProps: Object.assign( {}, this.state.updatedItemProps, diff ),
+		} );
+
+		MediaActions.edit( siteId, {
+			ID: activeItem,
+			...find( this.props.items, item => item.ID === activeItem ),
+			...diff,
+		} );
+	}
+
+	saveItemProps() {
+		const { updatedItemProps } = this.state;
+
+		if ( isEmpty( updatedItemProps ) ) {
+			return;
+		}
+
+		const { site: { ID: siteId } } = this.props;
+		const { activeItem } = this.state;
+
+		MediaActions.update( siteId, {
+			ID: activeItem,
+			...find( this.props.items, item => item.ID === activeItem ),
+			...updatedItemProps,
+		} );
+	}
 }
 
 export default connect( null, {
