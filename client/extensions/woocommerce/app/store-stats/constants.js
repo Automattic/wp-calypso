@@ -145,13 +145,6 @@ export const chartTabs = [
 
 export const referrerChartTabs = [
 	{
-		label: translate( 'Sales' ),
-		attr: 'sales',
-		gridicon: 'money',
-		availableCharts: [],
-		type: 'currency',
-	},
-	{
 		label: translate( 'Views' ),
 		attr: 'product_views',
 		gridicon: 'visible',
@@ -171,6 +164,13 @@ export const referrerChartTabs = [
 		gridicon: 'star',
 		availableCharts: [],
 		type: 'number',
+	},
+	{
+		label: translate( 'Sales' ),
+		attr: 'sales',
+		gridicon: 'money',
+		availableCharts: [],
+		type: 'currency',
 	},
 ];
 
