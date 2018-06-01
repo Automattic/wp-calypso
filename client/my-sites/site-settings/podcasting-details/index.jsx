@@ -160,6 +160,7 @@ class PodcastingDetails extends Component {
 			isPodcastingEnabled,
 			fields,
 		} = this.props;
+
 		if ( ! siteId ) {
 			return null;
 		}
@@ -257,7 +258,24 @@ class PodcastingDetails extends Component {
 	}
 
 	onCategorySelected = category => {
-		this.setFieldForcingString( 'podcasting_category_id' )( category.ID );
+		const { settings, fields, isPodcastingEnabled } = this.props;
+
+		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
+
+		if ( ! isPodcastingEnabled ) {
+			// If we are newly enabling podcasting, and no podcast title is set,
+			// use the site title.
+			if ( ! fields.podcasting_title ) {
+				fieldsToUpdate.podcasting_title = settings.blogname;
+			}
+			// If we are newly enabling podcasting, and no podcast subtitle is set,
+			// use the site description.
+			if ( ! fields.podcasting_subtitle ) {
+				fieldsToUpdate.podcasting_subtitle = settings.blogdescription;
+			}
+		}
+
+		this.props.updateFields( fieldsToUpdate );
 	};
 
 	onCategoryCleared = () => {
