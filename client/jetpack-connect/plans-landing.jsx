@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -100,7 +100,7 @@ class PlansLanding extends Component {
 		}
 
 		return (
-			<div>
+			<Fragment>
 				<DocumentHead title={ translate( 'Plans' ) } />
 				<QueryPlans />
 
@@ -120,7 +120,7 @@ class PlansLanding extends Component {
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>
-			</div>
+			</Fragment>
 		);
 	}
 }
