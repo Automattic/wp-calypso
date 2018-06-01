@@ -12,10 +12,10 @@ const debug = debugFactory( 'calypso:two-step-authorization' );
  */
 import emitter from 'lib/mixins/emitter';
 import userSettings from 'lib/user-settings';
-import connectedApplications from 'lib/connected-applications-data';
 import analytics from 'lib/analytics';
 import wp from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';
+import { requestConnectedApplications } from 'state/connected-applications/actions';
 import { requestUserProfileLinks } from 'state/profile-links/actions';
 
 const wpcom = wp.undocumented();
@@ -78,7 +78,7 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 				// data from the following modules.
 				if ( this.isReauthRequired() ) {
 					userSettings.fetchSettings();
-					connectedApplications.fetch();
+					reduxDispatch( requestConnectedApplications() );
 					reduxDispatch( requestUserProfileLinks() );
 				}
 

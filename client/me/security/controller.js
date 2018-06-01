@@ -17,7 +17,6 @@ import PasswordComponent from 'me/security/main';
 import accountPasswordData from 'lib/account-password-data';
 import SocialLoginComponent from 'me/social-login';
 import ConnectedAppsComponent from 'me/connected-applications';
-import connectedAppsData from 'lib/connected-applications-data';
 import AccountRecoveryComponent from 'me/security-account-recovery';
 
 export function password( context, next ) {
@@ -51,7 +50,6 @@ export function connectedApplications( context, next ) {
 	context.primary = React.createElement( ConnectedAppsComponent, {
 		userSettings: userSettings,
 		path: context.path,
-		connectedAppsData: connectedAppsData,
 	} );
 	next();
 }
