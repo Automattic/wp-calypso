@@ -940,8 +940,8 @@
       "integrity": "sha512-LAQ1d4OPfSJ/BMbI2DuizmYrrkD9JMaTdi2hQTlI53lQ4kRQPyZQRS4CYQ7O66bnBBnP/oYdRxbk++X0xuFU6A=="
     },
     "@types/node": {
-      "version": "10.1.4",
-      "integrity": "sha512-GpQxofkdlHYxjHad98UUdNoMO7JrmzQZoAaghtNg14Gwg7YkohcrCoJEcEMSgllx4VIZ+mYw7ZHjfaeIagP/rg==",
+      "version": "10.3.0",
+      "integrity": "sha512-hWzNviaVFIr1TqcRA8ou49JaSHp+Rfabmnqg2kNvusKqLhPU0rIsGPUj5WJJ7ld4Bb7qdgLmIhLfCD1qS08IVA==",
       "dev": true
     },
     "@webassemblyjs/ast": {
@@ -1176,14 +1176,14 @@
       }
     },
     "acorn": {
-      "version": "5.6.0",
-      "integrity": "sha512-QatFQ4C0n+PLqemyC6zXEv04tSqRR0hRqe+uGKPEVgKe2G8kl8wJvHzRYWwz6vqqEqt6idPVMFojZ4P1zlyAzQ=="
+      "version": "5.6.1",
+      "integrity": "sha512-XH4o5BK5jmw9PzSGK7mNf+/xV+mPxQxGZoeC36OVsJZYV77JAG9NnI7T90hoUpI/C1TOfXWTvugRdZ9ZR3iE2Q=="
     },
     "acorn-dynamic-import": {
       "version": "3.0.0",
       "integrity": "sha512-zVWV8Z8lislJoOKKqdNMOB+s6+XV5WERty8MnKBeFgwA+19XJjJHs2RP5dzM57FftIs+jQnRToLiWazKr6sSWg==",
       "requires": {
-        "acorn": "5.6.0"
+        "acorn": "5.6.1"
       }
     },
     "acorn-globals": {
@@ -1191,14 +1191,14 @@
       "integrity": "sha512-KjZwU26uG3u6eZcfGbTULzFcsoz6pegNKtHPksZPOUsiKo5bUmiBPa38FuHZ/Eun+XYh/JCCkS9AS3Lu4McQOQ==",
       "dev": true,
       "requires": {
-        "acorn": "5.6.0"
+        "acorn": "5.6.1"
       }
     },
     "acorn-jsx": {
       "version": "4.1.1",
       "integrity": "sha512-JY+iV6r+cO21KtntVvFkD+iqjtdpRUpGqKWgfkCdZq1R+kbreEl8EcdcJR4SmiIgsIQT33s6QzheQ9a275Q8xw==",
       "requires": {
-        "acorn": "5.6.0"
+        "acorn": "5.6.1"
       }
     },
     "after": {
@@ -1381,7 +1381,7 @@
       "dev": true,
       "requires": {
         "define-properties": "1.1.2",
-        "es-abstract": "1.11.0"
+        "es-abstract": "1.12.0"
       }
     },
     "array-map": {
@@ -2875,7 +2875,7 @@
       "version": "0.19.3",
       "integrity": "sha512-3B0Lcy2u6x6km0BqTz/FS3UnrOJlnIlBWsyjvtqzdtmWkqiS0+Sg4hc6L9Mmm63hZKTACpYS9vUeIoKSi1vcrQ==",
       "requires": {
-        "acorn": "5.6.0",
+        "acorn": "5.6.1",
         "acorn-dynamic-import": "3.0.0",
         "acorn-jsx": "4.1.1",
         "chalk": "2.4.1",
@@ -4733,7 +4733,7 @@
       "version": "4.7.1",
       "integrity": "sha512-H6PmeeUcZloWtdt4DAkFyzFL94arpHr3NOwwmVILFiy+9Qd4JTxxXrzfyGk/lmct2qVGBwTSwSXagqu2BxmWig==",
       "requires": {
-        "acorn": "5.6.0",
+        "acorn": "5.6.1",
         "defined": "1.0.0"
       }
     },
@@ -5285,8 +5285,8 @@
       }
     },
     "es-abstract": {
-      "version": "1.11.0",
-      "integrity": "sha512-ZnQrE/lXTTQ39ulXZ+J1DTFazV9qBy61x2bY071B+qGco8Z8q1QddsLdt/EF8Ai9hcWH72dWS0kFqXLxOxqslA==",
+      "version": "1.12.0",
+      "integrity": "sha512-C8Fx/0jFmV5IPoMOFPA9P9G5NtqW+4cOPit3MIuvR2t7Ag2K15EJTpxnHAYTzL+aYQJIESYeXZmDBfOBE1HcpA==",
       "requires": {
         "es-to-primitive": "1.1.1",
         "function-bind": "1.1.1",
@@ -5870,7 +5870,7 @@
       "integrity": "sha512-yAcIQxtmMiB/jL32dzEp2enBeidsB7xWPLNiw3IIkpVds1P+h7qF9YwJq1yUNzp2OKXgAprs4F61ih66UsoD1A==",
       "dev": true,
       "requires": {
-        "acorn": "5.6.0",
+        "acorn": "5.6.1",
         "acorn-jsx": "3.0.1"
       },
       "dependencies": {
@@ -5949,8 +5949,8 @@
       }
     },
     "events": {
-      "version": "1.0.2",
-      "integrity": "sha1-dYSdz+k9EPsFfDAFWv29UdBqjiQ="
+      "version": "3.0.0",
+      "integrity": "sha512-Dc381HFWJzEOhQ+d8pkNon++bk9h6cdAoAj4iE6Q4y6xgTzySWXlKn05/TVNpjnfRqi/X0EpJEJohPjNI3zpVA=="
     },
     "evp_bytestokey": {
       "version": "1.0.3",
@@ -10736,7 +10736,7 @@
       "dev": true,
       "requires": {
         "abab": "1.0.4",
-        "acorn": "5.6.0",
+        "acorn": "5.6.1",
         "acorn-globals": "4.1.0",
         "array-equal": "1.0.0",
         "cssom": "0.3.2",
@@ -12387,7 +12387,7 @@
         "constants-browserify": "1.0.0",
         "crypto-browserify": "3.12.0",
         "domain-browser": "1.2.0",
-        "events": "1.0.2",
+        "events": "1.1.1",
         "https-browserify": "1.0.0",
         "os-browserify": "0.3.0",
         "path-browserify": "0.0.0",
@@ -12403,6 +12403,12 @@
         "url": "0.11.0",
         "util": "0.10.3",
         "vm-browserify": "0.0.4"
+      },
+      "dependencies": {
+        "events": {
+          "version": "1.1.1",
+          "integrity": "sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ="
+        }
       }
     },
     "node-localstorage": {
@@ -12744,7 +12750,7 @@
       "dev": true,
       "requires": {
         "define-properties": "1.1.2",
-        "es-abstract": "1.11.0",
+        "es-abstract": "1.12.0",
         "function-bind": "1.1.1",
         "has": "1.0.1"
       }
@@ -12755,7 +12761,7 @@
       "dev": true,
       "requires": {
         "define-properties": "1.1.2",
-        "es-abstract": "1.11.0"
+        "es-abstract": "1.12.0"
       }
     },
     "object.omit": {
@@ -12785,7 +12791,7 @@
       "dev": true,
       "requires": {
         "define-properties": "1.1.2",
-        "es-abstract": "1.11.0",
+        "es-abstract": "1.12.0",
         "function-bind": "1.1.1",
         "has": "1.0.1"
       }
@@ -13124,7 +13130,7 @@
       "integrity": "sha512-rgO9Zg5LLLkfJF9E6CCmXlSE4UVceloys8JrFqCcHloC3usd/kJCyPDwH2SOlzix2j3xaP9sUX3e8+kvkuleAA==",
       "dev": true,
       "requires": {
-        "@types/node": "10.1.4"
+        "@types/node": "10.3.0"
       }
     },
     "parsejson": {
@@ -17433,7 +17439,7 @@
       "integrity": "sha1-86rvfBcZ8XDF6rHDK/eA2W4h8vA=",
       "requires": {
         "define-properties": "1.1.2",
-        "es-abstract": "1.11.0",
+        "es-abstract": "1.12.0",
         "function-bind": "1.1.1"
       }
     },
@@ -19302,7 +19308,7 @@
         "@webassemblyjs/wasm-edit": "1.5.9",
         "@webassemblyjs/wasm-opt": "1.5.9",
         "@webassemblyjs/wasm-parser": "1.5.9",
-        "acorn": "5.6.0",
+        "acorn": "5.6.1",
         "acorn-dynamic-import": "3.0.0",
         "ajv": "6.5.0",
         "ajv-keywords": "3.2.0",
@@ -19647,7 +19653,7 @@
       "integrity": "sha512-VKUVkVMc6TWVXmF1OxsBXoiRjYiDRA4XT0KqtbLMDK+891VX7FCuklYwzldND8J2upUcHHnuXYNTP+4mSFi4Kg==",
       "dev": true,
       "requires": {
-        "acorn": "5.6.0",
+        "acorn": "5.6.1",
         "bfj-node4": "5.3.1",
         "chalk": "2.4.1",
         "commander": "2.15.1",
@@ -19729,7 +19735,7 @@
         "webpack-addons": "1.1.5",
         "webpack-fork-yeoman-generator": "1.1.1",
         "yargs": "9.0.1",
-        "yeoman-environment": "2.1.1"
+        "yeoman-environment": "2.2.0"
       },
       "dependencies": {
         "ansi-regex": {
@@ -20595,8 +20601,8 @@
       "integrity": "sha1-AI4G2AlDIMNy28L47XagymyKxBk="
     },
     "yeoman-environment": {
-      "version": "2.1.1",
-      "integrity": "sha512-IBLwCUrJrDxBYuwdYm1wuF3O/CR2LpXR0rFS684QOrU6x69DPPrsdd20dZOFaedZ/M9sON7po73WhO3I1CbgNQ==",
+      "version": "2.2.0",
+      "integrity": "sha512-gQ+hIW8QRlUo4jGBDCm++qg01SXaIVJ7VyLrtSwk2jQG4vtvluWpsGIl7V8DqT2jGiqukdec0uEyffVEyQgaZA==",
       "requires": {
         "chalk": "2.4.1",
         "cross-spawn": "6.0.5",
