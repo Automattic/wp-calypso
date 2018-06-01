@@ -72,13 +72,10 @@ class EmailVerificationCard extends React.Component {
 			waiting: ! emailSent,
 			sent: emailSent,
 		} );
-		const hideButtons = true;
 		let statusIcon = 'notice-outline';
-		let statusText = translate(
-			'Verification services are temporarily interrupted. ' +
-				'We hope to be able to send the email within 48 hours. ' +
-				'Please review and act upon receipt.'
-		);
+		let statusText = translate( 'Check your email — instructions sent to %(email)s.', {
+			args: { email: contactEmail },
+		} );
 
 		if ( emailSent ) {
 			statusIcon = 'mail';
@@ -93,25 +90,24 @@ class EmailVerificationCard extends React.Component {
 					<Gridicon icon={ statusIcon } size={ 36 } />
 					{ statusText }
 
-					{ ! emailSent &&
-						! hideButtons && (
-							<div>
-								<Button
-									compact
-									busy={ submitting }
-									disabled={ submitting }
-									onClick={ this.handleSubmit }
-								>
-									{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
-								</Button>
+					{ ! emailSent && (
+						<div>
+							<Button
+								compact
+								busy={ submitting }
+								disabled={ submitting }
+								onClick={ this.handleSubmit }
+							>
+								{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
+							</Button>
 
-								{ changeEmailHref && (
-									<Button compact href={ changeEmailHref } onClick={ this.props.onClick }>
-										{ this.props.translate( 'Change Email Address' ) }
-									</Button>
-								) }
-							</div>
-						) }
+							{ changeEmailHref && (
+								<Button compact href={ changeEmailHref } onClick={ this.props.onClick }>
+									{ this.props.translate( 'Change Email Address' ) }
+								</Button>
+							) }
+						</div>
+					) }
 				</div>
 			</div>
 		);
