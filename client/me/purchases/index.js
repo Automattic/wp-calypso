@@ -69,7 +69,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.cancelPurchase(),
+		paths.cancelPurchase( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
