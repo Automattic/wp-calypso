@@ -6,7 +6,12 @@ export const addCreditCard = purchasesRoot + '/add-credit-card';
 
 export const billingHistory = purchasesRoot + '/billing';
 
-export function billingHistoryReceipt( receiptId = ':receiptId' ) {
+export function billingHistoryReceipt( receiptId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof receiptId ) {
+			throw new Error( 'purchaseId must be provided' );
+		}
+	}
 	return billingHistory + `/${ receiptId }`;
 }
 

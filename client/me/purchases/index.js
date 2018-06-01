@@ -41,7 +41,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.billingHistoryReceipt(),
+		paths.billingHistoryReceipt( ':receiptId' ),
 		redirectLoggedOut,
 		sidebar,
 		billingController.transaction,
