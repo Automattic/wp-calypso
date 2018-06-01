@@ -14,10 +14,10 @@ import PropTypes from 'prop-types';
  */
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
+import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlanStorage from 'blocks/plan-storage';
-import FilterItem from './filter-item';
 import DataSource from './data-source';
 
 // These source supply very large images, and there are instances such as
@@ -107,7 +107,7 @@ export class MediaLibraryFilterBar extends Component {
 		return enabledFilters && ( ! filter.length || ! includes( enabledFilters, filter ) );
 	}
 
-	changeFilter = filter => {
+	changeFilter = filter => () => {
 		this.props.onFilterChange( filter );
 	};
 
@@ -125,15 +125,15 @@ export class MediaLibraryFilterBar extends Component {
 		return (
 			<SectionNavTabs>
 				{ tabs.map( filter => (
-					<FilterItem
+					<SectionNavTabItem
 						key={ 'filter-tab-' + filter }
 						value={ filter }
 						selected={ this.props.filter === filter }
-						onChange={ this.changeFilter }
+						onClick={ this.changeFilter( filter ) }
 						disabled={ this.isFilterDisabled( filter ) }
 					>
 						{ this.getFilterLabel( filter ) }
-					</FilterItem>
+					</SectionNavTabItem>
 				) ) }
 			</SectionNavTabs>
 		);
