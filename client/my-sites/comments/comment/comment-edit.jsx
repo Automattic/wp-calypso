@@ -18,6 +18,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import InfoPopover from 'components/info-popover';
+import PostSchedule from 'components/post-schedule';
 import { decodeEntities } from 'lib/formatting';
 import {
 	bumpStat,
@@ -41,11 +42,12 @@ export class CommentEdit extends Component {
 		authorDisplayName: '',
 		authorUrl: '',
 		commentContent: '',
+		commentDate: '',
 	};
 
 	componentWillMount() {
-		const { authorDisplayName, authorUrl, commentContent } = this.props;
-		this.setState( { authorDisplayName, authorUrl, commentContent } );
+		const { authorDisplayName, authorUrl, commentContent, commentDate } = this.props;
+		this.setState( { authorDisplayName, authorUrl, commentContent, commentDate } );
 	}
 
 	setAuthorDisplayNameValue = event => this.setState( { authorDisplayName: event.target.value } );
@@ -54,6 +56,9 @@ export class CommentEdit extends Component {
 
 	setCommentContentValue = ( event, callback = noop ) =>
 		this.setState( { commentContent: event.target.value }, callback );
+
+	setCommentDateValue = commentDate =>
+		this.setState( { commentDate: this.props.moment( commentDate ).format() } );
 
 	showNotice = () => {
 		const { translate } = this.props;
@@ -100,7 +105,7 @@ export class CommentEdit extends Component {
 			toggleEditMode,
 			translate,
 		} = this.props;
-		const { authorDisplayName, authorUrl, commentContent } = this.state;
+		const { authorDisplayName, authorUrl, commentContent, commentDate } = this.state;
 
 		return (
 			<div className="comment__edit">
@@ -135,6 +140,11 @@ export class CommentEdit extends Component {
 							onChange={ this.setAuthorUrlValue }
 							value={ authorUrl }
 						/>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="date">{ translate( 'Submitted on' ) }</FormLabel>
+						<PostSchedule selectedDay={ commentDate } onDateChange={ this.setCommentDateValue } />
 					</FormFieldset>
 
 					<CommentHtmlEditor
@@ -181,6 +191,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		authorDisplayName,
 		authorUrl: get( comment, 'author.URL', '' ),
 		commentContent: get( comment, 'raw_content' ),
+		commentDate: get( comment, 'date' ),
 		isAuthorRegistered: 0 !== get( comment, 'author.ID' ),
 		isEditCommentSupported,
 		postId: get( comment, 'post.ID' ),
