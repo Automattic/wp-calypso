@@ -112,6 +112,11 @@ class AccountSettingsClose extends Component {
 									</p>
 									<p className="account-close__body-copy">
 										{ translate(
+											'You will also be unable to open a new WordPress.com account with the same email address for 30 days.'
+										) }
+									</p>
+									<p className="account-close__body-copy">
+										{ translate(
 											"To close your account, you'll need to {{a}}contact our support team{{/a}}.",
 											{
 												components: {
@@ -147,6 +152,11 @@ class AccountSettingsClose extends Component {
 								<p className="account-close__body-copy">
 									{ translate(
 										'Account closure cannot be undone and will remove all sites and content.'
+									) }
+								</p>
+								<p className="account-close__body-copy">
+									{ translate(
+										'You will also be unable to open a new WordPress.com account with the same email address for 30 days.'
 									) }
 								</p>
 								<p className="account-close__body-copy">
