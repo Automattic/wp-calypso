@@ -9,6 +9,9 @@ exports[`Plans should render placeholder when shouldShowPlaceholder is true 1`] 
 
 exports[`Plans should render plans 1`] = `
 <React.Fragment>
+  <Connect(DocumentHead)
+    title="Plans"
+  />
   <Connect(QueryPlans) />
   <Connect(QuerySitePlans)
     siteId={1234567}

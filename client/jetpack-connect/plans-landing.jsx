@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/route';
+import DocumentHead from 'components/data/document-head';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -90,7 +91,7 @@ class PlansLanding extends Component {
 	};
 
 	render() {
-		const { interval, requestingSites, site, url } = this.props;
+		const { interval, requestingSites, site, translate, url } = this.props;
 
 		// We're redirecting in componentDidMount if the site is already connected
 		// so don't bother rendering any markup if this is the case
@@ -100,6 +101,7 @@ class PlansLanding extends Component {
 
 		return (
 			<div>
+				<DocumentHead title={ translate( 'Plans' ) } />
 				<QueryPlans />
 
 				<PlansGrid
