@@ -20,6 +20,11 @@ export function managePurchase( siteName = ':site', purchaseId = ':purchaseId' )
 }
 
 export function cancelPurchase( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
 	return managePurchase( siteName, purchaseId ) + '/cancel';
 }
 
