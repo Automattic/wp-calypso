@@ -94,7 +94,11 @@ class ConversationCaterpillarComponent extends React.Component {
 
 		return (
 			<div className="conversation-caterpillar">
-				<div className="conversation-caterpillar__gravatars" onClick={ this.handleTickle }>
+				<div
+					className="conversation-caterpillar__gravatars"
+					onClick={ this.handleTickle }
+					aria-hidden="true"
+				>
 					{ map( displayedAuthors, ( author, index ) => {
 						let gravClasses = 'conversation-caterpillar__gravatar';
 						// If we have more than 5 gravs,
@@ -112,7 +116,6 @@ class ConversationCaterpillarComponent extends React.Component {
 								key={ author.email }
 								user={ author }
 								size={ 32 }
-								aria-hidden="true"
 							/>
 						);
 					} ) }
