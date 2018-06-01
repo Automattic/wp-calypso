@@ -264,7 +264,6 @@ class PostComment extends React.PureComponent {
 
 		return (
 			<PostCommentForm
-				ref="postCommentForm"
 				post={ this.props.post }
 				parentCommentId={ this.props.commentId }
 				commentText={ this.props.commentText }

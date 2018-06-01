@@ -43,20 +43,6 @@ class PostCommentForm extends React.Component {
 		} );
 	}
 
-	componentDidUpdate() {
-		const commentTextNode = this.refs.commentText;
-
-		if ( ! commentTextNode ) {
-			return;
-		}
-
-		const commentText = this.getCommentText();
-		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
-		commentTextNode.style.height = commentText.length
-			? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px'
-			: null;
-	}
-
 	handleSubmit( event ) {
 		event.preventDefault();
 		this.submit();
@@ -197,39 +183,36 @@ class PostCommentForm extends React.Component {
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
-			<form className="comments__form" ref="commentForm">
+			<form className="comments__form">
 				<fieldset>
 					<Gravatar user={ this.props.currentUser } />
-					<label>
-						<div className={ expandingAreaClasses }>
-							<pre>
-								<span>{ this.state.commentText }</span>
-								<br />
-							</pre>
-							<AutoDirection>
-								<PostCommentFormTextarea
-									value={ this.state.commentText }
-									placeholder={ translate( 'Enter your comment here…' ) }
-									onKeyUp={ this.handleKeyUp }
-									onKeyDown={ this.handleKeyDown }
-									onFocus={ this.handleFocus }
-									onBlur={ this.handleBlur }
-									onChange={ this.handleTextChange }
-									siteId={ post.site_ID }
-									enableAutoFocus={ isReply }
-								/>
-							</AutoDirection>
-						</div>
-						<button
-							ref="commentButton"
-							className={ buttonClasses }
-							disabled={ this.state.commentText.length === 0 }
-							onClick={ this.handleSubmit }
-						>
-							{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
-						</button>
-						{ this.renderError() }
-					</label>
+					<div className={ expandingAreaClasses }>
+						<pre>
+							<span>{ this.state.commentText }</span>
+							<br />
+						</pre>
+						<AutoDirection>
+							<PostCommentFormTextarea
+								value={ this.state.commentText }
+								placeholder={ translate( 'Enter your comment here…' ) }
+								onKeyUp={ this.handleKeyUp }
+								onKeyDown={ this.handleKeyDown }
+								onFocus={ this.handleFocus }
+								onBlur={ this.handleBlur }
+								onChange={ this.handleTextChange }
+								siteId={ post.site_ID }
+								enableAutoFocus={ isReply }
+							/>
+						</AutoDirection>
+					</div>
+					<button
+						className={ buttonClasses }
+						disabled={ this.state.commentText.length === 0 }
+						onClick={ this.handleSubmit }
+					>
+						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
+					</button>
+					{ this.renderError() }
 				</fieldset>
 			</form>
 		);
