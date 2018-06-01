@@ -328,7 +328,7 @@ class DomainsStep extends React.Component {
 			? getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() )
 			: undefined;
 		let fallbackSubHeaderText = translate(
-			"Enter your site's name, or some key words that describe it - " +
+			"Enter your site's name, or some keywords that describe it - " +
 				"we'll use this to create your new site's address."
 		);
 

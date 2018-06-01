@@ -30,7 +30,7 @@ class DomainSuggestionsExample extends React.Component {
 			<div className="example-domain-suggestions">
 				<p className="example-domain-suggestions__explanation">
 					{ translate(
-						'A domain name is what people type into their browser to visit your site.'
+						'A domain name is the site address people type into their browser to visit your site.'
 					) }
 				</p>
 				{ showDomainOption && (
