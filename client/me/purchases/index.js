@@ -89,7 +89,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.confirmCancelDomain(),
+		paths.confirmCancelDomain( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
