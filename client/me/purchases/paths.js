@@ -15,7 +15,12 @@ export function billingHistoryReceipt( receiptId ) {
 	return billingHistory + `/${ receiptId }`;
 }
 
-export function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
+export function managePurchase( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
 	return purchasesRoot + `/${ siteName }/${ purchaseId }`;
 }
 
