@@ -266,7 +266,7 @@ class ConfirmCancelDomain extends React.Component {
 					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
 					title="Purchases > Confirm Cancel Domain"
 				/>
-				<HeaderCake backHref={ cancelPurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake backHref={ cancelPurchase( this.props.purchaseId ) }>
 					{ titles.confirmCancelDomain }
 				</HeaderCake>
 				<Card>

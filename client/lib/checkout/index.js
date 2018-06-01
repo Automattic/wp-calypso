@@ -11,10 +11,8 @@ export function getExitCheckoutUrl( cart, siteSlug ) {
 	let url = '/plans/';
 
 	if ( cartItems.hasRenewalItem( cart ) ) {
-		const { purchaseId, purchaseDomain } = cartItems.getRenewalItems( cart )[ 0 ].extra,
-			siteName = siteSlug || purchaseDomain;
-
-		return managePurchase( siteName, purchaseId );
+		const { purchaseId } = cartItems.getRenewalItems( cart )[ 0 ].extra;
+		return managePurchase( purchaseId );
 	}
 
 	if ( cartItems.hasDomainRegistration( cart ) ) {

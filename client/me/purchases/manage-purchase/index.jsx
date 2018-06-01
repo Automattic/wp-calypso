@@ -217,7 +217,7 @@ class ManagePurchase extends Component {
 		};
 
 		let text,
-			link = cancelPurchase( this.props.siteSlug, id );
+			link = cancelPurchase( id );
 
 		if ( isAtomicSite && isSubscription( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
@@ -273,7 +273,7 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<CompactCard href={ cancelPrivacyProtection( this.props.siteSlug, id ) }>
+			<CompactCard href={ cancelPrivacyProtection( id ) }>
 				{ translate( 'Cancel Privacy Protection' ) }
 			</CompactCard>
 		);

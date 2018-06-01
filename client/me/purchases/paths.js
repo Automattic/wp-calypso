@@ -6,30 +6,68 @@ export const addCreditCard = purchasesRoot + '/add-credit-card';
 
 export const billingHistory = purchasesRoot + '/billing';
 
-export function billingHistoryReceipt( receiptId = ':receiptId' ) {
+export function billingHistoryReceipt( receiptId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof receiptId ) {
+			throw new Error( 'purchaseId must be provided' );
+		}
+	}
 	return billingHistory + `/${ receiptId }`;
 }
 
-export function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
-	return purchasesRoot + `/${ siteName }/${ purchaseId }`;
+export function managePurchase( purchaseId, __guard__ ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof purchaseId ) {
+			throw new Error( 'purchaseId must be provided' );
+		}
+		if ( 'undefined' !== typeof purchaseId ) {
+			throw new Error( `Unexpected parameter found: \`${ JSON.stringify( __guard__ ) }\`` );
+		}
+	}
+	return purchasesRoot + `/${ purchaseId }`;
 }
 
-export function cancelPurchase( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/cancel';
+export function cancelPurchase( purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof purchaseId ) {
+			throw new Error( 'purchaseId must be provided' );
+		}
+	}
+	return managePurchase( purchaseId ) + '/cancel';
 }
 
-export function confirmCancelDomain( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
+export function confirmCancelDomain( purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof purchaseId ) {
+			throw new Error( 'purchaseId must be provided' );
+		}
+	}
+	return managePurchase( purchaseId ) + '/confirm-cancel-domain';
 }
 
-export function cancelPrivacyProtection( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/cancel-privacy-protection';
+export function cancelPrivacyProtection( purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof purchaseId ) {
+			throw new Error( 'purchaseId must be provided' );
+		}
+	}
+	return managePurchase( purchaseId ) + '/cancel-privacy-protection';
 }
 
-export function addCardDetails( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/payment/add';
+export function addCardDetails( purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof purchaseId ) {
+			throw new Error( 'purchaseId must be provided' );
+		}
+	}
+	return managePurchase( purchaseId ) + '/payment/add';
 }
 
-export function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
-	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
+export function editCardDetails( purchaseId, cardId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof purchaseId || 'undefined' === typeof cardId ) {
+			throw new Error( 'purchaseId and cardId must be provided' );
+		}
+	}
+	return managePurchase( purchaseId ) + `/payment/edit/${ cardId }`;
 }

@@ -30,9 +30,7 @@ class UpcomingChargesTable extends Component {
 
 		return (
 			<div className="billing-history__transaction-links">
-				<a href={ managePurchase( siteSlug, transaction.id ) }>
-					{ translate( 'Manage Purchase' ) }
-				</a>
+				<a href={ managePurchase( transaction.id ) }>{ translate( 'Manage Purchase' ) }</a>
 			</div>
 		);
 	};

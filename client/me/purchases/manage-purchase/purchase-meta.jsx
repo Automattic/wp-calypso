@@ -142,10 +142,7 @@ class PurchaseMeta extends Component {
 		const { purchase, translate, moment } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			const attachedPlanUrl = managePurchase(
-				this.props.selectedSite.slug,
-				purchase.attachedToPurchaseId
-			);
+			const attachedPlanUrl = managePurchase( purchase.attachedToPurchaseId );
 
 			return (
 				<span>

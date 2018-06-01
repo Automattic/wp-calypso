@@ -199,7 +199,7 @@ class PurchaseItem extends Component {
 		if ( ! isPlaceholder ) {
 			props = {
 				onClick: this.scrollToTop,
-				href: managePurchase( this.props.slug, this.props.purchase.id ),
+				href: managePurchase( this.props.purchase.id ),
 			};
 		}
 
