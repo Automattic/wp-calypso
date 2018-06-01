@@ -576,7 +576,7 @@ class AboutStep extends Component {
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Let’s create a site' ) }
+				headerText={ translate( 'Let’s create a site.' ) }
 				subHeaderText={ translate(
 					'Please answer these questions so we can help you make the site you need.'
 				) }
