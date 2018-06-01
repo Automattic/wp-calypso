@@ -48,6 +48,11 @@ export class SiteSettingsFormGeneral extends Component {
 		// Wait for page.js to update the URL, then see if we are linking
 		// directly to a section of this page.
 		setTimeout( () => {
+			if ( ! window || ! window.location ) {
+				// This code breaks everything in the tests (they hang with no
+				// error message).
+				return;
+			}
 			const hash = window.location.hash;
 			const el = hash && document.getElementById( hash.substring( 1 ) );
 			if ( hash && el ) {
