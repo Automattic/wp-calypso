@@ -203,7 +203,7 @@
     "build-docker": "node bin/build-docker.js",
     "prebuild-server": "mkdirp build",
     "build-server": "cross-env-shell CALYPSO_SERVER=true NODE_PATH=$NODE_PATH:server:client:. webpack --display-error-details --config webpack.config.node.js",
-    "build-client": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node --max_old_space_size=8192 ./node_modules/webpack/bin/webpack.js --display-error-details --config webpack.config.js",
+    "build-client": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node --max_old_space_size=16384 ./node_modules/webpack/bin/webpack.js --display-error-details --config webpack.config.js",
     "build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || npm run build-client",
     "build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
     "clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public",
