@@ -54,8 +54,8 @@ import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-fr
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isEligibleForCheckoutToChecklist from 'state/selectors/is-eligible-for-checkout-to-checklist';
 import { getStoredCards } from 'state/stored-cards/selectors';
-import { isValidFeatureKey, getPlan, findPlansKeys } from 'lib/plans';
-import { GROUP_WPCOM } from 'lib/plans/constants';
+import { isValidFeatureKey, getPlan, findPlansKeys, planMatches } from 'lib/plans';
+import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
@@ -169,7 +169,8 @@ export class Checkout extends React.Component {
 	}
 
 	getPlanProducts() {
-		return this.props.cart.products.filter( ( { product_slug } ) => getPlan( product_slug ) );
+		const products = this.props.cart.products || [];
+		return products.filter( ( { product_slug } ) => getPlan( product_slug ) );
 	}
 
 	getProductSlugFromSynonym( slug ) {
@@ -506,11 +507,23 @@ export class Checkout extends React.Component {
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
 			>
-				{ config.isEnabled( 'upgrades/2-year-plans' ) &&
-					abtest( 'multiyearSubscriptions' ) === 'show' &&
-					this.renderSubscriptionLengthPicker() }
+				{ this.shouldDisplayLengthPicker() && this.renderSubscriptionLengthPicker() }
 			</SecurePaymentForm>
 		);
+	}
+
+	shouldDisplayLengthPicker() {
+		const planInCart = this.getPlanProducts()[ 0 ];
+		if ( ! planInCart ) {
+			return false;
+		}
+
+		const enabled2YearPlans = config.isEnabled( 'upgrades/2-year-plans' );
+
+		const buyingNonBusinessPlan = ! planMatches( planInCart.product_slug, { type: TYPE_BUSINESS } );
+		const testingMultiYearBusiness = abtest( 'multiyearSubscriptionsBusinessPriceTest' ) === 'show';
+
+		return enabled2YearPlans && ( buyingNonBusinessPlan || testingMultiYearBusiness );
 	}
 
 	renderSubscriptionLengthPicker() {

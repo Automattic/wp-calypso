@@ -159,23 +159,18 @@ export const TYPE_PERSONAL = 'TYPE_PERSONAL';
 export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 
-const WPComGetBillingTimeframe = abtest => {
-	if ( abtest ) {
-		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
-			return i18n.translate( '/month, billed annually or every two years' );
-		}
+const WPComGetBillingTimeframe = () => {
+	if ( isEnabled( 'upgrades/2-year-plans' ) ) {
+		return i18n.translate( '/month, billed annually or every two years' );
 	}
 	return i18n.translate( 'per month, billed yearly' );
 };
 
-const WPComGetBiennialBillingTimeframe = abtest => {
-	if ( abtest ) {
-		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
-			return i18n.translate( '/month, billed every two years' );
-		}
+const WPComGetBiennialOnlyBillingTimeframe = () => {
+	if ( isEnabled( 'upgrades/2-year-plans' ) ) {
+		return i18n.translate( '/month, billed every two years' );
 	}
-
-	return WPComGetBillingTimeframe( abtest );
+	return WPComGetBillingTimeframe();
 };
 
 const getPlanPersonalDetails = () => ( {
@@ -433,7 +428,7 @@ export const PLANS_LIST = {
 	[ PLAN_PERSONAL_2_YEARS ]: {
 		...getPlanPersonalDetails(),
 		term: TERM_BIENNIALLY,
-		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		getBillingTimeFrame: WPComGetBiennialOnlyBillingTimeframe,
 		availableFor: plan => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
 		getProductId: () => 1029,
 		getStoreSlug: () => PLAN_PERSONAL_2_YEARS,
@@ -453,7 +448,7 @@ export const PLANS_LIST = {
 	[ PLAN_PREMIUM_2_YEARS ]: {
 		...getPlanPremiumDetails(),
 		term: TERM_BIENNIALLY,
-		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		getBillingTimeFrame: WPComGetBiennialOnlyBillingTimeframe,
 		availableFor: plan =>
 			includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM ], plan ),
 		getProductId: () => 1023,
@@ -464,7 +459,16 @@ export const PLANS_LIST = {
 	[ PLAN_BUSINESS ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_ANNUALLY,
-		getBillingTimeFrame: WPComGetBillingTimeframe,
+		getBillingTimeFrame: abtest => {
+			if ( isEnabled( 'upgrades/2-year-plans' ) ) {
+				if ( abtest && abtest( 'multiyearSubscriptionsBusinessPriceTest' ) === 'show' ) {
+					return i18n.translate( '/month, billed annually or every two years' );
+				}
+				return i18n.translate( '/month, billed annually' );
+			}
+
+			return i18n.translate( 'per month, billed yearly' );
+		},
 		availableFor: plan =>
 			includes(
 				[ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ],
@@ -478,7 +482,7 @@ export const PLANS_LIST = {
 	[ PLAN_BUSINESS_2_YEARS ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_BIENNIALLY,
-		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		getBillingTimeFrame: WPComGetBiennialOnlyBillingTimeframe,
 		availableFor: plan =>
 			includes(
 				[

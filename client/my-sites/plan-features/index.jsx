@@ -230,7 +230,7 @@ class PlanFeatures extends Component {
 						planType={ planName }
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
-						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+						billingTimeFrame={ planConstantObj.getBillingTimeFrame( abtest ) }
 						hideMonthly={ hideMonthly }
 						isPlaceholder={ isPlaceholder }
 						basePlansPath={ basePlansPath }
@@ -296,7 +296,7 @@ class PlanFeatures extends Component {
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
+			let billingTimeFrame = planConstantObj.getBillingTimeFrame( abtest );
 
 			if ( isInSignup && ! displayJetpackPlans ) {
 				switch ( siteType ) {

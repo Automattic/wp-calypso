@@ -1,7 +1,7 @@
 /** @format */
 export default {
-	multiyearSubscriptions: {
-		datestamp: '20180417',
+	multiyearSubscriptionsBusinessPriceTest: {
+		datestamp: '20180530',
 		variations: {
 			show: 50,
 			hide: 50,
