@@ -55,7 +55,7 @@ class PurchaseCardDetails extends Component {
 
 		this.props.clearPurchases();
 
-		page( managePurchase( this.props.selectedSite.slug, id ) );
+		page( managePurchase( id ) );
 	}
 }
 
