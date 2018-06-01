@@ -122,7 +122,6 @@ class DesignTypeWithAtomicStoreStep extends Component {
 			<Tile
 				buttonLabel={ choice.label }
 				description={ choice.description }
-				href="#"
 				image={ choice.image }
 				key={ choice.type }
 				onClick={ this.handleChoiceClick( choice.type ) }
