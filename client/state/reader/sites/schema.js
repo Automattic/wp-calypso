@@ -1,4 +1,8 @@
 /** @format */
+
+/**
+ * Internal dependencies
+ */
 import { sitesSchema } from 'state/sites/schema';
 
 // based on the normal site endpoint schema with a few extra properties
