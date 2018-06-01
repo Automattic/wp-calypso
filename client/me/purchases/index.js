@@ -99,7 +99,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.addCardDetails(),
+		paths.addCardDetails( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
