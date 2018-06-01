@@ -33,6 +33,11 @@ export function confirmCancelDomain( siteName, purchaseId ) {
 }
 
 export function cancelPrivacyProtection( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
 	return managePurchase( siteName, purchaseId ) + '/cancel-privacy-protection';
 }
 

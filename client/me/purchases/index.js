@@ -79,7 +79,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.cancelPrivacyProtection(),
+		paths.cancelPrivacyProtection( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
