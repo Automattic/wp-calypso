@@ -57,12 +57,7 @@ export function addCardDetails( context, next ) {
 
 	setTitle( context, titles.addCardDetails );
 
-	context.primary = (
-		<AddCardDetails
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
-	);
+	context.primary = <AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
 	next();
 }
 
@@ -79,10 +74,7 @@ export function cancelPrivacyProtection( context, next ) {
 	setTitle( context, titles.cancelPrivacyProtection );
 
 	context.primary = (
-		<CancelPrivacyProtection
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
+		<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 	);
 	next();
 }
@@ -94,12 +86,7 @@ export function cancelPurchase( context, next ) {
 
 	setTitle( context, titles.cancelPurchase );
 
-	context.primary = (
-		<CancelPurchase
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
-	);
+	context.primary = <CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
 	next();
 }
 
@@ -111,10 +98,7 @@ export function confirmCancelDomain( context, next ) {
 	setTitle( context, titles.confirmCancelDomain );
 
 	context.primary = (
-		<ConfirmCancelDomain
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
+		<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 	);
 	next();
 }
@@ -130,7 +114,6 @@ export function editCardDetails( context, next ) {
 		<EditCardDetails
 			cardId={ context.params.cardId }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
 		/>
 	);
 	next();
@@ -158,7 +141,6 @@ export function managePurchase( context, next ) {
 		<ManagePurchase
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 			destinationType={ context.params.destinationType }
-			siteSlug={ context.params.site }
 		/>
 	);
 	next();
