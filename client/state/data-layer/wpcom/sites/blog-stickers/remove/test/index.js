@@ -1,18 +1,13 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
  * Internal dependencies
  */
 import {
 	requestBlogStickerRemove,
 	receiveBlogStickerRemove,
 	receiveBlogStickerRemoveError,
+	fromApi,
 } from '../';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -20,70 +15,63 @@ import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/act
 
 describe( 'blog-sticker-remove', () => {
 	describe( 'requestBlogStickerRemove', () => {
-		test( 'should dispatch an http request', () => {
-			const dispatch = spy();
+		test( 'should dispatch a http request', () => {
 			const action = removeBlogSticker( 123, 'broken-in-reader' );
-			requestBlogStickerRemove( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
-				http( {
-					method: 'POST',
-					path: '/sites/123/blog-stickers/remove/broken-in-reader',
-					body: {},
-					apiVersion: '1.1',
-					onSuccess: action,
-					onFailure: action,
-				} )
+			const output = requestBlogStickerRemove( action );
+			expect( output ).toEqual(
+				http(
+					{
+						method: 'POST',
+						path: '/sites/123/blog-stickers/remove/broken-in-reader',
+						body: {},
+						apiVersion: '1.1',
+					},
+					action
+				)
 			);
 		} );
 	} );
 
 	describe( 'receiveBlogStickerRemove', () => {
 		test( 'should dispatch a notice', () => {
-			const dispatch = spy();
-			receiveBlogStickerRemove(
-				{ dispatch },
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				{ success: true }
-			);
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				notice: {
-					status: 'is-plain',
-				},
+			const output = receiveBlogStickerRemove( {
+				payload: { blogId: 123, stickerName: 'broken-in-reader' },
 			} );
-		} );
 
-		test( 'should dispatch a sticker removal if it fails', () => {
-			const dispatch = spy();
-			receiveBlogStickerRemove(
-				{ dispatch },
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				{
-					success: false,
-				}
+			expect( output ).toEqual(
+				expect.objectContaining( {
+					notice: expect.objectContaining( {
+						status: 'is-plain',
+					} ),
+				} )
 			);
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				notice: {
-					status: 'is-error',
-				},
-			} );
 		} );
 	} );
 
 	describe( 'receiveBlogStickerRemoveError', () => {
 		test( 'should dispatch an error notice and add sticker action', () => {
-			const dispatch = spy();
-			receiveBlogStickerRemoveError(
-				{ dispatch },
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } }
-			);
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				notice: {
-					status: 'is-error',
-				},
+			const output = receiveBlogStickerRemoveError( {
+				payload: { blogId: 123, stickerName: 'broken-in-reader' },
 			} );
-			expect( dispatch ).to.have.been.calledWith(
-				bypassDataLayer( addBlogSticker( 123, 'broken-in-reader' ) )
+
+			expect( output[ 0 ] ).toEqual(
+				expect.objectContaining( {
+					notice: expect.objectContaining( {
+						status: 'is-error',
+					} ),
+				} )
 			);
+
+			expect( output[ 1 ] ).toEqual( bypassDataLayer( addBlogSticker( 123, 'broken-in-reader' ) ) );
+		} );
+	} );
+
+	describe( 'fromApi', () => {
+		it( 'should throw an error for an unsuccessful removal', () => {
+			expect( () => fromApi( { success: false } ) ).toThrow();
+		} );
+		it( 'should return original response for a successful removal', () => {
+			expect( fromApi( { success: true } ) ).toEqual( { success: true } );
 		} );
 	} );
 } );
