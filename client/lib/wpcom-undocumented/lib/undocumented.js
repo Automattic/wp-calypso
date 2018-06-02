@@ -2582,4 +2582,18 @@ Undocumented.prototype.requestGdprConsentManagementLink = function( domain, call
 	} );
 };
 
+Undocumented.prototype.getDomainConnectSyncUxUrl = function(
+	domain,
+	providerId,
+	serviceId,
+	redirectUri,
+	callback
+) {
+	return this.wpcom.req.get(
+		`/domains/${ domain }/dns/providers/${ providerId }/services/${ serviceId }/syncurl`,
+		{ redirect_uri: redirectUri },
+		callback
+	);
+};
+
 export default Undocumented;

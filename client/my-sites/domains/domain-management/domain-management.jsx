@@ -6,6 +6,7 @@
 import AddGoogleApps from './add-google-apps';
 import ContactsPrivacy from './contacts-privacy';
 import Dns from './dns';
+import DomainConnectMapping from './domain-connect-mapping';
 import Edit from './edit';
 import TransferIn from './edit/transfer-in';
 import EditContactInfo from './edit-contact-info';
@@ -26,6 +27,7 @@ export default {
 	AddGoogleApps,
 	ContactsPrivacy,
 	Dns,
+	DomainConnectMapping,
 	Edit,
 	EditContactInfo,
 	ManageConsent,
