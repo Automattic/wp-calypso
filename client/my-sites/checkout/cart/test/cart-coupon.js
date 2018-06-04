@@ -59,6 +59,7 @@ describe( 'cart-coupon', () => {
 						coupon: '',
 					} }
 				/>
+				/>,
 			);
 			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
 			expect( component.find( '.cart__form' ).length ).toBe( 0 );
@@ -117,6 +118,7 @@ describe( 'cart-coupon', () => {
 			expect( applyCoupon.mock.calls.length ).toBe( 1 );
 			expect( applyCoupon.mock.calls[ 0 ][ 0 ] ).toBe( 'CODE15' );
 		} );
+
 
 		test( 'Should disallow submission when form is currently being submitted', () => {
 			const component = shallow(
