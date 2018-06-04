@@ -139,7 +139,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 		const seoHelpLink = siteIsJetpack
 			? 'https://jetpack.com/support/seo-tools/'
-			: 'https://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/';
+			: 'https://blog.wordpress.com/seo/';
 
 		return (
 			<ActionCard
