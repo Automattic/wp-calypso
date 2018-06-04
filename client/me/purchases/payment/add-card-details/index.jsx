@@ -5,7 +5,7 @@
  */
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 /**
  * Internal Dependencies
@@ -45,11 +45,11 @@ class AddCardDetails extends PurchaseCardDetails {
 	render() {
 		if ( ! this.props.hasLoadedUserPurchasesFromServer ) {
 			return (
-				<div>
+				<Fragment>
 					<QueryUserPurchases userId={ this.props.userId } />
 
 					<CreditCardFormLoadingPlaceholder title={ titles.addCardDetails } />
-				</div>
+				</Fragment>
 			);
 		}
 
