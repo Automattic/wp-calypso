@@ -160,6 +160,7 @@ class PodcastingDetails extends Component {
 			isPodcastingEnabled,
 			fields,
 		} = this.props;
+
 		if ( ! siteId ) {
 			return null;
 		}
@@ -257,17 +258,31 @@ class PodcastingDetails extends Component {
 	}
 
 	onCategorySelected = category => {
-		this.setFieldForcingString( 'podcasting_category_id' )( category.ID );
+		const { settings, fields, isPodcastingEnabled } = this.props;
+
+		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
+
+		if ( ! isPodcastingEnabled ) {
+			// If we are newly enabling podcasting, and no podcast title is set,
+			// use the site title.
+			if ( ! fields.podcasting_title ) {
+				fieldsToUpdate.podcasting_title = settings.blogname;
+			}
+			// If we are newly enabling podcasting, and no podcast subtitle is set,
+			// use the site description.
+			if ( ! fields.podcasting_subtitle ) {
+				fieldsToUpdate.podcasting_subtitle = settings.blogdescription;
+			}
+		}
+
+		this.props.updateFields( fieldsToUpdate );
 	};
 
 	onCategoryCleared = () => {
-		this.setFieldForcingString( 'podcasting_category_id' )( 0 );
+		this.props.updateFields( { podcasting_category_id: '0' } );
 	};
 
 	onCoverImageRemoved = () => {
-		// Do not call setFieldForcingString / onChangeField multiple times in
-		// the same render cycle - this breaks dirty detection in
-		// wrapSettingsForm.
 		this.props.updateFields( {
 			podcasting_image_id: '0',
 			podcasting_image: '',
@@ -279,17 +294,6 @@ class PodcastingDetails extends Component {
 			podcasting_image_id: String( coverId ),
 			podcasting_image: coverUrl,
 		} );
-	};
-
-	setFieldForcingString = field => value => {
-		const { onChangeField } = this.props;
-
-		// Always send and save IDs as strings because this is what
-		// the settings form wrapper expects (otherwise the settings form will
-		// be marked dirty again immediately after saving).
-		const event = { target: { value: String( value ) } };
-
-		onChangeField( field )( event );
 	};
 }
 
