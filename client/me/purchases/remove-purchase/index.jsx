@@ -27,7 +27,6 @@ import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
-import { isDataLoading } from '../utils';
 import { isDomainRegistration, isPlan, isBusiness, isGoogleApps } from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
@@ -53,12 +52,11 @@ const debug = debugFactory( 'calypso:purchases:survey' );
 
 class RemovePurchase extends Component {
 	static propTypes = {
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		isDomainOnlySite: PropTypes.bool,
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
 		setAllSitesSelected: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
 	};
@@ -161,7 +159,7 @@ class RemovePurchase extends Component {
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom
 				.marketing()
-				.survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
+				.survey( 'calypso-remove-purchase', this.props.purchase.siteId );
 			const surveyData = {
 				'why-cancel': {
 					response: this.state.survey.questionOneRadio,
@@ -204,7 +202,7 @@ class RemovePurchase extends Component {
 			} else {
 				if ( isDomainRegistration( purchase ) ) {
 					if ( isDomainOnlySite ) {
-						this.props.receiveDeletedSite( selectedSite.ID );
+						this.props.receiveDeletedSite( purchase.siteId );
 						this.props.setAllSitesSelected();
 					}
 
@@ -218,7 +216,7 @@ class RemovePurchase extends Component {
 					notices.success(
 						translate( '%(productName)s was removed from {{siteName/}}.', {
 							args: { productName },
-							components: { siteName: <em>{ selectedSite.domain }</em> },
+							components: { siteName: <em>{ purchase.domain }</em> },
 						} ),
 						{ persistent: true }
 					);
@@ -378,7 +376,7 @@ class RemovePurchase extends Component {
 				<p>
 					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
 						args: { productName },
-						components: { siteName: <em>{ this.props.selectedSite.domain }</em> },
+						components: { siteName: <em>{ this.props.purchase.domain }</em> },
 					} ) }{' '}
 					{ isGoogleApps( purchase )
 						? translate(
@@ -450,7 +448,7 @@ class RemovePurchase extends Component {
 	}
 
 	render() {
-		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
+		if ( ! this.props.purchase ) {
 			return null;
 		}
 
