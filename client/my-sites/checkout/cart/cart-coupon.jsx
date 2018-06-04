@@ -56,9 +56,9 @@ export class CartCoupon extends React.Component {
 						args: { coupon: this.appliedCouponCode },
 					} ) }
 				</span>{' '}
-				<a href="" onClick={ this.clearCoupon } className="cart__remove-link">
+				<button onClick={ this.clearCoupon } className="button is-link cart__remove-link">
 					{ this.props.translate( 'Remove' ) }
-				</a>
+				</button>
 			</div>
 		);
 	}
@@ -70,9 +70,9 @@ export class CartCoupon extends React.Component {
 
 		return (
 			<div className="cart__coupon">
-				<a href="" onClick={ this.toggleCouponDetails } className="cart__toggle-link">
+				<button onClick={ this.toggleCouponDetails } className="button is-link cart__toggle-link">
 					{ this.props.translate( 'Have a coupon code?' ) }
-				</a>
+				</button>
 
 				{ this.renderCouponForm() }
 			</div>
