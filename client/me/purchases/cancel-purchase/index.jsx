@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 /**
  * Internal Dependencies
@@ -141,10 +141,10 @@ class CancelPurchase extends React.Component {
 
 		if ( ! this.props.hasLoadedUserPurchasesFromServer ) {
 			return (
-				<div>
+				<Fragment>
 					<QueryUserPurchases userId={ this.props.userId } />
 					<CancelPurchaseLoadingPlaceholder purchaseId={ this.props.purchaseId } />
-				</div>
+				</Fragment>
 			);
 		}
 
