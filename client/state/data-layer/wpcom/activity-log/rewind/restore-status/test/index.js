@@ -2,9 +2,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -31,8 +29,7 @@ const FINISHED_RESPONSE = deepFreeze( {
 
 describe( 'receiveRestoreProgress', () => {
 	test( 'should dispatch updateRewindRestoreProgress', () => {
-		const dispatch = sinon.spy();
-		updateProgress( { dispatch }, { siteId, timestamp, restoreId }, fromApi( FINISHED_RESPONSE ) );
+		const action = updateProgress( { siteId, timestamp, restoreId }, fromApi( FINISHED_RESPONSE ) );
 		const expectedAction = updateRewindRestoreProgress( siteId, timestamp, restoreId, {
 			errorCode: '',
 			failureReason: '',
@@ -41,6 +38,6 @@ describe( 'receiveRestoreProgress', () => {
 			status: 'finished',
 			rewindId: '',
 		} );
-		expect( dispatch ).to.have.been.calledWith( expectedAction );
+		expect( action ).toEqual( expectedAction );
 	} );
 } );
