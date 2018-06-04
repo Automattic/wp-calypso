@@ -7,12 +7,12 @@
  * @returns {number} - Summed value at the end of the walk
  */
 
-function recursivelyWalkAndSum( node, valueProp, nextNodeProp, value = 0 ) {
+export function recursivelyWalkAndSum( node, valueProp, nextNodeProp, value = 0 ) {
 	value += node[ valueProp ];
 	if ( ! node[ nextNodeProp ] ) {
 		return value;
 	}
-	return recursivelyWalkAndSum( node[ nextNodeProp ], valueProp, value );
+	return recursivelyWalkAndSum( node[ nextNodeProp ], valueProp, nextNodeProp, value );
 }
 
 /**
@@ -32,9 +32,21 @@ function isInViewportRange( elementStart, elementEnd ) {
  * @param {HTMLElement} element
  */
 function scrollIntoViewport( element ) {
-	let elementStartY = recursivelyWalkAndSum( element, 'offsetTop', 'offsetParent' ),
+	const elementStartY = recursivelyWalkAndSum( element, 'offsetTop', 'offsetParent' ),
 		elementEndY = elementStartY + element.offsetHeight;
-	! isInViewportRange( elementStartY, elementEndY ) && window.scrollTo( 0, elementStartY );
+	if ( isInViewportRange( elementStartY, elementEndY ) ) {
+		return;
+	}
+
+	try {
+		window.scroll( {
+			top: elementStartY,
+			left: 0,
+			behavior: 'smooth',
+		} );
+	} catch ( e ) {
+		window.scrollTo( 0, elementStartY );
+	}
 }
 
 export default scrollIntoViewport;
