@@ -11,7 +11,10 @@ const path = require( 'path' ),
 	cookieParser = require( 'cookie-parser' ),
 	userAgent = require( 'express-useragent' ),
 	morgan = require( 'morgan' ),
-	pages = require( 'pages' );
+	pages = require( 'pages' ),
+	startTickTimer = require( 'lib/analytics/tick-timer' ).startTickTimer;
+
+const TICK_TIMER_MILLIS = 1000 / config( 'statsd_analytics_tick_time_logs_per_second' );
 
 const analytics = require( '../lib/analytics' ).default;
 
@@ -111,6 +114,9 @@ function setup() {
 
 	// attach the pages module
 	app.use( pages() );
+
+	// Start up tick-time analytics interval
+	startTickTimer( TICK_TIMER_MILLIS );
 
 	return app;
 }
