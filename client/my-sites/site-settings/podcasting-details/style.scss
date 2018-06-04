@@ -41,3 +41,18 @@
 		color: $gray-lighten-10;
 	}
 }
+
+.podcasting-details__private-site {
+	.site-settings .podcasting-details__link & {
+		p {
+			margin-bottom: 0.75em;
+		}
+		// Necessary to state this again for specificity
+		p:last-child {
+			margin-bottom: 0;
+		}
+	}
+	p:last-child {
+		margin-bottom: 0;
+	}
+}

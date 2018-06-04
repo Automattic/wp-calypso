@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,11 +12,25 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import PodcastingPrivateSiteMessage from './private-site';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import isPrivateSite from 'state/selectors/is-private-site';
 
 class PodcastingLink extends Component {
 	render() {
-		const { fields, siteSlug, translate } = this.props;
+		const { fields, siteSlug, isPrivate, translate } = this.props;
+
+		if ( isPrivate ) {
+			return (
+				<div className="podcasting-details__link">
+					<SectionHeader label={ translate( 'Podcasting' ) } />
+					<Card className="podcasting-details__link-card">
+						<PodcastingPrivateSiteMessage />
+					</Card>
+				</div>
+			);
+		}
+
 		const podcastingEnabled =
 			fields && fields.podcasting_category_id && Number( fields.podcasting_category_id ) > 0;
 		const detailsLink = `/settings/podcasting/${ siteSlug }`;
@@ -43,7 +56,10 @@ class PodcastingLink extends Component {
 }
 
 export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+
 	return {
 		siteSlug: getSelectedSiteSlug( state ),
+		isPrivate: isPrivateSite( state, siteId ),
 	};
 } )( localize( PodcastingLink ) );
