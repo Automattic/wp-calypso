@@ -56,8 +56,9 @@ export class ChecklistTask extends PureComponent {
 			duration,
 			title,
 			translate,
+			buttonText,
 		} = this.props;
-		const { buttonText = translate( 'Do it!' ) } = this.props;
+		//{ buttonText = translate( 'Do it!' ) } = this.props;
 		const hasActionlink = completed && completedButtonText;
 
 		return (

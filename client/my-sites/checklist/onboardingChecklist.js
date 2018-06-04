@@ -31,6 +31,7 @@ const tasks = {
 		url: '/me',
 		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
 		tour: 'checklistUserAvatar',
+		buttonText: 'Add Profile!',
 	},
 	blogname_set: {
 		title: 'Give your site a name',
@@ -41,6 +42,7 @@ const tasks = {
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/personalize-your-site.svg',
 		tour: 'checklistSiteTitle',
+		buttonText: 'Name Site!',
 	},
 	blogdescription_set: {
 		title: 'Create a tagline',
@@ -51,6 +53,7 @@ const tasks = {
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/create-tagline.svg',
 		tour: 'checklistSiteTagline',
+		buttonText: 'Add Tagline!',
 	},
 	contact_page_updated: {
 		title: 'Personalize your Contact page',
@@ -61,6 +64,7 @@ const tasks = {
 		image: '/calypso/images/stats/tasks/contact.svg',
 		url: '/post/$siteSlug/2',
 		tour: 'checklistContactPage',
+		buttonText: 'Personalize!',
 	},
 	custom_domain_registered: {
 		title: 'Register a custom domain',
@@ -88,6 +92,7 @@ const tasks = {
 		url: '/post/$siteSlug',
 		image: '/calypso/images/stats/tasks/first-post.svg',
 		tour: 'checklistPublishPost',
+		buttonText: 'Publish!',
 	},
 	site_created: {
 		title: 'Create your site',
@@ -104,6 +109,7 @@ const tasks = {
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/upload-icon.svg',
 		tour: 'checklistSiteIcon',
+		buttonText: 'Add icon!',
 	},
 	social_links_set: {
 		title: 'Display links to your social accounts',
