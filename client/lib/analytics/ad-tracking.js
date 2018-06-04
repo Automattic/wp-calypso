@@ -944,18 +944,19 @@ function recordOrderInNanigans( cart, orderId ) {
 		return;
 	}
 
-	// As for the FB pixel, we have decided to skip negative or 0-value carts.
-	if ( cart.total_cost < 0.01 ) {
-		debug( 'recordOrderInNanigans: Skipping due to a 0-value cart.' );
+	const paidProducts = cart.products.filter( product => product.cost >= 0.01 );
+
+	if ( paidProducts.length === 0 ) {
+		debug( 'recordOrderInNanigans: Skip cart because it has ONLY <0.01 products' );
 		return;
 	}
 
 	debug( 'recordOrderInNanigans: Record purchase' );
 
-	const productPrices = cart.products.map( product => product.cost * 100 ); // VALUE is in cents, [ 0, 9600 ]
+	const productPrices = paidProducts.map( product => product.cost * 100 ); // VALUE is in cents, [ 0, 9600 ]
 	const eventDetails = {
-		sku: cart.products.map( product => product.product_slug ), // [ 'blog_domain', 'plan_premium' ]
-		qty: cart.products.map( () => 1 ), // [ 1, 1 ]
+		sku: paidProducts.map( product => product.product_slug ), // [ 'blog_domain', 'plan_premium' ]
+		qty: paidProducts.map( () => 1 ), // [ 1, 1 ]
 		currency: cart.currency,
 		unique: orderId, // unique transaction id
 	};
