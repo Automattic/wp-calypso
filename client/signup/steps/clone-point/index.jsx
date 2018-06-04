@@ -36,17 +36,23 @@ class ClonePointStep extends Component {
 	};
 
 	selectCurrent = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			clonePoint: 0,
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			{
+				clonePoint: 0,
+			}
+		);
 
 		this.props.goToNextStep();
 	};
 
 	selectedPoint = activityTs => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			clonePoint: activityTs,
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			{
+				clonePoint: activityTs,
+			}
+		);
 
 		this.props.goToNextStep();
 	};

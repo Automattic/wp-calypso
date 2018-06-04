@@ -30,19 +30,24 @@ export class SitePickerSubmit extends React.Component {
 				siteId,
 				siteSlug,
 			},
-			[],
 			{}
 		);
 
-		SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
-			themeSlugWithRepo: 'pub/twentysixteen',
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: 'themes', wasSkipped: true },
+			{
+				themeSlugWithRepo: 'pub/twentysixteen',
+			}
+		);
 
 		if ( hasPaidPlan ) {
-			SignupActions.submitSignupStep( { stepName: 'plans-site-selected', wasSkipped: true }, [], {
-				cartItem: null,
-				privacyItem: null,
-			} );
+			SignupActions.submitSignupStep(
+				{ stepName: 'plans-site-selected', wasSkipped: true },
+				{
+					cartItem: null,
+					privacyItem: null,
+				}
+			);
 
 			goToStep( 'user' );
 		} else {

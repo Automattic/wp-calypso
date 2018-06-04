@@ -60,7 +60,7 @@ class CloneDestinationStep extends Component {
 		);
 
 		if ( isEmpty( errors ) ) {
-			SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
+			SignupActions.submitSignupStep( { stepName: this.props.stepName }, {
 				destinationSiteName,
 				destinationSiteUrl,
 			} );

@@ -106,10 +106,13 @@ class DesignTypeWithAtomicStoreStep extends Component {
 			return;
 		}
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			designType,
-			themeSlugWithRepo,
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			{
+				designType,
+				themeSlugWithRepo,
+			}
+		);
 
 		// If the user chooses `store` as design type, redirect to the `store-nux` flow.
 		// For other choices, continue with the current flow.

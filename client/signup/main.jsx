@@ -121,10 +121,13 @@ class Signup extends React.Component {
 				vertical,
 				otherText: '',
 			} );
-			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
-				surveySiteType: 'blog',
-				surveyQuestion: vertical,
-			} );
+			SignupActions.submitSignupStep(
+				{ stepName: 'survey' },
+				{
+					surveySiteType: 'blog',
+					surveyQuestion: vertical,
+				}
+			);
 		}
 	};
 

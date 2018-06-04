@@ -64,7 +64,7 @@ describe( 'flow-controller', () => {
 		} );
 
 		test( 'should call apiRequestFunction on steps with that property', done => {
-			SignupActions.submitSignupStep( { stepName: 'userCreation' }, [], { bearer_token: 'TOKEN' } );
+			SignupActions.submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } );
 
 			SignupActions.submitSignupStep( {
 				stepName: 'asyncStep',
@@ -73,7 +73,7 @@ describe( 'flow-controller', () => {
 		} );
 
 		test( 'should not call apiRequestFunction multiple times', done => {
-			SignupActions.submitSignupStep( { stepName: 'userCreation' }, [], { bearer_token: 'TOKEN' } );
+			SignupActions.submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } );
 			SignupActions.submitSignupStep( {
 				stepName: 'asyncStep',
 				done: done,
@@ -81,7 +81,7 @@ describe( 'flow-controller', () => {
 
 			// resubmit the first step to initiate another call to SignupFlowController#_process
 			// implicitly asserting that apiRequestFunction/done is only called once
-			SignupActions.submitSignupStep( { stepName: 'userCreation' }, [], { bearer_token: 'TOKEN' } );
+			SignupActions.submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } );
 		} );
 	} );
 

@@ -43,7 +43,7 @@ describe( 'dependency-store', () => {
 	} );
 
 	test( 'should store dependencies if they are provided in either signup action', () => {
-		SignupActions.submitSignupStep( { stepName: 'userCreation' }, [], { bearer_token: 'TOKEN' } );
+		SignupActions.submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } );
 
 		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN' } );
 

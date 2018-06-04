@@ -154,7 +154,6 @@ export class UserStep extends Component {
 				oauth2Signup,
 				...data,
 			},
-			null,
 			dependencies
 		);
 

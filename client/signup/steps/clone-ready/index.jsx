@@ -31,7 +31,7 @@ class CloneReadyStep extends Component {
 	goToNextStep = () => {
 		const { originBlogId, clonePoint } = this.props.payload;
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {} );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, {} );
 
 		this.props.initRewind( originBlogId, clonePoint, this.props.payload );
 		this.props.goToNextStep();
