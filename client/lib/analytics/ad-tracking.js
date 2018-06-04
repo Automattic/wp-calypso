@@ -415,7 +415,10 @@ async function loadTrackingScripts( callback ) {
  * @returns {Boolean} Is ad tracking is allowed?
  */
 function isAdTrackingAllowed() {
-	return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds() && mayWeTrackCurrentUserGdpr();
+	const result =
+		config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds() && mayWeTrackCurrentUserGdpr();
+	debug( 'isAdTrackingAllowed:', result );
+	return result;
 }
 
 /**
