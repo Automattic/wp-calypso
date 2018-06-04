@@ -77,7 +77,6 @@ export class DesignTypeStep extends Component {
 			<Tile
 				buttonLabel={ choice.label }
 				description={ choice.description }
-				href={ `#${ choice.type }` }
 				image={ choice.image }
 				key={ choice.type }
 				onClick={ choiceHandlers[ choice.type ] }
