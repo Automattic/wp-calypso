@@ -50,12 +50,12 @@ export class CartCoupon extends React.Component {
 
 	renderAppliedCoupon() {
 		return (
-			<div className="cart-coupon">
+			<div className="cart__coupon">
 				<span className="cart__details">
 					{ this.props.translate( 'Coupon applied: %(coupon)s', {
 						args: { coupon: this.appliedCouponCode },
 					} ) }
-				</span>{ ' ' }
+				</span>{' '}
 				<a href="" onClick={ this.clearCoupon } className="cart__remove-link">
 					{ this.props.translate( 'Remove' ) }
 				</a>
@@ -69,7 +69,7 @@ export class CartCoupon extends React.Component {
 		}
 
 		return (
-			<div className="cart-coupon">
+			<div className="cart__coupon">
 				<a href="" onClick={ this.toggleCouponDetails } className="cart__toggle-link">
 					{ this.props.translate( 'Have a coupon code?' ) }
 				</a>
@@ -130,7 +130,7 @@ export class CartCoupon extends React.Component {
 			},
 			() => {
 				this.applyCoupon( event );
-			},
+			}
 		);
 	};
 

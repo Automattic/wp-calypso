@@ -44,8 +44,8 @@ describe( 'cart-coupon', () => {
 
 	describe( 'General behavior', () => {
 		test( 'Should not blow up', () => {
-			const component = shallow( <CartCoupon { ...props } cart={ cart }/> );
-			expect( component.find( '.cart-coupon' ).length ).toBe( 1 );
+			const component = shallow( <CartCoupon { ...props } cart={ cart } /> );
+			expect( component.find( '.cart__coupon' ).length ).toBe( 1 );
 		} );
 
 		test( 'Should render only coupon code link when there is no coupon', () => {
@@ -57,7 +57,7 @@ describe( 'cart-coupon', () => {
 						is_coupon_applied: false,
 						coupon: '',
 					} }
-				/>,
+				/>
 			);
 			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
 			expect( component.find( '.cart__form' ).length ).toBe( 0 );
@@ -72,7 +72,7 @@ describe( 'cart-coupon', () => {
 						is_coupon_applied: false,
 						coupon: '',
 					} }
-				/>,
+				/>
 			);
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
 			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
@@ -88,7 +88,7 @@ describe( 'cart-coupon', () => {
 						is_coupon_applied: false,
 						coupon: '',
 					} }
-				/>,
+				/>
 			);
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
@@ -105,7 +105,7 @@ describe( 'cart-coupon', () => {
 						is_coupon_applied: false,
 						coupon: '',
 					} }
-				/>,
+				/>
 			);
 			applyCoupon.mockReset();
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
@@ -126,7 +126,7 @@ describe( 'cart-coupon', () => {
 						is_coupon_applied: false,
 						coupon: '',
 					} }
-				/>,
+				/>
 			);
 			applyCoupon.mockReset();
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
@@ -154,7 +154,7 @@ describe( 'cart-coupon', () => {
 						is_coupon_applied: true,
 						coupon: 'TEST10',
 					} }
-				/>,
+				/>
 			);
 			expect( component.find( '.cart__toggle-link' ).length ).toBe( 0 );
 			expect( component.find( '.cart__form' ).length ).toBe( 0 );
@@ -171,7 +171,7 @@ describe( 'cart-coupon', () => {
 						is_coupon_applied: true,
 						coupon: 'TEST10',
 					} }
-				/>,
+				/>
 			);
 			applyCoupon.mockReset();
 			component.find( '.cart__remove-link' ).simulate( 'click', event );
