@@ -107,12 +107,17 @@ class AccountSettingsClose extends Component {
 								<Fragment>
 									<p className="account-close__body-copy">
 										{ translate(
-											'Account closure cannot be undone and will remove all sites and content.'
+											'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
 										) }
 									</p>
 									<p className="account-close__body-copy">
 										{ translate(
-											"To close your account, you'll need to {{a}}contact our support team{{/a}}.",
+											'You will not be able to open a new WordPress.com account using the same email address for 30 days.'
+										) }
+									</p>
+									<p className="account-close__body-copy">
+										{ translate(
+											'To close this account now, {{a}}contact our support team{{/a}}.',
 											{
 												components: {
 													a: <ActionPanelLink href="/help/contact" />,
@@ -146,19 +151,28 @@ class AccountSettingsClose extends Component {
 							<Fragment>
 								<p className="account-close__body-copy">
 									{ translate(
-										'Account closure cannot be undone and will remove all sites and content.'
+										'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
 									) }
 								</p>
 								<p className="account-close__body-copy">
 									{ translate(
-										"If you're unsure about what account closure means or have any other questions, " +
-											'{{a}}chat with someone from our support team{{/a}} before going ahead.',
+										'You will not be able to open a new WordPress.com account using the same email address for 30 days.'
+									) }
+								</p>
+								<p className="account-close__body-copy">
+									{ translate(
+										'If you have any questions at all about what happens when you close an account, ' +
+											'please {{a}}chat with someone from our support team{{/a}} first. ' +
+											"They'll explain the ramifications and help you explore alternatives. ",
 										{
 											components: {
 												a: <ActionPanelLink href="/help/contact" />,
 											},
 										}
 									) }
+								</p>
+								<p className="account-close__body-copy">
+									{ translate( 'When you\'re ready to proceed, use the "Close account" button.' ) }
 								</p>
 							</Fragment>
 						) }
@@ -167,18 +181,18 @@ class AccountSettingsClose extends Component {
 						{ ( isLoading || isDeletePossible ) && (
 							<Button scary onClick={ this.handleDeleteClick }>
 								<Gridicon icon="trash" />
-								{ translate( 'Close Account' ) }
+								{ translate( 'Close account' ) }
 							</Button>
 						) }
 						{ hasAtomicSites && (
 							<Button primary href="/help/contact">
-								{ translate( 'Contact Support' ) }
+								{ translate( 'Contact support' ) }
 							</Button>
 						) }
 						{ hasPurchases &&
 							! hasAtomicSites && (
 								<Button primary href="/me/purchases">
-									{ translate( 'Manage Purchases' ) }
+									{ translate( 'Manage purchases' ) }
 								</Button>
 							) }
 					</ActionPanelFooter>
