@@ -62,6 +62,7 @@ class DelegatingQuit extends Quit {
 
 	onClick = event => {
 		let eventTarget = event.target;
+		// Event delegation
 		while ( !! eventTarget && eventTarget !== event.currentTarget ) {
 			if ( eventTarget.matches( this.props.target ) ) {
 				this.props.onClick && this.props.onClick( event );
