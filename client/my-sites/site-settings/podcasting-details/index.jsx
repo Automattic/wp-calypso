@@ -173,7 +173,7 @@ class PodcastingDetails extends Component {
 				<DocumentHead title={ translate( 'Podcasting Settings' ) } />
 				<form id="site-settings" onSubmit={ handleSubmitForm }>
 					<HeaderCake
-						actionButton={ ! error && this.renderSaveButton() }
+						actionButton={ error ? null : this.renderSaveButton() }
 						backHref={ writingHref }
 						backText={ translate( 'Writing' ) }
 					>
