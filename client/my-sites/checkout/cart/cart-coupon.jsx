@@ -131,7 +131,7 @@ export class CartCoupon extends React.Component {
 			},
 			() => {
 				this.applyCoupon( event );
-			}
+			},
 		);
 	};
 
