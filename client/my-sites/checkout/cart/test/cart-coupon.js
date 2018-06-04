@@ -59,7 +59,6 @@ describe( 'cart-coupon', () => {
 						coupon: '',
 					} }
 				/>
-				/>,
 			);
 			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
 			expect( component.find( '.cart__form' ).length ).toBe( 0 );
