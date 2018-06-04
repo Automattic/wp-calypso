@@ -23,7 +23,10 @@ describe( 'activateFailed', () => {
 	test( 'should dispatch an error notice', () => {
 		expect( activateFailed( { siteId }, { message: 'some problem' } ) ).toContainEqual(
 			expect.objectContaining( {
-				notice: expect.anything(),
+				notice: expect.objectContaining( {
+					status: 'is-error',
+					text: 'Problem activating rewind: some problem',
+				} ),
 			} )
 		);
 	} );
