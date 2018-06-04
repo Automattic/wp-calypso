@@ -82,7 +82,6 @@ export default function( router ) {
 		paths.cancelPrivacyProtection( ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
-		siteSelection,
 		controller.cancelPrivacyProtection,
 		makeLayout,
 		clientRender

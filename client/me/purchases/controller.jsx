@@ -74,10 +74,7 @@ export function cancelPrivacyProtection( context, next ) {
 	setTitle( context, titles.cancelPrivacyProtection );
 
 	context.primary = (
-		<CancelPrivacyProtection
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
+		<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 	);
 	next();
 }
