@@ -102,7 +102,6 @@ export default function( router ) {
 		paths.addCardDetails( ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
-		siteSelection,
 		controller.addCardDetails,
 		makeLayout,
 		clientRender

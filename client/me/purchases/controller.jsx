@@ -57,12 +57,7 @@ export function addCardDetails( context, next ) {
 
 	setTitle( context, titles.addCardDetails );
 
-	context.primary = (
-		<AddCardDetails
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
-	);
+	context.primary = <AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
 	next();
 }
 
