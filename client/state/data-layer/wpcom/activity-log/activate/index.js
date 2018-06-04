@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
 import { get } from 'lodash';
 
@@ -12,28 +10,24 @@ import { get } from 'lodash';
  */
 import { REWIND_ACTIVATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
 import { rewindActivateFailure, rewindActivateSuccess } from 'state/activity-log/actions';
-import { dispatchRequestEx, getData } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
-const activateRewind = action => {
-	const params = {
-		method: 'POST',
-		path: `/activity-log/${ action.siteId }/rewind/activate`,
-		apiVersion: '1',
-	};
+const activateRewind = action =>
+	http(
+		{
+			method: 'POST',
+			path: `/activity-log/${ action.siteId }/rewind/activate`,
+			apiVersion: '1',
+			...( action.isVpMigrate ? { body: { rewindOptIn: true } } : {} ),
+		},
+		action
+	);
 
-	if ( action.isVpMigrate ) {
-		params.body = { rewindOptIn: true };
-	}
-
-	return http( params, action );
-};
-
-export const activateSucceeded = action => {
+export const activateSucceeded = ( action, rawData ) => {
 	const successNotifier = rewindActivateSuccess( action.siteId );
-	const rawData = getData( action );
 
 	if ( undefined === get( rawData, 'rewind_state', undefined ) ) {
 		return successNotifier;
