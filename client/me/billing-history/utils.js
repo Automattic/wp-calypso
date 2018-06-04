@@ -9,7 +9,10 @@ import { find, map, partition, reduce } from 'lodash';
  */
 import formatCurrency from 'lib/format-currency';
 
-export const groupDomainProducts = ( transactionItems, translate ) => {
+export const groupDomainProducts = ( originalItems, translate ) => {
+	const transactionItems = Object.keys( originalItems ).map( key => {
+		return Object.assign( {}, originalItems[ key ] );
+	} );
 	const [ domainProducts, otherProducts ] = partition( transactionItems, {
 		product_slug: 'wp-domains',
 	} );

@@ -7,6 +7,8 @@
 }
 
 .domain-transfer-suggestion__domain-description {
+	padding-right: 1em;
+
 	@include breakpoint( ">660px" ) {
 		width: 75%;
 	}

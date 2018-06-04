@@ -92,7 +92,7 @@ describe( 'queuedRequests', () => {
 		} );
 	} );
 
-	test( 'request should set the flag', () => {
+	test( 'request failure should unset the flag', () => {
 		expect(
 			queuedRequests(
 				{},

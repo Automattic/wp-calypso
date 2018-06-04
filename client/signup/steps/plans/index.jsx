@@ -24,6 +24,12 @@ import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 
 class PlansStep extends Component {
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
+	}
+
 	onSelectPlan = cartItem => {
 		const {
 				additionalStepData,

@@ -58,6 +58,7 @@ describe( 'actions', () => {
 		} );
 
 		// TODO: move to analytics middleware so that this doesn't cascade out the need for mocking
+		// eslint-disable-next-line jest/no-disabled-tests
 		test.skip( 'should fire tracks events for posts with railcars', () => {
 			const posts = [
 				{

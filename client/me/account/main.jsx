@@ -50,6 +50,7 @@ import _user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
 import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
 import AccountSettingsCloseLink from './close-link';
+import { requestGeoLocation } from 'state/data-getters';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -90,6 +91,10 @@ const Account = createReactClass( {
 		return this.props.userSettings.getSetting( settingName );
 	},
 
+	getUserOriginalSetting( settingName ) {
+		return this.props.userSettings.getOriginalSetting( settingName );
+	},
+
 	updateUserSetting( settingName, value ) {
 		this.props.userSettings.updateSetting( settingName, value );
 	},
@@ -111,11 +116,12 @@ const Account = createReactClass( {
 
 	updateLanguage( event ) {
 		const { value } = event.target;
-		const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
-		const originalLocaleVariant = this.props.userSettings.getOriginalSetting( 'locale_variant' );
 		this.updateUserSetting( 'language', value );
 		const redirect =
-			value !== originalLanguage || value !== originalLocaleVariant ? '/me/account' : false;
+			value !== this.getUserOriginalSetting( 'language' ) ||
+			value !== this.getUserOriginalSetting( 'locale_variant' )
+				? '/me/account'
+				: false;
 		// store any selected locale variant so we can test it against those with no GP translation sets
 		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 		this.setState( { redirect, localeVariantSelected } );
@@ -278,6 +284,16 @@ const Account = createReactClass( {
 		if ( has( unsavedSettings, colorSchemeKey ) ) {
 			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
 				color_scheme: get( unsavedSettings, colorSchemeKey ),
+			} );
+		}
+
+		if ( has( unsavedSettings, 'language' ) ) {
+			this.props.recordTracksEvent( 'calypso_user_language_switch', {
+				new_language: this.getUserSetting( 'language' ),
+				previous_language:
+					this.getUserOriginalSetting( 'locale_variant' ) ||
+					this.getUserOriginalSetting( 'language' ),
+				country_code: this.props.countryCode,
 			} );
 		}
 	},
@@ -799,6 +815,7 @@ export default compose(
 	connect(
 		state => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
+			countryCode: requestGeoLocation().data,
 		} ),
 		{ errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
 	),

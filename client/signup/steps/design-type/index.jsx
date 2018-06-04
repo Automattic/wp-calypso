@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, memoize, transform } from 'lodash';
@@ -15,9 +15,8 @@ import { identity, memoize, transform } from 'lodash';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import Card from 'components/card';
-import { BlogImage, PageImage, GridImage } from '../design-type-with-store/type-images';
-
+import Tile from 'components/tile-grid/tile';
+import TileGrid from 'components/tile-grid';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -52,7 +51,7 @@ export class DesignTypeStep extends Component {
 				description: translate(
 					'To share your ideas, stories, and photographs with your followers.'
 				),
-				image: <BlogImage />,
+				image: '/calypso/images/illustrations/type-blog.svg',
 			},
 			{
 				type: 'page',
@@ -60,13 +59,13 @@ export class DesignTypeStep extends Component {
 				description: translate(
 					'To promote your business, organization, or brand and connect with your audience.'
 				),
-				image: <PageImage />,
+				image: '/calypso/images/illustrations/type-website.svg',
 			},
 			{
 				type: 'grid',
 				label: translate( 'Start with a portfolio' ),
 				description: translate( 'To present your creative projects in a visual showcase.' ),
-				image: <GridImage />,
+				image: '/calypso/images/illustrations/type-portfolio.svg',
 			},
 		];
 	}
@@ -75,32 +74,30 @@ export class DesignTypeStep extends Component {
 		const choiceHandlers = this.getChoiceHandlers();
 
 		return (
-			<Card
-				key={ choice.type }
+			<Tile
+				buttonLabel={ choice.label }
+				description={ choice.description }
 				href={ `#${ choice.type }` }
-				className="design-type__choice"
+				image={ choice.image }
+				key={ choice.type }
 				onClick={ choiceHandlers[ choice.type ] }
-			>
-				<div className="design-type__choice-image">{ choice.image }</div>
-				<div className="design-type__choice-copy">
-					<span className="button is-compact design-type__cta">{ choice.label }</span>
-					<p className="design-type__choice-description">{ choice.description }</p>
-				</div>
-			</Card>
+			/>
 		);
 	};
 
 	renderChoices() {
 		return (
-			<div className="design-type__list">
-				{ this.getChoices().map( this.renderChoice ) }
-				<div className="design-type__choice is-spacergif" />
+			<Fragment>
+				<TileGrid className="design-type__list">
+					{ this.getChoices().map( this.renderChoice ) }
+				</TileGrid>
+
 				<p className="design-type__disclaimer">
 					{ this.props.translate(
 						'Not sure? Pick the closest option. You can always change your settings later.'
 					) }
 				</p>
-			</div>
+			</Fragment>
 		);
 	}
 

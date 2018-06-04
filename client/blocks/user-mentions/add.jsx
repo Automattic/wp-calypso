@@ -81,10 +81,14 @@ export default WrappedComponent =>
 		}
 
 		handleKeyDown = event => {
+			if ( ! this.state.showPopover ) {
+				return;
+			}
+
 			const selectedIndex = this.getSelectedSuggestionIndex();
 
 			// Cancel Enter and Tab default actions so we can define our own in keyUp
-			if ( includes( [ keys.enter, keys.tab ], event.keyCode ) && this.state.showPopover ) {
+			if ( includes( [ keys.enter, keys.tab ], event.keyCode ) ) {
 				event.preventDefault();
 				return false;
 			}
@@ -98,6 +102,7 @@ export default WrappedComponent =>
 			// Cancel the cursor move.
 			event.preventDefault();
 
+			// Change the selected suggestion
 			if ( event.keyCode === keys.downArrow ) {
 				nextIndex = ( selectedIndex + 1 ) % this.matchingSuggestions.length;
 			} else {

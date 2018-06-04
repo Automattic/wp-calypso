@@ -9,7 +9,12 @@ import { trim } from 'lodash';
  * Internal dependencies
  */
 import { recordTrack } from 'reader/stats';
-import { trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import {
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+	getStartDate,
+} from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
 import { TAG_PAGE } from 'reader/follow-sources';
 
@@ -25,6 +30,7 @@ export const tagListing = ( context, next ) => {
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
 	const streamKey = 'tag:' + tagSlug;
 	const mcKey = 'topic';
+	const startDate = getStartDate( context );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack( 'calypso_reader_tag_loaded', {
@@ -46,6 +52,7 @@ export const tagListing = ( context, next ) => {
 				analyticsPageTitle,
 				mcKey
 			) }
+			startDate={ startDate }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
 			showBack={ !! context.lastRoute }
 			showPrimaryFollowButtonOnCards={ true }

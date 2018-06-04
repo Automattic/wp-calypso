@@ -6,7 +6,6 @@ import React from 'react';
 import Debug from 'debug';
 import page from 'page';
 import { get, isEmpty, some } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -34,7 +33,6 @@ import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack/onboarding/actions';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
 import { urlToSlug } from 'lib/url';
 import {
@@ -256,8 +254,6 @@ export function plansLanding( context, next ) {
 
 	removeSidebar( context );
 
-	context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
-
 	analytics.tracks.recordEvent( 'calypso_plans_view' );
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
@@ -278,9 +274,6 @@ export function plansSelection( context, next ) {
 	const analyticsBasePath = basePath + '/:site';
 
 	removeSidebar( context );
-
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
 	analytics.tracks.recordEvent( 'calypso_plans_view' );
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );

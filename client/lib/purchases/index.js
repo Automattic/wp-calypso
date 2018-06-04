@@ -11,13 +11,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	isJetpackPlan,
-	isDomainRegistration,
-	isDomainTransfer,
-	isPlan,
-	isTheme,
-} from 'lib/products-values';
+import { isDomainRegistration, isDomainTransfer, isPlan, isTheme } from 'lib/products-values';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -61,10 +55,6 @@ function getPurchasesBySite( purchases, sites ) {
 function getName( purchase ) {
 	if ( isDomainRegistration( purchase ) ) {
 		return purchase.meta;
-	}
-
-	if ( isJetpackPlan( purchase ) ) {
-		return `Jetpack ${ purchase.productName }`;
 	}
 
 	return purchase.productName;

@@ -26,8 +26,8 @@ export default localize( ( { isBusinessPlan, selectedSite, translate } ) => {
 									'to remove the WordPress.com footer credit.'
 							)
 				}
-				buttonText={ ! isBusinessPlan && translate( 'Upgrade to Business' ) }
-				href={ ! isBusinessPlan && '/checkout/' + selectedSite.slug + '/business' }
+				buttonText={ ! isBusinessPlan ? translate( 'Upgrade to Business' ) : null }
+				href={ ! isBusinessPlan ? '/checkout/' + selectedSite.slug + '/business' : null }
 			/>
 		</div>
 	);
