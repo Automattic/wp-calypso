@@ -9,7 +9,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import {
 	JETPACK_CREDENTIALS_DELETE,
 	JETPACK_CREDENTIALS_STORE,
@@ -17,41 +17,49 @@ import {
 } from 'state/action-types';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
-export const request = ( { dispatch }, action ) => {
-	dispatch(
-		http(
-			{
-				apiVersion: '1.1',
-				method: 'POST',
-				path: `/activity-log/${ action.siteId }/delete-credentials`,
-				body: { role: action.role },
-			},
-			{ ...action }
-		)
+export const request = action =>
+	http(
+		{
+			apiVersion: '1.1',
+			method: 'POST',
+			path: `/activity-log/${ action.siteId }/delete-credentials`,
+			body: { role: action.role },
+		},
+		{ ...action }
 	);
-};
 
-export const success = ( { dispatch }, { siteId }, { rewind_state } ) => {
-	dispatch( {
+export const success = ( { siteId }, { rewind_state } ) => {
+	const storeAction = {
 		type: JETPACK_CREDENTIALS_STORE,
 		credentials: {
 			main: null,
 		},
 		siteId,
-	} );
+	};
 
 	// the API transform could fail and the rewind data might
 	// be unavailable so if that's the case just let it go
 	// for now. we'll improve our rigor as time goes by.
 	try {
-		dispatch( {
-			type: REWIND_STATE_UPDATE,
-			siteId,
-			data: transformApi( rewind_state ),
-		} );
-	} catch ( e ) {}
+		return [
+			storeAction,
+			{
+				type: REWIND_STATE_UPDATE,
+				siteId,
+				data: transformApi( rewind_state ),
+			},
+		];
+	} catch ( e ) {
+		return storeAction;
+	}
 };
 
 export default {
-	[ JETPACK_CREDENTIALS_DELETE ]: [ dispatchRequest( request, success, noop ) ],
+	[ JETPACK_CREDENTIALS_DELETE ]: [
+		dispatchRequestEx( {
+			fetch: request,
+			onSuccess: success,
+			onError: noop,
+		} ),
+	],
 };

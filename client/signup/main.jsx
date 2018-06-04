@@ -530,10 +530,11 @@ class Signup extends React.Component {
 						/>
 					) }
 				<ReactCSSTransitionGroup
+					component="div"
 					className="signup__steps"
 					transitionName="signup__step"
-					transitionEnterTimeout={ 500 }
-					transitionLeaveTimeout={ 300 }
+					transitionEnterTimeout={ 400 }
+					transitionLeaveTimeout={ 400 }
 				>
 					{ this.currentStep() }
 				</ReactCSSTransitionGroup>
