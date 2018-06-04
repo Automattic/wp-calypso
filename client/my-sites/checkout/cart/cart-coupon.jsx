@@ -43,7 +43,9 @@ export class CartCoupon extends React.Component {
 	}
 
 	get appliedCouponCode() {
-		return this.props.cart.is_coupon_applied && this.props.cart.coupon;
+		return this.props.cart.is_coupon_applied && this.props.cart.coupon
+			? this.props.cart.coupon
+			: null;
 	}
 
 	renderAppliedCoupon() {
@@ -53,7 +55,7 @@ export class CartCoupon extends React.Component {
 					{ this.props.translate( 'Coupon applied: %(coupon)s', {
 						args: { coupon: this.appliedCouponCode },
 					} ) }
-				</span>{' '}
+				</span>{ ' ' }
 				<a href="" onClick={ this.clearCoupon } className="cart__remove-link">
 					{ this.props.translate( 'Remove' ) }
 				</a>
@@ -104,7 +106,7 @@ export class CartCoupon extends React.Component {
 	};
 
 	get isSubmitting() {
-		return ! this.props.cart.is_coupon_applied && this.props.cart.coupon;
+		return ! this.props.cart.is_coupon_applied && this.props.cart.coupon ? true : false;
 	}
 
 	toggleCouponDetails = event => {
@@ -128,7 +130,7 @@ export class CartCoupon extends React.Component {
 			},
 			() => {
 				this.applyCoupon( event );
-			}
+			},
 		);
 	};
 
