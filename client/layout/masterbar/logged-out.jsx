@@ -22,6 +22,7 @@ import { addQueryArgs } from 'lib/route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
+import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 
 class MasterbarLoggedOut extends PureComponent {
 	static propTypes = {
@@ -99,6 +100,15 @@ class MasterbarLoggedOut extends PureComponent {
 		 * WordPress.com site.
 		 */
 		if ( startsWith( currentRoute, '/jetpack/new' ) ) {
+			return null;
+		}
+
+		/**
+		 * Hide signup from the screen when we have been sent to the login page from a redirect
+		 * by a service provider to authorize a Domain Connect template application.
+		 */
+		const redirectTo = get( currentQuery, 'redirect_to', '' );
+		if ( isDomainConnectAuthorizePath( redirectTo ) ) {
 			return null;
 		}
 

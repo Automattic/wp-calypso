@@ -25,6 +25,7 @@ import { isEnabled } from 'config';
 import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -69,11 +70,18 @@ export class LoginLinks extends React.Component {
 	};
 
 	renderBackLink() {
-		// If we seem to be in a Jetpack connection flow, provide some special handling
-		// so users can go back to their site rather than WordPress.com
 		const redirectTo = get( this.props, [ 'query', 'redirect_to' ] );
 		if ( redirectTo ) {
 			const { pathname, query: redirectToQuery } = parseUrl( redirectTo, true );
+
+			// If we are in a Domain Connect authorization flow, don't show the back link
+			// since this page was loaded by a redirect from a third party service provider.
+			if ( isDomainConnectAuthorizePath( redirectTo ) ) {
+				return null;
+			}
+
+			// If we seem to be in a Jetpack connection flow, provide some special handling
+			// so users can go back to their site rather than WordPress.com
 			if ( pathname === '/jetpack/connect/authorize' && redirectToQuery.client_id ) {
 				const returnToSiteUrl = addQueryArgs(
 					{ client_id: redirectToQuery.client_id },
