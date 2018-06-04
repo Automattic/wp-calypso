@@ -72,7 +72,6 @@ export default function( router ) {
 		paths.cancelPurchase( ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
-		siteSelection,
 		controller.cancelPurchase,
 		makeLayout,
 		clientRender
