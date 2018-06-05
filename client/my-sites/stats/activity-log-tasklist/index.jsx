@@ -371,7 +371,8 @@ class ActivityLogTasklist extends Component {
  * the update is running, failed, or was successfully completed, respectively.
  */
 const getStatusForTheme = ( siteId, themeId ) => {
-	const { state } = getHttpData( `theme-update-${ siteId }-${ themeId }` );
+	const themeHttpData = getHttpData( `theme-update-${ siteId }-${ themeId }` );
+	const { state } = themeHttpData;
 	if ( 'pending' === state ) {
 		return { status: 'inProgress' };
 	}
@@ -379,7 +380,11 @@ const getStatusForTheme = ( siteId, themeId ) => {
 		return { status: 'error' };
 	}
 	if ( 'success' === state ) {
-		return { status: 'completed' };
+		// When a theme successfully updates, the theme 'update' property is nullified.
+		if ( null === get( themeHttpData, 'data.themes.0.update' ) ) {
+			return { status: 'completed' };
+		}
+		return { status: 'error' };
 	}
 	return false;
 };
@@ -427,7 +432,10 @@ const updateTheme = ( siteId, themeId ) =>
 			path: `/sites/${ siteId }/themes`,
 			body: { action: 'update', themes: themeId },
 		} ),
-		{ fromApi: () => ( { themes } ) => themes.map( ( { id } ) => [ id, true ] ) }
+		{
+			fromApi: () => ( { themes } ) => themes.map( ( { id } ) => [ id, true ] ),
+			freshness: -Infinity,
+		}
 	);
 
 const mapStateToProps = ( state, { siteId, plugins, themes } ) => {
