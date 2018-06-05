@@ -44,48 +44,61 @@ function ProgressBanner( {
 	restoreId,
 	downloadId,
 	action,
+	context,
 } ) {
+	let title = '';
+	let description = '';
+	let statusMessage = '';
+
+	if ( 'restore' === action && 'alternate' === context ) {
+		title = translate( 'Currently cloning your site' );
+		description = translate(
+			"We're in the process of cloning your site to %s. " +
+				"You'll be notified once it's complete.",
+			{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
+		);
+		statusMessage =
+			'queued' === status
+				? translate( 'The cloning process will start in a moment.' )
+				: translate( "We're on it! Your site is being cloned." );
+	} else if ( 'restore' === action ) {
+		title = translate( 'Currently restoring your site' );
+		description = translate(
+			"We're in the process of restoring your site back to %s. " +
+				"You'll be notified once it's complete.",
+			{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
+		);
+		statusMessage =
+			'queued' === status
+				? translate( 'Your restore will start in a moment.' )
+				: translate( "We're on it! Your site is being restored." );
+	} else {
+		title = translate( 'Currently creating a downloadable backup of your site' );
+		description = translate(
+			"We're in the process of creating a downloadable backup of your site at %s. " +
+				"You'll be notified once it's complete.",
+			{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
+		);
+		statusMessage =
+			0 < percent
+				? translate( "We're on it! Your download is being created." )
+				: translate( 'The creation of your backup will start in a moment.' );
+	}
+
 	return (
-		<ActivityLogBanner
-			status="info"
-			title={
-				'restore' === action
-					? translate( 'Currently restoring your site' )
-					: translate( 'Currently creating a downloadable backup of your site' )
-			}
-		>
+		<ActivityLogBanner status="info" title={ title }>
 			{ 'restore' === action && (
 				<div>
 					<QueryRewindRestoreStatus restoreId={ restoreId } siteId={ siteId } />
-					<p>
-						{ translate(
-							"We're in the process of restoring your site back to %s. " +
-								"You'll be notified once it's complete.",
-							{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
-						) }
-					</p>
-					<em>
-						{ 'queued' === status
-							? translate( 'Your restore will start in a moment.' )
-							: translate( "We're on it! Your site is being restored." ) }
-					</em>
+					<p>{ description }</p>
+					<em>{ statusMessage }</em>
 				</div>
 			) }
 			{ 'backup' === action && (
 				<div>
 					<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
-					<p>
-						{ translate(
-							"We're in the process of creating a downloadable backup of your site at %s. " +
-								"You'll be notified once it's complete.",
-							{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
-						) }
-					</p>
-					<em>
-						{ 0 < percent
-							? translate( "We're on it! Your download is being created." )
-							: translate( 'The creation of your backup will start in a moment.' ) }
-					</em>
+					<p>{ description }</p>
+					<em>{ statusMessage }</em>
 				</div>
 			) }
 			{ ( 'running' === status || ( 0 <= percent && percent <= 100 ) ) && (

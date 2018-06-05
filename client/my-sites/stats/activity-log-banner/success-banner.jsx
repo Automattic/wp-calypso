@@ -50,6 +50,7 @@ class SuccessBanner extends PureComponent {
 		backupUrl: PropTypes.string,
 		downloadCount: PropTypes.number,
 		downloadId: PropTypes.number,
+		context: PropTypes.string,
 
 		// connect
 		dismissRestoreProgress: PropTypes.func.isRequired,
@@ -79,6 +80,7 @@ class SuccessBanner extends PureComponent {
 			timestamp,
 			translate,
 			backupUrl,
+			context,
 			trackHappyChatBackup,
 			trackHappyChatRestore,
 		} = this.props;
@@ -101,7 +103,10 @@ class SuccessBanner extends PureComponent {
 					trackHappyChat: trackHappyChatBackup,
 				}
 			: {
-					title: translate( 'Your site has been successfully restored' ),
+					title:
+						'alternate' === context
+							? translate( 'Your site has been successfully cloned' )
+							: translate( 'Your site has been successfully restored' ),
 					icon: 'history',
 					track: (
 						<TrackComponentView
@@ -109,9 +114,10 @@ class SuccessBanner extends PureComponent {
 							eventProperties={ { restore_to: timestamp } }
 						/>
 					),
-					taskFinished: translate( 'We successfully restored your site back to %s!', {
-						args: date,
-					} ),
+					taskFinished:
+						'alternate' === context
+							? translate( 'We successfully cloned your site to %s!', { args: date } )
+							: translate( 'We successfully restored your site back to %s!', { args: date } ),
 					actionButton: (
 						<Button href={ siteUrl } primary>
 							{ translate( 'View site' ) }

@@ -211,6 +211,7 @@ class ActivityLog extends Component {
 			status,
 			timestamp,
 			rewindId,
+			context,
 		} = actionProgress;
 		return (
 			<ProgressBanner
@@ -223,6 +224,7 @@ class ActivityLog extends Component {
 				status={ status }
 				timestamp={ timestamp || rewindId }
 				action={ action }
+				context={ context }
 			/>
 		);
 	}
@@ -245,6 +247,7 @@ class ActivityLog extends Component {
 			restoreId,
 			downloadId,
 			rewindId,
+			context,
 		} = progress;
 		const requestedRestoreId = this.props.requestedRestoreId || rewindId;
 		return (
@@ -262,6 +265,7 @@ class ActivityLog extends Component {
 						siteId={ siteId }
 						siteTitle={ siteTitle }
 						timestamp={ timestamp }
+						context={ context }
 					/>
 				) : (
 					<SuccessBanner
@@ -272,6 +276,7 @@ class ActivityLog extends Component {
 						downloadId={ downloadId }
 						backupUrl={ url }
 						downloadCount={ downloadCount }
+						context={ context }
 					/>
 				) }
 			</div>
