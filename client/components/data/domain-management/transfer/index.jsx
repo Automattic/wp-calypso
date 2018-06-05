@@ -18,7 +18,7 @@ import { fetchUsers } from 'lib/users/actions';
 import { fetchWapiDomainInfo } from 'lib/upgrades/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 const stores = [ WapiDomainInfoStore, UsersStore ];
@@ -94,7 +94,7 @@ export default connect( state => {
 	const siteId = get( selectedSite, 'ID', null );
 
 	return {
-		domains: getDomainsBySiteId( state, siteId ),
+		domains: getDecoratedSiteDomains( state, siteId ),
 		requestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 		selectedSite,
 	};

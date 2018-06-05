@@ -24,7 +24,7 @@ import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 const user = userFactory();
@@ -120,7 +120,7 @@ export default connect(
 		const siteId = get( selectedSite, 'ID', null );
 
 		return {
-			domains: getDomainsBySiteId( state, siteId ),
+			domains: getDecoratedSiteDomains( state, siteId ),
 			googleAppsUsers,
 			googleAppsUsersLoaded: isLoaded( state ),
 			products: getProductsList( state ),

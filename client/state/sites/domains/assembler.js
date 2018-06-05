@@ -5,12 +5,10 @@
  */
 import { getDomainType, getGdprConsentStatus, getTransferStatus } from 'lib/domains/utils';
 import { assembleGoogleAppsSubscription } from 'lib/domains/assembler';
-import i18n from 'i18n-calypso';
 
 export const createSiteDomainObject = domain => {
 	return {
 		autoRenewalDate: String( domain.auto_renewal_date ),
-		autoRenewalMoment: domain.auto_renewal_date && i18n.moment( domain.auto_renewal_date ),
 		adminEmail: domain.admin_email,
 		autoRenewing: Boolean( domain.auto_renewing ),
 		blogId: Number( domain.blog_id ),
@@ -21,14 +19,13 @@ export const createSiteDomainObject = domain => {
 		expired: Boolean( domain.expired ),
 		expiry: ! domain.expiry ? null : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
-		expirationMoment: domain.expiry && i18n.moment( domain.expiry ),
 		gdprConsentStatus: getGdprConsentStatus( domain ),
 		googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
 		hasPrivacyProtection: Boolean( domain.has_private_registration ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
-		isAutoRenewing: domain.auto_renewing,
+		isAutoRenewing: Boolean( domain.auto_renewing ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
@@ -46,7 +43,6 @@ export const createSiteDomainObject = domain => {
 		privateDomain: domain.private_domain,
 		privacyAvailable: Boolean( domain.privacy_available ),
 		registrar: String( domain.registrar ),
-		registrationMoment: domain.registration_date && i18n.moment( domain.registration_date ),
 		registrationDate: String( domain.registration_date ),
 		subscriptionId: domain.subscription_id,
 		supportsDomainConnect: Boolean( domain.supports_domain_connect ),

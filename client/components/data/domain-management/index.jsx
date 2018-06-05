@@ -19,7 +19,7 @@ import QueryContactDetailsCache from 'components/data/query-contact-details-cach
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 
 const stores = [ CartStore ];
@@ -82,7 +82,7 @@ export default connect( state => {
 	const siteId = get( selectedSite, 'ID', null );
 
 	return {
-		domains: getDomainsBySiteId( state, siteId ),
+		domains: getDecoratedSiteDomains( state, siteId ),
 		requestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 		productList: getProductsList( state ),
 		sitePlans: getPlansBySite( state, selectedSite ),

@@ -15,7 +15,7 @@ import StoreConnection from 'components/data/store-connection';
 import { fetchWhois } from 'lib/upgrades/actions';
 import WhoisStore from 'lib/domains/whois/store';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 const stores = [ WhoisStore ];
@@ -79,7 +79,7 @@ export default connect( state => {
 	const siteId = get( selectedSite, 'ID', null );
 
 	return {
-		domains: getDomainsBySiteId( state, siteId ),
+		domains: getDecoratedSiteDomains( state, siteId ),
 		requestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 		selectedSite,
 	};
