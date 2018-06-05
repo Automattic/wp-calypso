@@ -37,10 +37,9 @@ const eventProperties = warning => ( { warning, position: 'individual-purchase' 
 
 class PurchaseNotice extends Component {
 	static propTypes = {
-		isDataLoading: PropTypes.bool,
 		handleRenew: PropTypes.func,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
 		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	};
 
@@ -243,7 +242,7 @@ class PurchaseNotice extends Component {
 	}
 
 	render() {
-		if ( this.props.isDataLoading ) {
+		if ( ! this.props.purchase ) {
 			return null;
 		}
 
@@ -270,7 +269,4 @@ class PurchaseNotice extends Component {
 	}
 }
 
-const mapStateToProps = null;
-const mapDispatchToProps = { recordTracksEvent };
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseNotice ) );
+export default connect( null, { recordTracksEvent } )( localize( PurchaseNotice ) );

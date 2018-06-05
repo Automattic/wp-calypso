@@ -445,15 +445,12 @@ class ManagePurchase extends Component {
 				) }
 				<Main className={ classes }>
 					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
-					{
-						<PurchaseNotice
-							isDataLoading={ isDataLoading( this.props ) }
-							handleRenew={ this.handleRenew }
-							selectedSite={ selectedSite }
-							purchase={ purchase }
-							editCardDetailsPath={ editCardDetailsPath }
-						/>
-					}
+					<PurchaseNotice
+						handleRenew={ this.handleRenew }
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						editCardDetailsPath={ editCardDetailsPath }
+					/>
 					{ this.renderPurchaseDetail() }
 				</Main>
 			</Fragment>
