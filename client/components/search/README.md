@@ -44,6 +44,9 @@ This value is passed to the autoFocus attribute of the `<input>` element, and de
 ### disabled (optional) bool ( default false )
 This value is passed to the disabled attribute of the `<input>` element, and determines whether or not the input is disabled.
 
+### disableAutocorrect (optional) bool ( default false )
+Sets on input the following attributes: autoComplete: 'off', autoCorrect: 'off', spellCheck: 'false'
+
 ### searching (optional) bool ( default false )
 Whether to display a [`<Spinner />`](../spinner/) in place of the search icon.
 
