@@ -250,6 +250,12 @@ class DomainsStep extends React.Component {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
 
+		const suggestion = get(
+			this.props,
+			'queryObject.new',
+			get( this.props, 'signupDependencies.siteTitle', '' )
+		);
+
 		return (
 			<RegisterDomainStep
 				key="domainForm"
@@ -270,7 +276,7 @@ class DomainsStep extends React.Component {
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ get( this.props, 'queryObject.new', '' ) }
+				suggestion={ suggestion }
 				designType={ this.getDesignType() }
 			/>
 		);
