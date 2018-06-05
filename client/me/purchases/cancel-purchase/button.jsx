@@ -49,6 +49,7 @@ class CancelPurchaseButton extends Component {
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
 		disabled: PropTypes.bool,
+		siteSlug: PropTypes.string.isRequired,
 	};
 
 	state = {
@@ -191,10 +192,9 @@ class CancelPurchaseButton extends Component {
 	};
 
 	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase,
-			{ slug } = this.props.selectedSite;
+		const { id } = this.props.purchase;
 
-		page( confirmCancelDomain( slug, id ) );
+		page( confirmCancelDomain( this.props.siteSlug, id ) );
 	};
 
 	cancelPurchase = () => {
@@ -295,7 +295,7 @@ class CancelPurchaseButton extends Component {
 
 			submitSurvey(
 				'calypso-remove-purchase',
-				this.props.selectedSite.ID,
+				purchase.siteId,
 				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
 			);
 		}

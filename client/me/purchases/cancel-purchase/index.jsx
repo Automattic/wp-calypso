@@ -77,25 +77,20 @@ class CancelPurchase extends React.Component {
 			return true;
 		}
 
-		const { purchase, selectedSite } = props;
+		const { purchase } = props;
 
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
 
-		return selectedSite && purchase && isCancelable( purchase ) && isDomainTransferCancelable;
+		return purchase && isCancelable( purchase ) && isDomainTransferCancelable;
 	};
 
 	redirect = props => {
-		const { purchase } = props;
-		const selectedSite = props.selectedSite;
+		const { purchase, siteSlug } = props;
 		let redirectPath = purchasesRoot;
 
-		if (
-			selectedSite &&
-			purchase &&
-			( ! isCancelable( purchase ) || isDomainTransfer( purchase ) )
-		) {
-			redirectPath = managePurchase( selectedSite.slug, purchase.id );
+		if ( purchase && ( ! isCancelable( purchase ) || isDomainTransfer( purchase ) ) ) {
+			redirectPath = managePurchase( siteSlug, purchase.id );
 		}
 
 		page.redirect( redirectPath );
@@ -148,7 +143,7 @@ class CancelPurchase extends React.Component {
 					<QueryUserPurchases userId={ this.props.userId } />
 					<CancelPurchaseLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
-						selectedSite={ this.props.selectedSite }
+						siteSlug={ this.props.siteSlug }
 					/>
 				</div>
 			);
@@ -209,6 +204,7 @@ class CancelPurchase extends React.Component {
 						disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
 						selectedSite={ this.props.selectedSite }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
+						siteSlug={ this.props.siteSlug }
 					/>
 				</CompactCard>
 			</Main>
