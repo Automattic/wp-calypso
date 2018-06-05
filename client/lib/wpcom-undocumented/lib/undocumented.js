@@ -643,36 +643,6 @@ Undocumented.prototype.getDomainRegistrationSupportedStates = function( countryC
 	);
 };
 
-Undocumented.prototype.getDomainRegistrationSupportedCountries = function( fn ) {
-	debug( '/domains/supported-countries/ query' );
-
-	return this._sendRequest(
-		{
-			path: '/domains/supported-countries/',
-			method: 'get',
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.getPaymentSupportedCountries = function( fn ) {
-	debug( '/me/transactions/supported-countries/ query' );
-
-	return this._sendRequest(
-		{
-			path: '/me/transactions/supported-countries/',
-			method: 'get',
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.getSmsSupportedCountries = function( fn ) {
-	debug( 'meta/sms-supported-countries/ query' );
-
-	return this.wpcom.req.get( { path: '/meta/sms-country-codes/' }, fn );
-};
-
 function mapKeysRecursively( object, fn ) {
 	return Object.keys( object ).reduce( function( mapped, key ) {
 		let value = object[ key ];
