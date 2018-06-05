@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -15,15 +15,16 @@ import NameserversStore from 'lib/domains/nameservers/store';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import StoreConnection from 'components/data/store-connection';
 import { fetchNameservers } from 'lib/upgrades/actions';
-import { getDomainsBySite } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 
 const stores = [ NameserversStore ];
 
 function getStateFromStores( props ) {
 	return {
 		domains: props.domains,
+		isRequestingSiteDomains: props.isRequestingSiteDomains,
 		nameservers: NameserversStore.getByDomainName( props.selectedDomainName ),
 		selectedDomainName: props.selectedDomainName,
 		// undefined is not permitted by the passed component
@@ -51,7 +52,14 @@ export class NameserversData extends Component {
 		this.loadNameservers();
 	}
 
-	loadNameservers = () => fetchNameservers( this.props.selectedDomainName );
+	loadNameservers = () => {
+		const selectedDomainName = this.props.selectedDomainName;
+
+		if ( this.prevSelectedDomainName !== selectedDomainName ) {
+			fetchNameservers( this.props.selectedDomainName );
+			this.prevSelectedDomainName = selectedDomainName;
+		}
+	};
 
 	render() {
 		const { selectedSite } = this.props;
@@ -59,14 +67,15 @@ export class NameserversData extends Component {
 		return (
 			<div>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
-				<QuerySiteDomains siteId={ selectedSite && selectedSite.ID } />
+				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				<StoreConnection
 					component={ this.props.component }
 					domains={ this.props.domains }
-					stores={ stores }
 					getStateFromStores={ getStateFromStores }
+					isRequestingSiteDomains={ this.props.requestingSiteDomains }
 					selectedDomainName={ this.props.selectedDomainName }
 					selectedSite={ selectedSite }
+					stores={ stores }
 				/>
 			</div>
 		);
@@ -75,23 +84,11 @@ export class NameserversData extends Component {
 
 const mapStateToProps = state => {
 	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySite( state, selectedSite );
+	const siteId = get( selectedSite, 'ID', null );
 
 	return {
-		domains: {
-			// this doesn't appear to be currently
-			// stored in our app state as it was in
-			// the domains store. we know if we are
-			// currently fetching, but not if a fetch
-			// has taken place. in this case, I'm
-			// using the length of the array to indicate
-			// `hasLoaded` because this component should
-			// never exist in the app without at least
-			// one domain. thus, if we have at least one
-			// then we have loaded them.
-			hasLoadedFromServer: !! domains.length,
-			list: domains,
-		},
+		domains: getDomainsBySiteId( state, siteId ),
+		requestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 		selectedSite,
 	};
 };

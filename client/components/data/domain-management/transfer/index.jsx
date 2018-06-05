@@ -44,8 +44,8 @@ class TransferData extends Component {
 	static propTypes = {
 		analyticsPath: PropTypes.string,
 		analyticsTitle: PropTypes.string,
-		domains: PropTypes.array,
 		component: PropTypes.func.isRequired,
+		domains: PropTypes.array,
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
