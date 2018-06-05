@@ -68,19 +68,30 @@ class DomainConnectMapping extends React.Component {
 	};
 
 	renderSuccessNotice = () => {
-		if ( ! this.isDomainConnectComplete() || this.state.error ) {
+		const selectedDomain = getSelectedDomain( this.props );
+		if (
+			( ! selectedDomain.pointsToWpcom && ! this.isDomainConnectComplete() ) ||
+			this.state.error
+		) {
 			return;
 		}
 
 		const { translate } = this.props;
 
+		let message;
+		if ( selectedDomain.pointsToWpcom ) {
+			message = translate( 'Your domain is already configured to work with WordPress.com.' );
+		} else {
+			message = translate(
+				'Your domain is now configured to work with WordPress.com. ' +
+					'Please note that there may be a delay before the new settings ' +
+					'take effect at your domain provider.'
+			);
+		}
+
 		return (
 			<Notice status="is-success" icon="checkmark" showDismiss={ false }>
-				{ translate(
-					'Your domain is now configured to work with WordPress.com. ' +
-						'Please note that there may be a delay before the new settings ' +
-						'take effect at your domain provider.'
-				) }
+				{ message }
 			</Notice>
 		);
 	};
