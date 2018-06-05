@@ -42,7 +42,7 @@ The child component should receive processed props defined during the render:
 
 As well as:
 
-* `domains` - a list of domains, it's the result of a call to `DomainsStore.getBySite` for the current site
+* `domains` - a list of domains we get using `<QuerySiteDomains />` component (Redux)
 * `nameservers` - name servers data, it's the result of a call to `NameserversStore.getByDomainName` for the current domain  
 
-It's updated whenever `DomainsStore`, `NameserversStore` or `sites` changes.
+It's updated whenever `domains`, `NameserversStore` or `sites` changes.

@@ -62,6 +62,6 @@ The child component should receive processed props defined during the render:
 As well as:
 
 * `cart` - products added to the cart, it's the result of a call to `CartStore.get`  
-* `domains` - a list of domains, it's the result of a call to `DomainsStore.getBySite` for the current site
+* `domains` - a list of domains we get using `<QuerySiteDomains />` component (Redux)
 
-It's updated whenever CartStore`, `DomainStore`, `productsList` or `sites` changes.
+It's updated whenever CartStore`, `domains`, `productsList` or `sites` changes.

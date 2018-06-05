@@ -1,3 +1,5 @@
+<h1> DEPRECATED, do not use </h1>
+
 domains
 -------
 

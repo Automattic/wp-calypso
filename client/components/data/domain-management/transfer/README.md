@@ -40,7 +40,7 @@ The child component should receive processed props defined during the render:
 
 As well as:
 
-* `domains` - a list of domains, it's the result of a call to `DomainsStore.getBySite` for the current site
+* `domains` - a list of domains we get using `<QuerySiteDomains />` component (Redux)
 * `wapiDomainInfo` - Wapi domain info, it's the result of a call to `WapiDomainInfoStore.getByDomainName` for the current domain  
 
-It's updated whenever `DomainsStore`, `WapiDomainInfoStore` changes.
+It's updated whenever `domains`, `WapiDomainInfoStore` changes.
