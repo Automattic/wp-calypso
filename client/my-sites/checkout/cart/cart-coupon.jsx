@@ -22,7 +22,6 @@ export class CartCoupon extends React.Component {
 		super( props );
 
 		this.state = {
-			isCouponFormShowing: false,
 			couponInputValue: this.appliedCouponCode,
 			userChangedCoupon: false,
 		};
@@ -68,22 +67,10 @@ export class CartCoupon extends React.Component {
 			return null;
 		}
 
-		return (
-			<div className="cart__coupon">
-				<button onClick={ this.toggleCouponDetails } className="button is-link cart__toggle-link">
-					{ this.props.translate( 'Have a coupon code?' ) }
-				</button>
-
-				{ this.renderCouponForm() }
-			</div>
-		);
+		return <div className="cart__coupon">{ this.renderCouponForm() }</div>;
 	}
 
 	renderCouponForm = () => {
-		if ( ! this.state.isCouponFormShowing ) {
-			return null;
-		}
-
 		return (
 			<form onSubmit={ this.applyCoupon } className={ 'cart__form' }>
 				<input
@@ -109,25 +96,12 @@ export class CartCoupon extends React.Component {
 		return ! this.props.cart.is_coupon_applied && this.props.cart.coupon ? true : false;
 	}
 
-	toggleCouponDetails = event => {
-		event.preventDefault();
-
-		this.setState( { isCouponFormShowing: ! this.state.isCouponFormShowing } );
-
-		if ( this.state.isCouponFormShowing ) {
-			analytics.ga.recordEvent( 'Upgrades', 'Clicked Hide Coupon Code Link' );
-		} else {
-			analytics.ga.recordEvent( 'Upgrades', 'Clicked Show Coupon Code Link' );
-		}
-	};
-
 	clearCoupon = event => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.setState(
 			{
 				couponInputValue: '',
-				isCouponFormShowing: false,
 			},
 			() => {
 				this.applyCoupon( event );

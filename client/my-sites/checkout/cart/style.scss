@@ -132,10 +132,9 @@
 		}
 
 		form {
+			width: 100%;
 			display: block;
-			border-top: 1px solid $gray-lighten-30;
-			margin: 15px -15px 0 -15px;
-			padding: 15px 15px 0 15px;
+			margin-top: 15px;
 
 			input[type=text] {
 				font-size: 12px;
