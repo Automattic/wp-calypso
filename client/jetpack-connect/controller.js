@@ -260,7 +260,6 @@ export function plansLanding( context, next ) {
 	context.primary = (
 		<PlansLanding
 			context={ context }
-			destinationType={ context.params.destinationType }
 			interval={ context.params.interval }
 			url={ context.query.site }
 		/>
@@ -287,7 +286,6 @@ export function plansSelection( context, next ) {
 						: JPC_PATH_PLANS
 				}
 				context={ context }
-				destinationType={ context.params.destinationType }
 				interval={ context.params.interval }
 				queryRedirect={ context.query.redirect }
 			/>

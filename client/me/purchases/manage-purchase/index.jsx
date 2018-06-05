@@ -78,7 +78,6 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 
 class ManagePurchase extends Component {
 	static propTypes = {
-		destinationType: PropTypes.string,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchase: PropTypes.object,
