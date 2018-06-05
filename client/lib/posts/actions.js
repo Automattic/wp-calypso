@@ -122,7 +122,7 @@ PostActions = {
 		} );
 	},
 
-	autosave: async function( site ) {
+	autosave: async function() {
 		const post = PostEditStore.get();
 		const savedPost = PostEditStore.getSavedPost();
 
@@ -136,7 +136,7 @@ PostActions = {
 		if ( utils.isPublished( savedPost ) || utils.isPublished( post ) ) {
 			await reduxDispatch( editorAutosave( post ) );
 		} else {
-			await PostActions.saveEdited( site, null, null, {
+			await PostActions.saveEdited( null, {
 				recordSaveEvent: false,
 				autosave: true,
 			} );
@@ -179,12 +179,10 @@ PostActions = {
 	/**
 	 * Calls out to API to save a Post object
 	 *
-	 * @param {Object} site Site object
 	 * @param {object} attributes post attributes to change before saving
-	 * @param {object} context additional properties for recording the save event
 	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
 	 */
-	saveEdited: async function( site, attributes, context, options ) {
+	saveEdited: async function( attributes, options ) {
 		// TODO: skip this edit if `attributes` are `null`. That means
 		// we don't want to do any additional edit before saving.
 		Dispatcher.handleViewAction( {
@@ -234,7 +232,7 @@ PostActions = {
 		}
 
 		if ( ! options || options.recordSaveEvent !== false ) {
-			recordSaveEvent( site, context ); // do this before changing status from 'future'
+			reduxDispatch( recordSaveEvent() ); // do this before changing status from 'future'
 		}
 
 		if (
@@ -267,7 +265,6 @@ PostActions = {
 				// it
 				rawContent: mode === currentMode ? rawContent : null,
 				post: data,
-				site,
 			} );
 
 			// Retrieve the normalized post and use it to update Redux store

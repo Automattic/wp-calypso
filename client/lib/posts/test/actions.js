@@ -23,12 +23,6 @@ jest.mock( 'lib/redux-bridge', () => ( {
 	reduxGetState: () => ( { ui: { editor: { saveBlockers: [] } } } ),
 } ) );
 
-const sampleSite = {
-	ID: 123,
-	jetpack: false,
-	slug: 'example.wordpress.com',
-	URL: 'https://example.wordpress.com',
-};
 describe( 'actions', () => {
 	let sandbox;
 
@@ -52,7 +46,7 @@ describe( 'actions', () => {
 		test( 'should not send a request if the post has no content', () => {
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( false );
 
-			const saveResult = PostActions.saveEdited( sampleSite, null, {} );
+			const saveResult = PostActions.saveEdited( null );
 			return expect( saveResult ).rejects.toThrow( 'NO_CONTENT' );
 		} );
 
@@ -60,7 +54,7 @@ describe( 'actions', () => {
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( {} );
 
-			const saveResult = PostActions.saveEdited( sampleSite, null, {} );
+			const saveResult = PostActions.saveEdited( null );
 			return expect( saveResult ).resolves.toBeUndefined();
 		} );
 
@@ -94,7 +88,7 @@ describe( 'actions', () => {
 
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( changedAttributes );
 
-			const saveResult = PostActions.saveEdited( sampleSite, null, {} );
+			const saveResult = PostActions.saveEdited( null );
 			await expect( saveResult ).resolves.toBeUndefined();
 
 			sinon.assert.calledTwice( Dispatcher.handleViewAction );
