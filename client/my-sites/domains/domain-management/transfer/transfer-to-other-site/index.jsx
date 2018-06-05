@@ -49,7 +49,7 @@ export class TransferToOtherSite extends React.Component {
 	};
 
 	isDataReady() {
-		return this.props.isRequestingSiteDomains;
+		return ! this.props.isRequestingSiteDomains;
 	}
 
 	isSiteEligible = site => {
