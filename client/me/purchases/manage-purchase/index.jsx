@@ -40,7 +40,6 @@ import {
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
@@ -55,7 +54,7 @@ import {
 	isDomainTransfer,
 	isTheme,
 } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
+import { getSite, isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
@@ -81,7 +80,7 @@ class ManagePurchase extends Component {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
 		userId: PropTypes.number,
 	};
 
@@ -100,7 +99,7 @@ class ManagePurchase extends Component {
 	}
 
 	isDataValid( props = this.props ) {
-		if ( isDataLoading( props ) ) {
+		if ( ! props.hasLoadedUserPurchasesFromServer ) {
 			return true;
 		}
 
@@ -367,7 +366,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderPurchaseDetail() {
-		if ( isDataLoading( this.props ) ) {
+		if ( ! this.props.hasLoadedUserPurchasesFromServer ) {
 			return this.renderPlaceholder();
 		}
 
@@ -420,11 +419,15 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { selectedSite, selectedSiteId, purchase, isPurchaseTheme } = this.props;
+		const { selectedSite, purchase, isPurchaseTheme } = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
-		if ( ! isDataLoading( this.props ) && selectedSite && canEditPaymentDetails( purchase ) ) {
+		if (
+			this.props.hasLoadedUserPurchasesFromServer &&
+			selectedSite &&
+			canEditPaymentDetails( purchase )
+		) {
 			editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
 		}
 
@@ -460,20 +463,20 @@ class ManagePurchase extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
-	const selectedSiteId = getSelectedSiteId( state );
+	const siteId = purchase ? purchase.siteId : null;
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
-	const selectedSite = getSelectedSite( state );
+	const selectedSite = getSite( state, siteId );
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
-		selectedSiteId,
+		selectedSiteId: siteId,
 		selectedSite,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
 		isPurchaseTheme,
-		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, purchase.meta ),
-		isAtomicSite: selectedSite && isSiteAtomic( state, selectedSiteId ),
+		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
+		isAtomicSite: selectedSite && isSiteAtomic( state, siteId ),
 		userId: getCurrentUserId( state ),
 	};
 } )( localize( ManagePurchase ) );
