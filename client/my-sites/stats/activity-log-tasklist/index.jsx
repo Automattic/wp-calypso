@@ -432,7 +432,10 @@ const updateTheme = ( siteId, themeId ) =>
 			path: `/sites/${ siteId }/themes`,
 			body: { action: 'update', themes: themeId },
 		} ),
-		{ fromApi: () => ( { themes } ) => themes.map( ( { id } ) => [ id, true ] ) }
+		{
+			fromApi: () => ( { themes } ) => themes.map( ( { id } ) => [ id, true ] ),
+			freshness: -Infinity,
+		}
 	);
 
 const mapStateToProps = ( state, { siteId, plugins, themes } ) => {
