@@ -246,6 +246,26 @@ export const ReaderSidebar = createReactClass( {
 								</li>
 							) }
 
+							{ config.isEnabled( 'reader/remembered-posts' ) && (
+								<li
+									className={ ReaderSidebarHelper.itemLinkClass(
+										'/read/remembered-posts',
+										this.props.path,
+										{ 'sidebar-activity__likes': true }
+									) }
+								>
+									<a
+										href="/read/remembered-posts"
+										onClick={ this.handleReaderSidebarLikeActivityClicked }
+									>
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">
+											{ this.props.translate( 'Remembered Posts' ) }
+										</span>
+									</a>
+								</li>
+							) }
+
 							<li
 								className={ ReaderSidebarHelper.itemLinkClass(
 									'/activities/likes',

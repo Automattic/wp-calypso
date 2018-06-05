@@ -31,6 +31,8 @@ import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
+import RememberPostButton from 'blocks/remember-post-button';
+import { shouldShowRememberPostButton } from 'blocks/remember-post-button/helper';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -132,10 +134,6 @@ class ReaderPostOptionsMenu extends React.Component {
 		}, 100 );
 	};
 
-	rememberPost = () => {};
-
-	forgetPost = () => {};
-
 	visitPost = () => {
 		const post = this.props.post;
 
@@ -228,14 +226,13 @@ class ReaderPostOptionsMenu extends React.Component {
 							</PopoverMenuItem>
 						) }
 
-					{ true ? (
-						<PopoverMenuItem onClick={ this.rememberPost }>
-							{ translate( 'Remember Post' ) }
-						</PopoverMenuItem>
-					) : (
-						<PopoverMenuItem onClick={ this.forgetPost }>
-							{ translate( 'Forget Post' ) }
-						</PopoverMenuItem>
+					{ shouldShowRememberPostButton( post ) && (
+						<RememberPostButton
+							tagName={ PopoverMenuItem }
+							siteId={ siteId }
+							postId={ postId }
+							post={ post }
+						/>
 					) }
 
 					{ ( this.props.showFollow || isEditPossible || post.URL ) &&

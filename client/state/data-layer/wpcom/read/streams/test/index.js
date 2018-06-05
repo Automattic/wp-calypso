@@ -108,6 +108,15 @@ describe( 'streams', () => {
 					},
 				},
 				{
+					stream: 'remembered-posts',
+					expected: {
+						method: 'GET',
+						path: '/read/remembered-posts',
+						apiVersion: '1.2',
+						query: { ...query },
+					},
+				},
+				{
 					stream: 'search: { "q": "foo", "sort": "date" }',
 					expected: {
 						method: 'GET',

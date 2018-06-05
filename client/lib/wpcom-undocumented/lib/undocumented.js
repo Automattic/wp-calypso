@@ -1294,6 +1294,15 @@ Undocumented.prototype.readA8cConversations = function( query, fn ) {
 	return this.wpcom.req.get( '/read/conversations', params, fn );
 };
 
+Undocumented.prototype.readRememberedPosts = function( query, fn ) {
+	debug( '/read/remembered-posts' );
+	const params = {
+		...query,
+		apiVersion: '1.2',
+	};
+	return this.wpcom.req.get( '/read/remembered-posts', params, fn );
+};
+
 Undocumented.prototype.discoverFeed = function( query, fn ) {
 	debug( '/read/feed' );
 	return this.wpcom.req.get( '/read/feed/', query, fn );

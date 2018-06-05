@@ -362,6 +362,14 @@ sections.push( {
 } );
 
 sections.push( {
+	name: 'remembered-posts',
+	paths: [ '/read/remembered-posts' ],
+	module: 'reader/remembered-posts',
+	secondary: true,
+	group: 'reader',
+} );
+
+sections.push( {
 	name: 'help',
 	paths: [ '/help' ],
 	module: 'me/help',

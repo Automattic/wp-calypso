@@ -19,7 +19,7 @@ import { itemsSchema } from './schema';
 import { key } from './utils';
 
 /**
- * Tracks all known conversation following statuses.
+ * Tracks the remember status of a post.
  */
 export const items = createReducer(
 	{},
@@ -29,7 +29,7 @@ export const items = createReducer(
 				[ key(
 					action.payload.siteId,
 					action.payload.postId
-				) ]: READER_REMEMBERED_POSTS_STATUS.following,
+				) ]: READER_REMEMBERED_POSTS_STATUS.remembered,
 			} );
 			return newState;
 		},

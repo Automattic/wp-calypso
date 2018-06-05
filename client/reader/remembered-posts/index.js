@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,21 +7,24 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
-import readerController from 'reader/controller';
 import config from 'config';
+import { rememberedPosts } from './controller';
+import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	// Blog Recommendations
 	if ( config.isEnabled( 'reader/remembered-posts' ) ) {
-		page( '/remembered-posts',
-			readerController.preloadReaderBundle,
-			readerController.loadSubscriptions,
-			readerController.initAbTests,
-			readerController.updateLastRoute,
-			readerController.removePost,
-			readerController.sidebar,
-			controller.rememberedPosts
+		page(
+			'/read/remembered-posts',
+			preloadReaderBundle,
+			updateLastRoute,
+			initAbTests,
+			sidebar,
+			rememberedPosts,
+			makeLayout,
+			clientRender
 		);
+	} else {
+		page( '/read/remembered-posts', '/' );
 	}
 }

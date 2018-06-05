@@ -1,18 +1,42 @@
+/** @format */
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import titleActions from 'lib/screen-title/actions';
+import { sectionify } from 'lib/route';
+import { recordTrack } from 'reader/stats';
+import AsyncLoad from 'components/async-load';
+import { trackPageLoad, trackScrollPage } from 'reader/controller-helper';
 
-const ANALYTICS_PAGE_TITLE = 'Reader';
+export function rememberedPosts( context, next ) {
+	const basePath = sectionify( context.path );
+	const mcKey = 'remembered-posts';
+	const title = 'Reader > Remembered Posts';
 
-export default {
-	rememberedPosts() {
-		titleActions.setTitle( i18n.translate( 'Remembered Posts ‹ Reader' ) );
-	},
+	trackPageLoad( basePath, 'Reader > Remembered Posts', mcKey );
+	recordTrack( 'calypso_reader_remembered_posts_viewed' );
 
-};
+	const streamKey = 'remembered-posts';
+	const scrollTracker = trackScrollPage.bind(
+		null,
+		'/read/remembered-posts',
+		title,
+		'Reader',
+		mcKey
+	);
+
+	context.primary = (
+		<AsyncLoad
+			require="reader/remembered-posts/stream"
+			key={ 'remembered-posts' }
+			title="rememberedPosts"
+			streamKey={ streamKey }
+			trackScrollPage={ scrollTracker }
+		/>
+	);
+	next();
+}

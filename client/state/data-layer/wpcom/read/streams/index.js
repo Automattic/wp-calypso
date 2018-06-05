@@ -112,6 +112,11 @@ const streamApis = {
 		dateProperty: 'last_comment_date_gmt',
 		pollQuery: () => getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ] ),
 	},
+	rememberedPosts: {
+		path: () => '/read/remembered-posts',
+		dateProperty: 'last_comment_date_gmt',
+		pollQuery: () => getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ] ),
+	},
 	featured: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/featured`,
 		dateProperty: 'date',

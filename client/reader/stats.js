@@ -89,6 +89,9 @@ function getLocation( path ) {
 	if ( path.indexOf( '/read/conversations' ) === 0 ) {
 		return 'conversations';
 	}
+	if ( path.indexOf( '/read/remembered-posts' ) === 0 ) {
+		return 'remembered_posts';
+	}
 	return 'unknown';
 }
 
