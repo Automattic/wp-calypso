@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, isEmpty } from 'lodash';
+import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -42,12 +42,8 @@ class InlineHelpPopover extends Component {
 	};
 
 	openResultView = event => {
-		const { selectedResult } = this.props;
 		event.preventDefault();
-
-		if ( ! isEmpty( selectedResult ) ) {
-			this.openSecondaryView( VIEW_RICH_RESULT );
-		}
+		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
 
 	moreHelpClicked = () => {
