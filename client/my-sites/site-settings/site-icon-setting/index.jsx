@@ -243,7 +243,6 @@ class SiteIconSetting extends Component {
 			buttonProps = {
 				type: 'button',
 				onClick: this.showModal,
-				'data-tip-target': 'settings-site-icon-change',
 				onMouseEnter: this.preloadModal,
 			};
 		} else {
@@ -291,6 +290,7 @@ class SiteIconSetting extends Component {
 				<Button
 					{ ...buttonProps }
 					className="site-icon-setting__button"
+					data-tip-target="settings-site-icon-change"
 					disabled={ isSaving }
 					compact
 				>
