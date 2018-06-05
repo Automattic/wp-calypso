@@ -102,10 +102,6 @@ class InlineHelpRichResult extends Component {
 		}
 	};
 
-	onCancel = () => {
-		this.setState( { showDialog: ! this.state.showDialog } );
-	};
-
 	render() {
 		const { result, type } = this.props;
 		const title = get( result, RESULT_TITLE );
