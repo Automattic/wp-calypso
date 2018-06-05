@@ -87,6 +87,7 @@ class InlineHelpPopover extends Component {
 							<InlineHelpRichResult
 								result={ this.props.selectedResult }
 								setDialogState={ this.props.setDialogState }
+								closePopover={ this.props.onClose }
 							/>
 						),
 					}[ this.state.activeSecondaryView ]
