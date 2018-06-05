@@ -65,7 +65,7 @@ export class CartCoupon extends React.Component {
 
 	renderApplyCouponUI() {
 		if ( this.props.cart.total_cost === 0 ) {
-			return;
+			return null;
 		}
 
 		return (
@@ -81,7 +81,7 @@ export class CartCoupon extends React.Component {
 
 	renderCouponForm = () => {
 		if ( ! this.state.isCouponFormShowing ) {
-			return;
+			return null;
 		}
 
 		return (

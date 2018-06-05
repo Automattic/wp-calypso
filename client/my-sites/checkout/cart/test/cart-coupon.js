@@ -1,11 +1,12 @@
 /**
  * @format
+ * @jest-environment jsdom
  */
 
 /**
  * External dependencies
  */
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import { identity } from 'lodash';
 import React from 'react';
 
@@ -177,6 +178,21 @@ describe( 'cart-coupon', () => {
 			component.find( '.cart__remove-link' ).simulate( 'click', event );
 			expect( applyCoupon.mock.calls.length ).toBe( 1 );
 			expect( applyCoupon.mock.calls[ 0 ][ 0 ] ).toBe( '' );
+		} );
+
+		test( 'Should not display coupon form if cart total is 0', () => {
+			const component = mount(
+				<CartCoupon
+					{ ...props }
+					cart={ {
+						...cart,
+						total_cost: 0,
+					} }
+				/>
+			);
+			applyCoupon.mockReset();
+			expect( component.children().length ).toBe( 0 );
+			expect( component.find( 'cart__coupon' ).length ).toBe( 0 );
 		} );
 	} );
 
