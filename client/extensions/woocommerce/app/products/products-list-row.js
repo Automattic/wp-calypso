@@ -6,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { unescape } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +23,7 @@ const ProductsListRow = ( { site, product } ) => {
 	const categoryNames =
 		product.categories &&
 		product.categories.map( function( category ) {
-			return category.name;
+			return unescape( category.name );
 		} );
 
 	const renderCategories = () => (
