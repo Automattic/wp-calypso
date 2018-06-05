@@ -50,7 +50,7 @@ describe( 'cart-coupon', () => {
 			expect( component.find( '.cart__coupon' ).length ).toBe( 1 );
 		} );
 
-		test( 'Should render only coupon code link when there is no coupon', () => {
+		test( 'Should render coupon form when there is no coupon', () => {
 			const component = shallow(
 				<CartCoupon
 					{ ...props }
@@ -61,41 +61,7 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
-			expect( component.find( '.cart__form' ).length ).toBe( 0 );
-		} );
-
-		test( 'Should show coupon form when toggle link is clicked', () => {
-			const component = shallow(
-				<CartCoupon
-					{ ...props }
-					cart={ {
-						...cart,
-						is_coupon_applied: false,
-						coupon: '',
-					} }
-				/>
-			);
-			component.find( '.cart__toggle-link' ).simulate( 'click', event );
-			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
 			expect( component.find( '.cart__form' ).length ).toBe( 1 );
-		} );
-
-		test( 'Should hide coupon form when toggle link is clicked twice', () => {
-			const component = shallow(
-				<CartCoupon
-					{ ...props }
-					cart={ {
-						...cart,
-						is_coupon_applied: false,
-						coupon: '',
-					} }
-				/>
-			);
-			component.find( '.cart__toggle-link' ).simulate( 'click', event );
-			component.find( '.cart__toggle-link' ).simulate( 'click', event );
-			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
-			expect( component.find( '.cart__form' ).length ).toBe( 0 );
 		} );
 
 		test( 'Should apply a coupon when form is submitted', () => {
@@ -110,7 +76,6 @@ describe( 'cart-coupon', () => {
 				/>
 			);
 			applyCoupon.mockReset();
-			component.find( '.cart__toggle-link' ).simulate( 'click', event );
 			component.setState( {
 				couponInputValue: 'CODE15',
 			} );
@@ -132,7 +97,6 @@ describe( 'cart-coupon', () => {
 				/>
 			);
 			applyCoupon.mockReset();
-			component.find( '.cart__toggle-link' ).simulate( 'click', event );
 			component.setState( {
 				couponInputValue: 'CODE15',
 			} );
@@ -159,7 +123,6 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			expect( component.find( '.cart__toggle-link' ).length ).toBe( 0 );
 			expect( component.find( '.cart__form' ).length ).toBe( 0 );
 			expect( component.find( '.cart__details' ).length ).toBe( 1 );
 			expect( component.find( '.cart__remove-link' ).length ).toBe( 1 );
