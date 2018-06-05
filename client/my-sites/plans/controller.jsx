@@ -23,7 +23,6 @@ export default {
 				<Plans
 					context={ context }
 					intervalType={ context.params.intervalType }
-					destinationType={ context.params.destinationType }
 					selectedFeature={ context.query.feature }
 					selectedPlan={ context.query.plan }
 					withDiscount={ context.query.discount }
