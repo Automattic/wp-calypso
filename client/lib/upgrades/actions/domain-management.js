@@ -9,11 +9,8 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import { action as ActionTypes } from '../constants';
-import { isInitialized as isDomainInitialized } from 'lib/domains';
 import Dispatcher from 'dispatcher';
 import DnsStore from 'lib/domains/dns/store';
-import { createDomainObjects } from 'lib/domains/assembler';
-import DomainsStore from 'lib/domains/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import NameserversStore from 'lib/domains/nameservers/store';
 import { requestSite } from 'state/sites/actions';
@@ -24,6 +21,7 @@ import WhoisStore from 'lib/domains/whois/store';
 import wp from 'lib/wp';
 import debugFactory from 'debug';
 import { isBeingProcessed } from 'lib/domains/dns';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
 
 const debug = debugFactory( 'actions:domain-management' );
 
@@ -37,30 +35,13 @@ export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dis
 	} );
 	wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
 		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIMARY_DOMAIN_SET_FAILED,
-				error:
-					( error && error.message ) ||
-					i18n.translate(
-						'There was a problem setting the primary domain. Please try' +
-							' again later or contact support.'
-					),
-				siteId,
-				domainName,
-			} );
-
 			return onComplete( error, data );
 		}
 
 		requestSite( siteId )( dispatch ).then( () => {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIMARY_DOMAIN_SET_COMPLETED,
-				siteId,
-				domainName,
+			fetchSiteDomains( siteId )( dispatch ).then( () => {
+				onComplete( null, data );
 			} );
-
-			onComplete( null, data );
-			fetchDomains( siteId );
 		} );
 	} );
 };
@@ -126,43 +107,6 @@ export function deleteEmailForwarding( domainName, mailbox, onComplete ) {
 
 export function resendVerificationEmailForwarding( domainName, mailbox, onComplete ) {
 	wpcom.resendVerificationEmailForward( domainName, mailbox, onComplete );
-}
-
-export function fetchDomains( siteId ) {
-	if ( ! isDomainInitialized( DomainsStore.get(), siteId ) ) {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.DOMAINS_INITIALIZE,
-			siteId,
-		} );
-	}
-
-	const domains = DomainsStore.getBySite( siteId );
-	if ( domains.isFetching ) {
-		return;
-	}
-
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DOMAINS_FETCH,
-		siteId,
-	} );
-
-	wpcom
-		.site( siteId )
-		.domains()
-		.then( data => {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DOMAINS_FETCH_COMPLETED,
-				siteId,
-				domains: createDomainObjects( data.domains ),
-			} );
-		} )
-		.catch( error => {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DOMAINS_FETCH_FAILED,
-				siteId,
-				error,
-			} );
-		} );
 }
 
 /**

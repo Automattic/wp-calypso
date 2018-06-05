@@ -177,11 +177,6 @@ function isSubdomain( domainName ) {
 	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
 }
 
-function isInitialized( state, siteId ) {
-	const siteState = state[ siteId ];
-	return siteState && ( siteState.hasLoadedFromServer || siteState.isFetching );
-}
-
 function hasGoogleApps( domain ) {
 	return 'no_subscription' !== get( domain, 'googleAppsSubscription.status', '' );
 }
@@ -313,7 +308,6 @@ export {
 	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
 	hasPendingGoogleAppsUsers,
-	isInitialized,
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,

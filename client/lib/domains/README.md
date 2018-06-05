@@ -32,12 +32,10 @@ To interact with the store, use the actions made available in [`domain-managemen
 ```js
 import {
 	enablePrivacyProtection,
-	fetchDomains,
 	requestTransferCode,
 	setPrimaryDomain,
 } from 'lib/upgrades/actions';
 
-fetchDomains( 'example.wordpress.com' );
 setPrimaryDomain( 'example.wordpress.com', 'example.com' );
 enablePrivacyProtection( { 'example.wordpress.com', 'example.com' } );
 requestTransferCode( { 'example.wordpress.com', 'example.com', true, true } );

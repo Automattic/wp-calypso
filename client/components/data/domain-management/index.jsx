@@ -4,30 +4,31 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import StoreConnection from 'components/data/store-connection';
-import DomainsStore from 'lib/domains/store';
 import CartStore from 'lib/cart/store';
-import observe from 'lib/mixins/data-observe';
-import { fetchDomains } from 'lib/upgrades/actions';
+import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePlans from 'components/data/query-site-plans';
+import QuerySiteDomains from 'components/data/query-site-domains';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getProductsList } from 'state/products-list/selectors';
 
-const stores = [ DomainsStore, CartStore ];
+const stores = [ CartStore ];
 
 function getStateFromStores( props ) {
 	return {
 		cart: CartStore.get(),
 		context: props.context,
-		domains: props.selectedSite ? DomainsStore.getBySite( props.selectedSite.ID ) : null,
+		domains: props.selectedSite ? props.domains : null,
+		isRequestingSiteDomains: props.isRequestingSiteDomains,
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
@@ -35,10 +36,8 @@ function getStateFromStores( props ) {
 	};
 }
 
-const DomainManagementData = createReactClass( {
-	displayName: 'DomainManagementData',
-
-	propTypes: {
+class DomainManagementData extends React.Component {
+	static propTypes = {
 		analyticsPath: PropTypes.string,
 		analyticsTitle: PropTypes.string,
 		context: PropTypes.object.isRequired,
@@ -46,56 +45,44 @@ const DomainManagementData = createReactClass( {
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		sitePlans: PropTypes.object.isRequired,
-	},
+	};
 
-	mixins: [ observe( 'productsList' ) ],
-
-	componentWillMount: function() {
+	render() {
 		const { selectedSite } = this.props;
 
-		if ( selectedSite ) {
-			fetchDomains( selectedSite.ID );
-		}
-	},
-
-	componentWillUpdate: function( nextProps ) {
-		const { selectedSite: prevSite } = this.props;
-		const { selectedSite: nextSite } = nextProps;
-
-		if ( nextSite && nextSite !== prevSite ) {
-			fetchDomains( nextSite.ID );
-		}
-	},
-
-	render: function() {
 		return (
 			<div>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
 				<StoreConnection
 					component={ this.props.component }
-					stores={ stores }
-					getStateFromStores={ getStateFromStores }
-					products={ this.props.productsList.get() }
-					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ this.props.selectedSite }
-					sitePlans={ this.props.sitePlans }
 					context={ this.props.context }
+					domains={ this.props.domains }
+					getStateFromStores={ getStateFromStores }
+					isRequestingSiteDomains={ this.props.requestingSiteDomains }
+					products={ this.props.productsList }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ selectedSite }
+					sitePlans={ this.props.sitePlans }
+					stores={ stores }
 				/>
-				{ this.props.selectedSite && <QuerySitePlans siteId={ this.props.selectedSite.ID } /> && (
-						<QueryContactDetailsCache />
-					) }
+				{ <QueryProductsList /> }
+				{ selectedSite &&
+					( <QuerySitePlans siteId={ selectedSite.ID } /> && (
+							<QuerySiteDomains siteId={ selectedSite.ID } />
+						) && <QueryContactDetailsCache /> ) }
 			</div>
 		);
-	},
-} );
+	}
+}
 
-const mapStateToProps = state => {
+export default connect( state => {
 	const selectedSite = getSelectedSite( state );
 
 	return {
+		domains: getDomainsBySiteId( state, selectedSite.ID ),
+		requestingSiteDomains: isRequestingSiteDomains( state, selectedSite.ID ),
+		productList: getProductsList( state ),
 		sitePlans: getPlansBySite( state, selectedSite ),
 		selectedSite,
 	};
-};
-
-export default connect( mapStateToProps )( DomainManagementData );
+} )( DomainManagementData );
