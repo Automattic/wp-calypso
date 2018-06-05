@@ -6,7 +6,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { startsWith } from 'lodash';
 
 /**
@@ -80,23 +79,15 @@ export class TranslatorInvite extends Component {
 			return (
 				<Notice icon="globe" showDismiss={ true } onDismissClick={ this.dismiss }>
 					<div className="translator-invite__content">
-						{ this.props.translate(
-							'Would you like to help us translate WordPress into {{translateLink}}%(defaultLanguage)s{{/translateLink}}?',
-							{
-								args: {
-									defaultLanguage: localizedLanguageNames[ locale ].localized,
-								},
-								components: {
-									translateLink: (
-										<a
-											href={ `https://translate.wordpress.com/projects/wpcom/${ locale }/default/` }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
+						Would you like to help us translate WordPress into{' '}
+						<a
+							href={ `https://translate.wordpress.com/projects/wpcom/${ locale }/default/` }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ localizedLanguageNames[ locale ].en }
+						</a>{' '}
+						?
 					</div>
 				</Notice>
 			);
@@ -124,4 +115,4 @@ export default connect(
 		localizedLanguageNames: getLocalizedLanguageNames( state ),
 	} ),
 	null
-)( localize( TranslatorInvite ) );
+)( TranslatorInvite );
