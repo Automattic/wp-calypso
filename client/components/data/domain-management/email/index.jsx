@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -12,11 +12,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import StoreConnection from 'components/data/store-connection';
-import DomainsStore from 'lib/domains/store';
 import CartStore from 'lib/cart/store';
 import QueryProducts from 'components/data/query-products-list';
 import QuerySites from 'components/data/query-sites';
-import { fetchDomains } from 'lib/upgrades/actions';
 import userFactory from 'lib/user';
 import { fetchByDomain, fetchBySiteId } from 'state/google-apps-users/actions';
 import { getByDomain, getBySite, isLoaded } from 'state/google-apps-users/selectors';
@@ -26,14 +24,17 @@ import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import QuerySiteDomains from 'components/data/query-site-domains';
 
 const user = userFactory();
 
-const stores = [ DomainsStore, CartStore ];
+const stores = [ CartStore ];
 
 function getStateFromStores( props ) {
 	return {
-		domains: DomainsStore.getBySite( props.selectedSite.ID ) || {},
+		domains: props.domains,
+		isRequestingSiteDomains: props.isRequestingSiteDomains,
 		cart: CartStore.get(),
 		context: props.context,
 		products: props.products,
@@ -79,28 +80,31 @@ class EmailData extends React.Component {
 	}
 
 	loadDomainsAndSitePlans = site => {
-		fetchDomains( site.ID );
 		this.props.fetchSitePlans( this.props.sitePlans, site );
 	};
 
 	render() {
+		const { selectedSite } = this.props;
+
 		return (
 			<div>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				<QueryProducts />
 				<QuerySites />
 				<StoreConnection
+					component={ this.props.component }
+					context={ this.props.context }
 					domains={ this.props.domains }
+					getStateFromStores={ getStateFromStores }
 					googleAppsUsers={ this.props.googleAppsUsers }
 					googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
-					component={ this.props.component }
-					stores={ stores }
-					getStateFromStores={ getStateFromStores }
+					isRequestingSiteDomains={ this.props.requestingSiteDomains }
 					products={ this.props.products }
 					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ this.props.selectedSite }
+					selectedSite={ selectedSite }
 					sitePlans={ this.props.sitePlans }
-					context={ this.props.context }
+					stores={ stores }
 				/>
 			</div>
 		);
@@ -113,11 +117,14 @@ export default connect(
 		const googleAppsUsers = selectedDomainName
 			? getByDomain( state, selectedDomainName )
 			: getBySite( state, selectedSite.ID );
+		const siteId = get( selectedSite, 'ID', null );
 
 		return {
+			domains: getDomainsBySiteId( state, siteId ),
 			googleAppsUsers,
 			googleAppsUsersLoaded: isLoaded( state ),
 			products: getProductsList( state ),
+			requestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 			sitePlans: getPlansBySite( state, selectedSite ),
 			selectedSite,
 		};

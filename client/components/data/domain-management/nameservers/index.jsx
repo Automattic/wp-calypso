@@ -53,12 +53,7 @@ export class NameserversData extends Component {
 	}
 
 	loadNameservers = () => {
-		const selectedDomainName = this.props.selectedDomainName;
-
-		if ( this.prevSelectedDomainName !== selectedDomainName ) {
-			fetchNameservers( this.props.selectedDomainName );
-			this.prevSelectedDomainName = selectedDomainName;
-		}
+		fetchNameservers( this.props.selectedDomainName );
 	};
 
 	render() {

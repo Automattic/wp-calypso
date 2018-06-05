@@ -62,8 +62,12 @@ export class List extends React.Component {
 		notice: null,
 	};
 
+	isLoading() {
+		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
+	}
+
 	domainWarnings() {
-		if ( ! this.props.isRequestingSiteDomains ) {
+		if ( ! this.isLoading() ) {
 			return (
 				<DomainWarnings
 					domains={ this.props.domains }
@@ -171,8 +175,7 @@ export class List extends React.Component {
 	isFreshDomainOnlyRegistration() {
 		const domainName = this.props.selectedSite.domain;
 		const domain =
-			! this.props.isRequestingSiteDomains &&
-			find( this.props.domains, ( { name } ) => name === domainName );
+			! this.isLoading() && find( this.props.domains, ( { name } ) => name === domainName );
 
 		return (
 			domain &&
@@ -393,7 +396,7 @@ export class List extends React.Component {
 	};
 
 	listItems() {
-		if ( this.props.isRequestingSiteDomains ) {
+		if ( this.isLoading() ) {
 			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 

@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,23 +11,19 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSelectedSite } from 'state/ui/selectors';
-import DomainsStore from 'lib/domains/store';
 import StoreConnection from 'components/data/store-connection';
-import { fetchDomains, fetchWhois } from 'lib/upgrades/actions';
+import { fetchWhois } from 'lib/upgrades/actions';
 import WhoisStore from 'lib/domains/whois/store';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import QuerySiteDomains from 'components/data/query-site-domains';
 
-const stores = [ DomainsStore, WhoisStore ];
+const stores = [ WhoisStore ];
 
 function getStateFromStores( props ) {
-	let domains;
-
-	if ( props.selectedSite ) {
-		domains = DomainsStore.getBySite( props.selectedSite.ID );
-	}
-
 	return {
-		domains,
+		domains: props.domains,
+		isRequestingSiteDomains: props.isRequestingSiteDomains,
 		whois: WhoisStore.getByDomainName( props.selectedDomainName ),
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
@@ -44,23 +41,11 @@ class WhoisData extends Component {
 	};
 
 	componentWillMount() {
-		this.loadDomains();
 		this.loadWhois();
 	}
 
 	componentWillUpdate() {
-		this.loadDomains();
 		this.loadWhois();
-	}
-
-	loadDomains() {
-		const selectedSite = this.props.selectedSite;
-
-		if ( this.prevSelectedSite !== selectedSite ) {
-			fetchDomains( selectedSite.ID );
-
-			this.prevSelectedSite = selectedSite;
-		}
 	}
 
 	loadWhois() {
@@ -68,16 +53,21 @@ class WhoisData extends Component {
 	}
 
 	render() {
+		const { selectedSite } = this.props;
+
 		return (
 			<div>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				<StoreConnection
 					component={ this.props.component }
-					stores={ stores }
-					getStateFromStores={ getStateFromStores }
-					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ this.props.selectedSite }
 					context={ this.props.context }
+					domains={ this.props.domains }
+					getStateFromStores={ getStateFromStores }
+					isRequestingSiteDomains={ this.props.requestingSiteDomains }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ selectedSite }
+					stores={ stores }
 				/>
 			</div>
 		);
@@ -85,7 +75,12 @@ class WhoisData extends Component {
 }
 
 export default connect( state => {
+	const selectedSite = getSelectedSite( state );
+	const siteId = get( selectedSite, 'ID', null );
+
 	return {
-		selectedSite: getSelectedSite( state ),
+		domains: getDomainsBySiteId( state, siteId ),
+		requestingSiteDomains: isRequestingSiteDomains( state, siteId ),
+		selectedSite,
 	};
 } )( WhoisData );

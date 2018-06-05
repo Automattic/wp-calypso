@@ -31,13 +31,14 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 
 class Email extends React.Component {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
+		googleAppsUsers: PropTypes.array.isRequired,
+		googleAppsUsersLoaded: PropTypes.bool.isRequired,
+		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		products: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		user: PropTypes.object.isRequired,
-		googleAppsUsers: PropTypes.array.isRequired,
-		googleAppsUsersLoaded: PropTypes.bool.isRequired,
 	};
 
 	render() {
@@ -73,7 +74,7 @@ class Email extends React.Component {
 	content() {
 		if (
 			! (
-				this.props.domains.hasLoadedFromServer &&
+				! this.props.isRequestingSiteDomains &&
 				this.props.googleAppsUsersLoaded &&
 				this.props.products.gapps
 			)
@@ -83,7 +84,7 @@ class Email extends React.Component {
 
 		const domainList = this.props.selectedDomainName
 			? [ getSelectedDomain( this.props ) ]
-			: this.props.domains.list;
+			: this.props.domains;
 
 		if ( domainList.some( hasGoogleApps ) ) {
 			return this.googleAppsUsersCard();

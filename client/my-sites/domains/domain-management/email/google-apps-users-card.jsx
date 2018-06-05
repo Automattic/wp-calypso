@@ -29,7 +29,7 @@ const GoogleAppsUsers = createReactClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
 
 	propTypes: {
-		domains: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
 		googleAppsUsers: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
@@ -37,9 +37,7 @@ const GoogleAppsUsers = createReactClass( {
 	},
 
 	getDomainsAsList() {
-		return this.props.selectedDomainName
-			? [ getSelectedDomain( this.props ) ]
-			: this.props.domains.list;
+		return this.props.selectedDomainName ? [ getSelectedDomain( this.props ) ] : this.props.domains;
 	},
 
 	canAddUsers( domainName ) {
@@ -101,7 +99,7 @@ const GoogleAppsUsers = createReactClass( {
 					</a>
 				);
 
-			const domain = find( this.props.domains.list, { name: user.domain } );
+			const domain = find( this.props.domains, { name: user.domain } );
 			const subscribedDate = get( domain, 'googleAppsSubscription.subscribedDate', false );
 			if ( subscribedDate ) {
 				if ( this.isNewUser( user, subscribedDate ) ) {
@@ -135,8 +133,8 @@ const GoogleAppsUsers = createReactClass( {
 	},
 
 	render() {
-		const pendingDomains = this.getDomainsAsList().filter( hasPendingGoogleAppsUsers ),
-			usersByDomain = groupBy( this.props.googleAppsUsers, 'domain' );
+		const pendingDomains = this.getDomainsAsList().filter( hasPendingGoogleAppsUsers );
+		const usersByDomain = groupBy( this.props.googleAppsUsers, 'domain' );
 
 		return (
 			<div>

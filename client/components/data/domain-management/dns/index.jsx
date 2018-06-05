@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,22 +12,18 @@ import { connect } from 'react-redux';
  */
 import StoreConnection from 'components/data/store-connection';
 import DnsStore from 'lib/domains/dns/store';
-import DomainsStore from 'lib/domains/store';
-import { fetchDns, fetchDomains } from 'lib/upgrades/actions';
+import { fetchDns } from 'lib/upgrades/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import QuerySiteDomains from 'components/data/query-site-domains';
 
-const stores = [ DomainsStore, DnsStore ];
+const stores = [ DnsStore ];
 
 function getStateFromStores( props ) {
-	let domains;
-
-	if ( props.selectedSite ) {
-		domains = DomainsStore.getBySite( props.selectedSite.ID );
-	}
-
 	return {
-		domains,
+		domains: props.domains,
+		isRequestingSiteDomains: props.isRequestingSiteDomains,
 		dns: DnsStore.getByDomainName( props.selectedDomainName ),
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
@@ -53,28 +50,39 @@ export class DnsData extends Component {
 	}
 
 	loadDns = () => {
-		fetchDomains( this.props.selectedSite.ID );
 		fetchDns( this.props.selectedDomainName );
 	};
 
 	render() {
+		const { selectedSite } = this.props;
+
 		return (
 			<div>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				<StoreConnection
 					component={ this.props.component }
-					stores={ stores }
+					domains={ this.props.domains }
 					getStateFromStores={ getStateFromStores }
+					isRequestingSiteDomains={ this.props.requestingSiteDomains }
 					selectedDomainName={ this.props.selectedDomainName }
 					selectedSite={ this.props.selectedSite }
+					stores={ stores }
 				/>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => ( {
-	selectedSite: getSelectedSite( state ),
-} );
+const mapStateToProps = state => {
+	const selectedSite = getSelectedSite( state );
+	const siteId = get( selectedSite, 'ID', null );
+
+	return {
+		domains: getDomainsBySiteId( state, siteId ),
+		requestingSiteDomains: isRequestingSiteDomains( state, siteId ),
+		selectedSite,
+	};
+};
 
 export default connect( mapStateToProps )( DnsData );
