@@ -41,7 +41,7 @@ dirtyFiles.forEach( file => console.log(
 ) );
 
 const toPrettify = files.filter( file => ! dirtyFiles.has( file ) );
-toPrettify.forEach( file => console.log( `Prettier formatting file: ${ file } because it contains the @format flag` ) );
+toPrettify.forEach( file => console.log( `Prettier formatting staged file: ${ file }` ) );
 
 execSync( `./node_modules/.bin/prettier --write --require-pragma ${ toPrettify.join( ' ' ) }` );
 execSync( `git add ${ toPrettify.join( ' ' ) }` );
