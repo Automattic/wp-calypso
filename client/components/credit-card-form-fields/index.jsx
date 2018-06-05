@@ -23,7 +23,7 @@ import { shouldRenderAdditionalEbanxFields } from 'lib/checkout/ebanx';
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
 		card: PropTypes.object.isRequired,
-		countriesList: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		eventFormName: PropTypes.string,
 		onFieldChange: PropTypes.func,
 		getErrorMessage: PropTypes.func,
@@ -142,7 +142,7 @@ export class CreditCardFormFields extends React.Component {
 
 					{ this.createField( 'country', PaymentCountrySelect, {
 						label: translate( 'Country' ),
-						countriesList: countriesList,
+						countriesList,
 						onChange: noop,
 						onCountrySelected: this.updateFieldValues,
 					} ) }

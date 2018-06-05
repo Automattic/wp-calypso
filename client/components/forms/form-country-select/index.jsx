@@ -3,42 +3,44 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
-import createReactClass from 'create-react-class';
 import classnames from 'classnames';
-import observe from 'lib/mixins/data-observe';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
-/* mixins need to be refactored out eventually */
-/* eslint-disable react/prefer-es6-class */
 /* eslint-disable jsx-a11y/no-onchange */
-export const FormCountrySelect = createReactClass( {
-	displayName: 'FormCountrySelect',
+export class FormCountrySelect extends Component {
+	static propTypes = {
+		countriesList: PropTypes.array.isRequired,
+		className: PropTypes.string,
+		disabled: PropTypes.bool,
+		onChange: PropTypes.func,
+		translate: PropTypes.func.isRequired,
+	};
 
-	mixins: [ observe( 'countriesList' ) ],
+	getOptions() {
+		const { countriesList, translate } = this.props;
 
-	getOptions( countriesList ) {
 		if ( isEmpty( countriesList ) ) {
 			return [
 				{
 					key: '',
-					label: this.props.translate( 'Loading…' ),
+					label: translate( 'Loading…' ),
 				},
 			];
 		}
+
 		return countriesList.map( ( { code, name }, idx ) => ( {
 			key: idx,
 			label: name,
 			code,
 			disabled: ! code,
 		} ) );
-	},
+	}
 
 	render() {
-		const countriesList = this.props.countriesList.get(),
-			options = this.getOptions( countriesList );
+		const options = this.getOptions();
 
 		return (
 			<select
@@ -62,9 +64,8 @@ export const FormCountrySelect = createReactClass( {
 				} ) }
 			</select>
 		);
-	},
-} );
+	}
+}
 /* eslint-enable jsx-a11y/no-onchange */
-/* eslint-enable react/prefer-es6-class */
 
 export default localize( FormCountrySelect );

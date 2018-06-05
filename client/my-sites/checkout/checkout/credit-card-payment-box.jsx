@@ -38,14 +38,13 @@ export class CreditCardPaymentBox extends React.Component {
 		transaction: PropTypes.object.isRequired,
 		transactionStep: PropTypes.object.isRequired,
 		cards: PropTypes.array,
-		countriesList: PropTypes.object,
+		countriesList: PropTypes.array.isRequired,
 		initialCard: PropTypes.object,
 		onSubmit: PropTypes.func,
 	};
 
 	static defaultProps = {
 		cards: [],
-		countriesList: {},
 		initialCard: null,
 		onSubmit: noop,
 	};

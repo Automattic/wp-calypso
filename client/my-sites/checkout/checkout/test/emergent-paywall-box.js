@@ -15,6 +15,9 @@ import { identity } from 'lodash';
 
 import { EmergentPaywallBox } from '../emergent-paywall-box';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 const defaultProps = {
 	cart: {},
 	transaction: {},
