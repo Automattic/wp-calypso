@@ -38,10 +38,9 @@ export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dis
 			return onComplete( error, data );
 		}
 
-		requestSite( siteId )( dispatch ).then( () => {
-			fetchSiteDomains( siteId )( dispatch ).then( () => {
-				onComplete( null, data );
-			} );
+		fetchSiteDomains( siteId )( dispatch ).then( () => {
+			onComplete( null, data );
+			requestSite( siteId )( dispatch );
 		} );
 	} );
 };

@@ -25,7 +25,7 @@ import TransferProhibited from './transfer-prohibited.jsx';
 
 class Transfer extends React.Component {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		wapiDomainInfo: PropTypes.object.isRequired,
@@ -74,9 +74,7 @@ class Transfer extends React.Component {
 	};
 
 	isDataLoading() {
-		return (
-			! this.props.wapiDomainInfo.hasLoadedFromServer || ! this.props.domains.hasLoadedFromServer
-		);
+		return ! this.props.wapiDomainInfo.hasLoadedFromServer || this.props.isRequestingSiteDomains;
 	}
 }
 

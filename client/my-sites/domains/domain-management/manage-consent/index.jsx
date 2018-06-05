@@ -25,7 +25,7 @@ import { requestGdprConsentManagementLink } from 'lib/upgrades/actions';
 
 class ManageConsent extends React.Component {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};

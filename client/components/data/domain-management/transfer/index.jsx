@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,27 +11,28 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import DomainsStore from 'lib/domains/store';
 import StoreConnection from 'components/data/store-connection';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import UsersStore from 'lib/users/store';
 import { fetchUsers } from 'lib/users/actions';
-import { fetchDomains, fetchWapiDomainInfo } from 'lib/upgrades/actions';
+import { fetchWapiDomainInfo } from 'lib/upgrades/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import QuerySiteDomains from 'components/data/query-site-domains';
 
-const stores = [ DomainsStore, WapiDomainInfoStore, UsersStore ];
+const stores = [ WapiDomainInfoStore, UsersStore ];
 
 function getStateFromStores( props ) {
-	let domains, users;
+	let users;
 
 	if ( props.selectedSite ) {
-		domains = DomainsStore.getBySite( props.selectedSite.ID );
 		users = UsersStore.getUsers( { siteId: props.selectedSite.ID } );
 	}
 
 	return {
-		domains,
+		domains: props.domains,
+		isRequestingSiteDomains: props.isRequestingSiteDomains,
 		users,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
@@ -43,6 +44,7 @@ class TransferData extends Component {
 	static propTypes = {
 		analyticsPath: PropTypes.string,
 		analyticsTitle: PropTypes.string,
+		domains: PropTypes.array,
 		component: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 	};
@@ -59,7 +61,6 @@ class TransferData extends Component {
 		const selectedSite = this.props.selectedSite;
 
 		if ( this.prevSelectedSite !== selectedSite ) {
-			fetchDomains( selectedSite.ID );
 			fetchUsers( { siteId: selectedSite.ID, number: 1000 } );
 
 			this.prevSelectedSite = selectedSite;
@@ -68,15 +69,20 @@ class TransferData extends Component {
 	}
 
 	render() {
+		const { selectedSite } = this.props;
+
 		return (
 			<div>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				<StoreConnection
 					component={ this.props.component }
-					stores={ stores }
+					domains={ this.props.domains }
+					isRequestingSiteDomains={ this.props.requestingSiteDomains }
 					getStateFromStores={ getStateFromStores }
 					selectedDomainName={ this.props.selectedDomainName }
 					selectedSite={ this.props.selectedSite }
+					stores={ stores }
 				/>
 			</div>
 		);
@@ -84,7 +90,12 @@ class TransferData extends Component {
 }
 
 export default connect( state => {
+	const selectedSite = getSelectedSite( state );
+	const siteId = get( selectedSite, 'ID', null );
+
 	return {
-		selectedSite: getSelectedSite( state ),
+		domains: getDomainsBySiteId( state, siteId ),
+		requestingSiteDomains: isRequestingSiteDomains( state, siteId ),
+		selectedSite,
 	};
 } )( TransferData );

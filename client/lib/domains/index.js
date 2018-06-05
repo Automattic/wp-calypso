@@ -203,7 +203,7 @@ function hasPendingGoogleAppsUsers( domain ) {
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
-	return find( domains.list, domain => {
+	return find( domains, domain => {
 		if ( domain.name !== selectedDomainName ) {
 			return false;
 		}

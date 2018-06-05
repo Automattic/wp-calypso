@@ -25,7 +25,6 @@ import {
 } from 'my-sites/domains/paths';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import QuerySiteDomains from 'components/data/query-site-domains';
 
 function Transfer( props ) {
 	const {
@@ -41,8 +40,6 @@ function Transfer( props ) {
 
 	return (
 		<Main className="domain-management-transfer">
-			<QuerySiteDomains siteId={ selectedSite.ID } />
-
 			<Header
 				selectedDomainName={ selectedDomainName }
 				backHref={ domainManagementEdit( slug, selectedDomainName ) }

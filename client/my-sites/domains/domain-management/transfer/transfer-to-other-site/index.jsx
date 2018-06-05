@@ -35,10 +35,11 @@ const wpcom = wp.undocumented();
 
 export class TransferToOtherSite extends React.Component {
 	static propTypes = {
-		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.object.isRequired,
 		currentUser: PropTypes.object.isRequired,
 		isDomainOnly: PropTypes.bool.isRequired,
+		isRequestingSiteDomains: PropTypes.bool.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.object.isRequired,
 	};
 
 	state = {
@@ -48,7 +49,7 @@ export class TransferToOtherSite extends React.Component {
 	};
 
 	isDataReady() {
-		return this.props.domains.hasLoadedFromServer;
+		return this.props.isRequestingSiteDomains;
 	}
 
 	isSiteEligible = site => {

@@ -42,6 +42,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
 import { decodeURIComponentIfValid } from 'lib/url';
+import { domainManagementPrimaryDomain } from '../paths';
 
 const productsList = new ProductsList();
 
@@ -82,7 +83,14 @@ export default {
 
 	domainManagementPrimaryDomain: function( pageContext, next ) {
 		pageContext.primary = (
-			<DomainManagement.PrimaryDomain selectedDomainName={ pageContext.params.domain } />
+			<DomainManagementData
+				analyticsPath={ domainManagementPrimaryDomain( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Set Primary Domain"
+				component={ DomainManagement.PrimaryDomain }
+				context={ pageContext }
+				productsList={ productsList }
+				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+			/>
 		);
 		next();
 	},

@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -41,6 +42,7 @@ class DomainManagementData extends React.Component {
 		analyticsPath: PropTypes.string,
 		analyticsTitle: PropTypes.string,
 		context: PropTypes.object.isRequired,
+		domains: PropTypes.array,
 		productsList: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.object,
@@ -53,6 +55,11 @@ class DomainManagementData extends React.Component {
 		return (
 			<div>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+				{ <QueryProductsList /> }
+				{ selectedSite &&
+					( <QuerySitePlans siteId={ selectedSite.ID } /> && (
+							<QuerySiteDomains siteId={ selectedSite.ID } />
+						) && <QueryContactDetailsCache /> ) }
 				<StoreConnection
 					component={ this.props.component }
 					context={ this.props.context }
@@ -65,11 +72,6 @@ class DomainManagementData extends React.Component {
 					sitePlans={ this.props.sitePlans }
 					stores={ stores }
 				/>
-				{ <QueryProductsList /> }
-				{ selectedSite &&
-					( <QuerySitePlans siteId={ selectedSite.ID } /> && (
-							<QuerySiteDomains siteId={ selectedSite.ID } />
-						) && <QueryContactDetailsCache /> ) }
 			</div>
 		);
 	}
@@ -77,10 +79,11 @@ class DomainManagementData extends React.Component {
 
 export default connect( state => {
 	const selectedSite = getSelectedSite( state );
+	const siteId = get( selectedSite, 'ID', null );
 
 	return {
-		domains: getDomainsBySiteId( state, selectedSite.ID ),
-		requestingSiteDomains: isRequestingSiteDomains( state, selectedSite.ID ),
+		domains: getDomainsBySiteId( state, siteId ),
+		requestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 		productList: getProductsList( state ),
 		sitePlans: getPlansBySite( state, selectedSite ),
 		selectedSite,

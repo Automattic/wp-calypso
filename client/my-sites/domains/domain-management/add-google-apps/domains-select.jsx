@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -21,8 +20,8 @@ class DomainsSelect extends React.Component {
 	render() {
 		let domainRegistrations, disabled, options;
 
-		if ( this.props.domains.hasLoadedFromServer ) {
-			domainRegistrations = getGoogleAppsSupportedDomains( this.props.domains.list );
+		if ( this.props.isRequestingSiteDomains ) {
+			domainRegistrations = getGoogleAppsSupportedDomains( this.props.domains );
 			disabled = false;
 			options = domainRegistrations.map( domain => {
 				return (
