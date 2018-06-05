@@ -28,6 +28,8 @@ $ cd wp-calypso
 $ npm start
 ```
 
+_Note - if you are planning on pushing changes back to Calypso, this workflow will ask you for a username and password every time you push a change, which will not work if you have GitHub 2-factor auth enabled.  In this case you should use `git clone git@github.com:Automattic/wp-calypso.git` instead, and follow the instructions [here](https://help.github.com/articles/about-ssh/) to set up authentication._
+
 The `npm start` command will install any `npm` dependencies and start the development server. When changes are made to either the JavaScript files or the Sass stylesheets, the build process will run automatically. The build process compiles both the JavaScript and CSS to make sure that you have the latest versions of both.
 
 To run Calypso locally, you'll need to add `127.0.0.1 calypso.localhost` to [your hosts file](http://www.howtogeek.com/howto/27350/beginner-geek-how-to-edit-your-hosts-file/), and load the app at [http://calypso.localhost:3000](http://calypso.localhost:3000) instead of just `localhost`. This is necessary, because when running locally Calypso is using the remote version of the WordPress.com REST API, which allows only certain origins via our current authentication methods.
