@@ -5,7 +5,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { startCase } from 'lodash';
@@ -16,6 +16,7 @@ import { startCase } from 'lodash';
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import LocaleSuggestions from 'components/locale-suggestions';
+import TranslatorInvite from 'components/translator-invite';
 import LoginBlock from 'blocks/login';
 import LoginLinks from './login-links';
 import Main from 'components/main';
@@ -81,14 +82,19 @@ export class Login extends React.Component {
 		this.props.recordPageView( url, title );
 	}
 
-	renderLocaleSuggestions() {
+	renderI18nSuggestions() {
 		const { locale, path, twoFactorAuthType, socialConnect } = this.props;
 
 		if ( twoFactorAuthType || socialConnect ) {
 			return null;
 		}
 
-		return <LocaleSuggestions locale={ locale } path={ path } />;
+		return (
+			<Fragment>
+				<TranslatorInvite locale={ locale } path={ path } />
+				<LocaleSuggestions locale={ locale } path={ path } />
+			</Fragment>
+		);
 	}
 
 	renderFooter() {
@@ -176,7 +182,7 @@ export class Login extends React.Component {
 		return (
 			<div>
 				<Main className="wp-login__main">
-					{ this.renderLocaleSuggestions() }
+					{ this.renderI18nSuggestions() }
 
 					<DocumentHead
 						title={ translate( 'Log In' ) }
