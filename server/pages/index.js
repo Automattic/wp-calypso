@@ -10,7 +10,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, flatten, forEach, intersection, snakeCase } from 'lodash';
+import { get, includes, map, pick, flatten, forEach, intersection, snakeCase, startsWith } from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -30,6 +30,7 @@ import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
+import { getLanguage } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -474,6 +475,37 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
+function handleLocaleSubdomains( req, res, next ) {
+	const langRouteParams = map( config( 'languages' ), 'langSlug' ).join( '|' );
+	const hostnameGroup = `\\.${ config( 'hostname' ).replace( /\./g, '\\.' ) }`;
+	const langSubDomainRegEx = new RegExp( `^(${ langRouteParams })(${ hostnameGroup })` );
+	const langSubDomainMatch = req.hostname.match( langSubDomainRegEx );
+	// If the subdomain matches one of our langSlugs
+	// and the user isn't logged in
+	// and we're visiting the /themes page.
+	if ( langSubDomainMatch &&
+		langSubDomainMatch[ 1 ] &&
+		! req.cookies.wordpress_logged_in &&
+		startsWith( req.path, '/themes' ) ) {
+		const language = getLanguage( langSubDomainMatch[ 1 ] );
+		if ( language && language.langSlug ) {
+			req.context = Object.assign( {}, req.context, {
+				lang: language.langSlug,
+				isRTL: !! language.rtl,
+			} );
+		}
+		return next();
+	// Not sure what to here. Try a normal calypso route, or let it through to 404
+	} else {
+		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
+		const port = process.env.PORT || config( 'port' );
+		const host = process.env.HOST || config( 'hostname' );
+		const redirectUrl = `${ protocol }://${ host }${ ( port ? `:${ port }` : '' ) }${ req.originalUrl }`;
+		res.redirect( redirectUrl );
+	}
+	next();
+}
+
 module.exports = function() {
 	const app = express();
 
@@ -481,6 +513,7 @@ module.exports = function() {
 
 	app.use( logSectionResponseTime );
 	app.use( cookieParser() );
+	app.use( handleLocaleSubdomains );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {

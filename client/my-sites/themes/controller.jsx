@@ -71,6 +71,8 @@ export function loggedIn( context, next ) {
 }
 
 export function loggedOut( context, next ) {
+	// eslint-disable-next-line
+	console.log( `xxx.wordpress.com - context.lang (${ context.lang }) is available, so we can do something with it` );
 	if ( context.isServerSide && ! isEmpty( context.query ) ) {
 		// Don't server-render URLs with query params
 		return next();
