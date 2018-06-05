@@ -6,6 +6,6 @@
 
 import { get } from 'lodash';
 
-export function getSignupDependencyStore( state ) {
+export function getSignupDependencies( state ) {
 	return get( state, 'signup.dependencyStore', {} );
 }

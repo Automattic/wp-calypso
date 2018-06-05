@@ -28,13 +28,14 @@ import page from 'page';
  */
 import SignupActions from './actions';
 import SignupProgressStore from './progress-store';
-import SignupDependencyStore from './dependency-store';
 import flows from 'signup/config/flows';
 import steps from 'signup/config/steps';
 import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 const user = userFactory();
 import { getStepUrl } from 'signup/utils';
+import { resetDependencyStore } from 'state/signup/dependency-store/actions';
+import { getSignupDependencies } from 'state/signup/dependency-store/selectors';
 
 /**
  * Constants
@@ -85,14 +86,14 @@ assign( SignupFlowController.prototype, {
 	_resetStoresIfProcessing: function() {
 		if ( find( SignupProgressStore.get(), { status: 'processing' } ) ) {
 			SignupProgressStore.reset();
-			SignupDependencyStore.reset();
+			this._reduxStore.dispatch( resetDependencyStore() );
 		}
 	},
 
 	_resetStoresIfUserHasLoggedIn: function() {
 		if ( user.get() && find( SignupProgressStore.get(), { stepName: 'user' } ) ) {
 			SignupProgressStore.reset();
-			SignupDependencyStore.reset();
+			this._reduxStore.dispatch( resetDependencyStore() );
 		}
 	},
 
@@ -119,7 +120,10 @@ assign( SignupFlowController.prototype, {
 					return true;
 				}
 
-				const dependenciesFound = pick( SignupDependencyStore.get(), step.dependencies );
+				const dependenciesFound = pick(
+					getSignupDependencies( this._reduxStore.getState() ),
+					step.dependencies
+				);
 				const dependenciesNotProvided = difference(
 					step.dependencies,
 					keys( dependenciesFound ),
@@ -157,7 +161,7 @@ assign( SignupFlowController.prototype, {
 
 				const dependenciesNotProvided = difference(
 					step.providesDependencies,
-					keys( SignupDependencyStore.get() )
+					keys( getSignupDependencies( this._reduxStore.getState() ) )
 				);
 				if ( ! isEmpty( dependenciesNotProvided ) ) {
 					throw new Error(
@@ -195,15 +199,15 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_process: function() {
-		let currentSteps = this._flow.steps,
+		const currentSteps = this._flow.steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
 				step => -1 !== currentSteps.indexOf( step.stepName )
 			),
 			pendingSteps = filter( signupProgress, { status: 'pending' } ),
 			completedSteps = filter( signupProgress, { status: 'completed' } ),
-			bearerToken = SignupDependencyStore.get().bearer_token,
-			dependencies = SignupDependencyStore.get();
+			bearerToken = getSignupDependencies( this._reduxStore.getState() ).bearer_token,
+			dependencies = getSignupDependencies( this._reduxStore.getState() );
 
 		if ( bearerToken && ! wpcom.isTokenLoaded() ) {
 			wpcom.loadToken( bearerToken );
@@ -227,7 +231,10 @@ assign( SignupFlowController.prototype, {
 	_canProcessStep: function( step ) {
 		const providesToken = steps[ step.stepName ].providesToken,
 			dependencies = steps[ step.stepName ].dependencies || [],
-			dependenciesFound = pick( SignupDependencyStore.get(), dependencies ),
+			dependenciesFound = pick(
+				getSignupDependencies( this._reduxStore.getState() ),
+				dependencies
+			),
 			dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length,
 			currentSteps = this._flow.steps,
 			signupProgress = filter(
@@ -249,7 +256,10 @@ assign( SignupFlowController.prototype, {
 
 	_processStep: function( step ) {
 		const dependencies = steps[ step.stepName ].dependencies || [];
-		const dependenciesFound = pick( SignupDependencyStore.get(), dependencies );
+		const dependenciesFound = pick(
+			getSignupDependencies( this._reduxStore.getState() ),
+			dependencies
+		);
 
 		if ( this._canProcessStep( step ) ) {
 			this._processingSteps[ step.stepName ] = true;
@@ -257,7 +267,6 @@ assign( SignupFlowController.prototype, {
 			SignupActions.processSignupStep( step );
 
 			const apiFunction = steps[ step.stepName ].apiRequestFunction;
-
 			apiFunction(
 				( errors, providedDependencies ) => {
 					this._processingSteps[ step.stepName ] = false;
@@ -301,7 +310,7 @@ assign( SignupFlowController.prototype, {
 		SignupProgressStore.off( 'change', this._boundProcess );
 
 		SignupProgressStore.reset();
-		SignupDependencyStore.reset();
+		this._reduxStore.dispatch( resetDependencyStore() );
 	},
 
 	changeFlowName( flowName ) {

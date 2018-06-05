@@ -10,7 +10,7 @@ import optionalDependencies from './optional-dependencies/reducer';
 import steps from './steps/reducer';
 
 export default combineReducers( {
-	dependencyStore,
+	dependencyStore, // TODO: Rename dependencyStore to dependencies
 	optionalDependencies,
 	steps,
 } );

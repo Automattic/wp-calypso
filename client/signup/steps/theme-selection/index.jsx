@@ -21,7 +21,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { isEnabled } from 'config';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
 class ThemeSelectionStep extends Component {
 	static propTypes = {
@@ -125,5 +124,4 @@ export default connect( ( state, props ) => ( {
 	chosenSurveyVertical: getSurveyVertical( state ),
 	currentUser: getCurrentUser( state ),
 	designType: props.designType || getDesignType( state ),
-	dependencyStore: getSignupDependencyStore( state ),
 } ) )( localize( ThemeSelectionStep ) );

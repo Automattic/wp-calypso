@@ -31,8 +31,8 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 import config from 'config';
-import SignupDependencyStore from 'lib/signup/dependency-store';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { bindToFlux as bindDepedencyStoreToFlux } from 'state/signup/dependency-store/actions';
+import { getSignupDependencies } from 'state/signup/dependency-store/selectors';
 import SignupProgressStore from 'lib/signup/progress-store';
 import SignupFlowController from 'lib/signup/flow-controller';
 import LocaleSuggestions from 'components/locale-suggestions';
@@ -64,18 +64,21 @@ const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
 class Signup extends React.Component {
 	static displayName = 'Signup';
 
+	static propTypes = {
+		dependencies: PropTypes.object,
+		progress: PropTypes.object,
+	};
+
 	static contextTypes = {
 		store: PropTypes.object,
 	};
 
 	constructor( props, context ) {
 		super( props, context );
-		SignupDependencyStore.setReduxStore( context.store );
 
 		this.state = {
 			login: false,
 			progress: SignupProgressStore.get(),
-			dependencies: props.signupDependencies,
 			loadingScreenStartTime: undefined,
 			resumingStep: undefined,
 			loginHandler: null,
@@ -146,11 +149,11 @@ class Signup extends React.Component {
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
 		let providedDependencies;
-
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
 
+		bindDepedencyStoreToFlux();
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
@@ -549,7 +552,7 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
-		signupDependencies: getSignupDependencyStore( state ),
+		signupDependencies: getSignupDependencies( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{ setSurvey, loadTrackingTool, affiliateReferral },

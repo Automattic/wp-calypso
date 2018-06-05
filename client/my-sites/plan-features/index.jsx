@@ -25,7 +25,7 @@ import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest } from 'lib/abtest';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { getSignupDependencies } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
@@ -590,7 +590,7 @@ export default connect(
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
-		const signupDependencies = getSignupDependencyStore( state );
+		const signupDependencies = getSignupDependencies( state );
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 
