@@ -50,12 +50,14 @@ function ProgressBanner( {
 	let description = '';
 	let statusMessage = '';
 
+	const dateTime = applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' );
+
 	if ( 'restore' === action && 'alternate' === context ) {
 		title = translate( 'Currently cloning your site' );
 		description = translate(
-			"We're in the process of cloning your site to %s. " +
+			"We're in the process of cloning your site to %(dateTime)s. " +
 				"You'll be notified once it's complete.",
-			{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
+			{ args: { dateTime } }
 		);
 		statusMessage =
 			'queued' === status
@@ -64,9 +66,9 @@ function ProgressBanner( {
 	} else if ( 'restore' === action ) {
 		title = translate( 'Currently restoring your site' );
 		description = translate(
-			"We're in the process of restoring your site back to %s. " +
+			"We're in the process of restoring your site back to %(dateTime)s. " +
 				"You'll be notified once it's complete.",
-			{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
+			{ args: { dateTime } }
 		);
 		statusMessage =
 			'queued' === status
@@ -75,9 +77,9 @@ function ProgressBanner( {
 	} else {
 		title = translate( 'Currently creating a downloadable backup of your site' );
 		description = translate(
-			"We're in the process of creating a downloadable backup of your site at %s. " +
+			"We're in the process of creating a downloadable backup of your site at %(dateTime)s. " +
 				"You'll be notified once it's complete.",
-			{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
+			{ args: { dateTime } }
 		);
 		statusMessage =
 			0 < percent
@@ -87,20 +89,16 @@ function ProgressBanner( {
 
 	return (
 		<ActivityLogBanner status="info" title={ title }>
-			{ 'restore' === action && (
-				<div>
+			<div>
+				{ 'restore' === action && (
 					<QueryRewindRestoreStatus restoreId={ restoreId } siteId={ siteId } />
-					<p>{ description }</p>
-					<em>{ statusMessage }</em>
-				</div>
-			) }
-			{ 'backup' === action && (
-				<div>
+				) }
+				{ 'backup' === action && (
 					<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
-					<p>{ description }</p>
-					<em>{ statusMessage }</em>
-				</div>
-			) }
+				) }
+				<p>{ description }</p>
+				<em>{ statusMessage }</em>
+			</div>
 			{ ( 'running' === status || ( 0 <= percent && percent <= 100 ) ) && (
 				<ProgressBar isPulsing value={ percent || 0 } />
 			) }
