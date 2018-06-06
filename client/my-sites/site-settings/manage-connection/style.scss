@@ -1,12 +1,12 @@
 .manage-connection__user {
-	padding-top: 5px;
+	padding: 5px 10px 0px 10px;
+	display: inline-block;
 
 	.gravatar {
 		margin-right: 10px;
 	}
 
 	.manage-connection__user-name {
-		display: inline-block;
 		vertical-align: top;
 		line-height: 24px;
 	}
@@ -14,4 +14,17 @@
 
 .manage-connection__disconnect-link {
 	margin-top: 16px;
+}
+
+.manage-connection__user-dropdown .author-selector__author-toggle {
+	display: inline-block;
+	border-style: solid;
+	border-color: $gray-lighten-20;
+	border-width: 1px 1px 2px;
+	border-radius: 4px;
+
+	.gridicon {
+		vertical-align: super;
+		padding-right: 5px;
+	}
 }
