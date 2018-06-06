@@ -112,5 +112,6 @@ export const getMasterUserInfo = ( state, siteId = getSelectedSiteId( state ) ) 
 		masterUserName: meta && meta.master_user_name,
 		masterUserLogin: meta && meta.master_user_login,
 		masterUserEmail: meta && meta.master_user_email,
+		masterUserWpcomLogin: meta && meta.master_user_wpcom_login,
 	};
 };
