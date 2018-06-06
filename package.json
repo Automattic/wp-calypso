@@ -9,7 +9,7 @@
     "url": "https://github.com/Automattic/wp-calypso.git"
   },
   "main": "index.js",
-  "browserlist": [
+  "browserslist": [
     "last 2 versions",
     "Safari >= 10",
     "iOS >= 10",
@@ -28,7 +28,7 @@
     "@babel/preset-stage-2": "7.0.0-beta.44",
     "@babel/runtime": "7.0.0-beta.44",
     "assets-webpack-plugin": "3.5.1",
-    "autoprefixer": "6.3.5",
+    "autoprefixer": "8.6.0",
     "autosize": "3.0.15",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "22.4.1",
