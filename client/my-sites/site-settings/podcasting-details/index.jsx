@@ -6,7 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map, toPairs, pick, flowRight } from 'lodash';
+import { map, toPairs, pick, flowRight, filter, head } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -14,6 +14,7 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import ClipboardButtonInput from 'components/clipboard-button-input';
 import DocumentHead from 'components/data/document-head';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
@@ -31,7 +32,10 @@ import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
-import { isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
+import {
+	isRequestingTermsForQueryIgnoringPage,
+	getTermsForQueryIgnoringPage,
+} from 'state/terms/selectors';
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
@@ -151,6 +155,23 @@ class PodcastingDetails extends Component {
 		);
 	}
 
+	renderFeedUrl() {
+		const { podcastingFeedUrl, translate } = this.props;
+
+		if ( ! podcastingFeedUrl ) {
+			return;
+		}
+
+		return (
+			<FormFieldset>
+				<ClipboardButtonInput value={ podcastingFeedUrl } />
+				<FormSettingExplanation>
+					{ translate( 'Copy your feed URL and submit it to Apple Podcasts or another service.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+		);
+	}
+
 	render() {
 		const { handleSubmitForm, siteSlug, siteId, translate, isPodcastingEnabled } = this.props;
 		if ( ! siteId ) {
@@ -228,6 +249,7 @@ class PodcastingDetails extends Component {
 						label: translate( 'Subtitle' ),
 					} ) }
 				</div>
+				{ this.renderFeedUrl() }
 				{ this.renderTopics() }
 				{ this.renderExplicitContent() }
 				{ this.renderTextField( {
@@ -340,6 +362,10 @@ const connectComponent = connect( ( state, ownProps ) => {
 		Number( ownProps.fields.podcasting_category_id );
 	const isPodcastingEnabled = podcastingCategoryId > 0;
 
+	const categories = getTermsForQueryIgnoringPage( state, siteId, 'category', {} );
+	const selectedCategory = categories && head( filter( categories, { ID: podcastingCategoryId } ) );
+	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
+
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
@@ -347,6 +373,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		podcastingCategoryId,
 		isPodcastingEnabled,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
+		podcastingFeedUrl,
 	};
 } );
 

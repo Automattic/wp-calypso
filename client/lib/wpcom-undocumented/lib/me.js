@@ -60,24 +60,6 @@ UndocumentedMe.prototype.purchases = function( callback ) {
 	return this.wpcom.req.get( '/me/purchases', callback );
 };
 
-UndocumentedMe.prototype.getConnectedApplications = function( callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/connected-applications',
-	};
-
-	return this.wpcom.req.get( args, callback );
-};
-
-UndocumentedMe.prototype.revokeApplicationConnection = function( connectionID, callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/connected-applications/' + connectionID + '/delete',
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
 UndocumentedMe.prototype.validatePassword = function( password, callback ) {
 	const args = {
 		apiVersion: '1.1',

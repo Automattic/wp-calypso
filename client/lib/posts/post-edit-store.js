@@ -77,7 +77,7 @@ function startEditing( site, post ) {
 	_isLoading = false;
 }
 
-function updatePost( site, post ) {
+function updatePost( post ) {
 	post = normalize( post );
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
@@ -245,7 +245,7 @@ function dispatcherCallback( payload ) {
 
 		case 'RECEIVE_POST_BEING_EDITED':
 			if ( ! action.error ) {
-				updatePost( action.site, action.post );
+				updatePost( action.post );
 				if ( typeof action.rawContent === 'string' ) {
 					_initialRawContent = action.rawContent;
 				}
