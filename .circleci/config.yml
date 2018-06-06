@@ -99,7 +99,7 @@ jobs:
       - run:
           name: Store coverage file
           command: |
-             cp coverage/clover.xml $CIRCLE_ARTIFACTS/clover.xml
+             cp coverage/coverage-final.json $CIRCLE_ARTIFACTS/coverage-final.json
 
       - store_test_results:
           path: /tmp/test_results
