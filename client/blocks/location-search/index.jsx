@@ -38,7 +38,7 @@ class LocationSearch extends Component {
 			autocompleteService = {}; // if multiple components are initialized on the page, we'd want the script to load only once
 			loadScript(
 				`//maps.googleapis.com/maps/api/js?key=${ config(
-					'google_places_api_key'
+					'google_maps_and_places_api_key'
 				) }&libraries=places`,
 				function() {
 					// eslint-disable-next-line no-undef

@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import config from 'config';
 import { loadScript } from 'lib/load-script';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'components/data/query-site-stats';
@@ -140,6 +141,7 @@ class StatsGeochart extends Component {
 			window.google.load( 'visualization', '1', {
 				packages: [ 'geochart' ],
 				callback: this.drawRegionsMap,
+				mapsApiKey: config( 'google_maps_and_places_api_key' ),
 			} );
 			clearTimeout( this.timer );
 		} else {
