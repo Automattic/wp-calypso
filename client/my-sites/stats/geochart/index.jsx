@@ -36,7 +36,7 @@ class StatsGeochart extends Component {
 
 	componentDidMount() {
 		if ( ! window.google ) {
-			loadScript( 'https://www.google.com/jsapi' );
+			loadScript( 'https://www.gstatic.com/charts/loader.js' );
 			this.tick();
 		} else {
 			// google jsapi is in the dom, load the visualizations again just in case
@@ -137,12 +137,12 @@ class StatsGeochart extends Component {
 
 	loadVisualizations = () => {
 		// If google is already in the DOM, don't load it again.
-		if ( window.google ) {
-			window.google.load( 'visualization', '1', {
+		if ( window.google && window.google.charts ) {
+			window.google.charts.load( 'current', {
 				packages: [ 'geochart' ],
-				callback: this.drawRegionsMap,
 				mapsApiKey: config( 'google_maps_and_places_api_key' ),
 			} );
+			window.google.charts.setOnLoadCallback( this.drawRegionsMap );
 			clearTimeout( this.timer );
 		} else {
 			this.tick();
