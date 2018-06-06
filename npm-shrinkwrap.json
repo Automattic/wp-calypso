@@ -927,6 +927,19 @@
         "to-fast-properties": "2.0.0"
       }
     },
+    "@cronvel/get-pixels": {
+      "version": "3.3.1",
+      "integrity": "sha512-jgDb8vGPkpjRDbiYyHTI2Bna4HJysjPNSiERzBnRJjCR/YqC3u0idTae0tmNECsaZLOpAWmlK9wiIwnLGIT9Bg==",
+      "dev": true,
+      "requires": {
+        "jpeg-js": "0.1.2",
+        "ndarray": "1.0.18",
+        "ndarray-pack": "1.2.1",
+        "node-bitmap": "0.0.1",
+        "omggif": "1.0.9",
+        "pngjs": "2.3.1"
+      }
+    },
     "@mrmlnc/readdir-enhanced": {
       "version": "2.2.1",
       "integrity": "sha512-bPHp6Ji8b41szTOcaP63VlnbbO5Ny6dwAATtY6JTjh5N2OLrb5Qk/Th5cRkRQhkWCt+EJsYrNB0MiL+Gpn6e3g==",
@@ -4467,11 +4480,6 @@
       "integrity": "sha1-agdBWgHJH69KMuONnfunH2HLIP4=",
       "dev": true
     },
-    "data-uri-to-buffer": {
-      "version": "0.0.3",
-      "integrity": "sha1-GK6XmmoMqZSwYlhTkW0mYruuCxo=",
-      "dev": true
-    },
     "data-urls": {
       "version": "1.0.0",
       "integrity": "sha512-ai40PPQR0Fn1lD2PPie79CibnlMN2AYiDhwFX/rZHVsxbs5kNJSjegqXIprhouGXlRdEnfybva7kqRGnB6mypA==",
@@ -7836,24 +7844,6 @@
     "get-document": {
       "version": "1.0.0",
       "integrity": "sha1-SCG85m8cJMsDMWAr5strEsTwHEs="
-    },
-    "get-pixels": {
-      "version": "3.3.0",
-      "integrity": "sha1-jZeVvq4YhQuED3SVgbrcBdPjbkE=",
-      "dev": true,
-      "requires": {
-        "data-uri-to-buffer": "0.0.3",
-        "jpeg-js": "0.1.2",
-        "mime-types": "2.1.18",
-        "ndarray": "1.0.18",
-        "ndarray-pack": "1.2.1",
-        "node-bitmap": "0.0.1",
-        "omggif": "1.0.9",
-        "parse-data-uri": "0.2.0",
-        "pngjs": "2.3.1",
-        "request": "2.87.0",
-        "through": "2.3.8"
-      }
     },
     "get-src": {
       "version": "1.0.1",
@@ -12282,8 +12272,8 @@
       "integrity": "sha1-yobR/ogoFpsBICCOPchCS524NCw="
     },
     "nextgen-events": {
-      "version": "0.10.2",
-      "integrity": "sha512-P6efDoVOOJjVLOhwINq+aqhC2B3a9IxojbWMn9fTv2coDiyRaaGLSgWsm84wQHlQeuqVgqiLEE+xiHXf3EVN6w==",
+      "version": "1.0.1",
+      "integrity": "sha512-ATR5qGlRJiptrv9awMyxgI+SDZlsB+GrkicjX1zAeit0cqJkMslbbL/2dcjk0K0a1kUWc1AM3SEKGQn4PlHUaA==",
       "dev": true
     },
     "nice-try": {
@@ -13066,14 +13056,6 @@
         "create-hash": "1.2.0",
         "evp_bytestokey": "1.0.3",
         "pbkdf2": "3.0.16"
-      }
-    },
-    "parse-data-uri": {
-      "version": "0.2.0",
-      "integrity": "sha1-vwTYUd1ch7CrI45dAazklLYEtMk=",
-      "dev": true,
-      "requires": {
-        "data-uri-to-buffer": "0.0.3"
       }
     },
     "parse-entities": {
@@ -17390,8 +17372,8 @@
       "integrity": "sha1-Rb8dny19wJvtgfHDB8Qw5ouEz/4="
     },
     "string-kit": {
-      "version": "0.6.18",
-      "integrity": "sha512-G/nR5FBUcVkFagf0ckMPCnV8UIlldTa60LaYPR4bZ6MtAj6o03cQcJK9TqoU13dOy52Sjt/XqY+bO7iJcJ+chw==",
+      "version": "0.7.4",
+      "integrity": "sha512-89YFn8PUI1TqCkupOQjCcKkuveSZFHCO8wuRX3qeB90d8uCYC+MAOzkDl7vEw8AAlEgwbt00jrkoTnpT9417Ug==",
       "dev": true,
       "requires": {
         "xregexp": "4.1.1"
@@ -17943,15 +17925,15 @@
       }
     },
     "terminal-kit": {
-      "version": "1.13.13",
-      "integrity": "sha512-6A8b5OJd9oMLvbfPIaRr4F+FBnuH4/sQQPlVCnhbuQ+EwAyUbFB9Z+KTuivtmbWOUErXIYtlQ8t36+YBz5T2vA==",
+      "version": "1.17.6",
+      "integrity": "sha512-AnabIqvegOB40UQenG295dtCLR0pxvd7fAd0IcbGm2RxHA0Za2RlS+epZm4ii1xc8KD0ejag/+SJ0UM5xFWVIw==",
       "dev": true,
       "requires": {
+        "@cronvel/get-pixels": "3.3.1",
         "async-kit": "2.2.4",
-        "get-pixels": "3.3.0",
         "ndarray": "1.0.18",
-        "nextgen-events": "0.10.2",
-        "string-kit": "0.6.18",
+        "nextgen-events": "1.0.1",
+        "string-kit": "0.7.4",
         "tree-kit": "0.5.27"
       }
     },
