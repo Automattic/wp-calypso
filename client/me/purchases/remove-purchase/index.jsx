@@ -5,7 +5,7 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -483,10 +483,10 @@ class RemovePurchase extends Component {
 		}
 
 		return (
-			<span>
+			<Fragment>
 				{ this.renderCard() }
 				{ this.renderDialog( purchase ) }
-			</span>
+			</Fragment>
 		);
 	}
 }
