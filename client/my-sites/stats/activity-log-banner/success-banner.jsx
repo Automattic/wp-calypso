@@ -92,7 +92,7 @@ class SuccessBanner extends PureComponent {
 					track: (
 						<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
 					),
-					taskFinished: translate( 'We successfully created a backup of your site to %s!', {
+					taskFinished: translate( 'We successfully created a backup of your site at %s!', {
 						args: date,
 					} ),
 					actionButton: (
