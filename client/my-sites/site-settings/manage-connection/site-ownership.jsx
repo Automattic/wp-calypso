@@ -12,6 +12,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import accept from 'lib/accept';
 import AuthorSelector from 'blocks/author-selector';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -52,7 +53,17 @@ class SiteOwnership extends Component {
 	}
 
 	onSelect = user => {
-		this.props.changeOwner( this.props.siteId, user.ID, user.name );
+		const { translate } = this.props;
+
+		accept(
+			translate( 'Are you sure you want to transfer ownership?' ),
+			accepted => {
+				accepted && this.props.changeOwner( this.props.siteId, user.ID, user.name );
+			},
+			translate( 'Yes' ),
+			translate( 'No' ),
+			{ isScary: true }
+		);
 	};
 
 	renderCurrentUser() {
