@@ -16,14 +16,14 @@ import Dispatcher from 'dispatcher';
 import steps from 'signup/config/steps';
 
 const SignupDependencyStore = {
-	get: function() {
+	get() {
 		return getSignupDependencyStore( SignupDependencyStore.reduxStore.getState() );
 	},
-	reset: function() {
-		SignupDependencyStore.reduxStore.dispatch( {
-			type: SIGNUP_COMPLETE_RESET,
-			data: {},
-		} );
+	update( data ) {
+		SignupDependencyStore.reduxStore.dispatch( { type: SIGNUP_DEPENDENCY_STORE_UPDATE, data } );
+	},
+	reset() {
+		SignupDependencyStore.reduxStore.dispatch( { type: SIGNUP_COMPLETE_RESET } );
 	},
 	setReduxStore( reduxStore ) {
 		this.reduxStore = reduxStore;
@@ -61,10 +61,7 @@ SignupDependencyStore.dispatchToken = Dispatcher.register( function( payload ) {
 			case 'SUBMIT_SIGNUP_STEP':
 				if ( action.type === 'PROVIDE_SIGNUP_DEPENDENCIES' || assertValidDependencies( action ) ) {
 					// any dependency from `PROVIDE_SIGNUP_DEPENDENCIES` is valid as it is not associated with a step
-					SignupDependencyStore.reduxStore.dispatch( {
-						type: SIGNUP_DEPENDENCY_STORE_UPDATE,
-						data: action.providedDependencies,
-					} );
+					SignupDependencyStore.update( action.providedDependencies );
 				}
 				break;
 		}

@@ -13,7 +13,7 @@ export default createReducer(
 	{},
 	{
 		[ SIGNUP_DEPENDENCY_STORE_UPDATE ]: ( state = {}, action ) => {
-			return Object.assign( {}, state, action.data );
+			return { ...state, ...action.data };
 		},
 		[ SIGNUP_COMPLETE_RESET ]: () => {
 			return {};

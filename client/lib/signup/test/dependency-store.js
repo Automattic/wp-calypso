@@ -30,6 +30,7 @@ describe( 'dependency-store', () => {
 	} );
 
 	afterEach( () => {
+		SignupDependencyStore.reset();
 		SignupProgressStore.reset();
 	} );
 
@@ -62,6 +63,6 @@ describe( 'dependency-store', () => {
 
 		SignupActions.provideDependencies( dependencies );
 
-		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN2', ...dependencies } );
+		assert.deepEqual( SignupDependencyStore.get(), dependencies );
 	} );
 } );
