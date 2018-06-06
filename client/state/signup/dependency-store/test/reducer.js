@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import signupDependencyStore from '../reducer';
@@ -18,10 +13,10 @@ describe( 'reducer', () => {
 				{},
 				{
 					type: SIGNUP_DEPENDENCY_STORE_UPDATE,
-					data: { test: 123 },
+					dependencies: { test: 123 },
 				}
 			)
-		).to.be.eql( { test: 123 } );
+		).toEqual( { test: 123 } );
 	} );
 
 	test( 'should reset the signup store', () => {
@@ -32,6 +27,6 @@ describe( 'reducer', () => {
 					type: SIGNUP_COMPLETE_RESET,
 				}
 			)
-		).to.be.eql( {} );
+		).toEqual( {} );
 	} );
 } );

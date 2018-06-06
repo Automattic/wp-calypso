@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { createStore } from 'redux';
 
 /**
@@ -30,28 +29,29 @@ describe( 'dependency-store', () => {
 	} );
 
 	afterEach( () => {
+		SignupDependencyStore.reset();
 		SignupProgressStore.reset();
 	} );
 
 	test( 'should return an empty object at first', () => {
-		assert.deepEqual( SignupDependencyStore.get(), {} );
+		expect( SignupDependencyStore.get() ).toEqual( {} );
 	} );
 
 	test( 'should not store dependencies if none are included in an action', () => {
 		SignupActions.submitSignupStep( { stepName: 'stepA' } );
-		assert.deepEqual( SignupDependencyStore.get(), {} );
+		expect( SignupDependencyStore.get() ).toEqual( {} );
 	} );
 
 	test( 'should store dependencies if they are provided in either signup action', () => {
 		SignupActions.submitSignupStep( { stepName: 'userCreation' }, [], { bearer_token: 'TOKEN' } );
 
-		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN' } );
+		expect( SignupDependencyStore.get() ).toEqual( { bearer_token: 'TOKEN' } );
 
 		SignupActions.processedSignupStep( { stepName: 'userCreation' }, [], {
 			bearer_token: 'TOKEN2',
 		} );
 
-		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN2' } );
+		expect( SignupDependencyStore.get() ).toEqual( { bearer_token: 'TOKEN2' } );
 	} );
 
 	test( 'should store dependencies if they are provided in the `PROVIDE_SIGNUP_DEPENDENCIES` action', () => {
@@ -62,6 +62,6 @@ describe( 'dependency-store', () => {
 
 		SignupActions.provideDependencies( dependencies );
 
-		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN2', ...dependencies } );
+		expect( SignupDependencyStore.get() ).toEqual( dependencies );
 	} );
 } );
