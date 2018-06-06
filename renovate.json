@@ -15,5 +15,10 @@
     "@babel/preset-stage-2",
     "@babel/runtime",
     "jquery"
+  ],
+  "labels": [
+    "Framework",
+    "[Status] Needs Review",
+    "[Status] Needs e2e Testing"
   ]
 }
