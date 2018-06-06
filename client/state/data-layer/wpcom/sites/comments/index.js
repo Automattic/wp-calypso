@@ -22,7 +22,7 @@ import { dispatchRequest, dispatchRequestEx } from 'state/data-layer/wpcom-http/
 import replies from './replies';
 import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
-import { getRawSite } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 import getSiteComment from 'state/selectors/get-site-comment';
 import {
 	receiveComments,

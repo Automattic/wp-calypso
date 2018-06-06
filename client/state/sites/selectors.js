@@ -39,17 +39,7 @@ import { getSiteComputedAttributes } from './utils';
 import getSiteOptions from 'state/selectors/get-site-options';
 import getSitesItems from 'state/selectors/get-sites-items';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-
-/**
- * Returns a raw site object by its ID.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?Object}        Site object
- */
-export const getRawSite = ( state, siteId ) => {
-	return getSitesItems( state )[ siteId ] || null;
-};
+import getRawSite from 'state/selectors/get-raw-site';
 
 /**
  * Returns a site object by its slug.

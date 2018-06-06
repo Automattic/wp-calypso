@@ -6,7 +6,7 @@
 
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getRawSite } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 
 /**
  * Returns true if the site can be upgraded by the user, false if the

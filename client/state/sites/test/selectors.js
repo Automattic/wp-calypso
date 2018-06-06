@@ -9,7 +9,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	getRawSite,
 	getSite,
 	getSiteCollisions,
 	isSiteConflicting,
@@ -75,40 +74,6 @@ describe( 'selectors', () => {
 		getSite.clearCache();
 		getSiteCollisions.memoizedSelector.cache.clear();
 		getSiteBySlug.memoizedSelector.cache.clear();
-	} );
-
-	describe( '#getRawSite()', () => {
-		test( 'it should return null if there is no such site', () => {
-			const rawSite = getRawSite(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203199
-			);
-
-			expect( rawSite ).to.be.null;
-		} );
-
-		test( 'it should return the raw site object for site with that ID', () => {
-			const site = {
-				ID: 77203199,
-				URL: 'https://example.com',
-			};
-			const rawSite = getRawSite(
-				{
-					sites: {
-						items: {
-							77203199: site,
-						},
-					},
-				},
-				77203199
-			);
-
-			expect( rawSite ).to.eql( site );
-		} );
 	} );
 
 	describe( '#getSite()', () => {

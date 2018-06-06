@@ -5,7 +5,6 @@
  */
 
 import {
-	getRawSite,
 	getSiteDomain,
 	getSiteOption,
 	getSiteSlug,
@@ -14,6 +13,7 @@ import {
 	isSiteConflicting,
 	isSitePreviewable,
 } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSiteOptions from 'state/selectors/get-site-options';
 import { withoutHttp } from 'lib/url';
