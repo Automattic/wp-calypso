@@ -29,26 +29,21 @@ const changeConnectionOwner = action =>
 		action
 	);
 
-const handleSuccess = ( { newOwnerWpcomDisplayName, siteId } ) => {
-	return dispatch => {
-		dispatch(
-			successNotice(
-				translate( 'Connection owner changed to %(user)s.', {
-					args: { user: newOwnerWpcomDisplayName },
-				} )
-			)
-		);
-		dispatch( requestJetpackUserConnectionData( siteId ) );
-	};
-};
+const handleSuccess = ( { newOwnerWpcomDisplayName, siteId } ) => [
+	successNotice(
+		translate( 'Connection owner changed to %(user)s.', {
+			args: { user: newOwnerWpcomDisplayName },
+		} )
+	),
+	requestJetpackUserConnectionData( siteId ),
+];
 
-const handleError = ( { newOwnerWpcomDisplayName } ) => {
-	return errorNotice(
+const handleError = ( { newOwnerWpcomDisplayName } ) =>
+	errorNotice(
 		translate( 'Connection owner could not be changed to %(user)s. Please contact support.', {
 			args: { user: newOwnerWpcomDisplayName },
 		} )
 	);
-};
 
 export default {
 	[ JETPACK_CONNECTION_CHANGE_OWNER ]: [
