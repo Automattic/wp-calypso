@@ -10,17 +10,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import {
-	get,
-	includes,
-	map,
-	pick,
-	flatten,
-	forEach,
-	intersection,
-	snakeCase,
-	startsWith,
-} from 'lodash';
+import { get, includes, pick, flatten, forEach, intersection, snakeCase, startsWith } from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -491,18 +481,18 @@ function render404( request, response ) {
 }
 
 function handleLocaleSubdomains( req, res, next ) {
-	const langRouteParams = map( config( 'languages' ), 'langSlug' ).join( '|' );
+	const langRouteParams = config( 'magnificent_non_en_locales' ).join( '|' );
 	const hostnameGroup = `\\.${ config( 'hostname' ).replace( /\./g, '\\.' ) }`;
 	const langSubDomainRegEx = new RegExp( `^(${ langRouteParams })(${ hostnameGroup })` );
 	const langSubDomainMatch = req.hostname.match( langSubDomainRegEx );
 
-	// If the subdomain is a valid route
+	// If the subdomain is a valid route.
 	if ( langSubDomainMatch && langSubDomainMatch[ 1 ] ) {
-		// We get the language again for the RTL information
+		// We get the language again for the RTL information.
 		const language = getLanguage( langSubDomainMatch[ 1 ] );
 
 		// We want to switch locales only on the themes page
-		// and in a logged-out state
+		// and in a logged-out state.
 		if ( language && ! req.cookies.wordpress_logged_in && startsWith( req.path, '/themes' ) ) {
 			req.context = Object.assign( {}, req.context, {
 				lang: language.langSlug,
