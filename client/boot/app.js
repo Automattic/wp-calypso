@@ -46,10 +46,6 @@ window.AppBoot = () => {
 	if ( user.initialized ) {
 		boot( user );
 	} else {
-		user.once( 'change', () => {
-			// eslint-disable-next-line
-			console.log( `xxx.wordpress.com - never fires` );
-			boot( user );
-		} );
+		user.once( 'change', () => boot( user ) );
 	}
 };

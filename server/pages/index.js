@@ -10,7 +10,17 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, map, pick, flatten, forEach, intersection, snakeCase, startsWith } from 'lodash';
+import {
+	get,
+	includes,
+	map,
+	pick,
+	flatten,
+	forEach,
+	intersection,
+	snakeCase,
+	startsWith,
+} from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -173,7 +183,9 @@ function getAcceptedLanguagesFromHeader( header ) {
 }
 
 function getDefaultContext( request ) {
-	let initialServerState = {};
+	let initialServerState = {},
+		sectionCss,
+		lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
 	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
@@ -182,7 +194,6 @@ function getDefaultContext( request ) {
 	const cacheKey = getNormalizedPath( request.pathname, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
-	let sectionCss;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -205,6 +216,10 @@ function getDefaultContext( request ) {
 		sectionCss = request.context.sectionCss;
 	}
 
+	if ( request.context && request.context.lang ) {
+		lang = request.context.lang;
+	}
+
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -215,7 +230,7 @@ function getDefaultContext( request ) {
 		isRTL: config( 'rtl' ),
 		isDebug,
 		badge: false,
-		lang: config( 'i18n_default_locale_slug' ),
+		lang,
 		entrypoint: getAssets().entrypoints.build.assets.filter(
 			asset => ! asset.startsWith( 'manifest' )
 		),
@@ -483,10 +498,12 @@ function handleLocaleSubdomains( req, res, next ) {
 	// If the subdomain matches one of our langSlugs
 	// and the user isn't logged in
 	// and we're visiting the /themes page.
-	if ( langSubDomainMatch &&
+	if (
+		langSubDomainMatch &&
 		langSubDomainMatch[ 1 ] &&
 		! req.cookies.wordpress_logged_in &&
-		startsWith( req.path, '/themes' ) ) {
+		startsWith( req.path, '/themes' )
+	) {
 		const language = getLanguage( langSubDomainMatch[ 1 ] );
 		if ( language && language.langSlug ) {
 			req.context = Object.assign( {}, req.context, {
@@ -495,13 +512,6 @@ function handleLocaleSubdomains( req, res, next ) {
 			} );
 		}
 		return next();
-	// Not sure what to here. Try a normal calypso route, or let it through to 404
-	} else {
-		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-		const port = process.env.PORT || config( 'port' );
-		const host = process.env.HOST || config( 'hostname' );
-		const redirectUrl = `${ protocol }://${ host }${ ( port ? `:${ port }` : '' ) }${ req.originalUrl }`;
-		res.redirect( redirectUrl );
 	}
 	next();
 }
