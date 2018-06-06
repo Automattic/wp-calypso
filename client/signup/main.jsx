@@ -31,7 +31,6 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 import config from 'config';
-import { bindToFlux as bindDepedencyStoreToFlux } from 'state/signup/dependency-store/actions';
 import { getSignupDependencies } from 'state/signup/dependency-store/selectors';
 import SignupProgressStore from 'lib/signup/progress-store';
 import SignupFlowController from 'lib/signup/flow-controller';
@@ -155,7 +154,6 @@ class Signup extends React.Component {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
 
-		bindDepedencyStoreToFlux();
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,

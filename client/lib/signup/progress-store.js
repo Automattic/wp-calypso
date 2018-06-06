@@ -15,7 +15,7 @@ import store from 'store';
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 import steps from 'signup/config/steps';
-import { bindToFlux as bindDepedencyStoreToFlux } from 'state/signup/dependency-store/actions';
+import { getFluxDispatchToken as getDependencyStoreDispatchToken } from 'state/signup/dependency-store/actions';
 
 /**
  * Constants
@@ -157,7 +157,9 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	const action = payload.action,
 		step = addTimestamp( action.data );
 
-	Dispatcher.waitFor( [ bindDepedencyStoreToFlux()( SignupProgressStore.reduxStore.dispatch ) ] );
+	Dispatcher.waitFor( [
+		getDependencyStoreDispatchToken()( SignupProgressStore.reduxStore.dispatch ),
+	] );
 
 	if ( ! isEmpty( action.errors ) ) {
 		return setStepInvalid( step, action.errors );

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { SIGNUP_COMPLETE_RESET, SIGNUP_DEPENDENCY_STORE_UPDATE } from 'state/action-types';
-export { bindToFlux } from './actions-compatibility';
+export { getFluxDispatchToken } from './actions-compatibility';
 
 export function updateDependencyStore( data ) {
 	return {

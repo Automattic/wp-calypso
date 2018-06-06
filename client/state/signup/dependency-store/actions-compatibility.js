@@ -18,7 +18,7 @@ import { updateDependencyStore } from './actions';
  * Ported over from the deprecated `client/lib/signup/dependency-store`.
  * @returns {Function} a thunk that binds to the flux dispatcher
  */
-export function bindToFlux() {
+export function getFluxDispatchToken() {
 	return dispatch => {
 		return FluxDispatcher.register( function( payload ) {
 			const { action } = payload;
@@ -40,7 +40,7 @@ export function bindToFlux() {
 	};
 }
 
-// Used in conjunction with bindToFlux
+// Used in conjunction with getFluxDispatchToken
 function assertValidDependencies( action ) {
 	const step = steps[ action.data.stepName ];
 	const providesDependencies = ( step && step.providesDependencies ) || [];
