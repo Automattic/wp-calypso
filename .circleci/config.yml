@@ -114,3 +114,4 @@ jobs:
 notify:
   webhooks:
     - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
+
