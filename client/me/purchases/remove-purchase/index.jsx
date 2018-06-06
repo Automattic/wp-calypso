@@ -230,22 +230,6 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	renderCard = () => {
-		const { translate } = this.props;
-		const productName = getName( this.props.purchase );
-
-		return (
-			<CompactCard
-				tagName={ Focusable }
-				className="remove-purchase__card"
-				onClick={ this.openDialog }
-			>
-				<Gridicon icon="trash" />
-				{ translate( 'Remove %(productName)s', { args: { productName } } ) }
-			</CompactCard>
-		);
-	};
-
 	getChatButton = () => {
 		return (
 			<HappychatButton className="remove-purchase__chat-button" onClick={ this.chatButtonClicked }>
@@ -471,14 +455,24 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		const purchase = this.props.purchase;
+		const { purchase, translate } = this.props;
+		const productName = getName( purchase );
+
 		if ( ! isRemovable( purchase ) ) {
 			return null;
 		}
 
 		return (
 			<Fragment>
-				{ this.renderCard() }
+				<CompactCard
+					tagName={ Focusable }
+					className="remove-purchase__card"
+					onClick={ this.openDialog }
+				>
+					<Gridicon icon="trash" />
+					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
+				</CompactCard>
+
 				{ this.renderDialog( purchase ) }
 			</Fragment>
 		);
