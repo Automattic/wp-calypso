@@ -4,7 +4,7 @@ jobs:
     parallelism: 6
     working_directory: ~/wp-calypso
     docker:
-      - image: circleci/node:8.11.2-browsers@sha256:f6a38f5bdc699540213a7cd2b84cf40cef9155535fb9750be092675b277338cf
+      - image: circleci/node:8.11.2-browsers
         environment:
           CIRCLE_ARTIFACTS: /tmp/artifacts
           CIRCLE_TEST_REPORTS: /tmp/test_results
