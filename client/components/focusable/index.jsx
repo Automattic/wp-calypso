@@ -2,10 +2,10 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { omit } from 'lodash';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { noop } from 'lodash';
 
 class Focusable extends Component {
 	static propTypes = {
@@ -13,13 +13,10 @@ class Focusable extends Component {
 		onKeyDown: PropTypes.func,
 	};
 
-	onClick = event => {
-		const { onClick } = this.props;
-		onClick( event );
-	};
+	static defaultProps = { onClick: noop };
 
 	onKeyDown = event => {
-		const { onClick, onKeyDown = false } = this.props;
+		const { onClick, onKeyDown } = this.props;
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
 			onClick( event );
@@ -30,17 +27,15 @@ class Focusable extends Component {
 	};
 
 	render = () => {
-		const { children, className } = this.props;
-		const omitProps = [ 'children', 'className', 'onClick', 'onKeyDown', 'role', 'tabIndex' ];
-		const props = omit( this.props, omitProps );
+		const { children, className, ...passProps } = this.props;
 		return (
 			<div
+				{ ...passProps }
 				className={ classNames( 'focusable', className ) }
 				role="button"
 				tabIndex="0"
-				onClick={ this.onClick }
+				onClick={ this.props.onClick }
 				onKeyDown={ this.onKeyDown }
-				{ ...props }
 			>
 				{ children }
 			</div>
