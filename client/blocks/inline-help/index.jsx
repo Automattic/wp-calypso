@@ -128,16 +128,31 @@ class InlineHelp extends Component {
 
 	closeDialog = () => this.setState( { showDialog: false } );
 
+	getDialogButtons() {
+		const { translate } = this.props;
+		const { dialogType, dialogPostHref } = this.state;
+
+		if ( dialogType === 'article' ) {
+			return [
+				<Button href={ dialogPostHref } target="_blank" primary>
+					{ translate( 'Visit Article' ) } <Gridicon icon="external" size={ 12 } />
+				</Button>,
+				<Button onClick={ this.closeDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
+			];
+		}
+
+		if ( dialogType === 'video' ) {
+			return [
+				<Button onClick={ this.closeDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
+			];
+		}
+
+		return [];
+	}
+
 	render() {
 		const { translate } = this.props;
-		const {
-			showInlineHelp,
-			showDialog,
-			videoLink,
-			dialogType,
-			dialogPostId,
-			dialogPostHref,
-		} = this.state;
+		const { showInlineHelp, showDialog, videoLink, dialogType, dialogPostId } = this.state;
 		const inlineHelpButtonClasses = { 'inline-help__button': true, 'is-active': showInlineHelp };
 
 		/* @TODO: This class is not valid and this tricks the linter
@@ -145,13 +160,7 @@ class InlineHelp extends Component {
 		 */
 		const iframeClasses = classNames( 'inline-help__richresult__dialog__video' );
 		const dialogClasses = classNames( 'inline-help__richresult__dialog', dialogType );
-
-		const dialogButtons = dialogType === 'article' && [
-			<Button href={ dialogPostHref } target="_blank" primary>
-				{ translate( 'Visit Article' ) } <Gridicon icon="external" size={ 12 } />
-			</Button>,
-			<Button onClick={ this.closeDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
-		];
+		const dialogButtons = this.getDialogButtons();
 
 		return (
 			<div className="inline-help">
