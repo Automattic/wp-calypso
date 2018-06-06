@@ -6,13 +6,6 @@ DomainManagementData
 This folder contains the following components:
 
 * `DomainManagementData`
-* `DnsData`
-* `EmailData`
-* `EmailForwardingData`
-* `NameserversData`
-* `SiteRedirectData`
-* `TransferData`
-* `WhoisData`
 
 ## Main component
 
