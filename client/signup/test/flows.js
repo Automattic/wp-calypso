@@ -30,7 +30,7 @@ describe( 'Signup Flows Configuration', () => {
 			user = require( 'lib/user' )();
 
 			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
-			sinon.stub( flows, 'getABTestFilteredFlow', ( flowName, flow ) => {
+			sinon.stub( flows, 'getABTestFilteredFlow' ).callsFake( ( flowName, flow ) => {
 				return flow;
 			} );
 		} );
@@ -61,10 +61,10 @@ describe( 'Signup Flows Configuration', () => {
 
 		beforeAll( () => {
 			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
-			sinon.stub( flows, 'insertStepIntoFlow', ( stepName, flow ) => {
+			sinon.stub( flows, 'insertStepIntoFlow' ).callsFake( ( stepName, flow ) => {
 				return flow;
 			} );
-			sinon.stub( flows, 'removeStepFromFlow', ( stepName, flow ) => {
+			sinon.stub( flows, 'removeStepFromFlow' ).callsFake( ( stepName, flow ) => {
 				return flow;
 			} );
 		} );
