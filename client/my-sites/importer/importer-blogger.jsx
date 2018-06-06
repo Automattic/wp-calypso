@@ -35,33 +35,32 @@ class ImporterBlogger extends React.PureComponent {
 		} ),
 	};
 
-	importerData = {
-		title: importerName,
-		icon: 'blogger-alt',
-		description: this.props.translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
-			{
-				args: {
-					importerName,
-				},
-			}
-		),
-		uploadDescription: this.props.translate(
-			'Upload a {{b}}%(importerName)s export file{{/b}} to start importing into {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: {
-					importerName,
-					siteTitle: this.props.site.title,
-				},
-				components: {
-					b: <strong />,
-				},
-			}
-		),
-	};
-
 	render() {
-		return <FileImporter importerData={ this.importerData } { ...this.props } />;
+		const importerData = {
+			title: importerName,
+			icon: 'blogger-alt',
+			description: this.props.translate(
+				'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
+				{
+					args: {
+						importerName,
+					},
+				}
+			),
+			uploadDescription: this.props.translate(
+				'Upload a {{b}}%(importerName)s export file{{/b}} to start importing into {{b}}%(siteTitle)s{{/b}}.',
+				{
+					args: {
+						importerName,
+						siteTitle: this.props.site.title,
+					},
+					components: {
+						b: <strong />,
+					},
+				}
+			),
+		};
+		return <FileImporter importerData={ importerData } { ...this.props } />;
 	}
 }
 
