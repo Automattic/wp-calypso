@@ -5,7 +5,6 @@
  */
 
 import { find } from 'lodash';
-import { fromJS } from 'immutable';
 
 /**
  * Internal dependencies
@@ -57,11 +56,7 @@ function replaceUserInfoWithIds( customData ) {
 	return Object.assign( {}, customData, {
 		sourceAuthors: customData.sourceAuthors.map(
 			author =>
-				author.mappedTo
-					? Object.assign( {}, author, {
-							mappedTo: author.mappedTo.ID,
-						} )
-					: author
+				author.mappedTo ? Object.assign( {}, author, { mappedTo: author.mappedTo.ID } ) : author
 		),
 	} );
 }
@@ -71,10 +66,10 @@ export function fromApi( state ) {
 
 	return {
 		importerId,
+		progress,
 		importerState: apiToAppState( importStatus ),
 		type: `importer-type-${ type }`,
-		progress: fromJS( progress ),
-		customData: fromJS( generateSourceAuthorIds( customData ) ),
+		customData: generateSourceAuthorIds( customData ),
 		site: { ID: siteId },
 	};
 }

@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { noop, every, has, defer, get } from 'lodash';
 
 /**
@@ -16,9 +17,14 @@ import wpLib from 'lib/wp';
 
 const wpcom = wpLib.undocumented();
 
-import { toApi, fromApi } from 'lib/importer/common';
+import { toApi, fromApi } from 'state/imports/utils';
 
-import { startMappingAuthors, startImporting, mapAuthor, finishUpload } from 'lib/importer/actions';
+import {
+	startMappingAuthors,
+	startImporting,
+	mapAuthor,
+	finishUpload,
+} from 'state/imports/actions';
 import user from 'lib/user';
 
 import { appStates } from 'state/imports/constants';
@@ -27,7 +33,6 @@ import ErrorPane from '../error-pane';
 import TextInput from 'components/forms/form-text-input';
 
 import SiteImporterSitePreview from './site-importer-site-preview';
-import { connectDispatcher } from '../dispatcher-converter';
 
 import { loadmShotsPreview } from './site-preview-actions';
 
@@ -42,6 +47,10 @@ class SiteImporterInputPane extends React.Component {
 		} ),
 		onStartImport: PropTypes.func,
 		disabled: PropTypes.bool,
+		startImporting: PropTypes.func.isRequired,
+		startMappingAuthors: PropTypes.func.isRequired,
+		finishUpload: PropTypes.func.isRequired,
+		mapAuthorFor: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = { description: null, onStartImport: noop };
@@ -79,7 +88,7 @@ class SiteImporterInputPane extends React.Component {
 					} );
 				}, nextProps );
 			} else {
-				defer( props => startMappingAuthors( props.importerStatus.importerId ), nextProps );
+				defer( props => props.startMappingAuthors( props.importerStatus.importerId ), nextProps );
 			}
 
 			// Do not continue execution of the function as the rest should be executed on the next update.
@@ -93,7 +102,7 @@ class SiteImporterInputPane extends React.Component {
 
 			if ( oldAuthors === false && newAuthors === true ) {
 				defer( props => {
-					startImporting( props.importerStatus );
+					props.startImporting( props.importerStatus );
 				}, nextProps );
 			}
 		}
@@ -166,9 +175,8 @@ class SiteImporterInputPane extends React.Component {
 				this.setState( { loading: false } );
 
 				const data = fromApi( resp );
-				const action = finishUpload( this.props.importerStatus.importerId )( data );
 				defer( () => {
-					Dispatcher.handleViewAction( action );
+					this.props.finishUpload( this.props.importerStatus.importerId )( data );
 				} );
 			} )
 			.catch( err => {
@@ -231,11 +239,23 @@ class SiteImporterInputPane extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	mapAuthorFor: importerId => ( source, target ) =>
-		defer( () => {
-			dispatch( mapAuthor( importerId, source, target ) );
-		} ),
-} );
+const mapDispatchToProps = dispatch => {
+	const boundActionCreators = bindActionCreators(
+		{
+			startImporting,
+			startMappingAuthors,
+			finishUpload,
+		},
+		dispatch
+	);
 
-export default connectDispatcher( null, mapDispatchToProps )( localize( SiteImporterInputPane ) );
+	return {
+		...boundActionCreators,
+		mapAuthorFor: importerId => ( source, target ) =>
+			defer( () => {
+				dispatch( mapAuthor( importerId, source, target ) );
+			} ),
+	};
+};
+
+export default connect( null, mapDispatchToProps )( localize( SiteImporterInputPane ) );

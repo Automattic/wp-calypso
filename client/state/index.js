@@ -47,8 +47,9 @@ import googleMyBusiness from './google-my-business/reducer';
 import help from './help/reducer';
 import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
 import i18n from './i18n/reducer';
-import invites from './invites/reducer';
+import imports from './imports/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
+import invites from './invites/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
@@ -142,6 +143,7 @@ const reducers = {
 	help,
 	httpData,
 	i18n,
+	imports,
 	inlineHelpSearchResults,
 	invites,
 	jetpackConnect,

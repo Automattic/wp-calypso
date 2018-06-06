@@ -5,16 +5,17 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, translate, localize } from 'i18n-calypso';
-import { has, omit } from 'lodash';
+import { has, omit, defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { mapAuthor, startImporting } from 'lib/importer/actions';
+import { mapAuthor, startImporting } from 'state/imports/actions';
 import { appStates } from 'state/imports/constants';
-import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
 import MappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
@@ -105,6 +106,8 @@ class ImportingPane extends React.PureComponent {
 			ID: PropTypes.number.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
+		startImporting: PropTypes.func.isRequired,
+		mapAuthorFor: PropTypes.func.isRequired,
 	};
 
 	getErrorMessage = ( { description } ) => {
@@ -193,6 +196,10 @@ class ImportingPane extends React.PureComponent {
 		return this.isInState( appStates.MAP_AUTHORS );
 	};
 
+	startImporting = () => {
+		this.props.startImporting( this.props.importerStatus );
+	};
+
 	render() {
 		const {
 			importerStatus: { importerId, errorData = {}, customData },
@@ -229,7 +236,7 @@ class ImportingPane extends React.PureComponent {
 					<MappingPane
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ mapAuthorFor( importerId ) }
-						onStartImport={ () => startImporting( this.props.importerStatus ) }
+						onStartImport={ this.startImporting }
 						{ ...{ siteId } }
 						sourceAuthors={ customData.sourceAuthors }
 						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
@@ -254,11 +261,21 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	mapAuthorFor: importerId => ( source, target ) =>
-		setTimeout( () => {
-			dispatch( mapAuthor( importerId, source, target ) );
-		}, 0 ),
-} );
+const mapDispatchToProps = dispatch => {
+	const boundActionCreators = bindActionCreators(
+		{
+			startImporting,
+		},
+		dispatch
+	);
 
-export default connectDispatcher( null, mapDispatchToProps )( localize( ImportingPane ) );
+	return {
+		...boundActionCreators,
+		mapAuthorFor: importerId => ( source, target ) =>
+			defer( () => {
+				dispatch( mapAuthor( importerId, source, target ) );
+			} ),
+	};
+};
+
+export default connect( null, mapDispatchToProps )( localize( ImportingPane ) );

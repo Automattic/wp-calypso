@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import Dispatcher from 'dispatcher';
 import { flowRight, includes, partial } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
@@ -31,7 +30,7 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
-import { fromApi, toApi } from './common';
+import { fromApi, toApi } from './utils';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -55,38 +54,39 @@ const expiryOrder = ( siteId, importerId ) =>
 const importOrder = importerStatus =>
 	toApi( Object.assign( {}, importerStatus, { importerState: appStates.IMPORTING } ) );
 
-const apiStart = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
-const apiSuccess = data => {
-	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_COMPLETED } );
+const apiStart = () => ( { type: IMPORTS_FETCH } );
+
+const apiSuccess = dispatch => data => {
+	dispatch( { type: IMPORTS_FETCH_COMPLETED } );
 
 	return data;
 };
-const apiFailure = data => {
-	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_FAILED } );
+const apiFailure = dispatch => data => {
+	dispatch( { type: IMPORTS_FETCH_FAILED } );
 
 	return data;
 };
 const setImportLock = ( shouldEnableLock, importerId ) => {
 	const type = shouldEnableLock ? IMPORTS_IMPORT_LOCK : IMPORTS_IMPORT_UNLOCK;
 
-	Dispatcher.handleViewAction( { type, importerId } );
+	return { type, importerId };
 };
 const lockImport = partial( setImportLock, true );
 const unlockImport = partial( setImportLock, false );
 
 const asArray = a => [].concat( a );
 
-function receiveImporterStatus( importerStatus ) {
-	Dispatcher.handleViewAction( {
+const receiveImporterStatus = dispatch => importerStatus => {
+	dispatch( {
 		type: IMPORTS_IMPORT_RECEIVE,
 		importerStatus,
 	} );
-}
+};
 
-export function cancelImport( siteId, importerId ) {
-	lockImport( importerId );
+export const cancelImport = ( siteId, importerId ) => dispatch => {
+	dispatch( lockImport( importerId ) );
 
-	Dispatcher.handleViewAction( {
+	dispatch( {
 		type: IMPORTS_IMPORT_CANCEL,
 		importerId,
 		siteId,
@@ -98,14 +98,15 @@ export function cancelImport( siteId, importerId ) {
 		return;
 	}
 
-	apiStart();
-	wpcom
+	dispatch( apiStart() );
+
+	return wpcom
 		.updateImporter( siteId, cancelOrder( siteId, importerId ) )
-		.then( apiSuccess )
+		.then( apiSuccess( dispatch ) )
 		.then( fromApi )
-		.then( receiveImporterStatus )
-		.catch( apiFailure );
-}
+		.then( receiveImporterStatus( dispatch ) )
+		.catch( apiFailure( dispatch ) );
+};
 
 export const failUpload = importerId => ( { message: error } ) => ( {
 	type: IMPORTS_UPLOAD_FAILED,
@@ -113,17 +114,17 @@ export const failUpload = importerId => ( { message: error } ) => ( {
 	error,
 } );
 
-export function fetchState( siteId ) {
-	apiStart();
+export const fetchState = siteId => dispatch => {
+	dispatch( apiStart() );
 
 	return wpcom
 		.fetchImporterState( siteId )
-		.then( apiSuccess )
+		.then( apiSuccess( dispatch ) )
 		.then( asArray )
 		.then( importers => importers.map( fromApi ) )
-		.then( importers => importers.map( receiveImporterStatus ) )
-		.catch( apiFailure );
-}
+		.then( importers => importers.map( receiveImporterStatus( dispatch ) ) )
+		.catch( apiFailure( dispatch ) );
+};
 
 export const finishUpload = importerId => importerStatus => ( {
 	type: IMPORTS_UPLOAD_COMPLETED,
@@ -138,33 +139,34 @@ export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => ( {
 	targetAuthor,
 } );
 
-export function resetImport( siteId, importerId ) {
+export const resetImport = ( siteId, importerId ) => dispatch => {
 	// We are done with this import session, so lock it away
-	lockImport( importerId );
+	dispatch( lockImport( importerId ) );
 
-	Dispatcher.handleViewAction( {
+	dispatch( {
 		type: IMPORTS_IMPORT_RESET,
 		importerId,
 		siteId,
 	} );
 
-	apiStart();
-	wpcom
+	dispatch( apiStart() );
+
+	return wpcom
 		.updateImporter( siteId, expiryOrder( siteId, importerId ) )
-		.then( apiSuccess )
+		.then( apiSuccess( dispatch ) )
 		.then( fromApi )
-		.then( receiveImporterStatus )
-		.catch( apiFailure );
-}
+		.then( receiveImporterStatus( dispatch ) )
+		.catch( apiFailure( dispatch ) );
+};
 
-export function startMappingAuthors( importerId ) {
-	lockImport( importerId );
+export const startMappingAuthors = importerId => dispatch => {
+	dispatch( lockImport( importerId ) );
 
-	Dispatcher.handleViewAction( {
+	dispatch( {
 		type: IMPORTS_AUTHORS_START_MAPPING,
 		importerId,
 	} );
-}
+};
 
 export const setUploadProgress = ( importerId, data ) => ( {
 	type: IMPORTS_UPLOAD_SET_PROGRESS,
@@ -185,23 +187,29 @@ export const startImport = ( siteId, importerType ) => {
 	};
 };
 
-export function startImporting( importerStatus ) {
+export const startImporting = importerStatus => dispatch => {
 	const { importerId, site: { ID: siteId } } = importerStatus;
 
-	unlockImport( importerId );
+	dispatch( unlockImport( importerId ) );
 
-	Dispatcher.handleViewAction( {
+	dispatch( {
 		type: IMPORTS_START_IMPORTING,
 		importerId,
 	} );
 
-	wpcom.updateImporter( siteId, importOrder( importerStatus ) );
-}
+	return wpcom.updateImporter( siteId, importOrder( importerStatus ) );
+};
 
 export const startUpload = ( importerStatus, file ) => dispatch => {
 	const { importerId, site: { ID: siteId } } = importerStatus;
 
-	wpcom
+	dispatch( {
+		type: IMPORTS_UPLOAD_START,
+		filename: file.name,
+		importerId,
+	} );
+
+	return wpcom
 		.uploadExportFile( siteId, {
 			importStatus: toApi( importerStatus ),
 			file,
@@ -220,10 +228,4 @@ export const startUpload = ( importerStatus, file ) => dispatch => {
 		.then( fromApi )
 		.then( flowRight( dispatch, finishUpload( importerId ) ) )
 		.catch( flowRight( dispatch, failUpload( importerId ) ) );
-
-	dispatch( {
-		type: IMPORTS_UPLOAD_START,
-		filename: file.name,
-		importerId,
-	} );
 };

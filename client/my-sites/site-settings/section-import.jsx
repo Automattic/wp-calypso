@@ -16,12 +16,11 @@ import { find } from 'lodash';
  */
 import CompactCard from 'components/card/compact';
 import EmptyContent from 'components/empty-content';
-import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import SiteImporter from 'my-sites/importer/importer-site-importer';
-import { fetchState } from 'lib/importer/actions';
+import { fetchState } from 'state/imports/actions';
 import { appStates, WORDPRESS, MEDIUM, SITE_IMPORTER } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -37,17 +36,11 @@ const hasActiveImports = imports =>
 class SiteSettingsImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
+		fetchState: PropTypes.func.isRequired,
 	};
 
-	state = getImporterState();
-
 	componentDidMount() {
-		ImporterStore.on( 'change', this.updateState );
 		this.updateFromAPI();
-	}
-
-	componentWillUnmount() {
-		ImporterStore.off( 'change', this.updateState );
 	}
 
 	/**
@@ -58,7 +51,7 @@ class SiteSettingsImport extends Component {
 	 * @returns {Array<Object>} ImportStatus objects
 	 */
 	getImports( type ) {
-		const { api: { isHydrated }, importers } = this.state;
+		const { api: { isHydrated }, importers } = this.props.imports;
 		const { site } = this.props;
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
@@ -80,11 +73,7 @@ class SiteSettingsImport extends Component {
 	}
 
 	updateFromAPI = () => {
-		fetchState( this.props.site.ID );
-	};
-
-	updateState = () => {
-		this.setState( getImporterState() );
+		this.props.fetchState( this.props.site.ID );
 	};
 
 	render() {
@@ -178,7 +167,13 @@ class SiteSettingsImport extends Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( SiteSettingsImport ) );
+export default connect(
+	state => ( {
+		site: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+		imports: state.imports,
+	} ),
+	{
+		fetchState,
+	}
+)( localize( SiteSettingsImport ) );
