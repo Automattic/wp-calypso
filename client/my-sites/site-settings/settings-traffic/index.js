@@ -13,7 +13,11 @@ import settingsController from 'my-sites/site-settings/settings-controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 const redirectToTrafficSection = context => {
-	page.redirect( '/settings/traffic/' + ( context.params.site_id || '' ) );
+	const sectionAnchor = context.hashstring;
+	const siteId = context.params.site_id || '';
+
+	page.redirect( '/settings/traffic/' + siteId );
+	sectionAnchor && window.location.replace( '/settings/traffic/' + siteId + '#' + sectionAnchor );
 };
 
 export default function() {
