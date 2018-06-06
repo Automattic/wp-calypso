@@ -97,12 +97,9 @@ jobs:
           when: always
 
       - run:
-          name: Add code coverage status check to PR
+          name: Store coverage file
           command: |
-             set +o pipefail
-             cat coverage/clover.xml | grep '<metrics' | head -n 1 > $CIRCLE_ARTIFACTS/clover-short.xml
-             echo '</metrics>' >> $CIRCLE_ARTIFACTS/clover-short.xml
-             curl -XPOST "https://code-coverage.herokuapp.com/report?branch=$CIRCLE_BRANCH&commit_sha1=$CIRCLE_SHA1&pr_number=$(echo $CIRCLE_PULL_REQUEST | awk -F '/' '{print $NF}')&repo=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME&pr=$CIRCLE_PULL_REQUEST" -F report=@$CIRCLE_ARTIFACTS/clover-short.xml
+             cp coverage/clover.xml $CIRCLE_ARTIFACTS/clover.xml
 
       - store_test_results:
           path: /tmp/test_results
