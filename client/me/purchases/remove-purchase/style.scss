@@ -6,6 +6,13 @@
 
 .remove-purchase__card {
 	cursor: pointer;
+	color: $blue-wordpress;
+
+	&:active,
+	&:focus,
+	&:hover {
+		color: $link-highlight;
+	}
 
 	.gridicon {
 		margin-top: -2px;

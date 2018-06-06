@@ -44,6 +44,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import HappychatButton from 'components/happychat/button';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import Focusable from 'components/focusable';
 
 /**
  * Module dependencies
@@ -234,11 +235,13 @@ class RemovePurchase extends Component {
 		const productName = getName( this.props.purchase );
 
 		return (
-			<CompactCard className="remove-purchase__card" onClick={ this.openDialog }>
-				<a href="#">
-					<Gridicon icon="trash" />
-					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
-				</a>
+			<CompactCard
+				tagName={ Focusable }
+				className="remove-purchase__card"
+				onClick={ this.openDialog }
+			>
+				<Gridicon icon="trash" />
+				{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 			</CompactCard>
 		);
 	};
