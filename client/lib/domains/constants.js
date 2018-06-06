@@ -86,3 +86,8 @@ export const gdprConsentStatus = {
 	DENIED: 'DENIED',
 	FORCED_ALL_CONTRACTUAL: 'FORCED_ALL_CONTRACTUAL',
 };
+
+export const domainConnect = {
+	DISCOVERY_TXT_RECORD_NAME: '_domainconnect',
+	API_URL: 'public-api.wordpress.com/rest/v1.3/domain-connect',
+};
