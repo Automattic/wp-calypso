@@ -164,7 +164,7 @@ export class JetpackConnectMain extends Component {
 			url: url,
 			type: 'remote_auth',
 		} );
-		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
+		externalRedirect( addCalypsoEnvQueryArg( this.props.siteHomeUrl + REMOTE_PATH_AUTH ) );
 	} );
 
 	goToRemoteInstall = this.makeSafeRedirectionFunction( url => {
@@ -391,6 +391,7 @@ const connectComponent = connect(
 			jetpackConnectSite,
 			mobileAppRedirect,
 			skipRemoteInstall,
+			siteHomeUrl: siteData.url,
 		};
 	},
 	{
