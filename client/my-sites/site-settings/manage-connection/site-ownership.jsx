@@ -62,18 +62,20 @@ class SiteOwnership extends Component {
 		}
 
 		return (
-			<AuthorSelector
-				siteId={ siteId }
-				exclude={ this.isUserExcludedFromSelector }
-				transformAuthor={ this.transformUser }
-				allowSingleUser
-				onSelect={ this.onSelect }
-			>
-				<div className="manage-connection__user">
-					<Gravatar user={ currentUser } size={ 24 } />
-					<span className="manage-connection__user-name">{ currentUser.display_name }</span>
-				</div>
-			</AuthorSelector>
+			<div className="manage-connection__user-dropdown">
+				<AuthorSelector
+					siteId={ siteId }
+					exclude={ this.isUserExcludedFromSelector }
+					transformAuthor={ this.transformUser }
+					allowSingleUser
+					onSelect={ this.onSelect }
+				>
+					<div className="manage-connection__user">
+						<Gravatar user={ currentUser } size={ 24 } />
+						<span className="manage-connection__user-name">{ currentUser.display_name }</span>
+					</div>
+				</AuthorSelector>
+			</div>
 		);
 	}
 
