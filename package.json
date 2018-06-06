@@ -160,7 +160,7 @@
     "tinymce": "4.6.3",
     "to-title-case": "0.1.5",
     "tracekit": "0.4.3",
-    "twemoji": "2.3",
+    "twemoji": "~11.0.0",
     "uglifyjs-webpack-plugin": "1.2.4",
     "url": "0.11.0",
     "uuid": "3.2.1",
