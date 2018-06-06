@@ -5,7 +5,7 @@
  */
 
 import store from 'store';
-import { assign, clone, includes, pick, reduce } from 'lodash';
+import { assign, clone, includes, isEmpty, pick, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getEditorPostId,
+	getEditorInitialRawContent,
 	getEditorRawContent,
 	isEditorSaveBlocked,
 } from 'state/ui/editor/selectors';
@@ -178,7 +179,7 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
  * flag that tells whether a post ID was assigned during this save. Happens when a new draft
  * has been just saved for the first time.
  */
-function saveResult( localPost, receivedPost = localPost ) {
+function saveResult( localPost, receivedPost ) {
 	return {
 		receivedPost,
 		idAssigned: localPost.ID !== receivedPost.ID,
@@ -206,16 +207,28 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 		throw new Error( 'SAVE_BLOCKED' );
 	}
 
+	const initialRawContent = getEditorInitialRawContent( getState() );
+	const rawContent = getEditorRawContent( getState() );
+
 	let changedAttributes = getPostEdits( getState(), siteId, postId );
 
-	// Don't send a request to the API if the post is unchanged. An empty  post request is invalid.
+	// when toggling editor modes, it is possible for the post to be dirty
+	// even though the content hasn't changed. To avoid a confusing UX
+	// let's just pass the content through and save it anyway
+	if ( ! changedAttributes.content && rawContent !== initialRawContent ) {
+		changedAttributes = {
+			...changedAttributes,
+			content: post.content,
+		};
+	}
+
+	// Don't send a request to the API if the post is unchanged. An empty post request is invalid.
 	// This case is not treated as error, but rather as a successful save.
-	if ( ! Object.keys( changedAttributes ).length ) {
-		return saveResult( post );
+	if ( isEmpty( changedAttributes ) ) {
+		return null;
 	}
 
 	changedAttributes = normalizeApiAttributes( changedAttributes );
-	const rawContent = getEditorRawContent( getState() );
 	const mode = PreferencesStore.get( 'editor-mode' );
 	const isNew = ! postId;
 
@@ -289,7 +302,7 @@ export const autosave = () => async ( dispatch, getState ) => {
 	const postId = getEditorPostId( state );
 
 	if ( ! isEditedPostDirty( state, siteId, postId ) ) {
-		throw new Error( 'NOT_DIRTY' );
+		return null;
 	}
 
 	const savedPost = getSitePost( state, siteId, postId );

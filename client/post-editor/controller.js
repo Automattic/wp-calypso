@@ -153,7 +153,6 @@ export default {
 			if ( postToCopyId ) {
 				context.store.dispatch( startEditingPostCopy( siteId, postToCopyId ) );
 			} else if ( postId ) {
-				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				const contextPath = context.path;
 				context.store.dispatch( startEditingExistingPost( siteId, postId ) ).then( editedPost => {
 					if ( contextPath !== page.current ) {

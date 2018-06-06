@@ -93,18 +93,31 @@ export const userCan = function( capability, post ) {
 	return hasCap;
 };
 
-export const isBackDatedPublished = function( post ) {
-	if ( ! post || post.status !== 'future' ) {
+// Return backdated-published status of a post. Optionally, the `status` can be overridden
+// with a custom value: what would the post status be if a `status` edit was applied?
+export const isBackDatedPublished = function( post, status ) {
+	if ( ! post ) {
 		return false;
 	}
 
-	return moment( post.date ).isBefore( moment() );
+	const effectiveStatus = status || post.status;
+
+	return effectiveStatus === 'future' && moment( post.date ).isBefore( moment() );
 };
 
-export const isPublished = function( post ) {
+// Return published status of a post. Optionally, the `status` can be overridden
+// with a custom value: what would the post status be if a `status` edit was applied?
+export const isPublished = function( post, status ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	const effectiveStatus = status || post.status;
+
 	return (
-		post &&
-		( post.status === 'publish' || post.status === 'private' || isBackDatedPublished( post ) )
+		effectiveStatus === 'publish' ||
+		effectiveStatus === 'private' ||
+		isBackDatedPublished( post, status )
 	);
 };
 

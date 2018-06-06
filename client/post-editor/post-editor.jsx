@@ -507,11 +507,6 @@ export class PostEditor extends React.Component {
 			content: this.editor.getContent(),
 		} );
 
-		// Make sure that after TinyMCE processing that the post is still dirty
-		// if ( ! PostEditStore.isDirty() || ! PostEditStore.hasContent() ) {
-		// 	return;
-		// }
-
 		// The post is either already published or the current modifications are going to publish it
 		const savingPublishedPost =
 			utils.isPublished( this.props.savedPost ) || utils.isPublished( this.props.post );
@@ -585,10 +580,11 @@ export class PostEditor extends React.Component {
 	};
 
 	onSave = status => {
+		// Refuse to save if the current edits would mean that an unpublished post gets published.
+		// That's an exclusive resposibility of the `onPublish` method.
 		if (
 			! utils.isPublished( this.props.savedPost ) &&
-			( ( ! status && utils.isPublished( this.props.post ) ) ||
-				utils.isPublished( { ...this.props.post, status } ) )
+			utils.isPublished( this.props.post, status )
 		) {
 			return;
 		}

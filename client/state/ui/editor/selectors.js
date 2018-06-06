@@ -184,6 +184,10 @@ export function getEditorPublishButtonStatus( state ) {
 	return 'requestReview';
 }
 
+export function getEditorInitialRawContent( state ) {
+	return state.ui.editor.rawContent.initial;
+}
+
 export function getEditorRawContent( state ) {
 	return state.ui.editor.rawContent.current;
 }
