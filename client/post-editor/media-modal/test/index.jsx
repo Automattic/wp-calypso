@@ -77,7 +77,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	afterEach( () => {
-		accept.reset();
+		accept.resetHistory();
 	} );
 
 	test( 'When `single` selection screen chosen should initialise with no items selected', () => {

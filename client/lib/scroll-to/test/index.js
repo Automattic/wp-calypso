@@ -18,7 +18,7 @@ describe( 'scroll-to', () => {
 	} );
 
 	afterEach( () => {
-		window.scrollTo.reset();
+		window.scrollTo.resetHistory();
 	} );
 
 	test( 'window position x', done => {

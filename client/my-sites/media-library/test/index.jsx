@@ -39,7 +39,7 @@ describe( 'MediaLibrary', () => {
 	};
 
 	beforeEach( () => {
-		requestStub.reset();
+		requestStub.resetHistory();
 	} );
 
 	const getItem = source => mount( <MediaLibrary store={ store } source={ source } /> );

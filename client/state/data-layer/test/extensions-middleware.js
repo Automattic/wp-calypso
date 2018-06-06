@@ -181,7 +181,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		removeHandlers( 'my-extension', config );
 
-		adder.reset();
+		adder.resetHistory();
 		config.middleware( store )( next )( action );
 		expect( adder ).to.not.have.been.called;
 	} );

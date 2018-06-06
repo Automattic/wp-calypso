@@ -26,7 +26,7 @@ jest.mock( 'lib/redux-bridge', () => ( {
 
 describe( 'reader utils', () => {
 	beforeEach( () => {
-		page.show.reset();
+		page.show.resetHistory();
 	} );
 
 	describe( '#showSelectedPost', () => {

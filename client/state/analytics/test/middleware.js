@@ -45,8 +45,8 @@ jest.mock( 'lib/analytics/ad-tracking', () => {
 describe( 'middleware', () => {
 	describe( 'analytics dispatching', () => {
 		beforeEach( () => {
-			mockAnalytics.reset();
-			mockAdTracking.reset();
+			mockAnalytics.resetHistory();
+			mockAdTracking.resetHistory();
 		} );
 
 		test( 'should call mc.bumpStat', () => {

@@ -28,7 +28,7 @@ describe( 'actions', () => {
 	} );
 
 	beforeEach( () => {
-		spy.reset();
+		spy.resetHistory();
 	} );
 
 	describe( 'receiveUnregisterDevice()', () => {

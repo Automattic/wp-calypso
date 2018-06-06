@@ -75,14 +75,17 @@ describe( '#httpHandler', () => {
 			null
 		);
 
-		expect( dispatch ).to.have.been.calledWithMatch(
-			sinon.match(
-				extendAction(
-					failer,
-					failureMeta( new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" ) )
-				)
-			)
-		);
+		expect( dispatch ).to.have.been.calledOnce;
+		// sinon matchers fail hard here for some reason
+		global.expect( dispatch.args[ 0 ][ 0 ] ).toEqual( {
+			type: 'FAIL',
+			meta: {
+				dataLayer: {
+					error: new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" ),
+					headers: undefined,
+				},
+			},
+		} );
 	} );
 
 	test( 'should set appropriate headers', () => {

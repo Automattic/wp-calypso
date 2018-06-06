@@ -62,7 +62,7 @@ describe( 'MediaActions', () => {
 	} );
 
 	beforeEach( () => {
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		sandbox.stub( Dispatcher, 'handleServerAction' );
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		sandbox.stub( stubs, 'mediaGet' ).callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
@@ -100,7 +100,7 @@ describe( 'MediaActions', () => {
 	describe( '#fetch()', () => {
 		test( 'should call to the WordPress.com REST API', done => {
 			Dispatcher.handleViewAction.restore();
-			sandbox.stub( Dispatcher, 'handleViewAction', function() {
+			sandbox.stub( Dispatcher, 'handleViewAction' ).callsFake( function() {
 				expect( MediaActions._fetching ).to.have.all.keys( [
 					[ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join(),
 				] );
