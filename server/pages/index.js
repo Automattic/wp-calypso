@@ -495,23 +495,29 @@ function handleLocaleSubdomains( req, res, next ) {
 	const hostnameGroup = `\\.${ config( 'hostname' ).replace( /\./g, '\\.' ) }`;
 	const langSubDomainRegEx = new RegExp( `^(${ langRouteParams })(${ hostnameGroup })` );
 	const langSubDomainMatch = req.hostname.match( langSubDomainRegEx );
-	// If the subdomain matches one of our langSlugs
-	// and the user isn't logged in
-	// and we're visiting the /themes page.
-	if (
-		langSubDomainMatch &&
-		langSubDomainMatch[ 1 ] &&
-		! req.cookies.wordpress_logged_in &&
-		startsWith( req.path, '/themes' )
-	) {
+
+	// If the subdomain is a valid route
+	if ( langSubDomainMatch && langSubDomainMatch[ 1 ] ) {
+		// We get the language again for the RTL information
 		const language = getLanguage( langSubDomainMatch[ 1 ] );
-		if ( language && language.langSlug ) {
+
+		// We want to switch locales only on the themes page
+		// and in a logged-out state
+		if ( language && ! req.cookies.wordpress_logged_in && startsWith( req.path, '/themes' ) ) {
 			req.context = Object.assign( {}, req.context, {
 				lang: language.langSlug,
 				isRTL: !! language.rtl,
 			} );
+		} else {
+			// We redirect to the base hostname so that the user's locale preferences take priority.
+			const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
+			const port = process.env.PORT || config( 'port' );
+			const host = process.env.HOST || config( 'hostname' );
+			const redirectUrl = `${ protocol }://${ host }${ port ? `:${ port }` : '' }${
+				req.originalUrl
+			}`;
+			res.redirect( redirectUrl );
 		}
-		return next();
 	}
 	next();
 }
