@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import inherits from 'inherits';
 import { includes, find, get, replace, some } from 'lodash';
 
@@ -16,8 +15,8 @@ import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
 import formatCurrency from 'lib/format-currency';
 
-const GOOGLE_APPS_INVALID_TLDS = [ 'in' ],
-	GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
+const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
+const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
 
 function ValidationError( code ) {
 	this.code = code;

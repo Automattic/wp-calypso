@@ -4,7 +4,15 @@
  * Internal dependencies
  */
 import { getDomainType, getGdprConsentStatus, getTransferStatus } from 'lib/domains/utils';
-import { assembleGoogleAppsSubscription } from 'lib/domains/assembler';
+import { camelCase, mapKeys } from 'lodash';
+
+function assembleGoogleAppsSubscription( googleAppsSubscription ) {
+	if ( ! googleAppsSubscription ) {
+		return;
+	}
+
+	return mapKeys( googleAppsSubscription, ( value, key ) => camelCase( key ) );
+}
 
 export const createSiteDomainObject = domain => {
 	return {
