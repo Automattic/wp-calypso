@@ -41,7 +41,7 @@ Each action takes a `step` object with the following properties:
 
 If `errors` has a non-zero length, it will be attached to the step and the step's status will be set to `invalid` as it is added to the store. If a `providedDependencies` object is included, its information will be added to the dependency store.
 
-### SignupDependencyStore
+### Signup Dependencies
 Actions which provide a `providedDependencies` object will have this information added to the dependency store in the Redux state. This is possible through a compatibility layer connecting Flux and Redux in `client/state/signup/dependency-store/actions-compatibility`.
 
 ```js

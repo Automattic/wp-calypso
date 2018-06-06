@@ -20,7 +20,7 @@ import { updateDependencyStore } from './actions';
  */
 export function bindToFlux() {
 	return dispatch => {
-		FluxDispatcher.register( function( payload ) {
+		return FluxDispatcher.register( function( payload ) {
 			const { action } = payload;
 			switch ( action.type ) {
 				// From client/lib/signup/actions.js
@@ -42,8 +42,9 @@ export function bindToFlux() {
 
 // Used in conjunction with bindToFlux
 function assertValidDependencies( action ) {
-	const providesDependencies = steps[ action.data.stepName ].providesDependencies || [],
-		extraDependencies = difference( keys( action.providedDependencies ), providesDependencies );
+	const step = steps[ action.data.stepName ];
+	const providesDependencies = ( step && step.providesDependencies ) || [];
+	const extraDependencies = difference( keys( action.providedDependencies ), providesDependencies );
 
 	if ( ! isEmpty( extraDependencies ) ) {
 		throw new Error(

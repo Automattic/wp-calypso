@@ -6,7 +6,7 @@ Handles all reducers that are related to the Signup process.
 More information about why it is organized in stores and not proper Redux flow can be seen [here](https://github.com/Automattic/wp-calypso/issues/6709)
 
 
-### SignupDependencyStore - `dependency-store`
+### `dependency-store`
 
 Holds the reducers that take care of the data passed to `SignupDependencyStore`, which is now saved in Redux, instead of `localStorage`.
 

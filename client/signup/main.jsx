@@ -76,6 +76,8 @@ class Signup extends React.Component {
 	constructor( props, context ) {
 		super( props, context );
 
+		SignupProgressStore.setReduxStore( context.store );
+
 		this.state = {
 			login: false,
 			progress: SignupProgressStore.get(),

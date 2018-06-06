@@ -47,6 +47,9 @@ function SignupFlowController( options ) {
 		return new SignupFlowController( options );
 	}
 
+	this._reduxStore = options.reduxStore;
+	SignupProgressStore.setReduxStore( this._reduxStore );
+
 	this._flowName = options.flowName;
 	this._flow = flows.getFlow( options.flowName );
 	this._onComplete = options.onComplete;
@@ -55,9 +58,6 @@ function SignupFlowController( options ) {
 	this._boundProcess = this._process.bind( this );
 
 	this._assertFlowHasValidDependencies();
-
-	this._reduxStore = options.reduxStore;
-
 	SignupProgressStore.on( 'change', this._boundProcess );
 
 	if ( options.flowName === store.get( STORAGE_KEY ) ) {

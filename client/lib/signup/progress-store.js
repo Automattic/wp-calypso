@@ -14,8 +14,8 @@ import store from 'store';
  */
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
-import SignupDependencyStore from './dependency-store';
 import steps from 'signup/config/steps';
+import { bindToFlux as bindDepedencyStoreToFlux } from 'state/signup/dependency-store/actions';
 
 /**
  * Constants
@@ -38,6 +38,9 @@ const SignupProgressStore = {
 	getFromCache: function() {
 		loadProgressFromCache();
 		return this.get();
+	},
+	setReduxStore( reduxStore ) {
+		this.reduxStore = reduxStore;
 	},
 };
 
@@ -151,10 +154,10 @@ function addStorableDependencies( step, action ) {
 }
 
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
-	let action = payload.action,
+	const action = payload.action,
 		step = addTimestamp( action.data );
 
-	Dispatcher.waitFor( [ SignupDependencyStore.dispatchToken ] );
+	Dispatcher.waitFor( [ bindDepedencyStoreToFlux()( SignupProgressStore.reduxStore.dispatch ) ] );
 
 	if ( ! isEmpty( action.errors ) ) {
 		return setStepInvalid( step, action.errors );
