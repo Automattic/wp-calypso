@@ -163,7 +163,7 @@ class CloneDestinationStep extends Component {
 				<FormTextInput
 					name="destinationSiteName"
 					onChange={ this.handleFieldChange }
-					isError={ formErrors.destinationSiteName }
+					isError={ !! formErrors.destinationSiteName }
 				/>
 				{ formErrors.destinationSiteName && (
 					<FormInputValidation isError={ true } text={ formErrors.destinationSiteName } />
@@ -173,7 +173,7 @@ class CloneDestinationStep extends Component {
 				<FormTextInput
 					name="destinationSiteUrl"
 					onChange={ this.handleFieldChange }
-					isError={ formErrors.destinationSiteUrl }
+					isError={ !! formErrors.destinationSiteUrl }
 				/>
 				{ formErrors.destinationSiteUrl && (
 					<FormInputValidation isError={ true } text={ formErrors.destinationSiteUrl } />
