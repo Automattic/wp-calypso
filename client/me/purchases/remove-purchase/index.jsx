@@ -260,7 +260,8 @@ class RemovePurchase extends Component {
 	};
 
 	renderDomainDialog() {
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
+		const productName = getName( purchase );
 		const buttons = [
 			{
 				action: 'cancel',
@@ -275,7 +276,6 @@ class RemovePurchase extends Component {
 				onClick: this.removePurchase,
 			},
 		];
-		const productName = getName( this.props.purchase );
 
 		if (
 			config.isEnabled( 'upgrades/precancellation-chat' ) &&
@@ -294,24 +294,15 @@ class RemovePurchase extends Component {
 				<FormSectionHeading>
 					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</FormSectionHeading>
-				{ this.renderDomainDialogText() }
+				<p>
+					{ translate(
+						'This will remove %(domain)s from your account. By removing, ' +
+							'you are canceling the domain registration. This may stop ' +
+							'you from using it again, even with another service.',
+						{ args: { domain: productName } }
+					) }
+				</p>
 			</Dialog>
-		);
-	}
-
-	renderDomainDialogText() {
-		const { purchase, translate } = this.props;
-		const productName = getName( purchase );
-
-		return (
-			<p>
-				{ translate(
-					'This will remove %(domain)s from your account. By removing, ' +
-						'you are canceling the domain registration. This may stop ' +
-						'you from using it again, even with another service.',
-					{ args: { domain: productName } }
-				) }
-			</p>
 		);
 	}
 
