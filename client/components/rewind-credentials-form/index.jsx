@@ -41,6 +41,7 @@ export class RewindCredentialsForm extends Component {
 
 	static defaultProps = {
 		labels: {},
+		requirePath: PropTypes.bool,
 	};
 
 	state = {
@@ -59,6 +60,7 @@ export class RewindCredentialsForm extends Component {
 			port: false,
 			user: false,
 			pass: false,
+			path: false,
 		},
 	};
 
@@ -79,7 +81,7 @@ export class RewindCredentialsForm extends Component {
 	};
 
 	handleSubmit = () => {
-		const { role, siteId, siteUrl, translate, updateCredentials } = this.props;
+		const { requirePath, role, siteId, siteUrl, translate, updateCredentials } = this.props;
 
 		const payload = {
 			role,
@@ -104,7 +106,8 @@ export class RewindCredentialsForm extends Component {
 			isNaN( payload.port ) && { port: translate( 'Port number must be numeric.' ) },
 			userError && { user: userError },
 			! payload.pass &&
-				! payload.kpri && { pass: translate( 'Please enter your server password.' ) }
+				! payload.kpri && { pass: translate( 'Please enter your server password.' ) },
+			! payload.path && requirePath && { path: translate( 'Please enter a server path.' ) }
 		);
 
 		return isEmpty( errors )
@@ -138,8 +141,7 @@ export class RewindCredentialsForm extends Component {
 	}
 
 	render() {
-		const { formIsSubmitting, labels, onCancel, siteId, translate } = this.props;
-
+		const { formIsSubmitting, labels, onCancel, requirePath, siteId, translate } = this.props;
 		const { showAdvancedSettings, formErrors } = this.state;
 
 		return (
@@ -237,7 +239,7 @@ export class RewindCredentialsForm extends Component {
 					>
 						{ translate( 'Advanced settings' ) }
 					</Button>
-					{ showAdvancedSettings && (
+					{ ( showAdvancedSettings || requirePath ) && (
 						<div className="rewind-credentials-form__advanced-settings">
 							<FormFieldset className="rewind-credentials-form__path">
 								<FormLabel htmlFor="wordpress-path">
@@ -252,6 +254,9 @@ export class RewindCredentialsForm extends Component {
 									disabled={ formIsSubmitting }
 									isError={ !! formErrors.path }
 								/>
+								{ formErrors.path && (
+									<FormInputValidation isError={ true } text={ formErrors.path } />
+								) }
 							</FormFieldset>
 
 							<FormFieldset className="rewind-credentials-form__kpri">
