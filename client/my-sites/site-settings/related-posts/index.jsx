@@ -66,7 +66,7 @@ const RelatedPosts = ( {
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_thumbnails' ) }
 						>
-							{ translate( 'Use a large and visually striking layout' ) }
+							{ translate( 'Show a thumbnail image where available' ) }
 						</CompactFormToggle>
 					</div>
 
