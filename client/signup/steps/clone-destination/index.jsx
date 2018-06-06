@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
+import FormInputValidation from 'components/forms/form-input-validation';
 import ExternalLink from 'components/external-link';
 
 class CloneDestinationStep extends Component {
@@ -32,26 +34,46 @@ class CloneDestinationStep extends Component {
 			destinationSiteName: '',
 			destinationSiteUrl: '',
 		},
+		formErrors: {
+			destinationSiteName: false,
+			destinationSiteUrl: false,
+		},
 	};
 
 	handleFieldChange = ( { target: { name, value } } ) =>
 		this.setState( {
 			form: Object.assign( {}, this.state.form, { [ name ]: value } ),
+			formErrors: { ...this.state.formErrors, [ name ]: false },
 		} );
 
 	goToNextStep = () => {
-		const { form: { siteName, siteUrl } } = this.state;
+		const { translate } = this.props;
+		const { form: { destinationSiteName, destinationSiteUrl } } = this.state;
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			destinationSiteName: siteName,
-			destinationSiteUrl: siteUrl,
-		} );
+		const errors = Object.assign(
+			! destinationSiteName && {
+				destinationSiteName: translate( 'Please provide a name for your site.' ),
+			},
+			! destinationSiteUrl && {
+				destinationSiteUrl: translate( 'Please provide the destination URL.' ),
+			}
+		);
 
-		this.props.goToNextStep();
+		if ( isEmpty( errors ) ) {
+			SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
+				destinationSiteName,
+				destinationSiteUrl,
+			} );
+
+			this.props.goToNextStep();
+		} else {
+			this.setState( { formErrors: errors } );
+		}
 	};
 
 	renderStepContent = () => {
 		const { translate } = this.props;
+		const { formErrors } = this.state;
 
 		return (
 			<Card className="clone-destination__card">
@@ -138,10 +160,24 @@ class CloneDestinationStep extends Component {
 				</svg>
 
 				<FormLabel className="clone-destination__label">Destination site title</FormLabel>
-				<FormTextInput name="siteName" onChange={ this.handleFieldChange } />
+				<FormTextInput
+					name="destinationSiteName"
+					onChange={ this.handleFieldChange }
+					isError={ formErrors.destinationSiteName }
+				/>
+				{ formErrors.destinationSiteName && (
+					<FormInputValidation isError={ true } text={ formErrors.destinationSiteName } />
+				) }
 
 				<FormLabel className="clone-destination__label">Destination site URL</FormLabel>
-				<FormTextInput name="siteUrl" onChange={ this.handleFieldChange } />
+				<FormTextInput
+					name="destinationSiteUrl"
+					onChange={ this.handleFieldChange }
+					isError={ formErrors.destinationSiteUrl }
+				/>
+				{ formErrors.destinationSiteUrl && (
+					<FormInputValidation isError={ true } text={ formErrors.destinationSiteUrl } />
+				) }
 
 				<p className="clone-destination__tos">
 					{ translate( 'By continuing, you agree to our {{TOS /}}', {
