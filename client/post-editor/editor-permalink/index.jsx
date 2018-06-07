@@ -40,21 +40,9 @@ class EditorPermalink extends Component {
 
 		this.state = {
 			showPopover: false,
-			popoverVisible: false,
 			showCopyConfirmation: false,
 			tooltip: false,
 		};
-	}
-
-	componentDidUpdate( prevProps, prevState ) {
-		if ( this.state.showPopover !== prevState.showPopover ) {
-			// The contents of <Popover /> are only truly rendered into the
-			// DOM after its `componentDidUpdate` finishes executing, so we
-			// wait to render the clipboard button until after the update.
-			this.setState( {
-				popoverVisible: this.state.showPopover,
-			} );
-		}
 	}
 
 	componentWillUnmount() {
@@ -96,9 +84,6 @@ class EditorPermalink extends Component {
 	}
 
 	renderCopyButton() {
-		if ( ! this.state.popoverVisible ) {
-			return;
-		}
 		const { path, slug, translate } = this.props;
 
 		let label;
