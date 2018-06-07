@@ -1,4 +1,9 @@
-machine:
-  node:
-    version: v6.1.0
-
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:carbon
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm test
