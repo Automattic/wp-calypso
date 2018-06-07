@@ -21,15 +21,12 @@ jest.mock( 'lib/impure-lodash', () => ( {
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
 		test( 'fetchConciergeAvailableTimes()', () => {
-			const dispatch = jest.fn();
 			const action = {
 				type: CONCIERGE_AVAILABLE_TIMES_REQUEST,
 				scheduleId: 123,
 			};
 
-			fetchConciergeAvailableTimes( { dispatch }, action );
-
-			expect( dispatch ).toHaveBeenCalledWith(
+			expect( fetchConciergeAvailableTimes( action ) ).toEqual(
 				http(
 					{
 						method: 'GET',
@@ -42,26 +39,21 @@ describe( 'wpcom-api', () => {
 		} );
 
 		test( 'storeFetchedConciergeAvailableTimes()', () => {
-			const dispatch = jest.fn();
 			const mockAvailableTimes = [
 				new Date( '2017-01-01 01:00:00' ),
 				new Date( '2017-01-01 02:00:00' ),
 				new Date( '2017-01-01 03:00:00' ),
 			];
 
-			storeFetchedConciergeAvailableTimes( { dispatch }, {}, mockAvailableTimes );
-
-			expect( dispatch ).toHaveBeenCalledWith(
+			expect( storeFetchedConciergeAvailableTimes( {}, mockAvailableTimes ) ).toEqual(
 				updateConciergeAvailableTimes( mockAvailableTimes )
 			);
 		} );
 
 		test( 'showConciergeAvailableTimesFetchError()', () => {
-			const dispatch = jest.fn();
-
-			showConciergeAvailableTimesFetchError( { dispatch } );
-
-			expect( dispatch ).toHaveBeenCalledWith( conciergeAvailableTimesFetchError() );
+			expect( showConciergeAvailableTimesFetchError() ).toEqual(
+				conciergeAvailableTimesFetchError()
+			);
 		} );
 	} );
 } );
