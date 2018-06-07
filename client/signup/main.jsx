@@ -139,7 +139,7 @@ class Signup extends React.Component {
 			return this.resumeProgress();
 		}
 
-		if ( this.positionInFlow() !== 0 ) {
+		if ( this.getPositionInFlow() !== 0 ) {
 			// no progress was resumed and we're on a non-zero step
 			// redirect to the beginning of the flow
 			return page.redirect(
@@ -428,10 +428,8 @@ class Signup extends React.Component {
 		return flowSteps.length === signupProgress.length;
 	};
 
-	positionInFlow = () => {
+	getPositionInFlow() {
 		return indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
-	};
-
 	}
 
 	renderCurrentStep() {
@@ -480,7 +478,7 @@ class Signup extends React.Component {
 						signupProgress={ this.state.progress }
 						signupDependencies={ this.props.signupDependencies }
 						stepSectionName={ this.props.stepSectionName }
-						positionInFlow={ this.positionInFlow() }
+						positionInFlow={ this.getPositionInFlow() }
 						hideFreePlan={ hideFreePlan }
 						{ ...propsFromConfig }
 					/>
@@ -492,7 +490,7 @@ class Signup extends React.Component {
 	render() {
 		if (
 			! this.props.stepName ||
-			( this.positionInFlow() > 0 && this.state.progress.length === 0 ) ||
+			( this.getPositionInFlow() > 0 && this.state.progress.length === 0 ) ||
 			this.state.resumingStep
 		) {
 			return null;
@@ -512,7 +510,7 @@ class Signup extends React.Component {
 				{ ! this.state.loadingScreenStartTime &&
 					showProgressIndicator && (
 						<FlowProgressIndicator
-							positionInFlow={ this.positionInFlow() }
+							positionInFlow={ this.getPositionInFlow() }
 							flowLength={ flow.steps.length }
 							flowName={ this.props.flowName }
 						/>
