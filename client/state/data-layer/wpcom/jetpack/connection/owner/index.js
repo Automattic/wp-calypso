@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { JETPACK_CONNECTION_CHANGE_OWNER } from 'state/action-types';
+import { JETPACK_USER_CONNECTION_CHANGE_OWNER } from 'state/action-types';
 import { requestJetpackUserConnectionData } from 'state/jetpack/connection/actions';
 
 const changeConnectionOwner = action =>
@@ -46,7 +46,7 @@ const handleError = ( { newOwnerWpcomDisplayName } ) =>
 	);
 
 export default {
-	[ JETPACK_CONNECTION_CHANGE_OWNER ]: [
+	[ JETPACK_USER_CONNECTION_CHANGE_OWNER ]: [
 		dispatchRequestEx( {
 			fetch: changeConnectionOwner,
 			onSuccess: handleSuccess,
