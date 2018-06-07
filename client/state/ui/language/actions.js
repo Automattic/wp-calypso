@@ -16,15 +16,13 @@ import { LOCALE_SET } from 'state/action-types';
  * Set the ui locale
  *
  * @param   {String} localeSlug the locale slug to change the locale to
- * @param   {String?} localeVariant the slug of the variant of localeSlug
  * @returns {Object} Action
  */
-export const setLocale = ( localeSlug, localeVariant = null ) => {
-	switchLocale( localeSlug, localeVariant );
+export const setLocale = localeSlug => {
+	switchLocale( localeSlug );
 	return {
 		type: LOCALE_SET,
 		localeSlug,
-		localeVariant,
 	};
 };
 
@@ -37,11 +35,11 @@ export const setLocale = ( localeSlug, localeVariant = null ) => {
 export const setLocaleRawData = localeData => {
 	i18n.setLocale( localeData );
 
-	const { localeSlug, localeVariant = null } = localeData[ '' ];
+	// This is a bit of an ugly hack to make `localeVariant` fall back to `localeSlug`.
+	const { localeSlug, localeVariant = localeSlug } = localeData[ '' ];
 
 	return {
 		type: LOCALE_SET,
-		localeSlug,
-		localeVariant,
+		localeSlug: localeVariant,
 	};
 };

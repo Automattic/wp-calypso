@@ -17,15 +17,13 @@ describe( 'actions', () => {
 			expect( setLocale( 'he' ) ).to.eql( {
 				type: LOCALE_SET,
 				localeSlug: 'he',
-				localeVariant: null,
 			} );
 		} );
 
 		test( 'returns an action with localeVariant set', () => {
-			expect( setLocale( 'he', 'he_formal' ) ).to.eql( {
+			expect( setLocale( 'he_formal' ) ).to.eql( {
 				type: LOCALE_SET,
-				localeSlug: 'he',
-				localeVariant: 'he_formal',
+				localeSlug: 'he_formal',
 			} );
 		} );
 	} );
@@ -41,7 +39,6 @@ describe( 'actions', () => {
 			).to.eql( {
 				type: LOCALE_SET,
 				localeSlug: 'he',
-				localeVariant: null,
 			} );
 		} );
 
@@ -55,8 +52,7 @@ describe( 'actions', () => {
 				} )
 			).to.eql( {
 				type: LOCALE_SET,
-				localeSlug: 'he',
-				localeVariant: 'he_formal',
+				localeSlug: 'he_formal',
 			} );
 		} );
 	} );
