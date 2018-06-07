@@ -17,7 +17,10 @@ import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
 import { requestTransferCode, cancelTransferRequest } from 'lib/upgrades/actions';
 import notices from 'notices';
-import { displayRequestTransferCodeResponseNotice } from './shared';
+import {
+	displayRequestTransferCodeResponseNotice,
+	renderGdprTransferWarningNotice,
+} from './shared';
 import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 class Unlocked extends React.Component {
@@ -281,6 +284,8 @@ class Unlocked extends React.Component {
 
 		return (
 			<div>
+				{ renderGdprTransferWarningNotice() }
+
 				<SectionHeader
 					label={ translate( 'Transfer Domain' ) }
 					className="transfer-out__section-header"

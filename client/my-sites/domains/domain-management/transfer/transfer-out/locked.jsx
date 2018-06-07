@@ -15,9 +15,11 @@ import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
 import { requestTransferCode } from 'lib/upgrades/actions';
-import { displayRequestTransferCodeResponseNotice } from './shared';
+import {
+	displayRequestTransferCodeResponseNotice,
+	renderGdprTransferWarningNotice,
+} from './shared';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
-import Notice from 'components/notice';
 
 class Locked extends React.Component {
 	state = {
@@ -63,26 +65,13 @@ class Locked extends React.Component {
 	render() {
 		const { translate } = this.props;
 		const { privateDomain } = getSelectedDomain( this.props );
+
 		return (
 			<div>
-				<Notice status="is-warning" showDismiss={ false }>
-					{ translate(
-						"Due to the EU's {{gdpr}}General Data Protection Regulation{{/gdpr}}, " +
-							'some providers may have trouble transferring your domain to them. ' +
-							'{{learn}}Learn more.{{/learn}}',
-						{
-							components: {
-								gdpr: (
-									<a href="https://automattic.com/automattic-and-the-general-data-protection-regulation-gdpr/" />
-								),
-								learn: (
-									<a href="https://en.support.wordpress.com/move-domain/transfer-domain-registration/#what-if-my-new-registrar-says-they-cant-start-my-transfer-because-my-contact-information-is-not-public" />
-								),
-							},
-						}
-					) }
-				</Notice>
+				{ renderGdprTransferWarningNotice() }
+
 				<SectionHeader label={ translate( 'Transfer Domain' ) } />
+
 				<Card className="transfer-card">
 					<p>
 						{ privateDomain
