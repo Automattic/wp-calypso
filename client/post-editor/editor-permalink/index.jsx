@@ -30,6 +30,8 @@ class EditorPermalink extends Component {
 		slug: PropTypes.string,
 	};
 
+	permalinkToggleReference = React.createRef();
+
 	constructor() {
 		super( ...arguments );
 		this.showPopover = this.showPopover.bind( this );
@@ -120,13 +122,13 @@ class EditorPermalink extends Component {
 					className="editor-permalink__toggle"
 					icon="link"
 					onClick={ this.showPopover }
-					ref="popoverButton"
+					ref={ this.permalinkToggleReference }
 				/>
 				<Popover
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
 					position={ 'bottom right' }
-					context={ this.refs && this.refs.popoverButton }
+					context={ this.permalinkToggleReference.current }
 					className="editor-permalink__popover"
 				>
 					<Slug
@@ -137,7 +139,7 @@ class EditorPermalink extends Component {
 					{ this.renderCopyButton() }
 				</Popover>
 				<Tooltip
-					context={ this.refs && this.refs.popoverButton }
+					context={ this.permalinkToggleReference.current }
 					isVisible={ this.state.tooltip }
 					position="bottom"
 				>
