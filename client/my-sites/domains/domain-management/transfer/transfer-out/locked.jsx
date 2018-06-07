@@ -17,6 +17,7 @@ import Button from 'components/button';
 import { requestTransferCode } from 'lib/upgrades/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
+import Notice from 'components/notice';
 
 class Locked extends React.Component {
 	state = {
@@ -64,30 +65,48 @@ class Locked extends React.Component {
 		const { privateDomain } = getSelectedDomain( this.props );
 		return (
 			<div>
+				<Notice status="is-warning" showDismiss={ false }>
+					{ translate(
+						'Currently, many domain providers are experiencing difficulty with their ' +
+							'processes for handling transfers due to changes required for The ' +
+							'European Union’s {{gdpr}}General Data Protection Regulation{{/gdpr}}, ' +
+							'which went into full effect on May 25, 2018. Please note this may ' +
+							'impact your ability to transfer your domain from WordPress.com to ' +
+							'other providers. {{learn}}Learn more.{{/learn}}',
+						{
+							components: {
+								gdpr: (
+									<a href="https://automattic.com/automattic-and-the-general-data-protection-regulation-gdpr/" />
+								),
+								learn: (
+									<a href="https://en.support.wordpress.com/move-domain/transfer-domain-registration/#what-if-my-new-registrar-says-they-cant-start-my-transfer-because-my-contact-information-is-not-public" />
+								),
+							},
+						}
+					) }
+				</Notice>
 				<SectionHeader label={ translate( 'Transfer Domain' ) } />
 				<Card className="transfer-card">
-					<div>
-						<p>
-							{ privateDomain
-								? translate(
-										'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
-											'Your contact information will be publicly available during the transfer period.'
-									)
-								: translate( 'To transfer your domain, we must unlock it.' ) }{' '}
-							<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
-								{ translate( 'Learn More.' ) }
-							</a>
-						</p>
-						{ this.isManualTransferRequired() && this.renderManualTransferInfo() }
-						<Button
-							className="transfer__action-button"
-							onClick={ this.unlockAndRequestTransferCode }
-							primary
-							disabled={ this.state.submitting }
-						>
-							{ translate( 'Update Settings And Continue' ) }
-						</Button>
-					</div>
+					<p>
+						{ privateDomain
+							? translate(
+									'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
+										'Your contact information will be publicly available during the transfer period.'
+								)
+							: translate( 'To transfer your domain, we must unlock it.' ) }{' '}
+						<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
+							{ translate( 'Learn More.' ) }
+						</a>
+					</p>
+					{ this.isManualTransferRequired() && this.renderManualTransferInfo() }
+					<Button
+						className="transfer-out__action-button"
+						onClick={ this.unlockAndRequestTransferCode }
+						primary
+						disabled={ this.state.submitting }
+					>
+						{ translate( 'Update Settings And Continue' ) }
+					</Button>
 				</Card>
 			</div>
 		);
