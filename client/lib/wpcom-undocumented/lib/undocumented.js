@@ -163,17 +163,17 @@ Undocumented.prototype.fetchJetpackKeys = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/keys' }, fn );
 };
 
-/**
- * Test if a Jetpack Site is connected to .com
- *
- * @param {int} [siteId] The site ID
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id:/test-connection query' );
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
-};
+// /**
+//  * Test if a Jetpack Site is connected to .com
+//  *
+//  * @param {int} [siteId] The site ID
+//  * @param {Function} fn The callback function
+//  * @api public
+//  */
+// Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
+// 	debug( '/jetpack-blogs/:site_id:/test-connection query' );
+// 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
+// };
 
 /*
  * Retrieve current connection status of a Jetpack site.

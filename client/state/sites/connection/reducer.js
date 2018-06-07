@@ -5,12 +5,7 @@
  */
 
 import { combineReducers, createReducer } from 'state/utils';
-import {
-	SITE_CONNECTION_STATUS_RECEIVE,
-	SITE_CONNECTION_STATUS_REQUEST,
-	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
-	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
-} from 'state/action-types';
+import { SITE_CONNECTION_STATUS_RECEIVE, SITE_CONNECTION_STATUS_REQUEST } from 'state/action-types';
 
 const createRequestingReducer = requesting => ( state, { siteId } ) => ( {
 	...state,
@@ -31,8 +26,6 @@ export const requesting = createReducer(
 	{},
 	{
 		[ SITE_CONNECTION_STATUS_REQUEST ]: createRequestingReducer( true ),
-		[ SITE_CONNECTION_STATUS_REQUEST_FAILURE ]: createRequestingReducer( false ),
-		[ SITE_CONNECTION_STATUS_REQUEST_SUCCESS ]: createRequestingReducer( false ),
 	}
 );
 

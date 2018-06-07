@@ -8,44 +8,67 @@ import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
 	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
-	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
+	// SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import wp from 'lib/wp';
+// import wp from 'lib/wp';
 
-/**
- * Request the Jetpack connection status for a certain site.
- *
- * @param  {Int}       siteId  ID of the site.
- * @return {Function}          Action thunk to request the Jetpack connection status when called.
- */
+// /**
+//  * Request the Jetpack connection status for a certain site.
+//  *
+//  * @param  {Int}       siteId  ID of the site.
+//  * @return {Function}          Action thunk to request the Jetpack connection status when called.
+//  */
+// export const requestConnectionStatus = siteId => {
+// 	return dispatch => {
+// 		dispatch( {
+// 			type: SITE_CONNECTION_STATUS_REQUEST,
+// 			siteId,
+// 		} );
+
+// 		return wp
+// 			.undocumented()
+// 			.testConnectionJetpack( siteId )
+// 			.then( response => {
+// 				dispatch( {
+// 					type: SITE_CONNECTION_STATUS_RECEIVE,
+// 					siteId,
+// 					status: response.connected,
+// 				} );
+
+// 				dispatch( {
+// 					type: SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
+// 					siteId,
+// 				} );
+// 			} )
+// 			.catch( error => {
+// 				dispatch( {
+// 					type: SITE_CONNECTION_STATUS_REQUEST_FAILURE,
+// 					siteId,
+// 					error,
+// 				} );
+// 			} );
+// 	};
+// };
+
 export const requestConnectionStatus = siteId => {
-	return dispatch => {
-		dispatch( {
-			type: SITE_CONNECTION_STATUS_REQUEST,
-			siteId,
-		} );
+	return {
+		type: SITE_CONNECTION_STATUS_REQUEST,
+		siteId,
+	};
+};
 
-		return wp
-			.undocumented()
-			.testConnectionJetpack( siteId )
-			.then( response => {
-				dispatch( {
-					type: SITE_CONNECTION_STATUS_RECEIVE,
-					siteId,
-					status: response.connected,
-				} );
+export const receiveConnectionStatus = ( siteId, status ) => {
+	return {
+		type: SITE_CONNECTION_STATUS_RECEIVE,
+		siteId,
+		status,
+	};
+};
 
-				dispatch( {
-					type: SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
-					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: SITE_CONNECTION_STATUS_REQUEST_FAILURE,
-					siteId,
-					error,
-				} );
-			} );
+export const errorConnectionStatus = ( siteId, error ) => {
+	return {
+		type: SITE_CONNECTION_STATUS_REQUEST_FAILURE,
+		siteId,
+		error,
 	};
 };
