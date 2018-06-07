@@ -33,13 +33,10 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
-import ProductsList from 'lib/products-list';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { decodeURIComponentIfValid } from 'lib/url';
 import { domainManagementPrimaryDomain } from '../paths';
-
-const productsList = new ProductsList();
 
 export default {
 	domainManagementList( pageContext, next ) {
@@ -54,7 +51,6 @@ export default {
 				needsDomains
 				needsPlans
 				needsProductsList
-				productsList={ productsList }
 			/>
 		);
 		next();
@@ -79,7 +75,6 @@ export default {
 				needsDomains
 				needsPlans
 				needsProductsList
-				productsList={ productsList }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);
@@ -98,7 +93,6 @@ export default {
 				needsDomains
 				needsPlans
 				needsProductsList
-				productsList={ productsList }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);
@@ -132,7 +126,6 @@ export default {
 				needsDomains
 				needsPlans
 				needsProductsList
-				productsList={ productsList }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);
@@ -163,7 +156,6 @@ export default {
 				) }
 				analyticsTitle="Domain Management > Email"
 				component={ DomainManagement.Email }
-				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				context={ pageContext }
 			/>
@@ -259,7 +251,6 @@ export default {
 				needsDomains
 				needsPlans
 				needsProductsList
-				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
