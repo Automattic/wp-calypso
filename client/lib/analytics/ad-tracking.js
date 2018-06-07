@@ -729,11 +729,8 @@ export function recordOrder( cart, orderId ) {
 
 	// Yahoo Gemini
 	if ( isGeminiEnabled ) {
-		let valueParam = '';
-		if ( usdTotalCost !== null ) {
-			valueParam = '&gv=' + usdTotalCost;
-		}
-		new Image().src = YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
+		new Image().src =
+			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 	}
 
 	if ( isAolEnabled ) {
