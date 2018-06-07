@@ -187,3 +187,44 @@ export function getTranslationPermaLink( originalId, locale, project = GP_PROJEC
 	const translationSetSlug = GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default';
 	return `${ urlBase }/${ project }/${ localeSlug }/${ translationSetSlug }?filters[original_id]=${ originalId }`;
 }
+
+/**
+ * Extracts tokens with a special meaning from string
+ * @param {String} input Translation string
+ * @returns {Array<Object>} Parsed tokens
+ */
+export function extractTokensFromString( input ) {
+	const tokenRegexp = /(%(\d+\$(?:\d+)?)?[bcdefgosuxEFGX]|%\([^)]+\)[sd]|%%|{{[^}]+}})/g;
+	const tokens = [];
+	let token;
+	while ( ( token = tokenRegexp.exec( input ) ) !== null ) {
+		tokens.push( {
+			value: token[ 0 ],
+			offset: token.index,
+			length: token[ 0 ].length,
+		} );
+	}
+	return tokens;
+}
+
+/**
+ * Compute which tokens are used in input
+ * @param {String} input Translation string
+ * @param {Array<Object>} tokens Available tokens
+ * @returns {Array<Object>} available array, externed with property `used`
+ */
+export function computeTokenUsage( input, tokens ) {
+	const used = extractTokensFromString( input );
+	return tokens.map( token => {
+		const found = used.find(
+			candidate => ! candidate.alreadyMatched && candidate.value === token.value
+		);
+		if ( found ) {
+			found.alreadyMatched = true;
+		}
+		return {
+			...token,
+			used: !! found,
+		};
+	} );
+}
