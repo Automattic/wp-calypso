@@ -5,8 +5,9 @@
 }
 
 .remove-purchase__card {
-	cursor: pointer;
 	color: $blue-wordpress;
+	text-align: left;
+	width: 100%;
 
 	&:active,
 	&:focus,
