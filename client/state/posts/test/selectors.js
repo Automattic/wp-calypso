@@ -1812,6 +1812,11 @@ describe( 'selectors', () => {
 						},
 						edits: {},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284,
 				841
@@ -1844,6 +1849,11 @@ describe( 'selectors', () => {
 							},
 						},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284,
 				841
@@ -1863,6 +1873,11 @@ describe( 'selectors', () => {
 									type: 'jetpack-portfolio',
 								},
 							},
+						},
+					},
+					ui: {
+						editor: {
+							rawContent: {},
 						},
 					},
 				},
@@ -1885,6 +1900,11 @@ describe( 'selectors', () => {
 							},
 						},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284
 			);
@@ -1905,6 +1925,11 @@ describe( 'selectors', () => {
 							},
 						},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284
 			);
@@ -1923,6 +1948,11 @@ describe( 'selectors', () => {
 									author: 'testonesite2014',
 								},
 							},
+						},
+					},
+					ui: {
+						editor: {
+							rawContent: {},
 						},
 					},
 				},
@@ -1956,12 +1986,57 @@ describe( 'selectors', () => {
 							},
 						},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284,
 				841
 			);
 
 			expect( isDirty ).to.be.false;
+		} );
+
+		test( 'should return true if edited post is unchanged but the raw content is different', () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										content: 'Hello World',
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									content: 'Hello World',
+								},
+							},
+						},
+					},
+					ui: {
+						editor: {
+							rawContent: {
+								initial: 'Hello World',
+								current: 'Hello World!',
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.true;
 		} );
 
 		test( 'should return true if saved post value does not equal edited post value', () => {
@@ -1986,6 +2061,11 @@ describe( 'selectors', () => {
 									title: 'Hello World!',
 								},
 							},
+						},
+					},
+					ui: {
+						editor: {
+							rawContent: {},
 						},
 					},
 				},
@@ -2017,6 +2097,11 @@ describe( 'selectors', () => {
 									parent: 10,
 								},
 							},
+						},
+					},
+					ui: {
+						editor: {
+							rawContent: {},
 						},
 					},
 				},
@@ -2053,6 +2138,11 @@ describe( 'selectors', () => {
 							},
 						},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284,
 				841
@@ -2085,6 +2175,11 @@ describe( 'selectors', () => {
 							},
 						},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284,
 				841
@@ -2115,6 +2210,11 @@ describe( 'selectors', () => {
 									date: moment( '2016-09-14T15:47:33-04:00' ),
 								},
 							},
+						},
+					},
+					ui: {
+						editor: {
+							rawContent: {},
 						},
 					},
 				},
@@ -2157,6 +2257,11 @@ describe( 'selectors', () => {
 							},
 						},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284,
 				841
@@ -2197,6 +2302,11 @@ describe( 'selectors', () => {
 							},
 						},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284,
 				841
@@ -2235,6 +2345,11 @@ describe( 'selectors', () => {
 							},
 						},
 					},
+					ui: {
+						editor: {
+							rawContent: {},
+						},
+					},
 				},
 				2916284,
 				841
@@ -2268,6 +2383,11 @@ describe( 'selectors', () => {
 									featured_image: 123,
 								},
 							},
+						},
+					},
+					ui: {
+						editor: {
+							rawContent: {},
 						},
 					},
 				},
@@ -2313,6 +2433,11 @@ describe( 'selectors', () => {
 							queries,
 							edits: updateEdits,
 						},
+						ui: {
+							editor: {
+								rawContent: {},
+							},
+						},
 					},
 					2916284,
 					841
@@ -2334,6 +2459,11 @@ describe( 'selectors', () => {
 						posts: {
 							queries,
 							edits: deleteEdits,
+						},
+						ui: {
+							editor: {
+								rawContent: {},
+							},
 						},
 					},
 					2916284,
@@ -2371,6 +2501,11 @@ describe( 'selectors', () => {
 										],
 									},
 								},
+							},
+						},
+						ui: {
+							editor: {
+								rawContent: {},
 							},
 						},
 					},
@@ -2428,6 +2563,11 @@ describe( 'selectors', () => {
 					queries: queries1,
 					edits,
 				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
 			};
 
 			const state2 = {
@@ -2435,6 +2575,11 @@ describe( 'selectors', () => {
 					items,
 					queries: queries2,
 					edits,
+				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
 				},
 			};
 

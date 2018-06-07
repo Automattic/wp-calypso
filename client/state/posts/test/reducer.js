@@ -261,7 +261,9 @@ describe( 'reducer', () => {
 						site_ID: 2916284,
 						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 						title: 'Hello World',
-						meta: {},
+						meta: {
+							links: {},
+						},
 					},
 				],
 			} );
@@ -274,6 +276,7 @@ describe( 'reducer', () => {
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 					title: 'Hello World',
+					meta: {},
 				},
 			] );
 		} );
@@ -1502,9 +1505,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						type: 'jetpack-testimonial',
-					},
+					841: null,
 					'': {
 						title: 'Ribs & Chicken',
 					},
@@ -1534,7 +1535,9 @@ describe( 'reducer', () => {
 						site_ID: 2916284,
 						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 						title: 'Hello World',
-						meta: {},
+						meta: {
+							links: {},
+						},
 					},
 				],
 			} );
@@ -1545,6 +1548,7 @@ describe( 'reducer', () => {
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 					title: 'Hello World',
+					meta: {},
 				},
 			] );
 		} );

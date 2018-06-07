@@ -20,6 +20,11 @@ describe( 'editedPostHasContent()', () => {
 					queries: {},
 					edits: {},
 				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
 			},
 			2916284,
 			841
@@ -45,6 +50,11 @@ describe( 'editedPostHasContent()', () => {
 						} ),
 					},
 					edits: {},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
 				},
 			},
 			2916284,
@@ -73,6 +83,11 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {},
 				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
 			},
 			2916284,
 			841
@@ -100,6 +115,11 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {},
 				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
 			},
 			2916284,
 			841
@@ -126,6 +146,11 @@ describe( 'editedPostHasContent()', () => {
 						} ),
 					},
 					edits: {},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
 				},
 			},
 			2916284,
@@ -164,6 +189,11 @@ describe( 'editedPostHasContent()', () => {
 						},
 					},
 				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
 			},
 			2916284,
 			841
@@ -183,6 +213,11 @@ describe( 'editedPostHasContent()', () => {
 								title: 'chicken',
 							},
 						},
+					},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
 					},
 				},
 			},
@@ -206,6 +241,11 @@ describe( 'editedPostHasContent()', () => {
 						},
 					},
 				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
 			},
 			2916284,
 			841
@@ -224,6 +264,46 @@ describe( 'editedPostHasContent()', () => {
 							841: {
 								excerpt: 'chicken ribs',
 							},
+						},
+					},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
+			},
+			2916284,
+			841
+		);
+
+		expect( hasContent ).to.be.true;
+	} );
+
+	test( 'should return true if there is empty content and non-empty raw content', () => {
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									type: 'post',
+									content: '',
+								},
+							},
+						} ),
+					},
+					edits: {},
+				},
+				ui: {
+					editor: {
+						rawContent: {
+							initial: '',
+							current: 'ribs',
 						},
 					},
 				},
