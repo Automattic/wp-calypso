@@ -1,15 +1,7 @@
 DomainManagementData
 ====================
 
-## Components list
-
-This folder contains the following components:
-
-* `DomainManagementData`
-
-## Main component
-
-`DomainManagementData` - a component, located directly in this folder, that fetches a site's domains and cart content, then passes them to its children.
+A component that fetches data based on given props and then passes them to its children.
 
 ## Usage
 
@@ -24,37 +16,35 @@ import MyChildComponent from 'components/my-child-component';
 // initialize rest of the variables
 
 class MyComponent extends React.Component {
-	render() {
-		return (
-			<DomainManagementData
-				component={ MyChildComponent }
-				context={ context }
-				productsList={ productsList }
-				sites={ sites } />
-		);
-	}
+    render() {
+        return (
+            <DomainManagementData
+                component={ MyChildComponent }
+                context={ context }
+                needsDomains
+                needsDomainInfo
+                needsUsers
+            />
+        );
+    }
 }
 
 export default MyComponent;
 ```
 
-The component expects to receive all listed props:
+Currently we have both Flux and Redux mixed. Props for loading data:
+* `needsCart` - Loads the `CartStore` (Flux)
+* `needsContactDetails` - Loads Contact Details for current user (Redux)
+* `needsDns` - Loads the `DnsStore` (Flux)
+* `needsDomains` - Loads domain for currently selected site (Redux)
+* `needsDomainInfo` - Loads `WapiDomainInfoStore` (Flux)
+* `needsEmailForwarding` - Loads `EmailForwardingStore` (Flux)
+* `needsGoogleApps` - Loads Google Apps email users (Redux)
+* `needsNameservers` - Loads `NameserversStore` (Flux)
+* `needsPlans` - Loads plans for given site (Redux)
+* `needsProductsList` - Loads products list (Redux)
+* `needsSiteRedirect` - Loads `SiteRedirectStore` (Flux)
+* `needsUsers` - Loads `UsersStore` (Flux)
+* `needsWhois` - Loads `WhoisStore` (Flux)
 
-* `context` - a request context
-* `productsList` - a collection of all the products users can have on WordPress.com
-* `selectedDomainName` - the domain name currently selected (optional)
-* `sites` - a list of user sites 
-
-The child component should receive processed props defined during the render:
-
-* `context` - a request context
-* `products` - a collection of all the products users can have on WordPress.com
-* `selectedDomainName` - the domain name currently selected (optional)
-* `selectedSite` - the site currently selected 
-
-As well as:
-
-* `cart` - products added to the cart, it's the result of a call to `CartStore.get`  
-* `domains` - a list of domains we get using `<QuerySiteDomains />` component (Redux)
-
-It's updated whenever CartStore`, `domains`, `productsList` or `sites` changes.
+The child component should receive processed props defined in `getStateFromStores()`. It's updated whenever the data it needs changes.
