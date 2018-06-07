@@ -691,6 +691,8 @@ export function recordOrder( cart, orderId ) {
 		return;
 	}
 
+	const usdTotalCost = costToUSD( cart.total_cost, cart.currency );
+
 	// load the ecommerce plugin
 	debug( 'recordOrder: ga ecommerce plugin load' );
 	window.ga( 'require', 'ecommerce' );
@@ -727,7 +729,8 @@ export function recordOrder( cart, orderId ) {
 
 	// Yahoo Gemini
 	if ( isGeminiEnabled ) {
-		new Image().src = YAHOO_GEMINI_CONVERSION_PIXEL_URL;
+		new Image().src =
+			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 	}
 
 	if ( isAolEnabled ) {
