@@ -52,9 +52,9 @@ describe( 'reducer', () => {
 		},
 	];
 
-	test( 'should default to an empty array', () => {
+	test( 'should default to null', () => {
 		const state = reducer( undefined, {} );
-		expect( state ).toEqual( [] );
+		expect( state ).toBeNull();
 	} );
 
 	test( 'should set connected applications to empty array when user has no connected applications', () => {
