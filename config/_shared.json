@@ -20,6 +20,7 @@
 	"google_analytics_key": false,
 	"google_adwords_conversion_id": false,
 	"google_adwords_conversion_id_jetpack": false,
+	"google_maps_api_key": "ABC",
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",

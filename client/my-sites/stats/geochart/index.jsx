@@ -15,12 +15,15 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import config from 'config';
 import { loadScript } from 'lib/load-script';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+
+const GOOGLE_MAPS_API_KEY = config( 'google_maps_api_key' );
 
 class StatsGeochart extends Component {
 	static propTypes = {
@@ -139,6 +142,7 @@ class StatsGeochart extends Component {
 		if ( window.google ) {
 			window.google.load( 'visualization', '1', {
 				packages: [ 'geochart' ],
+				mapsApiKey: GOOGLE_MAPS_API_KEY,
 				callback: this.drawRegionsMap,
 			} );
 			clearTimeout( this.timer );

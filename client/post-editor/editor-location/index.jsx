@@ -12,6 +12,7 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import PostActions from 'lib/posts/actions';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import { recordEvent, recordStat } from 'lib/posts/stats';
@@ -23,6 +24,7 @@ import RemoveButton from 'components/remove-button';
  * Module variables
  */
 const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
+const GOOGLE_MAPS_API_KEY = config( 'google_maps_api_key' );
 
 class EditorLocation extends React.Component {
 	static displayName = 'EditorLocation';
@@ -110,6 +112,7 @@ class EditorLocation extends React.Component {
 				markers: this.props.coordinates.join( ',' ),
 				zoom: 8,
 				size: '400x300',
+				key: GOOGLE_MAPS_API_KEY,
 			} );
 
 		return <img src={ src } className="editor-location__map" />;
