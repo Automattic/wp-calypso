@@ -217,6 +217,15 @@ describe( 'I18n', function() {
 					}
 				) );
 			} );
+			it( 'should not throw when passed a circular object', function() {
+				var obj = { foo: 'bar', toString: function() { return 'baz'; } };
+				obj.obj = obj;
+				assert.equal( 'test1 baz', translate( 'test1 %s',
+					{
+						args: obj
+					}
+				) );
+			} );
 		} );
 
 		describe( 'with mixed components', function() {
