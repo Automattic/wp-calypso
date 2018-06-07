@@ -1,7 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
@@ -35,7 +37,7 @@ class Email extends React.Component {
 		googleAppsUsers: PropTypes.array.isRequired,
 		googleAppsUsersLoaded: PropTypes.bool.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
-		products: PropTypes.object.isRequired,
+		products: PropTypes.object,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		user: PropTypes.object.isRequired,
@@ -76,7 +78,7 @@ class Email extends React.Component {
 			! (
 				! this.props.isRequestingSiteDomains &&
 				this.props.googleAppsUsersLoaded &&
-				this.props.products.gapps
+				get( this.props, 'products.gapps', false )
 			)
 		) {
 			return <Placeholder />;

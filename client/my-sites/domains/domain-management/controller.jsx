@@ -12,7 +12,6 @@ import React from 'react';
  */
 import DomainManagement from './domain-management';
 import DomainManagementData from 'components/data/domain-management';
-import EmailData from 'components/data/domain-management/email';
 import {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
@@ -23,6 +22,7 @@ import {
 	domainManagementEmailForwarding,
 	domainManagementList,
 	domainManagementNameServers,
+	domainManagementPrimaryDomain,
 	domainManagementPrivacyProtection,
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
@@ -36,7 +36,6 @@ import {
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { decodeURIComponentIfValid } from 'lib/url';
-import { domainManagementPrimaryDomain } from '../paths';
 
 export default {
 	domainManagementList( pageContext, next ) {
@@ -149,15 +148,20 @@ export default {
 
 	domainManagementEmail( pageContext, next ) {
 		pageContext.primary = (
-			<EmailData
+			<DomainManagementData
 				analyticsPath={ domainManagementEmail(
 					':site',
 					pageContext.params.domain ? ':domain' : undefined
 				) }
 				analyticsTitle="Domain Management > Email"
 				component={ DomainManagement.Email }
-				selectedDomainName={ pageContext.params.domain }
 				context={ pageContext }
+				needsCart
+				needsDomains
+				needsGoogleApps
+				needsPlans
+				needsProductsList
+				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
 		next();
