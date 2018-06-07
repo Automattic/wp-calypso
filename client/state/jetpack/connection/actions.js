@@ -13,6 +13,7 @@ import {
 	JETPACK_DISCONNECT_REQUEST,
 	JETPACK_DISCONNECT_REQUEST_FAILURE,
 	JETPACK_DISCONNECT_REQUEST_SUCCESS,
+	JETPACK_USER_CONNECTION_CHANGE_OWNER,
 	JETPACK_USER_CONNECTION_DATA_RECEIVE,
 	JETPACK_USER_CONNECTION_DATA_REQUEST,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
@@ -110,5 +111,22 @@ export const disconnect = siteId => {
 					error: error.message,
 				} );
 			} );
+	};
+};
+
+/**
+ * Change the jetpack master user.
+ *
+ * @param {number} siteId the site ID
+ * @param {number} newOwnerWporgId the wporg user ID of the new owner
+ * @param {string} newOwnerWpcomDisplayName display name for UI messages
+ * @return {Object} action object
+ */
+export const changeOwner = ( siteId, newOwnerWporgId, newOwnerWpcomDisplayName ) => {
+	return {
+		type: JETPACK_USER_CONNECTION_CHANGE_OWNER,
+		siteId,
+		newOwnerWporgId,
+		newOwnerWpcomDisplayName,
 	};
 };
