@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isString } from 'lodash';
+import { find, isString, map } from 'lodash';
 import { parse } from 'url';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -59,6 +59,15 @@ export function isLocaleVariant( locale ) {
  */
 export function canBeTranslated( locale ) {
 	return [ 'en', 'sr_latin' ].indexOf( locale ) === -1;
+}
+
+/**
+ * Return a list of all supported language slugs
+ *
+ * @return {Array} A list of all supported language slugs
+ */
+export function getLanguageSlugs() {
+	return map( config( 'languages' ), 'langSlug' );
 }
 
 /**
