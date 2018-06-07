@@ -293,7 +293,7 @@ export class PostEditor extends React.Component {
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
-						hasContent={ this.state.hasContent }
+						hasContent={ this.state.hasContent || this.props.hasContent }
 						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
 						isDirty={ this.state.isDirty || this.props.dirty }
@@ -326,7 +326,7 @@ export class PostEditor extends React.Component {
 										isSaving={ this.state.isSaving }
 										isSaveBlocked={ this.isSaveBlocked() }
 										isDirty={ this.state.isDirty || this.props.dirty }
-										hasContent={ this.state.hasContent }
+										hasContent={ this.state.hasContent || this.props.hasContent }
 										onSave={ this.onSave }
 									/>
 								) : (
