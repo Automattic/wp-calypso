@@ -20,7 +20,7 @@ import { LOCALE_SET } from 'state/action-types';
  * @returns {Object} Action
  */
 export const setLocale = ( localeSlug, localeVariant = null ) => {
-	switchLocale( localeVariant );
+	switchLocale( localeVariant || localeSlug );
 	return {
 		type: LOCALE_SET,
 		localeSlug,
