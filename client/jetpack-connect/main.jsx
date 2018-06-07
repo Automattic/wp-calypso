@@ -111,7 +111,7 @@ export class JetpackConnectMain extends Component {
 			this.isCurrentUrlFetched() &&
 			! this.state.redirecting
 		) {
-			return this.goToRemoteAuth( this.state.currentUrl );
+			return this.goToRemoteAuth( this.props.siteHomeUrl );
 		}
 		if ( this.getStatus() === ALREADY_OWNED && ! this.state.redirecting ) {
 			if ( isMobileAppFlow ) {
@@ -391,7 +391,7 @@ const connectComponent = connect(
 			jetpackConnectSite,
 			mobileAppRedirect,
 			skipRemoteInstall,
-			siteHomeUrl: siteData.url,
+			siteHomeUrl: siteData.urlAfterRedirects || jetpackConnectSite.url,
 		};
 	},
 	{
