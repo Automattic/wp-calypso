@@ -37,6 +37,7 @@ const eventProperties = warning => ( { warning, position: 'individual-purchase' 
 
 class PurchaseNotice extends Component {
 	static propTypes = {
+		isDataLoading: PropTypes.bool,
 		handleRenew: PropTypes.func,
 		purchase: PropTypes.object,
 		selectedSite: PropTypes.object,
@@ -242,7 +243,7 @@ class PurchaseNotice extends Component {
 	}
 
 	render() {
-		if ( ! this.props.purchase ) {
+		if ( this.props.isDataLoading ) {
 			return null;
 		}
 
