@@ -18,6 +18,7 @@ const config = {
 				targets: {
 					browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ],
 				},
+				include: [ 'es6.set' ],
 				exclude: [ 'transform-classes', 'transform-template-literals' ], // transform-classes is added manually later.
 			},
 		],
