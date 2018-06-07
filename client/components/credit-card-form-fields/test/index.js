@@ -35,9 +35,7 @@ const defaultProps = {
 	translate: identity,
 	isFieldInvalid: identity,
 	onFieldChange: noop,
-	transaction: {
-		step: 'cupcake',
-	},
+	isNewTransaction: true,
 };
 
 describe( 'CreditCardFormFields', () => {
@@ -67,7 +65,7 @@ describe( 'CreditCardFormFields', () => {
 
 		test( 'should not display Ebanx fields when there is a transaction in process', () => {
 			const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
-			wrapper.setProps( { card: { country: 'BR' }, transaction: null } );
+			wrapper.setProps( { card: { country: 'BR' }, isNewTransaction: false } );
 			expect( wrapper.find( 'EbanxPaymentFields' ) ).toHaveLength( 0 );
 		} );
 	} );
