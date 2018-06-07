@@ -4,7 +4,7 @@ jobs:
     parallelism: 6
     working_directory: ~/wp-calypso
     docker:
-      - image: circleci/node:8.11.2-browsers
+      - image: circleci/node:10.4.0-browsers
         environment:
           CIRCLE_ARTIFACTS: /tmp/artifacts
           CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -27,12 +27,12 @@ jobs:
             mkdir -p $CIRCLE_TEST_REPORTS
 
       - restore_cache:
-          key: v1-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
+          key: v10-4-0-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
 
-      - run: npm install
+      - run: npm ci
 
       - save_cache:
-          key: v1-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
+          key: v10-4-0-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
           paths:
             - "node_modules"
 

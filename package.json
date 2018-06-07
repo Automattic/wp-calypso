@@ -175,8 +175,8 @@
     "wpcom-xhr-request": "1.1.1"
   },
   "engines": {
-    "node": "8.11.2",
-    "npm": "5.6.0"
+    "node": "10.4.0",
+    "npm": "6.1.0"
   },
   "scripts": {
     "preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true npm run -s build-client",
@@ -224,7 +224,6 @@
     "precommit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
     "prepush": "npm run -s install-if-no-packages && node bin/pre-push-hook.js",
     "rm": "node bin/rm.js",
-    "postshrinkwrap": "node bin/trim-shrinkwrap.js && touch node_modules",
     "prestart": "npm run -s install-if-deps-outdated && node bin/welcome.js && node bin/version-check.js",
     "start": "npm run -s build",
     "poststart": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS build/bundle.js",
