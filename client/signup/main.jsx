@@ -114,24 +114,7 @@ class Signup extends React.Component {
 			flowName: this.props.flowName,
 			providedDependencies,
 			reduxStore: this.context.store,
-			onComplete: function( dependencies, destination ) {
-				const timeSinceLoading = this.state.loadingScreenStartTime
-					? Date.now() - this.state.loadingScreenStartTime
-					: undefined;
-				const filteredDestination = getDestination(
-					destination,
-					dependencies,
-					this.props.flowName
-				);
-
-				if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
-					return delay(
-						this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
-						MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
-					);
-				}
-				return this.handleFlowComplete( dependencies, filteredDestination );
-			}.bind( this ),
+			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
 		this.loadProgressFromStore();
@@ -188,6 +171,22 @@ class Signup extends React.Component {
 		debug( 'Signup component unmounted' );
 		SignupProgressStore.off( 'change', this.loadProgressFromStore );
 	}
+
+	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
+		const timeSinceLoading = this.state.loadingScreenStartTime
+			? Date.now() - this.state.loadingScreenStartTime
+			: undefined;
+		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
+
+		if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
+			return delay(
+				this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
+				MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
+			);
+		}
+		return this.handleFlowComplete( dependencies, filteredDestination );
+	};
+
 	recordSignupStart() {
 		analytics.tracks.recordEvent( 'calypso_signup_start', {
 			flow: this.props.flowName,
