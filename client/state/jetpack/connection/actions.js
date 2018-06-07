@@ -118,15 +118,15 @@ export const disconnect = siteId => {
  * Change the jetpack master user.
  *
  * @param {number} siteId the site ID
- * @param {number} newOwnerDotorgId the dotorg user ID of the new owner
+ * @param {number} newOwnerWporgId the wporg user ID of the new owner
  * @param {string} newOwnerWpcomDisplayName display name for UI messages
  * @return {Object} action object
  */
-export const changeOwner = ( siteId, newOwnerDotorgId, newOwnerWpcomDisplayName ) => {
+export const changeOwner = ( siteId, newOwnerWporgId, newOwnerWpcomDisplayName ) => {
 	return {
 		type: JETPACK_USER_CONNECTION_CHANGE_OWNER,
 		siteId,
-		newOwnerDotorgId,
+		newOwnerWporgId,
 		newOwnerWpcomDisplayName,
 	};
 };

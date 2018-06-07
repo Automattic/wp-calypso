@@ -22,7 +22,7 @@ const changeConnectionOwner = action =>
 			path: '/jetpack-blogs/' + action.siteId + '/rest-api/',
 			body: {
 				path: '/jetpack/v4/connection/owner/',
-				body: JSON.stringify( { owner: action.newOwnerDotorgId } ),
+				body: JSON.stringify( { owner: action.newOwnerWporgId } ),
 				json: true,
 			},
 		},
