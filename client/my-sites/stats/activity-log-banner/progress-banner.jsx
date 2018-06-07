@@ -52,39 +52,45 @@ function ProgressBanner( {
 
 	const dateTime = applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' );
 
-	if ( 'restore' === action && 'alternate' === context ) {
-		title = translate( 'Currently cloning your site' );
-		description = translate(
-			"We're in the process of cloning your site to %(dateTime)s. " +
-				"You'll be notified once it's complete.",
-			{ args: { dateTime } }
-		);
-		statusMessage =
-			'queued' === status
-				? translate( 'The cloning process will start in a moment.' )
-				: translate( "We're on it! Your site is being cloned." );
-	} else if ( 'restore' === action ) {
-		title = translate( 'Currently restoring your site' );
-		description = translate(
-			"We're in the process of restoring your site back to %(dateTime)s. " +
-				"You'll be notified once it's complete.",
-			{ args: { dateTime } }
-		);
-		statusMessage =
-			'queued' === status
-				? translate( 'Your restore will start in a moment.' )
-				: translate( "We're on it! Your site is being restored." );
-	} else {
-		title = translate( 'Currently creating a downloadable backup of your site' );
-		description = translate(
-			"We're in the process of creating a downloadable backup of your site at %(dateTime)s. " +
-				"You'll be notified once it's complete.",
-			{ args: { dateTime } }
-		);
-		statusMessage =
-			0 < percent
-				? translate( "We're on it! Your download is being created." )
-				: translate( 'The creation of your backup will start in a moment.' );
+	switch ( action ) {
+		case 'restore':
+			if ( 'alternate' === context ) {
+				title = translate( 'Currently cloning your site' );
+				description = translate(
+					"We're in the process of cloning your site to %(dateTime)s. " +
+						"You'll be notified once it's complete.",
+					{ args: { dateTime } }
+				);
+				statusMessage =
+					'queued' === status
+						? translate( 'The cloning process will start in a moment.' )
+						: translate( "We're on it! Your site is being cloned." );
+			} else {
+				title = translate( 'Currently restoring your site' );
+				description = translate(
+					"We're in the process of restoring your site back to %(dateTime)s. " +
+						"You'll be notified once it's complete.",
+					{ args: { dateTime } }
+				);
+				statusMessage =
+					'queued' === status
+						? translate( 'Your restore will start in a moment.' )
+						: translate( "We're on it! Your site is being restored." );
+			}
+			break;
+
+		case 'backup':
+			title = translate( 'Currently creating a downloadable backup of your site' );
+			description = translate(
+				"We're in the process of creating a downloadable backup of your site at %(dateTime)s. " +
+					"You'll be notified once it's complete.",
+				{ args: { dateTime } }
+			);
+			statusMessage =
+				0 < percent
+					? translate( "We're on it! Your download is being created." )
+					: translate( 'The creation of your backup will start in a moment.' );
+			break;
 	}
 
 	return (
