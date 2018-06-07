@@ -5,7 +5,7 @@ Language UI State
 
 ###`setLocale()`
 
-Change the locale (optionally including the variant) of the application.
+Change the locale of the application and, optionally, the locale variant of the application.
 
 ## Reducers
 
