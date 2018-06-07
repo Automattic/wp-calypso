@@ -10,6 +10,11 @@ jobs:
           CIRCLE_TEST_REPORTS: /tmp/test_results
 
     steps:
+
+      - run:
+          name: Install NPM
+          command: 'sudo npm install -g npm@6.1.0'
+
       - restore_cache:
           key: v1-20180524-git
 
@@ -27,12 +32,12 @@ jobs:
             mkdir -p $CIRCLE_TEST_REPORTS
 
       - restore_cache:
-          key: v1-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
+          key: npm6-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
 
       - run: npm install
 
       - save_cache:
-          key: v1-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
+          key: npm6-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
           paths:
             - "node_modules"
 
