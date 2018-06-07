@@ -23,7 +23,7 @@
     "async": "^1.5.2",
     "commander": "^2.9.0",
     "create-react-class": "^15.6.2",
-    "debug": "2.2.0",
+    "debug": "^3.1.0",
     "globby": "^6.1.0",
     "interpolate-components": "1.1.1",
     "jed": "1.0.2",
@@ -41,9 +41,9 @@
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "enzyme-adapter-react-helper": "^1.2.3",
-    "mocha": "^2.4.5",
+    "mocha": "^5.2.0",
     "react-dom": "^16.0.0",
-    "react-test-env": "0.1.1",
+    "react-test-env": "^0.2.0",
     "react-test-renderer": "^16.0.0",
     "rewire": "^2.5.1"
   }
