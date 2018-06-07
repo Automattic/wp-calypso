@@ -14,7 +14,11 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
-import { requestTransferCode, cancelTransferRequest } from 'lib/upgrades/actions';
+import {
+	cancelTransferRequest,
+	fetchWapiDomainInfo,
+	requestTransferCode,
+} from 'lib/upgrades/actions';
 import notices from 'notices';
 import {
 	displayRequestTransferCodeResponseNotice,
@@ -199,6 +203,7 @@ class Unlocked extends React.Component {
 				this.setState( { sent: true } );
 			}
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
+			fetchWapiDomainInfo( this.props.selectedDomainName );
 		} );
 	};
 
