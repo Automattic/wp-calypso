@@ -94,12 +94,6 @@ class Signup extends React.Component {
 	}
 
 	componentWillMount() {
-		analytics.tracks.recordEvent( 'calypso_signup_start', {
-			flow: this.props.flowName,
-			ref: this.props.refParameter,
-		} );
-		recordSignupStart();
-
 		// Signup updates the cart through `SignupCart`. To prevent
 		// synchronization issues and unnecessary polling, the cart is disabled
 		// here.
@@ -186,8 +180,25 @@ class Signup extends React.Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
+		this.recordSignupStart();
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
+	}
+
+	componentWillUnmount() {
+		debug( 'Signup component unmounted' );
+		SignupProgressStore.off( 'change', this.loadProgressFromStore );
+	}
+	recordSignupStart() {
+		analytics.tracks.recordEvent( 'calypso_signup_start', {
+			flow: this.props.flowName,
+			ref: this.props.refParameter,
+		} );
+		this.recordReferralVisit();
 		this.props.loadTrackingTool( 'HotJar' );
+		recordSignupStart();
+	}
+
+	recordReferralVisit() {
 		const urlPath = location.href;
 		const parsedUrl = url.parse( urlPath, true );
 		const affiliateId = parsedUrl.query.aff;
@@ -197,14 +208,9 @@ class Signup extends React.Component {
 			analytics.tracks.recordEvent( 'calypso_refer_visit', {
 				flow: this.props.flowName,
 				// The current page without any query params
-				page: parsedUrl.host + parsedUrl.pathname,
+				page: `${ parsedUrl.host }${ parsedUrl.pathname }`,
 			} );
 		}
-	}
-
-	componentWillUnmount() {
-		debug( 'Signup component unmounted' );
-		SignupProgressStore.off( 'change', this.loadProgressFromStore );
 	}
 
 	loadProgressFromStore = () => {
