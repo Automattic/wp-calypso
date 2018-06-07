@@ -36,6 +36,11 @@ export class RewindCredentialsForm extends Component {
 		onCancel: PropTypes.func,
 		onComplete: PropTypes.func,
 		siteUrl: PropTypes.string,
+		labels: PropTypes.object,
+	};
+
+	static defaultProps = {
+		labels: {},
 	};
 
 	state = {
@@ -133,7 +138,7 @@ export class RewindCredentialsForm extends Component {
 	}
 
 	render() {
-		const { formIsSubmitting, onCancel, siteId, translate } = this.props;
+		const { formIsSubmitting, labels, onCancel, siteId, translate } = this.props;
 
 		const { showAdvancedSettings, formErrors } = this.state;
 
@@ -156,7 +161,9 @@ export class RewindCredentialsForm extends Component {
 
 				<div className="rewind-credentials-form__row">
 					<FormFieldset className="rewind-credentials-form__server-address">
-						<FormLabel htmlFor="host-address">{ translate( 'Server Address' ) }</FormLabel>
+						<FormLabel htmlFor="host-address">
+							{ labels.host || translate( 'Server Address' ) }
+						</FormLabel>
 						<FormTextInput
 							name="host"
 							id="host-address"
@@ -170,7 +177,9 @@ export class RewindCredentialsForm extends Component {
 					</FormFieldset>
 
 					<FormFieldset className="rewind-credentials-form__port-number">
-						<FormLabel htmlFor="server-port">{ translate( 'Port Number' ) }</FormLabel>
+						<FormLabel htmlFor="server-port">
+							{ labels.port || translate( 'Port Number' ) }
+						</FormLabel>
 						<FormTextInput
 							name="port"
 							id="server-port"
@@ -186,7 +195,9 @@ export class RewindCredentialsForm extends Component {
 
 				<div className="rewind-credentials-form__row rewind-credentials-form__user-pass">
 					<FormFieldset className="rewind-credentials-form__username">
-						<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
+						<FormLabel htmlFor="server-username">
+							{ labels.user || translate( 'Server username' ) }
+						</FormLabel>
 						<FormTextInput
 							name="user"
 							id="server-username"
@@ -200,7 +211,9 @@ export class RewindCredentialsForm extends Component {
 					</FormFieldset>
 
 					<FormFieldset className="rewind-credentials-form__password">
-						<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
+						<FormLabel htmlFor="server-password">
+							{ labels.pass || translate( 'Server password' ) }
+						</FormLabel>
 						<FormPasswordInput
 							name="pass"
 							id="server-password"
@@ -228,7 +241,7 @@ export class RewindCredentialsForm extends Component {
 						<div className="rewind-credentials-form__advanced-settings">
 							<FormFieldset className="rewind-credentials-form__path">
 								<FormLabel htmlFor="wordpress-path">
-									{ translate( 'WordPress installation path' ) }
+									{ labels.path || translate( 'WordPress installation path' ) }
 								</FormLabel>
 								<FormTextInput
 									name="path"
@@ -242,7 +255,9 @@ export class RewindCredentialsForm extends Component {
 							</FormFieldset>
 
 							<FormFieldset className="rewind-credentials-form__kpri">
-								<FormLabel htmlFor="private-key">{ translate( 'Private Key' ) }</FormLabel>
+								<FormLabel htmlFor="private-key">
+									{ labels.kpri || translate( 'Private Key' ) }
+								</FormLabel>
 								<FormTextArea
 									name="kpri"
 									id="private-key"
@@ -261,7 +276,7 @@ export class RewindCredentialsForm extends Component {
 
 				<FormFieldset>
 					<Button primary disabled={ formIsSubmitting } onClick={ this.handleSubmit }>
-						{ translate( 'Save' ) }
+						{ labels.save || translate( 'Save' ) }
 					</Button>
 					{ this.props.allowCancel && (
 						<Button
@@ -269,7 +284,7 @@ export class RewindCredentialsForm extends Component {
 							onClick={ onCancel }
 							className="rewind-credentials-form__cancel-button"
 						>
-							{ translate( 'Cancel' ) }
+							{ labels.cancel || translate( 'Cancel' ) }
 						</Button>
 					) }
 					{ this.props.allowDelete && (
@@ -280,7 +295,7 @@ export class RewindCredentialsForm extends Component {
 							className="rewind-credentials-form__delete-button"
 						>
 							<Gridicon icon="trash" size={ 18 } />
-							{ translate( 'Delete' ) }
+							{ labels.delete || translate( 'Delete' ) }
 						</Button>
 					) }
 				</FormFieldset>

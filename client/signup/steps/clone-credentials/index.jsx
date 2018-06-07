@@ -56,6 +56,10 @@ class CloneCredentialsStep extends Component {
 						role={ 'alternate' /* eslint-disable-line */ }
 						siteId={ originBlogId }
 						siteUrl={ destinationSiteUrl }
+						labels={ {
+							host: translate( 'Destination Server Address' ),
+							path: translate( 'Destination WordPress Path' ),
+						} }
 					/>
 				</Card>
 			</div>
