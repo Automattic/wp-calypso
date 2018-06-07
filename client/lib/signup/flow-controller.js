@@ -33,12 +33,12 @@ import flows from 'signup/config/flows';
 import steps from 'signup/config/steps';
 import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
-const user = userFactory();
 import { getStepUrl } from 'signup/utils';
 
 /**
  * Constants
  */
+const user = userFactory();
 const STORAGE_KEY = 'signupFlowName';
 
 function SignupFlowController( options ) {
@@ -49,15 +49,16 @@ function SignupFlowController( options ) {
 	this._flowName = options.flowName;
 	this._flow = flows.getFlow( options.flowName );
 	this._onComplete = options.onComplete;
-	this._processingSteps = {};
 
-	this._boundProcess = this._process.bind( this );
+	this._reduxStore = options.reduxStore;
+	SignupProgressStore.setReduxStore( this._reduxStore );
+	SignupDependencyStore.setReduxStore( this._reduxStore );
+
+	this._processingSteps = {};
 
 	this._assertFlowHasValidDependencies();
 
-	this._reduxStore = options.reduxStore;
-
-	SignupProgressStore.on( 'change', this._boundProcess );
+	SignupProgressStore.on( 'change', this._process.bind( this ) );
 
 	if ( options.flowName === store.get( STORAGE_KEY ) ) {
 		SignupActions.fetchCachedSignup( options.flowName );
@@ -297,9 +298,7 @@ assign( SignupFlowController.prototype, {
 		return !! this._flow.autoContinue;
 	},
 
-	reset: function() {
-		SignupProgressStore.off( 'change', this._boundProcess );
-
+	reset() {
 		SignupProgressStore.reset();
 		SignupDependencyStore.reset();
 	},

@@ -4,47 +4,78 @@
  * External dependencies
  */
 
-import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
+import { cloneDeep, find, get, isEmpty, isEqual, map, omit } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:signup-progress-store' );
-import store from 'store';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
-import SignupDependencyStore from './dependency-store';
 import steps from 'signup/config/steps';
+import { SIGNUP_COMPLETE_RESET, SIGNUP_PROGRESS_UPDATE } from 'state/action-types';
+import { getSignupProgress } from 'state/signup/progress/selectors';
+import SignupDependencyStore from './dependency-store';
 
-/**
- * Constants
- */
-const STORAGE_KEY = 'signupProgress';
-
-/**
- * Module variables
- */
-let signupProgress = [];
+const debug = debugFactory( 'calypso:signup-progress-store' );
 
 const SignupProgressStore = {
-	get: function() {
-		return clone( signupProgress );
+	subscribers: new Map(),
+
+	get() {
+		return cloneDeep( getSignupProgress( this.reduxStore.getState() ) );
 	},
-	reset: function() {
-		signupProgress = [];
-		store.remove( STORAGE_KEY );
+	omitUserData( progress ) {
+		return map( progress, step => {
+			return omit( step, 'userData' );
+		} );
 	},
-	getFromCache: function() {
-		loadProgressFromCache();
-		return this.get();
+	on( eventName, callback ) {
+		if ( eventName === 'change' ) {
+			this.subscribe( callback );
+		}
+	},
+	off( ...params ) {
+		this.unsubscribe( ...params );
+	},
+	reset() {
+		this.reduxStore.dispatch( {
+			type: SIGNUP_COMPLETE_RESET,
+		} );
+		// Unsubscribe all listeners
+		[ ...this.subscribers.keys() ].forEach( key => this.unsubscribe( key ) );
+	},
+	set( input ) {
+		this.reduxStore.dispatch( {
+			type: SIGNUP_PROGRESS_UPDATE,
+			data: this.omitUserData( input ),
+		} );
+	},
+	setReduxStore( reduxStore ) {
+		this.reduxStore = reduxStore;
+	},
+	subscribe( callback ) {
+		this.currentValue = this.get();
+		const unsubscribeFn = this.reduxStore.subscribe( () => {
+			const previousProgress = this.currentValue;
+			this.currentValue = SignupProgressStore.get();
+			if ( ! isEqual( previousProgress, this._currentProgress ) ) {
+				callback( this.currentValue );
+			}
+		} );
+		this.subscribers.set( callback, unsubscribeFn );
+	},
+	unsubscribe( callback ) {
+		if ( this.subscribers.has( callback ) ) {
+			// NOTE: Executing the function stored at this key unsubscribes the listener
+			this.subscribers.get( callback )();
+			this.subscribers.delete( callback );
+		}
 	},
 };
 
-emitter( SignupProgressStore );
-
 function updateStep( newStep ) {
-	signupProgress = map( signupProgress, function( step ) {
+	debug( `Updating signup step ${ newStep.stepName }` );
+	const signupProgress = map( SignupProgressStore.get(), function( step ) {
 		if ( step.stepName === newStep.stepName ) {
 			const { status } = newStep;
 			if ( status === 'pending' || status === 'completed' ) {
@@ -53,26 +84,25 @@ function updateStep( newStep ) {
 				// the user goes back and chooses to not skip a step. If a step
 				// is submitted without these, we explicitly remove them from
 				// the step data.
-				return assign( {}, omit( step, [ 'processingMessage', 'wasSkipped' ] ), newStep );
+				return { ...omit( step, [ 'processingMessage', 'wasSkipped' ] ), ...newStep };
 			}
 
-			return assign( {}, step, newStep );
+			return { ...step, ...newStep };
 		}
 
 		return step;
 	} );
 
-	handleChange();
+	SignupProgressStore.set( signupProgress );
 }
 
 function addStep( step ) {
-	signupProgress = signupProgress.concat( step );
-
-	handleChange();
+	debug( `Adding signup step ${ step.stepName }` );
+	SignupProgressStore.set( SignupProgressStore.get().concat( step ) );
 }
 
 function updateOrAddStep( step ) {
-	if ( find( signupProgress, { stepName: step.stepName } ) ) {
+	if ( find( SignupProgressStore.get(), { stepName: step.stepName } ) ) {
 		updateStep( step );
 	} else {
 		addStep( step );
@@ -80,62 +110,39 @@ function updateOrAddStep( step ) {
 }
 
 function setStepInvalid( step, errors ) {
-	updateOrAddStep(
-		assign( {}, step, {
-			status: 'invalid',
-			errors: errors,
-		} )
-	);
+	updateOrAddStep( { ...step, status: 'invalid', errors } );
 }
 
 function saveStep( step ) {
-	if ( find( signupProgress, { stepName: step.stepName } ) ) {
+	debug( `Saving signup step ${ step.stepName }` );
+	if ( find( SignupProgressStore.get(), { stepName: step.stepName } ) ) {
 		updateStep( step );
 	} else {
-		addStep( assign( {}, step, { status: 'in-progress' } ) );
+		addStep( { ...step, status: 'in-progress' } );
 	}
 }
 
 function submitStep( step ) {
+	debug( `Submitting signup step ${ step.stepName }` );
 	const stepHasApiRequestFunction =
 			steps[ step.stepName ] && steps[ step.stepName ].apiRequestFunction,
 		status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
-	updateOrAddStep( assign( {}, step, { status } ) );
+	updateOrAddStep( { ...step, status } );
 }
 
 function processStep( step ) {
-	updateStep( assign( {}, step, { status: 'processing' } ) );
+	debug( `Processing signup step ${ step.stepName }` );
+	updateStep( { ...step, status: 'processing' } );
 }
 
 function completeStep( step ) {
-	updateStep( assign( {}, step, { status: 'completed' } ) );
+	debug( `Completed signup step ${ step.stepName }` );
+	updateStep( { ...step, status: 'completed' } );
 }
 
 function addTimestamp( step ) {
-	return assign( {}, step, { lastUpdated: Date.now() } );
-}
-
-function loadProgressFromCache() {
-	const cachedSignupProgress = store.get( STORAGE_KEY );
-
-	if ( ! isEmpty( cachedSignupProgress ) ) {
-		signupProgress = cachedSignupProgress;
-	}
-
-	handleChange();
-}
-
-function omitUserData( progress ) {
-	return map( progress, step => {
-		return omit( step, 'userData' );
-	} );
-}
-
-function handleChange() {
-	SignupProgressStore.emit( 'change' );
-
-	store.set( STORAGE_KEY, omitUserData( signupProgress ) );
+	return { ...step, lastUpdated: Date.now() };
 }
 
 function addStorableDependencies( step, action ) {
@@ -150,9 +157,12 @@ function addStorableDependencies( step, action ) {
 	return { ...step, providedDependencies };
 }
 
+/**
+ * Compatibility layer
+ */
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
-	let action = payload.action,
-		step = addTimestamp( action.data );
+	const { action } = payload;
+	const step = addTimestamp( action.data );
 
 	Dispatcher.waitFor( [ SignupDependencyStore.dispatchToken ] );
 
@@ -160,22 +170,18 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 		return setStepInvalid( step, action.errors );
 	}
 
+	debug( `Handling ${ action.type }` );
 	switch ( action.type ) {
-		case 'FETCH_CACHED_SIGNUP':
-			loadProgressFromCache();
-			break;
 		case 'SAVE_SIGNUP_STEP':
 			saveStep( addStorableDependencies( step, action ) );
 			break;
 		case 'SUBMIT_SIGNUP_STEP':
-			debug( 'submit step' );
 			submitStep( addStorableDependencies( step, action ) );
 			break;
 		case 'PROCESS_SIGNUP_STEP':
 			processStep( addStorableDependencies( step, action ) );
 			break;
 		case 'PROCESSED_SIGNUP_STEP':
-			debug( 'complete step' );
 			completeStep( addStorableDependencies( step, action ) );
 			break;
 	}

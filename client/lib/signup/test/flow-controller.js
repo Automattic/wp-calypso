@@ -14,33 +14,36 @@ import { createStore } from 'redux';
  * Internal dependencies
  */
 import { reducer } from 'state';
+import SignupActions from '../actions';
+import SignupDependencyStore from '../dependency-store';
+import SignupFlowController from '../flow-controller';
+import SignupProgressStore from '../progress-store';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'flow-controller', () => {
-	let SignupProgressStore,
-		SignupDependencyStore,
-		SignupFlowController,
-		SignupActions,
-		signupFlowController;
-
-	beforeAll( () => {
-		SignupProgressStore = require( '../progress-store' );
-		SignupDependencyStore = require( '../dependency-store' );
-		SignupFlowController = require( '../flow-controller' );
-		SignupActions = require( '../actions' );
-		SignupProgressStore.reset();
-
-		const store = createStore( reducer );
-		SignupDependencyStore.setReduxStore( store );
-	} );
+	let signupFlowController;
+	const store = createStore( reducer );
 
 	afterEach( () => {
 		signupFlowController.reset();
-		SignupDependencyStore.reset();
-		SignupProgressStore.reset();
+	} );
+
+	describe( 'setup', () => {
+		test( 'should have a redux store attached', () => {
+			signupFlowController = SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+			assert.equal( signupFlowController._reduxStore, store );
+		} );
+		test( 'should bind its redux store to both progress and dependency stores', () => {
+			assert.equal( SignupProgressStore.reduxStore, store );
+			assert.equal( SignupDependencyStore.reduxStore, store );
+		} );
 	} );
 
 	describe( 'controlling a simple flow', () => {
@@ -51,6 +54,7 @@ describe( 'flow-controller', () => {
 					assert.equal( destination, '/' );
 					done();
 				},
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( { stepName: 'stepA' } );
@@ -60,7 +64,10 @@ describe( 'flow-controller', () => {
 
 	describe( 'controlling a flow w/ an asynchronous step', () => {
 		beforeEach( () => {
-			signupFlowController = SignupFlowController( { flowName: 'flow_with_async' } );
+			signupFlowController = SignupFlowController( {
+				flowName: 'flow_with_async',
+				reduxStore: store,
+			} );
 		} );
 
 		test( 'should call apiRequestFunction on steps with that property', done => {
@@ -68,7 +75,7 @@ describe( 'flow-controller', () => {
 
 			SignupActions.submitSignupStep( {
 				stepName: 'asyncStep',
-				done: done,
+				done,
 			} );
 		} );
 
@@ -76,7 +83,7 @@ describe( 'flow-controller', () => {
 			SignupActions.submitSignupStep( { stepName: 'userCreation' }, [], { bearer_token: 'TOKEN' } );
 			SignupActions.submitSignupStep( {
 				stepName: 'asyncStep',
-				done: done,
+				done,
 			} );
 
 			// resubmit the first step to initiate another call to SignupFlowController#_process
@@ -93,6 +100,7 @@ describe( 'flow-controller', () => {
 					assert.equal( destination, '/checkout/testsite.wordpress.com' );
 					done();
 				},
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {
@@ -111,6 +119,7 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'invalid_flow_with_dependencies',
 				onComplete: function() {},
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( { stepName: 'siteCreation' } );
@@ -125,6 +134,7 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
 				onComplete: ary( done, 0 ),
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {
@@ -143,6 +153,7 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
 				onComplete: ary( done, 0 ),
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {
@@ -169,6 +180,7 @@ describe( 'flow-controller', () => {
 			assert.throws( function() {
 				SignupFlowController( {
 					flowName: 'flowWithProvidedDependencies',
+					reduxStore: store,
 				} );
 			} );
 		} );
@@ -178,6 +190,7 @@ describe( 'flow-controller', () => {
 				flowName: 'flowWithProvidedDependencies',
 				providedDependencies: { siteSlug: 'foo' },
 				onComplete: ary( done, 0 ),
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {

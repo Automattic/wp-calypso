@@ -9,21 +9,23 @@
 import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { defer, find, last, omit } from 'lodash';
 import sinon from 'sinon';
+import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
+import { reducer } from 'state';
+import SignupActions from '../actions';
+import SignupProgressStore from '../progress-store';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'progress-store', () => {
-	let SignupProgressStore, SignupActions;
-
 	beforeAll( () => {
-		SignupProgressStore = require( '../progress-store' );
-		SignupActions = require( '../actions' );
+		const store = createStore( reducer );
+		SignupProgressStore.setReduxStore( store );
 	} );
 
 	test( 'should return an empty at first', () => {
@@ -126,5 +128,34 @@ describe( 'progress-store', () => {
 
 		SignupActions.processedSignupStep( { stepName: 'site-selection' } );
 		assert.equal( SignupProgressStore.get()[ 0 ].status, 'completed' );
+	} );
+
+	describe( 'subscriptions', () => {
+		beforeEach( () => {
+			SignupProgressStore.reset();
+		} );
+
+		test( 'should handle adding and removing subscriptions', () => {
+			const callback = () => {};
+			SignupProgressStore.subscribe( callback );
+			assert.equal( SignupProgressStore.subscribers.size, 1 );
+			assert.equal( typeof SignupProgressStore.subscribers.get( callback ), 'function' );
+
+			SignupProgressStore.unsubscribe( callback );
+			assert.equal( SignupProgressStore.subscribers.size, 0 );
+			assert.equal( typeof SignupProgressStore.subscribers.get( callback ), 'undefined' );
+		} );
+
+		test( 'should notify subscribers only if the values change', done => {
+			const stepName = 'site-selection';
+			SignupProgressStore.subscribe( () => {
+				assert.equal( SignupProgressStore.get().length, 1 );
+				assert.equal( SignupProgressStore.get()[ 0 ].stepName, stepName );
+				done();
+			} );
+
+			assert.equal( SignupProgressStore.get().length, 0 );
+			SignupActions.submitSignupStep( { stepName } );
+		} );
 	} );
 } );
