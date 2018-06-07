@@ -192,7 +192,7 @@ class PlansSetup extends React.Component {
 			<JetpackManageErrorPage
 				siteId={ this.props.siteId }
 				title={ this.props.translate(
-					'Oh no! You need to select a jetpack site to be able to setup your plan'
+					'Oh no! You need to select a Jetpack site to be able to setup your plan'
 				) }
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
 			/>
