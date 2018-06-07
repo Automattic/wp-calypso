@@ -21,7 +21,7 @@ import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
-import TranslatorLauncher from './community-translator/launcher';
+import TranslatorLauncher from 'layout/community-translator/launcher';
 import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
 import OfflineStatus from 'layout/offline-status';
