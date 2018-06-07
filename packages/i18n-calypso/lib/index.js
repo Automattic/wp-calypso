@@ -348,11 +348,20 @@ I18N.prototype.translate = function() {
 
 	cacheable = ! options.components;
 	if ( cacheable ) {
-		optionsString = JSON.stringify( options );
-		translation = this.state.translations.get( optionsString );
-		// Return the cached translation.
-		if ( translation ) {
-			return translation;
+		// Safe JSON stringification here to catch Circular JSON error
+		// caused by passing a React component into args where only scalars are allowed
+		try {
+			optionsString = JSON.stringify( options );
+		} catch ( e ) {
+			cacheable = false;
+		}
+
+		if ( optionsString ) {
+			translation = this.state.translations.get( optionsString );
+			// Return the cached translation.
+			if ( translation ) {
+				return translation;
+			}
 		}
 	}
 
