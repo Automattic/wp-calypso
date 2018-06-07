@@ -48,6 +48,7 @@ class NewCardForm extends Component {
 					<CreditCardFormFields
 						card={ transaction.newCardFormFields }
 						countriesList={ countriesList }
+						isNewTransaction={ !! transaction }
 						eventFormName="Checkout Form"
 						onFieldChange={ this.handleFieldChange }
 						getErrorMessage={ this.getErrorMessage }
