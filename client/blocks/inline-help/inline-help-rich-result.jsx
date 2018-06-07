@@ -121,6 +121,7 @@ class InlineHelpRichResult extends Component {
 				<p>{ preventWidows( decodeEntities( description ) ) }</p>
 				<Button primary onClick={ this.handleClick } href={ link }>
 					{ buttonIcon && <Gridicon icon={ buttonIcon } size={ 12 } /> }
+					{ buttonIcon && buttonLabel && ' ' }
 					{ buttonLabel }
 				</Button>
 			</div>
