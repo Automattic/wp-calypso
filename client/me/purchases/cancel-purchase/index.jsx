@@ -127,14 +127,20 @@ class CancelPurchase extends React.Component {
 		const renewalDate = this.props.moment( renewDate ).format( 'LL' );
 
 		if ( isDomainRegistration( purchase ) ) {
-			return this.props.translate( 'Domain will be removed on %(renewalDate)s', {
-				args: { renewalDate },
-			} );
+			return this.props.translate(
+				'When you click to confirm, the domain will be removed on %(renewalDate)s',
+				{
+					args: { renewalDate },
+				}
+			);
 		}
 
-		return this.props.translate( 'Subscription will be removed on %(renewalDate)s', {
-			args: { renewalDate },
-		} );
+		return this.props.translate(
+			'When you click to confirm, the subscription will be removed on %(renewalDate)s',
+			{
+				args: { renewalDate },
+			}
+		);
 	};
 
 	render() {
