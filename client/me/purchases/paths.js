@@ -9,7 +9,7 @@ export const billingHistory = purchasesRoot + '/billing';
 export function billingHistoryReceipt( receiptId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof receiptId ) {
-			throw new Error( 'purchaseId must be provided' );
+			throw new Error( 'receiptId must be provided' );
 		}
 	}
 	return billingHistory + `/${ receiptId }`;
