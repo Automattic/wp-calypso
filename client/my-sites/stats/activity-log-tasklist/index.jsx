@@ -200,7 +200,7 @@ class ActivityLogTasklist extends Component {
 		updateSingle( item );
 
 		showInfoNotice(
-			translate( 'Updating %(item)s in %(siteName)s.', {
+			translate( 'Updating %(item)s on %(siteName)s.', {
 				args: { item: item.name, siteName },
 			} ),
 			{
@@ -269,7 +269,7 @@ class ActivityLogTasklist extends Component {
 					break;
 				case 'completed':
 					showSuccessNotice(
-						translate( 'Successfully updated %(item)s in %(siteName)s.', noticeArgs ),
+						translate( 'Successfully updated %(item)s on %(siteName)s.', noticeArgs ),
 						{
 							id: `alitemupdate-${ slug }`,
 							duration: 3000,
@@ -417,7 +417,7 @@ const makeUpdatableList = ( itemList, siteId, state = null ) =>
 	} ) );
 
 /**
- * Start updating the theme in the specified site.
+ * Start updating the theme on the specified site.
  *
  * @param {number} siteId  Site Id.
  * @param {string} themeId Theme slug.
