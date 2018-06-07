@@ -36,10 +36,6 @@ jobs:
           paths:
             - "node_modules"
 
-      - run:
-          name: Update the lockfile
-          command: CI_PULL_REQUEST='' npx greenkeeper-lockfile-update
-
       - run: NODE_ENV=test npm run build-server
 
       - run:
@@ -76,10 +72,6 @@ jobs:
           name: Run Server Tests
           command: |
               npm run test-server:ci $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
-
-      - run:
-          name: Upload lockfile changes
-          command: npx greenkeeper-lockfile-update
 
       - run:
           name: Gather Test Results
