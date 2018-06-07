@@ -123,6 +123,7 @@ export class CartCoupon extends React.Component {
 
 	clearCoupon = event => {
 		event.preventDefault();
+		event.stopPropagation();
 		this.setState(
 			{
 				couponInputValue: '',
