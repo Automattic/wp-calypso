@@ -733,7 +733,7 @@ export function recordOrder( cart, orderId ) {
 		if ( usdTotalCost !== null ) {
 			valueParam = '&gv=' + usdTotalCost;
 		}
-		new Image().src = YAHOO_GEMINI_CONVERSION_PIXEL_URL + valueParam;
+		new Image().src = YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 	}
 
 	if ( isAolEnabled ) {
