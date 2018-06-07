@@ -77,6 +77,15 @@ class Signup extends React.Component {
 		store: PropTypes.object,
 	};
 
+	static propTypes = {
+		domainsWithPlansOnly: PropTypes.bool,
+		isLoggedIn: PropTypes.bool,
+		loadTrackingTool: PropTypes.func.isRequired,
+		setSurvey: PropTypes.func.isRequired,
+		signupDependencies: PropTypes.object,
+		trackAffiliateReferral: PropTypes.func.isRequired,
+	};
+
 	constructor( props, context ) {
 		super( props, context );
 		SignupDependencyStore.setReduxStore( context.store );
@@ -202,7 +211,7 @@ class Signup extends React.Component {
 		const parsedUrl = url.parse( urlPath, true );
 		const affiliateId = parsedUrl.query.aff;
 		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			this.props.affiliateReferral( { urlPath, affiliateId } );
+			this.props.trackAffiliateReferral( { urlPath, affiliateId } );
 			// Record the referral in Tracks
 			analytics.tracks.recordEvent( 'calypso_refer_visit', {
 				flow: this.props.flowName,
@@ -557,7 +566,7 @@ export default connect(
 		signupDependencies: getSignupDependencyStore( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ setSurvey, loadTrackingTool, affiliateReferral },
+	{ setSurvey, loadTrackingTool, trackAffiliateReferral: affiliateReferral },
 	undefined,
 	{ pure: false }
 )( Signup );
