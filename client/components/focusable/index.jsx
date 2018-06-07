@@ -5,7 +5,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
 
 class Focusable extends Component {
 	static propTypes = {
@@ -13,11 +12,9 @@ class Focusable extends Component {
 		onKeyDown: PropTypes.func,
 	};
 
-	static defaultProps = { onClick: noop };
-
 	onKeyDown = event => {
 		const { onClick, onKeyDown } = this.props;
-		if ( event.key === 'Enter' || event.key === ' ' ) {
+		if ( onClick && ( event.key === 'Enter' || event.key === ' ' ) ) {
 			event.preventDefault();
 			onClick( event );
 		}
@@ -34,7 +31,6 @@ class Focusable extends Component {
 				className={ classNames( 'focusable', className ) }
 				role="button"
 				tabIndex="0"
-				onClick={ this.props.onClick }
 				onKeyDown={ this.onKeyDown }
 			>
 				{ children }
