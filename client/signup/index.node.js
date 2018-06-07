@@ -3,38 +3,19 @@
 /**
  * Internal dependencies
  */
+import { getLanguage, getLanguageSlugs } from 'lib/i18n-utils';
 
-import { getLanguage } from 'lib/i18n-utils';
+const lang = `:lang(${ getLanguageSlugs().join( '|' ) })?`;
 
 export default function( router ) {
-	router( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpLocale );
+	router( `/start/:flowName?/:stepName?/:stepSectionName?/${ lang }`, setUpLocale );
 }
 
 // Set up the locale in case it has ended up in the flow param
 function setUpLocale( context, next ) {
-	let { flowName, stepName, stepSectionName, lang } = context.params;
-
-	if ( ! lang && stepSectionName && getLanguage( stepSectionName ) ) {
-		lang = stepSectionName;
-		stepSectionName = undefined;
-	} else if ( ! lang && stepName && getLanguage( stepName ) ) {
-		lang = stepName;
-		stepName = undefined;
-	} else if ( ! lang && flowName && getLanguage( flowName ) ) {
-		lang = flowName;
-		flowName = undefined;
-	}
-
-	context.params = Object.assign( {}, context.params, {
-		flowName,
-		stepName,
-		stepSectionName,
-		lang,
-	} );
-
-	const language = getLanguage( lang );
+	const language = getLanguage( context.params.lang );
 	if ( language ) {
-		context.lang = lang;
+		context.lang = context.params.lang;
 		if ( language.rtl ) {
 			context.isRTL = true;
 		}
