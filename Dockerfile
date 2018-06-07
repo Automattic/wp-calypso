@@ -29,7 +29,7 @@ RUN npm install --global npm@6.1
 # change. This layer should allow for final build times
 # to be limited only by the Calypso build speed.
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
-RUN        npm install --production
+RUN        npm ci
 
 # Build a "source" layer
 #
