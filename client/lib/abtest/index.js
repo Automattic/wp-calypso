@@ -5,7 +5,7 @@
  */
 
 import debugFactory from 'debug';
-import { every, get, includes, isArray, keys, map, reduce, some } from 'lodash';
+import { every, get, includes, isArray, keys, reduce, some } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
 
@@ -14,10 +14,10 @@ import i18n from 'i18n-calypso';
  */
 import activeTests from 'lib/abtest/active-tests';
 import analytics from 'lib/analytics';
-import config from 'config';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
+import { getLanguageSlugs } from 'lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso:abtests' );
 const user = userFactory();
@@ -69,7 +69,7 @@ const parseDateStamp = datestamp => {
 	return date;
 };
 
-const languageSlugs = map( config( 'languages' ), 'langSlug' );
+const languageSlugs = getLanguageSlugs();
 const langSlugIsValid = slug => languageSlugs.indexOf( slug ) !== -1;
 
 ABTest.prototype.init = function( name, geoLocation ) {
