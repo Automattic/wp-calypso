@@ -61,6 +61,7 @@ import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/pro
  */
 const debug = debugModule( 'calypso:signup' );
 const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
+
 class Signup extends React.Component {
 	static displayName = 'Signup';
 
@@ -83,50 +84,6 @@ class Signup extends React.Component {
 			plans: false,
 		};
 	}
-
-	loadProgressFromStore = () => {
-		const newProgress = SignupProgressStore.get(),
-			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
-			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
-			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
-
-		this.setState( { progress: newProgress } );
-
-		if ( this.isEveryStepSubmitted() ) {
-			this.goToFirstInvalidStep();
-		}
-
-		if ( startLoadingScreen ) {
-			this.setState( { loadingScreenStartTime: Date.now() } );
-		}
-
-		if ( invalidSteps ) {
-			this.setState( { loadingScreenStartTime: undefined } );
-		}
-	};
-
-	submitQueryDependencies = () => {
-		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
-			return;
-		}
-
-		const queryObject = this.props.initialContext.query;
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
-
-		// `vertical` query parameter
-		const vertical = queryObject.vertical;
-		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
-			debug( 'From query string: vertical = %s', vertical );
-			this.props.setSurvey( {
-				vertical,
-				otherText: '',
-			} );
-			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
-				surveySiteType: 'blog',
-				surveyQuestion: vertical,
-			} );
-		}
-	};
 
 	componentWillMount() {
 		analytics.tracks.recordEvent( 'calypso_signup_start', {
@@ -219,6 +176,73 @@ class Signup extends React.Component {
 		this.checkForCartItems( signupDependencies );
 	}
 
+	componentDidMount() {
+		debug( 'Signup component mounted' );
+		SignupProgressStore.on( 'change', this.loadProgressFromStore );
+		this.props.loadTrackingTool( 'HotJar' );
+		const urlPath = location.href;
+		const parsedUrl = url.parse( urlPath, true );
+		const affiliateId = parsedUrl.query.aff;
+		if ( affiliateId && ! isNaN( affiliateId ) ) {
+			this.props.affiliateReferral( { urlPath, affiliateId } );
+			// Record the referral in Tracks
+			analytics.tracks.recordEvent( 'calypso_refer_visit', {
+				flow: this.props.flowName,
+				// The current page without any query params
+				page: parsedUrl.host + parsedUrl.pathname,
+			} );
+		}
+	}
+
+	componentWillUnmount() {
+		debug( 'Signup component unmounted' );
+		SignupProgressStore.off( 'change', this.loadProgressFromStore );
+	}
+
+	loadProgressFromStore = () => {
+		const newProgress = SignupProgressStore.get(),
+			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
+			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
+			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
+
+		this.setState( { progress: newProgress } );
+
+		if ( this.isEveryStepSubmitted() ) {
+			this.goToFirstInvalidStep();
+		}
+
+		if ( startLoadingScreen ) {
+			this.setState( { loadingScreenStartTime: Date.now() } );
+		}
+
+		if ( invalidSteps ) {
+			this.setState( { loadingScreenStartTime: undefined } );
+		}
+	};
+
+	submitQueryDependencies = () => {
+		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
+			return;
+		}
+
+		const queryObject = this.props.initialContext.query;
+		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+
+		// `vertical` query parameter
+		const vertical = queryObject.vertical;
+		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
+			debug( 'From query string: vertical = %s', vertical );
+			this.props.setSurvey( {
+				vertical,
+				otherText: '',
+			} );
+			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
+				surveySiteType: 'blog',
+				surveyQuestion: vertical,
+			} );
+		}
+	};
+
 	checkForCartItems = signupDependencies => {
 		const dependenciesContainCartItem = dependencies => {
 			return (
@@ -289,29 +313,6 @@ class Signup extends React.Component {
 			} );
 		}
 	};
-
-	componentDidMount() {
-		debug( 'Signup component mounted' );
-		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		this.props.loadTrackingTool( 'HotJar' );
-		const urlPath = location.href;
-		const parsedUrl = url.parse( urlPath, true );
-		const affiliateId = parsedUrl.query.aff;
-		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			this.props.affiliateReferral( { urlPath, affiliateId } );
-			// Record the referral in Tracks
-			analytics.tracks.recordEvent( 'calypso_refer_visit', {
-				flow: this.props.flowName,
-				// The current page without any query params
-				page: parsedUrl.host + parsedUrl.pathname,
-			} );
-		}
-	}
-
-	componentWillUnmount() {
-		debug( 'Signup component unmounted' );
-		SignupProgressStore.off( 'change', this.loadProgressFromStore );
-	}
 
 	loginRedirectTo = path => {
 		let redirectTo;
