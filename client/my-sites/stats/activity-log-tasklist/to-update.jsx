@@ -13,7 +13,6 @@ import { get, unionBy } from 'lodash';
  */
 import { getPluginsWithUpdates } from 'state/plugins/installed/selectors';
 import { requestSiteAlerts } from 'state/data-getters';
-import config from 'config';
 
 const emptyList = [];
 
@@ -57,9 +56,7 @@ export default WrappedComponent => {
 	return connect( ( state, { siteId } ) => {
 		return {
 			plugins: getPluginsWithUpdates( state, [ siteId ] ),
-			themes: config.isEnabled( 'activity-log-theme-update' )
-				? get( requestSiteAlerts( siteId ), 'data.updates.themes', emptyList )
-				: emptyList,
+			themes: get( requestSiteAlerts( siteId ), 'data.updates.themes', emptyList ),
 		};
 	} )( ToUpdate );
 };
