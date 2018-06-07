@@ -432,30 +432,9 @@ class Signup extends React.Component {
 		return indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
 	};
 
-	localeSuggestions = () => {
-		return 0 === this.positionInFlow() && ! this.props.isLoggedIn ? (
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-		) : null;
-	};
+	}
 
-	loginForm = () => {
-		return this.state.bearerToken ? (
-			<WpcomLoginForm
-				authorization={ 'Bearer ' + this.state.bearerToken }
-				log={ this.state.username }
-				redirectTo={ this.state.redirectTo }
-			/>
-		) : null;
-	};
-
-	pageTitle = () => {
-		const accountFlowName = 'account';
-		return this.props.flowName === accountFlowName
-			? translate( 'Create an account' )
-			: translate( 'Create a site' );
-	};
-
-	currentStep = () => {
+	renderCurrentStep() {
 		const userIsLoggedIn = this.props.isLoggedIn;
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
@@ -471,10 +450,13 @@ class Signup extends React.Component {
 					isDomainMapping( domainItem ) ) &&
 					this.props.domainsWithPlansOnly )
 			);
+		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
 			<div className="signup__step" key={ stepKey }>
-				{ this.localeSuggestions() }
+				{ shouldRenderLocaleSuggestions && (
+					<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+				) }
 				{ this.state.loadingScreenStartTime ? (
 					<SignupProcessingScreen
 						hasCartItems={ this.state.hasCartItems }
@@ -505,7 +487,7 @@ class Signup extends React.Component {
 				) }
 			</div>
 		);
-	};
+	}
 
 	render() {
 		if (
@@ -519,9 +501,14 @@ class Signup extends React.Component {
 		const flow = flows.getFlow( this.props.flowName );
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
+		const pageTitle =
+			this.props.flowName === 'account'
+				? translate( 'Create an account' )
+				: translate( 'Create a site' );
+
 		return (
 			<span>
-				<DocumentHead title={ this.pageTitle() } />
+				<DocumentHead title={ pageTitle } />
 				{ ! this.state.loadingScreenStartTime &&
 					showProgressIndicator && (
 						<FlowProgressIndicator
@@ -537,9 +524,15 @@ class Signup extends React.Component {
 					transitionEnterTimeout={ 400 }
 					transitionLeaveTimeout={ 400 }
 				>
-					{ this.currentStep() }
+					{ this.renderCurrentStep() }
 				</ReactCSSTransitionGroup>
-				{ this.loginForm() }
+				{ this.state.bearerToken && (
+					<WpcomLoginForm
+						authorization={ 'Bearer ' + this.state.bearerToken }
+						log={ this.state.username }
+						redirectTo={ this.state.redirectTo }
+					/>
+				) }
 			</span>
 		);
 	}
