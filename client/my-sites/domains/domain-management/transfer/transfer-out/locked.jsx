@@ -67,12 +67,9 @@ class Locked extends React.Component {
 			<div>
 				<Notice status="is-warning" showDismiss={ false }>
 					{ translate(
-						'Currently, many domain providers are experiencing difficulty with their ' +
-							'processes for handling transfers due to changes required for The ' +
-							'European Union’s {{gdpr}}General Data Protection Regulation{{/gdpr}}, ' +
-							'which went into full effect on May 25, 2018. Please note this may ' +
-							'impact your ability to transfer your domain from WordPress.com to ' +
-							'other providers. {{learn}}Learn more.{{/learn}}',
+						"Due to the EU's {{gdpr}}General Data Protection Regulation{{/gdpr}}, " +
+							'some providers may have trouble transferring your domain to them. ' +
+							'{{learn}}Learn more.{{/learn}}',
 						{
 							components: {
 								gdpr: (
