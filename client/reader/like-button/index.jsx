@@ -15,6 +15,8 @@ import { markPostSeen } from 'state/reader/posts/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { isEnabled } from 'config';
+import QueryPostLikes from 'components/data/query-post-likes';
+import getPostLikeCount from 'state/selectors/get-post-like-count';
 
 class ReaderLikeButton extends React.Component {
 	constructor( props ) {
@@ -73,11 +75,12 @@ class ReaderLikeButton extends React.Component {
 	};
 
 	render() {
-		const { siteId, postId } = this.props;
+		const { siteId, postId, likeCount } = this.props;
 		const { showLikesPopover, likesPopoverContext } = this.state;
 
 		return (
 			<Fragment>
+				<QueryPostLikes siteId={ siteId } postId={ postId } />
 				<LikeButtonContainer
 					{ ...this.props }
 					ref={ this.setLikesPopoverContext }
@@ -88,7 +91,8 @@ class ReaderLikeButton extends React.Component {
 				/>
 				{ showLikesPopover &&
 					siteId &&
-					postId && (
+					postId &&
+					likeCount > 0 && (
 						<PostLikesPopover
 							className="reader-likes-popover" // eslint-disable-line
 							onMouseEnter={ this.maybeShowLikesPopover }
@@ -104,4 +108,11 @@ class ReaderLikeButton extends React.Component {
 	}
 }
 
-export default connect( null, { markPostSeen } )( ReaderLikeButton );
+export default connect(
+	( state, { siteId, postId } ) => {
+		return {
+			likeCount: getPostLikeCount( state, siteId, postId ),
+		};
+	},
+	{ markPostSeen }
+)( ReaderLikeButton );
