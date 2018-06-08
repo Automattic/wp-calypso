@@ -114,3 +114,13 @@ export const getMasterUserInfo = ( state, siteId = getSelectedSiteId( state ) ) 
 		masterUserEmail: meta && meta.master_user_email,
 	};
 };
+
+export const getMarkOrdersComplete = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const data = getLabelSettingsFormData( state, siteId );
+	return data && data.mark_orders_complete;
+};
+
+export const getEmailTrackingInfo = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const data = getLabelSettingsFormData( state, siteId );
+	return data && data.email_tracking_info;
+};
