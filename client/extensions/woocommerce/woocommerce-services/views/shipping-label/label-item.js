@@ -159,6 +159,7 @@ LabelItem.propTypes = {
 	openRefundDialog: PropTypes.func.isRequired,
 	openReprintDialog: PropTypes.func.isRequired,
 	openDetailsDialog: PropTypes.func.isRequired,
+	translate: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
