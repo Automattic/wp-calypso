@@ -203,8 +203,8 @@ export default {
 				analyticsTitle="Domain Management > Set Up Your Domain"
 				component={ DomainManagement.DomainConnectMapping }
 				context={ pageContext }
+				needsDomains
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
-				productsList={ productsList }
 			/>
 		);
 		next();
