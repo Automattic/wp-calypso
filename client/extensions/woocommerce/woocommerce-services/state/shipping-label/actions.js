@@ -6,19 +6,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import {
-	every,
-	fill,
-	find,
-	first,
-	flatten,
-	includes,
-	isBoolean,
-	isEqual,
-	map,
-	noop,
-	pick,
-} from 'lodash';
+import { every, fill, find, flatten, includes, isBoolean, isEqual, map, noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +26,6 @@ import {
 	shouldFulfillOrder,
 	shouldEmailDetails,
 } from './selectors';
-import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 import { getEmailReceipts } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
@@ -608,7 +595,7 @@ const labelStatusTask = ( orderId, siteId, labelId, retryCount ) => {
 		} );
 };
 
-const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, labels ) => {
+const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError ) => {
 	dispatch( exitPrintingFlow( orderId, siteId, true ) );
 	dispatch( clearAvailableRates( orderId, siteId ) );
 
@@ -616,51 +603,12 @@ const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, lab
 		return;
 	}
 
-	if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
-		const trackingNumbers = labels.map( label => label.tracking );
-		const carrierId = first( labels ).carrier_id;
-		let note = '';
-		if ( 'usps' === carrierId ) {
-			note = translate(
-				'Your order has been shipped with USPS. The tracking number is %(trackingNumbers)s.',
-				'Your order consisting of %(packageNum)d packages has been shipped with USPS. ' +
-					'The tracking numbers are %(trackingNumbers)s.',
-				{
-					args: {
-						packageNum: trackingNumbers.length,
-						trackingNumbers: trackingNumbers.join( ', ' ),
-					},
-					count: trackingNumbers.length,
-				}
-			);
-		} else {
-			note = translate(
-				'Your order has been shipped. The tracking number is %(trackingNumbers)s.',
-				'Your order consisting of %(packageNum)d packages has been shipped. ' +
-					'The tracking numbers are %(trackingNumbers)s.',
-				{
-					args: {
-						packageNum: trackingNumbers.length,
-						trackingNumbers: trackingNumbers.join( ', ' ),
-					},
-					count: trackingNumbers.length,
-				}
-			);
-		}
-
-		dispatch(
-			createNote( siteId, orderId, {
-				note,
-				customer_note: true,
-			} )
-		);
-	}
-
 	if ( shouldFulfillOrder( getState(), orderId, siteId ) ) {
 		dispatch(
 			saveOrder( siteId, {
 				id: orderId,
 				status: 'completed',
+				email_tracking_info: shouldEmailDetails( getState(), orderId, siteId ),
 			} )
 		);
 	}
