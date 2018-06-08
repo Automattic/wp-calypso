@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import ClipboardButton from 'components/forms/clipboard-button';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import DetailsDialog from './label-details-modal';
@@ -23,8 +24,17 @@ import {
 	openReprintDialog,
 	openDetailsDialog,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class LabelItem extends Component {
+	state = {
+		showTrackingCopyConfirmation: false,
+	};
+
+	componentWillUnmount() {
+		clearTimeout( this.trackingCopyConfirmationTimer );
+	}
+
 	renderRefund = label => {
 		const { orderId, siteId, translate } = this.props;
 
@@ -86,6 +96,24 @@ class LabelItem extends Component {
 		);
 	};
 
+	handleTrackingCopyClick = () => {
+		this.setState( {
+			showTrackingCopyConfirmation: true,
+		} );
+
+		clearTimeout( this.trackingCopyConfirmationTimer );
+
+		this.trackingCopyConfirmationTimer = setTimeout( () => {
+			this.setState( {
+				showTrackingCopyConfirmation: false,
+			} );
+		}, 2000 );
+
+		this.props.recordTracksEvent( 'calypso_woocommerce_order_tracking_number_copy', {
+			carrier_id: this.props.label.carrierId,
+		} );
+	};
+
 	render() {
 		const { siteId, orderId, label, translate } = this.props;
 		const {
@@ -139,13 +167,26 @@ class LabelItem extends Component {
 					) }
 				</p>
 				{ label.showDetails && (
-					<p className="shipping-label__item-tracking">
-						{ translate( 'Tracking #: {{trackingLink/}}', {
-							components: {
-								trackingLink: <TrackingLink tracking={ label.tracking } carrierId={ label.carrierId } />
-							},
-						} ) }
-					</p>
+					<Fragment>
+						<p className="shipping-label__item-tracking">
+							{ translate( 'Tracking #: {{trackingLink/}}', {
+								components: {
+									trackingLink: (
+										<TrackingLink tracking={ label.tracking } carrierId={ label.carrierId } />
+									),
+								},
+							} ) }
+						</p>
+						<ClipboardButton
+							compact
+							onCopy={ this.handleTrackingCopyClick }
+							text={ label.tracking }
+						>
+							{ this.state.showTrackingCopyConfirmation
+								? translate( 'Copied!' )
+								: translate( 'Copy to clipboard' ) }
+						</ClipboardButton>
+					</Fragment>
 				) }
 			</div>
 		);
@@ -159,11 +200,20 @@ LabelItem.propTypes = {
 	openRefundDialog: PropTypes.func.isRequired,
 	openReprintDialog: PropTypes.func.isRequired,
 	openDetailsDialog: PropTypes.func.isRequired,
+	recordTracksEvent: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
-	return bindActionCreators( { openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch );
+	return bindActionCreators(
+		{
+			openRefundDialog,
+			openReprintDialog,
+			openDetailsDialog,
+			recordTracksEvent,
+		},
+		dispatch
+	);
 };
 
 export default connect(
