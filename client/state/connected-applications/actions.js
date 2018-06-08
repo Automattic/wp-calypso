@@ -17,11 +17,6 @@ import {
  */
 export const requestConnectedApplications = () => ( {
 	type: CONNECTED_APPLICATIONS_REQUEST,
-	meta: {
-		dataLayer: {
-			trackRequest: true,
-		},
-	},
 } );
 
 /**

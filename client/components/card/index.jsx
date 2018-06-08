@@ -25,7 +25,7 @@ class Card extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
 		href: PropTypes.string,
-		tagName: PropTypes.string,
+		tagName: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ).isRequired,
 		target: PropTypes.string,
 		compact: PropTypes.bool,
 		highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),

@@ -40,8 +40,8 @@ describe( 'getConnectedApplications()', () => {
 		expect( result ).toBe( apps );
 	} );
 
-	test( 'should return an empty array with an empty state', () => {
+	test( 'should return null with an empty state', () => {
 		const result = getConnectedApplications( undefined );
-		expect( result ).toEqual( [] );
+		expect( result ).toBeNull();
 	} );
 } );

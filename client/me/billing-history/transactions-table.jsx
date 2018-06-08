@@ -75,6 +75,10 @@ class TransactionsTable extends React.Component {
 			return <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
 		}
 
+		if ( transactionItem.product === transactionItem.variation ) {
+			return transactionItem.product;
+		}
+
 		return this.serviceNameDescription( {
 			...transactionItem,
 			plan: capitalPDangit( titleCase( transactionItem.variation ) ),

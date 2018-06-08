@@ -9,7 +9,8 @@ import { endsWith, filter, find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRawSite, getSiteAdminUrl } from 'state/sites/selectors';
+import { getSiteAdminUrl } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 import { getPostTypes } from 'state/post-types/selectors';
 
 function getDefaultItemTypes( state, siteId ) {

@@ -41,7 +41,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.billingHistoryReceipt(),
+		paths.billingHistoryReceipt( ':receiptId' ),
 		redirectLoggedOut,
 		sidebar,
 		billingController.transaction,
@@ -59,7 +59,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.managePurchase(),
+		paths.managePurchase( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
@@ -69,7 +69,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.cancelPurchase(),
+		paths.cancelPurchase( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
@@ -79,7 +79,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.cancelPrivacyProtection(),
+		paths.cancelPrivacyProtection( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
@@ -89,7 +89,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.confirmCancelDomain(),
+		paths.confirmCancelDomain( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
@@ -99,7 +99,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.addCardDetails(),
+		paths.addCardDetails( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,
@@ -109,7 +109,7 @@ export default function( router ) {
 	);
 
 	router(
-		paths.editCardDetails(),
+		paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
 		redirectLoggedOut,
 		sidebar,
 		siteSelection,

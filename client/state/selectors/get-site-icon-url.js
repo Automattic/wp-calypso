@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 import getMediaUrl from 'state/selectors/get-media-url';
 import getSiteIconId from 'state/selectors/get-site-icon-id';
 

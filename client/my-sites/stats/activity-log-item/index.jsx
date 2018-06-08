@@ -240,13 +240,16 @@ class ActivityLogItem extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Button
-				className="activity-log-item__clone-action"
-				primary
-				onClick={ this.performCloneAction }
-			>
-				{ translate( 'Clone from here' ) }
-			</Button>
+			<div className="activity-log-item__action">
+				<Button
+					className="activity-log-item__clone-action"
+					primary
+					compact
+					onClick={ this.performCloneAction }
+				>
+					{ translate( 'Clone from here' ) }
+				</Button>
+			</div>
 		);
 	};
 

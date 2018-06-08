@@ -28,6 +28,7 @@ export class CreditCardFormFields extends React.Component {
 		onFieldChange: PropTypes.func,
 		getErrorMessage: PropTypes.func,
 		autoFocus: PropTypes.bool,
+		isNewTransaction: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -35,6 +36,7 @@ export class CreditCardFormFields extends React.Component {
 		onFieldChange: noop,
 		getErrorMessage: noop,
 		autoFocus: true,
+		isNewTransaction: false,
 	};
 
 	createField = ( fieldName, componentClass, props ) => {
@@ -90,7 +92,13 @@ export class CreditCardFormFields extends React.Component {
 	};
 
 	shouldRenderEbanxFields() {
-		return shouldRenderAdditionalEbanxFields( this.getFieldValue( 'country' ) );
+		// The add/update card endpoints do not process Ebanx payment details
+		// so we only show Ebanx fields at checkout,
+		// i.e., when there is a current transaction.
+		return (
+			this.props.isNewTransaction &&
+			shouldRenderAdditionalEbanxFields( this.getFieldValue( 'country' ) )
+		);
 	}
 
 	render() {

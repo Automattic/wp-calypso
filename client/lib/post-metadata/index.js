@@ -136,6 +136,40 @@ PostMetadata = {
 			return [ latitude, longitude ];
 		}
 	},
+
+	/**
+	 * Given a post object, return a boolean, indicating whether the geo-location data
+	 * associated with the post is allowed to be displayed publicly.
+	 *
+	 * @param {Object} post Post object
+	 * @returns {boolean|null} Whether the geo-location data is shared publicly.
+	 */
+	geoIsSharedPublicly: function( post ) {
+		if ( ! post ) {
+			return null;
+		}
+
+		const isSharedPublicly = getValueByKey( post.metadata, 'geo_public' );
+
+		if ( parseInt( isSharedPublicly, 10 ) ) {
+			return true;
+		}
+
+		if ( undefined === isSharedPublicly ) {
+			// If they have no geo_public value but they do have a lat/long, then we assume they saved with Calypso
+			// before it supported geo_public, in which case we should treat it as private.
+			if (
+				getValueByKey( post.metadata, 'geo_latitude' ) ||
+				getValueByKey( post.metadata, 'geo_longitude' )
+			) {
+				return false;
+			}
+
+			return true;
+		}
+
+		return false;
+	},
 };
 
 export default PostMetadata;

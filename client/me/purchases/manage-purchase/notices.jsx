@@ -40,7 +40,7 @@ class PurchaseNotice extends Component {
 		isDataLoading: PropTypes.bool,
 		handleRenew: PropTypes.func,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
 		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	};
 
@@ -270,7 +270,4 @@ class PurchaseNotice extends Component {
 	}
 }
 
-const mapStateToProps = null;
-const mapDispatchToProps = { recordTracksEvent };
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseNotice ) );
+export default connect( null, { recordTracksEvent } )( localize( PurchaseNotice ) );

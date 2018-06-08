@@ -52,7 +52,6 @@ const CountrySelect = createReactClass( {
 			options.push( {
 				key: 'loading',
 				label: this.props.translate( 'Loading…' ),
-				disabled: 'disabled',
 			} );
 		} else {
 			options = options.concat( [

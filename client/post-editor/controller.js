@@ -169,7 +169,7 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 			 *
 			 * @see https://github.com/Automattic/wp-calypso/issues/14840
 			 */
-			const metadataWhitelist = [ 'geo_latitude', 'geo_longitude' ];
+			const metadataWhitelist = [ 'geo_latitude', 'geo_longitude', 'geo_address', 'geo_public' ];
 
 			// Filter the post metadata to include only the ones we want to copy,
 			// use only the `key` and `value` properties (and, most importantly exclude `id`),

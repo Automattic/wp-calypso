@@ -6,7 +6,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, times } from 'lodash';
+import { times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,7 +16,6 @@ import ConnectedAppItem from 'me/connected-application-item';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import getConnectedApplications from 'state/selectors/get-connected-applications';
-import getRequest from 'state/selectors/get-request';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -24,7 +23,6 @@ import QueryConnectedApplications from 'components/data/query-connected-applicat
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import { requestConnectedApplications } from 'state/connected-applications/actions';
 
 class ConnectedApplications extends PureComponent {
 	static propTypes = {
@@ -71,8 +69,12 @@ class ConnectedApplications extends PureComponent {
 	renderConnectedApps() {
 		const { apps } = this.props;
 
-		if ( ! apps.length ) {
+		if ( apps === null ) {
 			return this.renderPlaceholders();
+		}
+
+		if ( ! apps.length ) {
+			return this.renderEmptyContent();
 		}
 
 		return apps.map( connection => (
@@ -81,15 +83,13 @@ class ConnectedApplications extends PureComponent {
 	}
 
 	renderConnectedAppsList() {
-		const { apps, isRequestingApps, path } = this.props;
+		const { path } = this.props;
 
 		return (
 			<Fragment>
 				<SecuritySectionNav path={ path } />
 
-				{ ! isRequestingApps && ! apps.length
-					? this.renderEmptyContent()
-					: this.renderConnectedApps() }
+				{ this.renderConnectedApps() }
 			</Fragment>
 		);
 	}
@@ -118,5 +118,4 @@ class ConnectedApplications extends PureComponent {
 
 export default connect( state => ( {
 	apps: getConnectedApplications( state ),
-	isRequestingApps: get( getRequest( state, requestConnectedApplications() ), 'isLoading', false ),
 } ) )( localize( ConnectedApplications ) );

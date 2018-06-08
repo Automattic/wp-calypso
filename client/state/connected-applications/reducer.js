@@ -14,7 +14,7 @@ import {
 } from 'state/action-types';
 import schema from './schema';
 
-const reducer = ( state = [], action ) => {
+const reducer = ( state = null, action ) => {
 	switch ( action.type ) {
 		case CONNECTED_APPLICATION_DELETE_SUCCESS:
 			return reject( state, { ID: action.appId } );

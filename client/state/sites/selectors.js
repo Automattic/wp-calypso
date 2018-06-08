@@ -35,21 +35,34 @@ import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
-import { getSiteComputedAttributes } from './utils';
 import getSiteOptions from 'state/selectors/get-site-options';
 import getSitesItems from 'state/selectors/get-sites-items';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import getRawSite from 'state/selectors/get-raw-site';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 /**
- * Returns a raw site object by its ID.
+ * Returns the slug for a site, or null if the site is unknown.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {?Object}        Site object
+ * @return {?String}        Site slug
  */
-export const getRawSite = ( state, siteId ) => {
-	return getSitesItems( state )[ siteId ] || null;
-};
+export const getSiteSlug = createSelector(
+	( state, siteId ) => {
+		const site = getRawSite( state, siteId );
+		if ( ! site ) {
+			return null;
+		}
+
+		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+		}
+
+		return urlToSlug( site.URL );
+	},
+	[ getSitesItems ]
+);
 
 /**
  * Returns a site object by its slug.
@@ -227,29 +240,6 @@ export function isJetpackMinimumVersion( state, siteId, version ) {
 
 	return versionCompare( siteVersion, version, '>=' );
 }
-
-/**
- * Returns the slug for a site, or null if the site is unknown.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?String}        Site slug
- */
-export const getSiteSlug = createSelector(
-	( state, siteId ) => {
-		const site = getRawSite( state, siteId );
-		if ( ! site ) {
-			return null;
-		}
-
-		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-		}
-
-		return urlToSlug( site.URL );
-	},
-	[ getSitesItems ]
-);
 
 /**
  * Returns the domain for a site, or null if the site is unknown.
@@ -1143,4 +1133,41 @@ export function hasAllSitesList( state ) {
  */
 export function getUpdatesBySiteId( state, siteId ) {
 	return get( getRawSite( state, siteId ), 'updates', null );
+}
+
+/**
+ * Returns computed properties of the site object.
+ *
+ * @param    {Object}      state    Global state tree
+ * @param    {Number}      siteId   Site ID
+ * @returns  {?Object}              Site computed properties or null
+ */
+export function getSiteComputedAttributes( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
+	const computedAttributes = {
+		domain: getSiteDomain( state, siteId ),
+		hasConflict: isSiteConflicting( state, siteId ),
+		is_customizable: !! canCurrentUser( state, siteId, 'edit_theme_options' ),
+		is_previewable: !! isSitePreviewable( state, siteId ),
+		options: getSiteOptions( state, siteId ),
+		slug: getSiteSlug( state, siteId ),
+		title: getSiteTitle( state, siteId ),
+	};
+
+	// If a WordPress.com site has a mapped domain create a `wpcom_url`
+	// attribute to allow site selection with either domain.
+	if ( getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId ) ) {
+		computedAttributes.wpcom_url = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+	}
+
+	// we only need to use the unmapped URL for conflicting sites
+	if ( computedAttributes.hasConflict ) {
+		computedAttributes.URL = getSiteOption( state, siteId, 'unmapped_url' );
+	}
+
+	return computedAttributes;
 }

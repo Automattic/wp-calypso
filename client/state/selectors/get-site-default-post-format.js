@@ -9,7 +9,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRawSite, getSiteOption } from 'state/sites/selectors';
+import { getSiteOption } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 import { getSiteSettings } from 'state/site-settings/selectors';
 
 /**

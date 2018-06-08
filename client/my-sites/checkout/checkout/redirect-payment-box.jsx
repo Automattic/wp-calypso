@@ -285,43 +285,43 @@ export class RedirectPaymentBox extends PureComponent {
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
-			<form onSubmit={ this.redirectToPayment }>
-				<div className="checkout__payment-box-section">
-					{ this.createField( 'name', Input, {
-						label: translate( 'Your Name' ),
-					} ) }
-					{ this.renderAdditionalFields() }
-				</div>
-
-				{ this.props.children }
-
-				<TermsOfService
-					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
-						this.props.cart
-					) }
-				/>
-
-				<div className="checkout__payment-box-actions">
-					<div className="checkout__pay-button">
-						<button
-							type="submit"
-							className="checkout__button-pay button is-primary "
-							disabled={ this.state.formDisabled }
-						>
-							{ this.renderButtonText() }
-						</button>
-						<SubscriptionText cart={ this.props.cart } />
+			<React.Fragment>
+				<form onSubmit={ this.redirectToPayment }>
+					<div className="checkout__payment-box-section">
+						{ this.createField( 'name', Input, {
+							label: translate( 'Your Name' ),
+						} ) }
+						{ this.renderAdditionalFields() }
 					</div>
 
-					{ showPaymentChatButton && (
-						<PaymentChatButton paymentType={ this.props.paymentType } cart={ this.props.cart } />
-					) }
-				</div>
+					{ this.props.children }
 
+					<TermsOfService
+						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
+							this.props.cart
+						) }
+					/>
+
+					<div className="checkout__payment-box-actions">
+						<div className="checkout__pay-button">
+							<button
+								type="submit"
+								className="checkout__button-pay button is-primary "
+								disabled={ this.state.formDisabled }
+							>
+								{ this.renderButtonText() }
+							</button>
+							<SubscriptionText cart={ this.props.cart } />
+						</div>
+
+						{ showPaymentChatButton && (
+							<PaymentChatButton paymentType={ this.props.paymentType } cart={ this.props.cart } />
+						) }
+					</div>
+				</form>
 				<CartCoupon cart={ this.props.cart } />
-
 				<CartToggle />
-			</form>
+			</React.Fragment>
 		);
 	}
 

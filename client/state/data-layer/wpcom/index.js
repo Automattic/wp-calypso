@@ -14,6 +14,7 @@ import concierge from './concierge';
 import domains from './domains';
 import gravatarUpload from './gravatar-upload';
 import i18n from './i18n';
+import jetpackConnectionOwner from './jetpack/connection/owner';
 import jetpackInstall from './jetpack-install';
 import jetpackSettings from './jetpack/settings';
 import localeGuess from './locale-guess';
@@ -41,6 +42,7 @@ export const handlers = mergeHandlers(
 	domains,
 	gravatarUpload,
 	i18n,
+	jetpackConnectionOwner,
 	jetpackInstall,
 	jetpackSettings,
 	localeGuess,

@@ -152,10 +152,6 @@ export class CreditCardPaymentBox extends React.Component {
 					</div>
 				</div>
 
-				<CartCoupon cart={ cart } />
-
-				<CartToggle />
-
 				{ showPaymentChatButton && (
 					<PaymentChatButton
 						paymentType="credits"
@@ -188,22 +184,26 @@ export class CreditCardPaymentBox extends React.Component {
 		const { cart, cards, countriesList, initialCard, transaction } = this.props;
 
 		return (
-			<form autoComplete="off" onSubmit={ this.submit }>
-				<CreditCardSelector
-					cards={ cards }
-					countriesList={ countriesList }
-					initialCard={ initialCard }
-					transaction={ transaction }
-				/>
+			<React.Fragment>
+				<form autoComplete="off" onSubmit={ this.submit }>
+					<CreditCardSelector
+						cards={ cards }
+						countriesList={ countriesList }
+						initialCard={ initialCard }
+						transaction={ transaction }
+					/>
 
-				{ this.props.children }
+					{ this.props.children }
 
-				<TermsOfService
-					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
-				/>
+					<TermsOfService
+						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
+					/>
 
-				{ this.paymentBoxActions() }
-			</form>
+					{ this.paymentBoxActions() }
+				</form>
+				<CartCoupon cart={ cart } />
+				<CartToggle />
+			</React.Fragment>
 		);
 	};
 }

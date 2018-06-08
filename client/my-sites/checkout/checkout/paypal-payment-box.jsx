@@ -145,67 +145,68 @@ export class PaypalPaymentBox extends React.Component {
 			paymentButtonClasses = 'payment-box__payment-buttons';
 
 		return (
-			<form onSubmit={ this.redirectToPayPal }>
-				<div className="checkout__payment-box-sections">
-					<div className="checkout__payment-box-section">
-						<PaymentCountrySelect
-							additionalClasses="checkout-field"
-							name="country"
-							label={ this.props.translate( 'Country', { textOnly: true } ) }
-							countriesList={ this.props.countriesList }
-							onCountrySelected={ this.updateLocalStateWithFieldValue }
-							disabled={ this.state.formDisabled }
-							eventFormName="Checkout Form"
-						/>
-						<Input
-							additionalClasses="checkout-field"
-							name="postal-code"
-							label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
-							onChange={ this.handleChange }
-							disabled={ this.state.formDisabled }
-							eventFormName="Checkout Form"
-						/>
-					</div>
-				</div>
-
-				{ this.props.children }
-
-				<TermsOfService
-					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
-						this.props.cart
-					) }
-				/>
-
-				<div className="payment-box-actions">
-					<div className={ paymentButtonClasses }>
-						<span className="checkout__pay-button">
-							<button
-								type="submit"
-								className="button is-primary button-pay checkout__button"
+			<React.Fragment>
+				<form onSubmit={ this.redirectToPayPal }>
+					<div className="checkout__payment-box-sections">
+						<div className="checkout__payment-box-section">
+							<PaymentCountrySelect
+								additionalClasses="checkout-field"
+								name="country"
+								label={ this.props.translate( 'Country', { textOnly: true } ) }
+								countriesList={ this.props.countriesList }
+								onCountrySelected={ this.updateLocalStateWithFieldValue }
 								disabled={ this.state.formDisabled }
-							>
-								{ this.renderButtonText() }
-							</button>
-							<SubscriptionText cart={ this.props.cart } />
-						</span>
-
-						<div className="checkout__secure-payment">
-							<div className="checkout__secure-payment-content">
-								<Gridicon icon="lock" />
-								{ this.props.translate( 'Secure Payment' ) }
-							</div>
+								eventFormName="Checkout Form"
+							/>
+							<Input
+								additionalClasses="checkout-field"
+								name="postal-code"
+								label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
+								onChange={ this.handleChange }
+								disabled={ this.state.formDisabled }
+								eventFormName="Checkout Form"
+							/>
 						</div>
-
-						{ showPaymentChatButton && (
-							<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
-						) }
-
-						<CartCoupon cart={ this.props.cart } />
-
-						<CartToggle />
 					</div>
-				</div>
-			</form>
+
+					{ this.props.children }
+
+					<TermsOfService
+						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
+							this.props.cart
+						) }
+					/>
+
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<div className="payment-box-actions">
+						<div className={ paymentButtonClasses }>
+							<span className="checkout__pay-button">
+								<button
+									type="submit"
+									className="button is-primary button-pay checkout__button"
+									disabled={ this.state.formDisabled }
+								>
+									{ this.renderButtonText() }
+								</button>
+								<SubscriptionText cart={ this.props.cart } />
+							</span>
+
+							<div className="checkout__secure-payment">
+								<div className="checkout__secure-payment-content">
+									<Gridicon icon="lock" />
+									{ this.props.translate( 'Secure Payment' ) }
+								</div>
+							</div>
+
+							{ showPaymentChatButton && (
+								<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
+							) }
+						</div>
+					</div>
+				</form>
+				<CartCoupon cart={ this.props.cart } />
+				<CartToggle />
+			</React.Fragment>
 		);
 	};
 }

@@ -33,48 +33,51 @@ export class CreditsPaymentBox extends React.Component {
 		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
-			<form onSubmit={ this.props.onSubmit }>
-				<div className="payment-box-section">
-					<WordPressLogo size={ 52 } />
-					<div className="checkout__payment-box-section-content">
-						<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
+			<React.Fragment>
+				<form onSubmit={ this.props.onSubmit }>
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<div className="payment-box-section">
+						<WordPressLogo size={ 52 } />
+						<div className="checkout__payment-box-section-content">
+							<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
 
-						<span>
-							{ this.props.translate(
-								'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
-								{
-									args: {
-										credits: cart.credits,
-										currency: cart.currency,
-									},
-									components: {
-										strong: <strong />,
-									},
-								}
-							) }
-						</span>
+							<span>
+								{ this.props.translate(
+									'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
+									{
+										args: {
+											credits: cart.credits,
+											currency: cart.currency,
+										},
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</span>
+						</div>
 					</div>
-				</div>
 
-				{ this.props.children }
+					{ this.props.children }
 
-				<TermsOfService />
+					<TermsOfService />
 
-				<div className="payment-box-actions">
-					<PayButton cart={ this.props.cart } transactionStep={ transactionStep } />
-					{ showPaymentChatButton && (
-						<PaymentChatButton
-							paymentType="credits"
-							cart={ cart }
-							transactionStep={ transactionStep }
-						/>
-					) }
-				</div>
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<div className="payment-box-actions">
+						<PayButton cart={ this.props.cart } transactionStep={ transactionStep } />
+						{ showPaymentChatButton && (
+							<PaymentChatButton
+								paymentType="credits"
+								cart={ cart }
+								transactionStep={ transactionStep }
+							/>
+						) }
+					</div>
+				</form>
 
 				<CartCoupon cart={ cart } />
-
 				<CartToggle />
-			</form>
+			</React.Fragment>
 		);
 	};
 
