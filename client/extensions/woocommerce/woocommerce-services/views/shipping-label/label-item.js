@@ -38,8 +38,7 @@ class LabelItem extends Component {
 			return null;
 		}
 
-		const openDialog = e => {
-			e.preventDefault();
+		const openDialog = () => {
 			this.props.openRefundDialog( orderId, siteId, label.labelId );
 		};
 
@@ -62,8 +61,7 @@ class LabelItem extends Component {
 
 		const { orderId, siteId, translate } = this.props;
 
-		const openDialog = e => {
-			e.preventDefault();
+		const openDialog = () => {
 			this.props.openReprintDialog( orderId, siteId, label.labelId );
 		};
 
@@ -77,8 +75,7 @@ class LabelItem extends Component {
 	renderLabelDetails = label => {
 		const { orderId, siteId, translate } = this.props;
 
-		const openDialog = e => {
-			e.preventDefault();
+		const openDialog = () => {
 			this.props.openDetailsDialog( orderId, siteId, label.labelId );
 		};
 
