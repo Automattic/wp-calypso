@@ -80,10 +80,10 @@ class DomainConnectMapping extends React.Component {
 
 		let message;
 		if ( selectedDomain.pointsToWpcom ) {
-			message = translate( 'Your domain is already configured to work with WordPress.com.' );
+			message = translate( 'Success! Your domain is configured to work with WordPress.com.' );
 		} else {
 			message = translate(
-				'Your domain is now configured to work with WordPress.com. ' +
+				'Success! Your domain is configured to work with WordPress.com. ' +
 					'Please note that there may be a delay before the new settings ' +
 					'take effect at your domain provider.'
 			);
@@ -93,6 +93,49 @@ class DomainConnectMapping extends React.Component {
 			<Notice status="is-success" icon="checkmark" showDismiss={ false }>
 				{ message }
 			</Notice>
+		);
+	};
+
+	renderActionCard = () => {
+		const { translate } = this.props;
+		const selectedDomain = getSelectedDomain( this.props );
+
+		if ( selectedDomain.pointsToWpcom ) {
+			return;
+		}
+
+		return (
+			<div>
+				<SectionHeader label={ translate( 'Connect Your Domain' ) } />
+				<Card>
+					<div>
+						<p>
+							{ translate(
+								'Your domain provider supports automattically configuring your ' +
+									'domain to use it with WordPress.com.'
+							) }
+						</p>
+						<p>
+							{ translate(
+								'Clicking the button below redirects you to your domain provider ' +
+									'where you may be asked to log in. Once you confirm your ' +
+									'settings and the process is complete, your domain will be ' +
+									'connected to your WordPress.com site and you will be redirected ' +
+									'back to WordPress.com.'
+							) }
+						</p>
+						<Button
+							className="domain-connect-mapping__action-button"
+							onClick={ this.applyDomainConnectMappingTemplate }
+							primary
+							busy={ this.state.submitting }
+							disabled={ this.state.submitting }
+						>
+							{ translate( 'Configure Your Domain Settings' ) }
+						</Button>
+					</div>
+				</Card>
+			</div>
 		);
 	};
 
@@ -113,37 +156,7 @@ class DomainConnectMapping extends React.Component {
 				</Header>
 				{ this.renderErrorNotice() }
 				{ this.renderSuccessNotice() }
-				<div>
-					<SectionHeader label={ translate( 'Connect Your Domain' ) } />
-					<Card>
-						<div>
-							<p>
-								{ translate(
-									'Your domain provider supports automattically configuring your ' +
-										'domain to use it with WordPress.com.'
-								) }
-							</p>
-							<p>
-								{ translate(
-									'Clicking the button below redirects you to your domain provider ' +
-										'where you may be asked to log in. Once you confirm your ' +
-										'settings and the process is complete, your domain will be ' +
-										'connected to your WordPress.com site and you will be redirected ' +
-										'back to WordPress.com.'
-								) }
-							</p>
-							<Button
-								className="domain-connect-mapping__action-button"
-								onClick={ this.applyDomainConnectMappingTemplate }
-								primary
-								busy={ this.state.submitting }
-								disabled={ this.state.submitting }
-							>
-								{ translate( 'Configure Your Domain Settings' ) }
-							</Button>
-						</div>
-					</Card>
-				</div>
+				{ this.renderActionCard() }
 			</Main>
 		);
 	}
