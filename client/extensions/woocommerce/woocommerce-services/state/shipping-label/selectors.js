@@ -14,6 +14,8 @@ import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tr
 import {
 	areSettingsLoaded,
 	areSettingsErrored,
+	getMarkOrdersComplete,
+	getEmailTrackingInfo,
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import {
 	isLoaded as arePackagesLoaded,
@@ -55,12 +57,12 @@ export const getLabels = ( state, orderId, siteId = getSelectedSiteId( state ) )
 
 export const shouldFulfillOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	return shippingLabel && shippingLabel.fulfillOrder;
+	return get( shippingLabel, 'fulfillOrder', getMarkOrdersComplete( state, siteId ) );
 };
 
 export const shouldEmailDetails = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	return shippingLabel && shippingLabel.emailDetails;
+	return get( shippingLabel, 'emailDetails', getEmailTrackingInfo( state, siteId ) );
 };
 
 export const getSelectedPaymentMethod = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
