@@ -3,7 +3,7 @@
 	bottom: 0;
 	width: 100%;
 	padding: 16px;
-	background-color: darken( $gray, 18% );
+	background-color: $gray-dark;
 	color: $white;
 	z-index: z-index( 'root', '.gdpr-banner' );
 
@@ -20,9 +20,12 @@
 		font-size: 16px;
 		padding: 16px 24px;
 	}
+
 	@include breakpoint( ">960px" ) {
 		font-size: 16px;
 		padding: 16px 32px;
+		max-width: 960px;
+		left: calc( 50% - 480px );
 	}
 
 	a {
@@ -69,9 +72,8 @@
 }
 
 .gdpr-banner__text-content {
-	font-size: 12px;
 	line-height: 1.4;
-	max-width: 800px;
+	max-width: 700px;
 	margin-right: auto;
 }
 
