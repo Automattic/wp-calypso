@@ -12,7 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import DetailsDialog from './label-details-modal';
@@ -43,12 +44,9 @@ class LabelItem extends Component {
 		};
 
 		return (
-			<span>
-				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<Button onClick={ openDialog } borderless className="shipping-label__button">
-					{ translate( 'Request refund' ) }
-				</Button>
-			</span>
+			<PopoverMenuItem onClick={ openDialog } icon="refund">
+				{ translate( 'Request refund' ) }
+			</PopoverMenuItem>
 		);
 	};
 
@@ -70,12 +68,9 @@ class LabelItem extends Component {
 		};
 
 		return (
-			<span>
-				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<Button onClick={ openDialog } borderless className="shipping-label__button">
-					{ translate( 'Reprint' ) }
-				</Button>
-			</span>
+			<PopoverMenuItem onClick={ openDialog } icon="print">
+				{ translate( 'Reprint' ) }
+			</PopoverMenuItem>
 		);
 	};
 
@@ -88,41 +83,41 @@ class LabelItem extends Component {
 		};
 
 		return (
-			<span>
-				<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<Button onClick={ openDialog } borderless className="shipping-label__button">
-					{ translate( 'View details' ) }
-				</Button>
-			</span>
+			<PopoverMenuItem onClick={ openDialog } icon="info-outline">
+				{ translate( 'View details' ) }
+			</PopoverMenuItem>
 		);
 	};
 
 	render() {
-		const { label, translate } = this.props;
+		const { siteId, orderId, label, translate } = this.props;
 
 		return (
 			<div key={ label.labelId } className="shipping-label__item">
 				<p className="shipping-label__item-detail">
-					<span>
-						{ translate( 'Label #%(labelIndex)s printed', {
-							args: {
-								labelIndex: label.labelIndex + 1,
-							},
-						} ) }
-					</span>
-					{ label.showDetails && this.renderLabelDetails( label ) }
+					{ translate( 'Label #%(labelIndex)s printed', {
+						args: {
+							labelIndex: label.labelIndex + 1,
+						},
+					} ) }
+
+					<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
+					<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
+					<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
+
+					{ label.showDetails && (
+						<EllipsisMenu position="bottom left">
+							{ this.renderLabelDetails( label ) }
+							{ this.renderRefund( label ) }
+							{ this.renderReprint( label ) }
+						</EllipsisMenu>
+					) }
 				</p>
 				{ label.showDetails && (
 					<p className="shipping-label__item-tracking">
 						{ translate( 'Tracking #: {{trackingLink/}}', {
 							components: { trackingLink: <TrackingLink { ...label } /> },
 						} ) }
-					</p>
-				) }
-				{ label.showDetails && (
-					<p className="shipping-label__item-actions">
-						{ this.renderRefund( label ) }
-						{ this.renderReprint( label ) }
 					</p>
 				) }
 			</div>
