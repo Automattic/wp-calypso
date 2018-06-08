@@ -5,7 +5,7 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -229,20 +229,6 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	renderCard = () => {
-		const { translate } = this.props;
-		const productName = getName( this.props.purchase );
-
-		return (
-			<CompactCard className="remove-purchase__card" onClick={ this.openDialog }>
-				<a href="#">
-					<Gridicon icon="trash" />
-					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
-				</a>
-			</CompactCard>
-		);
-	};
-
 	getChatButton = () => {
 		return (
 			<HappychatButton className="remove-purchase__chat-button" onClick={ this.chatButtonClicked }>
@@ -260,7 +246,8 @@ class RemovePurchase extends Component {
 	};
 
 	renderDomainDialog() {
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
+		const productName = getName( purchase );
 		const buttons = [
 			{
 				action: 'cancel',
@@ -275,7 +262,6 @@ class RemovePurchase extends Component {
 				onClick: this.removePurchase,
 			},
 		];
-		const productName = getName( this.props.purchase );
 
 		if (
 			config.isEnabled( 'upgrades/precancellation-chat' ) &&
@@ -294,24 +280,15 @@ class RemovePurchase extends Component {
 				<FormSectionHeading>
 					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</FormSectionHeading>
-				{ this.renderDomainDialogText() }
+				<p>
+					{ translate(
+						'This will remove %(domain)s from your account. By removing, ' +
+							'you are canceling the domain registration. This may stop ' +
+							'you from using it again, even with another service.',
+						{ args: { domain: productName } }
+					) }
+				</p>
 			</Dialog>
-		);
-	}
-
-	renderDomainDialogText() {
-		const { purchase, translate } = this.props;
-		const productName = getName( purchase );
-
-		return (
-			<p>
-				{ translate(
-					'This will remove %(domain)s from your account. By removing, ' +
-						'you are canceling the domain registration. This may stop ' +
-						'you from using it again, even with another service.',
-					{ args: { domain: productName } }
-				) }
-			</p>
 		);
 	}
 
@@ -477,16 +454,22 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		const purchase = this.props.purchase;
+		const { purchase, translate } = this.props;
+		const productName = getName( purchase );
+
 		if ( ! isRemovable( purchase ) ) {
 			return null;
 		}
 
 		return (
-			<span>
-				{ this.renderCard() }
+			<Fragment>
+				<CompactCard tagName="button" className="remove-purchase__card" onClick={ this.openDialog }>
+					<Gridicon icon="trash" />
+					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
+				</CompactCard>
+
 				{ this.renderDialog( purchase ) }
-			</span>
+			</Fragment>
 		);
 	}
 }
