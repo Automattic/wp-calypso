@@ -1,0 +1,58 @@
+/** @format */
+
+export default {
+	type: 'array',
+	items: {
+		type: 'object',
+		required: [ 'ID', 'blog_id', 'user_id' ],
+		properties: {
+			ID: { type: 'string', pattern: '^\\d+$' },
+			blog_id: { type: 'string', pattern: '^\\d+$' },
+			user_id: { type: 'string', pattern: '^\\d+$' },
+
+			/**
+			 * More expected types
+			 */
+			// active: {},
+			// amount: {},
+			// attached_to_purchase_id: {},
+			// blogname: {},
+			// can_disable_auto_renew: {},
+			// can_explicit_renew: {},
+			// currency_code: {},
+			// currency_symbol: {},
+			// domain: {},
+			// expiry_date: {},
+			// expiry_status: {},
+			// has_private_registration: {},
+			// included_domain: {},
+			// is_cancelable: {},
+			// is_domain_registration: {},
+			// is_refundable: {},
+			// is_renewable: {},
+			// is_renewal: {},
+			// meta: {},
+			// payment_card_id: {},
+			// payment_card_processor: {},
+			// payment_card_type: {},
+			// payment_country_code: {},
+			// payment_country_name: {},
+			// payment_details: {},
+			// payment_expiry: {},
+			// payment_name: {},
+			// payment_type: {},
+			// pending_transfer: {},
+			// product_id: {},
+			// product_name: {},
+			// product_slug: {},
+			// refund_amount: {},
+			// refund_currency_symbol: {},
+			// refund_period_in_days: {},
+			// renew_date: {},
+			// subscribed_date: {},
+			// subscription_status: {},
+			// tag_line: {},
+			// user_id: {},
+		},
+	},
+};

@@ -1,8 +1,12 @@
 /** @format */
-// External dependencies
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import {
 	PRIVACY_PROTECTION_CANCEL,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
@@ -12,8 +16,6 @@ import {
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH,
-	PURCHASES_USER_FETCH_COMPLETED,
-	PURCHASES_USER_FETCH_FAILED,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
 } from 'state/action-types';
@@ -87,30 +89,7 @@ export const fetchSitePurchases = siteId => dispatch => {
 		} );
 };
 
-export const fetchUserPurchases = userId => dispatch => {
-	dispatch( {
-		type: PURCHASES_USER_FETCH,
-	} );
-
-	return new Promise( ( resolve, reject ) => {
-		wpcom.me().purchases( ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		} );
-	} )
-		.then( data => {
-			dispatch( {
-				type: PURCHASES_USER_FETCH_COMPLETED,
-				purchases: data,
-				userId,
-			} );
-		} )
-		.catch( () => {
-			dispatch( {
-				type: PURCHASES_USER_FETCH_FAILED,
-				error: PURCHASES_FETCH_ERROR_MESSAGE,
-			} );
-		} );
-};
+export const fetchUserPurchases = userId => ( { type: PURCHASES_USER_FETCH, userId } );
 
 export const removePurchase = ( purchaseId, userId ) => dispatch => {
 	return new Promise( ( resolve, reject ) => {
