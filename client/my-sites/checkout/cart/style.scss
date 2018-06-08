@@ -6,6 +6,31 @@
 	}
 }
 
+@mixin cart-coupon-form-visible-by-default() {
+	form {
+		display: block;
+	}
+
+	.cart__toggle-link {
+		display: none;
+	}
+}
+@mixin cart-coupon-form-visible-after-link-click() {
+	form {
+		display: none;
+	}
+
+	.cart__toggle-link {
+		display: block;
+	}
+
+	&.is-unfolded {
+		form {
+			display: block;
+		}
+	}
+}
+
 .cart-body {
 	padding: 15px;
 
@@ -122,6 +147,14 @@
 	.cart__coupon {
 		font-size: 11px;
 
+		&.is-test-more-prominent {
+			@include cart-coupon-form-visible-by-default();
+		}
+
+		&.is-test-control {
+			@include cart-coupon-form-visible-after-link-click();
+		}
+
 		@include breakpoint( "<660px" ) {
 			display: none;
 		}
@@ -133,7 +166,6 @@
 
 		form {
 			width: 100%;
-			display: block;
 			margin-top: 15px;
 
 			input[type=text] {

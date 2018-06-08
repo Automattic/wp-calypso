@@ -255,6 +255,8 @@
 	}
 
 	.cart__coupon {
+		@include cart-coupon-form-visible-by-default();
+
 		cursor: pointer;
 		display: none;
 		font-size: 14px;

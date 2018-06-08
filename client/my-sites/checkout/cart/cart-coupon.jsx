@@ -7,6 +7,8 @@
 import React from 'react';
 import { isEmpty, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
+import { getABTestVariation } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -67,7 +69,23 @@ export class CartCoupon extends React.Component {
 			return null;
 		}
 
-		return <div className="cart__coupon">{ this.renderCouponForm() }</div>;
+		const isProminent = 'prominent' === getABTestVariation( 'couponCodeMoreProminent' );
+		const className = classNames(
+			'cart__coupon',
+			isProminent ? 'is-test-more-prominent' : 'is-test-control',
+			{
+				'is-unfolded': this.state.isCouponFormShowing,
+			}
+		);
+		return (
+			<div className={ className }>
+				<button onClick={ this.toggleCouponDetails } className="button is-link cart__toggle-link">
+					{ this.props.translate( 'Have a coupon code?' ) }
+				</button>
+
+				{ this.renderCouponForm() }
+			</div>
+		);
 	}
 
 	renderCouponForm = () => {
@@ -90,6 +108,18 @@ export class CartCoupon extends React.Component {
 				</Button>
 			</form>
 		);
+	};
+
+	toggleCouponDetails = event => {
+		event.preventDefault();
+
+		this.setState( { isCouponFormShowing: ! this.state.isCouponFormShowing } );
+
+		if ( this.state.isCouponFormShowing ) {
+			analytics.ga.recordEvent( 'Upgrades', 'Clicked Hide Coupon Code Link' );
+		} else {
+			analytics.ga.recordEvent( 'Upgrades', 'Clicked Show Coupon Code Link' );
+		}
 	};
 
 	get isSubmitting() {

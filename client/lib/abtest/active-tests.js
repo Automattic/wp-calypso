@@ -1,5 +1,15 @@
 /** @format */
 export default {
+	couponCodeMoreProminent: {
+		datestamp: '20180701',
+		variations: {
+			prominent: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 	multiyearSubscriptions: {
 		datestamp: '20180601',
 		variations: {
