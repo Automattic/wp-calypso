@@ -15,6 +15,7 @@ export {
 	addLocaleToWpcomUrl,
 	getForumUrl,
 	getLanguage,
+	getLanguageSlugs,
 	getLocaleFromPath,
 	getSupportSiteLocale,
 	isDefaultLocale,
