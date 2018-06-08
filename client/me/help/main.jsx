@@ -3,12 +3,11 @@
 /**
  * External dependencies
  */
-
-import { some } from 'lodash';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import debugModule from 'debug';
+import React from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
