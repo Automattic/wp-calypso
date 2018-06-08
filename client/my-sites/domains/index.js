@@ -113,6 +113,14 @@ export default function() {
 	);
 
 	page(
+		paths.domainManagementDomainConnectMapping( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementDomainConnectMapping,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		paths.domainManagementDns( ':site', ':domain' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementDns,

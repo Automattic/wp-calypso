@@ -57,6 +57,7 @@ describe( 'assembler', () => {
 			registrar: undefined,
 			registrationMoment: undefined,
 			subscriptionId: undefined,
+			supportsDomainConnect: undefined,
 			tldMaintenanceEndTime: undefined,
 			transferLockOnWhoisUpdateOptional: undefined,
 			transferStatus: null,

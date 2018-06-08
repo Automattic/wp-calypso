@@ -48,6 +48,7 @@ export function createDomainObjects( dataTransferObject ) {
 			registrar: domain.registrar,
 			registrationMoment: domain.registration_date && i18n.moment( domain.registration_date ),
 			subscriptionId: domain.subscription_id,
+			supportsDomainConnect: domain.supports_domain_connect,
 			tldMaintenanceEndTime: domain.tld_maintenance_end_time,
 			transferLockOnWhoisUpdateOptional: domain.transfer_lock_on_whois_update_optional,
 			type: getDomainType( domain ),

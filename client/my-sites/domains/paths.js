@@ -140,3 +140,7 @@ export function getSectionName( pathname ) {
 
 	return matches ? matches[ 1 ] : null;
 }
+
+export function domainManagementDomainConnectMapping( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'domain-connect-mapping' );
+}
