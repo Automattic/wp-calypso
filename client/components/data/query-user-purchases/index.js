@@ -12,7 +12,7 @@ import { PureComponent } from 'react';
  */
 import { fetchUserPurchases } from 'state/purchases/actions';
 
-class QueryUserPurchases extends PureComponent {
+export class QueryUserPurchases extends PureComponent {
 	static propTypes = {
 		fetchUserPurchases: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
