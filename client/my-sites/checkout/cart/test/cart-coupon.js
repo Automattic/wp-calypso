@@ -14,10 +14,11 @@ import React from 'react';
  * Internal dependencies
  */
 import { CartCoupon } from '../cart-coupon';
-import { applyCoupon } from 'lib/upgrades/actions';
+import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
 
 jest.mock( 'lib/upgrades/actions', () => ( {
 	applyCoupon: jest.fn( () => {} ),
+	removeCoupon: jest.fn( () => {} ),
 } ) );
 
 jest.mock( 'lib/analytics', () => ( {
@@ -119,7 +120,6 @@ describe( 'cart-coupon', () => {
 			expect( applyCoupon.mock.calls[ 0 ][ 0 ] ).toBe( 'CODE15' );
 		} );
 
-
 		test( 'Should disallow submission when form is currently being submitted', () => {
 			const component = shallow(
 				<CartCoupon
@@ -176,10 +176,10 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			applyCoupon.mockReset();
+			removeCoupon.mockReset();
 			component.find( '.cart__remove-link' ).simulate( 'click', event );
-			expect( applyCoupon.mock.calls.length ).toBe( 1 );
-			expect( applyCoupon.mock.calls[ 0 ][ 0 ] ).toBe( '' );
+			expect( removeCoupon.mock.calls.length ).toBe( 1 );
+			expect( removeCoupon.mock.calls[ 0 ][ 0 ] ).toBe( undefined );
 		} );
 
 		test( 'Should not display coupon form if cart total is 0', () => {

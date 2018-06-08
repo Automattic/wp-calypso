@@ -3,7 +3,8 @@
 /**
  * External dependencies
  */
-
+import url from 'url';
+import cookie from 'cookie';
 import { extend, isArray } from 'lodash';
 import update from 'immutability-helper';
 import i18n from 'i18n-calypso';
@@ -32,11 +33,52 @@ function emptyCart( siteId, attributes ) {
 	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
 
+function getCoupon( from = [ 'query', 'cookie' ] ) {
+	let coupon = '';
+
+	if ( typeof document === 'undefined' ) {
+		return '';
+	}
+
+	const queryCoupon = url.parse( document.URL, true ).query.coupon;
+	const cookieCoupon = cookie.parse( document.cookie ).coupon;
+
+	if ( from.indexOf( 'query' ) !== -1 && queryCoupon ) {
+		coupon = queryCoupon;
+	} else if ( from.indexOf( 'cookie' ) !== -1 && cookieCoupon ) {
+		coupon = cookieCoupon;
+	}
+
+	if ( typeof coupon === 'string' && /^[a-z0-9._\-]+$/i.test( coupon ) ) {
+		return coupon;
+	}
+
+	return '';
+}
+
 function applyCoupon( coupon ) {
 	return function( cart ) {
 		return update( cart, {
 			coupon: { $set: coupon },
 			is_coupon_applied: { $set: false },
+			$unset: [ 'is_coupon_removed' ],
+		} );
+	};
+}
+
+function removeCoupon() {
+	return function( cart ) {
+		if ( typeof document !== 'undefined' ) {
+			document.cookie = cookie.serialize( 'coupon', '', {
+				path: '/',
+				maxAge: -1,
+			} );
+		}
+
+		return update( cart, {
+			coupon: { $set: '' },
+			is_coupon_applied: { $set: false },
+			$merge: { is_coupon_removed: true },
 		} );
 	};
 }
@@ -236,7 +278,9 @@ function getLocationOrigin( l ) {
 }
 
 export {
+	getCoupon,
 	applyCoupon,
+	removeCoupon,
 	canRemoveFromCart,
 	cartItems,
 	emptyCart,
@@ -253,7 +297,9 @@ export {
 };
 
 export default {
+	getCoupon,
 	applyCoupon,
+	removeCoupon,
 	cartItems,
 	emptyCart,
 	isPaymentMethodEnabled,

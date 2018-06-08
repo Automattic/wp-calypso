@@ -52,6 +52,7 @@ function preprocessCartForServer( cart ) {
 		'products',
 		'coupon',
 		'is_coupon_applied',
+		'is_coupon_removed',
 		'currency',
 		'temporary',
 		'extra'
