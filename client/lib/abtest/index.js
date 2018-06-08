@@ -17,7 +17,7 @@ import analytics from 'lib/analytics';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
-import { getLanguageSlugs } from 'lib/i18n-utils/utils';
+import { getLanguageSlugs } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:abtests' );
 const user = userFactory();

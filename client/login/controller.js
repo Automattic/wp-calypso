@@ -17,7 +17,7 @@ import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { getLanguageSlugs } from 'lib/i18n-utils/utils';
+import { getLanguageSlugs } from 'lib/i18n-utils';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 
 const enhanceContextWithLogin = context => {
