@@ -255,7 +255,7 @@
 	}
 
 	.cart__coupon {
-		@include cart-coupon-form-visible-by-default();
+		@include cart-coupon-form-visible-after-link-click();
 
 		cursor: pointer;
 		display: none;

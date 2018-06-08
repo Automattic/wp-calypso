@@ -89,6 +89,11 @@ export class CartCoupon extends React.Component {
 	}
 
 	renderCouponForm = () => {
+		const isProminent = 'prominent' === getABTestVariation( 'couponCodeMoreProminent' );
+		const props = {};
+		if ( ! isProminent ) {
+			props.autoFocus = true;
+		}
 		return (
 			<form onSubmit={ this.applyCoupon } className={ 'cart__form' }>
 				<input
@@ -97,7 +102,7 @@ export class CartCoupon extends React.Component {
 					placeholder={ this.props.translate( 'Enter Coupon Code', { textOnly: true } ) }
 					onChange={ this.handleCouponInputChange }
 					value={ this.state.couponInputValue }
-					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+					{ ...props }
 				/>
 				<Button
 					type="submit"

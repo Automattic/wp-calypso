@@ -9,10 +9,13 @@
 @mixin cart-coupon-form-visible-by-default() {
 	form {
 		display: block;
+		margin-top: 5px;
 	}
 
 	.cart__toggle-link {
-		display: none;
+		display: block;
+		color: #000;
+		margin-top: 10px;
 	}
 }
 @mixin cart-coupon-form-visible-after-link-click() {
@@ -21,7 +24,7 @@
 	}
 
 	.cart__toggle-link {
-		display: block;
+		display: inline-block;
 	}
 
 	&.is-unfolded {
