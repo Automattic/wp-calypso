@@ -4,8 +4,7 @@
 var React = require( 'react' ),
 	setupEnzymeAdapter = require( 'enzyme-adapter-react-helper' ),
 	expect = require( 'chai' ).expect,
-	shallow = require( 'enzyme' ).shallow,
-	useFakeDom = require( 'react-test-env' ).useFakeDom;
+	shallow = require( 'enzyme' ).shallow;
 
 /**
  * Internal dependencies
@@ -14,7 +13,6 @@ var localize = require( '..' ).localize,
 	emptyRender = function() { return null; };
 
 describe( 'localize()', function() {
-	useFakeDom();
 	setupEnzymeAdapter();
 
 	it( 'should be named using the variable name of the composed component', function() {

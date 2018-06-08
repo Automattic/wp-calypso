@@ -3,8 +3,7 @@
  */
 var assert = require( 'assert' ),
 	React = require( 'react' ),
-	ReactDomServer = require( 'react-dom/server'),
-	useFakeDom = require( 'react-test-env' ).useFakeDom;
+	ReactDomServer = require( 'react-dom/server');
 
 /**
  * Internal dependencies
@@ -26,8 +25,6 @@ function stripReactAttributes( string ) {
 }
 
 describe( 'I18n', function() {
-	useFakeDom();
-
 	beforeEach( function() {
 		i18n.setLocale( data.locale );
 	} );

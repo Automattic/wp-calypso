@@ -5,8 +5,7 @@ var React = require( 'react' ),
 	createReactClass = require( 'create-react-class' ),
 	expect = require( 'chai' ).expect,
 	shallow = require( 'enzyme' ).shallow,
-	render = require( 'enzyme' ).render,
-	useFakeDom = require( 'react-test-env' ).useFakeDom;
+	render = require( 'enzyme' ).render;
 
 /**
  * Internal dependencies
@@ -16,8 +15,6 @@ var i18n = require( '..' ),
 	emptyRender = function() { return null; };
 
 describe( 'mixin()', function() {
-	useFakeDom();
-
 	it( 'should add its properties to a React Component', function() {
 		var mixinComponent = createReactClass( {
 			mixins: [ i18nMixin ],
