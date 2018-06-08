@@ -37,7 +37,7 @@ class CancelPurchaseForm extends React.Component {
 		defaultContent: PropTypes.node.isRequired,
 		onInputChange: PropTypes.func.isRequired,
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		selectedSite: PropTypes.shape( { slug: PropTypes.string.isRequired } ),
 		showSurvey: PropTypes.bool.isRequired,
 		surveyStep: PropTypes.string.isRequired,
 		translate: PropTypes.func,
@@ -267,24 +267,29 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	openConcierge = () => {
+		if ( ! this.props.selectedSite ) {
+			return;
+		}
 		this.props.clickConcierge();
 		return window.open( `/me/concierge/${ this.props.selectedSite.slug }/book` );
 	};
 
 	renderConciergeOffer = () => {
-		const { translate } = this.props;
+		const { selectedSite, translate } = this.props;
 		return (
-			<FormFieldset>
-				<p>
-					{ translate(
-						'Schedule a 30 minute orientation with one of our Happiness Engineers. ' +
-							"We'll help you to setup your site and answer any questions you have!"
-					) }
-				</p>
-				<Button onClick={ this.openConcierge } primary>
-					{ translate( 'Schedule a session' ) }
-				</Button>
-			</FormFieldset>
+			selectedSite && (
+				<FormFieldset>
+					<p>
+						{ translate(
+							'Schedule a 30 minute orientation with one of our Happiness Engineers. ' +
+								"We'll help you to setup your site and answer any questions you have!"
+						) }
+					</p>
+					<Button onClick={ this.openConcierge } primary>
+						{ translate( 'Schedule a session' ) }
+					</Button>
+				</FormFieldset>
+			)
 		);
 	};
 
