@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import url from 'url';
 import { forEach } from 'lodash';
 
 /**
@@ -13,6 +13,26 @@ import wpcom from 'lib/wp';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import { cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
+
+function preprocessCartForServer( cart ) {
+	const newCart = { ...cart };
+
+	if (
+		! newCart.coupon &&
+		! newCart.is_coupon_applied &&
+		! newCart.is_coupon_removed &&
+		typeof document !== 'undefined'
+	) {
+		const coupon = url.parse( document.URL, true ).query.coupon;
+
+		if ( coupon ) {
+			newCart.coupon = coupon;
+			newCart.is_coupon_applied = false;
+		}
+	}
+
+	return newCart;
+}
 
 function addProductsToCart( cart, newCartItems ) {
 	forEach( newCartItems, function( cartItem ) {
@@ -36,6 +56,7 @@ export default {
 		};
 
 		newCart = addProductsToCart( newCart, newCartItems );
+		newCart = preprocessCartForServer( newCart );
 
 		wpcom.undocumented().setCart( cartKey, newCart, function( postError ) {
 			callback( postError );
@@ -51,7 +72,8 @@ export default {
 				newCartItems = [ newCartItems ];
 			}
 
-			const newCart = addProductsToCart( data, newCartItems );
+			let newCart = addProductsToCart( data, newCartItems );
+			newCart = preprocessCartForServer( newCart );
 
 			wpcom.undocumented().setCart( cartKey, newCart, callback );
 		} );

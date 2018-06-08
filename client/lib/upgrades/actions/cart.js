@@ -116,3 +116,9 @@ export function applyCoupon( coupon ) {
 		coupon,
 	} );
 }
+
+export function removeCoupon() {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.CART_COUPON_REMOVE,
+	} );
+}

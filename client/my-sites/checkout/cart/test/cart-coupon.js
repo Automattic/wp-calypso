@@ -14,10 +14,11 @@ import React from 'react';
  * Internal dependencies
  */
 import { CartCoupon } from '../cart-coupon';
-import { applyCoupon } from 'lib/upgrades/actions';
+import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
 
 jest.mock( 'lib/upgrades/actions', () => ( {
 	applyCoupon: jest.fn( () => {} ),
+	removeCoupon: jest.fn( () => {} ),
 } ) );
 
 jest.mock( 'lib/analytics', () => ( {
@@ -30,6 +31,8 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 
 const props = {
+	applyCoupon,
+	removeCoupon,
 	translate: identity,
 };
 
@@ -43,6 +46,11 @@ describe( 'cart-coupon', () => {
 		is_coupon_applied: false,
 		coupon: '',
 	};
+
+	beforeEach( function() {
+		applyCoupon.mockReset();
+		removeCoupon.mockReset();
+	} );
 
 	describe( 'General behavior', () => {
 		test( 'Should not blow up', () => {
@@ -109,7 +117,6 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			applyCoupon.mockReset();
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
 			component.setState( {
 				couponInputValue: 'CODE15',
@@ -130,7 +137,6 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			applyCoupon.mockReset();
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
 			component.setState( {
 				couponInputValue: 'CODE15',
@@ -175,10 +181,9 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			applyCoupon.mockReset();
 			component.find( '.cart__remove-link' ).simulate( 'click', event );
-			expect( applyCoupon.mock.calls.length ).toBe( 1 );
-			expect( applyCoupon.mock.calls[ 0 ][ 0 ] ).toBe( '' );
+			expect( removeCoupon.mock.calls.length ).toBe( 1 );
+			expect( removeCoupon.mock.calls[ 0 ][ 0 ] ).toBeUndefined();
 		} );
 
 		test( 'Should not display coupon form if cart total is 0', () => {
@@ -191,7 +196,6 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			applyCoupon.mockReset();
 			expect( component.children().length ).toBe( 0 );
 			expect( component.find( 'cart__coupon' ).length ).toBe( 0 );
 		} );

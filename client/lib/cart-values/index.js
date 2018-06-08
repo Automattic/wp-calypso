@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { extend, isArray } from 'lodash';
 import update from 'immutability-helper';
 import i18n from 'i18n-calypso';
@@ -37,6 +36,17 @@ function applyCoupon( coupon ) {
 		return update( cart, {
 			coupon: { $set: coupon },
 			is_coupon_applied: { $set: false },
+			$unset: [ 'is_coupon_removed' ],
+		} );
+	};
+}
+
+function removeCoupon() {
+	return function( cart ) {
+		return update( cart, {
+			coupon: { $set: '' },
+			is_coupon_applied: { $set: false },
+			$merge: { is_coupon_removed: true },
 		} );
 	};
 }
@@ -237,6 +247,7 @@ function getLocationOrigin( l ) {
 
 export {
 	applyCoupon,
+	removeCoupon,
 	canRemoveFromCart,
 	cartItems,
 	emptyCart,
@@ -254,6 +265,7 @@ export {
 
 export default {
 	applyCoupon,
+	removeCoupon,
 	cartItems,
 	emptyCart,
 	isPaymentMethodEnabled,

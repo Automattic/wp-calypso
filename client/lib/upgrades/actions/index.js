@@ -13,6 +13,7 @@ export {
 	addItems,
 	addPrivacyToAllDomains,
 	applyCoupon,
+	removeCoupon,
 	closeCartPopup,
 	disableCart,
 	openCartPopup,

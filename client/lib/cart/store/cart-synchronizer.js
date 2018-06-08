@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import url from 'url';
 import { assign, flowRight, pick } from 'lodash';
 import i18n from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
@@ -52,10 +52,25 @@ function preprocessCartForServer( cart ) {
 		'products',
 		'coupon',
 		'is_coupon_applied',
+		'is_coupon_removed',
 		'currency',
 		'temporary',
 		'extra'
 	);
+
+	if (
+		! newCart.coupon &&
+		! newCart.is_coupon_applied &&
+		! newCart.is_coupon_removed &&
+		typeof document !== 'undefined'
+	) {
+		const coupon = url.parse( document.URL, true ).query.coupon;
+
+		if ( coupon ) {
+			newCart.coupon = coupon;
+			newCart.is_coupon_applied = false;
+		}
+	}
 
 	const newCartItems = cart.products.map( function( cartItem ) {
 		return pick( cartItem, 'product_id', 'meta', 'free_trial', 'volume', 'extra' );
