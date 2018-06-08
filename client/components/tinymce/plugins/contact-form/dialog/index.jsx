@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,7 +91,7 @@ class ContactFormDialog extends React.Component {
 		const {
 			activeTab,
 			currentUser: { email },
-			post: { title, type: postType } = {},
+			post,
 			contactForm: { to, subject, fields },
 			showDialog,
 			onChangeTabs,
@@ -100,6 +101,9 @@ class ContactFormDialog extends React.Component {
 			onFieldRemove,
 			onSettingsUpdate,
 		} = this.props;
+
+		const title = get( post, 'title', null );
+		const postType = get( post, 'type', null );
 
 		const content =
 			activeTab === 'fields' ? (
