@@ -2,14 +2,39 @@
 	position: fixed;
 	bottom: 0;
 	width: 100%;
-	margin-bottom: 0;
-	background-color: $blue-light;
-	color: $blue-dark;
+	padding: 16px;
+	background-color: $gray-dark;
+	color: $white;
 	z-index: z-index( 'root', '.gdpr-banner' );
 
 	animation-duration: 0.5s;
 	animation-name: gdpr-banner__slideup;
 	animation-timing-function: ease-in-out;
+
+	&.is-compact {
+		margin-bottom: 0;
+	}
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		font-size: 16px;
+		padding: 16px 24px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		font-size: 16px;
+		padding: 16px 32px;
+		max-width: 960px;
+		left: calc( 50% - 480px );
+	}
+
+	a {
+		color: $white;
+		text-decoration: underline;
+		&:hover {
+			text-decoration: none;
+		}
+	}
 }
 
 @keyframes gdpr-banner__slideup {
@@ -47,18 +72,19 @@
 }
 
 .gdpr-banner__text-content {
-	font-size: 12px;
 	line-height: 1.4;
-	max-width: 50em;
-	margin: 0 auto;
-	@include breakpoint( ">660px" ) {
-		font-size: 16px;
-	}
+	max-width: 700px;
+	margin-right: auto;
 }
 
 .gdpr-banner__buttons {
 	margin-top: 14px;
 	text-align: center;
+	@include breakpoint( ">660px" ) {
+		flex: 0 0 auto;
+		margin: 0 0 0 16px;
+		text-align: inherit;
+	}
 }
 
 .gdpr-banner__acknowledge-button {
