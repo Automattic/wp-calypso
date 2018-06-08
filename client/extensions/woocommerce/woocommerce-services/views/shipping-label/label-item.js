@@ -95,8 +95,9 @@ class LabelItem extends Component {
 		return (
 			<div key={ label.labelId } className="shipping-label__item">
 				<p className="shipping-label__item-detail">
-					{ translate( 'Label #%(labelIndex)s printed', {
+					{ translate( '%(service)s label (#%(labelIndex)d) printed', {
 						args: {
+							service: label.serviceName,
 							labelIndex: label.labelIndex + 1,
 						},
 					} ) }
