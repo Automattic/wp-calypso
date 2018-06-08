@@ -33,6 +33,8 @@ import {
 	areSettingsFetching,
 	areSettingsLoaded,
 	getEmailReceipts,
+	getMarkOrdersComplete,
+	getEmailTrackingInfo,
 	getLabelSettingsStoreOptions,
 	getMasterUserInfo,
 	getPaperSize,
@@ -324,6 +326,45 @@ class ShippingLabels extends Component {
 		);
 	};
 
+	renderFulfillmentSection = () => {
+		const { translate, canEditSettings, markOrdersComplete, emailTrackingInfo } = this.props;
+
+		const onMarkOrdersCompleteChange = () =>
+			this.props.setValue( 'mark_orders_complete', ! markOrdersComplete );
+		const onEmailTrackingInfoChange = () =>
+			this.props.setValue( 'email_tracking_info', ! emailTrackingInfo );
+
+		return (
+			<FormFieldSet>
+				<FormLabel className="label-settings__cards-label">
+					{ translate( 'Order Fulfillment' ) }
+				</FormLabel>
+				<FormLabel>
+					<FormCheckbox
+						checked={ markOrdersComplete }
+						onChange={ onMarkOrdersCompleteChange }
+						disabled={ ! canEditSettings }
+					/>
+					<span className="label-settings__credit-card-description">
+						{ translate( 'Mark orders completed when purchasing shipping labels' ) }
+					</span>
+				</FormLabel>
+				<FormLabel>
+					<FormCheckbox
+						checked={ emailTrackingInfo }
+						onChange={ onEmailTrackingInfoChange }
+						disabled={ ! canEditSettings }
+					/>
+					<span className="label-settings__credit-card-description">
+						{ translate(
+							'Include tracking information in Completed Order email sent to customer'
+						) }
+					</span>
+				</FormLabel>
+			</FormFieldSet>
+		);
+	};
+
 	renderContent = () => {
 		const { canEditSettings, isLoading, paperSize, storeOptions, translate } = this.props;
 
@@ -358,6 +399,7 @@ class ShippingLabels extends Component {
 					{ this.renderPaymentsSection() }
 				</FormFieldSet>
 				{ this.renderEmailReceiptsSection() }
+				{ this.renderFulfillmentSection() }
 			</div>
 		);
 	};
@@ -387,6 +429,8 @@ export default connect(
 			canEditSettings:
 				userCanManagePayments( state, siteId ) || userCanEditSettings( state, siteId ),
 			emailReceipts: getEmailReceipts( state, siteId ),
+			markOrdersComplete: getMarkOrdersComplete( state, siteId ),
+			emailTrackingInfo: getEmailTrackingInfo( state, siteId ),
 			...getMasterUserInfo( state, siteId ),
 		};
 	},
