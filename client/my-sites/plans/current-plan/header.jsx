@@ -31,7 +31,7 @@ export class CurrentPlanHeader extends Component {
 	};
 
 	renderPurchaseInfo() {
-		const { currentPlan, selectedSite, isExpiring, translate } = this.props;
+		const { currentPlan, isExpiring, translate } = this.props;
 
 		if ( ! currentPlan || this.isJetpackFreePlan() ) {
 			return null;
@@ -55,7 +55,7 @@ export class CurrentPlanHeader extends Component {
 								} ) }
 					</span>
 					{ currentPlan.userIsOwner && (
-						<Button compact href={ managePurchase( selectedSite.slug, currentPlan.id ) }>
+						<Button compact href={ managePurchase( currentPlan.id ) }>
 							{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
 						</Button>
 					) }

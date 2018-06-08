@@ -27,7 +27,7 @@ class SubscriptionSettings extends React.Component {
 			case domainTypes.REGISTERED:
 			case domainTypes.SITE_REDIRECT:
 			case domainTypes.TRANSFER:
-				return managePurchase( this.props.siteSlug, this.props.subscriptionId );
+				return managePurchase( this.props.subscriptionId );
 
 			default:
 				return purchasesRoot;

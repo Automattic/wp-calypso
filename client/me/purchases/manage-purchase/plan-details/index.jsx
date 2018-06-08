@@ -28,6 +28,7 @@ import { getPluginsForSite } from 'state/plugins/premium/selectors';
 class PurchasePlanDetails extends Component {
 	static propTypes = {
 		purchase: PropTypes.object,
+		siteId: PropTypes.number,
 	};
 
 	renderPlaceholder() {
@@ -52,15 +53,14 @@ class PurchasePlanDetails extends Component {
 	}
 
 	render() {
-		const { selectedSite, pluginList, translate } = this.props;
-		const { purchase } = this.props;
+		const { pluginList, purchase, siteId, translate } = this.props;
 
 		// Short out as soon as we know it's not a Jetpack plan
 		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
 			return null;
 		}
 
-		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
+		if ( isDataLoading( this.props ) || ! this.props.siteId ) {
 			return this.renderPlaceholder();
 		}
 
@@ -76,7 +76,7 @@ class PurchasePlanDetails extends Component {
 
 		return (
 			<div className="plan-details">
-				<QueryPluginKeys siteId={ selectedSite.ID } />
+				<QueryPluginKeys siteId={ siteId } />
 				<SectionHeader label={ headerText } />
 				<Card>
 					<PlanBillingPeriod purchase={ purchase } />
@@ -98,9 +98,9 @@ class PurchasePlanDetails extends Component {
 }
 
 // hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading
-export default connect( ( state, props ) => ( {
+export default connect( ( state, { purchaseId, siteId } ) => ( {
 	hasLoadedSites: ! isRequestingSites( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-	purchase: getByPurchaseId( state, props.purchaseId ),
-	pluginList: props.selectedSite ? getPluginsForSite( state, props.selectedSite.ID ) : [],
+	purchase: getByPurchaseId( state, purchaseId ),
+	pluginList: siteId ? getPluginsForSite( state, siteId ) : [],
 } ) )( localize( PurchasePlanDetails ) );

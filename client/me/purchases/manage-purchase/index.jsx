@@ -40,7 +40,6 @@ import {
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
@@ -55,7 +54,7 @@ import {
 	isDomainTransfer,
 	isTheme,
 } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
+import { getSite, isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
@@ -80,8 +79,14 @@ class ManagePurchase extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		isAtomicSite: PropTypes.bool,
+		isPurchaseTheme: PropTypes.bool,
+		plan: PropTypes.object,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string.isRequired,
+		theme: PropTypes.object,
 		userId: PropTypes.number,
 	};
 
@@ -135,7 +140,7 @@ class ManagePurchase extends Component {
 
 		addItems( renewItems );
 
-		page( '/checkout/' + this.props.selectedSite.slug );
+		page( '/checkout/' + this.props.siteSlug );
 	};
 
 	renderRenewButton() {
@@ -163,10 +168,7 @@ class ManagePurchase extends Component {
 
 	renderPlanDetails() {
 		return (
-			<PurchasePlanDetails
-				selectedSite={ this.props.selectedSite }
-				purchaseId={ this.props.purchaseId }
-			/>
+			<PurchasePlanDetails siteId={ this.props.siteId } purchaseId={ this.props.purchaseId } />
 		);
 	}
 
@@ -214,7 +216,7 @@ class ManagePurchase extends Component {
 		};
 
 		let text,
-			link = cancelPurchase( this.props.selectedSite.slug, id );
+			link = cancelPurchase( id );
 
 		if ( isAtomicSite && isSubscription( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
@@ -270,7 +272,7 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<CompactCard href={ cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ cancelPrivacyProtection( id ) }>
 				{ translate( 'Cancel Privacy Protection' ) }
 			</CompactCard>
 		);
@@ -371,7 +373,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, selectedSiteId, selectedSite } = this.props;
+		const { purchase, selectedSite, siteId } = this.props;
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),
@@ -383,7 +385,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<div>
-				<PurchaseSiteHeader siteId={ selectedSiteId } name={ siteName } domain={ siteDomain } />
+				<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
@@ -409,8 +411,9 @@ class ManagePurchase extends Component {
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
-					selectedSite={ selectedSite }
 					purchase={ purchase }
+					selectedSite={ selectedSite }
+					siteSlug={ this.props.siteSlug }
 				/>
 			</div>
 		);
@@ -420,7 +423,7 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { selectedSite, selectedSiteId, purchase, isPurchaseTheme } = this.props;
+		const { isPurchaseTheme, purchase, selectedSite, siteId } = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
@@ -439,9 +442,7 @@ class ManagePurchase extends Component {
 					title="Purchases > Manage Purchase"
 				/>
 				<QueryUserPurchases userId={ this.props.userId } />
-				{ isPurchaseTheme && (
-					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ purchase.meta } />
-				) }
+				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 				<Main className={ classes }>
 					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
 					{
@@ -462,20 +463,19 @@ class ManagePurchase extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
-	const selectedSiteId = getSelectedSiteId( state );
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
-	const selectedSite = getSelectedSite( state );
+	const siteId = purchase ? purchase.siteId : null;
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		purchase,
-		selectedSiteId,
-		selectedSite,
-		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
+		isAtomicSite: siteId && isSiteAtomic( state, siteId ),
 		isPurchaseTheme,
-		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, purchase.meta ),
-		isAtomicSite: selectedSite && isSiteAtomic( state, selectedSiteId ),
+		plan: isPurchasePlan ? applyTestFiltersToPlansList( purchase.productSlug, abtest ) : undefined,
+		purchase,
+		selectedSite: getSite( state, siteId ),
+		siteId,
+		theme: isPurchaseTheme ? getCanonicalTheme( state, siteId, purchase.meta ) : undefined,
 		userId: getCurrentUserId( state ),
 	};
 } )( localize( ManagePurchase ) );

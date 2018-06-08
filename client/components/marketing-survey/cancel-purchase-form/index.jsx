@@ -37,8 +37,8 @@ class CancelPurchaseForm extends React.Component {
 		defaultContent: PropTypes.node.isRequired,
 		onInputChange: PropTypes.func.isRequired,
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		surveyStep: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 	};
@@ -268,7 +268,7 @@ class CancelPurchaseForm extends React.Component {
 
 	openConcierge = () => {
 		this.props.clickConcierge();
-		return window.open( `/me/concierge/${ this.props.selectedSite.slug }/book` );
+		return window.open( `/me/concierge/${ this.props.siteSlug }/book` );
 	};
 
 	renderConciergeOffer = () => {

@@ -104,7 +104,7 @@ class CancelPrivacyProtection extends Component {
 					{ persistent: true }
 				);
 
-				page( managePurchase( this.props.selectedSite.slug, id ) );
+				page( managePurchase( id ) );
 			} )
 			.catch( () => {
 				this.resetState();
@@ -211,7 +211,7 @@ class CancelPrivacyProtection extends Component {
 					title="Purchases > Cancel Privacy Protection"
 				/>
 				<QueryUserPurchases userId={ this.props.userId } />
-				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake backHref={ managePurchase( this.props.purchaseId ) }>
 					{ titles.cancelPrivacyProtection }
 				</HeaderCake>
 				{ notice }
