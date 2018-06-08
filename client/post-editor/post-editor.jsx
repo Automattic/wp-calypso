@@ -108,6 +108,7 @@ export class PostEditor extends React.Component {
 
 	getDefaultState() {
 		return {
+			mode: this.props.editorModePreference || 'tinymce',
 			confirmationSidebar: 'closed',
 			confirmationSidebarPreference: true,
 			isSaving: false,
@@ -156,6 +157,11 @@ export class PostEditor extends React.Component {
 		// if post and content is already available on mount, e.g., "Press This" or a post copy
 		if ( this.props.post && this.props.post.content ) {
 			this.editor.setEditorContent( this.props.post.content, { initial: true } );
+		}
+
+		// record the initial value of the editor mode preference
+		if ( this.props.editorModePreference ) {
+			analytics.mc.bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
 		}
 	}
 
@@ -245,7 +251,7 @@ export class PostEditor extends React.Component {
 
 	render() {
 		const site = this.props.selectedSite;
-		const mode = this.getEditorMode();
+		const mode = this.state.mode;
 		const isInvalidURL = this.props.loadingError;
 
 		const isTrashed = get( this.props.post, 'status' ) === 'trash';
@@ -836,19 +842,6 @@ export class PostEditor extends React.Component {
 		}
 	};
 
-	getEditorMode = () => {
-		let editorMode = 'tinymce';
-		if ( this.props.editorModePreference ) {
-			editorMode = this.props.editorModePreference;
-
-			if ( ! this.recordedDefaultEditorMode ) {
-				analytics.mc.bumpStat( 'calypso_default_editor_mode', editorMode );
-				this.recordedDefaultEditorMode = true;
-			}
-		}
-		return editorMode;
-	};
-
 	getContainingTagInfo = ( content, cursorPosition ) => {
 		const lastLtPos = content.lastIndexOf( '<', cursorPosition );
 		const lastGtPos = content.lastIndexOf( '>', cursorPosition );
@@ -1102,6 +1095,7 @@ export class PostEditor extends React.Component {
 			this.editor._editor.on( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
 		}
 
+		this.setState( { mode } );
 		this.props.setEditorModePreference( mode );
 
 		this.props.editPost( this.props.siteId, this.props.postId, { content } );
