@@ -86,6 +86,7 @@ const AddressFields = props => {
 					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
 					editUnverifiableAddress={ editUnverifiableAddressHandler }
 					countriesData={ storeOptions.countriesData }
+					fieldErrors={ fieldErrors }
 				/>
 			);
 		}

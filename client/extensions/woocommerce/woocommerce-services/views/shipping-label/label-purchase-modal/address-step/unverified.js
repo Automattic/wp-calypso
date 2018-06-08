@@ -23,7 +23,44 @@ const UnverifiedAddress = ( {
 	editUnverifiableAddress,
 	confirmAddressSuggestion,
 	translate,
+	fieldErrors,
 } ) => {
+	// Reduce the address verification errors object to a single error string.
+	const getVerificationError = () => {
+		if ( fieldErrors.general ) {
+			return fieldErrors.general;
+		}
+
+		// Return the first field error if there is no general error.
+		for ( const field in fieldErrors ) {
+			return fieldErrors[ field ];
+		}
+
+		return false;
+	};
+
+	const renderNotice = () => {
+		const verificationError = getVerificationError( fieldErrors );
+
+		if ( verificationError ) {
+			return (
+				<Notice status="is-info" showDismiss={ false }>
+					{ translate( 'We were unable to automatically verify the address — %(error)s.', {
+						args: {
+							error: verificationError,
+						},
+					} ) }
+				</Notice>
+			);
+		}
+
+		return (
+			<Notice status="is-info" showDismiss={ false }>
+				{ translate( 'We were unable to automatically verify the address.' ) }
+			</Notice>
+		);
+	};
+
 	const uspsUrlProperties = {
 		scheme: 'https',
 		hostname: 'tools.usps.com',
@@ -56,9 +93,7 @@ const UnverifiedAddress = ( {
 
 	return (
 		<div>
-			<Notice status="is-info" showDismiss={ false }>
-				{ translate( 'We were unable to automatically verify the address.' ) }
-			</Notice>
+			{ renderNotice() }
 			<div className="address-step__unverifiable-container">
 				<div className="address-step__unverifiable-info">
 					<span className="address-step__unverifiable-title">
