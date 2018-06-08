@@ -12,7 +12,6 @@ import {
 	cancelPrivacyProtection,
 	clearPurchases,
 	fetchSitePurchases,
-	fetchUserPurchases,
 	removePurchase,
 } from '../actions';
 import {
@@ -21,8 +20,6 @@ import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
-	PURCHASES_USER_FETCH,
-	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
 } from 'state/action-types';
@@ -92,30 +89,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASES_SITE_FETCH_COMPLETED,
 					siteId,
-					purchases,
-				} );
-			} );
-		} );
-	} );
-
-	describe( '#fetchUserPurchases', () => {
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/me/purchases' )
-				.reply( 200, purchases );
-		} );
-
-		test( 'should dispatch fetch/complete actions', () => {
-			const promise = fetchUserPurchases( userId )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: PURCHASES_USER_FETCH,
-			} );
-
-			return promise.then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: PURCHASES_USER_FETCH_COMPLETED,
-					userId,
 					purchases,
 				} );
 			} );
