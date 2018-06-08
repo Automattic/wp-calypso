@@ -18,7 +18,7 @@ const aDebug = debug( 'calypso:analytics:affiliate' );
 import { AFFILIATE_REFERRAL } from 'state/action-types';
 
 const trackAffiliatePageLoad = ( { dispatch }, action ) => {
-	const { affiliateId, urlPath } = action;
+	const { affiliateId, campaignId, urlPath } = action;
 
 	if ( ! affiliateId || isNaN( affiliateId ) ) {
 		return;
@@ -34,6 +34,7 @@ const trackAffiliatePageLoad = ( { dispatch }, action ) => {
 				headers: [ [ 'content-type', 'application/x-www-form-urlencoded; charset=UTF-8' ] ],
 				body: {
 					affiliate_id: affiliateId,
+					campaign_id: campaignId || '',
 					referrer: urlPath,
 				},
 				// Needed to check and set the 'wp-affiliate-tracker' cookie

@@ -297,8 +297,9 @@ class Signup extends React.Component {
 		const urlPath = location.href;
 		const parsedUrl = url.parse( urlPath, true );
 		const affiliateId = parsedUrl.query.aff;
+		const campaignId = parsedUrl.query.cid;
 		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			this.props.affiliateReferral( { urlPath, affiliateId } );
+			this.props.affiliateReferral( { urlPath, affiliateId, campaignId } );
 			// Record the referral in Tracks
 			analytics.tracks.recordEvent( 'calypso_refer_visit', {
 				flow: this.props.flowName,
