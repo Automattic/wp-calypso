@@ -1,14 +1,22 @@
 /** @format */
 
 export default {
+	definitions: {
+		integerish: {
+			oneOf: [ { type: 'string', pattern: '^\\d+$' }, { type: 'integer' } ],
+		},
+	},
 	type: 'array',
 	items: {
 		type: 'object',
-		required: [ 'ID', 'blog_id', 'user_id' ],
+		required: [ 'ID', 'blog_id', 'user_id', 'product_id', 'product_slug' ],
 		properties: {
-			ID: { type: 'string', pattern: '^\\d+$' },
-			blog_id: { type: 'string', pattern: '^\\d+$' },
-			user_id: { type: 'string', pattern: '^\\d+$' },
+			ID: { $ref: '#/definitions/integerish' },
+			blog_id: { $ref: '#/definitions/integerish' },
+			user_id: { $ref: '#/definitions/integerish' },
+
+			product_id: { $ref: '#/definitions/integerish' },
+			product_slug: { type: 'string' },
 
 			/**
 			 * More expected types
@@ -42,9 +50,7 @@ export default {
 			// payment_name: {},
 			// payment_type: {},
 			// pending_transfer: {},
-			// product_id: {},
 			// product_name: {},
-			// product_slug: {},
 			// refund_amount: {},
 			// refund_currency_symbol: {},
 			// refund_period_in_days: {},
