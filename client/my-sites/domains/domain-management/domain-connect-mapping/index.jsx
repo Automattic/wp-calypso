@@ -47,7 +47,8 @@ class DomainConnectMapping extends React.Component {
 	isDomainConnectComplete = () => {
 		const queryObject = parse( window.location.search.replace( '?', '' ) );
 		const status = get( queryObject, 'status', null );
-		return status === this.getRedirectUriStatusString();
+		const redirectUriStatusString = this.getRedirectUriStatusString();
+		return status === redirectUriStatusString || redirectUriStatusString in queryObject;
 	};
 
 	renderErrorNotice = () => {
