@@ -1095,11 +1095,12 @@ export class PostEditor extends React.Component {
 			this.editor._editor.on( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
 		}
 
-		this.setState( { mode } );
 		this.props.setEditorModePreference( mode );
-
-		this.props.editPost( this.props.siteId, this.props.postId, { content } );
-		this.props.editorResetRawContent();
+		this.setState( { mode }, () => {
+			this.props.editorResetRawContent();
+			this.saveRawContent();
+			this.props.editPost( this.props.siteId, this.props.postId, { content } );
+		} );
 	};
 }
 
