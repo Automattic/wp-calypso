@@ -12,7 +12,6 @@
 		"<rootDir>/client/"
 	],
 	"testEnvironment": "node",
-	"transformIgnorePatterns": ["node_modules[\\/\\\\](?!redux-form)"],
 	"testMatch": [ "<rootDir>/client/**/test/*.js?(x)" ],
 	"testURL": "https://example.com",
 	"setupTestFrameworkScriptFile": "<rootDir>/test/client/setup-test-framework.js",

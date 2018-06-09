@@ -15375,8 +15375,8 @@
       }
     },
     "redux-form": {
-      "version": "7.0.2",
-      "integrity": "sha512-R1H9APwnBiJE31FWS2vBlM6NplH7AQb+3FJ3Z2e5B1flbgAZbFr7S0R9yrL8P4yy1liIAJcLreI1Ji4KA6KMtA==",
+      "version": "7.3.0",
+      "integrity": "sha512-WcZRsRsVG25l8Cih3bEeeoZFxSIvoHqTpBRe5Ifl1ob7xvEpYLXyYYHAFER1DpTfMZPgTPHZ4UkR4ILFP3hzkw==",
       "requires": {
         "deep-equal": "1.0.1",
         "es6-error": "4.1.1",
