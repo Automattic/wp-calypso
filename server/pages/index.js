@@ -10,7 +10,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, flatten, forEach, intersection, snakeCase, startsWith } from 'lodash';
+import { endsWith, get, includes, pick, flatten, forEach, intersection, snakeCase } from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -173,9 +173,9 @@ function getAcceptedLanguagesFromHeader( header ) {
 }
 
 function getDefaultContext( request ) {
-	let initialServerState = {},
-		sectionCss,
-		lang = config( 'i18n_default_locale_slug' );
+	let initialServerState = {};
+	let sectionCss;
+	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
 	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
@@ -206,6 +206,8 @@ function getDefaultContext( request ) {
 		sectionCss = request.context.sectionCss;
 	}
 
+	// We assign request.context.lang in the handleLocaleSubdomains()
+	// middleware function if we detect a language slug in subdomain
 	if ( request.context && request.context.lang ) {
 		lang = request.context.lang;
 	}
@@ -480,33 +482,30 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
-function handleLocaleSubdomains( req, res, next ) {
-	const langRouteParams = config( 'magnificent_non_en_locales' ).join( '|' );
-	const hostnameGroup = `\\.${ config( 'hostname' ).replace( /\./g, '\\.' ) }`;
-	const langSubDomainRegEx = new RegExp( `^(${ langRouteParams })(${ hostnameGroup })` );
-	const langSubDomainMatch = req.hostname.match( langSubDomainRegEx );
+export function handleLocaleSubdomains( req, res, next ) {
+	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
+		? req.hostname.split( '.' )[ 0 ]
+		: null;
 
-	// If the subdomain is a valid route.
-	if ( langSubDomainMatch && langSubDomainMatch[ 1 ] ) {
-		// We get the language again for the RTL information.
-		const language = getLanguage( langSubDomainMatch[ 1 ] );
+	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {
+		// Retrieve the language object for the RTL information.
+		const language = getLanguage( langSlug );
 
-		// We want to switch locales only on the themes page
-		// and in a logged-out state.
-		if ( language && ! req.cookies.wordpress_logged_in && startsWith( req.path, '/themes' ) ) {
-			req.context = Object.assign( {}, req.context, {
+		// Switch locales only in a logged-out state.
+		if ( language && ! req.cookies.wordpress_logged_in ) {
+			req.context = {
+				...req.context,
 				lang: language.langSlug,
 				isRTL: !! language.rtl,
-			} );
+			};
 		} else {
-			// We redirect to the base hostname so that the user's locale preferences take priority.
+			// Strip the langSlug and redirect using hostname
+			// so that the user's locale preferences take priority.
 			const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-			const port = process.env.PORT || config( 'port' );
-			const host = process.env.HOST || config( 'hostname' );
-			const redirectUrl = `${ protocol }://${ host }${ port ? `:${ port }` : '' }${
-				req.originalUrl
-			}`;
-			res.redirect( redirectUrl );
+			const port = process.env.PORT || config( 'port' ) || '';
+			const hostname = req.hostname.substr( langSlug.length + 1 );
+			const redirectUrl = `${ protocol }://${ hostname }:${ port }${ req.path }`;
+			return res.redirect( redirectUrl );
 		}
 	}
 	next();
