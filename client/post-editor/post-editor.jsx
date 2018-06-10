@@ -734,9 +734,6 @@ export class PostEditor extends React.Component {
 			edits.status = 'publish';
 		}
 
-		// Sync the status edit to Redux to ensure that Flux and Redux stores have the same info
-		this.props.editPost( this.props.siteId, this.props.postId, { status: edits.status } );
-
 		// Flush any pending raw content saves
 		// Update content on demand to avoid unnecessary lag and because it is expensive
 		// to serialize when TinyMCE is the active mode
