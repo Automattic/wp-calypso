@@ -245,12 +245,11 @@
     "test-server:watch": "npm run -s test-server -- --watch",
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
     "update-deps": "npm run -s rm -- node_modules && npm run -s rm -- npm-shrinkwrap.json && npm install && npm shrinkwrap",
-    "postshrinkwrap": "touch node_modules"
+    "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\""
   },
   "devDependencies": {
     "5to6-codemod": "5to6/5to6-codemod#v1.7.0",
     "babel-eslint": "8.2.3",
-    "cash-touch": "0.2.0",
     "chai": "3.5.0",
     "chai-enzyme": "1.0.0-beta.0",
     "enzyme": "3.2.0",
