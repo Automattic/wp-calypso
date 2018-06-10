@@ -138,7 +138,7 @@ class ImportingPane extends React.PureComponent {
 			return this.props.translate(
 				'All done! Check out {{a}}Posts{{/a}}, ' +
 					'{{b}}Pages{{/b}} ' +
-					'and {{c}}Media{[/c}} to see your imported content.',
+					'and {{c}}Media{{/c}} to see your imported content.',
 				{
 					components: {
 						a: postLink,
