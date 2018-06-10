@@ -499,6 +499,22 @@ export class PostEditor extends React.Component {
 		this.debouncedSaveRawContent.cancel();
 	};
 
+	// Sync content from the TinyMCE editor to the Redux state. Because it's expensive to serialize
+	// the content when TinyMCE is the active mode, we don't sync on every keystroke, but only
+	// immediately before save/publish and after switching editor mode.
+	syncEditorContent( options ) {
+		const resetRawContent = get( options, 'resetRawContent', false );
+		const content = get( options, 'content', this.editor.getContent() );
+
+		if ( resetRawContent ) {
+			this.props.editorResetRawContent();
+		}
+		this.saveRawContent();
+		if ( content !== get( this.props.post, 'content', null ) ) {
+			this.props.editPost( this.props.siteId, this.props.postId, { content } );
+		}
+	}
+
 	autosave = async () => {
 		// If debounced / throttled autosave was pending, consider it flushed
 		this.throttledAutosave.cancel();
@@ -508,10 +524,7 @@ export class PostEditor extends React.Component {
 			return;
 		}
 
-		this.saveRawContent();
-		this.props.editPost( this.props.siteId, this.props.postId, {
-			content: this.editor.getContent(),
-		} );
+		this.syncEditorContent();
 
 		// The post is either already published or the current modifications are going to publish it
 		const savingPublishedPost =
@@ -597,15 +610,12 @@ export class PostEditor extends React.Component {
 
 		this.setState( { isSaving: true } );
 
-		const { siteId, postId } = this.props;
-
 		if ( status ) {
-			this.props.editPost( siteId, postId, { status } );
+			this.props.editPost( this.props.siteId, this.props.postId, { status } );
 		}
 
 		// Flush any pending raw content saves
-		this.saveRawContent();
-		this.props.editPost( siteId, postId, { content: this.editor.getContent() } );
+		this.syncEditorContent();
 
 		this.props.saveEdited().then( this.onSaveDraftSuccess, this.onSaveDraftFailure );
 	};
@@ -706,14 +716,29 @@ export class PostEditor extends React.Component {
 		this.onSaveSuccess( saveResult, 'save' );
 	};
 
-	onPublish = ( isConfirmed = false ) => {
-		if ( this.props.isConfirmationSidebarEnabled && false === isConfirmed ) {
-			this.setConfirmationSidebar( { status: 'open' } );
-			return;
+	// determine if publish is private, future or normal
+	getPublishStatus() {
+		if ( utils.isPrivate( this.props.post ) ) {
+			return 'private';
 		}
 
-		if ( this.props.isConfirmationSidebarEnabled && 'open' === this.state.confirmationSidebar ) {
-			this.setConfirmationSidebar( { status: 'publishing' } );
+		if ( utils.isFutureDated( this.props.post ) ) {
+			return 'future';
+		}
+
+		return 'publish';
+	}
+
+	onPublish = ( isConfirmed = false ) => {
+		if ( this.props.isConfirmationSidebarEnabled ) {
+			if ( isConfirmed === false ) {
+				this.setConfirmationSidebar( { status: 'open' } );
+				return;
+			}
+
+			if ( this.state.confirmationSidebar === 'open' ) {
+				this.setConfirmationSidebar( { status: 'publishing' } );
+			}
 		}
 
 		this.setState( {
@@ -721,26 +746,9 @@ export class PostEditor extends React.Component {
 			isPublishing: true,
 		} );
 
-		const { siteId, postId } = this.props;
-
-		const edits = {};
-
-		// determine if this is a private publish
-		if ( utils.isPrivate( this.props.post ) ) {
-			edits.status = 'private';
-		} else if ( utils.isFutureDated( this.props.post ) ) {
-			edits.status = 'future';
-		} else {
-			edits.status = 'publish';
-		}
-
-		// Flush any pending raw content saves
-		// Update content on demand to avoid unnecessary lag and because it is expensive
-		// to serialize when TinyMCE is the active mode
-		this.saveRawContent();
-		edits.content = this.editor.getContent();
-
-		this.props.editPost( siteId, postId, edits );
+		const status = this.getPublishStatus();
+		this.props.editPost( this.props.siteId, this.props.postId, { status } );
+		this.syncEditorContent();
 
 		this.props.saveEdited().then( this.onPublishSuccess, this.onPublishFailure );
 	};
@@ -1094,9 +1102,10 @@ export class PostEditor extends React.Component {
 
 		this.props.setEditorModePreference( mode );
 		this.setState( { mode }, () => {
-			this.props.editorResetRawContent();
-			this.saveRawContent();
-			this.props.editPost( this.props.siteId, this.props.postId, { content } );
+			this.syncEditorContent( {
+				resetRawContent: true,
+				content,
+			} );
 		} );
 	};
 }
