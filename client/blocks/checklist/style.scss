@@ -257,6 +257,7 @@
 		@include breakpoint( '<480px' ) {
 			.checklist__task-action {
 				padding-right: 0;
+				max-width: 50px;
 			}
 		}
 	}
