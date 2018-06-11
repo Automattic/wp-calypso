@@ -482,7 +482,16 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
-export function handleLocaleSubdomains( req, res, next ) {
+/**
+ * Sets language properties to context if
+ * a WordPress.com language slug is detected in the hostname
+ *
+ * @param {Object} req Express request object
+ * @param {Object} res Express response object
+ * @param {Function} next a callback to call when done
+ * @returns {Function|Undefined} res.redirect if not logged in
+ */
+function handleLocaleSubdomains( req, res, next ) {
 	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
 		? req.hostname.split( '.' )[ 0 ]
 		: null;
