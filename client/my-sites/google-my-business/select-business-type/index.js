@@ -114,7 +114,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				>
 					{ translate( 'Create Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }{' '}
+					} ) }{ ' ' }
 					<Gridicon icon="external" />
 				</Button>
 			);
