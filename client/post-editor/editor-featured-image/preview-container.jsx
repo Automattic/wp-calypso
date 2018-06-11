@@ -71,7 +71,6 @@ export default class extends React.Component {
 		defer( () => {
 			if ( this.props.onImageChange && image && image.ID ) {
 				this.props.onImageChange( image.ID );
-				MediaActions.setLibrarySelectedItems( this.props.siteId, [ image ] );
 			}
 		} );
 	};
