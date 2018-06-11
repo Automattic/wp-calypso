@@ -48,6 +48,7 @@ export class CommentEdit extends Component {
 		commentContent: '',
 		commentDate: '',
 		isDatePopoverVisible: false,
+		tmpCommentDate: '',
 	};
 
 	componentWillMount() {
@@ -56,6 +57,14 @@ export class CommentEdit extends Component {
 	}
 
 	storeDatePopoverButtonRef = button => ( this.datePopoverButtonRef = button );
+
+	openDatePopover = () =>
+		this.setState( ( { commentDate } ) => ( {
+			isDatePopoverVisible: true,
+			tmpCommentDate: commentDate,
+		} ) );
+
+	closeDatePopover = () => this.setState( { isDatePopoverVisible: false, tmpCommentDate: '' } );
 
 	getTimezoneForPostSchedule = () => ( {
 		timezone: this.props.siteTimezone || undefined,
@@ -71,6 +80,13 @@ export class CommentEdit extends Component {
 
 	setCommentDateValue = commentDate =>
 		this.setState( { commentDate: this.props.moment( commentDate ).format() } );
+
+	cancelCommentDataValueChange = () =>
+		this.setState( ( { tmpCommentDate } ) => ( {
+			commentDate: tmpCommentDate,
+			isDatePopoverVisible: false,
+			tmpCommentDate: '',
+		} ) );
 
 	showNotice = () => {
 		const { translate } = this.props;
@@ -107,11 +123,6 @@ export class CommentEdit extends Component {
 
 		toggleEditMode();
 	};
-
-	toggleDatePopover = () =>
-		this.setState( ( { isDatePopoverVisible } ) => ( {
-			isDatePopoverVisible: ! isDatePopoverVisible,
-		} ) );
 
 	undo = previousCommentData => () => {
 		const { postId, siteId } = this.props;
@@ -180,7 +191,7 @@ export class CommentEdit extends Component {
 						<Button
 							className="comment__edit-date-button"
 							ref={ this.storeDatePopoverButtonRef }
-							onClick={ this.toggleDatePopover }
+							onClick={ this.openDatePopover }
 						>
 							{ moment( commentDate ).format( 'll LT' ) }
 						</Button>
@@ -188,14 +199,23 @@ export class CommentEdit extends Component {
 							className="comment__edit-date-popover"
 							context={ this.datePopoverButtonRef }
 							isVisible={ isDatePopoverVisible }
-							onClose={ this.toggleDatePopover }
+							onClose={ this.closeDatePopover }
 							position="bottom"
 						>
 							<PostSchedule
 								selectedDay={ commentDate }
+								displayInputChrono={ false }
 								onDateChange={ this.setCommentDateValue }
 								{ ...this.getTimezoneForPostSchedule() }
 							/>
+							<div className="comment__edit-date-popover-buttons">
+								<Button primary compact onClick={ this.closeDatePopover }>
+									{ translate( 'Change' ) }
+								</Button>
+								<Button compact onClick={ this.cancelCommentDataValueChange }>
+									{ translate( 'Cancel' ) }
+								</Button>
+							</div>
 						</Popover>
 					</FormFieldset>
 

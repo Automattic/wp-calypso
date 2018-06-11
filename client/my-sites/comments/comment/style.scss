@@ -505,6 +505,16 @@
 .comment__edit-date-popover .popover__inner {
 	padding: 0 8px;
 }
+.comment__edit-date-popover-buttons {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-start;
+	padding-bottom: 8px;
+
+	.button {
+		margin-left: 10px;
+	}
+}
 
 // HTML Editor
 
