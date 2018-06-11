@@ -138,9 +138,6 @@ export default connect(
 		connectGoogleMyBusinessAccount,
 		dismissNudge,
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
-			enhanceWithLocationCounts,
-			enhanceWithSiteType,
-		] ),
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [ enhanceWithLocationCounts, enhanceWithSiteType ] ),
 	}
 )( localize( GoogleMyBusinessNewAccount ) );
