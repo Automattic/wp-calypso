@@ -195,8 +195,8 @@ class ActivityLogItem extends Component {
 			pluginsToUpdate,
 		} = this.props;
 
-		if ( enableClone && activityIsRewindable ) {
-			return this.renderCloneAction();
+		if ( enableClone ) {
+			return activityIsRewindable ? this.renderCloneAction() : null;
 		}
 
 		switch ( activityName ) {
