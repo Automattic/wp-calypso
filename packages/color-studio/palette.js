@@ -2,19 +2,11 @@ const _ = require('lodash')
 const chroma = require('chroma-js')
 
 const createPaletteColors = require('./formula')
+const FOUNDATIONS = require('./foundations')
 
-const PALETTE_COLORS = [
-  createPaletteColors('#52585e', 'Gray'),
-  createPaletteColors('#029fc9', 'Teal'),
-  createPaletteColors('#0f82ff', 'Blue'),
-  createPaletteColors('#8437c2', 'Purple'),
-  createPaletteColors('#f61567', 'Pink'),
-  createPaletteColors('#ff2600', 'Red'),
-  createPaletteColors('#ff9902', 'Orange'),
-  createPaletteColors('#f4d301', 'Yellow'),
-  createPaletteColors('#00a300', 'Green'),
-  createPaletteColors('#1abc97', 'Celadon')
-]
+const PALETTE_COLORS = FOUNDATIONS.baseColors.map(color => {
+  return createPaletteColors(color.value, color.name)
+})
 
 const SKETCH_PALETTE_SCHEMA = {
   compatibleVersion: '2',
