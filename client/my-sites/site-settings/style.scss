@@ -250,8 +250,8 @@
 	}
 }
 
-:target {
-	border: 2px solid black;
+.site-settings__inactive-setting {
+	filter: blur(2px);
 }
 
 .site-settings__general-settings .site-settings__language-picker-notice {

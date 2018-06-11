@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
+import { find, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,6 +29,7 @@ import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
 import QueryRewindState from 'components/data/query-rewind-state';
 
 const SiteSettingsSecurity = ( {
+	setting,
 	showRewindCredentials,
 	site,
 	siteId,
@@ -68,6 +69,9 @@ const SiteSettingsSecurity = ( {
 		return <JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.4" />;
 	}
 
+	const settings = [ 'jetpack-monitor', 'security-settings' ];
+	const isValidSection = includes( settings, setting );
+
 	return (
 		<Main className="settings-security__main site-settings">
 			<QueryRewindState siteId={ siteId } />
@@ -76,8 +80,8 @@ const SiteSettingsSecurity = ( {
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showRewindCredentials && <JetpackCredentials /> }
-			<JetpackMonitor />
-			<FormSecurity />
+			<JetpackMonitor inactive={ isValidSection && setting !== 'jetpack-monitor' } />
+			<FormSecurity inactive={ isValidSection && setting !== 'security-settings' } />
 		</Main>
 	);
 };
