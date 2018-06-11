@@ -28,10 +28,12 @@ import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
 import PodcastingPrivateSiteMessage from './private-site';
+import PodcastingNoPermissionsMessage from './no-permissions';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
+import canCurrentUser from 'state/selectors/can-current-user';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsForQueryIgnoringPage,
@@ -283,10 +285,14 @@ class PodcastingDetails extends Component {
 	renderSettingsError() {
 		// If there is a reason that we can't display the podcasting settings
 		// screen, it will be rendered here.
-		const { isPrivate } = this.props;
+		const { isPrivate, userCanManagePodcasting } = this.props;
 
 		if ( isPrivate ) {
 			return <PodcastingPrivateSiteMessage />;
+		}
+
+		if ( ! userCanManagePodcasting ) {
+			return <PodcastingNoPermissionsMessage />;
 		}
 
 		return null;
@@ -374,6 +380,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isPodcastingEnabled,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 		podcastingFeedUrl,
+		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 } );
 
