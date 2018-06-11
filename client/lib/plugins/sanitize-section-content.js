@@ -6,6 +6,11 @@ import { filter } from 'lodash';
 import validUrl from 'valid-url';
 
 /**
+ * Internal dependencies
+ */
+import { domForHtml } from 'lib/post-normalizer/utils';
+
+/**
  * Determine if a given tag is allowed
  *
  * This only looks at the name of the tag to
@@ -129,11 +134,8 @@ const replacementFor = node => {
  * @returns {string} sanitized HTML
  */
 export const sanitizeSectionContent = content => {
-	const parser = new DOMParser();
-	const doc = parser.parseFromString( content, 'text/html' );
-
 	// this will let us visit every single DOM node programmatically
-	const walker = doc.createTreeWalker( doc.body );
+	const walker = document.createTreeWalker( domForHtml( content ) );
 
 	/**
 	 * we don't want to remove nodes while walking the tree
