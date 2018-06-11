@@ -787,7 +787,7 @@ export class PostEditor extends React.Component {
 
 	setPostDate = date => {
 		const { siteId, postId } = this.props;
-		const dateValue = date ? date.format() : null;
+		const dateValue = date ? date.format() : false;
 
 		this.props.editPost( siteId, postId, { date: dateValue } );
 
