@@ -10,7 +10,7 @@ import { expect } from 'chai';
 import EmailForwardingStore from './../store';
 import { DOMAIN_NAME, EMAIL, EMAIL_FORWARDS, FORWARD_ADDRESS, MAILBOX_NAME } from './data';
 import Dispatcher from 'dispatcher';
-import { action as ActionTypes } from 'lib/upgrades/constants';
+import { action as ActionTypes } from 'lib/upgrades/action-types';
 
 describe( 'store', () => {
 	test( 'should be an object', () => {

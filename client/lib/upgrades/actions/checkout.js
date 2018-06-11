@@ -7,7 +7,7 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from '../constants';
+import { action as ActionTypes } from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import { submit } from 'lib/store-transactions';
 

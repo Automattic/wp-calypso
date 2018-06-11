@@ -17,7 +17,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import { isMobile } from 'lib/viewport';
-import { action as upgradesActionTypes } from 'lib/upgrades/constants';
+import { action as upgradesActionTypes } from 'lib/upgrades/action-types';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import { isATEnabled } from 'lib/automated-transfer';
 

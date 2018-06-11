@@ -10,7 +10,7 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
+import { action as UpgradesActionTypes } from 'lib/upgrades/action-types';
 import { cartItems } from 'lib/cart-values';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';

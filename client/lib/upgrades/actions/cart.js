@@ -7,7 +7,7 @@ import { assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from '../constants';
+import { action as ActionTypes } from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
 

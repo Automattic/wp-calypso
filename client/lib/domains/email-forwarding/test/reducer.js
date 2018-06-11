@@ -10,7 +10,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { reducer } from './../reducer';
 import { DOMAIN_NAME, EMAIL_FORWARDS, MAILBOX_NAME } from './data';
-import { action as ActionTypes } from 'lib/upgrades/constants';
+import { action as ActionTypes } from 'lib/upgrades/action-types';
 
 describe( 'reducer', () => {
 	test( 'should return the same state when no matching record passed in the delete complete action', () => {

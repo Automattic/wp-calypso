@@ -9,7 +9,7 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/constants';
+import { action as ActionTypes } from 'lib/upgrades/action-types';
 
 function updateStateForSite( state, siteId, data ) {
 	const command = state[ siteId ] ? '$merge' : '$set';
