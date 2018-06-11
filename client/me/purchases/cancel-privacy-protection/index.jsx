@@ -98,7 +98,7 @@ class CancelPrivacyProtection extends Component {
 					{ persistent: true }
 				);
 
-				page( managePurchase( this.props.selectedSite.slug, id ) );
+				page( managePurchase( this.props.siteSlug, id ) );
 			} )
 			.catch( () => {
 				this.resetState();
