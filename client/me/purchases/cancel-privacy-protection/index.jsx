@@ -38,6 +38,7 @@ class CancelPrivacyProtection extends Component {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchase: PropTypes.object,
 		purchaseId: PropTypes.number.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
 	};
 
