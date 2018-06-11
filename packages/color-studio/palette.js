@@ -4,16 +4,16 @@ const chroma = require('chroma-js')
 const createPaletteColors = require('./formula')
 
 const PALETTE_COLORS = [
-  createPaletteColors('#52585e', 'gray'),
-  createPaletteColors('#029fc9', 'teal'),
-  createPaletteColors('#0f82ff', 'blue'),
-  createPaletteColors('#8437c2', 'purple'),
-  createPaletteColors('#f61567', 'pink'),
-  createPaletteColors('#ff2600', 'red'),
-  createPaletteColors('#ff9902', 'orange'),
-  createPaletteColors('#f4d301', 'yellow'),
-  createPaletteColors('#00a300', 'green'),
-  createPaletteColors('#1abc97', 'celadon')
+  createPaletteColors('#52585e', 'Gray'),
+  createPaletteColors('#029fc9', 'Teal'),
+  createPaletteColors('#0f82ff', 'Blue'),
+  createPaletteColors('#8437c2', 'Purple'),
+  createPaletteColors('#f61567', 'Pink'),
+  createPaletteColors('#ff2600', 'Red'),
+  createPaletteColors('#ff9902', 'Orange'),
+  createPaletteColors('#f4d301', 'Yellow'),
+  createPaletteColors('#00a300', 'Green'),
+  createPaletteColors('#1abc97', 'Celadon')
 ]
 
 const SKETCH_PALETTE_SCHEMA = {
@@ -100,7 +100,7 @@ function skipWhiteColors(palette) {
 
 function formatColorVariable(colorObject) {
   const colorIndex = _.compact([colorObject.index, colorObject.auxiliary ? 'A' : '']).join('')
-  const variableName = _.compact([SCSS_VARIABLE_PREFIX, colorObject.name, colorIndex]).join('-')
+  const variableName = _.compact([SCSS_VARIABLE_PREFIX, colorObject.name.toLowerCase(), colorIndex]).join('-')
 
   return `${variableName}: ${formatHex(colorObject.color)};`
 }

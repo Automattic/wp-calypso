@@ -1,5 +1,5 @@
 {
-  "name": "palette",
+  "name": "color-studio",
   "version": "0.2.1",
   "private": true,
   "dependencies": {
@@ -57,6 +57,9 @@
         "off"
       ],
       "no-multi-spaces": [
+        "off"
+      ],
+      "no-negated-condition": [
         "off"
       ],
       "object-curly-spacing": [
