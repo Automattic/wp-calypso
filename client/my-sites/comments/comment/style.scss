@@ -440,6 +440,10 @@
 	.form-fieldset {
 		padding: 0 8px;
 		width: 50%;
+
+		@include breakpoint( '>1280px' ) {
+			width: 33%;
+		}
 	}
 
 	.form-textarea {
@@ -501,6 +505,7 @@
 
 .comment__edit-date-button {
 	display: block;
+	width: 100%;
 }
 .comment__edit-date-popover .popover__inner {
 	padding: 0 8px;
