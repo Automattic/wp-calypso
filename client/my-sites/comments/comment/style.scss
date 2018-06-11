@@ -499,6 +499,13 @@
 	width: 100%;
 }
 
+.comment__edit-date-button {
+	display: block;
+}
+.comment__edit-date-popover .popover__inner {
+	padding: 0 8px;
+}
+
 // HTML Editor
 
 .comment-html-editor {

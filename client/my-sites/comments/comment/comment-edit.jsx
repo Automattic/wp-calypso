@@ -12,12 +12,14 @@ import { get, noop, pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import CommentHtmlEditor from 'my-sites/comments/comment/comment-html-editor';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import InfoPopover from 'components/info-popover';
+import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { decodeEntities } from 'lib/formatting';
@@ -45,12 +47,15 @@ export class CommentEdit extends Component {
 		authorUrl: '',
 		commentContent: '',
 		commentDate: '',
+		isDatePopoverVisible: false,
 	};
 
 	componentWillMount() {
 		const { authorDisplayName, authorUrl, commentContent, commentDate } = this.props;
 		this.setState( { authorDisplayName, authorUrl, commentContent, commentDate } );
 	}
+
+	storeDatePopoverButtonRef = button => ( this.datePopoverButtonRef = button );
 
 	getTimezoneForPostSchedule = () => ( {
 		timezone: this.props.siteTimezone || undefined,
@@ -76,6 +81,7 @@ export class CommentEdit extends Component {
 			'authorDisplayName',
 			'authorUrl',
 			'commentContent',
+			'commentDate',
 		] );
 
 		const noticeOptions = {
@@ -91,12 +97,21 @@ export class CommentEdit extends Component {
 	submitEdit = () => {
 		const { postId, siteId, toggleEditMode } = this.props;
 
-		this.props.editComment( siteId, postId, this.state );
+		this.props.editComment(
+			siteId,
+			postId,
+			pick( this.state, [ 'authorDisplayName', 'authorUrl', 'commentContent', 'commentDate' ] )
+		);
 
 		this.showNotice();
 
 		toggleEditMode();
 	};
+
+	toggleDatePopover = () =>
+		this.setState( ( { isDatePopoverVisible } ) => ( {
+			isDatePopoverVisible: ! isDatePopoverVisible,
+		} ) );
 
 	undo = previousCommentData => () => {
 		const { postId, siteId } = this.props;
@@ -108,6 +123,7 @@ export class CommentEdit extends Component {
 		const {
 			isAuthorRegistered,
 			isEditCommentSupported,
+			moment,
 			siteGmtOffset,
 			siteId,
 			siteSlug,
@@ -115,7 +131,13 @@ export class CommentEdit extends Component {
 			toggleEditMode,
 			translate,
 		} = this.props;
-		const { authorDisplayName, authorUrl, commentContent, commentDate } = this.state;
+		const {
+			authorDisplayName,
+			authorUrl,
+			commentContent,
+			commentDate,
+			isDatePopoverVisible,
+		} = this.state;
 
 		return (
 			<div className="comment__edit">
@@ -155,11 +177,26 @@ export class CommentEdit extends Component {
 
 					<FormFieldset>
 						<FormLabel htmlFor="date">{ translate( 'Submitted on' ) }</FormLabel>
-						<PostSchedule
-							selectedDay={ commentDate }
-							onDateChange={ this.setCommentDateValue }
-							{ ...this.getTimezoneForPostSchedule() }
-						/>
+						<Button
+							className="comment__edit-date-button"
+							ref={ this.storeDatePopoverButtonRef }
+							onClick={ this.toggleDatePopover }
+						>
+							{ moment( commentDate ).format( 'll LT' ) }
+						</Button>
+						<Popover
+							className="comment__edit-date-popover"
+							context={ this.datePopoverButtonRef }
+							isVisible={ isDatePopoverVisible }
+							onClose={ this.toggleDatePopover }
+							position="bottom"
+						>
+							<PostSchedule
+								selectedDay={ commentDate }
+								onDateChange={ this.setCommentDateValue }
+								{ ...this.getTimezoneForPostSchedule() }
+							/>
+						</Popover>
 					</FormFieldset>
 
 					<CommentHtmlEditor
