@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { fetchSitePlansCompleted, transferPlanOwnership } from '../actions';
@@ -17,7 +12,7 @@ describe( 'actions', () => {
 			const siteId = 2916284,
 				action = fetchSitePlansCompleted( siteId, {} );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				siteId,
 				plans: [],
@@ -31,7 +26,7 @@ describe( 'actions', () => {
 			const newUserId = 123456;
 			const action = transferPlanOwnership( siteId, newUserId );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: SITE_PLAN_OWNERSHIP_TRANSFER,
 				newUserId,
 				siteId,
