@@ -22,6 +22,7 @@ import {
 	SITE_PLANS_TRIAL_CANCEL,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_TRIAL_CANCEL_FAILED,
+	SITE_PLAN_OWNERSHIP_TRANSFER,
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
@@ -151,3 +152,17 @@ export function refreshSitePlans( siteId ) {
 		dispatch( fetchSitePlans( siteId ) );
 	};
 }
+
+/**
+ * Returns an action object to be used in signalling that site plan ownership
+ * change to another user has started.
+ *
+ * @param {Number} siteId - ID of the site
+ * @param {Number} newUserId - ID of the new user
+ * @returns {Object} the corresponding action object
+ */
+export const transferPlanOwnership = ( siteId, newUserId ) => ( {
+	type: SITE_PLAN_OWNERSHIP_TRANSFER,
+	newUserId,
+	siteId,
+} );
