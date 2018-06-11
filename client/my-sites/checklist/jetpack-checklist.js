@@ -34,6 +34,7 @@ const tasks = {
 		completedButtonText: 'Change',
 		duration: translate( '3 min' ),
 		url: '/settings/security/$siteSlug#jetpack-monitor',
+		tour: 'jetpackMonitoring',
 	},
 	jetpack_plugin_updates: {
 		title: translate( 'Automatic Plugin Updates' ),
