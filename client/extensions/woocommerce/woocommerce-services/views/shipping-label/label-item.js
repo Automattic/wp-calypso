@@ -98,17 +98,17 @@ class LabelItem extends Component {
 							labelIndex: label.labelIndex + 1,
 						},
 					} ) }
-
-					<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
-					<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-					<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
-
 					{ label.showDetails && (
-						<EllipsisMenu position="bottom left">
-							{ this.renderLabelDetails( label ) }
-							{ this.renderRefund( label ) }
-							{ this.renderReprint( label ) }
-						</EllipsisMenu>
+						<span>
+							<EllipsisMenu position="bottom left">
+								{ this.renderLabelDetails( label ) }
+								{ this.renderRefund( label ) }
+								{ this.renderReprint( label ) }
+							</EllipsisMenu>
+							<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
+							<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
+							<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
+						</span>
 					) }
 				</p>
 				{ label.showDetails && (
