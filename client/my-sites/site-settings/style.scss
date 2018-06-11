@@ -249,6 +249,11 @@
 		margin: 0 -24px 1.5em;
 	}
 }
+
+:target {
+	border: 2px solid black;
+}
+
 .site-settings__general-settings .site-settings__language-picker-notice {
 	margin-bottom: 10px;
 }
