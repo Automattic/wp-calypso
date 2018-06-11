@@ -6,7 +6,6 @@
 
 import url from 'url';
 import { moment } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +23,7 @@ export const getEditURL = function( post, site ) {
 
 	let path;
 
-	const type = get( post, 'type', 'post' );
+	const type = post.type || 'post';
 	switch ( type ) {
 		case 'post':
 			path = '/post';
@@ -122,15 +121,27 @@ export const isPublished = function( post, status ) {
 };
 
 export const isScheduled = function( post ) {
-	return post && 'future' === post.status;
+	if ( ! post ) {
+		return false;
+	}
+
+	return post.status === 'future';
 };
 
 export const isPrivate = function( post ) {
-	return post && 'private' === post.status;
+	if ( ! post ) {
+		return false;
+	}
+
+	return post.status === 'private';
 };
 
 export const isPending = function( post ) {
-	return post && 'pending' === post.status;
+	if ( ! post ) {
+		return false;
+	}
+
+	return post.status === 'pending';
 };
 
 export const getEditedTime = function( post ) {
