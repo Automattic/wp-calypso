@@ -70,7 +70,6 @@ export default {
 			// subscribed_date: {},
 			// subscription_status: {},
 			// tag_line: {},
-			// user_id: {},
 		},
 	},
 };
