@@ -47,6 +47,7 @@ export default {
 			// included_domain: {},
 			// is_cancelable: {},
 			// is_domain_registration: {},
+			// is_domain: {},
 			// is_refundable: {},
 			// is_renewable: {},
 			// is_renewal: {},
