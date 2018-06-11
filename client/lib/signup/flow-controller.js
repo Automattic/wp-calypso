@@ -9,7 +9,6 @@ import {
 	difference,
 	every,
 	filter,
-	find,
 	flatten,
 	get,
 	isEmpty,
@@ -60,13 +59,13 @@ function SignupFlowController( options ) {
 
 	SignupProgressStore.on( 'change', this._process.bind( this ) );
 
-	if ( options.flowName === store.get( STORAGE_KEY ) ) {
-		SignupActions.fetchCachedSignup( options.flowName );
-
-		// reset the stores if the cached progress contained a processing step
-		this._resetStoresIfProcessing();
-		this._resetStoresIfUserHasLoggedIn();
-	}
+	// if ( options.flowName === store.get( STORAGE_KEY ) ) {
+	// 	SignupActions.fetchCachedSignup( options.flowName );
+	//
+	// 	// reset the stores if the cached progress contained a processing step
+	// 	this._resetStoresIfProcessing();
+	// 	this._resetStoresIfUserHasLoggedIn();
+	// }
 
 	if ( this._flow.providesDependenciesInQuery ) {
 		this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
@@ -79,23 +78,23 @@ function SignupFlowController( options ) {
 		}
 	}
 
-	store.set( STORAGE_KEY, options.flowName );
+	// store.set( STORAGE_KEY, options.flowName );
 }
 
 assign( SignupFlowController.prototype, {
-	_resetStoresIfProcessing: function() {
-		if ( find( SignupProgressStore.get(), { status: 'processing' } ) ) {
-			SignupProgressStore.reset();
-			SignupDependencyStore.reset();
-		}
-	},
-
-	_resetStoresIfUserHasLoggedIn: function() {
-		if ( user.get() && find( SignupProgressStore.get(), { stepName: 'user' } ) ) {
-			SignupProgressStore.reset();
-			SignupDependencyStore.reset();
-		}
-	},
+	// _resetStoresIfProcessing: function() {
+	// 	if ( find( SignupProgressStore.get(), { status: 'processing' } ) ) {
+	// 		SignupProgressStore.reset();
+	// 		SignupDependencyStore.reset();
+	// 	}
+	// },
+	//
+	// _resetStoresIfUserHasLoggedIn: function() {
+	// 	if ( user.get() && find( SignupProgressStore.get(), { stepName: 'user' } ) ) {
+	// 		SignupProgressStore.reset();
+	// 		SignupDependencyStore.reset();
+	// 	}
+	// },
 
 	_assertFlowProvidedDependenciesFromConfig: function( providedDependencies ) {
 		const dependencyDiff = difference(
@@ -196,7 +195,7 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_process: function() {
-		let currentSteps = this._flow.steps,
+		const currentSteps = this._flow.steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
 				step => -1 !== currentSteps.indexOf( step.stepName )

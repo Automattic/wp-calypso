@@ -43,7 +43,6 @@ import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-trac
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 import SignupActions from 'lib/signup/actions';
-import SignupDependencyStore from 'lib/signup/dependency-store';
 import SignupFlowController from 'lib/signup/flow-controller';
 import SignupProgressStore from 'lib/signup/progress-store';
 import { disableCart } from 'lib/upgrades/actions';

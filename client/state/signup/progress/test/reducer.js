@@ -16,7 +16,7 @@ describe( 'reducer', () => {
 		expect(
 			reducer( [], {
 				type: SIGNUP_PROGRESS_UPDATE,
-				data: [ { test: 123 } ],
+				step: [ { test: 123 } ],
 			} )
 		).to.be.eql( [ { test: 123 } ] );
 	} );

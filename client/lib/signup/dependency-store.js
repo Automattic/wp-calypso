@@ -3,7 +3,8 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_COMPLETE_RESET, SIGNUP_DEPENDENCY_STORE_UPDATE } from 'state/action-types';
+import { resetSignup } from 'state/signup/actions';
+import { updateDependencyStore } from 'state/signup/dependency-store/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
 const SignupDependencyStore = {
@@ -11,10 +12,10 @@ const SignupDependencyStore = {
 		return getSignupDependencyStore( SignupDependencyStore.reduxStore.getState() );
 	},
 	update( data ) {
-		SignupDependencyStore.reduxStore.dispatch( { type: SIGNUP_DEPENDENCY_STORE_UPDATE, data } );
+		SignupDependencyStore.reduxStore.dispatch( updateDependencyStore( data ) );
 	},
 	reset() {
-		SignupDependencyStore.reduxStore.dispatch( { type: SIGNUP_COMPLETE_RESET } );
+		SignupDependencyStore.reduxStore.dispatch( resetSignup() );
 	},
 	setReduxStore( reduxStore ) {
 		this.reduxStore = reduxStore;
