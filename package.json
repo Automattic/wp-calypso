@@ -114,7 +114,7 @@
     "moment": "2.21.0",
     "morgan": "1.2.0",
     "ms": "0.7.1",
-    "node-sass": "4.5.3",
+    "node-sass": "4.9.0",
     "notifications-panel": "2.1.10",
     "npm-run-all": "4.0.2",
     "object-path-immutable": "0.5.2",
@@ -175,8 +175,8 @@
     "wpcom-xhr-request": "1.1.1"
   },
   "engines": {
-    "node": "8.11.2",
-    "npm": "5.6.0"
+    "node": "10.4.0",
+    "npm": "6.1.0"
   },
   "scripts": {
     "preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true npm run -s build-client",
@@ -224,7 +224,6 @@
     "precommit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
     "prepush": "npm run -s install-if-no-packages && node bin/pre-push-hook.js",
     "rm": "node bin/rm.js",
-    "postshrinkwrap": "node bin/trim-shrinkwrap.js && touch node_modules",
     "prestart": "npm run -s install-if-deps-outdated && node bin/welcome.js && node bin/version-check.js",
     "start": "npm run -s build",
     "poststart": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS build/bundle.js",
@@ -245,12 +244,12 @@
     "test-server:coverage": "npm run -s test-server -- --coverage",
     "test-server:watch": "npm run -s test-server -- --watch",
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
-    "update-deps": "npm run -s rm -- node_modules && npm run -s rm -- npm-shrinkwrap.json && npm install && npm shrinkwrap"
+    "update-deps": "npm run -s rm -- node_modules && npm run -s rm -- npm-shrinkwrap.json && npm install && npm shrinkwrap",
+    "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\""
   },
   "devDependencies": {
     "5to6-codemod": "5to6/5to6-codemod#v1.7.0",
     "babel-eslint": "8.2.3",
-    "cash-touch": "0.2.0",
     "chai": "3.5.0",
     "chai-enzyme": "1.0.0-beta.0",
     "enzyme": "3.2.0",
@@ -292,6 +291,6 @@
     "webpack-hot-middleware": "2.22.2"
   },
   "optionalDependencies": {
-    "fsevents": "1.1.3"
+    "fsevents": "1.2.4"
   }
 }
