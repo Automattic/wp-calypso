@@ -13,6 +13,12 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import form from 'redux-form/es/reducer';
 import { mapValues } from 'lodash';
 
+import { NON_EXISTENT_NAME } from './account/reducer';
+
+if ( NON_EXISTENT_NAME === undefined ) {
+	console.log( ':x' );
+}
+
 /**
  * Internal dependencies
  */
