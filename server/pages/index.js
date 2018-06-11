@@ -10,7 +10,17 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { endsWith, get, includes, pick, flatten, forEach, intersection, snakeCase } from 'lodash';
+import {
+	endsWith,
+	get,
+	includes,
+	pick,
+	flatten,
+	forEach,
+	intersection,
+	snakeCase,
+	split,
+} from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -493,7 +503,7 @@ function render404( request, response ) {
  */
 function handleLocaleSubdomains( req, res, next ) {
 	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
-		? req.hostname.split( '.' )[ 0 ]
+		? split( req.hostname, '.' )[ 0 ]
 		: null;
 
 	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {
