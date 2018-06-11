@@ -56,10 +56,6 @@ UndocumentedMe.prototype.getReceipt = function( receiptId, queryOrCallback ) {
 	);
 };
 
-UndocumentedMe.prototype.purchases = function( callback ) {
-	return this.wpcom.req.get( '/me/purchases', callback );
-};
-
 UndocumentedMe.prototype.validatePassword = function( password, callback ) {
 	const args = {
 		apiVersion: '1.1',
