@@ -218,11 +218,11 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should return the variant', () => {
-			expect( getLanguage( 'de', 'de_formal' ).langSlug ).toEqual( 'de_formal' );
+			expect( getLanguage( 'de_formal' ).langSlug ).toEqual( 'de_formal' );
 		} );
 
 		test( 'should return the parent slug since the given variant does not exist', () => {
-			expect( getLanguage( 'fr', 'fr_formal' ).langSlug ).toEqual( 'fr' );
+			expect( getLanguage( 'fr_formal' ).langSlug ).toEqual( 'fr' );
 		} );
 	} );
 
