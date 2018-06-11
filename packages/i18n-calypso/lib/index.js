@@ -165,8 +165,9 @@ function I18N() {
 	this.componentUpdateHooks = [];
 	this.translateHooks = [];
 	this.stateObserver = new EventEmitter();
-	// Because the mixin can be injected into a ton of React components,
+	// Because the higher-order component can wrap a ton of React components,
 	// we need to bump the number of listeners to infinity and beyond
+	// FIXME: still valid?
 	this.stateObserver.setMaxListeners( 0 );
 	// default configuration
 	this.configure();
