@@ -9,7 +9,6 @@ import {
 	difference,
 	every,
 	filter,
-	find,
 	flatten,
 	get,
 	isEmpty,
@@ -33,12 +32,12 @@ import flows from 'signup/config/flows';
 import steps from 'signup/config/steps';
 import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
-const user = userFactory();
 import { getStepUrl } from 'signup/utils';
 
 /**
  * Constants
  */
+const user = userFactory();
 const STORAGE_KEY = 'signupFlowName';
 
 function SignupFlowController( options ) {
@@ -49,23 +48,24 @@ function SignupFlowController( options ) {
 	this._flowName = options.flowName;
 	this._flow = flows.getFlow( options.flowName );
 	this._onComplete = options.onComplete;
-	this._processingSteps = {};
 
-	this._boundProcess = this._process.bind( this );
+	this._reduxStore = options.reduxStore;
+	SignupProgressStore.setReduxStore( this._reduxStore );
+	SignupDependencyStore.setReduxStore( this._reduxStore );
+
+	this._processingSteps = {};
 
 	this._assertFlowHasValidDependencies();
 
-	this._reduxStore = options.reduxStore;
+	SignupProgressStore.on( 'change', this._process.bind( this ) );
 
-	SignupProgressStore.on( 'change', this._boundProcess );
-
-	if ( options.flowName === store.get( STORAGE_KEY ) ) {
-		SignupActions.fetchCachedSignup( options.flowName );
-
-		// reset the stores if the cached progress contained a processing step
-		this._resetStoresIfProcessing();
-		this._resetStoresIfUserHasLoggedIn();
-	}
+	// if ( options.flowName === store.get( STORAGE_KEY ) ) {
+	// 	SignupActions.fetchCachedSignup( options.flowName );
+	//
+	// 	// reset the stores if the cached progress contained a processing step
+	// 	this._resetStoresIfProcessing();
+	// 	this._resetStoresIfUserHasLoggedIn();
+	// }
 
 	if ( this._flow.providesDependenciesInQuery ) {
 		this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
@@ -78,23 +78,23 @@ function SignupFlowController( options ) {
 		}
 	}
 
-	store.set( STORAGE_KEY, options.flowName );
+	// store.set( STORAGE_KEY, options.flowName );
 }
 
 assign( SignupFlowController.prototype, {
-	_resetStoresIfProcessing: function() {
-		if ( find( SignupProgressStore.get(), { status: 'processing' } ) ) {
-			SignupProgressStore.reset();
-			SignupDependencyStore.reset();
-		}
-	},
-
-	_resetStoresIfUserHasLoggedIn: function() {
-		if ( user.get() && find( SignupProgressStore.get(), { stepName: 'user' } ) ) {
-			SignupProgressStore.reset();
-			SignupDependencyStore.reset();
-		}
-	},
+	// _resetStoresIfProcessing: function() {
+	// 	if ( find( SignupProgressStore.get(), { status: 'processing' } ) ) {
+	// 		SignupProgressStore.reset();
+	// 		SignupDependencyStore.reset();
+	// 	}
+	// },
+	//
+	// _resetStoresIfUserHasLoggedIn: function() {
+	// 	if ( user.get() && find( SignupProgressStore.get(), { stepName: 'user' } ) ) {
+	// 		SignupProgressStore.reset();
+	// 		SignupDependencyStore.reset();
+	// 	}
+	// },
 
 	_assertFlowProvidedDependenciesFromConfig: function( providedDependencies ) {
 		const dependencyDiff = difference(
@@ -195,7 +195,7 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_process: function() {
-		let currentSteps = this._flow.steps,
+		const currentSteps = this._flow.steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
 				step => -1 !== currentSteps.indexOf( step.stepName )
@@ -297,9 +297,7 @@ assign( SignupFlowController.prototype, {
 		return !! this._flow.autoContinue;
 	},
 
-	reset: function() {
-		SignupProgressStore.off( 'change', this._boundProcess );
-
+	reset() {
 		SignupProgressStore.reset();
 		SignupDependencyStore.reset();
 	},
