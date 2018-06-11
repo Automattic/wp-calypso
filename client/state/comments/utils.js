@@ -20,5 +20,9 @@ export const commentHasLink = ( commentContent, apiSuppliedValue ) => {
 		return apiSuppliedValue;
 	}
 
-	return !! domForHtml( commentContent ).getElementsByTagName( 'a' ).length;
+	try {
+		return !! domForHtml( commentContent ).getElementsByTagName( 'a' ).length;
+	} catch ( e ) {
+		return false;
+	}
 };
