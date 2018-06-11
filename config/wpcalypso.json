@@ -42,6 +42,7 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": true,
 		"google-my-business": true,
+		"google-my-business-m3": false,
 		"google-analytics": false,
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,

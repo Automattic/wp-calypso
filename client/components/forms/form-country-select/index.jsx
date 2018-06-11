@@ -7,7 +7,6 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import classnames from 'classnames';
-import observe from 'lib/mixins/data-observe';
 import { isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -16,8 +15,6 @@ import { localize } from 'i18n-calypso';
 /* eslint-disable jsx-a11y/no-onchange */
 export const FormCountrySelect = createReactClass( {
 	displayName: 'FormCountrySelect',
-
-	mixins: [ observe( 'countriesList' ) ],
 
 	getOptions( countriesList ) {
 		if ( isEmpty( countriesList ) ) {
@@ -37,7 +34,7 @@ export const FormCountrySelect = createReactClass( {
 	},
 
 	render() {
-		const countriesList = this.props.countriesList.get(),
+		const countriesList = this.props.countriesList,
 			options = this.getOptions( countriesList );
 
 		return (

@@ -39,6 +39,7 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": false,
 		"google-my-business": true,
+		"google-my-business-m3": false,
 		"google-analytics": false,
 		"happychat": true,
 		"help": true,
