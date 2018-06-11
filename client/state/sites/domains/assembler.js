@@ -43,6 +43,7 @@ export const createSiteDomainObject = domain => {
 		registrar: String( domain.registrar ),
 		registrationDate: String( domain.registration_date ),
 		subscriptionId: domain.subscription_id,
+		supportsDomainConnect: Boolean( domain.supports_domain_connect ),
 		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional ),
 		type: getDomainType( domain ),
 		transferStatus: getTransferStatus( domain ),

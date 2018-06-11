@@ -19,6 +19,7 @@ import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
 import { isE2ETest } from 'lib/e2e';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
+import { getLanguage } from 'lib/i18n-utils/utils';
 import localforage from 'lib/localforage';
 import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 
@@ -203,21 +204,7 @@ User.prototype.handleFetchSuccess = function( userData ) {
 };
 
 User.prototype.getLanguage = function() {
-	const languages = config( 'languages' );
-	const len = languages.length;
-	let language, index;
-
-	if ( ! this.data.localeSlug ) {
-		return;
-	}
-	for ( index = 0; index < len; index++ ) {
-		if ( this.data.localeSlug === languages[ index ].langSlug ) {
-			language = languages[ index ];
-			break;
-		}
-	}
-
-	return language;
+	return getLanguage( this.data.localeSlug );
 };
 
 /**

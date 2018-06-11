@@ -84,7 +84,7 @@ class ImporterHeader extends React.PureComponent {
 	};
 
 	getLogo = icon => {
-		if ( includes( [ 'wordpress', 'medium' ], icon ) ) {
+		if ( includes( [ 'wordpress', 'medium', 'blogger-alt' ], icon ) ) {
 			return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
 		}
 

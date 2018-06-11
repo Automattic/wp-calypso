@@ -33,6 +33,7 @@ import {
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
 	domainManagementManageConsent,
+	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
 import ProductsList from 'lib/products-list';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
@@ -166,6 +167,21 @@ export default {
 		);
 		next();
 	},
+
+	domainManagementDomainConnectMapping( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementDomainConnectMapping( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Set Up Your Domain"
+				component={ DomainManagement.DomainConnectMapping }
+				context={ pageContext }
+				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+				productsList={ productsList }
+			/>
+		);
+		next();
+	},
+
 	domainManagementNameServers( pageContext, next ) {
 		pageContext.primary = (
 			<NameserversData

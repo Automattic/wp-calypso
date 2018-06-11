@@ -17,7 +17,11 @@ import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import { domainManagementDns, domainManagementEmail } from 'my-sites/domains/paths';
+import {
+	domainManagementDns,
+	domainManagementEmail,
+	domainManagementDomainConnectMapping,
+} from 'my-sites/domains/paths';
 
 const MappedDomain = createReactClass( {
 	displayName: 'MappedDomain',
@@ -113,6 +117,7 @@ const MappedDomain = createReactClass( {
 			<VerticalNav>
 				{ this.emailNavItem() }
 				{ this.dnsRecordsNavItem() }
+				{ this.domainConnectMappingNavItem() }
 			</VerticalNav>
 		);
 	},
@@ -128,6 +133,24 @@ const MappedDomain = createReactClass( {
 
 		return (
 			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS Records' ) }</VerticalNavItem>
+		);
+	},
+
+	domainConnectMappingNavItem() {
+		const { supportsDomainConnect, hasWpcomNameservers, pointsToWpcom } = this.props.domain;
+		if ( ! supportsDomainConnect || hasWpcomNameservers || pointsToWpcom ) {
+			return;
+		}
+
+		const path = domainManagementDomainConnectMapping(
+			this.props.selectedSite.slug,
+			this.props.domain.name
+		);
+
+		return (
+			<VerticalNavItem path={ path }>
+				{ this.props.translate( 'Connect Your Domain' ) }
+			</VerticalNavItem>
 		);
 	},
 } );

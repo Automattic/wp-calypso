@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isString } from 'lodash';
+import { find, isString, map } from 'lodash';
 import { parse } from 'url';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -62,15 +62,20 @@ export function canBeTranslated( locale ) {
 }
 
 /**
- * Matches and returns language from config.languages based on the given localeSlug and localeVariant
- * @param  {String} localeSlug locale slug of the language to match
- * @param  {String?} localeVariant local variant of the language to match. It takes precedence if exists.
+ * Return a list of all supported language slugs
+ *
+ * @return {Array} A list of all supported language slugs
+ */
+export function getLanguageSlugs() {
+	return map( config( 'languages' ), 'langSlug' );
+}
+
+/**
+ * Matches and returns language from config.languages based on the given localeSlug
+ * @param  {String} langSlug locale slug of the language to match
  * @return {Object|undefined} An object containing the locale data or undefined.
  */
-export function getLanguage( localeSlug, localeVariant = null ) {
-	// if a localeVariant is given, we should use it. Otherwise, use localeSlug
-	const langSlug = localeVariant || localeSlug;
-
+export function getLanguage( langSlug ) {
 	if ( localeRegex.test( langSlug ) ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
 		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.

@@ -29,7 +29,6 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
 	"features": {
-		"activity-log-theme-update": true,
 		"activity-log-wpcom-free": true,
 		"account-recovery": true,
 		"ad-tracking": false,
@@ -90,6 +89,7 @@
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
 		"manage/import/medium": true,
+		"manage/import/blogger": true,
 		"manage/import/site-importer": true,
 		"manage/media": true,
 		"manage/option_sync_non_public_post_stati": true,
@@ -147,6 +147,7 @@
 		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/full-errors": true,
+		"reader/likes-hover": true,
 		"reader/list-management": false,
 		"reader/nesting-arrow": true,
 		"reader/paste-to-link": true,
