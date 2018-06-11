@@ -29,9 +29,14 @@ class GoogleMyBusinessStatsNudge extends Component {
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		visible: PropTypes.bool,
 	};
 
-	componentWillMount() {
+	static defaultProps = {
+		visible: true,
+	};
+
+	componentDidMount() {
 		if ( ! this.props.isDismissed ) {
 			this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_view' );
 		}
@@ -108,6 +113,9 @@ export default connect(
 	} ),
 	{
 		dismissNudge,
-		recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithDismissCount, enhanceWithSiteType ] ),
+		recordTracksEvent: withEnhancers( recordTracksEvent, [
+			enhanceWithDismissCount,
+			enhanceWithSiteType,
+		] ),
 	}
 )( localize( GoogleMyBusinessStatsNudge ) );
