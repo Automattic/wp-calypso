@@ -27,9 +27,12 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     additionalClasses="checkout__checkout-field ebanx-brazil"
     autoComplete="off"
     countriesList={
-      Object {
-        "get": [Function],
-      }
+      Array [
+        Object {
+          "code": "BR",
+          "name": "Brazil",
+        },
+      ]
     }
     countryCode="BR"
     disabled={false}

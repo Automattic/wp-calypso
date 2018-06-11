@@ -37,7 +37,7 @@ export class RedirectPaymentBox extends PureComponent {
 	static propTypes = {
 		paymentType: PropTypes.string.isRequired,
 		cart: PropTypes.object.isRequired,
-		countriesList: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
 	};

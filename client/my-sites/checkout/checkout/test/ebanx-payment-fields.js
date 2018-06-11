@@ -15,11 +15,17 @@ import { identity } from 'lodash';
 
 import { EbanxPaymentFields } from '../ebanx-payment-fields';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 const defaultProps = {
 	countryCode: 'BR',
-	countriesList: {
-		get: () => [ { code: 'BR', name: 'Brazil' } ],
-	},
+	countriesList: [
+		{
+			code: 'BR',
+			name: 'Brazil',
+		},
+	],
 	getErrorMessage: jest.fn(),
 	getFieldValue: jest.fn(),
 	handleFieldChange: jest.fn(),

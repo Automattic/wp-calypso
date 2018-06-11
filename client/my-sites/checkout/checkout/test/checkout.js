@@ -14,7 +14,6 @@ import { identity } from 'lodash';
  */
 import { Checkout } from '../checkout';
 
-jest.mock( 'lib/countries-list', () => ( {} ) );
 jest.mock( 'lib/user', () => ( {} ) );
 jest.mock( 'lib/upgrades/actions', () => ( {
 	resetTransaction: jest.fn(),

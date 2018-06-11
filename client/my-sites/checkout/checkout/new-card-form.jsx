@@ -19,7 +19,7 @@ class NewCardForm extends Component {
 	static displayName = 'NewCardForm';
 
 	static propTypes = {
-		countriesList: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		hasStoredCards: PropTypes.bool.isRequired,
 		transaction: PropTypes.object.isRequired,
 	};

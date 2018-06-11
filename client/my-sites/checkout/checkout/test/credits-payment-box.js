@@ -53,6 +53,9 @@ jest.mock( '../payment-chat-button', () => {
 	return class PaymentChatButton extends react.Component {};
 } );
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 const defaultProps = {
 	cart: {},
 	translate: identity,
