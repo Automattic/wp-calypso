@@ -14,32 +14,28 @@ import { createStore } from 'redux';
  * Internal dependencies
  */
 import { reducer } from 'state';
+import { resetDependencyStore } from 'state/signup/dependency-store/actions';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'flow-controller', () => {
-	let SignupProgressStore,
-		SignupDependencyStore,
-		SignupFlowController,
-		SignupActions,
-		signupFlowController;
+	let store, SignupProgressStore, SignupFlowController, SignupActions, signupFlowController;
 
 	beforeAll( () => {
 		SignupProgressStore = require( '../progress-store' );
-		SignupDependencyStore = require( '../dependency-store' );
 		SignupFlowController = require( '../flow-controller' );
 		SignupActions = require( '../actions' );
 		SignupProgressStore.reset();
 
-		const store = createStore( reducer );
-		SignupDependencyStore.setReduxStore( store );
+		store = createStore( reducer );
+		SignupProgressStore.setReduxStore( store );
 	} );
 
 	afterEach( () => {
 		signupFlowController.reset();
-		SignupDependencyStore.reset();
+		store.dispatch( resetDependencyStore() );
 		SignupProgressStore.reset();
 	} );
 
@@ -51,6 +47,7 @@ describe( 'flow-controller', () => {
 					assert.equal( destination, '/' );
 					done();
 				},
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( { stepName: 'stepA' } );
@@ -60,7 +57,10 @@ describe( 'flow-controller', () => {
 
 	describe( 'controlling a flow w/ an asynchronous step', () => {
 		beforeEach( () => {
-			signupFlowController = SignupFlowController( { flowName: 'flow_with_async' } );
+			signupFlowController = SignupFlowController( {
+				flowName: 'flow_with_async',
+				reduxStore: store,
+			} );
 		} );
 
 		test( 'should call apiRequestFunction on steps with that property', done => {
@@ -93,6 +93,7 @@ describe( 'flow-controller', () => {
 					assert.equal( destination, '/checkout/testsite.wordpress.com' );
 					done();
 				},
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {
@@ -111,6 +112,7 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'invalid_flow_with_dependencies',
 				onComplete: function() {},
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( { stepName: 'siteCreation' } );
@@ -125,6 +127,7 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
 				onComplete: ary( done, 0 ),
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {
@@ -143,6 +146,7 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
 				onComplete: ary( done, 0 ),
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {
@@ -169,6 +173,7 @@ describe( 'flow-controller', () => {
 			assert.throws( function() {
 				SignupFlowController( {
 					flowName: 'flowWithProvidedDependencies',
+					reduxStore: store,
 				} );
 			} );
 		} );
@@ -178,6 +183,7 @@ describe( 'flow-controller', () => {
 				flowName: 'flowWithProvidedDependencies',
 				providedDependencies: { siteSlug: 'foo' },
 				onComplete: ary( done, 0 ),
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {

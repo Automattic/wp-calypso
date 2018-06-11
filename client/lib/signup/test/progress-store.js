@@ -9,11 +9,13 @@
 import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { defer, find, last, omit } from 'lodash';
 import sinon from 'sinon';
+import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
+import { reducer } from 'state';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
@@ -24,6 +26,9 @@ describe( 'progress-store', () => {
 	beforeAll( () => {
 		SignupProgressStore = require( '../progress-store' );
 		SignupActions = require( '../actions' );
+
+		const store = createStore( reducer );
+		SignupProgressStore.setReduxStore( store );
 	} );
 
 	test( 'should return an empty at first', () => {

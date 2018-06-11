@@ -14,7 +14,7 @@ import { get } from 'lodash';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { getSignupDependencies } from 'state/signup/dependency-store/selectors';
 
 class RewindWereBacking extends Component {
 	static propTypes = {
@@ -26,11 +26,11 @@ class RewindWereBacking extends Component {
 
 		// Connected props
 		siteSlug: PropTypes.string.isRequired,
-		dependencyStore: PropTypes.object,
+		signupDependencies: PropTypes.object,
 	};
 
 	stepContent = () => {
-		const { translate, siteSlug, dependencyStore } = this.props;
+		const { translate, siteSlug, signupDependencies } = this.props;
 
 		return (
 			<Card className="rewind-were-backing__card rewind-switch__card rewind-switch__content">
@@ -39,7 +39,7 @@ class RewindWereBacking extends Component {
 				</h3>
 				<img src="/calypso/images/illustrations/thankYou.svg" alt="" />
 				<p className="rewind-were-backing__description rewind-switch__description">
-					{ get( dependencyStore, 'rewindconfig', false ) &&
+					{ get( signupDependencies, 'rewindconfig', false ) &&
 						translate(
 							'Your site is being backed up because it is set up with ' +
 								'Jetpack Premium at no additional cost to you.'
@@ -75,7 +75,7 @@ class RewindWereBacking extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], 0 ),
-		dependencyStore: getSignupDependencyStore( state ),
+		signupDependencies: getSignupDependencies( state ),
 	} ),
 	null
 )( localize( RewindWereBacking ) );
