@@ -7,7 +7,7 @@ import { assign, flow, flowRight, partialRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/action-types';
+import * as UpgradesActionTypes from 'lib/upgrades/action-types';
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';

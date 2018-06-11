@@ -9,7 +9,7 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/action-types';
+import * as UpgradesActionTypes from 'lib/upgrades/action-types';
 
 const initialDomainState = {
 	isFetching: false,

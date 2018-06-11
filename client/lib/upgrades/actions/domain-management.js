@@ -8,7 +8,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/action-types';
+import * as ActionTypes from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import DnsStore from 'lib/domains/dns/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';

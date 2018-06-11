@@ -10,7 +10,7 @@ import { expect } from 'chai';
  */
 import WhoisStore from './../store';
 import Dispatcher from 'dispatcher';
-import { action as ActionTypes } from 'lib/upgrades/action-types';
+import * as ActionTypes from 'lib/upgrades/action-types';
 import { whoisType } from '../constants';
 
 describe( 'store', () => {

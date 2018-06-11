@@ -11,7 +11,7 @@ import { pick } from 'lodash';
  */
 import { reducer } from '../reducer';
 import { DOMAIN_NAME, RECORD_A, RECORD_TXT } from './data';
-import { action as ActionTypes } from 'lib/upgrades/action-types';
+import * as ActionTypes from 'lib/upgrades/action-types';
 
 describe( 'reducer', () => {
 	test( 'should return the same state when no matching record passed in the delete action', () => {

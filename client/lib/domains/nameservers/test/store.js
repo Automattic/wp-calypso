@@ -10,7 +10,7 @@ import { expect } from 'chai';
  */
 import NameserversStore from './../store';
 import Dispatcher from 'dispatcher';
-import { action as ActionTypes } from 'lib/upgrades/action-types';
+import * as ActionTypes from 'lib/upgrades/action-types';
 
 describe( 'store', () => {
 	const DOMAIN_NAME = 'dummy.com',

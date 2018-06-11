@@ -6,7 +6,7 @@
 import { assign, flowRight } from 'lodash';
 import i18n from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
-import { action as upgradesActionTypes } from 'lib/upgrades/action-types';
+import * as upgradesActionTypes from 'lib/upgrades/action-types';
 import debugFactory from 'debug';
 
 /**

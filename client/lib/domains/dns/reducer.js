@@ -10,7 +10,7 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/action-types';
+import * as ActionTypes from 'lib/upgrades/action-types';
 import { addMissingWpcomRecords, removeDuplicateWpcomRecords } from './';
 
 function updateDomainState( state, domainName, dns ) {
