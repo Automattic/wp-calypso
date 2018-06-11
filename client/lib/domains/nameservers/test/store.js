@@ -10,7 +10,12 @@ import { expect } from 'chai';
  */
 import NameserversStore from './../store';
 import Dispatcher from 'dispatcher';
-import * as ActionTypes from 'lib/upgrades/action-types';
+import {
+	NAMESERVERS_FETCH,
+	NAMESERVERS_FETCH_COMPLETED,
+	NAMESERVERS_FETCH_FAILED,
+	NAMESERVERS_UPDATE_COMPLETED,
+} from 'lib/upgrades/action-types';
 
 describe( 'store', () => {
 	const DOMAIN_NAME = 'dummy.com',
@@ -34,7 +39,7 @@ describe( 'store', () => {
 
 	test( 'should return an object with enabled isFetching flag when fetching domain data triggered', () => {
 		Dispatcher.handleViewAction( {
-			type: ActionTypes.NAMESERVERS_FETCH,
+			type: NAMESERVERS_FETCH,
 			domainName: DOMAIN_NAME,
 		} );
 
@@ -47,7 +52,7 @@ describe( 'store', () => {
 
 	test( 'should return an object with disabled isFetching flag when fetching domain data failed', () => {
 		Dispatcher.handleViewAction( {
-			type: ActionTypes.NAMESERVERS_FETCH_FAILED,
+			type: NAMESERVERS_FETCH_FAILED,
 			domainName: DOMAIN_NAME,
 		} );
 
@@ -60,7 +65,7 @@ describe( 'store', () => {
 
 	test( 'should return a list with name servers when fetching domain data completed', () => {
 		Dispatcher.handleViewAction( {
-			type: ActionTypes.NAMESERVERS_FETCH_COMPLETED,
+			type: NAMESERVERS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
 			nameservers: NAMSERVERS,
 		} );
@@ -76,7 +81,7 @@ describe( 'store', () => {
 		const UPDATED_NAMESERVERS = [ 'ns1.foo.com', 'ns2.foo.com' ];
 
 		Dispatcher.handleViewAction( {
-			type: ActionTypes.NAMESERVERS_UPDATE_COMPLETED,
+			type: NAMESERVERS_UPDATE_COMPLETED,
 			domainName: DOMAIN_NAME,
 			nameservers: UPDATED_NAMESERVERS,
 		} );

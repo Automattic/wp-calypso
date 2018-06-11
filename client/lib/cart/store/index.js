@@ -7,7 +7,17 @@ import { assign, flow, flowRight, partialRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as UpgradesActionTypes from 'lib/upgrades/action-types';
+import {
+	CART_COUPON_APPLY,
+	CART_COUPON_REMOVE,
+	CART_DISABLE,
+	CART_ITEM_REMOVE,
+	CART_ITEM_REPLACE,
+	CART_ITEMS_ADD,
+	CART_PRIVACY_PROTECTION_ADD,
+	CART_PRIVACY_PROTECTION_REMOVE,
+	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+} from 'lib/upgrades/action-types';
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
@@ -98,37 +108,37 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.CART_DISABLE:
+		case CART_DISABLE:
 			disable();
 			break;
 
-		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_ADD:
+		case CART_PRIVACY_PROTECTION_ADD:
 			update( cartItems.addPrivacyToAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_REMOVE:
+		case CART_PRIVACY_PROTECTION_REMOVE:
 			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD:
+		case GOOGLE_APPS_REGISTRATION_DATA_ADD:
 			update(
 				cartItems.fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData )
 			);
 			break;
 
-		case UpgradesActionTypes.CART_ITEMS_ADD:
+		case CART_ITEMS_ADD:
 			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
 			break;
 
-		case UpgradesActionTypes.CART_COUPON_APPLY:
+		case CART_COUPON_APPLY:
 			update( applyCoupon( action.coupon ) );
 			break;
 
-		case UpgradesActionTypes.CART_COUPON_REMOVE:
+		case CART_COUPON_REMOVE:
 			update( removeCoupon() );
 			break;
 
-		case UpgradesActionTypes.CART_ITEM_REMOVE:
+		case CART_ITEM_REMOVE:
 			update(
 				cartItems.removeItemAndDependencies(
 					action.cartItem,
@@ -138,7 +148,7 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			);
 			break;
 
-		case UpgradesActionTypes.CART_ITEM_REPLACE:
+		case CART_ITEM_REPLACE:
 			update( cartItems.replaceItem( action.oldItem, action.newItem ) );
 			break;
 	}

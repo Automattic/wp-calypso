@@ -10,7 +10,14 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import * as UpgradesActionTypes from 'lib/upgrades/action-types';
+import {
+	CART_ITEM_REMOVE,
+	TRANSACTION_DOMAIN_DETAILS_SET,
+	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
+	TRANSACTION_PAYMENT_SET,
+	TRANSACTION_RESET,
+	TRANSACTION_STEP_SET,
+} from 'lib/upgrades/action-types';
 import { cartItems } from 'lib/cart-values';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';
@@ -91,30 +98,30 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	const action = payload.action;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.TRANSACTION_DOMAIN_DETAILS_SET:
+		case TRANSACTION_DOMAIN_DETAILS_SET:
 			setDomainDetails( action.domainDetails );
 			break;
 
-		case UpgradesActionTypes.TRANSACTION_PAYMENT_SET:
+		case TRANSACTION_PAYMENT_SET:
 			setPayment( action.payment );
 			break;
 
-		case UpgradesActionTypes.TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
+		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			setNewCreditCardDetails( {
 				rawDetails: action.rawDetails,
 				maskedDetails: action.maskedDetails,
 			} );
 			break;
 
-		case UpgradesActionTypes.TRANSACTION_STEP_SET:
+		case TRANSACTION_STEP_SET:
 			setStep( action.step );
 			break;
 
-		case UpgradesActionTypes.TRANSACTION_RESET:
+		case TRANSACTION_RESET:
 			reset();
 			break;
 
-		case UpgradesActionTypes.CART_ITEM_REMOVE:
+		case CART_ITEM_REMOVE:
 			Dispatcher.waitFor( [ CartStore.dispatchToken ] );
 
 			if (

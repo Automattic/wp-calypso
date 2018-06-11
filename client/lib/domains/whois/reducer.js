@@ -9,7 +9,12 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import * as ActionTypes from 'lib/upgrades/action-types';
+import {
+	WHOIS_FETCH,
+	WHOIS_FETCH_COMPLETED,
+	WHOIS_FETCH_FAILED,
+	WHOIS_UPDATE_COMPLETED,
+} from 'lib/upgrades/action-types';
 import { whoisType } from './constants';
 
 const initialDomainState = {
@@ -67,19 +72,19 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case ActionTypes.WHOIS_FETCH:
+		case WHOIS_FETCH:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: true,
 				needsUpdate: false,
 			} );
 			break;
-		case ActionTypes.WHOIS_FETCH_FAILED:
+		case WHOIS_FETCH_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: false,
 				needsUpdate: true,
 			} );
 			break;
-		case ActionTypes.WHOIS_FETCH_COMPLETED:
+		case WHOIS_FETCH_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				data: action.data,
 				hasLoadedFromServer: true,
@@ -87,7 +92,7 @@ function reducer( state, payload ) {
 				needsUpdate: false,
 			} );
 			break;
-		case ActionTypes.WHOIS_UPDATE_COMPLETED:
+		case WHOIS_UPDATE_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				needsUpdate: true,
 				// merge validated contact details from the form into whois data

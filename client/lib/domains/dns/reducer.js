@@ -10,7 +10,18 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import * as ActionTypes from 'lib/upgrades/action-types';
+import {
+	DNS_ADD,
+	DNS_ADD_COMPLETED,
+	DNS_ADD_FAILED,
+	DNS_APPLY_TEMPLATE_COMPLETED,
+	DNS_DELETE,
+	DNS_DELETE_COMPLETED,
+	DNS_DELETE_FAILED,
+	DNS_FETCH,
+	DNS_FETCH_COMPLETED,
+	DNS_FETCH_FAILED,
+} from 'lib/upgrades/action-types';
 import { addMissingWpcomRecords, removeDuplicateWpcomRecords } from './';
 
 function updateDomainState( state, domainName, dns ) {
@@ -104,27 +115,27 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case ActionTypes.DNS_FETCH:
+		case DNS_FETCH:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: true,
 			} );
 			break;
-		case ActionTypes.DNS_FETCH_COMPLETED:
+		case DNS_FETCH_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				records: action.records,
 				isFetching: false,
 				hasLoadedFromServer: true,
 			} );
 			break;
-		case ActionTypes.DNS_FETCH_FAILED:
+		case DNS_FETCH_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: false,
 			} );
 			break;
-		case ActionTypes.DNS_ADD:
+		case DNS_ADD:
 			state = addDns( state, action.domainName, action.record );
 			break;
-		case ActionTypes.DNS_ADD_COMPLETED:
+		case DNS_ADD_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				isSubmittingForm: false,
 			} );
@@ -132,28 +143,28 @@ function reducer( state, payload ) {
 				isBeingAdded: false,
 			} );
 			break;
-		case ActionTypes.DNS_APPLY_TEMPLATE_COMPLETED:
+		case DNS_APPLY_TEMPLATE_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				records: action.records,
 				isFetching: false,
 				hasLoadedFromServer: true,
 			} );
 			break;
-		case ActionTypes.DNS_ADD_FAILED:
+		case DNS_ADD_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isSubmittingForm: false,
 			} );
 			state = deleteDns( state, action.domainName, action.record );
 			break;
-		case ActionTypes.DNS_DELETE:
+		case DNS_DELETE:
 			state = updateDnsState( state, action.domainName, action.record, {
 				isBeingDeleted: true,
 			} );
 			break;
-		case ActionTypes.DNS_DELETE_COMPLETED:
+		case DNS_DELETE_COMPLETED:
 			state = deleteDns( state, action.domainName, action.record );
 			break;
-		case ActionTypes.DNS_DELETE_FAILED:
+		case DNS_DELETE_FAILED:
 			state = updateDnsState( state, action.domainName, action.record, {
 				isBeingDeleted: false,
 			} );

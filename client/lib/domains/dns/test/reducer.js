@@ -11,7 +11,7 @@ import { pick } from 'lodash';
  */
 import { reducer } from '../reducer';
 import { DOMAIN_NAME, RECORD_A, RECORD_TXT } from './data';
-import * as ActionTypes from 'lib/upgrades/action-types';
+import { DNS_DELETE_COMPLETED } from 'lib/upgrades/action-types';
 
 describe( 'reducer', () => {
 	test( 'should return the same state when no matching record passed in the delete action', () => {
@@ -22,7 +22,7 @@ describe( 'reducer', () => {
 			} ),
 			payload = {
 				action: {
-					type: ActionTypes.DNS_DELETE_COMPLETED,
+					type: DNS_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
 					record: RECORD_TXT,
 				},
@@ -41,7 +41,7 @@ describe( 'reducer', () => {
 			} ),
 			payload = {
 				action: {
-					type: ActionTypes.DNS_DELETE_COMPLETED,
+					type: DNS_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
 					record: RECORD_TXT,
 				},
@@ -61,7 +61,7 @@ describe( 'reducer', () => {
 			} ),
 			payload = {
 				action: {
-					type: ActionTypes.DNS_DELETE_COMPLETED,
+					type: DNS_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
 					record: RECORD_TXT_WITHOUT_ID,
 				},

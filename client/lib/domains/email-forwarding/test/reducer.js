@@ -10,7 +10,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { reducer } from './../reducer';
 import { DOMAIN_NAME, EMAIL_FORWARDS, MAILBOX_NAME } from './data';
-import * as ActionTypes from 'lib/upgrades/action-types';
+import { EMAIL_FORWARDING_DELETE_COMPLETED } from 'lib/upgrades/action-types';
 
 describe( 'reducer', () => {
 	test( 'should return the same state when no matching record passed in the delete complete action', () => {
@@ -21,7 +21,7 @@ describe( 'reducer', () => {
 			} ),
 			payload = {
 				action: {
-					type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
+					type: EMAIL_FORWARDING_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
 					mailbox: 'unknown',
 				},
@@ -44,7 +44,7 @@ describe( 'reducer', () => {
 			} ),
 			payload = {
 				action: {
-					type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
+					type: EMAIL_FORWARDING_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
 					mailbox: MAILBOX_NAME,
 				},

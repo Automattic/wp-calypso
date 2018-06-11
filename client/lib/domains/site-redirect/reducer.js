@@ -9,7 +9,15 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import * as ActionTypes from 'lib/upgrades/action-types';
+import {
+	SITE_REDIRECT_FETCH,
+	SITE_REDIRECT_FETCH_COMPLETED,
+	SITE_REDIRECT_FETCH_FAILED,
+	SITE_REDIRECT_NOTICE_CLOSE,
+	SITE_REDIRECT_UPDATE,
+	SITE_REDIRECT_UPDATE_COMPLETED,
+	SITE_REDIRECT_UPDATE_FAILED,
+} from 'lib/upgrades/action-types';
 
 function updateStateForSite( state, siteId, data ) {
 	const command = state[ siteId ] ? '$merge' : '$set';
@@ -34,21 +42,21 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case ActionTypes.SITE_REDIRECT_NOTICE_CLOSE:
+		case SITE_REDIRECT_NOTICE_CLOSE:
 			state = updateStateForSite( state, action.siteId, {
 				notice: null,
 			} );
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_FETCH:
+		case SITE_REDIRECT_FETCH:
 			state = updateStateForSite( state, action.siteId, {
 				isFetching: true,
 			} );
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_FETCH_COMPLETED:
+		case SITE_REDIRECT_FETCH_COMPLETED:
 			state = updateStateForSite( state, action.siteId, {
 				isFetching: false,
 				notice: null,
@@ -57,7 +65,7 @@ function reducer( state, payload ) {
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_FETCH_FAILED:
+		case SITE_REDIRECT_FETCH_FAILED:
 			state = updateStateForSite( state, action.siteId, {
 				isFetching: false,
 				notice: {
@@ -68,14 +76,14 @@ function reducer( state, payload ) {
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_UPDATE:
+		case SITE_REDIRECT_UPDATE:
 			state = updateStateForSite( state, action.siteId, {
 				isUpdating: true,
 			} );
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_UPDATE_COMPLETED:
+		case SITE_REDIRECT_UPDATE_COMPLETED:
 			state = updateStateForSite( state, action.siteId, {
 				isUpdating: false,
 				notice: {
@@ -87,7 +95,7 @@ function reducer( state, payload ) {
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_UPDATE_FAILED:
+		case SITE_REDIRECT_UPDATE_FAILED:
 			state = updateStateForSite( state, action.siteId, {
 				isUpdating: false,
 				notice: {

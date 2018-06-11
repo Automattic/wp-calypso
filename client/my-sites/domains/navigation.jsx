@@ -17,7 +17,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import { isMobile } from 'lib/viewport';
-import * as upgradesActionTypes from 'lib/upgrades/action-types';
+import { CART_POPUP_CLOSE, CART_POPUP_OPEN } from 'lib/upgrades/action-types';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import { isATEnabled } from 'lib/automated-transfer';
 
@@ -36,12 +36,12 @@ class PlansNavigation extends React.Component {
 	componentWillMount() {
 		this.dispatchToken = Dispatcher.register(
 			function( payload ) {
-				if ( payload.action.type === upgradesActionTypes.CART_POPUP_OPEN ) {
+				if ( payload.action.type === CART_POPUP_OPEN ) {
 					this.setState( {
 						cartVisible: true,
 						cartShowKeepSearching: payload.action.options.showKeepSearching,
 					} );
-				} else if ( payload.action.type === upgradesActionTypes.CART_POPUP_CLOSE ) {
+				} else if ( payload.action.type === CART_POPUP_CLOSE ) {
 					this.setState( { cartVisible: false } );
 				}
 			}.bind( this )

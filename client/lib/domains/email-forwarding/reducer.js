@@ -8,7 +8,13 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import * as UpgradesActionTypes from 'lib/upgrades/action-types';
+import {
+	EMAIL_FORWARDING_ADD_COMPLETED,
+	EMAIL_FORWARDING_DELETE_COMPLETED,
+	EMAIL_FORWARDING_FETCH,
+	EMAIL_FORWARDING_FETCH_COMPLETED,
+	EMAIL_FORWARDING_FETCH_FAILED,
+} from 'lib/upgrades/action-types';
 
 const initialDomainState = {
 	hasLoadedFromServer: false,
@@ -85,19 +91,19 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.EMAIL_FORWARDING_FETCH:
+		case EMAIL_FORWARDING_FETCH:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: true,
 				needsUpdate: false,
 			} );
 			break;
-		case UpgradesActionTypes.EMAIL_FORWARDING_FETCH_FAILED:
+		case EMAIL_FORWARDING_FETCH_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: false,
 				needsUpdate: true,
 			} );
 			break;
-		case UpgradesActionTypes.EMAIL_FORWARDING_FETCH_COMPLETED:
+		case EMAIL_FORWARDING_FETCH_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				hasLoadedFromServer: true,
 				isFetching: false,
@@ -105,7 +111,7 @@ function reducer( state, payload ) {
 				needsUpdate: false,
 			} );
 			break;
-		case UpgradesActionTypes.EMAIL_FORWARDING_ADD_COMPLETED:
+		case EMAIL_FORWARDING_ADD_COMPLETED:
 			state = addTemporaryMailbox( state, action.domainName, {
 				active: true,
 				domain: action.domainName,
@@ -115,7 +121,7 @@ function reducer( state, payload ) {
 				temporary: true,
 			} );
 			break;
-		case UpgradesActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED:
+		case EMAIL_FORWARDING_DELETE_COMPLETED:
 			state = deleteTemporaryMailbox( state, action.domainName, action.mailbox );
 			break;
 	}

@@ -9,7 +9,12 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import * as UpgradesActionTypes from 'lib/upgrades/action-types';
+import {
+	NAMESERVERS_FETCH,
+	NAMESERVERS_FETCH_COMPLETED,
+	NAMESERVERS_FETCH_FAILED,
+	NAMESERVERS_UPDATE_COMPLETED,
+} from 'lib/upgrades/action-types';
 
 const initialDomainState = {
 	isFetching: false,
@@ -39,24 +44,24 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.NAMESERVERS_FETCH:
+		case NAMESERVERS_FETCH:
 			state = updateState( state, action.domainName, {
 				isFetching: true,
 			} );
 			break;
-		case UpgradesActionTypes.NAMESERVERS_FETCH_FAILED:
+		case NAMESERVERS_FETCH_FAILED:
 			state = updateState( state, action.domainName, {
 				isFetching: false,
 			} );
 			break;
-		case UpgradesActionTypes.NAMESERVERS_FETCH_COMPLETED:
+		case NAMESERVERS_FETCH_COMPLETED:
 			state = updateState( state, action.domainName, {
 				isFetching: false,
 				hasLoadedFromServer: true,
 				list: action.nameservers,
 			} );
 			break;
-		case UpgradesActionTypes.NAMESERVERS_UPDATE_COMPLETED:
+		case NAMESERVERS_UPDATE_COMPLETED:
 			state = updateState( state, action.domainName, {
 				isFetching: false,
 				hasLoadedFromServer: true,

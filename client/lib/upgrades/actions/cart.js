@@ -7,7 +7,19 @@ import { assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as ActionTypes from 'lib/upgrades/action-types';
+import {
+	CART_COUPON_APPLY,
+	CART_DISABLE,
+	CART_ITEM_REMOVE,
+	CART_ITEM_REPLACE,
+	CART_ITEMS_ADD,
+	CART_ON_MOBILE_SHOW,
+	CART_POPUP_CLOSE,
+	CART_POPUP_OPEN,
+	CART_PRIVACY_PROTECTION_ADD,
+	CART_PRIVACY_PROTECTION_REMOVE,
+	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+} from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
 
@@ -16,38 +28,38 @@ import { cartItems } from 'lib/cart-values';
 import 'lib/cart/store';
 
 export function disableCart() {
-	Dispatcher.handleViewAction( { type: ActionTypes.CART_DISABLE } );
+	Dispatcher.handleViewAction( { type: CART_DISABLE } );
 }
 
 export function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_POPUP_OPEN,
+		type: CART_POPUP_OPEN,
 		options: options || {},
 	} );
 }
 
 export function closeCartPopup() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_POPUP_CLOSE,
+		type: CART_POPUP_CLOSE,
 	} );
 }
 
 export function showCartOnMobile( show ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_ON_MOBILE_SHOW,
+		type: CART_ON_MOBILE_SHOW,
 		show,
 	} );
 }
 
 export function addPrivacyToAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_PRIVACY_PROTECTION_ADD,
+		type: CART_PRIVACY_PROTECTION_ADD,
 	} );
 }
 
 export function removePrivacyFromAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_PRIVACY_PROTECTION_REMOVE,
+		type: CART_PRIVACY_PROTECTION_REMOVE,
 	} );
 }
 
@@ -64,14 +76,14 @@ export function addItems( items ) {
 	} );
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_ITEMS_ADD,
+		type: CART_ITEMS_ADD,
 		cartItems: extendedItems,
 	} );
 }
 
 export function removeItem( item, domainsWithPlansOnly ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_ITEM_REMOVE,
+		type: CART_ITEM_REMOVE,
 		cartItem: item,
 		domainsWithPlansOnly,
 	} );
@@ -79,7 +91,7 @@ export function removeItem( item, domainsWithPlansOnly ) {
 
 export function replaceItem( oldItem, newItem ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_ITEM_REPLACE,
+		type: CART_ITEM_REPLACE,
 		oldItem,
 		newItem,
 	} );
@@ -96,7 +108,7 @@ export function addDomainToCart( domainSuggestion ) {
 
 export function addGoogleAppsRegistrationData( registrationData ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD,
+		type: GOOGLE_APPS_REGISTRATION_DATA_ADD,
 		registrationData: registrationData,
 	} );
 }
@@ -112,7 +124,7 @@ export function removeDomainFromCart( domainSuggestion ) {
 
 export function applyCoupon( coupon ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_COUPON_APPLY,
+		type: CART_COUPON_APPLY,
 		coupon,
 	} );
 }

@@ -8,7 +8,16 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import * as UpgradesActionTypes from 'lib/upgrades/action-types';
+import {
+	DOMAIN_TRANSFER_ACCEPT_COMPLETED,
+	DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_DECLINE_COMPLETED,
+	PRIVACY_PROTECTION_ENABLE_COMPLETED,
+	WAPI_DOMAIN_INFO_FETCH,
+	WAPI_DOMAIN_INFO_FETCH_COMPLETED,
+	WAPI_DOMAIN_INFO_FETCH_FAILED,
+} from 'lib/upgrades/action-types';
 
 const initialDomainState = {
 	hasLoadedFromServer: false,
@@ -30,24 +39,24 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.WAPI_DOMAIN_INFO_FETCH:
+		case WAPI_DOMAIN_INFO_FETCH:
 			return updateDomainState( state, action.domainName, {
 				needsUpdate: false,
 			} );
 
-		case UpgradesActionTypes.WAPI_DOMAIN_INFO_FETCH_COMPLETED:
+		case WAPI_DOMAIN_INFO_FETCH_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				hasLoadedFromServer: true,
 				data: action.status,
 				needsUpdate: false,
 			} );
 
-		case UpgradesActionTypes.WAPI_DOMAIN_INFO_FETCH_FAILED:
+		case WAPI_DOMAIN_INFO_FETCH_FAILED:
 			return updateDomainState( state, action.domainName, {
 				needsUpdate: true,
 			} );
 
-		case UpgradesActionTypes.DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED:
+		case DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					locked: action.locked,
@@ -55,14 +64,14 @@ function reducer( state, payload ) {
 				} ),
 			} );
 
-		case UpgradesActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED:
+		case PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					pendingTransfer: false,
 				} ),
 			} );
 
-		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
+		case DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
 			const { data } = state[ action.domainName ],
 				locked = ! action.unlock && data.locked;
 
@@ -73,8 +82,8 @@ function reducer( state, payload ) {
 				needsUpdate: true,
 			} );
 
-		case UpgradesActionTypes.DOMAIN_TRANSFER_ACCEPT_COMPLETED:
-		case UpgradesActionTypes.DOMAIN_TRANSFER_DECLINE_COMPLETED:
+		case DOMAIN_TRANSFER_ACCEPT_COMPLETED:
+		case DOMAIN_TRANSFER_DECLINE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					pendingTransfer: false,

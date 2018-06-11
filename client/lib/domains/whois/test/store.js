@@ -10,7 +10,12 @@ import { expect } from 'chai';
  */
 import WhoisStore from './../store';
 import Dispatcher from 'dispatcher';
-import * as ActionTypes from 'lib/upgrades/action-types';
+import {
+	WHOIS_FETCH,
+	WHOIS_FETCH_COMPLETED,
+	WHOIS_FETCH_FAILED,
+	WHOIS_UPDATE_COMPLETED,
+} from 'lib/upgrades/action-types';
 import { whoisType } from '../constants';
 
 describe( 'store', () => {
@@ -35,7 +40,7 @@ describe( 'store', () => {
 
 	test( 'should return an object with disabled needsUpdate and enabled isFetching flag when fetching domain data triggered', () => {
 		Dispatcher.handleViewAction( {
-			type: ActionTypes.WHOIS_FETCH,
+			type: WHOIS_FETCH,
 			domainName: DOMAIN_NAME,
 		} );
 
@@ -49,7 +54,7 @@ describe( 'store', () => {
 
 	test( 'should return an object with enabled needsUpdate and disabled isFetching flag when fetching domain data failed', () => {
 		Dispatcher.handleViewAction( {
-			type: ActionTypes.WHOIS_FETCH_FAILED,
+			type: WHOIS_FETCH_FAILED,
 			domainName: DOMAIN_NAME,
 		} );
 
@@ -70,7 +75,7 @@ describe( 'store', () => {
 		];
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.WHOIS_FETCH_COMPLETED,
+			type: WHOIS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
 			data,
 		} );
@@ -98,12 +103,12 @@ describe( 'store', () => {
 		];
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.WHOIS_FETCH_COMPLETED,
+			type: WHOIS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
 			data,
 		} );
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.WHOIS_FETCH_COMPLETED,
+			type: WHOIS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
 			data: anotherData,
 		} );
@@ -127,12 +132,12 @@ describe( 'store', () => {
 		];
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.WHOIS_FETCH_COMPLETED,
+			type: WHOIS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
 			data,
 		} );
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.WHOIS_FETCH_COMPLETED,
+			type: WHOIS_FETCH_COMPLETED,
 			domainName: ANOTHER_DOMAIN_NAME,
 			data: anotherData,
 		} );
@@ -148,7 +153,7 @@ describe( 'store', () => {
 			type: whoisType.REGISTRANT,
 		};
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.WHOIS_UPDATE_COMPLETED,
+			type: WHOIS_UPDATE_COMPLETED,
 			domainName: DOMAIN_NAME,
 			registrantContactDetails,
 		} );
@@ -181,13 +186,13 @@ describe( 'store', () => {
 		};
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.WHOIS_FETCH_COMPLETED,
+			type: WHOIS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
 			data,
 		} );
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.WHOIS_UPDATE_COMPLETED,
+			type: WHOIS_UPDATE_COMPLETED,
 			domainName: DOMAIN_NAME,
 			registrantContactDetails,
 		} );
