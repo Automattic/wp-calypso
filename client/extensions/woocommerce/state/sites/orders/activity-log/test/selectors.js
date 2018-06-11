@@ -397,6 +397,7 @@ describe( 'selectors', () => {
 					key: 4,
 					type: 'LABEL_REFUND_REJECTED',
 					timestamp: 4200000,
+					serviceName: 'Xpress',
 					labelIndex: 3,
 				},
 				{
@@ -424,6 +425,7 @@ describe( 'selectors', () => {
 					key: 3,
 					type: 'LABEL_REFUND_COMPLETED',
 					timestamp: 3200000,
+					serviceName: 'First Class',
 					labelIndex: 2,
 					amount: 6.95,
 					currency: 'USD',
@@ -453,6 +455,7 @@ describe( 'selectors', () => {
 					key: 2,
 					type: 'LABEL_REFUND_REQUESTED',
 					timestamp: 2100000,
+					serviceName: 'Xpress',
 					labelIndex: 1,
 					amount: 7,
 					currency: 'CAD',
