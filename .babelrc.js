@@ -19,6 +19,7 @@ const config = {
 					browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ],
 				},
 				exclude: [ 'transform-classes', 'transform-template-literals' ], // transform-classes is added manually later.
+				useBuiltIns: 'entry',
 			},
 		],
 		'@babel/stage-2',
@@ -43,7 +44,7 @@ const config = {
 			{ async: isCalypsoClient && codeSplit },
 		],
 		'@babel/plugin-proposal-export-default-from',
-		'@babel/transform-runtime',
+		[ '@babel/transform-runtime', { regenerator: false } ],
 		isCalypsoClient && './inline-imports.js',
 	] ),
 	env: {

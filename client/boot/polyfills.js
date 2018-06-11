@@ -1,4 +1,8 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import '@babel/polyfill';
 
 /**
  * Internal dependencies
