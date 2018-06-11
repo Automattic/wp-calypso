@@ -134,8 +134,10 @@ const replacementFor = node => {
  * @returns {string} sanitized HTML
  */
 export const sanitizeSectionContent = content => {
+	const doc = domForHtml( content );
+
 	// this will let us visit every single DOM node programmatically
-	const walker = document.createTreeWalker( domForHtml( content ) );
+	const walker = document.createTreeWalker( doc );
 
 	/**
 	 * we don't want to remove nodes while walking the tree
@@ -238,5 +240,5 @@ export const sanitizeSectionContent = content => {
 		}
 	} );
 
-	return doc.body.innerHTML;
+	return doc.innerHTML;
 };
