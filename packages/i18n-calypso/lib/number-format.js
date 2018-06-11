@@ -1,5 +1,5 @@
 /**
- * Exposes number format capability through i18n mixin
+ * Exposes number format capability
  *
  * @copyright Copyright (c) 2013 Kevin van Zonneveld (http://kvz.io) and Contributors (http://phpjs.org/authors).
  * @license See CREDITS.md
