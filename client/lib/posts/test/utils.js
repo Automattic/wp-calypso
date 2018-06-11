@@ -8,8 +8,6 @@
  */
 import * as postUtils from '../utils';
 
-jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
-
 describe( 'utils', () => {
 	describe( '#getEditURL', () => {
 		test( 'should return correct path type=post is supplied', () => {
