@@ -1,5 +1,16 @@
 /** @format */
 
+/**
+ * This schema is necessarily fairly relaxed.
+ *
+ * The endpoint is not very consistent with the data it returns. For example, IDs appear to be
+ * treated _mostly_ as integer strings, but some come back as integer numbers.
+ *
+ * Some booleans appear to have similar behavior. In particular, `is_domain` has observed values of
+ * 'true' (string) or simply omitting the property. This can safely be coerced to a bool as long as
+ * 'false' (string) is never a value.
+ */
+
 export default {
 	definitions: {
 		integerish: {
