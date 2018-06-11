@@ -23,7 +23,9 @@ import LocaleSuggestions from 'components/locale-suggestions';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
+	enhanceWithSiteType,
 } from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 import Main from 'components/main';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
@@ -110,8 +112,8 @@ const mapState = state => ( {
 
 const mapDispatch = {
 	hideMagicLoginRequestForm,
-	recordPageView,
-	recordTracksEvent,
+	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
 };
 
 export default connect( mapState, mapDispatch )( localize( MagicLogin ) );

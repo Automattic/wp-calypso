@@ -19,6 +19,7 @@ import {
 } from 'state/action-types';
 import { getCurrentOAuth2ClientId } from 'state/ui/oauth2-clients/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { withEnhancers } from 'state/utils';
 
 const mergedMetaData = ( a, b ) => [
 	...get( a, 'meta.analytics', [] ),
@@ -121,33 +122,6 @@ export const recordPageView = ( url, title, service, properties = {} ) => ( {
 
 export const recordGooglePageView = ( url, title ) => recordPageView( url, title, 'ga' );
 
-const withClientId = actionCreator => ( ...args ) => ( dispatch, getState ) => {
-	const action = actionCreator( ...args );
-
-	if ( typeof action !== 'object' ) {
-		throw new Error(
-			'withClientId only works with action creators that return plain action object'
-		);
-	}
-
-	const clientId = getCurrentOAuth2ClientId( getState() );
-
-	if ( clientId ) {
-		set(
-			action,
-			action.type === ANALYTICS_EVENT_RECORD
-				? 'meta.analytics[0].payload.properties.client_id'
-				: 'meta.analytics[0].payload.client_id',
-			clientId
-		);
-	}
-
-	return dispatch( action );
-};
-
-export const recordTracksEventWithClientId = withClientId( recordTracksEvent );
-export const recordPageViewWithClientId = withClientId( recordPageView );
-
 /**
  * Enhances any Redux action that denotes the recording of an analytics event with an additional property which
  * specifies the type of the current selected site.
@@ -161,18 +135,36 @@ export const enhanceWithSiteType = ( action, getState ) => {
 	const site = getSelectedSite( getState() );
 
 	if ( site !== null ) {
-		return merge( action, {
-			meta: {
-				analytics: [ {
-					payload: {
-						properties: {
-							site_type: site.jetpack ? 'jetpack' : 'wpcom',
-						}
-					}
-				} ]
-			}
-		} );
+		if ( action.type === ANALYTICS_EVENT_RECORD ) {
+			set(
+				action,
+				'meta.analytics[0].payload.properties.site_type',
+				site.jetpack ? 'jetpack' : 'wpcom'
+			);
+		} else {
+			set( action, 'meta.analytics[0].payload.site_type', site.jetpack ? 'jetpack' : 'wpcom' );
+		}
 	}
 
 	return action;
 };
+
+const enhanceWithClientId = ( action, getState ) => {
+	const clientId = getCurrentOAuth2ClientId( getState() );
+
+	if ( clientId ) {
+		if ( action.type === ANALYTICS_EVENT_RECORD ) {
+			set( action, 'meta.analytics[0].payload.properties.client_id', clientId );
+		} else {
+			set( action, 'meta.analytics[0].payload.client_id', clientId );
+		}
+	}
+
+	return action;
+};
+
+export const recordTracksEventWithClientId = withEnhancers(
+	recordTracksEvent,
+	enhanceWithClientId
+);
+export const recordPageViewWithClientId = withEnhancers( recordPageView, enhanceWithClientId );

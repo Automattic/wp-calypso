@@ -23,7 +23,11 @@ import PrivateSite from './private-site';
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
+import {
+	recordPageViewWithClientId as recordPageView,
+	enhanceWithSiteType,
+} from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 
 export class Login extends React.Component {
 	static propTypes = {
@@ -203,6 +207,6 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
-		recordPageView,
+		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 	}
 )( localize( Login ) );
