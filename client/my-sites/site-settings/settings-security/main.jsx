@@ -38,7 +38,7 @@ class SiteSettingsSecurity extends PureComponent {
 	};
 
 	isActiveSetting = setting => {
-		const settings = [ 'jetpack-credentials', 'jetpack-monitor', 'security-settings' ];
+		const settings = [ 'jetpack-credentials', 'jetpack-monitor' ];
 		// Fall back to active if the setting isn't known (so we don't blur it)
 		return setting === this.props.setting || ! includes( settings, this.props.setting );
 	};
@@ -90,7 +90,7 @@ class SiteSettingsSecurity extends PureComponent {
 					<JetpackCredentials blurred={ ! this.isActiveSetting( 'jetpack-credentials' ) } />
 				) }
 				<JetpackMonitor blurred={ ! this.isActiveSetting( 'jetpack-monitor' ) } />
-				<FormSecurity blurred={ ! this.isActiveSetting( 'security-settings' ) } />
+				<FormSecurity />
 			</Main>
 		);
 	}
