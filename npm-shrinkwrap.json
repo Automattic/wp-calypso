@@ -4181,9 +4181,9 @@
       "integrity": "sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk="
     },
     "click-outside": {
-      "version": "2.0.1",
-      "resolved": "https://registry.npmjs.org/click-outside/-/click-outside-2.0.1.tgz",
-      "integrity": "sha1-BjEIouSNayBZ0hx84bUpQlEbbf8=",
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/click-outside/-/click-outside-2.0.2.tgz",
+      "integrity": "sha1-tT9zWwanxdo0Wr8X1BmAlHaXk6Y=",
       "requires": {
         "babel-runtime": "^6.9.2",
         "component-event": "^0.1.4",
