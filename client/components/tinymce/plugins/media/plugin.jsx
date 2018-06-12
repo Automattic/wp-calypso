@@ -15,7 +15,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import PostEditStore from 'lib/posts/post-edit-store';
 import * as MediaConstants from 'lib/media/constants';
 import MediaActions from 'lib/media/actions';
 import { getThumbnailSizeDimensions } from 'lib/media/utils';
@@ -31,7 +30,7 @@ import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { unblockSave } from 'state/ui/editor/save-blockers/actions';
-import { isEditorSaveBlocked } from 'state/ui/editor/selectors';
+import { getEditorRawContent, isEditorSaveBlocked } from 'state/ui/editor/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
@@ -163,7 +162,7 @@ function mediaButton( editor ) {
 		} else {
 			// Attempt to pull the post from the edit store so that the post
 			// contents can be analyzed for images.
-			content = PostEditStore.getRawContent();
+			content = getEditorRawContent( getState() );
 			if ( ! content ) {
 				return;
 			}

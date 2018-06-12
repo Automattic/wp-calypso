@@ -6,7 +6,6 @@
 
 import url from 'url';
 import { moment } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,14 +13,36 @@ import { includes } from 'lodash';
 import postNormalizer from 'lib/post-normalizer';
 
 export const getEditURL = function( post, site ) {
-	let basePath = '';
-	const postType = post.type || 'post';
-
-	if ( ! includes( [ 'post', 'page' ], postType ) ) {
-		basePath = '/edit';
+	if ( ! site ) {
+		return '/post';
 	}
 
-	return `${ basePath }/${ postType }/${ site.slug }/${ post.ID }`;
+	if ( ! post ) {
+		return `/post/${ site.slug }`;
+	}
+
+	let path;
+
+	const type = post.type || 'post';
+	switch ( type ) {
+		case 'post':
+			path = '/post';
+			break;
+		case 'page':
+			path = '/page';
+			break;
+		default:
+			path = `/edit/${ type }`;
+			break;
+	}
+
+	path += `/${ site.slug }`;
+
+	if ( post.ID ) {
+		path += `/${ post.ID }`;
+	}
+
+	return path;
 };
 
 export const getPreviewURL = function( site, post, autosavePreviewUrl ) {
@@ -71,31 +92,56 @@ export const userCan = function( capability, post ) {
 	return hasCap;
 };
 
-export const isBackDatedPublished = function( post ) {
-	if ( ! post || post.status !== 'future' ) {
+// Return backdated-published status of a post. Optionally, the `status` can be overridden
+// with a custom value: what would the post status be if a `status` edit was applied?
+export const isBackDatedPublished = function( post, status ) {
+	if ( ! post ) {
 		return false;
 	}
 
-	return moment( post.date ).isBefore( moment() );
+	const effectiveStatus = status || post.status;
+
+	return effectiveStatus === 'future' && moment( post.date ).isBefore( moment() );
 };
 
-export const isPublished = function( post ) {
+// Return published status of a post. Optionally, the `status` can be overridden
+// with a custom value: what would the post status be if a `status` edit was applied?
+export const isPublished = function( post, status ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	const effectiveStatus = status || post.status;
+
 	return (
-		post &&
-		( post.status === 'publish' || post.status === 'private' || isBackDatedPublished( post ) )
+		effectiveStatus === 'publish' ||
+		effectiveStatus === 'private' ||
+		isBackDatedPublished( post, status )
 	);
 };
 
 export const isScheduled = function( post ) {
-	return post && 'future' === post.status;
+	if ( ! post ) {
+		return false;
+	}
+
+	return post.status === 'future';
 };
 
 export const isPrivate = function( post ) {
-	return post && 'private' === post.status;
+	if ( ! post ) {
+		return false;
+	}
+
+	return post.status === 'private';
 };
 
 export const isPending = function( post ) {
-	return post && 'pending' === post.status;
+	if ( ! post ) {
+		return false;
+	}
+
+	return post.status === 'pending';
 };
 
 export const getEditedTime = function( post ) {

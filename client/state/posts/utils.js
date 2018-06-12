@@ -270,7 +270,7 @@ export function normalizePostForState( post ) {
 			...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] ),
 		],
 		( memo, path ) => {
-			unset( memo, path.concat( 'meta' ) );
+			unset( memo, path.concat( 'meta', 'links' ) );
 			return memo;
 		},
 		normalizedPost

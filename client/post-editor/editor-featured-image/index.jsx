@@ -102,6 +102,16 @@ class EditorFeaturedImage extends Component {
 		stats.recordEvent( 'Featured image removed' );
 	};
 
+	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
+	// after creating an item by uploading or selecting from Google library.
+	onImageChange = imageId => {
+		if ( imageId !== this.props.featuredImageId ) {
+			this.props.editPost( this.props.siteId, this.props.postId, {
+				featured_image: imageId,
+			} );
+		}
+	};
+
 	renderMediaModal() {
 		if ( ! this.props.siteId ) {
 			return;
@@ -133,6 +143,7 @@ class EditorFeaturedImage extends Component {
 				siteId={ siteId }
 				itemId={ featuredImageId }
 				maxWidth={ this.props.maxWidth }
+				onImageChange={ this.onImageChange }
 			/>
 		);
 	}

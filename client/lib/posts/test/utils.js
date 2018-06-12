@@ -8,8 +8,6 @@
  */
 import * as postUtils from '../utils';
 
-jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
-
 describe( 'utils', () => {
 	describe( '#getEditURL', () => {
 		test( 'should return correct path type=post is supplied', () => {
@@ -61,8 +59,8 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#isPrivate', () => {
-		test( 'should return undefined when no post is supplied', () => {
-			expect( postUtils.isPrivate() ).toBeUndefined();
+		test( 'should return false when no post is supplied', () => {
+			expect( postUtils.isPrivate() ).toBe( false );
 		} );
 
 		test( 'should return true when post.status is private', () => {
@@ -75,8 +73,8 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#isPublished', () => {
-		test( 'should return undefined when no post is supplied', () => {
-			expect( postUtils.isPublished() ).toBeUndefined();
+		test( 'should return false when no post is supplied', () => {
+			expect( postUtils.isPublished() ).toBe( false );
 		} );
 
 		test( 'should return true when post.status is private', () => {
@@ -93,8 +91,8 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#isPending', () => {
-		test( 'should return undefined when no post is supplied', () => {
-			expect( postUtils.isPending() ).toBeUndefined();
+		test( 'should return false when no post is supplied', () => {
+			expect( postUtils.isPending() ).toBe( false );
 		} );
 
 		test( 'should return true when post.status is pending', () => {
