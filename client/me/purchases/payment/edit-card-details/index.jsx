@@ -80,7 +80,7 @@ class EditCardDetails extends Component {
 
 		this.props.clearPurchases();
 
-		page( managePurchase( this.props.selectedSite.slug, id ) );
+		page( managePurchase( this.props.siteSlug, id ) );
 	};
 
 	componentWillMount() {
