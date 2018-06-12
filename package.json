@@ -58,7 +58,7 @@
     "create-react-class": "15.6.3",
     "creditcards": "2.1.2",
     "cross-env": "5.1.1",
-    "d3-array": "1.2.0",
+    "d3-array": "1.2.1",
     "d3-axis": "1.0.8",
     "d3-scale": "1.0.6",
     "d3-selection": "1.1.0",
