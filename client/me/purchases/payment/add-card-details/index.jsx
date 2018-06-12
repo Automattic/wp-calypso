@@ -125,4 +125,7 @@ const mapStateToProps = ( state, { purchaseId } ) => ( {
 	userId: getCurrentUserId( state ),
 } );
 
-export default connect( mapStateToProps, { clearPurchases } )( AddCardDetails );
+export default connect(
+	mapStateToProps,
+	{ clearPurchases }
+)( AddCardDetails );
