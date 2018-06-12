@@ -65,12 +65,6 @@ class AddCardDetails extends Component {
 		return purchase && selectedSite;
 	}
 
-	getApiParams() {
-		return {
-			purchaseId: this.props.purchase.id,
-		};
-	}
-
 	recordFormSubmitEvent = () => {
 		analytics.tracks.recordEvent( 'calypso_purchases_credit_card_form_submit', {
 			product_slug: this.props.purchase.productSlug,
@@ -119,7 +113,7 @@ class AddCardDetails extends Component {
 				</HeaderCake>
 
 				<CreditCardForm
-					apiParams={ this.getApiParams() }
+					apiParams={ { purchaseId: this.props.purchase.id } }
 					createCardToken={ this.createCardToken }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
 					successCallback={ this.successCallback }
