@@ -53,7 +53,7 @@ export default class extends React.Component {
 		let left, offset;
 
 		if ( this.props.showValueLabel ) {
-			left = 100 * ( this.props.value - this.props.min ) / ( this.props.max - this.props.min );
+			left = ( 100 * ( this.props.value - this.props.min ) ) / ( this.props.max - this.props.min );
 
 			// The center of the slider thumb is not aligned to the same
 			// percentage stops as an absolute positioned element will be.

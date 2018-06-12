@@ -114,4 +114,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( FormDimensionsInput ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( FormDimensionsInput ) );

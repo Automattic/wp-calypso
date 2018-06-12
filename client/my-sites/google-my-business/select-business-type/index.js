@@ -52,7 +52,9 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	handleConnect = () => {
 		const { locations, siteSlug } = this.props;
 
-		this.props.recordTracksEventWithLocationCounts( 'calypso_google_my_business_select_business_type_connect' );
+		this.props.recordTracksEventWithLocationCounts(
+			'calypso_google_my_business_select_business_type_connect'
+		);
 
 		if ( locations.length === 0 ) {
 			page.redirect( `/google-my-business/new/${ siteSlug }` );
@@ -114,7 +116,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				>
 					{ translate( 'Create Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }{ ' ' }
+					} ) }{' '}
 					<Gridicon icon="external" />
 				</Button>
 			);
@@ -233,6 +235,9 @@ export default connect(
 	},
 	{
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [ enhanceWithLocationCounts, enhanceWithSiteType ] ),
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+			enhanceWithLocationCounts,
+			enhanceWithSiteType,
+		] ),
 	}
 )( localize( GoogleMyBusinessSelectBusinessType ) );

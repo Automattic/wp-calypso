@@ -219,4 +219,7 @@ class AccountDialog extends Component {
 	}
 }
 
-export default connect( null, { warningNotice } )( localize( AccountDialog ) );
+export default connect(
+	null,
+	{ warningNotice }
+)( localize( AccountDialog ) );

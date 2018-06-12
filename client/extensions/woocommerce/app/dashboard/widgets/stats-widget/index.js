@@ -235,7 +235,7 @@ class StatsWidget extends Component {
 			'day' === unit
 				? translate(
 						'Data is being processed. Switch to the week or month view to see your latest referrers.'
-					)
+				  )
 				: translate( 'No referral activity has been recorded for this time period.' );
 
 		const viewLink = config.isEnabled( 'woocommerce/extension-referrers' )
@@ -394,4 +394,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( StatsWidget ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( StatsWidget ) );

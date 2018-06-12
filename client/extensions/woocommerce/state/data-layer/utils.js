@@ -78,7 +78,7 @@ export function verifyResponseHasValidCategories( response ) {
 			name: unescape( cat.name ),
 			description: cat.description ? unescape( cat.description ) : '',
 		};
-	} )
+	} );
 
 	return {
 		data: {

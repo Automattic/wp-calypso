@@ -37,21 +37,21 @@
 
 	.button.is-primary {
 		background-color: $green-jetpack;
-		border-color: darken($green-jetpack, 5%);
+		border-color: darken( $green-jetpack, 5% );
 
 		&:hover,
 		&:focus {
-			border-color: darken($green-jetpack, 30%);
+			border-color: darken( $green-jetpack, 30% );
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 2px lighten($green-jetpack, 25%);
+			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
 		}
 
 		&[disabled],
 		&:disabled {
-			background: tint($green-jetpack, 50%);
-			border-color: tint($green-jetpack, 35%);
+			background: tint( $green-jetpack, 50% );
+			border-color: tint( $green-jetpack, 35% );
 			color: $white;
 		}
 	}
@@ -239,7 +239,7 @@
 	position: relative;
 	margin: 0;
 	line-height: 0;
-	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 }
 
 .example-components__install-plugin-header {
@@ -346,7 +346,7 @@
 		background-color: #518d2a;
 		border-color: #518d2a;
 		border-radius: 4px;
-		box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 4px 0 0 #3e6c20;
+		box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, 0.2 ), 0 4px 0 0 #3e6c20;
 	}
 }
 
@@ -445,7 +445,7 @@
 }
 
 .jetpack-connect__connect-button-card {
-	background: lighten($gray, 34%);
+	background: lighten( $gray, 34% );
 	border-top: 1px solid $gray-lighten-30;
 	box-shadow: none;
 	margin: 16px -16px -16px -16px;
@@ -637,7 +637,7 @@
 
 	&.is-primary {
 		background-color: $green-jetpack;
-		border-color: darken($green-jetpack, 5%);
+		border-color: darken( $green-jetpack, 5% );
 	}
 }
 
@@ -665,7 +665,7 @@
 
 	.gridicons-lock {
 		position: absolute;
-		z-index: z-index('root', '.jetpack-connect__password-form .gridicon');
+		z-index: z-index( 'root', '.jetpack-connect__password-form .gridicon' );
 		left: 8px;
 		top: 7px;
 		fill: $gray-lighten-20;
@@ -687,7 +687,7 @@
 	text-align: center;
 }
 
-.layout.has-chat.is-section-jetpack-connect:not(.is-group-editor):not(.is-section-theme):not(.is-group-reader)
+.layout.has-chat.is-section-jetpack-connect:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader )
 	.layout__content {
 	@include breakpoint( '>1040px' ) {
 		padding-left: 32px;

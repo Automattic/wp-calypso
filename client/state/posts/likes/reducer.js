@@ -42,7 +42,7 @@ export const itemReducer = createReducer(
 								site_ID: like.site_ID,
 								site_visible: like.site_visible,
 							};
-						} )
+					  } )
 					: state.likes,
 				iLike,
 				found,

@@ -42,10 +42,10 @@ class FreeCartPaymentBox extends React.Component {
 									? this.props.translate(
 											'You get one free domain with your subscription to %(productName)s. Time to celebrate!',
 											{ args: { productName: this.getProductName() } }
-										)
+									  )
 									: this.props.translate(
 											'Just complete checkout to add these upgrades to your site.'
-										) }
+									  ) }
 							</span>
 						</div>
 					</div>

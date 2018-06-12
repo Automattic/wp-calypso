@@ -37,4 +37,7 @@ export class JetpackConnectHelpButton extends PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( JetpackConnectHelpButton ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( JetpackConnectHelpButton ) );

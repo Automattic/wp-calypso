@@ -28,7 +28,7 @@
 
 	&.is-global {
 		@extend .global-notices;
-		z-index: z-index('root', '.web-preview .editor-notice');
+		z-index: z-index( 'root', '.web-preview .editor-notice' );
 
 		@include breakpoint( '>660px' ) {
 			top: 49px + 16px;

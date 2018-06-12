@@ -135,7 +135,7 @@ class DomainsStep extends React.Component {
 				? cartItems.domainRegistration( {
 						domain: suggestion.domain_name,
 						productSlug: suggestion.product_slug,
-					} )
+				  } )
 				: undefined;
 
 		this.props.submitDomainStepSelection( suggestion, 'signup' );
@@ -331,7 +331,7 @@ class DomainsStep extends React.Component {
 			: translate(
 					"Enter your site's name, or some keywords that describe it - " +
 						"we'll use this to create your new site's address."
-				);
+			  );
 	}
 
 	renderContent() {

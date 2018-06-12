@@ -76,7 +76,7 @@ export const requestSiteAlerts = siteId => {
 											slug: threat.extension.slug,
 											version: threat.extension.version,
 										},
-									}
+								  }
 								: {} ),
 						} ) ),
 						warnings,

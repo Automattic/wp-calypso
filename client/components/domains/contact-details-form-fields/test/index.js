@@ -65,8 +65,12 @@ describe( 'ContactDetailsFormFields', () => {
 
 			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__container.first-name' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.contact-details-form-fields__container.last-name' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '.contact-details-form-fields__container.first-name' ) ).toHaveLength(
+				1
+			);
+			expect( wrapper.find( '.contact-details-form-fields__container.last-name' ) ).toHaveLength(
+				1
+			);
 			expect( wrapper.find( '.contact-details-form-fields__container.phone' ) ).toHaveLength( 1 );
 		} );
 	} );

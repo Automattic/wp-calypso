@@ -112,6 +112,9 @@ class PlanBillingPeriod extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( PlanBillingPeriod ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( PlanBillingPeriod ) );

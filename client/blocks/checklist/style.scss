@@ -61,12 +61,12 @@
 			fill: $gray;
 			vertical-align: middle;
 			align-items: center;
-			transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
+			transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
 		}
 
 		.checklist.is-expanded & {
 			.gridicon {
-				transform: rotate(180deg);
+				transform: rotate( 180deg );
 			}
 		}
 
@@ -77,7 +77,7 @@
 
 	.checklist.is-expanded &-action {
 		.gridicon {
-			transform: rotate(180deg);
+			transform: rotate( 180deg );
 		}
 	}
 
@@ -265,7 +265,7 @@
 		.checklist__task-title,
 		.checklist__task-description,
 		.checklist__task-duration {
-			background-color: lighten($gray, 25%);
+			background-color: lighten( $gray, 25% );
 			color: transparent;
 			animation: pulse-light 3s ease-in-out infinite;
 		}

@@ -41,7 +41,7 @@ export function calculateDelta( item, previousItem, attr, unit ) {
 	if ( previousItem && previousItem[ attr ] !== 0 ) {
 		const current = item[ attr ];
 		const previous = previousItem[ attr ];
-		value = Math.round( ( current - previous ) / previous * 100 );
+		value = Math.round( ( ( current - previous ) / previous ) * 100 );
 	}
 	const isIncrease = value > 0;
 	const isIncreaseFavorable = includes( negativeIsBeneficialAttributes, attr )
@@ -224,7 +224,7 @@ export function getConversionRateData( visitorData, orderData, unit ) {
 		if ( visitorRow.visitors > 0 && orderData[ index ] ) {
 			return {
 				period: unitPeriod,
-				conversionRate: round( orders / visitorRow.visitors * 100, 2 ),
+				conversionRate: round( ( orders / visitorRow.visitors ) * 100, 2 ),
 			};
 		}
 		return { period: unitPeriod, conversionRate: 0 };

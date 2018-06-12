@@ -90,7 +90,7 @@ class MediaLibraryScale extends Component {
 
 	onScaleChange( event ) {
 		const sliderPosition = parseInt( event.target.value, 10 );
-		const scaleIndex = sliderPosition * SCALE_CHOICES.length / SLIDER_STEPS;
+		const scaleIndex = ( sliderPosition * SCALE_CHOICES.length ) / SLIDER_STEPS;
 		const scale = SCALE_CHOICES[ Math.floor( scaleIndex ) ];
 
 		this.setState( { sliderPosition } );
@@ -114,7 +114,7 @@ class MediaLibraryScale extends Component {
 			return 0;
 		}
 
-		return Math.floor( scaleIndex * ( SLIDER_STEPS - 1 ) / ( SCALE_CHOICES.length - 1 ) );
+		return Math.floor( ( scaleIndex * ( SLIDER_STEPS - 1 ) ) / ( SCALE_CHOICES.length - 1 ) );
 	}
 
 	render() {

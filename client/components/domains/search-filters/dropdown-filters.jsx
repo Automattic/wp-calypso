@@ -74,7 +74,10 @@ export class DropdownFilters extends Component {
 	}
 
 	getMaxCharactersValidationErrors() {
-		const { filters: { maxCharacters }, translate } = this.props;
+		const {
+			filters: { maxCharacters },
+			translate,
+		} = this.props;
 		const isValid = /^-?\d*$/.test( maxCharacters );
 		return ! isValid ? [ translate( 'Value must be a whole number' ) ] : null;
 	}

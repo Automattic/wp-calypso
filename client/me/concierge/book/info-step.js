@@ -61,13 +61,18 @@ class InfoStep extends Component {
 	};
 
 	canSubmitForm = () => {
-		const { signupForm: { firstname, message } } = this.props;
+		const {
+			signupForm: { firstname, message },
+		} = this.props;
 
 		return !! firstname.trim() && !! message.trim();
 	};
 
 	componentDidMount() {
-		const { userSettings, signupForm: { firstname, lastname } } = this.props;
+		const {
+			userSettings,
+			signupForm: { firstname, lastname },
+		} = this.props;
 
 		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
 

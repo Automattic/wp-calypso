@@ -389,7 +389,10 @@ export const getSeoTitleFormatsForSite = compose(
  * @param  {Number} siteId Selected site
  * @return {Object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
-export const getSeoTitleFormats = compose( getSeoTitleFormatsForSite, getRawSite );
+export const getSeoTitleFormats = compose(
+	getSeoTitleFormatsForSite,
+	getRawSite
+);
 
 export const buildSeoTitle = ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) => {
 	const processPiece = ( piece = {}, data ) =>

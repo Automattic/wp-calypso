@@ -106,7 +106,7 @@ class AdsMain extends Component {
 						path: '/ads/settings' + pathSuffix,
 						id: 'ads-settings',
 					},
-				]
+			  ]
 			: [];
 	}
 
@@ -319,4 +319,8 @@ const mergeProps = ( stateProps, dispatchProps, parentProps ) => ( {
 	...stateProps,
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( AdsMain ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( localize( AdsMain ) );

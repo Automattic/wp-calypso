@@ -127,7 +127,7 @@ class ThemesSiteSelectorModal extends React.Component {
 							selectedOption.getUrl
 								? function( siteId ) {
 										return selectedOption.getUrl( selectedThemeId, siteId );
-									}
+								  }
 								: null
 						}
 					>

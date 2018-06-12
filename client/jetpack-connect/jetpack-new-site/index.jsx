@@ -141,4 +141,7 @@ class JetpackNewSite extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( JetpackNewSite ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( JetpackNewSite ) );

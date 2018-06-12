@@ -142,8 +142,7 @@ class LineChart extends Component {
 		g.select( '.domain' ).remove();
 
 		// Moves axis values below the tick lines, and right-align them
-		g
-			.selectAll( '.tick text' )
+		g.selectAll( '.tick text' )
 			.style( 'text-anchor', 'end' )
 			.attr( 'transform', 'translate(-10,12)' );
 	};

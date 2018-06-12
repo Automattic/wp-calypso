@@ -40,13 +40,17 @@ describe( 'FormPhoneInput', () => {
 				/>
 			);
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal( countriesList[ 1 ] );
+			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
+				countriesList[ 1 ]
+			);
 		} );
 
 		test( 'should set country to first element when not specified', () => {
 			const phoneComponent = shallow( <FormPhoneInput countriesList={ countriesList } /> );
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal( countriesList[ 0 ] );
+			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
+				countriesList[ 0 ]
+			);
 		} );
 
 		test( 'should update country on change', () => {
@@ -58,7 +62,9 @@ describe( 'FormPhoneInput', () => {
 				},
 			} );
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal( countriesList[ 1 ] );
+			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
+				countriesList[ 1 ]
+			);
 		} );
 
 		test( 'should have no country with empty countryList', () => {

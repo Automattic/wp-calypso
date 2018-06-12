@@ -114,4 +114,7 @@ function mapStateToProps( state, { streamKey } ) {
 	return { posts, sources, stream };
 }
 
-export default connect( mapStateToProps, { requestPage } )( localize( FeedFeatured ) );
+export default connect(
+	mapStateToProps,
+	{ requestPage }
+)( localize( FeedFeatured ) );

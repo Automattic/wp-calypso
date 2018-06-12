@@ -21,7 +21,9 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 
 export const fetch = action => {
 	const notice = successNotice( i18n.translate( 'Obtaining your credentials…' ) );
-	const { notice: { noticeId } } = notice;
+	const {
+		notice: { noticeId },
+	} = notice;
 
 	return [
 		notice,

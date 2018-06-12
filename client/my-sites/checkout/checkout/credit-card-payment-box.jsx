@@ -82,7 +82,7 @@ export class CreditCardPaymentBox extends React.Component {
 
 	tick = () => {
 		// increase the progress of the progress bar by 0.5% of the remaining progress each tick
-		const progress = this.state.progress + 1 / 200 * ( 100 - this.state.progress );
+		const progress = this.state.progress + ( 1 / 200 ) * ( 100 - this.state.progress );
 
 		this.setState( { progress } );
 	};

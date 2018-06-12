@@ -147,14 +147,14 @@ export class SignupProcessingScreen extends Component {
 							components: { strong: <strong /> },
 							args: { domain },
 						}
-					)
+				  )
 				: this.props.translate(
 						'{{strong}}Awesome!{{/strong}} Give us one minute and we’ll move right along.',
 						{
 							components: { strong: <strong /> },
 							args: { domain },
 						}
-					);
+				  );
 		}
 
 		return loginHandler
@@ -163,13 +163,13 @@ export class SignupProcessingScreen extends Component {
 					{
 						components: { strong: <strong /> },
 					}
-				)
+			  )
 			: this.props.translate(
 					'{{strong}}Awesome!{{/strong}} Give us one minute and we’ll move right along.',
 					{
 						components: { strong: <strong /> },
 					}
-				);
+			  );
 	}
 
 	handleClick( ctaName, redirectTo = '' ) {

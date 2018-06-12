@@ -255,8 +255,11 @@ const paymentSettingsClick = domain =>
 		} )
 	);
 
-export default connect( null, {
-	errorNotice,
-	paymentSettingsClick,
-	successNotice,
-} )( localize( Transfer ) );
+export default connect(
+	null,
+	{
+		errorNotice,
+		paymentSettingsClick,
+		successNotice,
+	}
+)( localize( Transfer ) );

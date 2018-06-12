@@ -350,4 +350,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreLocationSetupView ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( StoreLocationSetupView ) );

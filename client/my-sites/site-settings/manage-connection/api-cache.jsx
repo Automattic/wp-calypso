@@ -58,6 +58,8 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'api_cache' ] );
 };
 
-export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
-	ApiCache
-);
+export default flowRight(
+	connectComponent,
+	localize,
+	wrapSettingsForm( getFormSettings )
+)( ApiCache );

@@ -115,6 +115,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	} );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
-	localize( PostActionsEllipsisMenuTrash )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( localize( PostActionsEllipsisMenuTrash ) );

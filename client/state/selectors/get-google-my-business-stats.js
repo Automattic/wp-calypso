@@ -16,5 +16,9 @@ import { get } from 'lodash';
  * @return {Number} the corresponding stats, or null if not found
  */
 export default function getGoogleMyBusinessStats( state, siteId, statType, interval, aggregation ) {
-	return get( state, [ 'googleMyBusiness', siteId, 'stats', statType, interval, aggregation ], null );
+	return get(
+		state,
+		[ 'googleMyBusiness', siteId, 'stats', statType, interval, aggregation ],
+		null
+	);
 }

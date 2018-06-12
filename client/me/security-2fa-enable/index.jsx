@@ -376,10 +376,10 @@ class Security2faEnable extends React.Component {
 					{ this.state.submittingCode
 						? this.props.translate( 'Enabling…', {
 								context: 'A button label used during Two-Step setup.',
-							} )
+						  } )
 						: this.props.translate( 'Enable', {
 								context: 'A button label used during Two-Step setup.',
-							} ) }
+						  } ) }
 				</FormButton>
 
 				<FormButton

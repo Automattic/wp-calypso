@@ -63,7 +63,7 @@
 	padding: 0 330px 0 24px;
 
 	@include breakpoint( '1040px-1280px' ) {
-		padding-right: calc(40% - 20px);
+		padding-right: calc( 40% - 20px );
 	}
 
 	@include breakpoint( '<1040px' ) {

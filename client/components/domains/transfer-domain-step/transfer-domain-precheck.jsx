@@ -364,7 +364,10 @@ const recordContinueButtonClick = ( domain_name, losing_registrar, losing_regist
 		losing_registrar_iana_id,
 	} );
 
-export default connect( null, {
-	recordNextStep,
-	recordContinueButtonClick,
-} )( localize( TransferDomainPrecheck ) );
+export default connect(
+	null,
+	{
+		recordNextStep,
+		recordContinueButtonClick,
+	}
+)( localize( TransferDomainPrecheck ) );

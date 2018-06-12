@@ -247,7 +247,7 @@ class UploadImage extends Component {
 			: {
 					src: selectedImage,
 					file: selectedImageName,
-				};
+			  };
 
 		return (
 			<Dialog additionalClassNames={ classes } isVisible={ true }>

@@ -52,31 +52,34 @@ describe( '#receiveStats', () => {
 
 		receiveStats( { dispatch }, action, {
 			time_zone: 'Europe/London',
-			metric_values: [ {
-				metric: 'QUERIES_DIRECT',
-				total_value: {
-					time_dimension: {
-						timeRange: {
-							endTime: '2018-04-19T23:59:59.900Z',
-							startTime: '2018-04-13T00:00:00Z',
+			metric_values: [
+				{
+					metric: 'QUERIES_DIRECT',
+					total_value: {
+						time_dimension: {
+							timeRange: {
+								endTime: '2018-04-19T23:59:59.900Z',
+								startTime: '2018-04-13T00:00:00Z',
+							},
 						},
+						metric_option: 'AGGREGATED_TOTAL',
+						value: 0,
 					},
-					metric_option: 'AGGREGATED_TOTAL',
-					value: 0,
 				},
-			}, {
-				metric: 'QUERIES_INDIRECT',
-				total_value: {
-					time_dimension: {
-						timeRange: {
-							endTime: '2018-04-19T23:59:59.900Z',
-							startTime: '2018-04-13T00:00:00Z',
+				{
+					metric: 'QUERIES_INDIRECT',
+					total_value: {
+						time_dimension: {
+							timeRange: {
+								endTime: '2018-04-19T23:59:59.900Z',
+								startTime: '2018-04-13T00:00:00Z',
+							},
 						},
+						metric_option: 'AGGREGATED_TOTAL',
+						value: 1,
 					},
-					metric_option: 'AGGREGATED_TOTAL',
-					value: 1,
 				},
-			} ],
+			],
 		} );
 
 		expect( dispatch ).to.have.been.calledOnce;
@@ -88,31 +91,34 @@ describe( '#receiveStats', () => {
 				action.aggregation,
 				{
 					timeZone: 'Europe/London',
-					metricValues: [ {
-						metric: 'QUERIES_DIRECT',
-						totalValue: {
-							timeDimension: {
-								timeRange: {
-									endTime: '2018-04-19T23:59:59.900Z',
-									startTime: '2018-04-13T00:00:00Z',
+					metricValues: [
+						{
+							metric: 'QUERIES_DIRECT',
+							totalValue: {
+								timeDimension: {
+									timeRange: {
+										endTime: '2018-04-19T23:59:59.900Z',
+										startTime: '2018-04-13T00:00:00Z',
+									},
 								},
+								metricOption: 'AGGREGATED_TOTAL',
+								value: 0,
 							},
-							metricOption: 'AGGREGATED_TOTAL',
-							value: 0,
 						},
-					}, {
-						metric: 'QUERIES_INDIRECT',
-						totalValue: {
-							timeDimension: {
-								timeRange: {
-									endTime: '2018-04-19T23:59:59.900Z',
-									startTime: '2018-04-13T00:00:00Z',
+						{
+							metric: 'QUERIES_INDIRECT',
+							totalValue: {
+								timeDimension: {
+									timeRange: {
+										endTime: '2018-04-19T23:59:59.900Z',
+										startTime: '2018-04-13T00:00:00Z',
+									},
 								},
+								metricOption: 'AGGREGATED_TOTAL',
+								value: 1,
 							},
-							metricOption: 'AGGREGATED_TOTAL',
-							value: 1,
 						},
-					} ],
+					],
 				}
 			)
 		);

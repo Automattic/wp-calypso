@@ -199,4 +199,7 @@ const mapDispatchToProps = {
 	update: requestSiteChecklistTaskUpdate,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistShow ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ChecklistShow ) );

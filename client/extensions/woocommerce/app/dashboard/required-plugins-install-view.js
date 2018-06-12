@@ -513,6 +513,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	localize( RequiredPluginsInstallView )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( RequiredPluginsInstallView ) );

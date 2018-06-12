@@ -130,4 +130,8 @@ const createReduxForm = reduxForm( {
 	form,
 } );
 
-export default flowRight( connectComponent, localize, createReduxForm )( Pages );
+export default flowRight(
+	connectComponent,
+	localize,
+	createReduxForm
+)( Pages );

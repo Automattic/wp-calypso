@@ -77,7 +77,7 @@ class ConversationsIntro extends React.Component {
 												a: <a href="http://wp.me/p5PDj3-44u" />,
 											},
 										}
-									)
+								  )
 								: translate(
 										'{{strong}}Welcome to Conversations.{{/strong}} You can read ' +
 											'and reply to all your conversations in one place. ' +
@@ -88,7 +88,7 @@ class ConversationsIntro extends React.Component {
 												strong: <strong />,
 											},
 										}
-									) }
+								  ) }
 						</span>
 					</div>
 					<div className="conversations__intro-character" />

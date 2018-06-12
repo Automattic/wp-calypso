@@ -106,11 +106,11 @@ class DeleteUser extends React.Component {
 										username: this.props.user.name,
 									},
 								}
-							)
+						  )
 						: translate(
 								'If you remove this user, he or she will no longer be able to access this site, ' +
 									'but any content that was created by this user will remain on the site.'
-							) }
+						  ) }
 				</p>
 				<p>{ translate( 'Would you still like to remove this user?' ) }</p>
 			</div>,
@@ -208,11 +208,11 @@ class DeleteUser extends React.Component {
 											username: this.props.user.name,
 										},
 									}
-								)
+							  )
 							: translate(
 									'You have the option of reassigning all content created by ' +
 										'this user, or deleting the content entirely.'
-								) }
+							  ) }
 					</p>
 
 					<FormFieldset>
@@ -241,7 +241,7 @@ class DeleteUser extends React.Component {
 											args: {
 												username: this.props.user.name ? this.props.user.name : '',
 											},
-										} )
+									  } )
 									: translate( 'Delete all content created by this user' ) }
 							</span>
 						</FormLabel>

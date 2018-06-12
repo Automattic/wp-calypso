@@ -59,7 +59,10 @@ class SiteSettingsImport extends Component {
 	 * @returns {Array<Object>} ImportStatus objects
 	 */
 	getImports( type ) {
-		const { api: { isHydrated }, importers } = this.state;
+		const {
+			api: { isHydrated },
+			importers,
+		} = this.state;
 		const { site } = this.props;
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
@@ -94,7 +97,12 @@ class SiteSettingsImport extends Component {
 			return <Placeholder />;
 		}
 
-		const { jetpack: isJetpack, options: { admin_url: adminUrl }, slug, title: siteTitle } = site;
+		const {
+			jetpack: isJetpack,
+			options: { admin_url: adminUrl },
+			slug,
+			title: siteTitle,
+		} = site;
 		const title = siteTitle.length ? siteTitle : slug;
 		const description = translate(
 			"Import another site's content into " +

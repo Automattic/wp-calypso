@@ -101,7 +101,7 @@ export const receiveError = ( { siteId }, error ) => [
 ];
 
 export const updateUploadProgress = ( { siteId }, { loaded, total } ) => {
-	const progress = total ? loaded / total * 100 : total;
+	const progress = total ? ( loaded / total ) * 100 : total;
 
 	return updatePluginUploadProgress( siteId, progress );
 };

@@ -100,4 +100,7 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect( null, mapDispatchToProps )( localize( GdprBanner ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( GdprBanner ) );

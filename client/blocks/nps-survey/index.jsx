@@ -195,9 +195,12 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, {
-	submitNpsSurvey,
-	submitNpsSurveyWithNoScore,
-	sendNpsSurveyFeedback,
-	successNotice,
-} )( localize( NpsSurvey ) );
+export default connect(
+	mapStateToProps,
+	{
+		submitNpsSurvey,
+		submitNpsSurveyWithNoScore,
+		sendNpsSurveyFeedback,
+		successNotice,
+	}
+)( localize( NpsSurvey ) );

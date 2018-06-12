@@ -127,6 +127,7 @@ const mapDispatchToProps = {
 	selectResult,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	localize( InlineHelpSearchResults )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( InlineHelpSearchResults ) );

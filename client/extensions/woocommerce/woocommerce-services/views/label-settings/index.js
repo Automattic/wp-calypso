@@ -126,6 +126,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	localize( AccountSettingsRootView )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( AccountSettingsRootView ) );

@@ -29,14 +29,16 @@ export const enhanceWithDismissCount = ( action, getState ) => {
 
 		return merge( action, {
 			meta: {
-				analytics: [ {
-					payload: {
-						properties: {
-							dismiss_count: dismissCount,
-						}
-					}
-				} ]
-			}
+				analytics: [
+					{
+						payload: {
+							properties: {
+								dismiss_count: dismissCount,
+							},
+						},
+					},
+				],
+			},
 		} );
 	}
 
@@ -64,15 +66,17 @@ export const enhanceWithLocationCounts = ( action, getState ) => {
 
 		return merge( action, {
 			meta: {
-				analytics: [ {
-					payload: {
-						properties: {
-							location_count: locations.length,
-							verified_location_count: verifiedLocationCount,
-						}
-					}
-				} ]
-			}
+				analytics: [
+					{
+						payload: {
+							properties: {
+								location_count: locations.length,
+								verified_location_count: verifiedLocationCount,
+							},
+						},
+					},
+				],
+			},
 		} );
 	}
 

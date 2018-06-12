@@ -58,7 +58,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 						className="gmb-select-location__connected-icon"
 						icon="checkmark-circle"
 						size={ 18 }
-					/>{ ' ' }
+					/>{' '}
 					{ translate( 'Connected' ) }
 				</div>
 			);
@@ -78,6 +78,9 @@ export default connect(
 	} ),
 	{
 		connectGoogleMyBusinessLocation,
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [ enhanceWithLocationCounts, enhanceWithSiteType ] ),
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+			enhanceWithLocationCounts,
+			enhanceWithSiteType,
+		] ),
 	}
 )( localize( GoogleMyBusinessSelectLocationButton ) );

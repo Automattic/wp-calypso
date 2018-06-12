@@ -63,7 +63,9 @@ class Referrers extends Component {
 		if ( trimmedStr === '' ) {
 			const { unit, slug } = this.props;
 			const basePath = '/store/stats/referrers';
-			const { queryParams: { referrer, ...queryParams } } = this.props; // eslint-disable-line no-unused-vars
+			const {
+				queryParams: { referrer, ...queryParams },
+			} = this.props; // eslint-disable-line no-unused-vars
 			const widgetPath = getWidgetPath( unit, slug, queryParams );
 			this.state.filter = '';
 			this.state.selectedReferrer = {};

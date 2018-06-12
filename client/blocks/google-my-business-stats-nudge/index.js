@@ -108,6 +108,9 @@ export default connect(
 	} ),
 	{
 		dismissNudge,
-		recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithDismissCount, enhanceWithSiteType ] ),
+		recordTracksEvent: withEnhancers( recordTracksEvent, [
+			enhanceWithDismissCount,
+			enhanceWithSiteType,
+		] ),
 	}
 )( localize( GoogleMyBusinessStatsNudge ) );

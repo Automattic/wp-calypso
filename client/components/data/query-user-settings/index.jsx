@@ -22,4 +22,7 @@ class QueryUserSettings extends Component {
 	}
 }
 
-export default connect( null, { fetchUserSettings } )( QueryUserSettings );
+export default connect(
+	null,
+	{ fetchUserSettings }
+)( QueryUserSettings );

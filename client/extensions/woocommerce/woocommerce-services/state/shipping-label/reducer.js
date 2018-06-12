@@ -943,7 +943,8 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_ERROR ] = ( state, 
 	if ( get( state, 'reprintDialog.labelId' ) !== labelId ) {
 		return state;
 	}
-	return { ...state,
+	return {
+		...state,
 		reprintDialog: {
 			labelId,
 			isFetching: false,

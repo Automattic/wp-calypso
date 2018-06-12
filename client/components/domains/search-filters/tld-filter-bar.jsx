@@ -116,7 +116,9 @@ export class TldFilterBar extends Component {
 	}
 
 	renderSuggestedButtons() {
-		const { lastFilters: { tlds: selectedTlds } } = this.props;
+		const {
+			lastFilters: { tlds: selectedTlds },
+		} = this.props;
 		return this.props.availableTlds
 			.slice( 0, this.props.numberOfTldsShown )
 			.map( ( tld, index ) => (
@@ -202,6 +204,9 @@ export class TldFilterBar extends Component {
 		);
 	}
 }
-export default connect( null, {
-	recordTldFilterSelected,
-} )( localize( TldFilterBar ) );
+export default connect(
+	null,
+	{
+		recordTldFilterSelected,
+	}
+)( localize( TldFilterBar ) );

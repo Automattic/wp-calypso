@@ -191,10 +191,10 @@ class HelpModal extends React.Component {
 		const additionalText = this.props.macosx
 			? translate( 'Additional shortcuts. Control + Option + key:', {
 					context: 'Mac shortcuts',
-				} )
+			  } )
 			: translate( 'Additional shortcuts. Shift + Alt + key:', {
 					context: 'Windows shortcuts',
-				} );
+			  } );
 
 		const tableHead = this.getTableHead();
 

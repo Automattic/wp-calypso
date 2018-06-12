@@ -43,10 +43,10 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 								: Service;
 
 							return <Component key={ service.ID } service={ service } />;
-						} )
+					  } )
 					: times( NUMBER_OF_PLACEHOLDERS, index => (
 							<ServicePlaceholder key={ 'service-placeholder-' + index } />
-						) ) }
+					  ) ) }
 			</ul>
 		</div>
 	);

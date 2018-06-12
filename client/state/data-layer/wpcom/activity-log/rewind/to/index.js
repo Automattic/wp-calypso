@@ -54,7 +54,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 						"Oops, something went wrong. We've been notified and are working on resolving this issue."
 					)
 				)
-			)
+		  )
 		: withAnalytics(
 				recordTracksEvent( 'calypso_rewind_to_unknown_error', error ),
 				errorNotice(
@@ -62,7 +62,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 						'Oops, something went wrong. Please try again soon or contact support for help.'
 					)
 				)
-			);
+		  );
 
 export default {
 	[ REWIND_RESTORE ]: [

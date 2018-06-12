@@ -422,13 +422,13 @@ export class PluginMeta extends Component {
 									newPluginVersion: this.props.plugin.version,
 								},
 							}
-						)
+					  )
 					: i18n.translate( 'Version %(newPluginVersion)s is available for %(siteName)s', {
 							args: {
 								siteName: newVersions[ 0 ].title,
 								newPluginVersion: this.props.plugin.version,
 							},
-						} );
+					  } );
 			const noticeActionMessage =
 				newVersions.length > 1 ? i18n.translate( 'Update all' ) : i18n.translate( 'Update' );
 			return (

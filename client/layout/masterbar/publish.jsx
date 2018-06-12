@@ -133,4 +133,7 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNew );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( MasterbarItemNew );

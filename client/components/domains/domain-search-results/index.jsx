@@ -125,11 +125,11 @@ class DomainSearchResults extends React.Component {
 				? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
 						args: { tld: getTld( domain ) },
 						components: { strong: <strong /> },
-					} )
+				  } )
 				: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
 						args: { domain },
 						components: { strong: <strong /> },
-					} );
+				  } );
 
 			if ( TLD_NOT_SUPPORTED_TEMPORARILY === lastDomainStatus ) {
 				domainUnavailableMessage = translate(

@@ -142,7 +142,12 @@ export const handleSaveFailure = (
 };
 
 export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: errorMessage } ) => {
-	const { settings, siteId, type, meta: { dataLayer } } = action;
+	const {
+		settings,
+		siteId,
+		type,
+		meta: { dataLayer },
+	} = action;
 	const { retryCount = 0 } = dataLayer;
 
 	// If we got a timeout on WooCommerce installation, try again (up to 3 times),

@@ -560,7 +560,7 @@ function wpcomPlugin( editor ) {
 									left: 0,
 									width: windowWidth,
 									height: windowHeight,
-								},
+							  },
 						toolbar = this.getEl(),
 						toolbarWidth = toolbar.offsetWidth,
 						toolbarHeight = toolbar.offsetHeight,

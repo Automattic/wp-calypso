@@ -84,8 +84,11 @@ class PostPhoto extends React.Component {
 			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
 
-			newHeight = Math.min( naturalHeight / naturalWidth * cardWidth, this.getMaxPhotoHeight() );
-			newWidth = naturalWidth / naturalHeight * newHeight;
+			newHeight = Math.min(
+				( naturalHeight / naturalWidth ) * cardWidth,
+				this.getMaxPhotoHeight()
+			);
+			newWidth = ( naturalWidth / naturalHeight ) * newHeight;
 			featuredImageStyle.height = newHeight;
 			featuredImageStyle.width = newWidth;
 		}

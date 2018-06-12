@@ -10,7 +10,7 @@
 }
 
 .marked-lines__marked-line {
-	background-color: rgba($alert-red, 0.2);
+	background-color: rgba( $alert-red, 0.2 );
 }
 
 .marked-lines__line-numbers {
@@ -25,7 +25,7 @@
 	color: $gray-text-min;
 
 	&.marked-lines__marked-line {
-		background-color: rgba($alert-red, 0.15);
+		background-color: rgba( $alert-red, 0.15 );
 	}
 }
 

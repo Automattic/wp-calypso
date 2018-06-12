@@ -84,6 +84,7 @@ const withNavigation = WrappedComponent => props => (
 	<WrappedComponent { ...{ ...props, navigateTo: page } } />
 );
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	withNavigation( localize( WpcomPluginInstallButton ) )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( withNavigation( localize( WpcomPluginInstallButton ) ) );

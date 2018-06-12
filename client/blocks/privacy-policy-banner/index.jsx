@@ -169,4 +169,7 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PrivacyPolicyBanner ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( PrivacyPolicyBanner ) );

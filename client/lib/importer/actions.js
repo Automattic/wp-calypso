@@ -186,7 +186,10 @@ export const startImport = ( siteId, importerType ) => {
 };
 
 export function startImporting( importerStatus ) {
-	const { importerId, site: { ID: siteId } } = importerStatus;
+	const {
+		importerId,
+		site: { ID: siteId },
+	} = importerStatus;
 
 	unlockImport( importerId );
 
@@ -199,7 +202,10 @@ export function startImporting( importerStatus ) {
 }
 
 export const startUpload = ( importerStatus, file ) => dispatch => {
-	const { importerId, site: { ID: siteId } } = importerStatus;
+	const {
+		importerId,
+		site: { ID: siteId },
+	} = importerStatus;
 
 	wpcom
 		.uploadExportFile( siteId, {
@@ -218,8 +224,18 @@ export const startUpload = ( importerStatus, file ) => dispatch => {
 		} )
 		.then( data => Object.assign( data, { siteId } ) )
 		.then( fromApi )
-		.then( flowRight( dispatch, finishUpload( importerId ) ) )
-		.catch( flowRight( dispatch, failUpload( importerId ) ) );
+		.then(
+			flowRight(
+				dispatch,
+				finishUpload( importerId )
+			)
+		)
+		.catch(
+			flowRight(
+				dispatch,
+				failUpload( importerId )
+			)
+		);
 
 	dispatch( {
 		type: IMPORTS_UPLOAD_START,

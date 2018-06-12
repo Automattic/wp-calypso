@@ -377,6 +377,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 	};
 } );
 
-export default flowRight( wrapSettingsForm( getFormSettings ), connectComponent )(
-	localize( PodcastingDetails )
-);
+export default flowRight(
+	wrapSettingsForm( getFormSettings ),
+	connectComponent
+)( localize( PodcastingDetails ) );

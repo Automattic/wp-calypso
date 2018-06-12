@@ -197,4 +197,7 @@ const mapDispatch = {
 	recordTracksEvent,
 };
 
-export default connect( mapState, mapDispatch )( localize( RequestLoginEmailForm ) );
+export default connect(
+	mapState,
+	mapDispatch
+)( localize( RequestLoginEmailForm ) );

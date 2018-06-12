@@ -31,7 +31,7 @@ const joinAnalytics = ( analytics, action ) =>
 		? dispatch => {
 				dispatch( analytics );
 				dispatch( action );
-			}
+		  }
 		: merge( {}, action, { meta: { analytics: mergedMetaData( analytics, action ) } } );
 
 export const composeAnalytics = ( ...analytics ) => ( {

@@ -201,7 +201,10 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-	setDesignType,
-} )( localize( DesignTypeWithAtomicStoreStep ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+		setDesignType,
+	}
+)( localize( DesignTypeWithAtomicStoreStep ) );

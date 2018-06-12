@@ -83,4 +83,7 @@ class SiteTitleStep extends React.Component {
 	}
 }
 
-export default connect( null, { setSiteTitle } )( SiteTitleStep );
+export default connect(
+	null,
+	{ setSiteTitle }
+)( SiteTitleStep );

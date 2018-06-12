@@ -330,7 +330,10 @@ class PostCommentList extends React.Component {
 	};
 
 	loadMoreCommentsHandler = direction => {
-		const { post: { ID: postId, site_ID: siteId }, commentsFilter: status } = this.props;
+		const {
+			post: { ID: postId, site_ID: siteId },
+			commentsFilter: status,
+		} = this.props;
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
 		this.setState( { amountOfCommentsToTake } );

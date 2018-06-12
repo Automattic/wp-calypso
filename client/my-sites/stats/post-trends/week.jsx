@@ -40,7 +40,7 @@ class PostTrendsWeek extends Component {
 				.add( i, 'day' );
 			const postCount = streakData[ dayDate.format( 'YYYY-MM-DD' ) ] || 0;
 			const classNames = [];
-			let level = Math.ceil( postCount / max * 4 );
+			let level = Math.ceil( ( postCount / max ) * 4 );
 
 			if (
 				dayDate.isBefore( moment( month ).startOf( 'month' ) ) ||

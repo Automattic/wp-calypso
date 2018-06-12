@@ -183,4 +183,7 @@ class SurveyStep extends React.Component {
 	};
 }
 
-export default connect( null, { setSurvey } )( localize( SurveyStep ) );
+export default connect(
+	null,
+	{ setSurvey }
+)( localize( SurveyStep ) );

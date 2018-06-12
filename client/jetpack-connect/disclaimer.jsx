@@ -51,6 +51,9 @@ class JetpackConnectDisclaimer extends PureComponent {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( JetpackConnectDisclaimer ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( JetpackConnectDisclaimer ) );

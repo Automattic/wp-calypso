@@ -222,7 +222,7 @@ export class SimpleSiteRenameForm extends Component {
 									args: { ownerInfo: currentDomain.owner },
 									components: { strong: <strong /> },
 								}
-							) }
+						  ) }
 				</div>
 			);
 		}

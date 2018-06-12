@@ -230,7 +230,7 @@ export class EditorMediaModal extends Component {
 						type: ModalViews.GALLERY === view ? 'gallery' : 'media',
 						items: mediaLibrarySelectedItems,
 						settings: this.state.gallerySettings,
-					}
+				  }
 				: undefined;
 			this.props.onClose( value );
 		}

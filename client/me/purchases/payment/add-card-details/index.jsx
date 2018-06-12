@@ -97,4 +97,7 @@ const mapDispatchToProps = {
 	clearPurchases,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( AddCardDetails );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( AddCardDetails );

@@ -57,8 +57,8 @@ describe( '<Rating />', () => {
 
 				const roundRating = Math.round( ratingValue / 10 ) * 10;
 				const ratingWidth = size * 5;
-				const maskPosition = roundRating / 100 * ratingWidth;
-				const clipPathMaskPosition = ratingWidth - roundRating / 100 * ratingWidth;
+				const maskPosition = ( roundRating / 100 ) * ratingWidth;
+				const clipPathMaskPosition = ratingWidth - ( roundRating / 100 ) * ratingWidth;
 				const component = wrapper.find( 'div.rating__overlay' );
 				expect( component.props().style.clipPath ).to.equal(
 					'inset(0 ' + clipPathMaskPosition + 'px 0 0 )'

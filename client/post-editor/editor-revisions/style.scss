@@ -8,13 +8,13 @@
 	box-sizing: border-box;
 	display: flex;
 	width: 90vw;
-	height: calc(90vh - 73px);
+	height: calc( 90vh - 73px );
 	overflow-y: hidden;
 
 	@include breakpoint( '<660px' ) {
 		flex-direction: column-reverse;
 		width: 100vw;
-		height: calc(100vh - 73px);
+		height: calc( 100vh - 73px );
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -27,10 +27,10 @@
 			height: 25px;
 			background: linear-gradient(
 				to bottom,
-				rgba(255, 255, 255, 1) 0%,
-				rgba(255, 255, 255, 1) 25%,
-				rgba(255, 255, 255, 0.85) 50%,
-				rgba(255, 255, 255, 0) 100%
+				rgba( 255, 255, 255, 1 ) 0%,
+				rgba( 255, 255, 255, 1 ) 25%,
+				rgba( 255, 255, 255, 0.85 ) 50%,
+				rgba( 255, 255, 255, 0 ) 100%
 			);
 		}
 	}
@@ -44,7 +44,7 @@
 	margin: 0 0 -16px;
 	padding: 16px 0;
 	text-align: left;
-	width: calc(100% + 32px);
+	width: calc( 100% + 32px );
 
 	.gridicon {
 		color: $gray-text;

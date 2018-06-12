@@ -102,11 +102,14 @@ class RewindMigrate extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
-	const rewindState = getRewindState( state, siteId );
-	return {
-		siteId,
-		rewindIsNowActive: 'provisioning' === rewindState.state,
-	};
-}, null )( localize( RewindMigrate ) );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
+		const rewindState = getRewindState( state, siteId );
+		return {
+			siteId,
+			rewindIsNowActive: 'provisioning' === rewindState.state,
+		};
+	},
+	null
+)( localize( RewindMigrate ) );
