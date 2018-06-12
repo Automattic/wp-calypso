@@ -107,10 +107,13 @@ class DesignTypeWithStoreStep extends Component {
 
 		const themeSlugWithRepo = getThemeForDesignType( designType );
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			designType,
-			themeSlugWithRepo,
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			{
+				designType,
+				themeSlugWithRepo,
+			}
+		);
 
 		this.props.goToNextStep();
 	};

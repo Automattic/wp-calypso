@@ -43,7 +43,6 @@ class RewindFormCreds extends Component {
 					processingMessage: this.props.translate( 'Migrating your credentials' ),
 					stepName: this.props.stepName,
 				},
-				undefined,
 				{ rewindconfig: true }
 			);
 			this.props.goToNextStep();

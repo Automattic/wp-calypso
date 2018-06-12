@@ -27,17 +27,23 @@ class CloneJetpackStep extends Component {
 	};
 
 	selectNew = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			cloneJetpack: 'new',
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			{
+				cloneJetpack: 'new',
+			}
+		);
 
 		this.props.goToNextStep();
 	};
 
 	selectMigrate = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			cloneJetpack: 'migrate',
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			{
+				cloneJetpack: 'migrate',
+			}
+		);
 
 		this.props.goToNextStep();
 	};

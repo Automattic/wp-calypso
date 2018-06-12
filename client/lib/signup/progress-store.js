@@ -79,15 +79,6 @@ function updateOrAddStep( step ) {
 	}
 }
 
-function setStepInvalid( step, errors ) {
-	updateOrAddStep(
-		assign( {}, step, {
-			status: 'invalid',
-			errors: errors,
-		} )
-	);
-}
-
 function saveStep( step ) {
 	if ( find( signupProgress, { stepName: step.stepName } ) ) {
 		updateStep( step );
@@ -151,14 +142,10 @@ function addStorableDependencies( step, action ) {
 }
 
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
-	let action = payload.action,
-		step = addTimestamp( action.data );
+	const action = payload.action;
+	const step = addTimestamp( action.data );
 
 	Dispatcher.waitFor( [ SignupDependencyStore.dispatchToken ] );
-
-	if ( ! isEmpty( action.errors ) ) {
-		return setStepInvalid( step, action.errors );
-	}
 
 	switch ( action.type ) {
 		case 'FETCH_CACHED_SIGNUP':

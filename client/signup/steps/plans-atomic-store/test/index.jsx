@@ -147,8 +147,8 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 
 		const calls = SignupActions.submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
-		expect( args[ 2 ].cartItem ).toBe( cartItem );
-		expect( args[ 2 ].privacyItem ).toEqual( null );
+		expect( args[ 1 ].cartItem ).toBe( cartItem );
+		expect( args[ 1 ].privacyItem ).toEqual( null );
 		expect( args[ 0 ].privacyItem ).toEqual( null );
 	} );
 
@@ -173,7 +173,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		const calls = SignupActions.submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
 		expect( args[ 0 ].privacyItem ).toEqual( 43 );
-		expect( args[ 2 ].privacyItem ).toEqual( 43 );
+		expect( args[ 1 ].privacyItem ).toEqual( 43 );
 	} );
 
 	test( 'Should call recordEvent when cartItem is specified', () => {

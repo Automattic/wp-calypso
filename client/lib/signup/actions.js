@@ -28,13 +28,12 @@ const SignupActions = {
 		} );
 	},
 
-	submitSignupStep( step, errors, providedDependencies ) {
+	submitSignupStep( step, providedDependencies ) {
 		analytics.tracks.recordEvent( 'calypso_signup_actions_submit_step', { step: step.stepName } );
 
 		Dispatcher.handleViewAction( {
 			type: 'SUBMIT_SIGNUP_STEP',
 			data: step,
-			errors: undefined === errors ? [] : errors,
 			providedDependencies: providedDependencies,
 		} );
 	},

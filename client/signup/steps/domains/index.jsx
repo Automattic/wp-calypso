@@ -153,7 +153,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
@@ -183,7 +182,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
@@ -215,7 +213,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
