@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
+import { find, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,10 +30,17 @@ import QueryRewindState from 'components/data/query-rewind-state';
 
 class SiteSettingsSecurity extends PureComponent {
 	static propTypes = {
+		setting: PropTypes.string,
 		showRewindCredentials: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteIsJetpack: PropTypes.bool,
+	};
+
+	isActiveSetting = setting => {
+		const settings = [ 'jetpack-credentials', 'jetpack-monitor', 'security-settings' ];
+		// Fall back to active if the setting isn't known (so we don't blur it)
+		return setting === this.props.setting || ! includes( settings, this.props.setting );
 	};
 
 	render() {
@@ -79,9 +86,11 @@ class SiteSettingsSecurity extends PureComponent {
 				<JetpackDevModeNotice />
 				<SidebarNavigation />
 				<SiteSettingsNavigation site={ site } section="security" />
-				{ showRewindCredentials && <JetpackCredentials /> }
-				<JetpackMonitor />
-				<FormSecurity />
+				{ showRewindCredentials && (
+					<JetpackCredentials blurred={ ! this.isActiveSetting( 'jetpack-credentials' ) } />
+				) }
+				<JetpackMonitor blurred={ ! this.isActiveSetting( 'jetpack-monitor' ) } />
+				<FormSecurity blurred={ ! this.isActiveSetting( 'security-settings' ) } />
 			</Main>
 		);
 	}

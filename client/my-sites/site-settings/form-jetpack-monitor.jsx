@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty, partial } from 'lodash';
@@ -122,14 +123,18 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	};
 
 	render() {
-		const { siteId, translate } = this.props;
+		const { blurred, siteId, translate } = this.props;
 
 		if ( ! config.isEnabled( 'settings/security/monitor' ) ) {
 			return null;
 		}
 
+		const className = classNames( 'site-settings__security-settings', {
+			'site-settings__blurred': blurred,
+		} );
+
 		return (
-			<div className="site-settings__security-settings">
+			<div className={ className }>
 				<QueryJetpackModules siteId={ siteId } />
 				<QuerySiteMonitorSettings siteId={ siteId } />
 
