@@ -117,7 +117,7 @@ class PodcastingDetails extends Component {
 			>
 				<option value="0">None</option>
 				{ map( toPairs( podcastingTopics ), ( [ topic, subtopics ] ) => {
-					// The keys for podcasting in iTunes use &amp;
+					// The keys for podcasting in Apple Podcasts use &amp;
 					const topicKey = topic.replace( '&', '&amp;' );
 					return [
 						<option key={ topicKey } value={ topicKey }>
@@ -145,7 +145,7 @@ class PodcastingDetails extends Component {
 				<FormLabel htmlFor="podcasting_category_1">{ translate( 'Podcast Topics' ) }</FormLabel>
 				<FormSettingExplanation>
 					{ translate(
-						'Choose how your podcast should be categorized within iTunes and other podcasting services.'
+						'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services.'
 					) }
 				</FormSettingExplanation>
 				{ this.renderTopicSelector( 'podcasting_category_1' ) }
