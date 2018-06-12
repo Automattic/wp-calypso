@@ -72,11 +72,8 @@ which set of configs will be used.
 on `initialize()`. This is built-in to the system and we don't have much direct control
 over it. There may be mitigation strategies if this becomes undesirable.  
 
-- Directly's code uses some poorly-supported JavaScript functions like String.startsWith(),
-but it offers a fallback if a browser doesn't support it. Unfortunately this usage triggers
-errors in `development` from [`lib/wrap-es6-functions`](../wrap-es6-functions). The errors
-are innocuous and do not prevent the widget from working. One proposed solution is to
-re-enable Babel's polyfill which would remove the need for the error warnings.
+- Directly's code uses some poorly-supported JavaScript functions like String.startsWith().
+Babel's polyfill makes this a non-issue on non-compliant browsers.
 
 - The widget checks if the user is signed in to Directly with a call to their API:
 https://www.directly.com/chat/checkAuth. If you aren't signed in this request will
