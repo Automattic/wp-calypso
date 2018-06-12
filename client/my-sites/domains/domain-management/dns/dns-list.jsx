@@ -17,6 +17,7 @@ import DnsRecord from './dns-record';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
 import { isDeletingLastMXRecord } from 'lib/domains/dns';
+import { domainConnect } from 'lib/domains/constants';
 
 class DnsList extends React.Component {
 	static propTypes = {
@@ -101,10 +102,22 @@ class DnsList extends React.Component {
 		} );
 	}
 
+	isDomainConnectRecord( dnsRecord ) {
+		return (
+			domainConnect.DISCOVERY_TXT_RECORD_NAME === dnsRecord.name &&
+			domainConnect.API_URL === dnsRecord.data &&
+			'TXT' === dnsRecord.type
+		);
+	}
+
 	render() {
 		const { dialog } = this.state;
 		const { dns, selectedDomainName, selectedSite } = this.props;
 		const dnsRecordsList = dns.records.map( ( dnsRecord, index ) => {
+			if ( this.isDomainConnectRecord( dnsRecord ) ) {
+				return;
+			}
+
 			return (
 				<DnsRecord
 					key={ index }
