@@ -105,7 +105,9 @@ export default connect(
 
 		const site = getSite( state, siteId );
 		const post = getEditedPost( state, siteId, postId );
-		const author = get( post, 'author', getCurrentUser( state ) );
+		const postAuthor = get( post, 'author' );
+		//default to current user when null or falsey
+		const author = postAuthor ? postAuthor : getCurrentUser( state );
 
 		return { site, post, author, isNew };
 	},
