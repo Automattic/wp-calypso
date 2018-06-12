@@ -74,7 +74,7 @@ export class GsuiteNudge extends React.Component {
 							: '/checkout/:site/with-gsuite/:domain'
 					}
 					title="G Suite Upsell"
-					properties={ { site: siteSlug, domain, ...( receiptId && { receiptId } ) } }
+					properties={ { site: siteSlug, domain, ...( receiptId && { receipt_id: receiptId } ) } }
 				/>
 				<DocumentHead
 					title={ translate( 'Add G Suite < %(siteTitle)s', {

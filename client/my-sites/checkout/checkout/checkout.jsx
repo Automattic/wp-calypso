@@ -613,7 +613,7 @@ export class Checkout extends React.Component {
 		let analyticsProps = {};
 		if ( purchaseId && product ) {
 			analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
-			analyticsProps = { product, purchaseId, site: selectedSiteSlug };
+			analyticsProps = { product, purchase_id: purchaseId, site: selectedSiteSlug };
 		} else if ( selectedFeature && plan ) {
 			analyticsPath = '/checkout/features/:feature/:site/:plan';
 			analyticsProps = { feature: selectedFeature, plan, site: selectedSiteSlug };

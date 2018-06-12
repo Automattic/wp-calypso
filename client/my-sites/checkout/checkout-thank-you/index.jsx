@@ -267,13 +267,13 @@ export class CheckoutThankYou extends React.Component {
 		if ( gsuiteReceiptId ) {
 			return {
 				path: '/checkout/thank-you/:site/:receipt_id/with-gsuite/:gsuite_receipt_id',
-				properties: { gsuiteReceiptId, receiptId, site },
+				properties: { gsuite_receipt_id: gsuiteReceiptId, receipt_id: receiptId, site },
 			};
 		}
 		if ( feature && receiptId ) {
 			return {
 				path: '/checkout/thank-you/features/:feature/:site/:receipt_id',
-				properties: { feature, receiptId, site },
+				properties: { feature, receipt_id: receiptId, site },
 			};
 		}
 		if ( feature && ! receiptId ) {
@@ -285,13 +285,13 @@ export class CheckoutThankYou extends React.Component {
 		if ( receiptId && selectedSite ) {
 			return {
 				path: '/checkout/thank-you/:site/:receipt_id',
-				properties: { receiptId, site },
+				properties: { receipt_id: receiptId, site },
 			};
 		}
 		if ( receiptId && ! selectedSite ) {
 			return {
 				path: '/checkout/thank-you/no-site/:receipt_id',
-				properties: { receiptId },
+				properties: { receipt_id: receiptId },
 			};
 		}
 		if ( selectedSite ) {

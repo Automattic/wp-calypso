@@ -109,7 +109,7 @@ class CheckoutPending extends PureComponent {
 							: '/checkout/thank-you/no-site/pending/:order_id'
 					}
 					title="Checkout Pending"
-					properties={ { orderId, ...( siteSlug && { site: siteSlug } ) } }
+					properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
 				/>
 				<EmptyContent
 					illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
