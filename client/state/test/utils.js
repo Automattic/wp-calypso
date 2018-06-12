@@ -959,10 +959,5 @@ describe( 'utils', () => {
 
 			expect( providedGetState ).toEqual( getState );
 		} );
-
-		it( 'should warn about supporting only plain object actions', () => {
-			const actionCreator = () => () => ( {} ); // returns thunk
-			expect( withEnhancers( actionCreator, [] )() ).toThrow();
-		} );
 	} );
 } );
