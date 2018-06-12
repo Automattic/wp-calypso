@@ -48,7 +48,7 @@
     "classnames": "1.1.1",
     "click-outside": "2.0.1",
     "clipboard": "1.5.3",
-    "commander": "2.3.0",
+    "commander": "2.15.1",
     "component-closest": "0.1.4",
     "component-file-picker": "0.2.1",
     "cookie": "0.1.2",
