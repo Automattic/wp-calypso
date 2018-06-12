@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 
 import page from 'page';
 import React, { Component } from 'react';
-import { curry } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -50,8 +49,9 @@ class EditCardDetails extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.createCardToken = curry( createCardToken )( 'card_update' );
 	}
+
+	createCardToken = ( ...args ) => createCardToken( 'card_update', ...args );
 
 	redirectIfDataIsInvalid( props = this.props ) {
 		if ( isDataLoading( props ) ) {
