@@ -292,13 +292,17 @@ class Signup extends React.Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
+
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
 		this.props.loadTrackingTool( 'HotJar' );
+
 		const urlPath = location.href;
 		const parsedUrl = url.parse( urlPath, true );
 		const affiliateId = parsedUrl.query.aff;
+		const campaignId = parsedUrl.query.cid;
+
 		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			this.props.affiliateReferral( { urlPath, affiliateId } );
+			this.props.affiliateReferral( { affiliateId, campaignId, urlPath } );
 			// Record the referral in Tracks
 			analytics.tracks.recordEvent( 'calypso_refer_visit', {
 				flow: this.props.flowName,
