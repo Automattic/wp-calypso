@@ -24,7 +24,7 @@ const needsInstall = () => {
 };
 
 if ( needsInstall() ) {
-	const installResult = spawnSync( 'npm', [ 'install' ], {
+	const installResult = spawnSync( 'npm', [ 'ci' ], {
 		shell: true,
 		stdio: 'inherit',
 	} ).status;
