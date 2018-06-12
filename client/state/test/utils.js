@@ -959,5 +959,25 @@ describe( 'utils', () => {
 
 			expect( providedGetState ).toEqual( getState );
 		} );
+
+		it( 'should accept an action creator as first parameter', () => {
+			const actionCreator = () => ( { type: 'HELLO' } );
+			const enhancedActionCreator = withEnhancers(
+				withEnhancers( actionCreator, action => Object.assign( { name: 'test' }, action ) ),
+				action => Object.assign( { hello: 'world' }, action )
+			);
+
+			const thunk = enhancedActionCreator();
+			const getState = () => ( {} );
+			let dispatchedAction = null;
+			const dispatch = action => ( dispatchedAction = action );
+			thunk( dispatch, getState );
+
+			expect( dispatchedAction ).toEqual( {
+				name: 'test',
+				hello: 'world',
+				type: 'HELLO',
+			} );
+		} );
 	} );
 } );
