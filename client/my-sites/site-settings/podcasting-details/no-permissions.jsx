@@ -11,9 +11,11 @@ function PodcastingNoPermissionsMessage( { translate } ) {
 		<div className="podcasting-details__no-permissions">
 			<p>
 				{ translate(
-					"Oops! You don't have permission to manage Podcasting. " +
-						"If you think you should, contact this site's administrator."
+					"Oops! You don't have permission to manage Podcasting settings on this site."
 				) }
+			</p>
+			<p>
+				{ translate( "Try changing to a different site or contacting this site's administrator." ) }
 			</p>
 		</div>
 	);
