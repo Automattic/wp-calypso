@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { find, get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -246,7 +247,11 @@ export class RewindCredentialsForm extends Component {
 						</Button>
 					) }
 					{ ( showAdvancedSettings || requirePath ) && (
-						<div className="rewind-credentials-form__advanced-settings">
+						<div
+							className={ classNames( {
+								'rewind-credentials-form__advanced-settings': ! requirePath,
+							} ) }
+						>
 							<FormFieldset className="rewind-credentials-form__path">
 								<FormLabel htmlFor="wordpress-path">
 									{ labels.path || translate( 'WordPress installation path' ) }
