@@ -134,7 +134,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		} );
 
 		return (
-			<div className={ className }>
+			<div className={ className } id="jetpack-monitor">
 				<QueryJetpackModules siteId={ siteId } />
 				<QuerySiteMonitorSettings siteId={ siteId } />
 

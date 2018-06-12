@@ -32,7 +32,7 @@ class JetpackCredentials extends Component {
 		} );
 
 		return (
-			<div className={ className }>
+			<div className={ className } id="jetpack-credentials">
 				<QueryRewindState siteId={ siteId } />
 				<SectionHeader label={ translate( 'Backups and security scans' ) }>
 					{ hasAuthorized && (
