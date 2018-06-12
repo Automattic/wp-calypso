@@ -45,7 +45,7 @@ import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precanc
 class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
 		disabled: PropTypes.bool,
@@ -191,10 +191,8 @@ class CancelPurchaseButton extends Component {
 	};
 
 	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase,
-			{ slug } = this.props.selectedSite;
-
-		page( confirmCancelDomain( slug, id ) );
+		const { id } = this.props.purchase;
+		page( confirmCancelDomain( id ) );
 	};
 
 	cancelPurchase = () => {
@@ -295,7 +293,7 @@ class CancelPurchaseButton extends Component {
 
 			submitSurvey(
 				'calypso-remove-purchase',
-				this.props.selectedSite.ID,
+				purchase.siteId,
 				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
 			);
 		}

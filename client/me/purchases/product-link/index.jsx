@@ -70,7 +70,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 
 ProductLink.propTypes = {
 	purchase: PropTypes.object.isRequired,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+	selectedSite: PropTypes.shape( { slug: PropTypes.string.isRequired } ),
 };
 
 export default connect( ( state, { purchase } ) => {

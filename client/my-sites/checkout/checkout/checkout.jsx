@@ -295,7 +295,6 @@ export class Checkout extends React.Component {
 	}
 
 	getCheckoutCompleteRedirectPath = () => {
-		let renewalItem;
 		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
 		const domainReceiptId = get(
 			cartItems.getGoogleApps( cart ),
@@ -308,9 +307,8 @@ export class Checkout extends React.Component {
 		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
 
 		if ( cartItems.hasRenewalItem( cart ) ) {
-			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
-
-			return managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
+			const renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
+			return managePurchase( renewalItem.extra.purchaseId );
 		}
 
 		if ( cartItems.hasFreeTrial( cart ) ) {

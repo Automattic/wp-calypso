@@ -202,7 +202,7 @@ class PurchaseItem extends Component {
 			};
 
 			if ( ! isDisconnectedSite ) {
-				props.href = managePurchase( this.props.slug, this.props.purchase.id );
+				props.href = managePurchase( this.props.purchase.id );
 			}
 		}
 

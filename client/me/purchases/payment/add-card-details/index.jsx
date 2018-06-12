@@ -5,7 +5,7 @@
  */
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 /**
  * Internal Dependencies
@@ -14,10 +14,7 @@ import { clearPurchases } from 'state/purchases/actions';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading } from 'me/purchases/utils';
-import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -34,8 +31,6 @@ class AddCardDetails extends PurchaseCardDetails {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchaseId: PropTypes.number.isRequired,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
-		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
 	};
 
@@ -48,13 +43,13 @@ class AddCardDetails extends PurchaseCardDetails {
 	}
 
 	render() {
-		if ( isDataLoading( this.props ) ) {
+		if ( ! this.props.hasLoadedUserPurchasesFromServer ) {
 			return (
-				<div>
+				<Fragment>
 					<QueryUserPurchases userId={ this.props.userId } />
 
 					<CreditCardFormLoadingPlaceholder title={ titles.addCardDetails } />
-				</div>
+				</Fragment>
 			);
 		}
 
@@ -68,7 +63,7 @@ class AddCardDetails extends PurchaseCardDetails {
 					path="/me/purchases/:site/:purchaseId/payment/add"
 					title="Purchases > Add Card Details"
 				/>
-				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake backHref={ managePurchase( this.props.purchaseId ) }>
 					{ titles.addCardDetails }
 				</HeaderCake>
 
@@ -85,10 +80,8 @@ class AddCardDetails extends PurchaseCardDetails {
 
 const mapStateToProps = ( state, { purchaseId } ) => {
 	return {
-		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSite( state ),
 		userId: getCurrentUserId( state ),
 	};
 };
