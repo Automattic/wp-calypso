@@ -227,20 +227,20 @@ export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
 ) => {
 	const action = actionCreator( ...args );
 
-	if ( typeof action !== 'object' ) {
-		throw new Error(
-			'withEnhancers only works with an action creator that returns a plain action object'
-		);
-	}
-
 	if ( ! Array.isArray( enhancers ) ) {
 		enhancers = [ enhancers ];
 	}
 
+	if ( typeof action === 'function' ) {
+		const newDispatch = actionValue =>
+			dispatch(
+				enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue )
+			);
+		return action( newDispatch, getState );
+	}
+
 	return dispatch(
-		enhancers.reduce( ( result, enhancer ) => {
-			return enhancer( result, getState );
-		}, action )
+		enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), action )
 	);
 };
 
