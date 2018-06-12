@@ -6,7 +6,6 @@
  * Internal dependencies
  */
 import * as actions from '../actions';
-import * as analyticsActions from 'state/analytics/actions';
 import useNock from 'test/helpers/use-nock';
 import wpcom from 'lib/wp';
 import {
@@ -56,7 +55,6 @@ describe( '#dismissUrl()', () => {
 
 describe( '#retryAuth()', () => {
 	test( 'should dispatch redirect action when called', () => {
-		jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 		const spy = jest.fn();
 		const { retryAuth } = actions;
 		const url = 'http://example.com';
@@ -67,6 +65,9 @@ describe( '#retryAuth()', () => {
 			type: JETPACK_CONNECT_RETRY_AUTH,
 			slug: 'example.com',
 			attemptNumber: 0,
+			meta: expect.objectContaining( {
+				analytics: expect.any( Array ),
+			} ),
 		} );
 	} );
 } );
@@ -119,7 +120,6 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch authorize request action when thunk triggered', () => {
-			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorize } = actions;
 
@@ -128,6 +128,9 @@ describe( '#authorize()', () => {
 			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_AUTHORIZE,
 				queryObject,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 
@@ -161,7 +164,6 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch sites receive action when request completes', async () => {
-			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorize } = actions;
 
@@ -169,17 +171,22 @@ describe( '#authorize()', () => {
 			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_RECEIVE,
 				site: { ID: client_id },
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 
 		test( 'should dispatch authorize receive site list action when request completes', async () => {
-			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorize } = actions;
 
 			await authorize( queryObject )( spy );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -206,7 +213,6 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch authorize receive action when request completes', async () => {
-			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorize } = actions;
 
@@ -220,6 +226,9 @@ describe( '#authorize()', () => {
 					message: 'Could not verify your request.',
 					status: 400,
 				},
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -283,7 +292,6 @@ describe( '#validateSSONonce()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
-			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { validateSSONonce } = actions;
 
@@ -293,6 +301,9 @@ describe( '#validateSSONonce()', () => {
 				blogDetails: blogDetails,
 				sharedDetails: sharedDetails,
 				type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -315,7 +326,6 @@ describe( '#validateSSONonce()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
-			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { validateSSONonce } = actions;
 
@@ -327,6 +337,9 @@ describe( '#validateSSONonce()', () => {
 					status: 400,
 				},
 				type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -359,7 +372,6 @@ describe( '#authorizeSSO()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
-			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorizeSSO } = actions;
 
@@ -368,6 +380,9 @@ describe( '#authorizeSSO()', () => {
 				ssoUrl,
 				siteUrl: ssoUrl,
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -386,7 +401,6 @@ describe( '#authorizeSSO()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
-			jest.spyOn( analyticsActions, 'withAnalytics' ).mockImplementation( ( _, action ) => action );
 			const spy = jest.fn();
 			const { authorizeSSO } = actions;
 
@@ -398,6 +412,9 @@ describe( '#authorizeSSO()', () => {
 					status: 400,
 				},
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
