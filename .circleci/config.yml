@@ -26,15 +26,7 @@ jobs:
             mkdir -p $CIRCLE_ARTIFACTS
             mkdir -p $CIRCLE_TEST_REPORTS
 
-      - restore_cache:
-          key: v10-4-0-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
-
       - run: npm ci
-
-      - save_cache:
-          key: v10-4-0-npmdeps-{{ checksum "npm-shrinkwrap.json" }}
-          paths:
-            - "node_modules"
 
       - run: NODE_ENV=test npm run build-server
 
