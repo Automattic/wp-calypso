@@ -70,6 +70,7 @@ class SiteSettingsFormWriting extends Component {
 			handleAutosavingToggle,
 			handleAutosavingRadio,
 			handleSubmitForm,
+			isPodcastingSupported,
 			isMasterbarSectionVisible,
 			isRequestingSettings,
 			isSavingSettings,
@@ -169,7 +170,7 @@ class SiteSettingsFormWriting extends Component {
 					onChangeField={ onChangeField }
 				/>
 
-				{ ! siteIsJetpack &&
+				{ isPodcastingSupported &&
 					config.isEnabled( 'manage/site-settings/podcasting' ) && (
 						<PodcastingLink fields={ fields } />
 					) }
@@ -219,6 +220,8 @@ const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
+		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
 
 		return {
 			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
@@ -229,7 +232,8 @@ const connectComponent = connect(
 				siteIsJetpack &&
 				isJetpackMinimumVersion( state, siteId, '4.8' ) &&
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
-				! isSiteAutomatedTransfer( state, siteId ),
+				! siteIsAutomatedTransfer,
+			isPodcastingSupported,
 		};
 	},
 	{ requestPostTypes },
