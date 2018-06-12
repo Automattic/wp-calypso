@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
@@ -28,66 +28,64 @@ import Placeholder from 'my-sites/site-settings/placeholder';
 import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
 import QueryRewindState from 'components/data/query-rewind-state';
 
-const SiteSettingsSecurity = ( {
-	showRewindCredentials,
-	site,
-	siteId,
-	siteIsJetpack,
-	translate,
-} ) => {
-	if ( ! site ) {
-		return <Placeholder />;
-	}
+class SiteSettingsSecurity extends PureComponent {
+	static propTypes = {
+		showRewindCredentials: PropTypes.bool,
+		site: PropTypes.object,
+		siteId: PropTypes.number,
+		siteIsJetpack: PropTypes.bool,
+	};
 
-	if ( ! siteIsJetpack ) {
+	render() {
+		const { showRewindCredentials, site, siteId, siteIsJetpack, translate } = this.props;
+
+		if ( ! site ) {
+			return <Placeholder />;
+		}
+
+		if ( ! siteIsJetpack ) {
+			return (
+				<JetpackManageErrorPage
+					action={ translate( 'Manage general settings for %(site)s', {
+						args: { site: site.name },
+					} ) }
+					actionURL={ '/settings/general/' + site.slug }
+					title={ translate( 'No security configuration is required.' ) }
+					line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
+					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
+				/>
+			);
+		}
+
+		if ( ! site.canManage ) {
+			return (
+				<JetpackManageErrorPage
+					template="optInManage"
+					title={ translate( "Looking to manage this site's security settings?" ) }
+					section="security-settings"
+					siteId={ siteId }
+				/>
+			);
+		}
+
+		if ( ! site.hasMinimumJetpackVersion ) {
+			return <JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.4" />;
+		}
+
 		return (
-			<JetpackManageErrorPage
-				action={ translate( 'Manage general settings for %(site)s', {
-					args: { site: site.name },
-				} ) }
-				actionURL={ '/settings/general/' + site.slug }
-				title={ translate( 'No security configuration is required.' ) }
-				line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
-				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-			/>
+			<Main className="settings-security__main site-settings">
+				<QueryRewindState siteId={ siteId } />
+				<DocumentHead title={ translate( 'Site Settings' ) } />
+				<JetpackDevModeNotice />
+				<SidebarNavigation />
+				<SiteSettingsNavigation site={ site } section="security" />
+				{ showRewindCredentials && <JetpackCredentials /> }
+				<JetpackMonitor />
+				<FormSecurity />
+			</Main>
 		);
 	}
-
-	if ( ! site.canManage ) {
-		return (
-			<JetpackManageErrorPage
-				template="optInManage"
-				title={ translate( "Looking to manage this site's security settings?" ) }
-				section="security-settings"
-				siteId={ siteId }
-			/>
-		);
-	}
-
-	if ( ! site.hasMinimumJetpackVersion ) {
-		return <JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.4" />;
-	}
-
-	return (
-		<Main className="settings-security__main site-settings">
-			<QueryRewindState siteId={ siteId } />
-			<DocumentHead title={ translate( 'Site Settings' ) } />
-			<JetpackDevModeNotice />
-			<SidebarNavigation />
-			<SiteSettingsNavigation site={ site } section="security" />
-			{ showRewindCredentials && <JetpackCredentials /> }
-			<JetpackMonitor />
-			<FormSecurity />
-		</Main>
-	);
-};
-
-SiteSettingsSecurity.propTypes = {
-	showRewindCredentials: PropTypes.bool,
-	site: PropTypes.object,
-	siteId: PropTypes.number,
-	siteIsJetpack: PropTypes.bool,
-};
+}
 
 export default connect( state => {
 	const site = getSelectedSite( state );
