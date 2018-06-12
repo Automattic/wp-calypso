@@ -27,6 +27,8 @@ import {
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 
+beforeEach( jest.restoreAllMocks );
+
 describe( '#confirmJetpackInstallStatus()', () => {
 	test( 'should dispatch confirm status action when called', () => {
 		const { confirmJetpackInstallStatus } = actions;
@@ -63,6 +65,9 @@ describe( '#retryAuth()', () => {
 			type: JETPACK_CONNECT_RETRY_AUTH,
 			slug: 'example.com',
 			attemptNumber: 0,
+			meta: expect.objectContaining( {
+				analytics: expect.any( Array ),
+			} ),
 		} );
 	} );
 } );
@@ -123,6 +128,9 @@ describe( '#authorize()', () => {
 			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_AUTHORIZE,
 				queryObject,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 
@@ -163,6 +171,9 @@ describe( '#authorize()', () => {
 			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_RECEIVE,
 				site: { ID: client_id },
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 
@@ -173,6 +184,9 @@ describe( '#authorize()', () => {
 			await authorize( queryObject )( spy );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -212,6 +226,9 @@ describe( '#authorize()', () => {
 					message: 'Could not verify your request.',
 					status: 400,
 				},
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -284,6 +301,9 @@ describe( '#validateSSONonce()', () => {
 				blogDetails: blogDetails,
 				sharedDetails: sharedDetails,
 				type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -317,6 +337,9 @@ describe( '#validateSSONonce()', () => {
 					status: 400,
 				},
 				type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -357,6 +380,9 @@ describe( '#authorizeSSO()', () => {
 				ssoUrl,
 				siteUrl: ssoUrl,
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -386,6 +412,9 @@ describe( '#authorizeSSO()', () => {
 					status: 400,
 				},
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
+				meta: expect.objectContaining( {
+					analytics: expect.any( Array ),
+				} ),
 			} );
 		} );
 	} );
@@ -393,8 +422,6 @@ describe( '#authorizeSSO()', () => {
 
 describe( '#createAccount()', () => {
 	const { createAccount } = actions;
-
-	beforeEach( jest.restoreAllMocks );
 
 	test( 'should resolve with the username and bearer token', async () => {
 		const userData = { username: 'happyuser' };
@@ -426,8 +453,6 @@ describe( '#createAccount()', () => {
 
 describe( '#createSocialAccount()', () => {
 	const { createSocialAccount } = actions;
-
-	beforeEach( jest.restoreAllMocks );
 
 	test( 'should reject with the error', async () => {
 		const error = {
