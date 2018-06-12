@@ -172,7 +172,7 @@ export function retryAuth( url, attemptNumber ) {
 				} ),
 				{
 					type: JETPACK_CONNECT_RETRY_AUTH,
-					attemptNumber: attemptNumber,
+					attemptNumber,
 					slug: urlToSlug( url ),
 				}
 			)
@@ -337,7 +337,7 @@ export function authorize( queryObject ) {
 		dispatch(
 			withAnalytics( recordTracksEvent( 'calypso_jpc_authorize', { from, site: client_id } ), {
 				type: JETPACK_CONNECT_AUTHORIZE,
-				queryObject: queryObject,
+				queryObject,
 			} )
 		);
 		return wpcom
