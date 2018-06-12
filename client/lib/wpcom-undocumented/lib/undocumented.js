@@ -13,6 +13,7 @@ import Site from './site';
 import Me from './me';
 import MailingList from './mailing-list';
 import config from 'config';
+import { getCoupon } from 'lib/cart-values';
 import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
 
@@ -767,6 +768,8 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 	);
 };
 
+let cartRequestCounter = 0;
+
 /**
  * GET/POST cart
  *
@@ -777,7 +780,11 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
  * @api public
  */
 Undocumented.prototype.cart = function( cartKey, method, data, fn ) {
+	cartRequestCounter++;
+	let path = '/me/shopping-cart/' + cartKey;
+
 	debug( '/me/shopping-cart/:cart-key query' );
+
 	if ( arguments.length === 2 ) {
 		fn = method;
 		method = 'GET';
@@ -787,9 +794,38 @@ Undocumented.prototype.cart = function( cartKey, method, data, fn ) {
 		method = 'GET';
 		data = {};
 	}
+
+	if ( method === 'GET' && cartRequestCounter === 1 ) {
+		// If it's the first GET request and we have `?coupon=[code]`, then
+		// pass coupon to the API and have it applied to current cart items.
+		const coupon = getCoupon( [ 'query' ] );
+
+		if ( coupon ) {
+			path += '?coupon=' + encodeURIComponent( coupon );
+		}
+	} else if ( method === 'POST' ) {
+		// If no coupon and we aren't explicitly removing the coupon, then
+		// use the coupon from query string or from cookie if one is available.
+		data = data || {};
+
+		if (
+			! data.coupon &&
+			! data.is_coupon_applied &&
+			! data.is_coupon_removed &&
+			typeof document !== 'undefined'
+		) {
+			const coupon = getCoupon();
+
+			if ( coupon ) {
+				data.coupon = coupon;
+				data.is_coupon_applied = false;
+			}
+		}
+	}
+
 	return this._sendRequest(
 		{
-			path: '/me/shopping-cart/' + cartKey,
+			path: path,
 			method: method,
 			body: data,
 		},

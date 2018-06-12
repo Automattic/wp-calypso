@@ -24,6 +24,7 @@ import {
  */
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
+import { getCoupon } from 'lib/cart-values';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 import { doNotTrack, isPiiUrl, shouldReportOmitBlogId, hashPii } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
@@ -195,6 +196,7 @@ const analytics = {
 		analytics.setUser( user );
 		analytics.setSuperProps( superProps );
 		analytics.identifyUser();
+		analytics.collectCoupon();
 	},
 
 	setUser: function( user ) {
@@ -556,6 +558,19 @@ const analytics = {
 			}
 
 			window._tkq.push( [ 'identifyUser', _user.get().ID, _user.get().username ] );
+		}
+	},
+
+	collectCoupon: function() {
+		// When we have `?coupon=[code]` in the URL,
+		// save it in a cookie for reference at checkout.
+		const coupon = getCoupon( [ 'query' ] );
+
+		if ( coupon ) {
+			document.cookie = cookie.serialize( 'coupon', coupon, {
+				path: '/',
+				maxAge: 60 * 60 * 24 * 365,
+			} );
 		}
 	},
 

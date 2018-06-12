@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import analytics from 'lib/analytics';
-import { applyCoupon } from 'lib/upgrades/actions';
+import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
 
 export class CartCoupon extends React.Component {
 	static displayName = 'CartCoupon';
@@ -130,7 +130,7 @@ export class CartCoupon extends React.Component {
 				isCouponFormShowing: false,
 			},
 			() => {
-				this.applyCoupon( event );
+				this.removeCoupon( event );
 			}
 		);
 	};
@@ -146,6 +146,19 @@ export class CartCoupon extends React.Component {
 		} );
 
 		applyCoupon( this.state.couponInputValue );
+	};
+
+	removeCoupon = event => {
+		event.preventDefault();
+		if ( this.isSubmitting ) {
+			return;
+		}
+
+		analytics.tracks.recordEvent( 'calypso_checkout_coupon_submit', {
+			coupon_code: '',
+		} );
+
+		removeCoupon();
 	};
 
 	handleCouponInputChange = event => {
