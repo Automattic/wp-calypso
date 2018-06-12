@@ -3,33 +3,31 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-
-import React, { Component, Fragment } from 'react';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
-import { clearPurchases } from 'state/purchases/actions';
+import analytics from 'lib/analytics';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading } from 'me/purchases/utils';
-import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'state/current-user/selectors';
-
-import analytics from 'lib/analytics';
+import { clearPurchases } from 'state/purchases/actions';
 import { createCardToken } from 'lib/store-transactions';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { isDataLoading } from 'me/purchases/utils';
+import { isRequestingSites } from 'state/sites/selectors';
+import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 
 class AddCardDetails extends Component {
 	static propTypes = {
