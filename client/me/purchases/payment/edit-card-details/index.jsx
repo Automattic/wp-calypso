@@ -52,7 +52,6 @@ class EditCardDetails extends Component {
 		super( props );
 		this.createCardToken = curry( createCardToken )( 'card_update' );
 		this.recordFormSubmitEvent = this.recordFormSubmitEvent.bind( this );
-		this.successCallback = this.successCallback.bind( this );
 	}
 
 	redirectIfDataIsInvalid( props = this.props ) {
@@ -83,13 +82,13 @@ class EditCardDetails extends Component {
 		} );
 	}
 
-	successCallback() {
+	successCallback = () => {
 		const { id } = this.props.purchase;
 
 		this.props.clearPurchases();
 
 		page( managePurchase( this.props.selectedSite.slug, id ) );
-	}
+	};
 
 	componentWillMount() {
 		this.redirectIfDataIsInvalid();
