@@ -6,7 +6,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import page from 'page';
 
 /**
@@ -90,11 +90,11 @@ class AddCardDetails extends Component {
 	render() {
 		if ( isDataLoading( this.props ) ) {
 			return (
-				<div>
+				<Fragment>
 					<QueryUserPurchases userId={ this.props.userId } />
 
 					<CreditCardFormLoadingPlaceholder title={ titles.addCardDetails } />
-				</div>
+				</Fragment>
 			);
 		}
 

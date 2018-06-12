@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import page from 'page';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 /**
  * Internal Dependencies
@@ -94,13 +94,13 @@ class EditCardDetails extends Component {
 	render() {
 		if ( isDataLoading( this.props ) || ! this.props.hasLoadedStoredCardsFromServer ) {
 			return (
-				<div>
+				<Fragment>
 					<QueryStoredCards />
 
 					<QueryUserPurchases userId={ this.props.userId } />
 
 					<CreditCardFormLoadingPlaceholder title={ titles.editCardDetails } />
-				</div>
+				</Fragment>
 			);
 		}
 
