@@ -129,7 +129,7 @@ export const fetch = action => {
 	const queryString = stringify( omitBy( requestQuery, val => '' === val ) );
 
 	return request( siteId, action ).getWithHeaders( `products/categories?${ queryString }` );
-}
+};
 
 export const onFetchSuccess = ( action, { data } ) => dispatch => {
 	const { siteId, query } = action;
@@ -154,7 +154,7 @@ export const onFetchSuccess = ( action, { data } ) => dispatch => {
 			dispatch( fetchProductCategories( siteId, { ...query, offset } ) );
 		}
 	}
-}
+};
 
 export const onFetchError = ( action, error ) => dispatch => {
 	const { siteId, query } = action;
@@ -167,7 +167,7 @@ export const onFetchError = ( action, error ) => dispatch => {
 	} );
 
 	dispatch( setError( siteId, action, error ) );
-}
+};
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_CREATE ]: [ handleProductCategoryCreate ],

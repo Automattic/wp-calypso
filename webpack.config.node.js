@@ -37,8 +37,7 @@ function getExternals() {
 
 	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 	// with modules that are incompatible with webpack bundling.
-	fs
-		.readdirSync( 'node_modules' )
+	fs.readdirSync( 'node_modules' )
 		.filter( function( module ) {
 			return [ '.bin' ].indexOf( module ) === -1;
 		} )

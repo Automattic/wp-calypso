@@ -42,7 +42,12 @@ export const handleSuccess = ( { url } ) => {
 };
 
 export const handleError = ( action, error ) => {
-	const { url, user, password, meta: { dataLayer } } = action;
+	const {
+		url,
+		user,
+		password,
+		meta: { dataLayer },
+	} = action;
 	const { retryCount = 0 } = dataLayer;
 
 	const logToTracks = withAnalytics(

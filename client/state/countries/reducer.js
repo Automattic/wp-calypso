@@ -13,22 +13,23 @@ import {
 	COUNTRIES_SMS_UPDATED,
 } from 'state/action-types';
 
-const createListReducer = ( fetchActionType, updatedActionType ) => createReducer(
-	{
-		isFetching: false,
-		items: [],
-	},
-	{
-		[ fetchActionType ]: ( state ) => ( {
-			...state,
-			isFetching: true
-		} ),
-		[ updatedActionType ]: ( state, action ) => ( {
+const createListReducer = ( fetchActionType, updatedActionType ) =>
+	createReducer(
+		{
 			isFetching: false,
-			items: action.countries,
-		} )
-	}
-);
+			items: [],
+		},
+		{
+			[ fetchActionType ]: state => ( {
+				...state,
+				isFetching: true,
+			} ),
+			[ updatedActionType ]: ( state, action ) => ( {
+				isFetching: false,
+				items: action.countries,
+			} ),
+		}
+	);
 
 const domains = createListReducer( COUNTRIES_DOMAINS_FETCH, COUNTRIES_DOMAINS_UPDATED );
 

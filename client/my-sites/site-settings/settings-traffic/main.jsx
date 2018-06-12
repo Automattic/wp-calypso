@@ -142,6 +142,8 @@ const getFormSettings = partialRight( pick, [
 	'blog_public',
 ] );
 
-export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
-	SiteSettingsTraffic
-);
+export default flowRight(
+	connectComponent,
+	localize,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsTraffic );

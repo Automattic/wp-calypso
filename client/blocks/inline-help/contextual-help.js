@@ -44,7 +44,7 @@ const contextLinksForSection = {
 	stats: [
 		{
 			link: 'http://en.support.wordpress.com/stats/',
-            post_id: 4454,
+			post_id: 4454,
 			title: 'Understanding the Stats Page',
 			description:
 				'Your stats page includes a bunch of nifty graphs, charts, and lists that show you how many ' +

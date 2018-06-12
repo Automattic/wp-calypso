@@ -162,4 +162,7 @@ const mapDispatchToProps = {
 	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( MasterbarItemNotifications );

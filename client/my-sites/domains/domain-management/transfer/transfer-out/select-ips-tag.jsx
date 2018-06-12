@@ -112,7 +112,10 @@ class SelectIpsTag extends Component {
 	};
 
 	renderGoToGainingRegistrar() {
-		const { translate, gainingRegistrar: { registrarUrl } } = this.props;
+		const {
+			translate,
+			gainingRegistrar: { registrarUrl },
+		} = this.props;
 
 		return (
 			<Notice
@@ -130,7 +133,10 @@ class SelectIpsTag extends Component {
 	}
 
 	renderNoticeAction() {
-		const { translate, gainingRegistrar: { registrarUrl } } = this.props;
+		const {
+			translate,
+			gainingRegistrar: { registrarUrl },
+		} = this.props;
 
 		return (
 			<NoticeAction href={ registrarUrl } external={ true }>

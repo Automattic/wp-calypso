@@ -377,14 +377,17 @@ class CancelPurchaseForm extends React.Component {
 	}
 }
 
-export default connect( null, dispatch => ( {
-	clickRadio: ( option, value ) =>
-		dispatch(
-			recordTracksEvent( 'calypso_purchases_cancel_form_select_radio_option', {
-				option: option,
-				value: value,
-			} )
-		),
-	clickConcierge: () =>
-		dispatch( recordTracksEvent( 'calypso_purchases_cancel_form_concierge_click' ) ),
-} ) )( localize( CancelPurchaseForm ) );
+export default connect(
+	null,
+	dispatch => ( {
+		clickRadio: ( option, value ) =>
+			dispatch(
+				recordTracksEvent( 'calypso_purchases_cancel_form_select_radio_option', {
+					option: option,
+					value: value,
+				} )
+			),
+		clickConcierge: () =>
+			dispatch( recordTracksEvent( 'calypso_purchases_cancel_form_concierge_click' ) ),
+	} )
+)( localize( CancelPurchaseForm ) );

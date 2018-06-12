@@ -405,4 +405,7 @@ const mapState = ( state, { query, siteId } ) => ( {
 	site: getSite( state, siteId ),
 } );
 
-const ConnectedPages = flowRight( connect( mapState ), localize )( Pages );
+const ConnectedPages = flowRight(
+	connect( mapState ),
+	localize
+)( Pages );

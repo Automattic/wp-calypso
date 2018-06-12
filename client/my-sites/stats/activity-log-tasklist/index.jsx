@@ -307,7 +307,7 @@ class ActivityLogTasklist extends Component {
 									count: numberOfUpdates,
 									args: { updates: numberOfUpdates },
 								}
-							)
+						  )
 						: translate( 'You have one update available' ) }
 					{ 1 < numberOfUpdates && (
 						<SplitButton
@@ -482,14 +482,17 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 				? withAnalytics(
 						recordTracksEvent( 'calypso_activitylog_tasklist_manage_single_plugin' ),
 						navigate( `/plugins/${ slug }/${ siteSlug }` )
-					)
+				  )
 				: withAnalytics(
 						recordTracksEvent( 'calypso_activitylog_tasklist_manage_single_theme' ),
 						navigate( `/theme/${ slug }/${ siteSlug }` )
-					)
+				  )
 		),
 } );
 
 export default WithItemsToUpdate(
-	connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogTasklist ) )
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( localize( ActivityLogTasklist ) )
 );

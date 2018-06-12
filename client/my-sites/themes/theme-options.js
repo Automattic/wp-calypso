@@ -53,7 +53,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 				! isThemePremium( state, themeId ) || // Not a premium theme
 				isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 				isThemeActive( state, themeId, siteId ), // Already active
-		}
+	  }
 	: {};
 
 const upgradePlan = config.isEnabled( 'upgrades/checkout' )
@@ -76,7 +76,7 @@ const upgradePlan = config.isEnabled( 'upgrades/checkout' )
 				! isThemePremium( state, themeId ) ||
 				isThemeActive( state, themeId, siteId ) ||
 				isPremiumThemeAvailable( state, themeId, siteId ),
-		}
+	  }
 	: {};
 
 const activate = {

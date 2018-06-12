@@ -94,7 +94,7 @@ export class MediaLibraryList extends React.Component {
 		};
 
 		if ( ! isFillingEntireRow && ! isLastInRow ) {
-			marginValue = ( 1 % this.props.mediaScale ) / ( itemsPerRow - 1 ) * 100 + '%';
+			marginValue = ( ( 1 % this.props.mediaScale ) / ( itemsPerRow - 1 ) ) * 100 + '%';
 
 			const { isRtl } = this.props;
 
@@ -201,7 +201,7 @@ export class MediaLibraryList extends React.Component {
 	renderLoadingPlaceholders = () => {
 		let itemsPerRow = this.getItemsPerRow(),
 			itemsVisible = ( this.props.media || [] ).length,
-			placeholders = itemsPerRow - itemsVisible % itemsPerRow;
+			placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
 
 		// We render enough placeholders to occupy the remainder of the row
 		return Array.apply( null, new Array( placeholders ) ).map( function( value, i ) {

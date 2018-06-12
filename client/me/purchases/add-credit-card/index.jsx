@@ -65,4 +65,7 @@ const mapDispatchToProps = {
 	addStoredCard,
 };
 
-export default connect( null, mapDispatchToProps )( AddCreditCard );
+export default connect(
+	null,
+	mapDispatchToProps
+)( AddCreditCard );

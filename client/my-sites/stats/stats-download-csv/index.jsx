@@ -108,4 +108,7 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-export default flowRight( connectComponent, localize )( StatsDownloadCsv );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsDownloadCsv );

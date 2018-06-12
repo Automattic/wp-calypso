@@ -514,4 +514,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 	showSuccessNotice: ( success, options ) => dispatch( successNotice( success, options ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ActivityLogItem ) );

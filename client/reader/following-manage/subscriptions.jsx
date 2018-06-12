@@ -148,7 +148,7 @@ class FollowingManageSubscriptions extends Component {
 								? translate( 'Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
 										components: { italic: <i /> },
 										args: query,
-									} )
+								  } )
 								: translate( 'Sorry, no followed sites found.' ) }
 						</span>
 					) }

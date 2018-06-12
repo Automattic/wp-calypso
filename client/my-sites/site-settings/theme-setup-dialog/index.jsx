@@ -124,4 +124,7 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, { toggleDialog, runThemeSetup } )( ThemeSetupDialog );
+export default connect(
+	mapStateToProps,
+	{ toggleDialog, runThemeSetup }
+)( ThemeSetupDialog );

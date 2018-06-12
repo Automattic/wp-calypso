@@ -57,7 +57,7 @@ class ScrollHelper {
 			callback = callback.bind( context );
 		}
 
-		const firstIndexInRow = index - index % this.props.itemsPerRow,
+		const firstIndexInRow = index - ( index % this.props.itemsPerRow ),
 			lastIndexInRow =
 				Math.min( firstIndexInRow + this.props.itemsPerRow, this.props.items.length ) - 1;
 		for ( let i = firstIndexInRow; i <= lastIndexInRow; i++ ) {

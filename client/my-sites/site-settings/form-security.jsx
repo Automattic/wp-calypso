@@ -162,6 +162,8 @@ const getFormSettings = partialRight( pick, [
 	'wordpress_api_key',
 ] );
 
-export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
-	SiteSettingsFormSecurity
-);
+export default flowRight(
+	connectComponent,
+	localize,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormSecurity );

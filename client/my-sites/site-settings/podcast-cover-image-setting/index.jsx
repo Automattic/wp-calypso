@@ -254,7 +254,7 @@ class PodcastCoverImageSetting extends PureComponent {
 										onDone: this.setCoverImage,
 										onCancel: this.cancelEditingCoverImage,
 									},
-								}
+							  }
 							: {} ) }
 						visible={ isModalVisible }
 						labels={ {

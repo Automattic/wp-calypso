@@ -70,7 +70,7 @@
 	padding: 16px 0;
 	align-items: center;
 
-	&:not(:last-child) {
+	&:not( :last-child ) {
 		border-bottom: 1px solid $gray-lighten-20;
 	}
 }
@@ -86,7 +86,7 @@
 		a,
 		button {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten($gray, 25%);
+			background-color: lighten( $gray, 25% );
 			color: transparent;
 			cursor: default;
 		}
@@ -103,7 +103,7 @@
 	}
 
 	&:last-child {
-		background: lighten($gray, 35%);
+		background: lighten( $gray, 35% );
 	}
 }
 
@@ -111,7 +111,7 @@
 	padding: 12px 0;
 	font-size: 14px;
 	border-top: 0;
-	background: lighten($gray, 35%);
+	background: lighten( $gray, 35% );
 }
 
 .shipping__zones-row-icon {
@@ -171,7 +171,7 @@
 	width: 45%;
 }
 
-.shipping__zones-row-method:not(:last-child) {
+.shipping__zones-row-method:not( :last-child ) {
 	margin-bottom: 8px;
 }
 

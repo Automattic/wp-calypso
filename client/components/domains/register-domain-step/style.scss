@@ -14,7 +14,7 @@
 
 		&.is-refocused {
 			animation: shake 0.5s both;
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20);
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
 		}
 	}
 
@@ -32,16 +32,16 @@
 @keyframes shake {
 	0%,
 	100% {
-		transform: translate3d(0, 0, 0);
+		transform: translate3d( 0, 0, 0 );
 	}
 
 	10%,
 	60% {
-		transform: translate3d(-5px, 0, 0);
+		transform: translate3d( -5px, 0, 0 );
 	}
 
 	30% {
-		transform: translate3d(5px, 0, 0);
+		transform: translate3d( 5px, 0, 0 );
 	}
 }
 
@@ -57,11 +57,11 @@
 	border-radius: 0;
 
 	// from components/card/style.scss
-	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 
 	// from components/domains/domain-suggestion/style
 	// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-	transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
+	transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
 
 	&:hover {
 		color: $blue-medium;
@@ -98,7 +98,7 @@
 		position: absolute;
 		left: 50%;
 		top: 50%;
-		transform: translate(-50%, -50%);
+		transform: translate( -50%, -50% );
 		opacity: 0;
 	}
 

@@ -264,7 +264,10 @@ class TransferOtherUser extends React.Component {
 	}
 }
 
-export default connect( state => ( { currentUser: getCurrentUser( state ) } ), {
-	successNotice,
-	errorNotice,
-} )( localize( TransferOtherUser ) );
+export default connect(
+	state => ( { currentUser: getCurrentUser( state ) } ),
+	{
+		successNotice,
+		errorNotice,
+	}
+)( localize( TransferOtherUser ) );

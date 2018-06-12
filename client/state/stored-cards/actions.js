@@ -16,8 +16,7 @@ import wp from 'lib/wp';
 
 export const addStoredCard = cardData => dispatch => {
 	return new Promise( ( resolve, reject ) => {
-		wp
-			.undocumented()
+		wp.undocumented()
 			.me()
 			.storedCardAdd( cardData.token, ( error, data ) => {
 				error ? reject( error ) : resolve( data );
@@ -61,8 +60,7 @@ export const deleteStoredCard = card => dispatch => {
 	} );
 
 	return new Promise( ( resolve, reject ) => {
-		wp
-			.undocumented()
+		wp.undocumented()
 			.me()
 			.storedCardDelete( card, ( error, data ) => {
 				error ? reject( error ) : resolve( data );

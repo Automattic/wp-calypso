@@ -690,6 +690,7 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	SiteSettingsFormDiscussion
-);
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormDiscussion );

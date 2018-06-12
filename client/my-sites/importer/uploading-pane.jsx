@@ -144,7 +144,10 @@ class UploadingPane extends React.PureComponent {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	startUpload: flowRight( dispatch, startUpload ),
+	startUpload: flowRight(
+		dispatch,
+		startUpload
+	),
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( localize( UploadingPane ) );

@@ -38,4 +38,7 @@ class MobileBackToSidebar extends React.Component {
 	}
 }
 
-export default connect( null, { setLayoutFocus } )( MobileBackToSidebar );
+export default connect(
+	null,
+	{ setLayoutFocus }
+)( MobileBackToSidebar );

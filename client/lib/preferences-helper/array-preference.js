@@ -27,4 +27,7 @@ class ArrayPreference extends Component {
 	}
 }
 
-export default connect( null, null )( localize( ArrayPreference ) );
+export default connect(
+	null,
+	null
+)( localize( ArrayPreference ) );

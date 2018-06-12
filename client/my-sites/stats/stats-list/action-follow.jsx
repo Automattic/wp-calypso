@@ -57,10 +57,10 @@ const StatsActionFollow = createReactClass( {
 			label = following
 				? this.props.translate( 'Following', {
 						context: 'Stats: Follow action / Following status',
-					} )
+				  } )
 				: this.props.translate( 'Follow', {
 						context: 'Stats: Follow action / Following status',
-					} ),
+				  } ),
 			gridiconType = following ? 'reader-following' : 'reader-follow',
 			wrapperClassSet;
 

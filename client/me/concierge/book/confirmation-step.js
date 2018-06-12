@@ -41,4 +41,7 @@ class ConfirmationStep extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( ConfirmationStep ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( ConfirmationStep ) );

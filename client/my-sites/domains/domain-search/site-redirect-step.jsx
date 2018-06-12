@@ -175,9 +175,12 @@ const recordFormSubmit = searchBoxValue =>
 		searchBoxValue
 	);
 
-export default connect( null, {
-	errorNotice,
-	recordInputFocus,
-	recordGoButtonClick,
-	recordFormSubmit,
-} )( localize( SiteRedirectStep ) );
+export default connect(
+	null,
+	{
+		errorNotice,
+		recordInputFocus,
+		recordGoButtonClick,
+		recordFormSubmit,
+	}
+)( localize( SiteRedirectStep ) );

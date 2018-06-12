@@ -126,7 +126,10 @@ export class MySitesSidebar extends Component {
 				tipTarget="menus"
 				label={ translate( 'Stats' ) }
 				className="stats"
-				selected={ itemLinkMatches( [ '/stats', '/store/stats', '/google-my-business/stats' ], path ) }
+				selected={ itemLinkMatches(
+					[ '/stats', '/store/stats', '/google-my-business/stats' ],
+					path
+				) }
 				link={ statsLink }
 				onNavigate={ this.trackStatsClick }
 				icon="stats-alt"
@@ -728,9 +731,12 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, {
-	recordGoogleEvent,
-	recordTracksEvent,
-	setLayoutFocus,
-	setNextLayoutFocus,
-} )( localize( MySitesSidebar ) );
+export default connect(
+	mapStateToProps,
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+		setLayoutFocus,
+		setNextLayoutFocus,
+	}
+)( localize( MySitesSidebar ) );

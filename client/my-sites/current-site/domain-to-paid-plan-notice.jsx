@@ -38,7 +38,7 @@ export class DomainToPaidPlanNotice extends Component {
 		const href = isDomainOnly
 			? `/start/site-selected/?siteSlug=${ encodeURIComponent(
 					site.slug
-				) }&siteId=${ encodeURIComponent( site.ID ) }`
+			  ) }&siteId=${ encodeURIComponent( site.ID ) }`
 			: `/plans/${ site.slug }`;
 
 		const text = isJetpack
@@ -72,4 +72,7 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = null;
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( DomainToPaidPlanNotice ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( DomainToPaidPlanNotice ) );

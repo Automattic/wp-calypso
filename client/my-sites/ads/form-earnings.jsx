@@ -401,21 +401,21 @@ class AdsFormEarnings extends Component {
 							this.state.earnings.wordads,
 							translate( 'Earnings History' ),
 							'wordads'
-						)
+					  )
 					: null }
 				{ this.state.earnings && this.checkSize( this.state.earnings.sponsored )
 					? this.earningsTable(
 							this.state.earnings.sponsored,
 							translate( 'Sponsored Content History' ),
 							'sponsored'
-						)
+					  )
 					: null }
 				{ this.state.earnings && this.checkSize( this.state.earnings.adjustment )
 					? this.earningsTable(
 							this.state.earnings.adjustment,
 							translate( 'Adjustments History' ),
 							'adjustment'
-						)
+					  )
 					: null }
 			</div>
 		);

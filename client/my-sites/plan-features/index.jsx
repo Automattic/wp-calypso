@@ -663,14 +663,14 @@ export default connect(
 								const planSlug = getPlanSlug( state, planProductId );
 
 								onUpgradeClick( getCartItemForPlan( planSlug ) );
-							}
+						  }
 						: () => {
 								if ( ! available ) {
 									return;
 								}
 
 								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }` );
-							},
+						  },
 					planConstantObj,
 					planName: plan,
 					planObject: planObject,

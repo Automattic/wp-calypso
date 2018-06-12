@@ -268,4 +268,7 @@ const ReauthRequired = createReactClass( {
 	},
 } );
 
-export default connect( null, { recordGoogleEvent } )( localize( ReauthRequired ) );
+export default connect(
+	null,
+	{ recordGoogleEvent }
+)( localize( ReauthRequired ) );

@@ -33,7 +33,7 @@ export const receivePosterUrl = ( action, { poster: posterUrl } ) => setPosterUr
 export const receiveUploadProgress = ( action, progress ) => {
 	const hasProgressData = 'loaded' in progress && 'total' in progress;
 	const percentage = hasProgressData
-		? Math.min( Math.round( progress.loaded / ( Number.EPSILON + progress.total ) * 100 ), 100 )
+		? Math.min( Math.round( ( progress.loaded / ( Number.EPSILON + progress.total ) ) * 100 ), 100 )
 		: 0;
 
 	return showUploadProgress( percentage );

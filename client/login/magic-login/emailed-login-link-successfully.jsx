@@ -52,7 +52,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 						args: {
 							emailAddress,
 						},
-					} )
+				  } )
 				: translate( 'We just emailed you a link.' ),
 			' ',
 			translate( 'Please check your inbox and click the link to log in.' ),
@@ -99,4 +99,7 @@ const mapDispatch = {
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect( mapState, mapDispatch )( localize( EmailedLoginLinkSuccessfully ) );
+export default connect(
+	mapState,
+	mapDispatch
+)( localize( EmailedLoginLinkSuccessfully ) );

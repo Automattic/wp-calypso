@@ -101,7 +101,7 @@ class SuccessBanner extends PureComponent {
 						</Button>
 					),
 					trackHappyChat: trackHappyChatBackup,
-				}
+			  }
 			: {
 					title:
 						'alternate' === context
@@ -124,7 +124,7 @@ class SuccessBanner extends PureComponent {
 						</Button>
 					),
 					trackHappyChat: trackHappyChatRestore,
-				};
+			  };
 		return (
 			<ActivityLogBanner
 				isDismissable

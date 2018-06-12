@@ -65,4 +65,7 @@ class ReaderExportButton extends React.Component {
 	}
 }
 
-export default connect( null, { errorNotice } )( localize( ReaderExportButton ) );
+export default connect(
+	null,
+	{ errorNotice }
+)( localize( ReaderExportButton ) );

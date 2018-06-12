@@ -119,7 +119,7 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 				prices,
 				discount: discount,
 				total: total,
-			}
+		  }
 		: null;
 };
 

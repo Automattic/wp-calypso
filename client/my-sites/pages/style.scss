@@ -15,7 +15,7 @@
 
 .pages__page-list-header {
 	background: $gray-light;
-	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 	color: $gray;
 	font-size: 11px;
 	padding: 6px 11px;
@@ -82,7 +82,7 @@
 	top: 0;
 	left: 0;
 	height: 100%;
-	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 
 	&.is-indented {
 		width: 112px;
@@ -170,8 +170,8 @@
 	right: 0;
 	top: 0;
 	bottom: 0;
-	z-index: z-index('root', '.page__shadow-notice-cover');
-	background-color: rgba($gray-light, 0.8);
+	z-index: z-index( 'root', '.page__shadow-notice-cover' );
+	background-color: rgba( $gray-light, 0.8 );
 	display: flex;
 	align-items: center;
 	overflow: hidden;
@@ -179,16 +179,16 @@
 
 @keyframes shadow-notice-appear {
 	0% {
-		transform: translateX(50px);
+		transform: translateX( 50px );
 	}
 
 	100% {
-		transform: translateX(0);
+		transform: translateX( 0 );
 	}
 }
 
 .notice.is-compact.page__shadow-notice {
 	margin-left: auto;
 	margin-right: 24px;
-	animation: shadow-notice-appear 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); // http://easings.net/#easeOutBack
+	animation: shadow-notice-appear 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ); // http://easings.net/#easeOutBack
 }

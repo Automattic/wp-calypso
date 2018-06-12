@@ -92,7 +92,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 			targeted = this.hasConnections()
 				? this.props.connections.filter(
 						connection => skipped && -1 === skipped.indexOf( connection.keyring_connection_ID )
-					)
+				  )
 				: [],
 			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
 			acceptableLength = requireCount ? 280 - 23 - 23 : null,

@@ -303,7 +303,10 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 }
 
-export default connect( null, {
-	recordStartTransferClickInThankYou,
-	recordTracksEvent,
-} )( localize( CheckoutThankYouHeader ) );
+export default connect(
+	null,
+	{
+		recordStartTransferClickInThankYou,
+		recordTracksEvent,
+	}
+)( localize( CheckoutThankYouHeader ) );

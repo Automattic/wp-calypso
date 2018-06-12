@@ -101,11 +101,11 @@ class ThemeSelectionStep extends Component {
 		const subHeaderText = storeSignup
 			? translate( 'Pick one of our store themes to start with. You can change this later.', {
 					context: 'Themes step subheader in Signup',
-				} )
+			  } )
 			: translate(
 					'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
 					{ context: 'Themes step subheader in Signup' }
-				);
+			  );
 
 		return (
 			<StepWrapper

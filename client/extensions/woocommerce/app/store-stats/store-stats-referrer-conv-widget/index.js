@@ -56,7 +56,7 @@ const StoreStatsReferrerConvWidget = props => {
 					<TableItem className="store-stats-referrer-conv-widget__delta">
 						{ `${
 							d.product_views !== 0
-								? Math.abs( Math.round( d.add_to_carts / d.product_views * 100 ) )
+								? Math.abs( Math.round( ( d.add_to_carts / d.product_views ) * 100 ) )
 								: '-'
 						}%` }
 					</TableItem>
@@ -66,7 +66,7 @@ const StoreStatsReferrerConvWidget = props => {
 					<TableItem className="store-stats-referrer-conv-widget__delta">
 						{ `${
 							d.add_to_carts !== 0
-								? Math.abs( Math.round( d.product_purchases / d.add_to_carts * 100 ) )
+								? Math.abs( Math.round( ( d.product_purchases / d.add_to_carts ) * 100 ) )
 								: '-'
 						}%` }
 					</TableItem>

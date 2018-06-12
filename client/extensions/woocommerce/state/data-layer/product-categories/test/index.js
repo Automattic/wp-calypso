@@ -45,16 +45,19 @@ describe( 'handlers', () => {
 			};
 			const result = fetch( action );
 			expect( result ).to.eql(
-				http( {
-					method: 'GET',
-					path: '/jetpack-blogs/123/rest-api/',
-					apiVersion: '1.1',
-					body: null,
-					query: {
-						json: true,
-						path: '/wc/v3/products/categories&page=1&per_page=100&_envelope&_method=GET',
+				http(
+					{
+						method: 'GET',
+						path: '/jetpack-blogs/123/rest-api/',
+						apiVersion: '1.1',
+						body: null,
+						query: {
+							json: true,
+							path: '/wc/v3/products/categories&page=1&per_page=100&_envelope&_method=GET',
+						},
 					},
-				}, action )
+					action
+				)
 			);
 		} );
 	} );

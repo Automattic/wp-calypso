@@ -173,6 +173,7 @@ class WPCOMNotifications extends React.Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators( { successNotice, errorNotice }, dispatch )
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
 )( localize( WPCOMNotifications ) );

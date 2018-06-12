@@ -44,8 +44,8 @@ export default class ProgressBar extends PureComponent {
 
 	getCompletionPercentage() {
 		const percentage = Math.ceil(
-			( this.props.canGoBackwards ? this.props.value : this.state.allTimeMax ) /
-				this.props.total *
+			( ( this.props.canGoBackwards ? this.props.value : this.state.allTimeMax ) /
+				this.props.total ) *
 				100
 		);
 

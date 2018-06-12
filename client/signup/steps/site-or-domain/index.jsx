@@ -28,7 +28,10 @@ import { getDomainProductSlug } from 'lib/domains';
 
 class SiteOrDomain extends Component {
 	getDomainName() {
-		const { initialContext: { query }, step } = this.props;
+		const {
+			initialContext: { query },
+			step,
+		} = this.props;
 		let domain,
 			isValidDomain = false;
 

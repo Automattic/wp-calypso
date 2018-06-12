@@ -101,7 +101,13 @@ class ImporterHeader extends React.PureComponent {
 	};
 
 	render() {
-		const { importerStatus: { importerState }, icon, isEnabled, title, description } = this.props;
+		const {
+			importerStatus: { importerState },
+			icon,
+			isEnabled,
+			title,
+			description,
+		} = this.props;
 		const canCancel =
 			isEnabled && ! includes( [ appStates.UPLOADING, ...stopStates ], importerState );
 		const isScary = includes( [ ...cancelStates ], importerState );
@@ -128,7 +134,10 @@ class ImporterHeader extends React.PureComponent {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	startImport: flowRight( dispatch, startImport ),
+	startImport: flowRight(
+		dispatch,
+		startImport
+	),
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( localize( ImporterHeader ) );

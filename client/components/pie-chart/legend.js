@@ -52,7 +52,8 @@ class PieChartLegend extends Component {
 		return (
 			<div className="pie-chart__legend">
 				{ transformedData.map( datum => {
-					const percent = dataTotal > 0 ? Math.round( datum.value / dataTotal * 100 ).toString() : '0';
+					const percent =
+						dataTotal > 0 ? Math.round( ( datum.value / dataTotal ) * 100 ).toString() : '0';
 
 					return (
 						<LegendItem

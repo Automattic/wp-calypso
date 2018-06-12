@@ -124,4 +124,7 @@ const mapDispatchToProps = {
 	requestGuidedTour,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( InlineHelpRichResult ) );

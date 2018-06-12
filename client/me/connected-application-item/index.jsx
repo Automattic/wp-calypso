@@ -40,14 +40,18 @@ class ConnectedApplicationItem extends React.Component {
 			return;
 		}
 
-		const { connection: { title, ID } } = this.props;
+		const {
+			connection: { title, ID },
+		} = this.props;
 		event.stopPropagation();
 		this.recordClickEvent( 'Disconnect Connected Application Link', title );
 		this.props.deleteConnectedApplication( ID );
 	};
 
 	renderAccessScopeBadge() {
-		const { connection: { scope, site } } = this.props;
+		const {
+			connection: { scope, site },
+		} = this.props;
 		let meta = '';
 
 		if ( ! this.props.connection ) {
@@ -68,7 +72,9 @@ class ConnectedApplicationItem extends React.Component {
 	}
 
 	renderScopeMessage() {
-		const { connection: { scope, site } } = this.props;
+		const {
+			connection: { scope, site },
+		} = this.props;
 		let message;
 		if ( ! this.props.connection ) {
 			return;
@@ -121,7 +127,9 @@ class ConnectedApplicationItem extends React.Component {
 	}
 
 	renderDetail() {
-		const { connection: { URL, authorized, permissions } } = this.props;
+		const {
+			connection: { URL, authorized, permissions },
+		} = this.props;
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
@@ -212,7 +220,10 @@ class ConnectedApplicationItem extends React.Component {
 	}
 }
 
-export default connect( null, {
-	deleteConnectedApplication,
-	recordGoogleEvent,
-} )( localize( ConnectedApplicationItem ) );
+export default connect(
+	null,
+	{
+		deleteConnectedApplication,
+		recordGoogleEvent,
+	}
+)( localize( ConnectedApplicationItem ) );

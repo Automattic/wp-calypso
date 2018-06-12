@@ -215,4 +215,7 @@ const mapDispatch = {
 	showMagicLoginLinkExpiredPage,
 };
 
-export default connect( mapState, mapDispatch )( localize( HandleEmailedLinkForm ) );
+export default connect(
+	mapState,
+	mapDispatch
+)( localize( HandleEmailedLinkForm ) );

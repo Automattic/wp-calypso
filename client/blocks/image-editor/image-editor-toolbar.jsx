@@ -184,7 +184,7 @@ export class ImageEditorToolbar extends Component {
 						text: translate( 'Crop' ),
 						onClick: this.onAspectOpen,
 						disabled: isAspectRatioDisabled,
-					},
+				  },
 			{
 				tool: 'flip-vertical',
 				icon: 'flip-vertical',

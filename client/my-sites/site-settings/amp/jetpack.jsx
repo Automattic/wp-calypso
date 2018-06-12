@@ -71,7 +71,7 @@ export default connect( state => {
 					customize_amp: 1,
 				},
 				customizerUrl
-			)
+		  )
 		: null;
 
 	return {

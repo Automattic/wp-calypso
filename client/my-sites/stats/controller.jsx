@@ -180,7 +180,11 @@ export default {
 	},
 
 	site: function( context, next ) {
-		const { params: { site_id: givenSiteId }, query: queryOptions, store } = context;
+		const {
+			params: { site_id: givenSiteId },
+			query: queryOptions,
+			store,
+		} = context;
 
 		if ( 'simplePaymentsEmailTour' === get( queryOptions, 'tour' ) ) {
 			if ( ! isDesktop() ) {

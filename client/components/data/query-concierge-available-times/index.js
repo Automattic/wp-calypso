@@ -21,6 +21,7 @@ class QueryConciergeAvailableTimes extends Component {
 	}
 }
 
-export default connect( state => state, { requestConciergeAvailableTimes } )(
-	QueryConciergeAvailableTimes
-);
+export default connect(
+	state => state,
+	{ requestConciergeAvailableTimes }
+)( QueryConciergeAvailableTimes );

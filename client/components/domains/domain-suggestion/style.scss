@@ -15,16 +15,16 @@
 		cursor: pointer;
 
 		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-		transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
+		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
 
 		&:hover {
 			box-shadow: 0 0 0 1px $gray;
-			z-index: z-index('root', '.domain-suggestion.is-clickable:hover');
+			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
 		}
 	}
 
 	&.is-added {
-		background-color: lighten($gray, 35%);
+		background-color: lighten( $gray, 35% );
 
 		.domain-suggestion__content {
 			h3,
@@ -81,11 +81,11 @@
 			min-height: 22px;
 		}
 
-		.is-placeholder:nth-of-type(2n + 1) & {
+		.is-placeholder:nth-of-type( 2n + 1 ) & {
 			margin-right: 52%;
 		}
 
-		.is-placeholder:nth-of-type(1) & {
+		.is-placeholder:nth-of-type( 1 ) & {
 			margin-right: 40%;
 		}
 	}
@@ -122,8 +122,8 @@
 		transition: all 0.1s linear;
 
 		&:hover {
-			background-color: lighten($blue-medium, 4%);
-			border-color: darken($blue-medium, 4%);
+			background-color: lighten( $blue-medium, 4% );
+			border-color: darken( $blue-medium, 4% );
 		}
 	}
 

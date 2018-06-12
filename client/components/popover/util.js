@@ -141,7 +141,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 				isVertical
 					? `${ primary } ${ opposite[ prefered ] }`
 					: `${ opposite[ prefered ] } ${ primary }`,
-			]
+		  ]
 		: [
 				primary,
 				isVertical
@@ -150,7 +150,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 				isVertical
 					? `${ primary } ${ opposite[ adjacent[ primary ] ] }`
 					: `${ opposite[ adjacent[ primary ] ] } ${ primary }`,
-			];
+		  ];
 
 	let bestPos;
 	let best = 0;

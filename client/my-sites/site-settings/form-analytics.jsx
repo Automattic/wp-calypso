@@ -341,10 +341,16 @@ const mapStateToProps = state => {
 	};
 };
 
-const connectComponent = connect( mapStateToProps, null, null, { pure: false } );
+const connectComponent = connect(
+	mapStateToProps,
+	null,
+	null,
+	{ pure: false }
+);
 
 const getFormSettings = partialRight( pick, [ 'wga' ] );
 
-export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	GoogleAnalyticsForm
-);
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( GoogleAnalyticsForm );

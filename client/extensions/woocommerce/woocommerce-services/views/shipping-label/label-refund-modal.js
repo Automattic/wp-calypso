@@ -105,4 +105,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeRefundDialog, confirmRefund }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( RefundDialog ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( RefundDialog ) );

@@ -62,11 +62,11 @@ export class HappinessSupport extends Component {
 			? translate(
 					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
 					{ components }
-				)
+			  )
 			: translate(
 					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
 					{ components }
-				);
+			  );
 	}
 
 	getSupportButtons() {

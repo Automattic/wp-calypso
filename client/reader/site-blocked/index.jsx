@@ -65,8 +65,11 @@ class SiteBlocked extends React.Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-	bumpStat,
-	unblockSite,
-} )( localize( SiteBlocked ) );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+		bumpStat,
+		unblockSite,
+	}
+)( localize( SiteBlocked ) );

@@ -55,6 +55,7 @@ const mapDispatchToProps = {
 	viewSplit: splitPostRevisionsDiffView,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	localize( EditorRevisionsListViewButtons )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( EditorRevisionsListViewButtons ) );

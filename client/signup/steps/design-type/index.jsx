@@ -143,7 +143,10 @@ export class DesignTypeStep extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-	setDesignType,
-} )( localize( DesignTypeStep ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+		setDesignType,
+	}
+)( localize( DesignTypeStep ) );

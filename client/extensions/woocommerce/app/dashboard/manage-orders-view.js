@@ -212,4 +212,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { fetchCounts } )( localize( ManageOrdersView ) );
+export default connect(
+	mapStateToProps,
+	{ fetchCounts }
+)( localize( ManageOrdersView ) );

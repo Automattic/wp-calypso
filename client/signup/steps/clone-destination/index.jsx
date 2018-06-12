@@ -48,7 +48,9 @@ class CloneDestinationStep extends Component {
 
 	goToNextStep = () => {
 		const { translate } = this.props;
-		const { form: { destinationSiteName, destinationSiteUrl } } = this.state;
+		const {
+			form: { destinationSiteName, destinationSiteUrl },
+		} = this.state;
 
 		const errors = Object.assign(
 			! destinationSiteName && {

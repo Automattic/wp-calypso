@@ -216,7 +216,7 @@ export class ImageEditorCanvas extends Component {
 		context.setTransform( 1, 0, 0, 1, canvas.width / 2, canvas.height / 2 );
 
 		context.scale( transform.scaleX, transform.scaleY );
-		context.rotate( transform.degrees * Math.PI / 180 );
+		context.rotate( ( transform.degrees * Math.PI ) / 180 );
 
 		context.drawImage( this.image, -imageWidth / 2, -imageHeight / 2 );
 
@@ -233,7 +233,7 @@ export class ImageEditorCanvas extends Component {
 
 		// if enough time has passed to call the next frame
 		// reset lastTimeStamp minus 1 frame in ms ( to adjust for frame rates other than 60fps )
-		this.lastTimestamp = now - elapsedTime % this.frameRateInterval;
+		this.lastTimestamp = now - ( elapsedTime % this.frameRateInterval );
 
 		const { leftRatio, topRatio, widthRatio, heightRatio } = this.props.crop;
 
@@ -244,8 +244,8 @@ export class ImageEditorCanvas extends Component {
 		const { offsetTop, offsetLeft, offsetWidth, offsetHeight } = canvas;
 
 		this.props.setImageEditorCropBounds(
-			offsetTop - offsetHeight * -canvasY / 100,
-			offsetLeft - offsetWidth * -canvasX / 100,
+			offsetTop - ( offsetHeight * -canvasY ) / 100,
+			offsetLeft - ( offsetWidth * -canvasX ) / 100,
 			offsetTop + offsetHeight * ( 1 + canvasY / 100 ),
 			offsetLeft + offsetWidth * ( 1 + canvasX / 100 )
 		);

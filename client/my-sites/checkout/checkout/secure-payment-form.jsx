@@ -409,9 +409,12 @@ const SecurePaymentForm = createReactClass( {
 	},
 } );
 
-export default connect( state => {
-	return {
-		countriesList: getCountries( state, 'payments' ),
-		presaleChatAvailable: isPresalesChatAvailable( state ),
-	};
-}, null )( localize( SecurePaymentForm ) );
+export default connect(
+	state => {
+		return {
+			countriesList: getCountries( state, 'payments' ),
+			presaleChatAvailable: isPresalesChatAvailable( state ),
+		};
+	},
+	null
+)( localize( SecurePaymentForm ) );

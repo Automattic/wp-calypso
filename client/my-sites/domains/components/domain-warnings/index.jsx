@@ -1067,4 +1067,7 @@ export class DomainWarnings extends React.PureComponent {
 const mapStateToProps = null;
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( DomainWarnings ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( DomainWarnings ) );

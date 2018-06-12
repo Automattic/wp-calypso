@@ -74,4 +74,7 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, { toggleDialog } )( localize( ThemeSetup ) );
+export default connect(
+	mapStateToProps,
+	{ toggleDialog }
+)( localize( ThemeSetup ) );

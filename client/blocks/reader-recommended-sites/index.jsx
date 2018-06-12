@@ -94,4 +94,7 @@ export class RecommendedSites extends React.PureComponent {
 	}
 }
 
-export default connect( null, { blockSite } )( localize( RecommendedSites ) );
+export default connect(
+	null,
+	{ blockSite }
+)( localize( RecommendedSites ) );

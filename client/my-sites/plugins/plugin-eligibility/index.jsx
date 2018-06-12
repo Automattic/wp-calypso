@@ -77,6 +77,7 @@ const mapDispatchToProps = {
 	initiateTransfer: initiateThemeTransfer,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	withNavigation( localize( PluginEligibility ) )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( withNavigation( localize( PluginEligibility ) ) );

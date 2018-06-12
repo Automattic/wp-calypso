@@ -294,6 +294,7 @@ const getFormSettings = settings => {
 	return formSettings;
 };
 
-export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	SiteSettingsFormWriting
-);
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormWriting );

@@ -49,8 +49,8 @@ class RewindAddCreds extends Component {
 				<p className="rewind-add-creds__description rewind-switch__description">
 					{ translate(
 						'To activate Jetpack backups and security, please add your site credentials. ' +
-						'WordPress.com will then be able to access your site to perform automatic backups, ' +
-						'and to restore your site in case of an emergency.'
+							'WordPress.com will then be able to access your site to perform automatic backups, ' +
+							'and to restore your site in case of an emergency.'
 					) }
 				</p>
 				<Button primary onClick={ this.goToCredsForm }>
@@ -78,8 +78,11 @@ class RewindAddCreds extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], '' ),
-	};
-}, null )( localize( RewindAddCreds ) );
+export default connect(
+	( state, ownProps ) => {
+		return {
+			siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], '' ),
+		};
+	},
+	null
+)( localize( RewindAddCreds ) );

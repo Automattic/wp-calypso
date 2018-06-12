@@ -163,4 +163,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { confirmPrintLabel, purchaseLabel, exitPrintingFlow }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseDialog ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( PurchaseDialog ) );

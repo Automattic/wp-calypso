@@ -57,10 +57,7 @@ class PhoneInput extends React.PureComponent {
 		if ( ! selectedCountry ) {
 			// Special cases where the country is in a disputed region and not globally recognized.
 			// At this point this should only be used for: Canary islands, Kosovo, Netherlands Antilles
-			const data = find(
-				this.props.countriesList || [],
-				( { code } ) => code === countryCode
-			);
+			const data = find( this.props.countriesList || [], ( { code } ) => code === countryCode );
 
 			selectedCountry = {
 				isoCode: countryCode,

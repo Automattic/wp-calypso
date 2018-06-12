@@ -68,12 +68,12 @@ export class JetpackConnectMain extends Component {
 				currentUrl: cleanUrl( this.props.url ),
 				shownUrl: this.props.url,
 				waitingForSites: false,
-			}
+		  }
 		: {
 				currentUrl: '',
 				shownUrl: '',
 				waitingForSites: false,
-			};
+		  };
 
 	componentWillMount() {
 		if ( this.props.url ) {
@@ -401,4 +401,7 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( JetpackConnectMain );
+export default flowRight(
+	connectComponent,
+	localize
+)( JetpackConnectMain );

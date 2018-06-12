@@ -164,4 +164,7 @@ const connectComponent = connect(
 	{ recordTracksEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsPostPerformance );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsPostPerformance );
