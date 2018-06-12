@@ -39,7 +39,7 @@
     "blob": "0.0.4",
     "body-parser": "1.18.3",
     "bounding-client-rect": "1.0.5",
-    "browser-filesaver": "1.1.0",
+    "browser-filesaver": "1.1.1",
     "chalk": "1.0.0",
     "check-node-version": "2.1.0",
     "chokidar": "2.0.3",
