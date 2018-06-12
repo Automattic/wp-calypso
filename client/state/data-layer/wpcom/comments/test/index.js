@@ -1,11 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
  * Internal dependencies
  */
 import {
@@ -34,7 +28,7 @@ describe( 'wpcom-api', () => {
 					postId: '1010',
 					query,
 				};
-				const dispatch = spy();
+				const dispatch = jest.fn();
 				const getState = () => ( {
 					comments: {
 						items: {
@@ -45,8 +39,8 @@ describe( 'wpcom-api', () => {
 
 				fetchPostComments( action )( dispatch, getState );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					http(
 						{
 							apiVersion: '1.1',
@@ -72,7 +66,7 @@ describe( 'wpcom-api', () => {
 					query,
 					direction: 'before',
 				};
-				const dispatch = spy();
+				const dispatch = jest.fn();
 				const getState = () => ( {
 					comments: {
 						items: {
@@ -88,8 +82,8 @@ describe( 'wpcom-api', () => {
 
 				fetchPostComments( action )( dispatch, getState );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					http(
 						{
 							apiVersion: '1.1',
@@ -118,7 +112,7 @@ describe( 'wpcom-api', () => {
 					found: -1,
 				};
 
-				expect( addComments( action, data ) ).to.eql( {
+				expect( addComments( action, data ) ).toEqual( {
 					type: COMMENTS_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
@@ -138,7 +132,7 @@ describe( 'wpcom-api', () => {
 					found: 2,
 				};
 
-				expect( addComments( action, data ) ).to.deep.include( {
+				expect( addComments( action, data ) ).toContainEqual( {
 					type: COMMENTS_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
@@ -146,7 +140,7 @@ describe( 'wpcom-api', () => {
 					direction: 'before',
 				} );
 
-				expect( addComments( action, data ) ).to.deep.include( {
+				expect( addComments( action, data ) ).toContainEqual( {
 					type: COMMENTS_COUNT_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
@@ -158,7 +152,7 @@ describe( 'wpcom-api', () => {
 		describe( 'commentsFromApi', () => {
 			test( 'should decode author name entities', () => {
 				const comments = [ { author: { name: 'joe' } }, { author: { name: '&#9829;' } } ];
-				expect( commentsFromApi( comments ) ).eql( [
+				expect( commentsFromApi( comments ) ).toEqual( [
 					{ author: { name: 'joe' } },
 					{ author: { name: '♥' } },
 				] );
@@ -167,7 +161,7 @@ describe( 'wpcom-api', () => {
 
 		describe( '#announceFailure', () => {
 			test( 'should dispatch an error notice', () => {
-				const dispatch = spy();
+				const dispatch = jest.fn();
 				const getState = () => ( {
 					posts: {
 						queries: {},
@@ -176,29 +170,31 @@ describe( 'wpcom-api', () => {
 
 				announceFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-error',
-						text: 'Could not retrieve comments for requested post',
-					},
-				} );
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						type: NOTICE_CREATE,
+						notice: expect.objectContaining( {
+							status: 'is-error',
+							text: 'Could not retrieve comments for requested post',
+						} ),
+					} )
+				);
 			} );
 		} );
 
 		describe( '#handleDeleteSuccess', () => {
 			test( 'should not do anything when no options are set', () => {
-				expect( handleDeleteSuccess( {} ) ).to.eql( [] );
+				expect( handleDeleteSuccess( {} ) ).toEqual( [] );
 			} );
 
 			test( 'should show a success notice if the related option is set', () => {
-				expect( handleDeleteSuccess( { options: { showSuccessNotice: true } } ) ).to.deep.include( {
+				expect( handleDeleteSuccess( { options: { showSuccessNotice: true } } ) ).toContainEqual( {
 					type: NOTICE_CREATE,
-					notice: {
+					notice: expect.objectContaining( {
 						status: 'is-success',
 						text: 'Comment deleted permanently.',
-					},
+					} ),
 				} );
 			} );
 
@@ -215,7 +211,7 @@ describe( 'wpcom-api', () => {
 							type: 'any',
 						},
 					} )
-				).to.deep.include( {
+				).toContainEqual( {
 					type: 'COMMENTS_LIST_REQUEST',
 					query: {
 						listType: 'site',
