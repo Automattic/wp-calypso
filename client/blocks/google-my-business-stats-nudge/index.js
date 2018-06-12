@@ -52,7 +52,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 	};
 
 	render() {
-		if ( this.props.isDismissed ) {
+		if ( this.props.isDismissed || ! this.props.visible ) {
 			return null;
 		}
 
