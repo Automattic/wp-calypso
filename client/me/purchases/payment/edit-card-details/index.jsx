@@ -51,7 +51,6 @@ class EditCardDetails extends Component {
 	constructor( props ) {
 		super( props );
 		this.createCardToken = curry( createCardToken )( 'card_update' );
-		this.recordFormSubmitEvent = this.recordFormSubmitEvent.bind( this );
 	}
 
 	redirectIfDataIsInvalid( props = this.props ) {
@@ -76,11 +75,11 @@ class EditCardDetails extends Component {
 		};
 	}
 
-	recordFormSubmitEvent() {
+	recordFormSubmitEvent = () => {
 		analytics.tracks.recordEvent( 'calypso_purchases_credit_card_form_submit', {
 			product_slug: this.props.purchase.productSlug,
 		} );
-	}
+	};
 
 	successCallback = () => {
 		const { id } = this.props.purchase;
