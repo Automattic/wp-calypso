@@ -272,7 +272,7 @@ const bulkChangeCommentStatus = action => {
 	return http(
 		{
 			method: 'POST',
-			path: `/sites/${ siteId }/comments`,
+			path: `/sites/${ siteId }/comments/status`,
 			apiVersion: '1',
 			body: {
 				comment_ids: commentIds,
