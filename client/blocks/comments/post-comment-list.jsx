@@ -30,7 +30,7 @@ import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-b
 import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
- * PostCommentList, as the name would suggest, displays a list of comments for a post.
+ * PostCommentList displays a list of comments for a post.
  * It has the capability of either starting from the latest comment for a post,
  * or it may begin from any commentId within the post by specifying a commentId.
  *
@@ -45,6 +45,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
  *    This also activates a "Show More" button at the end of the comment list instead of just at the top
  *
  */
+
 class PostCommentList extends React.Component {
 	static propTypes = {
 		post: PropTypes.shape( {
@@ -401,16 +402,16 @@ class PostCommentList extends React.Component {
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
 						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
-						{ showViewMoreComments ? (
-							<span className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
+						{ showViewMoreComments && (
+							<button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
 								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 									args: {
 										shown: displayedCommentsCount,
 										total: actualCommentsCount,
 									},
 								} ) }
-							</span>
-						) : null }
+							</button>
+						) }
 					</div>
 				) }
 				{ showFilters && (
@@ -450,14 +451,14 @@ class PostCommentList extends React.Component {
 				{ this.renderCommentsList( displayedComments ) }
 				{ showViewMoreComments &&
 					this.props.startingCommentId && (
-						<span className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
+						<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
 							{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 								args: {
 									shown: displayedCommentsCount,
 									total: actualCommentsCount,
 								},
 							} ) }
-						</span>
+						</button>
 					) }
 				<PostCommentFormRoot
 					post={ this.props.post }
