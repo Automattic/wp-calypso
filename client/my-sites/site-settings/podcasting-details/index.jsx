@@ -16,6 +16,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'components/empty-content';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
 import { decodeEntities } from 'lib/formatting';
@@ -34,6 +35,8 @@ import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
 import canCurrentUser from 'state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsForQueryIgnoringPage,
@@ -175,9 +178,25 @@ class PodcastingDetails extends Component {
 	}
 
 	render() {
-		const { handleSubmitForm, siteSlug, siteId, translate, isPodcastingEnabled } = this.props;
+		const {
+			handleSubmitForm,
+			siteSlug,
+			siteId,
+			translate,
+			isPodcastingEnabled,
+			isUnsupportedSite,
+		} = this.props;
 		if ( ! siteId ) {
 			return null;
+		}
+
+		if ( isUnsupportedSite ) {
+			return (
+				<EmptyContent
+					illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+					title={ translate( 'Podcasting settings are not supported on this site.' ) }
+				/>
+			);
 		}
 
 		const error = this.renderSettingsError();
@@ -372,6 +391,9 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const selectedCategory = categories && head( filter( categories, { ID: podcastingCategoryId } ) );
 	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
 
+	const isJetpack = isJetpackSite( state, siteId );
+	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
@@ -381,6 +403,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
+		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
 	};
 } );
 
