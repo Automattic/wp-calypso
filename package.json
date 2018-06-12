@@ -254,7 +254,7 @@
     "chai-enzyme": "1.0.0-beta.0",
     "enzyme": "3.2.0",
     "enzyme-adapter-react-16": "1.1.1",
-    "enzyme-to-json": "3.3.0",
+    "enzyme-to-json": "3.3.4",
     "eslines": "1.1.0",
     "eslint": "4.19.1",
     "eslint-config-prettier": "2.9.0",
