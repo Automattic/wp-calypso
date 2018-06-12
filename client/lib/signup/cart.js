@@ -37,12 +37,12 @@ export default {
 
 		newCart = addProductsToCart( newCart, newCartItems );
 
-		wpcom.undocumented().cart( cartKey, 'POST', newCart, function( postError ) {
+		wpcom.undocumented().setCart( cartKey, newCart, function( postError ) {
 			callback( postError );
 		} );
 	},
 	addToCart: function( cartKey, newCartItems, callback ) {
-		wpcom.undocumented().cart( cartKey, function( error, data ) {
+		wpcom.undocumented().getCart( cartKey, function( error, data ) {
 			if ( error ) {
 				return callback( error );
 			}
@@ -53,7 +53,7 @@ export default {
 
 			const newCart = addProductsToCart( data, newCartItems );
 
-			wpcom.undocumented().cart( cartKey, 'POST', newCart, callback );
+			wpcom.undocumented().setCart( cartKey, newCart, callback );
 		} );
 	},
 };

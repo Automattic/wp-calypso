@@ -796,29 +796,39 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 };
 
 /**
- * GET/POST cart
+ * Get cart.
  *
- * @param {string} [cartKey] The cart's key
- * @param {string} [method] The request method
- * @param {object} [data] The REQUEST data
- * @param {Function} fn The callback function
+ * @param {string} cartKey The cart's key.
+ * @param {Function} fn The callback function.
  * @api public
  */
-Undocumented.prototype.cart = function( cartKey, method, data, fn ) {
-	debug( '/me/shopping-cart/:cart-key query' );
-	if ( arguments.length === 2 ) {
-		fn = method;
-		method = 'GET';
-		data = {};
-	} else if ( arguments.length === 3 ) {
-		fn = data;
-		method = 'GET';
-		data = {};
-	}
-	return this._sendRequest(
+Undocumented.prototype.getCart = function( cartKey, fn ) {
+	debug( 'GET: /me/shopping-cart/:cart-key' );
+
+	this._sendRequest(
 		{
 			path: '/me/shopping-cart/' + cartKey,
-			method: method,
+			method: 'GET',
+		},
+		fn
+	);
+};
+
+/**
+ * Set cart.
+ *
+ * @param {string} cartKey The cart's key.
+ * @param {object} data The POST data.
+ * @param {Function} fn The callback function.
+ * @api public
+ */
+Undocumented.prototype.setCart = function( cartKey, data, fn ) {
+	debug( 'POST: /me/shopping-cart/:cart-key', data );
+
+	this._sendRequest(
+		{
+			path: '/me/shopping-cart/' + cartKey,
+			method: 'POST',
 			body: data,
 		},
 		fn
