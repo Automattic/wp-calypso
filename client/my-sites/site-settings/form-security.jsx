@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { flowRight, partialRight, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -53,6 +54,7 @@ class SiteSettingsFormSecurity extends Component {
 			fields,
 			handleAutosavingToggle,
 			handleSubmitForm,
+			inactive,
 			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
@@ -73,12 +75,12 @@ class SiteSettingsFormSecurity extends Component {
 		const disableProtect = ! protectModuleActive || protectModuleUnavailable;
 		const disableSpamFiltering = ! fields.akismet || akismetUnavailable;
 
+		const className = classNames( 'site-settings__security-settings', {
+			'site-settings__inactive-setting': inactive,
+		} );
+
 		return (
-			<form
-				id="site-settings"
-				onSubmit={ handleSubmitForm }
-				className="site-settings__security-settings"
-			>
+			<form id="site-settings" onSubmit={ handleSubmitForm } className={ className }>
 				<QueryJetpackModules siteId={ siteId } />
 
 				{ this.renderSectionHeader(
