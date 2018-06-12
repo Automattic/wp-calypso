@@ -42,7 +42,7 @@ class EditCardDetails extends Component {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchaseId: PropTypes.number.isRequired,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
 	};
