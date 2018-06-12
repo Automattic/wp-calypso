@@ -11,15 +11,18 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import ActivityLogItem from 'my-sites/stats/activity-log-item';
-import TileGrid from 'components/tile-grid';
-import Tile from 'components/tile-grid/tile';
+import Pagination from 'components/pagination';
 import QuerySites from 'components/data/query-sites';
 import QuerySiteSettings from 'components/data/query-site-settings';
+import SignupActions from 'lib/signup/actions';
+import StepWrapper from 'signup/step-wrapper';
+import Tile from 'components/tile-grid/tile';
+import TileGrid from 'components/tile-grid';
 import { adjustMoment } from 'my-sites/stats/activity-log/utils';
 import { requestActivityLogs } from 'state/data-getters';
+
+const PAGE_SIZE = 20;
 
 class ClonePointStep extends Component {
 	static propTypes = {
@@ -33,6 +36,7 @@ class ClonePointStep extends Component {
 
 	state = {
 		showLog: false,
+		currentPage: 1,
 	};
 
 	selectCurrent = () => {
@@ -60,8 +64,20 @@ class ClonePointStep extends Component {
 		return adjustMoment( { timezone, gmtOffset, moment } );
 	};
 
+	changePage = pageNumber => {
+		this.setState( { currentPage: pageNumber } );
+		window.scrollTo( 0, 0 );
+	};
+
 	renderActivityLog = () => {
 		const { siteId, logs, moment, translate } = this.props;
+
+		const actualPage = Math.max(
+			1,
+			Math.min( this.state.currentPage, Math.ceil( logs.length / PAGE_SIZE ) )
+		);
+
+		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
 
 		const timePeriod = ( () => {
 			const today = this.applySiteOffset( moment.utc( Date.now() ) );
@@ -90,7 +106,7 @@ class ClonePointStep extends Component {
 				<QuerySites siteId={ siteId } />
 				<QuerySiteSettings siteId={ siteId } />
 				<section className="clone-point__wrapper">
-					{ logs.map( log => (
+					{ theseLogs.map( log => (
 						<Fragment key={ log.activityId }>
 							{ timePeriod( log ) }
 							<ActivityLogItem
@@ -106,6 +122,16 @@ class ClonePointStep extends Component {
 						</Fragment>
 					) ) }
 				</section>
+				<Pagination
+					className="clone-point__pagination"
+					key="clone-point-pagination"
+					nextLabel={ translate( 'Older' ) }
+					page={ this.state.currentPage }
+					pageClick={ this.changePage }
+					perPage={ PAGE_SIZE }
+					prevLabel={ translate( 'Newer' ) }
+					total={ logs.length }
+				/>
 			</div>
 		);
 	};
