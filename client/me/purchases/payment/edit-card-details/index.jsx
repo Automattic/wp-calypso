@@ -47,10 +47,6 @@ class EditCardDetails extends Component {
 		userId: PropTypes.number,
 	};
 
-	constructor( props ) {
-		super( props );
-	}
-
 	createCardToken = ( ...args ) => createCardToken( 'card_update', ...args );
 
 	redirectIfDataIsInvalid( props = this.props ) {
