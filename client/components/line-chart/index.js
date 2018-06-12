@@ -9,8 +9,8 @@ import { extent as d3Extent } from 'd3-array';
 import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
-import { select as d3Select } from 'd3-selection';
-import { concat, first, last, mean } from 'lodash';
+import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
+import { concat, first, last, mean, throttle } from 'lodash';
 import { moment } from 'i18n-calypso';
 
 /**
@@ -210,23 +210,34 @@ class LineChart extends Component {
 		} );
 	};
 
-	bindEvents = svg => {
-		const self = this;
+	bindEvents = ( svg, params ) => {
+		const updateMouseMove = throttle( this.handleMouseMove, 100 );
+		svg.on( 'mousemove', function() {
+			const coordinates = d3Mouse( this );
+			updateMouseMove( ...coordinates, params );
+		} );
+	};
 
+	drawOverlayElement = svg => {
+		// This is needed so we can bind mouse events on the whole svg
+		// otherwise they will only be fired over svg shapes.
+		// SVG2 could solve it with `pointer-events: bounding-box;`
+		// but it's only supported in chrome at the moment.
+		svg.attr( 'pointer-events', 'all' );
 		svg
-			.selectAll( 'circle' )
-			.on( 'mouseenter', function( point, index ) {
-				self.handleMouseEnterPoint( this, index );
-			} )
-			.on( 'mouseout', function( point, index ) {
-				self.handleMouseOutPoint( this, index );
-			} );
+			.append( 'rect' )
+			.attr( 'x', 0 )
+			.attr( 'y', 0 )
+			.attr( 'width', '100%' )
+			.attr( 'height', '100%' )
+			.attr( 'fill', 'none' );
 	};
 
 	drawChart = ( svg, params ) => {
 		this.drawAxes( svg, params );
 		this.drawLines( svg, params );
 		this.drawPoints( svg, params );
+		this.drawOverlayElement( svg, params );
 		this.bindEvents( svg, params );
 		this.setState( { svg } );
 	};
@@ -235,6 +246,62 @@ class LineChart extends Component {
 		d3Select( point ).attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
 
 		this.setState( { pointHovered: point } );
+	};
+
+	handleMouseOutPoint = point => {
+		d3Select( point ).attr( 'r', POINTS_SIZE );
+
+		this.setState( { pointHovered: null } );
+	};
+
+	handleMouseMove = ( X, Y, params ) => {
+		const { xScale, yScale } = params;
+		const { svg, data } = this.state;
+
+		const xDate = xScale.invert( X );
+		let closestDate = 0,
+			prevClosestDate = 0,
+			nextClosestDate = 0;
+
+		const firstDataSerie = data[ 0 ];
+		// assume sorted by date
+		firstDataSerie.forEach( ( datum, index ) => {
+			if ( Math.abs( xDate - datum.date ) < Math.abs( xDate - closestDate ) ) {
+				closestDate = datum.date;
+				prevClosestDate = firstDataSerie[ index - 1 ]
+					? firstDataSerie[ index - 1 ].date
+					: datum.date;
+				nextClosestDate = firstDataSerie[ index + 1 ]
+					? firstDataSerie[ index + 1 ].date
+					: datum.date;
+			}
+		} );
+
+		const startDateBar = closestDate + Math.round( ( prevClosestDate - closestDate ) / 2 );
+		const endDateBar = closestDate + Math.round( ( nextClosestDate - closestDate ) / 2 );
+
+		const bar = svg.select( `rect.line-chart__date-range-${ closestDate }` );
+
+		if ( bar.empty() ) {
+			svg
+				.select(
+					`rect.line-chart__date-range-selected:not(.line-chart__date-range-${ closestDate })`
+				)
+				.remove();
+			svg
+				.append( 'rect' )
+				.attr( 'class', `line-chart__date-range-selected line-chart__date-range-${ closestDate }` )
+				.attr( 'x', xScale( startDateBar ) )
+				.attr( 'y', 0 )
+				.attr( 'width', xScale( endDateBar ) - xScale( startDateBar ) )
+				.attr( 'height', yScale( 0 ) );
+
+			svg.selectAll( `circle.line-chart__line-point` ).attr( 'r', POINTS_SIZE );
+
+			svg
+				.selectAll( `circle.line-chart__line-point[cx="${ xScale( closestDate ) }"]` )
+				.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
+		}
 	};
 
 	handleMouseOutPoint = point => {
