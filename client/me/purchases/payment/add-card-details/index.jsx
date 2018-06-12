@@ -129,21 +129,12 @@ class AddCardDetails extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { purchaseId } ) => {
-	return {
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		purchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSite( state ),
-		userId: getCurrentUserId( state ),
-	};
-};
+const mapStateToProps = ( state, { purchaseId } ) => ( {
+	hasLoadedSites: ! isRequestingSites( state ),
+	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+	purchase: getByPurchaseId( state, purchaseId ),
+	selectedSite: getSelectedSite( state ),
+	userId: getCurrentUserId( state ),
+} );
 
-const mapDispatchToProps = {
-	clearPurchases,
-};
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( AddCardDetails );
+export default connect( mapStateToProps, { clearPurchases } )( AddCardDetails );
