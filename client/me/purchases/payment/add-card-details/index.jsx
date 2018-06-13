@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import HeaderCake from 'components/header-cake';
@@ -28,6 +27,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isDataLoading } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class AddCardDetails extends Component {
 	static propTypes = {
@@ -59,11 +59,10 @@ class AddCardDetails extends Component {
 		return purchase && selectedSite;
 	}
 
-	recordFormSubmitEvent = () => {
-		analytics.tracks.recordEvent( 'calypso_purchases_credit_card_form_submit', {
+	recordFormSubmitEvent = () =>
+		void this.props.recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
 			product_slug: this.props.purchase.productSlug,
 		} );
-	};
 
 	successCallback = () => {
 		const { id } = this.props.purchase;
@@ -125,7 +124,4 @@ const mapStateToProps = ( state, { purchaseId } ) => ( {
 	userId: getCurrentUserId( state ),
 } );
 
-export default connect(
-	mapStateToProps,
-	{ clearPurchases }
-)( AddCardDetails );
+export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( AddCardDetails );
