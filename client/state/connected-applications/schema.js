@@ -1,3 +1,4 @@
+/** @format */
 export default {
 	type: 'array',
 	items: {
@@ -35,7 +36,8 @@ export default {
 						},
 						required: [ 'site_ID', 'site_URL', 'site_name' ],
 						additionalProperties: false,
-					} ],
+					},
+				],
 			},
 			title: { type: 'string' },
 		},
