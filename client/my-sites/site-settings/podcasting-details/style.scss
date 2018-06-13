@@ -42,7 +42,8 @@
 	}
 }
 
-.podcasting-details__private-site {
+.podcasting-details__private-site,
+.podcasting-details__no-permissions {
 	.site-settings .podcasting-details__link & {
 		p {
 			margin-bottom: 0.75em;
