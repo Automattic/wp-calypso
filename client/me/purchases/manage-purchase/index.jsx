@@ -161,15 +161,6 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	renderPlanDetails() {
-		return (
-			<PurchasePlanDetails
-				selectedSite={ this.props.selectedSite }
-				purchaseId={ this.props.purchaseId }
-			/>
-		);
-	}
-
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate } = this.props;
 
@@ -357,9 +348,7 @@ class ManagePurchase extends Component {
 
 					<PurchaseMeta purchaseId={ false } />
 				</Card>
-
-				{ this.renderPlanDetails() }
-
+				<PurchasePlanDetails />
 				<VerticalNavItem isPlaceholder />
 				<VerticalNavItem isPlaceholder />
 			</Fragment>
@@ -399,13 +388,10 @@ class ManagePurchase extends Component {
 
 					{ this.renderRenewButton() }
 				</Card>
-
-				{ this.renderPlanDetails() }
-
+				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
 				{ this.renderCancelPrivacyProtection() }
-
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }

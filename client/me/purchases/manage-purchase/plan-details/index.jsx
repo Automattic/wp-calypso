@@ -27,7 +27,18 @@ import { getPluginsForSite } from 'state/plugins/premium/selectors';
 
 class PurchasePlanDetails extends Component {
 	static propTypes = {
+		purchaseId: PropTypes.number,
+
+		// Connected props
 		purchase: PropTypes.object,
+		hasLoadedSites: PropTypes.bool,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool,
+		pluginList: PropTypes.arrayOf(
+			PropTypes.shape( {
+				slug: PropTypes.string.isRequired,
+				key: PropTypes.string.isRequired,
+			} ).isRequired
+		).isRequired,
 	};
 
 	renderPlaceholder() {
@@ -52,7 +63,7 @@ class PurchasePlanDetails extends Component {
 	}
 
 	render() {
-		const { selectedSite, pluginList, translate } = this.props;
+		const { pluginList, translate } = this.props;
 		const { purchase } = this.props;
 
 		// Short out as soon as we know it's not a Jetpack plan
@@ -60,7 +71,7 @@ class PurchasePlanDetails extends Component {
 			return null;
 		}
 
-		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
+		if ( isDataLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
 
@@ -76,7 +87,7 @@ class PurchasePlanDetails extends Component {
 
 		return (
 			<div className="plan-details">
-				<QueryPluginKeys siteId={ selectedSite.ID } />
+				{ purchase && <QueryPluginKeys siteId={ purchase.siteId } /> }
 				<SectionHeader label={ headerText } />
 				<Card>
 					<PlanBillingPeriod purchase={ purchase } />
@@ -98,9 +109,12 @@ class PurchasePlanDetails extends Component {
 }
 
 // hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading
-export default connect( ( state, props ) => ( {
-	hasLoadedSites: ! isRequestingSites( state ),
-	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-	purchase: getByPurchaseId( state, props.purchaseId ),
-	pluginList: props.selectedSite ? getPluginsForSite( state, props.selectedSite.ID ) : [],
-} ) )( localize( PurchasePlanDetails ) );
+export default connect( ( state, props ) => {
+	const purchase = getByPurchaseId( state, props.purchaseId );
+	return {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		purchase,
+		pluginList: purchase ? getPluginsForSite( state, purchase.siteId ) : [],
+	};
+} )( localize( PurchasePlanDetails ) );
