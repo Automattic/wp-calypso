@@ -50,6 +50,7 @@ export const tasks = [
 		completedTitle: translate( 'You turned on automatic plugin updates.' ),
 		completedButtonText: translate( 'Change' ),
 		duration: translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ),
+		tour: 'jetpackPluginUpdates',
 		url: '/plugins/manage/$siteSlug',
 	},
 	{
