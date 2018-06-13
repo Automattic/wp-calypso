@@ -102,9 +102,22 @@ function convertToJSON(palette) {
     }
   })
 
+  printedColorArray.unshift({
+    name: 'White',
+    values: {
+      hex: '#fff',
+      rgba: {
+        red: 0,
+        green: 0,
+        blue: 0,
+        alpha: 1
+      }
+    }
+  })
+
   const jsonPalette = {
     version: PACKAGE.version,
-    colors: [{ name: 'White', value: '#fff' }].concat(printedColorArray)
+    colors: printedColorArray
   }
 
   return printJSON(jsonPalette)

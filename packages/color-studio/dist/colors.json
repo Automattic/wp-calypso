@@ -3,7 +3,15 @@
   "colors": [
     {
       "name": "White",
-      "value": "#fff"
+      "values": {
+        "hex": "#fff",
+        "rgba": {
+          "red": 0,
+          "green": 0,
+          "blue": 0,
+          "alpha": 1
+        }
+      }
     },
     {
       "name": "Gray 10",
