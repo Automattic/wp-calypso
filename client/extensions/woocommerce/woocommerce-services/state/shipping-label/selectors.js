@@ -127,6 +127,7 @@ const getAddressErrors = (
 	{
 		values,
 		isNormalized,
+		isUnverifiable,
 		normalized: normalizedValues,
 		selectNormalized,
 		ignoreValidation,
@@ -134,7 +135,7 @@ const getAddressErrors = (
 	},
 	countriesData
 ) => {
-	if ( isNormalized && ! normalizedValues && fieldErrors ) {
+	if ( ( isNormalized || isUnverifiable ) && ! normalizedValues && fieldErrors ) {
 		return fieldErrors;
 	} else if ( isNormalized && ! normalizedValues ) {
 		// If the address is normalized but the server didn't return a normalized address, then it's

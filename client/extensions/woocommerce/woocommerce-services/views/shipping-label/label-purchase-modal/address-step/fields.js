@@ -20,11 +20,13 @@ import CountryDropdown from 'woocommerce/woocommerce-services/components/country
 import StateDropdown from 'woocommerce/woocommerce-services/components/state-dropdown';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
+import UnverifiedAddress from './unverified';
 import { decodeEntities } from 'lib/formatting';
 import {
 	selectNormalizedAddress,
 	confirmAddressSuggestion,
 	editAddress,
+	editUnverifiableAddress,
 	updateAddressValue,
 	submitAddressForNormalization,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
@@ -50,26 +52,46 @@ const AddressFields = props => {
 		translate,
 	} = props;
 
-	if ( isNormalized && normalized && ! isEqual( normalized, values ) ) {
-		const selectNormalizedAddressHandler = select =>
-			props.selectNormalizedAddress( orderId, siteId, group, select );
+	const fieldErrors = isObject( errors ) ? errors : {};
+
+	if ( isNormalized ) {
 		const confirmAddressSuggestionHandler = () =>
 			props.confirmAddressSuggestion( orderId, siteId, group );
-		const editAddressHandler = () => props.editAddress( orderId, siteId, group );
-		return (
-			<AddressSuggestion
-				values={ values }
-				normalized={ normalized }
-				selectNormalized={ selectNormalized }
-				selectNormalizedAddress={ selectNormalizedAddressHandler }
-				confirmAddressSuggestion={ confirmAddressSuggestionHandler }
-				editAddress={ editAddressHandler }
-				countriesData={ storeOptions.countriesData }
-			/>
-		);
+
+		if ( normalized && ! isEqual( normalized, values ) ) {
+			const editAddressHandler = () => props.editAddress( orderId, siteId, group );
+			const selectNormalizedAddressHandler = select =>
+				props.selectNormalizedAddress( orderId, siteId, group, select );
+
+			return (
+				<AddressSuggestion
+					values={ values }
+					normalized={ normalized }
+					selectNormalized={ selectNormalized }
+					selectNormalizedAddress={ selectNormalizedAddressHandler }
+					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
+					editAddress={ editAddressHandler }
+					countriesData={ storeOptions.countriesData }
+				/>
+			);
+		}
+
+		if ( 0 < size( fieldErrors ) ) {
+			const editUnverifiableAddressHandler = () =>
+				props.editUnverifiableAddress( orderId, siteId, group );
+
+			return (
+				<UnverifiedAddress
+					values={ values }
+					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
+					editUnverifiableAddress={ editUnverifiableAddressHandler }
+					countriesData={ storeOptions.countriesData }
+					fieldErrors={ fieldErrors }
+				/>
+			);
+		}
 	}
 
-	const fieldErrors = isObject( errors ) ? errors : {};
 	const generalErrorOnly = fieldErrors.general && size( fieldErrors ) === 1;
 	const getId = fieldName => group + '_' + fieldName;
 	const getValue = fieldName =>
@@ -167,7 +189,7 @@ const AddressFields = props => {
 				disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
 				onClick={ submitAddressForNormalizationHandler }
 			>
-				{ translate( 'Validate address' ) }
+				{ translate( 'Verify address' ) }
 			</StepConfirmationButton>
 		</div>
 	);
@@ -203,6 +225,7 @@ const mapDispatchToProps = dispatch => {
 			selectNormalizedAddress,
 			confirmAddressSuggestion,
 			editAddress,
+			editUnverifiableAddress,
 			updateAddressValue,
 			submitAddressForNormalization,
 		},
