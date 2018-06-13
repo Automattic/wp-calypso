@@ -40,7 +40,6 @@ import {
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
@@ -55,7 +54,7 @@ import {
 	isDomainTransfer,
 	isTheme,
 } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
+import { getSite, isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
@@ -80,8 +79,10 @@ class ManagePurchase extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		isAtomicSite: PropTypes.bool,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
+		selectedSiteId: PropTypes.number,
 		userId: PropTypes.number,
 	};
 
@@ -135,7 +136,7 @@ class ManagePurchase extends Component {
 
 		addItems( renewItems );
 
-		page( '/checkout/' + this.props.selectedSite.slug );
+		page( '/checkout/' + this.props.siteSlug );
 	};
 
 	renderRenewButton() {
@@ -169,7 +170,7 @@ class ManagePurchase extends Component {
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = getEditCardDetailsPath( this.props.selectedSite.slug, purchase );
+			const path = getEditCardDetailsPath( this.props.siteSlug, purchase );
 			const renewing = isRenewing( purchase );
 
 			if (
@@ -205,7 +206,7 @@ class ManagePurchase extends Component {
 		};
 
 		let text,
-			link = cancelPurchase( this.props.selectedSite.slug, id );
+			link = cancelPurchase( this.props.siteSlug, id );
 
 		if ( isAtomicSite && isSubscription( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
@@ -261,7 +262,7 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<CompactCard href={ cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ cancelPrivacyProtection( this.props.siteSlug, id ) }>
 				{ translate( 'Cancel Privacy Protection' ) }
 			</CompactCard>
 		);
@@ -310,7 +311,7 @@ class ManagePurchase extends Component {
 					'making it easier to remember and easier to share.',
 				{
 					args: {
-						domain: selectedSite.domain,
+						domain: purchase.domain,
 					},
 				}
 			);
@@ -406,12 +407,12 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { selectedSite, selectedSiteId, purchase, isPurchaseTheme } = this.props;
+		const { selectedSite, selectedSiteId, siteSlug, purchase, isPurchaseTheme } = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
 		if ( ! isDataLoading( this.props ) && selectedSite && canEditPaymentDetails( purchase ) ) {
-			editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
+			editCardDetailsPath = getEditCardDetailsPath( siteSlug, purchase );
 		}
 
 		return (
@@ -446,12 +447,13 @@ class ManagePurchase extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
-	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSiteId = purchase ? purchase.siteId : null;
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
-	const selectedSite = getSelectedSite( state );
+	const selectedSite = getSite( state, selectedSiteId );
+	const hasLoadedSites = ! isRequestingSites( state );
 	return {
-		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedSites,
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		selectedSiteId,
@@ -459,7 +461,7 @@ export default connect( ( state, props ) => {
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, purchase.meta ),
-		isAtomicSite: selectedSite && isSiteAtomic( state, selectedSiteId ),
+		isAtomicSite: selectedSite ? isSiteAtomic( state, selectedSiteId ) : null,
 		userId: getCurrentUserId( state ),
 	};
 } )( localize( ManagePurchase ) );
