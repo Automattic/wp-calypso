@@ -31,10 +31,13 @@
     "xo": "^0.20.3"
   },
   "scripts": {
+    "build": "yarn build:json && yarn build:scss && yarn build:sketch",
     "build:json": "node palette json > dist/colors.json",
+    "build:scss": "node palette scss > dist/_colors.scss",
+    "build:sketch": "node palette sketch > dist/Colors.sketchpalette",
     "development": "open index.html && webpack --watch --mode=development",
     "lint": "xo",
-    "precommit": "yarn lint && webpack --display=errors-only && git add --update",
+    "precommit": "yarn lint && yarn build && webpack --display=errors-only && git add --update",
     "render": "skpm-build --run --watch"
   },
   "skpm": {

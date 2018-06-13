@@ -9,14 +9,6 @@ const PALETTE_COLORS = FOUNDATIONS.baseColors.map(color => {
   return createPaletteColors(color.value, color.name)
 })
 
-const SKETCH_PALETTE_SCHEMA = {
-  compatibleVersion: '2',
-  pluginVersion: '2.14',
-  gradients: [],
-  colors: [],
-  images: []
-}
-
 const SKETCH_PALETTE_ROW_COUNT = 8
 const SCSS_VARIABLE_PREFIX = '$wpc'
 
@@ -35,8 +27,15 @@ function printPalette(palette, type) {
   }
 }
 
-function convertToSketchPalette(palette, padding = 0) {
-  const sketchPalette = _.cloneDeep(SKETCH_PALETTE_SCHEMA)
+function convertToSketchPalette(palette) {
+  const sketchPalette = {
+    _paletteVersion: PACKAGE.version,
+    compatibleVersion: '2',
+    pluginVersion: '2.14',
+    gradients: [],
+    colors: [],
+    images: []
+  }
 
   palette.forEach(colorArray => {
     let colorArrayChunks = _(splitColorsByType(colorArray))
@@ -55,7 +54,11 @@ function convertToSketchPalette(palette, padding = 0) {
       .each(c => sketchPalette.colors.push(c))
   })
 
-  return JSON.stringify(sketchPalette, null, padding)
+  return printJSON(sketchPalette)
+}
+
+function printJSON(data, padding = 2) {
+  return JSON.stringify(data, null, padding)
 }
 
 function splitColorsByType(colorArray) {
@@ -80,14 +83,15 @@ function convertToSCSS(palette) {
   const printedColorArrays = _.flatten(skipWhiteColors(palette).map(splitColorsByType))
   printedColorArrays.unshift([{ color: '#fff', name: 'white' }])
 
-  return printedColorArrays
-    .map(colorArray => {
-      return colorArray.map(formatColorVariable).join('\n')
-    })
-    .join('\n\n')
+  const printedColorArray = printedColorArrays.map(colorArray => {
+    return colorArray.map(formatColorVariable).join('\n')
+  })
+  printedColorArray.unshift(`// v${PACKAGE.version}`)
+
+  return printedColorArray.join('\n\n')
 }
 
-function convertToJSON(palette, padding = 2) {
+function convertToJSON(palette) {
   const printedColorArray = _.flatten(skipWhiteColors(palette)).map(colorObject => {
     return {
       name: `${colorObject.name} ${colorObject.index}${colorObject.auxiliary ? 'A' : ''}`,
@@ -103,7 +107,7 @@ function convertToJSON(palette, padding = 2) {
     colors: [{ name: 'White', value: '#fff' }].concat(printedColorArray)
   }
 
-  return JSON.stringify(jsonPalette, null, padding)
+  return printJSON(jsonPalette)
 }
 
 function skipWhiteColors(palette) {
