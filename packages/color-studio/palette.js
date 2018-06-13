@@ -3,6 +3,7 @@ const chroma = require('chroma-js')
 
 const createPaletteColors = require('./formula')
 const FOUNDATIONS = require('./foundations')
+const PACKAGE = require('./package.json')
 
 const PALETTE_COLORS = FOUNDATIONS.baseColors.map(color => {
   return createPaletteColors(color.value, color.name)
@@ -27,6 +28,8 @@ function printPalette(palette, type) {
       return convertToSketchPalette(palette)
     case 'scss':
       return convertToSCSS(palette)
+    case 'json':
+      return convertToJSON(palette)
     default:
       return palette
   }
@@ -82,6 +85,25 @@ function convertToSCSS(palette) {
       return colorArray.map(formatColorVariable).join('\n')
     })
     .join('\n\n')
+}
+
+function convertToJSON(palette, padding = 2) {
+  const printedColorArray = _.flatten(skipWhiteColors(palette)).map(colorObject => {
+    return {
+      name: `${colorObject.name} ${colorObject.index}${colorObject.auxiliary ? 'A' : ''}`,
+      values: {
+        hex: formatHex(colorObject.color),
+        rgba: convertToSketchPaletteColor(colorObject)
+      }
+    }
+  })
+
+  const jsonPalette = {
+    version: PACKAGE.version,
+    colors: [{ name: 'White', value: '#fff' }].concat(printedColorArray)
+  }
+
+  return JSON.stringify(jsonPalette, null, padding)
 }
 
 function skipWhiteColors(palette) {

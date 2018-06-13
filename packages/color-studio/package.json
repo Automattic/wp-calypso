@@ -31,6 +31,7 @@
     "xo": "^0.20.3"
   },
   "scripts": {
+    "build:json": "node palette json > dist/colors.json",
     "development": "open index.html && webpack --watch --mode=development",
     "lint": "xo",
     "precommit": "yarn lint && webpack --display=errors-only && git add --update",
