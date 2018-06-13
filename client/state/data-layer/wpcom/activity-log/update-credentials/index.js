@@ -145,9 +145,9 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		case 'service_unavailable':
 			announce(
 				translate(
-					"Our service isn't working right now. We're working to restore it as soon as possible."
+					'A error occurred when we were trying to validate your site information. Please make sure your credentials and host URL are correct and try again. If you need help, please click on the support chat link.'
 				),
-				{ button: translate( 'Try again' ), onClick: () => dispatch( action ) }
+				{ button: translate( 'Support chat' ), onClick: getHelp }
 			);
 			spreadHappiness(
 				'Rewind Credentials: update request failed on timeout (could be us or remote site)'
