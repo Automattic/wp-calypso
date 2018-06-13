@@ -1,30 +1,16 @@
-.podcasting-details__wrapper .form-setting-explanation {
+.podcasting-details__wrapper .form-setting-explanation,
+.podcasting-details__category-selector .form-setting-explanation {
 	margin-bottom: 6px;
 }
 
-.podcasting-details__category-selector {
-	@include breakpoint( ">960px" ) {
-		box-sizing: border-box;
-		float: left;
-		width: 35%;
-		padding-right: 24px;
-	}
-
-	button {
-		width: 100%;
-	}
-}
-
-.podcasting-details__basic-settings {
-	@include breakpoint( ">960px" ) {
-		box-sizing: border-box;
-		float: left;
-		width: 63%;
-	}
+.podcasting-details__category-selector.card {
+	width: 100%;
+	margin-bottom: 0;
+	padding-bottom: 0;
 }
 
 .podcasting-details__link-title {
-	color: 	$gray-dark;
+	color: $gray-dark;
 	font-weight: 600;
 }
 
@@ -55,5 +41,16 @@
 	}
 	p:last-child {
 		margin-bottom: 0;
+	}
+}
+
+.podcasting-details__disable-podcasting {
+	color: $gray-text-min;
+	text-align: center;
+	width: 80%;
+	margin: 0 auto;
+
+	.button {
+		margin: 12px 0 6px;
 	}
 }

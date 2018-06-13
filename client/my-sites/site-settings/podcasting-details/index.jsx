@@ -201,19 +201,34 @@ class PodcastingDetails extends Component {
 					>
 						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
+					<Card className="podcasting-details__category-selector">
+						{ error || this.renderCategorySetting() }
+					</Card>
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
+					{ isPodcastingEnabled && (
+						<div className="podcasting-details__disable-podcasting">
+							<Button onClick={ this.onCategoryCleared } scary>
+								{ translate( 'Disable Podcast' ) }
+							</Button>
+							<p>
+								{ translate(
+									'Disable to stop publishing your podcast feed. You can always set it up again.'
+								) }
+							</p>
+						</div>
+					) }
 				</form>
 			</div>
 		);
 	}
 
-	renderSettings() {
-		const { siteId, podcastingCategoryId, translate, isPodcastingEnabled, fields } = this.props;
+	renderCategorySetting() {
+		const { siteId, podcastingCategoryId, translate } = this.props;
 
 		return (
 			<Fragment>
-				<FormFieldset className="podcasting-details__category-selector">
-					<QueryTerms siteId={ siteId } taxonomy="category" />
+				<QueryTerms siteId={ siteId } taxonomy="category" />
+				<FormFieldset>
 					<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
 					<FormSettingExplanation>
 						{ translate(
@@ -229,29 +244,31 @@ class PodcastingDetails extends Component {
 						onAddTermSuccess={ this.onCategorySelected }
 						height={ 200 }
 					/>
-					{ isPodcastingEnabled && (
-						<Button onClick={ this.onCategoryCleared } scary>
-							{ translate( 'Disable Podcast' ) }
-						</Button>
-					) }
 				</FormFieldset>
-				<div className="podcasting-details__basic-settings">
-					<PodcastCoverImageSetting
-						coverImageId={ parseInt( fields.podcasting_image_id, 10 ) || 0 }
-						coverImageUrl={ fields.podcasting_image }
-						onRemove={ this.onCoverImageRemoved }
-						onSelect={ this.onCoverImageSelected }
-					/>
-					{ this.renderTextField( {
-						key: 'podcasting_title',
-						label: translate( 'Title' ),
-					} ) }
-					{ this.renderTextField( {
-						key: 'podcasting_subtitle',
-						label: translate( 'Subtitle' ),
-					} ) }
-				</div>
 				{ this.renderFeedUrl() }
+			</Fragment>
+		);
+	}
+
+	renderSettings() {
+		const { translate, fields } = this.props;
+
+		return (
+			<Fragment>
+				<PodcastCoverImageSetting
+					coverImageId={ parseInt( fields.podcasting_image_id, 10 ) || 0 }
+					coverImageUrl={ fields.podcasting_image }
+					onRemove={ this.onCoverImageRemoved }
+					onSelect={ this.onCoverImageSelected }
+				/>
+				{ this.renderTextField( {
+					key: 'podcasting_title',
+					label: translate( 'Title' ),
+				} ) }
+				{ this.renderTextField( {
+					key: 'podcasting_subtitle',
+					label: translate( 'Subtitle' ),
+				} ) }
 				{ this.renderTopics() }
 				{ this.renderExplicitContent() }
 				{ this.renderTextField( {
