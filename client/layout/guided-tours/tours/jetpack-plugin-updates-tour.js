@@ -36,8 +36,8 @@ export const JetpackPluginUpdatesTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							"Let's enable monitoring of your site's uptime " +
-								'by activating the toggle switch for Jetpack Monitor.'
+							"Let's activate autoupdates for Jetpack to ensure you're always " +
+								'up-to-date with the latest features and security fixes.'
 						) }
 					</p>
 					<ButtonRow>
@@ -61,7 +61,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 					</h1>
 					<p>
 						{ translate(
-							'Uptime Monitoring has been enabled. Would you like to continue setting up the security essential features for your site?'
+							'Jetpack will now autoupdate for you. Would you like to continue setting up the security essential features for your site?'
 						) }
 					</p>
 					<SiteLink isButton href={ '/checklist/:site' }>
