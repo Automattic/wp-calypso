@@ -1,3 +1,102 @@
+// Podcasting section/link on Writing settings page
+
+.podcasting-details__link {
+	&:not( .is-enabled ) {
+		.podcasting-details__link-button {
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+	}
+
+	.podcasting-details__link-action-container {
+		display: flex;
+		align-items: flex-start;
+
+		.podcasting-details__link-info {
+			flex-grow: 1;
+			color: $gray-text;
+			margin-right: 12px;
+		}
+		.podcasting-details__link-button {
+			color: $gray-darken-20;
+			font-weight: 600;
+			flex-shrink: 0;
+		}
+	}
+
+	a.external-link {
+		text-decoration: underline;
+		white-space: nowrap;
+
+		&:hover, &:focus, &:active {
+			color: $link-highlight;
+		}
+
+		.gridicons-external {
+			margin-left: 5px;
+			color: $gray-text-min;
+		}
+	}
+
+	.podcasting-details__link-feed-label {
+		font-weight: 600;
+		margin-bottom: 5px;
+	}
+}
+
+.podcasting-details__link.is-enabled {
+	.podcasting-details__link-info {
+		position: relative;
+		background: $gray-lighten-30;
+		border-radius: 4px;
+		align-self: stretch;
+		padding: 4px 6px 4px 0;
+		// Center contents vertically
+		// Note this element contains a <span> container to ensure normal
+		// display (whitespace) between text items
+		display: flex;
+		align-items: center;
+	}
+
+	.podcasting-details__link-button {
+		// For viewports/translations when the text is taller than the button
+		align-self: center;
+	}
+
+	.gridicons-microphone {
+		flex-shrink: 0;
+		margin: 0 4px 0 6px;
+		color: $podcasting-purple;
+	}
+
+	.podcasting-details__link-feed {
+		margin-top: 20px;
+	}
+
+	.podcasting-details__link-feed-url input {
+		color: $gray-text-min;
+		font-size: 14px;
+		padding: 6px 10px;
+		margin-bottom: 5px;
+	}
+}
+
+@include breakpoint( "<800px" ) {
+	.podcasting-details__link.is-enabled {
+		.podcasting-details__link-action-container {
+			display: block;
+			text-align: right;
+		}
+		.podcasting-details__link-info {
+			text-align: left;
+			margin-right: 0;
+			margin-bottom: 8px;
+		}
+	}
+}
+
+// Podcasting details page
+
 .podcasting-details__wrapper .form-setting-explanation,
 .podcasting-details__category-wrapper .form-setting-explanation {
 	margin-bottom: 6px;
