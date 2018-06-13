@@ -195,6 +195,7 @@ class GoogleMyBusinessStatsChart extends Component {
 						data={ transformedData }
 						renderTooltipForDatanum={ renderTooltipForDatanum }
 						legendInfo={ legendInfo }
+						shouldFadeIn={ true }
 					/>
 
 					{ this.renderChartNotice() }
