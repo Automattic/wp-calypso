@@ -5150,9 +5150,9 @@
       }
     },
     "d3-array": {
-      "version": "1.2.0",
-      "resolved": "https://registry.npmjs.org/d3-array/-/d3-array-1.2.0.tgz",
-      "integrity": "sha1-FH0mlyDhdMQFen9CvosPPyulMQg="
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/d3-array/-/d3-array-1.2.1.tgz",
+      "integrity": "sha512-CyINJQ0SOUHojDdFDH4JEM0552vCR1utGyLHegJHyYH0JyCpSeTPxi4OBqHMA2jJZq4NH782LtaJWBImqI/HBw=="
     },
     "d3-axis": {
       "version": "1.0.8",
