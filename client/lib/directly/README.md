@@ -72,9 +72,6 @@ which set of configs will be used.
 on `initialize()`. This is built-in to the system and we don't have much direct control
 over it. There may be mitigation strategies if this becomes undesirable.  
 
-- Directly's code uses some poorly-supported JavaScript functions like String.startsWith().
-Babel's polyfill makes this a non-issue on non-compliant browsers.
-
 - The widget checks if the user is signed in to Directly with a call to their API:
 https://www.directly.com/chat/checkAuth. If you aren't signed in this request will
 return `401` and you'll see an error in the browser console. Directly's team has
