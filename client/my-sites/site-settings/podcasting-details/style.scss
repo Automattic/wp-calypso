@@ -1,12 +1,17 @@
 .podcasting-details__wrapper .form-setting-explanation,
-.podcasting-details__category-selector .form-setting-explanation {
+.podcasting-details__category-wrapper .form-setting-explanation {
 	margin-bottom: 6px;
 }
 
-.podcasting-details__category-selector.card {
+.podcasting-details__category-wrapper.card {
 	width: 100%;
 	margin-bottom: 0;
 	padding-bottom: 0;
+}
+
+.podcasting-details__title-subtitle-wrapper {
+	float: left;
+	width: 75%;
 }
 
 .podcasting-details__link-title {
@@ -22,8 +27,18 @@
 }
 
 .podcasting-details__wrapper {
-	&.is-disabled fieldset:not( .podcasting-details__category-selector ) label,
-	&.is-disabled fieldset:not( .podcasting-details__category-selector ) .form-setting-explanation {
+	.podcast-cover-image-setting {
+		float: left;
+		margin-right: 24px;
+	}
+
+	&.is-disabled {
+		background-color: $gray-light;
+		border-color: $gray;
+	}
+
+	&.is-disabled label,
+	&.is-disabled .form-setting-explanation {
 		color: $gray-lighten-10;
 	}
 }

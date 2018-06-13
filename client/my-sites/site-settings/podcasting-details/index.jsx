@@ -201,7 +201,7 @@ class PodcastingDetails extends Component {
 					>
 						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
-					<Card className="podcasting-details__category-selector">
+					<Card className="podcasting-details__category-wrapper">
 						{ error || this.renderCategorySetting() }
 					</Card>
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
@@ -251,7 +251,7 @@ class PodcastingDetails extends Component {
 	}
 
 	renderSettings() {
-		const { translate, fields } = this.props;
+		const { translate, fields, isPodcastingEnabled } = this.props;
 
 		return (
 			<Fragment>
@@ -260,15 +260,18 @@ class PodcastingDetails extends Component {
 					coverImageUrl={ fields.podcasting_image }
 					onRemove={ this.onCoverImageRemoved }
 					onSelect={ this.onCoverImageSelected }
+					isDisabled={ ! isPodcastingEnabled }
 				/>
-				{ this.renderTextField( {
-					key: 'podcasting_title',
-					label: translate( 'Title' ),
-				} ) }
-				{ this.renderTextField( {
-					key: 'podcasting_subtitle',
-					label: translate( 'Subtitle' ),
-				} ) }
+				<div className="podcasting-details__title-subtitle-wrapper">
+					{ this.renderTextField( {
+						key: 'podcasting_title',
+						label: translate( 'Title' ),
+					} ) }
+					{ this.renderTextField( {
+						key: 'podcasting_subtitle',
+						label: translate( 'Subtitle' ),
+					} ) }
+				</div>
 				{ this.renderTopics() }
 				{ this.renderExplicitContent() }
 				{ this.renderTextField( {
