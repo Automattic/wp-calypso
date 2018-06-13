@@ -66,7 +66,7 @@ export const JetpackMonitoringTour = makeTour(
 					</h1>
 					<p>
 						{ translate(
-							'Uptime Monitoring has been enabled. Let’s move on and see what’s next on our checklist.'
+							'Uptime Monitoring has been enabled. Would you like to continue setting up the security essential features for your site?'
 						) }
 					</p>
 					<SiteLink isButton href={ '/checklist/:site' }>
