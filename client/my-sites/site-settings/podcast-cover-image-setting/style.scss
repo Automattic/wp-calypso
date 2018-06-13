@@ -23,6 +23,10 @@
 	align-self: center;
 	background: $transparent;
 	position: relative;
+
+	.is-disabled & {
+		opacity: 0.3;
+	}
 }
 
 .podcast-cover-image-setting__placeholder {
