@@ -58,7 +58,7 @@ class RemovePurchase extends Component {
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
 		setAllSitesSelected: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
 	};
@@ -161,7 +161,7 @@ class RemovePurchase extends Component {
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom
 				.marketing()
-				.survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
+				.survey( 'calypso-remove-purchase', this.props.purchase.siteId );
 			const surveyData = {
 				'why-cancel': {
 					response: this.state.survey.questionOneRadio,
@@ -204,7 +204,7 @@ class RemovePurchase extends Component {
 			} else {
 				if ( isDomainRegistration( purchase ) ) {
 					if ( isDomainOnlySite ) {
-						this.props.receiveDeletedSite( selectedSite.ID );
+						this.props.receiveDeletedSite( purchase.siteId );
 						this.props.setAllSitesSelected();
 					}
 
@@ -218,7 +218,7 @@ class RemovePurchase extends Component {
 					notices.success(
 						translate( '%(productName)s was removed from {{siteName/}}.', {
 							args: { productName },
-							components: { siteName: <em>{ selectedSite.domain }</em> },
+							components: { siteName: <em>{ purchase.domain }</em> },
 						} ),
 						{ persistent: true }
 					);
@@ -378,7 +378,7 @@ class RemovePurchase extends Component {
 				<p>
 					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
 						args: { productName },
-						components: { siteName: <em>{ this.props.selectedSite.domain }</em> },
+						components: { siteName: <em>{ purchase.domain }</em> },
 					} ) }{' '}
 					{ isGoogleApps( purchase )
 						? translate(
@@ -450,7 +450,7 @@ class RemovePurchase extends Component {
 	}
 
 	render() {
-		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
+		if ( isDataLoading( this.props ) ) {
 			return null;
 		}
 
@@ -475,9 +475,11 @@ class RemovePurchase extends Component {
 }
 
 export default connect(
-	( state, { selectedSite } ) => ( {
-		isDomainOnlySite: selectedSite && isDomainOnly( state, selectedSite.ID ),
-		isAutomatedTransferSite: selectedSite && isSiteAutomatedTransfer( state, selectedSite.ID ),
+	( state, { purchase, selectedSite } ) => ( {
+		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
+		isAutomatedTransferSite: selectedSite
+			? isSiteAutomatedTransfer( state, selectedSite.ID )
+			: null,
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
 		purchasesError: getPurchasesError( state ),
