@@ -5188,9 +5188,9 @@
       "integrity": "sha1-JB6xhJvZ6egCHA0KeZ+KDo5EF2Q="
     },
     "d3-scale": {
-      "version": "1.0.6",
-      "resolved": "https://registry.npmjs.org/d3-scale/-/d3-scale-1.0.6.tgz",
-      "integrity": "sha1-vOGdqA06DPQiyVQ64zIghiILNO0=",
+      "version": "1.0.7",
+      "resolved": "https://registry.npmjs.org/d3-scale/-/d3-scale-1.0.7.tgz",
+      "integrity": "sha512-KvU92czp2/qse5tUfGms6Kjig0AhHOwkzXG0+PqIJB3ke0WUv088AHMZI0OssO9NCkXt4RP8yju9rpH8aGB7Lw==",
       "requires": {
         "d3-array": "^1.2.0",
         "d3-collection": "1",
@@ -8194,7 +8194,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -8559,7 +8560,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -8607,6 +8609,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -8645,11 +8648,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
