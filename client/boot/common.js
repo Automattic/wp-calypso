@@ -108,6 +108,10 @@ const loggedOutMiddleware = currentUser => {
 
 	page( '*', ( context, next ) => {
 		if ( isValidSection( context.path ) ) {
+			// redirect to login page if we're not on it already
+			if ( ! startsWith( context.path, '/log-in' ) ) {
+				return page.redirect( '/log-in/?redirect_to=' + encodeURIComponent( context.path ) );
+			}
 			next();
 		}
 	} );
