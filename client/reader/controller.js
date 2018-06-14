@@ -37,6 +37,10 @@ function userHasHistory( context ) {
 	return !! context.lastRoute;
 }
 
+function pass() {
+	// this should get linted and bomb
+}
+
 function renderFeedError( context, next ) {
 	context.primary = React.createElement( FeedError );
 	next();

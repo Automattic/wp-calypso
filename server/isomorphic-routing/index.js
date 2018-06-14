@@ -13,6 +13,8 @@ import { serverRender } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 
+// this should get linted, but pass happily
+
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
 		if ( middlewares.length === 0 && typeof route === 'function' && route.length === 3 ) {
