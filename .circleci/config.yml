@@ -16,6 +16,11 @@ jobs:
 
       - checkout
 
+    # Update origin/master so we can diff against it later
+      - run:
+          name: Update master branch
+          command: git fetch --force origin master
+
       - save_cache:
           name: Save git cache
           key: v1-20180524-git
@@ -72,7 +77,7 @@ jobs:
       - run:
           name: Lint Client and Server
           command: |
-            ./node_modules/.bin/eslint-eslines $(circleci tests glob "client/**/*.js" "client/**/*.jsx" "server/**/*.js" "server/**/*.jsx" | circleci tests split)
+            ./node_modules/.bin/eslint-eslines $(git diff --name-only origin/master... | grep -E '^(client|server)' | grep -E '\.jsx?$' | circleci tests split)
 
       - run:
           name: Run Client Tests
