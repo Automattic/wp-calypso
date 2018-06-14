@@ -44,15 +44,20 @@ export function setAllSitesSelected() {
 /**
  * Returns an action object signalling that the current route is to be changed
  *
- * @param  {String} path    Route path
- * @param  {Object} [query] Query arguments
- * @return {Object}         Action object
+ * @param  {String}  path    Route path
+ * @param  {Object}  [query] Query arguments
+ * @param  {boolean} isSSR   If this is a ServerSideRendering call, then the actions make take different decisions.
+ *                           One example: in case of SSR, the title, meta, and links may be preloaded from cache and
+ *                           therefore have a valid value that should not make ROUTE_SET behave as the user would have
+ *                           changed the page by clicking a link.
+ * @return {Object}          Action object
  */
-export function setRoute( path, query = {} ) {
+export function setRoute( path, query = {}, isSSR = false ) {
 	return {
 		type: ROUTE_SET,
 		path,
 		query,
+		isSSR,
 	};
 }
 
