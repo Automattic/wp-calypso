@@ -10,8 +10,10 @@
 }
 
 .podcasting-details__title-subtitle-wrapper {
-	float: left;
-	width: 75%;
+	@include breakpoint( '>960px' ) {
+		float: left;
+		width: 75%;
+	}
 }
 
 .podcasting-details__link-title {
@@ -30,6 +32,12 @@
 	.podcast-cover-image-setting {
 		float: left;
 		margin-right: 24px;
+	}
+
+	.form-select {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+		}
 	}
 
 	&.is-disabled {

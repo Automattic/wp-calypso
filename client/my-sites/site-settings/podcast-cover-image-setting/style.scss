@@ -2,6 +2,7 @@
 	position: relative;
 	overflow: hidden;
 	display: flex;
+	float: left;
 	margin: 0;
 	text-align: center;
 	border: 1px solid $gray-lighten-20;
@@ -45,17 +46,26 @@
 }
 
 .podcast-cover-image-setting {
-	width: 98px;
+	width: 208px;
+
+	@include breakpoint( '>960px' ) {
+		width: 98px;
+	}
 }
 
 .podcast-cover-image-setting__button {
-	min-width: 98px;
-	margin-top: 4px;
+	width: 98px;
+	float: left;
+	margin: 0 0 6px 12px;
 	text-align: center;
 
 	.is-disabled &:disabled {
 		background-color: $gray-light;
 		border-color: $gray-lighten-20;
 		color: $gray-lighten-10;
+	}
+
+	@include breakpoint( '>960px' ) {
+		margin: 6px 0 0;
 	}
 }
