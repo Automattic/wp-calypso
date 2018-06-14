@@ -28,7 +28,18 @@ jobs:
             mkdir -p $CIRCLE_ARTIFACTS
             mkdir -p $CIRCLE_TEST_REPORTS
 
+      - restore_cache:
+          name: "Restoring npm cache"
+          key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+          key: v1-npmcache-{{ checksum ".nvmrc" }}
+
       - run: npm ci
+
+      - save_cache:
+          name: "Saving npm cache"
+          key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+          paths:
+            - ~/.npm
 
       - run:
           name: Build Server
