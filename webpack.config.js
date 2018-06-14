@@ -123,7 +123,7 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				use: _.compact( [ 'thread-loader', babelLoader ] ),
+				use: [ 'thread-loader', babelLoader ],
 			},
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
