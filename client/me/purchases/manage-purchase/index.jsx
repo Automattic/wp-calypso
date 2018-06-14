@@ -83,6 +83,7 @@ class ManagePurchase extends Component {
 		purchase: PropTypes.object,
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
+		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
 	};
 
