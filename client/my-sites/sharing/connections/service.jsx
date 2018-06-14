@@ -101,10 +101,17 @@ export class SharingService extends Component {
 			this.refresh();
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
 		} else {
-			this.addConnection( this.props.service );
+			this.addConnection( this.props.service, this.state.newKeyringId );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
 		}
 	};
+
+	/**
+	 * Handle external access provided by the user.
+	 *
+	 * @param {Number} keyringConnectionId Keyring connection ID.
+	 */
+	externalAccessProvided = keyringConnectionId => {}; // eslint-disable-line no-unused-vars
 
 	/**
 	 * Establishes a new connection.
@@ -129,7 +136,7 @@ export class SharingService extends Component {
 			} else {
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
-				requestExternalAccess( service.connect_URL, () => {
+				requestExternalAccess( service.connect_URL, newKeyringId => {
 					// When the user has finished authorizing the connection
 					// (or otherwise closed the window), force a refresh
 					this.props.requestKeyringConnections();
@@ -137,6 +144,8 @@ export class SharingService extends Component {
 					// In the case that a Keyring connection doesn't exist, wait for app
 					// authorization to occur, then display with the available connections
 					this.setState( { isAwaitingConnections: true } );
+
+					this.externalAccessProvided( newKeyringId );
 				} );
 			}
 		} else {

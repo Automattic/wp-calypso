@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, filter } from 'lodash';
+import { get, filter, find } from 'lodash';
 
 /**
  * Returns true if we are requesting keyrings for the specified site ID, false otherwise.
@@ -47,7 +47,7 @@ export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
  * @return {Object}  Site keyrings indexed by keyring ids
  */
 export function getSiteKeyrings( state, siteId ) {
-	return get( state.siteKeyrings.items, [ siteId ], null );
+	return get( state.siteKeyrings.items, [ siteId ], [] );
 }
 
 /**
@@ -60,4 +60,22 @@ export function getSiteKeyrings( state, siteId ) {
  */
 export function getSiteKeyringsForService( state, siteId, service ) {
 	return filter( getSiteKeyrings( state, siteId ), { service } );
+}
+
+/**
+ * Returns the matching site keyring connection or undefined if it does not exist.
+ *
+ * @param  {Object}  state          Global state tree
+ * @param  {Number}  siteId         Site ID
+ * @param  {Number}  keyringId      Keyring Id
+ * @param  {String}  externalUserId External User Id on the keyring
+ *
+ * @return {?Object}                Site Keyring connection
+ */
+export function getSiteKeyringConnection( state, siteId, keyringId, externalUserId = null ) {
+	return find( getSiteKeyrings( state, siteId ), siteKeyring => {
+		return externalUserId === null
+			? siteKeyring.keyring_id === keyringId
+			: siteKeyring.keyring_id === keyringId && siteKeyring.external_user_id === externalUserId;
+	} );
 }

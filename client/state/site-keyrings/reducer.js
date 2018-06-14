@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { remove } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
@@ -18,6 +13,7 @@ import {
 	SITE_KEYRINGS_SAVE_FAILURE,
 	SITE_KEYRINGS_SAVE_SUCCESS,
 	SITE_KEYRINGS_DELETE_SUCCESS,
+	SITE_KEYRINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -80,13 +76,21 @@ const items = createReducer(
 		} ),
 		[ SITE_KEYRINGS_SAVE_SUCCESS ]: ( state, { siteId, keyring } ) => ( {
 			...state,
-			[ siteId ]: state[ siteId ].concat( [ keyring ] ),
+			[ siteId ]: ( state[ siteId ] || [] ).concat( [ keyring ] ),
+		} ),
+		[ SITE_KEYRINGS_UPDATE_SUCCESS ]: ( state, { siteId, keyringId, externalUserId } ) => ( {
+			...state,
+			[ siteId ]: state[ siteId ].map(
+				keyring =>
+					keyring.keyring_id === keyringId
+						? { ...keyring, external_user_id: externalUserId }
+						: keyring
+			),
 		} ),
 		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { siteId, keyringId, externalUserId } ) => ( {
 			...state,
-			[ siteId ]: remove(
-				state,
-				keyring => keyring.keyring_id === keyringId && keyring.external_user_id === externalUserId
+			[ siteId ]: ( state[ siteId ] || [] ).filter(
+				keyring => keyring.keyring_id !== keyringId || keyring.external_user_id !== externalUserId
 			),
 		} ),
 	},

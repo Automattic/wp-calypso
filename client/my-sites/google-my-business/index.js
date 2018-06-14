@@ -13,11 +13,11 @@ import { makeLayout, redirectLoggedOut } from 'controller';
 import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import isGoogleMyBusinessLocationConnected from 'state/selectors/is-google-my-business-location-connected';
 import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
 import { requestSiteKeyrings } from 'state/site-keyrings/actions';
+import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
@@ -128,7 +128,7 @@ export default function( router ) {
 			const hasConnectedLocation = isGoogleMyBusinessLocationConnected( state, siteId );
 			const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
 			const hasAuthenticated =
-				getKeyringConnectionsByName( state, 'google_my_business' ).length > 0;
+				getSiteKeyringsForService( state, siteId, 'google_my_business' ).length > 0;
 
 			if ( hasConnectedLocation ) {
 				page.redirect( `/google-my-business/stats/${ context.params.site }` );

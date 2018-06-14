@@ -11,24 +11,22 @@ import { filter, last } from 'lodash';
 import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 
-function isConnected( externalUser, siteKeyring ) {
-	return (
-		externalUser.keyringConnectionId === siteKeyring.keyring_id &&
-		externalUser.ID === siteKeyring.external_user_id
-	);
-}
-
 export default function getGoogleMyBusinessLocations( state, siteId ) {
-	// Google My Business can only have one location connected at a time
-	const googleMyBusinessSiteKeyring =
-		last( getSiteKeyringsForService( state, siteId, 'google_my_business' ) ) || {};
+	const googleMyBusinessSiteKeyring = last(
+		getSiteKeyringsForService( state, siteId, 'google_my_business' )
+	);
+
+	if ( ! googleMyBusinessSiteKeyring ) {
+		return [];
+	}
 
 	const externalUsers = filter( getAvailableExternalAccounts( state, 'google_my_business' ), {
 		isExternal: true,
+		keyringConnectionId: googleMyBusinessSiteKeyring.keyring_id,
 	} );
 
 	externalUsers.forEach( externalUser => {
-		externalUser.isConnected = isConnected( externalUser, googleMyBusinessSiteKeyring );
+		externalUser.isConnected = externalUser.ID === googleMyBusinessSiteKeyring.external_user_id;
 	} );
 
 	return externalUsers;
