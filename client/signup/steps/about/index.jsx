@@ -240,12 +240,13 @@ class AboutStep extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { goToNextStep, stepName, translate } = this.props;
+		const { goToNextStep, stepName, flowName, previousFlowName, translate } = this.props;
 
 		//Defaults
 		let themeRepo = 'pub/radcliffe-2',
 			designType = 'blog',
-			siteTitleValue = 'Site Title';
+			siteTitleValue = 'Site Title',
+			nextFlowName = flowName;
 
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
@@ -303,7 +304,12 @@ class AboutStep extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
 
 		//Store
-		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
+		if ( designType === DESIGN_TYPE_STORE ) {
+			nextFlowName =
+				siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
+					? previousFlowName
+					: 'store-nux';
+		}
 
 		//Pressable
 		if (

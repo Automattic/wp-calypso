@@ -99,6 +99,7 @@ class Signup extends React.Component {
 			loginHandler: null,
 			hasCartItems: false,
 			plans: false,
+			previousFlowName: null,
 		};
 	}
 
@@ -421,6 +422,11 @@ class Signup extends React.Component {
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
 			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
+		if ( nextFlowName !== this.props.flowName ) {
+			SignupActions.changeSignupFlow( nextFlowName );
+			this.setState( { previousFlowName: this.props.flowName } );
+		}
+
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
 
@@ -498,6 +504,7 @@ class Signup extends React.Component {
 						meta={ flow.meta || {} }
 						goToNextStep={ this.goToNextStep }
 						goToStep={ this.goToStep }
+						previousFlowName={ this.state.previousFlowName }
 						flowName={ this.props.flowName }
 						signupProgress={ this.state.progress }
 						signupDependencies={ this.props.signupDependencies }
