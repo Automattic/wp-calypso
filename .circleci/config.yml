@@ -61,6 +61,9 @@ jobs:
       - run:
           name: Lint Client and Server
           command: |
+            git diff --name-only origin/master...
+            git diff --name-only origin/master... | grep -E "^(client|server).+\.jsx?"
+            git diff --name-only origin/master... | grep -E "^(client|server).+\.jsx?" | circleci tests split
             ./node_modules/.bin/eslint-eslines $(git diff --name-only origin/master... | grep -E "^(client|server).+\.jsx?" | circleci tests split)
 
       - run:
