@@ -14,8 +14,6 @@ import { decodeEntities } from 'lib/formatting';
 import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
 
-const UNREAD_COUNT_CAP = 40;
-
 /**
  * Returns the document title as set by the DocumentHead component or setTitle
  * action.
@@ -28,49 +26,15 @@ export function getDocumentHeadTitle( state ) {
 }
 
 /**
- * Returns a count reflecting unread items.
- *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Unread count (string because it can be e.g. '40+')
- */
-export function getDocumentHeadUnreadCount( state ) {
-	return state.documentHead.unreadCount;
-}
-
-/**
- * Returns a count reflecting unread items, capped at a value determined by
- * UNREAD_COUNT_CAP. Any value greater than the cap yields 'cap+'. Examples:
- * '1', '20', '39', '40+'
- *
- * @param  {Object}  state  Global state tree
- * @return {String}         Unread count (string because it can be e.g. '40+')
- */
-export function getDocumentHeadCappedUnreadCount( state ) {
-	const unreadCount = getDocumentHeadUnreadCount( state );
-	if ( ! unreadCount ) {
-		return '';
-	}
-
-	return unreadCount <= UNREAD_COUNT_CAP ? String( unreadCount ) : `${ UNREAD_COUNT_CAP }+`;
-}
-
-/**
- * Returns the formatted document title, based on the currently set title,
- * capped unreadCount, and selected site.
+ * Returns the formatted document title, based on the currently set title
+ * and selected site.
  *
  * @param  {Object}  state  Global state tree
  * @return {String}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(
 	state => {
-		let title = '';
-
-		const unreadCount = getDocumentHeadCappedUnreadCount( state );
-		if ( unreadCount ) {
-			title += `(${ unreadCount }) `;
-		}
-
-		title += compact( [
+		let title = compact( [
 			getDocumentHeadTitle( state ),
 			isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) ),
 		] ).join( ' ‹ ' );

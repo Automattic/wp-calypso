@@ -3,10 +3,6 @@ export const titleSchema = {
 	type: 'string',
 };
 
-export const unreadCountSchema = {
-	type: 'number',
-};
-
 export const metaSchema = {
 	type: 'array',
 	items: {

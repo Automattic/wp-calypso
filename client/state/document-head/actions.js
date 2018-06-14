@@ -8,7 +8,6 @@ import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 } from 'state/action-types';
 
 /**
@@ -22,20 +21,6 @@ export function setDocumentHeadTitle( title ) {
 	return {
 		type: DOCUMENT_HEAD_TITLE_SET,
 		title,
-	};
-}
-
-/**
- * Returns an action object used in signalling that the unread count to be
- * shown in the document title should be assigned to the specified value.
- *
- * @param  {Number} count Unread count
- * @return {Object}       Action object
- */
-export function setDocumentHeadUnreadCount( count ) {
-	return {
-		type: DOCUMENT_HEAD_UNREAD_COUNT_SET,
-		count,
 	};
 }
 

@@ -10,8 +10,6 @@ import { expect } from 'chai';
  */
 import {
 	getDocumentHeadTitle,
-	getDocumentHeadUnreadCount,
-	getDocumentHeadCappedUnreadCount,
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
@@ -31,30 +29,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( title ).to.equal( 'My Section Title' );
-		} );
-	} );
-
-	describe( '#getDocumentHeadUnreadCount()', () => {
-		test( 'should return the unread posts counter', () => {
-			const unreadCount = getDocumentHeadUnreadCount( {
-				documentHead: {
-					unreadCount: 3,
-				},
-			} );
-
-			expect( unreadCount ).to.equal( 3 );
-		} );
-	} );
-
-	describe( '#getDocumentHeadCappedUnreadCount()', () => {
-		test( 'should return the capped unread posts counter', () => {
-			const unreadCount = getDocumentHeadCappedUnreadCount( {
-				documentHead: {
-					unreadCount: 45,
-				},
-			} );
-
-			expect( unreadCount ).to.equal( '40+' );
 		} );
 	} );
 
@@ -114,36 +88,6 @@ describe( 'selectors', () => {
 				} );
 
 				expect( formattedTitle ).to.equal( 'Reader — WordPress.com' );
-			} );
-
-			test( 'should return formatted title made up of section and unread count but not site name', () => {
-				const formattedTitle = getDocumentHeadFormattedTitle( {
-					documentHead: {
-						title: 'Reader',
-						unreadCount: '12',
-					},
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								name: 'WordPress.com Example Blog',
-								URL: 'http://yourgroovydomain.com',
-							},
-						},
-					},
-					ui: {
-						selectedSiteId: 2916284,
-						section: {
-							name: 'reader',
-							paths: [ '/', '/read' ],
-							module: 'reader',
-							group: 'reader',
-							secondary: true,
-						},
-					},
-				} );
-
-				expect( formattedTitle ).to.equal( '(12) Reader — WordPress.com' );
 			} );
 		} );
 
