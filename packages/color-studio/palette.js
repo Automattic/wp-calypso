@@ -93,8 +93,12 @@ function convertToSCSS(palette) {
 
 function convertToJSON(palette) {
   const printedColorArray = _.flatten(skipWhiteColors(palette)).map(colorObject => {
+    const index = colorObject.index
+    const indexLength = String(index).replace(/\D/g, '').length
+    const printedIndex = _.repeat(0, Math.max(3 - indexLength, 0)) + index
+
     return {
-      name: `${colorObject.name} ${colorObject.index}${colorObject.auxiliary ? 'A' : ''}`,
+      name: `${colorObject.name} ${printedIndex}${colorObject.auxiliary ? 'A' : ''}`,
       values: {
         hex: formatHex(colorObject.color),
         rgba: convertToSketchPaletteColor(colorObject)

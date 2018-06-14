@@ -14,7 +14,7 @@
       }
     },
     {
-      "name": "Gray 10",
+      "name": "Gray 010",
       "values": {
         "hex": "#f5f6f6",
         "rgba": {
@@ -26,7 +26,7 @@
       }
     },
     {
-      "name": "Gray 20",
+      "name": "Gray 020",
       "values": {
         "hex": "#dcdee0",
         "rgba": {
@@ -38,7 +38,7 @@
       }
     },
     {
-      "name": "Gray 30",
+      "name": "Gray 030",
       "values": {
         "hex": "#c3c6ca",
         "rgba": {
@@ -50,7 +50,7 @@
       }
     },
     {
-      "name": "Gray 40",
+      "name": "Gray 040",
       "values": {
         "hex": "#aaafb4",
         "rgba": {
@@ -62,7 +62,7 @@
       }
     },
     {
-      "name": "Gray 50",
+      "name": "Gray 050",
       "values": {
         "hex": "#93989d",
         "rgba": {
@@ -74,7 +74,7 @@
       }
     },
     {
-      "name": "Gray 60",
+      "name": "Gray 060",
       "values": {
         "hex": "#7c8287",
         "rgba": {
@@ -86,7 +86,7 @@
       }
     },
     {
-      "name": "Gray 70",
+      "name": "Gray 070",
       "values": {
         "hex": "#676d73",
         "rgba": {
@@ -98,7 +98,7 @@
       }
     },
     {
-      "name": "Gray 80",
+      "name": "Gray 080",
       "values": {
         "hex": "#52585e",
         "rgba": {
@@ -110,7 +110,7 @@
       }
     },
     {
-      "name": "Gray 90",
+      "name": "Gray 090",
       "values": {
         "hex": "#494e53",
         "rgba": {
@@ -194,7 +194,7 @@
       }
     },
     {
-      "name": "Teal 10",
+      "name": "Teal 010",
       "values": {
         "hex": "#eafcfe",
         "rgba": {
@@ -206,7 +206,7 @@
       }
     },
     {
-      "name": "Teal 20",
+      "name": "Teal 020",
       "values": {
         "hex": "#b5f4fc",
         "rgba": {
@@ -218,7 +218,7 @@
       }
     },
     {
-      "name": "Teal 30",
+      "name": "Teal 030",
       "values": {
         "hex": "#86eaf7",
         "rgba": {
@@ -230,7 +230,7 @@
       }
     },
     {
-      "name": "Teal 40",
+      "name": "Teal 040",
       "values": {
         "hex": "#63dcef",
         "rgba": {
@@ -242,7 +242,7 @@
       }
     },
     {
-      "name": "Teal 50",
+      "name": "Teal 050",
       "values": {
         "hex": "#44cee6",
         "rgba": {
@@ -254,7 +254,7 @@
       }
     },
     {
-      "name": "Teal 60",
+      "name": "Teal 060",
       "values": {
         "hex": "#29bedd",
         "rgba": {
@@ -266,7 +266,7 @@
       }
     },
     {
-      "name": "Teal 70",
+      "name": "Teal 070",
       "values": {
         "hex": "#13afd3",
         "rgba": {
@@ -278,7 +278,7 @@
       }
     },
     {
-      "name": "Teal 80",
+      "name": "Teal 080",
       "values": {
         "hex": "#029fc9",
         "rgba": {
@@ -290,7 +290,7 @@
       }
     },
     {
-      "name": "Teal 90",
+      "name": "Teal 090",
       "values": {
         "hex": "#028cb0",
         "rgba": {
@@ -374,7 +374,7 @@
       }
     },
     {
-      "name": "Teal 10A",
+      "name": "Teal 010A",
       "values": {
         "hex": "#f8f8f8",
         "rgba": {
@@ -386,7 +386,7 @@
       }
     },
     {
-      "name": "Teal 20A",
+      "name": "Teal 020A",
       "values": {
         "hex": "#e3ebeb",
         "rgba": {
@@ -398,7 +398,7 @@
       }
     },
     {
-      "name": "Teal 30A",
+      "name": "Teal 030A",
       "values": {
         "hex": "#bee1e6",
         "rgba": {
@@ -410,7 +410,7 @@
       }
     },
     {
-      "name": "Teal 40A",
+      "name": "Teal 040A",
       "values": {
         "hex": "#a4d4dc",
         "rgba": {
@@ -422,7 +422,7 @@
       }
     },
     {
-      "name": "Teal 50A",
+      "name": "Teal 050A",
       "values": {
         "hex": "#90c6d2",
         "rgba": {
@@ -434,7 +434,7 @@
       }
     },
     {
-      "name": "Teal 60A",
+      "name": "Teal 060A",
       "values": {
         "hex": "#80b7c6",
         "rgba": {
@@ -446,7 +446,7 @@
       }
     },
     {
-      "name": "Teal 70A",
+      "name": "Teal 070A",
       "values": {
         "hex": "#75a8bb",
         "rgba": {
@@ -458,7 +458,7 @@
       }
     },
     {
-      "name": "Teal 80A",
+      "name": "Teal 080A",
       "values": {
         "hex": "#6b99ae",
         "rgba": {
@@ -470,7 +470,7 @@
       }
     },
     {
-      "name": "Teal 90A",
+      "name": "Teal 090A",
       "values": {
         "hex": "#628696",
         "rgba": {
@@ -554,7 +554,7 @@
       }
     },
     {
-      "name": "Blue 10",
+      "name": "Blue 010",
       "values": {
         "hex": "#ecfaff",
         "rgba": {
@@ -566,7 +566,7 @@
       }
     },
     {
-      "name": "Blue 20",
+      "name": "Blue 020",
       "values": {
         "hex": "#bfeeff",
         "rgba": {
@@ -578,7 +578,7 @@
       }
     },
     {
-      "name": "Blue 30",
+      "name": "Blue 030",
       "values": {
         "hex": "#96e0ff",
         "rgba": {
@@ -590,7 +590,7 @@
       }
     },
     {
-      "name": "Blue 40",
+      "name": "Blue 040",
       "values": {
         "hex": "#74cfff",
         "rgba": {
@@ -602,7 +602,7 @@
       }
     },
     {
-      "name": "Blue 50",
+      "name": "Blue 050",
       "values": {
         "hex": "#58bdff",
         "rgba": {
@@ -614,7 +614,7 @@
       }
     },
     {
-      "name": "Blue 60",
+      "name": "Blue 060",
       "values": {
         "hex": "#3cabff",
         "rgba": {
@@ -626,7 +626,7 @@
       }
     },
     {
-      "name": "Blue 70",
+      "name": "Blue 070",
       "values": {
         "hex": "#2497ff",
         "rgba": {
@@ -638,7 +638,7 @@
       }
     },
     {
-      "name": "Blue 80",
+      "name": "Blue 080",
       "values": {
         "hex": "#0f82ff",
         "rgba": {
@@ -650,7 +650,7 @@
       }
     },
     {
-      "name": "Blue 90",
+      "name": "Blue 090",
       "values": {
         "hex": "#0e74dc",
         "rgba": {
@@ -734,7 +734,7 @@
       }
     },
     {
-      "name": "Blue 10A",
+      "name": "Blue 010A",
       "values": {
         "hex": "#f7f7f7",
         "rgba": {
@@ -746,7 +746,7 @@
       }
     },
     {
-      "name": "Blue 20A",
+      "name": "Blue 020A",
       "values": {
         "hex": "#e6e6e6",
         "rgba": {
@@ -758,7 +758,7 @@
       }
     },
     {
-      "name": "Blue 30A",
+      "name": "Blue 030A",
       "values": {
         "hex": "#c4d9e3",
         "rgba": {
@@ -770,7 +770,7 @@
       }
     },
     {
-      "name": "Blue 40A",
+      "name": "Blue 040A",
       "values": {
         "hex": "#a6cae1",
         "rgba": {
@@ -782,7 +782,7 @@
       }
     },
     {
-      "name": "Blue 50A",
+      "name": "Blue 050A",
       "values": {
         "hex": "#8db9df",
         "rgba": {
@@ -794,7 +794,7 @@
       }
     },
     {
-      "name": "Blue 60A",
+      "name": "Blue 060A",
       "values": {
         "hex": "#76a8de",
         "rgba": {
@@ -806,7 +806,7 @@
       }
     },
     {
-      "name": "Blue 70A",
+      "name": "Blue 070A",
       "values": {
         "hex": "#6496df",
         "rgba": {
@@ -818,7 +818,7 @@
       }
     },
     {
-      "name": "Blue 80A",
+      "name": "Blue 080A",
       "values": {
         "hex": "#5582e0",
         "rgba": {
@@ -830,7 +830,7 @@
       }
     },
     {
-      "name": "Blue 90A",
+      "name": "Blue 090A",
       "values": {
         "hex": "#4e74bd",
         "rgba": {
@@ -914,7 +914,7 @@
       }
     },
     {
-      "name": "Purple 10",
+      "name": "Purple 010",
       "values": {
         "hex": "#faf2fe",
         "rgba": {
@@ -926,7 +926,7 @@
       }
     },
     {
-      "name": "Purple 20",
+      "name": "Purple 020",
       "values": {
         "hex": "#efd5fb",
         "rgba": {
@@ -938,7 +938,7 @@
       }
     },
     {
-      "name": "Purple 30",
+      "name": "Purple 030",
       "values": {
         "hex": "#e3b8f7",
         "rgba": {
@@ -950,7 +950,7 @@
       }
     },
     {
-      "name": "Purple 40",
+      "name": "Purple 040",
       "values": {
         "hex": "#d39df0",
         "rgba": {
@@ -962,7 +962,7 @@
       }
     },
     {
-      "name": "Purple 50",
+      "name": "Purple 050",
       "values": {
         "hex": "#c183e6",
         "rgba": {
@@ -974,7 +974,7 @@
       }
     },
     {
-      "name": "Purple 60",
+      "name": "Purple 060",
       "values": {
         "hex": "#ae69dc",
         "rgba": {
@@ -986,7 +986,7 @@
       }
     },
     {
-      "name": "Purple 70",
+      "name": "Purple 070",
       "values": {
         "hex": "#9a50d0",
         "rgba": {
@@ -998,7 +998,7 @@
       }
     },
     {
-      "name": "Purple 80",
+      "name": "Purple 080",
       "values": {
         "hex": "#8437c2",
         "rgba": {
@@ -1010,7 +1010,7 @@
       }
     },
     {
-      "name": "Purple 90",
+      "name": "Purple 090",
       "values": {
         "hex": "#7532a9",
         "rgba": {
@@ -1094,7 +1094,7 @@
       }
     },
     {
-      "name": "Purple 10A",
+      "name": "Purple 010A",
       "values": {
         "hex": "#f5f5f5",
         "rgba": {
@@ -1106,7 +1106,7 @@
       }
     },
     {
-      "name": "Purple 20A",
+      "name": "Purple 020A",
       "values": {
         "hex": "#e1dce3",
         "rgba": {
@@ -1118,7 +1118,7 @@
       }
     },
     {
-      "name": "Purple 30A",
+      "name": "Purple 030A",
       "values": {
         "hex": "#d6c0e0",
         "rgba": {
@@ -1130,7 +1130,7 @@
       }
     },
     {
-      "name": "Purple 40A",
+      "name": "Purple 040A",
       "values": {
         "hex": "#c8a5d9",
         "rgba": {
@@ -1142,7 +1142,7 @@
       }
     },
     {
-      "name": "Purple 50A",
+      "name": "Purple 050A",
       "values": {
         "hex": "#b78ccf",
         "rgba": {
@@ -1154,7 +1154,7 @@
       }
     },
     {
-      "name": "Purple 60A",
+      "name": "Purple 060A",
       "values": {
         "hex": "#a573c5",
         "rgba": {
@@ -1166,7 +1166,7 @@
       }
     },
     {
-      "name": "Purple 70A",
+      "name": "Purple 070A",
       "values": {
         "hex": "#935bba",
         "rgba": {
@@ -1178,7 +1178,7 @@
       }
     },
     {
-      "name": "Purple 80A",
+      "name": "Purple 080A",
       "values": {
         "hex": "#7e44ac",
         "rgba": {
@@ -1190,7 +1190,7 @@
       }
     },
     {
-      "name": "Purple 90A",
+      "name": "Purple 090A",
       "values": {
         "hex": "#6f3e94",
         "rgba": {
@@ -1274,7 +1274,7 @@
       }
     },
     {
-      "name": "Pink 10",
+      "name": "Pink 010",
       "values": {
         "hex": "#ffedf8",
         "rgba": {
@@ -1286,7 +1286,7 @@
       }
     },
     {
-      "name": "Pink 20",
+      "name": "Pink 020",
       "values": {
         "hex": "#ffd5ed",
         "rgba": {
@@ -1298,7 +1298,7 @@
       }
     },
     {
-      "name": "Pink 30",
+      "name": "Pink 030",
       "values": {
         "hex": "#ffbce2",
         "rgba": {
@@ -1310,7 +1310,7 @@
       }
     },
     {
-      "name": "Pink 40",
+      "name": "Pink 040",
       "values": {
         "hex": "#ffa2d6",
         "rgba": {
@@ -1322,7 +1322,7 @@
       }
     },
     {
-      "name": "Pink 50",
+      "name": "Pink 050",
       "values": {
         "hex": "#fe87c6",
         "rgba": {
@@ -1334,7 +1334,7 @@
       }
     },
     {
-      "name": "Pink 60",
+      "name": "Pink 060",
       "values": {
         "hex": "#fc6ab2",
         "rgba": {
@@ -1346,7 +1346,7 @@
       }
     },
     {
-      "name": "Pink 70",
+      "name": "Pink 070",
       "values": {
         "hex": "#fa4798",
         "rgba": {
@@ -1358,7 +1358,7 @@
       }
     },
     {
-      "name": "Pink 80",
+      "name": "Pink 080",
       "values": {
         "hex": "#f61567",
         "rgba": {
@@ -1370,7 +1370,7 @@
       }
     },
     {
-      "name": "Pink 90",
+      "name": "Pink 090",
       "values": {
         "hex": "#d8135e",
         "rgba": {
@@ -1454,7 +1454,7 @@
       }
     },
     {
-      "name": "Pink 10A",
+      "name": "Pink 010A",
       "values": {
         "hex": "#f2f2f2",
         "rgba": {
@@ -1466,7 +1466,7 @@
       }
     },
     {
-      "name": "Pink 20A",
+      "name": "Pink 020A",
       "values": {
         "hex": "#e3e0e2",
         "rgba": {
@@ -1478,7 +1478,7 @@
       }
     },
     {
-      "name": "Pink 30A",
+      "name": "Pink 030A",
       "values": {
         "hex": "#e4c8d7",
         "rgba": {
@@ -1490,7 +1490,7 @@
       }
     },
     {
-      "name": "Pink 40A",
+      "name": "Pink 040A",
       "values": {
         "hex": "#e6afcc",
         "rgba": {
@@ -1502,7 +1502,7 @@
       }
     },
     {
-      "name": "Pink 50A",
+      "name": "Pink 050A",
       "values": {
         "hex": "#e597be",
         "rgba": {
@@ -1514,7 +1514,7 @@
       }
     },
     {
-      "name": "Pink 60A",
+      "name": "Pink 060A",
       "values": {
         "hex": "#e47eac",
         "rgba": {
@@ -1526,7 +1526,7 @@
       }
     },
     {
-      "name": "Pink 70A",
+      "name": "Pink 070A",
       "values": {
         "hex": "#e26295",
         "rgba": {
@@ -1538,7 +1538,7 @@
       }
     },
     {
-      "name": "Pink 80A",
+      "name": "Pink 080A",
       "values": {
         "hex": "#df466c",
         "rgba": {
@@ -1550,7 +1550,7 @@
       }
     },
     {
-      "name": "Pink 90A",
+      "name": "Pink 090A",
       "values": {
         "hex": "#c14062",
         "rgba": {
@@ -1634,7 +1634,7 @@
       }
     },
     {
-      "name": "Red 10",
+      "name": "Red 010",
       "values": {
         "hex": "#fff0ea",
         "rgba": {
@@ -1646,7 +1646,7 @@
       }
     },
     {
-      "name": "Red 20",
+      "name": "Red 020",
       "values": {
         "hex": "#ffdbcd",
         "rgba": {
@@ -1658,7 +1658,7 @@
       }
     },
     {
-      "name": "Red 30",
+      "name": "Red 030",
       "values": {
         "hex": "#ffc5af",
         "rgba": {
@@ -1670,7 +1670,7 @@
       }
     },
     {
-      "name": "Red 40",
+      "name": "Red 040",
       "values": {
         "hex": "#ffae91",
         "rgba": {
@@ -1682,7 +1682,7 @@
       }
     },
     {
-      "name": "Red 50",
+      "name": "Red 050",
       "values": {
         "hex": "#ff9573",
         "rgba": {
@@ -1694,7 +1694,7 @@
       }
     },
     {
-      "name": "Red 60",
+      "name": "Red 060",
       "values": {
         "hex": "#ff7a53",
         "rgba": {
@@ -1706,7 +1706,7 @@
       }
     },
     {
-      "name": "Red 70",
+      "name": "Red 070",
       "values": {
         "hex": "#ff5a31",
         "rgba": {
@@ -1718,7 +1718,7 @@
       }
     },
     {
-      "name": "Red 80",
+      "name": "Red 080",
       "values": {
         "hex": "#ff2600",
         "rgba": {
@@ -1730,7 +1730,7 @@
       }
     },
     {
-      "name": "Red 90",
+      "name": "Red 090",
       "values": {
         "hex": "#e02300",
         "rgba": {
@@ -1814,7 +1814,7 @@
       }
     },
     {
-      "name": "Red 10A",
+      "name": "Red 010A",
       "values": {
         "hex": "#f3f3f3",
         "rgba": {
@@ -1826,7 +1826,7 @@
       }
     },
     {
-      "name": "Red 20A",
+      "name": "Red 020A",
       "values": {
         "hex": "#e2e2e2",
         "rgba": {
@@ -1838,7 +1838,7 @@
       }
     },
     {
-      "name": "Red 30A",
+      "name": "Red 030A",
       "values": {
         "hex": "#e1cec7",
         "rgba": {
@@ -1850,7 +1850,7 @@
       }
     },
     {
-      "name": "Red 40A",
+      "name": "Red 040A",
       "values": {
         "hex": "#e4b8a8",
         "rgba": {
@@ -1862,7 +1862,7 @@
       }
     },
     {
-      "name": "Red 50A",
+      "name": "Red 050A",
       "values": {
         "hex": "#e7a089",
         "rgba": {
@@ -1874,7 +1874,7 @@
       }
     },
     {
-      "name": "Red 60A",
+      "name": "Red 060A",
       "values": {
         "hex": "#ea8769",
         "rgba": {
@@ -1886,7 +1886,7 @@
       }
     },
     {
-      "name": "Red 70A",
+      "name": "Red 070A",
       "values": {
         "hex": "#ec6b48",
         "rgba": {
@@ -1898,7 +1898,7 @@
       }
     },
     {
-      "name": "Red 80A",
+      "name": "Red 080A",
       "values": {
         "hex": "#ee4623",
         "rgba": {
@@ -1910,7 +1910,7 @@
       }
     },
     {
-      "name": "Red 90A",
+      "name": "Red 090A",
       "values": {
         "hex": "#cf4020",
         "rgba": {
@@ -1994,7 +1994,7 @@
       }
     },
     {
-      "name": "Orange 10",
+      "name": "Orange 010",
       "values": {
         "hex": "#fffcea",
         "rgba": {
@@ -2006,7 +2006,7 @@
       }
     },
     {
-      "name": "Orange 20",
+      "name": "Orange 020",
       "values": {
         "hex": "#fff2ad",
         "rgba": {
@@ -2018,7 +2018,7 @@
       }
     },
     {
-      "name": "Orange 30",
+      "name": "Orange 030",
       "values": {
         "hex": "#ffe57f",
         "rgba": {
@@ -2030,7 +2030,7 @@
       }
     },
     {
-      "name": "Orange 40",
+      "name": "Orange 040",
       "values": {
         "hex": "#ffd760",
         "rgba": {
@@ -2042,7 +2042,7 @@
       }
     },
     {
-      "name": "Orange 50",
+      "name": "Orange 050",
       "values": {
         "hex": "#ffc944",
         "rgba": {
@@ -2054,7 +2054,7 @@
       }
     },
     {
-      "name": "Orange 60",
+      "name": "Orange 060",
       "values": {
         "hex": "#ffba2a",
         "rgba": {
@@ -2066,7 +2066,7 @@
       }
     },
     {
-      "name": "Orange 70",
+      "name": "Orange 070",
       "values": {
         "hex": "#ffaa15",
         "rgba": {
@@ -2078,7 +2078,7 @@
       }
     },
     {
-      "name": "Orange 80",
+      "name": "Orange 080",
       "values": {
         "hex": "#ff9902",
         "rgba": {
@@ -2090,7 +2090,7 @@
       }
     },
     {
-      "name": "Orange 90",
+      "name": "Orange 090",
       "values": {
         "hex": "#dd8802",
         "rgba": {
@@ -2174,7 +2174,7 @@
       }
     },
     {
-      "name": "Orange 10A",
+      "name": "Orange 010A",
       "values": {
         "hex": "#fbfbfb",
         "rgba": {
@@ -2186,7 +2186,7 @@
       }
     },
     {
-      "name": "Orange 20A",
+      "name": "Orange 020A",
       "values": {
         "hex": "#f9f1d0",
         "rgba": {
@@ -2198,7 +2198,7 @@
       }
     },
     {
-      "name": "Orange 30A",
+      "name": "Orange 030A",
       "values": {
         "hex": "#f9e5a3",
         "rgba": {
@@ -2210,7 +2210,7 @@
       }
     },
     {
-      "name": "Orange 40A",
+      "name": "Orange 040A",
       "values": {
         "hex": "#f8d886",
         "rgba": {
@@ -2222,7 +2222,7 @@
       }
     },
     {
-      "name": "Orange 50A",
+      "name": "Orange 050A",
       "values": {
         "hex": "#f7cb6d",
         "rgba": {
@@ -2234,7 +2234,7 @@
       }
     },
     {
-      "name": "Orange 60A",
+      "name": "Orange 060A",
       "values": {
         "hex": "#f6bd58",
         "rgba": {
@@ -2246,7 +2246,7 @@
       }
     },
     {
-      "name": "Orange 70A",
+      "name": "Orange 070A",
       "values": {
         "hex": "#f5ae4a",
         "rgba": {
@@ -2258,7 +2258,7 @@
       }
     },
     {
-      "name": "Orange 80A",
+      "name": "Orange 080A",
       "values": {
         "hex": "#f39f3f",
         "rgba": {
@@ -2270,7 +2270,7 @@
       }
     },
     {
-      "name": "Orange 90A",
+      "name": "Orange 090A",
       "values": {
         "hex": "#d28d3b",
         "rgba": {
@@ -2354,7 +2354,7 @@
       }
     },
     {
-      "name": "Yellow 10",
+      "name": "Yellow 010",
       "values": {
         "hex": "#fffeea",
         "rgba": {
@@ -2366,7 +2366,7 @@
       }
     },
     {
-      "name": "Yellow 20",
+      "name": "Yellow 020",
       "values": {
         "hex": "#fffc99",
         "rgba": {
@@ -2378,7 +2378,7 @@
       }
     },
     {
-      "name": "Yellow 30",
+      "name": "Yellow 030",
       "values": {
         "hex": "#fdf66f",
         "rgba": {
@@ -2390,7 +2390,7 @@
       }
     },
     {
-      "name": "Yellow 40",
+      "name": "Yellow 040",
       "values": {
         "hex": "#fbf051",
         "rgba": {
@@ -2402,7 +2402,7 @@
       }
     },
     {
-      "name": "Yellow 50",
+      "name": "Yellow 050",
       "values": {
         "hex": "#fae938",
         "rgba": {
@@ -2414,7 +2414,7 @@
       }
     },
     {
-      "name": "Yellow 60",
+      "name": "Yellow 060",
       "values": {
         "hex": "#f8e222",
         "rgba": {
@@ -2426,7 +2426,7 @@
       }
     },
     {
-      "name": "Yellow 70",
+      "name": "Yellow 070",
       "values": {
         "hex": "#f6da10",
         "rgba": {
@@ -2438,7 +2438,7 @@
       }
     },
     {
-      "name": "Yellow 80",
+      "name": "Yellow 080",
       "values": {
         "hex": "#f4d301",
         "rgba": {
@@ -2450,7 +2450,7 @@
       }
     },
     {
-      "name": "Yellow 90",
+      "name": "Yellow 090",
       "values": {
         "hex": "#d5ba01",
         "rgba": {
@@ -2534,7 +2534,7 @@
       }
     },
     {
-      "name": "Yellow 10A",
+      "name": "Yellow 010A",
       "values": {
         "hex": "#fdfdfd",
         "rgba": {
@@ -2546,7 +2546,7 @@
       }
     },
     {
-      "name": "Yellow 20A",
+      "name": "Yellow 020A",
       "values": {
         "hex": "#fefabc",
         "rgba": {
@@ -2558,7 +2558,7 @@
       }
     },
     {
-      "name": "Yellow 30A",
+      "name": "Yellow 030A",
       "values": {
         "hex": "#fdf495",
         "rgba": {
@@ -2570,7 +2570,7 @@
       }
     },
     {
-      "name": "Yellow 40A",
+      "name": "Yellow 040A",
       "values": {
         "hex": "#fbef7b",
         "rgba": {
@@ -2582,7 +2582,7 @@
       }
     },
     {
-      "name": "Yellow 50A",
+      "name": "Yellow 050A",
       "values": {
         "hex": "#f9e868",
         "rgba": {
@@ -2594,7 +2594,7 @@
       }
     },
     {
-      "name": "Yellow 60A",
+      "name": "Yellow 060A",
       "values": {
         "hex": "#f7e15a",
         "rgba": {
@@ -2606,7 +2606,7 @@
       }
     },
     {
-      "name": "Yellow 70A",
+      "name": "Yellow 070A",
       "values": {
         "hex": "#f4da52",
         "rgba": {
@@ -2618,7 +2618,7 @@
       }
     },
     {
-      "name": "Yellow 80A",
+      "name": "Yellow 080A",
       "values": {
         "hex": "#f1d34d",
         "rgba": {
@@ -2630,7 +2630,7 @@
       }
     },
     {
-      "name": "Yellow 90A",
+      "name": "Yellow 090A",
       "values": {
         "hex": "#d3ba47",
         "rgba": {
@@ -2714,7 +2714,7 @@
       }
     },
     {
-      "name": "Green 10",
+      "name": "Green 010",
       "values": {
         "hex": "#eafcea",
         "rgba": {
@@ -2726,7 +2726,7 @@
       }
     },
     {
-      "name": "Green 20",
+      "name": "Green 020",
       "values": {
         "hex": "#baf6ba",
         "rgba": {
@@ -2738,7 +2738,7 @@
       }
     },
     {
-      "name": "Green 30",
+      "name": "Green 030",
       "values": {
         "hex": "#8ced8c",
         "rgba": {
@@ -2750,7 +2750,7 @@
       }
     },
     {
-      "name": "Green 40",
+      "name": "Green 040",
       "values": {
         "hex": "#67e167",
         "rgba": {
@@ -2762,7 +2762,7 @@
       }
     },
     {
-      "name": "Green 50",
+      "name": "Green 050",
       "values": {
         "hex": "#47d347",
         "rgba": {
@@ -2774,7 +2774,7 @@
       }
     },
     {
-      "name": "Green 60",
+      "name": "Green 060",
       "values": {
         "hex": "#2bc32b",
         "rgba": {
@@ -2786,7 +2786,7 @@
       }
     },
     {
-      "name": "Green 70",
+      "name": "Green 070",
       "values": {
         "hex": "#12b312",
         "rgba": {
@@ -2798,7 +2798,7 @@
       }
     },
     {
-      "name": "Green 80",
+      "name": "Green 080",
       "values": {
         "hex": "#00a300",
         "rgba": {
@@ -2810,7 +2810,7 @@
       }
     },
     {
-      "name": "Green 90",
+      "name": "Green 090",
       "values": {
         "hex": "#009000",
         "rgba": {
@@ -2894,7 +2894,7 @@
       }
     },
     {
-      "name": "Green 10A",
+      "name": "Green 010A",
       "values": {
         "hex": "#f7f7f7",
         "rgba": {
@@ -2906,7 +2906,7 @@
       }
     },
     {
-      "name": "Green 20A",
+      "name": "Green 020A",
       "values": {
         "hex": "#d1efd0",
         "rgba": {
@@ -2918,7 +2918,7 @@
       }
     },
     {
-      "name": "Green 30A",
+      "name": "Green 030A",
       "values": {
         "hex": "#a6e7a3",
         "rgba": {
@@ -2930,7 +2930,7 @@
       }
     },
     {
-      "name": "Green 40A",
+      "name": "Green 040A",
       "values": {
         "hex": "#85dc80",
         "rgba": {
@@ -2942,7 +2942,7 @@
       }
     },
     {
-      "name": "Green 50A",
+      "name": "Green 050A",
       "values": {
         "hex": "#6bce63",
         "rgba": {
@@ -2954,7 +2954,7 @@
       }
     },
     {
-      "name": "Green 60A",
+      "name": "Green 060A",
       "values": {
         "hex": "#57bf4b",
         "rgba": {
@@ -2966,7 +2966,7 @@
       }
     },
     {
-      "name": "Green 70A",
+      "name": "Green 070A",
       "values": {
         "hex": "#49af3b",
         "rgba": {
@@ -2978,7 +2978,7 @@
       }
     },
     {
-      "name": "Green 80A",
+      "name": "Green 080A",
       "values": {
         "hex": "#419f32",
         "rgba": {
@@ -2990,7 +2990,7 @@
       }
     },
     {
-      "name": "Green 90A",
+      "name": "Green 090A",
       "values": {
         "hex": "#3b8c2d",
         "rgba": {
@@ -3074,7 +3074,7 @@
       }
     },
     {
-      "name": "Celadon 10",
+      "name": "Celadon 010",
       "values": {
         "hex": "#eefefc",
         "rgba": {
@@ -3086,7 +3086,7 @@
       }
     },
     {
-      "name": "Celadon 20",
+      "name": "Celadon 020",
       "values": {
         "hex": "#bffaf2",
         "rgba": {
@@ -3098,7 +3098,7 @@
       }
     },
     {
-      "name": "Celadon 30",
+      "name": "Celadon 030",
       "values": {
         "hex": "#98f2e5",
         "rgba": {
@@ -3110,7 +3110,7 @@
       }
     },
     {
-      "name": "Celadon 40",
+      "name": "Celadon 040",
       "values": {
         "hex": "#79e9d7",
         "rgba": {
@@ -3122,7 +3122,7 @@
       }
     },
     {
-      "name": "Celadon 50",
+      "name": "Celadon 050",
       "values": {
         "hex": "#5ddec8",
         "rgba": {
@@ -3134,7 +3134,7 @@
       }
     },
     {
-      "name": "Celadon 60",
+      "name": "Celadon 060",
       "values": {
         "hex": "#43d3b8",
         "rgba": {
@@ -3146,7 +3146,7 @@
       }
     },
     {
-      "name": "Celadon 70",
+      "name": "Celadon 070",
       "values": {
         "hex": "#2cc8a7",
         "rgba": {
@@ -3158,7 +3158,7 @@
       }
     },
     {
-      "name": "Celadon 80",
+      "name": "Celadon 080",
       "values": {
         "hex": "#1abc97",
         "rgba": {
@@ -3170,7 +3170,7 @@
       }
     },
     {
-      "name": "Celadon 90",
+      "name": "Celadon 090",
       "values": {
         "hex": "#18a686",
         "rgba": {
@@ -3254,7 +3254,7 @@
       }
     },
     {
-      "name": "Celadon 10A",
+      "name": "Celadon 010A",
       "values": {
         "hex": "#fbfbfb",
         "rgba": {
@@ -3266,7 +3266,7 @@
       }
     },
     {
-      "name": "Celadon 20A",
+      "name": "Celadon 020A",
       "values": {
         "hex": "#eaf0ef",
         "rgba": {
@@ -3278,7 +3278,7 @@
       }
     },
     {
-      "name": "Celadon 30A",
+      "name": "Celadon 030A",
       "values": {
         "hex": "#c8e9e3",
         "rgba": {
@@ -3290,7 +3290,7 @@
       }
     },
     {
-      "name": "Celadon 40A",
+      "name": "Celadon 040A",
       "values": {
         "hex": "#ade0d6",
         "rgba": {
@@ -3302,7 +3302,7 @@
       }
     },
     {
-      "name": "Celadon 50A",
+      "name": "Celadon 050A",
       "values": {
         "hex": "#97d6c9",
         "rgba": {
@@ -3314,7 +3314,7 @@
       }
     },
     {
-      "name": "Celadon 60A",
+      "name": "Celadon 060A",
       "values": {
         "hex": "#83cbba",
         "rgba": {
@@ -3326,7 +3326,7 @@
       }
     },
     {
-      "name": "Celadon 70A",
+      "name": "Celadon 070A",
       "values": {
         "hex": "#73c1ab",
         "rgba": {
@@ -3338,7 +3338,7 @@
       }
     },
     {
-      "name": "Celadon 80A",
+      "name": "Celadon 080A",
       "values": {
         "hex": "#68b59d",
         "rgba": {
@@ -3350,7 +3350,7 @@
       }
     },
     {
-      "name": "Celadon 90A",
+      "name": "Celadon 090A",
       "values": {
         "hex": "#609f8b",
         "rgba": {
