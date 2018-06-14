@@ -30,7 +30,11 @@ jobs:
 
       - run: npm ci
 
-      - run: NODE_ENV=test npm run build-server
+      - run:
+          name: Build Server
+          environment:
+              NODE_ENV: test
+          command: npm run build-server
 
       - run:
           name: Build calypso-strings.pot
