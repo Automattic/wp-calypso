@@ -82,7 +82,7 @@ class LineChart extends Component {
 	state = {
 		data: null,
 		fillArea: false,
-		pointHovered: null,
+		selectedPoints: [],
 		svg: null,
 	};
 
@@ -204,17 +204,24 @@ class LineChart extends Component {
 						.attr( 'cx', xScale( datum.date ) )
 						.attr( 'cy', yScale( datum.value ) )
 						.attr( 'r', drawFullSeries ? POINTS_SIZE : POINTS_END_SIZE )
-						.datum( datum );
+						.datum( { ...datum, dataSeriesIndex } );
 				}
 			);
 		} );
 	};
 
 	bindEvents = ( svg, params ) => {
-		const updateMouseMove = throttle( this.handleMouseMove, 100 );
+		const updateMouseMove = throttle( this.handleMouseMove, 100, { trailing: false } );
 		svg.on( 'mousemove', function() {
 			const coordinates = d3Mouse( this );
 			updateMouseMove( ...coordinates, params );
+		} );
+		svg.on( 'mouseleave', () => {
+			// remove rect and tooltips
+			svg.select( `rect.line-chart__date-range-selected` ).remove();
+			this.setState( { selectedPoints: [] } );
+			// reset point size
+			svg.selectAll( `circle.line-chart__line-point` ).attr( 'r', POINTS_SIZE );
 		} );
 	};
 
@@ -240,18 +247,6 @@ class LineChart extends Component {
 		this.drawOverlayElement( svg, params );
 		this.bindEvents( svg, params );
 		this.setState( { svg } );
-	};
-
-	handleMouseEnterPoint = point => {
-		d3Select( point ).attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
-
-		this.setState( { pointHovered: point } );
-	};
-
-	handleMouseOutPoint = point => {
-		d3Select( point ).attr( 'r', POINTS_SIZE );
-
-		this.setState( { pointHovered: null } );
 	};
 
 	handleMouseMove = ( X, Y, params ) => {
@@ -298,16 +293,12 @@ class LineChart extends Component {
 
 			svg.selectAll( `circle.line-chart__line-point` ).attr( 'r', POINTS_SIZE );
 
-			svg
-				.selectAll( `circle.line-chart__line-point[cx="${ xScale( closestDate ) }"]` )
-				.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
+			const selectedPoints = svg.selectAll(
+				`circle.line-chart__line-point[cx="${ xScale( closestDate ) }"]`
+			);
+			selectedPoints.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
+			this.setState( { selectedPoints: selectedPoints.nodes() } );
 		}
-	};
-
-	handleMouseOutPoint = point => {
-		d3Select( point ).attr( 'r', POINTS_SIZE );
-
-		this.setState( { pointHovered: null } );
 	};
 
 	getXAxisParams = ( concatData, data, margin, newWidth ) => {
@@ -372,13 +363,35 @@ class LineChart extends Component {
 			return;
 		}
 
+		// reset points
+		svg.selectAll( `circle.line-chart__line-point` ).attr( 'r', POINTS_SIZE );
+
+		this.setState( { selectedPoints: [] } );
+
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
 			const selected = selectedItemIndex === dataSeriesIndex;
-			svg
-				.select(
-					`path.line-chart__line-${ dataSeriesIndex }, path.line-chart__area-${ dataSeriesIndex }`
-				)
-				.classed( 'line-chart__line-selected', selected );
+			const lineSelection = svg.select( `path.line-chart__line-${ dataSeriesIndex }` );
+			const areaSelection = svg.select( `path.line-chart__area-${ dataSeriesIndex }` );
+			lineSelection.classed( 'line-chart__line-selected', selected );
+			areaSelection.classed( 'line-chart__area-selected', selected );
+			const fadeUnselected = selectedItemIndex >= 0 && ! selected;
+			lineSelection.classed( 'line-chart__line-not-selected', fadeUnselected );
+			areaSelection.classed( 'line-chart__area-not-selected', fadeUnselected );
+
+			if ( selected ) {
+				// bring to front
+				lineSelection.each( function() {
+					this.parentNode.appendChild( this );
+				} );
+				areaSelection.each( function() {
+					this.parentNode.appendChild( this );
+				} );
+				const selectedPoints = svg.selectAll(
+					`circle.line-chart__line-point-color-${ dataSeriesIndex }`
+				);
+				selectedPoints.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
+				this.setState( { selectedPoints: selectedPoints.nodes() } );
+			}
 		} );
 	};
 
@@ -399,24 +412,34 @@ class LineChart extends Component {
 		};
 	};
 
-	getTooltipContent = () => {
-		const { pointHovered } = this.state;
+	renderTooltips = () => {
+		const { selectedPoints } = this.state;
+		return selectedPoints.map( point => {
+			const pointData = d3Select( point ).datum();
 
-		if ( ! pointHovered ) {
-			return null;
-		}
+			if ( ! pointData ) {
+				return null;
+			}
 
-		const circle = d3Select( pointHovered );
-		const datum = circle.datum();
+			const uniqueKey = `tooltip-${ pointData.dataSeriesIndex }-${ pointData.date }`;
 
-		return (
-			<span className="line-chart__tooltip">{ this.props.renderTooltipForDatanum( datum ) }</span>
-		);
+			return (
+				<Tooltip
+					className="line-chart__tooltip is-streak"
+					context={ point }
+					position="top"
+					key={ uniqueKey }
+					isVisible
+				>
+					{ this.props.renderTooltipForDatanum( pointData ) }
+				</Tooltip>
+			);
+		} );
 	};
 
 	render() {
 		const { legendInfo } = this.props;
-		const { data, pointHovered } = this.state;
+		const { data } = this.state;
 
 		if ( ! data ) {
 			return null;
@@ -438,15 +461,7 @@ class LineChart extends Component {
 					data={ data }
 				/>
 
-				<Tooltip
-					className="line-chart__tooltip is-streak"
-					id="popover__line-chart"
-					context={ pointHovered }
-					isVisible={ !! pointHovered }
-					position="top"
-				>
-					{ this.getTooltipContent() }
-				</Tooltip>
+				{ this.renderTooltips() }
 			</div>
 		);
 	}

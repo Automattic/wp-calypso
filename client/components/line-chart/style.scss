@@ -1,3 +1,7 @@
+.line-chart__base {
+	cursor: pointer;
+}
+
 .line-chart__line-color-0 {
 	fill: none;
 	stroke: $blue-dark;
@@ -20,6 +24,10 @@
 	stroke-width: 5px;
 }
 
+.line-chart__line-not-selected, .line-chart__area-not-selected {
+	opacity: 0.5;
+}
+
 .line-chart__area-color-0 {
 	fill: $blue-dark;
 	opacity: 0.6;
@@ -39,20 +47,6 @@
 	cursor: pointer;
 	fill: $white;
 	stroke-width: 3px;
-}
-
-.line-chart__area-selected {
-	&.line-chart__area-color-0 {
-		opacity: 0.8;
-	}
-
-	&.line-chart__area-color-1 {
-		opacity: 0.5;
-	}
-
-	&.line-chart__area-color-2 {
-		opacity: 0.3;
-	}
 }
 
 .line-chart__line-point-color-0 {
