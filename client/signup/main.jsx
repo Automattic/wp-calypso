@@ -43,7 +43,6 @@ import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-trac
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 import SignupActions from 'lib/signup/actions';
-import SignupDependencyStore from 'lib/signup/dependency-store';
 import SignupFlowController from 'lib/signup/flow-controller';
 import SignupProgressStore from 'lib/signup/progress-store';
 import { disableCart } from 'lib/upgrades/actions';
@@ -54,6 +53,7 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
 import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
 // Current directory dependencies
@@ -88,11 +88,9 @@ class Signup extends React.Component {
 
 	constructor( props, context ) {
 		super( props, context );
-		SignupDependencyStore.setReduxStore( context.store );
 
 		this.state = {
 			login: false,
-			progress: SignupProgressStore.get(),
 			dependencies: props.signupDependencies,
 			loadingScreenStartTime: undefined,
 			resumingStep: undefined,
@@ -419,7 +417,7 @@ class Signup extends React.Component {
 		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
+			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
 			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
@@ -521,7 +519,7 @@ class Signup extends React.Component {
 	render() {
 		if (
 			! this.props.stepName ||
-			( this.getPositionInFlow() > 0 && this.state.progress.length === 0 ) ||
+			( this.getPositionInFlow() > 0 && this.props.progress.length === 0 ) ||
 			this.state.resumingStep
 		) {
 			return null;
@@ -572,6 +570,7 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
+		progress: getSignupProgress( state ),
 		signupDependencies: getSignupDependencyStore( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
