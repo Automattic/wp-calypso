@@ -6,6 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import { map, toPairs, pick, flowRight, filter, head } from 'lodash';
 import classNames from 'classnames';
 
@@ -349,9 +350,16 @@ class PodcastingDetails extends Component {
 	};
 
 	onCategoryCleared = () => {
-		this.props.updateFields( { podcasting_category_id: '0' }, () => {
-			this.props.submitForm();
+		const { updateFields, clearDirtyFields, submitForm, siteSlug } = this.props;
+
+		updateFields( { podcasting_category_id: '0' }, () => {
+			submitForm();
 		} );
+
+		//Needed to allow redirect
+		clearDirtyFields();
+
+		page.redirect( '/settings/writing/' + siteSlug );
 	};
 
 	onCoverImageRemoved = () => {
