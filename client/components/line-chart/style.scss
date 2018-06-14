@@ -120,21 +120,6 @@
 	fill: $gray-darken-10;
 }
 
-.line-chart__legend-with-fade {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: flex-start;
-
-	.legend-item {
-		cursor: pointer;
-	}
-
-	.legend-item:not( :first-child ) {
-		margin-left: 20px;
-	}
-}
-
 .line-chart__legend {
 	display: flex;
 	flex-direction: row;
@@ -148,10 +133,6 @@
 	.legend-item:not( :first-child ) {
 		margin-left: 20px;
 	}
-	animation-name: fadeIn;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 1s;
 }
 
 .line-chart__legend-sample-0 {
