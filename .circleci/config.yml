@@ -16,6 +16,10 @@ jobs:
 
       - checkout
 
+      - run:
+          name: Force master to update
+          command: git fetch --force origin master
+
       - save_cache:
           name: Save git cache
           key: v1-20180524-git
