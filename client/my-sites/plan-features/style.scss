@@ -445,29 +445,38 @@ $plan-features-sidebar-width: 272px;
 	overflow-x: auto;
 }
 
-.touch {
-	.plans-wrapper {
-		overflow-x: scroll;
-		-webkit-overflow-scrolling: touch;
-	}
-}
-
 .plan-features--signup {
 	margin: 0 auto;
 
 	.jetpack-connect__plans & {
-		width: 1000px;
+		max-width: 1000px;
+
+		@include breakpoint( "<660px" ) {
+			width: auto;
+		}
 	}
 
 	.signup__steps & {
-		width: 1100px;
+		max-width: 1100px;
+
+		@include breakpoint( "<660px" ) {
+			width: auto;
+		}
 	}
 
 	.plan-features__table {
-		display: table !important;
-		border-spacing: 15px 0 !important;
 		width: 100%;
 		margin: 0;
+		padding: 0 16px;
+
+		@include breakpoint( "<660px" ) {
+			display: none !important;
+		}
+
+		@include breakpoint( ">1040px" ) {
+			border-spacing: 15px 0 !important;
+			padding: 0;
+		}
 	}
 
 	.plan-features__content {
@@ -495,11 +504,27 @@ $plan-features-sidebar-width: 272px;
 		width: 100px;
 		height: 100px;
 		margin: 20px auto;
+
+		@include breakpoint( "<660px" ) {
+			float: right;
+			width: 50px;
+			height: 50px;
+			margin: 16px 20px;
+		}
 	}
 
 	.plan-features__pricing,
 	.plan-price.is-discounted {
 		color: $gray-dark;
+	}
+
+	.plan-features__pricing {
+		padding: 0 12px;
+
+		@include breakpoint( "<660px" ) {
+			margin: 20px 20px -12px;
+			padding: 0;
+		}
 	}
 
 	.is-placeholder {
@@ -544,36 +569,9 @@ $plan-features-sidebar-width: 272px;
 	.plan-features__row:last-of-type .plan-features__table-item {
 		border-bottom: solid 1px lighten( $gray, 27% );
 	}
-}
 
-/**
- * A/B test for horizontal vs vertical scroll
- */
-.has-mobile-table.plan-features--signup {
-
-	@include breakpoint( "<660px" ) {
-
-		.signup__steps &,
-		.jetpack-connect__plans & {
-			width: auto;
-		}
-
-		.plan-features__graphic {
-			float: right;
-			width: 50px;
-			height: 50px;
-			margin: 16px 20px;
-		}
-
-		.plan-features__pricing {
-			margin: 20px 20px -12px;
-		}
-
-		.plan-features__table {
-			display: none !important;
-		}
-
-		.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
+	.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
+		@include breakpoint( "<660px" ) {
 			padding-top: 0;
 		}
 	}
