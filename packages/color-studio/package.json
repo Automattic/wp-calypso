@@ -20,13 +20,7 @@
     "webpack": "^4.5.0"
   },
   "devDependencies": {
-    "@skpm/builder": "^0.5.7",
-    "eslint-config-xo-react": "^0.16.0",
-    "eslint-plugin-react": "^7.9.1",
     "husky": "^0.14.3",
-    "react": "^16.4.0",
-    "react-sketchapp": "^2.0.0",
-    "react-test-renderer": "^16.4.0",
     "webpack-cli": "^2.0.14",
     "xo": "^0.20.3"
   },
@@ -37,19 +31,12 @@
     "build:sketch": "node palette sketch > dist/Colors.sketchpalette",
     "development": "open index.html && webpack --watch --mode=development",
     "lint": "xo",
-    "precommit": "yarn lint && yarn build && webpack --display=errors-only && git add --update",
-    "render": "skpm-build --run --watch"
-  },
-  "skpm": {
-    "main": "color-studio.sketchplugin",
-    "manifest": "sketch/manifest.json"
+    "precommit": "yarn lint && yarn build && webpack --display=errors-only && git add --update"
   },
   "xo": {
     "ignores": [
-      "*.sketchplugin/**/*.js",
       "**/build/*.js"
     ],
-    "extends": "xo-react",
     "esnext": true,
     "space": true,
     "semicolon": false,
@@ -86,15 +73,6 @@
       "space-before-function-paren": [
         "error",
         "never"
-      ],
-      "react/jsx-tag-spacing": [
-        "error",
-        {
-          "beforeSelfClosing": "always"
-        }
-      ],
-      "react/prop-types": [
-        "off"
       ]
     }
   }
