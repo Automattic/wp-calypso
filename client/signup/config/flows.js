@@ -11,6 +11,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 const user = userFactory();
@@ -164,6 +165,13 @@ const flows = {
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2018-01-24',
+	},
+
+	'domain-last': {
+		steps: [ 'about', 'plans', 'user', 'domains' ],
+		destination: getSiteDestination,
+		description: 'Take the main flow and put domains at the end',
+		lastModified: '2018-04-20',
 	},
 
 	surveystep: {
@@ -431,7 +439,11 @@ function filterDesignTypeInFlow( flowName, flow ) {
  * @return {string}          New flow name.
  */
 function filterFlowName( flowName ) {
-	// do nothing. No flows to filter at the moment.
+	if ( ! user.get() && flowName === 'main' ) {
+		if ( abtest( 'domainsLastFlowOnSignup' ) === 'yes' ) {
+			flowName = 'domain-last';
+		}
+	}
 	return flowName;
 }
 

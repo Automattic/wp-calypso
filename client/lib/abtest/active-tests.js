@@ -118,4 +118,12 @@ export default {
 		},
 		defaultVariation: 'belowFeatured',
 	},
+	domainsLastFlowOnSignup: {
+		datestamp: '20180420',
+		variations: {
+			no: 1,
+			yes: 1,
+		},
+		defaultVariation: 'no',
+	},
 };
