@@ -86,7 +86,7 @@ class PlanFeatures extends Component {
 		mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
 
 		return (
-			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
+			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
@@ -107,15 +107,6 @@ class PlanFeatures extends Component {
 			</div>
 		);
 	}
-
-	setScrollLeft = plansWrapper => {
-		const { isInSignup, displayJetpackPlans } = this.props;
-
-		// center plans
-		if ( isInSignup && plansWrapper ) {
-			displayJetpackPlans ? ( plansWrapper.scrollLeft = 312 ) : ( plansWrapper.scrollLeft = 495 );
-		}
-	};
 
 	renderDiscountNotice() {
 		const { canPurchase, hasPlaceholders, withDiscount, activeDiscount } = this.props;
