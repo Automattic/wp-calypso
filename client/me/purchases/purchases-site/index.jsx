@@ -61,7 +61,7 @@ const PurchasesSite = ( {
 			{ items }
 
 			{ ! isPlaceholder && hasLoadedSite && ! site ? (
-				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } domain={ domain } />
+				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } />
 			) : null }
 		</div>
 	);

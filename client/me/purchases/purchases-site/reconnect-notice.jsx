@@ -18,7 +18,7 @@ import { CALYPSO_CONTACT, JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
 class PurchaseReconnectNotice extends Component {
 	static propTypes = {
 		name: PropTypes.string,
-		domain: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
