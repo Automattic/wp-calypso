@@ -60,10 +60,9 @@ function SignupFlowController( options ) {
 	SignupProgressStore.on( 'change', this._boundProcess );
 
 	if ( options.flowName === store.get( STORAGE_KEY ) ) {
-		SignupActions.fetchCachedSignup( options.flowName );
-
 		// reset the stores if the cached progress contained a processing step
 		this._resetStoresIfProcessing();
+		// reset the stores if user has newly authenticated
 		this._resetStoresIfUserHasLoggedIn();
 	}
 
