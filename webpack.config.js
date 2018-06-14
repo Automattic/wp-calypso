@@ -30,7 +30,7 @@ const config = require( './server/config' );
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
-const shouldMinify = process.env.MINIFY_JS === 'true';
+const shouldMinify = process.env.MINIFY_JS === 'true' || bundleEnv === 'production';
 const shouldEmitStats = process.env.EMIT_STATS === 'true';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
