@@ -191,7 +191,7 @@ function getDefaultContext( request ) {
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
 	// called before route-specific middleware, so it's up to the cache *writes* in server
 	// render to make sure that Redux state and markup are only cached for whitelisted query args.
-	const cacheKey = getNormalizedPath( request.pathname, request.query );
+	const cacheKey = getNormalizedPath( request.path, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
 
