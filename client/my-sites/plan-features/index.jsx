@@ -64,17 +64,6 @@ import {
 } from 'lib/plans/constants';
 
 class PlanFeatures extends Component {
-	componentDidMount() {
-		const { basePlansPath, isInSignup } = this.props;
-		// Check if user is in signup flow & small screens
-		// Used in AB test: mobilePlansTablesOnSignup_20180330
-		if ( isInSignup && window.matchMedia( '(max-width: 660px)' ).matches ) {
-			this.props.recordTracksEvent( 'calypso_wp_plans_verticalabtest_view', {
-				base_plans_path: basePlansPath,
-			} );
-		}
-	}
-
 	render() {
 		const { isInSignup, planProperties } = this.props;
 		const tableClasses = classNames(
