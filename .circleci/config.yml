@@ -46,11 +46,21 @@ jobs:
           paths:
             - ~/.npm
 
+      - restore_cache:
+          name: Restoring server build babel cache
+          key: v1-server-babel-
+
       - run:
           name: Build Server
           environment:
               NODE_ENV: test
           command: npm run build-server
+
+      - save_cache:
+          name: Saving server build babel cache
+          key: v1-server-babel-{{ epoch }}
+          paths:
+            - "build/.babel-server-cache"
 
       - run:
           name: Build calypso-strings.pot
