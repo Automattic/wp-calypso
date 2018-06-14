@@ -90,7 +90,11 @@ const items = createReducer(
 		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { siteId, keyringId, externalUserId } ) => ( {
 			...state,
 			[ siteId ]: ( state[ siteId ] || [] ).filter(
-				keyring => keyring.keyring_id !== keyringId || keyring.external_user_id !== externalUserId
+				keyring =>
+					! (
+						keyring.keyring_id === keyringId &&
+						( ! externalUserId || keyring.external_user_id === externalUserId )
+					)
 			),
 		} ),
 	},
