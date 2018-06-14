@@ -28,7 +28,13 @@ import previousStep from 'components/marketing-survey/cancel-purchase-form/previ
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { isDataLoading } from '../utils';
-import { isDomainRegistration, isPlan, isBusiness, isGoogleApps } from 'lib/products-values';
+import {
+	isBusiness,
+	isDomainRegistration,
+	isGoogleApps,
+	isJetpackPlan,
+	isPlan,
+} from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -454,6 +460,11 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
+		// If we have a disconnected site that is _not_ a Jetpack purchase, no removal allowed.
+		if ( ! this.props.selectedSite && ! this.props.isJetpack ) {
+			return null;
+		}
+
 		const { purchase, translate } = this.props;
 		const productName = getName( purchase );
 
@@ -475,17 +486,21 @@ class RemovePurchase extends Component {
 }
 
 export default connect(
-	( state, { purchase, selectedSite } ) => ( {
-		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-		isAutomatedTransferSite: selectedSite
-			? isSiteAutomatedTransfer( state, selectedSite.ID )
-			: null,
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
-		purchasesError: getPurchasesError( state ),
-		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
-		userId: getCurrentUserId( state ),
-	} ),
+	( state, { purchase, selectedSite } ) => {
+		const isJetpack = purchase && isJetpackPlan( purchase );
+		return {
+			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
+			/* We know Jetpack sites are not Atomic */
+			isAutomatedTransferSite:
+				! isJetpack && ( selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : null ),
+			isChatAvailable: isHappychatAvailable( state ),
+			isChatActive: hasActiveHappychatSession( state ),
+			isJetpack,
+			purchasesError: getPurchasesError( state ),
+			precancellationChatAvailable: isPrecancellationChatAvailable( state ),
+			userId: getCurrentUserId( state ),
+		};
+	},
 	{
 		receiveDeletedSite,
 		recordTracksEvent,
