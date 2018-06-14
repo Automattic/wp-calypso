@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { remove } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
@@ -94,9 +89,8 @@ const items = createReducer(
 		} ),
 		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { siteId, keyringId, externalUserId } ) => ( {
 			...state,
-			[ siteId ]: remove(
-				state[ siteId ] || [],
-				keyring => keyring.keyring_id === keyringId && keyring.external_user_id === externalUserId
+			[ siteId ]: ( state[ siteId ] || [] ).filter(
+				keyring => keyring.keyring_id !== keyringId || keyring.external_user_id !== externalUserId
 			),
 		} ),
 	},
