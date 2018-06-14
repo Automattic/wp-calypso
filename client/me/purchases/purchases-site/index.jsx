@@ -60,9 +60,9 @@ const PurchasesSite = ( {
 
 			{ items }
 
-			{ ! isPlaceholder && hasLoadedSite && ! site ? (
-				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } />
-			) : null }
+			{ ! isPlaceholder &&
+				hasLoadedSite &&
+				! site && <PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } /> }
 		</div>
 	);
 };
