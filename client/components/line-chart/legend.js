@@ -18,13 +18,11 @@ class LineChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.array.isRequired,
 		onDataSeriesSelected: PropTypes.func,
-		shouldFadeIn: PropTypes.boolean,
 	};
 
 	static defaultProps = {
 		fillArea: false,
 		onDataSeriesSelected: noop,
-		shouldFadeIn: false,
 	};
 
 	handleMouseOver = dataSeriesIndex => {
@@ -36,10 +34,10 @@ class LineChartLegend extends Component {
 	};
 
 	render() {
-		const { data, shouldFadeIn } = this.props;
+		const { data } = this.props;
 
 		return (
-			<span className={ shouldFadeIn ? 'line-chart__legend-with-fade' : 'line-chart__legend' }>
+			<span className="line-chart__legend">
 				{ data.map( ( dataSeries, index ) => {
 					return (
 						// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events

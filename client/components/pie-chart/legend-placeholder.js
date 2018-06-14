@@ -5,43 +5,43 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { range } from 'lodash';
 
-const SVG_SIZE = 30;
+/**
+ * Internal dependencies
+ */
+import LegendItemPlaceholder from 'components/legend-item/placeholder';
 
 class PieChartLegendPlaceholder extends Component {
 	static propTypes = {
-		numLegendElements: PropTypes.number.isRequired,
+		dataSeriesInfo: PropTypes.arrayOf(
+			PropTypes.shape( {
+				description: PropTypes.string,
+				name: PropTypes.string.isRequired,
+			} )
+		).isRequired,
 	};
 
+	static getDerivedStateFromProps( props, state ) {
+		const longestName = props.dataSeriesInfo.reduce( ( pv, cv ) => {
+			return pv.length > cv.name.length ? pv : cv.name;
+		}, '' );
+
+		return state.longestName !== longestName ? { longestName } : null;
+	}
+
 	render() {
-		const { numLegendElements } = this.props;
+		const { dataSeriesInfo } = this.props;
+		const { longestName } = this.state;
 
 		return (
 			<div className="pie-chart__placeholder-legend">
-				{ range( numLegendElements ).map( number => {
+				{ dataSeriesInfo.map( datumInfo => {
 					return (
-						<div key={ number } className="pie-chart__placeholder-legend-item">
-							<div className="pie-chart__placeholder-legend-item-title">
-								<svg
-									className="pie-chart__placeholder-legend-drawing"
-									viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
-								>
-									<circle
-										className="pie-chart__placeholder-drawing-element"
-										cx={ SVG_SIZE / 2 }
-										cy={ SVG_SIZE / 2 }
-										r={ SVG_SIZE / 2 }
-									/>
-								</svg>
-							</div>
-
-							<div className="pie-chart__placeholder-legend-item-detail">
-								<div key="detail-1" className="pie-chart__placeholder-legend-item-detail-element" />
-								<div key="detail-2" className="pie-chart__placeholder-legend-item-detail-element" />
-								<div key="detail-3" className="pie-chart__placeholder-legend-item-detail-element" />
-							</div>
-						</div>
+						<LegendItemPlaceholder
+							key={ datumInfo.name }
+							name={ longestName }
+							description={ datumInfo.description }
+						/>
 					);
 				} ) }
 			</div>

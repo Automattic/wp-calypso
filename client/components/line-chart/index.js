@@ -5,7 +5,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { extent as d3Extent } from 'd3-array';
 import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
@@ -66,7 +65,6 @@ class LineChart extends Component {
 		legendInfo: PropTypes.array,
 		margin: PropTypes.object,
 		renderTooltipForDatanum: PropTypes.func,
-		shouldFadeIn: PropTypes.boolean,
 	};
 
 	static defaultProps = {
@@ -79,7 +77,6 @@ class LineChart extends Component {
 			left: 30,
 		},
 		renderTooltipForDatanum: datum => datum.value,
-		shouldFadeIn: false,
 	};
 
 	state = {
@@ -351,20 +348,15 @@ class LineChart extends Component {
 	};
 
 	render() {
-		const { legendInfo, shouldFadeIn } = this.props;
+		const { legendInfo } = this.props;
 		const { data, pointHovered } = this.state;
 
 		if ( ! data ) {
 			return null;
 		}
 
-		const classes = [ 'line-chart' ];
-		if ( shouldFadeIn ) {
-			classes.push( 'line-chat__with-fade-in' );
-		}
-
 		return (
-			<div className={ classnames( ...classes ) }>
+			<div className="line-chart">
 				{ legendInfo && (
 					<LineChartLegend
 						data={ legendInfo }
@@ -373,7 +365,7 @@ class LineChart extends Component {
 				) }
 
 				<D3Base
-					className={ shouldFadeIn ? 'line-chart__base-with-fade-in' : 'line-chart__base' }
+					className="line-chart__base"
 					drawChart={ this.drawChart }
 					getParams={ this.getParams }
 					data={ data }

@@ -9,7 +9,7 @@
 .pie-chart__chart-drawing {
 	max-width: 40%;
 }
-
+.pie-chart__placeholder-title,
 .pie-chart__title {
 	margin-top: 15px;
 	font-size: 16px;
@@ -45,6 +45,16 @@
 	}
 }
 
+.pie-chart__placeholder-legend {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	.legend-item__placeholder:not( :first-child ) {
+		margin-top: 20px;
+	}
+}
+
 .pie-chart__placeholder-legend-drawing {
 	height: 12px;
 	width: 12px;
@@ -53,11 +63,6 @@
 
 .pie-chart__placeholder-title {
 	@include placeholder();
-	margin-top: 15px;
-	font-size: 24px;
-	text-align: center;
-	width: 80%;
-	height: 35px;
 }
 
 .pie-chart__placeholder-drawing-element {
