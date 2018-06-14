@@ -38,6 +38,10 @@
 	margin: 0 7px;
 	text-align: center;
 	align-self: center;
+
+	.is-disabled & {
+		color: $gray-lighten-10;
+	}
 }
 
 .podcast-cover-image-setting {
@@ -48,4 +52,10 @@
 	min-width: 98px;
 	margin-top: 4px;
 	text-align: center;
+
+	.is-disabled &:disabled {
+		background-color: $gray-light;
+		border-color: $gray-lighten-20;
+		color: $gray-lighten-10;
+	}
 }

@@ -34,12 +34,18 @@
 
 	&.is-disabled {
 		background-color: $gray-light;
-		border-color: $gray;
+		border-color: $gray-lighten-20;
 	}
 
 	&.is-disabled label,
 	&.is-disabled .form-setting-explanation {
 		color: $gray-lighten-10;
+	}
+
+	&.is-disabled .form-text-input,
+	&.is-disabled .form-textarea {
+		color: $gray-lighten-10;
+		border-color: $gray-lighten-20;
 	}
 }
 
