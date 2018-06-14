@@ -30,13 +30,14 @@ jobs:
 
       - restore_cache:
           name: "Restoring npm cache"
-          key: v1-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}-npmcache
+          key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+          key: v1-npmcache-{{ checksum ".nvmrc" }}
 
       - run: npm ci
 
       - save_cache:
           name: "Saving npm cache"
-          key: v1-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}-npmcache
+          key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
           paths:
             - ~/.npm
 
