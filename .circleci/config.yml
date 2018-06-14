@@ -11,11 +11,13 @@ jobs:
 
     steps:
       - restore_cache:
+          name: Restore git cache
           key: v1-20180524-git
 
       - checkout
 
       - save_cache:
+          name: Save git cache
           key: v1-20180524-git
           paths:
             - ".git"
@@ -28,14 +30,20 @@ jobs:
 
       - run: npm ci
 
-      - run: NODE_ENV=test npm run build-server
+      - run:
+          name: Build Server
+          environment:
+              NODE_ENV: test
+          command: npm run build-server
 
       - run:
+          name: Build calypso-strings.pot
           command: |
             npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
             mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
 
       - run:
+          name: Build New Strings .pot
           command: |
             git clone https://github.com/Automattic/gp-localci-client.git
             bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
@@ -47,7 +55,7 @@ jobs:
             bin/run-integration $(circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings)
 
       - run:
-          name: Lint
+          name: Lint Config Keys
           command: npm run lint:config-defaults
 
       - run:
