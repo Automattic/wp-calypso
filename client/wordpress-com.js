@@ -188,6 +188,7 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'checklist',
