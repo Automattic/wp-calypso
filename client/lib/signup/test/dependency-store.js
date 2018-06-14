@@ -13,19 +13,17 @@ import { createStore } from 'redux';
  * Internal dependencies
  */
 import { reducer } from 'state';
+import SignupActions from '../actions';
+import SignupDependencyStore from '../dependency-store';
+import SignupProgressStore from '../progress-store';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'dependency-store', () => {
-	let SignupProgressStore, SignupDependencyStore, SignupActions;
-
 	beforeAll( () => {
-		SignupProgressStore = require( '../progress-store' );
-		SignupDependencyStore = require( '../dependency-store' );
-		SignupActions = require( '../actions' );
-
 		const store = createStore( reducer );
+		SignupProgressStore.setReduxStore( store );
 		SignupDependencyStore.setReduxStore( store );
 	} );
 
@@ -62,6 +60,6 @@ describe( 'dependency-store', () => {
 
 		SignupActions.provideDependencies( dependencies );
 
-		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN2', ...dependencies } );
+		expect( SignupDependencyStore.get() ).toEqual( dependencies );
 	} );
 } );
