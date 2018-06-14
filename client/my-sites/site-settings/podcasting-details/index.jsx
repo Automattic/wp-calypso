@@ -349,7 +349,9 @@ class PodcastingDetails extends Component {
 	};
 
 	onCategoryCleared = () => {
-		this.props.updateFields( { podcasting_category_id: '0' } );
+		this.props.updateFields( { podcasting_category_id: '0' }, () => {
+			this.props.submitForm();
+		} );
 	};
 
 	onCoverImageRemoved = () => {
