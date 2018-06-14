@@ -71,7 +71,6 @@ class PlanFeatures extends Component {
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
-			'has-mobile-table': abtest( 'mobilePlansTablesOnSignup' ) === 'vertical',
 			'plan-features--signup': isInSignup,
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
