@@ -195,6 +195,10 @@ class ActivityLogItem extends Component {
 			pluginsToUpdate,
 		} = this.props;
 
+		if ( enableClone ) {
+			return activityIsRewindable ? this.renderCloneAction() : null;
+		}
+
 		switch ( activityName ) {
 			case 'plugin__update_available':
 				// If every plugin is either still updating or finished successfully, hide the button.
@@ -229,10 +233,6 @@ class ActivityLogItem extends Component {
 
 		if ( ! hideRestore && activityIsRewindable ) {
 			return this.renderRewindAction();
-		}
-
-		if ( enableClone && activityIsRewindable ) {
-			return this.renderCloneAction();
 		}
 	}
 
