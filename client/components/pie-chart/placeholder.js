@@ -11,7 +11,7 @@ const SVG_SIZE = 300;
 
 class PieChartPlaceholder extends Component {
 	static propTypes = {
-		title: PropTypes.string,
+		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
 
 	static defaultProps = {

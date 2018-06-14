@@ -1,27 +1,3 @@
-.line-chat__with-fade-in {
-	animation-name: fadeInBackground;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 1s;
-}
-
-@keyframes fadeInBackground {
-    0% { background-color: lighten( $gray, 30% ); }
-    100%   { background-color: $white; }
-}
-
-.line-chart__base-with-fade-in {
-	animation-name: fadeIn;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 1s;
-}
-
-@keyframes fadeIn {
-    0% { opactiy: 0 }
-    100%   { opactiy: 1 }
-}
-
 .line-chart__line-color-0 {
 	fill: none;
 	stroke: $blue-dark;

@@ -29,6 +29,10 @@ class PieChartLegendPlaceholder extends Component {
 		return state.longestName !== longestName ? { longestName } : null;
 	}
 
+	state = {
+		longestName: '',
+	};
+
 	render() {
 		const { dataSeriesInfo } = this.props;
 		const { longestName } = this.state;
