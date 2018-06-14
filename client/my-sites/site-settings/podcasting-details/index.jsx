@@ -16,7 +16,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
 import { decodeEntities } from 'lib/formatting';
@@ -30,6 +29,7 @@ import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingNoPermissionsMessage from './no-permissions';
+import PodcastingNotSupportedMessage from './not-supported';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -178,25 +178,9 @@ class PodcastingDetails extends Component {
 	}
 
 	render() {
-		const {
-			handleSubmitForm,
-			siteSlug,
-			siteId,
-			translate,
-			isPodcastingEnabled,
-			isUnsupportedSite,
-		} = this.props;
+		const { handleSubmitForm, siteSlug, siteId, translate, isPodcastingEnabled } = this.props;
 		if ( ! siteId ) {
 			return null;
-		}
-
-		if ( isUnsupportedSite ) {
-			return (
-				<EmptyContent
-					illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
-					title={ translate( 'Podcasting settings are not supported on this site.' ) }
-				/>
-			);
 		}
 
 		const error = this.renderSettingsError();
@@ -304,7 +288,7 @@ class PodcastingDetails extends Component {
 	renderSettingsError() {
 		// If there is a reason that we can't display the podcasting settings
 		// screen, it will be rendered here.
-		const { isPrivate, userCanManagePodcasting } = this.props;
+		const { isPrivate, isUnsupportedSite, userCanManagePodcasting } = this.props;
 
 		if ( isPrivate ) {
 			return <PodcastingPrivateSiteMessage />;
@@ -312,6 +296,10 @@ class PodcastingDetails extends Component {
 
 		if ( ! userCanManagePodcasting ) {
 			return <PodcastingNoPermissionsMessage />;
+		}
+
+		if ( isUnsupportedSite ) {
+			return <PodcastingNotSupportedMessage />;
 		}
 
 		return null;
