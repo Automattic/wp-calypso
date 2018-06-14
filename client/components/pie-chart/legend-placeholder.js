@@ -22,9 +22,13 @@ class PieChartLegendPlaceholder extends Component {
 	};
 
 	static getDerivedStateFromProps( props, state ) {
-		const longestName = props.dataSeriesInfo.reduce( ( pv, cv ) => {
-			return pv.length > cv.name.length ? pv : cv.name;
-		}, '' );
+		const longestName = props.dataSeriesInfo.reduce(
+			( intermediateLongestName, currentValue ) =>
+				intermediateLongestName.length > currentValue.name.length
+					? intermediateLongestName
+					: currentValue.name,
+			''
+		);
 
 		return state.longestName !== longestName ? { longestName } : null;
 	}
