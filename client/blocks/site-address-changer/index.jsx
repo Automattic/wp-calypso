@@ -24,11 +24,9 @@ import {
 	requestSiteAddressAvailability,
 	clearValidationError,
 } from 'state/site-address-change/actions';
-import {
-	isRequestingSiteAddressChange,
-	getSiteAddressAvailabilityPending,
-	getSiteAddressValidationError,
-} from 'state/selectors';
+import getSiteAddressAvailabilityPending from 'state/selectors/get-site-address-availability-pending';
+import getSiteAddressValidationError from 'state/selectors/get-site-address-validation-error';
+import isRequestingSiteAddressChange from 'state/selectors/is-requesting-site-address-change';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
@@ -63,7 +61,7 @@ export class SiteAddressChanger extends Component {
 	onConfirm = () => {
 		const { selectedSiteId } = this.props;
 
-		this.props.requestSiteAddressChange( selectedSiteId, this.state.domainFieldValue);
+		this.props.requestSiteAddressChange( selectedSiteId, this.state.domainFieldValue );
 	};
 
 	setValidationState = () => {
