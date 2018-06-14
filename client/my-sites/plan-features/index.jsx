@@ -85,10 +85,6 @@ class PlanFeatures extends Component {
 
 		mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
 
-		if ( isInSignup && abtest( 'mobilePlansTablesOnSignup' ) === 'original' ) {
-			mobileView = '';
-		}
-
 		return (
 			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
 				<QueryActivePromotions />
