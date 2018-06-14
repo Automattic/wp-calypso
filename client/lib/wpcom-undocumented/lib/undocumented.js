@@ -218,11 +218,12 @@ Undocumented.prototype.jetpackAuthorize = function(
 	state,
 	redirect_uri,
 	secret,
-	jp_version
+	jp_version,
+	from
 ) {
 	debug( '/jetpack-blogs/:site_id:/authorize query' );
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
-	const params = { code, state, redirect_uri, secret, jp_version };
+	const params = { code, state, redirect_uri, secret, jp_version, from };
 	return this.wpcom.req.post( { path: endpointUrl }, params );
 };
 
