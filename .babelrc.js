@@ -44,6 +44,7 @@ const config = {
 			{ async: isCalypsoClient && codeSplit },
 		],
 		'@babel/plugin-proposal-export-default-from',
+		[ '@babel/transform-runtime', { regenerator: false } ],
 		isCalypsoClient && './inline-imports.js',
 	] ),
 	env: {
