@@ -47,8 +47,8 @@ jobs:
             - ~/.npm
 
       - restore_cache:
-          name: Restoring server build babel cache
-          key: v1-server-babel-
+          name: Restore Server Build Babel cache
+          key: v1-server-babel-{{ checksum "npm-shrinkwrap.json"}}
 
       - run:
           name: Build Server
@@ -57,8 +57,8 @@ jobs:
           command: npm run build-server
 
       - save_cache:
-          name: Saving server build babel cache
-          key: v1-server-babel-{{ epoch }}
+          name: Saving Server Build Babel cache
+          key: v1-server-babel-{{ checksum "npm-shrinkwrap.json" }}-{{ epoch }}
           paths:
             - "build/.babel-server-cache"
 
