@@ -9,6 +9,7 @@
 .legend-item__placeholder-title {
 	display: flex;
 	align-items: center;
+	height: 21px;
 }
 
 .legend-item__detail-description,
@@ -46,6 +47,11 @@
 		content: '';
 	}
 	border: 2px solid $white;
+}
+
+.legend-item__placeholder-detail {
+	height: 42px;
+	box-sizing: border-box;
 }
 
 .legend-item__placeholder-title-circle {
