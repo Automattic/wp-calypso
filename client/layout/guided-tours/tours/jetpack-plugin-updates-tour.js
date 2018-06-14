@@ -15,6 +15,7 @@ import {
 	ButtonRow,
 	Continue,
 	makeTour,
+	Quit,
 	SiteLink,
 	Step,
 	Tour,
@@ -64,9 +65,12 @@ export const JetpackPluginUpdatesTour = makeTour(
 							'Jetpack will now autoupdate for you. Would you like to continue setting up the security essential features for your site?'
 						) }
 					</p>
-					<SiteLink isButton href={ '/checklist/:site' }>
-						{ translate( 'Return to the checklist' ) }
-					</SiteLink>
+					<ButtonRow>
+						<SiteLink isButton href={ '/checklist/:site' }>
+							{ translate( "Yes, let's do it." ) }
+						</SiteLink>
+						<Quit>{ translate( 'No thanks.' ) }</Quit>
+					</ButtonRow>
 				</Fragment>
 			) }
 		</Step>
