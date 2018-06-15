@@ -4419,9 +4419,10 @@
       }
     },
     "commander": {
-      "version": "2.3.0",
-      "resolved": "https://registry.npmjs.org/commander/-/commander-2.3.0.tgz",
-      "integrity": "sha1-/UMOiJgy7DU7ms0d4hfBHLPu+HM="
+      "version": "2.15.1",
+      "resolved": "https://registry.npmjs.org/commander/-/commander-2.15.1.tgz",
+      "integrity": "sha512-VlfT9F3V0v+jr4yxPc5gg9s62/fIVWsd2Bk2iD435um1NlGMYdVCq+MjcXnhYq2icNOizHr1kK+5TI6H0Hy0ag==",
+      "dev": true
     },
     "commondir": {
       "version": "1.0.1",
