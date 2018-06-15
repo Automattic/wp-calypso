@@ -93,7 +93,7 @@
     "immutability-helper": "2.4.0",
     "immutable": "3.7.6",
     "imports-loader": "0.6.5",
-    "inherits": "2.0.1",
+    "inherits": "2.0.3",
     "is-my-json-valid": "2.17.2",
     "jquery": "1.12.3",
     "json-loader": "0.5.4",
