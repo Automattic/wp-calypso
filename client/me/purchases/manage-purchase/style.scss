@@ -164,25 +164,17 @@
 	margin-top: 16px;
 }
 
-.manage-purchase__meta,
-.manage-purchase__contact-support {
-	padding: 0 24px;
-	border-top: 1px solid $gray-lighten-30;
-
-	@include breakpoint( '<660px' ) {
-		padding: 0 16px;
-	}
-}
-
 .manage-purchase__meta {
 	display: flex;
 	margin: 0;
 	list-style: none;
 	overflow: auto;
+	padding: 0 24px;
+	border-top: 1px solid $gray-lighten-30;
 
 	@include breakpoint( '<660px' ) {
 		flex-direction: column;
-		padding-bottom: 16px;
+		padding: 0 16px 16px;
 	}
 
 	li {
@@ -287,8 +279,5 @@
 }
 
 .manage-purchase__contact-support {
-	border-top: solid 1px $gray-lighten-30;
 	color: $gray;
-	margin-top: 15px;
-	padding-top: 10px;
 }

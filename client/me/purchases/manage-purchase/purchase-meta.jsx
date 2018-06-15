@@ -38,6 +38,7 @@ import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
+import CompactCard from 'components/card/compact';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -246,7 +247,7 @@ class PurchaseMeta extends Component {
 		}
 
 		return (
-			<div className="manage-purchase__contact-support">
+			<CompactCard className="manage-purchase__contact-support">
 				{ translate(
 					'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
 						'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
@@ -261,7 +262,7 @@ class PurchaseMeta extends Component {
 						},
 					}
 				) }
-			</div>
+			</CompactCard>
 		);
 	}
 
