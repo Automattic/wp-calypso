@@ -6,7 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { differenceBy, find, isEqual, last, noop, some } from 'lodash';
+import { find, isEqual, last, noop, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -139,20 +139,12 @@ class KeyringConnectButton extends Component {
 		} );
 
 		if ( this.didKeyringConnectionSucceed( nextProps.keyringConnections ) ) {
-			const keyringId = this.state.keyringId || null;
-			this.setState( { isConnecting: false, keyringId: null } );
-			let newKeyringConnection = null;
-			if ( keyringId ) {
-				newKeyringConnection = find( nextProps.keyringConnections, { ID: keyringId } );
-			} else {
-				// if no keyring id is given from the popup,
-				// fallback to less reliable ways of determining the new connection
-				newKeyringConnection =
-					differenceBy( this.props.keyringConnections, nextProps.keyringConnections, 'ID' )[ 0 ] ||
-					last( nextProps.keyringConnections );
+			const keyringId = this.state.keyringId;
+			const newKeyringConnection = find( nextProps.keyringConnections, { ID: keyringId } );
+			if ( newKeyringConnection ) {
+				this.props.onConnect( newKeyringConnection );
 			}
-
-			this.props.onConnect( newKeyringConnection );
+			this.setState( { keyringId: null } );
 		}
 	}
 
@@ -170,13 +162,11 @@ class KeyringConnectButton extends Component {
 				keyringConnection.isConnected === false || keyringConnection.isConnected === undefined
 		);
 
-		if ( keyringConnections.length === 0 ) {
-			this.setState( { isConnecting: false } );
-		} else if ( ! hasAnyConnectionOptions ) {
+		if ( ! this.state.keyringId || keyringConnections.length === 0 || ! hasAnyConnectionOptions ) {
 			this.setState( { isConnecting: false } );
 		}
 
-		return keyringConnections.length && hasAnyConnectionOptions;
+		return this.state.keyringId && keyringConnections.length && hasAnyConnectionOptions;
 	}
 
 	render() {
