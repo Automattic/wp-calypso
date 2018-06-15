@@ -143,10 +143,6 @@ const webpackConfig = {
 				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 			},
 			{
-				test: /\.html$/,
-				loader: 'html-loader',
-			},
-			{
 				include: require.resolve( 'tinymce/tinymce' ),
 				use: 'exports-loader?window=tinymce',
 			},
