@@ -90,7 +90,7 @@ class LabelItem extends Component {
 		const { siteId, orderId, label, translate } = this.props;
 
 		return (
-			<div key={ label.labelId } className="shipping-label__item">
+			<div className="shipping-label__item">
 				<p className="shipping-label__item-detail">
 					{ translate( '%(service)s label (#%(labelIndex)d) printed', {
 						args: {
