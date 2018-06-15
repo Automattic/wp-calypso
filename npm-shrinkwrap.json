@@ -3515,6 +3515,11 @@
       "resolved": "https://registry.npmjs.org/chardet/-/chardet-0.4.2.tgz",
       "integrity": "sha1-tUc7M9yXxCTl2Y3IfVXU2KKci/I="
     },
+    "charenc": {
+      "version": "0.0.2",
+      "resolved": "https://registry.npmjs.org/charenc/-/charenc-0.0.2.tgz",
+      "integrity": "sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc="
+    },
     "check-node-version": {
       "version": "2.1.0",
       "resolved": "https://registry.npmjs.org/check-node-version/-/check-node-version-2.1.0.tgz",
@@ -4785,6 +4790,11 @@
         "shebang-command": "^1.2.0",
         "which": "^1.2.9"
       }
+    },
+    "crypt": {
+      "version": "0.0.2",
+      "resolved": "https://registry.npmjs.org/crypt/-/crypt-0.0.2.tgz",
+      "integrity": "sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs="
     },
     "cryptiles": {
       "version": "2.0.5",
@@ -6733,9 +6743,9 @@
       "integrity": "sha1-De4/7TH81GlhjOc0IJn8GvoL2xM="
     },
     "estree-walker": {
-      "version": "0.2.1",
-      "resolved": "https://registry.npmjs.org/estree-walker/-/estree-walker-0.2.1.tgz",
-      "integrity": "sha1-va/oCVOD2EFNXcLs9MkXO225QS4="
+      "version": "0.3.1",
+      "resolved": "https://registry.npmjs.org/estree-walker/-/estree-walker-0.3.1.tgz",
+      "integrity": "sha1-5rGlHPcpJSTnI3wxLl/mZgwc4ao="
     },
     "esutils": {
       "version": "2.0.2",
@@ -9301,9 +9311,9 @@
       }
     },
     "i18n-calypso": {
-      "version": "1.8.4",
-      "resolved": "https://registry.npmjs.org/i18n-calypso/-/i18n-calypso-1.8.4.tgz",
-      "integrity": "sha512-vAEAmvbuytZEs/2d0M4WJYCKtzuCt4L2R7jMg57yO50kCmm5uPIj/9EJadum+MBPU7JgyWzDHH5J8PDr7deW4A==",
+      "version": "1.9.1",
+      "resolved": "https://registry.npmjs.org/i18n-calypso/-/i18n-calypso-1.9.1.tgz",
+      "integrity": "sha512-5lnGA5+ew4m+jlWjH54rTt+KrsCoYbFPxg/20dGyuZZHIQ4+BizMqzIVkS6L091mmrCNnUHtv8Slf0/u+74cRQ==",
       "requires": {
         "async": "^1.5.2",
         "commander": "^2.9.0",
@@ -9318,7 +9328,8 @@
         "lru": "^3.1.0",
         "moment-timezone": "0.5.11",
         "react": "0.14.8 || ^15.5.0 || ^16.0.0",
-        "xgettext-js": "1.0.0"
+        "sha1": "^1.1.1",
+        "xgettext-js": "^1.0.0"
       },
       "dependencies": {
         "async": {
@@ -17732,6 +17743,15 @@
         "safe-buffer": "^5.0.1"
       }
     },
+    "sha1": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/sha1/-/sha1-1.1.1.tgz",
+      "integrity": "sha1-rdqnqTFo85PxnrKxUJFhjicA+Eg=",
+      "requires": {
+        "charenc": ">= 0.0.1",
+        "crypt": ">= 0.0.1"
+      }
+    },
     "shebang-command": {
       "version": "1.2.0",
       "resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-1.2.0.tgz",
@@ -21908,22 +21928,19 @@
       "dev": true
     },
     "xgettext-js": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/xgettext-js/-/xgettext-js-1.0.0.tgz",
-      "integrity": "sha1-zZwElVeUaLH0ODReVEhcOJTqMFc=",
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/xgettext-js/-/xgettext-js-1.1.0.tgz",
+      "integrity": "sha1-BSqSm2dVMjmyaqXrHjI1gSvqtm0=",
       "requires": {
-        "babylon": "6.8.4",
-        "estree-walker": "0.2.1",
+        "babylon": "^6.8.4",
+        "estree-walker": "^0.3.0",
         "lodash": "^4.13.1"
       },
       "dependencies": {
         "babylon": {
-          "version": "6.8.4",
-          "resolved": "https://registry.npmjs.org/babylon/-/babylon-6.8.4.tgz",
-          "integrity": "sha1-CXMGuNq66VFZIlzymz6lWRIFMYA=",
-          "requires": {
-            "babel-runtime": "^6.0.0"
-          }
+          "version": "6.18.0",
+          "resolved": "https://registry.npmjs.org/babylon/-/babylon-6.18.0.tgz",
+          "integrity": "sha512-q/UEjfGJ2Cm3oKV71DJz9d25TPnq5rhBVL2Q4fA5wcC3jcrdn7+SssEybFIxwAvvP+YCsCYNKughoF33GxgycQ=="
         }
       }
     },
