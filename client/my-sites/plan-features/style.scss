@@ -449,28 +449,29 @@ $plan-features-sidebar-width: 272px;
 	margin: 0 auto;
 
 	.jetpack-connect__plans & {
-		max-width: 1000px;
+		width: auto;
 
-		@include breakpoint( "<660px" ) {
-			width: auto;
+		@include breakpoint( ">660px" ) {
+			max-width: 1000px;
 		}
 	}
 
 	.signup__steps & {
-		max-width: 1100px;
+		width: auto;
 
-		@include breakpoint( "<660px" ) {
-			width: auto;
+		@include breakpoint( ">660px" ) {
+			max-width: 1100px;
 		}
 	}
 
 	.plan-features__table {
-		width: 100%;
-		margin: 0;
-		padding: 0 16px;
+		display: none;
 
-		@include breakpoint( "<660px" ) {
-			display: none !important;
+		@include breakpoint( ">660px" ) {
+			display: table;
+			width: 100%;
+			margin: 0;
+			padding: 0 16px;
 		}
 
 		@include breakpoint( ">1040px" ) {
@@ -501,15 +502,16 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features__graphic {
-		width: 100px;
-		height: 100px;
-		margin: 20px auto;
+		float: right;
+		width: 50px;
+		height: 50px;
+		margin: 16px 20px;
 
-		@include breakpoint( "<660px" ) {
-			float: right;
-			width: 50px;
-			height: 50px;
-			margin: 16px 20px;
+		@include breakpoint( ">660px" ) {
+			float: none;
+			width: 100px;
+			height: 100px;
+			margin: 20px auto;
 		}
 	}
 
@@ -519,11 +521,12 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features__pricing {
-		padding: 0 12px;
+		margin: 20px 20px -12px;
+		padding: 0;
 
-		@include breakpoint( "<660px" ) {
-			margin: 20px 20px -12px;
-			padding: 0;
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 0;
+			padding: 0 12px;
 		}
 	}
 
