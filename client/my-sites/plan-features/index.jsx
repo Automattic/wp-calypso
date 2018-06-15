@@ -64,17 +64,6 @@ import {
 } from 'lib/plans/constants';
 
 class PlanFeatures extends Component {
-	componentDidMount() {
-		const { basePlansPath, isInSignup } = this.props;
-		// Check if user is in signup flow & small screens
-		// Used in AB test: mobilePlansTablesOnSignup_20180330
-		if ( isInSignup && window.matchMedia( '(max-width: 660px)' ).matches ) {
-			this.props.recordTracksEvent( 'calypso_wp_plans_verticalabtest_view', {
-				base_plans_path: basePlansPath,
-			} );
-		}
-	}
-
 	render() {
 		const { isInSignup, planProperties } = this.props;
 		const tableClasses = classNames(
@@ -82,7 +71,6 @@ class PlanFeatures extends Component {
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
-			'has-mobile-table': abtest( 'mobilePlansTablesOnSignup' ) === 'vertical',
 			'plan-features--signup': isInSignup,
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
@@ -97,12 +85,8 @@ class PlanFeatures extends Component {
 
 		mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
 
-		if ( isInSignup && abtest( 'mobilePlansTablesOnSignup' ) === 'original' ) {
-			mobileView = '';
-		}
-
 		return (
-			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
+			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
@@ -123,15 +107,6 @@ class PlanFeatures extends Component {
 			</div>
 		);
 	}
-
-	setScrollLeft = plansWrapper => {
-		const { isInSignup, displayJetpackPlans } = this.props;
-
-		// center plans
-		if ( isInSignup && plansWrapper ) {
-			displayJetpackPlans ? ( plansWrapper.scrollLeft = 312 ) : ( plansWrapper.scrollLeft = 495 );
-		}
-	};
 
 	renderDiscountNotice() {
 		const { canPurchase, hasPlaceholders, withDiscount, activeDiscount } = this.props;

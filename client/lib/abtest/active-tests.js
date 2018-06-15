@@ -83,15 +83,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	mobilePlansTablesOnSignup: {
-		datestamp: '20180330',
-		variations: {
-			original: 50,
-			vertical: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
 	jetpackSignupGoogleTop: {
 		datestamp: '20180427',
 		variations: {
