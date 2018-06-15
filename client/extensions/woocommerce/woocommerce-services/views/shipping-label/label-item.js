@@ -134,7 +134,7 @@ class LabelItem extends Component {
 								currency={ currency }
 								labelId={ labelId }
 							/>
-							<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
+							<ReprintDialog siteId={ siteId } orderId={ orderId } labelId={ labelId } />
 						</span>
 					) }
 				</p>
