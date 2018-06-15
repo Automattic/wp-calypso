@@ -41,7 +41,7 @@ import {
 	getFormErrors,
 	shouldFulfillOrder,
 	shouldEmailDetails,
-	needsCustomsForm,
+	isCustomsFormRequired,
 	getProductValueFromOrder,
 } from './selectors';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
@@ -245,7 +245,7 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 
 	dispatch( NoticeActions.removeNotice( 'wcs-label-rates' ) );
 
-	const customsItems = needsCustomsForm( getState(), orderId, siteId ) ? customs.items : null;
+	const customsItems = isCustomsFormRequired( getState(), orderId, siteId ) ? customs.items : null;
 	const apiPackages = map( packages.selected, pckg =>
 		convertToApiPackage( pckg, siteId, orderId, state, customsItems )
 	);
@@ -924,7 +924,9 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 			}
 			const state = getShippingLabel( getState(), orderId, siteId );
 			form = state.form;
-			const customsItems = needsCustomsForm( state, orderId, siteId ) ? form.customs.items : null;
+			const customsItems = isCustomsFormRequired( state, orderId, siteId )
+				? form.customs.items
+				: null;
 			const formData = {
 				async: true,
 				origin: getAddressValues( form.origin ),
