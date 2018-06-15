@@ -18,6 +18,8 @@
     "jquery"
   ],
   "labels": [
-    "Framework"
+	"Framework",
+	"[Type] Task",
+	"[Status] Needs Review"
   ]
 }
