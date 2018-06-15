@@ -17,10 +17,13 @@
 			color: $gray-text;
 			margin-right: 12px;
 		}
+
 		.podcasting-details__link-button {
 			color: $gray-darken-20;
 			font-weight: 600;
 			flex-shrink: 0;
+			// For viewports/translations when the text is taller than the button
+			align-self: center;
 		}
 	}
 
@@ -56,11 +59,6 @@
 		// display (whitespace) between text items
 		display: flex;
 		align-items: center;
-	}
-
-	.podcasting-details__link-button {
-		// For viewports/translations when the text is taller than the button
-		align-self: center;
 	}
 
 	.gridicons-microphone {
