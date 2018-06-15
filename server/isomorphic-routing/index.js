@@ -47,7 +47,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 }
 
 function setRouteMiddleware( context, next ) {
-	context.store.dispatch( setRouteAction( context.pathname, context.query ) );
+	context.store.dispatch( setRouteAction( context.pathname, context.query, true ) );
 
 	next();
 }

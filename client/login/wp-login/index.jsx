@@ -168,7 +168,7 @@ export class Login extends React.Component {
 
 	render() {
 		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
-		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/login', locale );
+		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/log-in', locale );
 
 		return (
 			<div>
