@@ -21,6 +21,8 @@ import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
+import UpgradeBanner from '../activity-log-banner/upgrade-banner';
+import { isFreePlan } from 'lib/plans';
 import FoldableCard from 'components/foldable-card';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -38,6 +40,7 @@ import SuccessBanner from '../activity-log-banner/success-banner';
 import UnavailabilityNotice from './unavailability-notice';
 import { adjustMoment, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
@@ -299,6 +302,14 @@ class ActivityLog extends Component {
 		);
 	}
 
+	renderUpgradeBanner() {
+		const { siteIsOnFreePlan } = this.props;
+		if ( ! siteIsOnFreePlan ) {
+			return null;
+		}
+		return <UpgradeBanner />;
+	}
+
 	getActivityLog() {
 		const {
 			enableRewind,
@@ -375,6 +386,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
+				{ this.renderUpgradeBanner() }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
@@ -490,6 +502,7 @@ export default connect(
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 		const logs = siteId && requestActivityLogs( siteId, {} );
+		const siteIsOnFreePlan = isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) );
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
@@ -511,6 +524,7 @@ export default connect(
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
+			siteIsOnFreePlan,
 		};
 	},
 	{
