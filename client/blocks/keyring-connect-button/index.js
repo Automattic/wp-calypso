@@ -67,7 +67,7 @@ class KeyringConnectButton extends Component {
 	 * @return {string} Connection status.
 	 */
 	getConnectionStatus() {
-		if ( this.props.isFetching ) {
+		if ( this.props.isFetching || this.props.isAwaitingConnections ) {
 			// When connections are still loading, we don't know the status
 			return 'unknown';
 		}
