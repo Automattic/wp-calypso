@@ -4634,9 +4634,9 @@
       "integrity": "sha1-uCeAl7m8IpNl3lxiz1/K7YtVmeU="
     },
     "cookie": {
-      "version": "0.1.2",
-      "resolved": "https://registry.npmjs.org/cookie/-/cookie-0.1.2.tgz",
-      "integrity": "sha1-cv7D0k5Io0Mgc9kMEmQgBQYQBLE="
+      "version": "0.3.1",
+      "resolved": "https://registry.npmjs.org/cookie/-/cookie-0.3.1.tgz",
+      "integrity": "sha1-5+Ch+e9DtMi6klxcWpboBtFoc7s="
     },
     "cookie-parser": {
       "version": "1.4.3",
