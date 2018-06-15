@@ -10,11 +10,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import StoredCard, { cardType } from './stored-card';
+import StoredCard from './stored-card';
 
 class CreditCard extends React.Component {
 	static propTypes = {
-		card: cardType,
+		card: PropTypes.shape( StoredCard.propTypes ),
 		selected: PropTypes.bool,
 		onSelect: PropTypes.func,
 		className: PropTypes.string,
@@ -42,10 +42,10 @@ class CreditCard extends React.Component {
 				onClick={ onSelect }
 				onKeyPress={ this.handleKeyPress }
 			>
-				{ card ? <StoredCard card={ card } /> : children }
+				{ card ? <StoredCard { ...card } /> : children }
 			</div>
 		) : (
-			<div className={ classes }>{ card ? <StoredCard card={ card } /> : children }</div>
+			<div className={ classes }>{ card ? <StoredCard { ...card } /> : children }</div>
 		);
 	}
 }
