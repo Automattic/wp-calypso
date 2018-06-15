@@ -6311,9 +6311,9 @@
       "integrity": "sha1-nGO20LJf8qiMOtvRjFthrMO5+qI="
     },
     "escape-string-regexp": {
-      "version": "1.0.3",
-      "resolved": "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.3.tgz",
-      "integrity": "sha1-ni2LJbwlVcMzZyN1DgPwmcJzW7U="
+      "version": "1.0.5",
+      "resolved": "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz",
+      "integrity": "sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ="
     },
     "escodegen": {
       "version": "1.10.0",
