@@ -5702,9 +5702,9 @@
       }
     },
     "dom-scroll-into-view": {
-      "version": "1.0.1",
-      "resolved": "https://registry.npmjs.org/dom-scroll-into-view/-/dom-scroll-into-view-1.0.1.tgz",
-      "integrity": "sha1-Mqu5Lw2P7KYhUWKu9D5LRJq42Zw="
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/dom-scroll-into-view/-/dom-scroll-into-view-1.2.1.tgz",
+      "integrity": "sha1-6PNnMt0ImwIBqI14Fdw/iObWbH4="
     },
     "dom-serializer": {
       "version": "0.1.0",
