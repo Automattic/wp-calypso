@@ -6,7 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { find, isEqual, last, noop, some } from 'lodash';
+import { find, last, noop, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -123,28 +123,21 @@ class KeyringConnectButton extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props.keyringConnections, nextProps.keyringConnections ) ) {
+		if ( this.state.isAwaitingConnections ) {
 			this.setState( {
-				isConnecting: false,
+				isAwaitingConnections: false,
+				isRefreshing: false,
 			} );
-		}
 
-		if ( ! this.state.isAwaitingConnections ) {
-			return;
-		}
-
-		this.setState( {
-			isAwaitingConnections: false,
-			isRefreshing: false,
-		} );
-
-		if ( this.didKeyringConnectionSucceed( nextProps.keyringConnections ) ) {
-			const keyringId = this.state.keyringId;
-			const newKeyringConnection = find( nextProps.keyringConnections, { ID: keyringId } );
-			if ( newKeyringConnection ) {
-				this.props.onConnect( newKeyringConnection );
+			if ( this.didKeyringConnectionSucceed( nextProps.keyringConnections ) ) {
+				const newKeyringConnection = find( nextProps.keyringConnections, {
+					ID: this.state.keyringId,
+				} );
+				if ( newKeyringConnection ) {
+					this.props.onConnect( newKeyringConnection );
+				}
+				this.setState( { keyringId: null, isConnecting: false } );
 			}
-			this.setState( { keyringId: null } );
 		}
 	}
 
@@ -164,9 +157,10 @@ class KeyringConnectButton extends Component {
 
 		if ( ! this.state.keyringId || keyringConnections.length === 0 || ! hasAnyConnectionOptions ) {
 			this.setState( { isConnecting: false } );
+			return false;
 		}
 
-		return this.state.keyringId && keyringConnections.length && hasAnyConnectionOptions;
+		return true;
 	}
 
 	render() {
