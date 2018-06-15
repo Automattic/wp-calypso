@@ -14,12 +14,12 @@ import Dispatcher from 'dispatcher';
 import steps from 'signup/config/steps';
 import { SIGNUP_COMPLETE_RESET, SIGNUP_PROGRESS_SET } from 'state/action-types';
 import {
-	addOrUpdateStep,
 	completeStep,
 	processStep,
+	removeUnneededSteps,
+	saveStep,
 	setStepInvalid,
 	submitStep,
-	removeUnneededSteps,
 } from 'state/signup/progress/actions';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import SignupDependencyStore from './dependency-store';
@@ -34,6 +34,9 @@ const SignupProgressStore = {
 	// Redux actions
 	//
 	get() {
+		if ( ! this.reduxStore ) {
+			throw new Error( 'Tried to read redux state before store was ready' );
+		}
 		return cloneDeep( getSignupProgress( this.reduxStore.getState() ) );
 	},
 	reset() {
@@ -117,7 +120,7 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	switch ( action.type ) {
 		case 'SAVE_SIGNUP_STEP':
 			SignupProgressStore.reduxStore.dispatch(
-				addOrUpdateStep( addStorableDependencies( step, action ) )
+				saveStep( addStorableDependencies( step, action ) )
 			);
 			break;
 		case 'SUBMIT_SIGNUP_STEP':

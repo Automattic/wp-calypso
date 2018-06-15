@@ -87,7 +87,7 @@ class Signup extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Signup updates the cart through `SignupCart`. To prevent
 		// synchronization issues and unnecessary polling, the cart is disabled
 		// here.
@@ -132,7 +132,7 @@ class Signup extends React.Component {
 		this.recordStep();
 	}
 
-	componentWillReceiveProps( { signupDependencies, stepName, flowName } ) {
+	UNSAFE_componentWillReceiveProps( { signupDependencies, stepName, flowName } ) {
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName );
 		}
@@ -448,7 +448,7 @@ class Signup extends React.Component {
 	renderCurrentStep() {
 		const userIsLoggedIn = this.props.isLoggedIn;
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
-		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
+		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
@@ -471,7 +471,7 @@ class Signup extends React.Component {
 				{ this.state.loadingScreenStartTime ? (
 					<SignupProcessingScreen
 						hasCartItems={ this.state.hasCartItems }
-						steps={ this.state.progress }
+						steps={ this.props.progress }
 						loginHandler={ this.state.loginHandler }
 						signupDependencies={ this.props.signupDependencies }
 						flowName={ this.props.flowName }
@@ -489,7 +489,7 @@ class Signup extends React.Component {
 						goToStep={ this.goToStep }
 						previousFlowName={ this.state.previousFlowName }
 						flowName={ this.props.flowName }
-						signupProgress={ this.state.progress }
+						signupProgress={ this.props.progress }
 						signupDependencies={ this.props.signupDependencies }
 						stepSectionName={ this.props.stepSectionName }
 						positionInFlow={ this.getPositionInFlow() }
