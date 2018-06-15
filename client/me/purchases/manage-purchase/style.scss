@@ -280,4 +280,12 @@
 
 .manage-purchase__contact-support {
 	color: $gray-text-min;
+	border-top: solid 1px $gray-lighten-30;
+	margin: 0 auto;
+	padding: 16px;
+	background: $white;
+
+	@include breakpoint( '>480px' ) {
+		padding: 16px 24px;
+	}
 }
