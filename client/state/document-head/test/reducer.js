@@ -32,13 +32,6 @@ describe( 'reducer', () => {
 
 			expect( newState ).to.equal( 'new title' );
 		} );
-
-		it( 'should return initial state on route set action', () => {
-			const original = 'new title';
-			const state = title( original, { type: ROUTE_SET } );
-
-			expect( state ).to.equal( '' );
-		} );
 	} );
 
 	describe( '#unreadCount()', () => {
@@ -88,13 +81,6 @@ describe( 'reducer', () => {
 
 			expect( newState ).to.eql( expectedState );
 		} );
-
-		it( 'should return initial state on route set action', () => {
-			const original = deepFreeze( [ { content: 'some content', type: 'some type' } ] );
-			const state = meta( original, { type: ROUTE_SET } );
-
-			expect( state ).to.eql( DEFAULT_META_STATE );
-		} );
 	} );
 
 	describe( '#link()', () => {
@@ -119,13 +105,6 @@ describe( 'reducer', () => {
 			const expectedState = [ { rel: 'another-rel', href: 'https://automattic.com' } ];
 
 			expect( newState ).to.eql( expectedState );
-		} );
-
-		it( 'should return initial state on route set action', () => {
-			const original = deepFreeze( [ { rel: 'some-rel', href: 'https://wordpress.org' } ] );
-			const state = link( original, { type: ROUTE_SET } );
-
-			expect( state ).to.eql( [] );
 		} );
 	} );
 } );
