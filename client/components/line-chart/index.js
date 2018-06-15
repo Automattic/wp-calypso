@@ -10,7 +10,7 @@ import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } fr
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
-import { concat, first, last, mean, throttle } from 'lodash';
+import { concat, first, last, mean, throttle, uniq } from 'lodash';
 import { moment } from 'i18n-calypso';
 
 /**
@@ -441,8 +441,40 @@ class LineChart extends Component {
 		};
 	};
 
+	getTooltipPositionMap = values => {
+		const sortedUniqValues = uniq( values ).sort();
+
+		switch ( sortedUniqValues.length ) {
+			case 1:
+				return {
+					[ sortedUniqValues[ 0 ] ]: 'top',
+				};
+			case 2:
+				return {
+					[ sortedUniqValues[ 0 ] ]: 'bottom',
+					[ sortedUniqValues[ 1 ] ]: 'top',
+				};
+			case 3:
+				return {
+					[ sortedUniqValues[ 0 ] ]: 'bottom',
+					[ sortedUniqValues[ 1 ] ]: 'left',
+					[ sortedUniqValues[ 2 ] ]: 'top',
+				};
+			default:
+				return {
+					[ sortedUniqValues[ 0 ] ]: 'bottom',
+					[ sortedUniqValues[ 1 ] ]: 'left',
+					[ sortedUniqValues[ 2 ] ]: 'right',
+					[ sortedUniqValues[ 3 ] ]: 'bottom',
+				};
+		}
+	};
+
 	renderTooltips = () => {
 		const { selectedPoints } = this.state;
+		const selectPointsValues = selectedPoints.map( point => d3Select( point ).datum().value );
+		const tooltipPositionsMap = this.getTooltipPositionMap( selectPointsValues );
+
 		return selectedPoints.map( point => {
 			const pointData = d3Select( point ).datum();
 
@@ -456,7 +488,7 @@ class LineChart extends Component {
 				<Tooltip
 					className="line-chart__tooltip is-streak"
 					context={ point }
-					position="top"
+					position={ tooltipPositionsMap[ pointData.value ] }
 					key={ uniqueKey }
 					isVisible
 				>
