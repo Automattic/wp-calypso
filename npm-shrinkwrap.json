@@ -4071,13 +4071,13 @@
       }
     },
     "clipboard": {
-      "version": "1.5.3",
-      "resolved": "https://registry.npmjs.org/clipboard/-/clipboard-1.5.3.tgz",
-      "integrity": "sha1-unh0tHK4BJ9eAfJgsIU5emb625Q=",
+      "version": "1.7.1",
+      "resolved": "https://registry.npmjs.org/clipboard/-/clipboard-1.7.1.tgz",
+      "integrity": "sha1-Ng1taUbpmnof7zleQrqStem1oWs=",
       "requires": {
-        "good-listener": "^1.1.2",
-        "select": "^1.0.4",
-        "tiny-emitter": "^1.0.0"
+        "good-listener": "^1.2.2",
+        "select": "^1.1.2",
+        "tiny-emitter": "^2.0.0"
       }
     },
     "cliui": {
@@ -19562,9 +19562,9 @@
       }
     },
     "tiny-emitter": {
-      "version": "1.2.0",
-      "resolved": "https://registry.npmjs.org/tiny-emitter/-/tiny-emitter-1.2.0.tgz",
-      "integrity": "sha1-bchFBSywjr78GHRyO1jySmSMO28="
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/tiny-emitter/-/tiny-emitter-2.0.2.tgz",
+      "integrity": "sha512-2NM0auVBGft5tee/OxP4PI3d8WItkDM+fPnaRAVo6xTDI2knbz9eC5ArWGqtGlYqiH3RU5yMpdyTTO7MguC4ow=="
     },
     "tinymce": {
       "version": "4.6.3",
