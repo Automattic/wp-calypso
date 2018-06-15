@@ -153,8 +153,11 @@
 	fill: $blue-light;
 }
 
-
 .line-chart__date-range-selected {
 	fill: $blue-medium;
 	opacity: 0.1;
+}
+
+.line-chart__tooltip {
+	pointer-events: none;
 }
