@@ -1,8 +1,9 @@
+/** @format */
 .manage-purchase__info {
 	font-size: 13px;
 	padding: 0;
 
-	@include breakpoint ( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 14px;
 		padding: 0;
 	}
@@ -15,14 +16,14 @@
 		.manage-purchase__detail-label,
 		.manage-purchase__detail,
 		.manage-purchase__detail .user {
-			opacity: .7;
+			opacity: 0.7;
 		}
 	}
 
 	&.is-expired + .notice {
 		margin-top: -10px;
 
-		@include breakpoint ( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin-top: -16px;
 		}
 	}
@@ -71,7 +72,7 @@
 			width: 60%;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			.manage-purchase__description,
 			.manage-purchase__detail,
 			.manage-purchase__detail-label {
@@ -79,7 +80,7 @@
 			}
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			.manage-purchase__detail {
 				width: 25%;
 			}
@@ -95,7 +96,7 @@
 .manage-purchase__content {
 	padding: 16px 24px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding: 16px;
 	}
 }
@@ -143,7 +144,7 @@
 	font-weight: 400;
 	clear: none;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 22px;
 		padding-right: 100px;
 	}
@@ -168,7 +169,7 @@
 	padding: 0 24px;
 	border-top: 1px solid $gray-lighten-30;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding: 0 16px;
 	}
 }
@@ -179,7 +180,7 @@
 	list-style: none;
 	overflow: auto;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		flex-direction: column;
 		padding-bottom: 16px;
 	}
@@ -188,13 +189,13 @@
 		color: $gray-darken-30;
 		font-size: 13px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			clear: both;
 			overflow: auto;
 			margin-top: 15px;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			box-sizing: border-box;
 			flex: 1 1 auto;
 			font-size: 14px;
@@ -210,7 +211,7 @@
 		}
 
 		+ li {
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				border-left: 1px solid $gray-lighten-30;
 			}
 		}
@@ -227,12 +228,12 @@
 	font-style: normal;
 	font-weight: 600;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		flex-direction: row;
 		float: left;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		color: $gray-text-min;
 		display: block;
 		font-family: $sans;
@@ -243,7 +244,7 @@
 }
 
 .manage-purchase__detail {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: block;
 		float: right;
 		text-align: right;
@@ -267,21 +268,21 @@
 .manage-purchase__purchase-expiring-notice.notice {
 	margin-bottom: 10px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-bottom: 16px;
 	}
 }
 
 .manage-purchase__renew-button {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 16px;
 		width: 100%;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		position: absolute;
-			right: 24px;
-			top: 16px;
+		right: 24px;
+		top: 16px;
 	}
 }
 
