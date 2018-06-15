@@ -217,8 +217,9 @@ class LineChart extends Component {
 			updateMouseMove( ...coordinates, params );
 		} );
 		svg.on( 'mouseleave', () => {
-			// remove rect and tooltips
-			svg.select( `rect.line-chart__date-range-selected` ).remove();
+			// remove rect, temporary points and tooltips
+			svg.selectAll( `rect.line-chart__date-range-selected` ).remove();
+			svg.selectAll( `circle.line-chart__line-point-hover` ).remove();
 			this.setState( { selectedPoints: [] } );
 			// reset point size
 			svg.selectAll( `circle.line-chart__line-point` ).attr( 'r', POINTS_SIZE );
@@ -259,6 +260,7 @@ class LineChart extends Component {
 			nextClosestDate = 0;
 
 		const firstDataSerie = data[ 0 ];
+		const drawFullSeries = firstDataSerie.length < POINTS_MAX;
 		// assume sorted by date
 		firstDataSerie.forEach( ( datum, index ) => {
 			if ( Math.abs( xDate - datum.date ) < Math.abs( xDate - closestDate ) ) {
@@ -283,6 +285,7 @@ class LineChart extends Component {
 					`rect.line-chart__date-range-selected:not(.line-chart__date-range-${ closestDate })`
 				)
 				.remove();
+
 			svg
 				.append( 'rect' )
 				.attr( 'class', `line-chart__date-range-selected line-chart__date-range-${ closestDate }` )
@@ -293,11 +296,37 @@ class LineChart extends Component {
 
 			svg.selectAll( `circle.line-chart__line-point` ).attr( 'r', POINTS_SIZE );
 
-			const selectedPoints = svg.selectAll(
-				`circle.line-chart__line-point[cx="${ xScale( closestDate ) }"]`
-			);
-			selectedPoints.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
-			this.setState( { selectedPoints: selectedPoints.nodes() } );
+			if ( drawFullSeries ) {
+				const selectedPoints = svg.selectAll(
+					`circle.line-chart__line-point[cx="${ xScale( closestDate ) }"]`
+				);
+				selectedPoints.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
+				this.setState( { selectedPoints: selectedPoints.nodes() } );
+			} else {
+				svg.selectAll( 'circle.line-chart__line-point-hover' ).remove();
+				let circles = [];
+				data.forEach( ( dataSeries, dataSeriesIndex ) => {
+					const colorNum = dataSeriesIndex % NUM_SERIES;
+
+					dataSeries.forEach( datum => {
+						if ( closestDate === datum.date ) {
+							const circleSelection = svg
+								.append( 'circle' )
+								.attr(
+									'class',
+									`line-chart__line-point line-chart__line-point-hover line-chart__line-point-color-${ colorNum }`
+								)
+								.attr( 'cx', xScale( datum.date ) )
+								.attr( 'cy', yScale( datum.value ) )
+								.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) )
+								.datum( { ...datum, dataSeriesIndex } );
+							circles = circles.concat( circleSelection.nodes() );
+						}
+					} );
+				} );
+
+				this.setState( { selectedPoints: circles } );
+			}
 		}
 	};
 
