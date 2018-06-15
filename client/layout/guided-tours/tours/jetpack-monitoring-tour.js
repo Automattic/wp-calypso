@@ -48,9 +48,7 @@ export const JetpackMonitoringTour = makeTour(
 							click
 							hidden
 						/>
-						<SiteLink isButton={ false } href="/checklist/:site">
-							{ translate( 'Return to the checklist' ) }
-						</SiteLink>
+						<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 					</ButtonRow>
 				</Fragment>
 			) }
