@@ -33,19 +33,18 @@ class CreditCard extends React.Component {
 			'is-selectable': onSelect,
 		} );
 
-		return onSelect ? (
-			<div
-				className={ classes }
-				tabIndex={ -1 }
-				role="radio"
-				aria-checked={ selected }
-				onClick={ onSelect }
-				onKeyPress={ this.handleKeyPress }
-			>
+		const selectionProps = onSelect && {
+			tabIndex: -1,
+			role: 'radio',
+			'aria-checked': selected,
+			onClick: onSelect,
+			onKeyPress: this.handleKeyPress,
+		};
+
+		return (
+			<div className={ classes } { ...selectionProps }>
 				{ card ? <StoredCard { ...card } /> : children }
 			</div>
-		) : (
-			<div className={ classes }>{ card ? <StoredCard { ...card } /> : children }</div>
 		);
 	}
 }
