@@ -109,6 +109,11 @@ class KeyringConnectButton extends Component {
 			// Attempt to create a new connection. If a Keyring connection ID
 			// is not provided, the user will need to authorize the app
 			requestExternalAccess( this.props.service.connect_URL, keyringId => {
+				if ( ! keyringId ) {
+					this.setState( { isConnecting: false } );
+					return;
+				}
+
 				// When the user has finished authorizing the connection
 				// (or otherwise closed the window), force a refresh
 				this.props.requestKeyringConnections( true );
