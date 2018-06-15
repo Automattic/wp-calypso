@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEqual, isObject, size } from 'lodash';
+import { isEqual, isObject, pick, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +34,9 @@ import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
+	getCountriesData,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { ACCEPTED_USPS_ORIGIN_COUNTRY_CODES } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
 
 const AddressFields = props => {
 	const {
@@ -47,7 +49,7 @@ const AddressFields = props => {
 		normalizationInProgress,
 		allowChangeCountry,
 		group,
-		storeOptions,
+		countriesData,
 		errors,
 		translate,
 	} = props;
@@ -71,7 +73,7 @@ const AddressFields = props => {
 					selectNormalizedAddress={ selectNormalizedAddressHandler }
 					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
 					editAddress={ editAddressHandler }
-					countriesData={ storeOptions.countriesData }
+					countriesData={ countriesData }
 				/>
 			);
 		}
@@ -85,7 +87,7 @@ const AddressFields = props => {
 					values={ values }
 					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
 					editUnverifiableAddress={ editUnverifiableAddressHandler }
-					countriesData={ storeOptions.countriesData }
+					countriesData={ countriesData }
 					fieldErrors={ fieldErrors }
 				/>
 			);
@@ -162,7 +164,7 @@ const AddressFields = props => {
 					title={ translate( 'State' ) }
 					value={ getValue( 'state' ) }
 					countryCode={ getValue( 'country' ) }
-					countriesData={ storeOptions.countriesData }
+					countriesData={ countriesData }
 					updateValue={ updateValue( 'state' ) }
 					className="address-step__state"
 					error={ fieldErrors.state || generalErrorOnly }
@@ -181,7 +183,7 @@ const AddressFields = props => {
 				title={ translate( 'Country' ) }
 				value={ getValue( 'country' ) }
 				disabled={ ! allowChangeCountry }
-				countriesData={ storeOptions.countriesData }
+				countriesData={ countriesData }
 				updateValue={ updateValue( 'country' ) }
 				error={ fieldErrors.country || generalErrorOnly }
 			/>
@@ -203,19 +205,22 @@ AddressFields.propTypes = {
 	normalized: PropTypes.object,
 	selectNormalized: PropTypes.bool.isRequired,
 	allowChangeCountry: PropTypes.bool.isRequired,
-	storeOptions: PropTypes.object.isRequired,
 	errors: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	group: PropTypes.string.isRequired,
+	countriesData: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = ( state, { group, orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	const storeOptions = loaded ? shippingLabel.storeOptions : {};
+	let countriesData = getCountriesData( state, orderId, siteId );
+	if ( 'origin' === group ) {
+		countriesData = pick( countriesData, ACCEPTED_USPS_ORIGIN_COUNTRY_CODES );
+	}
 	return {
 		...shippingLabel.form[ group ],
 		errors: loaded && getFormErrors( state, orderId, siteId )[ group ],
-		storeOptions,
+		countriesData,
 	};
 };
 

@@ -14,7 +14,7 @@ const AddressSummary = ( { values, originalValues, countriesData, expandStateNam
 		const statesMap = ( expandStateName && ( countriesData[ country ] || {} ).states ) || {};
 		stateStr = statesMap[ state ] || state;
 	}
-	const countryStr = countriesData[ country ].name;
+	const countryStr = countriesData[ country ] ? countriesData[ country ].name : country;
 
 	const getValue = fieldName => {
 		const rawValue = values[ fieldName ];
@@ -41,7 +41,7 @@ const AddressSummary = ( { values, originalValues, countriesData, expandStateNam
 				{ getValue( 'address' ) } { getValue( 'address_2' ) }
 			</p>
 			<p>
-				{ getValue( 'city' ) }, { getValue( 'state' ) }&nbsp;{ getValue( 'postcode' ) }
+				{ getValue( 'city' ) }, { getValue( 'state' ) }&nbsp; { getValue( 'postcode' ) }
 			</p>
 			<p>{ getValue( 'country' ) }</p>
 		</div>

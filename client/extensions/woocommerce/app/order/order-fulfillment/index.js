@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { first } from 'lodash';
+import { first, includes } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -24,6 +24,7 @@ import {
 	getLabels,
 	isLabelDataFetchError,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { ACCEPTED_USPS_ORIGIN_COUNTRY_CODES } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
@@ -44,6 +45,7 @@ import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shippin
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
+import { isEnabled } from 'config';
 
 class OrderFulfillment extends Component {
 	static propTypes = {
@@ -141,7 +143,13 @@ class OrderFulfillment extends Component {
 		}
 	};
 
-	isAddressValidForLabels( address ) {
+	isAddressValidForLabels( address, type ) {
+		if ( isEnabled( 'woocommerce/extension-wcservices/international-labels' ) ) {
+			return (
+				'destination' === type || includes( ACCEPTED_USPS_ORIGIN_COUNTRY_CODES, address.country )
+			);
+		}
+
 		const { labelCountriesData } = this.props;
 		if ( ! labelCountriesData ) {
 			return false;
@@ -175,8 +183,8 @@ class OrderFulfillment extends Component {
 		return (
 			labelsEnabled &&
 			hasLabelsPaymentMethod &&
-			this.isAddressValidForLabels( storeAddress ) &&
-			this.isAddressValidForLabels( shipping )
+			this.isAddressValidForLabels( storeAddress, 'origin' ) &&
+			this.isAddressValidForLabels( shipping, 'destination' )
 		);
 	}
 

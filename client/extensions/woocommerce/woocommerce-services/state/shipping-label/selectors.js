@@ -3,7 +3,19 @@
 /**
  * External dependencies
  */
-import { find, get, isEmpty, isEqual, isFinite, mapValues, round, some } from 'lodash';
+import {
+	find,
+	get,
+	includes,
+	isEmpty,
+	isEqual,
+	isFinite,
+	mapValues,
+	omit,
+	pick,
+	round,
+	some,
+} from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -19,6 +31,8 @@ import {
 	isLoaded as arePackagesLoaded,
 	isFetchError as arePackagesErrored,
 } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import { isEnabled } from 'config';
+import { ACCEPTED_USPS_ORIGIN_COUNTRY_CODES } from './constants';
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -31,11 +45,6 @@ export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( st
 export const isLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return shippingLabel && shippingLabel.loaded;
-};
-
-export const isEnabled = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	return shippingLabel && shippingLabel.enabled;
 };
 
 export const isFetching = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
@@ -123,6 +132,26 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 		: null;
 };
 
+export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! isLoaded( state, orderId, siteId ) ) {
+		return null;
+	}
+
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const { countriesData } = shippingLabel.storeOptions;
+	if ( isEnabled( 'woocommerce/extension-wcservices/international-labels' ) || ! countriesData ) {
+		return countriesData;
+	}
+
+	return {
+		...pick( countriesData, [ 'PR', 'VI' ] ),
+		US: {
+			...countriesData.US,
+			states: omit( countriesData.US.states, [ 'AA', 'AE', 'AP' ] ), // Exclude military addresses
+		},
+	};
+};
+
 const getAddressErrors = (
 	{
 		values,
@@ -155,12 +184,11 @@ const getAddressErrors = (
 	} );
 
 	if ( countriesData[ country ] ) {
-		switch ( country ) {
-			case 'US':
-				if ( ! /^\d{5}(?:-\d{4})?$/.test( postcode ) ) {
-					errors.postcode = translate( 'Invalid ZIP code format' );
-				}
-				break;
+		if (
+			includes( ACCEPTED_USPS_ORIGIN_COUNTRY_CODES, country ) &&
+			! /^\d{5}(?:-\d{4})?$/.test( postcode )
+		) {
+			errors.postcode = translate( 'Invalid ZIP code format' );
 		}
 
 		if ( ! isEmpty( countriesData[ country ].states ) && ! state ) {
@@ -331,13 +359,4 @@ export const isLabelDataFetchError = ( state, orderId, siteId = getSelectedSiteI
 		areSettingsErrored( state, siteId ) ||
 		arePackagesErrored( state, siteId )
 	);
-};
-
-export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! isLoaded( state, orderId, siteId ) ) {
-		return null;
-	}
-
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	return shippingLabel.storeOptions.countriesData;
 };
