@@ -201,9 +201,11 @@ class PodcastingDetails extends Component {
 					>
 						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
-					<Card className="podcasting-details__category-wrapper">
-						{ error || this.renderCategorySetting() }
-					</Card>
+					{ ! error && (
+						<Card className="podcasting-details__category-wrapper">
+							{ this.renderCategorySetting() }
+						</Card>
+					) }
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
 					{ isPodcastingEnabled && (
 						<div className="podcasting-details__disable-podcasting">
