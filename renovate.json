@@ -1,25 +1,37 @@
 {
   "extends": [
-	"config:base",
-	"default:pinDigestsDisabled"
+    "config:base",
+    "default:pinDigestsDisabled"
   ],
   "statusCheckVerify": true,
   "ignoreDeps": [
-    "@babel/cli",
-    "@babel/core",
-    "@babel/plugin-proposal-export-default-from",
-    "@babel/plugin-syntax-jsx",
-    "@babel/plugin-transform-runtime",
-    "@babel/polyfill",
-    "@babel/preset-env",
-    "@babel/preset-react",
-    "@babel/preset-stage-2",
-    "@babel/runtime",
     "jquery"
   ],
+  "packageRules": [
+    {
+      "extends": "monorepo:babel",
+      "groupName": "babel"
+    },
+    {
+      "extends": "monorepo:jest",
+      "groupName": "jest"
+    },
+    {
+      "extends": "packages:eslint",
+      "groupName": "eslint"
+    },
+    {
+      "extends": "monorepo:lodash",
+      "groupName": "lodash"
+    },
+    {
+      "extends": "monorepo:react",
+      "groupName": "react"
+    }
+  ],
   "labels": [
-	"Framework",
-	"[Type] Task",
-	"[Status] Needs Review"
+    "Framework",
+    "[Type] Task",
+    "[Status] Needs Review"
   ]
 }
