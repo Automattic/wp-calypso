@@ -9,7 +9,6 @@ import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
-	ROUTE_SET,
 } from 'state/action-types';
 import { titleSchema, linkSchema, metaSchema } from './schema';
 
