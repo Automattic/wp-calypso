@@ -390,6 +390,7 @@ class ActivityLog extends Component {
 						description={ translate(
 							'Backups and security scans require access to your site to work properly.'
 						) }
+						e2eType="add-credentials"
 					/>
 				) }
 				{ 'provisioning' === rewindState.state && (
@@ -401,6 +402,7 @@ class ActivityLog extends Component {
 							"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
 								"After this initial backup, we'll save future changes in real time."
 						) }
+						e2eType="backup-underway"
 					/>
 				) }
 				{ siteId && <ActivityLogTasklist siteId={ siteId } /> }
