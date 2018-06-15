@@ -40,7 +40,12 @@ class SiteLink extends Component {
 
 		if ( isButton ) {
 			return (
-				<Button primary onClick={ this.onClick } href={ siteHref }>
+				<Button
+					className="guided-tours__button-link"
+					href={ siteHref }
+					onClick={ this.onClick }
+					primary
+				>
 					{ children }
 				</Button>
 			);
