@@ -442,7 +442,9 @@ class LineChart extends Component {
 	};
 
 	getTooltipPositionMap = values => {
-		const sortedUniqValues = uniq( values ).sort();
+		const sortedUniqValues = uniq( values ).sort(
+			( leftValue, rightValue ) => leftValue - rightValue
+		);
 
 		switch ( sortedUniqValues.length ) {
 			case 1:
@@ -465,7 +467,7 @@ class LineChart extends Component {
 					[ sortedUniqValues[ 0 ] ]: 'bottom',
 					[ sortedUniqValues[ 1 ] ]: 'left',
 					[ sortedUniqValues[ 2 ] ]: 'right',
-					[ sortedUniqValues[ 3 ] ]: 'bottom',
+					[ sortedUniqValues[ 3 ] ]: 'top',
 				};
 		}
 	};
