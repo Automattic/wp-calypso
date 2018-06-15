@@ -4683,11 +4683,11 @@
       "integrity": "sha1-Z29us8OZl8LuGsOpJP1hJHSPV40="
     },
     "copy-webpack-plugin": {
-      "version": "4.4.3",
-      "resolved": "https://registry.npmjs.org/copy-webpack-plugin/-/copy-webpack-plugin-4.4.3.tgz",
-      "integrity": "sha512-v4THQ24Tks2NkyOvZuFDgZVfDD9YaA9rwYLZTrWg2GHIA8lrH5DboEyeoorh5Skki+PUbgSmnsCwhMWqYrQZrA==",
+      "version": "4.5.1",
+      "resolved": "https://registry.npmjs.org/copy-webpack-plugin/-/copy-webpack-plugin-4.5.1.tgz",
+      "integrity": "sha512-OlTo6DYg0XfTKOF8eLf79wcHm4Ut10xU2cRBRPMW/NA5F9VMjZGTfRHWDIYC3s+1kObGYrBLshXWU1K0hILkNQ==",
       "requires": {
-        "cacache": "^10.0.1",
+        "cacache": "^10.0.4",
         "find-cache-dir": "^1.0.0",
         "globby": "^7.1.1",
         "is-glob": "^4.0.0",
@@ -4709,11 +4709,6 @@
             "pify": "^3.0.0",
             "slash": "^1.0.0"
           }
-        },
-        "ignore": {
-          "version": "3.3.8",
-          "resolved": "https://registry.npmjs.org/ignore/-/ignore-3.3.8.tgz",
-          "integrity": "sha512-pUh+xUQQhQzevjRHHFqqcTy0/dP/kS9I8HSrUydhihjuD09W6ldVWFtIrwhXdUJHis3i2rZNqEHpZH/cbinFbg=="
         },
         "is-extglob": {
           "version": "2.1.1",
@@ -9534,8 +9529,7 @@
     "ignore": {
       "version": "3.3.8",
       "resolved": "https://registry.npmjs.org/ignore/-/ignore-3.3.8.tgz",
-      "integrity": "sha512-pUh+xUQQhQzevjRHHFqqcTy0/dP/kS9I8HSrUydhihjuD09W6ldVWFtIrwhXdUJHis3i2rZNqEHpZH/cbinFbg==",
-      "dev": true
+      "integrity": "sha512-pUh+xUQQhQzevjRHHFqqcTy0/dP/kS9I8HSrUydhihjuD09W6ldVWFtIrwhXdUJHis3i2rZNqEHpZH/cbinFbg=="
     },
     "immediate": {
       "version": "3.0.6",
