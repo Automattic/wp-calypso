@@ -1750,12 +1750,12 @@
       "integrity": "sha1-ri1acpR38onWDdf5amMUoi3Wwio="
     },
     "autoprefixer": {
-      "version": "8.6.0",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-8.6.0.tgz",
-      "integrity": "sha512-JaYK4gmyklt+es0VDdWVS9R/X96D8eaT0qDLAO6R4niBsoKv6nI4QtfFs8YQskwatIdJ6XZeTBDRpjf4tH+Dlg==",
+      "version": "8.6.2",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-8.6.2.tgz",
+      "integrity": "sha512-cv9v1mYYBcAnZq4MHseJ9AIdjQmNahnpCpPO46oTkQJS2GggsBp2azHjNpAuQ95Epvsg+AIsyjYhfI9YwFxGSA==",
       "requires": {
         "browserslist": "^3.2.8",
-        "caniuse-lite": "^1.0.30000847",
+        "caniuse-lite": "^1.0.30000851",
         "normalize-range": "^0.1.2",
         "num2fraction": "^1.2.2",
         "postcss": "^6.0.22",
