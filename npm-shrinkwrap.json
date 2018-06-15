@@ -7719,9 +7719,9 @@
       }
     },
     "filesize": {
-      "version": "3.2.1",
-      "resolved": "https://registry.npmjs.org/filesize/-/filesize-3.2.1.tgz",
-      "integrity": "sha1-oG8cVJftY1gFfEFeU0A/dkwfteY="
+      "version": "3.6.1",
+      "resolved": "https://registry.npmjs.org/filesize/-/filesize-3.6.1.tgz",
+      "integrity": "sha512-7KjR1vv6qnicaPMi1iiTcI85CyYwRO/PSFCu6SvqL8jN2Wjt/NIYQTFtFs7fSDCYOstUkEWIQGFUg5YZQfjlcg=="
     },
     "fill-range": {
       "version": "2.2.4",
