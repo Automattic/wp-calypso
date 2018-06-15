@@ -6,7 +6,6 @@
 
 import React, { Fragment } from 'react';
 import Gridicon from 'gridicons';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +21,7 @@ import {
 } from 'layout/guided-tours/config-elements';
 
 export const JetpackMonitoringTour = makeTour(
-	<Tour name="jetpackMonitoring" version="20180611" path="/non-existent-route" when={ noop }>
+	<Tour name="jetpackMonitoring" version="20180611" path="/non-existent-route">
 		<Step
 			name="init"
 			target=".jetpack-monitor-settings .form-toggle__switch"
