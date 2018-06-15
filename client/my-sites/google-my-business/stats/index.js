@@ -82,6 +82,22 @@ class GoogleMyBusinessStats extends Component {
 		);
 	};
 
+	renderViewsOrActionsTooltipForDatanum = interval => datanum => {
+		const { value: valueCount, date } = datanum;
+		if ( 'week' !== interval ) {
+			return this.props.translate( '%(value)d on %(day)s', '%(value)d on %(day)s', {
+				count: valueCount,
+				args: {
+					value: valueCount,
+					day: moment( date ).format( 'D MMMM YYYY' ),
+				},
+				comment: 'How many views or actions per day for a Google My Business location with date.',
+			} );
+		}
+
+		return valueCount;
+	};
+
 	renderStats() {
 		const { siteId, translate } = this.props;
 
@@ -131,6 +147,7 @@ class GoogleMyBusinessStats extends Component {
 								name: translate( 'Listings On Search' ),
 							},
 						} }
+						renderTooltipForDatanum={ this.renderViewsOrActionsTooltipForDatanum }
 					/>
 				</div>
 
@@ -153,6 +170,7 @@ class GoogleMyBusinessStats extends Component {
 								name: translate( 'Call You' ),
 							},
 						} }
+						renderTooltipForDatanum={ this.renderViewsOrActionsTooltipForDatanum }
 					/>
 				</div>
 			</div>

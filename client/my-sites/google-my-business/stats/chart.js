@@ -186,7 +186,7 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	renderLineChart() {
-		const { renderTooltipForDatanum } = this.props;
+		const { interval, renderTooltipForDatanum } = this.props;
 		const { transformedData, legendInfo } = this.state;
 
 		if ( ! transformedData ) {
@@ -199,7 +199,9 @@ class GoogleMyBusinessStatsChart extends Component {
 					<LineChart
 						fillArea
 						data={ transformedData }
-						renderTooltipForDatanum={ renderTooltipForDatanum }
+						renderTooltipForDatanum={
+							renderTooltipForDatanum ? renderTooltipForDatanum( interval ) : undefined
+						}
 						legendInfo={ legendInfo }
 					/>
 
