@@ -88,6 +88,14 @@ class LabelItem extends Component {
 
 	render() {
 		const { siteId, orderId, label, translate } = this.props;
+		const {
+			labelIndex,
+			serviceName,
+			packageName,
+			productNames,
+			receiptId,
+			labelId,
+		} = label;
 
 		return (
 			<div className="shipping-label__item">
@@ -105,7 +113,16 @@ class LabelItem extends Component {
 								{ this.renderRefund( label ) }
 								{ this.renderReprint( label ) }
 							</EllipsisMenu>
-							<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
+							<DetailsDialog
+								siteId={ siteId }
+								orderId={ orderId }
+								labelIndex= { labelIndex }
+								serviceName={ serviceName }
+								packageName={ packageName }
+								productNames={ productNames }
+								receiptId={ receiptId }
+								labelId= { labelId }
+							/>
 							<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
 							<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
 						</span>
