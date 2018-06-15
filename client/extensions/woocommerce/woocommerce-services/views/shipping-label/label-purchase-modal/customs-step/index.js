@@ -43,7 +43,7 @@ const CustomsStep = ( props ) => {
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) }
 				onClick={ props.confirmCustoms } >
-				{ translate( 'Confirm' ) }
+				{ translate( 'Save customs form' ) }
 			</StepConfirmationButton>
 		</StepContainer>
 	);
