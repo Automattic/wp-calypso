@@ -551,7 +551,7 @@ export const confirmPackages = ( orderId, siteId ) => ( dispatch, getState ) => 
 	tryGetLabelRates( orderId, siteId, dispatch, getState );
 };
 
-export const saveCustoms = ( orderId, siteId ) => {
+const saveCustoms = ( orderId, siteId ) => {
 	return {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
 		siteId,
