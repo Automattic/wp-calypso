@@ -359,7 +359,7 @@ class PodcastingDetails extends Component {
 		//Needed to allow redirect
 		clearDirtyFields();
 
-		page.redirect( '/settings/writing/' + siteSlug );
+		page.redirect( '/settings/writing/' + siteSlug + '#site-podcasting-settings' );
 	};
 
 	onCoverImageRemoved = () => {
