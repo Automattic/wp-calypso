@@ -29,11 +29,14 @@ import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingNoPermissionsMessage from './no-permissions';
+import PodcastingNotSupportedMessage from './not-supported';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
 import canCurrentUser from 'state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsForQueryIgnoringPage,
@@ -305,7 +308,7 @@ class PodcastingDetails extends Component {
 	renderSettingsError() {
 		// If there is a reason that we can't display the podcasting settings
 		// screen, it will be rendered here.
-		const { isPrivate, userCanManagePodcasting } = this.props;
+		const { isPrivate, isUnsupportedSite, userCanManagePodcasting } = this.props;
 
 		if ( isPrivate ) {
 			return <PodcastingPrivateSiteMessage />;
@@ -313,6 +316,10 @@ class PodcastingDetails extends Component {
 
 		if ( ! userCanManagePodcasting ) {
 			return <PodcastingNoPermissionsMessage />;
+		}
+
+		if ( isUnsupportedSite ) {
+			return <PodcastingNotSupportedMessage />;
 		}
 
 		return null;
@@ -392,6 +399,9 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const selectedCategory = categories && head( filter( categories, { ID: podcastingCategoryId } ) );
 	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
 
+	const isJetpack = isJetpackSite( state, siteId );
+	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
@@ -401,6 +411,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
+		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
 	};
 } );
 
