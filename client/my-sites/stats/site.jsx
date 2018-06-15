@@ -34,6 +34,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import ChecklistBanner from './checklist-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 
@@ -135,6 +136,7 @@ class StatsSite extends Component {
 
 		return (
 			<Main wideLayout={ true }>
+				<QueryKeyringConnections />
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Stats' ) } />
 				<PageViewTracker
@@ -152,8 +154,12 @@ class StatsSite extends Component {
 				/>
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
-					{ isGoogleMyBusinessStatsNudgeVisible && (
-						<GoogleMyBusinessStatsNudge siteSlug={ slug } siteId={ siteId } />
+					{ siteId && (
+						<GoogleMyBusinessStatsNudge
+							siteSlug={ slug }
+							siteId={ siteId }
+							visible={ isGoogleMyBusinessStatsNudgeVisible }
+						/>
 					) }
 					<ChartTabs
 						barClick={ this.barClick }

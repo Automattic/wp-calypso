@@ -49,6 +49,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		coverImageUrl: PropTypes.string,
 		onRemove: PropTypes.func,
 		onSelect: PropTypes.func,
+		isDisabled: PropTypes.bool,
 	};
 
 	state = {
@@ -184,7 +185,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	renderChangeButton() {
-		const { coverImageId, coverImageUrl, translate } = this.props;
+		const { coverImageId, coverImageUrl, translate, isDisabled } = this.props;
 		const isCoverSet = coverImageId || coverImageUrl;
 
 		return (
@@ -193,6 +194,7 @@ class PodcastCoverImageSetting extends PureComponent {
 				compact
 				onClick={ this.showModal }
 				onMouseEnter={ this.preloadModal }
+				disabled={ isDisabled }
 			>
 				{ isCoverSet ? translate( 'Change' ) : translate( 'Add' ) }
 			</Button>
@@ -200,7 +202,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	renderCoverPreview() {
-		const { coverImageUrl, siteId, translate } = this.props;
+		const { coverImageUrl, siteId, translate, isDisabled } = this.props;
 		const { transientMediaId } = this.state;
 		const media = transientMediaId && MediaStore.get( siteId, transientMediaId );
 		const imageUrl = ( media && media.URL ) || coverImageUrl;
@@ -210,6 +212,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		const classNames = classnames( 'podcast-cover-image-setting__preview', {
 			'is-blank': ! imageSrc,
 			'is-transient': isTransient,
+			'is-disabled': isDisabled,
 		} );
 
 		return (
@@ -218,6 +221,7 @@ class PodcastCoverImageSetting extends PureComponent {
 				onClick={ this.showModal }
 				onMouseEnter={ this.preloadModal }
 				type="button" // default is "submit" which saves settings on click
+				disabled={ isDisabled }
 			>
 				{ imageSrc ? (
 					<Image className="podcast-cover-image-setting__img" src={ imageSrc } alt="" />
@@ -269,12 +273,18 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	renderRemoveButton() {
-		const { coverImageId, coverImageUrl, onRemove, translate } = this.props;
+		const { coverImageId, coverImageUrl, onRemove, translate, isDisabled } = this.props;
 		const isCoverSet = coverImageId || coverImageUrl;
 
 		return (
 			isCoverSet && (
-				<Button className="podcast-cover-image-setting__button" compact onClick={ onRemove } scary>
+				<Button
+					className="podcast-cover-image-setting__button"
+					compact
+					onClick={ onRemove }
+					scary
+					disabled={ isDisabled }
+				>
 					{ translate( 'Remove' ) }
 				</Button>
 			)

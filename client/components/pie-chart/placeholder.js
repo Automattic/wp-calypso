@@ -5,19 +5,21 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 const SVG_SIZE = 300;
 
 class PieChartPlaceholder extends Component {
 	static propTypes = {
-		title: PropTypes.bool,
+		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
 
 	static defaultProps = {
-		title: false,
+		title: null,
 	};
 
 	render() {
+		const { title, translate } = this.props;
 		return (
 			<div className="pie-chart__placeholder">
 				<svg
@@ -35,10 +37,14 @@ class PieChartPlaceholder extends Component {
 					</g>
 				</svg>
 
-				{ this.props && <div className="pie-chart__placeholder-title" /> }
+				{ title && (
+					<h2 className="pie-chart__placeholder-title">
+						{ 'string' === typeof title ? title : title( translate, 0 ) }
+					</h2>
+				) }
 			</div>
 		);
 	}
 }
 
-export default PieChartPlaceholder;
+export default localize( PieChartPlaceholder );

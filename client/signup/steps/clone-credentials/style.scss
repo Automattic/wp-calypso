@@ -3,6 +3,8 @@
 	margin: 0 auto;
 }
 
-.clone-credentials__form .form-fieldset:last-child {
-	margin-bottom: 0;
+.clone-credentials__form {
+	.form-fieldset {
+		margin-bottom: 24px;
+	}
 }

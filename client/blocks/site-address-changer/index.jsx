@@ -20,13 +20,13 @@ import ConfirmationDialog from './dialog';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import {
-	requestSiteRename,
+	requestSiteAddressChange,
 	requestSiteAddressAvailability,
 	clearValidationError,
-} from 'state/site-rename/actions';
+} from 'state/site-address-change/actions';
 import getSiteAddressAvailabilityPending from 'state/selectors/get-site-address-availability-pending';
 import getSiteAddressValidationError from 'state/selectors/get-site-address-validation-error';
-import isRequestingSiteRename from 'state/selectors/is-requesting-site-rename';
+import isRequestingSiteAddressChange from 'state/selectors/is-requesting-site-address-change';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
@@ -34,13 +34,13 @@ const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 const ADDRESS_CHANGE_SUPPORT_URL = 'https://support.wordpress.com/changing-blog-address/';
 const VALIDATION_DEBOUNCE_MS = 800;
 
-export class SimpleSiteRenameForm extends Component {
+export class SiteAddressChanger extends Component {
 	static propTypes = {
 		currentDomainSuffix: PropTypes.string.isRequired,
 		currentDomain: PropTypes.object.isRequired,
 
 		// `connect`ed
-		isSiteRenameRequesting: PropTypes.bool,
+		isSiteAddressChangeRequesting: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 	};
 
@@ -61,7 +61,7 @@ export class SimpleSiteRenameForm extends Component {
 	onConfirm = () => {
 		const { selectedSiteId } = this.props;
 
-		this.props.requestSiteRename( selectedSiteId, this.state.domainFieldValue );
+		this.props.requestSiteAddressChange( selectedSiteId, this.state.domainFieldValue );
 	};
 
 	setValidationState = () => {
@@ -130,7 +130,7 @@ export class SimpleSiteRenameForm extends Component {
 	};
 
 	onFieldChange = event => {
-		if ( this.props.isAvailabilityPending || this.props.isSiteRenameRequesting ) {
+		if ( this.props.isAvailabilityPending || this.props.isSiteAddressChangeRequesting ) {
 			return;
 		}
 
@@ -197,7 +197,7 @@ export class SimpleSiteRenameForm extends Component {
 			currentDomainSuffix,
 			isAvailabilityPending,
 			isAvailable,
-			isSiteRenameRequesting,
+			isSiteAddressChangeRequesting,
 			siteId,
 			translate,
 		} = this.props;
@@ -207,12 +207,12 @@ export class SimpleSiteRenameForm extends Component {
 		const currentDomainPrefix = this.getCurrentDomainPrefix();
 		const shouldShowValidationMessage = this.shouldShowValidationMessage();
 		const validationMessage = this.getValidationMessage();
-		const isBusy = isSiteRenameRequesting || isAvailabilityPending;
+		const isBusy = isSiteAddressChangeRequesting || isAvailabilityPending;
 		const isDisabled = domainFieldValue === currentDomainPrefix || ! isAvailable;
 
 		if ( ! currentDomain.currentUserCanManage ) {
 			return (
-				<div className="simple-site-rename-form simple-site-rename-form__only-owner-info">
+				<div className="site-address-changer site-address-changer__only-owner-info">
 					<Gridicon icon="info-outline" />
 					{ isEmpty( currentDomain.owner )
 						? translate( 'Only the site owner can edit this domain name.' )
@@ -228,7 +228,7 @@ export class SimpleSiteRenameForm extends Component {
 		}
 
 		return (
-			<div className="simple-site-rename-form">
+			<div className="site-address-changer">
 				<ConfirmationDialog
 					isVisible={ this.state.showDialog }
 					onClose={ this.onDialogClose }
@@ -242,7 +242,7 @@ export class SimpleSiteRenameForm extends Component {
 						eventName="calypso_siteaddresschange_form_view"
 						eventProperties={ { blog_id: siteId } }
 					/>
-					<Card className="simple-site-rename-form__content">
+					<Card className="site-address-changer__content">
 						<FormSectionHeading>{ translate( 'Change Site Address' ) }</FormSectionHeading>
 						<FormTextInputWithAffixes
 							type="text"
@@ -257,8 +257,8 @@ export class SimpleSiteRenameForm extends Component {
 							isError={ ! isAvailable }
 							text={ validationMessage || '\u00A0' }
 						/>
-						<div className="simple-site-rename-form__footer">
-							<div className="simple-site-rename-form__info">
+						<div className="site-address-changer__footer">
+							<div className="site-address-changer__info">
 								<Gridicon icon="info-outline" size={ 18 } />
 								<p>
 									{ translate(
@@ -290,21 +290,26 @@ export default flow(
 	connect(
 		state => {
 			const siteId = getSelectedSiteId( state );
-			const isAvailable = get( state, [ 'siteRename', 'validation', siteId, 'isAvailable' ] );
+			const isAvailable = get( state, [
+				'siteAddressChange',
+				'validation',
+				siteId,
+				'isAvailable',
+			] );
 
 			return {
 				siteId,
 				selectedSiteId: siteId,
 				isAvailable,
-				isSiteRenameRequesting: isRequestingSiteRename( state, siteId ),
+				isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 				isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
 				validationError: getSiteAddressValidationError( state, siteId ),
 			};
 		},
 		{
-			requestSiteRename,
+			requestSiteAddressChange,
 			requestSiteAddressAvailability,
 			clearValidationError,
 		}
 	)
-)( SimpleSiteRenameForm );
+)( SiteAddressChanger );

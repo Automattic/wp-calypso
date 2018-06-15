@@ -28,10 +28,12 @@ import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
 import PodcastingPrivateSiteMessage from './private-site';
+import PodcastingNoPermissionsMessage from './no-permissions';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
+import canCurrentUser from 'state/selectors/can-current-user';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsForQueryIgnoringPage,
@@ -117,7 +119,7 @@ class PodcastingDetails extends Component {
 			>
 				<option value="0">None</option>
 				{ map( toPairs( podcastingTopics ), ( [ topic, subtopics ] ) => {
-					// The keys for podcasting in iTunes use &amp;
+					// The keys for podcasting in Apple Podcasts use &amp;
 					const topicKey = topic.replace( '&', '&amp;' );
 					return [
 						<option key={ topicKey } value={ topicKey }>
@@ -145,7 +147,7 @@ class PodcastingDetails extends Component {
 				<FormLabel htmlFor="podcasting_category_1">{ translate( 'Podcast Topics' ) }</FormLabel>
 				<FormSettingExplanation>
 					{ translate(
-						'Choose how your podcast should be categorized within iTunes and other podcasting services.'
+						'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services.'
 					) }
 				</FormSettingExplanation>
 				{ this.renderTopicSelector( 'podcasting_category_1' ) }
@@ -199,19 +201,34 @@ class PodcastingDetails extends Component {
 					>
 						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
+					<Card className="podcasting-details__category-wrapper">
+						{ error || this.renderCategorySetting() }
+					</Card>
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
+					{ isPodcastingEnabled && (
+						<div className="podcasting-details__disable-podcasting">
+							<Button onClick={ this.onCategoryCleared } scary>
+								{ translate( 'Disable Podcast' ) }
+							</Button>
+							<p>
+								{ translate(
+									'Disable to stop publishing your podcast feed. You can always set it up again.'
+								) }
+							</p>
+						</div>
+					) }
 				</form>
 			</div>
 		);
 	}
 
-	renderSettings() {
-		const { siteId, podcastingCategoryId, translate, isPodcastingEnabled, fields } = this.props;
+	renderCategorySetting() {
+		const { siteId, podcastingCategoryId, translate } = this.props;
 
 		return (
 			<Fragment>
-				<FormFieldset className="podcasting-details__category-selector">
-					<QueryTerms siteId={ siteId } taxonomy="category" />
+				<QueryTerms siteId={ siteId } taxonomy="category" />
+				<FormFieldset>
 					<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
 					<FormSettingExplanation>
 						{ translate(
@@ -227,19 +244,25 @@ class PodcastingDetails extends Component {
 						onAddTermSuccess={ this.onCategorySelected }
 						height={ 200 }
 					/>
-					{ isPodcastingEnabled && (
-						<Button onClick={ this.onCategoryCleared } scary>
-							{ translate( 'Disable Podcast' ) }
-						</Button>
-					) }
 				</FormFieldset>
-				<div className="podcasting-details__basic-settings">
-					<PodcastCoverImageSetting
-						coverImageId={ parseInt( fields.podcasting_image_id, 10 ) || 0 }
-						coverImageUrl={ fields.podcasting_image }
-						onRemove={ this.onCoverImageRemoved }
-						onSelect={ this.onCoverImageSelected }
-					/>
+				{ this.renderFeedUrl() }
+			</Fragment>
+		);
+	}
+
+	renderSettings() {
+		const { translate, fields, isPodcastingEnabled } = this.props;
+
+		return (
+			<Fragment>
+				<PodcastCoverImageSetting
+					coverImageId={ parseInt( fields.podcasting_image_id, 10 ) || 0 }
+					coverImageUrl={ fields.podcasting_image }
+					onRemove={ this.onCoverImageRemoved }
+					onSelect={ this.onCoverImageSelected }
+					isDisabled={ ! isPodcastingEnabled }
+				/>
+				<div className="podcasting-details__title-subtitle-wrapper">
 					{ this.renderTextField( {
 						key: 'podcasting_title',
 						label: translate( 'Title' ),
@@ -249,7 +272,6 @@ class PodcastingDetails extends Component {
 						label: translate( 'Subtitle' ),
 					} ) }
 				</div>
-				{ this.renderFeedUrl() }
 				{ this.renderTopics() }
 				{ this.renderExplicitContent() }
 				{ this.renderTextField( {
@@ -283,10 +305,14 @@ class PodcastingDetails extends Component {
 	renderSettingsError() {
 		// If there is a reason that we can't display the podcasting settings
 		// screen, it will be rendered here.
-		const { isPrivate } = this.props;
+		const { isPrivate, userCanManagePodcasting } = this.props;
 
 		if ( isPrivate ) {
 			return <PodcastingPrivateSiteMessage />;
+		}
+
+		if ( ! userCanManagePodcasting ) {
+			return <PodcastingNoPermissionsMessage />;
 		}
 
 		return null;
@@ -374,6 +400,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isPodcastingEnabled,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 		podcastingFeedUrl,
+		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 } );
 

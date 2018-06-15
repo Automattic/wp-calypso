@@ -18,7 +18,6 @@ import Button from 'components/button';
 import canCurrentUser from 'state/selectors/can-current-user';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
-import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
@@ -33,6 +32,7 @@ import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions'
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { withEnhancers } from 'state/utils';
+import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
@@ -49,18 +49,15 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		page.back( `/stats/day/${ this.props.siteSlug }` );
 	};
 
-	handleConnect = () => {
-		const { locations, siteSlug } = this.props;
+	handleConnect = keyringConnection => {
+		const { siteId, siteSlug } = this.props;
 
-		this.props.recordTracksEventWithLocationCounts(
-			'calypso_google_my_business_select_business_type_connect'
-		);
-
-		if ( locations.length === 0 ) {
-			page.redirect( `/google-my-business/new/${ siteSlug }` );
-		} else {
-			page.redirect( `/google-my-business/select-location/${ siteSlug }` );
-		}
+		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
+			this.props.recordTracksEventWithLocationCounts(
+				'calypso_google_my_business_select_business_type_connect'
+			);
+			page.redirect( `/google-my-business/${ siteSlug }` );
+		} );
 	};
 
 	trackCreateListingClick = () => {
@@ -92,12 +89,13 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 		let connectButton;
 
-		if ( config.isEnabled( 'google-my-business' ) && canUserManageOptions ) {
+		if ( canUserManageOptions ) {
 			connectButton = (
 				<KeyringConnectButton
 					serviceId="google_my_business"
 					onClick={ this.trackConnectToGoogleMyBusinessClick }
 					onConnect={ this.handleConnect }
+					forceReconnect
 					primary
 				>
 					{ translate( 'Connect to Google My Business', {
@@ -239,5 +237,6 @@ export default connect(
 			enhanceWithLocationCounts,
 			enhanceWithSiteType,
 		] ),
+		connectGoogleMyBusinessAccount,
 	}
 )( localize( GoogleMyBusinessSelectBusinessType ) );

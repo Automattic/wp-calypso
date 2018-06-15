@@ -22,13 +22,12 @@ import { getStreamUrl } from 'reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
 import CommentEditForm from './comment-edit-form';
-import { PLACEHOLDER_STATE } from 'state/comments/constants';
+import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback';
 import CommentActions from './comment-actions';
 import Emojify from 'components/emojify';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import withDimensions from 'lib/with-dimensions';
 import { expandComments } from 'state/comments/actions';
@@ -265,7 +264,6 @@ class PostComment extends React.PureComponent {
 
 		return (
 			<PostCommentForm
-				ref="postCommentForm"
 				post={ this.props.post }
 				parentCommentId={ this.props.commentId }
 				commentText={ this.props.commentText }

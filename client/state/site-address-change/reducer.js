@@ -13,9 +13,9 @@ import {
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
 	SITE_ADDRESS_AVAILABILITY_ERROR,
 	SITE_ADDRESS_AVAILABILITY_ERROR_CLEAR,
-	SITE_RENAME_REQUEST,
-	SITE_RENAME_REQUEST_FAILURE,
-	SITE_RENAME_REQUEST_SUCCESS,
+	SITE_ADDRESS_CHANGE_REQUEST,
+	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
+	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -30,12 +30,12 @@ import {
 export const requesting = createReducer(
 	{},
 	{
-		[ SITE_RENAME_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-		[ SITE_RENAME_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( {
+		[ SITE_ADDRESS_CHANGE_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+		[ SITE_ADDRESS_CHANGE_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( {
 			...state,
 			[ siteId ]: false,
 		} ),
-		[ SITE_RENAME_REQUEST_FAILURE ]: ( state, { siteId } ) => ( {
+		[ SITE_ADDRESS_CHANGE_REQUEST_FAILURE ]: ( state, { siteId } ) => ( {
 			...state,
 			[ siteId ]: false,
 		} ),
@@ -53,21 +53,21 @@ export const requesting = createReducer(
 export const status = createReducer(
 	{},
 	{
-		[ SITE_RENAME_REQUEST ]: ( state, { siteId } ) => ( {
+		[ SITE_ADDRESS_CHANGE_REQUEST ]: ( state, { siteId } ) => ( {
 			...state,
 			[ siteId ]: {
 				status: 'pending',
 				error: false,
 			},
 		} ),
-		[ SITE_RENAME_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( {
+		[ SITE_ADDRESS_CHANGE_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( {
 			...state,
 			[ siteId ]: {
 				status: 'success',
 				error: false,
 			},
 		} ),
-		[ SITE_RENAME_REQUEST_FAILURE ]: ( state, { siteId, error } ) => ( {
+		[ SITE_ADDRESS_CHANGE_REQUEST_FAILURE ]: ( state, { siteId, error } ) => ( {
 			...state,
 			[ siteId ]: {
 				status: 'error',

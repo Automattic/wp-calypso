@@ -33,7 +33,7 @@ export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 	const siteKeyrings = get( state, `siteKeyrings.items.${ siteId }`, [] );
 	const googleMyBusinessSiteKeyring = find(
 		siteKeyrings,
-		keyring => keyring.service === 'google_my_business'
+		keyring => keyring.service === 'google_my_business' && !! keyring.external_user_id
 	);
 
 	if ( googleMyBusinessSiteKeyring ) {

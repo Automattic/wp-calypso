@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { find, forEach, some, endsWith, findIndex } from 'lodash';
+import { find, forEach, has, some, endsWith, findIndex } from 'lodash';
 import url from 'url';
 
 /**
@@ -97,14 +97,18 @@ export function makeImageURLSafe( object, propName, maxWidth, baseURL ) {
 }
 
 export function domForHtml( html ) {
-	let dom;
 	if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
 		const parser = new DOMParser();
-		dom = parser.parseFromString( html, 'text/html' ).body;
-	} else {
-		dom = document.createElement( 'div' );
-		dom.innerHTML = html;
+		const parsed = parser.parseFromString( html, 'text/html' );
+		if ( has( parsed, 'body' ) ) {
+			return parsed.body;
+		}
 	}
+
+	// DOMParser support is not present or non-standard
+	const dom = document.createElement( 'div' );
+	dom.innerHTML = html;
+
 	return dom;
 }
 

@@ -15,6 +15,9 @@ import {
 	SITE_KEYRINGS_DELETE,
 	SITE_KEYRINGS_DELETE_FAILURE,
 	SITE_KEYRINGS_DELETE_SUCCESS,
+	SITE_KEYRINGS_UPDATE,
+	SITE_KEYRINGS_UPDATE_SUCCESS,
+	SITE_KEYRINGS_UPDATE_FAILURE,
 } from 'state/action-types';
 
 /**
@@ -55,7 +58,7 @@ export function requestSiteKeyrings( siteId ) {
 	};
 }
 
-export function saveSiteKeyring( siteId, keyring ) {
+export function createSiteKeyring( siteId, keyring ) {
 	return dispatch => {
 		dispatch( {
 			type: SITE_KEYRINGS_SAVE,
@@ -64,7 +67,7 @@ export function saveSiteKeyring( siteId, keyring ) {
 
 		return wpcom
 			.undocumented()
-			.updateSiteKeyrings( siteId, keyring )
+			.createSiteKeyring( siteId, keyring )
 			.then( body => {
 				dispatch( {
 					type: SITE_KEYRINGS_SAVE_SUCCESS,
@@ -78,6 +81,42 @@ export function saveSiteKeyring( siteId, keyring ) {
 				dispatch( {
 					type: SITE_KEYRINGS_SAVE_FAILURE,
 					siteId,
+					error,
+				} );
+
+				return Promise.reject( error );
+			} );
+	};
+}
+
+export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
+	return dispatch => {
+		dispatch( {
+			type: SITE_KEYRINGS_UPDATE,
+			siteId,
+			keyringId,
+			externalUserId,
+		} );
+
+		return wpcom
+			.undocumented()
+			.updateSiteKeyring( siteId, keyringId, externalUserId )
+			.then( body => {
+				dispatch( {
+					type: SITE_KEYRINGS_UPDATE_SUCCESS,
+					siteId,
+					keyringId,
+					externalUserId,
+				} );
+
+				return body;
+			} )
+			.catch( error => {
+				dispatch( {
+					type: SITE_KEYRINGS_UPDATE_FAILURE,
+					siteId,
+					keyringId,
+					externalUserId,
 					error,
 				} );
 

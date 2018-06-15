@@ -15,9 +15,9 @@ import {
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
 	SITE_ADDRESS_AVAILABILITY_ERROR,
 	SITE_ADDRESS_AVAILABILITY_ERROR_CLEAR,
-	SITE_RENAME_REQUEST,
-	SITE_RENAME_REQUEST_FAILURE,
-	SITE_RENAME_REQUEST_SUCCESS,
+	SITE_ADDRESS_CHANGE_REQUEST,
+	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
+	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -31,7 +31,7 @@ function fetchNonce( siteId ) {
 
 export const getErrorNotice = message =>
 	errorNotice( message, {
-		id: 'siteRenameUnsuccessful',
+		id: 'siteAddressChangeUnsuccessful',
 		duration: 5000,
 		showDismiss: true,
 		isPersistent: true,
@@ -96,9 +96,9 @@ export const clearValidationError = siteId => dispatch => {
 	} );
 };
 
-export const requestSiteRename = ( siteId, newBlogName, discard = true ) => dispatch => {
+export const requestSiteAddressChange = ( siteId, newBlogName, discard = true ) => dispatch => {
 	dispatch( {
-		type: SITE_RENAME_REQUEST,
+		type: SITE_ADDRESS_CHANGE_REQUEST,
 		siteId,
 	} );
 
@@ -117,7 +117,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard = true ) => disp
 		);
 		dispatchErrorNotice( dispatch, error );
 		dispatch( {
-			type: SITE_RENAME_REQUEST_FAILURE,
+			type: SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 			error: error.message,
 			siteId,
 		} );
@@ -142,7 +142,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard = true ) => disp
 
 							dispatch(
 								successNotice( translate( 'Your new site address is ready to go!' ), {
-									id: 'siteRenameSuccessful',
+									id: 'siteAddressChangeSuccessful',
 									duration: 5000,
 									showDismiss: true,
 									isPersistent: true,
@@ -152,7 +152,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard = true ) => disp
 					}
 
 					dispatch( {
-						type: SITE_RENAME_REQUEST_SUCCESS,
+						type: SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 						newSlug,
 						siteId,
 					} );

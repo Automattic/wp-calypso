@@ -68,6 +68,7 @@ export function startEditingNewPost( siteId, post ) {
 			title: '',
 		} );
 
+		dispatch( editorReset( { isLoading: true } ) );
 		dispatch( { type: EDITOR_START, siteId, postId: null } );
 		dispatch( editPost( siteId, null, postAttributes ) );
 		dispatch( editorReset() );

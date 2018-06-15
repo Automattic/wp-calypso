@@ -161,8 +161,8 @@ class GoogleMyBusinessStatsChart extends Component {
 		if ( ! transformedData ) {
 			return (
 				<Fragment>
-					<PieChartPlaceholder title={ !! chartTitle } />
-					<PieChartLegendPlaceholder numLegendElements={ Object.keys( dataSeriesInfo ).length } />
+					<PieChartPlaceholder title={ chartTitle } />
+					<PieChartLegendPlaceholder dataSeriesInfo={ Object.values( dataSeriesInfo ) } />
 				</Fragment>
 			);
 		}
@@ -288,9 +288,6 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 	}
 }
-/* eslint-enable wpcalypso/jsx-classname-namespace */
-/* eslint-enable jsx-a11y/no-onchange */
-
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 /* eslint-enable jsx-a11y/no-onchange */
 
