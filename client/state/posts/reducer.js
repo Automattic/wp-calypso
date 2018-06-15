@@ -472,6 +472,7 @@ export function edits( state = {}, action ) {
 			const postId = action.postId || '';
 			const postEdits = get( state, [ siteId, postId ] );
 			const mergedEdits = mergePostEdits( postEdits, action.post );
+
 			return {
 				...state,
 				[ siteId ]: {
@@ -499,20 +500,36 @@ export function edits( state = {}, action ) {
 			} );
 
 		case POST_SAVE_SUCCESS:
-			if ( ! state.hasOwnProperty( action.siteId ) || ! action.savedPost || action.postId ) {
+			if ( ! state.hasOwnProperty( action.siteId ) || ! action.savedPost ) {
 				break;
 			}
 			const { siteId, savedPost } = action;
 
-			// a new post (edited with a transient postId of '') has been just saved and assigned
-			// a real numeric ID. Rewrite the state key with the new postId.
-			return {
-				...state,
-				[ siteId ]: mapKeys(
-					state[ siteId ],
-					( value, key ) => ( '' === key ? savedPost.ID : key )
-				),
-			};
+			if ( ! action.postId ) {
+				// a new post (edited with a transient postId of '') has been just saved and assigned
+				// a real numeric ID. Rewrite the state key with the new postId.
+				return {
+					...state,
+					[ siteId ]: mapKeys(
+						state[ siteId ],
+						( value, key ) => ( '' === key ? savedPost.ID : key )
+					),
+				};
+			} else if ( state[ siteId ].hasOwnProperty( action.postId ) ) {
+				// a draft saved with a date of `false` resets the publish date via the api
+				// thus the `date` should no longer be treated as dirty.
+				const dateEdits = get( state, [ action.siteId, action.postId ] );
+				if ( ! dateEdits || false !== dateEdits.date ) {
+					break;
+				}
+				return {
+					...state,
+					[ siteId ]: {
+						...state[ siteId ],
+						[ action.postId ]: omit( dateEdits, 'date' ),
+					},
+				};
+			}
 	}
 
 	return state;

@@ -383,7 +383,7 @@ export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
 }
 
 export function isDateEqual( localDateEdit, savedDate ) {
-	return moment( localDateEdit ).isSame( savedDate );
+	return localDateEdit && moment( localDateEdit ).isSame( savedDate );
 }
 
 export function isStatusEqual( localStatusEdit, savedStatus ) {

@@ -1444,6 +1444,34 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should consider date not edited after resetting draft date', () => {
+			const original = deepFreeze( {
+				2916284: {
+					842: {
+						title: 'I like turtles',
+						date: false,
+					},
+				},
+			} );
+			const state = edits( original, {
+				type: POST_SAVE_SUCCESS,
+				siteId: 2916284,
+				postId: 842,
+				savedPost: {
+					ID: 842,
+					title: 'I like turtles',
+					date: '2018-06-14T16:47:21+00:00',
+				},
+			} );
+			expect( state ).to.eql( {
+				2916284: {
+					842: {
+						title: 'I like turtles',
+					},
+				},
+			} );
+		} );
+
 		test( "should ignore stop editor action when site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {

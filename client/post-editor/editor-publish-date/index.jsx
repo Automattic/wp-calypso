@@ -64,7 +64,7 @@ export class EditorPublishDate extends React.Component {
 	};
 
 	setImmediate = () => {
-		this.props.setPostDate( null );
+		this.props.setPostDate( false );
 		this.setState( { isOpen: false } );
 	};
 
