@@ -21,7 +21,7 @@ import {
 } from 'layout/guided-tours/config-elements';
 
 export const JetpackMonitoringTour = makeTour(
-	<Tour name="jetpackMonitoring" version="20180611" path="/non-existent-route">
+	<Tour name="jetpackMonitoring" version="20180611">
 		<Step
 			name="init"
 			target=".jetpack-monitor-settings .form-toggle__switch"
