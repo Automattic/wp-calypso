@@ -95,6 +95,9 @@ class LabelItem extends Component {
 			productNames,
 			receiptId,
 			labelId,
+			createdDate,
+			refundableAmount,
+			currency,
 		} = label;
 
 		return (
@@ -116,14 +119,21 @@ class LabelItem extends Component {
 							<DetailsDialog
 								siteId={ siteId }
 								orderId={ orderId }
-								labelIndex= { labelIndex }
+								labelIndex={ labelIndex }
 								serviceName={ serviceName }
 								packageName={ packageName }
 								productNames={ productNames }
 								receiptId={ receiptId }
-								labelId= { labelId }
+								labelId={ labelId }
 							/>
-							<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
+							<RefundDialog
+								siteId={ siteId }
+								orderId={ orderId }
+								createdDate={ createdDate }
+								refundableAmount={ refundableAmount }
+								currency={ currency }
+								labelId={ labelId }
+							/>
 							<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
 						</span>
 					) }
