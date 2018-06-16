@@ -28,7 +28,13 @@ import FormAnalyticsStores from './form-analytics-stores';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium } from 'lib/products-values';
+import {
+	isBusiness,
+	isEnterprise,
+	isJetpackBusiness,
+	isJetpackPremium,
+	isVipPlan,
+} from 'lib/products-values';
 import {
 	getSiteOption,
 	isJetpackMinimumVersion,
@@ -44,7 +50,7 @@ import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
-const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
+const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness, isVipPlan );
 
 export class GoogleAnalyticsForm extends Component {
 	state = {
