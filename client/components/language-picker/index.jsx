@@ -79,7 +79,7 @@ export class LanguagePicker extends PureComponent {
 		}
 
 		// onChange takes an object in shape of a DOM event as argument
-		const value = language[ this.props.valueKey ];
+		const value = language[ this.props.valueKey ] || language.langSlug;
 		const event = { target: { value } };
 		this.props.onChange( event );
 		this.setState( {
