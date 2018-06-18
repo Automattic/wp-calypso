@@ -29,17 +29,19 @@ export const connectGoogleMyBusinessAccount = ( siteId, keyringId, locationId = 
 	dispatch,
 	getState
 ) => {
-	if ( ! getSiteKeyringConnection( getState(), siteId, keyringId ) ) {
-		return dispatch( disconnectAllGoogleMyBusinessAccounts( siteId ) ).then( () =>
-			dispatch(
-				createSiteKeyring( siteId, {
-					keyring_id: keyringId,
-					service: 'google_my_business',
-					external_user_id: locationId,
-				} )
-			)
-		);
+	if ( getSiteKeyringConnection( getState(), siteId, keyringId ) ) {
+		return Promise.resolve();
 	}
+
+	return dispatch( disconnectAllGoogleMyBusinessAccounts( siteId ) ).then( () =>
+		dispatch(
+			createSiteKeyring( siteId, {
+				keyring_id: keyringId,
+				service: 'google_my_business',
+				external_user_id: locationId,
+			} )
+		)
+	);
 };
 
 export const connectGoogleMyBusinessLocation = ( siteId, keyringId, locationId ) => dispatch =>
