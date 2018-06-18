@@ -48,6 +48,11 @@ const importers = [
 		component: MediumImporter,
 	},
 	{
+		type: BLOGGER,
+		isImporterEnabled: isEnabled( 'manage/import/blogger' ),
+		component: BloggerImporter,
+	},
+	{
 		type: SITE_IMPORTER,
 		isImporterEnabled: isEnabled( 'manage/import/site-importer' ),
 		component: SiteImporter,
@@ -106,7 +111,9 @@ class SiteSettingsImport extends Component {
 		} );
 
 		// add the 'other importers' card to the end of the list of importers
-		const { options: { admin_url: adminUrl } } = site;
+		const {
+			options: { admin_url: adminUrl },
+		} = site;
 
 		const otherImportersCard = (
 			<CompactCard
@@ -158,7 +165,10 @@ class SiteSettingsImport extends Component {
 	 * @returns {Array} Importer react elements
 	 */
 	renderImporters() {
-		const { api: { isHydrated }, importers: imports } = this.state;
+		const {
+			api: { isHydrated },
+			importers: imports,
+		} = this.state;
 		const { site } = this.props;
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
