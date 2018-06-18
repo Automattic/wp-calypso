@@ -18,11 +18,13 @@ import { translate } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import notices from 'notices';
 import TermsOfService from './terms-of-service';
+import wp from 'lib/wp';
 import { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
+const wpcom = wp.undocumented();
 const log = debug( 'calypso:checkout:payment:emergent-payall' );
 const httpDataId = 'emergent-paywall-config';
 
