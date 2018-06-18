@@ -12,6 +12,7 @@ import { stringify } from 'qs';
 import { serverRender } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
+import { setShouldServerSideRender } from '../render';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
@@ -38,6 +39,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				combineMiddlewares(
 					setSectionMiddlewareFactory( section ),
 					setRouteMiddleware,
+					setShouldServerSideRender,
 					...middlewares
 				),
 				serverRender

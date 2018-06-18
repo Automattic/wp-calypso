@@ -26,8 +26,6 @@ const enhanceContextWithLogin = context => {
 		path,
 	} = context;
 
-	context.cacheQueryKeys = [ 'client_id', 'signup_flow' ];
-
 	context.primary = (
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
