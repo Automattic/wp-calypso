@@ -3,10 +3,8 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 import Gridicon from 'gridicons';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +20,7 @@ import {
 } from 'layout/guided-tours/config-elements';
 
 export const JetpackPluginUpdatesTour = makeTour(
-	<Tour name="jetpackPluginUpdates" version="20180611" path="/non-existent-route" when={ noop }>
+	<Tour name="jetpackPluginUpdates" version="20180611">
 		<Step
 			name="init"
 			target="#plugin-jetpack .form-toggle__switch"
@@ -43,9 +41,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue target="#plugin-jetpack .form-toggle__switch" step="finish" click hidden />
-						<SiteLink isButton={ false } href="/checklist/:site">
-							{ translate( 'Return to the checklist' ) }
-						</SiteLink>
+						<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 					</ButtonRow>
 				</Fragment>
 			) }
