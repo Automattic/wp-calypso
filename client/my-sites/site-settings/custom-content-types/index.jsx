@@ -114,7 +114,7 @@ class CustomContentTypes extends Component {
 
 	renderBlogPostSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Blog posts' );
+		const fieldLabel = translate( 'blog posts' );
 		const fieldDescription = translate( 'On blog pages, the number of posts to show per page.' );
 
 		return (
@@ -126,7 +126,7 @@ class CustomContentTypes extends Component {
 
 	renderTestimonialSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Testimonials' );
+		const fieldLabel = translate( 'testimonials' );
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
 				'you can display them using the shortcode [testimonials].',
@@ -142,7 +142,7 @@ class CustomContentTypes extends Component {
 
 	renderPortfolioSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Portfolio Projects' );
+		const fieldLabel = translate( 'portfolio projects' );
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
 				'you can display them using the shortcode [portfolio].',
