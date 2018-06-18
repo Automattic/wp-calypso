@@ -78,11 +78,11 @@ export class EditorNotice extends Component {
 		switch ( key ) {
 			case 'publishFailure':
 				if ( 'post' === type ) {
-					return translate( 'Publishing of post failed' );
+					return translate( 'Publishing of post failed.' );
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Publishing of page failed' );
+					return translate( 'Publishing of page failed.' );
 				}
 
 				return translate( 'Publishing of %(typeLabel)s failed.', {
