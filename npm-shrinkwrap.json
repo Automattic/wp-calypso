@@ -6941,9 +6941,9 @@
       }
     },
     "express-useragent": {
-      "version": "1.0.7",
-      "resolved": "https://registry.npmjs.org/express-useragent/-/express-useragent-1.0.7.tgz",
-      "integrity": "sha1-FT3mR+Wl0FxOwbQXJ5Ska8DQeZE="
+      "version": "1.0.12",
+      "resolved": "https://registry.npmjs.org/express-useragent/-/express-useragent-1.0.12.tgz",
+      "integrity": "sha1-W64BCakl7Js1QX8xpOitE/GRJTo="
     },
     "extend": {
       "version": "3.0.1",

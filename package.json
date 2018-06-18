@@ -76,7 +76,7 @@
     "events": "3.0.0",
     "exports-loader": "0.7.0",
     "express": "4.16.3",
-    "express-useragent": "1.0.7",
+    "express-useragent": "1.0.12",
     "filesize": "3.6.1",
     "flag-icon-css": "2.9.0",
     "flux": "2.1.1",
