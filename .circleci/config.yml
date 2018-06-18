@@ -48,7 +48,8 @@ jobs:
 
       - restore_cache:
           name: Restore Server Build Babel cache
-          key: v1-server-babel-{{ checksum "npm-shrinkwrap.json"}}
+          key: v1-server-babel-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+          key: v1-server-babel-{{ checksum ".nvmrc" }}
 
       - run:
           name: Build Server
@@ -58,7 +59,7 @@ jobs:
 
       - save_cache:
           name: Saving Server Build Babel cache
-          key: v1-server-babel-{{ checksum "npm-shrinkwrap.json" }}-{{ epoch }}
+          key: v1-server-babel-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
           paths:
             - "build/.babel-server-cache"
 
