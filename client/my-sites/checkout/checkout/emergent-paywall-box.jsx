@@ -15,12 +15,12 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import notices from 'notices';
 import TermsOfService from './terms-of-service';
 import wp from 'lib/wp';
 import { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const wpcom = wp.undocumented();
 const log = debug( 'calypso:checkout:payment:emergent-payall' );
@@ -128,7 +128,7 @@ export class EmergentPaywallBox extends Component {
 					const successPath = `/checkout/thank-you/${ this.state.siteSlug }/pending/${
 						result.order_id
 					}`;
-					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
+					this.props.recordTracksEvent( 'calypso_checkout_form_submit', {
 						payment_method: this.state.paymentMethod,
 					} );
 					page.redirect( successPath );
@@ -242,5 +242,7 @@ export default connect(
 	state => ( {
 		userCountryCode: getCurrentUserCountryCode( state ),
 	} ),
-	null
+	{
+		recordTracksEvent,
+	}
 )( localize( EmergentPaywallBox ) );
