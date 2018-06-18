@@ -29,7 +29,8 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 
 class NameServers extends React.Component {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
+		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		nameservers: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
@@ -66,7 +67,7 @@ class NameServers extends React.Component {
 	}
 
 	isLoading() {
-		return ! this.props.domains.hasLoadedFromServer || ! this.props.nameservers.hasLoadedFromServer;
+		return this.props.isRequestingSiteDomains || ! this.props.nameservers.hasLoadedFromServer;
 	}
 
 	render() {
@@ -184,7 +185,7 @@ class NameServers extends React.Component {
 	}
 
 	needsVerification() {
-		if ( ! this.props.domains.hasLoadedFromServer ) {
+		if ( this.props.isRequestingSiteDomains ) {
 			return false;
 		}
 

@@ -28,8 +28,7 @@ class AddGoogleApps extends React.Component {
 
 	ensureCanAddEmail() {
 		const needsRedirect =
-			this.props.domains.hasLoadedFromServer &&
-			! hasGoogleAppsSupportedDomain( this.props.domains.list );
+			this.props.isRequestingSiteDomains && ! hasGoogleAppsSupportedDomain( this.props.domains );
 
 		if ( needsRedirect ) {
 			const path = domainManagementEmail(
@@ -57,6 +56,7 @@ class AddGoogleApps extends React.Component {
 					<SectionHeader label={ translate( 'Add G Suite' ) } />
 					<AddEmailAddressesCard
 						domains={ this.props.domains }
+						isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ this.props.selectedSite }
 					/>

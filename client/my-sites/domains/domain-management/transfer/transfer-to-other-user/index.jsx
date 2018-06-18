@@ -33,12 +33,13 @@ const wpcom = wp.undocumented();
 
 class TransferOtherUser extends React.Component {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
+		currentUser: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
+		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		wapiDomainInfo: PropTypes.object.isRequired,
 		users: PropTypes.array.isRequired,
-		currentUser: PropTypes.object.isRequired,
+		wapiDomainInfo: PropTypes.object.isRequired,
 	};
 
 	constructor( props ) {
@@ -260,7 +261,7 @@ class TransferOtherUser extends React.Component {
 	}
 
 	isDataReady() {
-		return this.props.wapiDomainInfo.hasLoadedFromServer && this.props.domains.hasLoadedFromServer;
+		return this.props.wapiDomainInfo.hasLoadedFromServer && ! this.props.isRequestingSiteDomains;
 	}
 }
 

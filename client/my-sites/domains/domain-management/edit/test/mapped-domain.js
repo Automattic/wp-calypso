@@ -28,7 +28,6 @@ describe( 'mapped-domain', () => {
 				name: 'neverexpires.com',
 				expirationMoment: null,
 			},
-			settingPrimaryDomain: false,
 			translate: identity,
 		};
 	} );

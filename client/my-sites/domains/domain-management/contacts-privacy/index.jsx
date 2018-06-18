@@ -29,10 +29,10 @@ import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/
 
 class ContactsPrivacy extends React.PureComponent {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
-		whois: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		whois: PropTypes.object.isRequired,
 	};
 
 	render() {

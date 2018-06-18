@@ -43,7 +43,6 @@ export {
 	deleteEmailForwarding,
 	enablePrivacyProtection,
 	fetchDns,
-	fetchDomains,
 	fetchEmailForwarding,
 	fetchNameservers,
 	fetchSiteRedirect,

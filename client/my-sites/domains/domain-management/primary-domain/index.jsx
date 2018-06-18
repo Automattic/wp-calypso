@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
@@ -17,20 +16,16 @@ import Main from 'components/main';
 import Card from 'components/card/compact';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Notice from 'components/notice';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import { domainManagementEdit, domainManagementPrimaryDomain } from 'my-sites/domains/paths';
+import { domainManagementEdit } from 'my-sites/domains/paths';
 import { setPrimaryDomain } from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
 import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';
-import { getDomainsBySite } from 'state/sites/domains/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class PrimaryDomain extends React.Component {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
@@ -101,12 +96,6 @@ class PrimaryDomain extends React.Component {
 
 		return (
 			<Main className="domain-management-primary-domain">
-				<PageViewTracker
-					path={ domainManagementPrimaryDomain( ':site', ':domain' ) }
-					title="Domain Management > Set Primary Domain"
-				/>
-				<QuerySiteDomains siteId={ selectedSite && selectedSite.ID } />
-
 				<Header selectedDomainName={ selectedDomainName } onClick={ this.goToEditDomainRoot }>
 					{ translate( 'Primary Domain' ) }
 				</Header>
@@ -196,22 +185,8 @@ const updatePrimaryDomainClick = ( { name, type }, success ) =>
 		} )
 	);
 
-export default connect(
-	state => {
-		const selectedSite = getSelectedSite( state );
-		const domains = getDomainsBySite( state, selectedSite );
-
-		return {
-			domains: {
-				isFetching: !! domains.length,
-				list: domains,
-			},
-			selectedSite,
-		};
-	},
-	{
-		setPrimaryDomain,
-		cancelClick,
-		updatePrimaryDomainClick,
-	}
-)( localize( PrimaryDomain ) );
+export default connect( null, {
+	setPrimaryDomain,
+	cancelClick,
+	updatePrimaryDomainClick,
+} )( localize( PrimaryDomain ) );

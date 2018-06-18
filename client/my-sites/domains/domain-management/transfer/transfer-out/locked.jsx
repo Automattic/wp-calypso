@@ -14,7 +14,7 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
-import { requestTransferCode } from 'lib/upgrades/actions';
+import { fetchWapiDomainInfo, requestTransferCode } from 'lib/upgrades/actions';
 import {
 	displayRequestTransferCodeResponseNotice,
 	renderGdprTransferWarningNotice,
@@ -43,6 +43,7 @@ class Locked extends React.Component {
 				this.setState( { submitting: false } );
 			}
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
+			fetchWapiDomainInfo( this.props.selectedDomainName );
 		} );
 	};
 
