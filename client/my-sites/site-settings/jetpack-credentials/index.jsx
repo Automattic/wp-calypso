@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { some } from 'lodash';
@@ -22,12 +23,16 @@ import { getSiteSlug } from 'state/sites/selectors';
 
 class JetpackCredentials extends Component {
 	render() {
-		const { credentials, rewindState, siteId, translate, siteSlug } = this.props;
+		const { blurred, credentials, rewindState, siteId, translate, siteSlug } = this.props;
 		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
 		const hasCredentials = some( credentials, { role: 'main' } );
 
+		const className = classNames( 'jetpack-credentials', {
+			'site-settings__blurred': blurred,
+		} );
+
 		return (
-			<div className="jetpack-credentials">
+			<div className={ className } id="jetpack-credentials">
 				<QueryRewindState siteId={ siteId } />
 				<SectionHeader label={ translate( 'Backups and security scans' ) }>
 					{ hasAuthorized && (

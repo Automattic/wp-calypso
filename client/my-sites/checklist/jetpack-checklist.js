@@ -23,7 +23,7 @@ const tasks = {
 		completedTitle: translate( 'You turned on backups and scanning.' ),
 		completedButtonText: 'Change',
 		duration: translate( '2 min' ),
-		url: '/stats/activity/$siteSlug',
+		url: '/settings/security/$siteSlug#jetpack-credentials',
 	},
 	jetpack_monitor: {
 		title: translate( 'Jetpack Monitor' ),
@@ -33,7 +33,7 @@ const tasks = {
 		completedTitle: translate( 'You turned on Jetpack Monitor.' ),
 		completedButtonText: 'Change',
 		duration: translate( '3 min' ),
-		url: '/settings/security/$siteSlug',
+		url: '/settings/security/$siteSlug#jetpack-monitor',
 	},
 	jetpack_plugin_updates: {
 		title: translate( 'Automatic Plugin Updates' ),
