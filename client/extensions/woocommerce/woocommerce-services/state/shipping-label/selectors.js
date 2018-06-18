@@ -33,6 +33,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/packages/selectors';
 import { isEnabled } from 'config';
 import { ACCEPTED_USPS_ORIGIN_COUNTRY_CODES } from './constants';
+import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -138,18 +139,8 @@ export const needsCustomsForm = createSelector(
 		if ( isEmpty( form ) ) {
 			return false;
 		}
-		const originStatus = form.origin;
-		const origin =
-			originStatus.isNormalized && originStatus.selectNormalized && originStatus.normalized
-				? originStatus.normalized
-				: originStatus.values;
-		const destinationStatus = form.destination;
-		const destination =
-			destinationStatus.isNormalized &&
-			destinationStatus.selectNormalized &&
-			destinationStatus.normalized
-				? destinationStatus.normalized
-				: destinationStatus.values;
+		const origin = getAddressValues( form.origin );
+		const destination = getAddressValues( form.destination );
 
 		// Special case: Any shipment from/to military addresses must have Customs
 		if ( 'US' === origin.country && includes( [ 'AA', 'AE', 'AP' ], origin.state ) ) {
@@ -191,18 +182,16 @@ export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( st
 	};
 };
 
-const getAddressErrors = (
-	{
+const getAddressErrors = ( addressData, countriesData ) => {
+	const {
 		values,
 		isNormalized,
 		isUnverifiable,
 		normalized: normalizedValues,
-		selectNormalized,
 		ignoreValidation,
 		fieldErrors,
-	},
-	countriesData
-) => {
+	} = addressData;
+
 	if ( ( isNormalized || isUnverifiable ) && ! normalizedValues && fieldErrors ) {
 		return fieldErrors;
 	} else if ( isNormalized && ! normalizedValues ) {
@@ -213,7 +202,7 @@ const getAddressErrors = (
 		};
 	}
 
-	const { postcode, state, country } = isNormalized && selectNormalized ? normalizedValues : values;
+	const { postcode, state, country } = getAddressValues( addressData );
 	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
 	requiredFields.forEach( field => {

@@ -22,21 +22,19 @@ import {
 	isLoaded,
 	getFormErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 
-const renderSummary = (
-	{
-		values,
+const renderSummary = ( props, showCountry ) => {
+	const {
 		isNormalized,
 		normalizationInProgress,
 		normalized,
-		selectNormalized,
 		storeOptions,
 		errors,
 		translate,
 		expandStateName = false,
-	},
-	showCountry
-) => {
+	} = props;
+
 	if ( normalizationInProgress ) {
 		return translate( 'Validating address…' );
 	}
@@ -47,7 +45,7 @@ const renderSummary = (
 		return translate( "You've edited the address, please revalidate it for accurate rates" );
 	}
 	const { countriesData } = storeOptions;
-	const { city, postcode, state, country } = normalized && selectNormalized ? normalized : values;
+	const { city, postcode, state, country } = getAddressValues( props );
 	// Summary format: "city, state  postcode [, country]"
 	let str = city + ', ';
 	if ( state ) {
