@@ -9,21 +9,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import url from 'url';
-import {
-	assign,
-	defer,
-	delay,
-	filter,
-	find,
-	get,
-	indexOf,
-	isEmpty,
-	last,
-	matchesProperty,
-	pick,
-	some,
-	startsWith,
-} from 'lodash';
+import { assign, defer, delay, find, get, indexOf, isEmpty, last, pick, startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -61,7 +47,7 @@ import steps from './config/steps';
 import flows from './config/flows';
 import stepComponents from './config/step-components';
 import FlowProgressIndicator from './flow-progress-indicator';
-import { getDestination, canResumeFlow, getStepUrl } from './utils';
+import { getDestination, canResumeFlow, getStepUrl, getCompletedSteps } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 
 /**
@@ -128,13 +114,10 @@ class Signup extends React.Component {
 		this.loadProgressFromStore();
 
 		if ( canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
-			// we loaded progress from local storage, attempt to resume progress
+			// Resume progress if possible
 			return this.resumeProgress();
-		}
-
-		if ( this.getPositionInFlow() !== 0 ) {
-			// no progress was resumed and we're on a non-zero step
-			// redirect to the beginning of the flow
+		} else if ( this.getPositionInFlow() !== 0 ) {
+			// Flow is not resumable; redirect to the beginning of the flow
 			return page.redirect(
 				getStepUrl(
 					this.props.flowName,
@@ -223,23 +206,26 @@ class Signup extends React.Component {
 	}
 
 	loadProgressFromStore = () => {
-		const newProgress = SignupProgressStore.get(),
-			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
-			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
-			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
-
-		this.setState( { progress: newProgress } );
-
-		if ( this.isEveryStepSubmitted() ) {
-			this.goToFirstInvalidStep();
-		}
-
-		if ( startLoadingScreen ) {
-			this.setState( { loadingScreenStartTime: Date.now() } );
-		}
-
-		if ( invalidSteps ) {
+		const hasInvalidSteps = !! this.getFirstInvalidStep();
+		if ( hasInvalidSteps ) {
 			this.setState( { loadingScreenStartTime: undefined } );
+		}
+
+		const isEveryStepSubmitted = this.isEveryStepSubmitted();
+		const shouldGoToInvalidStep = hasInvalidSteps && isEveryStepSubmitted;
+		const shouldStartLoadingScreen =
+			! hasInvalidSteps && isEveryStepSubmitted && ! this.state.loadingScreenStartTime;
+
+		if ( shouldGoToInvalidStep ) {
+			debug( `Every step has been submitted, go to the first invalid step` );
+			this.goToFirstInvalidStep();
+			return;
+		}
+
+		if ( shouldStartLoadingScreen ) {
+			debug( `Waiting for server with all steps submitted with no invalid steps` );
+			this.setState( { loadingScreenStartTime: Date.now() } );
+			return;
 		}
 	};
 
@@ -354,10 +340,7 @@ class Signup extends React.Component {
 
 	firstUnsubmittedStepName = () => {
 		const currentSteps = flows.getFlow( this.props.flowName ).steps,
-			signupProgress = filter(
-				SignupProgressStore.get(),
-				step => -1 !== currentSteps.indexOf( step.stepName )
-			),
+			signupProgress = getCompletedSteps( this.props.flowName, SignupProgressStore.get() ),
 			nextStepName = currentSteps[ signupProgress.length ],
 			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
 			firstInProgressStepName = firstInProgressStep.stepName;
@@ -428,8 +411,12 @@ class Signup extends React.Component {
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
 
+	getFirstInvalidStep() {
+		return find( SignupProgressStore.get(), { status: 'invalid' } );
+	}
+
 	goToFirstInvalidStep = () => {
-		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
+		const firstInvalidStep = this.getFirstInvalidStep();
 
 		if ( firstInvalidStep ) {
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
@@ -439,21 +426,19 @@ class Signup extends React.Component {
 
 			if ( firstInvalidStep.stepName === this.props.stepName ) {
 				// No need to redirect
+				debug( `Already navigated to the first invalid step: ${ firstInvalidStep.stepName }` );
 				return;
 			}
 
+			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
 			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
 	};
 
 	isEveryStepSubmitted = () => {
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
-		const signupProgress = filter(
-			SignupProgressStore.get(),
-			step => -1 !== flowSteps.indexOf( step.stepName ) && 'in-progress' !== step.status
-		);
-
-		return flowSteps.length === signupProgress.length;
+		const completedSteps = getCompletedSteps( this.props.flowName, SignupProgressStore.get() );
+		return flowSteps.length === completedSteps.length;
 	};
 
 	getPositionInFlow() {
