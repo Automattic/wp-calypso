@@ -23,6 +23,7 @@ import LineChartLegend from './legend';
 const CHART_MARGIN = 0.01;
 const POINTS_MAX = 10;
 const POINTS_SIZE = 3;
+const POINT_HIGHLIGHT_SIZE_FACTOR = 1.5;
 const POINTS_END_SIZE = 1;
 const X_AXIS_TICKS_MAX = 8;
 const X_AXIS_TICKS_SPACE = 70;
@@ -300,7 +301,7 @@ class LineChart extends Component {
 				const selectedPoints = svg.selectAll(
 					`circle.line-chart__line-point[cx="${ xScale( closestDate ) }"]`
 				);
-				selectedPoints.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
+				selectedPoints.attr( 'r', Math.floor( POINTS_SIZE * POINT_HIGHLIGHT_SIZE_FACTOR ) );
 				this.setState( { selectedPoints: selectedPoints.nodes() } );
 			} else {
 				svg.selectAll( 'circle.line-chart__line-point-hover' ).remove();
@@ -318,7 +319,7 @@ class LineChart extends Component {
 								)
 								.attr( 'cx', xScale( datum.date ) )
 								.attr( 'cy', yScale( datum.value ) )
-								.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) )
+								.attr( 'r', Math.floor( POINTS_SIZE * POINT_HIGHLIGHT_SIZE_FACTOR ) )
 								.datum( { ...datum, dataSeriesIndex } );
 							circles = circles.concat( circleSelection.nodes() );
 						}
@@ -418,7 +419,7 @@ class LineChart extends Component {
 				const selectedPoints = svg.selectAll(
 					`circle.line-chart__line-point-color-${ dataSeriesIndex }`
 				);
-				selectedPoints.attr( 'r', Math.floor( POINTS_SIZE * 1.5 ) );
+				selectedPoints.attr( 'r', Math.floor( POINTS_SIZE * POINT_HIGHLIGHT_SIZE_FACTOR ) );
 				this.setState( { selectedPoints: selectedPoints.nodes() } );
 			}
 		} );
