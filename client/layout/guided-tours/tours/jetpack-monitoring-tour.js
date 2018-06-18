@@ -64,7 +64,7 @@ export const JetpackMonitoringTour = makeTour(
 					</h1>
 					<p>
 						{ translate(
-							'Uptime Monitoring has been enabled. Would you like to continue setting up the security essential features for your site?'
+							'Downtime Monitoring has been enabled. Would you like to continue setting up the security essential features for your site?'
 						) }
 					</p>
 					<ButtonRow>
