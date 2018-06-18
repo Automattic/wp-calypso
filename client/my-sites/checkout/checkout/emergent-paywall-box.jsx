@@ -8,7 +8,7 @@ import debug from 'debug';
 import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
-import { get, debounce, startsWith, isBoolean } from 'lodash';
+import { get, startsWith, isBoolean } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 
@@ -27,6 +27,30 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 const wpcom = wp.undocumented();
 const log = debug( 'calypso:checkout:payment:emergent-payall' );
 const httpDataId = 'emergent-paywall-config';
+/**
+ * POST emergent paywall iframe client configuration
+ *
+ * @param {string} countryCode - user's country code
+ * @param {object} cart - current cart object. See: client/lib/cart/store/index.js
+ * @param {object} domainDetails - transaction store domain details
+ *
+ * @return {*} Stored data container for request.
+ */
+export const requestEmergentPaywallConfiguration = ( countryCode, cart, domainDetails ) => {
+	return requestHttpData(
+		httpDataId,
+		http( {
+			apiVersion: '1.1',
+			method: 'POST',
+			path: '/me/emergent-paywall-configuration',
+			body: { country: countryCode, cart, domainDetails },
+		} ),
+		{
+			fromApi: () => config => [ [ 'config', config ] ],
+			freshness: -Infinity,
+		}
+	);
+};
 
 export class EmergentPaywallBox extends Component {
 	static propTypes = {
@@ -75,7 +99,7 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	componentDidMount() {
-		this.props.requestEmergentPaywallConfiguration(
+		requestEmergentPaywallConfiguration(
 			this.props.userCountryCode,
 			this.props.cart,
 			this.props.transaction.domainDetails
@@ -92,7 +116,7 @@ export class EmergentPaywallBox extends Component {
 			prevProps.cart.total_cost !== this.props.cart.total_cost ||
 			prevProps.cart.products.length !== this.props.cart.products.length
 		) {
-			this.props.requestEmergentPaywallConfiguration(
+			requestEmergentPaywallConfiguration(
 				this.props.userCountryCode,
 				this.props.cart,
 				this.props.transaction.domainDetails
@@ -256,38 +280,11 @@ export class EmergentPaywallBox extends Component {
 	}
 }
 
-/**
- * POST emergent paywall iframe client configuration
- *
- * @param {string} countryCode - user's country code
- * @param {object} cart - current cart object. See: client/lib/cart/store/index.js
- * @param {object} domainDetails - transaction store domain details
- *
- * @return {*} Stored data container for request.
- */
-export const requestEmergentPaywallConfiguration = ( countryCode, cart, domainDetails ) => {
-	return requestHttpData(
-		httpDataId,
-		http( {
-			apiVersion: '1.1',
-			method: 'POST',
-			path: '/me/emergent-paywall-configuration',
-			body: { country: countryCode, cart, domainDetails },
-		} ),
-		{
-			fromApi: () => config => [ [ 'config', config ] ],
-			freshness: -Infinity,
-		}
-	);
-};
-
 export default connect(
 	state => ( {
 		userCountryCode: getCurrentUserCountryCode( state ),
 		emergentPaywallConfig: getHttpData( httpDataId ).data,
 		emergentPaywallConfigState: getHttpData( httpDataId ).state,
 	} ),
-	() => ( {
-		requestEmergentPaywallConfiguration: debounce( requestEmergentPaywallConfiguration, 500 ),
-	} )
+	null
 )( EmergentPaywallBox );
