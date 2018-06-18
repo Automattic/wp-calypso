@@ -3537,22 +3537,23 @@
       "integrity": "sha1-AmVfKyazvC7hrh5TFoht4463lzg="
     },
     "chokidar": {
-      "version": "2.0.3",
-      "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-2.0.3.tgz",
-      "integrity": "sha512-zW8iXYZtXMx4kux/nuZVXjkLP+CyIK5Al5FHnj1OgTKGZfp4Oy6/ymtMSKFv3GD8DviEmUPmJg9eFdJ/JzudMg==",
+      "version": "2.0.4",
+      "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-2.0.4.tgz",
+      "integrity": "sha512-z9n7yt9rOvIJrMhvDtDictKrkFHeihkNl6uWMmZlmL6tJtX9Cs+87oK+teBx+JIgzvbX3yZHT3eF8vpbDxHJXQ==",
       "requires": {
         "anymatch": "^2.0.0",
         "async-each": "^1.0.0",
         "braces": "^2.3.0",
-        "fsevents": "^1.1.2",
+        "fsevents": "^1.2.2",
         "glob-parent": "^3.1.0",
         "inherits": "^2.0.1",
         "is-binary-path": "^1.0.0",
         "is-glob": "^4.0.0",
+        "lodash.debounce": "^4.0.8",
         "normalize-path": "^2.1.1",
         "path-is-absolute": "^1.0.0",
         "readdirp": "^2.0.0",
-        "upath": "^1.0.0"
+        "upath": "^1.0.5"
       },
       "dependencies": {
         "anymatch": {
@@ -7794,7 +7795,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -8159,7 +8161,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -8207,6 +8210,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -8245,11 +8249,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -12249,6 +12255,11 @@
       "version": "4.5.0",
       "resolved": "https://registry.npmjs.org/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz",
       "integrity": "sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8="
+    },
+    "lodash.debounce": {
+      "version": "4.0.8",
+      "resolved": "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz",
+      "integrity": "sha1-gteb/zCmfEAF/9XiUVMArZyk168="
     },
     "lodash.escape": {
       "version": "3.2.0",
