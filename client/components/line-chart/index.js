@@ -473,7 +473,7 @@ class LineChart extends Component {
 	};
 
 	renderTooltips = () => {
-		const { selectedPoints } = this.state;
+		const { selectedPoints, data } = this.state;
 		const selectPointsValues = selectedPoints.map( point => d3Select( point ).datum().value );
 		const tooltipPositionsMap = this.getTooltipPositionMap( selectPointsValues );
 
@@ -494,7 +494,7 @@ class LineChart extends Component {
 					key={ uniqueKey }
 					isVisible
 				>
-					{ this.props.renderTooltipForDatanum( pointData ) }
+					{ this.props.renderTooltipForDatanum( pointData, data[ pointData.dataSeriesIndex ] ) }
 				</Tooltip>
 			);
 		} );

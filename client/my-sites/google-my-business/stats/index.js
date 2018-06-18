@@ -66,32 +66,32 @@ class GoogleMyBusinessStats extends Component {
 		} );
 	};
 
-	renderSearchTooltipForDatanum = datanum => {
-		const { value: searchCount, date } = datanum;
-		return this.props.translate(
-			'%(searches)d search on %(day)s',
-			'%(searches)d searches on %(day)s',
-			{
-				count: searchCount,
-				args: {
-					searches: searchCount,
-					day: moment( date ).format( 'D MMMM YYYY' ),
-				},
-				comment: 'How many searches per day for a Google My Business location.',
-			}
-		);
-	};
-
-	renderViewsOrActionsTooltipForDatanum = interval => datanum => {
+	renderViewsTooltipForDatanum = ( datanum, dataSeries ) => {
 		const { value: valueCount, date } = datanum;
-		if ( 'week' !== interval ) {
-			return this.props.translate( '%(value)d on %(day)s', '%(value)d on %(day)s', {
+		if ( dataSeries.length > 20 ) {
+			return this.props.translate( '%(value)d view on %(day)s', '%(value)d views on %(day)s', {
 				count: valueCount,
 				args: {
 					value: valueCount,
 					day: moment( date ).format( 'D MMMM YYYY' ),
 				},
-				comment: 'How many views or actions per day for a Google My Business location with date.',
+				comment: 'How many views per day for a Google My Business location with date.',
+			} );
+		}
+
+		return valueCount;
+	};
+
+	renderActionsTooltipForDatanum = ( datanum, dataSeries ) => {
+		const { value: valueCount, date } = datanum;
+		if ( dataSeries.length > 20 ) {
+			return this.props.translate( '%(value)d action on %(day)s', '%(value)d actions on %(day)s', {
+				count: valueCount,
+				args: {
+					value: valueCount,
+					day: moment( date ).format( 'D MMMM YYYY' ),
+				},
+				comment: 'How many actions per day for a Google My Business location with date.',
 			} );
 		}
 
@@ -127,7 +127,6 @@ class GoogleMyBusinessStats extends Component {
 								),
 							},
 						} }
-						renderTooltipForDatanum={ this.renderSearchTooltipForDatanum }
 					/>
 				</div>
 
@@ -147,7 +146,7 @@ class GoogleMyBusinessStats extends Component {
 								name: translate( 'Listings On Search' ),
 							},
 						} }
-						renderTooltipForDatanum={ this.renderViewsOrActionsTooltipForDatanum }
+						renderTooltipForDatanum={ this.renderViewsTooltipForDatanum }
 					/>
 				</div>
 
@@ -170,7 +169,7 @@ class GoogleMyBusinessStats extends Component {
 								name: translate( 'Call You' ),
 							},
 						} }
-						renderTooltipForDatanum={ this.renderViewsOrActionsTooltipForDatanum }
+						renderTooltipForDatanum={ this.renderActionsTooltipForDatanum }
 					/>
 				</div>
 			</div>
