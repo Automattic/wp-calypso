@@ -9236,6 +9236,13 @@
           "integrity": "sha1-+HBX6ZWxofauaklgZkE3vFbwOdo=",
           "requires": {
             "ms": "0.7.1"
+          },
+          "dependencies": {
+            "ms": {
+              "version": "0.7.1",
+              "resolved": "https://registry.npmjs.org/ms/-/ms-0.7.1.tgz",
+              "integrity": "sha1-nNE8A62/8ltl7/3nzoZO6VIBcJg="
+            }
           }
         }
       }
@@ -12968,9 +12975,9 @@
       }
     },
     "ms": {
-      "version": "0.7.1",
-      "resolved": "https://registry.npmjs.org/ms/-/ms-0.7.1.tgz",
-      "integrity": "sha1-nNE8A62/8ltl7/3nzoZO6VIBcJg="
+      "version": "0.7.3",
+      "resolved": "https://registry.npmjs.org/ms/-/ms-0.7.3.tgz",
+      "integrity": "sha1-cIFVpeROM/X9D8U+gdDUCpG+H/8="
     },
     "multimatch": {
       "version": "2.1.0",
@@ -21289,6 +21296,13 @@
               "integrity": "sha1-+HBX6ZWxofauaklgZkE3vFbwOdo=",
               "requires": {
                 "ms": "0.7.1"
+              },
+              "dependencies": {
+                "ms": {
+                  "version": "0.7.1",
+                  "resolved": "https://registry.npmjs.org/ms/-/ms-0.7.1.tgz",
+                  "integrity": "sha1-nNE8A62/8ltl7/3nzoZO6VIBcJg="
+                }
               }
             }
           }
@@ -21366,6 +21380,13 @@
           "integrity": "sha1-+HBX6ZWxofauaklgZkE3vFbwOdo=",
           "requires": {
             "ms": "0.7.1"
+          },
+          "dependencies": {
+            "ms": {
+              "version": "0.7.1",
+              "resolved": "https://registry.npmjs.org/ms/-/ms-0.7.1.tgz",
+              "integrity": "sha1-nNE8A62/8ltl7/3nzoZO6VIBcJg="
+            }
           }
         }
       }
@@ -21386,6 +21407,13 @@
           "integrity": "sha1-+HBX6ZWxofauaklgZkE3vFbwOdo=",
           "requires": {
             "ms": "0.7.1"
+          },
+          "dependencies": {
+            "ms": {
+              "version": "0.7.1",
+              "resolved": "https://registry.npmjs.org/ms/-/ms-0.7.1.tgz",
+              "integrity": "sha1-nNE8A62/8ltl7/3nzoZO6VIBcJg="
+            }
           }
         }
       }
