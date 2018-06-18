@@ -219,10 +219,7 @@ const AddEmailAddressesCard = createReactClass( {
 	formButtons() {
 		return (
 			<FormFooter className="add-email-addresses-card__footer">
-				<FormButton
-					onClick={ this.handleContinue }
-					disabled={ ! this.props.isRequestingSiteDomains }
-				>
+				<FormButton onClick={ this.handleContinue } disabled={ this.props.isRequestingSiteDomains }>
 					{ this.props.translate( 'Continue' ) }
 				</FormButton>
 
@@ -230,7 +227,7 @@ const AddEmailAddressesCard = createReactClass( {
 					type="button"
 					isPrimary={ false }
 					onClick={ this.handleCancel }
-					disabled={ ! this.props.isRequestingSiteDomains }
+					disabled={ this.props.isRequestingSiteDomains }
 				>
 					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
