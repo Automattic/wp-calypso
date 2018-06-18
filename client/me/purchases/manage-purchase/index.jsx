@@ -456,7 +456,7 @@ export default connect( ( state, props ) => {
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
-		isAtomicSite: site ? isSiteAtomic( state, siteId ) : null,
+		isAtomicSite: isSiteAtomic( state, siteId ),
 		userId: getCurrentUserId( state ),
 	};
 } )( localize( ManagePurchase ) );
