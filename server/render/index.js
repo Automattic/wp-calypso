@@ -155,7 +155,7 @@ export function serverRender( req, res ) {
 
 	if ( ! isDefaultLocale( context.lang ) ) {
 		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
-		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + langFileName + '.js';
+		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + langFileName + '.utf8.js';
 	}
 
 	if (
