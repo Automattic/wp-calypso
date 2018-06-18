@@ -418,7 +418,7 @@ export const getFormErrors = createSelector(
 		const { countriesData } = shippingLabel.storeOptions;
 		const { form, paperSize } = shippingLabel;
 		if ( isEmpty( form ) ) {
-			return;
+			return {};
 		}
 		const destinationCountryCode = form.destination.values.country;
 		const destinationCountryName = getCountriesData( state, orderId, siteId )[

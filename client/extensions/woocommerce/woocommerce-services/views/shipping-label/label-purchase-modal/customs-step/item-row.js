@@ -45,7 +45,7 @@ const ItemRow = ( props ) => {
 			id={ packageId + '_' + productId + '_description' }
 			className="customs-step__item-description-column"
 			title={ translate( 'Description' ) }
-			value={ description || '' }
+			value={ description }
 			placeholder={ defaultDescription }
 			updateValue={ props.setCustomsItemDescription }
 			error={ errors.description } />
@@ -60,7 +60,7 @@ const ItemRow = ( props ) => {
 			id={ packageId + '_' + productId + '_tariffNumber' }
 			className="customs-step__item-code-column"
 			title={ <TariffCodeHeader /> }
-			value={ tariffNumber || '' }
+			value={ tariffNumber }
 			updateValue={ props.setCustomsItemTariffNumber }
 			error={ errors.tariffNumber } />
 	</div>;
@@ -71,6 +71,15 @@ ItemRow.propTypes = {
 	orderId: PropTypes.number.isRequired,
 	packageId: PropTypes.string.isRequired,
 	productId: PropTypes.number.isRequired,
+	description: PropTypes.string.isRequired,
+	defaultDescription: PropTypes.string.isRequired,
+	tariffNumber: PropTypes.string.isRequired,
+	originCountry: PropTypes.string.isRequired,
+	errors: PropTypes.object,
+	countriesData: PropTypes.object.isRequired,
+	setCustomsItemDescription: PropTypes.func.isRequired,
+	setCustomsItemTariffNumber: PropTypes.func.isRequired,
+	setCustomsItemOriginCountry: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { orderId, siteId, productId } ) => {

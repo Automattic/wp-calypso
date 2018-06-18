@@ -125,6 +125,22 @@ PackageRow.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
 	packageId: PropTypes.string.isRequired,
+	errors: PropTypes.object,
+	contentsType: PropTypes.oneOf( [ 'merchandise', 'documents', 'gift', 'sample', 'other' ] ),
+	contentsExplanation: PropTypes.string,
+	restrictionType: PropTypes.oneOf( [ 'none', 'quarantine', 'sanitary_phytosanitary_inspection', 'other' ] ),
+	restrictionExplanation: PropTypes.string,
+	abandonOnNonDelivery: PropTypes.bool,
+	itn: PropTypes.string,
+	items: PropTypes.shape( {
+		product_id: PropTypes.number.isRequired,
+	} ).isRequired,
+	setContentsType: PropTypes.func.isRequired,
+	setContentsExplanation: PropTypes.func.isRequired,
+	setRestrictionType: PropTypes.func.isRequired,
+	setRestrictionExplanation: PropTypes.func.isRequired,
+	setAbandonOnNonDelivery: PropTypes.func.isRequired,
+	setITN: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { orderId, siteId, packageId } ) => {
