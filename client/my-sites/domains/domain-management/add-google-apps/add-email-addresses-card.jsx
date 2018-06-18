@@ -54,7 +54,7 @@ const AddEmailAddressesCard = createReactClass( {
 
 		if ( this.props.selectedDomainName ) {
 			domain = this.props.selectedDomainName;
-		} else if ( this.props.isRequestingSiteDomains ) {
+		} else if ( ! this.props.isRequestingSiteDomains ) {
 			domain = this.getFirstDomainName();
 		} else {
 			domain = null;
@@ -89,8 +89,8 @@ const AddEmailAddressesCard = createReactClass( {
 	needsToUpdateDomainFields( prevProps ) {
 		return (
 			! this.props.selectedDomainName &&
-			! prevProps.isRequestingSiteDomains &&
-			this.props.isRequestingSiteDomains
+			prevProps.isRequestingSiteDomains &&
+			! this.props.isRequestingSiteDomains
 		);
 	},
 
