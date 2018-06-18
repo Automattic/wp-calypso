@@ -32,7 +32,6 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_ADDRESS_VALUE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_IGNORE_VALIDATION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS,
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SELECT_NORMALIZED_ADDRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_ADDRESS,
@@ -212,9 +211,9 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS 
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS ] = (
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED ] = (
 	state,
-	{ group, normalized, isTrivialNormalization }
+	{ group, requestSuccess, fieldErrors, normalized, isTrivialNormalization }
 ) => {
 	const newState = {
 		...state,
@@ -222,7 +221,10 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS ] = (
 			...state.form,
 			[ group ]: {
 				...state.form[ group ],
-				selectNormalized: true,
+				isNormalized: requestSuccess,
+				normalizationInProgress: false,
+				fieldErrors,
+				selectNormalized: requestSuccess && ! fieldErrors,
 				normalized,
 			},
 		},
@@ -231,25 +233,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS ] = (
 		newState.form[ group ].values = normalized;
 	}
 	return newState;
-};
-
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED ] = (
-	state,
-	{ group, completed, fieldErrors }
-) => {
-	return {
-		...state,
-		form: {
-			...state.form,
-			[ group ]: {
-				...state.form[ group ],
-				isNormalized: completed,
-				normalizationInProgress: false,
-				fieldErrors,
-				selectNormalized: ! fieldErrors,
-			},
-		},
-	};
 };
 
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SELECT_NORMALIZED_ADDRESS ] = (
