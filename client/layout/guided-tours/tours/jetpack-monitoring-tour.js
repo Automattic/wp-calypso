@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 import Gridicon from 'gridicons';
 
