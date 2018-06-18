@@ -23,6 +23,7 @@ const tasks = {
 		completedTitle: translate( 'You turned on backups and scanning.' ),
 		completedButtonText: 'Change',
 		duration: translate( '2 min' ),
+		tour: 'jetpackCredentials',
 		url: '/stats/activity/$siteSlug',
 	},
 	jetpack_monitor: {
