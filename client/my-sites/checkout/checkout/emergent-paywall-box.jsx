@@ -75,7 +75,11 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	componentDidMount() {
-		this.props.requestEmergentPaywallConfiguration( this.props.userCountryCode, this.props.cart );
+		this.props.requestEmergentPaywallConfiguration(
+			this.props.userCountryCode,
+			this.props.cart,
+			this.props.transaction.domainDetails
+		);
 		window.addEventListener( 'message', this.onMessageReceiveHandler, false );
 	}
 
@@ -88,7 +92,11 @@ export class EmergentPaywallBox extends Component {
 			prevProps.cart.total_cost !== this.props.cart.total_cost ||
 			prevProps.cart.products.length !== this.props.cart.products.length
 		) {
-			this.props.requestEmergentPaywallConfiguration( this.props.userCountryCode, this.props.cart );
+			this.props.requestEmergentPaywallConfiguration(
+				this.props.userCountryCode,
+				this.props.cart,
+				this.props.transaction.domainDetails
+			);
 			return;
 		}
 
@@ -253,17 +261,18 @@ export class EmergentPaywallBox extends Component {
  *
  * @param {string} countryCode - user's country code
  * @param {object} cart - current cart object. See: client/lib/cart/store/index.js
+ * @param {object} domainDetails - transaction store domain details
  *
  * @return {*} Stored data container for request.
  */
-export const requestEmergentPaywallConfiguration = ( countryCode, cart ) => {
+export const requestEmergentPaywallConfiguration = ( countryCode, cart, domainDetails ) => {
 	return requestHttpData(
 		httpDataId,
 		http( {
 			apiVersion: '1.1',
 			method: 'POST',
 			path: '/me/emergent-paywall-configuration',
-			body: { country: countryCode, cart },
+			body: { country: countryCode, cart, domainDetails },
 		} ),
 		{
 			fromApi: () => config => [ [ 'config', config ] ],
