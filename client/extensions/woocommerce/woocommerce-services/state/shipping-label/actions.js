@@ -42,6 +42,7 @@ import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 import { getEmailReceipts } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
@@ -818,10 +819,8 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 			form = state.form;
 			const formData = {
 				async: true,
-				origin: form.origin.selectNormalized ? form.origin.normalized : form.origin.values,
-				destination: form.destination.selectNormalized
-					? form.destination.normalized
-					: form.destination.values,
+				origin: getAddressValues( form.origin ),
+				destination: getAddressValues( form.destination ),
 				packages: map( form.packages.selected, ( pckg, pckgId ) => {
 					const rate = find( form.rates.available[ pckgId ].rates, {
 						service_id: form.rates.values[ pckgId ],
