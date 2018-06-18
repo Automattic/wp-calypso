@@ -28,13 +28,23 @@ class JetpackNewSite extends Component {
 		this.handleBack = this.handleBack.bind( this );
 	}
 
-	state = { jetpackUrl: '' };
+	state = {
+		jetpackUrl: '',
+		shownUrl: '',
+	};
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
 	}
 
-	handleJetpackUrlChange = event => this.setState( { jetpackUrl: cleanUrl( event.target.value ) } );
+	handleJetpackUrlChange = event => {
+		const url = event.target.value;
+
+		this.setState( {
+			jetpackUrl: cleanUrl( url ),
+			shownUrl: url,
+		} );
+	};
 
 	getNewWpcomSiteUrl() {
 		return config( 'signup_url' ) + '?ref=calypso-selector';
@@ -109,7 +119,7 @@ class JetpackNewSite extends Component {
 								onChange={ this.handleJetpackUrlChange }
 								onSubmit={ this.handleJetpackSubmit }
 								handleOnClickTos={ this.handleOnClickTos }
-								url={ this.state.jetpackUrl }
+								url={ this.state.shownUrl }
 								autoFocus={ false } // eslint-disable-line jsx-a11y/no-autofocus
 							/>
 						</Card>
@@ -129,7 +139,7 @@ class JetpackNewSite extends Component {
 									onChange={ this.handleJetpackUrlChange }
 									onSubmit={ this.handleJetpackSubmit }
 									handleOnClickTos={ this.handleOnClickTos }
-									url={ this.state.jetpackUrl }
+									url={ this.state.shownUrl }
 									autoFocus={ false } // eslint-disable-line jsx-a11y/no-autofocus
 								/>
 							</div>
