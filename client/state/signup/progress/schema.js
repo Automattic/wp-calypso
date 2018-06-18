@@ -11,6 +11,7 @@ export const schema = {
 				},
 			},
 			lastUpdated: { type: 'number' },
+			// Valid status values: 'completed', 'processing', 'pending', and 'in-progress'
 			status: { type: 'string' },
 			stepName: { type: 'string' },
 		},

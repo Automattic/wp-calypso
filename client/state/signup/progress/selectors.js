@@ -6,6 +6,7 @@
 
 import { get } from 'lodash';
 
+const initialState = [];
 export function getSignupProgress( state ) {
-	return get( state, 'signup.progress', [] );
+	return get( state, 'signup.progress', initialState );
 }
