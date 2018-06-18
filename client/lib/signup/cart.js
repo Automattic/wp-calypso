@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import url from 'url';
 import { forEach } from 'lodash';
 
 /**
@@ -12,27 +11,7 @@ import { forEach } from 'lodash';
 import wpcom from 'lib/wp';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
-import { cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
-
-function preprocessCartForServer( cart ) {
-	const newCart = { ...cart };
-
-	if (
-		! newCart.coupon &&
-		! newCart.is_coupon_applied &&
-		! newCart.is_coupon_removed &&
-		typeof document !== 'undefined'
-	) {
-		const coupon = url.parse( document.URL, true ).query.coupon;
-
-		if ( coupon ) {
-			newCart.coupon = coupon;
-			newCart.is_coupon_applied = false;
-		}
-	}
-
-	return newCart;
-}
+import { cartItems, preprocessCartForServer, fillInAllCartItemAttributes } from 'lib/cart-values';
 
 function addProductsToCart( cart, newCartItems ) {
 	forEach( newCartItems, function( cartItem ) {

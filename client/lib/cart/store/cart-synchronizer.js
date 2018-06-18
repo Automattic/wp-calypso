@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import url from 'url';
-import { assign, flowRight, pick } from 'lodash';
+import { assign, flowRight } from 'lodash';
 import i18n from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
@@ -14,6 +13,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Emitter from 'lib/mixins/emitter';
+import { preprocessCartForServer } from 'lib/cart-values';
 
 /**
  * Internal dependencies
@@ -42,42 +42,6 @@ function castProductIDsToNumbers( cartItems ) {
 	return cartItems.map( function( item ) {
 		return assign( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
 	} );
-}
-
-function preprocessCartForServer( cart ) {
-	let newCart;
-
-	newCart = pick(
-		cart,
-		'products',
-		'coupon',
-		'is_coupon_applied',
-		'is_coupon_removed',
-		'currency',
-		'temporary',
-		'extra'
-	);
-
-	if (
-		! newCart.coupon &&
-		! newCart.is_coupon_applied &&
-		! newCart.is_coupon_removed &&
-		typeof document !== 'undefined'
-	) {
-		const coupon = url.parse( document.URL, true ).query.coupon;
-
-		if ( coupon ) {
-			newCart.coupon = coupon;
-			newCart.is_coupon_applied = false;
-		}
-	}
-
-	const newCartItems = cart.products.map( function( cartItem ) {
-		return pick( cartItem, 'product_id', 'meta', 'free_trial', 'volume', 'extra' );
-	} );
-	newCart = assign( {}, newCart, { products: newCartItems } );
-
-	return newCart;
 }
 
 function CartSynchronizer( cartKey, wpcom ) {
