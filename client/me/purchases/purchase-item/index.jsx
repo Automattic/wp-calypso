@@ -198,8 +198,8 @@ class PurchaseItem extends Component {
 		let onClick;
 		let href;
 		if ( ! isPlaceholder ) {
-			// A "disconnected" Jetpack site purchases may be managed.
-			// "Disconnected" WordPress.com sites (the user has been removed) may not.
+			// A "disconnected" Jetpack site's purchases may be managed.
+			// A "disconnected" WordPress.com site may not (the user has been removed).
 			if ( ! isDisconnectedSite || isJetpack ) {
 				onClick = this.scrollToTop;
 				href = managePurchase( this.props.slug, this.props.purchase.id );
