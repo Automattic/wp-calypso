@@ -72,7 +72,7 @@ describe( 'progress-store', () => {
 		} );
 	} );
 
-	test( 'should not store the same step twice', done => {
+	test( 'should not store the same step twice', () => {
 		SignupActions.submitSignupStep( {
 			stepName: 'site-selection',
 			formData: { url: 'my-site.wordpress.com' },
@@ -80,14 +80,11 @@ describe( 'progress-store', () => {
 
 		SignupActions.submitSignupStep( { stepName: 'site-selection' } );
 
-		defer( () => {
-			expect( SignupProgressStore.get() ).toHaveLength( 1 );
-			expect( omit( first( SignupProgressStore.get() ), 'lastUpdated' ) ).toEqual( {
-				stepName: 'site-selection',
-				formData: { url: 'my-site.wordpress.com' },
-				status: 'completed',
-			} );
-			done();
+		expect( SignupProgressStore.get() ).toHaveLength( 1 );
+		expect( omit( first( SignupProgressStore.get() ), 'lastUpdated' ) ).toEqual( {
+			stepName: 'site-selection',
+			formData: { url: 'my-site.wordpress.com' },
+			status: 'completed',
 		} );
 	} );
 
@@ -128,13 +125,15 @@ describe( 'progress-store', () => {
 		);
 	} );
 
-	test( 'should mark only new saved steps as in-progress', () => {
+	test( 'should mark only new saved steps as in-progress', done => {
+		SignupActions.submitSignupStep( { stepName: 'site-selection' } );
 		SignupActions.saveSignupStep( { stepName: 'site-selection' } );
 		SignupActions.saveSignupStep( { stepName: 'last-step' } );
 
 		defer( () => {
 			expect( first( SignupProgressStore.get() ).status ).not.toEqual( 'in-progress' );
 			expect( last( SignupProgressStore.get() ).status ).toEqual( 'in-progress' );
+			done();
 		} );
 	} );
 
