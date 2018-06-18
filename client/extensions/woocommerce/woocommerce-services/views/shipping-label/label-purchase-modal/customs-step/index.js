@@ -30,7 +30,6 @@ const CustomsStep = ( props ) => {
 		errors,
 		expanded,
 		translate,
-		packages,
 		isSubmitted,
 		packageDescriptions,
 	} = props;
@@ -44,7 +43,7 @@ const CustomsStep = ( props ) => {
 			toggleStep={ props.toggleStep }
 			isSuccess={ isSubmitted && ! hasNonEmptyLeaves( errors ) }
 			isError={ isSubmitted && hasNonEmptyLeaves( errors ) } >
-			{ Object.keys( packages ).map( ( packageId, index ) =>
+			{ Object.keys( packageDescriptions ).map( ( packageId, index ) =>
 				<div className="customs-step__package-container" key={ packageId }>
 					{ index ? <hr /> : null }
 					<p className="customs-step__package-name">{ packageDescriptions[ packageId ] }</p>
@@ -66,6 +65,12 @@ const CustomsStep = ( props ) => {
 CustomsStep.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
+	packageDescriptions: PropTypes.objectOf( PropTypes.string ).isRequired,
+	expanded: PropTypes.bool.isRequired,
+	isSubmitted: PropTypes.bool.isRequired,
+	errors: PropTypes.object,
+	toggleStep: PropTypes.func.isRequired,
+	confirmCustoms: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { orderId, siteId } ) => {
@@ -74,7 +79,6 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const packages = shippingLabel.form.packages.selected;
 
 	return {
-		packages,
 		packageDescriptions: getPackageDescriptions( packages, getAllPackageDefinitions( state, siteId ), true ),
 		expanded: shippingLabel.form.customs.expanded,
 		isSubmitted: isCustomsFormStepSubmitted( state, orderId, siteId ),
