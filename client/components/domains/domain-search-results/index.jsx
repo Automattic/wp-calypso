@@ -50,6 +50,7 @@ class DomainSearchResults extends React.Component {
 		onAddTransfer: PropTypes.func,
 		onClickMapping: PropTypes.func,
 		onClickTransfer: PropTypes.func,
+		onClickUseMuDomain: PropTypes.func,
 		isSignupStep: PropTypes.bool,
 		railcarSeed: PropTypes.string,
 		fetchAlgo: PropTypes.string,
@@ -142,6 +143,8 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 
+			// TODO: Should make the onClick for this go directly to mapping or to use my domain
+			// depending on the state of the domain.
 			if ( this.props.offerUnavailableOption ) {
 				if ( this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable ) {
 					availabilityElement = (
@@ -160,7 +163,7 @@ class DomainSearchResults extends React.Component {
 										a: (
 											<a
 												href="#"
-												onClick={ this.props.onClickTransfer }
+												onClick={ this.props.onClickUseMyDomain }
 												data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 											/>
 										),

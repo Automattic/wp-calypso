@@ -316,6 +316,17 @@ export default function() {
 		);
 
 		page(
+			paths.domainUseMyDomain( ':site', ':domain' ),
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/add/use-my-domain' ),
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.useMyDomain,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
 			siteSelection,
 			navigation,

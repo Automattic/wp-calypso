@@ -74,8 +74,10 @@ import {
 	recordSearchResultsReceive,
 	recordShowMoreResults,
 	recordTransferDomainButtonClick,
+	recordUseMyDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
+import { domainUseMyDomain } from 'my-sites/domains/paths';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
@@ -1015,6 +1017,7 @@ class RegisterDomainStep extends React.Component {
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickTransfer={ this.goToTransferDomainStep }
+				onClickUseMyDomain={ this.goToUseMyDomain }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				isLoadingSuggestions={ this.state.loadingResults }
@@ -1075,6 +1078,21 @@ class RegisterDomainStep extends React.Component {
 		return transferDomainUrl;
 	}
 
+	getUseMyDomainUrl() {
+		let useMyDomainUrl;
+
+		if ( this.props.useMyDomainUrl ) {
+			useMyDomainUrl = this.props.useMyDomainUrl;
+		} else {
+			useMyDomainUrl = domainUseMyDomain(
+				this.props.selectedSite.slug,
+				this.state.lastQuery.trim()
+			);
+		}
+
+		return useMyDomainUrl;
+	}
+
 	goToMapDomainStep = event => {
 		event.preventDefault();
 
@@ -1091,6 +1109,14 @@ class RegisterDomainStep extends React.Component {
 		this.props.recordTransferDomainButtonClick( this.props.analyticsSection, source );
 
 		page( this.getTransferDomainUrl() );
+	};
+
+	goToUseMyDomain = event => {
+		event.preventDefault();
+
+		this.props.recordUseMyDomainButtonClick( this.props.analyticsSection );
+
+		page( this.getUseMyDomainUrl() );
 	};
 
 	showValidationErrorMessage( domain, error, errorData ) {
@@ -1121,5 +1147,6 @@ export default connect(
 		recordSearchResultsReceive,
 		recordShowMoreResults,
 		recordTransferDomainButtonClick,
+		recordUseMyDomainButtonClick,
 	}
 )( localize( RegisterDomainStep ) );
