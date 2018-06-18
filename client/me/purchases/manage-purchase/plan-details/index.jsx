@@ -39,6 +39,7 @@ class PurchasePlanDetails extends Component {
 				key: PropTypes.string.isRequired,
 			} ).isRequired
 		).isRequired,
+		siteId: PropTypes.number,
 	};
 
 	renderPlaceholder() {
@@ -63,8 +64,7 @@ class PurchasePlanDetails extends Component {
 	}
 
 	render() {
-		const { pluginList, translate } = this.props;
-		const { purchase } = this.props;
+		const { pluginList, purchase, siteId, translate } = this.props;
 
 		// Short out as soon as we know it's not a Jetpack plan
 		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
@@ -87,7 +87,7 @@ class PurchasePlanDetails extends Component {
 
 		return (
 			<div className="plan-details">
-				{ purchase && <QueryPluginKeys siteId={ purchase.siteId } /> }
+				{ siteId && <QueryPluginKeys siteId={ siteId } /> }
 				<SectionHeader label={ headerText } />
 				<Card>
 					<PlanBillingPeriod purchase={ purchase } />
@@ -111,10 +111,12 @@ class PurchasePlanDetails extends Component {
 // hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
+	const siteId = purchase ? purchase.siteId : null;
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
-		pluginList: purchase ? getPluginsForSite( state, purchase.siteId ) : [],
+		pluginList: getPluginsForSite( state, siteId ),
+		siteId,
 	};
 } )( localize( PurchasePlanDetails ) );
