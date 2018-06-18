@@ -20,7 +20,7 @@ class DomainsSelect extends React.Component {
 	render() {
 		let domainRegistrations, disabled, options;
 
-		if ( this.props.isRequestingSiteDomains ) {
+		if ( ! this.props.isRequestingSiteDomains ) {
 			domainRegistrations = getGoogleAppsSupportedDomains( this.props.domains );
 			disabled = false;
 			options = domainRegistrations.map( domain => {

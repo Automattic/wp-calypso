@@ -28,7 +28,7 @@ class AddGoogleApps extends React.Component {
 
 	ensureCanAddEmail() {
 		const needsRedirect =
-			this.props.isRequestingSiteDomains && ! hasGoogleAppsSupportedDomain( this.props.domains );
+			! this.props.isRequestingSiteDomains && ! hasGoogleAppsSupportedDomain( this.props.domains );
 
 		if ( needsRedirect ) {
 			const path = domainManagementEmail(
