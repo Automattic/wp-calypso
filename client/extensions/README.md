@@ -48,12 +48,9 @@ At the moment we use a simple routing interface with `page.js`. There are a few 
 `renderHelloWorld` in this case is the one you need to create and is responsible for rendering your section:
 
 ```js
-const renderHelloWorld = ( context ) => {
-	renderWithReduxStore( (
-		<Main>
-			<HelloWorld />
-		</Main>
-	), document.getElementById( 'primary' ), context.store );
+const renderHelloWorld = ( context, next ) => {
+	context.primary = <HelloWorld />;
+	next();
 };
 ```
 
