@@ -316,7 +316,7 @@ class PurchaseMeta extends Component {
 		}
 
 		return (
-			<div>
+			<Fragment>
 				<ul className="manage-purchase__meta">
 					{ this.renderOwner() }
 					<li>
@@ -327,7 +327,7 @@ class PurchaseMeta extends Component {
 					{ this.renderPaymentDetails() }
 				</ul>
 				{ this.renderContactSupportToRenewMessage() }
-			</div>
+			</Fragment>
 		);
 	}
 }
