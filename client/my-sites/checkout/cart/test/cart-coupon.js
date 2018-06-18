@@ -7,33 +7,19 @@
  * External dependencies
  */
 import { mount, shallow } from 'enzyme';
-import { identity } from 'lodash';
+import { identity, noop } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { CartCoupon } from '../cart-coupon';
-import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
-
-jest.mock( 'lib/upgrades/actions', () => ( {
-	applyCoupon: jest.fn( () => {} ),
-	removeCoupon: jest.fn( () => {} ),
-} ) );
-
-jest.mock( 'lib/analytics', () => ( {
-	ga: {
-		recordEvent: () => {},
-	},
-	tracks: {
-		recordEvent: () => {},
-	},
-} ) );
 
 const props = {
-	applyCoupon,
-	removeCoupon,
+	applyCoupon: noop,
+	removeCoupon: noop,
 	translate: identity,
+	recordGoogleEvent: noop,
 };
 
 const event = {
@@ -46,11 +32,6 @@ describe( 'cart-coupon', () => {
 		is_coupon_applied: false,
 		coupon: '',
 	};
-
-	beforeEach( function() {
-		applyCoupon.mockReset();
-		removeCoupon.mockReset();
-	} );
 
 	describe( 'General behavior', () => {
 		test( 'Should not blow up', () => {
@@ -107,9 +88,11 @@ describe( 'cart-coupon', () => {
 		} );
 
 		test( 'Should apply a coupon when form is submitted', () => {
+			const applyCouponSpy = jest.fn();
 			const component = shallow(
 				<CartCoupon
 					{ ...props }
+					applyCoupon={ applyCouponSpy }
 					cart={ {
 						...cart,
 						is_coupon_applied: false,
@@ -122,14 +105,16 @@ describe( 'cart-coupon', () => {
 				couponInputValue: 'CODE15',
 			} );
 			component.find( '.cart__form' ).simulate( 'submit', event );
-			expect( applyCoupon.mock.calls.length ).toBe( 1 );
-			expect( applyCoupon.mock.calls[ 0 ][ 0 ] ).toBe( 'CODE15' );
+			expect( applyCouponSpy ).toHaveBeenCalledTimes( 1 );
+			expect( applyCouponSpy ).toHaveBeenCalledWith( 'CODE15' );
 		} );
 
 		test( 'Should disallow submission when form is currently being submitted', () => {
+			const applyCouponSpy = jest.fn();
 			const component = shallow(
 				<CartCoupon
 					{ ...props }
+					applyCoupon={ applyCouponSpy }
 					cart={ {
 						...cart,
 						is_coupon_applied: false,
@@ -150,7 +135,7 @@ describe( 'cart-coupon', () => {
 				},
 			} );
 			component.find( '.cart__form' ).simulate( 'submit', event );
-			expect( applyCoupon.mock.calls.length ).toBe( 1 );
+			expect( applyCouponSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'Should show coupon details when there is a coupon', () => {
@@ -171,9 +156,11 @@ describe( 'cart-coupon', () => {
 		} );
 
 		test( 'Should remove a coupon when "remove" link is clicked', () => {
+			const removeCouponSpy = jest.fn();
 			const component = shallow(
 				<CartCoupon
 					{ ...props }
+					removeCoupon={ removeCouponSpy }
 					cart={ {
 						...cart,
 						is_coupon_applied: true,
@@ -182,8 +169,7 @@ describe( 'cart-coupon', () => {
 				/>
 			);
 			component.find( '.cart__remove-link' ).simulate( 'click', event );
-			expect( removeCoupon.mock.calls.length ).toBe( 1 );
-			expect( removeCoupon.mock.calls[ 0 ][ 0 ] ).toBeUndefined();
+			expect( removeCouponSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'Should not display coupon form if cart total is 0', () => {

@@ -13,8 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import analytics from 'lib/analytics';
-import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { withAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
 
 export class CartCoupon extends React.Component {
@@ -117,9 +116,9 @@ export class CartCoupon extends React.Component {
 		this.setState( { isCouponFormShowing: ! this.state.isCouponFormShowing } );
 
 		if ( this.state.isCouponFormShowing ) {
-			analytics.ga.recordEvent( 'Upgrades', 'Clicked Hide Coupon Code Link' );
+			this.props.recordGoogleEvent( 'Upgrades', 'Clicked Hide Coupon Code Link' );
 		} else {
-			analytics.ga.recordEvent( 'Upgrades', 'Clicked Show Coupon Code Link' );
+			this.props.recordGoogleEvent( 'Upgrades', 'Clicked Show Coupon Code Link' );
 		}
 	};
 
@@ -166,6 +165,7 @@ export class CartCoupon extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
+	recordGoogleEvent,
 	applyCoupon: coupon =>
 		dispatch(
 			withAnalytics(
