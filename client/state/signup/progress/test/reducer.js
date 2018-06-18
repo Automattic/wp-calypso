@@ -19,12 +19,8 @@ import {
 //
 // Mocks necessary to properly handle 'signup/config/steps' import
 //
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-jest.mock( 'lib/signup/step-actions', () => ( {
-	createAccount: () => {},
-} ) );
+jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
+jest.mock( 'lib/signup/step-actions', () => ( { createAccount: () => {} } ) );
 jest.mock( 'lib/user', () => () => {
 	return {
 		get() {
