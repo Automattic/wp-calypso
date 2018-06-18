@@ -7794,7 +7794,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -8159,7 +8160,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -8207,6 +8209,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -8245,11 +8248,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -12497,9 +12502,9 @@
       }
     },
     "lunr": {
-      "version": "0.5.7",
-      "resolved": "https://registry.npmjs.org/lunr/-/lunr-0.5.7.tgz",
-      "integrity": "sha1-4hp8eDIlqtKwTD4b+iG01IqFLm8="
+      "version": "0.7.2",
+      "resolved": "https://registry.npmjs.org/lunr/-/lunr-0.7.2.tgz",
+      "integrity": "sha1-eaMOky4hbLoWNUHuN6NgfBLNcoE="
     },
     "magic-string": {
       "version": "0.22.5",
