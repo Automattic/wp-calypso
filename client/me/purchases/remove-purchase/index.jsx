@@ -64,7 +64,7 @@ class RemovePurchase extends Component {
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.object,
+		site: PropTypes.object,
 		setAllSitesSelected: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
 	};
@@ -162,7 +162,7 @@ class RemovePurchase extends Component {
 	removePurchase = closeDialog => {
 		this.setState( { isRemoving: true } );
 
-		const { isDomainOnlySite, purchase, selectedSite, translate } = this.props;
+		const { isDomainOnlySite, purchase, site, translate } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom
@@ -181,7 +181,7 @@ class RemovePurchase extends Component {
 				type: 'remove',
 			};
 
-			survey.addResponses( enrichedSurveyData( surveyData, moment(), selectedSite, purchase ) );
+			survey.addResponses( enrichedSurveyData( surveyData, moment(), site, purchase ) );
 
 			debug( 'Survey responses', survey );
 			survey
@@ -299,7 +299,7 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { purchase, selectedSite, translate } = this.props;
+		const { purchase, site, translate } = this.props;
 		const buttons = {
 			cancel: {
 				action: 'cancel',
@@ -358,7 +358,7 @@ class RemovePurchase extends Component {
 					defaultContent={ this.renderPlanDialogText() }
 					onInputChange={ this.onSurveyChange }
 					purchase={ purchase }
-					selectedSite={ selectedSite }
+					selectedSite={ site }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					surveyStep={ this.state.surveyStep }
 				/>
@@ -461,7 +461,7 @@ class RemovePurchase extends Component {
 		}
 
 		// If we have a disconnected site that is _not_ a Jetpack purchase, no removal allowed.
-		if ( ! this.props.selectedSite && ! this.props.isJetpack ) {
+		if ( ! this.props.site && ! this.props.isJetpack ) {
 			return null;
 		}
 
@@ -486,13 +486,11 @@ class RemovePurchase extends Component {
 }
 
 export default connect(
-	( state, { purchase, selectedSite } ) => {
+	( state, { purchase } ) => {
 		const isJetpack = purchase && isJetpackPlan( purchase );
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-			/* We know Jetpack sites are not Atomic */
-			isAutomatedTransferSite:
-				! isJetpack && ( selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : null ),
+			isAutomatedTransferSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isChatActive: hasActiveHappychatSession( state ),
 			isJetpack,
