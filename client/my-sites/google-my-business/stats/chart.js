@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { flatten, get, sumBy } from 'lodash';
+import { flatten, get, partialRight, sumBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -186,7 +186,7 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	renderLineChart() {
-		const { renderTooltipForDatanum } = this.props;
+		const { renderTooltip } = this.props;
 		const { transformedData, legendInfo } = this.state;
 
 		if ( ! transformedData ) {
@@ -199,7 +199,7 @@ class GoogleMyBusinessStatsChart extends Component {
 					<LineChart
 						fillArea
 						data={ transformedData }
-						renderTooltipForDatanum={ renderTooltipForDatanum }
+						renderTooltipForDatanum={ renderTooltip }
 						legendInfo={ legendInfo }
 					/>
 
@@ -302,6 +302,11 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const interval = getStatsInterval( state, siteId, ownProps.statType );
 		const aggregation = getAggregation( ownProps );
+		// inject interval props to renderTooltipForDatanum
+		const renderTooltip = ownProps.renderTooltipForDatanum
+			? partialRight( ownProps.renderTooltipForDatanum, interval )
+			: null;
+
 		return {
 			siteId,
 			interval,
@@ -313,6 +318,7 @@ export default connect(
 				interval,
 				aggregation
 			),
+			renderTooltip,
 		};
 	},
 	{

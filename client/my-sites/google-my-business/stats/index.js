@@ -66,9 +66,22 @@ class GoogleMyBusinessStats extends Component {
 		} );
 	};
 
-	renderViewsTooltipForDatanum = ( datanum, dataSeries ) => {
+	renderViewsTooltipForDatanum = ( datanum, interval ) => {
 		const { value: valueCount, date } = datanum;
-		if ( dataSeries.length > 20 ) {
+		if ( interval === 'quarter' ) {
+			return this.props.translate(
+				'%(value)d view on week %(week)s',
+				'%(value)d views on week %(week)s',
+				{
+					count: valueCount,
+					args: {
+						value: valueCount,
+						week: moment( date ).format( 'D MMMM YYYY' ),
+					},
+					comment: 'How many views per week for a Google My Business location with date.',
+				}
+			);
+		} else if ( interval === 'week' ) {
 			return this.props.translate( '%(value)d view on %(day)s', '%(value)d views on %(day)s', {
 				count: valueCount,
 				args: {
@@ -82,9 +95,22 @@ class GoogleMyBusinessStats extends Component {
 		return valueCount;
 	};
 
-	renderActionsTooltipForDatanum = ( datanum, dataSeries ) => {
+	renderActionsTooltipForDatanum = ( datanum, interval ) => {
 		const { value: valueCount, date } = datanum;
-		if ( dataSeries.length > 20 ) {
+		if ( interval === 'quarter' ) {
+			return this.props.translate(
+				'%(value)d action on week %(week)s',
+				'%(value)d action on week %(week)s',
+				{
+					count: valueCount,
+					args: {
+						value: valueCount,
+						week: moment( date ).format( 'D MMMM YYYY' ),
+					},
+					comment: 'How many views per week for a Google My Business location with date.',
+				}
+			);
+		} else if ( interval === 'week' ) {
 			return this.props.translate( '%(value)d action on %(day)s', '%(value)d actions on %(day)s', {
 				count: valueCount,
 				args: {
