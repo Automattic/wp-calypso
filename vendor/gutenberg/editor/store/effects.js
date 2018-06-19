@@ -471,7 +471,7 @@ export default {
 	FETCH_SHARED_BLOCKS( action, store ) {
 		// TODO: these are potentially undefined, this fix is in place
 		// until there is a filter to not use shared blocks if undefined
-		const basePath = wp.api.getPostTypeRoute( 'wp_block' );
+		const basePath = null; // wp.api.getPostTypeRoute( 'wp_block' );
 		if ( ! basePath ) {
 			return;
 		}
