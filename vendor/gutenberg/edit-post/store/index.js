@@ -6,6 +6,7 @@ import {
 	withRehydration,
 	loadAndPersist,
 } from '@wordpress/data';
+import userSettings from '@wordpress/usersettings';
 
 /**
  * Internal dependencies
@@ -18,7 +19,7 @@ import * as selectors from './selectors';
 /**
  * Module Constants
  */
-const STORAGE_KEY = `WP_EDIT_POST_PREFERENCES_${ window.userSettings.uid }`;
+const STORAGE_KEY = `WP_EDIT_POST_PREFERENCES_${ userSettings.uid }`;
 
 const store = registerStore( 'core/edit-post', {
 	reducer: withRehydration( reducer, 'preferences', STORAGE_KEY ),

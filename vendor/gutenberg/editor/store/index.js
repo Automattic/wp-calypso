@@ -13,6 +13,7 @@ import {
 	withRehydration,
 	loadAndPersist,
 } from '@wordpress/data';
+import userSettings from '@wordpress/usersettings';
 
 /**
  * Internal dependencies
@@ -27,7 +28,7 @@ import { validateTokenSettings } from '../components/rich-text/tokens';
 /**
  * Module Constants
  */
-const STORAGE_KEY = `GUTENBERG_PREFERENCES_${ window.userSettings.uid }`;
+const STORAGE_KEY = `GUTENBERG_PREFERENCES_${ userSettings.uid }`;
 const MODULE_KEY = 'core/editor';
 
 const store = applyMiddlewares(
