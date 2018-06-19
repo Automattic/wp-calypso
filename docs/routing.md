@@ -17,7 +17,7 @@ export default function() {
 		'/menus/:site_id',
 		siteSelection,
 		navigation,
-		menus, // ← Magic happens here
+		menus, // Create Menus component in `context.primary`
 		makeLayout,
 		clientRender
 	);
