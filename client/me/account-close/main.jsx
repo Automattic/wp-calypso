@@ -181,7 +181,7 @@ class AccountSettingsClose extends Component {
 						{ ( isLoading || isDeletePossible ) && (
 							<Button scary onClick={ this.handleDeleteClick }>
 								<Gridicon icon="trash" />
-								{ translate( 'Close account' ) }
+								{ translate( 'Close account', { context: 'button label' } ) }
 							</Button>
 						) }
 						{ hasAtomicSites && (
@@ -192,7 +192,7 @@ class AccountSettingsClose extends Component {
 						{ hasPurchases &&
 							! hasAtomicSites && (
 								<Button primary href="/me/purchases">
-									{ translate( 'Manage purchases' ) }
+									{ translate( 'Manage purchases', { context: 'button label' } ) }
 								</Button>
 							) }
 					</ActionPanelFooter>
