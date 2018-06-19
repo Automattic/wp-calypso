@@ -38,8 +38,27 @@ The rest of the attributes handle different configuration settings: `group` is u
 `index.js` will be assumed to be the entry point to your extension. That file should export a function that sets up routing for your plugin extension:
 
 ```js
-export default function() {
-	page( '/hello-world', siteSelection, navigation, renderHelloWorld );
+/**
+ * External dependencies
+ */
+import page from 'page';
+
+/**
+ * Internal dependencies
+ */
+import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection } from 'my-sites/controller';
+import { renderHelloWorld } from './controller';
+
+export default () => {
+	page(
+		'/hello-world',
+		siteSelection,
+		navigation,
+		renderHelloWorld,
+		makeLayout,
+		clientRender
+	);
 }
 ```
 
@@ -48,12 +67,9 @@ At the moment we use a simple routing interface with `page.js`. There are a few 
 `renderHelloWorld` in this case is the one you need to create and is responsible for rendering your section:
 
 ```js
-const renderHelloWorld = ( context ) => {
-	renderWithReduxStore( (
-		<Main>
-			<HelloWorld />
-		</Main>
-	), document.getElementById( 'primary' ), context.store );
+export const renderHelloWorld = ( context, next ) => {
+	context.primary = <HelloWorld />;
+	next();
 };
 ```
 
