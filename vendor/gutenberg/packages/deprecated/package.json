@@ -17,7 +17,7 @@
 		"url": "https://github.com/WordPress/gutenberg/issues"
 	},
 	"main": "build/index.js",
-	"module": "build-module/index.js",
+	"module": "src/index.js",
 	"react-native": "src/index",
 	"publishConfig": {
 		"access": "public"

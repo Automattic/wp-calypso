@@ -18,7 +18,7 @@
 		"url": "https://github.com/WordPress/gutenberg/issues"
 	},
 	"main": "build/index.js",
-	"module": "build-module/index.js",
+	"module": "src/index.js",
 	"dependencies": {
 		"element-closest": "^2.0.2",
 		"lodash": "^4.17.10",

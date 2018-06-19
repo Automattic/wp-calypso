@@ -26,7 +26,7 @@ const DEFAULT_OPTIONS = {
  *
  * @return {Object} Babel transform plugin.
  */
-export default function( babel ) {
+module.exports = function( babel ) {
 	const { types: t } = babel;
 
 	function getOptions( state ) {

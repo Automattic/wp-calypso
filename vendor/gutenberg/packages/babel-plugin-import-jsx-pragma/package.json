@@ -23,8 +23,8 @@
 		"build",
 		"build-module"
 	],
-	"main": "build/index.js",
-	"module": "build-module/index.js",
+	"main": "src/index.js",
+	"module": "src/index.js",
 	"devDependencies": {
 		"@babel/core": "^7.0.0-beta.52",
 		"@babel/plugin-syntax-jsx": "^7.0.0-beta.52"
