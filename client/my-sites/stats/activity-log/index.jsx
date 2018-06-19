@@ -302,14 +302,6 @@ class ActivityLog extends Component {
 		);
 	}
 
-	renderUpgradeBanner() {
-		const { siteIsOnFreePlan } = this.props;
-		if ( ! siteIsOnFreePlan ) {
-			return null;
-		}
-		return <UpgradeBanner />;
-	}
-
 	getActivityLog() {
 		const {
 			enableRewind,
@@ -386,7 +378,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ this.renderUpgradeBanner() }
+				{ this.props.siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }

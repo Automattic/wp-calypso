@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -18,7 +18,7 @@ import {
 	FEATURE_NO_ADS,
 } from 'lib/plans/constants';
 
-class UpgradeBanner extends PureComponent {
+class UpgradeBanner extends Component {
 	render() {
 		const { isJetpack, translate } = this.props;
 		return (
@@ -27,7 +27,7 @@ class UpgradeBanner extends PureComponent {
 					<Banner
 						callToAction={ translate( 'Get daily backups' ) }
 						dismissPreferenceName="activity-upgrade-banner-jetpack"
-						event="track_event"
+						event="activity_log_upgrade_click_jetpack"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
 						list={ [
 							translate( 'See all site activity over the past month' ),
@@ -41,7 +41,7 @@ class UpgradeBanner extends PureComponent {
 					<Banner
 						callToAction={ translate( 'Upgrade' ) }
 						dismissPreferenceName="activity-upgrade-banner-simple"
-						event="track_event"
+						event="activity_log_upgrade_click_wpcom"
 						feature={ FEATURE_NO_ADS }
 						list={ [
 							translate( 'Get a custom domain name' ),
