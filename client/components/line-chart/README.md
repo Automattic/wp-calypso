@@ -63,11 +63,11 @@ This component encapsulates a D3 based line chart graph
 Name | Type | Default | Description
 --- | --- | --- | ---
 `aspectRatio` | `number` | 2 | Aspect ratio between width and height of the graph
-`data` | `array` | false | Graph data for line chart
-`fillArea` | `bool` | false | Whether to creates the filling under the curve, so it would be an area instead just a line
-`legendInfo` | `array` | false | Info for legend of the graph, each item should be of the shape: `{ name, description }`
+`data` | `array` | false | Graph data for line chart. List of lists of points, each point should be of the shape: `{ date, value }`
+`fillArea` | `bool` | false | Whether to fill the area under the curve
+`legendInfo` | `array` | false | Information to display for the legend of the graph, each item should be of the shape: `{ name, description }`
 `margin` | `object` | `{ top: 30, right: 30, bottom: 30, left: 30 }` | Margin
-`renderTooltipForDatanum` | `function` | `datum => datum.value` | Function that gets the tooltip content from data object
+`renderTooltipForDatanum` | `function` | `datum => datum.value` | Function that returns a tooltip content from a given point
 
 ### General guidelines
 
