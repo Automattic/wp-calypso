@@ -20,7 +20,7 @@ import { LOADING } from 'woocommerce/state/constants';
  * if the locations are currently being fetched, or a "falsy" value if that haven't been fetched at all.
  */
 const getRawLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, `extensions.woocommerce.sites[${ siteId }].data.locations` );
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'data', 'locations' ] );
 };
 
 /**
