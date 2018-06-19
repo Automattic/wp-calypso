@@ -63,6 +63,7 @@ class CloneCredentialsStep extends Component {
 							host: translate( 'Destination Server Address' ),
 							path: translate( 'Destination WordPress Path' ),
 						} }
+						requirePath
 					/>
 				</Card>
 			</div>
