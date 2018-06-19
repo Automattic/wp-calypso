@@ -18,6 +18,7 @@ import { reducer } from 'state';
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'flow-controller', () => {
 	let SignupProgressStore,

@@ -16,7 +16,7 @@ import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 import SignupDependencyStore from './dependency-store';
 import flows from 'signup/config/flows';
-import steps from 'signup/config/steps';
+import steps from 'signup/config/steps-pure';
 
 /**
  * Constants
