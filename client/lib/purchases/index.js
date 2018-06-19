@@ -3,15 +3,21 @@
 /**
  * External dependencies
  */
-
-import { find, includes } from 'lodash';
-import moment from 'moment';
 import i18n from 'i18n-calypso';
+import moment from 'moment';
+import { includes, find, overSome } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isDomainRegistration, isDomainTransfer, isPlan, isTheme } from 'lib/products-values';
+import {
+	isDomainMapping,
+	isDomainRegistration,
+	isDomainTransfer,
+	isPlan,
+	isSiteRedirect,
+	isTheme,
+} from 'lib/products-values';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -172,13 +178,20 @@ function isRemovable( purchase ) {
 		return false;
 	}
 
-	return (
-		isExpiring( purchase ) ||
-		isExpired( purchase ) ||
-		( isDomainTransfer( purchase ) &&
-			! isRefundable( purchase ) &&
-			isPurchaseCancelable( purchase ) )
-	);
+	// Disallow removal of non-expired or non-expiring purchases of these types
+	if ( overSome( isDomainMapping, isDomainRegistration, isSiteRedirect )( purchase ) ) {
+		return isExpired( purchase ) || isExpiring( purchase );
+	}
+
+	if ( isDomainTransfer( purchase ) ) {
+		return (
+			isExpired( purchase ) ||
+			isExpiring( purchase ) ||
+			( ! isRefundable( purchase ) && isPurchaseCancelable( purchase ) )
+		);
+	}
+
+	return true;
 }
 
 /**
