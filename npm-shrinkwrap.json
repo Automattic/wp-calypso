@@ -8287,9 +8287,9 @@
       "dev": true
     },
     "fuse.js": {
-      "version": "2.6.1",
-      "resolved": "https://registry.npmjs.org/fuse.js/-/fuse.js-2.6.1.tgz",
-      "integrity": "sha1-0RjgD5qFn3s1TtT3dAIUJJ4ypXo="
+      "version": "2.7.4",
+      "resolved": "https://registry.npmjs.org/fuse.js/-/fuse.js-2.7.4.tgz",
+      "integrity": "sha1-luQg/efvARrEnCWKYhMU/ldlNvk="
     },
     "gather-stream": {
       "version": "1.0.0",
