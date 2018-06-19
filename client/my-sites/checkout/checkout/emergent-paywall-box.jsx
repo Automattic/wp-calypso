@@ -125,13 +125,11 @@ export class EmergentPaywallBox extends Component {
 			.then( result => {
 				if ( result.order_id ) {
 					log( 'Order created. Order ID is: ' + result.order_id );
-					const successPath = `/checkout/thank-you/${ this.state.siteSlug }/pending/${
-						result.order_id
-					}`;
-					this.props.recordTracksEvent( 'calypso_checkout_form_submit', {
-						payment_method: this.state.paymentMethod,
+					this.props.onOrderCreated( {
+						orderId: result.order_id,
+						paymentMethod: this.state.paymentMethod,
+						siteSlug: this.state.siteSlug,
 					} );
-					page.redirect( successPath );
 				}
 			} )
 			.catch( error => {
@@ -242,7 +240,12 @@ export default connect(
 	state => ( {
 		userCountryCode: getCurrentUserCountryCode( state ),
 	} ),
-	{
-		recordTracksEvent,
-	}
+	dispatch => ( {
+		onOrderCreated: ( { orderId, paymentMethod, siteSlug } ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_checkout_form_submit', { payment_method: paymentMethod } )
+			);
+			page.redirect( `/checkout/thank-you/${ siteSlug }/pending/${ orderId }` );
+		},
+	} )
 )( localize( EmergentPaywallBox ) );
