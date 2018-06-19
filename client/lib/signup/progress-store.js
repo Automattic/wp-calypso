@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import steps from 'signup/config/steps';
+import steps from 'signup/config/steps-pure';
 import { SIGNUP_COMPLETE_RESET, SIGNUP_PROGRESS_SET } from 'state/action-types';
 import {
 	completeStep,

@@ -30,7 +30,7 @@ import SignupActions from './actions';
 import SignupProgressStore from './progress-store';
 import SignupDependencyStore from './dependency-store';
 import flows from 'signup/config/flows';
-import steps from 'signup/config/steps';
+import steps from 'signup/config/steps-pure';
 import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 import { getStepUrl } from 'signup/utils';
