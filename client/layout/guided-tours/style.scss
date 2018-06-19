@@ -105,21 +105,15 @@
 .guided-tours__choice-button-row {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 }
 
+.guided-tours__choice-button-row,
 .guided-tours__single-button-row {
 	text-align: center;
-}
 
-.guided-tours__choice-button-row, .guided-tours__single-button-row {
 	.button {
 		min-width: 48%;
-	}
-	.guided-tours__button-link {
-		text-align: center;
-	}
-	.button:nth-child(1) {
-		margin-right: 4%;
 	}
 	.guided-tours__quit-button {
 		color: darken( $white, 20% );
