@@ -12,8 +12,8 @@ const siteId = 2916284;
 
 describe( 'requestPlanOwnershipTransfer()', () => {
 	test( 'should return an action for HTTP request to transfer the site plan to another user', () => {
-		const newUserId = 12345678;
-		const action = transferPlanOwnership( siteId, newUserId );
+		const newOwnerUserId = 12345678;
+		const action = transferPlanOwnership( siteId, newOwnerUserId );
 		const result = requestPlanOwnershipTransfer( action );
 
 		expect( result ).toEqual(
@@ -23,7 +23,7 @@ describe( 'requestPlanOwnershipTransfer()', () => {
 					method: 'POST',
 					path: '/sites/' + action.siteId + '/plan-transfer',
 					query: {
-						new_user_id: action.newUserId,
+						new_user_id: action.newOwnerUserId,
 					},
 				},
 				action

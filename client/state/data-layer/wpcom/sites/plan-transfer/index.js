@@ -31,7 +31,7 @@ export const requestPlanOwnershipTransfer = action =>
 			method: 'POST',
 			path: '/sites/' + action.siteId + '/plan-transfer',
 			query: {
-				new_user_id: action.newUserId,
+				new_user_id: action.newOwnerUserId,
 			},
 		},
 		action

@@ -158,11 +158,11 @@ export function refreshSitePlans( siteId ) {
  * change to another user has started.
  *
  * @param {Number} siteId - ID of the site
- * @param {Number} newUserId - ID of the new user
+ * @param {Number} newOwnerUserId - ID of the new owner user
  * @returns {Object} the corresponding action object
  */
-export const transferPlanOwnership = ( siteId, newUserId ) => ( {
+export const transferPlanOwnership = ( siteId, newOwnerUserId ) => ( {
 	type: SITE_PLAN_OWNERSHIP_TRANSFER,
-	newUserId,
+	newOwnerUserId,
 	siteId,
 } );

@@ -23,12 +23,12 @@ describe( 'actions', () => {
 	describe( '#transferPlanOwnership()', () => {
 		test( 'should return an action object for transferring the plan of a site to a user', () => {
 			const siteId = 2916284;
-			const newUserId = 123456;
-			const action = transferPlanOwnership( siteId, newUserId );
+			const newOwnerUserId = 123456;
+			const action = transferPlanOwnership( siteId, newOwnerUserId );
 
 			expect( action ).toEqual( {
 				type: SITE_PLAN_OWNERSHIP_TRANSFER,
-				newUserId,
+				newOwnerUserId,
 				siteId,
 			} );
 		} );
