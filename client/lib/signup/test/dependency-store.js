@@ -18,7 +18,7 @@ import SignupDependencyStore from '../dependency-store';
 import SignupProgressStore from '../progress-store';
 
 jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps-pure' ) );
 
 describe( 'dependency-store', () => {
 	beforeAll( () => {

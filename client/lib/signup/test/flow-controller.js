@@ -20,7 +20,7 @@ import SignupProgressStore from '../progress-store';
 
 jest.mock( 'lib/user', () => () => ( { get: () => ( {} ) } ) );
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps-pure' ) );
 
 describe( 'flow-controller', () => {
 	let signupFlowController;
