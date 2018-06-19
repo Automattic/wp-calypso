@@ -16,41 +16,17 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import notices from 'notices';
 import TermsOfService from './terms-of-service';
 import wp from 'lib/wp';
 import { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const wpcom = wp.undocumented();
 const log = debug( 'calypso:checkout:payment:emergent-payall' );
-const httpDataId = 'emergent-paywall-config';
-/**
- * POST emergent paywall iframe client configuration
- *
- * @param {string} countryCode - user's country code
- * @param {object} cart - current cart object. See: client/lib/cart/store/index.js
- * @param {object} domainDetails - transaction store domain details
- *
- * @return {*} Stored data container for request.
- */
-export const requestEmergentPaywallConfiguration = ( countryCode, cart, domainDetails ) => {
-	return requestHttpData(
-		httpDataId,
-		http( {
-			apiVersion: '1.1',
-			method: 'POST',
-			path: '/me/emergent-paywall-configuration',
-			body: { country: countryCode, cart, domainDetails },
-		} ),
-		{
-			fromApi: () => config => [ [ 'config', config ] ],
-			freshness: -Infinity,
-		}
-	);
-};
+const emergentPaywallLookupKey = 'emergent-paywall-config';
 
 export class EmergentPaywallBox extends Component {
 	static propTypes = {
@@ -59,6 +35,8 @@ export class EmergentPaywallBox extends Component {
 		transaction: PropTypes.object.isRequired,
 		emergentPaywallConfig: PropTypes.object,
 		emergentPaywallConfigState: PropTypes.string,
+		showErrorNotice: PropTypes.func.isRequired,
+		removeNotice: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -69,7 +47,9 @@ export class EmergentPaywallBox extends Component {
 
 	static getDerivedStateFromProps( props, state ) {
 		if ( props.emergentPaywallConfigState === 'failure' ) {
-			notices.error( translate( "There's been an error. Please try again later." ) );
+			props.showErrorNotice( translate( "There's been an error. Please try again later." ), {
+				id: emergentPaywallLookupKey,
+			} );
 			return {
 				paywall_url: '',
 				payload: '',
@@ -82,7 +62,7 @@ export class EmergentPaywallBox extends Component {
 			props.emergentPaywallConfig &&
 			props.emergentPaywallConfig.signature !== state.signature
 		) {
-			notices.clearNotices( 'notices' );
+			props.removeNotice( emergentPaywallLookupKey );
 			return {
 				...props.emergentPaywallConfig,
 			};
@@ -99,11 +79,7 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	componentDidMount() {
-		requestEmergentPaywallConfiguration(
-			this.props.userCountryCode,
-			this.props.cart,
-			this.props.transaction.domainDetails
-		);
+		this.props.fetchIframeConfig( this.props.userCountryCode );
 		window.addEventListener( 'message', this.onMessageReceiveHandler, false );
 	}
 
@@ -116,11 +92,7 @@ export class EmergentPaywallBox extends Component {
 			prevProps.cart.total_cost !== this.props.cart.total_cost ||
 			prevProps.cart.products.length !== this.props.cart.products.length
 		) {
-			requestEmergentPaywallConfiguration(
-				this.props.userCountryCode,
-				this.props.cart,
-				this.props.transaction.domainDetails
-			);
+			this.props.fetchIframeConfig( this.props.userCountryCode );
 			return;
 		}
 
@@ -280,11 +252,41 @@ export class EmergentPaywallBox extends Component {
 	}
 }
 
+/**
+ * POST emergent paywall iframe client configuration
+ *
+ * @param {object} cart - current cart object. See: client/lib/cart/store/index.js
+ * @param {object} domainDetails - transaction store domain details
+ * @param {string} country - user's country code
+ *
+ * @return {*} Stored data container for request.
+ */
+export const requestEmergentPaywallConfiguration = ( cart, domainDetails, country ) => {
+	return requestHttpData(
+		emergentPaywallLookupKey,
+		http( {
+			apiVersion: '1.1',
+			method: 'POST',
+			path: '/me/emergent-paywall-configuration',
+			body: { cart, domainDetails, country },
+		} ),
+		{
+			fromApi: () => config => [ [ 'config', config ] ],
+			freshness: -Infinity,
+		}
+	);
+};
+
 export default connect(
 	state => ( {
 		userCountryCode: getCurrentUserCountryCode( state ),
-		emergentPaywallConfig: getHttpData( httpDataId ).data,
-		emergentPaywallConfigState: getHttpData( httpDataId ).state,
+		emergentPaywallConfig: getHttpData( emergentPaywallLookupKey ).data,
+		emergentPaywallConfigState: getHttpData( emergentPaywallLookupKey ).state,
 	} ),
-	null
+	( dispatch, { cart, transaction } ) => ( {
+		fetchIframeConfig: country =>
+			requestEmergentPaywallConfiguration( cart, transaction.domainDetails, country ),
+		showErrorNotice: ( error, options ) => dispatch( errorNotice( error, options ) ),
+		removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	} )
 )( EmergentPaywallBox );
