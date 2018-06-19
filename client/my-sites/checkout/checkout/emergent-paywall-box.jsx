@@ -33,49 +33,39 @@ export class EmergentPaywallBox extends Component {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
 		transaction: PropTypes.object.isRequired,
-		emergentPaywallConfig: PropTypes.object,
-		emergentPaywallConfigState: PropTypes.string,
+		iframeConfig: PropTypes.object,
+		iframeConfigRequestState: PropTypes.string,
 		showErrorNotice: PropTypes.func.isRequired,
 		removeNotice: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
 		selectedSite: {},
-		emergentPaywallConfig: {},
-		emergentPaywallConfigState: '',
+		iframeConfig: {
+			paywall_url: '',
+			payload: '',
+			charge_id: '',
+			signature: '',
+		},
+		iframeConfigRequestState: '',
 	};
-
-	static getDerivedStateFromProps( props, state ) {
-		if ( props.emergentPaywallConfigState === 'failure' ) {
-			props.showErrorNotice( translate( "There's been an error. Please try again later." ), {
-				id: emergentPaywallLookupKey,
-			} );
-			return {
-				paywall_url: '',
-				payload: '',
-				charge_id: '',
-				signature: '',
-			};
-		}
-
-		if (
-			props.emergentPaywallConfig &&
-			props.emergentPaywallConfig.signature !== state.signature
-		) {
-			props.removeNotice( emergentPaywallLookupKey );
-			return {
-				...props.emergentPaywallConfig,
-			};
-		}
-
-		return null;
-	}
 
 	constructor( props ) {
 		super( props );
 		this.state = this.getInitialState();
 		this.iframeRef = React.createRef();
 		this.formRef = React.createRef();
+	}
+
+	getInitialState() {
+		return {
+			paymentMethod: paymentMethodClassName( 'emergent-paywall' ),
+			iframeHeight: 600,
+			iframeWidth: 750,
+			redirectTo: '',
+			pendingOrder: false,
+			siteSlug: this.props.selectedSite ? this.props.selectedSite.slug : 'no-site',
+		};
 	}
 
 	componentDidMount() {
@@ -87,35 +77,31 @@ export class EmergentPaywallBox extends Component {
 		window.removeEventListener( 'message', this.onMessageReceiveHandler );
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps ) {
 		if (
 			prevProps.cart.total_cost !== this.props.cart.total_cost ||
 			prevProps.cart.products.length !== this.props.cart.products.length
 		) {
-			this.props.fetchIframeConfig( this.props.userCountryCode );
-			return;
+			this.props.removeNotice( emergentPaywallLookupKey );
+			return this.props.fetchIframeConfig( this.props.userCountryCode );
 		}
 
-		if ( prevState.signature !== this.state.signature ) {
-			this.formRef.current.submit();
+		if (
+			this.props.iframeConfigRequestState === 'success' &&
+			prevProps.iframeConfig.signature !== this.props.iframeConfig.signature
+		) {
+			return this.formRef.current.submit();
+		}
+
+		if ( this.props.iframeConfigRequestState === 'failure' ) {
+			return this.props.showErrorNotice(
+				translate( "There's been an error. Please try again later." ),
+				{
+					id: emergentPaywallLookupKey,
+				}
+			);
 		}
 	}
-
-	getInitialState() {
-		return {
-			paywall_url: '',
-			paymentMethod: paymentMethodClassName( 'emergent-paywall' ),
-			payload: '',
-			charge_id: '',
-			signature: '',
-			iframeHeight: 600,
-			iframeWidth: 750,
-			redirectTo: '',
-			pendingOrder: false,
-			siteSlug: this.props.selectedSite ? this.props.selectedSite.slug : 'no-site',
-		};
-	}
-
 	/**
 	 * Determines what to do after a `PURCHASE_STATUS` message
 	 *
@@ -213,10 +199,14 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	render() {
-		const hasConfigLoaded = this.props.emergentPaywallConfigState === 'success';
-		const { payload, signature, paywall_url, iframeHeight } = this.state;
+		const {
+			iframeConfig: { payload, signature, paywall_url },
+			iframeConfigRequestState,
+		} = this.props;
+		const { iframeHeight } = this.state;
+		const isRequestStateSuccessful = iframeConfigRequestState === 'success';
 		const iframeContainerClasses = classNames( 'checkout__emergent-paywall-frame-container', {
-			'iframe-loaded': hasConfigLoaded,
+			'iframe-loaded': isRequestStateSuccessful,
 		} );
 
 		return (
@@ -224,7 +214,7 @@ export class EmergentPaywallBox extends Component {
 				<TermsOfService />
 				<div className="checkout__payment-box-sections">
 					<div className="checkout__payment-box-section">{ this.props.children }</div>
-					{ ! hasConfigLoaded && this.renderLoadingBlock() }
+					{ ! isRequestStateSuccessful && this.renderLoadingBlock() }
 					<div className={ iframeContainerClasses }>
 						<form
 							className="checkout__emergent-paywall-form"
@@ -280,8 +270,8 @@ export const requestEmergentPaywallConfiguration = ( cart, domainDetails, countr
 export default connect(
 	state => ( {
 		userCountryCode: getCurrentUserCountryCode( state ),
-		emergentPaywallConfig: getHttpData( emergentPaywallLookupKey ).data,
-		emergentPaywallConfigState: getHttpData( emergentPaywallLookupKey ).state,
+		iframeConfig: getHttpData( emergentPaywallLookupKey ).data,
+		iframeConfigRequestState: getHttpData( emergentPaywallLookupKey ).state,
 	} ),
 	( dispatch, { cart, transaction } ) => ( {
 		fetchIframeConfig: country =>
