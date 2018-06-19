@@ -1,0 +1,53 @@
+/** @format */
+
+.diff-viewer__filename {
+	padding: 2px 4px;
+	background-color: $gray-lighten-20;
+	font-weight: 500;
+}
+
+.diff-viewer__file {
+	background-color: $gray-lighten-30;
+	display: flex;
+	font-family: $monospace;
+	flex-direction: row;
+	overflow-x: scroll;
+	white-space: pre;
+}
+
+.diff-viewer__path-prefix {
+}
+
+.diff-viewer__path {
+}
+
+.diff-viewer__line-numbers {
+	padding: 0 8px;
+	display: flex;
+	flex-direction: column;
+	text-align: right;
+	background-color: $gray-lighten-20;
+	color: $gray-text-min;
+}
+
+.diff-viewer__lines {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	overflow-x: visible;
+
+	& div,
+	& del,
+	& ins {
+		padding: 0 8px;
+	}
+
+	& del {
+		background-color: lighten( $alert-red, 20% );
+		text-decoration: none;
+	}
+
+	& ins {
+		background-color: lighten( $alert-green, 20% );
+	}
+}

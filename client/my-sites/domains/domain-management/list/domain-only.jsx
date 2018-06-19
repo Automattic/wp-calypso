@@ -15,7 +15,7 @@ import React from 'react';
 import EmptyContent from 'components/empty-content';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { domainManagementEdit } from 'my-sites/domains/paths';
-import { getPrimaryDomainBySiteId } from 'state/selectors';
+import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 
 const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => {

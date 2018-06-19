@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -15,9 +14,16 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
-import { requestTransferCode, cancelTransferRequest } from 'lib/upgrades/actions';
+import {
+	cancelTransferRequest,
+	fetchWapiDomainInfo,
+	requestTransferCode,
+} from 'lib/upgrades/actions';
 import notices from 'notices';
-import { displayRequestTransferCodeResponseNotice } from './shared';
+import {
+	displayRequestTransferCodeResponseNotice,
+	renderGdprTransferWarningNotice,
+} from './shared';
 import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 class Unlocked extends React.Component {
@@ -197,6 +203,7 @@ class Unlocked extends React.Component {
 				this.setState( { sent: true } );
 			}
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
+			fetchWapiDomainInfo( this.props.selectedDomainName );
 		} );
 	};
 
@@ -221,11 +228,11 @@ class Unlocked extends React.Component {
 							'Our Happiness Engineers have been notified about ' +
 								'your transfer request and will be in touch shortly to help ' +
 								'you complete the process.'
-						)
+					  )
 					: translate(
 							'Please request an authorization code to notify our ' +
 								'Happiness Engineers of your intention.'
-						) }
+					  ) }
 			</p>
 		);
 	}
@@ -281,6 +288,8 @@ class Unlocked extends React.Component {
 
 		return (
 			<div>
+				{ renderGdprTransferWarningNotice() }
+
 				<SectionHeader
 					label={ translate( 'Transfer Domain' ) }
 					className="transfer-out__section-header"

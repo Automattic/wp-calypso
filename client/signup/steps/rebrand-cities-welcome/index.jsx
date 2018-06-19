@@ -73,4 +73,7 @@ class RebrandCitiesWelcomeStep extends Component {
 	}
 }
 
-export default connect( null, { setSiteTitle } )( localize( RebrandCitiesWelcomeStep ) );
+export default connect(
+	null,
+	{ setSiteTitle }
+)( localize( RebrandCitiesWelcomeStep ) );

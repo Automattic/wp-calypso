@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -28,12 +30,12 @@ import {
 	shouldEmailDetails,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const Sidebar = ( props ) => {
+const Sidebar = props => {
 	const { orderId, siteId, form, errors, paperSize, translate, fulfillOrder, emailDetails } = props;
 
 	const onEmailDetailsChange = () => props.setEmailDetailsOption( orderId, siteId, ! emailDetails );
 	const onFulfillOrderChange = () => props.setFulfillOrderOption( orderId, siteId, ! fulfillOrder );
-	const onPaperSizeChange = ( value ) => props.updatePaperSize( orderId, siteId, value );
+	const onPaperSizeChange = value => props.updatePaperSize( orderId, siteId, value );
 
 	return (
 		<div className="label-purchase-modal__sidebar">
@@ -44,7 +46,8 @@ const Sidebar = ( props ) => {
 				title={ translate( 'Paper size' ) }
 				value={ paperSize }
 				updateValue={ onPaperSizeChange }
-				error={ errors.paperSize } />
+				error={ errors.paperSize }
+			/>
 			<FormLabel className="label-purchase-modal__option-email-customer">
 				<FormCheckbox checked={ emailDetails } onChange={ onEmailDetailsChange } />
 				<span>{ translate( 'Email shipment details to the customer' ) }</span>
@@ -78,12 +81,18 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
-	return bindActionCreators( {
-		setEmailDetailsOption,
-		setFulfillOrderOption,
-		updatePaperSize,
-	}, dispatch );
+const mapDispatchToProps = dispatch => {
+	return bindActionCreators(
+		{
+			setEmailDetailsOption,
+			setFulfillOrderOption,
+			updatePaperSize,
+		},
+		dispatch
+	);
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Sidebar ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( Sidebar ) );

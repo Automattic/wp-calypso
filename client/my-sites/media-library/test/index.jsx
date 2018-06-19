@@ -18,8 +18,8 @@ import { requestKeyringConnections as requestStub } from 'state/sharing/keyring/
 
 jest.mock( 'components/data/query-preferences', () => require( 'components/empty-component' ) );
 jest.mock( 'components/data/media-validation-data', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/media/library-selected-store', () => () => null  );
-jest.mock( 'lib/media/actions', () => () => null  );
+jest.mock( 'lib/media/library-selected-store', () => () => null );
+jest.mock( 'lib/media/actions', () => () => null );
 jest.mock( 'my-sites/media-library/content', () => require( 'components/empty-component' ) );
 jest.mock( 'my-sites/media-library/drop-zone', () => require( 'components/empty-component' ) );
 jest.mock( 'my-sites/media-library/filter-bar', () => require( 'components/empty-component' ) );

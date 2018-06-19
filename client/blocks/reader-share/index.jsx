@@ -21,9 +21,9 @@ import ReaderPopoverMenu from 'components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import SiteSelector from 'components/site-selector';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -101,6 +101,7 @@ class ReaderShare extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.mounted = false;
+		this.shareButton = React.createRef();
 	}
 
 	componentWillMount() {
@@ -183,10 +184,9 @@ class ReaderShare extends React.Component {
 				onClick: this.toggle,
 				onTouchStart: preloadEditor,
 				onMouseEnter: preloadEditor,
-				ref: 'shareButton',
 			},
 			[
-				<span key="button" ref="shareButton" className={ buttonClasses }>
+				<span key="button" ref={ this.shareButton } className={ buttonClasses }>
 					<Gridicon icon="share" size={ this.props.iconSize } />
 					<span className="reader-share__button-label">
 						{ translate( 'Share', { comment: 'Share the post' } ) }
@@ -195,7 +195,7 @@ class ReaderShare extends React.Component {
 				this.state.showingMenu && (
 					<ReaderPopoverMenu
 						key="menu"
-						context={ this.refs && this.refs.shareButton }
+						context={ this.shareButton.current }
 						isVisible={ this.state.showingMenu }
 						onClose={ this.closeExternalShareMenu }
 						position={ this.props.position }
@@ -227,7 +227,6 @@ class ReaderShare extends React.Component {
 								onSiteSelect={ this.pickSiteToShareTo }
 								showAddNewSite={ false }
 								indicator={ false }
-								autoFocus={ false }
 								groups={ true }
 							/>
 						) }

@@ -1,22 +1,38 @@
-Stats Pagination
-================
-This component provides a way to paginate a resultset.
+Pagination
+===
 
-#### How to use:
+Use pagination to allow navigation between pages that represent an ordered collection of items.
+
+## Usage
 
 ```js
 import Pagination from 'components/pagination';
 
 render: function() {
 	return (
-		<Pagination page={ <Number> } perPage={ <Number> } total={ <Number> } pageClick={ <Function> } />;	
+		<Pagination compact={ <Boolean> } page={ <Number> } perPage={ <Number> } total={ <Number> } pageClick={ <Function> } />;
 	);
 }
 ```
 
-#### Required Props
+### Props
 
-* `page`: The current active page number
-* `perPage`: Number of records shown per page
-* `total`: Total number of records
-* `pageClick`: Function called when a pagination item is clicked - the page clicked is provided as an argument
+Name | Type | Default | Description
+--- | --- | --- | ---
+`page`* | `integer` | null | The current active page number.
+`perPage`* | `integer` | null | Number of records shown per page.
+`total`* | `integer` | null | Total number of records.
+`pageClick`* | `function` | null | Function called when a pagination item is clicked - the page clicked is provided as an argument.
+`compact` | `bool` | false | Render a smaller version.
+`nextLabel` | `string` | null | Overrides the "Next" button label.
+`prevLabel` | `string` | null | Overrides the "Previous" button label.
+
+### General guidelines
+
+* Use pagination at the bottom of lists.
+* Use infinite scrolling for consuming/scanning content. Use pagination for managing large lists.
+
+## Related components
+
+* To group buttons together, use the [ButtonGroup](./button-group) component.
+* To use show/hide certain content, use the [SegmentedControl](./segmented-control) component.

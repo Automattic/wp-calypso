@@ -15,28 +15,28 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
-import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import QuerySites from 'components/data/query-sites';
 import Wizard from 'components/wizard';
 import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
+	JETPACK_ONBOARDING_ANALYTICS_TITLES as ANALYTICS_TITLES,
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 } from './constants';
-import {
-	getJetpackOnboardingCompletedSteps,
-	getJetpackOnboardingSettings,
-	getJpoUserHash,
-	getSiteId,
-	getUnconnectedSite,
-	getUnconnectedSiteIdBySlug,
-	isRequestingJetpackOnboardingSettings,
-} from 'state/selectors';
+import getJetpackOnboardingCompletedSteps from 'state/selectors/get-jetpack-onboarding-completed-steps';
+import getJetpackOnboardingSettings from 'state/selectors/get-jetpack-onboarding-settings';
+import getJpoUserHash from 'state/selectors/get-jpo-user-hash';
+import getSiteId from 'state/selectors/get-site-id';
+import getUnconnectedSite from 'state/selectors/get-unconnected-site';
+import getUnconnectedSiteIdBySlug from 'state/selectors/get-unconnected-site-id-by-slug';
+import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 
 class JetpackOnboardingMain extends React.PureComponent {
@@ -135,12 +135,18 @@ class JetpackOnboardingMain extends React.PureComponent {
 			steps,
 			translate,
 		} = this.props;
+		const basePath = '/jetpack/start';
+		const pageTitle = get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' );
+		const analyticsPageTitle = get( ANALYTICS_TITLES, stepName ) + ' ‹ ' + 'Jetpack Start';
 
 		return (
 			<Main className="jetpack-onboarding">
-				<DocumentHead
-					title={ get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' ) }
+				<DocumentHead title={ pageTitle } />
+				<PageViewTracker
+					path={ [ basePath, stepName, ':site' ].join( '/' ) }
+					title={ analyticsPageTitle }
 				/>
+
 				{ /* It is important to use `<QuerySites siteId={ siteSlug } />` here, however wrong that seems.
 				   * The reason is that we rely on an `isRequestingSite()` check to tell whether we've
 				   * finished fetching site details, which will tell us whether the site is connected,
@@ -156,12 +162,12 @@ class JetpackOnboardingMain extends React.PureComponent {
 				   * the site is a connected Jetpack site or not, and a network request that uses
 				   * the wrong argument can mess up our request tracking quite badly. */
 				this.state.hasFinishedRequestingSite && (
-					<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
+					<QueryJetpackSettings query={ jpoAuth } siteId={ siteId } />
 				) }
 				{ siteId ? (
 					<Wizard
 						action={ action }
-						basePath="/jetpack/start"
+						basePath={ basePath }
 						baseSuffix={ siteSlug }
 						components={ COMPONENTS }
 						hideForwardLink={ this.shouldHideForwardLink() }
@@ -219,7 +225,7 @@ export default connect(
 			};
 		}
 
-		const isRequestingSettings = isRequestingJetpackOnboardingSettings( state, siteId, jpoAuth );
+		const isRequestingSettings = isRequestingJetpackSettings( state, siteId, jpoAuth );
 
 		const userIdHashed = getJpoUserHash( state, siteId );
 
@@ -249,12 +255,12 @@ export default connect(
 			userIdHashed,
 		};
 	},
-	{ recordTracksEvent, saveJetpackOnboardingSettings, setSelectedSiteId },
+	{ recordTracksEvent, saveJetpackSettings, setSelectedSiteId },
 	(
 		{ siteId, jpoAuth, userIdHashed, ...stateProps },
 		{
 			recordTracksEvent: recordTracksEventAction,
-			saveJetpackOnboardingSettings: saveJetpackOnboardingSettingsAction,
+			saveJetpackSettings: saveJetpackSettingsAction,
 			...dispatchProps
 		},
 		ownProps
@@ -271,7 +277,7 @@ export default connect(
 				...additionalProperties,
 			} ),
 		saveJpoSettings: ( s, settings ) =>
-			saveJetpackOnboardingSettingsAction( s, {
+			saveJetpackSettingsAction( s, {
 				onboarding: { ...settings, ...get( jpoAuth, 'onboarding' ) },
 			} ),
 		...dispatchProps,

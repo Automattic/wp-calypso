@@ -41,6 +41,7 @@ class AcceptDialog extends Component {
 				label: this.props.cancelButtonText
 					? this.props.cancelButtonText
 					: this.props.translate( 'Cancel' ),
+				additionalClassNames: 'is-cancel',
 			},
 			{
 				action: 'accept',

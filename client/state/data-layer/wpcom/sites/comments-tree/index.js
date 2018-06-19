@@ -15,7 +15,7 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { getRawSite } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 
 export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	const { siteId, status = 'unapproved' } = action.query;
@@ -80,7 +80,7 @@ export const announceFailure = ( { dispatch, getState }, { query } ) => {
 		site && site.name
 			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
 					args: { siteName: site.name },
-				} )
+			  } )
 			: translate( 'Failed to retrieve comments for your site' );
 
 	dispatch( errorNotice( error ) );

@@ -29,3 +29,6 @@ export function getExitCheckoutUrl( cart, siteSlug ) {
 
 	return siteSlug ? url + siteSlug : url;
 }
+
+export { getCreditCardType, validatePaymentDetails } from './validation';
+export { maskField, unmaskField } from './masking';

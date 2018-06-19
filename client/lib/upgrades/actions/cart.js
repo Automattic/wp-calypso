@@ -77,6 +77,14 @@ export function removeItem( item, domainsWithPlansOnly ) {
 	} );
 }
 
+export function replaceItem( oldItem, newItem ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.CART_ITEM_REPLACE,
+		oldItem,
+		newItem,
+	} );
+}
+
 export function addDomainToCart( domainSuggestion ) {
 	addItem(
 		cartItems.domainRegistration( {

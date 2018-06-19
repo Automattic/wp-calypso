@@ -1,4 +1,4 @@
-FROM       node:8.9.4
+FROM       node:10.4.1
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
@@ -27,10 +27,7 @@ RUN        bash /tmp/env-config.sh
 # change. This layer should allow for final build times
 # to be limited only by the Calypso build speed.
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
-RUN        true \
-           && npm install --production \
-           && rm -rf /root/.npm \
-           && true
+RUN        npm ci
 
 # Build a "source" layer
 #

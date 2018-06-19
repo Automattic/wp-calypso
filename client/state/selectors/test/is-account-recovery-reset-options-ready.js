@@ -8,7 +8,7 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import { isAccountRecoveryResetOptionsReady } from 'state/selectors';
+import isAccountRecoveryResetOptionsReady from 'state/selectors/is-account-recovery-reset-options-ready';
 
 describe( 'isAccountRecoveryResetOptionsReady()', () => {
 	test( 'should return false if items array is empty', () => {

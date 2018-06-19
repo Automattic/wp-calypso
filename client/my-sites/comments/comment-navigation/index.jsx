@@ -39,7 +39,8 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment, hasPendingCommentRequests } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
+import hasPendingCommentRequests from 'state/selectors/has-pending-comment-requests';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
 import { extendAction } from 'state/utils';
 
@@ -421,6 +422,7 @@ const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 		),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	localize( UrlSearch( CommentNavigation ) )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( UrlSearch( CommentNavigation ) ) );

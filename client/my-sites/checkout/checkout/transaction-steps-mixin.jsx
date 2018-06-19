@@ -14,17 +14,30 @@ const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-step
 import analytics from 'lib/analytics';
 import { recordOrder } from 'lib/analytics/ad-tracking';
 import { getTld } from 'lib/domains';
-import { cartItems } from 'lib/cart-values';
+import { cartItems, getLocationOrigin } from 'lib/cart-values';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { submitTransaction } from 'lib/upgrades/actions';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
+import { REDIRECTING_FOR_AUTHORIZATION } from '../../../lib/store-transactions/step-types';
 
 const TransactionStepsMixin = {
 	submitTransaction: function( event ) {
 		event.preventDefault();
 
-		submitTransaction( pick( this.props, [ 'cart', 'transaction' ] ) );
+		const params = pick( this.props, [ 'cart', 'transaction' ] );
+		const origin = getLocationOrigin( window.location );
+
+		params.successUrl = origin + this.props.redirectTo();
+		params.cancelUrl = origin + '/checkout/';
+
+		if ( this.props.selectedSite ) {
+			params.cancelUrl += this.props.selectedSite.slug;
+		} else {
+			params.cancelUrl += 'no-site';
+		}
+
+		submitTransaction( params );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -75,6 +88,11 @@ const TransactionStepsMixin = {
 						payment_method: this.props.transaction.payment.paymentMethod,
 					} );
 				}
+				break;
+
+			case REDIRECTING_FOR_AUTHORIZATION:
+				// TODO: wire in payment method
+				analytics.tracks.recordEvent( 'calypso_checkout_form_redirect' );
 				break;
 
 			case 'received-wpcom-response':
@@ -142,10 +160,14 @@ const TransactionStepsMixin = {
 			return;
 		}
 
-		defer( () => {
-			// The Thank You page throws a rendering error if this is not in a defer.
-			this.props.handleCheckoutCompleteRedirect();
-		} );
+		if ( step.data.redirect_url ) {
+			this.props.handleCheckoutExternalRedirect( step.data.redirect_url );
+		} else {
+			defer( () => {
+				// The Thank You page throws a rendering error if this is not in a defer.
+				this.props.handleCheckoutCompleteRedirect();
+			} );
+		}
 	},
 
 	_formatError: function( error ) {

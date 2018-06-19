@@ -2,12 +2,12 @@
 /**
  * External dependencies
  */
-const babel = require( 'babel-core' );
+const babel = require( '@babel/core' );
 
 describe( 'babel-plugin-transform-wpcalypso-async', () => {
 	function transform( code, async = true ) {
 		return babel.transform( code, {
-			plugins: [ 'syntax-jsx', [ require( '..' ), { async } ] ],
+			plugins: [ '@babel/plugin-syntax-jsx', [ require( '..' ), { async } ] ],
 		} ).code;
 	}
 

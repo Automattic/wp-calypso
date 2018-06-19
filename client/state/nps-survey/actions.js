@@ -6,11 +6,11 @@
 
 import debugFactory from 'debug';
 import wpcom from 'lib/wp';
-import { random } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
@@ -20,8 +20,10 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUESTING,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
+	NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
+	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
+	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 } from 'state/action-types';
-import { NPS_SURVEY_RAND_MAX } from './constants';
 
 const debug = debugFactory( 'calypso:nps-survey' );
 
@@ -36,22 +38,17 @@ export function setupNpsSurveyEligibility() {
 	return dispatch => {
 		debug( 'Checking NPS eligibility...' );
 
-		if ( 1 === random( 1, NPS_SURVEY_RAND_MAX ) ) {
-			return wpcom
-				.undocumented()
-				.checkNPSSurveyEligibility()
-				.then( data => {
-					debug( '...Eligibility returned from endpoint.', data );
-					dispatch( setNpsSurveyEligibility( data.display_survey ) );
-				} )
-				.catch( err => {
-					debug( '...Error querying NPS survey eligibility.', err );
-					dispatch( setNpsSurveyEligibility( false ) );
-				} );
-		}
-
-		debug( '...Session was not lucky' );
-		return dispatch( setNpsSurveyEligibility( false ) );
+		return wpcom
+			.undocumented()
+			.checkNPSSurveyEligibility()
+			.then( data => {
+				debug( '...Eligibility returned from endpoint.', data );
+				dispatch( setNpsSurveyEligibility( data.display_survey ) );
+			} )
+			.catch( err => {
+				debug( '...Error querying NPS survey eligibility.', err );
+				dispatch( setNpsSurveyEligibility( false ) );
+			} );
 	};
 }
 
@@ -65,6 +62,9 @@ export function submitNpsSurvey( surveyName, score ) {
 	return dispatch => {
 		debug( 'Submitting NPS survey...' );
 		dispatch( submitNpsSurveyRequesting( surveyName, score ) );
+
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_submitted' );
+		analytics.tracks.recordEvent( 'calypso_nps_survey_submitted' );
 
 		return wpcom
 			.undocumented()
@@ -85,6 +85,9 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 		debug( 'Submitting NPS survey with no score...' );
 		dispatch( submitNpsSurveyWithNoScoreRequesting( surveyName ) );
 
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
+		analytics.tracks.recordEvent( 'calypso_nps_survey_dismissed' );
+
 		return wpcom
 			.undocumented()
 			.dismissNPSSurvey( surveyName )
@@ -95,6 +98,28 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 			.catch( err => {
 				debug( '...Error submitting NPS survey with no score.', err );
 				dispatch( submitNpsSurveyWithNoScoreRequestFailure( err ) );
+			} );
+	};
+}
+
+export function sendNpsSurveyFeedback( surveyName, feedback ) {
+	return dispatch => {
+		debug( 'Sending NPS survey feedback...' );
+		dispatch( sendNpsSurveyFeedbackRequesting( surveyName, feedback ) );
+
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'feedback_submitted' );
+		analytics.tracks.recordEvent( 'calypso_nps_survey_feedback_submitted' );
+
+		return wpcom
+			.undocumented()
+			.sendNPSSurveyFeedback( surveyName, feedback )
+			.then( () => {
+				debug( '...Successfully sent NPS survey feedback.' );
+				dispatch( sendNpsSurveyFeedbackSuccess() );
+			} )
+			.catch( err => {
+				debug( '...Error sending NPS survey feedback.' );
+				dispatch( sendNpsSurveyFeedbackFailure( err ) );
 			} );
 	};
 }
@@ -137,5 +162,26 @@ export function submitNpsSurveyWithNoScoreRequestFailure( err ) {
 	return {
 		type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 		error: err,
+	};
+}
+
+export function sendNpsSurveyFeedbackRequesting( surveyName, feedback ) {
+	return {
+		type: NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
+		surveyName,
+		feedback,
+	};
+}
+
+export function sendNpsSurveyFeedbackSuccess() {
+	return {
+		type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
+	};
+}
+
+export function sendNpsSurveyFeedbackFailure( error ) {
+	return {
+		type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
+		error,
 	};
 }

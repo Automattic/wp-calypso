@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -50,9 +52,7 @@ const couponCodeField = (
 const freeShippingField = (
 	<CheckboxField
 		labelText={ translate( 'Free shipping' ) }
-		explanationText={ translate(
-			'This coupon also provides free shipping'
-		) }
+		explanationText={ translate( 'This coupon also provides free shipping' ) }
 	/>
 );
 
@@ -116,12 +116,7 @@ const appliesToProductSale = {
 	cssClass: 'promotions__promotion-form-card-applies-to',
 	fields: {
 		appliesTo: {
-			component: (
-				<PromotionAppliesToField
-					selectionTypes={ [ { type: 'productIds' } ] }
-					singular
-				/>
-			),
+			component: <PromotionAppliesToField selectionTypes={ [ { type: 'productIds' } ] } singular />,
 			validate: validateAppliesToSingleProduct,
 		},
 	},
@@ -135,7 +130,7 @@ const appliesToProductSale = {
  * @param { string } props.value Current value for end date.
  * @return { Object } React component instance.
  */
-const StartDateField = ( props ) => {
+const StartDateField = props => {
 	return (
 		<DateField
 			labelText={ translate( 'Start Date' ) }
@@ -154,7 +149,7 @@ const StartDateField = ( props ) => {
  * @param { string } props.value Current value for end date.
  * @return { Object } React component instance.
  */
-const EndDateField = ( props ) => {
+const EndDateField = props => {
 	const { promotion } = props;
 	const startDate = promotion.startDate ? new Date( promotion.startDate ) : new Date();
 
@@ -178,12 +173,7 @@ const productSaleModel = {
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			salePrice: {
-				component: (
-					<CurrencyField
-						labelText={ translate( 'Product Sale Price' ) }
-						isRequired
-					/>
-				),
+				component: <CurrencyField labelText={ translate( 'Product Sale Price' ) } isRequired />,
 				validate: validateSalePrice,
 			},
 		},
@@ -227,7 +217,9 @@ const couponConditions = {
 		maximumAmount: {
 			component: (
 				<CurrencyField
-					labelText={ translate( 'Don\'t apply this promotion if the order value exceeds a specific amount' ) }
+					labelText={ translate(
+						"Don't apply this promotion if the order value exceeds a specific amount"
+					) }
 					isEnableable
 				/>
 			),
@@ -402,13 +394,13 @@ export function validateAll( promotion, currency, showEmptyValidationErrors ) {
 		const { fields } = promotionModel[ cardName ];
 		for ( const fieldName in fields ) {
 			const { validate } = fields[ fieldName ];
-			const error = validate &&
-				validate( fieldName, promotion, currency, showEmptyValidationErrors );
+			const error =
+				validate && validate( fieldName, promotion, currency, showEmptyValidationErrors );
 			if ( error ) {
 				errors[ fieldName ] = error;
 			}
 		}
 	}
 
-	return ( ! isEmpty( errors ) ? errors : null );
+	return ! isEmpty( errors ) ? errors : null;
 }

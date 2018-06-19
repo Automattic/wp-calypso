@@ -7,6 +7,7 @@
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +31,7 @@ export class PaymentBox extends PureComponent {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
 		return function() {
 			analytics.ga.recordEvent( 'Upgrades', 'Switch Payment Method' );
-			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + paymentMethod );
+			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
 			onSelectPaymentMethod( paymentMethod );
 		};
 	}
@@ -51,7 +52,26 @@ export class PaymentBox extends PureComponent {
 				labelLogo = <Gridicon icon="credit-card" className="checkout__credit-card" />;
 				labelAdditionalText = paymentMethodName( method );
 				break;
+			case 'emergent-paywall':
+				const paytmLogo = (
+					<img
+						src="/calypso/images/upgrades/paytm.svg"
+						alt="paytm"
+						className="checkout__paytm"
+						key="paytm"
+					/>
+				);
+
+				labelLogo = (
+					<span className="checkout__emergent-paywall">
+						{ paytmLogo } / Net banking / Debit card
+					</span>
+				);
+				break;
 			case 'ideal':
+				labelAdditionalText = paymentMethodName( method );
+				break;
+			case 'brazil-tef':
 				labelAdditionalText = paymentMethodName( method );
 				break;
 		}
@@ -100,7 +120,7 @@ export class PaymentBox extends PureComponent {
 					args: {
 						paymentMethod: paymentMethodName( this.props.currentPaymentMethod ),
 					},
-				} )
+			  } )
 			: translate( 'Loading…' );
 
 		const paymentMethods = this.getPaymentMethods();

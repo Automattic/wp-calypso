@@ -3,32 +3,31 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import PostEditStore from 'lib/posts/post-edit-store';
 import * as utils from 'lib/posts/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getEditorPostId, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
+import { getEditedPost, getSitePost } from 'state/posts/selectors';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:posts:stats' );
 
-function recordUsageStats( site, action, postType ) {
-	let source;
-
+function recordUsageStats( siteIsJetpack, action, postType ) {
 	analytics.mc.bumpStat( 'editor_usage', action );
 
-	if ( site ) {
-		source = site.jetpack ? 'jetpack' : 'wpcom';
-		analytics.mc.bumpStat( 'editor_usage_' + source, action );
+	const source = siteIsJetpack ? 'jetpack' : 'wpcom';
+	analytics.mc.bumpStat( 'editor_usage_' + source, action );
 
-		if ( postType ) {
-			analytics.mc.bumpStat( 'editor_cpt_usage_' + source, postType + '_' + action );
-		}
+	if ( postType ) {
+		analytics.mc.bumpStat( 'editor_cpt_usage_' + source, postType + '_' + action );
 	}
 }
 
@@ -40,17 +39,15 @@ export function recordEvent( action, label, value ) {
 	analytics.ga.recordEvent( 'Editor', action, label, value );
 }
 
-export function recordSaveEvent( site, context ) {
-	const post = PostEditStore.get();
-	const savedPost = PostEditStore.getSavedPost();
-
-	if ( ! post || ! savedPost ) {
-		return;
-	}
-
-	const currentStatus = savedPost.status;
+export const recordSaveEvent = () => ( dispatch, getState ) => {
+	const state = getState();
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const post = getEditedPost( state, siteId, postId );
+	const currentStatus = get( getSitePost( state, siteId, postId ), 'status', 'draft' );
+	const confirmationSidebarEnabled = isConfirmationSidebarEnabled( state, siteId );
 	const nextStatus = post.status;
-	let tracksEventName = 'calypso_editor_' + post.type + '_';
+	let tracksEventName = 'calypso_editor_';
 	let statName = false;
 	let statEvent = false;
 	let usageAction = false;
@@ -66,7 +63,7 @@ export function recordSaveEvent( site, context ) {
 	} else if ( 'publish' === nextStatus || 'private' === nextStatus ) {
 		tracksEventName += 'publish';
 		usageAction = 'new';
-		if ( context && context.isConfirmationSidebarEnabled ) {
+		if ( confirmationSidebarEnabled ) {
 			eventContext = 'confirmation_sidebar';
 		}
 	} else if ( 'pending' === nextStatus ) {
@@ -75,13 +72,13 @@ export function recordSaveEvent( site, context ) {
 		tracksEventName += 'schedule';
 		statName = 'status-schedule';
 		statEvent = 'Scheduled Post';
-		if ( context && context.isConfirmationSidebarEnabled ) {
+		if ( confirmationSidebarEnabled ) {
 			eventContext = 'confirmation_sidebar';
 		}
 	}
 
 	if ( usageAction ) {
-		recordUsageStats( site, usageAction, post.type );
+		recordUsageStats( isJetpackSite( state, siteId ), usageAction, post.type );
 	}
 
 	// if this action has an mc stat name, record it
@@ -109,7 +106,7 @@ export function recordSaveEvent( site, context ) {
 		next_status: nextStatus,
 		context: eventContext,
 	} );
-}
+};
 
 const shouldBumpStat = Math.random() <= 0.01 || process.env.NODE_ENV === 'development';
 const maybeBumpStat = shouldBumpStat ? analytics.mc.bumpStat : noop;

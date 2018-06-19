@@ -15,7 +15,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { fetchPlugins } from 'state/plugins/installed/actions';
 import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
@@ -41,26 +40,10 @@ class SettingsTaxes extends Component {
 		setCheckedTaxSetup: PropTypes.func,
 	};
 
-	maybeFetchPlugins = ( props, force = false ) => {
-		const { isRequestingSitePlugins, siteId, sitePluginsLoaded } = props;
-
-		if ( siteId && ! isRequestingSitePlugins ) {
-			if ( force || ! sitePluginsLoaded ) {
-				this.props.fetchPlugins( [ siteId ] );
-			}
-		}
-	};
-
 	componentDidMount = () => {
-		this.maybeFetchPlugins( this.props, true );
-
 		if ( this.props.setupChoicesLoaded ) {
 			this.maybeSetCheckedTaxSetup();
 		}
-	};
-
-	componentWillReceiveProps = newProps => {
-		this.maybeFetchPlugins( newProps );
 	};
 
 	componentDidUpdate = prevProps => {
@@ -127,10 +110,12 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchPlugins,
 			setCheckedTaxSetup,
 		},
 		dispatch
 	);
 }
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsTaxes ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( SettingsTaxes ) );

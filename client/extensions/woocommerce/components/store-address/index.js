@@ -19,8 +19,11 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { areLocationsLoaded, getAllCountries } from 'woocommerce/state/sites/locations/selectors';
-import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
+import {
+	areLocationsLoaded,
+	getAllCountries,
+} from 'woocommerce/state/sites/data/locations/selectors';
+import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getStoreLocation,
@@ -218,4 +221,9 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize( connect( mapStateToProps, mapDispatchToProps )( StoreAddress ) );
+export default localize(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( StoreAddress )
+);

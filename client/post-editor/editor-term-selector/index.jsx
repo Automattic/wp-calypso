@@ -14,7 +14,7 @@ import { cloneDeep, findIndex, map, toArray } from 'lodash';
  */
 import TermTreeSelector from 'blocks/term-tree-selector';
 import AddTerm from './add-term';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { editPost, addTermForPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -67,7 +67,7 @@ class EditorTermSelector extends Component {
 	}
 
 	render() {
-		const { siteId, taxonomyName, canEditTerms, compact } = this.props;
+		const { taxonomyName, canEditTerms, compact } = this.props;
 
 		return (
 			<div>
@@ -76,7 +76,6 @@ class EditorTermSelector extends Component {
 					onChange={ this.boundOnTermsChange }
 					selected={ this.getSelectedTermIds() }
 					taxonomy={ taxonomyName }
-					siteId={ siteId }
 					multiple={ true }
 					compact={ compact }
 				/>

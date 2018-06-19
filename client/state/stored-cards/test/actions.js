@@ -129,6 +129,7 @@ describe( 'actions', () => {
 
 				expect( spy ).to.have.been.calledWith( {
 					type: STORED_CARDS_DELETE,
+					card,
 				} );
 
 				return promise.then( () => {
@@ -152,11 +153,13 @@ describe( 'actions', () => {
 
 				expect( spy ).to.have.been.calledWith( {
 					type: STORED_CARDS_DELETE,
+					card,
 				} );
 
 				return promise.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: STORED_CARDS_DELETE_FAILED,
+						card,
 						error: error.message,
 					} );
 				} );

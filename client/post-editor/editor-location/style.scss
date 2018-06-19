@@ -6,6 +6,12 @@
 	display: block;
 }
 
+.editor-location__public-warning {
+	color: $gray-text-min;
+	font-size: 11px;
+	font-weight: 400;
+}
+
 .editor-location__search .search-card {
 	margin-bottom: 1px;
 }

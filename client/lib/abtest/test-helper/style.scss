@@ -6,11 +6,11 @@
 	font-weight: normal;
 	cursor: pointer;
 	text-transform: initial;
+}
 
-	&.test-helper__current-variation {
-		text-decoration: underline;
-		color: $orange-jazzy;
-	}
+.environment-badge .environment.is-tests .test-helper__choice-indicator {
+	margin-top: -2px;
+	transform: scale(0.8);
 }
 
 .test-helper__test-header {
@@ -25,11 +25,14 @@
 	overflow-y: scroll;
 	position: absolute;
 	bottom: 100%;
-	right: 0px;
+	right: 0;
 	margin: 0;
 	font-size: 11px;
 }
 
 .test-helper__list {
 	margin: 5px 0 8px 20px;
+	list-style-type: none;
+	padding-left: 0;
 }
+

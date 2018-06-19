@@ -6,6 +6,7 @@
 
 import { mergeHandlers } from 'state/action-watchers/utils';
 import accountRecovery from './account-recovery';
+import activePromotions from './active-promotions';
 import activityLog from './activity-log';
 import checklist from './checklist';
 import comments from './comments';
@@ -13,6 +14,7 @@ import concierge from './concierge';
 import domains from './domains';
 import gravatarUpload from './gravatar-upload';
 import i18n from './i18n';
+import jetpackConnectionOwner from './jetpack/connection/owner';
 import jetpackInstall from './jetpack-install';
 import jetpackSettings from './jetpack/settings';
 import localeGuess from './locale-guess';
@@ -27,12 +29,12 @@ import read from './read';
 import sites from './sites';
 import themeFilters from './theme-filters';
 import timezones from './timezones';
-import users from './users';
 import usersAuthOptions from './users/auth-options';
 import videos from './videos';
 
 export const handlers = mergeHandlers(
 	accountRecovery,
+	activePromotions,
 	activityLog,
 	checklist,
 	comments,
@@ -40,6 +42,7 @@ export const handlers = mergeHandlers(
 	domains,
 	gravatarUpload,
 	i18n,
+	jetpackConnectionOwner,
 	jetpackInstall,
 	jetpackSettings,
 	localeGuess,
@@ -54,7 +57,6 @@ export const handlers = mergeHandlers(
 	sites,
 	themeFilters,
 	timezones,
-	users,
 	usersAuthOptions,
 	videos
 );

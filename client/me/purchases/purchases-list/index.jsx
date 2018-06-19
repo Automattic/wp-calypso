@@ -3,31 +3,30 @@
 /**
  * External dependencies
  */
-
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import CompactCard from 'components/card';
 import EmptyContent from 'components/empty-content';
+import Main from 'components/main';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PurchasesHeader from './header';
+import PurchasesSite from '../purchases-site';
+import QueryUserPurchases from 'components/data/query-user-purchases';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getPurchasesBySite } from 'lib/purchases';
+import getSites from 'state/selectors/get-sites';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 } from 'state/purchases/selectors';
-import { getSites } from 'state/selectors';
-import { getPurchasesBySite } from 'lib/purchases';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PurchasesHeader from './header';
-import PurchasesSite from '../purchases-site';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import userFactory from 'lib/user';
-const user = userFactory();
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -76,9 +75,10 @@ class PurchasesList extends Component {
 
 		return (
 			<Main className="purchases-list">
+				<QueryUserPurchases userId={ this.props.userId } />
+				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
-				<PurchasesHeader section={ 'purchases' } />
-				<QueryUserPurchases userId={ user.get().ID } />
+				<PurchasesHeader section="purchases" />
 				{ content }
 			</Main>
 		);
@@ -89,14 +89,16 @@ PurchasesList.propTypes = {
 	noticeType: PropTypes.string,
 	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
 	sites: PropTypes.array.isRequired,
+	userId: PropTypes.number.isRequired,
 };
 
-export default connect(
-	state => ( {
-		purchases: getUserPurchases( state, user.get().ID ),
+export default connect( state => {
+	const userId = getCurrentUserId( state );
+	return {
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		isFetchingUserPurchases: isFetchingUserPurchases( state ),
+		purchases: getUserPurchases( state, userId ),
 		sites: getSites( state ),
-	} ),
-	undefined
-)( localize( PurchasesList ) );
+		userId,
+	};
+} )( localize( PurchasesList ) );

@@ -6,6 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { get, map, noop, without } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,12 +14,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
 import Spinner from 'components/spinner';
-import {
-	getJetpackOnboardingCompletedSteps,
-	getJetpackOnboardingPendingSteps,
-} from 'state/selectors';
+import getJetpackOnboardingCompletedSteps from 'state/selectors/get-jetpack-onboarding-completed-steps';
+import getJetpackOnboardingPendingSteps from 'state/selectors/get-jetpack-onboarding-pending-steps';
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,

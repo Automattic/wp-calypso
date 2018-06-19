@@ -5,8 +5,10 @@
  */
 import {
 	APPLICATION_PASSWORD_CREATE,
+	APPLICATION_PASSWORD_CREATE_SUCCESS,
 	APPLICATION_PASSWORD_DELETE,
 	APPLICATION_PASSWORD_DELETE_SUCCESS,
+	APPLICATION_PASSWORD_NEW_CLEAR,
 	APPLICATION_PASSWORDS_RECEIVE,
 	APPLICATION_PASSWORDS_REQUEST,
 } from 'state/action-types';
@@ -38,6 +40,26 @@ export const receiveApplicationPasswords = appPasswords => ( {
 export const createApplicationPassword = applicationName => ( {
 	type: APPLICATION_PASSWORD_CREATE,
 	applicationName,
+} );
+
+/**
+ * Returns an action object to signal the successful creation of an application password.
+ *
+ * @param  {Object} appPassword Application password.
+ * @return {Object}             Action object.
+ */
+export const createApplicationPasswordSuccess = appPassword => ( {
+	type: APPLICATION_PASSWORD_CREATE_SUCCESS,
+	appPassword,
+} );
+
+/**
+ * Returns an action object to signal the clearing of the new application password.
+ *
+ * @return {Object} Action object.
+ */
+export const clearNewApplicationPassword = () => ( {
+	type: APPLICATION_PASSWORD_NEW_CLEAR,
 } );
 
 /**

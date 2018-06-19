@@ -1,5 +1,5 @@
 /** @format */
-let element = ( () => {
+const element = ( () => {
 	if ( document.implementation && document.implementation.createHTMLDocument ) {
 		return document.implementation.createHTMLDocument( '' ).createElement( 'textarea' );
 	}
@@ -9,7 +9,7 @@ let element = ( () => {
 
 export default function decodeEntities( text ) {
 	element.innerHTML = text;
-	let decoded = element.textContent;
+	const decoded = element.textContent;
 	element.innerHTML = '';
 	return decoded;
 }

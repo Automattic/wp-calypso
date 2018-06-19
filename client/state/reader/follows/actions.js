@@ -73,7 +73,7 @@ export function unfollow( feedUrl ) {
  * when following a URL.
  *
  * @param  {String} feedUrl Feed URL
- * @param  {Object} response Error response (contains keys 'info' and 'subscribed')
+ * @param  {Object} error Error response (contains keys 'info' and 'subscribed')
  * @return {Object} Action
  */
 export function recordFollowError( feedUrl, error ) {

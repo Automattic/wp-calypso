@@ -17,10 +17,14 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
-import tableRows from './table-rows';
+import QueryBillingTransaction from 'components/data/query-billing-transaction';
 import { groupDomainProducts } from './utils';
-import { getPastBillingTransaction, getPastBillingTransactions } from 'state/selectors';
+import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
+import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
+import {
+	clearBillingTransactionError,
+	requestBillingTransaction,
+} from 'state/billing-transactions/individual-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class BillingReceipt extends React.Component {
@@ -46,11 +50,14 @@ class BillingReceipt extends React.Component {
 	};
 
 	redirectIfInvalidTransaction() {
-		const { totalTransactions, transaction } = this.props;
+		const { transactionFetchError, transactionId } = this.props;
 
-		if ( ! transaction && totalTransactions !== null ) {
-			page.redirect( billingHistory );
+		if ( ! transactionFetchError ) {
+			return;
 		}
+
+		this.props.clearBillingTransactionError( transactionId );
+		page.redirect( billingHistory );
 	}
 
 	ref() {
@@ -196,7 +203,7 @@ class BillingReceipt extends React.Component {
 	}
 
 	renderBillingHistory() {
-		const { transaction, translate } = this.props;
+		const { transaction, translate, moment } = this.props;
 		const title = translate( 'Visit %(url)s', { args: { url: transaction.url } } );
 		const serviceLink = <a href={ transaction.url } title={ title } />;
 
@@ -204,7 +211,11 @@ class BillingReceipt extends React.Component {
 			<div>
 				<Card compact className="billing-history__receipt-card">
 					<div className="billing-history__app-overview">
-						<img src={ transaction.icon } title={ transaction.service } />
+						<img
+							src={ transaction.icon }
+							title={ transaction.service }
+							alt={ transaction.service }
+						/>
 						<h2>
 							{' '}
 							{ translate( '{{link}}%(service)s{{/link}} {{small}}by %(organization)s{{/small}}', {
@@ -222,7 +233,7 @@ class BillingReceipt extends React.Component {
 									'Screenshot: https://cloudup.com/isX-WEFYlOs',
 							} ) }
 							<div className="billing-history__transaction-date">
-								{ tableRows.formatDate( transaction.date ) }
+								{ moment( transaction.date ).format( 'll' ) }
 							</div>
 						</h2>
 					</div>
@@ -241,18 +252,14 @@ class BillingReceipt extends React.Component {
 				</Card>
 
 				<Card compact className="billing-history__receipt-links">
-					<a
-						href={ transaction.support }
-						className="button is-primary"
-						onClick={ this.handleSupportLinkClick }
-					>
+					<Button href={ transaction.support } primary onClick={ this.handleSupportLinkClick }>
 						{ translate( 'Contact %(transactionService)s Support', {
 							args: {
 								transactionService: transaction.service,
 							},
 							context: 'transactionService is a website, such as WordPress.com.',
 						} ) }
-					</a>
+					</Button>
 					<Button onClick={ this.handlePrintLinkClick }>{ translate( 'Print Receipt' ) }</Button>
 				</Card>
 			</div>
@@ -260,16 +267,16 @@ class BillingReceipt extends React.Component {
 	}
 
 	render() {
-		const { transaction, translate } = this.props;
+		const { transaction, transactionId, translate } = this.props;
 
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Billing History' ) } />
 				<PageViewTracker
-					path="/me/purchases/billing/receipt"
+					path="/me/purchases/billing/:receipt"
 					title="Me > Billing History > Receipt"
 				/>
-				<QueryBillingTransactions />
+				<QueryBillingTransaction transactionId={ transactionId } />
 
 				{ this.renderTitle() }
 
@@ -280,15 +287,13 @@ class BillingReceipt extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const transactions = getPastBillingTransactions( state );
-
-		return {
-			transaction: getPastBillingTransaction( state, ownProps.transactionId ),
-			totalTransactions: transactions ? transactions.length : null,
-		};
-	},
+	( state, { transactionId } ) => ( {
+		transaction: getPastBillingTransaction( state, transactionId ),
+		transactionFetchError: isPastBillingTransactionError( state, transactionId ),
+	} ),
 	{
+		clearBillingTransactionError,
 		recordGoogleEvent,
+		requestBillingTransaction,
 	}
 )( localize( BillingReceipt ) );

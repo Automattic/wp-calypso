@@ -12,7 +12,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
 import MyJetpackConnectionDataBlock from './data-block';
-import { getJetpackUserConnection } from 'state/selectors';
+import getJetpackUserConnection from 'state/selectors/get-jetpack-user-connection';
 
 function MyJetpackConnectionData( { jetpackConnection } ) {
 	return (

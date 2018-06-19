@@ -87,7 +87,8 @@ import i18n from './i18n';
 import { isMobile } from 'lib/viewport';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
-import { isRtl as isRtlSelector, getCurrentLocaleSlug } from 'state/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
  * Internal Variables
@@ -259,7 +260,7 @@ export default class extends React.Component {
 
 		tinymce.init( {
 			selector: '#' + this._id,
-			skin_url: '//s1.wp.com/wp-includes/js/tinymce/skins/lightgray',
+			skin_url: '/calypso/tinymce/skins/lightgray',
 			skin: 'lightgray',
 			content_css: CONTENT_CSS,
 			language: localeSlug,

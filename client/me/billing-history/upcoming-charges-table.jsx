@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import TransactionsTable from './transactions-table';
-import { getSiteSlugsForUpcomingTransactions } from 'state/selectors';
+import getSiteSlugsForUpcomingTransactions from 'state/selectors/get-site-slugs-for-upcoming-transactions';
 
 class UpcomingChargesTable extends Component {
 	static propTypes = {
@@ -50,8 +50,7 @@ class UpcomingChargesTable extends Component {
 
 		return (
 			<TransactionsTable
-				transactions={ this.props.transactions }
-				initialFilter={ { date: { newest: 20 } } }
+				transactionType="upcoming"
 				emptyTableText={ emptyTableText }
 				noFilterResultsText={ noFilterResultsText }
 				transactionRenderer={ this.renderTransaction }

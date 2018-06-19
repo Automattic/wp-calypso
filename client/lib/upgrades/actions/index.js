@@ -19,6 +19,7 @@ export {
 	removeDomainFromCart,
 	removeItem,
 	removePrivacyFromAllDomains,
+	replaceItem,
 	showCartOnMobile,
 } from './cart';
 
@@ -42,7 +43,6 @@ export {
 	deleteEmailForwarding,
 	enablePrivacyProtection,
 	fetchDns,
-	fetchDomains,
 	fetchEmailForwarding,
 	fetchNameservers,
 	fetchSiteRedirect,
@@ -55,6 +55,7 @@ export {
 	updateNameservers,
 	updateSiteRedirect,
 	updateWhois,
+	requestGdprConsentManagementLink,
 } from './domain-management';
 
 export { goToDomainCheckout } from './domain-search';

@@ -8,15 +8,20 @@ import { get, identity, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
-import PostActions from 'lib/posts/actions';
 import InfoPopover from 'components/info-popover';
 import { recordEvent, recordStat } from 'lib/posts/stats';
+import { editPost } from 'state/posts/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
+import { getSite } from 'state/sites/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';
@@ -39,7 +44,7 @@ export class EditorDiscussion extends React.Component {
 		translate: identity,
 	};
 
-	getDiscussionSetting = () => {
+	getDiscussionSetting() {
 		if ( this.props.post && this.props.post.discussion ) {
 			return this.props.post.discussion;
 		}
@@ -57,18 +62,18 @@ export class EditorDiscussion extends React.Component {
 		}
 
 		return {};
-	};
+	}
 
 	onChange = event => {
-		var discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' ),
-			newStatus = booleanToStatus( event.target.checked ),
-			discussionType = event.target.name,
-			statName,
-			gaEvent;
+		const discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' );
+		const newStatus = booleanToStatus( event.target.checked );
+		const discussionType = event.target.name;
+		let statName, gaEvent;
 
 		discussion[ discussionType ] = newStatus;
 
-		// There are other ways to construct these strings, but keeping them exactly as they are displayed in mc/ga aids in discovery via grok
+		// There are other ways to construct these strings, but keeping them exactly as they are
+		// displayed in mc/ga aids in discovery via grok
 		if ( 'comment_status' === discussionType ) {
 			statName = event.target.checked
 				? 'advanced_comments_open_enabled'
@@ -84,14 +89,13 @@ export class EditorDiscussion extends React.Component {
 		recordStat( statName );
 		recordEvent( gaEvent, newStatus );
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( {
-			discussion: discussion,
-		} );
+		const siteId = get( this.props.site, 'ID', null );
+		const postId = get( this.props.post, 'ID', null );
+		this.props.editPost( siteId, postId, { discussion } );
 	};
 
 	render() {
-		var discussion = this.getDiscussionSetting();
+		const discussion = this.getDiscussionSetting();
 
 		return (
 			<EditorFieldset legend={ this.props.translate( 'Discussion' ) }>
@@ -130,4 +134,15 @@ export class EditorDiscussion extends React.Component {
 	}
 }
 
-export default localize( EditorDiscussion );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const isNew = isEditorNewPost( state );
+		const site = getSite( state, siteId );
+		const post = getEditedPost( state, siteId, postId );
+
+		return { site, post, isNew };
+	},
+	{ editPost }
+)( localize( EditorDiscussion ) );

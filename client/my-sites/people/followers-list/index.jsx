@@ -208,8 +208,8 @@ const Followers = localize(
 			const downloadListLink =
 				this.props.fetchOptions.type === 'email' && !! this.props.site
 					? 'https://dashboard.wordpress.com/wp-admin/index.php?page=stats&blog=' +
-						this.props.site.ID +
-						'&blog_subscribers=csv&type=email'
+					  this.props.site.ID +
+					  '&blog_subscribers=csv&type=email'
 					: null;
 
 			return (

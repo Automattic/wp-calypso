@@ -9,7 +9,7 @@ import { some } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getSitesItems } from 'state/selectors';
+import getSitesItems from 'state/selectors/get-sites-items';
 import { isPlan } from 'lib/products-values';
 
 /**

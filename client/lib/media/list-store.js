@@ -130,7 +130,7 @@ function sourceHasDate( source ) {
 }
 
 MediaListStore.isItemMatchingQuery = function( siteId, item ) {
-	var query, matches;
+	let query, matches;
 
 	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
 		return true;
@@ -188,7 +188,7 @@ MediaListStore.getAllIds = function( siteId ) {
 };
 
 MediaListStore.getAll = function( siteId ) {
-	var allIds = MediaListStore.getAllIds( siteId );
+	const allIds = MediaListStore.getAllIds( siteId );
 
 	if ( allIds ) {
 		return allIds.map( MediaStore.get.bind( null, siteId ) );

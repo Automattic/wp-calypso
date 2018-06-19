@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
+import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,13 +43,6 @@ import { sitesSchema, hasAllSitesListSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 /**
- * Constants
- */
-// [TODO]: This validation is only necessary so long as we continue to receive
-// decorated sites from the `lib/sites-list` module.
-const VALID_SITE_KEYS = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].properties );
-
-/**
  * Tracks all known site objects, indexed by site ID.
  *
  * @param  {Object} state  Current state
@@ -82,9 +75,8 @@ export function items( state = null, action ) {
 			return reduce(
 				sites,
 				( memo, site ) => {
-					// Bypass if site object hasn't change
-					const transformedSite = pick( site, VALID_SITE_KEYS );
-					if ( isEqual( memo[ site.ID ], transformedSite ) ) {
+					// Bypass if site object hasn't changed
+					if ( isEqual( memo[ site.ID ], site ) ) {
 						return memo;
 					}
 
@@ -93,7 +85,7 @@ export function items( state = null, action ) {
 						memo = { ...state };
 					}
 
-					memo[ site.ID ] = transformedSite;
+					memo[ site.ID ] = site;
 					return memo;
 				},
 				initialNextState || {}

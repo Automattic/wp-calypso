@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import ButtonsAppearance from './appearance';
 import ButtonsOptions from './options';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QuerySharingButtons from 'components/data/query-sharing-buttons';
@@ -26,13 +27,11 @@ import {
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
 } from 'state/site-settings/selectors';
-import {
-	getSharingButtons,
-	isSavingSharingButtons,
-	isSharingButtonsSaveSuccessful,
-} from 'state/selectors';
+import getSharingButtons from 'state/selectors/get-sharing-buttons';
+import isSavingSharingButtons from 'state/selectors/is-saving-sharing-buttons';
+import isSharingButtonsSaveSuccessful from 'state/selectors/is-sharing-buttons-save-successful';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { activateModule } from 'state/jetpack/modules/actions';
@@ -120,7 +119,7 @@ class SharingButtons extends Component {
 				? {
 						// Like button should be disabled if the Likes Jetpack module is deactivated.
 						disabled_likes: true,
-					}
+				  }
 				: {};
 
 		return Object.assign( {}, settings, disabledSettings, this.state.values );
@@ -137,6 +136,7 @@ class SharingButtons extends Component {
 				id="sharing-buttons"
 				className="sharing-settings sharing-buttons"
 			>
+				<PageViewTracker path="/sharing/buttons/:site" title="Sharing > Sharing Buttons" />
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySharingButtons siteId={ siteId } />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
@@ -191,4 +191,8 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, protectForm, localize )( SharingButtons );
+export default flowRight(
+	connectComponent,
+	protectForm,
+	localize
+)( SharingButtons );

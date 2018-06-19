@@ -29,6 +29,8 @@ import { WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE } from 'woocommerce/wo
 import { shippingZoneMethodUpdated } from 'woocommerce/state/sites/shipping-zone-methods/actions';
 import * as api from 'woocommerce/woocommerce-services/api';
 import { dispatchWithProps } from 'woocommerce/state/helpers';
+import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
+import coerceFormValues from 'woocommerce/woocommerce-services/lib/utils/coerce-values';
 
 const getSaveLabelSettingsActionListSteps = ( state, siteId ) => {
 	const labelFormMeta = getLabelSettingsFormMeta( state, siteId );
@@ -130,15 +132,21 @@ export default {
 	[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE ]: [
 		( { dispatch, getState }, action ) => {
 			const { siteId, methodId, methodType, method, successAction, failureAction } = action;
+			const methodSchema = getShippingMethodSchema( getState(), methodType, siteId ).formSchema;
+			const methodValues = coerceFormValues( methodSchema, method );
+
 			const updatedAction = data => {
 				dispatch( shippingZoneMethodUpdated( siteId, data, action ) );
 
-				const props = { sentData: method, receivedData: data };
+				const props = {
+					sentData: methodValues,
+					receivedData: data,
+				};
 				dispatchWithProps( dispatch, getState, successAction, props );
 			};
 
 			api
-				.post( siteId, api.url.serviceSettings( methodType, methodId ), method )
+				.post( siteId, api.url.serviceSettings( methodType, methodId ), methodValues )
 				.then( updatedAction )
 				.catch( error => dispatchWithProps( dispatch, getState, failureAction, { error } ) );
 		},

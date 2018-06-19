@@ -1,7 +1,9 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-import { getJpoUserHash } from 'state/selectors';
+import getJpoUserHash from 'state/selectors/get-jpo-user-hash';
 
 describe( '#getJpoUserHash()', () => {
 	const userEmail = 'contact@yourgroovydomain.com';
@@ -35,61 +37,86 @@ describe( '#getJpoUserHash()', () => {
 	};
 
 	test( 'should return null if we have no credentials and no current user', () => {
-		const selected = getJpoUserHash( {
-			jetpackOnboarding: {
-				credentials: {},
+		const selected = getJpoUserHash(
+			{
+				jetpack: {
+					onboarding: {
+						credentials: {},
+					},
+				},
+				...emptyCurrentUserState,
 			},
-			...emptyCurrentUserState,
-		}, 12345678 );
+			12345678
+		);
 
 		expect( selected ).toBeNull();
 	} );
 
 	test( 'should return null if we have no credentials for the current site ID, and no current user', () => {
-		const selected = getJpoUserHash( {
-			jetpackOnboarding: {
-				credentials,
+		const selected = getJpoUserHash(
+			{
+				jetpack: {
+					onboarding: {
+						credentials,
+					},
+				},
+				...emptyCurrentUserState,
 			},
-			...emptyCurrentUserState,
-		}, 12345678 );
+			12345678
+		);
 
 		expect( selected ).toBeNull();
 	} );
 
 	test( 'should return null if we have no userEmail in the credentials of the current site and no current user', () => {
-		const selected = getJpoUserHash( {
-			jetpackOnboarding: {
-				credentials: {
-					2916284: {
-						token: 'abcd1234',
-						siteUrl: 'http://yourgroovydomain.com',
+		const selected = getJpoUserHash(
+			{
+				jetpack: {
+					onboarding: {
+						credentials: {
+							2916284: {
+								token: 'abcd1234',
+								siteUrl: 'http://yourgroovydomain.com',
+							},
+						},
 					},
 				},
+				...emptyCurrentUserState,
 			},
-			...emptyCurrentUserState,
-		}, 2916284 );
+			2916284
+		);
 
 		expect( selected ).toBeNull();
 	} );
 
 	test( 'should return hashed userEmail if it exists in the onboarding credentials', () => {
-		const selected = getJpoUserHash( {
-			jetpackOnboarding: {
-				credentials,
+		const selected = getJpoUserHash(
+			{
+				jetpack: {
+					onboarding: {
+						credentials,
+					},
+				},
+				...emptyCurrentUserState,
 			},
-			...emptyCurrentUserState,
-		}, 2916284 );
+			2916284
+		);
 
 		expect( selected ).toBe( userEmailHashed );
 	} );
 
 	test( 'should return hashed userEmail if current user is known', () => {
-		const selected = getJpoUserHash( {
-			jetpackOnboarding: {
-				credentials: {},
+		const selected = getJpoUserHash(
+			{
+				jetpack: {
+					onboarding: {
+						credentials: {},
+					},
+				},
+				...currentUserState,
 			},
-			...currentUserState,
-		}, 2916284 );
+			2916284
+		);
 
 		expect( selected ).toBe( userEmailHashed );
 	} );

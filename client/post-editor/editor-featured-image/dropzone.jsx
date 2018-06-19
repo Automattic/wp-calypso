@@ -16,7 +16,6 @@ import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import { filterItemsByMimePrefix, isItemBeingUploaded } from 'lib/media/utils';
-import PostActions from 'lib/posts/actions';
 import FeaturedImageDropZoneIcon from './dropzone-icon';
 
 import { receiveMedia, deleteMedia } from 'state/media/actions';
@@ -67,21 +66,7 @@ class FeaturedImageDropZone extends Component {
 				}
 			}
 
-			/**
-			 * TODO: Redux way. What's left: figure out how to properly use `editPost`
-			 * and research if the whole FeaturedImage component has to be updated to
-			 * work properly with Redux.
-			 *
-			 * Right now `PostActions.edit` seems to be the best way to approach the problem.
-			 */
-			// this.props.editPost( siteId, this.props.postId, { featured_image: media.ID } );
-
-			// Cannot dispatch an action while in a dispatched action. Temporary(tm).
-			setTimeout( () => {
-				PostActions.edit( {
-					featured_image: media.ID,
-				} );
-			}, 0 );
+			this.props.editPost( siteId, this.props.postId, { featured_image: media.ID } );
 		};
 
 		MediaStore.on( 'change', handleFeaturedImageUpload );

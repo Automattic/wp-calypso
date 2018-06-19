@@ -105,15 +105,18 @@ function isLoggedIn() {
 	return !! userData && userData.ID;
 }
 
+function getReduxStateKey() {
+	if ( ! isLoggedIn() ) {
+		return 'redux-state-logged-out';
+	}
+	return 'redux-state-' + user.get().ID;
+}
+
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
 
 	const throttledSaveState = throttle(
 		function() {
-			if ( ! isLoggedIn() ) {
-				return;
-			}
-
 			const nextState = reduxStore.getState();
 			if ( state && nextState === state ) {
 				return;
@@ -121,11 +124,9 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 			state = nextState;
 
-			localforage
-				.setItem( 'redux-state-' + user.get().ID, serializeState( state ) )
-				.catch( setError => {
-					debug( 'failed to set redux-store state', setError );
-				} );
+			localforage.setItem( getReduxStateKey(), serializeState( state ) ).catch( setError => {
+				debug( 'failed to set redux-store state', setError );
+			} );
 		},
 		SERIALIZE_THROTTLE,
 		{ leading: false, trailing: true }
@@ -141,8 +142,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 }
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
-	const shouldPersist =
-		config.isEnabled( 'persist-redux' ) && isLoggedIn() && ! isSupportUserSession();
+	const shouldPersist = config.isEnabled( 'persist-redux' ) && ! isSupportUserSession();
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		window.resetState = () => localforage.clear( () => location.reload( true ) );
@@ -164,7 +164,7 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 
 	if ( shouldPersist ) {
 		return localforage
-			.getItem( 'redux-state-' + user.get().ID )
+			.getItem( getReduxStateKey() )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
 			.then( persistOnChange )

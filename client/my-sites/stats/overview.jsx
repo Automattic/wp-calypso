@@ -18,12 +18,14 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteOverview from './stats-site-overview';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import DatePicker from './stats-date-picker';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsNavigation from 'blocks/stats-navigation';
+import titlecase from 'to-title-case';
 import Main from 'components/main';
 import StatsFirstView from './stats-first-view';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getVisibleSites } from 'state/selectors';
+import getVisibleSites from 'state/selectors/get-visible-sites';
 
 class StatsOverview extends Component {
 	static propTypes = {
@@ -98,6 +100,10 @@ class StatsOverview extends Component {
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ translate( 'Stats' ) } />
+				<PageViewTracker
+					path={ `/stats/${ period }` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'traffic' } interval={ period } />

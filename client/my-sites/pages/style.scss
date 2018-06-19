@@ -1,3 +1,5 @@
+/** @format */
+
 // Page list
 
 .pages__page-list {
@@ -13,7 +15,7 @@
 
 .pages__page-list-header {
 	background: $gray-light;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 	color: $gray;
 	font-size: 11px;
 	padding: 6px 11px;
@@ -34,7 +36,7 @@
 	.site-icon {
 		display: none;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: block;
 			margin-right: 10px;
 			min-width: 34px;
@@ -72,17 +74,15 @@
 			padding-left: 136px;
 		}
 	}
-
 }
 
-.page__hierarchy-indent{
+.page__hierarchy-indent {
 	background: $gray-light;
 	position: absolute;
 	top: 0;
 	left: 0;
 	height: 100%;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 
 	&.is-indented {
 		width: 112px;
@@ -136,6 +136,10 @@
 		color: $gray;
 		margin: 2px 8px -2px 0;
 	}
+}
+.page.is-untitled .page__title {
+	color: $gray;
+	font-style: italic;
 }
 
 .page__actions-toggle {

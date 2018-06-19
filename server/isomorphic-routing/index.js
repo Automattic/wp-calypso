@@ -1,9 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
-
-import { isEmpty, pick } from 'lodash';
+import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -85,7 +85,8 @@ function applyMiddlewares( context, expressNext, ...middlewares ) {
 				next();
 			}
 		} )
-	 );
+	); // prettier-ignore
+
 	compose( ...liftedMiddlewares )();
 }
 
@@ -93,15 +94,10 @@ function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => () => f( composed ), () => {} );
 }
 
-export function getCacheKey( context ) {
-	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
-		return context.pathname;
+export function getNormalizedPath( pathname, query ) {
+	if ( isEmpty( query ) ) {
+		return pathname;
 	}
 
-	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
-	return (
-		context.pathname +
-		'?' +
-		stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } )
-	);
+	return pathname + '?' + stringify( query, { sort: ( a, b ) => a.localeCompare( b ) } );
 }

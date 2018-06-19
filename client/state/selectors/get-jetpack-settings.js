@@ -15,5 +15,5 @@ import { get } from 'lodash';
  * @return {?Object}         Jetpack settings
  */
 export default function getJetpackSettings( state, siteId ) {
-	return get( state.jetpack.settings.items, [ siteId ], null );
+	return get( state.jetpack.settings, [ siteId ], null );
 }

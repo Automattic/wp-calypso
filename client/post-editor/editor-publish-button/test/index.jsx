@@ -34,124 +34,6 @@ const MOCK_SITE = {
 };
 
 describe( 'EditorPublishButton', () => {
-	describe( '#getButtonLabel()', () => {
-		test( 'should return Update if the post was originally published and is still slated to be published', () => {
-			const tree = shallow(
-				<EditorPublishButton
-					translate={ identity }
-					savedPost={ { status: 'publish' } }
-					post={ { status: 'publish' } }
-				/>
-			).instance();
-
-			expect( tree.getButtonLabel() ).to.equal( 'Update' );
-		} );
-
-		test( 'should return Update if the post was originally published and is currently reverted to non-published status', () => {
-			const tree = shallow(
-				<EditorPublishButton
-					translate={ identity }
-					savedPost={ { status: 'publish' } }
-					post={ { status: 'draft' } }
-				/>
-			).instance();
-
-			expect( tree.getButtonLabel() ).to.equal( 'Update' );
-		} );
-
-		test( 'should return Schedule if the post is dated in the future and not scheduled', () => {
-			const now = moment( new Date() ),
-				nextMonth = now.month( now.month() + 1 ).format(),
-				tree = shallow(
-					<EditorPublishButton
-						translate={ identity }
-						savedPost={ { status: 'draft' } }
-						post={ { date: nextMonth } }
-					/>
-				).instance();
-
-			expect( tree.getButtonLabel() ).to.equal( 'Schedule' );
-		} );
-
-		test( 'should return Schedule if the post is dated in the future and published', () => {
-			const now = moment( new Date() ),
-				nextMonth = now.month( now.month() + 1 ).format(),
-				tree = shallow(
-					<EditorPublishButton
-						translate={ identity }
-						savedPost={ { status: 'publish' } }
-						post={ { date: nextMonth } }
-						site={ MOCK_SITE }
-					/>
-				).instance();
-
-			expect( tree.getButtonLabel() ).to.equal( 'Schedule' );
-		} );
-
-		test( 'should return Update if the post is scheduled and dated in the future', () => {
-			const now = moment( new Date() ),
-				nextMonth = now.month( now.month() + 1 ).format(),
-				tree = shallow(
-					<EditorPublishButton
-						translate={ identity }
-						savedPost={ { status: 'future', date: nextMonth } }
-						post={ { title: 'change', status: 'future', date: nextMonth } }
-					/>
-				).instance();
-
-			expect( tree.getButtonLabel() ).to.equal( 'Update' );
-		} );
-
-		test( 'should return Update if the post is scheduled, dated in the future, and next status is draft', () => {
-			const now = moment( new Date() ),
-				nextMonth = now.month( now.month() + 1 ).format(),
-				tree = shallow(
-					<EditorPublishButton
-						translate={ identity }
-						savedPost={ { status: 'future', date: nextMonth } }
-						post={ { title: 'change', status: 'draft', date: nextMonth } }
-					/>
-				).instance();
-
-			expect( tree.getButtonLabel() ).to.equal( 'Update' );
-		} );
-
-		test( 'should return Publish if the post is scheduled and dated in the past', () => {
-			const now = moment( new Date() ),
-				lastMonth = now.month( now.month() - 1 ).format(),
-				tree = shallow(
-					<EditorPublishButton
-						translate={ identity }
-						savedPost={ { status: 'future', date: lastMonth } }
-						post={ { title: 'change', status: 'future', date: lastMonth } }
-						canUserPublishPosts
-					/>
-				).instance();
-
-			expect( tree.getButtonLabel() ).to.equal( 'Publish' );
-		} );
-
-		test( 'should return Publish if the post is a draft', () => {
-			const tree = shallow(
-				<EditorPublishButton
-					translate={ identity }
-					savedPost={ { status: 'draft' } }
-					canUserPublishPosts
-				/>
-			).instance();
-
-			expect( tree.getButtonLabel() ).to.equal( 'Publish' );
-		} );
-
-		test( 'should return "Submit for Review" if the post is a draft and user can\'t publish', () => {
-			const tree = shallow(
-				<EditorPublishButton translate={ identity } savedPost={ { status: 'draft' } } />
-			).instance();
-
-			expect( tree.getButtonLabel() ).to.equal( 'Submit for Review' );
-		} );
-	} );
-
 	describe( '#isEnabled()', () => {
 		test( 'should return true if form is not publishing and post is not empty', () => {
 			const tree = shallow(
@@ -262,7 +144,7 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'draft', date: nextMonth } }
+						currentPost={ { status: 'draft', date: nextMonth } }
 						post={ { title: 'change', status: 'draft', date: nextMonth } }
 						onPublish={ onPublish }
 						site={ MOCK_SITE }
@@ -282,7 +164,7 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'future', date: nextMonth } }
+						currentPost={ { status: 'future', date: nextMonth } }
 						post={ { title: 'change', status: 'future', date: nextMonth } }
 						onPublish={ onPublish }
 						canUserPublishPosts
@@ -301,7 +183,7 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'future', date: lastMonth } }
+						currentPost={ { status: 'future', date: lastMonth } }
 						post={ { title: 'change', status: 'future', date: lastMonth } }
 						onPublish={ onPublish }
 						canUserPublishPosts
@@ -318,10 +200,11 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'publish' } }
+						currentPost={ { status: 'publish' } }
 						post={ { title: 'change', status: 'draft' } }
 						onSave={ onSave }
 						site={ MOCK_SITE }
+						canUserPublishPosts
 					/>
 				).instance();
 
@@ -335,7 +218,7 @@ describe( 'EditorPublishButton', () => {
 				tree = shallow(
 					<EditorPublishButton
 						translate={ identity }
-						savedPost={ { status: 'draft' } }
+						currentPost={ { status: 'draft' } }
 						onSave={ onSave }
 					/>
 				).instance();

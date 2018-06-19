@@ -30,7 +30,8 @@ import {
 	isJetpackSite,
 	isSingleUserSite,
 } from 'state/sites/selectors';
-import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -127,10 +128,9 @@ class ManageMenu extends PureComponent {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
 		}
-		// Tracks doesn't like dashes (as in 'jetpack-portfolio', for example)
-		this.props.recordTracksEvent(
-			'calypso_mysites_sidebar_' + postType.replace( /-/g, '_' ) + '_clicked'
-		);
+		this.props.recordTracksEvent( 'calypso_mysites_manage_sidebar_item_clicked', {
+			menu_item: postType,
+		} );
 		this.props.onNavigate();
 	};
 
@@ -230,9 +230,9 @@ class ManageMenu extends PureComponent {
 
 	trackSidebarButtonClick = name => {
 		return () => {
-			this.props.recordTracksEvent(
-				'calypso_mysites_sidebar_' + name.replace( /-/g, '_' ) + '_sidebar_button_clicked'
-			);
+			this.props.recordTracksEvent( 'calypso_mysites_manage_sidebar_button_clicked', {
+				menu_item: name,
+			} );
 		};
 	};
 

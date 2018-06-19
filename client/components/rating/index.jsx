@@ -66,7 +66,7 @@ export default class Rating extends React.PureComponent {
 
 		const totalWidth = size * 5;
 		const roundRating = Math.round( rating / 10 ) * 10;
-		const maskPosition = roundRating / 100 * totalWidth;
+		const maskPosition = ( roundRating / 100 ) * totalWidth;
 		const clipPathMaskPosition = totalWidth - maskPosition + 'px';
 		const overlayHeightPx = size + 'px';
 		const overlayStyles = {

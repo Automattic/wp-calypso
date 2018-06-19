@@ -15,9 +15,11 @@ describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'actionLog',
+			'billingTransactions',
 			'comments',
 			'dropZone',
 			'editor',
+			'googleMyBusiness',
 			'guidedTour',
 			'hasSidebar',
 			'isLoading',

@@ -21,7 +21,8 @@ import { hasTouch } from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import { installPerfmonPageHandlers } from 'lib/perfmon';
-import { getSections, setupRoutes } from 'sections-middleware';
+import { setupRoutes } from 'sections-middleware';
+import { getSections } from 'sections-helper';
 import { checkFormHandler } from 'lib/protect-form';
 import notices from 'notices';
 import authController from 'auth/controller';
@@ -107,6 +108,10 @@ const loggedOutMiddleware = currentUser => {
 
 	page( '*', ( context, next ) => {
 		if ( isValidSection( context.path ) ) {
+			// redirect to login page if we're not on it already, only for stats for now
+			if ( startsWith( context.path, '/stats' ) ) {
+				return page.redirect( '/log-in/?redirect_to=' + encodeURIComponent( context.path ) );
+			}
 			next();
 		}
 	} );

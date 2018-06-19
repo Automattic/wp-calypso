@@ -8,6 +8,10 @@
 	}
 }
 
+.notice.is-error {
+	margin: 6px 0 16px;
+}
+
 .address-step__address-1.form-fieldset {
 	margin-bottom: 8px;
 }
@@ -29,28 +33,44 @@
 	margin-left: 0;
 }
 
-.address-step__suggestion-container {
+.address-step__suggestion-container,
+.address-step__unverifiable-container {
 	display: flex;
 	align-items: flex-start;
 	margin-top: 24px;
+	flex-direction: column;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
 }
 
-.address-step__suggestion-title {
+.address-step__suggestion-title,
+.address-step__unverifiable-title {
 	font-weight: bold;
+}
+
+.address-step__suggestion,
+.address-step__unverifiable-info {
+	padding: 16px;
+	flex-grow: 1;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+		width: 50%;
+
+		&:first-child {
+			margin-right: 16px;
+			margin-bottom: 24px;
+		}
+	}
 }
 
 .address-step__suggestion {
 	border: 1px solid transparent;
 	border-radius: 4px;
-	padding: 16px;
-	flex-grow: 1;
-	width: 50%;
 	cursor: pointer;
-
-	&:first-child {
-		margin-right: 16px;
-		margin-bottom: 24px;
-	}
+	width: 100%;
 
 	&.is-selected {
 		border-color: $blue-medium;
@@ -59,9 +79,11 @@
 
 .address-step__suggestion-edit {
 	margin-left: 24px;
+	color: $blue-wordpress;
+	font-weight: bold;
 }
 
-.address-step__suggestion-summary {
+.address-step__summary {
 	margin: 8px 0 8px 24px;
 	font-weight: normal;
 
@@ -71,5 +93,26 @@
 
 	.highlight {
 		background-color: lighten( $blue-light, 15 );
+	}
+}
+
+.address-step__unverifiable-info {
+	.external-link {
+		float: left;
+		clear: both;
+	}
+
+	.address-step__summary {
+		margin-left: 0px;
+	}
+}
+
+.address-step__unverifiable-actions {
+	.form-button {
+		margin-left: 10px;
+
+		&:first-child {
+			margin-left: 0;
+		}
 	}
 }

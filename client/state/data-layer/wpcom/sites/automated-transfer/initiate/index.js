@@ -95,7 +95,7 @@ export const receiveResponse = ( { dispatch }, { siteId }, { success } ) => {
 };
 
 export const updateUploadProgress = ( { dispatch }, { siteId }, { loaded, total } ) => {
-	const progress = total ? loaded / total * 100 : 0;
+	const progress = total ? ( loaded / total ) * 100 : 0;
 	dispatch( updatePluginUploadProgress( siteId, progress ) );
 };
 

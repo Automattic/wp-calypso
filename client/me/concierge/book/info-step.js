@@ -20,11 +20,13 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
+import IsRebrandCitiesSite from './is-rebrand-cities-site';
 import Timezone from 'components/timezone';
 import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
 import { updateConciergeSignupForm } from 'state/concierge/actions';
-import { getConciergeSignupForm, getUserSettings } from 'state/selectors';
+import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
+import getUserSettings from 'state/selectors/get-user-settings';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -43,21 +45,34 @@ class InfoStep extends Component {
 		this.props.updateConciergeSignupForm( { ...this.props.signupForm, timezone } );
 	};
 
-	setFieldValue = ( { target } ) => {
+	updateSignupForm( name, value ) {
 		this.props.updateConciergeSignupForm( {
 			...this.props.signupForm,
-			[ target.name ]: target.value,
+			[ name ]: value,
 		} );
+	}
+
+	setRebrandCitiesValue = value => {
+		this.updateSignupForm( 'isRebrandCitiesSite', value );
+	};
+
+	setFieldValue = ( { target: { name, value } } ) => {
+		this.updateSignupForm( name, value );
 	};
 
 	canSubmitForm = () => {
-		const { signupForm: { firstname, message } } = this.props;
+		const {
+			signupForm: { firstname, message },
+		} = this.props;
 
 		return !! firstname.trim() && !! message.trim();
 	};
 
 	componentDidMount() {
-		const { userSettings, signupForm: { firstname, lastname } } = this.props;
+		const {
+			userSettings,
+			signupForm: { firstname, lastname },
+		} = this.props;
 
 		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
 
@@ -74,7 +89,9 @@ class InfoStep extends Component {
 	render() {
 		const {
 			currentUserLocale,
+			onComplete,
 			signupForm: { firstname, lastname, message, timezone },
+			site,
 			translate,
 		} = this.props;
 		const language = getLanguage( currentUserLocale ).name;
@@ -88,10 +105,11 @@ class InfoStep extends Component {
 
 		return (
 			<div>
+				<IsRebrandCitiesSite onChange={ this.setRebrandCitiesValue } siteId={ site.ID } />
 				<PrimaryHeader />
 				{ ! isEnglish && <Notice showDismiss={ false } text={ noticeText } /> }
 				<CompactCard className="book__info-step-site-block">
-					<Site siteId={ this.props.site.ID } />
+					<Site siteId={ site.ID } />
 				</CompactCard>
 
 				<CompactCard>
@@ -151,7 +169,7 @@ class InfoStep extends Component {
 						disabled={ ! this.canSubmitForm() }
 						isPrimary={ true }
 						type="button"
-						onClick={ this.props.onComplete }
+						onClick={ onComplete }
 					>
 						{ translate( 'Continue to calendar' ) }
 					</FormButton>

@@ -30,6 +30,7 @@ import GoogleIcon from 'components/social-icons/google';
 import GoogleLoginButton from 'components/social-buttons/google';
 import userFactory from 'lib/user';
 import Notice from 'components/notice';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const user = userFactory();
 
@@ -155,6 +156,7 @@ class SocialLogin extends Component {
 
 		return (
 			<Main className="social-login">
+				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
 				<DocumentHead title={ title } />
 				<MeSidebarNavigation />
 

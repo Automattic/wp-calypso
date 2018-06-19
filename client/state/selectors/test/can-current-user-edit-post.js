@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { canCurrentUserEditPost } from 'state/selectors';
+import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 
 describe( 'canCurrentUserEditPost()', () => {
 	const fakeGlobalId = 'abcdef1234';

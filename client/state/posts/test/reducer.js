@@ -261,7 +261,9 @@ describe( 'reducer', () => {
 						site_ID: 2916284,
 						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 						title: 'Hello World',
-						meta: {},
+						meta: {
+							links: {},
+						},
 					},
 				],
 			} );
@@ -274,6 +276,7 @@ describe( 'reducer', () => {
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 					title: 'Hello World',
+					meta: {},
 				},
 			] );
 		} );
@@ -1117,6 +1120,284 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove discussion edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							title: 'Hello World',
+							type: 'post',
+							discussion: {
+								comment_status: 'open',
+								ping_status: 'open',
+							},
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							title: 'Hello',
+							discussion: {
+								comment_status: 'open',
+								comments_open: true,
+								ping_status: 'open',
+								pings_open: true,
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+					},
+				},
+			} );
+		} );
+
+		test( 'should keep discussion edits if they are not yet present in the saved post', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							title: 'Hello World',
+							type: 'post',
+							discussion: {
+								comment_status: 'closed',
+								ping_status: 'open',
+							},
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							title: 'Hello',
+							discussion: {
+								comment_status: 'open',
+								comments_open: true,
+								ping_status: 'open',
+								pings_open: true,
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+						discussion: {
+							comment_status: 'closed',
+							ping_status: 'open',
+						},
+					},
+				},
+			} );
+		} );
+
+		test( 'should remove author edit after it is saved and user IDs are equal', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							title: 'Hello World',
+							type: 'post',
+							author: {
+								ID: 123,
+								name: 'Robert Trujillo',
+							},
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							title: 'Hello',
+							author: {
+								ID: 123,
+								name: 'Bob Trujillo',
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+					},
+				},
+			} );
+		} );
+
+		test( 'should remove featured image edit after it is saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							featured_image: 123,
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							featured_image: 'https://example.files.wordpress.com/2018/02/img_4879.jpg',
+							post_thumbnail: {
+								ID: 123,
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {},
+				},
+			} );
+		} );
+
+		test( 'should remove metadata edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							metadata: [
+								{ key: 'tobeupdated', value: 'newvalue', operation: 'update' },
+								{ key: 'tobedeleted', operation: 'delete' },
+								{
+									key: 'notyetupdated',
+									value: 'newvalue',
+									operation: 'update',
+								},
+								{ key: 'notyetdeleted', operation: 'delete' },
+							],
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							metadata: [
+								{ key: 'tobeupdated', value: 'newvalue' },
+								{ key: 'notyetupdated', value: 'oldvalue' },
+								{ key: 'notyetdeleted', value: 'value' },
+							],
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						metadata: [
+							{ key: 'notyetupdated', value: 'newvalue', operation: 'update' },
+							{ key: 'notyetdeleted', operation: 'delete' },
+						],
+					},
+				},
+			} );
+		} );
+
+		test( 'should remove date edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							date: '2018-05-01T10:36:41+02:00',
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							date: '2018-05-01T08:36:41+00:00',
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {},
+				},
+			} );
+		} );
+
+		test( 'should remove status edits after they are saved', () => {
+			const emptyEditsState = {
+				2916284: {
+					841: {},
+				},
+			};
+
+			const editsStateWithStatus = status =>
+				deepFreeze( {
+					2916284: {
+						841: {
+							status,
+						},
+					},
+				} );
+
+			const receivePostActionWithStatus = status => ( {
+				type: POSTS_RECEIVE,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						type: 'post',
+						status,
+					},
+				],
+			} );
+
+			expect(
+				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'future' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'publish' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'future' ), receivePostActionWithStatus( 'publish' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'draft' ), receivePostActionWithStatus( 'draft' ) )
+			).to.eql( emptyEditsState );
+		} );
+
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
@@ -1156,6 +1437,34 @@ describe( 'reducer', () => {
 					841: {
 						title: 'Ribs & Chicken',
 					},
+					842: {
+						title: 'I like turtles',
+					},
+				},
+			} );
+		} );
+
+		test( 'should consider date not edited after resetting draft date', () => {
+			const original = deepFreeze( {
+				2916284: {
+					842: {
+						title: 'I like turtles',
+						date: false,
+					},
+				},
+			} );
+			const state = edits( original, {
+				type: POST_SAVE_SUCCESS,
+				siteId: 2916284,
+				postId: 842,
+				savedPost: {
+					ID: 842,
+					title: 'I like turtles',
+					date: '2018-06-14T16:47:21+00:00',
+				},
+			} );
+			expect( state ).to.eql( {
+				2916284: {
 					842: {
 						title: 'I like turtles',
 					},
@@ -1224,9 +1533,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						type: 'jetpack-testimonial',
-					},
+					841: null,
 					'': {
 						title: 'Ribs & Chicken',
 					},
@@ -1256,7 +1563,9 @@ describe( 'reducer', () => {
 						site_ID: 2916284,
 						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 						title: 'Hello World',
-						meta: {},
+						meta: {
+							links: {},
+						},
 					},
 				],
 			} );
@@ -1267,6 +1576,7 @@ describe( 'reducer', () => {
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 					title: 'Hello World',
+					meta: {},
 				},
 			] );
 		} );

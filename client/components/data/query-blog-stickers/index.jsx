@@ -31,4 +31,7 @@ class QueryBlogStickers extends Component {
 	}
 }
 
-export default connect( null, { listBlogStickers } )( QueryBlogStickers );
+export default connect(
+	null,
+	{ listBlogStickers }
+)( QueryBlogStickers );

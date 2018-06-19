@@ -14,8 +14,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-	JETPACK_CONNECT_CREATE_ACCOUNT,
-	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_QUERY_SET,
 	SERIALIZE,
 	SITE_REQUEST_FAILURE,
@@ -43,24 +41,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			authorizeSuccess: false,
 			authorizeError: false,
 		} );
-	} );
-
-	test( 'should omit userData and bearerToken when starting authorization', () => {
-		const state = jetpackConnectAuthorize(
-			{
-				userData: {
-					ID: 123,
-					email: 'example@example.com',
-				},
-				bearerToken: 'abcd1234',
-			},
-			{
-				type: JETPACK_CONNECT_AUTHORIZE,
-			}
-		);
-
-		expect( state ).not.toHaveProperty( 'userData' );
-		expect( state ).not.toHaveProperty( 'bearerToken' );
 	} );
 
 	test( 'should set authorizeSuccess to true when completed authorization successfully', () => {
@@ -138,55 +118,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			authorizeSuccess: false,
 			isAuthorizing: false,
 			timestamp,
-		} );
-	} );
-
-	test( 'should set isAuthorizing to true when initiating an account creation', () => {
-		const state = jetpackConnectAuthorize( undefined, {
-			type: JETPACK_CONNECT_CREATE_ACCOUNT,
-		} );
-
-		expect( state ).toEqual( {
-			isAuthorizing: true,
-			authorizeSuccess: false,
-			authorizeError: false,
-		} );
-	} );
-
-	test( 'should receive userData and bearerToken on successful account creation', () => {
-		const userData = {
-			ID: 123,
-			email: 'example@example.com',
-		};
-		const bearer_token = 'abcd1234';
-		const state = jetpackConnectAuthorize( undefined, {
-			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			userData,
-			data: {
-				bearer_token,
-			},
-		} );
-
-		expect( state ).toMatchObject( {
-			isAuthorizing: true,
-			authorizeSuccess: false,
-			authorizeError: false,
-			userData: userData,
-			bearerToken: bearer_token,
-		} );
-	} );
-
-	test( 'should mark authorizeError as true on unsuccessful account creation', () => {
-		const error = 'Sorry, that username already exists!';
-		const state = jetpackConnectAuthorize( undefined, {
-			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			error,
-		} );
-
-		expect( state ).toEqual( {
-			authorizeError: true,
-			authorizeSuccess: false,
-			isAuthorizing: false,
 		} );
 	} );
 

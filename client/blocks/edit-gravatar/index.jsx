@@ -248,7 +248,7 @@ export class EditGravatar extends Component {
 
 const recordClickButtonEvent = ( { isVerified } ) =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_edit_gravatar_click', { userVerified: isVerified } ),
+		recordTracksEvent( 'calypso_edit_gravatar_click', { user_verified: isVerified } ),
 		recordGoogleEvent( 'Me', 'Clicked on Edit Gravatar Button in Profile' )
 	);
 

@@ -27,7 +27,7 @@ describe( '#preloadImage()', () => {
 	} );
 
 	test( 'should load an image', () => {
-		var src = 'example.jpg';
+		const src = 'example.jpg';
 
 		preloadImage( src );
 

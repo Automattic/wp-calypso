@@ -4,7 +4,9 @@
  * Internal dependencies
  */
 import {
+	clearNewApplicationPassword,
 	createApplicationPassword,
+	createApplicationPasswordSuccess,
 	deleteApplicationPassword,
 	deleteApplicationPasswordSuccess,
 	receiveApplicationPasswords,
@@ -12,8 +14,10 @@ import {
 } from '../actions';
 import {
 	APPLICATION_PASSWORD_CREATE,
+	APPLICATION_PASSWORD_CREATE_SUCCESS,
 	APPLICATION_PASSWORD_DELETE,
 	APPLICATION_PASSWORD_DELETE_SUCCESS,
+	APPLICATION_PASSWORD_NEW_CLEAR,
 	APPLICATION_PASSWORDS_RECEIVE,
 	APPLICATION_PASSWORDS_REQUEST,
 } from 'state/action-types';
@@ -55,6 +59,28 @@ describe( 'actions', () => {
 			expect( action ).toEqual( {
 				type: APPLICATION_PASSWORD_CREATE,
 				applicationName,
+			} );
+		} );
+	} );
+
+	describe( 'createApplicationPasswordSuccess()', () => {
+		test( 'should return an application password create success action object', () => {
+			const appPassword = 'abcd 1234 efgh 5678';
+			const action = createApplicationPasswordSuccess( appPassword );
+
+			expect( action ).toEqual( {
+				type: APPLICATION_PASSWORD_CREATE_SUCCESS,
+				appPassword,
+			} );
+		} );
+	} );
+
+	describe( 'clearNewApplicationPassword()', () => {
+		test( 'should return a new application password clear action object', () => {
+			const action = clearNewApplicationPassword();
+
+			expect( action ).toEqual( {
+				type: APPLICATION_PASSWORD_NEW_CLEAR,
 			} );
 		} );
 	} );

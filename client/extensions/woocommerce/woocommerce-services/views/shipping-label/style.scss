@@ -24,6 +24,10 @@
 		margin-top: 16px;
 	}
 
+	.ellipsis-menu__toggle {
+		padding: 0;
+	}
+
 	.shipping-label__item-detail, .shipping-label__item-actions {
 		display: flex;
 		justify-content: space-between;
@@ -99,4 +103,12 @@
 .shipping-label__loading-spinner {
 	margin: 8px auto;
 	text-align: center;
+}
+
+.shipping-label__label-details-modal-heading {
+	display: flex;
+}
+
+.shipping-label__label-details-modal-heading-title {
+	flex-grow: 1;
 }

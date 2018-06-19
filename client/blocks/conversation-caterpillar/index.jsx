@@ -82,7 +82,7 @@ class ConversationCaterpillarComponent extends React.Component {
 			: size( allExpandableComments );
 
 		// Only display authors with a gravatar, and only display each author once
-		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'ID' );
+		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'email' );
 		const displayedAuthors = takeRight(
 			filter( uniqueAuthors, 'avatar_URL' ),
 			MAX_GRAVATARS_TO_DISPLAY
@@ -94,7 +94,11 @@ class ConversationCaterpillarComponent extends React.Component {
 
 		return (
 			<div className="conversation-caterpillar">
-				<div className="conversation-caterpillar__gravatars" onClick={ this.handleTickle }>
+				<div
+					className="conversation-caterpillar__gravatars"
+					onClick={ this.handleTickle }
+					aria-hidden="true"
+				>
 					{ map( displayedAuthors, ( author, index ) => {
 						let gravClasses = 'conversation-caterpillar__gravatar';
 						// If we have more than 5 gravs,
@@ -109,10 +113,9 @@ class ConversationCaterpillarComponent extends React.Component {
 						return (
 							<Gravatar
 								className={ gravClasses }
-								key={ author.ID }
+								key={ author.email }
 								user={ author }
 								size={ 32 }
-								aria-hidden="true"
 							/>
 						);
 					} ) }

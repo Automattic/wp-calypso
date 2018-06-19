@@ -58,4 +58,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 const mapDispatchToProps = dispatch =>
 	bindActionCreators( { requestGuidedTransferStatus }, dispatch );
 
-export default connect( mapStateToProps, mapDispatchToProps )( QuerySiteGuidedTransfer );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( QuerySiteGuidedTransfer );

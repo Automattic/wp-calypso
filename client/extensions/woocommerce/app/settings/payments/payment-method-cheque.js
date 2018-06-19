@@ -50,7 +50,11 @@ class PaymentMethodCheque extends Component {
 	];
 
 	render() {
-		const { method, method: { settings }, translate } = this.props;
+		const {
+			method,
+			method: { settings },
+			translate,
+		} = this.props;
 		return (
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"

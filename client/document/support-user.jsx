@@ -33,7 +33,7 @@ function SupportUser( { supportUser, supportToken, authorized = false } ) {
 				<script
 					dangerouslySetInnerHTML={ {
 						__html: `
-						${ supportUserFn.toString() }
+						const supportUserFn = ${ supportUserFn.toString() };
 
 						supportUserFn( {
 							user: ${ supportUser && `"${ encodeURIComponent( supportUser ) }"` },

@@ -13,7 +13,7 @@ import React from 'react';
  */
 import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
-import AllSites from 'my-sites/all-sites';
+import AllSites from 'blocks/all-sites';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
@@ -46,7 +46,6 @@ class PluginSiteNetwork extends React.Component {
 		return (
 			<PluginInstallButton
 				isEmbed={ true }
-				notices={ this.props.notices }
 				selectedSite={ this.props.site }
 				plugin={ this.props.plugin }
 				isInstalling={ installInProgress }
@@ -92,14 +91,9 @@ class PluginSiteNetwork extends React.Component {
 				<PluginAutoupdateToggle
 					site={ this.props.site }
 					plugin={ this.props.site.plugin }
-					notices={ this.props.notices }
 					wporg={ true }
 				/>
-				<PluginRemoveButton
-					plugin={ this.props.site.plugin }
-					site={ this.props.site }
-					notices={ this.props.notices }
-				/>
+				<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
 			</div>
 		);
 	};
@@ -160,7 +154,7 @@ class PluginSiteNetwork extends React.Component {
 		}
 		return (
 			<div className="plugin-site-network__secondary-site-actions">
-				<PluginActivateToggle site={ site } plugin={ site.plugin } notices={ this.props.notices } />
+				<PluginActivateToggle site={ site } plugin={ site.plugin } />
 			</div>
 		);
 	};

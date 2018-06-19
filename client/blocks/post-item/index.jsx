@@ -18,7 +18,8 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser, canCurrentUserEditPost } from 'state/selectors';
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
+import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 import {
 	isSharePanelOpen,
 	isMultiSelectEnabled,
@@ -36,7 +37,7 @@ import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 
 function preloadEditor() {
 	preload( 'post-editor' );

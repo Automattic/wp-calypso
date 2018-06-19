@@ -19,6 +19,7 @@ import {
 	buildExportArray,
 	isAutoRefreshAllowedForQuery,
 	parseStoreStatsReferrers,
+	getChartLabels,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -118,9 +119,6 @@ describe( 'utils', () => {
 				period: '2016-12-31',
 				orders: 0,
 				currency: 'NZD',
-				labelDay: 'Dec 31',
-				labelWeek: 'Dec 31',
-				labelMonth: 'Dec',
 				labelYear: '2016',
 				classNames: [],
 			},
@@ -128,9 +126,6 @@ describe( 'utils', () => {
 				period: '2017-12-31',
 				orders: 14,
 				currency: 'NZD',
-				labelDay: 'Dec 31',
-				labelWeek: 'Dec 31',
-				labelMonth: 'Dec',
 				labelYear: '2017',
 				classNames: [],
 			},
@@ -1832,16 +1827,14 @@ describe( 'utils', () => {
 				const parsedData = normalizers.statsVisits( {
 					fields: [ 'period', 'views', 'visitors' ],
 					data: [ [ '2016-12-22', 0, 0 ], [ '2016-12-23', 10, 6 ] ],
+					unit: 'week',
 				} );
 
 				expect( parsedData ).to.eql( [
 					{
 						classNames: [],
 						comments: null,
-						labelDay: 'Dec 22',
-						labelMonth: 'Dec',
 						labelWeek: 'Dec 22',
-						labelYear: '2016',
 						likes: null,
 						period: '2016-12-22',
 						posts: null,
@@ -1852,10 +1845,7 @@ describe( 'utils', () => {
 					{
 						classNames: [],
 						comments: null,
-						labelDay: 'Dec 23',
-						labelMonth: 'Dec',
 						labelWeek: 'Dec 23',
-						labelYear: '2016',
 						likes: null,
 						period: '2016-12-23',
 						posts: null,
@@ -1870,6 +1860,7 @@ describe( 'utils', () => {
 				const parsedData = normalizers.statsVisits( {
 					fields: [ 'period', 'views', 'visitors' ],
 					data: [ [ '2016W11W07', 0, 0 ], [ '2016W10W31', 10, 6 ] ],
+					unit: 'day',
 				} );
 
 				expect( parsedData ).to.eql( [
@@ -1877,9 +1868,6 @@ describe( 'utils', () => {
 						classNames: [],
 						comments: null,
 						labelDay: 'Nov 7',
-						labelMonth: 'Nov',
-						labelWeek: 'Nov 7',
-						labelYear: '2016',
 						likes: null,
 						period: '2016-11-07',
 						posts: null,
@@ -1891,9 +1879,6 @@ describe( 'utils', () => {
 						classNames: [],
 						comments: null,
 						labelDay: 'Oct 31',
-						labelMonth: 'Oct',
-						labelWeek: 'Oct 31',
-						labelYear: '2016',
 						likes: null,
 						period: '2016-10-31',
 						posts: null,
@@ -1970,8 +1955,8 @@ describe( 'utils', () => {
 		describe( 'parseStoreStatsReferrers', () => {
 			const validData = {
 				data: [
-					{ date: 'monday', data: [ [ 'green', 4 ], [ 'red', 8 ] ] },
-					{ date: 'tuesday', data: [ [ 'orange', 12 ], [ 'blue', 16 ] ] },
+					{ date: '2018-04-10', data: [ [ 'green', 4 ], [ 'red', 8 ] ] },
+					{ date: '2018-04-09', data: [ [ 'orange', 12 ], [ 'blue', 16 ] ] },
 				],
 				fields: [ 'color', 'age' ],
 			};
@@ -2009,8 +1994,63 @@ describe( 'utils', () => {
 					expect( d.age ).to.eql( validData.data[ 0 ].data[ idx ][ 1 ] );
 				} );
 
-				expect( firstRecord.date ).to.eql( 'monday' );
+				expect( firstRecord.date ).to.eql( '2018-04-10' );
 			} );
+		} );
+	} );
+
+	describe( 'getChartLabels', () => {
+		test( 'should return empty object on missing unit parameter', () => {
+			const label = getChartLabels( undefined, moment(), moment() );
+			expect( label ).to.deep.equal( {} );
+		} );
+
+		test( 'should return empty object on missing date parameter', () => {
+			const label = getChartLabels( 'day', undefined, moment() );
+			expect( label ).to.deep.equal( {} );
+		} );
+
+		test( 'should return empty object on missing localizedDate parameter', () => {
+			const label = getChartLabels( 'day', moment(), undefined );
+			expect( label ).to.deep.equal( {} );
+		} );
+
+		test( 'should return a correct property label', () => {
+			const label = getChartLabels( 'day', moment(), moment() );
+			expect( Object.keys( label )[ 0 ] ).to.equal( 'labelDay' );
+		} );
+
+		test( 'should return an "is-weekend" className for a weekend date', () => {
+			const sunday = moment( '2018-04-08' );
+			const label = getChartLabels( 'day', sunday, sunday );
+			expect( label.classNames[ 0 ] ).to.equal( 'is-weekend' );
+		} );
+
+		test( 'should not return an "is-weekend" className a weekday', () => {
+			const monday = moment( '2018-04-09' );
+			const label = getChartLabels( 'day', monday, monday );
+			expect( label.classNames ).to.be.an( 'array' ).that.is.empty;
+		} );
+
+		test( 'should return a correctly formatted date', () => {
+			const april9 = moment( '2018-04-09' );
+			const day = getChartLabels( 'day', april9, april9.locale( 'en' ) );
+			expect( day.labelDay ).to.equal( 'Apr 9' );
+
+			const week = getChartLabels( 'week', april9, april9.locale( 'en' ) );
+			expect( week.labelWeek ).to.equal( 'Apr 9' );
+
+			const month = getChartLabels( 'month', april9, april9.locale( 'en' ) );
+			expect( month.labelMonth ).to.equal( 'Apr' );
+
+			const year = getChartLabels( 'year', april9, april9.locale( 'en' ) );
+			expect( year.labelYear ).to.equal( '2018' );
+		} );
+
+		test( 'should return a correctly formatted localized date', () => {
+			const april9 = moment( '2018-04-09' );
+			const label = getChartLabels( 'day', april9, april9.locale( 'fr' ) );
+			expect( label.labelDay ).to.equal( 'avr. 9' );
 		} );
 	} );
 } );

@@ -20,13 +20,13 @@ import Card from 'components/card';
 import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getSiteChecklist } from 'state/selectors';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
 import ChecklistShowShare from 'my-sites/checklist/checklist-show/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
+import { getABTestVariation } from 'lib/abtest';
 
 const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
 
@@ -111,12 +111,9 @@ export class ChecklistBanner extends Component {
 			return false;
 		}
 
-		// NOTE: Accessing localStorage directly for checking A/B variation assignment
-		//       is an anti-pattern. Please use lib/abtest instead.
-		const abtests = store.get( ABTEST_LOCALSTORAGE_KEY );
 		if (
-			get( abtests, 'checklistThankYouForPaidUser_20171204' ) !== 'show' &&
-			get( abtests, 'checklistThankYouForFreeUser_20171204' ) !== 'show'
+			getABTestVariation( 'checklistThankYouForPaidUser' ) !== 'show' &&
+			getABTestVariation( 'checklistThankYouForFreeUser' ) !== 'show'
 		) {
 			return false;
 		}
@@ -155,7 +152,7 @@ export class ChecklistBanner extends Component {
 	render() {
 		const { completed, total, translate, siteId } = this.props;
 		const task = this.getNextTask();
-		const percentage = Math.round( completed / total * 100 ) || 0;
+		const percentage = Math.round( ( completed / total ) * 100 ) || 0;
 
 		if ( ! this.canShow() ) {
 			return null;
@@ -232,4 +229,7 @@ const mapDispatchToProps = {
 	requestTour: requestGuidedTour,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistBanner ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ChecklistBanner ) );

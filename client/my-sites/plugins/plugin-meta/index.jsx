@@ -36,22 +36,23 @@ import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer'
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
 import Banner from 'components/banner';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
+import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 
-class PluginMeta extends Component {
+export class PluginMeta extends Component {
 	static OUT_OF_DATE_YEARS = 2;
 
 	static propTypes = {
 		siteURL: PropTypes.string,
 		sites: PropTypes.array,
-		notices: PropTypes.object,
 		plugin: PropTypes.object.isRequired,
 		isInstalledOnSite: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
@@ -95,6 +96,13 @@ class PluginMeta extends Component {
 		return (
 			isBusiness( this.props.selectedSite.plan ) || isEnterprise( this.props.selectedSite.plan )
 		);
+	}
+
+	getPlan() {
+		if ( ! this.props.selectedSite ) {
+			return false;
+		}
+		return this.props.selectedSite.plan();
 	}
 
 	isWpcomPreinstalled = () => {
@@ -160,7 +168,6 @@ class PluginMeta extends Component {
 					<PluginActivateToggle
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						isMock={ this.props.isMock }
 					/>
 				) }
@@ -168,7 +175,6 @@ class PluginMeta extends Component {
 					<PluginAutoupdateToggle
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						wporg={ this.props.plugin.wporg }
 						isMock={ this.props.isMock }
 					/>
@@ -177,7 +183,6 @@ class PluginMeta extends Component {
 					<PluginRemoveButton
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						isMock={ this.props.isMock }
 					/>
 				) }
@@ -227,14 +232,22 @@ class PluginMeta extends Component {
 			'advanced-database-cleaner',
 			'advanced-reset-wp',
 			'advanced-wp-reset',
+			'armember-membership',
+			'autoptimize',
 			'better-wp-security',
+			'cf7-pipedrive-integration',
 			'duplicator',
+			'extended-wp-reset',
+			'google-captcha',
 			'file-manager-advanced',
 			'file-manager',
 			'reset-wp',
+			'wd-youtube',
 			'wordpress-database-reset',
 			'wordpress-reset',
+			'wp-automatic',
 			'wp-clone-by-wp-academy',
+			'wp-file-manager',
 			'wp-prefix-changer',
 			'wp-reset',
 			'wpmu-database-reset',
@@ -248,6 +261,8 @@ class PluginMeta extends Component {
 			'wp-db-backup',
 
 			// caching
+			'comet-cache',
+			'hyper-cache',
 			'quick-cache',
 			'w3-total-cache',
 			'wp-cache',
@@ -256,10 +271,24 @@ class PluginMeta extends Component {
 			'wp-super-cache',
 
 			// sql heavy
+			'another-wordpress-classifieds-plugin',
+			'leads',
+			'native-ads-adnow',
+			'ol_scrapes',
 			'page-visit-counter',
 			'post-views-counter',
+			'tokenad',
+			'top-10',
+			'wordpress-popular-posts',
+			'wp-cerber',
+			'wp-inject',
 			'wp-postviews',
+			'wp-rss-aggregator',
+			'wp-rss-feed-to-post',
+			'wp-rss-wordai',
 			'wp-statistics',
+			'wp-ulike',
+			'WPRobot5',
 
 			// security
 			'wordfence',
@@ -276,7 +305,11 @@ class PluginMeta extends Component {
 			'automatic-video-posts',
 			'bwp-minify',
 			'nginx-helper',
+			'patron-button-and-widgets-by-codebard',
+			'porn-embed',
 			'video-importer',
+			'woozone',
+			'wp-cleanfix',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
@@ -312,13 +345,9 @@ class PluginMeta extends Component {
 	}
 
 	maybeDisplayUnsupportedNotice() {
-		const { selectedSite, automatedTransferSite } = this.props;
+		const { selectedSite } = this.props;
 
-		if (
-			selectedSite &&
-			this.isUnsupportedPluginForAT() &&
-			( ! selectedSite.jetpack || automatedTransferSite )
-		) {
+		if ( selectedSite && this.isUnsupportedPluginForAT() ) {
 			return (
 				<Notice
 					text={ this.props.translate(
@@ -404,13 +433,13 @@ class PluginMeta extends Component {
 									newPluginVersion: this.props.plugin.version,
 								},
 							}
-						)
+					  )
 					: i18n.translate( 'Version %(newPluginVersion)s is available for %(siteName)s', {
 							args: {
 								siteName: newVersions[ 0 ].title,
 								newPluginVersion: this.props.plugin.version,
 							},
-						} );
+					  } );
 			const noticeActionMessage =
 				newVersions.length > 1 ? i18n.translate( 'Update all' ) : i18n.translate( 'Update' );
 			return (
@@ -505,9 +534,7 @@ class PluginMeta extends Component {
 				plugin.update.new_version
 			) {
 				PluginsActions.updatePlugin( site, plugin );
-				PluginsActions.removePluginsNotices(
-					this.props.notices.completed.concat( this.props.notices.errors )
-				);
+				PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 				analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
 					site: site,
@@ -593,18 +620,22 @@ class PluginMeta extends Component {
 					this.isWpcomPreinstalled() ) && <div style={ { marginBottom: 16 } } /> }
 
 				{ this.props.selectedSite &&
+					this.props.selectedSite.plan &&
 					! get( this.props.selectedSite, 'jetpack' ) &&
 					! this.hasBusinessPlan() &&
-					! this.isWpcomPreinstalled() && (
+					! this.isWpcomPreinstalled() &&
+					( this.maybeDisplayUnsupportedNotice() || (
 						<div className="plugin-meta__upgrade_nudge">
 							<Banner
 								feature={ FEATURE_UPLOAD_PLUGINS }
 								event={ 'calypso_plugin_detail_page_upgrade_nudge' }
-								plan={ PLAN_BUSINESS }
+								plan={ findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
+									type: TYPE_BUSINESS,
+								} ) }
 								title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
 							/>
 						</div>
-					) }
+					) ) }
 
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }

@@ -25,6 +25,7 @@ class LikeButtonContainer extends Component {
 		onLikeToggle: PropTypes.func,
 		found: PropTypes.number,
 		iLike: PropTypes.bool,
+		likeSource: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -33,7 +34,7 @@ class LikeButtonContainer extends Component {
 
 	handleLikeToggle = liked => {
 		const toggler = liked ? this.props.like : this.props.unlike;
-		toggler( this.props.siteId, this.props.postId );
+		toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 
 		this.props.onLikeToggle( liked );
 	};

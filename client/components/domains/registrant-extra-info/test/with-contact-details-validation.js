@@ -84,9 +84,15 @@ describe( 'uk-form validation', () => {
 					/>
 				).dive();
 
-				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {
-					extra: {
-						uk: { registrationNumber: [ 'dotukRegistrantTypeRequiresRegistrationNumber' ] },
+				expect( wrapper.props() ).toMatchObject( {
+					validationErrors: {
+						extra: {
+							uk: {
+								registrationNumber: [
+									{ errorMessage: 'A registration number is required for this registrant type.' },
+								],
+							},
+						},
 					},
 				} );
 			} );
@@ -166,8 +172,16 @@ describe( 'uk-form validation', () => {
 					/>
 				).dive();
 
-				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {
-					extra: { uk: { tradingName: [ 'dotukRegistrantTypeRequiresTradingName' ] } },
+				expect( wrapper.props() ).toMatchObject( {
+					validationErrors: {
+						extra: {
+							uk: {
+								tradingName: [
+									{ errorMessage: 'A trading name is required for this registrant type.' },
+								],
+							},
+						},
+					},
 				} );
 			} );
 		} );

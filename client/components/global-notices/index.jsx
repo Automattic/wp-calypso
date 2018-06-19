@@ -43,10 +43,21 @@ const NoticesList = createReactClass( {
 		debug( 'Mounting Global Notices React component.' );
 	},
 
-	removeNotice( notice ) {
+	removeNoticeStoreNotice: notice => () => {
 		if ( notice ) {
 			notices.removeNotice( notice );
 		}
+	},
+
+	// Auto-bound by createReactClass.
+	// Migrate to arrow => when using class extends React.Component
+	removeReduxNotice( notice ) {
+		return e => {
+			if ( notice.onDismissClick ) {
+				notice.onDismissClick( e );
+			}
+			this.props.removeNotice( notice.noticeId );
+		};
 	},
 
 	render() {
@@ -59,7 +70,7 @@ const NoticesList = createReactClass( {
 					duration={ notice.duration || null }
 					text={ notice.text }
 					isCompact={ notice.isCompact }
-					onDismissClick={ this.removeNotice.bind( this, notice ) }
+					onDismissClick={ this.removeNoticeStoreNotice( notice ) }
 					showDismiss={ notice.showDismiss }
 				>
 					{ notice.button && (
@@ -75,19 +86,16 @@ const NoticesList = createReactClass( {
 		//and from the old component. When all notices are moved to redux store, this component
 		//needs to be updated.
 		noticesList = noticesList.concat(
-			this.props.storeNotices.map( function( notice ) {
+			this.props.storeNotices.map( function( { button, href, onClick, ...notice } ) {
 				return (
 					<Notice
-						key={ 'notice-' + notice.noticeId }
-						status={ notice.status }
-						duration={ notice.duration || null }
-						showDismiss={ notice.showDismiss }
-						onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
-						text={ notice.text }
+						{ ...notice }
+						key={ `notice-${ notice.noticeId }` }
+						onDismissClick={ this.removeReduxNotice( notice ) }
 					>
-						{ notice.button && (
-							<NoticeAction href={ notice.href } onClick={ notice.onClick }>
-								{ notice.button }
+						{ button && (
+							<NoticeAction href={ href } onClick={ onClick }>
+								{ button }
 							</NoticeAction>
 						) }
 					</Notice>
@@ -108,10 +116,8 @@ const NoticesList = createReactClass( {
 } );
 
 export default connect(
-	state => {
-		return {
-			storeNotices: getNotices( state ),
-		};
-	},
+	state => ( {
+		storeNotices: getNotices( state ),
+	} ),
 	{ removeNotice }
 )( NoticesList );

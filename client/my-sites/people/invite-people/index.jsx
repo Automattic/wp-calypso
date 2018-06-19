@@ -42,8 +42,10 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isJetpackSite } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
-import { isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
+import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Module variables
@@ -424,6 +426,7 @@ class InvitePeople extends React.Component {
 		if ( site && ! userCan( 'promote_users', site ) ) {
 			return (
 				<Main>
+					<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 					<SidebarNavigation />
 					<EmptyContent
 						title={ translate( 'Oops, only administrators can invite other people' ) }
@@ -435,6 +438,7 @@ class InvitePeople extends React.Component {
 
 		return (
 			<Main className="invite-people">
+				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 				<SidebarNavigation />
 				<HeaderCake isCompact onClick={ this.goBack }>
 					{ translate( 'Invite People' ) }

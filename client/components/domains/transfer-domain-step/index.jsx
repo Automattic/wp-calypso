@@ -3,12 +3,11 @@
 /**
  * External dependencies
  */
-import async from 'async';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, get, isEmpty, isFunction, noop } from 'lodash';
+import { endsWith, get, isEmpty, noop } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { stringify } from 'qs';
@@ -17,16 +16,20 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import {
+	checkAuthCode,
 	checkDomainAvailability,
 	checkInboundTransferStatus,
+	getDomainPrice,
+	getDomainProductSlug,
 	getFixedDomainSearch,
 	getTld,
 	startInboundTransfer,
 } from 'lib/domains';
+import { getProductsList } from 'state/products-list/selectors';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import Card from 'components/card';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -37,9 +40,12 @@ import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
-import { fetchDomains } from 'lib/upgrades/actions';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
 import { domainManagementTransferIn } from 'my-sites/domains/paths';
 import { errorNotice } from 'state/notices/actions';
+import QueryProducts from 'components/data/query-products-list';
+import { isPlan } from 'lib/products-values';
+import { isDomainBundledWithPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -50,6 +56,7 @@ class TransferDomainStep extends React.Component {
 		goBack: PropTypes.func,
 		initialQuery: PropTypes.string,
 		isSignupStep: PropTypes.bool,
+		mapDomainUrl: PropTypes.string,
 		onRegisterDomain: PropTypes.func,
 		onTransferDomain: PropTypes.func,
 		onSave: PropTypes.func,
@@ -66,11 +73,13 @@ class TransferDomainStep extends React.Component {
 
 	getDefaultState() {
 		return {
+			authCodeValid: null,
 			domain: null,
 			domainsWithPlansOnly: false,
 			inboundTransferStatus: {},
 			precheck: get( this.props, 'forcePrecheck', false ),
 			searchQuery: this.props.initialQuery || '',
+			submittingAuthCodeCheck: false,
 			submittingAvailability: false,
 			submittingWhois: get( this.props, 'forcePrecheck', false ),
 			supportsPrivacy: false,
@@ -104,20 +113,23 @@ class TransferDomainStep extends React.Component {
 	}
 
 	getMapDomainUrl() {
-		const { basePath, selectedSite } = this.props;
-		let mapDomainUrl;
+		const { basePath, mapDomainUrl, selectedSite } = this.props;
+		if ( mapDomainUrl ) {
+			return mapDomainUrl;
+		}
 
+		let buildMapDomainUrl;
 		const basePathForMapping = endsWith( basePath, '/transfer' )
 			? basePath.substring( 0, basePath.length - 9 )
 			: basePath;
 
-		const query = stringify( { initialQuery: this.state.searchQuery.trim() } );
-		mapDomainUrl = `${ basePathForMapping }/mapping`;
+		buildMapDomainUrl = `${ basePathForMapping }/mapping`;
 		if ( selectedSite ) {
-			mapDomainUrl += `/${ selectedSite.slug }?${ query }`;
+			const query = stringify( { initialQuery: this.state.searchQuery.trim() } );
+			buildMapDomainUrl += `/${ selectedSite.slug }?${ query }`;
 		}
 
-		return mapDomainUrl;
+		return buildMapDomainUrl;
 	}
 
 	goToMapDomainStep = event => {
@@ -129,25 +141,37 @@ class TransferDomainStep extends React.Component {
 	};
 
 	addTransfer() {
-		const { translate } = this.props;
+		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
+		const productSlug = getDomainProductSlug( searchQuery );
+		const domainsWithPlansOnlyButNoPlan =
+			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+
+		let domainProductPrice = getDomainPrice(
+			productSlug,
+			this.props.productsList,
+			this.props.currencyCode
+		);
+
+		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+			domainProductPrice = translate( 'Free with your plan' );
+		} else if ( domainsWithPlansOnlyButNoPlan ) {
+			domainProductPrice = translate( 'Included in paid plans' );
+		}
 
 		return (
 			<div>
+				<QueryProducts />
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
-						<img
-							className="transfer-domain-step__illustration"
-							src={ '/calypso/images/illustrations/migrating-host-diy.svg' }
-						/>
 						<div className="transfer-domain-step__domain-heading">
 							{ translate( 'Manage your domain and site together on WordPress.com.' ) }
 						</div>
 						<div>
 							{ translate(
-								'Move your domain from your current provider to WordPress.com so you can update settings, ' +
+								'Transfer your domain away from your current provider to WordPress.com so you can update settings, ' +
 									"renew your domain, and more \u2013 right in your dashboard. We'll renew it for another year " +
 									'when the transfer is successful. {{a}}Learn more{{/a}}.',
 								{
@@ -174,6 +198,7 @@ class TransferDomainStep extends React.Component {
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onFocus={ this.recordInputFocus }
+							suffix={ domainProductPrice }
 							autoFocus
 						/>
 					</div>
@@ -213,12 +238,12 @@ class TransferDomainStep extends React.Component {
 		);
 	}
 
-	startPendingInboundTransfer = domain => {
+	startPendingInboundTransfer = ( domain, authCode ) => {
 		const { selectedSite, translate } = this.props;
 
-		startInboundTransfer( selectedSite.ID, domain, ( error, result ) => {
+		startInboundTransfer( selectedSite.ID, domain, authCode, ( error, result ) => {
 			if ( result ) {
-				fetchDomains( domain );
+				this.props.fetchSiteDomains( selectedSite.ID );
 				page( domainManagementTransferIn( selectedSite.slug, domain ) );
 			} else {
 				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
@@ -227,7 +252,14 @@ class TransferDomainStep extends React.Component {
 	};
 
 	getTransferDomainPrecheck() {
-		const { domain, inboundTransferStatus, submittingWhois, searchQuery } = this.state;
+		const {
+			authCodeValid,
+			domain,
+			inboundTransferStatus,
+			submittingAuthCodeCheck,
+			submittingWhois,
+			searchQuery,
+		} = this.state;
 
 		const onSetValid = this.props.forcePrecheck
 			? this.startPendingInboundTransfer
@@ -235,12 +267,12 @@ class TransferDomainStep extends React.Component {
 
 		return (
 			<TransferDomainPrecheck
+				authCodeValid={ authCodeValid }
+				checkAuthCode={ this.getAuthCodeStatus }
 				domain={ domain || searchQuery }
-				email={ inboundTransferStatus.email }
-				loading={ submittingWhois }
+				loading={ submittingWhois || submittingAuthCodeCheck }
 				losingRegistrar={ inboundTransferStatus.losingRegistrar }
 				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
-				privacy={ inboundTransferStatus.privacy }
 				refreshStatus={ this.getInboundTransferStatus }
 				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
 				setValid={ onSetValid }
@@ -384,76 +416,49 @@ class TransferDomainStep extends React.Component {
 			this.props.analyticsSection
 		);
 
-		async.parallel(
-			[
-				callback => {
-					this.getInboundTransferStatus( callback );
-				},
-				callback => {
-					this.getAvailability( callback );
-				},
-			],
-			() => {
-				this.setState( prevState => {
-					const { submittingAvailability, submittingWhois } = prevState;
+		Promise.all( [ this.getInboundTransferStatus(), this.getAvailability() ] ).then( () => {
+			this.setState( prevState => {
+				const { submittingAvailability, submittingWhois } = prevState;
 
-					return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
-				} );
+				return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
+			} );
 
-				if ( this.props.isSignupStep && this.state.domain && ! this.transferIsRestricted() ) {
-					this.props.onTransferDomain( domain );
-				}
+			if ( this.props.isSignupStep && this.state.domain && ! this.transferIsRestricted() ) {
+				this.props.onTransferDomain( domain );
 			}
-		);
+		} );
 	};
 
-	getAvailability = callback => {
+	getAvailability = () => {
 		const domain = getFixedDomainSearch( this.state.searchQuery );
 
-		checkDomainAvailability(
-			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
-			( error, result ) => {
-				const status = get( result, 'status', error );
-				switch ( status ) {
-					case domainAvailability.AVAILABLE:
-						this.setState( { suggestion: result } );
-						break;
-					case domainAvailability.TRANSFERRABLE:
-					case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
-						this.setState( {
-							domain,
-							supportsPrivacy: get( result, 'supports_privacy', false ),
-						} );
-						break;
-					case domainAvailability.MAPPABLE:
-					case domainAvailability.TLD_NOT_SUPPORTED:
-						const tld = getTld( domain );
+		return new Promise( resolve => {
+			checkDomainAvailability(
+				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				( error, result ) => {
+					const status = get( result, 'status', error );
+					switch ( status ) {
+						case domainAvailability.AVAILABLE:
+							this.setState( { suggestion: result } );
+							break;
+						case domainAvailability.TRANSFERRABLE:
+						case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
+							this.setState( {
+								domain,
+								supportsPrivacy: get( result, 'supports_privacy', false ),
+							} );
+							break;
+						case domainAvailability.MAPPABLE:
+						case domainAvailability.TLD_NOT_SUPPORTED:
+						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
+							const tld = getTld( domain );
 
-						this.setState( {
-							notice: this.props.translate(
-								"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
-									'but you can {{a}}map it{{/a}} instead.',
-								{
-									args: { tld },
-									components: {
-										strong: <strong />,
-										a: <a href="#" onClick={ this.goToMapDomainStep } />,
-									},
-								}
-							),
-							noticeSeverity: 'info',
-						} );
-						break;
-					case domainAvailability.UNKNOWN:
-						const mappableStatus = get( result, 'mappable', error );
-
-						if ( domainAvailability.MAPPABLE === mappableStatus ) {
 							this.setState( {
 								notice: this.props.translate(
-									"{{strong}}%(domain)s{{/strong}} can't be transferred. " +
-										'You can {{a}}manually connect it{{/a}} if you still want to use it for your site.',
+									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
+										'but you can {{a}}map it{{/a}} instead.',
 									{
-										args: { domain },
+										args: { tld },
 										components: {
 											strong: <strong />,
 											a: <a href="#" onClick={ this.goToMapDomainStep } />,
@@ -463,55 +468,99 @@ class TransferDomainStep extends React.Component {
 								noticeSeverity: 'info',
 							} );
 							break;
-						}
-					default:
-						let site = get( result, 'other_site_domain', null );
-						if ( ! site ) {
-							site = get( this.props, 'selectedSite.slug', null );
-						}
+						case domainAvailability.UNKNOWN:
+							const mappableStatus = get( result, 'mappable', error );
 
-						const { message, severity } = getAvailabilityNotice( domain, status, site );
-						this.setState( { notice: message, noticeSeverity: severity } );
+							if ( domainAvailability.MAPPABLE === mappableStatus ) {
+								this.setState( {
+									notice: this.props.translate(
+										"{{strong}}%(domain)s{{/strong}} can't be transferred. " +
+											'You can {{a}}manually connect it{{/a}} if you still want to use it for your site.',
+										{
+											args: { domain },
+											components: {
+												strong: <strong />,
+												a: <a href="#" onClick={ this.goToMapDomainStep } />,
+											},
+										}
+									),
+									noticeSeverity: 'info',
+								} );
+								break;
+							}
+						default:
+							let site = get( result, 'other_site_domain', null );
+							if ( ! site ) {
+								site = get( this.props, 'selectedSite.slug', null );
+							}
+
+							const maintenanceEndTime = get( result, 'maintenance_end_time', null );
+							const { message, severity } = getAvailabilityNotice( domain, status, {
+								site,
+								maintenanceEndTime,
+							} );
+							this.setState( { notice: message, noticeSeverity: severity } );
+					}
+
+					this.setState( { submittingAvailability: false } );
+					resolve();
 				}
-
-				this.setState( { submittingAvailability: false } );
-				callback();
-			}
-		);
+			);
+		} );
 	};
 
-	getInboundTransferStatus = ( callback = null ) => {
+	getInboundTransferStatus = () => {
 		this.setState( { submittingWhois: true } );
 
-		checkInboundTransferStatus(
-			getFixedDomainSearch( this.state.searchQuery ),
-			( error, result ) => {
-				this.setState( { submittingWhois: false } );
+		return new Promise( resolve => {
+			checkInboundTransferStatus(
+				getFixedDomainSearch( this.state.searchQuery ),
+				( error, result ) => {
+					this.setState( { submittingWhois: false } );
+
+					if ( ! isEmpty( error ) ) {
+						resolve();
+						return;
+					}
+
+					this.setState( {
+						inboundTransferStatus: {
+							creationDate: result.creation_date,
+							email: result.admin_email,
+							loading: false,
+							losingRegistrar: result.registrar,
+							losingRegistrarIanaId: result.registrar_iana_id,
+							privacy: result.privacy,
+							termMaximumInYears: result.term_maximum_in_years,
+							transferEligibleDate: result.transfer_eligible_date,
+							transferRestrictionStatus: result.transfer_restriction_status,
+							unlocked: result.unlocked,
+						},
+					} );
+					resolve();
+				}
+			);
+		} );
+	};
+
+	getAuthCodeStatus = ( domain, authCode ) => {
+		this.setState( { submittingAuthCodeCheck: true } );
+
+		return new Promise( resolve => {
+			checkAuthCode( domain, authCode, ( error, result ) => {
+				this.setState( { submittingAuthCodeCheck: false } );
 
 				if ( ! isEmpty( error ) ) {
+					resolve();
 					return;
 				}
 
 				this.setState( {
-					inboundTransferStatus: {
-						creationDate: result.creation_date,
-						email: result.admin_email,
-						loading: false,
-						losingRegistrar: result.registrar,
-						losingRegistrarIanaId: result.registrar_iana_id,
-						privacy: result.privacy,
-						termMaximumInYears: result.term_maximum_in_years,
-						transferEligibleDate: result.transfer_eligible_date,
-						transferRestrictionStatus: result.transfer_restriction_status,
-						unlocked: result.unlocked,
-					},
+					authCodeValid: result.success,
 				} );
-
-				if ( isFunction( callback ) ) {
-					callback();
-				}
-			}
-		);
+				resolve();
+			} );
+		} );
 	};
 }
 
@@ -539,10 +588,13 @@ const recordMapDomainButtonClick = section =>
 export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
+		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSite: getSelectedSite( state ),
+		productsList: getProductsList( state ),
 	} ),
 	{
 		errorNotice,
+		fetchSiteDomains,
 		recordAddDomainButtonClickInTransferDomain,
 		recordFormSubmitInTransferDomain,
 		recordInputFocusInTransferDomain,

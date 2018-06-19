@@ -246,7 +246,9 @@ describe( 'index', () => {
 			sinon.assert.calledOnce( fakeEvent.preventDefault );
 
 			const {
-				refs: { dropdownContainer: { focus: focusSpy } },
+				refs: {
+					dropdownContainer: { focus: focusSpy },
+				},
 				closeDropdown: closeDropdownSpy,
 			} = fakeContext;
 			sinon.assert.calledOnce( closeDropdownSpy );

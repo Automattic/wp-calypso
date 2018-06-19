@@ -133,6 +133,21 @@ class Chart extends React.Component {
 					<div className="chart__y-axis-marker is-hundred" />
 					<div className="chart__y-axis-marker is-fifty" />
 					<div className="chart__y-axis-marker is-zero" />
+
+					{ isEmptyChart && (
+						<div className="chart__empty">
+							<Notice
+								className="chart__empty-notice"
+								status="is-warning"
+								isCompact
+								text={ translate( 'No activity this period', {
+									context: 'Message on empty bar chart in Stats',
+									comment: 'Should be limited to 32 characters to prevent wrapping',
+								} ) }
+								showDismiss={ false }
+							/>
+						</div>
+					) }
 				</div>
 				<div className="chart__y-axis">
 					<div className="chart__y-axis-width-fix">{ numberFormat( 100000 ) }</div>
@@ -158,20 +173,6 @@ class Chart extends React.Component {
 					>
 						<ul>{ tooltipData }</ul>
 					</Tooltip>
-				) }
-				{ isEmptyChart && (
-					<div className="chart__empty">
-						<Notice
-							className="chart__empty-notice"
-							status="is-warning"
-							isCompact
-							text={ translate( 'No activity this period', {
-								context: 'Message on empty bar chart in Stats',
-								comment: 'Should be limited to 32 characters to prevent wrapping',
-							} ) }
-							showDismiss={ false }
-						/>
-					</div>
 				) }
 			</div>
 		);

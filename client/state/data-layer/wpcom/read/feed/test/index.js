@@ -2,101 +2,99 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import freeze from 'deep-freeze';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { initiateFeedSearch, receiveFeeds, receiveError } from '../';
-import { NOTICE_CREATE } from 'state/action-types';
+import {
+	requestReadFeedSearch,
+	receiveReadFeedSearchSuccess,
+	receiveReadFeedSearchError,
+	fromApi,
+	requestReadFeed,
+	receiveReadFeedSuccess,
+	receiveReadFeedError,
+} from '../';
+import {
+	NOTICE_CREATE,
+	READER_FEED_REQUEST_SUCCESS,
+	READER_FEED_REQUEST_FAILURE,
+} from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestFeed } from 'state/reader/feeds/actions';
 import { requestFeedSearch, receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import queryKey from 'state/reader/feed-searches/query-key';
 
-const feeds = freeze( [ { blog_ID: 'IM A BLOG', subscribe_URL: 'feedUrl' } ] );
+const feeds = freeze( [ { blog_ID: 123, subscribe_URL: 'http://example.com' } ] );
 
-const query = 'okapis r us';
+const query = 'okapis and giraffes';
 
 describe( 'wpcom-api', () => {
 	describe( 'search feeds', () => {
-		describe( '#initiateFeedSearch', () => {
+		describe( '#requestReadFeedSearch', () => {
 			test( 'should dispatch http request for feed search with followed feeds excluded by default', () => {
 				const action = requestFeedSearch( { query } );
-				const dispatch = sinon.spy();
 
-				initiateFeedSearch( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
-					http( {
-						method: 'GET',
-						path: '/read/feed',
-						apiVersion: '1.1',
-						query: { q: query, offset: 0, exclude_followed: true, sort: 'relevance' },
-						onSuccess: action,
-						onFailure: action,
-					} )
+				expect( requestReadFeedSearch( action ) ).toMatchObject(
+					http(
+						{
+							method: 'GET',
+							path: '/read/feed',
+							apiVersion: '1.1',
+							query: { q: query, offset: 0, exclude_followed: true, sort: 'relevance' },
+						},
+						action
+					)
 				);
 			} );
 
 			test( 'should dispatch http request for feed search with followed feeds included if specified', () => {
 				const action = requestFeedSearch( { query, excludeFollowed: false } );
-				const dispatch = sinon.spy();
 
-				initiateFeedSearch( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
-					http( {
-						method: 'GET',
-						path: '/read/feed',
-						apiVersion: '1.1',
-						query: { q: query, offset: 0, exclude_followed: false, sort: 'relevance' },
-						onSuccess: action,
-						onFailure: action,
-					} )
+				expect( requestReadFeedSearch( action ) ).toMatchObject(
+					http(
+						{
+							method: 'GET',
+							path: '/read/feed',
+							apiVersion: '1.1',
+							query: { q: query, offset: 0, exclude_followed: false, sort: 'relevance' },
+						},
+						action
+					)
 				);
 			} );
 
 			test( 'should dispatch http request for feed search with the offset specified', () => {
 				const action = requestFeedSearch( { query, offset: 10 } );
-				const dispatch = sinon.spy();
 
-				initiateFeedSearch( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
-					http( {
-						method: 'GET',
-						path: '/read/feed',
-						apiVersion: '1.1',
-						query: { q: query, offset: 10, exclude_followed: true, sort: 'relevance' },
-						onSuccess: action,
-						onFailure: action,
-					} )
+				expect( requestReadFeedSearch( action ) ).toMatchObject(
+					http(
+						{
+							method: 'GET',
+							path: '/read/feed',
+							apiVersion: '1.1',
+							query: { q: query, offset: 10, exclude_followed: true, sort: 'relevance' },
+						},
+						action
+					)
 				);
 			} );
 		} );
 
-		describe( '#receiveFeeds', () => {
+		describe( '#receiveReadFeedSearchSuccess', () => {
 			test( 'should dispatch an action with the feed results', () => {
 				const action = requestFeedSearch( { query } );
-				const dispatch = sinon.spy();
-				const apiResponse = { feeds, total: 500 };
+				const apiResponse = fromApi( { feeds, total: 500 } );
 
-				receiveFeeds( { dispatch }, action, apiResponse );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( receiveReadFeedSearchSuccess( action, apiResponse ) ).toMatchObject(
 					receiveFeedSearch(
 						queryKey( action.payload ),
 						[
 							{
-								blog_ID: 'IM A BLOG',
-								feed_URL: 'feedUrl',
-								subscribe_URL: 'feedUrl',
+								blog_ID: 123,
+								feed_URL: 'http://example.com',
+								subscribe_URL: 'http://example.com',
 							},
 						],
 						200
@@ -105,15 +103,58 @@ describe( 'wpcom-api', () => {
 			} );
 		} );
 
-		describe( '#receiveFeedsError', () => {
+		describe( '#receiveReadFeedSearchError', () => {
 			test( 'should dispatch error notice', () => {
 				const action = requestFeedSearch( { query } );
-				const dispatch = sinon.spy();
 
-				receiveError( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledWithMatch( {
+				expect( receiveReadFeedSearchError( action ) ).toMatchObject( {
 					type: NOTICE_CREATE,
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'request a single feed', () => {
+		const feedId = 123;
+
+		describe( '#requestReadFeed', () => {
+			test( 'should dispatch a http request', () => {
+				const action = requestFeed( feedId );
+
+				expect( requestReadFeed( action ) ).toMatchObject(
+					http(
+						{
+							apiVersion: '1.1',
+							method: 'GET',
+							path: `/read/feed/${ feedId }`,
+						},
+						action
+					)
+				);
+			} );
+		} );
+
+		describe( '#receiveReadFeedSuccess', () => {
+			test( 'should dispatch an action with the feed results', () => {
+				const action = requestFeed( feedId );
+				const apiResponse = { feed_ID: 123 };
+
+				expect( receiveReadFeedSuccess( action, apiResponse ) ).toMatchObject( {
+					type: READER_FEED_REQUEST_SUCCESS,
+					payload: { feed_ID: 123 },
+				} );
+			} );
+		} );
+
+		describe( '#receiveReadFeedError', () => {
+			test( 'should dispatch an error action', () => {
+				const action = requestFeed( feedId );
+				const apiResponse = { error: '417' };
+
+				expect( receiveReadFeedError( action, apiResponse ) ).toMatchObject( {
+					type: READER_FEED_REQUEST_FAILURE,
+					payload: { feed_ID: 123 },
+					error: apiResponse,
 				} );
 			} );
 		} );

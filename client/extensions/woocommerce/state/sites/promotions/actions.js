@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -45,4 +47,3 @@ export function deletePromotion( siteId, promotion, successAction, failureAction
 		failureAction,
 	};
 }
-

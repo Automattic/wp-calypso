@@ -39,6 +39,11 @@ function getCommonHandlers( {
 export default function() {
 	SiftScience.recordUser();
 
+	// These redirects are work-around in response to an issue where navigating back after a
+	// successful site address change shows a continuous placeholder state... #23929 for details.
+	page.redirect( '/domains/manage/edit', paths.domainManagementRoot() );
+	page.redirect( '/domains/manage/edit/:site', paths.domainManagementRoot() );
+
 	page( paths.domainManagementEmail(), siteSelection, sites, makeLayout, clientRender );
 
 	registerMultiPage( {
@@ -95,6 +100,22 @@ export default function() {
 		paths.domainManagementEditContactInfo( ':site', ':domain' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementEditContactInfo,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementManageConsent( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementManageConsent,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementDomainConnectMapping( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementDomainConnectMapping,
 		makeLayout,
 		clientRender
 	);

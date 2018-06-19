@@ -26,7 +26,7 @@ import {
 } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
-import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
+import isEligibleForDomainToPaidPlanUpsell from 'state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
 
 class DomainToPlanNudge extends Component {
 	static propTypes = {

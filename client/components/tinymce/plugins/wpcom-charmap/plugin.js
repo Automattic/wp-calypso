@@ -14,7 +14,7 @@ import tinymce from 'tinymce/tinymce';
 import CharMap from './charmap';
 
 function wpcomCharMapPlugin( editor ) {
-	var node;
+	let node;
 
 	editor.on( 'init', function() {
 		node = document.createElement( 'div' );

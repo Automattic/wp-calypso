@@ -9,15 +9,14 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find, noop } from 'lodash';
+import { find, isString, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getGeoCountryShort } from 'state/geo/selectors';
-import QueryGeo from 'components/data/query-geo';
 import LanguagePickerModal from './modal';
 import QueryLanguageNames from 'components/data/query-language-names';
+import { requestGeoLocation } from 'state/data-getters';
 import { getLanguageCodeLabels } from './utils';
 
 export class LanguagePicker extends PureComponent {
@@ -55,10 +54,21 @@ export class LanguagePicker extends PureComponent {
 	}
 
 	findLanguage( valueKey, value ) {
-		return find( this.props.languages, lang => {
+		const { translate } = this.props;
+		//check if the language provided is supported by Calypso
+		const language = find( this.props.languages, lang => {
 			// The value passed is sometimes string instead of number - need to use ==
 			return lang[ valueKey ] == value; // eslint-disable-line eqeqeq
 		} );
+		//if an unsupported language is provided return it without a display name
+		if ( isString( value ) && ! language ) {
+			return {
+				langSlug: value,
+				name: translate( 'Unsupported language' ),
+			};
+		}
+		//else return either the supported language or undefined (loading state)
+		return language;
 	}
 
 	selectLanguage = languageSlug => {
@@ -163,13 +173,12 @@ export class LanguagePicker extends PureComponent {
 					</div>
 				</div>
 				{ this.renderModal( language.langSlug ) }
-				<QueryGeo />
 				<QueryLanguageNames />
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
-	countryCode: getGeoCountryShort( state ),
-} ) )( localize( LanguagePicker ) );
+export default connect( () => ( { countryCode: requestGeoLocation().data } ) )(
+	localize( LanguagePicker )
+);

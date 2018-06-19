@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { isArray } from 'lodash';
@@ -21,7 +20,6 @@ import SiteIcon from 'blocks/site-icon';
 class ActionHeader extends React.Component {
 	static propTypes = {
 		breadcrumbs: PropTypes.node,
-		isLoading: PropTypes.bool,
 		primaryLabel: PropTypes.string,
 		setLayoutFocus: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
@@ -33,16 +31,13 @@ class ActionHeader extends React.Component {
 	};
 
 	renderBreadcrumbs = () => {
-		const { breadcrumbs, isLoading = false } = this.props;
+		const { breadcrumbs } = this.props;
 		let breadcrumbsOutput = breadcrumbs;
 		if ( isArray( breadcrumbs ) ) {
 			breadcrumbsOutput = breadcrumbs.map( ( crumb, i ) => <span key={ i }>{ crumb }</span> );
 		}
-		const breadcrumbClasses = classNames( 'action-header__breadcrumbs', {
-			'is-loading': isLoading,
-		} );
 
-		return <div className={ breadcrumbClasses }>{ breadcrumbsOutput }</div>;
+		return <div className="action-header__breadcrumbs">{ breadcrumbsOutput }</div>;
 	};
 
 	render() {
@@ -58,7 +53,9 @@ class ActionHeader extends React.Component {
 					<Gridicon icon="chevron-left" />
 				</Button>
 				<div className="action-header__content">
-					<SiteIcon site={ site } />
+					<a href={ site.URL } aria-label={ site.title }>
+						<SiteIcon site={ site } />
+					</a>
 					<div className="action-header__details">
 						{ site && <p className="action-header__site-title">{ site.title }</p> }
 						{ this.renderBreadcrumbs() }

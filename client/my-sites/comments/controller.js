@@ -57,12 +57,13 @@ export const siteComments = ( context, next ) => {
 	}
 
 	const status = mapPendingStatusToUnapproved( params.status );
+	const analyticsPath = `/comments/${ status }/:site`;
 
 	const pageNumber = sanitizeInt( query.page ) || 1;
 
 	context.primary = (
 		<CommentsManagement
-			analyticsPath="/comments/:status/:site"
+			analyticsPath={ analyticsPath }
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			siteFragment={ siteFragment }
@@ -82,6 +83,7 @@ export const postComments = ( context, next ) => {
 
 	const status = mapPendingStatusToUnapproved( params.status );
 	const postId = sanitizeInt( params.post );
+	const analyticsPath = `/comments/${ status }/:site/:post`;
 
 	if ( ! postId ) {
 		return page.redirect( `/comments/${ params.status }/${ siteFragment }` );
@@ -91,7 +93,7 @@ export const postComments = ( context, next ) => {
 
 	context.primary = (
 		<CommentsManagement
-			analyticsPath="/comments/:status/:site/:post"
+			analyticsPath={ analyticsPath }
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			postId={ postId }

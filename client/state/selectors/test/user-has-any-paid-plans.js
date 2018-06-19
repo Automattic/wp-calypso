@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { PLAN_BUSINESS, PLAN_FREE } from 'lib/plans/constants';
-import { userHasAnyPaidPlans } from 'state/selectors';
+import userHasAnyPaidPlans from 'state/selectors/user-has-any-paid-plans';
 
 describe( 'userHasAnyPaidPlans()', () => {
 	test( 'should return false if no sites in state', () => {

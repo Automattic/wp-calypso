@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Retrieve a field's schema, handling referenced schema definitions if need be.
  *
@@ -26,11 +28,7 @@ const getFieldSchema = ( fieldSchema, definitions ) => {
  */
 export const coerceValue = ( schema, value, definitions ) => {
 	// If the value is undefined or we don't have a schema type to reference, leave it be.
-	if (
-		undefined === value ||
-		null === value ||
-		! schema
-	) {
+	if ( undefined === value || null === value || ! schema ) {
 		return value;
 	}
 	schema = getFieldSchema( schema, definitions );
@@ -66,14 +64,14 @@ export const coerceValue = ( schema, value, definitions ) => {
 
 		case 'object':
 			const coerced = {};
-			Object.keys( value ).forEach( ( key ) => {
+			Object.keys( value ).forEach( key => {
 				const fieldSchema = ( schema.properties || {} )[ key ];
 				coerced[ key ] = coerceValue( fieldSchema, value[ key ], definitions );
 			} );
 			return coerced;
 
 		case 'array':
-			return value.map( ( arrayItem ) => coerceValue( schema.items, arrayItem, definitions ) );
+			return value.map( arrayItem => coerceValue( schema.items, arrayItem, definitions ) );
 
 		default:
 			return value;
@@ -88,7 +86,11 @@ export const coerceValue = ( schema, value, definitions ) => {
  * @returns {Object} - Coerced values based on schema.
  */
 const coerceFormValues = ( schema, values ) => {
-	return coerceValue( { type: 'object', properties: schema.properties }, values, schema.definitions );
+	return coerceValue(
+		{ type: 'object', properties: schema.properties },
+		values,
+		schema.definitions
+	);
 };
 
 export default coerceFormValues;

@@ -21,8 +21,8 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import StoreAddress from 'woocommerce/components/store-address';
 import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
-import { fetchCurrencies } from 'woocommerce/state/sites/currencies/actions';
-import { getCurrencies } from 'woocommerce/state/sites/currencies/selectors';
+import { fetchCurrencies } from 'woocommerce/state/sites/data/currencies/actions';
+import { getCurrencies } from 'woocommerce/state/sites/data/currencies/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
@@ -131,5 +131,8 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsLocationCurrency )
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( SettingsPaymentsLocationCurrency )
 );

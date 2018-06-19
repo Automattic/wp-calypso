@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -149,6 +148,7 @@ class StatsWidget extends Component {
 				data={ ( orderData && orderData.data ) || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				type="number"
 			/>
 		);
@@ -168,6 +168,7 @@ class StatsWidget extends Component {
 				data={ ( orderData && orderData.data ) || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				type="currency"
 			/>
 		);
@@ -184,6 +185,7 @@ class StatsWidget extends Component {
 				data={ visitorData || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				statType="statsVisits"
 				query={ queries.visitorQuery }
 				attribute="visitors"
@@ -207,6 +209,7 @@ class StatsWidget extends Component {
 				data={ data || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				statType="statsOrders"
 				query={ queries.orderQuery }
 				attribute="conversionRate"
@@ -232,7 +235,7 @@ class StatsWidget extends Component {
 			'day' === unit
 				? translate(
 						'Data is being processed. Switch to the week or month view to see your latest referrers.'
-					)
+				  )
 				: translate( 'No referral activity has been recorded for this time period.' );
 
 		const viewLink = config.isEnabled( 'woocommerce/extension-referrers' )
@@ -391,4 +394,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( StatsWidget ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( StatsWidget ) );

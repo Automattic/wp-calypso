@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-
 import moment from 'moment';
-import { difference, find, get, includes, invoke, pick, values } from 'lodash';
+import { format as urlFormat, parse as urlParse } from 'url';
+import { difference, get, includes, invoke, pick, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,10 +16,7 @@ import {
 	FEATURES_LIST,
 	PLANS_LIST,
 	PLAN_FREE,
-	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL,
-} from 'lib/plans/constants';
-import {
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -27,6 +24,11 @@ import {
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	GROUP_WPCOM,
+	GROUP_JETPACK,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
 } from './constants';
 
 /**
@@ -61,26 +63,6 @@ export function getFeatureByKey( feature ) {
 
 export function getFeatureTitle( feature ) {
 	return invoke( FEATURES_LIST, [ feature, 'getTitle' ] );
-}
-
-export function canUpgradeToPlan( planKey, site ) {
-	// Which "free plan" should we use to test
-	const freePlan =
-		get( site, 'jetpack', false ) && ! get( site, [ 'options', 'is_automated_transfer' ], false )
-			? PLAN_JETPACK_FREE
-			: PLAN_FREE;
-	const plan = get( site, [ 'plan', 'expired' ], false )
-		? freePlan
-		: get( site, [ 'plan', 'product_slug' ], freePlan );
-	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
-}
-
-export function getUpgradePlanSlugFromPath( path, site ) {
-	return find(
-		Object.keys( PLANS_LIST ),
-		planKey =>
-			( planKey === path || getPlanPath( planKey ) === path ) && canUpgradeToPlan( planKey, site )
-	);
 }
 
 export function getPlanPath( plan ) {
@@ -210,19 +192,51 @@ export function planLevelsMatch( planSlugA, planSlugB ) {
 }
 
 export function isBusinessPlan( planSlug ) {
-	return getPlan( planSlug ).type === TYPE_BUSINESS;
+	return planMatches( planSlug, { type: TYPE_BUSINESS } );
 }
 
 export function isPremiumPlan( planSlug ) {
-	return getPlan( planSlug ).type === TYPE_PREMIUM;
+	return planMatches( planSlug, { type: TYPE_PREMIUM } );
 }
 
 export function isPersonalPlan( planSlug ) {
-	return getPlan( planSlug ).type === TYPE_PERSONAL;
+	return planMatches( planSlug, { type: TYPE_PERSONAL } );
 }
 
 export function isFreePlan( planSlug ) {
-	return getPlan( planSlug ).type === TYPE_FREE;
+	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+export function isWpComBusinessPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
+}
+
+export function isWpComPremiumPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
+}
+
+export function isWpComPersonalPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_WPCOM } );
+}
+
+export function isWpComFreePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_WPCOM } );
+}
+
+export function isJetpackBusinessPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
+}
+
+export function isJetpackPremiumPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_JETPACK } );
+}
+
+export function isJetpackPersonalPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_JETPACK } );
+}
+
+export function isJetpackFreePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
 }
 
 /**
@@ -316,34 +330,41 @@ export function calculateMonthlyPriceForPlan( planSlug, termPrice ) {
 }
 
 export function calculateMonthlyPrice( term, termPrice ) {
-	let divisor;
+	const divisor = getBillingMonthsForTerm( term );
+	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
+}
+
+export function getBillingMonthsForPlan( planSlug ) {
+	return getBillingMonthsForTerm( getPlan( planSlug ).term );
+}
+
+export function getBillingMonthsForTerm( term ) {
 	if ( term === TERM_MONTHLY ) {
-		divisor = 1;
+		return 1;
 	} else if ( term === TERM_ANNUALLY ) {
-		divisor = 12;
+		return 12;
 	} else if ( term === TERM_BIENNIALLY ) {
-		divisor = 24;
-	} else {
-		throw new Error( `Unknown term: ${ term }` );
+		return 24;
 	}
 
-	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
+	throw new Error( `Unknown term: ${ term }` );
 }
 
 export const isPlanFeaturesEnabled = () => {
 	return isEnabled( 'manage/plan-features' );
 };
 
-export function plansLink( url, site, intervalType ) {
+export function plansLink( url, siteSlug, intervalType ) {
+	const parsedUrl = urlParse( url );
 	if ( 'monthly' === intervalType ) {
-		url += '/monthly';
+		parsedUrl.pathname += '/monthly';
 	}
 
-	if ( site && site.slug ) {
-		url += '/' + site.slug;
+	if ( siteSlug ) {
+		parsedUrl.pathname += '/' + siteSlug;
 	}
 
-	return url;
+	return urlFormat( parsedUrl );
 }
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
@@ -365,4 +386,27 @@ export function applyTestFiltersToPlansList( planName, abtest ) {
 	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantList;
 
 	return filteredPlanConstantObj;
+}
+
+/**
+ * Return estimated duration of given PLAN_TERM in days
+ *
+ * @param {String} term TERM_ constant
+ * @return {Number} Term duration
+ */
+export function getTermDuration( term ) {
+	switch ( term ) {
+		case TERM_MONTHLY:
+			return PLAN_MONTHLY_PERIOD;
+
+		case TERM_ANNUALLY:
+			return PLAN_ANNUAL_PERIOD;
+
+		case TERM_BIENNIALLY:
+			return PLAN_BIENNIAL_PERIOD;
+	}
+
+	if ( process.env.NODE_ENV === 'development' ) {
+		console.error( `Unexpected argument ${ term }, expected one of TERM_ constants` ); // eslint-disable-line no-console
+	}
 }

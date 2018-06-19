@@ -32,13 +32,11 @@ import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import {
-	getPrimaryDomainBySiteId,
-	getPrimarySiteId,
-	getSiteId,
-	getSites,
-	isDomainOnlySite,
-} from 'state/selectors';
+import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import getSiteId from 'state/selectors/get-site-id';
+import getSites from 'state/selectors/get-sites';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
@@ -312,14 +310,17 @@ export function siteSelection( context, next ) {
 
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
-		return analytics.pageView.record( basePath, sitesPageTitleForAnalytics + ' > No Sites' );
+		return analytics.pageView.record( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
+			base_path: basePath,
+		} );
 	}
 
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
 		return analytics.pageView.record(
-			basePath,
-			`${ sitesPageTitleForAnalytics } > All Sites Hidden`
+			'/no-sites',
+			`${ sitesPageTitleForAnalytics } > All Sites Hidden`,
+			{ base_path: basePath }
 		);
 	}
 

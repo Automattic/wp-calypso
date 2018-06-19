@@ -26,6 +26,7 @@ import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsFirstView from '../stats-first-view';
 import SectionHeader from 'components/section-header';
 import StatsViews from '../stats-views';
@@ -55,6 +56,7 @@ const StatsInsights = props => {
 	return (
 		<Main wideLayout>
 			<DocumentHead title={ translate( 'Stats' ) } />
+			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<StatsFirstView />
 			<SidebarNavigation />
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
@@ -108,4 +110,7 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsInsights );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsInsights );

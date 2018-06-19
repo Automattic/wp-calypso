@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,7 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import AllSites from 'my-sites/all-sites';
+import AllSites from 'blocks/all-sites';
 import AsyncLoad from 'components/async-load';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
@@ -22,11 +21,11 @@ import Gridicon from 'gridicons';
 import SiteNotice from './notice';
 import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSelectedOrAllSites, getVisibleSites } from 'state/selectors';
+import { getSectionName, getSelectedSite } from 'state/ui/selectors';
+import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
+import getVisibleSites from 'state/selectors/get-visible-sites';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
-import { getSectionName } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isRtl from 'state/selectors/is-rtl';
 import { hasAllSitesList } from 'state/sites/selectors';
@@ -68,7 +67,9 @@ class CurrentSite extends Component {
 			cartItems.hasStaleItem( CartStore.get() ) &&
 			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
 		) {
-			this.props.infoNotice(
+			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
+
+      this.props.infoNotice(
 				'siteDeservesBoost' === abtest( 'staleCartNotice' )
 					? this.props.translate( 'Your site deserves a boost!' )
 					: this.props.translate( 'Your cart is awaiting payment.' ),
@@ -137,7 +138,7 @@ class CurrentSite extends Component {
 					<AllSites />
 				) }
 
-				<SiteNotice site={ selectedSite } allSitesPath={ this.props.allSitesPath } />
+				<SiteNotice site={ selectedSite } />
 				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
 			</Card>
 		);

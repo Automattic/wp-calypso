@@ -45,9 +45,7 @@ class PluginRemoveButton extends React.Component {
 
 	processRemovalConfirmation = accepted => {
 		if ( accepted ) {
-			PluginsActions.removePluginsNotices(
-				this.props.notices.completed.concat( this.props.notices.errors )
-			);
+			PluginsActions.removePluginsNotices( 'completed', 'error' );
 			PluginsActions.removePlugin( this.props.site, this.props.plugin );
 
 			if ( this.props.isEmbed ) {
@@ -168,10 +166,10 @@ class PluginRemoveButton extends React.Component {
 			? this.props.translate( 'Removal Disabled', {
 					context:
 						'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" ',
-				} )
+			  } )
 			: this.props.translate( 'Remove', {
 					context: 'Verb. Presented to user as a label for a button.',
-				} );
+			  } );
 		if ( inProgress ) {
 			return (
 				<span className="plugin-action plugin-remove-button__remove">

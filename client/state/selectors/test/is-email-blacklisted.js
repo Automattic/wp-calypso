@@ -7,7 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isEmailBlacklisted } from 'state/selectors';
+import isEmailBlacklisted from 'state/selectors/is-email-blacklisted';
 
 const email = 'foo@bar.baz';
 

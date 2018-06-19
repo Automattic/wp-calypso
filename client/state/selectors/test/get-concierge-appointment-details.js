@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getConciergeAppointmentDetails } from 'state/selectors';
+import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
 
 describe( 'getConciergeAppointmentDetails()', () => {
 	test( 'should be defaulted to null.', () => {

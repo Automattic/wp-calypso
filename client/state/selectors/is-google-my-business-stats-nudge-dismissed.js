@@ -8,8 +8,8 @@ import { last } from 'lodash';
 /**
  * Internal dependencies
  */
+import getGoogleMyBusinessStatsNudgeDismissCount from 'state/selectors/get-google-my-business-stats-nudge-dismiss-count';
 import { getPreference } from 'state/preferences/selectors';
-import { getGoogleMyBusinessStatsNudgeDismissCount } from 'state/selectors';
 
 const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 const MAX_DISMISS = 2;
@@ -25,20 +25,8 @@ const getLastDismissTime = ( state, siteId ) => {
 	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
 	const sitePreference = preference[ siteId ] || [];
 	const lastEvent = last( sitePreference.filter( event => 'dismiss' === event.type ) );
-	return lastEvent ? lastEvent.dismissedAt : 0;
-};
 
-/**
- * Returns the true if the user indicated they have already listed their business, false otherwise
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId The Id of the site
- * @return {Boolean}  if the user indicated they have already listed their business
- */
-const isAlreadyListed = ( state, siteId ) => {
-	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
-	const sitePreference = preference[ siteId ] || [];
-	return sitePreference.some( event => 'already-listed' === event.type );
+	return lastEvent ? lastEvent.dismissedAt : 0;
 };
 
 /**
@@ -54,12 +42,9 @@ const isAlreadyListed = ( state, siteId ) => {
  * @param  {Number}  siteId The Id of the site
  * @return {Boolean} True if the nudge has been dismissed
  */
-const isGoogleMyBusinessStatsNudgeDismissed = ( state, siteId ) => {
-	if ( isAlreadyListed( state, siteId ) ) {
-		return true;
-	}
-
+export default function isGoogleMyBusinessStatsNudgeDismissed( state, siteId ) {
 	const lastDismissTime = getLastDismissTime( state, siteId );
+
 	// Return false if it has never been dismissed
 	if ( lastDismissTime === 0 ) {
 		return false;
@@ -70,6 +55,4 @@ const isGoogleMyBusinessStatsNudgeDismissed = ( state, siteId ) => {
 	}
 
 	return lastDismissTime > Date.now() - 2 * WEEK_IN_MS;
-};
-
-export default isGoogleMyBusinessStatsNudgeDismissed;
+}

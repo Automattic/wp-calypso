@@ -12,7 +12,7 @@ import { size, map, first } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUserDevices } from 'state/selectors';
+import getUserDevices from 'state/selectors/get-user-devices';
 import StreamHeader from './stream-header';
 import FormSelect from 'components/forms/form-select';
 

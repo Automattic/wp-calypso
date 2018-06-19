@@ -6,10 +6,9 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
 import Gridicon from 'gridicons';
 import React from 'react';
+import { shallow } from 'enzyme';
 
 describe( 'Accordion', () => {
 	let Accordion, AccordionStatus;
@@ -22,15 +21,15 @@ describe( 'Accordion', () => {
 	test( 'should render as expected with a title and content', () => {
 		const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
 
-		expect( wrapper ).to.have.className( 'accordion' );
-		expect( wrapper ).to.have.state( 'isExpanded' ).be.false;
-		expect( wrapper ).to.not.have.className( 'has-icon' );
-		expect( wrapper ).to.not.have.className( 'has-subtitle' );
-		expect( wrapper ).to.not.have.descendants( '.accordion__icon' );
-		expect( wrapper.find( '.accordion__title' ) ).to.have.text( 'Section' );
-		expect( wrapper ).to.not.have.descendants( '.accordion__subtitle' );
-		expect( wrapper ).to.not.have.descendants( '.accordion__icon' );
-		expect( wrapper.find( '.accordion__content' ) ).to.have.text( 'Content' );
+		expect( wrapper.hasClass( 'accordion' ) ).toBe( true );
+		expect( wrapper.state( 'isExpanded' ) ).toBe( false );
+		expect( wrapper.hasClass( 'has-icon' ) ).toBe( false );
+		expect( wrapper.hasClass( 'has-subtitle' ) ).toBe( false );
+		expect( wrapper.find( '.accordion__icon' ) ).toHaveLength( 0 );
+		expect( wrapper.find( '.accordion__title' ).text() ).toBe( 'Section' );
+		expect( wrapper.find( '.accordion__subtitle' ) ).toHaveLength( 0 );
+		expect( wrapper.find( '.accordion__icon' ) ).toHaveLength( 0 );
+		expect( wrapper.find( '.accordion__content' ).text() ).toBe( 'Content' );
 	} );
 
 	test( 'should accept an icon prop to be rendered', () => {
@@ -40,8 +39,8 @@ describe( 'Accordion', () => {
 			</Accordion>
 		);
 
-		expect( wrapper ).to.have.className( 'has-icon' );
-		expect( wrapper.find( '.accordion__icon' ) ).to.have.descendants( Gridicon );
+		expect( wrapper.hasClass( 'has-icon' ) ).toBe( true );
+		expect( wrapper.find( '.accordion__icon' ).find( Gridicon ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should accept a subtitle prop to be rendered aside the title', () => {
@@ -51,8 +50,8 @@ describe( 'Accordion', () => {
 			</Accordion>
 		);
 
-		expect( wrapper ).to.have.className( 'has-subtitle' );
-		expect( wrapper.find( '.accordion__subtitle' ) ).to.have.text( 'Subtitle' );
+		expect( wrapper.hasClass( 'has-subtitle' ) ).toBe( true );
+		expect( wrapper.find( '.accordion__subtitle' ).text() ).toBe( 'Subtitle' );
 	} );
 
 	test( 'should accept a status prop to be rendered in the toggle', () => {
@@ -69,13 +68,13 @@ describe( 'Accordion', () => {
 			</Accordion>
 		);
 
-		expect( wrapper ).to.have.className( 'has-status' );
-		expect( wrapper.find( AccordionStatus ).props() ).to.eql( status );
+		expect( wrapper.hasClass( 'has-status' ) ).toBe( true );
+		expect( wrapper.find( AccordionStatus ).props() ).toEqual( status );
 	} );
 
 	describe( 'events', () => {
 		function simulateClick( wrapper ) {
-			wrapper.find( '.accordion__toggle' ).simulate( 'click' );
+			return wrapper.find( '.accordion__toggle' ).simulate( 'click' );
 		}
 
 		test( 'should toggle when clicked', () => {
@@ -83,45 +82,37 @@ describe( 'Accordion', () => {
 
 			simulateClick( wrapper );
 
-			expect( wrapper ).to.have.state( 'isExpanded' ).be.true;
+			expect( wrapper.state( 'isExpanded' ) ).toBe( true );
 		} );
 
-		test( 'should accept an onToggle function handler to be invoked when toggled', done => {
+		test( 'should accept an onToggle function handler to be invoked when toggled', () => {
+			const toggleSpy = jest.fn();
 			const wrapper = shallow(
-				<Accordion title="Section" onToggle={ finishTest }>
+				<Accordion title="Section" onToggle={ toggleSpy }>
 					Content
 				</Accordion>
 			);
 
 			simulateClick( wrapper );
 
-			function finishTest( isExpanded ) {
-				expect( isExpanded ).to.be.true;
-
-				process.nextTick( function() {
-					expect( wrapper ).to.have.state( 'isExpanded' ).be.true;
-					done();
-				} );
-			}
+			expect( toggleSpy ).toHaveBeenCalledTimes( 1 );
+			expect( toggleSpy ).toHaveBeenCalledWith( true );
+			expect( wrapper.state( 'isExpanded' ) ).toBe( true );
 		} );
 
-		test( 'should always use the initialExpanded prop, if specified', done => {
+		test( 'should always use the initialExpanded prop, if specified', () => {
+			const toggleSpy = jest.fn();
 			const wrapper = shallow(
-				<Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>
+				<Accordion initialExpanded={ true } title="Section" onToggle={ toggleSpy }>
 					Content
 				</Accordion>
 			);
 
 			simulateClick( wrapper );
 
-			function finishTest( isExpanded ) {
-				expect( isExpanded ).to.be.false;
-
-				process.nextTick( function() {
-					expect( wrapper ).to.have.state( 'isExpanded' ).be.false;
-					done();
-				} );
-			}
+			expect( toggleSpy ).toHaveBeenCalledTimes( 1 );
+			expect( toggleSpy ).toHaveBeenCalledWith( false );
+			expect( wrapper.state( 'isExpanded' ) ).toBe( false );
 		} );
 	} );
 } );

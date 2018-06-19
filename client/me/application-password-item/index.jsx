@@ -12,44 +12,28 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { deleteApplicationPassword } from 'state/application-passwords/actions';
 import { errorNotice } from 'state/notices/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ApplicationPasswordsItem extends React.Component {
-	state = {
-		removingPassword: false,
-	};
-
 	handleRemovePasswordButtonClick = () => {
+		const { password } = this.props;
+
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Remove Application Password Button' );
-		this.removeApplicationPassword();
+		this.props.deleteApplicationPassword( password.ID );
 	};
-
-	removeApplicationPassword() {
-		this.setState( { removingPassword: true } );
-
-		this.props.appPasswordsData.revoke( parseInt( this.props.password.ID, 10 ), error => {
-			if ( error && 'unknown_application_password' !== error.error ) {
-				this.setState( { removingPassword: false } );
-				this.props.errorNotice(
-					this.props.translate(
-						'The application password was not successfully deleted. Please try again.'
-					)
-				);
-			}
-		} );
-	}
 
 	render() {
-		const password = this.props.password;
+		const { moment, password, translate } = this.props;
 
 		return (
 			<li className="application-password-item__password" key={ password.ID }>
 				<div className="application-password-item__details">
 					<h2 className="application-password-item__name">{ password.name }</h2>
 					<p className="application-password-item__generated">
-						{ this.props.translate( 'Generated on %s', {
-							args: this.props.moment( password.generated ).format( 'lll' ),
+						{ translate( 'Generated on %s', {
+							args: moment( password.generated ).format( 'lll' ),
 						} ) }
 					</p>
 				</div>
@@ -65,7 +49,11 @@ class ApplicationPasswordsItem extends React.Component {
 	}
 }
 
-export default connect( null, {
-	errorNotice,
-	recordGoogleEvent,
-} )( localize( ApplicationPasswordsItem ) );
+export default connect(
+	null,
+	{
+		deleteApplicationPassword,
+		errorNotice,
+		recordGoogleEvent,
+	}
+)( localize( ApplicationPasswordsItem ) );

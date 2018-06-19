@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getPostRevision } from 'state/selectors';
+import getPostRevision from 'state/selectors/get-post-revision';
 import TextDiff from 'components/text-diff';
 import scrollTo from 'lib/scroll-to';
 import { recordTracksEvent } from 'state/analytics/actions';

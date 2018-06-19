@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -25,11 +26,9 @@ import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import analytics from 'lib/analytics';
 import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import hasHappychatLocalizedSupport from 'state/happychat/selectors/has-happychat-localized-support';
 import {
-	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'state/help/ticket/selectors';
@@ -52,33 +51,34 @@ import {
 	initialize as initializeDirectly,
 } from 'state/help/directly/actions';
 import { getSitePlan, isRequestingSites } from 'state/sites/selectors';
-import {
-	hasUserAskedADirectlyQuestion,
-	isDirectlyFailed,
-	isDirectlyReady,
-	isDirectlyUninitialized,
-} from 'state/selectors';
+import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
+import hasUserAskedADirectlyQuestion from 'state/selectors/has-user-asked-a-directly-question';
+import isDirectlyReady from 'state/selectors/is-directly-ready';
+import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
-import { getLanguage, isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QueryLanguageNames from 'components/data/query-language-names';
+import getInlineHelpSupportVariation, {
+	SUPPORT_DIRECTLY,
+	SUPPORT_HAPPYCHAT,
+	SUPPORT_TICKET,
+	SUPPORT_FORUM,
+} from 'state/selectors/get-inline-help-support-variation';
+
+const debug = debugFactory( 'calypso:help-contact' );
 
 /**
  * Module variables
  */
-const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
+const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
-const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
-const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
-const SUPPORT_TICKET = 'SUPPORT_TICKET';
-const SUPPORT_FORUM = 'SUPPORT_FORUM';
-
-const startShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Sun, 17 Dec 2017 00:00:00 +0000' );
-const stopShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Tue, 26 Dec 2017 00:00:00 +0000' );
-const startShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Fri, 29 Dec 2017 00:00:00 +0000' );
-const stopShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Tue, 2 Jan 2018 00:00:00 +0000' );
+const startShowingEaster2018ClosureNoticeAt = i18n.moment( 'Thu, 29 Mar 2018 00:00:00 +0000' );
+const stopShowingEaster2018ClosureNoticeAt = i18n.moment( 'Mon, 2 Apr 2018 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
 	static propTypes = {
@@ -147,7 +147,7 @@ class HelpContact extends React.Component {
 	prepareDirectlyWidget = () => {
 		if (
 			this.hasDataToDetermineVariation() &&
-			this.getSupportVariation() === SUPPORT_DIRECTLY &&
+			this.props.supportVariation === SUPPORT_DIRECTLY &&
 			this.props.isDirectlyUninitialized
 		) {
 			this.props.initializeDirectly();
@@ -276,24 +276,6 @@ class HelpContact extends React.Component {
 		return isEn && ! this.props.isDirectlyFailed;
 	};
 
-	getSupportVariation = () => {
-		const { ticketSupportEligible } = this.props;
-
-		if ( this.shouldUseHappychat() ) {
-			return SUPPORT_HAPPYCHAT;
-		}
-
-		if ( ticketSupportEligible ) {
-			return SUPPORT_TICKET;
-		}
-
-		if ( this.shouldUseDirectly() ) {
-			return SUPPORT_DIRECTLY;
-		}
-
-		return SUPPORT_FORUM;
-	};
-
 	recordCompactSubmit = variation => {
 		if ( this.props.compact ) {
 			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
@@ -304,13 +286,13 @@ class HelpContact extends React.Component {
 
 	getContactFormPropsVariation = variationSlug => {
 		const { isSubmitting } = this.state;
-		const { currentUserLocale, hasMoreThanOneSite, translate } = this.props;
+		const { currentUserLocale, hasMoreThanOneSite, translate, localizedLanguageNames } = this.props;
+		let buttonLabel = translate( 'Chat with us' );
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
 				// TEMPORARY: to collect data about the customer preferences, context 1050-happychat-gh
 				// for non english customers check if we have full support in their language
-				let buttonLabel = translate( 'Chat with us' );
 				let additionalSupportOption = { enabled: false };
 
 				if ( ! isDefaultLocale( currentUserLocale ) && ! this.props.hasHappychatLocalizedSupport ) {
@@ -323,10 +305,14 @@ class HelpContact extends React.Component {
 						this.setState( { wasAdditionalSupportOptionShown: true } );
 					}
 
-					// override chat buttons
-					buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
-						args: { defaultLanguage },
-					} );
+					if ( localizedLanguageNames && localizedLanguageNames[ defaultLanguageSlug ] ) {
+						// override chat buttons
+						buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
+							args: {
+								defaultLanguage: localizedLanguageNames[ defaultLanguageSlug ].localized,
+							},
+						} );
+					}
 
 					// add additional support option
 					additionalSupportOption = {
@@ -422,14 +408,14 @@ class HelpContact extends React.Component {
 		//    requests are sent to the language specific forums (for popular languages)
 		//    we don't tell the user that support is only offered in English.
 		const showHelpLanguagePrompt =
-			config( 'support_locales' ).indexOf( currentUserLocale ) === -1 &&
+			config( 'livechat_support_locales' ).indexOf( currentUserLocale ) === -1 &&
 			SUPPORT_FORUM !== variationSlug;
 
 		return {
 			compact: this.props.compact,
 			selectedSite: this.props.selectedSite,
 			disabled: isSubmitting,
-			showHelpLanguagePrompt: showHelpLanguagePrompt,
+			showHelpLanguagePrompt,
 			valueLink: {
 				value: savedContactForm,
 				requestChange: contactForm => ( savedContactForm = contactForm ),
@@ -459,8 +445,8 @@ class HelpContact extends React.Component {
 	};
 
 	shouldShowPreloadForm = () => {
-		const waitingOnDirectly =
-			this.getSupportVariation() === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
+		const { supportVariation } = this.props;
+		const waitingOnDirectly = supportVariation === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
 
 		return (
 			this.props.isRequestingSites || ! this.hasDataToDetermineVariation() || waitingOnDirectly
@@ -486,7 +472,9 @@ class HelpContact extends React.Component {
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
-		const { translate, selectedSitePlanSlug } = this.props;
+		const { compact, selectedSitePlanSlug, supportVariation, translate } = this.props;
+
+		debug( { supportVariation } );
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -506,8 +494,6 @@ class HelpContact extends React.Component {
 				</div>
 			);
 		}
-
-		const supportVariation = this.getSupportVariation();
 
 		if ( supportVariation === SUPPORT_DIRECTLY && this.props.hasAskedADirectlyQuestion ) {
 			// We're taking the Directly confirmation outside the standard `confirmation` state object
@@ -538,25 +524,22 @@ class HelpContact extends React.Component {
 
 		const currentDate = i18n.moment();
 
-		// Customers sent to Directly and Forum are not affected by the Christmas closures
-		const isUserAffectedByChristmas2017Closure =
+		// Customers sent to Directly and Forum are not affected by live chat closures
+		const isUserAffectedByLiveChatClosure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
-		const isClosureNoticeInEffect =
-			currentDate.isBetween(
-				startShowingChristmas2017ClosureNoticeAt,
-				stopShowingChristmas2017ClosureNoticeAt
-			) ||
-			currentDate.isBetween(
-				startShowingNewYear2018ClosureNoticeAt,
-				stopShowingNewYear2018ClosureNoticeAt
-			);
+		const isClosureNoticeInEffect = currentDate.isBetween(
+			startShowingEaster2018ClosureNoticeAt,
+			stopShowingEaster2018ClosureNoticeAt
+		);
 
-		const shouldShowClosureNotice = isUserAffectedByChristmas2017Closure && isClosureNoticeInEffect;
+		const shouldShowClosureNotice = isUserAffectedByLiveChatClosure && isClosureNoticeInEffect;
 
 		return (
 			<div>
-				{ shouldShowClosureNotice && <HelpContactClosed sitePlanSlug={ selectedSitePlanSlug } /> }
+				{ shouldShowClosureNotice && (
+					<HelpContactClosed compact={ compact } sitePlanSlug={ selectedSitePlanSlug } />
+				) }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice
 						status="is-warning"
@@ -575,6 +558,7 @@ class HelpContact extends React.Component {
 	render() {
 		const content = (
 			<Fragment>
+				<PageViewTracker path="/help/contact" title="Help > Contact" />
 				{ ! this.props.compact && (
 					<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
 						{ this.props.translate( 'Contact Us' ) }
@@ -585,6 +569,7 @@ class HelpContact extends React.Component {
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
+				<QueryLanguageNames />
 			</Fragment>
 		);
 		if ( this.props.compact ) {
@@ -604,19 +589,18 @@ export default connect(
 			getUserInfo: getHappychatUserInfo( state ),
 			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
-			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isHappychatAvailable: isHappychatAvailable( state ),
 			isHappychatUserEligible: isHappychatUserEligible( state ),
+			localizedLanguageNames: getLocalizedLanguageNames( state ),
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
-			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
 			isRequestingSites: isRequestingSites( state ),
 			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,
+			supportVariation: getInlineHelpSupportVariation( state ),
 		};
 	},
 	{

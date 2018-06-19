@@ -7,14 +7,14 @@
 	0%,
 	20% {
 		transform: scale( 0, 0 );
-	},
+	}
 	100% {
 		transform: scale( 1, 1 );
 	}
 }
 
 .animate__fade-in {
-	animation: fade-in-scale 0.5s ease-out;
+	animation: fade-in 0.5s ease-out;
 	animation-fill-mode: forwards;
 }
 

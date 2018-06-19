@@ -7,77 +7,39 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, isNumber } from 'lodash';
+import { isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import DomainSuggestion from 'components/domains/domain-suggestion';
-import Gridicon from 'gridicons';
-import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
+import {
+	parseMatchReasons,
+	VALID_MATCH_REASONS,
+} from 'components/domains/domain-registration-suggestion/utility';
+import ProgressBar from 'components/progress-bar';
 
-const newTLDs = [
-	'.art',
-	'.bar',
-	'.beer',
-	'.buzz',
-	'.cab',
-	'.casa',
-	'.click',
-	'.coffee',
-	'.cooking',
-	'.design',
-	'.fashion',
-	'.fishing',
-	'.fit',
-	'.garden',
-	'.gift',
-	'.golf',
-	'.group',
-	'.help',
-	'.horse',
-	'.hospital',
-	'.ink',
-	'.jetzt',
-	'.link',
-	'.lol',
-	'.miami',
-	'.mom',
-	'.money',
-	'.movie',
-	'.network',
-	'.photo',
-	'.pics',
-	'.rest',
-	'.rodeo',
-	'.sexy',
-	'.style',
-	'.surf',
-	'.tattoo',
-	'.vip',
-	'.vodka',
-	'.wedding',
-	'.wiki',
-	'.work',
-	'.wtf',
-	'.yoga',
-];
+const NOTICE_GREEN = '#4ab866';
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
 		isSignupStep: PropTypes.bool,
+		isFeatured: PropTypes.bool,
 		cart: PropTypes.object,
 		suggestion: PropTypes.shape( {
 			domain_name: PropTypes.string.isRequired,
 			product_slug: PropTypes.string,
 			cost: PropTypes.string,
+			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 		} ).isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -119,7 +81,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		this.props.onButtonClick( this.props.suggestion );
 	};
 
-	render() {
+	getButtonProps() {
 		const {
 			cart,
 			domainsWithPlansOnly,
@@ -128,92 +90,130 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion,
 			translate,
 		} = this.props;
-		const domain = suggestion.domain_name;
+		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
-		const domainFlags = [];
 
-		let buttonClasses, buttonContent;
-
-		if ( domain ) {
-			const testTLDs = [ '.de' ];
-
-			// Grab everything from the first dot, so 'example.co.uk' will
-			// match '.co.uk' but not '.uk'
-			// This won't work if we add subdomains.
-			const tld = domain.substring( domain.indexOf( '.' ) );
-
-			if ( includes( newTLDs, tld ) ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-new` }
-						content={ translate( 'New' ) }
-						status="success"
-					/>
-				);
-			}
-
-			if ( includes( testTLDs, tld ) ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-testing` }
-						content={ 'Testing only' }
-						status="warning"
-					/>
-				);
-			}
-		}
-
-		if ( suggestion.isRecommended ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-recommended` }
-					content={ translate( 'Recommended' ) }
-					status="success"
-				/>
-			);
-		}
-
-		if ( suggestion.isBestAlternative ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-best-alternative` }
-					content={ translate( 'Best Alternative' ) }
-				/>
-			);
-		}
+		let buttonContent;
 
 		if ( isAdded ) {
-			buttonClasses = 'added';
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
-			buttonClasses = 'add is-primary';
 			buttonContent =
 				! isSignupStep &&
 				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
 					? translate( 'Upgrade', {
 							context: 'Domain mapping suggestion button with plan upgrade',
-						} )
+					  } )
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
+		return {
+			buttonContent,
+		};
+	}
+
+	getPriceRule() {
+		const { cart, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
+		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion );
+	}
+
+	renderDomain() {
+		const {
+			suggestion: { domain_name: domain },
+		} = this.props;
+		return <h3 className="domain-registration-suggestion__title">{ domain }</h3>;
+	}
+
+	renderProgressBar() {
+		const {
+			suggestion: { isRecommended, isBestAlternative, relevance: matchScore },
+			translate,
+			isFeatured,
+		} = this.props;
+
+		if ( ! isFeatured ) {
+			return null;
+		}
+
+		let title, progressBarProps;
+		if ( isRecommended ) {
+			title = translate( 'Best Match' );
+			progressBarProps = {
+				color: NOTICE_GREEN,
+				title,
+				value: matchScore * 100 || 90,
+			};
+		}
+
+		if ( isBestAlternative ) {
+			title = translate( 'Best Alternative' );
+			progressBarProps = {
+				title,
+				value: matchScore * 100 || 80,
+			};
+		}
+
+		if ( title ) {
+			return (
+				<div className="domain-registration-suggestion__progress-bar">
+					<ProgressBar { ...progressBarProps } />
+					<span className="domain-registration-suggestion__progress-bar-text">{ title }</span>
+				</div>
+			);
+		}
+	}
+
+	renderMatchReason() {
+		const {
+			suggestion: { domain_name: domain },
+			isFeatured,
+		} = this.props;
+
+		if ( ! isFeatured || ! Array.isArray( this.props.suggestion.match_reasons ) ) {
+			return null;
+		}
+
+		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
+
+		return (
+			<div className="domain-registration-suggestion__match-reasons">
+				{ matchReasons.map( ( phrase, index ) => (
+					<div className="domain-registration-suggestion__match-reason" key={ index }>
+						<Gridicon icon="checkmark" size={ 18 } />
+						{ phrase }
+					</div>
+				) ) }
+			</div>
+		);
+	}
+
+	render() {
+		const {
+			domainsWithPlansOnly,
+			isFeatured,
+			suggestion: { domain_name: domain, product_slug: productSlug, cost },
+		} = this.props;
+
+		const extraClasses = classNames( { 'featured-domain-suggestion': isFeatured } );
 
 		return (
 			<DomainSuggestion
-				priceRule={ getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion ) }
-				price={ suggestion.product_slug && suggestion.cost }
+				extraClasses={ extraClasses }
+				priceRule={ this.getPriceRule() }
+				price={ productSlug && cost }
 				domain={ domain }
-				buttonClasses={ buttonClasses }
-				buttonContent={ buttonContent }
-				cart={ cart }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
+				{ ...this.getButtonProps() }
 			>
-				<h3>
-					{ domain }
-					{ domainFlags }
-				</h3>
+				{ this.renderDomain() }
+				{ this.renderProgressBar() }
+				{ this.renderMatchReason() }
 			</DomainSuggestion>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( DomainRegistrationSuggestion ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( DomainRegistrationSuggestion ) );

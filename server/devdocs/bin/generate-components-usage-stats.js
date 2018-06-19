@@ -5,8 +5,7 @@
  * It accepts a newline-delimited list of .js and|or .jsx files
  * as its input, and writes the index to server/devdocs/components-usage-stats.json
  */
-var async = require( 'async' ),
-	camelCase = require( 'lodash' ).camelCase,
+var _ = require( 'lodash' ),
 	config = require( 'config' ),
 	fs = require( 'fs' ),
 	fspath = require( 'path' ),
@@ -21,6 +20,8 @@ var async = require( 'async' ),
 		EXPORT_RE: /(\bexport\s+(?:[^'"]+\s+from\s+)??)(['"])([^'"]+)(\2)/g,
 		REQUIRE_RE: /(\brequire\s*?\(\s*?)(['"])([^'"]+)(\2\s*?\))/g
 	};
+const promisify = require( 'util' ).promisify;
+const readFileAsync = promisify( fs.readFile );
 
 function main() {
 	const outFilePath = 'server/devdocs/components-usage-stats.json';
@@ -61,39 +62,14 @@ function main() {
  */
 
 function getModulesWithDependencies( root, fileList ) {
-	return new Promise( function( resolve, reject ) {
-		var modulesWithDeps = {};
+	const filePromises = fileList.map( async fileWithPath => {
+		const fileSource = await readFileAsync( fspath.join( root, fileWithPath), 'utf8')
+		const deps = getDependencies( fileSource );
 
-		async.each(
-			fileList,
-			function( fileWithPath, next ) {
-				fs.readFile(
-					fspath.join( root, fileWithPath ),
-					{ encoding: 'utf8' },
-					function( err, data ) {
-						var deps;
-
-						if ( err ) {
-							return next( err );
-						}
-						// get the dependencies
-						deps = getDependencies( data );
-						if ( deps.length ) {
-							modulesWithDeps[ fileWithPath ] = deps;
-						}
-						next( null );
-					}
-				);
-			},
-			function( err ) {
-				if ( err ) {
-					return reject( err );
-				}
-
-				return resolve( modulesWithDeps );
-			}
-		);
+		return [ fileWithPath, deps ];
 	} );
+
+	return Promise.all( filePromises ).then( _.fromPairs );
 }
 
 /**
@@ -145,7 +121,7 @@ function getDependencies( code ) {
 function generateUsageStats( modules ) {
 	function getCamelCasedDepName( dep ) {
 		return dep.split( '/' ).map( function( part ) {
-			return camelCase( part );
+			return _.camelCase( part );
 		} ).join( '/' );
 	}
 	return Object.keys( modules ).reduce( function( target, moduleName ) {

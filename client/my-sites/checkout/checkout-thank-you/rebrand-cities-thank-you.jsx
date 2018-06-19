@@ -15,7 +15,7 @@ import ThankYouCard from 'components/thank-you-card';
 
 class RebrandCitiesThankYou extends Component {
 	renderLogo() {
-		return <img src="/calypso/images/rebrand-cities/wp-rebrand-cities-logo.svg" />;
+		return <img alt="" src="/calypso/images/rebrand-cities/wp-rebrand-cities-logo.svg" />;
 	}
 
 	render() {

@@ -2,8 +2,9 @@
 /**
  * External dependencies
  */
-import { find, isString } from 'lodash';
+import { find, isString, map } from 'lodash';
 import { parse } from 'url';
+import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -51,27 +52,30 @@ export function isLocaleVariant( locale ) {
 
 /**
  * Checks against a list of locales that don't have any GP translation sets
- *
+ * A 'translation set' refers to a collection of strings to be translated see:
+ * https://glotpress.blog/the-manual/translation-sets/
  * @param {string} locale - locale slug (eg: 'fr')
- * @return {boolean} true when the locale is a member of the exception list
+ * @return {boolean} true when the locale is NOT a member of the exception list
  */
-export function hasTranslationSet( locale ) {
-	if ( ! isString( locale ) ) {
-		return false;
-	}
+export function canBeTranslated( locale ) {
 	return [ 'en', 'sr_latin' ].indexOf( locale ) === -1;
 }
 
 /**
- * Matches and returns language from config.languages based on the given localeSlug and localeVariant
- * @param  {String} localeSlug locale slug of the language to match
- * @param  {String?} localeVariant local variant of the language to match. It takes precedence if exists.
+ * Return a list of all supported language slugs
+ *
+ * @return {Array} A list of all supported language slugs
+ */
+export function getLanguageSlugs() {
+	return map( config( 'languages' ), 'langSlug' );
+}
+
+/**
+ * Matches and returns language from config.languages based on the given localeSlug
+ * @param  {String} langSlug locale slug of the language to match
  * @return {Object|undefined} An object containing the locale data or undefined.
  */
-export function getLanguage( localeSlug, localeVariant = null ) {
-	// if a localeVariant is given, we should use it. Otherwise, use localeSlug
-	const langSlug = localeVariant || localeSlug;
-
+export function getLanguage( langSlug ) {
 	if ( localeRegex.test( langSlug ) ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
 		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.
@@ -137,4 +141,36 @@ export function removeLocaleFromPath( path ) {
 	}
 
 	return parts.join( '/' ) + queryString;
+}
+
+/**
+ * Returns the slug for the WordPress.com support site for the current user, if
+ * any.
+ *
+ * Uses a (short) list of relatively well-updated *.support.wordpress.com
+ * support sites defined in config/_shared.json.
+ *
+ * @returns {string} A slug which is a valid subdomain of *.support.wordpress.com.
+ */
+export function getSupportSiteLocale() {
+	const localeSlug = getLocaleSlug();
+	if ( config( 'support_site_locales' ).indexOf( localeSlug ) > -1 ) {
+		return localeSlug;
+	}
+	return 'en';
+}
+
+/**
+ * Returns the base url for the forums, for example //{locale}.forums.wordpress.com
+ *
+ * Checks for a valid bb forum against a list `forum_locales` defined in config/_shared.json.
+ *
+ * @returns {string} //{locale}.forums.wordpress.com
+ */
+export function getForumUrl() {
+	const localeSlug = getLocaleSlug();
+	if ( config( 'forum_locales' ).indexOf( localeSlug ) > -1 ) {
+		return `//${ localeSlug }.forums.wordpress.com`;
+	}
+	return `//en.forums.wordpress.com`;
 }

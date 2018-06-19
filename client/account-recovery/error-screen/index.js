@@ -40,7 +40,7 @@ const AccountRecoveryErrorScreen = props => {
 
 	return (
 		<EmptyContent
-			illustration="/calypso/images/illustrations/illustration-500.svg"
+			illustration="/calypso/images/illustrations/error.svg"
 			title={ title }
 			line={ line }
 			action={ action }

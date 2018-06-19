@@ -16,7 +16,8 @@ import Card from 'components/card';
 import SiteSelector from 'components/site-selector';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { getSites, isDomainOnlySite } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import { domainManagementList, domainManagementTransfer } from 'my-sites/domains/paths';
@@ -27,17 +28,18 @@ import SectionHeader from 'components/section-header';
 import TransferConfirmationDialog from './confirmation-dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import wp from 'lib/wp';
-import { PLAN_FREE } from 'lib/plans/constants';
+import { isWpComFreePlan } from 'lib/plans';
 import { requestSites } from 'state/sites/actions';
 
 const wpcom = wp.undocumented();
 
-class TransferToOtherSite extends React.Component {
+export class TransferToOtherSite extends React.Component {
 	static propTypes = {
-		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.object.isRequired,
 		currentUser: PropTypes.object.isRequired,
 		isDomainOnly: PropTypes.bool.isRequired,
+		isRequestingSiteDomains: PropTypes.bool.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.object.isRequired,
 	};
 
 	state = {
@@ -47,15 +49,20 @@ class TransferToOtherSite extends React.Component {
 	};
 
 	isDataReady() {
-		return this.props.domains.hasLoadedFromServer;
+		return ! this.props.isRequestingSiteDomains;
 	}
 
 	isSiteEligible = site => {
+		// check if it's an Atomic site from the site options
+		const isAtomic = get( site, 'options.is_automated_transfer', false );
+
 		return (
 			site.capabilities.manage_options &&
-			! site.jetpack &&
+			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
 			! get( site, 'options.is_domain_only', false ) &&
-			! ( this.props.domainsWithPlansOnly && get( site, 'plan.product_slug' ) === PLAN_FREE ) &&
+			! (
+				this.props.domainsWithPlansOnly && isWpComFreePlan( get( site, 'plan.product_slug' ) )
+			) &&
 			site.ID !== this.props.selectedSite.ID
 		);
 	};

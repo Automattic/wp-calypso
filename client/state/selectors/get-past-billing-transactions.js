@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getBillingTransactions } from 'state/selectors';
+import getBillingTransactions from 'state/selectors/get-billing-transactions';
 
 /**
  * Returns all past billing transactions.

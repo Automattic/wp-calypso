@@ -1,10 +1,12 @@
 # Calypso
 
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovateapp.com/)
+
 Calypso is the new WordPress.com front-end – a beautiful redesign of the WordPress dashboard using a single-page web application, powered by the WordPress.com REST API. Calypso is built for reading, writing, and managing all of your WordPress sites in one place.
 
 ![beautiful screenshot](https://cldup.com/Q74QJCh0Yl.png)
 
-It’s built with JavaScript – a very light [node](https://nodejs.org) plus [express](http://expressjs.com) server, [React.js](https://facebook.github.io/react/), [Redux](http://redux.js.org/), [wpcom.js](http://wpcomjs.com), and many other wonderful libraries on the front-end.
+It’s built with JavaScript – a very light [node](https://nodejs.org/) plus [express](https://expressjs.com/) server, [React.js](https://reactjs.org/), [Redux](https://redux.js.org/), [wpcom.js](https://wpcomjs.com/), and many other wonderful libraries on the front-end.
 
 You can read more about Calypso at [developer.wordpress.com/calypso](https://developer.wordpress.com/calypso/).
 
@@ -18,7 +20,7 @@ You can try out the user-side of Calypso on [WordPress.com](https://wordpress.co
 4.	Execute `npm start` from the root directory of the repository.
 5.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
 
-Need more detailed installation instructions? [We have them](docs/install.md).
+Need more detailed installation instructions? [We have them](./docs/install.md).
 
 ## Contributing
 
@@ -28,15 +30,15 @@ Calypso welcomes – and indeed has been built by – contributors from all walk
 
 You can contribute in many ways. You can help reporting, testing, and detailing bugs, and also test new features we release in our "beta" program for testing on [Horizon](https://horizonfeedback.wordpress.com/).
 
-To clarify these expectations, Calypso has adopted the code of conduct defined by the Contributor Covenant. It can be read in full [here](CODE-OF-CONDUCT.md).
+To clarify these expectations, Calypso has adopted the code of conduct defined by the Contributor Covenant. It can be read in full [here](./CODE-OF-CONDUCT.md).
 
 ## Security
 
-Need to report a security vulnerability? Go to [https://automattic.com/security/](https://automattic.com/security/) or directly to our security bug bounty site [https://hackerone.com/automattic](https://hackerone.com/automattic).
+Need to report a security vulnerability? Go to [https://automattic.com/security/](https://automattic.com/security/) or directly to our security bug bounty site [https://hackerone.com/automattic](https://hackerone.com/automattic/).
 
 ## Browser Support
 
-We support the latest two versions of all major browsers, except  IE, where we currently only support 11 and Edge.  (see [Browse Happy](http://browsehappy.com) for current latest versions).
+We support the latest two versions of all major browsers, except  IE, where we currently only support 11 and Edge.  (see [Browse Happy](https://browsehappy.com/) for current latest versions).
 
 ## Troubleshooting
 

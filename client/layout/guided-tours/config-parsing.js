@@ -16,7 +16,10 @@ import { chunk, fromPairs, flatMap, flow, property, zipObject } from 'lodash';
  *
  *   { a: 'b', c: 'd', e: 'f' }
  */
-const fromPairsSequence = flow( xs => chunk( xs, 2 ), fromPairs );
+const fromPairsSequence = flow(
+	xs => chunk( xs, 2 ),
+	fromPairs
+);
 
 /*
  * Transforms a tree of elements (Step or deeper) into a sequence with the

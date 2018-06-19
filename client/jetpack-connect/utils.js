@@ -3,9 +3,15 @@
  * External dependencies
  */
 import config from 'config';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import PropTypes from 'prop-types';
-import { addQueryArgs } from 'lib/route';
+import { authorizeQueryDataSchema } from './schema';
 import { head, includes, isEmpty, split } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { addQueryArgs, untrailingslashit } from 'lib/route';
 
 export function authQueryTransformer( queryObject ) {
 	return {
@@ -22,16 +28,10 @@ export function authQueryTransformer( queryObject ) {
 		// Optional
 		// TODO: verify
 		authApproved: !! queryObject.auth_approved,
-
-		// TODO: disabled to mitigate https://github.com/Automattic/jetpack/issues/8783
-		// remove when fixed
-		// alreadyAuthorized: !! queryObject.already_authorized,
-		alreadyAuthorized: false,
-
+		alreadyAuthorized: !! queryObject.already_authorized,
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
-		partnerId: parseInt( queryObject.partner_id, 10 ) || null,
 		redirectAfterAuth: queryObject.redirect_after_auth || null,
 		siteIcon: queryObject.site_icon || null,
 		siteUrl: queryObject.site_url || null,
@@ -48,7 +48,6 @@ export const authQueryPropTypes = PropTypes.shape( {
 	homeUrl: PropTypes.string.isRequired,
 	jpVersion: PropTypes.string,
 	nonce: PropTypes.string.isRequired,
-	partnerId: PropTypes.number,
 	redirectAfterAuth: PropTypes.string,
 	redirectUri: PropTypes.string.isRequired,
 	scope: PropTypes.string.isRequired,
@@ -62,6 +61,21 @@ export const authQueryPropTypes = PropTypes.shape( {
 
 export function addCalypsoEnvQueryArg( url ) {
 	return addQueryArgs( { calypso_env: config( 'env_id' ) }, url );
+}
+
+/**
+ * Sanitize a user-supplied URL so we can use it for network requests.
+ *
+ * @param {string} inputUrl User-supplied URL
+ * @return {string} Sanitized URL
+ */
+export function cleanUrl( inputUrl ) {
+	let url = inputUrl.trim().toLowerCase();
+	if ( url && url.substr( 0, 4 ) !== 'http' ) {
+		url = 'http://' + url;
+	}
+	url = url.replace( /wp-admin\/?$/, '' );
+	return untrailingslashit( url );
 }
 
 /**
@@ -80,6 +94,28 @@ export function getRoleFromScope( scope ) {
 	const role = head( split( scope, ':', 1 ) );
 	if ( ! isEmpty( role ) ) {
 		return role;
+	}
+	return null;
+}
+
+/**
+ * Parse an authorization query
+ *
+ * @property {Function} parser Lazy-instatiated parser
+ * @param  {Object}     query  Authorization query
+ * @return {?Object}           Query after transformation. Null if invalid or errored during transform.
+ */
+export function parseAuthorizationQuery( query ) {
+	if ( ! parseAuthorizationQuery.parser ) {
+		parseAuthorizationQuery.parser = makeJsonSchemaParser(
+			authorizeQueryDataSchema,
+			authQueryTransformer
+		);
+	}
+	try {
+		return parseAuthorizationQuery.parser( query );
+	} catch ( error ) {
+		// The parser is expected to throw SchemaError or TransformerError on bad input.
 	}
 	return null;
 }

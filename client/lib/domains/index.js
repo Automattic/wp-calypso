@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import inherits from 'inherits';
 import { includes, find, get, replace, some } from 'lodash';
 
@@ -14,9 +13,10 @@ import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
+import formatCurrency from 'lib/format-currency';
 
-const GOOGLE_APPS_INVALID_TLDS = [ 'in' ],
-	GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
+const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
+const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
 
 function ValidationError( code ) {
 	this.code = code;
@@ -32,6 +32,22 @@ function canAddGoogleApps( domainName ) {
 		} );
 
 	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
+}
+
+function checkAuthCode( domainName, authCode, onComplete ) {
+	if ( ! domainName || ! authCode ) {
+		onComplete( null, { success: false } );
+		return;
+	}
+
+	wpcom.undocumented().checkAuthCode( domainName, authCode, function( serverError, result ) {
+		if ( serverError ) {
+			onComplete( serverError.error );
+			return;
+		}
+
+		onComplete( null, result );
+	} );
 }
 
 function checkDomainAvailability( params, onComplete ) {
@@ -83,20 +99,22 @@ function restartInboundTransfer( siteId, domainName, onComplete ) {
 	} );
 }
 
-function startInboundTransfer( siteId, domainName, onComplete ) {
+function startInboundTransfer( siteId, domainName, authCode, onComplete ) {
 	if ( ! domainName || ! siteId ) {
 		onComplete( null );
 		return;
 	}
 
-	wpcom.undocumented().startInboundTransfer( siteId, domainName, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
+	wpcom
+		.undocumented()
+		.startInboundTransfer( siteId, domainName, authCode, function( serverError, result ) {
+			if ( serverError ) {
+				onComplete( serverError.error );
+				return;
+			}
 
-		onComplete( null, result );
-	} );
+			onComplete( null, result );
+		} );
 }
 
 function resendInboundTransferEmail( domainName, onComplete ) {
@@ -158,11 +176,6 @@ function isSubdomain( domainName ) {
 	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
 }
 
-function isInitialized( state, siteId ) {
-	const siteState = state[ siteId ];
-	return siteState && ( siteState.hasLoadedFromServer || siteState.isFetching );
-}
-
 function hasGoogleApps( domain ) {
 	return 'no_subscription' !== get( domain, 'googleAppsSubscription.status', '' );
 }
@@ -189,7 +202,7 @@ function hasPendingGoogleAppsUsers( domain ) {
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
-	return find( domains.list, domain => {
+	return find( domains, domain => {
 		if ( domain.name !== selectedDomainName ) {
 			return false;
 		}
@@ -260,11 +273,27 @@ function getDomainProductSlug( domain ) {
 	return `dot${ tldSlug }_domain`;
 }
 
+function getDomainPrice( slug, productsList, currencyCode ) {
+	let price = get( productsList, [ slug, 'cost' ], null );
+	if ( price ) {
+		price += get( productsList, [ 'domain_map', 'cost' ], 0 );
+		price = formatCurrency( price, currencyCode );
+	}
+
+	return price;
+}
+
+function getAvailableTlds( query = {} ) {
+	return wpcom.undocumented().getAvailableTlds( query );
+}
+
 export {
 	canAddGoogleApps,
 	canRedirect,
+	checkAuthCode,
 	checkDomainAvailability,
 	checkInboundTransferStatus,
+	getDomainPrice,
 	getDomainProductSlug,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
@@ -278,11 +307,11 @@ export {
 	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
 	hasPendingGoogleAppsUsers,
-	isInitialized,
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,
 	resendInboundTransferEmail,
 	restartInboundTransfer,
 	startInboundTransfer,
+	getAvailableTlds,
 };

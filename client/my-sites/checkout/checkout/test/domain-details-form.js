@@ -24,6 +24,7 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
+	translate: x => x,
 } ) );
 jest.mock( 'lib/wp', () => {
 	const wpcomMock = {
@@ -37,6 +38,9 @@ jest.mock( 'lib/wp', () => {
 
 	return wpcomMock;
 } );
+
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'Domain Details Form', () => {
 	const defaultProps = {

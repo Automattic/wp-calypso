@@ -195,7 +195,7 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_process: function() {
-		var currentSteps = this._flow.steps,
+		let currentSteps = this._flow.steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
 				step => -1 !== currentSteps.indexOf( step.stepName )

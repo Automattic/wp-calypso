@@ -23,6 +23,7 @@ import Security2faDisable from 'me/security-2fa-disable';
 import Security2faSetup from 'me/security-2fa-setup';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const debug = debugFactory( 'calypso:me:two-step' );
 
@@ -136,7 +137,7 @@ class TwoStep extends Component {
 			return null;
 		}
 
-		return <AppPasswords appPasswordsData={ this.props.appPasswordsData } />;
+		return <AppPasswords />;
 	};
 
 	renderBackupCodes = () => {
@@ -150,6 +151,7 @@ class TwoStep extends Component {
 	render() {
 		return (
 			<Main className="two-step">
+				<PageViewTracker path="/me/security/two-step" title="Me > Two-Step Authentication" />
 				<MeSidebarNavigation />
 
 				<SecuritySectionNav path={ this.props.path } />

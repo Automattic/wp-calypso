@@ -16,14 +16,18 @@ import CompactCard from 'components/card/compact';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import Button from 'components/button';
 import { deleteCredentials } from 'state/jetpack/credentials/actions';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 class CredentialsConfigured extends Component {
-	componentWillMount() {
-		this.setState( { isRevoking: false } );
-	}
+	state = {
+		isRevoking: false,
+		isDeletingCreds: false,
+	};
 
-	handleRevoke = () => this.props.deleteCredentials( this.props.siteId, 'main' );
+	handleRevoke = () =>
+		this.setState( { isDeletingCreds: true }, () =>
+			this.props.deleteCredentials( this.props.siteId, 'main' )
+		);
 
 	toggleRevoking = () => this.setState( { isRevoking: ! this.state.isRevoking } );
 
@@ -45,9 +49,10 @@ class CredentialsConfigured extends Component {
 					<div className="credentials-configured__revoke-actions">
 						<Button
 							className="credentials-configured__revoke-button"
-							borderless={ true }
+							borderless
 							onClick={ this.handleRevoke }
-							scary={ true }
+							scary
+							disabled={ this.state.isDeletingCreds }
 						>
 							<Gridicon
 								className="credentials-configured__revoke-icon"
@@ -67,28 +72,30 @@ class CredentialsConfigured extends Component {
 		if ( canAutoconfigure ) {
 			return (
 				<CompactCard className="credentials-configured" onClick={ this.toggleRevoking } href="#">
-					<Gridicon
-						icon="checkmark-circle"
-						size={ 48 }
-						className="credentials-configured__header-gridicon"
-					/>
-					<div className="credentials-configured__header-configured-text">
-						{ translate( 'Backups and security scans are configured and active.' ) }
+					<div className="credentials-configured__info">
+						<Gridicon
+							icon="checkmark-circle"
+							size={ 48 }
+							className="credentials-configured__info-gridicon"
+						/>
+						<div className="credentials-configured__info-text">
+							{ translate( 'Backups and security scans are configured and active.' ) }
+						</div>
 					</div>
 				</CompactCard>
 			);
 		}
 
 		const header = (
-			<div className="credentials-configured__header">
+			<div className="credentials-configured__info">
 				<Gridicon
 					icon="checkmark-circle"
 					size={ 48 }
-					className="credentials-configured__header-gridicon"
+					className="credentials-configured__info-gridicon"
 				/>
-				<div className="credentials-configured__header-text">
-					<h3 className="credentials-configured__header-protocol">{ translate( 'Connected' ) }</h3>
-					<h4 className="credentials-configured__header-description">
+				<div className="credentials-configured__info-text">
+					<h3 className="credentials-configured__info-protocol">{ translate( 'Connected' ) }</h3>
+					<h4 className="credentials-configured__info-description">
 						{ translate(
 							'Your site is being backed up in real time and regularly scanned for security threats.'
 						) }
@@ -116,11 +123,12 @@ const mapStateToProps = ( state, { siteId } ) => {
 	const { canAutoconfigure, credentials = [] } = getRewindState( state, siteId );
 
 	return {
-		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors,max-len
+		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
 		mainCredentials: find( credentials, { role: 'main' } ),
 	};
 };
 
-export default connect( mapStateToProps, { deleteCredentials } )(
-	localize( CredentialsConfigured )
-);
+export default connect(
+	mapStateToProps,
+	{ deleteCredentials }
+)( localize( CredentialsConfigured ) );

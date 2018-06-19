@@ -25,7 +25,7 @@
 	overflow: hidden;
 	position: relative;
 	width: 300px;
-	transition: all .15s ease-in-out;
+	transition: all 0.2s ease-in;
 	z-index: 1;
 
 	@include breakpoint( "<660px" ) {
@@ -34,7 +34,7 @@
 
 	.has-multiple-sites &:hover {
 		border-color: $gray-lighten-10;
-		border-bottom-width: 2px;
+		box-shadow: 0 1px $gray-lighten-10;
 	}
 }
 

@@ -33,6 +33,10 @@ describe( 'index', () => {
 							dispatch: () => {},
 							getState: () => ( {
 								ui: {},
+								notices: {
+									items: {},
+									lastTimeShown: {},
+								},
 							} ),
 							subscribe: () => {},
 						} }

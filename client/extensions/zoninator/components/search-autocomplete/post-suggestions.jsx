@@ -65,6 +65,11 @@ const mapStateToProps = ( state, { exclude, search } ) => {
 	};
 };
 
-const connectComponent = connect( mapStateToProps, null, null, { withRef: true } );
+const connectComponent = connect(
+	mapStateToProps,
+	null,
+	null,
+	{ withRef: true }
+);
 
 export default connectComponent( PostSuggestions );

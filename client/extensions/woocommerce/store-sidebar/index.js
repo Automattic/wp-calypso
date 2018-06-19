@@ -16,20 +16,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
+import { areAllRequiredPluginsActive } from 'woocommerce/state/selectors/plugins';
+import {
+	areCountsLoaded,
+	getCountProducts,
+	getCountNewOrders,
+	getCountPendingReviews,
+} from 'woocommerce/state/sites/data/counts/selectors';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
+import Count from 'components/count';
+import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getNewOrdersWithoutPayPalPending } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
-import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
+import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
@@ -45,34 +48,35 @@ class StoreSidebar extends Component {
 		site: PropTypes.object,
 	};
 
-	componentDidMount = () => {
-		const { productsLoaded, site } = this.props;
+	componentDidMount() {
+		const { siteId } = this.props;
 
-		if ( site && site.ID ) {
-			this.fetchData( { siteId: site.ID, productsLoaded } );
+		if ( siteId ) {
+			this.fetchData();
 		}
-	};
+	}
 
-	componentWillReceiveProps = newProps => {
-		const { site } = this.props;
+	componentDidUpdate( prevProps ) {
+		const { allRequiredPluginsActive, pluginsLoaded, siteId } = this.props;
+		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
-		const newSiteId = newProps.site ? newProps.site.ID : null;
-		const oldSiteId = site ? site.ID : null;
-
-		if ( newSiteId && oldSiteId !== newSiteId ) {
-			this.fetchData( { ...newProps, siteId: newSiteId } );
+		// If the site has changed, or plugin status has changed, re-fetch data
+		if (
+			siteId !== oldSiteId ||
+			prevProps.allRequiredPluginsActive !== allRequiredPluginsActive ||
+			prevProps.pluginsLoaded !== pluginsLoaded
+		) {
+			this.fetchData();
 		}
-	};
+	}
 
-	fetchData = ( { siteId, productsLoaded } ) => {
+	fetchData = () => {
+		const { isLoaded, siteId } = this.props;
+		if ( ! isLoaded ) {
+			this.props.fetchCounts( siteId );
+		}
+
 		this.props.fetchSetupChoices( siteId );
-		this.props.fetchOrders( siteId );
-
-		this.props.fetchReviews( siteId, { status: 'pending' } );
-
-		if ( ! productsLoaded ) {
-			this.props.fetchProducts( siteId, { page: 1 } );
-		}
 	};
 
 	isItemLinkSelected = paths => {
@@ -157,7 +161,7 @@ class StoreSidebar extends Component {
 	};
 
 	orders = () => {
-		const { orders, site, siteSuffix, translate } = this.props;
+		const { totalNewOrders, site, siteSuffix, translate } = this.props;
 		const link = '/store/orders' + siteSuffix;
 		const childLinks = [ '/store/order', '/store/orders' ];
 		const selected = this.isItemLinkSelected( childLinks );
@@ -169,7 +173,7 @@ class StoreSidebar extends Component {
 
 		return (
 			<SidebarItem className={ classes } icon="pages" label={ translate( 'Orders' ) } link={ link }>
-				{ orders.length ? <Count count={ orders.length } /> : null }
+				{ totalNewOrders ? <Count count={ totalNewOrders } /> : null }
 			</SidebarItem>
 		);
 	};
@@ -232,9 +236,11 @@ class StoreSidebar extends Component {
 
 	render = () => {
 		const {
+			allRequiredPluginsActive,
 			finishedAddressSetup,
 			hasProducts,
 			path,
+			pluginsLoaded,
 			settingsGeneralLoaded,
 			site,
 			siteId,
@@ -256,6 +262,8 @@ class StoreSidebar extends Component {
 			}
 		}
 
+		const shouldLoadSettings = pluginsLoaded && allRequiredPluginsActive;
+
 		return (
 			<Sidebar className="store-sidebar__sidebar">
 				<StoreGroundControl site={ site } />
@@ -270,29 +278,33 @@ class StoreSidebar extends Component {
 						{ showAllSidebarItems && this.settings() }
 					</ul>
 				</SidebarMenu>
-				<QuerySettingsGeneral siteId={ siteId } />
+				{ shouldLoadSettings && <QuerySettingsGeneral siteId={ siteId } /> }
 			</Sidebar>
 		);
 	};
 }
 
 function mapStateToProps( state ) {
-	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
-	const hasProducts = getTotalProducts( state ) > 0;
-	const orders = getNewOrdersWithoutPayPalPending( state );
-	const productsLoaded = areProductsLoaded( state );
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
-	const totalPendingReviews = getTotalReviews( state, { status: 'pending' } );
+	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
+	const hasProducts = getCountProducts( state ) > 0;
+	const isLoaded = areCountsLoaded( state );
+	const totalNewOrders = getCountNewOrders( state );
+	const totalPendingReviews = getCountPendingReviews( state );
 	const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
+	const pluginsLoaded = arePluginsLoaded( state, siteId );
+	const allRequiredPluginsActive = areAllRequiredPluginsActive( state, siteId );
 
 	return {
+		allRequiredPluginsActive,
 		finishedAddressSetup,
 		hasProducts,
-		orders,
+		isLoaded,
+		totalNewOrders,
 		totalPendingReviews,
-		productsLoaded,
+		pluginsLoaded,
 		settingsGeneralLoaded,
 		site,
 		siteId,
@@ -304,13 +316,14 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchOrders,
-			fetchProducts,
-			fetchReviews,
+			fetchCounts,
 			fetchSetupChoices,
 		},
 		dispatch
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreSidebar ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( StoreSidebar ) );

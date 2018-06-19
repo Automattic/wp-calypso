@@ -15,7 +15,7 @@ import { addLocaleToPath, getLanguage } from 'lib/i18n-utils';
 import LocaleSuggestionsListItem from './list-item';
 import QueryLocaleSuggestions from 'components/data/query-locale-suggestions';
 import Notice from 'components/notice';
-import { getLocaleSuggestions } from 'state/selectors';
+import getLocaleSuggestions from 'state/selectors/get-locale-suggestions';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 
 export class LocaleSuggestions extends Component {

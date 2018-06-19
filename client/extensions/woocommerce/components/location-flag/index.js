@@ -31,6 +31,7 @@ class LocationFlag extends Component {
 				className={ classNames( 'location-flag', className ) }
 				style={ style }
 				src={ `/calypso/images/flags/${ code.toLowerCase() }.svg` }
+				alt=""
 			/>
 		);
 	}

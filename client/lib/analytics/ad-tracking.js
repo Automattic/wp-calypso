@@ -3,11 +3,9 @@
 /**
  * External dependencies
  */
-
-import async from 'async';
 import cookie from 'cookie';
 import debugFactory from 'debug';
-import { assign, clone, cloneDeep, noop } from 'lodash';
+import { assign, clone, cloneDeep, get, some, includes, noop } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
@@ -16,8 +14,9 @@ import { v4 as uuid } from 'uuid';
 import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { loadScript } from 'lib/load-script';
-import { shouldSkipAds } from 'lib/analytics/utils';
+import { loadScript as loadScriptCallback } from 'lib/load-script';
+import { shouldSkipAds, hashPii } from 'lib/analytics/utils';
+import { promisify } from '../../utils';
 
 /**
  * Module variables
@@ -33,20 +32,21 @@ const isFloodlightEnabled = true;
 const isAdwordsEnabled = true;
 const isFacebookEnabled = true;
 const isBingEnabled = true;
-const isYahooEnabled = true;
 const isGeminiEnabled = true;
 const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
 const isAolEnabled = true;
 const isExperianEnabled = true;
 const isLinkedinEnabled = true;
-let isYandexEnabled = true;
 const isOutbrainEnabled = true;
+const isYahooEnabled = false;
+let isYandexEnabled = false;
 const isCriteoEnabled = false;
 const isAtlasEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
 const isMediaWallahEnabled = false;
+const isNanigansEnabled = true;
 
 // Retargeting events are fired once every `retargetingPeriod` seconds.
 const retargetingPeriod = 60 * 60 * 24;
@@ -67,7 +67,10 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	ADWORDS_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
 	ADWORDS_CONVERSION_ID_JETPACK = config( 'google_adwords_conversion_id_jetpack' ),
-	YAHOO_GEMINI_PIXEL_URL = 'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088',
+	YAHOO_GEMINI_CONVERSION_PIXEL_URL =
+		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase',
+	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
+		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088',
 	ONE_BY_AOL_CONVERSION_PIXEL_URL =
 		'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
 	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL =
@@ -86,9 +89,11 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
 	YANDEX_SCRIPT_URL = 'https://mc.yandex.ru/metrika/watch.js',
 	OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js',
+	NANIGANS_SCRIPT_URL = 'https://cdn.nanigans.com/NaN_tracker.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
+		facebookJetpackInit: '919484458159593',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
 		atlasUniveralTagId: '11187200770563',
@@ -101,6 +106,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		linkedInPartnerId: '195308',
 		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
+		nanigansAppId: '653793',
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
@@ -222,6 +228,16 @@ function setUpFacebookGlobal() {
 		window._fbq = facebookEvents;
 	}
 
+	/*
+	 * Disable automatic PageView pushState tracking. It causes problems when we're using multiple FB pixel IDs.
+	 * The objective here is to avoid firing a PageView against multiple FB pixel IDs. By disabling pushState tracking,
+	 * we can do PageView tracking for FB on our own. See: `only_retarget()` in this file.
+	 *
+	 * There's more about the `disablePushState` flag here:
+	 * <https://developers.facebook.com/ads/blog/post/2017/05/29/tagging-a-single-page-application-facebook-pixel/>
+	 */
+	window._fbq.disablePushState = true;
+
 	facebookEvents.push = facebookEvents;
 	facebookEvents.loaded = true;
 	facebookEvents.version = '2.0';
@@ -250,139 +266,151 @@ function setupOutbrainGlobal() {
 	api.queue = [];
 }
 
-function loadTrackingScripts( callback ) {
+/**
+ * For Nanigans, we delay the configuration until an actual purchase is made.
+ *
+ * Becomes true when the global configuration has been added to the window.NaN_api
+ *
+ * @type {boolean}
+ */
+let isNanigansConfigured = false;
+
+/**
+ * Defines the global variables required by Nanigans
+ * (app tracking ID, user's hashed e-mail)
+ */
+function setupNanigansGlobal() {
+	isNanigansConfigured = true;
+
+	const currentUser = user.get();
+	const normalizedEmail =
+		currentUser && currentUser.email ? currentUser.email.toLowerCase().replace( /\s/g, '' ) : '';
+
+	window.NaN_api = [
+		[ TRACKING_IDS.nanigansAppId, normalizedEmail ? hashPii( normalizedEmail ) : '' ],
+	];
+
+	debug( 'Nanigans setup: ', window.NaN_api, ', for e-mail: ' + normalizedEmail );
+}
+
+const loadScript = promisify( loadScriptCallback );
+
+async function loadTrackingScripts( callback ) {
 	hasStartedFetchingScripts = true;
 
 	const scripts = [];
 
 	if ( isFacebookEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( FACEBOOK_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( FACEBOOK_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isAdwordsEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( GOOGLE_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( GOOGLE_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isBingEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( BING_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( BING_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isCriteoEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( CRITEO_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( CRITEO_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isQuantcastEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( quantcastAsynchronousTagURL(), onComplete );
-		} );
+		scripts.push( quantcastAsynchronousTagURL() );
 	}
 
 	if ( isYahooEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( YAHOO_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( YAHOO_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isTwitterEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( TWITTER_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( TWITTER_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isLinkedinEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( LINKED_IN_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( LINKED_IN_SCRIPT_URL );
 	}
 
 	if ( isMediaWallahEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( MEDIA_WALLAH_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( MEDIA_WALLAH_SCRIPT_URL );
 	}
 
 	if ( isQuoraEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( QUORA_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( QUORA_SCRIPT_URL );
 	}
 
 	if ( isYandexEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( YANDEX_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( YANDEX_SCRIPT_URL );
 	}
 
 	if ( isOutbrainEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( OUTBRAIN_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( OUTBRAIN_SCRIPT_URL );
 	}
 
-	async.series( scripts, function( error ) {
-		if ( error ) {
-			debug( 'Some scripts failed to load: ', error );
-		} else {
-			// init Facebook
-			if ( isFacebookEnabled ) {
-				window.fbq( 'init', TRACKING_IDS.facebookInit );
-			}
-
-			// init Bing
-			if ( isBingEnabled ) {
-				const bingConfig = {
-					ti: TRACKING_IDS.bingInit,
-					q: window.uetq,
-				};
-
-				if ( typeof UET !== 'undefined' ) {
-					// bing's script creates the UET global for us
-					window.uetq = new UET( bingConfig ); // eslint-disable-line
-					window.uetq.push( 'pageLoad' );
-				}
-			}
-
-			// init Twitter
-			if ( isTwitterEnabled ) {
-				window.twq( 'init', TRACKING_IDS.twitterPixelId );
-			}
-
-			// init Media Wallah
-			if ( isMediaWallahEnabled ) {
-				initMediaWallah();
-			}
-
-			// init Quora
-			if ( isQuoraEnabled ) {
-				window.qp( 'init', TRACKING_IDS.quoraPixelId );
-			}
-
-			// init Yandex counter
-			if ( isYandexEnabled ) {
-				if ( window.Ya ) {
-					window.yaCounter45268389 = new window.Ya.Metrika( { id: 45268389 } );
-				} else {
-					debug( "Error: Yandex's window.Ya not ready or missing" );
-					isYandexEnabled = false;
-				}
-			}
-
-			hasFinishedFetchingScripts = true;
-
-			if ( typeof callback === 'function' ) {
-				callback();
-			}
-			debug( 'Scripts loaded successfully' );
+	let hasError = false;
+	for ( const src of scripts ) {
+		try {
+			await loadScript( src );
+		} catch ( error ) {
+			hasError = true;
+			debug( 'A tracking script failed to load: ', error );
 		}
-	} );
+	}
+
+	if ( hasError ) {
+		return;
+	}
+
+	// init Facebook
+	if ( isFacebookEnabled ) {
+		initFacebook();
+	}
+
+	// init Bing
+	if ( isBingEnabled ) {
+		const bingConfig = {
+			ti: TRACKING_IDS.bingInit,
+			q: window.uetq,
+		};
+
+		if ( typeof UET !== 'undefined' ) {
+			// bing's script creates the UET global for us
+			window.uetq = new UET( bingConfig ); // eslint-disable-line
+			window.uetq.push( 'pageLoad' );
+		}
+	}
+
+	// init Twitter
+	if ( isTwitterEnabled ) {
+		window.twq( 'init', TRACKING_IDS.twitterPixelId );
+	}
+
+	// init Media Wallah
+	if ( isMediaWallahEnabled ) {
+		initMediaWallah();
+	}
+
+	// init Quora
+	if ( isQuoraEnabled ) {
+		window.qp( 'init', TRACKING_IDS.quoraPixelId );
+	}
+
+	// init Yandex counter
+	if ( isYandexEnabled ) {
+		if ( window.Ya ) {
+			window.yaCounter45268389 = new window.Ya.Metrika( { id: 45268389 } );
+		} else {
+			debug( "Error: Yandex's window.Ya not ready or missing" );
+			isYandexEnabled = false;
+		}
+	}
+
+	hasFinishedFetchingScripts = true;
+
+	if ( typeof callback === 'function' ) {
+		callback();
+	}
 }
 
 /**
@@ -392,12 +420,16 @@ function loadTrackingScripts( callback ) {
  *
  * 1. 'ad-tracking' is disabled
  * 2. `Do Not Track` is enabled
- * 3. `document.location.href` may contain personally identifiable information
+ * 3. the current user could be in the GDPR zone and hasn't consented to tracking
+ * 4. `document.location.href` may contain personally identifiable information
  *
  * @returns {Boolean} Is ad tracking is allowed?
  */
 function isAdTrackingAllowed() {
-	return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds();
+	const result =
+		config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds() && mayWeTrackCurrentUserGdpr();
+	debug( 'isAdTrackingAllowed:', result );
+	return result;
 }
 
 /**
@@ -422,7 +454,7 @@ function only_retarget() {
 	}
 
 	// Non rate limited retargeting
-	debug( 'Retargeting: Quantcast' );
+	debug( 'Retargeting: Quantcast & Facebook' );
 
 	// Quantcast
 	if ( isQuantcastEnabled ) {
@@ -430,6 +462,11 @@ function only_retarget() {
 			qacct: TRACKING_IDS.quantcast,
 			event: 'refresh',
 		} );
+	}
+
+	// Facebook
+	if ( isFacebookEnabled ) {
+		window.fbq( 'trackSingle', TRACKING_IDS.facebookInit, 'PageView' );
 	}
 
 	// Rate limited retargeting
@@ -440,11 +477,6 @@ function only_retarget() {
 	lastRetargetTime = nowTimestamp;
 
 	debug( 'Retargeting: others (rate limited)' );
-
-	// Facebook
-	if ( isFacebookEnabled ) {
-		window.fbq( 'track', 'PageView' );
-	}
 
 	// Twitter
 	if ( isTwitterEnabled ) {
@@ -463,7 +495,7 @@ function only_retarget() {
 
 	// Yahoo Gemini
 	if ( isGeminiEnabled ) {
-		new Image().src = YAHOO_GEMINI_PIXEL_URL;
+		new Image().src = YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL;
 	}
 
 	// One by AOL
@@ -488,6 +520,73 @@ function only_retarget() {
 }
 
 /**
+ * Returns a boolean telling whether we may track the current user.
+ *
+ * @return {Boolean}        Whether we may track the current user
+ */
+export function mayWeTrackCurrentUserGdpr() {
+	const cookies = cookie.parse( document.cookie );
+	if ( cookies.sensitive_pixel_option === 'yes' ) {
+		return true;
+	}
+	if ( cookies.sensitive_pixel_option === 'no' ) {
+		return false;
+	}
+	return ! isCurrentUserMaybeInGdprZone();
+}
+
+/**
+ * Returns a boolean telling whether the current user could be in the GDPR zone.
+ *
+ * @return {Boolean}        Whether the current user could be in the GDPR zone
+ */
+export function isCurrentUserMaybeInGdprZone() {
+	const currentUser = user.get();
+	const countryCode = get( currentUser, 'user_ip_country_code' );
+	// if we don't have the country code they could be in the GDPR zone, so, yes
+	if ( ! countryCode ) {
+		return true;
+	}
+	const gdprCountries = [
+		// European Member countries
+		'AT', // Austria
+		'BE', // Belgium
+		'BG', // Bulgaria
+		'CY', // Cyprus
+		'CZ', // Czech Republic
+		'DE', // Germany
+		'DK', // Denmark
+		'EE', // Estonia
+		'ES', // Spain
+		'FI', // Finland
+		'FR', // France
+		'GR', // Greece
+		'HR', // Croatia
+		'HU', // Hungary
+		'IE', // Ireland
+		'IT', // Italy
+		'LT', // Lithuania
+		'LU', // Luxembourg
+		'LV', // Latvia
+		'MT', // Malta
+		'NL', // Netherlands
+		'PL', // Poland
+		'PT', // Portugal
+		'RO', // Romania
+		'SE', // Sweden
+		'SI', // Slovenia
+		'SK', // Slovakia
+		'GB', // United Kingdom
+		// Single Market Countries that GDPR applies to
+		'CH', // Switzerland
+		'IS', // Iceland
+		'LI', // Liechtenstein
+		'NO', // Norway
+	];
+	return includes( gdprCountries, countryCode );
+}
+
+/**
  * Fire custom facebook conversion tracking event.
  *
  * @param {String} name - The name of the custom event.
@@ -495,7 +594,7 @@ function only_retarget() {
  * @returns {void}
  */
 export function trackCustomFacebookConversionEvent( name, properties ) {
-	window.fbw && window.fbq( 'trackCustom', name, properties );
+	window.fbq && window.fbq( 'trackSingleCustom', TRACKING_IDS.facebookInit, name, properties );
 }
 
 /**
@@ -541,13 +640,24 @@ export function recordAddToCart( cartItem ) {
 		return loadTrackingScripts( recordAddToCart.bind( null, cartItem ) );
 	}
 
-	debug( 'Recorded that this item was added to the cart', cartItem );
+	const isJetpackPlan = productsValues.isJetpackPlan( cartItem );
+
+	if ( isJetpackPlan ) {
+		debug( 'Recorded that this Jetpack item was added to the cart', cartItem );
+	} else {
+		debug( 'Recorded that this item was added to the cart', cartItem );
+	}
 
 	if ( isFacebookEnabled ) {
-		window.fbq( 'track', 'AddToCart', {
-			product_slug: cartItem.product_slug,
-			free_trial: Boolean( cartItem.free_trial ),
-		} );
+		window.fbq(
+			'trackSingle',
+			isJetpackPlan ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
+			'AddToCart',
+			{
+				product_slug: cartItem.product_slug,
+				free_trial: Boolean( cartItem.free_trial ),
+			}
+		);
 	}
 
 	if ( isCriteoEnabled ) {
@@ -577,10 +687,14 @@ export function recordViewCheckout( cart ) {
  */
 export function recordOrder( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordOrder: skipping as ad tracking is disallowed' );
 		return;
 	}
 
+	const usdTotalCost = costToUSD( cart.total_cost, cart.currency );
+
 	// load the ecommerce plugin
+	debug( 'recordOrder: ga ecommerce plugin load' );
 	window.ga( 'require', 'ecommerce' );
 
 	// Purchase tracking happens in one of three ways:
@@ -590,6 +704,8 @@ export function recordOrder( cart, orderId ) {
 	recordOrderInAtlas( cart, orderId );
 	recordOrderInCriteo( cart, orderId );
 	recordOrderInFloodlight( cart, orderId );
+	recordOrderInFacebook( cart, orderId );
+	recordOrderInNanigans( cart, orderId );
 
 	// This has to come before we add the items to the Google Analytics cart
 	recordOrderInGoogleAnalytics( cart, orderId );
@@ -601,6 +717,7 @@ export function recordOrder( cart, orderId ) {
 	} );
 
 	// Ensure we submit the cart to Google Analytics
+	debug( 'recordOrder: ga ecommerce send' );
 	window.ga( 'ecommerce:send' );
 
 	// 3. Fire a single tracking event without any details about what was purchased
@@ -612,7 +729,8 @@ export function recordOrder( cart, orderId ) {
 
 	// Yahoo Gemini
 	if ( isGeminiEnabled ) {
-		new Image().src = YAHOO_GEMINI_PIXEL_URL;
+		new Image().src =
+			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 	}
 
 	if ( isAolEnabled ) {
@@ -653,16 +771,20 @@ function recordProduct( product, orderId ) {
 	}
 
 	const currentUser = user.get();
-	const userId = currentUser ? currentUser.ID : 0;
+	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
 
 	try {
 		// Google Analytics
-		window.ga( 'ecommerce:addItem', {
+		const item = {
+			currency: product.currency,
 			id: orderId,
 			name: product.product_slug,
 			price: product.cost,
-			currency: product.currency,
-		} );
+			sku: product.product_slug,
+			quantity: 1,
+		};
+		debug( 'recordProduct: ga ecommerce add item', item );
+		window.ga( 'ecommerce:addItem', item );
 
 		// Google AdWords
 		if ( isAdwordsEnabled ) {
@@ -686,16 +808,22 @@ function recordProduct( product, orderId ) {
 			}
 		}
 
-		// Facebook
-		if ( isFacebookEnabled ) {
-			window.fbq( 'track', 'Purchase', {
-				currency: product.currency,
-				product_slug: product.product_slug,
-				value: product.cost,
-				user_id: userId,
-				order_id: orderId,
-			} );
-		}
+		// Facebook (disabled for now as we are not sure this works as intended).
+		// The entire order is already reported to Facebook, so not absolutely necessary.
+		/* if ( isFacebookEnabled ) {
+			window.fbq(
+				'trackSingle',
+				isJetpackPlan ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
+				'Purchase',
+				{
+					currency: product.currency,
+					product_slug: product.product_slug,
+					value: product.cost,
+					user_id: userId,
+					order_id: orderId,
+				}
+			);
+		} */
 
 		// Twitter
 		if ( isTwitterEnabled ) {
@@ -796,7 +924,7 @@ function recordOrderInAtlas( cart, orderId ) {
 		product_slugs: cart.products.map( product => product.product_slug ).join( ', ' ),
 		revenue: cart.total_cost,
 		currency_code: cart.currency,
-		user_id: currentUser ? currentUser.ID : 0,
+		user_id: currentUser ? hashPii( currentUser.ID ) : 0,
 		order_id: orderId,
 	};
 
@@ -843,6 +971,111 @@ function recordOrderInFloodlight( cart, orderId ) {
 	};
 
 	recordParamsInFloodlight( params );
+}
+
+/**
+ * Records an order in Nanigans. If nanigans is not already loaded and configured, it configures it now (delayed load
+ * until the moment when we actually need this pixel).
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInNanigans( cart, orderId ) {
+	if ( ! isAdTrackingAllowed() || ! isNanigansEnabled ) {
+		return;
+	}
+
+	const paidProducts = cart.products.filter( product => product.cost >= 0.01 );
+
+	if ( paidProducts.length === 0 ) {
+		debug( 'recordOrderInNanigans: Skip cart because it has ONLY <0.01 products' );
+		return;
+	}
+
+	debug( 'recordOrderInNanigans: Record purchase' );
+
+	const productPrices = paidProducts.map( product => product.cost * 100 ); // VALUE is in cents, [ 0, 9600 ]
+	const eventDetails = {
+		sku: paidProducts.map( product => product.product_slug ), // [ 'blog_domain', 'plan_premium' ]
+		qty: paidProducts.map( () => 1 ), // [ 1, 1 ]
+		currency: cart.currency,
+		unique: orderId, // unique transaction id
+	};
+
+	const eventStruct = [
+		'purchase', // EVENT_TYPE
+		'main', // EVENT_NAME
+		productPrices,
+		eventDetails,
+	];
+
+	if ( ! isNanigansConfigured ) {
+		setupNanigansGlobal();
+		loadScript( NANIGANS_SCRIPT_URL );
+	}
+
+	debug( 'Nanigans push:', eventStruct );
+	window.NaN_api.push( eventStruct ); // NaN api is either an array that supports push, either the real Nanigans API
+}
+
+/**
+ * Records an order in Facebook (a single event for the entire order)
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInFacebook( cart, orderId ) {
+	if ( ! isAdTrackingAllowed() || ! isFacebookEnabled ) {
+		return;
+	}
+
+	/**
+	 * We have made a conscioius decision to ignore the 0 cost carts, such that these carts are not considered
+	 * a conversion. We will analyze the results and make a final decision on this.
+	 */
+	if ( cart.total_cost < 0.01 ) {
+		debug( 'recordOrderInFacebook: Skipping due to a 0-value cart.' );
+		return;
+	}
+
+	const containsJetpackPlan = some( cart.products, productsValues.isJetpackPlan );
+	const containsNonJetpackProduct = some( cart.products, p => {
+		return ! productsValues.isJetpackPlan( p );
+	} );
+
+	if ( containsJetpackPlan && containsNonJetpackProduct ) {
+		debug( 'recordOrderInFacebook: Record purchase containing Jetpack and non-Jetpack products' );
+	} else if ( containsJetpackPlan ) {
+		debug( 'recordOrderInFacebook: Record purchase containing Jetpack' );
+	} else {
+		debug( 'recordOrderInFacebook: Record purchase' );
+	}
+
+	const currentUser = user.get();
+
+	const fbParams = {
+		currency: cart.currency,
+		product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
+		value: cart.total_cost,
+		user_id: currentUser ? currentUser.ID : 0,
+		order_id: orderId,
+	};
+
+	debug( 'recordParamsInFacebook: ', fbParams );
+
+	if ( containsJetpackPlan && containsNonJetpackProduct ) {
+		window.fbq( 'track', 'Purchase', fbParams ); // Track both FB pixel IDs.
+	} else {
+		// Track only the appropriate FB pixel ID.
+		window.fbq(
+			'trackSingle',
+			containsJetpackPlan ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
+			'Purchase',
+			fbParams
+		);
+	}
 }
 
 /**
@@ -977,7 +1210,7 @@ function floodlightUserParams() {
 
 	const currentUser = user.get();
 	if ( currentUser ) {
-		params.u4 = currentUser.ID.toString();
+		params.u4 = hashPii( currentUser.ID );
 	}
 
 	const anonymousUserId = tracksAnonymousUserId();
@@ -1147,7 +1380,7 @@ function recordInCriteo( eventName, eventProps ) {
 	events.push( { event: 'setSiteType', type: criteoSiteType() } );
 
 	if ( user.get() ) {
-		events.push( { event: 'setEmail', email: [ user.get().email ] } );
+		events.push( { event: 'setEmail', email: [ hashPii( user.get().email ) ] } );
 	}
 
 	const conversionEvent = clone( eventProps );
@@ -1191,15 +1424,18 @@ function criteoSiteType() {
  */
 function recordOrderInGoogleAnalytics( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordOrderInGoogleAnalytics: skipping as ad tracking is disallowed' );
 		return;
 	}
 
-	window.ga( 'ecommerce:addTransaction', {
+	const transaction = {
 		id: orderId,
 		affiliation: 'WordPress.com',
 		revenue: cart.total_cost,
 		currency: cart.currency,
-	} );
+	};
+	debug( 'recordOrderInGoogleAnalytics: ga ecommerce add transaction', transaction );
+	window.ga( 'ecommerce:addTransaction', transaction );
 }
 
 /**
@@ -1241,6 +1477,54 @@ function costToUSD( cost, currency ) {
  */
 function isSupportedCurrency( currency ) {
 	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;
+}
+
+/**
+ * Initializes the Facebook pixel.
+ *
+ * When the user is logged in, additional hashed data is being forwarded.
+ */
+function initFacebook() {
+	if ( user.get() ) {
+		initFacebookAdvancedMatching();
+	} else {
+		window.fbq( 'init', TRACKING_IDS.facebookInit );
+
+		/*
+		 * Also initialize the FB pixel for Jetpack.
+		 * However, disable auto-config for this secondary pixel ID.
+		 * See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
+		 */
+		window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
+		window.fbq( 'init', TRACKING_IDS.facebookJetpackInit );
+	}
+}
+
+/**
+ * See https://developers.facebook.com/docs/facebook-pixel/pixel-with-ads/conversion-tracking#advanced_match
+ */
+function initFacebookAdvancedMatching() {
+	// All data must be in lowercase. Remove all spaces.
+	const fbRequirementsFormatter = function( str ) {
+		return str.toLowerCase().replace( / /g, '' );
+	};
+
+	const currentUser = user.get();
+	const advancedMatching = {
+		em: fbRequirementsFormatter( currentUser.email ),
+	};
+
+	debug( 'FB Advanced Matching', advancedMatching );
+
+	window.fbq( 'init', TRACKING_IDS.facebookInit, advancedMatching );
+
+	/*
+	 * Also initialize the FB pixel for Jetpack.
+	 * However, disable auto-config for this secondary pixel ID.
+	 * See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
+	 */
+	window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
+	window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
 }
 
 /**

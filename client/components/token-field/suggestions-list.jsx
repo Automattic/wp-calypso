@@ -29,7 +29,7 @@ class SuggestionsList extends React.PureComponent {
 	};
 
 	componentDidUpdate( prevProps ) {
-		var node;
+		let node;
 
 		// only have to worry about scrolling selected suggestion into view
 		// when already expanded
@@ -56,7 +56,7 @@ class SuggestionsList extends React.PureComponent {
 	}
 
 	_computeSuggestionMatch = suggestion => {
-		var match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase(),
+		let match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase(),
 			indexOfMatch;
 
 		if ( match.length === 0 ) {
@@ -74,7 +74,7 @@ class SuggestionsList extends React.PureComponent {
 	};
 
 	render() {
-		var classes = classNames( 'token-field__suggestions-list', {
+		const classes = classNames( 'token-field__suggestions-list', {
 			'is-expanded': this.props.isExpanded && this.props.suggestions.length > 0,
 		} );
 
@@ -93,7 +93,7 @@ class SuggestionsList extends React.PureComponent {
 		return map(
 			this.props.suggestions,
 			function( suggestion, index ) {
-				var match = this._computeSuggestionMatch( suggestion ),
+				let match = this._computeSuggestionMatch( suggestion ),
 					classes = classNames( 'token-field__suggestion', {
 						'is-selected': index === this.props.selectedIndex,
 					} );

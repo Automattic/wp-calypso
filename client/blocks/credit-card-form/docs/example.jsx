@@ -27,6 +27,7 @@ const CreditCardFormExample = () => {
 			recordFormSubmitEvent={ noop }
 			saveStoredCard={ saveStoredCard }
 			successCallback={ noop }
+			autoFocus={ false }
 		/>
 	);
 };

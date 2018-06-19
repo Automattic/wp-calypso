@@ -50,6 +50,10 @@ export function isRequesting( state, siteId ) {
 	return state.plugins.installed.isRequesting[ siteId ];
 }
 
+export function isLoaded( state, siteId ) {
+	return false === state.plugins.installed.isRequesting[ siteId ];
+}
+
 export function isRequestingForSites( state, sites ) {
 	// As long as any sites have isRequesting true, we consider this group requesting
 	return some( sites, siteId => isRequesting( state, siteId ) );
@@ -83,7 +87,11 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 }
 
 export function getPluginsWithUpdates( state, siteIds ) {
-	return filter( getPlugins( state, siteIds ), _filters.updates );
+	return filter( getPlugins( state, siteIds ), _filters.updates ).map( plugin => ( {
+		...plugin,
+		version: plugin.update.new_version,
+		type: 'plugin',
+	} ) );
 }
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
@@ -132,6 +140,13 @@ export function getStatusForPlugin( state, siteId, pluginId ) {
 	}
 	const status = state.plugins.installed.status[ siteId ][ pluginId ];
 	return Object.assign( {}, status, { siteId: siteId, pluginId: pluginId } );
+}
+
+export function getStatusForSite( state, siteId ) {
+	if ( typeof state.plugins.installed.status[ siteId ] === 'undefined' ) {
+		return false;
+	}
+	return state.plugins.installed.status[ siteId ];
 }
 
 export function isPluginDoingAction( state, siteId, pluginId ) {

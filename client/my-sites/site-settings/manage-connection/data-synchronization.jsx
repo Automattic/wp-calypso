@@ -18,7 +18,7 @@ import PublicPostTypes from './public-post-types';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { getSiteUrl } from 'state/selectors';
+import getSiteUrl from 'state/selectors/get-site-url';
 
 const DataSynchronization = ( { siteUrl, supportsJetpackSync, translate } ) => {
 	if ( ! supportsJetpackSync ) {

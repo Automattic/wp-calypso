@@ -38,7 +38,8 @@ class DomainConnectAuthorizeFooter extends Component {
 
 	renderActionConfirmCancel = () => {
 		const { translate, showAction, onConfirm, onClose } = this.props;
-		const notReadyToSubmit = actionType.READY_TO_SUBMIT !== showAction;
+		const notReadyToSubmit =
+			actionType.READY_TO_SUBMIT !== showAction || actionType.REDIRECTING === showAction;
 
 		const confirm = translate( 'Confirm' );
 		const cancel = translate( 'Cancel' );
@@ -61,7 +62,6 @@ class DomainConnectAuthorizeFooter extends Component {
 					busy={ notReadyToSubmit }
 					className="domain-connect__button"
 					disabled={ notReadyToSubmit }
-					icon
 					onClick={ onConfirm }
 					primary
 				>
@@ -71,7 +71,6 @@ class DomainConnectAuthorizeFooter extends Component {
 					busy={ notReadyToSubmit }
 					className="domain-connect__button"
 					disabled={ notReadyToSubmit }
-					icon
 					onClick={ onClose }
 				>
 					<Gridicon icon="cross" /> { cancel }
@@ -94,6 +93,7 @@ class DomainConnectAuthorizeFooter extends Component {
 		switch ( this.props.showAction ) {
 			case actionType.READY_TO_SUBMIT:
 			case actionType.SUBMITTING:
+			case actionType.REDIRECTING:
 				return this.renderActionConfirmCancel();
 			case actionType.CLOSE:
 				return this.renderActionClose();

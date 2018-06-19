@@ -20,8 +20,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import {
 	PLAN_JETPACK_PREMIUM,
 	FEATURE_VIDEO_CDN_LIMITED,
@@ -30,16 +29,13 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode,
-	getMediaStorageLimit,
-	getMediaStorageUsed,
-} from 'state/selectors';
+import getMediaStorageLimit from 'state/selectors/get-media-storage-limit';
+import getMediaStorageUsed from 'state/selectors/get-media-storage-used';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
-import { updateSettings } from 'state/jetpack/settings/actions';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import PlanStorageBar from 'blocks/plan-storage/bar';
@@ -81,13 +77,10 @@ class MediaSettings extends Component {
 		return (
 			isVideoPressAvailable && (
 				<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
-					<div className="site-settings__info-link-container">
-						<InfoPopover position="left">
-							<ExternalLink target="_blank" icon href="https://jetpack.com/support/videopress/">
-								{ translate( 'Learn more about VideoPress.' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
+						link="https://jetpack.com/support/videopress/"
+					/>
 					<JetpackModuleToggle
 						siteId={ siteId }
 						moduleSlug="videopress"
@@ -196,13 +189,10 @@ class MediaSettings extends Component {
 					 */ }
 					{ ! jetpackVersionSupportsLazyImages && (
 						<FormFieldset>
-							<div className="site-settings__info-link-container">
-								<InfoPopover position="left">
-									<ExternalLink target="_blank" icon href="https://jetpack.com/support/photon">
-										{ translate( 'Learn more' ) }
-									</ExternalLink>
-								</InfoPopover>
-							</div>
+							<SupportInfo
+								text={ translate( 'Hosts your image files on the global WordPress.com servers.' ) }
+								link="https://jetpack.com/support/photon/"
+							/>
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="photon"
@@ -213,13 +203,10 @@ class MediaSettings extends Component {
 						</FormFieldset>
 					) }
 					<FormFieldset className={ carouselFieldsetClasses }>
-						<div className="site-settings__info-link-container">
-							<InfoPopover position="left">
-								<ExternalLink target="_blank" icon href="https://jetpack.com/support/carousel">
-									{ translate( 'Learn more about Carousel.' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
+						<SupportInfo
+							text={ translate( 'Gorgeous full-screen photo browsing experience.' ) }
+							link="https://jetpack.com/support/carousel/"
+						/>
 						<JetpackModuleToggle
 							siteId={ siteId }
 							moduleSlug="carousel"
@@ -263,34 +250,29 @@ class MediaSettings extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			selectedSiteId,
-			'photon'
-		);
-		const isVideoPressAvailable =
-			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
-			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
-			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'photon'
+	);
+	const isVideoPressAvailable =
+		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
+		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
+		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
 
-		return {
-			carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
-			isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
-			isVideoPressAvailable,
-			mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
-			mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
-			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			selectedSiteId,
-			sitePlanSlug,
-			siteSlug: getSiteSlug( state, selectedSiteId ),
-		};
-	},
-	{
-		updateSettings,
-	}
-)( localize( MediaSettings ) );
+	return {
+		carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
+		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
+		isVideoPressAvailable,
+		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
+		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
+		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		selectedSiteId,
+		sitePlanSlug,
+		siteSlug: getSiteSlug( state, selectedSiteId ),
+	};
+} )( localize( MediaSettings ) );

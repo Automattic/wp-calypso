@@ -34,4 +34,7 @@ class SiteSelectorAddSite extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( SiteSelectorAddSite ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( SiteSelectorAddSite ) );

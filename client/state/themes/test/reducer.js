@@ -66,6 +66,8 @@ const mood = {
 };
 
 describe( 'reducer', () => {
+	beforeEach( jest.restoreAllMocks );
+
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
 			expect.arrayContaining( [
@@ -386,9 +388,6 @@ describe( 'reducer', () => {
 			const state = queries( original, { type: DESERIALIZE } );
 
 			expect( state ).toEqual( {} );
-
-			// eslint-disable-next-line no-console
-			console.warn.mockReset();
 		} );
 	} );
 
@@ -709,9 +708,6 @@ describe( 'reducer', () => {
 
 			const state = activeThemes( original, { type: DESERIALIZE } );
 			expect( state ).toEqual( {} );
-
-			// eslint-disable-next-line no-console
-			console.warn.mockReset();
 		} );
 	} );
 

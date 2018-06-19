@@ -24,3 +24,4 @@ const textToEmojify = 'This will be converted 🙈🙉🙊';
 | -------------- | ---------------- | -------- | ------------------ | ------- |
 | `children`     | Text\|Components | yes      | none               | Typically a string that you want to search for UTF emoji |
 | `imgClassName` | String           | no       | `"emojify__emoji"` | classname applied to the image |
+| `tagName`      | String           | no       | `div`              | Tag name used for the wrapper element |

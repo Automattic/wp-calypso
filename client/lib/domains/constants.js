@@ -49,6 +49,7 @@ export const domainAvailability = {
 	REGISTERED_SAME_SITE: 'registered_on_same_site',
 	RESTRICTED: 'restricted_domain',
 	TLD_NOT_SUPPORTED: 'tld_not_supported',
+	TLD_NOT_SUPPORTED_TEMPORARILY: 'tld_not_supported_temporarily',
 	TRANSFER_PENDING: 'transfer_pending',
 	TRANSFER_PENDING_SAME_USER: 'transfer_pending_same_user',
 	TRANSFERRABLE: 'transferrable',
@@ -74,4 +75,19 @@ export const dnsTemplates = {
 export const domainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
 	TRANSFER_IN_PRIVACY: 'domain_transfer_privacy',
+};
+
+export const gdprConsentStatus = {
+	NONE: 'NONE',
+	PENDING: 'PENDING',
+	PENDING_ASYNC: 'PENDING_ASYNC',
+	ACCEPTED_CONTRACTUAL_MINIMUM: 'ACCEPTED_CONTRACTUAL_MINIMUM',
+	ACCEPTED_FULL: 'ACCEPTED_FULL',
+	DENIED: 'DENIED',
+	FORCED_ALL_CONTRACTUAL: 'FORCED_ALL_CONTRACTUAL',
+};
+
+export const domainConnect = {
+	DISCOVERY_TXT_RECORD_NAME: '_domainconnect',
+	API_URL: 'public-api.wordpress.com/rest/v1.3/domain-connect',
 };

@@ -114,7 +114,7 @@ $plan-features-sidebar-width: 272px;
 		border: 1px solid $blue-wordpress;
 		background-color: rgba( $blue-wordpress, 0.1 );
 		position: relative;
-			top: -1px;
+		top: -1px;
 
 		.plan-features__item-checkmark {
 			fill: $blue-wordpress;
@@ -423,7 +423,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__item-description {
 	display: inline-block;
 	margin-left: 10px;
- }
+}
 
 
 /*= Plans in Signup
@@ -440,29 +440,44 @@ $plan-features-sidebar-width: 272px;
 
 .plans-wrapper {
 	margin: 0 auto;
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
-	height: 100%;
 	padding: 20px 0 10px;
-    transform: translateY(-20px);
+	transform: translateY(-20px);
+	overflow-x: auto;
 }
 
 .plan-features--signup {
 	margin: 0 auto;
 
 	.jetpack-connect__plans & {
-		width: 1000px;
+		width: auto;
+
+		@include breakpoint( ">660px" ) {
+			max-width: 1000px;
+		}
 	}
 
 	.signup__steps & {
-		width: 1100px;
+		width: auto;
+
+		@include breakpoint( ">660px" ) {
+			max-width: 1100px;
+		}
 	}
 
 	.plan-features__table {
-		display: table !important;
-		border-spacing: 15px 0 !important;
-		width: 100%;
-		margin: 0;
+		display: none;
+
+		@include breakpoint( ">660px" ) {
+			display: table;
+			width: 100%;
+			margin: 0;
+			padding: 0 16px;
+		}
+
+		@include breakpoint( ">1040px" ) {
+			border-spacing: 15px 0 !important;
+			padding: 0;
+		}
 	}
 
 	.plan-features__content {
@@ -487,14 +502,32 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features__graphic {
-		width: 100px;
-		height: 100px;
-    	margin: 20px auto;
+		float: right;
+		width: 50px;
+		height: 50px;
+		margin: 16px 20px;
+
+		@include breakpoint( ">660px" ) {
+			float: none;
+			width: 100px;
+			height: 100px;
+			margin: 20px auto;
+		}
 	}
 
 	.plan-features__pricing,
 	.plan-price.is-discounted {
 		color: $gray-dark;
+	}
+
+	.plan-features__pricing {
+		margin: 20px 20px -12px;
+		padding: 0;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 0;
+			padding: 0 12px;
+		}
 	}
 
 	.is-placeholder {
@@ -539,139 +572,9 @@ $plan-features-sidebar-width: 272px;
 	.plan-features__row:last-of-type .plan-features__table-item {
 		border-bottom: solid 1px lighten( $gray, 27% );
 	}
-}
 
-.plans-features-main__bottom .plan-features__actions {
-	padding-bottom: 0;
-}
-.plans-features-main__bottom .plan-features__actions-button {
-	width: auto;
-}
-/**
- * A/B test for upgrade pricing display
- */
-.abtest-pricing-display {
-	.plan-price {
-		font-size: 16px;
-		margin: 3px 0 3px;
-	}
-	.plan-price__currency-symbol {
-		font-size: inherit;
-		vertical-align: initial;
-		color: inherit;
-	}
-	.plan-price__fraction {
-		font-size: inherit;
-		vertical-align: initial;
-		font-weight: inherit;
-	}
-	.plan-features__header-timeframe {
-		font-style: normal;
-		color: $gray;
-	}
-	.plan-price.is-original {
-		color: $gray-dark;
-	}
-	.plan-price.is-discounted,
-	.plan-price.is-original:before,
-	.plan-features__header-tip-info {
-		display: none;
-	}
-}
-
-.plan-features__notice-credits {
-	margin: 0 0 16px;
-}
-
-.plan-features__summary {
-	&-title,
-	&-price-row {
-		display: block;
-		margin-bottom: .3em;
-	}
-	&-price-row::after {
-		content: '';
-		display: block;
-		clear: both;
-	}
-	&-item {
-		float: left;
-	}
-	&-price {
-		float: right;
-		text-align: right;
-	}
-	&-discount {
-		color: $alert-green;
-	}
-	&-total {
-		font-weight: 500;
-	}
-	&-price-desc {
-		clear: both;
-		font-size: 12px;
-		color: $gray;
-	}
-	&-policy {
-		font-size: 12px;
-		color: $gray;
-	}
-}
-
-.plan-features__header-credit-label {
-	position: absolute;
-	font-size: 11px;
-	line-height: 20px;
-	height: 20px;
-	border-radius: 10px;
-	color: #fff;
-	font-weight: normal;
-	vertical-align: middle;
-	padding: 0 8px;
-	margin-left: 8px;
-	margin-top: -2px;
-
-	.is-personal-plan & {
-		background: darken( #fcd56e, 20% );
-	}
-
-	.is-business-plan & {
-		background: darken( #c879cc, 20% );
-	}
-
-	.is-premium-plan & {
-		background: darken( #44d0a3, 20% );
-	}
-}
-
-/**
- * A/B test for horizontal vs vertical scroll
- */
-.has-mobile-table.plan-features--signup {
-	
-	@include breakpoint( "<660px" ) {
-	
-		.signup__steps &,
-		.jetpack-connect__plans & {
-			width: auto;
-		}
-
-		.plan-features__graphic {
-			float: right;
-			width: 50px;
-			height: 50px;
-			margin: 16px 20px;
-		}
-
-		.plan-features__pricing {
-			margin: 20px 20px -12px;
-		}
-
-		.plan-features__table {
-			display: none !important;
-		}
-
-		.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
+	.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
+		@include breakpoint( "<660px" ) {
 			padding-top: 0;
 		}
 	}

@@ -1,11 +1,12 @@
 .editor-sticky.button {
-	opacity: 0;
-	cursor: default;
 	transition: opacity 200ms;
+
+	&, &:hover, &:focus {
+		color: $gray-lighten-20;
+	}
+
 	&.is-sticky {
 		color: $orange-jazzy;
-		opacity: 1;
-		cursor: pointer;
 	}
 }
 

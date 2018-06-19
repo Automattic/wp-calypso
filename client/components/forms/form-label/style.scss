@@ -9,6 +9,12 @@
 		font-weight: normal;
 		margin-left: 6px;
 	}
+
+	.form-label__optional {
+		color: darken( $gray, 20% );
+		font-weight: normal;
+		margin-left: 6px;
+	}
 }
 
 .form-label input[type="checkbox"] + span,

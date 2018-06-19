@@ -81,7 +81,7 @@ class EventsTooltip extends Component {
 											event.title === ''
 												? this.props.translate( '{{em}}(No title){{/em}}', {
 														components: { em: <em /> },
-													} )
+												  } )
 												: event.title
 										}
 									/>

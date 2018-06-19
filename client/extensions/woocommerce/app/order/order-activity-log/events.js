@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { keys, last, sortBy } from 'lodash';
+import { keys, last, noop, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -91,7 +91,6 @@ class OrderEvents extends Component {
 	};
 
 	renderPlaceholder = () => {
-		const noop = () => {};
 		const placeholderClassName = 'is-placeholder';
 		return (
 			<div className={ placeholderClassName }>

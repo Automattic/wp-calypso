@@ -39,12 +39,20 @@ import {
 	isBusinessPlan,
 	isPersonalPlan,
 	isPremiumPlan,
+	isFreePlan,
+	isJetpackBusinessPlan,
+	isJetpackPersonalPlan,
+	isJetpackPremiumPlan,
+	isJetpackFreePlan,
+	isWpComBusinessPlan,
+	isWpComPersonalPlan,
+	isWpComPremiumPlan,
+	isWpComFreePlan,
 	planMatches,
 	findSimilarPlansKeys,
 	findPlansKeys,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
-	isFreePlan,
 } from '../index';
 
 describe( 'isFreePlan', () => {
@@ -59,6 +67,7 @@ describe( 'isFreePlan', () => {
 		expect( isFreePlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
 		expect( isFreePlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isFreePlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isFreePlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 
@@ -76,6 +85,7 @@ describe( 'isPersonalPlan', () => {
 		expect( isPersonalPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).to.equal( false );
 		expect( isPersonalPlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isPersonalPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isPersonalPlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 
@@ -93,6 +103,7 @@ describe( 'isPremiumPlan', () => {
 		expect( isPremiumPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
 		expect( isPremiumPlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isPremiumPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isPremiumPlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 
@@ -110,6 +121,147 @@ describe( 'isBusinessPlan', () => {
 		expect( isBusinessPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
 		expect( isBusinessPlan( PLAN_PREMIUM ) ).to.equal( false );
 		expect( isBusinessPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isBusinessPlan( 'non-existing plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isWpComFreePlan', () => {
+	test( 'should return true for free plans', () => {
+		expect( isWpComFreePlan( PLAN_FREE ) ).to.equal( true );
+	} );
+	test( 'should return false for non-free plans', () => {
+		expect( isWpComFreePlan( PLAN_JETPACK_FREE ) ).to.equal( false );
+		expect( isWpComFreePlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isWpComFreePlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isWpComFreePlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isWpComFreePlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isWpComFreePlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isWpComFreePlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isWpComFreePlan( 'non-existing plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isWpComPersonalPlan', () => {
+	test( 'should return true for personal plans', () => {
+		expect( isWpComPersonalPlan( PLAN_PERSONAL ) ).to.equal( true );
+		expect( isWpComPersonalPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( true );
+	} );
+	test( 'should return false for non-personal plans', () => {
+		expect( isWpComPersonalPlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isWpComPersonalPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
+		expect( isWpComPersonalPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isWpComPersonalPlan( PLAN_PREMIUM_2_YEARS ) ).to.equal( false );
+		expect( isWpComPersonalPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isWpComPersonalPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).to.equal( false );
+		expect( isWpComPersonalPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isWpComPersonalPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isWpComPersonalPlan( 'non-exisWpComting plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isWpComPremiumPlan', () => {
+	test( 'should return true for premium plans', () => {
+		expect( isWpComPremiumPlan( PLAN_PREMIUM ) ).to.equal( true );
+		expect( isWpComPremiumPlan( PLAN_PREMIUM_2_YEARS ) ).to.equal( true );
+	} );
+	test( 'should return false for non-premium plans', () => {
+		expect( isWpComPremiumPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isWpComPremiumPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).to.equal( false );
+		expect( isWpComPremiumPlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isWpComPremiumPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( false );
+		expect( isWpComPremiumPlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isWpComPremiumPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
+		expect( isWpComPremiumPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isWpComPremiumPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isWpComFreePlan( 'non-existing plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isWpComBusinessPlan', () => {
+	test( 'should return true for business plans', () => {
+		expect( isWpComBusinessPlan( PLAN_BUSINESS ) ).to.equal( true );
+		expect( isWpComBusinessPlan( PLAN_BUSINESS_2_YEARS ) ).to.equal( true );
+	} );
+	test( 'should return false for non-business plans', () => {
+		expect( isWpComBusinessPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isWpComBusinessPlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).to.equal( false );
+		expect( isWpComBusinessPlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isWpComBusinessPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( false );
+		expect( isWpComBusinessPlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isWpComBusinessPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
+		expect( isWpComBusinessPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isWpComBusinessPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isWpComBusinessPlan( 'non-exisWpComting plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isJetpackFreePlan', () => {
+	test( 'should return true for free plans', () => {
+		expect( isJetpackFreePlan( PLAN_JETPACK_FREE ) ).to.equal( true );
+	} );
+	test( 'should return false for non-free plans', () => {
+		expect( isJetpackFreePlan( PLAN_FREE ) ).to.equal( false );
+		expect( isJetpackFreePlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isJetpackFreePlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isJetpackFreePlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isJetpackFreePlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isJetpackFreePlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isJetpackFreePlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isJetpackFreePlan( 'non-existing plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isJetpackPersonalPlan', () => {
+	test( 'should return true for personal plans', () => {
+		expect( isJetpackPersonalPlan( PLAN_JETPACK_PERSONAL ) ).to.equal( true );
+		expect( isJetpackPersonalPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( true );
+	} );
+	test( 'should return false for non-personal plans', () => {
+		expect( isJetpackPersonalPlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isJetpackPersonalPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( false );
+		expect( isJetpackPersonalPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isJetpackPersonalPlan( PLAN_PREMIUM_2_YEARS ) ).to.equal( false );
+		expect( isJetpackPersonalPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isJetpackPersonalPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).to.equal( false );
+		expect( isJetpackPersonalPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isJetpackPersonalPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isJetpackPersonalPlan( 'non-exisJetpackting plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isJetpackPremiumPlan', () => {
+	test( 'should return true for premium plans', () => {
+		expect( isJetpackPremiumPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( true );
+		expect( isJetpackPremiumPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).to.equal( true );
+	} );
+	test( 'should return false for non-premium plans', () => {
+		expect( isJetpackPremiumPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isJetpackPremiumPlan( PLAN_PREMIUM_2_YEARS ) ).to.equal( false );
+		expect( isJetpackPremiumPlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isJetpackPremiumPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( false );
+		expect( isJetpackPremiumPlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isJetpackPremiumPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
+		expect( isJetpackPremiumPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isJetpackPremiumPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isJetpackFreePlan( 'non-existing plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isJetpackBusinessPlan', () => {
+	test( 'should return true for business plans', () => {
+		expect( isJetpackBusinessPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( true );
+		expect( isJetpackBusinessPlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).to.equal( true );
+	} );
+	test( 'should return false for non-business plans', () => {
+		expect( isJetpackBusinessPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isJetpackBusinessPlan( PLAN_BUSINESS_2_YEARS ) ).to.equal( false );
+		expect( isJetpackBusinessPlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isJetpackBusinessPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( false );
+		expect( isJetpackBusinessPlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isJetpackBusinessPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
+		expect( isJetpackBusinessPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isJetpackBusinessPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isJetpackBusinessPlan( 'non-exisJetpackting plan' ) ).to.equal( false );
 	} );
 } );
 

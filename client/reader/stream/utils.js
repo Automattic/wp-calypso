@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { flatMap, last } from 'lodash';
+import { flatMap, last, clamp } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -106,4 +106,27 @@ export function injectRecommendations( posts, recs = [], itemsBetweenRecs ) {
 		}
 		return post;
 	} );
+}
+
+const MIN_DISTANCE_BETWEEN_RECS = 4; // page size is 7, so one in the middle of every page and one on page boundries, sometimes
+const MAX_DISTANCE_BETWEEN_RECS = 30;
+
+export function getDistanceBetweenRecs( totalSubs ) {
+	// the distance between recs changes based on how many subscriptions the user has.
+	// We cap it at MAX_DISTANCE_BETWEEN_RECS.
+	// It grows at the natural log of the number of subs, times a multiplier, offset by a constant.
+	// This lets the distance between recs grow quickly as you add subs early on, and slow down as you
+	// become a common user of the reader.
+	if ( totalSubs <= 0 ) {
+		// 0 means either we don't know yet, or the user actually has zero subs.
+		// if a user has zero subs, we don't show posts at all, so just treat 0 as 'unknown' and
+		// push recs to the max.
+		return MAX_DISTANCE_BETWEEN_RECS;
+	}
+	const distance = clamp(
+		Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 6 ),
+		MIN_DISTANCE_BETWEEN_RECS,
+		MAX_DISTANCE_BETWEEN_RECS
+	);
+	return distance;
 }

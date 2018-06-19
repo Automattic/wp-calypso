@@ -46,7 +46,7 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			isAbTestInVariant( 'designShowcaseWelcomeTour', 'enabled' )
 		) }
 	>
-		<Step name="init" placement="right" next="search">
+		<Step name="init" placement="right" next="search" style={ { animationDelay: '2s' } }>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>

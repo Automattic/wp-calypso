@@ -78,6 +78,7 @@ exports[`LanguagePickerModal should render 1`] = `
       compact={false}
       delaySearch={false}
       delayTimeout={300}
+      describedBy={null}
       disableAutocorrect={false}
       disabled={false}
       fitsContainer={true}

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-require( 'babel-register' );
 const request = require( 'request' );
 const vm = require( 'vm' );
 const _ = require( 'lodash' );

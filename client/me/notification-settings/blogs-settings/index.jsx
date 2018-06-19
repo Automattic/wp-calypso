@@ -14,7 +14,7 @@ import Immutable from 'immutable';
 /**
  * Internal dependencies
  */
-import { getSites } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
 import { isRequestingSites } from 'state/sites/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import Blog from './blog';

@@ -14,6 +14,7 @@ import config from 'config';
  */
 import cartItems from './cart-items';
 import productsValues from 'lib/products-values';
+import { requestGeoLocation } from 'state/data-getters';
 
 /**
  * Create a new empty cart.
@@ -67,7 +68,7 @@ function canRemoveFromCart( cart, cartItem ) {
  * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
  */
 function getNewMessages( previousCartValue, nextCartValue ) {
-	var previousDate, nextDate, hasNewServerData, nextCartMessages;
+	let previousDate, nextDate, hasNewServerData, nextCartMessages;
 	previousCartValue = previousCartValue || {};
 	nextCartValue = nextCartValue || {};
 	nextCartMessages = nextCartValue.messages || [];
@@ -114,7 +115,7 @@ function fillInAllCartItemAttributes( cart, products ) {
 }
 
 function fillInSingleCartItemAttributes( cartItem, products ) {
-	var product = products[ cartItem.product_slug ],
+	let product = products[ cartItem.product_slug ],
 		attributes = productsValues.whitelistAttributes( product );
 
 	return extend( {}, cartItem, attributes );
@@ -154,11 +155,13 @@ function paymentMethodClassName( method ) {
 		bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
 		'credit-card': 'WPCOM_Billing_MoneyPress_Paygate',
 		ebanx: 'WPCOM_Billing_Ebanx',
+		'emergent-paywall': 'WPCOM_Billing_Emergent_Paywall',
 		eps: 'WPCOM_Billing_Stripe_Source_Eps',
 		giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
 		ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
 		paypal: 'WPCOM_Billing_PayPal_Express',
 		p24: 'WPCOM_Billing_Stripe_Source_P24',
+		'brazil-tef': 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
 	};
 
 	return paymentMethodsClassNames[ method ] || '';
@@ -175,12 +178,23 @@ function paymentMethodName( method ) {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
 		'credit-card': i18n.translate( 'Credit or debit card' ),
+		'emergent-paywall': 'Net Banking / Paytm / Debit Card',
 		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
+		'brazil-tef': 'Transferência bancária',
 	};
+
+	// Temporarily override 'credit or debit' with just 'credit' for india
+	// while debit cards are served by the paywall
+	if ( method === 'credit-card' ) {
+		const userCountryCode = requestGeoLocation().data;
+		if ( 'IN' === userCountryCode ) {
+			return i18n.translate( 'Credit Card' );
+		}
+	}
 
 	return paymentMethodsNames[ method ] || method;
 }
@@ -190,10 +204,12 @@ function isPaymentMethodEnabled( cart, method ) {
 		'alipay',
 		'bancontact',
 		'eps',
+		'emergent-paywall',
 		'giropay',
 		'ideal',
 		'paypal',
 		'p24',
+		'brazil-tef',
 	];
 	const methodClassName = paymentMethodClassName( method );
 
@@ -215,6 +231,10 @@ function isPaymentMethodEnabled( cart, method ) {
 	);
 }
 
+function getLocationOrigin( l ) {
+	return l.protocol + '//' + l.hostname + ( l.port ? ':' + l.port : '' );
+}
+
 export {
 	applyCoupon,
 	canRemoveFromCart,
@@ -229,6 +249,7 @@ export {
 	isPaymentMethodEnabled,
 	paymentMethodClassName,
 	paymentMethodName,
+	getLocationOrigin,
 };
 
 export default {

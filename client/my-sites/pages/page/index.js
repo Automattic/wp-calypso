@@ -26,7 +26,7 @@ import * as utils from 'lib/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';
@@ -35,6 +35,7 @@ import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 import { withoutNotice } from 'state/notices/actions';
+import { isEnabled } from 'config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -203,6 +204,32 @@ class Page extends Component {
 		);
 	}
 
+	setFrontPage() {
+		alert( 'This feature is still being developed.' );
+	}
+
+	getFrontPageItem() {
+		if ( ! isEnabled( 'manage/pages/set-front-page' ) ) {
+			return null;
+		}
+
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+			return null;
+		}
+
+		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
+			return null;
+		}
+
+		return [
+			<MenuSeparator key="separator" />,
+			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
+				<Gridicon icon="house" size={ 18 } />
+				{ this.props.translate( 'Set as Front Page' ) }
+			</PopoverMenuItem>,
+		];
+	}
+
 	getSendToTrashItem() {
 		if ( ( this.props.hasStaticFrontPage && this.props.isPostsPage ) || this.props.isFrontPage ) {
 			return null;
@@ -337,13 +364,14 @@ class Page extends Component {
 
 	render() {
 		const { page, site = {}, shadowStatus, translate } = this.props;
-		const title = page.title || translate( '(no title)' );
+		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page );
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
 
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
+		const frontPageItem = this.getFrontPageItem();
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
 		const copyItem = this.getCopyItem();
@@ -355,6 +383,7 @@ class Page extends Component {
 			editItem ||
 			statsItem ||
 			restoreItem ||
+			frontPageItem ||
 			sendToTrashItem ||
 			moreInfoItem;
 
@@ -370,6 +399,7 @@ class Page extends Component {
 				{ statsItem }
 				{ copyItem }
 				{ restoreItem }
+				{ frontPageItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
 			</EllipsisMenu>
@@ -382,6 +412,7 @@ class Page extends Component {
 		const cardClasses = {
 			page: true,
 			'is-indented': this.props.hierarchical && this.props.hierarchyLevel > 0,
+			'is-untitled': ! page.title,
 		};
 
 		const hierarchyIndentClasses = {
@@ -608,4 +639,10 @@ const mapDispatch = {
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 };
 
-export default flow( localize, connect( mapState, mapDispatch ) )( Page );
+export default flow(
+	localize,
+	connect(
+		mapState,
+		mapDispatch
+	)
+)( Page );

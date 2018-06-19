@@ -115,7 +115,7 @@
 			padding-bottom: 16px;
 		}
 
-		.table-item:not(.is-row-heading) {
+		.table-item:not( .is-row-heading ) {
 			border-bottom: 1px solid $gray-lighten-30;
 			padding-top: 0;
 			vertical-align: top;

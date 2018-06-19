@@ -18,10 +18,11 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import PendingGappsTosNotice from './pending-gapps-tos-notice';
 import { purchasesRoot } from 'me/purchases/paths';
-import { type as domainTypes, transferStatus } from 'lib/domains/constants';
+import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/domains/constants';
 import { isSubdomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import {
 	ALL_ABOUT_DOMAINS,
+	CHANGE_NAME_SERVERS,
 	DOMAINS,
 	DOMAIN_HELPER_PREFIX,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
@@ -31,7 +32,9 @@ import {
 import {
 	domainManagementEdit,
 	domainManagementList,
+	domainManagementNameServers,
 	domainManagementTransferIn,
+	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -47,6 +50,7 @@ const expiredDomainsCanManageWarning = 'expired-domains-can-manage';
 const expiredDomainsCannotManageWarning = 'expired-domains-cannot-manage';
 const expiringDomainsCanManageWarning = 'expiring-domains-can-manage';
 const expiringDomainsCannotManageWarning = 'expiring-domains-cannot-manage';
+const newTransfersWrongNSWarning = 'new-transfer-wrong-ns';
 
 export class DomainWarnings extends React.PureComponent {
 	static propTypes = {
@@ -70,6 +74,8 @@ export class DomainWarnings extends React.PureComponent {
 			'wrongNSMappedDomains',
 			'newDomains',
 			'transferStatus',
+			'newTransfersWrongNS',
+			'pendingConsent',
 		],
 	};
 
@@ -110,6 +116,8 @@ export class DomainWarnings extends React.PureComponent {
 			this.newDomains,
 			this.pendingTransfer,
 			this.transferStatus,
+			this.newTransfersWrongNS,
+			this.pendingConsent,
 		];
 		const validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
 
@@ -420,6 +428,91 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
+	onNewTransfersWrongNSNoticeClick = () => {
+		this.trackClick( newTransfersWrongNSWarning );
+	};
+
+	newTransfersWrongNS = () => {
+		const newTransfers = this.getDomains().filter(
+			domain =>
+				domain.registrationMoment &&
+				moment( domain.registrationMoment )
+					.add( 3, 'days' )
+					.isAfter( moment() ) &&
+				domain.transferStatus === transferStatus.COMPLETED &&
+				! domain.hasWpcomNameservers
+		);
+
+		if ( newTransfers.length === 0 ) {
+			return null;
+		}
+
+		const { translate, isCompact } = this.props;
+		let compactMessage;
+		let actionLink;
+		let actionText;
+		let compactActionText;
+		let message;
+
+		if ( newTransfers.length > 1 ) {
+			actionLink = CHANGE_NAME_SERVERS;
+			actionText = translate( 'Learn more', {
+				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
+			} );
+			compactActionText = translate( 'Info', {
+				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
+			} );
+			compactMessage = translate( 'Domains require updating' );
+			message = translate(
+				'To make your newly transferred domains work with WordPress.com, you need to ' +
+					'update the nameservers.'
+			);
+		} else {
+			const domain = newTransfers[ 0 ].name;
+			actionLink = domainManagementNameServers( this.props.selectedSite.slug, domain );
+			actionText = translate( 'Update now', {
+				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
+			} );
+			compactActionText = translate( 'Fix', {
+				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
+			} );
+			compactMessage = translate( 'Domain requires updating' );
+			message = translate(
+				'To make {{strong}}%(domain)s{{/strong}} work with your WordPress.com site, you need to ' +
+					'update the nameservers.',
+				{
+					components: {
+						strong: <strong />,
+					},
+					args: { domain },
+				}
+			);
+		}
+
+		const action = (
+			<NoticeAction
+				href={ actionLink }
+				onClick={ this.onNewTransfersWrongNSNoticeClick }
+				rel="noopener noreferrer"
+			>
+				{ isCompact ? compactActionText : actionText }
+			</NoticeAction>
+		);
+
+		return (
+			<Notice
+				isCompact={ this.props.isCompact }
+				showDismiss={ false }
+				status="is-warning"
+				key="new-transfer-wrong-ns"
+				text={ isCompact ? compactMessage : message }
+			>
+				{ action }
+				{ this.trackImpression( newTransfersWrongNSWarning, newTransfers.length ) }
+			</Notice>
+		);
+	};
+
 	newDomains = () => {
 		if ( get( this.props, 'selectedSite.options.is_domain_only' ) ) {
 			return null;
@@ -603,7 +696,7 @@ export class DomainWarnings extends React.PureComponent {
 					</ul>
 				</span>
 			);
-			compactNoticeText = translate( 'Issues with your domains.' );
+			compactNoticeText = translate( 'Issues with your domains' );
 			compactContent = (
 				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ action }
@@ -622,7 +715,7 @@ export class DomainWarnings extends React.PureComponent {
 					</ul>
 				</span>
 			);
-			compactNoticeText = translate( 'Verification required for domains.' );
+			compactNoticeText = translate( 'Verification required for domains' );
 			compactContent = (
 				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ action }
@@ -672,7 +765,7 @@ export class DomainWarnings extends React.PureComponent {
 						},
 					}
 				),
-				compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}.', {
+				compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}', {
 					components: { strong: <strong /> },
 					args: { domain: domains[ 0 ].name },
 				} );
@@ -702,7 +795,7 @@ export class DomainWarnings extends React.PureComponent {
 					</ul>
 				</span>
 			),
-			compactNoticeText = translate( 'Issues with domains on this site.' );
+			compactNoticeText = translate( 'Issues with domains on this site' );
 
 		return (
 			<Notice
@@ -804,13 +897,7 @@ export class DomainWarnings extends React.PureComponent {
 					args: { domain: domainInTransfer.name },
 				};
 
-				if ( domainInTransfer.manualWhois ) {
-					message = translate(
-						"We'll send an email to confirm the transfer of {{strong}}%(domain)s{{/strong}} " +
-							'as soon as we get the correct address. {{a}}More Info{{/a}}',
-						translateParams
-					);
-				} else if ( domainInTransfer.adminEmail ) {
+				if ( domainInTransfer.adminEmail ) {
 					translateParams.args.email = domainInTransfer.adminEmail;
 					message = translate(
 						'We sent an email to {{strong}}%(email)s{{/strong}} to confirm the transfer of ' +
@@ -897,6 +984,71 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
+	pendingConsent = () => {
+		const pendingConsentDomains = this.getDomains().filter(
+			domain =>
+				domain.type === domainTypes.REGISTERED &&
+				gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus
+		);
+
+		if ( 0 === pendingConsentDomains.length ) {
+			return null;
+		}
+
+		const { isCompact, translate, selectedSite } = this.props;
+		let noticeText;
+
+		if ( pendingConsentDomains.length === 1 ) {
+			const currentDomain = pendingConsentDomains[ 0 ].name;
+			const translateOptions = {
+				components: {
+					strong: <strong />,
+					a: (
+						<a
+							href={ domainManagementManageConsent( selectedSite.slug, currentDomain ) }
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+				args: {
+					domain: currentDomain,
+				},
+			};
+
+			if ( isCompact ) {
+				noticeText = translate(
+					'The domain {{strong}}%(domain)s{{/strong}} requires explicit user consent to complete the registration.',
+					translateOptions
+				);
+			} else {
+				noticeText = translate(
+					'The domain {{strong}}%(domain)s{{/strong}} is still pending registration. Please check the domain owner email since explicit consent is required for the registration to complete or go to the {{a}}Consent Management{{/a}} page for more details.',
+					translateOptions
+				);
+			}
+		} else if ( isCompact ) {
+			noticeText = translate(
+				'Some domains require explicit user consent to complete the registration.'
+			);
+		} else {
+			noticeText = translate(
+				'Some domains are still pending registration. Please check the domain owner email to give explicit consent before the registration can be completed.'
+			);
+		}
+
+		return (
+			<Notice
+				isCompact={ isCompact }
+				status="is-error"
+				showDismiss={ false }
+				className="domain-warnings__notice"
+				key="pending-consent"
+			>
+				{ noticeText }
+			</Notice>
+		);
+	};
+
 	componentWillMount() {
 		if ( ! this.props.domains && ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
@@ -915,4 +1067,7 @@ export class DomainWarnings extends React.PureComponent {
 const mapStateToProps = null;
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( DomainWarnings ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( DomainWarnings ) );

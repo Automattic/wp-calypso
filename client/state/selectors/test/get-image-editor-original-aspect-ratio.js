@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getImageEditorOriginalAspectRatio } from 'state/selectors';
+import getImageEditorOriginalAspectRatio from 'state/selectors/get-image-editor-original-aspect-ratio';
 
 describe( 'getImageEditorOriginalAspectRatio()', () => {
 	test( 'should return null if the image has not loaded yet', () => {

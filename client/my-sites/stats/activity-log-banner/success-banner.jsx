@@ -16,7 +16,7 @@ import HappychatButton from 'components/happychat/button';
 import Gridicon from 'gridicons';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteUrl } from 'state/selectors';
+import getSiteUrl from 'state/selectors/get-site-url';
 import {
 	dismissRewindRestoreProgress,
 	dismissRewindBackupProgress,
@@ -50,6 +50,7 @@ class SuccessBanner extends PureComponent {
 		backupUrl: PropTypes.string,
 		downloadCount: PropTypes.number,
 		downloadId: PropTypes.number,
+		context: PropTypes.string,
 
 		// connect
 		dismissRestoreProgress: PropTypes.func.isRequired,
@@ -68,7 +69,7 @@ class SuccessBanner extends PureComponent {
 
 	trackDownload = () =>
 		this.props.recordTracksEvent( 'calypso_activitylog_backup_download', {
-			downloadCount: this.props.downloadCount,
+			download_count: this.props.downloadCount,
 		} );
 
 	render() {
@@ -79,6 +80,7 @@ class SuccessBanner extends PureComponent {
 			timestamp,
 			translate,
 			backupUrl,
+			context,
 			trackHappyChatBackup,
 			trackHappyChatRestore,
 		} = this.props;
@@ -90,7 +92,7 @@ class SuccessBanner extends PureComponent {
 					track: (
 						<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
 					),
-					taskFinished: translate( 'We successfully created a backup of your site to %s!', {
+					taskFinished: translate( 'We successfully created a backup of your site at %s!', {
 						args: date,
 					} ),
 					actionButton: (
@@ -99,9 +101,12 @@ class SuccessBanner extends PureComponent {
 						</Button>
 					),
 					trackHappyChat: trackHappyChatBackup,
-				}
+			  }
 			: {
-					title: translate( 'Your site has been successfully restored' ),
+					title:
+						'alternate' === context
+							? translate( 'Your site has been successfully cloned' )
+							: translate( 'Your site has been successfully restored' ),
 					icon: 'history',
 					track: (
 						<TrackComponentView
@@ -109,16 +114,17 @@ class SuccessBanner extends PureComponent {
 							eventProperties={ { restore_to: timestamp } }
 						/>
 					),
-					taskFinished: translate( 'We successfully restored your site back to %s!', {
-						args: date,
-					} ),
+					taskFinished:
+						'alternate' === context
+							? translate( 'We successfully cloned your site to %s!', { args: date } )
+							: translate( 'We successfully restored your site back to %s!', { args: date } ),
 					actionButton: (
 						<Button href={ siteUrl } primary>
 							{ translate( 'View site' ) }
 						</Button>
 					),
 					trackHappyChat: trackHappyChatRestore,
-				};
+			  };
 		return (
 			<ActivityLogBanner
 				isDismissable

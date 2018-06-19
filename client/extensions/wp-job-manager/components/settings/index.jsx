@@ -23,6 +23,8 @@ import SetupRedirect from '../setup/setup-redirect';
 import { saveSettings } from '../../state/settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSettings, isFetchingSettings } from '../../state/settings/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 class Settings extends Component {
 	static propTypes = {
@@ -48,6 +50,10 @@ class Settings extends Component {
 					siteId={ siteId }
 				/>
 				<SetupRedirect siteId={ siteId } />
+				<PageViewTracker
+					path={ `/extensions/wp-job-manager/${ tab ? tab + '/' : '' }:site` }
+					title={ `WP Job Manager > ${ tab ? titlecase( tab ) : 'Job Listings' }` }
+				/>
 				<QuerySettings siteId={ siteId } />
 				<DocumentHead title={ translate( 'WP Job Manager' ) } />
 				<Navigation activeTab={ tab } />
@@ -76,4 +82,7 @@ const connectComponent = connect(
 	{ saveSettings }
 );
 
-export default flowRight( connectComponent, localize )( Settings );
+export default flowRight(
+	connectComponent,
+	localize
+)( Settings );

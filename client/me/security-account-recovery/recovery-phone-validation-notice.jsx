@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -13,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
@@ -72,14 +71,11 @@ class RecoveryPhoneValidationNotice extends Component {
 					{ translate( 'Enter the code you receive via SMS:' ) }
 				</FormLabel>
 
-				<FormTextInput
-					autoComplete="off"
+				<FormVerificationCodeInput
 					disabled={ isValidating }
-					placeholder={ translate( 'e.g. 1234 5678' ) }
+					method={ 'sms' }
 					onChange={ this.onChange }
 					value={ candidateCode }
-					pattern="[0-9 ]*"
-					type="tel"
 				/>
 
 				<FormButtonsBar className="security-account-recovery__recovery-phone-validation-buttons">

@@ -11,7 +11,10 @@ import React from 'react';
 import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Header from 'my-sites/domains/domain-management/components/header';
-import { isDomainOnlySite, isSiteAutomatedTransfer } from 'state/selectors';
+import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isPrimaryDomainBySiteId from 'state/selectors/is-primary-domain-by-site-id';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import {
@@ -24,7 +27,15 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
 function Transfer( props ) {
-	const { isAutomatedTransfer, isDomainOnly, selectedSite, selectedDomainName, translate } = props;
+	const {
+		isAtomic,
+		isDomainOnly,
+		isPrimaryDomain,
+		selectedSite,
+		selectedDomainName,
+		translate,
+	} = props;
+
 	const slug = get( selectedSite, 'slug' );
 
 	return (
@@ -39,7 +50,7 @@ function Transfer( props ) {
 				<VerticalNavItem path={ domainManagementTransferOut( slug, selectedDomainName ) }>
 					{ translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
-				{ ! isAutomatedTransfer &&
+				{ ! isAtomic &&
 					! isDomainOnly && (
 						<VerticalNavItem
 							path={ domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
@@ -47,7 +58,8 @@ function Transfer( props ) {
 							{ translate( 'Transfer to another user' ) }
 						</VerticalNavItem>
 					) }
-				{ ! isAutomatedTransfer && (
+
+				{ ( ( isAtomic && ! isPrimaryDomain ) || ! isAtomic ) && ( // Simple and Atomic (not primary domain )
 					<VerticalNavItem path={ domainManagementTransferToOtherSite( slug, selectedDomainName ) }>
 						{ translate( 'Transfer to another WordPress.com site' ) }
 					</VerticalNavItem>
@@ -57,10 +69,12 @@ function Transfer( props ) {
 	);
 }
 
-export default connect( state => {
+export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
-		isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, siteId ),
+		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
+		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
 	};
 } )( localize( Transfer ) );

@@ -6,7 +6,7 @@
 
 import Dispatcher from 'dispatcher';
 
-var PeopleActions = {
+const PeopleActions = {
 	removePeopleNotices: logs => {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PEOPLE_NOTICES',

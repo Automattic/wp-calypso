@@ -18,9 +18,9 @@ import Dispatcher from 'dispatcher';
 import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
 import { hasDomainDetails } from 'lib/store-transactions';
 
-var _transaction = createInitialTransaction();
+let _transaction = createInitialTransaction();
 
-var TransactionStore = {
+const TransactionStore = {
 	get: function() {
 		return _transaction;
 	},
@@ -88,7 +88,7 @@ function setNewCreditCardDetails( options ) {
 }
 
 TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case UpgradesActionTypes.TRANSACTION_DOMAIN_DETAILS_SET:

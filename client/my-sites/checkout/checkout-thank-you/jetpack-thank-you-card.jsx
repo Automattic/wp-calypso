@@ -64,15 +64,11 @@ import {
 	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURES_LIST,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
+	GROUP_JETPACK,
+	TYPE_FREE,
 	getPlanClass,
 } from 'lib/plans/constants';
-import { getPlan } from 'lib/plans';
+import { getPlan, planMatches } from 'lib/plans';
 
 const vpFeatures = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,
@@ -89,7 +85,7 @@ const akismetFeatures = {
 	[ FEATURE_SPAM_AKISMET_PLUS ]: true,
 };
 
-class JetpackThankYouCard extends Component {
+export class JetpackThankYouCard extends Component {
 	state = {
 		completedJetpackFeatures: {},
 		installInitiatedPlugins: new Set(),
@@ -325,12 +321,8 @@ class JetpackThankYouCard extends Component {
 	isEligibleForLiveChat() {
 		const { planSlug } = this.props;
 		return (
-			planSlug === PLAN_JETPACK_BUSINESS ||
-			planSlug === PLAN_JETPACK_BUSINESS_MONTHLY ||
-			planSlug === PLAN_JETPACK_PERSONAL ||
-			planSlug === PLAN_JETPACK_PERSONAL_MONTHLY ||
-			planSlug === PLAN_JETPACK_PREMIUM ||
-			planSlug === PLAN_JETPACK_PREMIUM_MONTHLY
+			planMatches( planSlug, { group: GROUP_JETPACK } ) &&
+			! planMatches( planSlug, { type: TYPE_FREE } )
 		);
 	}
 
@@ -486,7 +478,7 @@ class JetpackThankYouCard extends Component {
 				? [
 						{ slug: 'vaultpress', status: 'wait', error: true },
 						{ slug: 'akismet', status: 'wait', error: true },
-					]
+				  ]
 				: this.props.plugins;
 
 		const pluginsStatus = reduce(
@@ -543,10 +535,10 @@ class JetpackThankYouCard extends Component {
 						return ( total += 1 );
 					},
 					0
-				);
+			  );
 
 		// We're intentionally showing at least 10% progress to indicate that setup has started.
-		return Math.max( 10, Math.ceil( completed / features.length * 100 ) );
+		return Math.max( 10, Math.ceil( ( completed / features.length ) * 100 ) );
 	}
 
 	renderAction( progress = 0 ) {

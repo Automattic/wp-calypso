@@ -16,12 +16,10 @@ import {
 	fetchMagicLoginRequestEmail,
 	hideMagicLoginRequestNotice,
 } from 'state/login/magic-login/actions';
-import {
-	getMagicLoginCurrentView,
-	getMagicLoginRequestEmailError,
-	getMagicLoginRequestedEmailSuccessfully,
-	isFetchingMagicLoginEmail,
-} from 'state/selectors';
+import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestedEmailSuccessfully from 'state/selectors/get-magic-login-requested-email-successfully';
+import getMagicLoginRequestEmailError from 'state/selectors/get-magic-login-request-email-error';
+import isFetchingMagicLoginEmail from 'state/selectors/is-fetching-magic-login-email';
 import { getRedirectToOriginal } from 'state/login/selectors';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -199,4 +197,7 @@ const mapDispatch = {
 	recordTracksEvent,
 };
 
-export default connect( mapState, mapDispatch )( localize( RequestLoginEmailForm ) );
+export default connect(
+	mapState,
+	mapDispatch
+)( localize( RequestLoginEmailForm ) );

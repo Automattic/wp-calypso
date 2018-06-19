@@ -33,7 +33,7 @@ import {
 	isThemeAvailableOnJetpackSite,
 } from 'state/themes/selectors';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
@@ -53,7 +53,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 				! isThemePremium( state, themeId ) || // Not a premium theme
 				isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 				isThemeActive( state, themeId, siteId ), // Already active
-		}
+	  }
 	: {};
 
 const upgradePlan = config.isEnabled( 'upgrades/checkout' )
@@ -76,7 +76,7 @@ const upgradePlan = config.isEnabled( 'upgrades/checkout' )
 				! isThemePremium( state, themeId ) ||
 				isThemeActive( state, themeId, siteId ) ||
 				isPremiumThemeAvailable( state, themeId, siteId ),
-		}
+	  }
 	: {};
 
 const activate = {
@@ -198,6 +198,7 @@ export const connectOptions = connect(
 		let mapGetUrl = identity,
 			mapHideForTheme = identity;
 
+		/* eslint-disable wpcalypso/redux-no-bound-selectors */
 		if ( siteId ) {
 			mapGetUrl = getUrl => t => getUrl( state, t, siteId );
 			mapHideForTheme = hideForTheme => t => hideForTheme( state, t, siteId, origin );
@@ -214,6 +215,7 @@ export const connectOptions = connect(
 				option.hideForTheme ? { hideForTheme: mapHideForTheme( option.hideForTheme ) } : {}
 			)
 		);
+		/* eslint-enable wpcalypso/redux-no-bound-selectors */
 	},
 	( dispatch, { siteId, source = 'unknown' } ) => {
 		const options = pickBy( ALL_THEME_OPTIONS, 'action' );

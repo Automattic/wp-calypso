@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import SupportInfo from 'components/support-info';
 import ExternalLink from 'components/external-link';
 import FormInput from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -24,7 +25,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
@@ -307,6 +308,12 @@ class SiteVerification extends Component {
 				<Card>
 					{ siteIsJetpack && (
 						<FormFieldset>
+							<SupportInfo
+								text={ translate(
+									'Provides the necessary hidden tags needed to verify your WordPress site with various services.'
+								) }
+								link="https://jetpack.com/support/site-verification-tools/"
+							/>
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="verification-tools"

@@ -19,16 +19,23 @@ import { preventWidows } from 'lib/formatting';
 import { isJetpackSite } from 'state/sites/selectors';
 import FeatureExample from 'components/feature-example';
 import Banner from 'components/banner';
-import { PLAN_BUSINESS, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
+import { TERM_ANNUALLY, TYPE_BUSINESS } from 'lib/plans/constants';
 
-const SeoPreviewNudge = ( { translate, isJetpack = false } ) => {
+export const SeoPreviewNudge = ( { translate, site, isJetpack = false } ) => {
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
 			<TrackComponentView eventName="calypso_seo_preview_upgrade_nudge_impression" />
 
 			<Banner
-				plan={ isJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
+				plan={
+					site &&
+					findFirstSimilarPlanKey( site.plan.product_slug, {
+						type: TYPE_BUSINESS,
+						...( isJetpack ? { term: TERM_ANNUALLY } : {} ),
+					} )
+				}
 				title={ translate( 'Upgrade to a Business Plan to unlock the power of our SEO tools!' ) }
 				event="site_preview_seo_plan_upgrade"
 				className="preview-upgrade-nudge__banner"

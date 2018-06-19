@@ -15,13 +15,13 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { translate } from 'i18n-calypso';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import SitesPopover from 'components/sites-popover';
 import Button from 'components/button';
 import { markPostSeen } from 'state/reader/posts/actions';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
 import { getDailyPostType } from './helper';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
@@ -52,6 +52,7 @@ export class DailyPostButton extends React.Component {
 
 		this._closeTimerId = null;
 		this._isMounted = false;
+		this.dailyPostButtonRef = React.createRef();
 	}
 
 	static propTypes = {
@@ -128,11 +129,12 @@ export class DailyPostButton extends React.Component {
 	};
 
 	renderSitesPopover = () => {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<SitesPopover
 				key="menu"
 				header={ <div> { translate( 'Post on' ) } </div> }
-				context={ this.refs && this.refs.dailyPostButton }
+				context={ this.dailyPostButtonRef.current }
 				visible={ this.state.showingMenu }
 				groups={ true }
 				onSiteSelect={ this.openEditorWithSite }
@@ -141,6 +143,7 @@ export class DailyPostButton extends React.Component {
 				className="is-reader"
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
 	render() {
@@ -164,7 +167,13 @@ export class DailyPostButton extends React.Component {
 				onMouseEnter: preloadEditor,
 			},
 			[
-				<Button ref="dailyPostButton" key="button" compact primary className={ buttonClasses }>
+				<Button
+					ref={ this.dailyPostButtonRef }
+					key="button"
+					compact
+					primary
+					className={ buttonClasses }
+				>
 					<Gridicon icon="create" />
 					<span>{ translate( 'Post about %(title)s', { args: { title } } ) } </span>
 				</Button>,

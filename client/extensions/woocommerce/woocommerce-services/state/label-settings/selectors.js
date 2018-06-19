@@ -101,11 +101,17 @@ export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) 
 		.sort( ( a, b ) => b.payment_method_id - a.payment_method_id );
 };
 
+export const getPaymentMethodsWarning = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.warnings && meta.warnings.payment_methods;
+};
+
 export const getMasterUserInfo = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const meta = getLabelSettingsFormMeta( state, siteId );
 	return {
 		masterUserName: meta && meta.master_user_name,
 		masterUserLogin: meta && meta.master_user_login,
 		masterUserEmail: meta && meta.master_user_email,
+		masterUserWpcomLogin: meta && meta.master_user_wpcom_login,
 	};
 };

@@ -17,18 +17,14 @@ const packageJSON = require( '../package.json' );
 const majorNodeVersion = semver.major( packageJSON.engines.node );
 const majorNpmVersion = semver.major( packageJSON.engines.npm );
 
-function buildMessage( { engine, engines, results } ) {
+function buildVersionCheckMessage( engine, engines, results ) {
 	const icon = results[ engine ].isSatisfied ? chalk.green( '✓' ) : chalk.red( '𝘅' );
-	let message = `${ icon } expecting ${ engine }: ${ chalk.blue( engines[ engine ] ) }`;
+	const expected = `expecting ${ engine }: ${ chalk.blue( engines[ engine ] ) }`;
+	const actual = results[ engine ].isSatisfied
+		? `(Your version: ${ chalk.green( results[ engine ].version.version ) })`
+		: `(Your version: ${ chalk.red( results[ engine ].version.version ) } is not in valid range: ${ chalk.blue( results[ engine ].wanted.range ) })`;
 
-	if ( results[ engine ].isSatisfied ) {
-		message += ` (Your version: ${ chalk.green( results[ engine ].version.version ) })`;
-	} else {
-		// eslint-disable-next-line max-len
-		message += ` (Your version: ${ chalk.red( results[ engine ].version.version ) } is not in valid range: ${ chalk.blue( results[ engine ].wanted.range ) })`;
-	}
-
-	return message;
+	return `${ icon } ${ expected } ${ actual }`;
 }
 
 checkNodeVersion( {
@@ -41,16 +37,8 @@ checkNodeVersion( {
 		process.exit( 1 );
 	}
 
-	const nodeMessage = buildMessage( {
-		engine: 'node',
-		engines: packageJSON.engines,
-		results,
-	} );
-	const npmMessage = buildMessage( {
-		engine: 'npm',
-		engines: packageJSON.engines,
-		results,
-	} );
+	const nodeMessage = buildVersionCheckMessage( 'node', packageJSON.engines, results );
+	const npmMessage = buildVersionCheckMessage( 'npm', packageJSON.engines, results );
 
 	console.log( nodeMessage );
 	console.log( npmMessage );

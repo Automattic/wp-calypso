@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getJetpackOnboardingSettings } from 'state/selectors';
+import getJetpackOnboardingSettings from 'state/selectors/get-jetpack-onboarding-settings';
 
 describe( '#getJetpackOnboardingSettings()', () => {
 	const onboardingSettings = {
@@ -19,7 +19,7 @@ describe( '#getJetpackOnboardingSettings()', () => {
 	test( 'should return null if we have no settings at all', () => {
 		const selected = getJetpackOnboardingSettings(
 			{
-				jetpackOnboarding: {
+				jetpack: {
 					settings: {},
 				},
 			},
@@ -32,7 +32,7 @@ describe( '#getJetpackOnboardingSettings()', () => {
 	test( 'should return null if we have no settings for the current site ID', () => {
 		const selected = getJetpackOnboardingSettings(
 			{
-				jetpackOnboarding: {
+				jetpack: {
 					settings,
 				},
 			},
@@ -45,7 +45,7 @@ describe( '#getJetpackOnboardingSettings()', () => {
 	test( 'should return the site settings of a known unconnected site', () => {
 		const selected = getJetpackOnboardingSettings(
 			{
-				jetpackOnboarding: {
+				jetpack: {
 					settings,
 				},
 			},

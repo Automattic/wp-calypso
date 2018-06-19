@@ -13,11 +13,10 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompletedSteps from '../summary-completed-steps';
 import NextSteps from '../summary-next-steps';
-import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
-import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
+import getSiteUrl from 'state/selectors/get-site-url';
+import getUnconnectedSiteUrl from 'state/selectors/get-unconnected-site-url';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	handleSummaryStepClick = ( stepName, stepType ) => () => {
@@ -38,10 +37,6 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<PageViewTracker
-					path={ [ basePath, STEPS.SUMMARY, ':site' ].join( '/' ) }
-					title="Summary ‹ Jetpack Start"
-				/>
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card>

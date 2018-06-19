@@ -17,15 +17,13 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
-import {
-	getReaderFeedsForQuery,
-	getReaderFeedsCountForQuery,
-	getReaderRecommendedSites,
-	getReaderRecommendedSitesPagingOffset,
-	getBlockedSites,
-	getReaderAliasedFollowFeedUrl,
-	getReaderFollowsCount,
-} from 'state/selectors';
+import getBlockedSites from 'state/selectors/get-blocked-sites';
+import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
+import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';
+import getReaderFeedsForQuery from 'state/selectors/get-reader-feeds-for-query';
+import getReaderFollowsCount from 'state/selectors/get-reader-follows-count';
+import getReaderRecommendedSites from 'state/selectors/get-reader-recommended-sites';
+import getReaderRecommendedSitesPagingOffset from 'state/selectors/get-reader-recommended-sites-paging-offset';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
 import RecommendedSites from 'blocks/reader-recommended-sites';
@@ -198,9 +196,8 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
-				{ ! searchResults && (
-					<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
-				) }
+				{ ! searchResults &&
+					sitesQuery && <QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } /> }
 				{ this.shouldRequestMoreRecs() && (
 					<QueryReaderRecommendedSites
 						seed={ recommendationsSeed }

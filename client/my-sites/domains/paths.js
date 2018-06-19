@@ -46,6 +46,10 @@ export function domainManagementEditContactInfo( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'edit-contact-info' );
 }
 
+export function domainManagementManageConsent( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'manage-consent' );
+}
+
 export function domainManagementEmail( siteName, domainName ) {
 	let path;
 
@@ -135,4 +139,8 @@ export function getSectionName( pathname ) {
 	const matches = regExp.exec( pathname );
 
 	return matches ? matches[ 1 ] : null;
+}
+
+export function domainManagementDomainConnectMapping( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'domain-connect-mapping' );
 }

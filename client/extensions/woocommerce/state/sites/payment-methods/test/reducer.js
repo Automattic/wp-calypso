@@ -30,7 +30,7 @@ describe( 'reducer', () => {
 		expect( newState[ siteId ].paymentMethods ).to.eql( LOADING );
 	} );
 
-	test( 'should store data from the action', () => {
+	test( 'should store data from the request action', () => {
 		const siteId = 123;
 		const state = {};
 		const action = {
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 		] );
 	} );
 
-	test( 'should store data from the action', () => {
+	test( 'should store data from the update success action', () => {
 		const siteId = 123;
 		const state = {
 			[ siteId ]: {

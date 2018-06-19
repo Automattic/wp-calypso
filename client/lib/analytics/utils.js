@@ -5,6 +5,7 @@
  */
 
 import debugFactory from 'debug';
+import sha256 from 'hash.js/lib/hash/sha/256';
 
 /**
  * Module variables
@@ -26,6 +27,18 @@ export function doNotTrack() {
 	);
 	debug( `Do Not Track: ${ result }` );
 	return result;
+}
+
+/**
+ * Hashes users' Personally Identifiable Information using SHA256
+ *
+ * @param {String|Number} data Data to be hashed
+ * @returns {String} SHA256 in hex string format
+ */
+export function hashPii( data ) {
+	return sha256()
+		.update( data.toString() )
+		.digest( 'hex' );
 }
 
 // If this list catches things that are not necessarily forbidden we're ok with
@@ -95,3 +108,21 @@ export function shouldSkipAds() {
 	debug( `Is Skipping Ads: ${ result }` );
 	return result;
 }
+
+const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslug)(\/|$|\?)/i;
+
+/**
+ * Check if a path should report the currently selected site ID.
+ *
+ * Some paths should never report it because it's used
+ * to tell general admin and site-specific activities apart.
+ *
+ * @param {String} path The tracked path.
+ * @returns {Boolean} If the report should null `blog_id`.
+ */
+export const shouldReportOmitBlogId = path => {
+	if ( ! path ) {
+		return true;
+	}
+	return ! SITE_FRAGMENT_REGEX.test( path );
+};

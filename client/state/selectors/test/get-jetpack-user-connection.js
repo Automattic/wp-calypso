@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getJetpackUserConnection } from 'state/selectors';
+import getJetpackUserConnection from 'state/selectors/get-jetpack-user-connection';
 import { dataItems } from './fixtures/jetpack-connection';
 
 describe( 'getJetpackUserConnection()', () => {

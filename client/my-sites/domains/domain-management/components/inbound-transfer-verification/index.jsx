@@ -25,24 +25,7 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 	render() {
 		const { domain, selectedSiteSlug, translate } = this.props;
 
-		const { manualWhois, adminEmail } = domain;
-
-		if ( manualWhois ) {
-			return (
-				<Card highlight="warning">
-					<div>
-						<h1 className="inbound-transfer-verification__heading">
-							{ translate( 'The authorization email is still waiting to be sent.' ) }
-						</h1>
-						{ translate(
-							"The contact address for this domain wasn't immediately available. " +
-								'We will keep checking and send the email to initiate the transfer once we have the ' +
-								'correct address. This could take up to 24 hours. We appreciate your patience.'
-						) }
-					</div>
-				</Card>
-			);
-		}
+		const { adminEmail } = domain;
 
 		if ( ! adminEmail ) {
 			return (

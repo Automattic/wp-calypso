@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -25,8 +26,9 @@ import accept from 'lib/accept';
 import analytics from 'lib/analytics';
 import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
+import { getCurrentUser } from 'state/current-user/selectors';
 
-class DeleteUser extends React.PureComponent {
+class DeleteUser extends React.Component {
 	static displayName = 'DeleteUser';
 
 	static propTypes = {
@@ -104,11 +106,11 @@ class DeleteUser extends React.PureComponent {
 										username: this.props.user.name,
 									},
 								}
-							)
+						  )
 						: translate(
 								'If you remove this user, he or she will no longer be able to access this site, ' +
 									'but any content that was created by this user will remain on the site.'
-							) }
+						  ) }
 				</p>
 				<p>{ translate( 'Would you still like to remove this user?' ) }</p>
 			</div>,
@@ -206,11 +208,11 @@ class DeleteUser extends React.PureComponent {
 											username: this.props.user.name,
 										},
 									}
-								)
+							  )
 							: translate(
 									'You have the option of reassigning all content created by ' +
 										'this user, or deleting the content entirely.'
-								) }
+							  ) }
 					</p>
 
 					<FormFieldset>
@@ -239,14 +241,14 @@ class DeleteUser extends React.PureComponent {
 											args: {
 												username: this.props.user.name ? this.props.user.name : '',
 											},
-										} )
+									  } )
 									: translate( 'Delete all content created by this user' ) }
 							</span>
 						</FormLabel>
 					</FormFieldset>
 
 					<FormButtonsBar>
-						<FormButton disabled={ this.isDeleteButtonDisabled() }>
+						<FormButton scary={ true } disabled={ this.isDeleteButtonDisabled() }>
 							{ translate( 'Delete user', { context: 'Button label' } ) }
 						</FormButton>
 					</FormButtonsBar>
@@ -279,4 +281,6 @@ class DeleteUser extends React.PureComponent {
 	}
 }
 
-export default localize( DeleteUser );
+export default localize(
+	connect( state => ( { currentUser: getCurrentUser( state ) } ) )( DeleteUser )
+);

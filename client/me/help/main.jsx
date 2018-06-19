@@ -5,7 +5,7 @@
  */
 
 import { find } from 'lodash';
-import { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
@@ -26,22 +26,16 @@ import SectionHeader from 'components/section-header';
 import HelpResult from './help-results/item';
 import HelpUnverifiedWarning from './help-unverified-warning';
 import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
+import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import config from 'config';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getSupportSiteLocale } from 'lib/i18n-utils';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:help-search' );
-
-const getSupportLocale = () => {
-	const localeSlug = getLocaleSlug();
-	if ( config( 'support_locales' ).indexOf( localeSlug ) > -1 ) {
-		return localeSlug;
-	}
-	return 'en';
-};
 
 class Help extends React.PureComponent {
 	static displayName = 'Help';
@@ -63,7 +57,7 @@ class Help extends React.PureComponent {
 				),
 			},
 			{
-				link: `https://${ getSupportLocale() }.support.wordpress.com/start/`,
+				link: `https://${ getSupportSiteLocale() }.support.wordpress.com/start/`,
 				title: this.props.translate( 'Get Started' ),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
@@ -108,7 +102,7 @@ class Help extends React.PureComponent {
 			<div className="help__support-links">
 				<CompactCard
 					className="help__support-link"
-					href={ `https://${ getSupportLocale() }.support.wordpress.com` }
+					href={ `https://${ getSupportSiteLocale() }.support.wordpress.com` }
 					target="__blank"
 				>
 					<div className="help__support-link-section">
@@ -235,6 +229,7 @@ class Help extends React.PureComponent {
 
 		return (
 			<Main className="help">
+				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
@@ -248,13 +243,15 @@ class Help extends React.PureComponent {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+const isWPCOMBusinessPlan = purchase =>
+	planMatches( purchase.productSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
+
+export const mapStateToProps = ( state, ownProps ) => {
 	const isEmailVerified = isCurrentUserEmailVerified( state );
 	const userId = getCurrentUserId( state );
 	const purchases = getUserPurchases( state, userId );
 	const isLoading = isFetchingUserPurchases( state );
-	const isBusinessPlanUser =
-		purchases && !! find( purchases, purchase => purchase.productSlug === PLAN_BUSINESS );
+	const isBusinessPlanUser = purchases && !! find( purchases, isWPCOMBusinessPlan );
 	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
 
 	return {
@@ -264,4 +261,6 @@ export default connect( ( state, ownProps ) => {
 		isLoading,
 		isEmailVerified,
 	};
-} )( localize( Help ) );
+};
+
+export default connect( mapStateToProps )( localize( Help ) );

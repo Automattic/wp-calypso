@@ -146,7 +146,7 @@ $devdocs-max-width: 720px;
 
 		// Some components use a card and the extra margin
 		// looks strange.
-		.card {
+		.card:last-child {
 			margin-bottom: 0;
 		}
 	}
@@ -206,78 +206,6 @@ $devdocs-max-width: 720px;
 	}
 }
 
-
-// README.md Viewer
-.docs-example__readme-viewer {
-	break-inside: avoid;
-
-	p, li {
-		font-size: 1.5rem;
-	}
-
-	p {
-		margin-bottom: 0.5rem;
-	}
-
-	table {
-		border-collapse: collapse;
-		border-spacing: 0;
-
-		th, td {
-			border-bottom: 1px solid transparentize( $gray-lighten-20, 0.5 );
-			text-align: left;
-		}
-
-		th {
-			color: $blue-dark;
-			font-size: 0.75em;
-			padding: 0.25em 3em 0.25em 0;
-		}
-
-		td {
-			font-size: 0.83em;
-			padding: 1.17em 3em 1.17em 0;
-		}
-	}
-
-	h1, h2, h3, h4, h5, h6 {
-		display: block;
-		margin-bottom: 0.5em;
-		margin-left: 0;
-	}
-
-	h1 {
-		font-size: 1.33em;
-	}
-
-	h2 {
-		font-size: 1.17em;
-	}
-
-	h3 {
-    	font-size: 1em;
-	}
-
-	h4 {
-		font-size: 0.83em;
-	}
-
-	h5 {
-		font-size: 0.67em;
-	}
-
-	h6 {
-		font-size: 0.5em;
-	}
-}
-
-.docs-example__readme-viewer-not-available {
-	font-family: $sans;
-	text-align: center;
-	color: $gray-text-min;
-}
-
-
 // Some components/blocks use a button to toggle variants
 .docs__design-toggle {
 	top: 10px;
@@ -288,7 +216,6 @@ $devdocs-max-width: 720px;
 
 // Some components/blocks need some space to look right
 .docs__design-button-row,
-.docs__design-badge-row,
 .design__button-row {
     margin-bottom: 20px;
 }
@@ -411,9 +338,9 @@ $devdocs-max-width: 720px;
 	}
 }
 
+
 // Documentation — Copy-heavy things like Contributing and Typography
-.devdocs__doc-content,
-.docs-example__readme-viewer {
+.devdocs__doc-content {
 	max-width: $devdocs-max-width;
 	margin: 32px auto;
 	font-size: 16px;
@@ -467,15 +394,17 @@ $devdocs-max-width: 720px;
 	}
 
 	code {
-		font-size: 15px;
 		background-color: $white;
-		padding: 2px 6px;
 		border-radius: 3px;
 		color: $blue-dark;
+		font-size: 15px;
+		padding: 2px 6px;
+		max-width: 100px;
 	}
 
 	pre > code {
 		background-color: $transparent;
+		padding: 2px 0;
 	}
 
 	.emoji {
@@ -530,12 +459,19 @@ $devdocs-max-width: 720px;
 	}
 }
 
+.design__typography-code-example {
+	font-family: $code;
+	font-size: 15px;
+}
+
+.design__typography-modular-scale {
+	max-width: 150px;
+}
+
 // At the end of documentation and reademe's
-a.devdocs__doc-edit-link,
-a.docs-example__doc-edit-link {
+a.devdocs__doc-edit-link {
 	text-align: center;
 	text-decoration: underline;
 	float: right;
 	position: relative;
-	top: -20px;
 }

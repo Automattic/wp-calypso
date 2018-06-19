@@ -23,6 +23,8 @@ import HeaderCake from 'components/header-cake';
 import { decodeEntities } from 'lib/formatting';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
+import titlecase from 'to-title-case';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PostLikes from '../stats-post-likes';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostStats from 'components/data/query-post-stats';
@@ -32,7 +34,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import Button from 'components/button';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
-import { hasNavigated } from 'state/selectors';
+import hasNavigated from 'state/selectors/has-navigated';
 import WebPreview from 'components/web-preview';
 
 class StatsPostDetail extends Component {
@@ -121,6 +123,10 @@ class StatsPostDetail extends Component {
 
 		return (
 			<Main wideLayout>
+				<PageViewTracker
+					path={ `/stats/${ postType }/:post_id/:site` }
+					title={ `Stats > Single ${ titlecase( postType ) }` }
+				/>
 				{ siteId && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
@@ -211,4 +217,7 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsPostDetail );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsPostDetail );

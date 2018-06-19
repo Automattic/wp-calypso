@@ -106,6 +106,13 @@ const devdocs = {
 		next();
 	},
 
+	playground: function( context, next ) {
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/playground" />
+		);
+		next();
+	},
+
 	selectors: function( context, next ) {
 		context.primary = (
 			<AsyncLoad

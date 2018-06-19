@@ -29,44 +29,10 @@ import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
-import { isPrivateSite, canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isPrivateSite from 'state/selectors/is-private-site';
 
-/**
- * This function return true if the image editor can be
- * enabled/shown
- *
- * @param  {object} item - media item
- * @param  {object} site - current site
- * @return {boolean} `true` if the image-editor can be enabled.
- */
-const enableImageEditing = ( item, site ) => {
-	// do not allow if, for some reason, there isn't a valid item yet
-	if ( ! item ) {
-		return false;
-	}
-
-	// do not show if the feature flag isn't set
-	if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
-		return false;
-	}
-
-	// do not allow for private sites
-	if ( get( site, 'is_private' ) ) {
-		return false;
-	}
-
-	// do not allow for Jetpack site with a non-valid version
-	if (
-		get( site, 'jetpack', false ) &&
-		versionCompare( get( site, 'options.jetpack_version', '0.0' ), '4.7-alpha', '<' )
-	) {
-		return false;
-	}
-
-	return true;
-};
-
-class EditorMediaModalDetailItem extends Component {
+export class EditorMediaModalDetailItem extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		item: PropTypes.object,
@@ -93,7 +59,7 @@ class EditorMediaModalDetailItem extends Component {
 	 * @param  {Object}  item Media item
 	 * @return {Boolean} Whether the video editor can be enabled
 	 */
-	enableVideoEditing( item ) {
+	shouldShowVideoEditingButtons( item ) {
 		const { isJetpack, isVideoPressEnabled, isVideoPressModuleActive } = this.props;
 
 		// Not a VideoPress video
@@ -114,14 +80,47 @@ class EditorMediaModalDetailItem extends Component {
 		return true;
 	}
 
+	/**
+	 * This function returns true if the image editor can be
+	 * enabled/shown
+	 *
+	 * @param  {object} item - media item
+	 * @param  {object} site - current site
+	 * @return {boolean} `true` if the image-editor can be enabled.
+	 */
+	shouldShowImageEditingButtons( item, site ) {
+		const { isSitePrivate } = this.props;
+
+		// do not allow if, for some reason, there isn't a valid item yet
+		if ( ! item ) {
+			return false;
+		}
+
+		// do not show if the feature flag isn't set
+		if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
+			return false;
+		}
+
+		// do not allow for private sites
+		if ( isSitePrivate ) {
+			return false;
+		}
+
+		// do not allow for Jetpack site with a non-valid version
+		if (
+			get( site, 'jetpack', false ) &&
+			versionCompare( get( site, 'options.jetpack_version', '0.0' ), '4.7-alpha', '<' )
+		) {
+			return false;
+		}
+
+		return true;
+	}
+
 	renderEditButton() {
 		const { item, onEdit, translate, canUserUploadFiles } = this.props;
 
 		if ( ! canUserUploadFiles ) {
-			return null;
-		}
-
-		if ( this.props.isPrivateSite ) {
 			return null;
 		}
 
@@ -186,9 +185,9 @@ class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderImageEditorButtons( classname ) {
-		const { site } = this.props;
+		const { item, site } = this.props;
 
-		if ( ! enableImageEditing( site ) ) {
+		if ( ! this.shouldShowImageEditingButtons( item, site ) ) {
 			return null;
 		}
 
@@ -203,7 +202,7 @@ class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderVideoEditorButtons( item, classname ) {
-		if ( ! this.enableVideoEditing( item ) ) {
+		if ( ! this.shouldShowVideoEditingButtons( item ) ) {
 			return null;
 		}
 
@@ -324,10 +323,13 @@ const connectComponent = connect( state => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 		isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
-		isPrivateSite: isPrivateSite( state, siteId ),
+		isSitePrivate: isPrivateSite( state, siteId ),
 		siteId,
 		canUserUploadFiles,
 	};
 } );
 
-export default flowRight( connectComponent, localize )( EditorMediaModalDetailItem );
+export default flowRight(
+	connectComponent,
+	localize
+)( EditorMediaModalDetailItem );

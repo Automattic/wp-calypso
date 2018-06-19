@@ -18,12 +18,6 @@ const prettier = require( 'prettier' );
  */
 const shouldFormat = require( './utils/should-format' );
 
-/**
- * Module constants
- */
-const defaultPrettierConfig = undefined;
-const sassPrettierConfig = { parser: 'scss' };
-
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
 		'under the GNU General Public License v2 (or later). All materials must have ' +
@@ -65,10 +59,9 @@ files.forEach( file => {
 			return;
 		}
 
-		const formattedText = prettier.format(
-			text,
-			file.endsWith( '.scss' ) ? sassPrettierConfig : defaultPrettierConfig
-		);
+		const config = prettier.resolveConfig.sync( file );
+		config.filepath = file;
+		const formattedText = prettier.format( text, config );
 
 		// No change required.
 		if ( text === formattedText ) {

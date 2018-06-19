@@ -1,7 +1,8 @@
 Current Site (JSX)
 ==================
 
-This component displays the currently selected site. It's used in the My Sites Sidebar.
+This component displays the currently selected site. All information is received from
+Redux state and the component receives no props. It's used in the My Sites Sidebar.
 
 #### How to use:
 
@@ -10,11 +11,7 @@ import CurrentSite from 'my-sites/current-site';
 
 render() {
 	return (
-		<CurrentSite sites={ sitesListObject } />
+		<CurrentSite />
 	);
 }
 ```
-
-#### Props
-
-* `sites (object)` - (required) An instance of `sites-list`.

@@ -15,7 +15,8 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import SignupActions from 'lib/signup/actions';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
+import SetupFooter from 'my-sites/site-settings/jetpack-credentials/credentials-setup-flow/setup-footer';
 
 class RewindFormCreds extends Component {
 	static propTypes = {
@@ -62,8 +63,8 @@ class RewindFormCreds extends Component {
 	stepContent = () => {
 		const { translate, siteId } = this.props;
 
-		return (
-			<Card className="rewind-form-creds__card rewind-switch__card rewind-switch__content">
+		return [
+			<div key="rewind-form-creds__header" className="rewind-form-creds__header">
 				<h3 className="rewind-form-creds__title rewind-switch__heading">
 					{ translate( 'Site credentials' ) }
 				</h3>
@@ -72,9 +73,18 @@ class RewindFormCreds extends Component {
 						"We'll guide you through the process of finding and entering your site's credentials."
 					) }
 				</p>
+			</div>,
+			<Card
+				key="rewind-form-creds__card"
+				className="rewind-form-creds__card rewind-switch__card rewind-switch__content"
+			>
+				<Card compact className="rewind-form-creds__legend">
+					{ translate( 'Enter your credentials' ) }
+				</Card>
 				<RewindCredentialsForm role="main" siteId={ siteId } allowCancel={ false } />
-			</Card>
-		);
+				<SetupFooter />
+			</Card>,
+		];
 	};
 
 	render() {
@@ -87,17 +97,20 @@ class RewindFormCreds extends Component {
 				stepContent={ this.stepContent() }
 				hideFormattedHeader={ true }
 				hideSkip={ true }
-				hideBack={ true }
+				hideBack={ false }
 			/>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
-	const rewindState = getRewindState( state, siteId );
-	return {
-		siteId,
-		rewindIsNowActive: includes( [ 'active', 'provisioning' ], rewindState.state ),
-	};
-}, null )( localize( RewindFormCreds ) );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
+		const rewindState = getRewindState( state, siteId );
+		return {
+			siteId,
+			rewindIsNowActive: includes( [ 'active', 'provisioning' ], rewindState.state ),
+		};
+	},
+	null
+)( localize( RewindFormCreds ) );

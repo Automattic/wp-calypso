@@ -19,7 +19,7 @@ import AsyncLoad from 'components/async-load';
 import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { toggleNotificationsPanel } from 'state/ui/actions';
-import { isNotificationsOpen } from 'state/selectors';
+import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import TranslatableString from 'components/translatable/proptype';
 
 class MasterbarItemNotifications extends Component {
@@ -162,4 +162,7 @@ const mapDispatchToProps = {
 	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( MasterbarItemNotifications );

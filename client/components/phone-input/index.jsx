@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { find, identity, noop } from 'lodash';
 import classnames from 'classnames';
@@ -19,20 +18,21 @@ import {
 	findCountryFromNumber,
 	processNumber,
 	MIN_LENGTH_TO_FORMAT,
-} from './phone-number';
-import CountryFlag from './country-flag';
-import { countries } from './data';
+} from 'components/phone-input/phone-number';
+import CountryFlag from 'components/phone-input/country-flag';
+import { countries } from 'components/phone-input/data';
 
 class PhoneInput extends React.PureComponent {
 	static propTypes = {
 		onChange: PropTypes.func.isRequired,
 		value: PropTypes.string.isRequired,
 		countryCode: PropTypes.string.isRequired,
-		countriesList: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 	};
 
 	static defaultProps = {
 		setComponentReference: noop,
+		enableStickyCountry: true,
 	};
 
 	constructor( props ) {
@@ -57,10 +57,7 @@ class PhoneInput extends React.PureComponent {
 		if ( ! selectedCountry ) {
 			// Special cases where the country is in a disputed region and not globally recognized.
 			// At this point this should only be used for: Canary islands, Kosovo, Netherlands Antilles
-			const data = find(
-				this.props.countriesList.get() || [],
-				( { code } ) => code === countryCode
-			);
+			const data = find( this.props.countriesList || [], ( { code } ) => code === countryCode );
 
 			selectedCountry = {
 				isoCode: countryCode,
@@ -229,7 +226,7 @@ class PhoneInput extends React.PureComponent {
 			countryCode: newCountryCode,
 			value: this.format( inputValue, newCountryCode ),
 		} );
-		this.setState( { freezeSelection: true } );
+		this.setState( { freezeSelection: this.props.enableStickyCountry } );
 	}
 
 	setNumberInputRef = c => ( this.numberInput = c );

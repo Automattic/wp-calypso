@@ -11,10 +11,11 @@ import React from 'react';
  */
 
 const ThemeSetupPlaceholder = () => {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="card settings-action-panel">
-			<div className="settings-action-panel__body">
-				<h2 className="settings-action-panel__title">
+		<div className="card action-panel">
+			<div className="action-panel__body">
+				<h2 className="action-panel__title">
 					<span className="is-placeholder">Theme Setup</span>
 				</h2>
 				<div className="notice is-placeholder">
@@ -30,13 +31,14 @@ const ThemeSetupPlaceholder = () => {
 					to look like the demo, so Theme Setup adds those for you. Please customize it!
 				</p>
 			</div>
-			<div className="settings-action-panel__footer">
+			<div className="action-panel__footer">
 				<button className="button theme-setup__button is-placeholder">
 					Set Up And Keep Content
 				</button>
 			</div>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default ThemeSetupPlaceholder;

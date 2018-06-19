@@ -28,7 +28,6 @@ class MyComponent extends React.Component {
 
 ## Props
 
-* `sites` object: An instance of `lib/sites-list`
 * (optional) `cart` object: The user's shopping cart
 * `domain` object: An object representing a domain name
 * `onGoBack` object: Called when the user clicks back in the header cake

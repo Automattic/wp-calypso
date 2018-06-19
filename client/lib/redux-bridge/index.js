@@ -1,4 +1,10 @@
 /** @format */
+
+/**
+ * Internal Dependencies
+ */
+import Dispatcher from 'dispatcher';
+
 let reduxStore = null;
 
 export function setReduxStore( store ) {
@@ -18,10 +24,34 @@ export function reduxGetState() {
 
 /**
  * Dispatch an action against the current redux store
+ * @returns {mixed} Result of the dispatch
  */
 export function reduxDispatch( ...args ) {
 	if ( ! reduxStore ) {
 		return;
 	}
-	reduxStore.dispatch( ...args );
+	return reduxStore.dispatch( ...args );
 }
+
+function markedFluxAction( action ) {
+	return Object.assign( {}, action, { type: `FLUX_${ action.type }` } );
+}
+
+// this is a Map<ActionType:string, transform:action=>action
+const actionsToForward = new Set();
+
+export function registerActionForward( actionName ) {
+	actionsToForward.add( actionName );
+}
+
+export function clearActionForwards() {
+	actionsToForward.clear();
+}
+
+function forwardAction( { action = {} } ) {
+	if ( actionsToForward.has( action.type ) ) {
+		reduxDispatch( markedFluxAction( action ) );
+	}
+}
+
+Dispatcher.register( forwardAction );

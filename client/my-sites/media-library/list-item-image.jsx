@@ -33,7 +33,7 @@ export default class extends React.Component {
 	state = {};
 
 	getImageDimensions = () => {
-		var width, height;
+		let width, height;
 
 		if ( this.props.media.width ) {
 			width = this.props.media.width;
@@ -54,7 +54,7 @@ export default class extends React.Component {
 	};
 
 	getImageStyle = () => {
-		var dimensions = this.getImageDimensions();
+		const dimensions = this.getImageDimensions();
 
 		return {
 			maxHeight: dimensions.height > dimensions.width ? 'none' : '100%',

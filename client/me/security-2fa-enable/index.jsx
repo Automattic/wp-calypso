@@ -4,27 +4,27 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-enable' );
-import QRCode from 'qrcode.react';
 import classNames from 'classnames';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import QRCode from 'qrcode.react';
+import React from 'react';
+
+const debug = debugFactory( 'calypso:me:security:2fa-enable' );
 
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTelInput from 'components/forms/form-tel-input';
+import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
+import Notice from 'components/notice';
 import Security2faProgress from 'me/security-2fa-progress';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import analytics from 'lib/analytics';
-import constants from 'me/constants';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'components/notice';
 
 class Security2faEnable extends React.Component {
 	static displayName = 'Security2faEnable';
@@ -146,7 +146,7 @@ class Security2faEnable extends React.Component {
 	};
 
 	onBeginCodeValidation = () => {
-		var args = {
+		const args = {
 			code: this.state.verificationCode,
 			action: 'enable-two-step',
 		};
@@ -190,7 +190,7 @@ class Security2faEnable extends React.Component {
 	};
 
 	renderQRCode = () => {
-		var qrClasses = classNames( 'security-2fa-enable__qr-code', {
+		const qrClasses = classNames( 'security-2fa-enable__qr-code', {
 			'is-placeholder': ! this.state.otpAuthUri,
 		} );
 
@@ -270,9 +270,9 @@ class Security2faEnable extends React.Component {
 				<p>
 					{ this.props.translate(
 						'Not sure what this screen means? You may need to download ' +
-							'{{authyLink}}Authy{{/authyLink}} or ' +
-							'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
-							'for your phone.',
+						'{{authyLink}}Authy{{/authyLink}} or ' +
+						'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
+						'for your phone.',
 						{
 							components: {
 								authyLink: (
@@ -328,31 +328,30 @@ class Security2faEnable extends React.Component {
 		return (
 			<div className="security-2fa-enable__next">
 				{ this.renderInputHelp() }
-				<FormTelInput
-					autoComplete="off"
+
+				<FormVerificationCodeInput
 					autoFocus
 					disabled={ this.state.submittingForm }
 					name="verificationCode"
-					placeholder={
-						'sms' === this.state.method
-							? constants.sevenDigit2faPlaceholder
-							: constants.sixDigit2faPlaceholder
-					}
+					method={ this.state.method }
 					onFocus={ function() {
 						analytics.ga.recordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
 					} }
 					value={ this.state.verificationCode }
 					onChange={ this.handleChange }
 				/>
+
 				{ 'sms' === this.state.method && this.state.smsRequestPerformed ? (
 					<FormSettingExplanation>
 						{ this.props.translate(
-							'A code has been sent to your device via SMS.  ' +
-								'You may request another code after one minute.'
+							'A code has been sent to your device via SMS. ' +
+							'You may request another code after one minute.'
 						) }
 					</FormSettingExplanation>
 				) : null }
+
 				{ this.possiblyRenderError() }
+
 				{ this.renderInputOptions() }
 			</div>
 		);
@@ -376,10 +375,10 @@ class Security2faEnable extends React.Component {
 					{ this.state.submittingCode
 						? this.props.translate( 'Enabling…', {
 								context: 'A button label used during Two-Step setup.',
-							} )
+						  } )
 						: this.props.translate( 'Enable', {
 								context: 'A button label used during Two-Step setup.',
-							} ) }
+						  } ) }
 				</FormButton>
 
 				<FormButton

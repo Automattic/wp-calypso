@@ -21,17 +21,16 @@ import UploadDropZone from 'blocks/upload-drop-zone';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import EmptyContent from 'components/empty-content';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
 import { initiateAutomatedTransferWithPluginZip } from 'state/automated-transfer/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getPluginUploadError,
-	getPluginUploadProgress,
-	getUploadedPluginId,
-	isPluginUploadComplete,
-	isPluginUploadInProgress,
-} from 'state/selectors';
+import getPluginUploadError from 'state/selectors/get-plugin-upload-error';
+import getPluginUploadProgress from 'state/selectors/get-plugin-upload-progress';
+import getUploadedPluginId from 'state/selectors/get-uploaded-plugin-id';
+import isPluginUploadComplete from 'state/selectors/is-plugin-upload-complete';
+import isPluginUploadInProgress from 'state/selectors/is-plugin-upload-in-progress';
 import {
 	getSiteAdminUrl,
 	isJetpackMinimumVersion,
@@ -147,6 +146,7 @@ class PluginUpload extends React.Component {
 
 		return (
 			<Main>
+				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
 				<QueryEligibility siteId={ siteId } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Upload plugin' ) }</HeaderCake>
 				{ upgradeJetpack && (

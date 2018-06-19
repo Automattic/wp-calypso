@@ -14,7 +14,7 @@ import { expect } from 'chai';
 import PopupMonitor from '../';
 
 describe( 'PopupMonitor', () => {
-	var popupMonitor;
+	let popupMonitor;
 
 	beforeAll( () => {
 		Object.assign( global.window, {
@@ -31,7 +31,7 @@ describe( 'PopupMonitor', () => {
 
 	describe( '#getScreenCenterSpecs()', () => {
 		test( 'should generate a popup specification string given the desired width and height', () => {
-			var specs = popupMonitor.getScreenCenterSpecs( 650, 500 );
+			const specs = popupMonitor.getScreenCenterSpecs( 650, 500 );
 
 			expect( specs ).to.equal( 'width=650,height=500,top=110,left=315' );
 		} );

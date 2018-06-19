@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -126,14 +128,17 @@ describe( 'helpers', () => {
 		} );
 
 		test( 'should set constraints from coupon', () => {
-			const coupon = { ...coupon1, ...{
-				individual_use: true,
-				usage_limit: 20,
-				usage_limit_per_user: 1,
-				free_shipping: true,
-				minimum_amount: '10',
-				maximum_amount: '25',
-			} };
+			const coupon = {
+				...coupon1,
+				...{
+					individual_use: true,
+					usage_limit: 20,
+					usage_limit_per_user: 1,
+					free_shipping: true,
+					minimum_amount: '10',
+					maximum_amount: '25',
+				},
+			};
 
 			const promotion = createPromotionFromCoupon( coupon );
 
@@ -243,9 +248,7 @@ describe( 'helpers', () => {
 
 			expect( couponData ).to.exist;
 			expect( couponData.id ).to.equal( 25 );
-			expect( couponData.product_categories ).to.equal(
-				promotion.appliesTo.productCategoryIds
-			);
+			expect( couponData.product_categories ).to.equal( promotion.appliesTo.productCategoryIds );
 		} );
 
 		test( 'should set conditions on coupon from promotion', () => {
@@ -282,7 +285,7 @@ describe( 'helpers', () => {
 				type: 'fixed_cart',
 				amount: '20',
 				appliesTo: { all: true },
-				couponId: 25
+				couponId: 25,
 			};
 
 			const badCouponPromotionCall = () => {

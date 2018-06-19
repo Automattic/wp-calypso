@@ -547,6 +547,7 @@ export function createTransientMedia( file ) {
 		Object.assign( transientMedia, {
 			file: file.URL,
 			title: file.name,
+			caption: file.caption || '',
 			extension: file.extension,
 			mime_type: file.mime_type,
 			guid: file.URL,

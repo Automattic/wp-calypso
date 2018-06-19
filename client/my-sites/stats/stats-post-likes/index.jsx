@@ -20,7 +20,7 @@ import StatsModuleContent from '../stats-module/content-text';
 import QueryPostLikes from 'components/data/query-post-likes';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
-import { countPostLikes } from 'state/selectors';
+import countPostLikes from 'state/selectors/count-post-likes';
 import PostLikes from 'blocks/post-likes';
 
 export const StatsPostLikes = props => {
@@ -92,4 +92,8 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, toggleInfo, localize )( StatsPostLikes );
+export default flowRight(
+	connectComponent,
+	toggleInfo,
+	localize
+)( StatsPostLikes );

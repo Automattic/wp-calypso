@@ -1,42 +1,57 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import getCountries from 'state/selectors/get-countries';
+import QueryDomainCountries from 'components/data/query-countries/domains';
 import { CountrySelect, Input } from 'my-sites/domains/components/form';
-import { forDomainRegistrations as countriesList } from 'lib/countries-list';
+import { getPostCodeLabelText } from './utils.js';
 
 export class GAppsFieldset extends Component {
 	static propTypes = {
+		countryCode: PropTypes.string,
+		countriesList: PropTypes.array.isRequired,
 		getFieldProps: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
+		countryCode: 'US',
 		getFieldProps: noop,
 		translate: identity,
 	};
 
 	render() {
-		const { getFieldProps, translate } = this.props;
+		const { getFieldProps, translate, countryCode } = this.props;
+
 		return (
 			<div className="custom-form-fieldsets__address-fields g-apps-fieldset">
+				<QueryDomainCountries />
 				<CountrySelect
 					label={ translate( 'Country' ) }
-					countriesList={ countriesList }
+					countriesList={ this.props.countriesList }
 					{ ...getFieldProps( 'country-code', true ) }
 				/>
-				<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code', true ) } />
+
+				<Input
+					label={ getPostCodeLabelText( countryCode ) }
+					{ ...getFieldProps( 'postal-code', true ) }
+				/>
 			</div>
 		);
 	}
 }
 
-export default localize( GAppsFieldset );
+export default connect( state => ( {
+	countriesList: getCountries( state, 'domains' ),
+} ) )( localize( GAppsFieldset ) );

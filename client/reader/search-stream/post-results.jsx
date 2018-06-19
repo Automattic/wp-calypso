@@ -20,6 +20,7 @@ import PostPlaceholder from 'reader/stream/post-placeholder';
 class PostResults extends Component {
 	static propTypes = {
 		query: PropTypes.string,
+		streamKey: PropTypes.string,
 	};
 
 	placeholderFactory = ( { key, ...rest } ) => {

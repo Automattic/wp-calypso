@@ -19,9 +19,9 @@ import { combineReducers } from 'state/utils';
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
-		case READER_POSTS_RECEIVE: {
-			return { ...state, ...keyBy( action.posts, 'global_ID' ) };
-		}
+		case READER_POSTS_RECEIVE:
+			const posts = action.posts || action.payload.posts;
+			return { ...state, ...keyBy( posts, 'global_ID' ) };
 	}
 	return state;
 }

@@ -15,10 +15,10 @@ import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
 import { newPost } from 'lib/paths';
 import { isMobile } from 'lib/viewport';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import { getSelectedSite } from 'state/ui/selectors';
 import MasterbarDrafts from './drafts';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 import TranslatableString from 'components/translatable/proptype';
 
 class MasterbarItemNew extends React.Component {
@@ -133,4 +133,7 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNew );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( MasterbarItemNew );

@@ -31,4 +31,7 @@ class QueryReaderFollowedTags extends Component {
 	}
 }
 
-export default connect( null, { requestFollowedTags: requestTags } )( QueryReaderFollowedTags );
+export default connect(
+	null,
+	{ requestFollowedTags: requestTags }
+)( QueryReaderFollowedTags );

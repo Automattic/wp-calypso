@@ -49,4 +49,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { requestThumbnail }, dispatch );
 
-export default connect( mapStateToProps, mapDispatchToProps )( QueryReaderThumbnails );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( QueryReaderThumbnails );

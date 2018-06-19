@@ -84,8 +84,8 @@ export default class EmailFollowersData extends Component {
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
-		let defer = function() {
-			var paginationData = EmailFollowersStore.getPaginationData( fetchOptions );
+		const defer = function() {
+			const paginationData = EmailFollowersStore.getPaginationData( fetchOptions );
 			if ( paginationData.fetchingFollowers ) {
 				return;
 			}
@@ -96,7 +96,7 @@ export default class EmailFollowersData extends Component {
 	};
 
 	isFetching = () => {
-		let fetchOptions = this.props.fetchOptions;
+		const fetchOptions = this.props.fetchOptions;
 		if ( ! fetchOptions.siteId ) {
 			debug( 'Is fetching because siteId is falsey' );
 			return true;
@@ -106,7 +106,7 @@ export default class EmailFollowersData extends Component {
 			return true;
 		}
 
-		let followersPaginationData = EmailFollowersStore.getPaginationData( fetchOptions );
+		const followersPaginationData = EmailFollowersStore.getPaginationData( fetchOptions );
 		debug( 'Followers pagination data: ' + JSON.stringify( followersPaginationData ) );
 
 		if ( followersPaginationData.fetchingFollowers ) {

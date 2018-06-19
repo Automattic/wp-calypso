@@ -41,7 +41,12 @@ class AcceptedFilenames extends Component {
 	};
 
 	renderToggle = ( fieldName, fieldLabel, parent ) => {
-		const { fields: { pages }, isReadOnly, isRequesting, isSaving } = this.props;
+		const {
+			fields: { pages },
+			isReadOnly,
+			isRequesting,
+			isSaving,
+		} = this.props;
 
 		return (
 			<FormToggle

@@ -64,22 +64,6 @@ class MeSidebar extends React.Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Sidebar Sign Out Link' );
 	};
 
-	renderNextStepsItem( selected ) {
-		const { currentUser, translate } = this.props;
-
-		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
-			return (
-				<SidebarItem
-					selected={ selected === 'next' }
-					link="/me/next"
-					label={ translate( 'Next Steps' ) }
-					icon="list-checkmark"
-					onNavigate={ this.onNavigate }
-				/>
-			);
-		}
-	}
-
 	render() {
 		const { context, translate } = this.props;
 		const filterMap = {
@@ -171,16 +155,14 @@ class MeSidebar extends React.Component {
 								preloadSectionName="security"
 							/>
 
-							{ config.isEnabled( 'me/privacy' ) && (
-								<SidebarItem
-									selected={ selected === 'privacy' }
-									link={ '/me/privacy' }
-									label={ translate( 'Privacy' ) }
-									icon="visible"
-									onNavigate={ this.onNavigate }
-									preloadSectionName="privacy"
-								/>
-							) }
+							<SidebarItem
+								selected={ selected === 'privacy' }
+								link={ '/me/privacy' }
+								label={ translate( 'Privacy' ) }
+								icon="visible"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="privacy"
+							/>
 
 							<SidebarItem
 								selected={ selected === 'notifications' }
@@ -207,7 +189,6 @@ class MeSidebar extends React.Component {
 								icon="my-sites"
 								onNavigate={ this.onNavigate }
 							/>
-							{ this.renderNextStepsItem( selected ) }
 						</ul>
 					</SidebarMenu>
 				</SidebarRegion>

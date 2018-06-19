@@ -9,23 +9,22 @@
 
 	@include breakpoint( '>660px' ) {
 		padding: 15px 20px;
-
-		.domain-product-price {
-			margin-left: 5%;
-		}
 	}
 
 	&.is-clickable {
 		cursor: pointer;
 
+		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
+
 		&:hover {
 			box-shadow: 0 0 0 1px $gray;
-			z-index: z-index('root', '.domain-suggestion.is-clickable:hover');
+			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
 		}
 	}
 
 	&.is-added {
-		background-color: lighten($gray, 35%);
+		background-color: lighten( $gray, 35% );
 
 		.domain-suggestion__content {
 			h3,
@@ -42,7 +41,6 @@
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
-		margin: 8px 0 0 0;
 	}
 
 	.notice.is-compact {
@@ -81,15 +79,13 @@
 		.is-placeholder & {
 			margin-right: 50%;
 			min-height: 22px;
-			margin-top: 9px;
-			margin-bottom: 9px;
 		}
 
-		.is-placeholder:nth-of-type(2n + 1) & {
+		.is-placeholder:nth-of-type( 2n + 1 ) & {
 			margin-right: 52%;
 		}
 
-		.is-placeholder:nth-of-type(1) & {
+		.is-placeholder:nth-of-type( 1 ) & {
 			margin-right: 40%;
 		}
 	}
@@ -107,18 +103,28 @@
 	}
 }
 
+.domain-registration-suggestion__title {
+	align-self: center;
+	line-height: 1.25;
+	padding-right: 2em;
+}
+
 .button.domain-suggestion__action {
 	flex: 1 0 auto;
 	min-width: 66px;
 	text-align: center;
 	color: $blue-medium;
 
-	// NOTE: .is-kracken-ui can be removed once feature is deployed.
-	.is-kracken-ui &.is-primary {
+	&.is-primary {
 		color: $white;
-		padding-left: 3em;
-		padding-right: 3em;
 		margin-left: 1em;
+		padding: 0.25em 3em;
+		transition: all 0.1s linear;
+
+		&:hover {
+			background-color: lighten( $blue-medium, 4% );
+			border-color: darken( $blue-medium, 4% );
+		}
 	}
 
 	.is-placeholder & {

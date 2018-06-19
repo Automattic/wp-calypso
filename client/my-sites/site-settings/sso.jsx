@@ -17,13 +17,10 @@ import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
+import SupportInfo from 'components/support-info';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
 const Sso = ( {
@@ -42,13 +39,12 @@ const Sso = ( {
 
 			<Card className="sso__card site-settings__security-settings">
 				<FormFieldset>
-					<div className="sso__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							<ExternalLink href="https://jetpack.com/support/sso" icon target="_blank">
-								{ translate( 'Learn more about WordPress.com Secure Sign On.' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate(
+							'Allows registered users to log in to your site with their WordPress.com accounts.'
+						) }
+						link="https://jetpack.com/support/sso/"
+					/>
 
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }

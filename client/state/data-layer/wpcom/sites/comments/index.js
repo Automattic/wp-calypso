@@ -22,8 +22,8 @@ import { dispatchRequest, dispatchRequestEx } from 'state/data-layer/wpcom-http/
 import replies from './replies';
 import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
-import { getRawSite } from 'state/sites/selectors';
-import { getSiteComment } from 'state/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
+import getSiteComment from 'state/selectors/get-site-comment';
 import {
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,
@@ -200,7 +200,7 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 		site && site.name
 			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
 					args: { siteName: site.name },
-				} )
+			  } )
 			: translate( 'Failed to retrieve comments for your site' );
 
 	dispatch( errorNotice( error ) );
@@ -220,7 +220,7 @@ export const editComment = ( { dispatch, getState }, action ) => {
 					author: comment.authorDisplayName,
 					author_url: comment.authorUrl,
 					content: comment.commentContent,
-				}
+			  }
 			: comment;
 
 	dispatch(

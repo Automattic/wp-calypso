@@ -10,12 +10,23 @@
 .packages-step__contents {
 	display: flex;
 	padding-bottom: 24px;
+	flex-direction: column;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
 }
 
 .packages-step__list {
-	width: 35%;
-	padding: 0 24px 0 0;
+	width: auto;
+	padding: 0 0 24px 0;
 	flex-shrink: 0;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+		width: 35%;
+		padding: 0 24px 0 0;
+	}
 }
 
 .packages-step__list-header {
@@ -28,12 +39,14 @@
 	padding: 6px 12px;
 	cursor: pointer;
 	align-items: center;
+	width: 100%;
 
 	&.is-selected {
 		background-color: $gray-light;
+	}
 
-		.packages-step__list-package-count {
-		}
+	.gridicon {
+		top: 0;
 	}
 }
 
@@ -43,6 +56,8 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-right: 2px;
+	text-align: left;
+	color: $gray-text;
 }
 
 .packages-step__list-package-count {
@@ -53,7 +68,7 @@
 	font-size: 11px;
 	font-weight: 600;
 	line-height: 14px;
-	color: $gray;
+	color: $gray-text;
 	text-align: center;
 }
 
@@ -112,11 +127,24 @@
 }
 
 .packages-step__package-weight {
-	display: inline-block;
-	width: 140px;
-	margin-bottom: 0;
+	width: 180px;
+	margin-bottom: 10px;
+	float: left;
+	margin-right: 15px;
+}
+
+@-moz-document url-prefix() { /* fix the width in Firefox */
+	.packages-step__package-weight {
+		width: 135px;
+		margin-right: 65px;
+	}
 }
 
 .packages-step__package-weight-unit {
 	margin-left: 8px;
+}
+
+.packages-step__package-signature {
+	width: 180px;
+	float: left;
 }

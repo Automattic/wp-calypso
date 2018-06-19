@@ -28,6 +28,7 @@ import {
 } from 'lib/notification-settings-store/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import EmailCategory from './email-category';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Module variables
@@ -152,6 +153,10 @@ class WPCOMNotifications extends React.Component {
 	render() {
 		return (
 			<Main>
+				<PageViewTracker
+					path="/me/notifications/updates"
+					title="Me > Notifications > Updates from WordPress.com"
+				/>
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
@@ -168,6 +173,7 @@ class WPCOMNotifications extends React.Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators( { successNotice, errorNotice }, dispatch )
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
 )( localize( WPCOMNotifications ) );

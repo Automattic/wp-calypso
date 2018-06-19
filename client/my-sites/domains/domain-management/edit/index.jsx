@@ -26,8 +26,8 @@ import WpcomDomain from './wpcom-domain';
 
 class Edit extends React.Component {
 	render() {
-		const domain = this.props.domains && getSelectedDomain( this.props ),
-			Details = this.getDetailsForType( domain && domain.type );
+		const domain = this.props.domains && getSelectedDomain( this.props );
+		const Details = this.getDetailsForType( domain && domain.type );
 
 		if ( ! domain || ! Details ) {
 			return <DomainMainPlaceholder goBack={ this.goToDomainManagement } />;
@@ -73,16 +73,15 @@ class Edit extends React.Component {
 		const { REGISTERED, TRANSFER } = domainTypes;
 
 		if ( includes( [ REGISTERED, TRANSFER ], domain.type ) && domain.registrar === MAINTENANCE ) {
-			return <MaintenanceCard { ...this.props } />;
+			return (
+				<MaintenanceCard
+					selectedDomainName={ this.props.selectedDomainName }
+					tldMaintenanceEndTime={ domain.tldMaintenanceEndTime }
+				/>
+			);
 		}
 
-		return (
-			<Details
-				domain={ domain }
-				selectedSite={ this.props.selectedSite }
-				settingPrimaryDomain={ this.props.domains.settingPrimaryDomain }
-			/>
-		);
+		return <Details domain={ domain } selectedSite={ this.props.selectedSite } />;
 	};
 
 	goToDomainManagement = () => {

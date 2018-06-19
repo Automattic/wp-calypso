@@ -3,74 +3,116 @@
 /**
  * External dependencies
  */
-
-import { connect } from 'react-redux';
+import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
-import { clearPurchases } from 'state/purchases/actions';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading, recordPageView } from 'me/purchases/utils';
-import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
-import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
+import { clearPurchases } from 'state/purchases/actions';
+import { createCardToken } from 'lib/store-transactions';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
+import { isDataLoading } from 'me/purchases/utils';
+import { isRequestingSites } from 'state/sites/selectors';
+import { managePurchase, purchasesRoot } from 'me/purchases/paths';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-const user = userFactory();
-
-class EditCardDetails extends PurchaseCardDetails {
+class EditCardDetails extends Component {
 	static propTypes = {
 		card: PropTypes.object,
 		clearPurchases: PropTypes.func.isRequired,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedStoredCardsFromServer: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		purchaseId: PropTypes.number.isRequired,
+		purchase: PropTypes.object,
+		selectedSite: PropTypes.object,
+		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
+	};
+
+	createCardToken = ( ...args ) => createCardToken( 'card_update', ...args );
+
+	redirectIfDataIsInvalid( props = this.props ) {
+		if ( isDataLoading( props ) ) {
+			return true;
+		}
+
+		if ( ! this.isDataValid( props ) ) {
+			page( purchasesRoot );
+		}
+	}
+
+	isDataValid( props = this.props ) {
+		const { purchase, selectedSite } = props;
+
+		return purchase && selectedSite;
+	}
+
+	recordFormSubmitEvent = () =>
+		void this.props.recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
+			product_slug: this.props.purchase.productSlug,
+		} );
+
+	successCallback = () => {
+		const { id } = this.props.purchase;
+
+		this.props.clearPurchases();
+
+		page( managePurchase( this.props.siteSlug, id ) );
 	};
 
 	componentWillMount() {
 		this.redirectIfDataIsInvalid();
-
-		recordPageView( 'edit_card_details', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
-
-		recordPageView( 'edit_card_details', this.props, nextProps );
 	}
 
 	render() {
 		if ( isDataLoading( this.props ) || ! this.props.hasLoadedStoredCardsFromServer ) {
 			return (
-				<div>
+				<Fragment>
 					<QueryStoredCards />
 
-					<QueryUserPurchases userId={ user.get().ID } />
+					<QueryUserPurchases userId={ this.props.userId } />
 
 					<CreditCardFormLoadingPlaceholder title={ titles.editCardDetails } />
-				</div>
+				</Fragment>
 			);
 		}
 
 		return (
 			<Main>
-				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.editCardDetails }</HeaderCake>
+				<TrackPurchasePageView
+					eventName="calypso_edit_card_details_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
+				<PageViewTracker
+					path="/me/purchases/:site/:purchaseId/payment/edit/:cardId"
+					title="Purchases > Edit Card Details"
+				/>
+				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
+					{ titles.editCardDetails }
+				</HeaderCake>
 
 				<CreditCardForm
-					apiParams={ this.getApiParams() }
+					apiParams={ { purchaseId: this.props.purchase.id } }
 					createCardToken={ this.createCardToken }
 					initialValues={ this.props.card }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
@@ -81,19 +123,14 @@ class EditCardDetails extends PurchaseCardDetails {
 	}
 }
 
-const mapStateToProps = ( state, { cardId, purchaseId } ) => {
-	return {
-		card: getStoredCardById( state, cardId ),
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSiteSelector( state ),
-	};
-};
+const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
+	card: getStoredCardById( state, cardId ),
+	hasLoadedSites: ! isRequestingSites( state ),
+	hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
+	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+	purchase: getByPurchaseId( state, purchaseId ),
+	selectedSite: getSelectedSite( state ),
+	userId: getCurrentUserId( state ),
+} );
 
-const mapDispatchToProps = {
-	clearPurchases,
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( EditCardDetails );
+export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( EditCardDetails );

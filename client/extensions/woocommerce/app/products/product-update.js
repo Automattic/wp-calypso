@@ -75,7 +75,7 @@ class ProductUpdate extends React.Component {
 
 	componentDidMount() {
 		const { params, product, site, variations } = this.props;
-		const productId = Number( params.product );
+		const productId = Number( params.product_id );
 
 		if ( site && site.ID ) {
 			if ( ! product ) {
@@ -85,20 +85,20 @@ class ProductUpdate extends React.Component {
 			if ( ! variations ) {
 				this.props.fetchProductVariations( site.ID, productId );
 			}
-			this.props.fetchProductCategories( site.ID );
+			this.props.fetchProductCategories( site.ID, { offset: 0 } );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
 		const { params, site } = this.props;
-		const productId = Number( params.product );
+		const productId = Number( params.product_id );
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchProduct( newSiteId, productId );
 			this.props.fetchProductVariations( newSiteId, productId );
 			this.props.editProduct( newSiteId, { id: productId }, {} );
-			this.props.fetchProductCategories( newSiteId );
+			this.props.fetchProductCategories( newSiteId, { offset: 0 } );
 		}
 	}
 
@@ -159,7 +159,7 @@ class ProductUpdate extends React.Component {
 	onSave = () => {
 		const { product, translate, site, fetchProductCategories: fetch } = this.props;
 		const successAction = () => {
-			fetch( site.ID );
+			fetch( site.ID, { offset: 0 } );
 			return successNotice(
 				translate( '%(product)s successfully updated.', {
 					args: { product: product.name },
@@ -233,7 +233,7 @@ class ProductUpdate extends React.Component {
 }
 
 function mapStateToProps( state, ownProps ) {
-	const productId = Number( ownProps.params.product );
+	const productId = Number( ownProps.params.product_id );
 
 	const site = getSelectedSiteWithFallback( state );
 	const product = getProductWithLocalEdits( state, productId );
@@ -278,4 +278,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductUpdate ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ProductUpdate ) );

@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import Count from 'components/count';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 
 /**
  * Main

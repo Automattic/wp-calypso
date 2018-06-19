@@ -5,6 +5,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +23,9 @@ class RewindAddCreds extends Component {
 		positionInFlow: PropTypes.number,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
+
+		// Connected props
+		siteSlug: PropTypes.string.isRequired,
 	};
 
 	goToCredsForm = () => {
@@ -43,9 +48,9 @@ class RewindAddCreds extends Component {
 				<img src="/calypso/images/illustrations/security.svg" alt="" />
 				<p className="rewind-add-creds__description rewind-switch__description">
 					{ translate(
-						'To switch you over to Jetpack backups and security we need you to add your site credentials. ' +
-							'This gives WordPress.com access to your site to perform automatic actions on your server—like backups. ' +
-							'It also allows us to restore your site and manually access it in case of an emergency.'
+						'To activate Jetpack backups and security, please add your site credentials. ' +
+							'WordPress.com will then be able to access your site to perform automatic backups, ' +
+							'and to restore your site in case of an emergency.'
 					) }
 				</p>
 				<Button primary onClick={ this.goToCredsForm }>
@@ -65,10 +70,19 @@ class RewindAddCreds extends Component {
 				stepContent={ this.stepContent() }
 				hideFormattedHeader={ true }
 				hideSkip={ true }
-				hideBack={ true }
+				hideBack={ false }
+				backUrl={ `/stats/activity/${ this.props.siteSlug }` }
+				allowBackFirstStep={ true }
 			/>
 		);
 	}
 }
 
-export default localize( RewindAddCreds );
+export default connect(
+	( state, ownProps ) => {
+		return {
+			siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], '' ),
+		};
+	},
+	null
+)( localize( RewindAddCreds ) );

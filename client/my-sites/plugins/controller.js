@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import page from 'page';
-import { capitalize, includes, some } from 'lodash';
+import { includes, some } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -20,7 +20,7 @@ import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
-import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
+import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 
 /**
  * Module variables
@@ -31,16 +31,6 @@ let lastPluginsListVisited, lastPluginsQuerystring;
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
-	const site = getSelectedSite( context.store.getState() );
-	const analyticsPageTitle = 'Plugins';
-
-	let baseAnalyticsPath = 'plugins/:plugin';
-
-	if ( site ) {
-		baseAnalyticsPath += '/:site';
-	}
-
-	analytics.pageView.record( baseAnalyticsPath, `${ analyticsPageTitle } > Plugin Details` );
 
 	// Scroll to the top
 	window.scrollTo( 0, 0 );
@@ -87,16 +77,6 @@ function renderPluginList( context, basePath ) {
 	if ( search ) {
 		analytics.ga.recordEvent( 'Plugins', 'Search', 'Search term', search );
 	}
-
-	const analyticsPageTitle =
-		'Plugins' +
-		( context.params.pluginFilter ? ' ' + capitalize( context.params.pluginFilter ) : '' );
-
-	let baseAnalyticsPath = 'plugins/manage';
-	if ( site ) {
-		baseAnalyticsPath += '/:site';
-	}
-	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 }
 
 // The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
@@ -116,14 +96,6 @@ function renderPluginsBrowser( context ) {
 
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
-
-	const analyticsPageTitle = 'Plugin Browser' + ( category ? ': ' + category : '' );
-	let baseAnalyticsPath = 'plugins' + ( category ? '/' + category : '' );
-	if ( site ) {
-		baseAnalyticsPath += '/:site';
-	}
-
-	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
 	context.primary = React.createElement( PluginBrowser, {
 		path: context.path,
@@ -146,14 +118,8 @@ function renderPluginWarnings( context ) {
 function renderProvisionPlugins( context ) {
 	const state = context.store.getState();
 	const section = getSection( state );
-	const site = getSelectedSite( state );
-	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
-	let baseAnalyticsPath = 'plugins/setup';
-	if ( site ) {
-		baseAnalyticsPath += '/:site';
-	}
 
-	analytics.pageView.record( baseAnalyticsPath, 'Jetpack Plugins Setup' );
+	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
 
 	context.primary = React.createElement( PlanSetup, {
 		whitelist: context.query.only || false,
@@ -241,6 +207,13 @@ const controller = {
 	resetHistory() {
 		lastPluginsListVisited = null;
 		lastPluginsQuerystring = null;
+	},
+
+	scrollTopIfNoHash( context, next ) {
+		if ( typeof window !== 'undefined' && ! window.location.hash ) {
+			window.scrollTo( 0, 0 );
+		}
+		next();
 	},
 };
 

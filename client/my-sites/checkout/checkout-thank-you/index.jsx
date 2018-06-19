@@ -61,7 +61,7 @@ import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import PurchaseDetail from 'components/purchase-detail';
-import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
+import { planMatches, getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
@@ -74,12 +74,10 @@ import {
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
-import {
-	PLAN_BUSINESS,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
-import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
+import { GROUP_WPCOM, GROUP_JETPACK, TYPE_BUSINESS } from 'lib/plans/constants';
+
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 
 function getPurchases( props ) {
@@ -99,7 +97,7 @@ function findPurchaseAndDomain( purchases, predicate ) {
 	return [ purchase, purchase.meta ];
 }
 
-class CheckoutThankYou extends React.Component {
+export class CheckoutThankYou extends React.Component {
 	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
@@ -254,7 +252,7 @@ class CheckoutThankYou extends React.Component {
 
 	isEligibleForLiveChat = () => {
 		const { planSlug } = this.props;
-		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
+		return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
 	};
 
 	isNewUser = () => {
@@ -291,10 +289,14 @@ class CheckoutThankYou extends React.Component {
 		}
 
 		// Rebrand Cities thanks page
+
 		if (
 			this.props.selectedSite &&
 			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
-			PLAN_BUSINESS === this.props.selectedSite.plan.product_slug
+			planMatches( this.props.selectedSite.plan.product_slug, {
+				type: TYPE_BUSINESS,
+				group: GROUP_WPCOM,
+			} )
 		) {
 			return <RebrandCitiesThankYou receipt={ this.props.receipt } />;
 		}

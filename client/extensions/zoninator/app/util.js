@@ -9,7 +9,7 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSections } from 'sections-middleware';
+import { getSections } from 'sections-helper';
 
 const getSettingsPath = () => {
 	const sections = getSections();

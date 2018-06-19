@@ -1,37 +1,38 @@
+/** @format */
+
 .domain-product-price {
 	color: $gray-darken-30;
-	display: inline-block;
-	font-size: 17px;
 	font-weight: 600;
+	line-height: 1;
 
-	@include breakpoint( ">660px" ) {
-		min-width: 130px;
-		display: flex;
+	@include breakpoint( '>660px' ) {
 		align-items: center;
-		margin-top: -4px;
+		display: flex;
+		flex: 0 2 360px;
+		font-size: 17px;
+		justify-content: flex-end;
+		padding-right: 2em;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
+		display: inline-block;
 		font-size: 14px;
 	}
 
-	&.is-with-plans-only:not( .is-free-domain ) {
-		flex: 1 1 280px;
-
-		small {
-			font-size: 12px;
-		}
-	}
-
 	.map-domain-step & {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			padding-bottom: 5px;
 		}
 	}
 
 	small {
 		font-weight: 400;
-		opacity: .6;
+		opacity: 0.6;
+	}
+
+	&.domain-product-price__is-with-plans-only {
+		font-weight: 400;
+		font-size: 0.9em;
 	}
 
 	.domain-product-price__premium-text {
@@ -46,12 +47,7 @@
 	}
 
 	&.is-free-domain {
-		display: block;
 		font-size: 13px;
-
-		@include breakpoint( ">960px" ) {
-			margin-top: -6px;
-		}
 
 		small {
 			font-size: 100%;
@@ -59,26 +55,17 @@
 		}
 
 		.domain-product-price__price {
-			opacity: .6;
+			opacity: 0.6;
 			text-decoration: line-through;
-		}
-
-		&.no-price {
-			@include breakpoint( ">660px" ) {
-				padding-top: 7px;
-			}
-			@include breakpoint( ">960px" ) {
-				padding-top: 13px;
-			}
 		}
 	}
 
 	.is-placeholder & {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: $gray-lighten-30;
 			color: transparent;

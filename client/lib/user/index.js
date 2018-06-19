@@ -21,7 +21,7 @@ export default function() {
 }
 
 User.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	switch ( action.type ) {
 		case InvitesActionTypes.INVITE_ACCEPTED:
 			if ( [ 'follower', 'viewer' ].indexOf( action.invite.role ) === -1 ) {

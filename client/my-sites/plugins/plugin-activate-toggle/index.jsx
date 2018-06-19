@@ -25,7 +25,6 @@ export class PluginActivateToggle extends Component {
 			disabled,
 			site,
 			plugin,
-			notices,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
@@ -34,7 +33,7 @@ export class PluginActivateToggle extends Component {
 		}
 
 		PluginsActions.togglePluginActivation( site, plugin );
-		PluginsActions.removePluginsNotices( notices.completed.concat( notices.errors ) );
+		PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 		if ( plugin.active ) {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
@@ -134,7 +133,6 @@ export class PluginActivateToggle extends Component {
 PluginActivateToggle.propTypes = {
 	site: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
-	notices: PropTypes.object,
 	isMock: PropTypes.bool,
 	disabled: PropTypes.bool,
 };
@@ -144,7 +142,10 @@ PluginActivateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect( null, {
-	recordGoogleEvent,
-	recordTracksEvent,
-} )( localize( PluginActivateToggle ) );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+	}
+)( localize( PluginActivateToggle ) );

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { noop, partial } from 'lodash';
+import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -19,16 +19,15 @@ import EditCardDetails from './payment/edit-card-details';
 import Main from 'components/main';
 import ManagePurchase from './manage-purchase';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
-import * as paths from './paths';
 import PurchasesHeader from './purchases-list/header';
 import PurchasesList from './purchases-list';
-import { concatTitle, recordPageView } from 'lib/react-helpers';
+import { concatTitle } from 'lib/react-helpers';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
 import { makeLayout, render as clientRender } from 'controller';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-const recordPurchasesPageView = partial( recordPageView, partial.placeholder, 'Purchases' );
 const user = userFactory();
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -36,108 +35,125 @@ function setTitle( context, ...title ) {
 	context.store.dispatch( setDocumentHeadTitle( concatTitle( titles.purchases, ...title ) ) );
 }
 
-export default {
-	addCardDetails( context, next ) {
-		setTitle( context, titles.addCardDetails );
+const userHasNoSites = () => user.get().site_count <= 0;
 
-		recordPurchasesPageView( paths.addCardDetails(), 'Add Card Details' );
+function noSites( context, analyticsPath ) {
+	setTitle( context );
+	context.primary = (
+		<Main>
+			<PageViewTracker path={ analyticsPath } title="Purchases > No Sites" />
+			<PurchasesHeader section={ 'purchases' } />
+			<NoSitesMessage />
+		</Main>
+	);
+	makeLayout( context, noop );
+	clientRender( context );
+}
 
-		context.primary = <AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
-		next();
-	},
+export function addCardDetails( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/payment/add' );
+	}
 
-	addCreditCard( context, next ) {
-		recordPurchasesPageView( paths.addCreditCard, 'Add Credit Card' );
+	setTitle( context, titles.addCardDetails );
 
-		context.primary = <AddCreditCard />;
-		next();
-	},
+	context.primary = (
+		<AddCardDetails
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			siteSlug={ context.params.site }
+		/>
+	);
+	next();
+}
 
-	cancelPrivacyProtection( context, next ) {
-		setTitle( context, titles.cancelPrivacyProtection );
+export function addCreditCard( context, next ) {
+	context.primary = <AddCreditCard />;
+	next();
+}
 
-		recordPurchasesPageView( paths.cancelPrivacyProtection(), 'Cancel Privacy Protection' );
+export function cancelPrivacyProtection( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/cancel-privacy-protection' );
+	}
 
-		context.primary = (
-			<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
-		);
-		next();
-	},
+	setTitle( context, titles.cancelPrivacyProtection );
 
-	cancelPurchase( context, next ) {
-		setTitle( context, titles.cancelPurchase );
+	context.primary = (
+		<CancelPrivacyProtection
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			siteSlug={ context.params.site }
+		/>
+	);
+	next();
+}
 
-		recordPurchasesPageView( paths.cancelPurchase(), 'Cancel Purchase' );
+export function cancelPurchase( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/cancel' );
+	}
 
-		context.primary = <CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
-		next();
-	},
+	setTitle( context, titles.cancelPurchase );
 
-	confirmCancelDomain( context, next ) {
-		setTitle( context, titles.confirmCancelDomain );
+	context.primary = (
+		<CancelPurchase
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			siteSlug={ context.params.site }
+		/>
+	);
+	next();
+}
 
-		recordPurchasesPageView( paths.confirmCancelDomain(), 'Confirm Cancel Domain' );
+export function confirmCancelDomain( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/confirm-cancel-domain' );
+	}
 
-		context.primary = (
-			<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
-		);
-		next();
-	},
+	setTitle( context, titles.confirmCancelDomain );
 
-	editCardDetails( context, next ) {
-		setTitle( context, titles.editCardDetails );
+	context.primary = (
+		<ConfirmCancelDomain
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			siteSlug={ context.params.site }
+		/>
+	);
+	next();
+}
 
-		recordPurchasesPageView( paths.editCardDetails(), 'Edit Card Details' );
+export function editCardDetails( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId' );
+	}
 
-		context.primary = (
-			<EditCardDetails
-				cardId={ context.params.cardId }
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
-		);
-		next();
-	},
+	setTitle( context, titles.editCardDetails );
 
-	list( context, next ) {
-		setTitle( context );
+	context.primary = (
+		<EditCardDetails
+			cardId={ context.params.cardId }
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			siteSlug={ context.params.site }
+		/>
+	);
+	next();
+}
 
-		recordPurchasesPageView( paths.purchasesRoot );
+export function list( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases' );
+	}
 
-		context.primary = <PurchasesList noticeType={ context.params.noticeType } />;
-		next();
-	},
+	setTitle( context );
 
-	managePurchase( context, next ) {
-		setTitle( context, titles.managePurchase );
+	context.primary = <PurchasesList noticeType={ context.params.noticeType } />;
+	next();
+}
 
-		recordPurchasesPageView( paths.managePurchase(), 'Manage Purchase' );
+export function managePurchase( context, next ) {
+	if ( userHasNoSites() ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId' );
+	}
 
-		context.primary = (
-			<ManagePurchase
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-				destinationType={ context.params.destinationType }
-			/>
-		);
-		next();
-	},
+	setTitle( context, titles.managePurchase );
 
-	noSitesMessage( context, next ) {
-		if ( user.get().site_count > 0 ) {
-			return next();
-		}
-
-		setTitle( context );
-
-		recordPurchasesPageView( context.path, 'No Sites' );
-
-		context.primary = (
-			<Main>
-				<PurchasesHeader section={ 'purchases' } />
-				<NoSitesMessage />
-			</Main>
-		);
-
-		makeLayout( context, noop );
-		clientRender( context );
-	},
-};
+	context.primary = <ManagePurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
+	next();
+}

@@ -6,9 +6,8 @@
 
 import { combineReducers, keyedReducer } from 'state/utils';
 import coupons from './coupons/reducer';
-import currencies from './currencies/reducer';
 import customers from './customers/reducer';
-import locations from './locations/reducer';
+import data from './data/reducer';
 import meta from './meta/reducer';
 import orders from './orders/reducer';
 import paymentMethods from './payment-methods/reducer';
@@ -28,9 +27,8 @@ import status from './status/reducer';
 
 const reducer = combineReducers( {
 	coupons,
-	currencies,
 	customers,
-	locations,
+	data,
 	meta,
 	orders,
 	paymentMethods,

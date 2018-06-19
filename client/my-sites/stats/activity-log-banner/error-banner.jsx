@@ -74,11 +74,11 @@ class ErrorBanner extends PureComponent {
 			? {
 					title: translate( 'Problem restoring your site' ),
 					details: translate( 'We came across a problem while trying to restore your site.' ),
-				}
+			  }
 			: {
-					title: translate( 'Problem creating a backup' ),
-					details: translate( 'We came across a problem creating a backup for your site.' ),
-				};
+					title: translate( 'Problem preparing your file' ),
+					details: translate( 'There was a problem preparing your backup for downloading.' ),
+			  };
 
 		return (
 			<ActivityLogBanner
@@ -95,12 +95,12 @@ class ErrorBanner extends PureComponent {
 									error_code: errorCode,
 									failure_reason: failureReason,
 									restore_to: timestamp,
-								}
+							  }
 							: {
 									error_code: 'backup',
 									failure_reason: 'backup failed',
 									download_id: downloadId,
-								}
+							  }
 					}
 				/>
 				<p>{ strings.details }</p>
@@ -121,8 +121,11 @@ class ErrorBanner extends PureComponent {
 	}
 }
 
-export default connect( null, {
-	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
-	trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
-	trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
-} )( localize( ErrorBanner ) );
+export default connect(
+	null,
+	{
+		dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+		trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
+		trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
+	}
+)( localize( ErrorBanner ) );

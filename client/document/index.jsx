@@ -12,24 +12,25 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { default as appConfig } from 'config';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import ExternalLink from 'components/external-link';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
+import { jsonStringifyForHtml } from '../../server/sanitize';
 
 class Document extends React.Component {
 	render() {
 		const {
 			app,
-			chunk,
+			chunkFiles,
 			commitSha,
 			faviconURL,
 			head,
 			i18nLocaleScript,
 			initialReduxState,
 			isRTL,
-			jsFile,
+			entrypoint,
+			manifest,
 			lang,
 			renderedLayout,
 			user,
@@ -50,7 +51,6 @@ class Document extends React.Component {
 			devDocsURL,
 			feedbackURL,
 			inlineScriptNonce,
-			analyticsScriptNonce,
 		} = this.props;
 
 		const inlineScript =
@@ -142,14 +142,14 @@ class Document extends React.Component {
 								</span>
 							) }
 							<span className={ `environment is-${ badge } is-env` }>{ badge }</span>
-							<a
+							<ExternalLink
 								className="bug-report"
 								href={ feedbackURL }
-								title="Report an issue"
 								target="_blank"
+								title="Report an issue"
 							>
 								<Gridicon icon="bug" size={ 18 } />
-							</a>
+							</ExternalLink>
 						</div>
 					) }
 
@@ -162,12 +162,27 @@ class Document extends React.Component {
 					/>
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
-					<script src={ urls.manifest } />
-					<script src={ urls.vendor } />
-					<script src={ urls[ jsFile ] } />
-					{ chunk && <script src={ urls[ chunk ] } /> }
-					<script type="text/javascript">window.AppBoot();</script>
+					{ /*
+						* inline manifest in production, but reference by url for development.
+						* this lets us have the performance benefit in prod, without breaking HMR in dev
+						* since the manifest needs to be updated on each save
+						*/ }
+					{ env === 'development' && <script src="/calypso/manifest.js" /> }
+					{ env !== 'development' && (
+						<script
+							nonce={ inlineScriptNonce }
+							dangerouslySetInnerHTML={ {
+								__html: manifest,
+							} }
+						/>
+					) }
+					{ entrypoint.map( asset => <script key={ asset } src={ asset } /> ) }
+					{ chunkFiles.map( chunk => <script key={ chunk } src={ chunk } /> ) }
+					<script nonce={ inlineScriptNonce } type="text/javascript">
+						window.AppBoot();
+					</script>
 					<script
+						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {
 							__html: `
 						 (function() {
@@ -185,15 +200,6 @@ class Document extends React.Component {
 						 `,
 						} }
 					/>
-					{ // Load GA only if enabled in the config.
-					appConfig( 'google_analytics_enabled' ) && (
-						<script
-							async={ true }
-							type="text/javascript"
-							src="https://www.google-analytics.com/analytics.js"
-							nonce={ analyticsScriptNonce }
-						/>
-					) }
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>

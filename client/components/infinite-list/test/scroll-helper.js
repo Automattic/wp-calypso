@@ -18,7 +18,7 @@ function getItemRef( item ) {
 describe( 'scroll-helper', () => {
 	describe( 'Hide Levels', () => {
 		describe( 'Context Higher than 5 items', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.props = {
 				guessedItemHeight: 100,
 				itemsPerRow: 1,
@@ -43,7 +43,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Context Shorter than 5 items', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.props = {
 				guessedItemHeight: 100,
 				itemsPerRow: 1,
@@ -69,7 +69,7 @@ describe( 'scroll-helper', () => {
 	} );
 
 	describe( 'Container and placeholder positioning', () => {
-		var preparedBounds = {
+		let preparedBounds = {
 				topPlaceholder: {
 					top: -2000,
 					height: 1000,
@@ -100,7 +100,7 @@ describe( 'scroll-helper', () => {
 	} );
 
 	describe( 'Initial last rendered index', () => {
-		var helper;
+		let helper;
 		beforeEach( () => {
 			helper = new ScrollHelper();
 			helper.props = {
@@ -123,7 +123,7 @@ describe( 'scroll-helper', () => {
 
 	describe( 'Items Above', () => {
 		test( 'Starts hiding when placeholder bottom edge is above soft level', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.containerTop = -3000;
 			helper.topPlaceholderHeight = 500;
 			helper.topHideLevelSoft = -2000;
@@ -135,7 +135,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Hiding batch of items', () => {
-			var preparedBounds = {
+			let preparedBounds = {
 					i0: {
 						bottom: -1850,
 					},
@@ -190,7 +190,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Completely above context', () => {
-			var preparedBounds = {
+			let preparedBounds = {
 					i0: {
 						bottom: -1850,
 					},
@@ -228,7 +228,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		test( 'Starts showing when placeholder bottom edge is below hard level', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.containerTop = -3000;
 			helper.topPlaceholderHeight = 2500;
 			helper.topHideLevelHard = -1000;
@@ -240,7 +240,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Showing batch of items', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.props = {
 				items: range( 6 ),
 				guessedItemHeight: 300,
@@ -286,7 +286,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Show items when their real height is higher than stored', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.props = {
 				items: range( 3 ),
 				guessedItemHeight: 300,
@@ -314,7 +314,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		test( 'removes placeholder if everything is shown', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.props = {
 				items: range( 3 ),
 				guessedItemHeight: 300,
@@ -337,7 +337,7 @@ describe( 'scroll-helper', () => {
 
 	describe( 'Items Below', () => {
 		test( 'Starts hiding when placholder top edge is below 3rd hide limit', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.containerBottom = 5000;
 			helper.bottomPlaceholderHeight = 500;
 			helper.bottomHideLevelUltraSoft = 4000;
@@ -349,7 +349,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Hiding batch of items', () => {
-			var preparedBounds = {
+			let preparedBounds = {
 					i5: {
 						top: 1900,
 					},
@@ -409,7 +409,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Completely below context', () => {
-			var helper = new ScrollHelper(
+			const helper = new ScrollHelper(
 				function() {
 					return null;
 				} // let it use guessed height
@@ -440,7 +440,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		test( 'Starts showing when placeholder top edge is above first hide limit', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.containerBottom = 5000;
 			helper.bottomPlaceholderHeight = 3500;
 			helper.bottomHideLevelHard = 2000;
@@ -452,7 +452,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Showing batch of items', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.props = {
 				items: range( 8 ),
 				guessedItemHeight: 300,
@@ -499,7 +499,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Show item longer than context', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.props = {
 				items: range( 8 ),
 				guessedItemHeight: 300,
@@ -532,7 +532,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Show new items', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.props = {
 				items: range( 8 ),
 				guessedItemHeight: 300,
@@ -564,7 +564,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		test( 'Placeholder height is always zero if everything shown', () => {
-			var helper = new ScrollHelper();
+			const helper = new ScrollHelper();
 			helper.props = {
 				items: range( 8 ),
 				guessedItemHeight: 300,
@@ -589,7 +589,7 @@ describe( 'scroll-helper', () => {
 	} );
 
 	describe( 'Next page', () => {
-		var helper;
+		let helper;
 
 		beforeEach( () => {
 			helper = new ScrollHelper();

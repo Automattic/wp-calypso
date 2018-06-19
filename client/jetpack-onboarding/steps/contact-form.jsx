@@ -15,9 +15,8 @@ import ConnectIntro from '../connect-intro';
 import ConnectSuccess from '../connect-success';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySites from 'components/data/query-sites';
-import { getJetpackOnboardingPendingSteps } from 'state/selectors';
+import getJetpackOnboardingPendingSteps from 'state/selectors/get-jetpack-onboarding-pending-steps';
 import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
@@ -93,14 +92,10 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	}
 
 	render() {
-		const { basePath, getForwardUrl, hasContactForm, siteId, translate } = this.props;
+		const { getForwardUrl, hasContactForm, siteId, translate } = this.props;
 
 		return (
 			<div className="steps__main">
-				<PageViewTracker
-					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
-					title="Contact Form ‹ Jetpack Start"
-				/>
 				<QuerySites siteId={ siteId } />
 
 				<JetpackLogo full size={ 45 } />

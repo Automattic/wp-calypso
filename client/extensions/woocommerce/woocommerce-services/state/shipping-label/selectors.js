@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,14 +11,21 @@ import { translate } from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-import { areSettingsLoaded, areSettingsErrored } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import {
+	areSettingsLoaded,
+	areSettingsErrored,
+} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import {
 	isLoaded as arePackagesLoaded,
 	isFetchError as arePackagesErrored,
 } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingLabel', orderId ], null );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingLabel', orderId ],
+		null
+	);
 };
 
 export const isLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
@@ -105,25 +114,41 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 		}
 	}
 
-	return prices.length ? {
-		prices,
-		discount: discount,
-		total: total,
-	} : null;
+	return prices.length
+		? {
+				prices,
+				discount: discount,
+				total: total,
+		  }
+		: null;
 };
 
-const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized, ignoreValidation }, countriesData ) => {
-	if ( isNormalized && ! normalized ) {
+const getAddressErrors = (
+	{
+		values,
+		isNormalized,
+		isUnverifiable,
+		normalized: normalizedValues,
+		selectNormalized,
+		ignoreValidation,
+		fieldErrors,
+	},
+	countriesData
+) => {
+	if ( ( isNormalized || isUnverifiable ) && ! normalizedValues && fieldErrors ) {
+		return fieldErrors;
+	} else if ( isNormalized && ! normalizedValues ) {
 		// If the address is normalized but the server didn't return a normalized address, then it's
 		// invalid and must register as an error
 		return {
 			address: translate( 'This address is not recognized. Please try another.' ),
 		};
 	}
-	const { postcode, state, country } = ( isNormalized && selectNormalized ) ? normalized : values;
+
+	const { postcode, state, country } = isNormalized && selectNormalized ? normalizedValues : values;
 	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
-	requiredFields.forEach( ( field ) => {
+	requiredFields.forEach( field => {
 		if ( ! values[ field ] ) {
 			errors[ field ] = translate( 'This field is required' );
 		}
@@ -144,7 +169,7 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 	}
 
 	if ( ignoreValidation ) {
-		Object.keys( errors ).forEach( ( field ) => {
+		Object.keys( errors ).forEach( field => {
 			if ( ignoreValidation[ field ] ) {
 				delete errors[ field ];
 			}
@@ -154,49 +179,50 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 	return errors;
 };
 
-const getPackagesErrors = ( values ) => mapValues( values, ( pckg ) => {
-	const errors = {};
+const getPackagesErrors = values =>
+	mapValues( values, pckg => {
+		const errors = {};
 
-	if ( 'not_selected' === pckg.box_id ) {
-		errors.box_id = translate( 'Please select a package' );
-	}
+		if ( 'not_selected' === pckg.box_id ) {
+			errors.box_id = translate( 'Please select a package' );
+		}
 
-	const isInvalidDimension = ( dimension ) => ( ! isFinite( dimension ) || 0 >= dimension );
+		const isInvalidDimension = dimension => ! isFinite( dimension ) || 0 >= dimension;
 
-	if ( isInvalidDimension( pckg.weight ) ) {
-		errors.weight = translate( 'Invalid weight' );
-	}
+		if ( isInvalidDimension( pckg.weight ) ) {
+			errors.weight = translate( 'Invalid weight' );
+		}
 
-	const hasInvalidDimensions = some( [
-		pckg.length,
-		pckg.width,
-		pckg.height,
-	], isInvalidDimension );
-	if ( hasInvalidDimensions ) {
-		errors.dimensions = translate( 'Package dimensions must be greater than zero' );
-	}
+		const hasInvalidDimensions = some(
+			[ pckg.length, pckg.width, pckg.height ],
+			isInvalidDimension
+		);
+		if ( hasInvalidDimensions ) {
+			errors.dimensions = translate( 'Package dimensions must be greater than zero' );
+		}
 
-	return errors;
-} );
+		return errors;
+	} );
 
 export const getRatesErrors = ( { values: selectedRates, available: allRates } ) => {
 	return {
-		server: mapValues( allRates, ( rate ) => {
+		server: mapValues( allRates, rate => {
 			if ( ! rate.errors ) {
 				return;
 			}
 
-			return rate.errors.map( ( error ) =>
-				error.userMessage ||
-				error.message ||
-				translate( "We couldn't get a rate for this package, please try again." )
+			return rate.errors.map(
+				error =>
+					error.userMessage ||
+					error.message ||
+					translate( "We couldn't get a rate for this package, please try again." )
 			);
 		} ),
-		form: mapValues( selectedRates, ( ( rate ) => rate ? null : translate( 'Please choose a rate' ) ) ),
+		form: mapValues( selectedRates, rate => ( rate ? null : translate( 'Please choose a rate' ) ) ),
 	};
 };
 
-const getSidebarErrors = ( paperSize ) => {
+const getSidebarErrors = paperSize => {
 	const errors = {};
 	if ( ! paperSize ) {
 		errors.paperSize = translate( 'This field is required' );
@@ -245,15 +271,19 @@ export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteI
 
 	const errors = getFormErrors( state, orderId, siteId );
 
-	if ( ! form.origin.isNormalized ||
+	if (
+		! form.origin.isNormalized ||
 		! isEqual( form.origin.values, form.origin.normalized ) ||
-		hasNonEmptyLeaves( errors.origin ) ) {
+		hasNonEmptyLeaves( errors.origin )
+	) {
 		return 'origin';
 	}
 
-	if ( ! form.destination.isNormalized ||
+	if (
+		! form.destination.isNormalized ||
 		! isEqual( form.destination.values, form.destination.normalized ) ||
-		hasNonEmptyLeaves( errors.destination ) ) {
+		hasNonEmptyLeaves( errors.destination )
+	) {
 		return 'destination';
 	}
 
@@ -288,11 +318,19 @@ export const canPurchase = createSelector(
 );
 
 export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	return isLoaded( state, orderId, siteId ) && areSettingsLoaded( state, siteId ) && arePackagesLoaded( state, siteId );
+	return (
+		isLoaded( state, orderId, siteId ) &&
+		areSettingsLoaded( state, siteId ) &&
+		arePackagesLoaded( state, siteId )
+	);
 };
 
 export const isLabelDataFetchError = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	return isError( state, orderId, siteId ) || areSettingsErrored( state, siteId ) || arePackagesErrored( state, siteId );
+	return (
+		isError( state, orderId, siteId ) ||
+		areSettingsErrored( state, siteId ) ||
+		arePackagesErrored( state, siteId )
+	);
 };
 
 export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {

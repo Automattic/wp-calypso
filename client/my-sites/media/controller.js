@@ -3,33 +3,22 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import i18n from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal Dependencies
  */
-import { sectionify } from 'lib/route';
-import analytics from 'lib/analytics';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { getSelectedSite } from 'state/ui/selectors';
 import MediaComponent from 'my-sites/media/main';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { getSiteFragment } from 'lib/route';
 
 export default {
 	media: function( context, next ) {
-		const filter = context.params.filter;
-		const search = context.query.s;
-		let baseAnalyticsPath = sectionify( context.path );
-
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
-
-		// Analytics
-		if ( selectedSite ) {
-			baseAnalyticsPath += '/:site';
+		if ( ! getSiteFragment( context.path ) ) {
+			return page.redirect( '/media' );
 		}
-		analytics.pageView.record( baseAnalyticsPath, 'Media' );
 
 		// Page Title
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -37,9 +26,8 @@ export default {
 
 		// Render
 		context.primary = React.createElement( MediaComponent, {
-			selectedSite,
-			filter: filter,
-			search: search,
+			filter: context.params.filter,
+			search: context.query.s,
 		} );
 		next();
 	},

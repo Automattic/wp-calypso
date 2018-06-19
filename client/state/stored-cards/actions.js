@@ -16,8 +16,7 @@ import wp from 'lib/wp';
 
 export const addStoredCard = cardData => dispatch => {
 	return new Promise( ( resolve, reject ) => {
-		wp
-			.undocumented()
+		wp.undocumented()
 			.me()
 			.storedCardAdd( cardData.token, ( error, data ) => {
 				error ? reject( error ) : resolve( data );
@@ -57,11 +56,11 @@ export const fetchStoredCards = () => dispatch => {
 export const deleteStoredCard = card => dispatch => {
 	dispatch( {
 		type: STORED_CARDS_DELETE,
+		card,
 	} );
 
 	return new Promise( ( resolve, reject ) => {
-		wp
-			.undocumented()
+		wp.undocumented()
 			.me()
 			.storedCardDelete( card, ( error, data ) => {
 				error ? reject( error ) : resolve( data );
@@ -76,6 +75,7 @@ export const deleteStoredCard = card => dispatch => {
 		.catch( error => {
 			dispatch( {
 				type: STORED_CARDS_DELETE_FAILED,
+				card,
 				error: error.message || i18n.translate( 'There was a problem deleting the stored card.' ),
 			} );
 		} );

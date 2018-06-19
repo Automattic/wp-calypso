@@ -15,17 +15,19 @@ import page from 'page';
 import Button from 'components/button';
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
+import { getCountProducts } from 'woocommerce/state/sites/data/counts/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getTotalProducts } from 'woocommerce/state/sites/products/selectors';
+import { getProductsSettingValue } from 'woocommerce/state/sites/settings/products/selectors';
 import InventoryWidget from './widgets/inventory-widget';
+import QuerySettingsProducts from 'woocommerce/components/query-settings-products';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import ShareWidget from 'woocommerce/components/share-widget';
 import StatsWidget from './widgets/stats-widget';
-import { recordTrack } from 'woocommerce/lib/analytics';
-import QuerySettingsProducts from 'woocommerce/components/query-settings-products';
-import { getProductsSettingValue } from 'woocommerce/state/sites/settings/products/selectors';
 
 class ManageNoOrdersView extends Component {
 	static propTypes = {
+		hasProducts: PropTypes.bool.isRequired,
+		shopPageId: PropTypes.string,
 		site: PropTypes.shape( {
 			slug: PropTypes.string.isRequired,
 			URL: PropTypes.string.isRequired,
@@ -135,6 +137,6 @@ class ManageNoOrdersView extends Component {
 }
 
 export default connect( state => ( {
-	hasProducts: getTotalProducts( state ) > 0,
+	hasProducts: getCountProducts( state ) > 0,
 	shopPageId: getProductsSettingValue( state, 'woocommerce_shop_page_id' ),
 } ) )( localize( ManageNoOrdersView ) );

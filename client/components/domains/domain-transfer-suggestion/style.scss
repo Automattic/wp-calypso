@@ -1,12 +1,14 @@
 .domain-transfer-suggestion {
 	display: flex;
 
-	&.is-kracken-ui .button.domain-suggestion__action {
+	.button.domain-suggestion__action {
 		color: $blue-medium;
 	}
 }
 
 .domain-transfer-suggestion__domain-description {
+	padding-right: 1em;
+
 	@include breakpoint( ">660px" ) {
 		width: 75%;
 	}

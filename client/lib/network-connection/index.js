@@ -19,7 +19,7 @@ import PollerPool from 'lib/data-poller';
 
 import { connectionLost, connectionRestored } from 'state/application/actions';
 
-var STATUS_CHECK_INTERVAL = 20000,
+let STATUS_CHECK_INTERVAL = 20000,
 	connected = true,
 	NetworkConnectionApp;
 
@@ -35,7 +35,7 @@ NetworkConnectionApp = {
 	 * Bootstraps network connection status change handler.
 	 */
 	init: function( reduxStore ) {
-		var changeCallback;
+		let changeCallback;
 
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;

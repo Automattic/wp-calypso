@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import ReactDom from 'react-dom';
-import observe from 'lib/mixins/data-observe';
 
 /**
  * Internal dependencies
@@ -23,8 +22,6 @@ import FormSelect from 'components/forms/form-select';
 
 const CountrySelect = createReactClass( {
 	displayName: 'CountrySelect',
-
-	mixins: [ observe( 'countriesList' ) ],
 
 	recordCountrySelectClick() {
 		if ( this.props.eventFormName ) {
@@ -42,8 +39,9 @@ const CountrySelect = createReactClass( {
 	},
 
 	render() {
+		const { countriesList } = this.props;
 		const classes = classNames( this.props.additionalClasses, 'country' );
-		const countriesList = this.props.countriesList.get();
+
 		let options = [];
 		let { value } = this.props;
 		value = value || '';
@@ -52,7 +50,6 @@ const CountrySelect = createReactClass( {
 			options.push( {
 				key: 'loading',
 				label: this.props.translate( 'Loading…' ),
-				disabled: 'disabled',
 			} );
 		} else {
 			options = options.concat( [
@@ -63,11 +60,11 @@ const CountrySelect = createReactClass( {
 			options = options.concat(
 				countriesList.map( ( country, index ) => {
 					if ( isEmpty( country.code ) ) {
-						return { key: 'divider2', label: '', disabled: 'disabled', value: '-' };
+						return { key: index, label: '', disabled: 'disabled', value: '-' };
 					}
 
 					return {
-						key: `country-select-${ index }-${ country.code }`,
+						key: index,
 						label: country.name,
 						value: country.code,
 					};
@@ -75,12 +72,16 @@ const CountrySelect = createReactClass( {
 			);
 		}
 
+		const validationId = `validation-field-${ this.props.name }`;
+
 		return (
 			<div className={ classes }>
 				<div>
 					<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
 
 					<FormSelect
+						aria-invalid={ this.props.isError }
+						aria-describedby={ validationId }
 						name={ this.props.name }
 						id={ this.props.name }
 						value={ value }
@@ -100,7 +101,7 @@ const CountrySelect = createReactClass( {
 				</div>
 
 				{ this.props.errorMessage && (
-					<FormInputValidation text={ this.props.errorMessage } isError />
+					<FormInputValidation id={ validationId } text={ this.props.errorMessage } isError />
 				) }
 			</div>
 		);

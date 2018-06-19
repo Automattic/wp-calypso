@@ -44,7 +44,7 @@ class PluginSiteJetpack extends React.Component {
 	};
 
 	renderInstallButton = () => {
-		var installInProgress = PluginsLog.isInProgressAction(
+		const installInProgress = PluginsLog.isInProgressAction(
 			this.props.site.ID,
 			this.props.plugin.slug,
 			'INSTALL_PLUGIN'
@@ -53,7 +53,6 @@ class PluginSiteJetpack extends React.Component {
 		return (
 			<PluginInstallButton
 				isEmbed={ true }
-				notices={ this.props.notices }
 				selectedSite={ this.props.site }
 				plugin={ this.props.plugin }
 				isInstalling={ installInProgress }
@@ -106,26 +105,17 @@ class PluginSiteJetpack extends React.Component {
 			>
 				<div>
 					{ canToggleActivation && (
-						<PluginActivateToggle
-							site={ this.props.site }
-							plugin={ this.props.site.plugin }
-							notices={ this.props.notices }
-						/>
+						<PluginActivateToggle site={ this.props.site } plugin={ this.props.site.plugin } />
 					) }
 					{ canToggleAutoupdate && (
 						<PluginAutoupdateToggle
 							site={ this.props.site }
 							plugin={ this.props.site.plugin }
-							notices={ this.props.notices }
 							wporg={ true }
 						/>
 					) }
 					{ canToggleRemove && (
-						<PluginRemoveButton
-							plugin={ this.props.site.plugin }
-							site={ this.props.site }
-							notices={ this.props.notices }
-						/>
+						<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
 					) }
 					{ showAutoManagedMessage && (
 						<div className="plugin-site-jetpack__automanage-notice">

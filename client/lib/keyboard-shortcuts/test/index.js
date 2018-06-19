@@ -12,7 +12,7 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 describe( 'KeyboardShortcuts', () => {
 	test( 'should emit events to subscribers', () => {
-		var arbitraryData = 'hello, world?',
+		let arbitraryData = 'hello, world?',
 			eventResult = '',
 			handleEvent = function( data ) {
 				eventResult = data;

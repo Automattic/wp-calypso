@@ -105,6 +105,9 @@ class Security2faSetup extends Component {
 	}
 }
 
-export default connect( null, { successNotice }, null, { pure: false } )(
-	localize( Security2faSetup )
-);
+export default connect(
+	null,
+	{ successNotice },
+	null,
+	{ pure: false }
+)( localize( Security2faSetup ) );

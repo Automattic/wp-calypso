@@ -548,10 +548,10 @@ class ThemeSheet extends React.Component {
 
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
-		const { siteId, retired } = this.props;
+		const { id, siteId, retired } = this.props;
 
-		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${
-			siteId ? '/:site_id' : ''
+		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
+			siteId ? '/:site' : ''
 		}`;
 		const analyticsPageTitle = `Themes > Details Sheet${
 			section ? ' > ' + titlecase( section ) : ''

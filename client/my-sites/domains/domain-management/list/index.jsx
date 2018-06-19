@@ -37,10 +37,12 @@ import {
 } from './constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import EmptyContent from 'components/empty-content';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { isDomainOnlySite, isSiteAutomatedTransfer } from 'state/selectors';
-
+import canCurrentUser from 'state/selectors/can-current-user';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
@@ -60,11 +62,15 @@ export class List extends React.Component {
 		notice: null,
 	};
 
+	isLoading() {
+		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
+	}
+
 	domainWarnings() {
-		if ( this.props.domains.hasLoadedFromServer ) {
+		if ( ! this.isLoading() ) {
 			return (
 				<DomainWarnings
-					domains={ this.props.domains.list }
+					domains={ this.props.domains }
 					position="domain-list"
 					selectedSite={ this.props.selectedSite }
 					ruleWhiteList={ [
@@ -75,6 +81,8 @@ export class List extends React.Component {
 						'unverifiedDomainsCannotManage',
 						'wrongNSMappedDomains',
 						'transferStatus',
+						'newTransfersWrongNS',
+						'pendingConsent',
 					] }
 				/>
 			);
@@ -110,6 +118,18 @@ export class List extends React.Component {
 	}
 
 	render() {
+		if ( ! this.props.userCanManageOptions ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
+
 		if ( ! this.props.domains ) {
 			return null;
 		}
@@ -155,8 +175,7 @@ export class List extends React.Component {
 	isFreshDomainOnlyRegistration() {
 		const domainName = this.props.selectedSite.domain;
 		const domain =
-			this.props.domains.hasLoadedFromServer &&
-			find( this.props.domains.list, ( { name } ) => name === domainName );
+			! this.isLoading() && find( this.props.domains, ( { name } ) => name === domainName );
 
 		return (
 			domain &&
@@ -221,7 +240,7 @@ export class List extends React.Component {
 				} );
 			}
 		);
-		const previousDomainIndex = findIndex( this.props.domains.list, { name: previousDomainName } );
+		const previousDomainIndex = findIndex( this.props.domains, { name: previousDomainName } );
 
 		this.setState( {
 			notice: null,
@@ -230,7 +249,7 @@ export class List extends React.Component {
 			settingPrimaryDomain: true,
 		} );
 
-		this.props.undoChangePrimary( this.props.domains.list[ previousDomainIndex ] );
+		this.props.undoChangePrimary( this.props.domains[ previousDomainIndex ] );
 	};
 
 	clickAddDomain = () => {
@@ -242,7 +261,7 @@ export class List extends React.Component {
 		this.props.enablePrimaryDomainMode();
 		this.setState( {
 			changePrimaryDomainModeEnabled: true,
-			primaryDomainIndex: findIndex( this.props.domains.list, { isPrimary: true } ),
+			primaryDomainIndex: findIndex( this.props.domains, { isPrimary: true } ),
 		} );
 	};
 
@@ -281,7 +300,7 @@ export class List extends React.Component {
 	}
 
 	changePrimaryButton() {
-		if ( ! this.props.domains.list || this.props.domains.list.length < 2 ) {
+		if ( ! this.props.domains || this.props.domains.length < 2 ) {
 			return null;
 		}
 
@@ -334,8 +353,8 @@ export class List extends React.Component {
 		}
 
 		this.props.changePrimary( domain );
-		const currentPrimaryIndex = findIndex( this.props.domains.list, { isPrimary: true } ),
-			currentPrimaryName = this.props.domains.list[ currentPrimaryIndex ].name;
+		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } ),
+			currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
 
 		if ( domain.name === currentPrimaryName ) {
 			// user clicked the current primary domain
@@ -377,13 +396,13 @@ export class List extends React.Component {
 	};
 
 	listItems() {
-		if ( ! this.props.domains.hasLoadedFromServer ) {
+		if ( this.isLoading() ) {
 			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
 		const domains = this.props.selectedSite.jetpack
-			? this.props.domains.list.filter( domain => domain.type !== type.WPCOM )
-			: this.props.domains.list;
+			? this.props.domains.filter( domain => domain.type !== type.WPCOM )
+			: this.props.domains;
 
 		return domains.map( ( domain, index ) => {
 			return (
@@ -463,11 +482,13 @@ const undoChangePrimary = domain =>
 export default connect(
 	( state, ownProps ) => {
 		const siteId = get( ownProps, 'selectedSite.ID', null );
+		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 		return {
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			userCanManageOptions,
 		};
 	},
 	dispatch => {

@@ -1,7 +1,9 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-import { getUnconnectedSite } from 'state/selectors';
+import getUnconnectedSite from 'state/selectors/get-unconnected-site';
 
 describe( '#getUnconnectedSite()', () => {
 	const site = {
@@ -14,31 +16,46 @@ describe( '#getUnconnectedSite()', () => {
 	};
 
 	test( 'should return null if we have no credentials at all', () => {
-		const selected = getUnconnectedSite( {
-			jetpackOnboarding: {
-				credentials: {},
+		const selected = getUnconnectedSite(
+			{
+				jetpack: {
+					onboarding: {
+						credentials: {},
+					},
+				},
 			},
-		}, 12345678 );
+			12345678
+		);
 
 		expect( selected ).toBeNull();
 	} );
 
 	test( 'should return null if we have no credentials for the current site ID', () => {
-		const selected = getUnconnectedSite( {
-			jetpackOnboarding: {
-				credentials,
+		const selected = getUnconnectedSite(
+			{
+				jetpack: {
+					onboarding: {
+						credentials,
+					},
+				},
 			},
-		}, 12345678 );
+			12345678
+		);
 
 		expect( selected ).toBeNull();
 	} );
 
 	test( 'should return the site credentials of a known unconnected site', () => {
-		const selected = getUnconnectedSite( {
-			jetpackOnboarding: {
-				credentials,
+		const selected = getUnconnectedSite(
+			{
+				jetpack: {
+					onboarding: {
+						credentials,
+					},
+				},
 			},
-		}, 2916284 );
+			2916284
+		);
 
 		expect( selected ).toBe( site );
 	} );

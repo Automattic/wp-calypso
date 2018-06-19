@@ -22,6 +22,7 @@ import PushNotificationSettings from './push-notification-settings';
 import store from 'lib/notification-settings-store';
 import QueryUserDevices from 'components/data/query-user-devices';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class NotificationSettings extends Component {
 	state = {
@@ -62,6 +63,7 @@ class NotificationSettings extends Component {
 
 		return (
 			<Main className="notification-settings">
+				<PageViewTracker path="/me/notifications" title="Me > Notifications" />
 				<QueryUserDevices />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
@@ -79,4 +81,7 @@ class NotificationSettings extends Component {
 	}
 }
 
-export default connect( null, { successNotice, errorNotice } )( localize( NotificationSettings ) );
+export default connect(
+	null,
+	{ successNotice, errorNotice }
+)( localize( NotificationSettings ) );

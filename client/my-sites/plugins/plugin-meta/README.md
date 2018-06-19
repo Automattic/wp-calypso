@@ -19,7 +19,6 @@ render() {
 
 #### Props
 
-* `notices` : (object) Object of errored, inProgress, and completed actions.
 * `plugin` : (object) A plugin object.
 * `siteURL` : (string) The URL of the selected site. Used to determine if this is a single or all sites view.
 * `sites` : (array) An array of the sites that current plugin is installed on.

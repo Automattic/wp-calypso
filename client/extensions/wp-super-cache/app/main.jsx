@@ -29,6 +29,8 @@ import { Tabs, WPSC_MIN_VERSION } from './constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatus } from '../state/status/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 class WPSuperCache extends Component {
 	static propTypes = {
@@ -92,6 +94,10 @@ class WPSuperCache extends Component {
 					redirectUrl={ redirectUrl }
 				/>
 				<QueryStatus siteId={ siteId } />
+				<PageViewTracker
+					path={ `/extensions/wp-super-cache/${ tab ? tab + '/' : '' }:site` }
+					title={ `WP Super Cache > ${ tab ? titlecase( tab ) : 'Easy' }` }
+				/>
 
 				{ cacheDisabled && (
 					<Notice

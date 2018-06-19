@@ -8,15 +8,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { includes, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
-import { getSection, masterbarIsVisible } from 'state/ui/selectors';
+import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {
@@ -38,8 +40,8 @@ const LayoutLoggedOut = ( {
 	useOAuth2Layout,
 } ) => {
 	const classes = {
-		[ 'is-group-' + section.group ]: !! section,
-		[ 'is-section-' + section.name ]: !! section,
+		[ 'is-group-' + section.group ]: !! get( section, 'group' ),
+		[ 'is-section-' + section.name ]: !! get( section, 'name' ),
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
@@ -68,6 +70,12 @@ const LayoutLoggedOut = ( {
 			{ masterbar }
 
 			<div id="content" className="layout__content">
+				<GlobalNotices
+					id="notices"
+					notices={ notices.list }
+					forcePinned={ 'post' === section.name }
+				/>
+
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>

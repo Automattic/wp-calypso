@@ -1,5 +1,24 @@
 /** @format */
 export default {
+	multiyearSubscriptions: {
+		datestamp: '20180601',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	springSale30PercentOff: {
+		datestamp: '20180413',
+		variations: {
+			upsell: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	signupAtomicStoreVsPressable: {
 		datestamp: '20171101',
 		variations: {
@@ -64,69 +83,31 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	domainSuggestionTestV6: {
-		datestamp: '20180315',
-		variations: {
-			group_0: 1, // Default group
-			group_1: 1000,
-			group_2: 1000,
-			group_3: 1000,
-			group_4: 1000,
-		},
-		defaultVariation: 'group_0',
-		allowExistingUsers: true,
-	},
-	upgradePricingDisplayV2: {
-		datestamp: '20180305',
+	jetpackSignupGoogleTop: {
+		datestamp: '20180427',
 		variations: {
 			original: 50,
-			modified: 50,
+			top: 50,
 		},
 		defaultVariation: 'original',
 	},
-	domainSearchPrefill: {
-		datestamp: '20180315',
+	domainSuggestionKrakenV321: {
+		datestamp: '20180524',
 		variations: {
-			noPrefill: 50,
-			withSiteTitle: 50,
+			domainsbot: 0,
+			group_1: 10000,
+			group_3: 10000,
+			group_4: 10000,
 		},
-		defaultVariation: 'noPrefill',
-		allowExistingUsers: true,
+		defaultVariation: 'domainsbot',
 	},
-	redesignedSidebarBanner: {
-		datestamp: '20180222',
+	domainSearchTLDFilterPlacement: {
+		datestamp: '20180531',
 		variations: {
-			newBanner: 50,
-			oldBanner: 50,
+			belowFeatured: 50,
+			aboveFeatured: 50,
 		},
-		defaultVariation: 'oldBanner',
-	},
-	siteGoalsShuffle: {
-		datestamp: '20180214',
-		variations: {
-			control: 50,
-			variant: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	inlineHelpWithContactForm: {
-		datestamp: '20180306',
-		variations: {
-			original: 90,
-			inlinecontact: 10,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
-	mobilePlansTablesOnSignup: {
-		datestamp: '20180320',
-		variations: {
-			original: 50,
-			mobile: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
+		defaultVariation: 'belowFeatured',
 	},
 	staleCartNotice: {
 		datestamp: '20180618',

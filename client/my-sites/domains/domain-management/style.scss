@@ -351,12 +351,17 @@ input[type=radio].domain-management-list-item__radio {
 .dns__details,
 .custom-nameservers-form__explanation,
 .email-forwarding__explanation,
-.site-redirect__explanation {
+.site-redirect__explanation,
+.dns__domain-connect-explanation {
 	display: block;
 	margin-top: 5px;
 	font-size: 13px;
 	font-style: italic;
 	color: $gray-text-min;
+}
+
+.dns__domain-connect-explanation {
+	margin-bottom: 5px;
 }
 
 .email-forwarding-card,
@@ -772,13 +777,14 @@ ul.email-forwarding__list {
 }
 
 .dns__list > ul,
-ul.domain-connect__dns-list
-{
+ul.domain-connect__dns-list,
+.dns__domain-connect-record {
 	list-style: none;
 	margin: 15px 0 0 0;
 	padding: 0;
 
-	li {
+	li,
+	.dns__domain-connect-record-wrap {
 		border-top: 1px solid $gray-light;
 		display: flex;
 		justify-content: space-between;
@@ -792,6 +798,7 @@ ul.domain-connect__dns-list
 			font-size: 11px;
 		}
 
+		span,
 		label {
 			background: $gray;
 			border-radius: 2px;
@@ -828,6 +835,22 @@ ul.domain-connect__dns-list
 	.dns__list-remove {
 		text-align: right;
 		width: 100px;
+	}
+}
+
+.dns__domain-connect-record {
+	margin: 0;
+	border-top: 1px solid $gray-light;
+	display: flex;
+	justify-content: space-between;
+
+	.dns__domain-connect-record-wrap {
+		border-top: none;
+
+	}
+
+	.dns__domain-connect-toggle {
+		margin: 15px 0;
 	}
 }
 

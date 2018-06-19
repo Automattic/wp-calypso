@@ -31,7 +31,7 @@ import {
 } from 'state/themes/selectors';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
-import { prependThemeFilterKeys } from 'state/selectors';
+import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 
 class ThemesSelection extends Component {
 	static propTypes = {

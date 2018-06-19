@@ -104,7 +104,7 @@ const createEditState = ( { zoneLocations, locationEdits } ) =>
 				methodIds: [],
 			} ) ),
 			shippingZoneLocations: zoneLocations,
-			locations,
+			data: { locations },
 		},
 		ui: {
 			shipping: {
@@ -165,7 +165,7 @@ describe( 'selectors', () => {
 			expect( getShippingZoneLocationsWithEdits( state ) ).to.be.null;
 		} );
 
-		test( 'should return null when there is no zone currently being edited', () => {
+		test( 'should return empty arrays when there is no zone currently being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [],
@@ -1433,7 +1433,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
 		} );
 
-		test( 'should return true when there is a whole country selected but the it belongs to other zone and does not allow states', () => {
+		test( 'should return true when there is a whole country selected but it belongs to another zone and does not allow states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {

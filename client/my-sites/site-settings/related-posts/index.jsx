@@ -15,6 +15,7 @@ import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
+import SupportInfo from 'components/support-info';
 import RelatedContentPreview from './related-content-preview';
 
 const RelatedPosts = ( {
@@ -30,6 +31,13 @@ const RelatedPosts = ( {
 
 			<Card className="related-posts__card site-settings__traffic-settings">
 				<FormFieldset>
+					<SupportInfo
+						text={ translate(
+							'Automatically displays similar content (related posts) at the end of each post.'
+						) }
+						link="https://jetpack.com/support/related-posts/"
+					/>
+
 					<CompactFormToggle
 						checked={ !! fields.jetpack_relatedposts_enabled }
 						disabled={ isRequestingSettings || isSavingSettings }
@@ -58,7 +66,7 @@ const RelatedPosts = ( {
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_thumbnails' ) }
 						>
-							{ translate( 'Use a large and visually striking layout' ) }
+							{ translate( 'Show a thumbnail image where available' ) }
 						</CompactFormToggle>
 					</div>
 

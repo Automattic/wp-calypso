@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,16 +11,14 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 // path to MailChimp setting state branch
-const basePath = ( siteId ) => (
-	[
-		'extensions',
-		'woocommerce',
-		'sites',
-		siteId,
-		'settings',
-		'mailchimp',
-	]
-);
+const basePath = siteId => [
+	'extensions',
+	'woocommerce',
+	'sites',
+	siteId,
+	'settings',
+	'mailchimp',
+];
 
 /**
  * Returns true if currently requesting MailChimp settings or false otherwise.
@@ -179,7 +179,7 @@ export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state
 		return false;
 	}
 
-	if ( 'n\/a' !== list ) {
+	if ( 'n/a' !== list ) {
 		return true;
 	}
 

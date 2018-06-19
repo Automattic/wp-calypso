@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { isExternal } from 'lib/url';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import TranslatableString from 'components/translatable/proptype';
 
 export default class SidebarItem extends React.Component {
