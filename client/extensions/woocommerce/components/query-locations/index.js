@@ -7,6 +7,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -34,5 +35,5 @@ class QueryLocations extends Component {
 
 export default connect(
 	null,
-	{ fetchLocations }
+	dispatch => bindActionCreators( { fetchLocations }, dispatch )
 )( QueryLocations );
