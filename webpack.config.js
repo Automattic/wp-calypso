@@ -18,6 +18,7 @@ const prism = require( 'prismjs' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const threadLoader = require( 'thread-loader' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 
 /**
  * Internal dependencies
@@ -73,6 +74,11 @@ const babelLoader = {
 };
 
 threadLoader.warmup( {}, [ 'babel-loader' ] );
+
+// Main CSS loader for everything but blocks..
+const cssExtractPlugin = new MiniCssExtractPlugin( {
+	filename: path.resolve( __dirname, 'public/style-gutenberg.css' ),
+} );
 
 const webpackConfig = {
 	bail: ! isDevelopment,
@@ -172,6 +178,95 @@ const webpackConfig = {
 					},
 				],
 			},
+			{
+				test: /\.pegjs/,
+				use: 'pegjs-loader',
+			},
+			{
+				test: /\.s?css$/,
+				use: [
+					process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
+					'css-loader',
+					{
+						loader: 'postcss-loader',
+						options: {
+							plugins: [
+								require( path.resolve( __dirname, 'vendor/gutenberg/packages/postcss-themes' ) )( {
+									defaults: {
+										primary: '#0085ba',
+										secondary: '#11a0d2',
+										toggle: '#11a0d2',
+										button: '#0085ba',
+										outlines: '#007cba',
+									},
+									themes: {
+										'admin-color-light': {
+											primary: '#0085ba',
+											secondary: '#c75726',
+											toggle: '#11a0d2',
+											button: '#0085ba',
+											outlines: '#007cba',
+										},
+										'admin-color-blue': {
+											primary: '#82b4cb',
+											secondary: '#d9ab59',
+											toggle: '#82b4cb',
+											button: '#d9ab59',
+											outlines: '#417e9B',
+										},
+										'admin-color-coffee': {
+											primary: '#c2a68c',
+											secondary: '#9fa47b',
+											toggle: '#c2a68c',
+											button: '#c2a68c',
+											outlines: '#59524c',
+										},
+										'admin-color-ectoplasm': {
+											primary: '#a7b656',
+											secondary: '#c77430',
+											toggle: '#a7b656',
+											button: '#a7b656',
+											outlines: '#523f6d',
+										},
+										'admin-color-midnight': {
+											primary: '#e14d43',
+											secondary: '#77a6b9',
+											toggle: '#77a6b9',
+											button: '#e14d43',
+											outlines: '#497b8d',
+										},
+										'admin-color-ocean': {
+											primary: '#a3b9a2',
+											secondary: '#a89d8a',
+											toggle: '#a3b9a2',
+											button: '#a3b9a2',
+											outlines: '#5e7d5e',
+										},
+										'admin-color-sunrise': {
+											primary: '#d1864a',
+											secondary: '#c8b03c',
+											toggle: '#c8b03c',
+											button: '#d1864a',
+											outlines: '#837425',
+										},
+									},
+								} ),
+								require( 'autoprefixer' ),
+								require( 'postcss-color-function' ),
+							],
+						},
+					},
+					{
+						loader: 'sass-loader',
+						query: {
+							includePaths: [ 'vendor/gutenberg/edit-post/assets/stylesheets' ],
+							data:
+								'@import "./_colors"; @import "breakpoints"; @import "variables"; @import "mixins"; @import "animations";@import "z-index";',
+							outputStyle: 'production' === process.env.NODE_ENV ? 'compressed' : 'nested',
+						},
+					},
+				],
+			},
 		],
 	},
 	resolve: {
@@ -183,11 +278,38 @@ const webpackConfig = {
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example',
 			},
+			{
+				'@wordpress/core-blocks': path.resolve( __dirname, 'vendor/gutenberg/core-blocks' ),
+				'@wordpress/blocks': path.resolve( __dirname, 'vendor/gutenberg/blocks' ),
+				'@wordpress/components': path.resolve( __dirname, 'vendor/gutenberg/components' ),
+				'@wordpress/editor': path.resolve( __dirname, 'vendor/gutenberg/editor' ),
+				'@wordpress/viewport': path.resolve( __dirname, 'vendor/gutenberg/viewport' ),
+				'@wordpress/utils': path.resolve( __dirname, 'vendor/gutenberg/utils' ),
+				'@wordpress/nux': path.resolve( __dirname, 'vendor/gutenberg/nux' ),
+				'@wordpress/api-request': path.resolve(
+					__dirname,
+					'vendor/gutenberg/packages/api-request'
+				),
+				'@wordpress/blob': path.resolve( __dirname, 'vendor/gutenberg/packages/blob' ),
+				'@wordpress/core-data': path.resolve( __dirname, 'vendor/gutenberg/packages/core-data' ),
+				'@wordpress/dom': path.resolve( __dirname, 'vendor/gutenberg/packages/dom' ),
+				'@wordpress/data': path.resolve( __dirname, 'vendor/gutenberg/packages/data' ),
+				'@wordpress/date': path.resolve( __dirname, 'vendor/gutenberg/packages/date' ),
+				'@wordpress/deprecated': path.resolve( __dirname, 'vendor/gutenberg/packages/deprecated' ),
+				'@wordpress/element': path.resolve( __dirname, 'vendor/gutenberg/packages/element' ),
+				'@wordpress/keycodes': path.resolve( __dirname, 'vendor/gutenberg/packages/keycodes' ),
+				'@wordpress/shortcode': path.resolve( __dirname, 'vendor/gutenberg/packages/shortcode' ),
+				'@wordpress/usersettings': path.resolve(
+					__dirname,
+					'vendor/gutenberg/packages/usersettings'
+				),
+			},
 			getAliasesForExtensions()
 		),
 	},
 	node: false,
 	plugins: _.compact( [
+		cssExtractPlugin,
 		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
@@ -235,7 +357,8 @@ if ( calypsoEnv === 'desktop' ) {
 } else {
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254
-	webpackConfig.externals.push( 'jquery' );
+	// Needed by Gutenberg's api-request, too, so let Webpack bundle it instead of externalizing
+	//webpackConfig.externals.push( 'jquery' );
 }
 
 if ( isDevelopment ) {
