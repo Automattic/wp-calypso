@@ -138,7 +138,7 @@ class SiteSettingsImport extends Component {
 	 * @param {Array} importsForSite The list of active import jobs
 	 * @returns {Array} Importer react elements for the active import jobs
 	 */
-	renderActiveImporters( site, siteTitle, importsForSite ) {
+	renderActiveImporters( importsForSite ) {
 		return importers.map( importer => {
 			const { type, isImporterEnabled, component: ImporterComponent } = importer;
 
@@ -146,16 +146,15 @@ class SiteSettingsImport extends Component {
 				return;
 			}
 
-			return importsForSite.filter( importItem => importItem.type === type ).map( importItem => (
-				<ImporterComponent
-					key={ importItem.importerId }
-					site={ site }
-					importerStatus={ {
-						siteTitle,
-						...importItem,
-					} }
-				/>
-			) );
+			return importsForSite
+				.filter( importItem => importItem.type === type )
+				.map( importItem => (
+					<ImporterComponent
+						key={ importItem.importerId }
+						site={ importItem.site }
+						importerStatus={ importItem }
+					/>
+				) );
 		} );
 	}
 
@@ -177,13 +176,15 @@ class SiteSettingsImport extends Component {
 			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
 		}
 
-		const importsForSite = filterImportsForSite( site.ID, imports );
+		const importsForSite = filterImportsForSite( site.ID, imports )
+			// Add in the 'site' and 'siteTitle' properties to the import objects.
+			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
 
 		if ( 0 === importsForSite.length ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
 		}
 
-		return this.renderActiveImporters( site, siteTitle, importsForSite );
+		return this.renderActiveImporters( importsForSite );
 	}
 
 	updateFromAPI = () => {
