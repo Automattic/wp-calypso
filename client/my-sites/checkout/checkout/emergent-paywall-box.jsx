@@ -33,6 +33,7 @@ export class EmergentPaywallBox extends Component {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
 		transaction: PropTypes.object.isRequired,
+		fetchIframeConfig: PropTypes.func.isRequired,
 		iframeConfig: PropTypes.object,
 		iframeConfigRequestState: PropTypes.string,
 		showErrorNotice: PropTypes.func.isRequired,

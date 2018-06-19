@@ -23,6 +23,11 @@ const defaultProps = {
 		products: [],
 	},
 	transaction: {},
+	iframeConfig: {},
+	iframeConfigRequestState: '',
+	fetchIframeConfig: jest.fn(),
+	showErrorNotice: jest.fn(),
+	removeNotice: jest.fn(),
 	translate: identity,
 	userCountryCode: 'IN',
 };
@@ -37,12 +42,12 @@ describe( '<EmergentPaywallBox />', () => {
 		const wrapper = mount( <EmergentPaywallBox { ...defaultProps } /> );
 		expect( wrapper.find( '.iframe-loaded' ) ).toHaveLength( 0 );
 		wrapper.setProps( {
-			emergentPaywallConfig: {
+			iframeConfig: {
 				paywall_url: 'http://bork.it',
 				signature: 'signature',
 				payload: 'payload',
 			},
-			emergentPaywallConfigState: 'success',
+			iframeConfigRequestState: 'success',
 		} );
 		expect( wrapper.find( '.iframe-loaded' ) ).toHaveLength( 1 );
 		expect( wrapper.find( 'input[name="payload"]' ).props().value ).toEqual( 'payload' );
