@@ -8382,9 +8382,9 @@
       "integrity": "sha1-3BXKHGcjh8p2vTesCjlbogQqLCg="
     },
     "get-video-id": {
-      "version": "2.1.4",
-      "resolved": "https://registry.npmjs.org/get-video-id/-/get-video-id-2.1.4.tgz",
-      "integrity": "sha1-lyKhEi4bxlK2lUOIo8jLngv8XBs=",
+      "version": "2.1.7",
+      "resolved": "https://registry.npmjs.org/get-video-id/-/get-video-id-2.1.7.tgz",
+      "integrity": "sha512-uGZbADzdLQgmxFJmYT0tbn63k2gPHDEFos7k/WToE44Wm5NLq9ucZ7FxKFFAJghkuxxJ1lbtGmEKNEKwaMLQkQ==",
       "requires": {
         "get-src": "^1.0.1"
       }
