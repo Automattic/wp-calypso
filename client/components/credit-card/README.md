@@ -61,6 +61,6 @@ All props are required.
 Name | Type | Description
 -- | -- | --
 `card` | `string` | Last digits of card number.
-`card_type` | `string` | Card type (e.g. `visa`).
+`cardType` | `string` | Card type (e.g. `visa`).
 `name` | `string` | Name on card (e.g. `James Smith`).
 `expiry` | `string` | Expiration date in MM/YY form.

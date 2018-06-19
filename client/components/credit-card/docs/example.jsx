@@ -18,13 +18,13 @@ class CreditCards extends Component {
 		cards: [
 			{
 				card: '4242',
-				card_type: 'visa',
+				cardType: 'visa',
 				name: 'James Smith',
 				expiry: '05/23',
 			},
 			{
 				card: '4444',
-				card_type: 'mastercard',
+				cardType: 'mastercard',
 				name: 'Jean Davis',
 				expiry: '01/21',
 			},
