@@ -14,3 +14,10 @@
 .custom-content-types__module-settings .form-toggle__label-content {
 	font-weight: 600;
 }
+
+html:not( [lang='de'] ) .custom-content-types__indented-form-field {
+	text-transform: lowercase;
+	&::first-letter {
+		text-transform: capitalize;
+	}
+}
