@@ -40,9 +40,31 @@ export const JetpackCredentialsTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Continue target=".credentials-setup-flow__setup-start" step="finish" click hidden />
+						<Continue
+							target=".credentials-setup-flow__setup-start"
+							step="click-agree"
+							click
+							hidden
+						/>
 						<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 					</ButtonRow>
+				</Fragment>
+			) }
+		</Step>
+
+		<Step
+			name="click-agree"
+			target=".credentials-setup-flow__tos-buttons .is-primary"
+			arrow="top-left"
+			placement="below"
+		>
+			{ ( { translate } ) => (
+				<Fragment>
+					<Continue target=".credentials-setup-flow__tos-buttons .is-primary" step="finish" click>
+						{ translate(
+							'Almost done — you need to agree to providing us with access to your server.'
+						) }
+					</Continue>
 				</Fragment>
 			) }
 		</Step>
