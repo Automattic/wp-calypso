@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,9 +61,7 @@ const importers = [
 ];
 
 const filterImportsForSite = ( siteID, imports ) => {
-	return Object.keys( imports )
-		.filter( importerId => imports[ importerId ].site.ID === siteID )
-		.map( importerId => imports[ importerId ] );
+	return filter( imports, importItem => importItem.site.ID === siteID );
 };
 
 class SiteSettingsImport extends Component {
@@ -117,7 +116,7 @@ class SiteSettingsImport extends Component {
 
 		const otherImportersCard = (
 			<CompactCard
-				key={ 'other-importers-card' }
+				key="other-importers-card"
 				href={ adminUrl + 'import.php' }
 				target="_blank"
 				rel="noopener noreferrer"
