@@ -24,7 +24,7 @@ const tasks = {
 		completedButtonText: 'Change',
 		duration: translate( '2 min' ),
 		tour: 'jetpackCredentials',
-		url: '/stats/activity/$siteSlug',
+		url: '/settings/security/$siteSlug',
 	},
 	jetpack_monitor: {
 		title: translate( 'Jetpack Monitor' ),
