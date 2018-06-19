@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import { replace } from 'lodash';
 import request from 'superagent';
 
 /**
@@ -20,7 +20,11 @@ export function login( username, password, auth_code ) {
 
 	request
 		.post( '/oauth' )
-		.send( { username, password, auth_code } )
+		.send( {
+			username,
+			password,
+			auth_code: replace( auth_code, /\s/g, '' ),
+		} )
 		.end( ( error, data ) => {
 			bumpStats( error, data );
 
