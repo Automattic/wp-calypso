@@ -66,6 +66,8 @@ class CurrentSite extends Component {
 			cartItems.hasStaleItem( CartStore.get() ) &&
 			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
 		) {
+			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
+
 			this.props.infoNotice( this.props.translate( 'Your site deserves a boost!' ), {
 				id: staleCartItemNoticeId,
 				isPersistent: false,
