@@ -21,6 +21,15 @@ export function removeNotice( noticeId ) {
 }
 
 export function createNotice( status, text, { id, ...noticeOptions } = {} ) {
+	if ( 'production' !== process.env.NODE_ENV ) {
+		if ( 'undefined' !== noticeOptions.noticeId ) {
+			// eslint-disable-next-line no-console
+			console.error(
+				'Did you mean to pass the `id` notice option?\n' +
+					`Received \`noticeId\`=${ JSON.stringify( noticeOptions.noticeId ) }.`
+			);
+		}
+	}
 	return {
 		type: NOTICE_CREATE,
 		notice: Object.assign( { showDismiss: true }, noticeOptions, {
