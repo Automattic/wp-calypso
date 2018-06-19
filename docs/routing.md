@@ -37,27 +37,27 @@ This pattern is the same for all Calypso sections. If you're unfamiliar with `pa
 
 Colon-prefixed route parts (such as `:site_id` here) are called route parameters. More on them in a bit.
 
-## Middlewares
+## Middleware
 
 Each of the functions in a route definition is called a _middleware_, but in Calypso parlance, we like to refer to them as _controllers_, too.
 Each middleware takes up to two arguments, `context` and `next`. `next` is a function that if called will just invoke the next middleware in the chain, while context is a JavaScript object whose attributes you can read and write and use to communicate information from one middleware to the next. Route params are found in `context.params` (e.g. `context.params.site_id`). The last middleware in the chain -- `menus` and `sites` in our example -- usually doesn't call `next`, since, well, it's the last middleware we're calling.
 
 So what does each middleware do?
 
-The last middleware before `makeLayout` is usually section-specific; and most often, it will place the section's primary view in `context.primary`. The other middlewares found in this example are more generic.
+The last middleware before `makeLayout` is usually section-specific; and most often, it will place the section's primary view in `context.primary`. Other middleware found in this example is more generic.
 
-Specific middlewares to the `my-sites` group:
+Middleware specific to the my-sites group:
 
 * `navigation` generates the section group's sidebar in `context.secondary`
 * `siteSelection` parses the current route, looking out for something that looks like a URL or numeric site ID, and sets the currently selected site based on this information. You can then find it by using the `getSelectedSiteId` selector found in `state/sites/selectors`.
 * `sites` renders a site selector menu for the user to select a site, and will then append that site's slug to current route.
 
-Middlewares that render the content:
+Content-rendering middleware:
 
 * `makeLayout` takes `context.primary` (view's primary content area) and `context.secondary` (a sidebar) and generates a single [`Layout`](../client/layout/README.md) component containing those two.
-* `clientRender` takes `Layout` component and renders it to a server-generated `<div />` called `#wpcom`.
+* `clientRender` takes the `Layout` component and renders it to a server-generated `<div />` called `#wpcom`.
 
-This all happens in the client but `Layout` can be also server-side rendered (SSR). You can read more about this from [server-side rendering](server-side-rendering.md) and [Isomorphic Routing](isomorphic-routing.md) documentation.
+This all happens in the client but `Layout` can be also server-side rendered (SSR). You can read more about this in [server-side rendering](server-side-rendering.md) and [Isomorphic Routing](isomorphic-routing.md) documentation.
 
 This wraps up the more introductory part; if you're interested in more details, keep on reading.
 
