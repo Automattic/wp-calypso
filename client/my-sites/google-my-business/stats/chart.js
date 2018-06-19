@@ -31,6 +31,22 @@ import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { withEnhancers } from 'state/utils';
 
+const withToolTip = WrappedComponent => props => {
+	// inject interval props to renderTooltipForDatanum
+	const renderTooltipForDatanum = props.renderTooltipForDatanum
+		? partialRight( props.renderTooltipForDatanum, props.tooltipInterval )
+		: null;
+
+	const newProps = {
+		...props,
+		renderTooltipForDatanum,
+	};
+
+	return <WrappedComponent { ...newProps } />;
+};
+
+const LineChartWithTooltip = withToolTip( LineChart );
+
 function transformData( props ) {
 	const { data } = props;
 
@@ -186,7 +202,7 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	renderLineChart() {
-		const { renderTooltip } = this.props;
+		const { renderTooltipForDatanum, interval } = this.props;
 		const { transformedData, legendInfo } = this.state;
 
 		if ( ! transformedData ) {
@@ -196,11 +212,12 @@ class GoogleMyBusinessStatsChart extends Component {
 		return (
 			<Fragment>
 				<div className="gmb-stats__line-chart">
-					<LineChart
+					<LineChartWithTooltip
 						fillArea
 						data={ transformedData }
-						renderTooltipForDatanum={ renderTooltip }
 						legendInfo={ legendInfo }
+						renderTooltipForDatanum={ renderTooltipForDatanum }
+						tooltipInterval={ interval }
 					/>
 
 					{ this.renderChartNotice() }
@@ -302,10 +319,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const interval = getStatsInterval( state, siteId, ownProps.statType );
 		const aggregation = getAggregation( ownProps );
-		// inject interval props to renderTooltipForDatanum
-		const renderTooltip = ownProps.renderTooltipForDatanum
-			? partialRight( ownProps.renderTooltipForDatanum, interval )
-			: null;
 
 		return {
 			siteId,
@@ -318,7 +331,6 @@ export default connect(
 				interval,
 				aggregation
 			),
-			renderTooltip,
 		};
 	},
 	{
