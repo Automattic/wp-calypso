@@ -14725,9 +14725,9 @@
       "integrity": "sha1-wNWmOycYgArY4esPpSachN1BhF4="
     },
     "q": {
-      "version": "1.0.1",
-      "resolved": "https://registry.npmjs.org/q/-/q-1.0.1.tgz",
-      "integrity": "sha1-EYcq7t7okmgRCxCnGESP+xARKhQ="
+      "version": "1.5.1",
+      "resolved": "https://registry.npmjs.org/q/-/q-1.5.1.tgz",
+      "integrity": "sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc="
     },
     "qr.js": {
       "version": "0.0.0",
