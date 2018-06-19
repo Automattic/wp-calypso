@@ -9,8 +9,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import stepsConfig from 'signup/config/steps';
-import flows from 'signup/config/flows';
+import stepsConfig from 'signup/config/steps-pure';
+import flows from 'signup/config/flows-pure';
 import {
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
@@ -51,7 +51,7 @@ export function processStep( state, { step } ) {
 }
 
 function removeUnneededSteps( state, { flowName } ) {
-	const flowSteps = flows.getFlow( flowName ).steps;
+	const flowSteps = get( flows, `${ flowName }.steps` );
 	return state.filter( step => flowSteps.includes( step.stepName ) );
 }
 
