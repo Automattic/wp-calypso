@@ -116,7 +116,7 @@
     "npm-run-all": "4.1.3",
     "object-path-immutable": "0.5.3",
     "objectpath": "1.2.1",
-    "page": "1.6.4",
+    "page": "1.8.6",
     "path-browserify": "1.0.0",
     "percentage-regex": "3.0.0",
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.8",
