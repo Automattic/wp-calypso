@@ -18255,20 +18255,18 @@
       }
     },
     "source-map-support": {
-      "version": "0.3.2",
-      "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.3.2.tgz",
-      "integrity": "sha1-c31ckB4LeP21OspxPSTyPMuxC+E=",
+      "version": "0.5.6",
+      "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.5.6.tgz",
+      "integrity": "sha512-N4KXEz7jcKqPf2b2vZF11lQIz9W5ZMuUcIOGj243lduidkf2fjkVKJS9vNxVWn3u/uxX38AcE8U9nnH9FPcq+g==",
       "requires": {
-        "source-map": "0.1.32"
+        "buffer-from": "^1.0.0",
+        "source-map": "^0.6.0"
       },
       "dependencies": {
         "source-map": {
-          "version": "0.1.32",
-          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.1.32.tgz",
-          "integrity": "sha1-yLbBZ3l7pHQKjqMyUhYv8IWRsmY=",
-          "requires": {
-            "amdefine": ">=0.0.4"
-          }
+          "version": "0.6.1",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz",
+          "integrity": "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g=="
         }
       }
     },
