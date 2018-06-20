@@ -3,10 +3,6 @@ CreditCard
 
 The `CreditCard` component serves as a container for a selectable credit card list item, and can display a stored credit card (passed as `card` prop) _or_ a placeholder such as a new card form (passed as `children`).
 
-The `StoredCard` component is a representation of a single credit card, used internally to render the `card` passed to `CreditCard`, but can also be used independently or as a child of the `CreditCard`.
-
-## `<CreditCard>`
-
 ### Usage
 
 Example credit card selection list:
@@ -35,7 +31,9 @@ Name | Type | Description
 `onSelect` | `func` | Handler called with event argument upon selecting card item.
 `className` | `string` | Extra custom class names to pass to element.
 
-## `<StoredCard>`
+## StoredCard
+
+The `StoredCard` component is a representation of a single credit card, used internally to render the `card` passed to `CreditCard`, but can also be used independently or as a child of the `CreditCard`.
 
 ### Usage
 
