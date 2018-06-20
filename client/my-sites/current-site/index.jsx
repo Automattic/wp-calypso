@@ -29,6 +29,7 @@ import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isRtl from 'state/selectors/is-rtl';
 import { hasAllSitesList } from 'state/sites/selectors';
+import { abtest } from 'lib/abtest';
 
 class CurrentSite extends Component {
 	static propTypes = {
@@ -68,14 +69,19 @@ class CurrentSite extends Component {
 		) {
 			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
 
-			this.props.infoNotice( this.props.translate( 'Your site deserves a boost!' ), {
-				id: staleCartItemNoticeId,
-				isPersistent: false,
-				duration: 10000,
-				button: this.props.translate( 'Complete your purchase' ),
-				href: '/checkout/' + selectedSite.slug,
-				onClick: this.clickStaleCartItemsNotice,
-			} );
+      this.props.infoNotice(
+				'siteDeservesBoost' === abtest( 'staleCartNotice' )
+					? this.props.translate( 'Your site deserves a boost!' )
+					: this.props.translate( 'Your cart is awaiting payment.' ),
+				{
+					id: staleCartItemNoticeId,
+					isPersistent: false,
+					duration: 10000,
+					button: this.props.translate( 'Complete your purchase' ),
+					href: '/checkout/' + selectedSite.slug,
+					onClick: this.clickStaleCartItemsNotice,
+				}
+			);
 		}
 	};
 
