@@ -1,1 +1,2 @@
-npm-shrinkwrap.json binary
+package-lock.json merge=npm-merge-driver
+npm-shrinkwrap.json merge=npm-merge-driver
