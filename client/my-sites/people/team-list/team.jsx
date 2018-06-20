@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,9 +17,9 @@ import PeopleListItem from 'my-sites/people/people-list-item';
 import { fetchUsers } from 'lib/users/actions';
 import InfiniteList from 'components/infinite-list';
 import NoResults from 'my-sites/no-results';
-import analytics from 'lib/analytics';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import ListEnd from 'components/list-end';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
@@ -125,7 +126,12 @@ class Team extends React.Component {
 	_fetchNextPage = () => {
 		const offset = this.props.users.length;
 		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
-		analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
+		this.props.recordGoogleEvent(
+			'People',
+			'Fetched more users with infinite list',
+			'offset',
+			offset
+		);
 		debug( 'fetching next batch of users' );
 		fetchUsers( fetchOptions );
 	};
@@ -139,4 +145,9 @@ class Team extends React.Component {
 	};
 }
 
-export default localize( Team );
+export default localize(
+	connect(
+		null,
+		{ recordGoogleEvent }
+	)( localize( Team ) )
+);

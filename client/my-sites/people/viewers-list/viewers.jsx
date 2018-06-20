@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -15,9 +16,9 @@ import ViewersActions from 'lib/viewers/actions';
 import ViewersStore from 'lib/viewers/store';
 import InfiniteList from 'components/infinite-list';
 import EmptyContent from 'components/empty-content';
-import analytics from 'lib/analytics';
 import accept from 'lib/accept';
 import ListEnd from 'components/list-end';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class Viewers extends React.PureComponent {
 	static displayName = 'Viewers';
@@ -35,12 +36,17 @@ class Viewers extends React.PureComponent {
 			currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0,
 			page = currentPage + 1;
 
-		analytics.ga.recordEvent( 'People', 'Fetched more viewers with infinite list', 'page', page );
+		this.props.recordGoogleEvent(
+			'People',
+			'Fetched more viewers with infinite list',
+			'page',
+			page
+		);
 		ViewersActions.fetch( this.props.siteId, page );
 	};
 
 	removeViewer = viewer => {
-		analytics.ga.recordEvent( 'People', 'Clicked Remove Viewer Button On Viewers List' );
+		this.props.recordGoogleEvent( 'People', 'Clicked Remove Viewer Button On Viewers List' );
 		accept(
 			<div>
 				<p>
@@ -52,13 +58,13 @@ class Viewers extends React.PureComponent {
 			</div>,
 			accepted => {
 				if ( accepted ) {
-					analytics.ga.recordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Remove Button In Remove Viewer Confirmation'
 					);
 					ViewersActions.remove( this.props.site.ID, viewer );
 				} else {
-					analytics.ga.recordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Cancel Button In Remove Viewer Confirmation'
 					);
@@ -90,7 +96,7 @@ class Viewers extends React.PureComponent {
 	};
 
 	onClickSiteSettings = () => {
-		analytics.ga.recordEvent( 'People', 'Clicked Site Settings Link On Empty Viewers' );
+		this.props.recordGoogleEvent( 'People', 'Clicked Site Settings Link On Empty Viewers' );
 	};
 
 	isLastPage = () => {
@@ -156,4 +162,9 @@ class Viewers extends React.PureComponent {
 	}
 }
 
-export default localize( Viewers );
+export default localize(
+	connect(
+		null,
+		{ recordGoogleEvent }
+	)( localize( Viewers ) )
+);
