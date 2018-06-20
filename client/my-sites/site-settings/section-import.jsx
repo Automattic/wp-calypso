@@ -132,8 +132,6 @@ class SiteSettingsImport extends Component {
 	 * Receives import jobs data (`importsForSite`) and maps this to return a
 	 * list of importer elements for active import jobs
 	 *
-	 * @param {object} site Data for the currently active site
-	 * @param {string} siteTitle The site's title
 	 * @param {Array} importsForSite The list of active import jobs
 	 * @returns {Array} Importer react elements for the active import jobs
 	 */
