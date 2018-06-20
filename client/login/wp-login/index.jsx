@@ -129,7 +129,10 @@ export class Login extends React.Component {
 						</a>
 					</div>
 				) : (
-					<img src="/calypso/images/jetpack/powered-by-jetpack.svg" alt="Powered by Jetpack" />
+					<img
+						src="/calypso/images/jetpack/powered-by-jetpack.svg?v=20180619"
+						alt="Powered by Jetpack"
+					/>
 				) }
 			</div>
 		);

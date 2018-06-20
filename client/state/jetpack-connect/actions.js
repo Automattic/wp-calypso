@@ -352,7 +352,7 @@ export function authorize( queryObject ) {
 				} );
 				return wpcom
 					.undocumented()
-					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version );
+					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version, from );
 			} )
 			.then( data => {
 				debug( 'Jetpack authorize complete. Updating sites list.', data );

@@ -38,7 +38,7 @@ class ActivityLogTaskUpdate extends Component {
 	};
 
 	handleEnqueue = () => this.props.enqueue( this.props.toUpdate );
-	handleDismiss = () => this.props.dismiss( this.props.slug );
+	handleDismiss = () => this.props.dismiss( this.props.toUpdate );
 	handleNameClick = () => this.props.goToPage( this.props.slug, this.props.type );
 
 	render() {

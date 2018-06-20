@@ -50,8 +50,14 @@ function transformData( props ) {
 
 	return data.metricValues.map( metric => {
 		return metric.dimensionalValues.map( datum => {
+			const datumDate = new Date( datum.time );
+			/* lock date to midnight for all values to better align with ticks */
+			datumDate.setHours( 0 );
+			datumDate.setMinutes( 0 );
+			datumDate.setSeconds( 0 );
+			datumDate.setMilliseconds( 0 );
 			return {
-				date: Date.parse( datum.time ),
+				date: datumDate.getTime(),
 				value: datum.value || 0,
 			};
 		} );

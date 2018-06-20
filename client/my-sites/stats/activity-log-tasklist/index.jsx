@@ -62,10 +62,10 @@ class ActivityLogTasklist extends Component {
 		// Plugins already updated + those with pending updates.
 		// This extends plugins with the plugin update status.
 		pluginsWithUpdate: PropTypes.arrayOf( PropTypes.object ).isRequired,
-		trackUpdatePlugin: PropTypes.func.isRequired,
-		trackUpdatePluginFromError: PropTypes.func.isRequired,
-		trackDismissPluginAll: PropTypes.func.isRequired,
-		trackDismissPlugin: PropTypes.func.isRequired,
+		trackUpdate: PropTypes.func.isRequired,
+		trackUpdateFromError: PropTypes.func.isRequired,
+		trackDismissAll: PropTypes.func.isRequired,
+		trackDismiss: PropTypes.func.isRequired,
 		goManagePlugins: PropTypes.func.isRequired,
 
 		// Themes
@@ -84,27 +84,32 @@ class ActivityLogTasklist extends Component {
 	};
 
 	/**
-	 * Adds a single or multiple plugin slugs to a list of dismissed plugins.
-	 * If it receives a string, it assumes it's a valid plugin slug and adds it to the dismissed list.
-	 * When it doesn't receive a string, it adds all the plugin slugs to the dismissed list.
+	 * Adds a single or multiple plugin or theme slugs to a list of dismissed items.
+	 * If it receives a string, it assumes it's a valid plugin or theme slug and adds it to the dismissed list.
+	 * When it doesn't receive a string, it adds all the plugin and theme slugs to the dismissed list.
 	 *
-	 * @param {string|void} slug Slug of a plugin or nothing.
+	 * @param {object} item Plugin or theme to dismiss.
 	 */
-	dismiss = slug => {
+	dismiss = item => {
 		// ToDo: this should update some record in the tasklist API
-		const { pluginsWithUpdate, trackDismissPlugin, trackDismissPluginAll } = this.props;
-		let plugins;
+		const {
+			pluginsWithUpdate: plugins,
+			themesWithUpdate: themes,
+			trackDismiss,
+			trackDismissAll,
+		} = this.props;
+		let items;
 
-		if ( 'string' === typeof slug ) {
-			plugins = [ slug ];
-			trackDismissPlugin( slug );
+		if ( 'string' === typeof item.slug ) {
+			items = [ item.slug ];
+			trackDismiss( item );
 		} else {
-			plugins = pluginsWithUpdate.map( p => p.slug );
-			trackDismissPluginAll();
+			items = union( plugins.map( p => p.slug ), themes.map( p => p.slug ) );
+			trackDismissAll();
 		}
 
 		this.setState( {
-			dismissed: union( this.state.dismissed, plugins ),
+			dismissed: union( this.state.dismissed, items ),
 		} );
 	};
 
@@ -119,7 +124,7 @@ class ActivityLogTasklist extends Component {
 	 * Goes to single theme or plugin management screen.
 	 *
 	 * @param {string} slug Plugin or theme slug, like "hello-dolly" or "dara".
-	 * @param {string} type Indicates if it's "plugins" or "themes".
+	 * @param {string} type Indicates if it's "plugin" or "theme".
 	 *
 	 * @returns {object} Action to redirect to plugin management.
 	 */
@@ -130,7 +135,8 @@ class ActivityLogTasklist extends Component {
 	 * If so, updates the next plugin.
 	 */
 	continueQueue = () => {
-		if ( 0 < this.state.queued.length && ! isItemUpdating( this.props.pluginsWithUpdate ) ) {
+		const { pluginsWithUpdate: plugins, themesWithUpdate: themes } = this.props;
+		if ( 0 < this.state.queued.length && ! isItemUpdating( union( plugins, themes ) ) ) {
 			this.updateItem( this.state.queued[ 0 ] );
 		}
 	};
@@ -143,9 +149,9 @@ class ActivityLogTasklist extends Component {
 	 */
 	enqueue = ( item, from = 'task' ) => {
 		if ( 'task' === from ) {
-			this.props.trackUpdatePlugin( item.slug );
+			this.props.trackUpdate( item );
 		} else if ( 'notice' === from ) {
-			this.props.trackUpdatePluginFromError( item.slug );
+			this.props.trackUpdateFromError( item );
 		}
 		this.setState(
 			{
@@ -457,18 +463,36 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	showErrorNotice: ( error, options ) => dispatch( errorNotice( error, options ) ),
 	showInfoNotice: ( info, options ) => dispatch( infoNotice( info, options ) ),
 	showSuccessNotice: ( success, options ) => dispatch( successNotice( success, options ) ),
-	trackUpdatePlugin: plugin_slug =>
-		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_update_plugin', { plugin_slug } ) ),
-	trackUpdatePluginFromError: plugin_slug =>
+	trackUpdate: ( { type, slug } ) =>
 		dispatch(
-			recordTracksEvent( 'calypso_activitylog_tasklist_update_plugin_from_error', { plugin_slug } )
+			recordTracksEvent(
+				'plugin' === type
+					? 'calypso_activitylog_tasklist_update_plugin'
+					: 'calypso_activitylog_tasklist_update_theme',
+				{ slug }
+			)
 		),
-	trackUpdateAll: () =>
-		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_update_plugin_all' ) ),
-	trackDismissPluginAll: () =>
-		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_plugin_all' ) ),
-	trackDismissPlugin: plugin_slug =>
-		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_plugin', { plugin_slug } ) ),
+	trackUpdateFromError: ( { type, slug } ) =>
+		dispatch(
+			recordTracksEvent(
+				'plugin' === type
+					? 'calypso_activitylog_tasklist_update_plugin_from_error'
+					: 'calypso_activitylog_tasklist_update_theme_from_error',
+				{ slug }
+			)
+		),
+	trackUpdateAll: () => dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_update_all' ) ),
+	trackDismissAll: () =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_all' ) ),
+	trackDismiss: ( { type, slug } ) =>
+		dispatch(
+			recordTracksEvent(
+				'plugin' === type
+					? 'calypso_activitylog_tasklist_dismiss_plugin'
+					: 'calypso_activitylog_tasklist_dismiss_theme',
+				{ slug }
+			)
+		),
 	goManagePlugins: siteSlug =>
 		dispatch(
 			withAnalytics(

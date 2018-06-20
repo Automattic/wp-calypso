@@ -1,15 +1,10 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
-import { fetchSitePlansCompleted } from '../actions';
-import { SITE_PLANS_FETCH_COMPLETED } from 'state/action-types';
+import { fetchSitePlansCompleted, transferPlanOwnership } from '../actions';
+import { SITE_PLANS_FETCH_COMPLETED, SITE_PLAN_OWNERSHIP_TRANSFER } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchSitePlansCompleted()', () => {
@@ -17,10 +12,24 @@ describe( 'actions', () => {
 			const siteId = 2916284,
 				action = fetchSitePlansCompleted( siteId, {} );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				siteId,
 				plans: [],
+			} );
+		} );
+	} );
+
+	describe( '#transferPlanOwnership()', () => {
+		test( 'should return an action object for transferring the plan of a site to a user', () => {
+			const siteId = 2916284;
+			const newOwnerUserId = 123456;
+			const action = transferPlanOwnership( siteId, newOwnerUserId );
+
+			expect( action ).toEqual( {
+				type: SITE_PLAN_OWNERSHIP_TRANSFER,
+				newOwnerUserId,
+				siteId,
 			} );
 		} );
 	} );

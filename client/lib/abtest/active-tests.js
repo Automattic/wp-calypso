@@ -109,4 +109,12 @@ export default {
 		},
 		defaultVariation: 'belowFeatured',
 	},
+	staleCartNotice: {
+		datestamp: '20180618',
+		variations: {
+			siteDeservesBoost: 50,
+			cartAwaitingPayment: 50,
+		},
+		defaultVariation: 'siteDeservesBoost',
+	},
 };

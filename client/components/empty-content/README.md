@@ -5,27 +5,31 @@ EmptyContent is used when a customer has no data to show. This is an opportunity
 
 ## Usage
 
+#### As a full view component
+
 ```jsx
 // import the component
 import EmptyContentComponent from 'components/empty-content';
 
 // Render the component
-ReactDom.render(
-	EmptyContentComponent( {
-		title: "You don't have any content yet.",
-		line: 'Would you like to create some?'
-	} ),
-	document.getElementById( 'primary' )
-);
+function show( context, next ) {
+	context.primary = (
+		<EmptyContentComponent title="Your title" line="Some text" />
+	);
+	next();
+}
+```
 
-// Or as an inline component
+#### As an inline component
+
+```jsx
 import EmptyContent from 'components/empty-content';
 
-// And use it inline inside the render method of another component
+// Use it inline inside the render method of another component
 render() {
 	return(
 		<div>
-			<EmptyContent title="Your title" line="some text" />
+			<EmptyContent title="Your title" line="Some text" />
 		</div>
 	);
 }
@@ -53,21 +57,18 @@ Name | Type | Default | Description
 --- | --- | --- | ---
 `secondaryAction` | `string/object` | `null` | Label or React element used for the secondary action button.
 `secondaryActionURL` | `string` | `null` | `href` value for the secondary action button.
-`secondaryActionCallback` | `fuction` | `null` | `onClick` value for the secondary action button.
+`secondaryActionCallback` | `function` | `null` | `onClick` value for the secondary action button.
 `secondaryActionTarget` | `string` | `null` | If omitted, no target attribute is specified.
 
 ### Example: Sites
 
-```es6
-ReactDom.render(
-	EmptyContentComponent( {
-		title: "You don't have any WordPress sites yet.",
-		line: 'Would you like to start one?',
-		action: 'Create Site',
-		actionURL: config( 'signup_url' ) + '?ref=calypso-section'
-	} ),
-	document.getElementById( 'primary' )
-);
+```jsx
+<EmptyContentComponent
+	title="You don't have any WordPress sites yet."
+	line="Would you like to start one?"
+	action="Create Site"
+	actionURL={ config( 'signup_url' ) + '?ref=calypso-section' }
+/>;
 ```
 
 ## General guidelines
