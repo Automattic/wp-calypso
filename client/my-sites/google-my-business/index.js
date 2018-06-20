@@ -36,8 +36,7 @@ const redirectUnauthorized = ( context, next ) => {
 	const siteIsGMBEligible = isSiteGoogleMyBusinessEligible( state, siteId );
 	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	if ( ! siteIsGMBEligible || ! canUserManageOptions ) {
-		page.redirect( `/stats/${ siteId }` );
-		return;
+		page.redirect( `/stats/${ context.params.site }` );
 	}
 
 	next();
