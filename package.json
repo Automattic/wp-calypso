@@ -143,7 +143,7 @@
     "redux-form": "7.0.2",
     "redux-thunk": "1.0.0",
     "rtlcss": "2.2.1",
-    "semver": "5.1.0",
+    "semver": "5.5.0",
     "social-logos": "2.0.0",
     "socket.io-client": "2.1.1",
     "source-map": "0.1.39",

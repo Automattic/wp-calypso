@@ -17798,9 +17798,9 @@
       "integrity": "sha1-DnNQrN7ICxEIUoeG7B1EGNEbOW0="
     },
     "semver": {
-      "version": "5.1.0",
-      "resolved": "https://registry.npmjs.org/semver/-/semver-5.1.0.tgz",
-      "integrity": "sha1-hfLPhVBGXE3wAM99hvawVBBqueU="
+      "version": "5.5.0",
+      "resolved": "https://registry.npmjs.org/semver/-/semver-5.5.0.tgz",
+      "integrity": "sha512-4SJ3dm0WAwWy/NVeioZh5AntkdJoWKxHxcmyP622fOkgHa4z3R0TdBJICINyaSDE6uNwVc8gZr+ZinwZAH4xIA=="
     },
     "send": {
       "version": "0.16.2",
