@@ -14661,12 +14661,12 @@
       }
     },
     "postcss-custom-properties": {
-      "version": "6.2.0",
-      "resolved": "https://registry.npmjs.org/postcss-custom-properties/-/postcss-custom-properties-6.2.0.tgz",
-      "integrity": "sha512-eNR2h9T9ciKMoQEORrPjH33XeN/nuvVuxArOKmHtsFbGbNss631tgTrKou3/pmjAZbA4QQkhLIkPQkIk3WW+8w==",
+      "version": "6.3.1",
+      "resolved": "https://registry.npmjs.org/postcss-custom-properties/-/postcss-custom-properties-6.3.1.tgz",
+      "integrity": "sha512-zoiwn4sCiUFbr4KcgcNZLFkR6gVQom647L+z1p/KBVHZ1OYwT87apnS42atJtx6XlX2yI7N5fjXbFixShQO2QQ==",
       "requires": {
         "balanced-match": "^1.0.0",
-        "postcss": "^6.0.13"
+        "postcss": "^6.0.18"
       }
     },
     "postcss-less": {
