@@ -109,7 +109,7 @@
     "marked": "0.4.0",
     "mkdirp": "0.5.1",
     "moment": "2.22.2",
-    "morgan": "1.2.0",
+    "morgan": "1.9.0",
     "ms": "0.7.3",
     "node-sass": "4.9.0",
     "notifications-panel": "2.1.10",
