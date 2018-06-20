@@ -123,16 +123,19 @@ class ConversationCaterpillarComponent extends React.Component {
 				<button
 					className="conversation-caterpillar__count"
 					onClick={ this.handleTickle }
-					title={ translate(
-						'View %(count)s comment for this post',
-						'View %(count)s comments for this post',
-						{
-							count: +commentCount,
-							args: {
-								count: commentCount,
-							},
-						}
-					) }
+					title={
+						commentCount > 0 &&
+						translate(
+							'View %(count)s comment for this post',
+							'View %(count)s comments for this post',
+							{
+								count: +commentCount,
+								args: {
+									count: commentCount,
+								},
+							}
+						)
+					}
 				>
 					{ commentCount > 1 &&
 						uniqueAuthorsCount > 1 &&
