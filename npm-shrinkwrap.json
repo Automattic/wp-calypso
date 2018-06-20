@@ -16533,6 +16533,11 @@
         "scrollparent": "^2.0.1"
       }
     },
+    "react-lifecycles-compat": {
+      "version": "3.0.4",
+      "resolved": "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz",
+      "integrity": "sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA=="
+    },
     "react-live": {
       "version": "1.10.1",
       "resolved": "https://registry.npmjs.org/react-live/-/react-live-1.10.1.tgz",
@@ -16547,12 +16552,13 @@
       }
     },
     "react-modal": {
-      "version": "3.1.11",
-      "resolved": "https://registry.npmjs.org/react-modal/-/react-modal-3.1.11.tgz",
-      "integrity": "sha512-Pm4QAc+sWYrfRC+WRERV+JGeGZIfodZGdbvWmjPzeSWqP+EW5ATK4N1U/btNHZWFzKL1UOmkmNtozEQlEg7c+A==",
+      "version": "3.4.5",
+      "resolved": "https://registry.npmjs.org/react-modal/-/react-modal-3.4.5.tgz",
+      "integrity": "sha512-fYaGmsvt4z5voC2Bl/9ngIWES4BSRYgGnTljMwuzTuYZ1BBpaZbnXia8xlvj7mF0kg3aPV+5APjZRiMfRG6vyA==",
       "requires": {
         "exenv": "^1.2.0",
         "prop-types": "^15.5.10",
+        "react-lifecycles-compat": "^3.0.0",
         "warning": "^3.0.0"
       }
     },
