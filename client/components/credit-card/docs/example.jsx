@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CreditCard from '..';
+import Button from 'components/button';
 
 class CreditCards extends Component {
 	state = {
@@ -37,9 +38,9 @@ class CreditCards extends Component {
 					<CreditCard key={ `${ card.lastDigits }_${ i }` } card={ card } selected={ 0 === i } />
 				) ) }
 				<CreditCard>
-					<div style={ { padding: 20 } }>
-						{ this.props.translate( 'Add another credit card...' ) }
-					</div>
+					<Button compact style={ { margin: 20 } }>
+						{ this.props.translate( 'Add another credit card' ) }
+					</Button>
 				</CreditCard>
 			</Fragment>
 		);
