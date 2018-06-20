@@ -118,6 +118,13 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 	const throttledSaveState = throttle(
 		function() {
 			const nextState = reduxStore.getState();
+
+			// Remove properties that shouldn't be persisted for logged-out
+			// users.
+			if ( ! isLoggedIn() ) {
+				delete nextState.currentUser;
+			}
+
 			if ( state && nextState === state ) {
 				return;
 			}
