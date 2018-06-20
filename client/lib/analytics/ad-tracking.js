@@ -42,7 +42,6 @@ const isOutbrainEnabled = true;
 const isYahooEnabled = false;
 let isYandexEnabled = false;
 const isCriteoEnabled = false;
-const isAtlasEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
 const isMediaWallahEnabled = false;
@@ -61,7 +60,6 @@ let lastFloodlightPageViewTime = 0;
  * Constants
  */
 const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js',
-	ATLAS_TRACKING_SCRIPT_URL = 'https://ad.atdmt.com/m/a.js',
 	GOOGLE_TRACKING_SCRIPT_URL = 'https://www.googleadservices.com/pagead/conversion_async.js',
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
@@ -96,7 +94,6 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		facebookJetpackInit: '919484458159593',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
-		atlasUniveralTagId: '11187200770563',
 		criteo: '31321',
 		quantcast: 'p-3Ma3jHaQMB_bS',
 		yahooProjectId: '10000',
@@ -701,7 +698,6 @@ export function recordOrder( cart, orderId ) {
 
 	// 1. Fire one tracking event that includes details about the entire order
 
-	recordOrderInAtlas( cart, orderId );
 	recordOrderInCriteo( cart, orderId );
 	recordOrderInFloodlight( cart, orderId );
 	recordOrderInFacebook( cart, orderId );
@@ -901,49 +897,6 @@ function recordProduct( product, orderId ) {
 	} catch ( err ) {
 		debug( 'Unable to save purchase tracking data', err );
 	}
-}
-
-/**
- * For Atlas, we track the entire order, not separately for each product in the order
- *
- * @see https://app.atlassolutions.com/help/atlashelp/727514814019823/ (Atlas account required)
- *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
- */
-function recordOrderInAtlas( cart, orderId ) {
-	if ( ! isAdTrackingAllowed() || ! isAtlasEnabled ) {
-		return;
-	}
-
-	const currentUser = user.get();
-
-	const params = {
-		event: 'Purchase',
-		products: cart.products.map( product => product.product_name ).join( ', ' ),
-		product_slugs: cart.products.map( product => product.product_slug ).join( ', ' ),
-		revenue: cart.total_cost,
-		currency_code: cart.currency,
-		user_id: currentUser ? hashPii( currentUser.ID ) : 0,
-		order_id: orderId,
-	};
-
-	const urlParams = Object.keys( params )
-		.map( function( key ) {
-			return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
-		} )
-		.join( '&' );
-
-	const urlWithParams =
-		ATLAS_TRACKING_SCRIPT_URL +
-		';m=' +
-		TRACKING_IDS.atlasUniveralTagId +
-		';cache=' +
-		Math.random() +
-		'?' +
-		urlParams;
-
-	loadScript( urlWithParams );
 }
 
 /**
