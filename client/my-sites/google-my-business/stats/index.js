@@ -70,28 +70,24 @@ class GoogleMyBusinessStats extends Component {
 		const { value: viewCount, date } = datanum;
 		if ( interval === 'quarter' ) {
 			return this.props.translate(
-				'%(viewCount)d view on the week of %(monday)s',
-				'%(viewCount)d views on the week of %(monday)s',
+				'%(value)d view on the week of %(monday)s',
+				'%(value)d views on the week of %(monday)s',
 				{
 					count: viewCount,
 					args: {
-						viewCount,
+						value: viewCount,
 						monday: moment( date ).format( 'LL' ),
 					},
 				}
 			);
 		} else if ( interval === 'week' ) {
-			return this.props.translate(
-				'%(viewCount)d view on %(day)s',
-				'%(viewCount)d views on %(day)s',
-				{
-					count: viewCount,
-					args: {
-						viewCount,
-						day: moment( date ).format( 'LL' ),
-					},
-				}
-			);
+			return this.props.translate( '%(value)d view on %(day)s', '%(value)d views on %(day)s', {
+				count: viewCount,
+				args: {
+					value: viewCount,
+					day: moment( date ).format( 'LL' ),
+				},
+			} );
 		}
 
 		return viewCount;
@@ -101,28 +97,24 @@ class GoogleMyBusinessStats extends Component {
 		const { value: actionCount, date } = datanum;
 		if ( interval === 'quarter' ) {
 			return this.props.translate(
-				'%(actionCount)d action on the week of %(monday)s',
-				'%(actionCount)d action on the week of %(monday)s',
+				'%(value)d action on the week of %(monday)s',
+				'%(value)d action on the week of %(monday)s',
 				{
 					count: actionCount,
 					args: {
-						actionCount,
+						value: actionCount,
 						monday: moment( date ).format( 'LL' ),
 					},
 				}
 			);
 		} else if ( interval === 'week' ) {
-			return this.props.translate(
-				'%(actionCount)d action on %(day)s',
-				'%(actionCount)d actions on %(day)s',
-				{
-					count: actionCount,
-					args: {
-						actionCount,
-						day: moment( date ).format( 'LL' ),
-					},
-				}
-			);
+			return this.props.translate( '%(value)d action on %(day)s', '%(value)d actions on %(day)s', {
+				count: actionCount,
+				args: {
+					value: actionCount,
+					day: moment( date ).format( 'LL' ),
+				},
+			} );
 		}
 
 		return actionCount;
