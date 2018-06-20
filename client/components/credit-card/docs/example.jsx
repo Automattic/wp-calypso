@@ -33,8 +33,14 @@ class CreditCards extends Component {
 	render() {
 		return (
 			<Fragment>
-				{ this.state.cards.map( ( card, i ) => <CreditCard key={ i } card={ card } /> ) }
-				<CreditCard>{ this.props.translate( 'Add another credit card...' ) }</CreditCard>
+				{ this.state.cards.map( ( card, i ) => (
+					<CreditCard key={ `${ card.lastDigits }_${ i }` } card={ card } selected={ 0 === i } />
+				) ) }
+				<CreditCard>
+					<div style={ { padding: 20 } }>
+						{ this.props.translate( 'Add another credit card...' ) }
+					</div>
+				</CreditCard>
 			</Fragment>
 		);
 	}
