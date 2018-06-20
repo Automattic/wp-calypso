@@ -19090,9 +19090,9 @@
       }
     },
     "supertest": {
-      "version": "2.0.0",
-      "resolved": "https://registry.npmjs.org/supertest/-/supertest-2.0.0.tgz",
-      "integrity": "sha1-Bg4Y7a5W49YrlcbpxOKl5OUJef8=",
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/supertest/-/supertest-2.0.1.tgz",
+      "integrity": "sha1-oFgIHXiPFRXUcA11Aogea3WeRM0=",
       "dev": true,
       "requires": {
         "methods": "1.x",
