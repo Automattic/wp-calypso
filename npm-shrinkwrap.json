@@ -17103,9 +17103,9 @@
       "integrity": "sha512-2NM0auVBGft5tee/OxP4PI3d8WItkDM+fPnaRAVo6xTDI2knbz9eC5ArWGqtGlYqiH3RU5yMpdyTTO7MguC4ow=="
     },
     "tinymce": {
-      "version": "4.6.3",
-      "resolved": "https://registry.npmjs.org/tinymce/-/tinymce-4.6.3.tgz",
-      "integrity": "sha1-lK0k6tTxOTjAkDr9L/RpwLZVYj4="
+      "version": "4.8.0",
+      "resolved": "https://registry.npmjs.org/tinymce/-/tinymce-4.8.0.tgz",
+      "integrity": "sha512-Rj5MiQxSpwDIaaXo3WsfZqLfLBUi6jLZRrIpg1cbRurhSLwaNcTgAGqxHFjNELlm7zR2xSGzzlq5B/mGlsiJSg=="
     },
     "title-case-minors": {
       "version": "0.0.2",
