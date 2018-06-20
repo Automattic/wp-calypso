@@ -16738,9 +16738,9 @@
       }
     },
     "readline-sync": {
-      "version": "1.4.5",
-      "resolved": "https://registry.npmjs.org/readline-sync/-/readline-sync-1.4.5.tgz",
-      "integrity": "sha1-xw0rFHPsq8Hk1TPLrz6CSft36ZI=",
+      "version": "1.4.9",
+      "resolved": "https://registry.npmjs.org/readline-sync/-/readline-sync-1.4.9.tgz",
+      "integrity": "sha1-PtqOZfI80qF+YTAbHwADOWr17No=",
       "dev": true
     },
     "readline2": {
