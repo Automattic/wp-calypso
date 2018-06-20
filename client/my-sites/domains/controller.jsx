@@ -25,14 +25,14 @@ import SiteRedirect from './domain-search/site-redirect';
 import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
-import UseMyDomain from 'components/domains/use-my-domain';
+// import UseYourDomain from 'components/domains/use-your-domain';
 import GoogleApps from 'components/upgrades/google-apps';
 import {
 	domainManagementTransferIn,
 	domainManagementTransferInPrecheck,
 	domainMapping,
 	domainTransferIn,
-	domainUseMyDomain,
+	// domainUseYourDomain,
 } from 'my-sites/domains/paths';
 import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
@@ -132,24 +132,24 @@ const transferDomain = ( context, next ) => {
 	next();
 };
 
-const useMyDomain = ( context, next ) => {
-	const handleGoBack = () => {
-		return page.redirect( `/domains/add/${ context.params.domain }` );
-	};
-	context.primary = (
-		<Main>
-			<PageViewTracker
-				path={ domainUseMyDomain( ':site', ':domain' ) }
-				title="Domain Search > Use My Domain"
-			/>
-			<DocumentHead title={ translate( 'Use My Domain' ) } />
-			<CartData>
-				<UseMyDomain goBack={ handleGoBack } />
-			</CartData>
-		</Main>
-	);
-	next();
-};
+// const useYourDomain = ( context, next ) => {
+// 	context.primary = (
+// 		<Main>
+// 			<PageViewTracker
+// 				path={ domainUseYourDomain( ':site' ) }
+// 				title="Domain Search > Use Your Domain"
+// 			/>
+// 			<DocumentHead title={ translate( 'Use Your Domain' ) } />
+// 			<CartData>
+// 				<UseYourDomain
+// 					basePath={ sectionify( context.path ) }
+// 					initialQuery={ context.query.initialQuery }
+// 				/>
+// 			</CartData>
+// 		</Main>
+// 	);
+// 	next();
+// };
 
 const transferDomainPrecheck = ( context, next ) => {
 	const state = context.store.getState();
@@ -289,5 +289,5 @@ export default {
 	redirectToDomainSearchSuggestion,
 	transferDomain,
 	transferDomainPrecheck,
-	useMyDomain,
+	// useYourDomain,
 };

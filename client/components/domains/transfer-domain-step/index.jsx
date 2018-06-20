@@ -36,7 +36,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { getSelectedSite } from 'state/ui/selectors';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import TransferDomainPrecheck from './transfer-domain-precheck';
-import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
+import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
@@ -83,6 +83,7 @@ class TransferDomainStep extends React.Component {
 			submittingAvailability: false,
 			submittingWhois: get( this.props, 'forcePrecheck', false ),
 			supportsPrivacy: false,
+			transferSelected: false,
 		};
 	}
 
@@ -141,24 +142,10 @@ class TransferDomainStep extends React.Component {
 	};
 
 	addTransfer() {
-		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, translate } = this.props;
+		const { translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
-		const productSlug = getDomainProductSlug( searchQuery );
-		const domainsWithPlansOnlyButNoPlan =
-			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
-
-		let domainProductPrice = getDomainPrice(
-			productSlug,
-			this.props.productsList,
-			this.props.currencyCode
-		);
-
-		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
-			domainProductPrice = translate( 'Free with your plan' );
-		} else if ( domainsWithPlansOnlyButNoPlan ) {
-			domainProductPrice = translate( 'Included in paid plans' );
-		}
+		const domainProductPrice = this.getProductPriceText();
 
 		return (
 			<div>
@@ -212,28 +199,6 @@ class TransferDomainStep extends React.Component {
 					</Button>
 					{ this.domainRegistrationUpsell() }
 				</form>
-
-				<Card className="transfer-domain-step__map-option">
-					<strong>{ translate( 'Manage your domain and site separately.' ) }</strong>
-					<p>
-						{ translate(
-							'Leave the domain at your current provider and {{a}}manually connect it{{/a}} to ' +
-								"your WordPress.com site. You'll still need to continue paying your current " +
-								'provider to renew and manage any domain settings.',
-							{
-								components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
-							}
-						) }
-						<a
-							className="transfer-domain-step__map-help"
-							href={ MAP_EXISTING_DOMAIN }
-							rel="noopener noreferrer"
-							target="_blank"
-						>
-							<Gridicon icon="help" size={ 18 } />
-						</a>
-					</p>
-				</Card>
 			</div>
 		);
 	}
@@ -333,18 +298,189 @@ class TransferDomainStep extends React.Component {
 		}
 	};
 
+	getProductPriceText = () => {
+		const {
+			cart,
+			currencyCode,
+			translate,
+			domainsWithPlansOnly,
+			isSignupStep,
+			productsList,
+			selectedSite,
+		} = this.props;
+		const { searchQuery } = this.state;
+		const productSlug = getDomainProductSlug( searchQuery );
+		const domainsWithPlansOnlyButNoPlan =
+			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+
+		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
+
+		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+			domainProductPrice = translate( 'Free with your plan' );
+		} else if ( domainsWithPlansOnlyButNoPlan ) {
+			domainProductPrice = translate( 'Included in paid plans' );
+		}
+
+		return domainProductPrice;
+	};
+
+	renderIllustration = image => {
+		return (
+			<div className="use-your-domain__option-illustration">
+				<img src={ image } alt="" />
+			</div>
+		);
+	};
+
+	renderOptionTitle = optionTitle => {
+		return <h3 className="use-your-domain__option-title">{ optionTitle }</h3>;
+	};
+
+	renderOptionReasons = optionReasons => {
+		return (
+			<div className="use-your-domain__option-reasons">
+				{ optionReasons.map( ( phrase, index ) => {
+					if ( isEmpty( phrase ) ) {
+						return;
+					}
+
+					return (
+						<div className="use-your-domain__option-reason" key={ index }>
+							<Gridicon icon="checkmark" size={ 18 } />
+							{ phrase }
+						</div>
+					);
+				} ) }
+			</div>
+		);
+	};
+
+	renderOptionContent = content => {
+		const { image, title, reasons, onClick, buttonText, isPrimary, learnMore } = content;
+		return (
+			<Card className="use-your-domain__option" compact>
+				<div className="use-your-domain__option-inner-wrap">
+					<div className="use-your-domain__option-content">
+						{ this.renderIllustration( image ) }
+						{ this.renderOptionTitle( title ) }
+						{ this.renderOptionReasons( reasons ) }
+					</div>
+					<div className="use-your-domain__option-action">
+						{ this.renderOptionButton( { onClick, buttonText, isPrimary } ) }
+						<div className="use-your-domain__learn-more">{ learnMore }</div>
+					</div>
+				</div>
+			</Card>
+		);
+	};
+
+	renderOptionButton = buttonOptions => {
+		const { buttonText, onClick, isPrimary } = buttonOptions;
+		const { submittingAvailability, submittingWhois } = this.state;
+		const submitting = submittingAvailability || submittingWhois;
+		return (
+			<Button
+				className="use-your-domain__option-button"
+				primary={ isPrimary }
+				onClick={ onClick }
+				busy={ submitting }
+			>
+				{ buttonText }
+			</Button>
+		);
+	};
+
+	renderSelectTransfer = () => {
+		const { translate } = this.props;
+
+		const image = '/calypso/images/illustrations/migrating-host-diy.svg';
+		const title = translate( 'Transfer your domain away from your current registrar.' );
+		const reasons = [
+			translate( 'Manage domain settings in your WordPress.com dashboard' ),
+			translate( 'Extends registration by 1 year' ),
+			translate( 'Can take several days to transfer' ),
+			this.getProductPriceText(),
+		];
+		const buttonText = translate( 'Transfer to WordPress.com' );
+		const learnMore = translate( '{{a}}Learn more about domain transfers{{/a}}', {
+			components: {
+				a: <a href={ INCOMING_DOMAIN_TRANSFER } />,
+			},
+		} );
+
+		return this.renderOptionContent( {
+			image,
+			title,
+			reasons,
+			onClick: this.handleFormSubmit,
+			buttonText,
+			isPrimary: true,
+			learnMore,
+		} );
+	};
+
+	renderSelectMapping = () => {
+		const { translate } = this.props;
+		const image = '/calypso/images/illustrations/jetpack-themes.svg';
+		const title = translate( 'Map your domain without moving it from your current registrar.' );
+		const reasons = [
+			translate( 'Manage domain settings at your current domain provider' ),
+			translate( 'Additional costs' ),
+			translate( 'Limited waiting period for changes' ),
+		];
+		const buttonText = translate( 'Buy Domain Mapping' );
+		const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
+			components: {
+				a: <a href={ MAP_EXISTING_DOMAIN } />,
+			},
+		} );
+
+		return this.renderOptionContent( {
+			image,
+			title,
+			reasons,
+			onClick: this.goToMapDomainStep,
+			buttonText,
+			isPrimary: false,
+			learnMore,
+		} );
+	};
+
+	useYourDomain = () => {
+		const { translate } = this.props;
+
+		return (
+			<div>
+				<QueryProducts />
+				<div className="use-your-domain__content">
+					{ this.renderSelectTransfer() }
+					{ this.renderSelectMapping() }
+				</div>
+				<p className="use-your-domain__footer">
+					{ translate( "Not sure what works best for you? {{a}}We're happy to help!{{/a}}", {
+						components: {
+							a: <a href={ CALYPSO_CONTACT } />,
+						},
+					} ) }
+				</p>
+			</div>
+		);
+	};
+
 	render() {
 		let content;
-		const { precheck } = this.state;
+		const { precheck, transferSelected } = this.state;
 		const { isSignupStep } = this.props;
 		const transferIsRestricted = this.transferIsRestricted();
 
-		if ( transferIsRestricted ) {
+		if ( transferSelected && transferIsRestricted ) {
 			content = this.getTransferRestrictionMessage();
 		} else if ( precheck && ! isSignupStep ) {
 			content = this.getTransferDomainPrecheck();
-		} else {
+		} else if ( transferSelected ) {
 			content = this.addTransfer();
+		} else {
+			content = this.useYourDomain();
 		}
 
 		const header = ! isSignupStep && (
@@ -354,9 +490,9 @@ class TransferDomainStep extends React.Component {
 		);
 
 		return (
-			<div className="transfer-domain-step">
+			<div className="use-your-domain">
 				{ header }
-				<div>{ content }</div>
+				{ content }
 			</div>
 		);
 	}
@@ -407,14 +543,18 @@ class TransferDomainStep extends React.Component {
 	handleFormSubmit = event => {
 		event.preventDefault();
 
-		const domain = getFixedDomainSearch( this.state.searchQuery );
-		this.props.recordFormSubmitInTransferDomain( this.state.searchQuery );
+		const { analyticsSection, searchQuery } = this.state;
+
+		if ( isEmpty( searchQuery ) ) {
+			this.setState( { transferSelected: true } );
+			return;
+		}
+
+		const domain = getFixedDomainSearch( searchQuery );
+		this.props.recordFormSubmitInTransferDomain( searchQuery );
 		this.setState( { notice: null, suggestion: null, submittingAvailability: true } );
 
-		this.props.recordGoButtonClickInTransferDomain(
-			this.state.searchQuery,
-			this.props.analyticsSection
-		);
+		this.props.recordGoButtonClickInTransferDomain( searchQuery, analyticsSection );
 
 		Promise.all( [ this.getInboundTransferStatus(), this.getAvailability() ] ).then( () => {
 			this.setState( prevState => {

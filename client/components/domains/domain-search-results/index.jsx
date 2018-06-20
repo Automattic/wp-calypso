@@ -50,7 +50,7 @@ class DomainSearchResults extends React.Component {
 		onAddTransfer: PropTypes.func,
 		onClickMapping: PropTypes.func,
 		onClickTransfer: PropTypes.func,
-		onClickUseMuDomain: PropTypes.func,
+		onClickUseYourDomain: PropTypes.func,
 		isSignupStep: PropTypes.bool,
 		railcarSeed: PropTypes.string,
 		fetchAlgo: PropTypes.string,
@@ -163,7 +163,7 @@ class DomainSearchResults extends React.Component {
 										a: (
 											<a
 												href="#"
-												onClick={ this.props.onClickUseMyDomain }
+												onClick={ this.props.onClickTransfer }
 												data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 											/>
 										),
