@@ -11488,11 +11488,6 @@
       "resolved": "https://registry.npmjs.org/jsesc/-/jsesc-2.5.1.tgz",
       "integrity": "sha1-5CGiqOINawgZ3yiQj3glJrlt0f4="
     },
-    "json-loader": {
-      "version": "0.5.4",
-      "resolved": "https://registry.npmjs.org/json-loader/-/json-loader-0.5.4.tgz",
-      "integrity": "sha1-i6oTZaYy9Yo8RtIBdfxgAsluN94="
-    },
     "json-parse-better-errors": {
       "version": "1.0.2",
       "resolved": "https://registry.npmjs.org/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz",
