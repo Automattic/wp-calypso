@@ -5,6 +5,7 @@
  */
 
 import React, { Component, Fragment } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,8 +13,6 @@ import React, { Component, Fragment } from 'react';
 import CreditCard from '..';
 
 class CreditCards extends Component {
-	static displayName = 'CreditCard';
-
 	state = {
 		cards: [
 			{
@@ -35,10 +34,13 @@ class CreditCards extends Component {
 		return (
 			<Fragment>
 				{ this.state.cards.map( ( card, i ) => <CreditCard key={ i } card={ card } /> ) }
-				<CreditCard>Add another credit card...</CreditCard>
+				<CreditCard>{ this.props.translate( 'Add another credit card...' ) }</CreditCard>
 			</Fragment>
 		);
 	}
 }
 
-export default CreditCards;
+const LocalizedCreditCards = localize( CreditCards );
+LocalizedCreditCards.displayName = 'CreditCard';
+
+export default LocalizedCreditCards;
