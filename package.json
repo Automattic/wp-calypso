@@ -124,7 +124,7 @@
     "postcss-cli": "2.5.1",
     "postcss-custom-properties": "6.2.0",
     "prismjs": "1.6.0",
-    "prop-types": "15.6.1",
+    "prop-types": "15.6.2",
     "qrcode.react": "0.7.2",
     "qs": "6.5.1",
     "react": "16.4.0",
