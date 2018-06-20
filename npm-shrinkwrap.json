@@ -19770,9 +19770,9 @@
       }
     },
     "tracekit": {
-      "version": "0.4.3",
-      "resolved": "https://registry.npmjs.org/tracekit/-/tracekit-0.4.3.tgz",
-      "integrity": "sha1-moxDxIonW9stVaRa1B0KJI8xit8="
+      "version": "0.4.5",
+      "resolved": "https://registry.npmjs.org/tracekit/-/tracekit-0.4.5.tgz",
+      "integrity": "sha512-LAb1udnpvhpgcx6/gmv7s6RO5lBwQGgAT/1VW0egSNSMvH/3xU3xKLoJ3pc+nkJ5AMv9qgTBnCkrUzbrHmCLpg=="
     },
     "tree-kit": {
       "version": "0.5.27",
