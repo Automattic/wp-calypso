@@ -18685,9 +18685,9 @@
       "integrity": "sha1-PFMZQukIwml8DsNEhYwobHygpgo="
     },
     "striptags": {
-      "version": "2.1.1",
-      "resolved": "https://registry.npmjs.org/striptags/-/striptags-2.1.1.tgz",
-      "integrity": "sha1-53G4sxk7l7vtOS3KWaeCedPIpqY="
+      "version": "2.2.1",
+      "resolved": "https://registry.npmjs.org/striptags/-/striptags-2.2.1.tgz",
+      "integrity": "sha1-TEULcI1BuL85zyTEn/I0/Gqr/TI="
     },
     "stylehacks": {
       "version": "2.3.2",
