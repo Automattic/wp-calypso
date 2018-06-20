@@ -11,14 +11,14 @@ import { localize } from 'i18n-calypso';
 
 class StoredCard extends React.Component {
 	static propTypes = {
-		card: PropTypes.string.isRequired,
+		lastDigits: PropTypes.string.isRequired,
 		cardType: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired,
 		expiry: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { card, cardType, name, expiry } = this.props;
+		const { lastDigits, cardType, name, expiry } = this.props;
 		const expirationDate = this.props.moment( expiry ).format( 'MM/YY' );
 
 		const type = cardType && cardType.toLocaleLowerCase();
@@ -35,7 +35,7 @@ class StoredCard extends React.Component {
 		return (
 			<div className={ cardClasses }>
 				<span className="credit-card__stored-card-number">
-					{ cardType } ****{ card }
+					{ cardType } ****{ lastDigits }
 				</span>
 				<span className="credit-card__stored-card-name">{ name }</span>
 				<span className="credit-card__stored-card-expiration-date">

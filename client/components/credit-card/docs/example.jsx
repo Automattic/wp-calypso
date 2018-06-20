@@ -16,13 +16,13 @@ class CreditCards extends Component {
 	state = {
 		cards: [
 			{
-				card: '4242',
+				lastDigits: '4242',
 				cardType: 'visa',
 				name: 'James Smith',
 				expiry: '05/23',
 			},
 			{
-				card: '4444',
+				lastDigits: '4444',
 				cardType: 'mastercard',
 				name: 'Jean Davis',
 				expiry: '01/21',
