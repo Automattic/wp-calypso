@@ -19,6 +19,8 @@ class StoredCard extends React.Component {
 
 	render() {
 		const { lastDigits, cardType, name, expiry } = this.props;
+
+		// The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
 		const expirationDate = this.props.moment( expiry ).format( 'MM/YY' );
 
 		const type = cardType && cardType.toLocaleLowerCase();
