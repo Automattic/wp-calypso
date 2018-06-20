@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -29,9 +29,9 @@ import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
 class SiteOwnership extends Component {
 	renderPlaceholder() {
 		return (
-			<Card className="manage-connection__card site-settings__card is-placeholder">
+			<CompactCard className="manage-connection__card site-settings__card is-placeholder">
 				<div />
-			</Card>
+			</CompactCard>
 		);
 	}
 
@@ -82,12 +82,12 @@ class SiteOwnership extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Card>
+			<CompactCard>
 				<FormFieldset>
 					<FormLegend>{ translate( 'Connection owner' ) }</FormLegend>
 					{ this.renderConnectionDetails() }
 				</FormFieldset>
-			</Card>
+			</CompactCard>
 		);
 	}
 
