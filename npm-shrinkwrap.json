@@ -13175,6 +13175,11 @@
           "version": "1.1.1",
           "resolved": "https://registry.npmjs.org/events/-/events-1.1.1.tgz",
           "integrity": "sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ="
+        },
+        "path-browserify": {
+          "version": "0.0.0",
+          "resolved": "https://registry.npmjs.org/path-browserify/-/path-browserify-0.0.0.tgz",
+          "integrity": "sha1-oLhwcpquIUAFt9UDLsLLuw+0RRo="
         }
       }
     },
@@ -14358,9 +14363,9 @@
       }
     },
     "path-browserify": {
-      "version": "0.0.0",
-      "resolved": "https://registry.npmjs.org/path-browserify/-/path-browserify-0.0.0.tgz",
-      "integrity": "sha1-oLhwcpquIUAFt9UDLsLLuw+0RRo="
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/path-browserify/-/path-browserify-1.0.0.tgz",
+      "integrity": "sha512-Hkavx/nY4/plImrZPHRk2CL9vpOymZLgEbMNX1U0bjcBL7QN9wODxyx0yaMZURSQaUtSEvDrfAvxa9oPb0at9g=="
     },
     "path-dirname": {
       "version": "1.0.2",
