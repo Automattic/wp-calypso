@@ -6819,11 +6819,6 @@
       "resolved": "https://registry.npmjs.org/esprima-fb/-/esprima-fb-15001.1.0-dev-harmony-fb.tgz",
       "integrity": "sha1-MKlHMDxrjV6VW+4rmbHSMyBqaQE="
     },
-    "esprima-fb": {
-      "version": "15001.1.0-dev-harmony-fb",
-      "resolved": "https://registry.npmjs.org/esprima-fb/-/esprima-fb-15001.1.0-dev-harmony-fb.tgz",
-      "integrity": "sha1-MKlHMDxrjV6VW+4rmbHSMyBqaQE="
-    },
     "esquery": {
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/esquery/-/esquery-1.0.1.tgz",
@@ -7958,7 +7953,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -8323,7 +8319,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -8371,6 +8368,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -8409,11 +8407,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -15026,11 +15026,24 @@
       }
     },
     "prismjs": {
-      "version": "1.6.0",
-      "resolved": "https://registry.npmjs.org/prismjs/-/prismjs-1.6.0.tgz",
-      "integrity": "sha1-EY2V+3pm26InLjQ7NF9SNmWds2U=",
+      "version": "1.15.0",
+      "resolved": "https://registry.npmjs.org/prismjs/-/prismjs-1.15.0.tgz",
+      "integrity": "sha512-Lf2JrFYx8FanHrjoV5oL8YHCclLQgbJcVZR+gikGGMqz6ub5QVWDTM6YIwm3BuPxM/LOV+rKns3LssXNLIf+DA==",
       "requires": {
-        "clipboard": "^1.5.5"
+        "clipboard": "^2.0.0"
+      },
+      "dependencies": {
+        "clipboard": {
+          "version": "2.0.1",
+          "resolved": "https://registry.npmjs.org/clipboard/-/clipboard-2.0.1.tgz",
+          "integrity": "sha512-7yhQBmtN+uYZmfRjjVjKa0dZdWuabzpSKGtyQZN+9C8xlC788SSJjOHWh7tzurfwTqTD5UDYAhIv5fRJg3sHjQ==",
+          "optional": true,
+          "requires": {
+            "good-listener": "^1.2.2",
+            "select": "^1.1.2",
+            "tiny-emitter": "^2.0.0"
+          }
+        }
       }
     },
     "private": {
