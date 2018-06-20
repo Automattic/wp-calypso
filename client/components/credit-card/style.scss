@@ -3,6 +3,7 @@
 @import './stored-card';
 
 div.credit-card {
+	background-color: $white;
 	border: 1px solid $gray-lighten-30;
 	border-top: none;
 	padding-left: 2px;
@@ -12,7 +13,7 @@ div.credit-card {
 		border-top: 1px solid $gray-lighten-30;
 	}
 
-	&.is-selectable:not(.is-selected) {
+	&.is-selectable:not( .is-selected ) {
 		cursor: pointer;
 	}
 
