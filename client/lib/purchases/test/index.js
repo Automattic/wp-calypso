@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import moment from 'moment';
 
 /**
@@ -28,64 +26,64 @@ import {
 describe( 'index', () => {
 	describe( '#isRemovable', () => {
 		test( 'should not be removable when domain registration purchase is not expired', () => {
-			expect( isRemovable( DOMAIN_PURCHASE ) ).to.be.false;
+			expect( isRemovable( DOMAIN_PURCHASE ) ).toBe( false );
 		} );
 
 		test( 'should not be removable when domain mapping purchase is not expired', () => {
-			expect( isRemovable( DOMAIN_MAPPING_PURCHASE ) ).to.be.false;
+			expect( isRemovable( DOMAIN_MAPPING_PURCHASE ) ).toBe( false );
 		} );
 
 		test( 'should not be removable when site redirect purchase is not expired', () => {
-			expect( isRemovable( SITE_REDIRECT_PURCHASE ) ).to.be.false;
+			expect( isRemovable( SITE_REDIRECT_PURCHASE ) ).toBe( false );
 		} );
 
 		test( 'should be removable when domain registration purchase is expired', () => {
-			expect( isRemovable( DOMAIN_PURCHASE_EXPIRED ) ).to.be.true;
+			expect( isRemovable( DOMAIN_PURCHASE_EXPIRED ) ).toBe( true );
 		} );
 
 		test( 'should be removable when domain mapping purchase is expired', () => {
-			expect( isRemovable( DOMAIN_MAPPING_PURCHASE_EXPIRED ) ).to.be.true;
+			expect( isRemovable( DOMAIN_MAPPING_PURCHASE_EXPIRED ) ).toBe( true );
 		} );
 
 		test( 'should be removable when site redirect purchase is expired', () => {
-			expect( isRemovable( SITE_REDIRECT_PURCHASE_EXPIRED ) ).to.be.true;
+			expect( isRemovable( SITE_REDIRECT_PURCHASE_EXPIRED ) ).toBe( true );
 		} );
 	} );
 	describe( '#isCancelable', () => {
 		test( 'should not be cancelable when the purchase is included in a plan', () => {
-			expect( isCancelable( DOMAIN_PURCHASE_INCLUDED_IN_PLAN ) ).to.be.false;
+			expect( isCancelable( DOMAIN_PURCHASE_INCLUDED_IN_PLAN ) ).toBe( false );
 		} );
 
 		test( 'should not be cancelable when the purchase is expired', () => {
-			expect( isCancelable( DOMAIN_PURCHASE_EXPIRED ) ).to.be.false;
+			expect( isCancelable( DOMAIN_PURCHASE_EXPIRED ) ).toBe( false );
 		} );
 
 		test( 'should be cancelable when the purchase is refundable', () => {
-			expect( isCancelable( DOMAIN_PURCHASE ) ).to.be.true;
+			expect( isCancelable( DOMAIN_PURCHASE ) ).toBe( true );
 		} );
 
 		test( 'should be cancelable when the purchase can have auto-renew disabled', () => {
-			expect( isCancelable( PLAN_PURCHASE ) ).to.be.true;
+			expect( isCancelable( PLAN_PURCHASE ) ).toBe( true );
 		} );
 
 		test( 'should not be cancelable if domain is pending transfer', () => {
-			expect( isCancelable( DOMAIN_PURCHASE_PENDING_TRANSFER ) ).to.be.false;
+			expect( isCancelable( DOMAIN_PURCHASE_PENDING_TRANSFER ) ).toBe( false );
 		} );
 	} );
 	describe( '#isPaidWithCredits', () => {
 		test( 'should be true when paid with credits', () => {
-			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_CREDITS ) ).to.be.true;
+			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_CREDITS ) ).toBe( true );
 		} );
 		test( 'should false when not paid with credits', () => {
-			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_PAYPAL ) ).to.be.false;
+			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_PAYPAL ) ).toBe( false );
 		} );
 		test( 'should be false when payment not set on purchase', () => {
-			expect( isPaidWithCredits( {} ) ).to.be.false;
+			expect( isPaidWithCredits( {} ) ).toBe( false );
 		} );
 	} );
 	describe( '#subscribedWithinPastWeek', () => {
 		test( 'should return false when no subscribed date', () => {
-			expect( subscribedWithinPastWeek( {} ) ).to.be.false;
+			expect( subscribedWithinPastWeek( {} ) ).toBe( false );
 		} );
 		test( 'should return false when subscribed more than 1 week ago', () => {
 			expect(
@@ -94,7 +92,7 @@ describe( 'index', () => {
 						.subtract( 8, 'days' )
 						.format(),
 				} )
-			).to.be.false;
+			).toBe( false );
 		} );
 		test( 'should return true when subscribed less than 1 week ago', () => {
 			expect(
@@ -103,7 +101,7 @@ describe( 'index', () => {
 						.subtract( 3, 'days' )
 						.format(),
 				} )
-			).to.be.true;
+			).toBe( true );
 		} );
 	} );
 } );
