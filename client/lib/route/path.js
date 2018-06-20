@@ -85,29 +85,6 @@ export function addSiteFragment( path, site ) {
 	return pieces.join( '/' );
 }
 
-export function sectionifyWithRoutes( path, routes ) {
-	const routeParams = {};
-	if ( ! routes || ! Array.isArray( routes ) ) {
-		return {
-			routePath: sectionify( path, routes ),
-			routeParams,
-		};
-	}
-
-	let routePath = path.split( '?' )[ 0 ];
-	for ( const route of routes ) {
-		if ( route.match( routePath, routeParams ) ) {
-			routePath = route.path;
-			break;
-		}
-	}
-
-	return {
-		routePath: untrailingslashit( routePath ),
-		routeParams,
-	};
-}
-
 export function sectionify( path, siteFragment ) {
 	let basePath = path.split( '?' )[ 0 ];
 
