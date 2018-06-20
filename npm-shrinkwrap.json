@@ -12631,6 +12631,11 @@
         "readable-stream": "^2.0.1"
       }
     },
+    "memorystream": {
+      "version": "0.3.1",
+      "resolved": "https://registry.npmjs.org/memorystream/-/memorystream-0.3.1.tgz",
+      "integrity": "sha1-htcJCzDORV1j+64S3aUaR93K+bI="
+    },
     "meow": {
       "version": "3.7.0",
       "resolved": "https://registry.npmjs.org/meow/-/meow-3.7.0.tgz",
@@ -13680,56 +13685,72 @@
       }
     },
     "npm-run-all": {
-      "version": "4.0.2",
-      "resolved": "https://registry.npmjs.org/npm-run-all/-/npm-run-all-4.0.2.tgz",
-      "integrity": "sha1-qEZpNI5ttsy+BSIAtM22v+A0pP4=",
+      "version": "4.1.3",
+      "resolved": "https://registry.npmjs.org/npm-run-all/-/npm-run-all-4.1.3.tgz",
+      "integrity": "sha512-aOG0N3Eo/WW+q6sUIdzcV2COS8VnTZCmdji0VQIAZF3b+a3YWb0AD0vFIyjKec18A7beLGbaQ5jFTNI2bPt9Cg==",
       "requires": {
-        "chalk": "^1.1.3",
-        "cross-spawn": "^5.0.1",
-        "minimatch": "^3.0.2",
-        "ps-tree": "^1.0.1",
-        "read-pkg": "^2.0.0",
+        "ansi-styles": "^3.2.0",
+        "chalk": "^2.1.0",
+        "cross-spawn": "^6.0.4",
+        "memorystream": "^0.3.1",
+        "minimatch": "^3.0.4",
+        "ps-tree": "^1.1.0",
+        "read-pkg": "^3.0.0",
         "shell-quote": "^1.6.1",
         "string.prototype.padend": "^3.0.0"
       },
       "dependencies": {
-        "cross-spawn": {
-          "version": "5.1.0",
-          "resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-5.1.0.tgz",
-          "integrity": "sha1-6L0O/uWPz/b4+UUQoKVUu/ojVEk=",
+        "chalk": {
+          "version": "2.4.1",
+          "resolved": "https://registry.npmjs.org/chalk/-/chalk-2.4.1.tgz",
+          "integrity": "sha512-ObN6h1v2fTJSmUXoS3nMQ92LbDK9be4TV+6G+omQlGJFdcUX5heKi1LZ1YnRMIgwTLEj3E24bT6tYni50rlCfQ==",
           "requires": {
-            "lru-cache": "^4.0.1",
-            "shebang-command": "^1.2.0",
-            "which": "^1.2.9"
+            "ansi-styles": "^3.2.1",
+            "escape-string-regexp": "^1.0.5",
+            "supports-color": "^5.3.0"
           }
         },
         "load-json-file": {
-          "version": "2.0.0",
-          "resolved": "https://registry.npmjs.org/load-json-file/-/load-json-file-2.0.0.tgz",
-          "integrity": "sha1-eUfkIUmvgNaWy/eXvKq8/h/inKg=",
+          "version": "4.0.0",
+          "resolved": "https://registry.npmjs.org/load-json-file/-/load-json-file-4.0.0.tgz",
+          "integrity": "sha1-L19Fq5HjMhYjT9U62rZo607AmTs=",
           "requires": {
             "graceful-fs": "^4.1.2",
-            "parse-json": "^2.2.0",
-            "pify": "^2.0.0",
+            "parse-json": "^4.0.0",
+            "pify": "^3.0.0",
             "strip-bom": "^3.0.0"
           }
         },
-        "path-type": {
-          "version": "2.0.0",
-          "resolved": "https://registry.npmjs.org/path-type/-/path-type-2.0.0.tgz",
-          "integrity": "sha1-8BLMuEFbcJb8LaoQVMPXI4lZTHM=",
+        "parse-json": {
+          "version": "4.0.0",
+          "resolved": "https://registry.npmjs.org/parse-json/-/parse-json-4.0.0.tgz",
+          "integrity": "sha1-vjX1Qlvh9/bHRxhPmKeIy5lHfuA=",
           "requires": {
-            "pify": "^2.0.0"
+            "error-ex": "^1.3.1",
+            "json-parse-better-errors": "^1.0.1"
           }
         },
-        "read-pkg": {
-          "version": "2.0.0",
-          "resolved": "https://registry.npmjs.org/read-pkg/-/read-pkg-2.0.0.tgz",
-          "integrity": "sha1-jvHAYjxqbbDcZxPEv6xGMysjaPg=",
+        "path-type": {
+          "version": "3.0.0",
+          "resolved": "https://registry.npmjs.org/path-type/-/path-type-3.0.0.tgz",
+          "integrity": "sha512-T2ZUsdZFHgA3u4e5PfPbjd7HDDpxPnQb5jN0SrDsjNSuVXHJqtwTnWqG0B1jZrgmJ/7lj1EmVIByWt1gxGkWvg==",
           "requires": {
-            "load-json-file": "^2.0.0",
+            "pify": "^3.0.0"
+          }
+        },
+        "pify": {
+          "version": "3.0.0",
+          "resolved": "https://registry.npmjs.org/pify/-/pify-3.0.0.tgz",
+          "integrity": "sha1-5aSs0sEB/fPZpNB/DbxNtJ3SgXY="
+        },
+        "read-pkg": {
+          "version": "3.0.0",
+          "resolved": "https://registry.npmjs.org/read-pkg/-/read-pkg-3.0.0.tgz",
+          "integrity": "sha1-nLxoaXj+5l0WwA4rGcI3/Pbjg4k=",
+          "requires": {
+            "load-json-file": "^4.0.0",
             "normalize-package-data": "^2.3.2",
-            "path-type": "^2.0.0"
+            "path-type": "^3.0.0"
           }
         },
         "strip-bom": {
