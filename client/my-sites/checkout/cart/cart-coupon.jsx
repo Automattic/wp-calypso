@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { withAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
+import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
 
 export class CartCoupon extends React.Component {
@@ -166,24 +166,17 @@ export class CartCoupon extends React.Component {
 
 const mapDispatchToProps = dispatch => ( {
 	recordGoogleEvent,
-	applyCoupon: coupon =>
-		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_checkout_coupon_submit', {
-					coupon_code: coupon,
-				} ),
-				() => applyCoupon( coupon )
-			)
-		),
-	removeCoupon: () =>
-		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_checkout_coupon_submit', {
-					coupon_code: '',
-				} ),
-				() => removeCoupon()
-			)
-		),
+	applyCoupon: coupon_code => {
+		dispatch( recordTracksEvent( 'calypso_checkout_coupon_submit', { coupon_code } ) );
+		applyCoupon( coupon_code );
+	},
+	removeCoupon: () => {
+		dispatch( recordTracksEvent( 'calypso_checkout_coupon_submit', { coupon_code: '' } ) );
+		removeCoupon();
+	},
 } );
 
-export default connect( null, mapDispatchToProps )( localize( CartCoupon ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( CartCoupon ) );
