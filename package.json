@@ -276,7 +276,7 @@
     "pretty-bytes": "4.0.2",
     "react-codemod": "reactjs/react-codemod",
     "react-test-renderer": "16.4.0",
-    "readline-sync": "1.4.5",
+    "readline-sync": "1.4.9",
     "sinon": "1.17.7",
     "sinon-chai": "2.8.0",
     "socket.io": "2.1.1",
