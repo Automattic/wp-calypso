@@ -14321,9 +14321,9 @@
       }
     },
     "path-browserify": {
-      "version": "0.0.1",
-      "resolved": "https://registry.npmjs.org/path-browserify/-/path-browserify-0.0.1.tgz",
-      "integrity": "sha512-BapA40NHICOS+USX9SN4tyhq+A2RrN/Ws5F0Z5aMHDp98Fl86lX8Oti8B7uN93L4Ifv4fHOEA+pQw87gmMO/lQ=="
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/path-browserify/-/path-browserify-1.0.0.tgz",
+      "integrity": "sha512-Hkavx/nY4/plImrZPHRk2CL9vpOymZLgEbMNX1U0bjcBL7QN9wODxyx0yaMZURSQaUtSEvDrfAvxa9oPb0at9g=="
     },
     "path-dirname": {
       "version": "1.0.2",
