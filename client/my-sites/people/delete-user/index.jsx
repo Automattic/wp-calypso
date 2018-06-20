@@ -82,15 +82,9 @@ class DeleteUser extends React.Component {
 		this.props.recordGoogleEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
 	};
 
-	setReassignLabel = label => {
-		this.reassignLabel = label;
-	};
+	setReassignLabel = label => ( this.reassignLabel = label );
 
-	onSelectAuthor = author => {
-		this.setState( {
-			reassignUser: author,
-		} );
-	};
+	onSelectAuthor = author => this.setState( { reassignUser: author } );
 
 	removeUser = () => {
 		const { translate } = this.props;

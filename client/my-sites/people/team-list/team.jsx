@@ -30,15 +30,14 @@ class Team extends React.Component {
 		bulkEditing: false,
 	};
 
-	isLastPage = () => {
-		return this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
-	};
+	isLastPage = () =>
+		this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 
 	render() {
-		let key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-			headerText = this.props.translate( 'Team', { context: 'A navigation label.' } ),
-			listClass = this.state.bulkEditing ? 'bulk-editing' : null,
-			people;
+		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) );
+		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+		let headerText = this.props.translate( 'Team', { context: 'A navigation label.' } );
+		let people;
 
 		if (
 			this.props.fetchInitialized &&
@@ -136,13 +135,9 @@ class Team extends React.Component {
 		fetchUsers( fetchOptions );
 	};
 
-	_getPersonRef = user => {
-		return 'user-' + user.ID;
-	};
+	_getPersonRef = user => 'user-' + user.ID;
 
-	_renderLoadingPeople = () => {
-		return <PeopleListItem key="people-list-item-placeholder" />;
-	};
+	_renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 }
 
 export default localize(

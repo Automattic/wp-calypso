@@ -27,14 +27,12 @@ class Viewers extends React.PureComponent {
 		bulkEditing: false,
 	};
 
-	renderPlaceholders = () => {
-		return <PeopleListItem key="people-list-item-placeholder" />;
-	};
+	renderPlaceholders = () => <PeopleListItem key="people-list-item-placeholder" />;
 
 	fetchNextPage = () => {
-		let paginationData = ViewersStore.getPaginationData( this.props.siteId ),
-			currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0,
-			page = currentPage + 1;
+		const paginationData = ViewersStore.getPaginationData( this.props.siteId );
+		const currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0;
+		const page = currentPage + 1;
 
 		this.props.recordGoogleEvent(
 			'People',
@@ -91,27 +89,19 @@ class Viewers extends React.PureComponent {
 		);
 	};
 
-	getViewerRef = viewer => {
-		return 'viewer-' + viewer.ID;
-	};
+	getViewerRef = viewer => 'viewer-' + viewer.ID;
 
-	onClickSiteSettings = () => {
-		this.props.recordGoogleEvent( 'People', 'Clicked Site Settings Link On Empty Viewers' );
-	};
-
-	isLastPage = () => {
-		return this.props.totalViewers <= this.props.viewers.length;
-	};
+	isLastPage = () => this.props.totalViewers <= this.props.viewers.length;
 
 	render() {
-		let viewers,
-			emptyContentArgs = {
-				title:
-					this.props.site && this.props.site.jetpack
-						? this.props.translate( "Oops, Jetpack sites don't support viewers." )
-						: this.props.translate( "You don't have any viewers yet." ),
-			},
-			listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+		let viewers;
+		let emptyContentArgs = {
+			title:
+				this.props.site && this.props.site.jetpack
+					? this.props.translate( "Oops, Jetpack sites don't support viewers." )
+					: this.props.translate( "You don't have any viewers yet." ),
+		};
 
 		if ( ! this.props.viewers.length && ! this.props.fetching ) {
 			if ( this.props.site && ! this.props.site.jetpack && ! this.props.site.is_private ) {

@@ -141,9 +141,7 @@ class InvitePeople extends React.Component {
 		}
 	};
 
-	onMessageChange = event => {
-		this.setState( { message: event.target.value } );
-	};
+	onMessageChange = event => this.setState( { message: event.target.value } );
 
 	onRoleChange = event => {
 		const role = event.target.value;
@@ -151,25 +149,20 @@ class InvitePeople extends React.Component {
 		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
 	};
 
-	onFocusTokenField = () => {
+	onFocusTokenField = () =>
 		this.props.recordTracksEvent( 'calypso_invite_people_token_field_focus' );
-	};
 
-	onFocusRoleSelect = () => {
+	onFocusRoleSelect = () =>
 		this.props.recordTracksEvent( 'calypso_invite_people_role_select_focus' );
-	};
 
-	onFocusCustomMessage = () => {
+	onFocusCustomMessage = () =>
 		this.props.recordTracksEvent( 'calypso_invite_people_custom_message_focus' );
-	};
 
-	onClickSendInvites = () => {
+	onClickSendInvites = () =>
 		this.props.recordTracksEvent( 'calypso_invite_people_send_invite_button_click' );
-	};
 
-	onClickRoleExplanation = () => {
+	onClickRoleExplanation = () =>
 		this.props.recordTracksEvent( 'calypso_invite_people_role_explanation_link_click' );
-	};
 
 	refreshValidation = () => {
 		const errors =
@@ -298,9 +291,7 @@ class InvitePeople extends React.Component {
 		);
 	};
 
-	enableSSO = () => {
-		this.props.activateModule( this.props.siteId, 'sso' );
-	};
+	enableSSO = () => this.props.activateModule( this.props.siteId, 'sso' );
 
 	renderInviteForm = () => {
 		const { site, translate, needsVerification, isJetpack, showSSONotice } = this.props;

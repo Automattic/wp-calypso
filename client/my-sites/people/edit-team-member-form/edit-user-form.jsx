@@ -109,11 +109,7 @@ class EditUserForm extends React.Component {
 	recordFieldFocus = fieldId => () =>
 		this.props.recordGoogleEvent( 'People', 'Focused on field on User Edit', 'Field', fieldId );
 
-	handleChange = event => {
-		this.setState( {
-			[ event.target.name ]: event.target.value,
-		} );
-	};
+	handleChange = event => this.setState( { [ event.target.name ]: event.target.value } );
 
 	renderField( fieldId ) {
 		let returnField = null;
