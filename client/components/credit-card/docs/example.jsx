@@ -20,13 +20,13 @@ class CreditCards extends Component {
 				lastDigits: '4242',
 				cardType: 'visa',
 				name: 'James Smith',
-				expiry: '05/23',
+				expiry: '2023-05-31',
 			},
 			{
 				lastDigits: '4444',
 				cardType: 'mastercard',
 				name: 'Jean Davis',
-				expiry: '01/21',
+				expiry: '2021-01-31',
 			},
 		],
 	};
