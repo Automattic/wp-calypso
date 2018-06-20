@@ -50,8 +50,6 @@ export default data => {
 		labels: labelsData || [],
 		paperSize,
 		storeOptions,
-		fulfillOrder: true,
-		emailDetails: true,
 		form: {
 			orderId: formData.order_id,
 			origin: {
