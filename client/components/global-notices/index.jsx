@@ -20,8 +20,8 @@ import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
 // eslint-disable-next-line react/prefer-es6-class
-export const NoticesList = createReactClass( {
-	displayName: 'NoticesList',
+export const GlobalNotices = createReactClass( {
+	displayName: 'GlobalNotices',
 
 	mixins: [ observe( 'notices' ) ],
 
@@ -122,4 +122,4 @@ export default connect(
 		storeNotices: getNotices( state ),
 	} ),
 	{ removeNotice }
-)( NoticesList );
+)( GlobalNotices );

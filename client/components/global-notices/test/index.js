@@ -10,7 +10,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal Dependencies
  */
-import { NoticesList } from '..';
+import { GlobalNotices } from '..';
 import Notice from 'components/notice';
 
 const baseProps = deepFreeze( {
@@ -23,9 +23,9 @@ const baseProps = deepFreeze( {
 
 beforeEach( jest.clearAllMocks );
 
-describe( '<NoticesList />', () => {
+describe( '<GlobalNotices />', () => {
 	test( 'should not render without notices', () => {
-		const wrapper = shallow( <NoticesList { ...baseProps } /> );
+		const wrapper = shallow( <GlobalNotices { ...baseProps } /> );
 		expect( wrapper.type() ).toBeNull();
 	} );
 
@@ -38,7 +38,7 @@ describe( '<NoticesList />', () => {
 				text: 'A test notice',
 			},
 		];
-		const wrapper = shallow( <NoticesList { ...baseProps } storeNotices={ notices } /> );
+		const wrapper = shallow( <GlobalNotices { ...baseProps } storeNotices={ notices } /> );
 		expect( wrapper.hasClass( 'global-notices' ) ).toBe( true );
 		expect( wrapper.prop( 'id' ) ).toBe( 'overlay-notices' );
 		expect( wrapper.find( Notice ) ).toHaveLength( 1 );
@@ -55,7 +55,7 @@ describe( '<NoticesList />', () => {
 			},
 		];
 		const wrapper = shallow(
-			<NoticesList { ...baseProps } storeNotices={ notices } id="test-id" />
+			<GlobalNotices { ...baseProps } storeNotices={ notices } id="test-id" />
 		);
 		expect( wrapper.prop( 'id' ) ).toBe( 'test-id' );
 	} );
@@ -72,7 +72,7 @@ describe( '<NoticesList />', () => {
 		];
 
 		const wrapper = shallow(
-			<NoticesList { ...baseProps } storeNotices={ notices } id="test-id" />
+			<GlobalNotices { ...baseProps } storeNotices={ notices } id="test-id" />
 		);
 
 		wrapper.find( Notice ).prop( 'onDismissClick' )();
