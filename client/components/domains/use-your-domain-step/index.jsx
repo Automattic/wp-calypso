@@ -152,7 +152,7 @@ class UseYourDomainStep extends React.Component {
 		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
 			domainProductPrice = translate( 'Free with your plan' );
 		} else if ( domainsWithPlansOnlyButNoPlan ) {
-			domainProductPrice = translate( 'Included with paid plans' );
+			domainProductPrice = translate( 'Included in paid plans' );
 		}
 
 		return domainProductPrice;
