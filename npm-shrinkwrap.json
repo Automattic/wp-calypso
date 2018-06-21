@@ -7905,11 +7905,6 @@
       "resolved": "https://registry.npmjs.org/foreach/-/foreach-2.0.5.tgz",
       "integrity": "sha1-C+4AUBiusmDQo6865ljdATbsG5k="
     },
-    "foreachasync": {
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/foreachasync/-/foreachasync-3.0.0.tgz",
-      "integrity": "sha1-VQKYfchxS+M5IJfzLgBxyd7gfPY="
-    },
     "forever-agent": {
       "version": "0.6.1",
       "resolved": "https://registry.npmjs.org/forever-agent/-/forever-agent-0.6.1.tgz",
@@ -20525,14 +20520,6 @@
       "dev": true,
       "requires": {
         "browser-process-hrtime": "^0.1.2"
-      }
-    },
-    "walk": {
-      "version": "2.3.4",
-      "resolved": "https://registry.npmjs.org/walk/-/walk-2.3.4.tgz",
-      "integrity": "sha1-Bs4VQVNTE+iswo6S60Jem2T0xQA=",
-      "requires": {
-        "foreachasync": "3.x"
       }
     },
     "walker": {
