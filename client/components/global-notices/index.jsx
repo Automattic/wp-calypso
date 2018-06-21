@@ -93,12 +93,12 @@ export const NoticesList = createReactClass( {
 		noticesList = noticesList.concat(
 			this.props.storeNotices.map(
 				// Collect `<Notice />` props in rest, extract other expected props
-				function( { button, href, noticeId, onClick, ...notice } ) {
+				function( { button, href, noticeId, onClick, onDismissClick, ...notice } ) {
 					return (
 						<Notice
 							{ ...notice }
 							key={ `notice-${ noticeId }` }
-							onDismissClick={ this.removeReduxNotice( noticeId, notice.onDismissClick ) }
+							onDismissClick={ this.removeReduxNotice( noticeId, onDismissClick ) }
 						>
 							{ button && (
 								<NoticeAction href={ href } onClick={ onClick }>
