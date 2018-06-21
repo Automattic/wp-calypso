@@ -38,14 +38,13 @@ export class CreditCardPaymentBox extends React.Component {
 		transaction: PropTypes.object.isRequired,
 		transactionStep: PropTypes.object.isRequired,
 		cards: PropTypes.array,
-		countriesList: PropTypes.object,
+		countriesList: PropTypes.array.isRequired,
 		initialCard: PropTypes.object,
 		onSubmit: PropTypes.func,
 	};
 
 	static defaultProps = {
 		cards: [],
-		countriesList: {},
 		initialCard: null,
 		onSubmit: noop,
 	};
@@ -83,7 +82,7 @@ export class CreditCardPaymentBox extends React.Component {
 
 	tick = () => {
 		// increase the progress of the progress bar by 0.5% of the remaining progress each tick
-		const progress = this.state.progress + 1 / 200 * ( 100 - this.state.progress );
+		const progress = this.state.progress + ( 1 / 200 ) * ( 100 - this.state.progress );
 
 		this.setState( { progress } );
 	};

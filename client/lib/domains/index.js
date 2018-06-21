@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import inherits from 'inherits';
 import { includes, find, get, replace, some } from 'lodash';
 
@@ -16,8 +15,8 @@ import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
 import formatCurrency from 'lib/format-currency';
 
-const GOOGLE_APPS_INVALID_TLDS = [ 'in' ],
-	GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
+const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
+const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
 
 function ValidationError( code ) {
 	this.code = code;
@@ -177,11 +176,6 @@ function isSubdomain( domainName ) {
 	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
 }
 
-function isInitialized( state, siteId ) {
-	const siteState = state[ siteId ];
-	return siteState && ( siteState.hasLoadedFromServer || siteState.isFetching );
-}
-
 function hasGoogleApps( domain ) {
 	return 'no_subscription' !== get( domain, 'googleAppsSubscription.status', '' );
 }
@@ -208,7 +202,7 @@ function hasPendingGoogleAppsUsers( domain ) {
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
-	return find( domains.list, domain => {
+	return find( domains, domain => {
 		if ( domain.name !== selectedDomainName ) {
 			return false;
 		}
@@ -313,7 +307,6 @@ export {
 	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
 	hasPendingGoogleAppsUsers,
-	isInitialized,
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,

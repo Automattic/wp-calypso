@@ -21,10 +21,7 @@ import {
 	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import { isDataLoading } from '../utils';
-import { getSelectedSite } from 'state/ui/selectors';
 import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
-import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
 import Notice from 'components/notice';
@@ -38,11 +35,9 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 
 class CancelPrivacyProtection extends Component {
 	static propTypes = {
-		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchase: PropTypes.object,
 		purchaseId: PropTypes.number.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
 	};
@@ -69,13 +64,13 @@ class CancelPrivacyProtection extends Component {
 	};
 
 	isDataValid = ( props = this.props ) => {
-		if ( isDataLoading( props ) ) {
+		if ( ! props.hasLoadedUserPurchasesFromServer ) {
 			return true;
 		}
 
-		const { purchase, selectedSite } = props;
+		const { purchase } = props;
 
-		return selectedSite && purchase && hasPrivacyProtection( purchase );
+		return purchase && hasPrivacyProtection( purchase );
 	};
 
 	cancel = event => {
@@ -104,7 +99,7 @@ class CancelPrivacyProtection extends Component {
 					{ persistent: true }
 				);
 
-				page( managePurchase( this.props.selectedSite.slug, id ) );
+				page( managePurchase( this.props.siteSlug, id ) );
 			} )
 			.catch( () => {
 				this.resetState();
@@ -176,7 +171,7 @@ class CancelPrivacyProtection extends Component {
 
 	render() {
 		const classes = classNames( 'cancel-privacy-protection__card', {
-			'is-placeholder': isDataLoading( this.props ),
+			'is-placeholder': ! this.props.hasLoadedUserPurchasesFromServer,
 		} );
 
 		let notice,
@@ -193,7 +188,7 @@ class CancelPrivacyProtection extends Component {
 				</p>
 			);
 
-		if ( ! isDataLoading( this.props ) && this.isDataValid() ) {
+		if ( this.props.hasLoadedUserPurchasesFromServer && this.isDataValid() ) {
 			notice = this.renderNotice();
 			button = this.renderButton();
 			descriptionText = this.renderDescriptionText();
@@ -233,10 +228,8 @@ class CancelPrivacyProtection extends Component {
 export default connect(
 	( state, props ) => ( {
 		error: getPurchasesError( state ),
-		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSite( state ),
 		userId: getCurrentUserId( state ),
 	} ),
 	{ cancelPrivacyProtection }

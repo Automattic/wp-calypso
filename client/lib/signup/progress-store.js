@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
+import { assign, clone, filter, find, get, isEmpty, map, omit } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:signup-progress-store' );
 import store from 'store';
@@ -15,6 +15,7 @@ import store from 'store';
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 import SignupDependencyStore from './dependency-store';
+import flows from 'signup/config/flows';
 import steps from 'signup/config/steps';
 
 /**
@@ -150,6 +151,12 @@ function addStorableDependencies( step, action ) {
 	return { ...step, providedDependencies };
 }
 
+function removeUnneededStep( flowName ) {
+	const flowSteps = flows.getFlow( flowName ).steps;
+	signupProgress = filter( signupProgress, ( { stepName } ) => flowSteps.indexOf( stepName ) > -1 );
+	handleChange();
+}
+
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	let action = payload.action,
 		step = addTimestamp( action.data );
@@ -177,6 +184,10 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'PROCESSED_SIGNUP_STEP':
 			debug( 'complete step' );
 			completeStep( addStorableDependencies( step, action ) );
+			break;
+		case 'CHANGE_SIGNUP_FLOW':
+			debug( 'change flow' );
+			removeUnneededStep( action.flow );
 			break;
 	}
 } );

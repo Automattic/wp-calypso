@@ -47,15 +47,23 @@ class CloneCredentialsStep extends Component {
 		return (
 			<div>
 				<SectionHeader
-					label={ translate( 'Enter credentials for the destination site, %(site)s.', {
-						args: { site: destinationSiteName },
-					} ) }
+					label={ translate(
+						'Make sure the credentials you enter are for the destination site, %(site)s.',
+						{
+							args: { site: destinationSiteName },
+						}
+					) }
 				/>
 				<Card className="clone-credentials__form">
 					<RewindCredentialsForm
 						role={ 'alternate' /* eslint-disable-line */ }
 						siteId={ originBlogId }
 						siteUrl={ destinationSiteUrl }
+						labels={ {
+							host: translate( 'Destination Server Address' ),
+							path: translate( 'Destination WordPress Path' ),
+						} }
+						requirePath
 					/>
 				</Card>
 			</div>
@@ -76,14 +84,13 @@ class CloneCredentialsStep extends Component {
 			positionInFlow,
 			signupProgress,
 			translate,
-			originSiteName,
 			destinationSiteName,
 		} = this.props;
 
 		const headerText = translate( 'Enter your server credentials' );
 		const subHeaderText = translate(
-			'In order to clone %(origin)s, we need the server credentials for %(destination)s.',
-			{ args: { origin: originSiteName, destination: destinationSiteName } }
+			'Before we can start cloning your site, we need the server credentials for %(destination)s.',
+			{ args: { destination: destinationSiteName } }
 		);
 
 		return (

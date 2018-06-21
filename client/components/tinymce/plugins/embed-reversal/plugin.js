@@ -10,9 +10,9 @@ import { includes, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import PostEditStore from 'lib/posts/post-edit-store';
 import wpcom from 'lib/wp';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorRawContent } from 'state/ui/editor/selectors';
 
 function embedReversal( editor ) {
 	const store = editor.getParam( 'redux_store' );
@@ -38,7 +38,7 @@ function embedReversal( editor ) {
 			}
 		} else {
 			// Else set the textarea content from store raw content
-			let content = PostEditStore.getRawContent();
+			let content = getEditorRawContent( store.getState() );
 			if ( ! includes( content, markup ) ) {
 				return;
 			}

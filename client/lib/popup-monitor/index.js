@@ -17,6 +17,12 @@ import Emitter from 'lib/mixins/emitter';
 function PopupMonitor() {
 	this.intervals = {};
 	this.monitorInterval = null;
+	this.windowInstance = null;
+	this.onMessage = messageEvent => {
+		if ( messageEvent.source === this.windowInstance ) {
+			this.emit( 'message', messageEvent.data );
+		}
+	};
 }
 
 /**
@@ -35,11 +41,12 @@ Emitter( PopupMonitor.prototype );
  * @public
  */
 PopupMonitor.prototype.open = function( url, name, specs ) {
-	let windowInstance;
 	name = name || Date.now();
 
-	windowInstance = window.open( url, name, specs );
-	this.startMonitoring( name, windowInstance );
+	this.windowInstance = window.open( url, name, specs );
+	this.startMonitoring( name, this.windowInstance );
+
+	window.addEventListener( 'message', this.onMessage, false );
 
 	return this;
 };
@@ -98,6 +105,7 @@ PopupMonitor.prototype.checkStatus = function() {
 	if ( 0 === Object.keys( this.intervals ).length ) {
 		clearInterval( this.monitorInterval );
 		delete this.monitorInterval;
+		window.removeEventListener( 'message', this.onMessage );
 	}
 };
 

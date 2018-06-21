@@ -136,4 +136,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Promotions ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( Promotions ) );

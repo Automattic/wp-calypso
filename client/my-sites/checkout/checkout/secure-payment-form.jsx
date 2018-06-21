@@ -24,13 +24,14 @@ import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
 import { setPayment } from 'lib/upgrades/actions';
-import { forPayments as countriesListForPayments } from 'lib/countries-list';
 import debugFactory from 'debug';
 import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
+import getCountries from 'state/selectors/get-countries';
+import QueryPaymentCountries from 'components/data/query-countries/payments';
 
 /**
  * Module variables
@@ -43,6 +44,7 @@ const SecurePaymentForm = createReactClass( {
 	mixins: [ TransactionStepsMixin ],
 
 	propTypes: {
+		countriesList: PropTypes.array.isRequired,
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 		handleCheckoutExternalRedirect: PropTypes.func.isRequired,
 		products: PropTypes.object.isRequired,
@@ -225,11 +227,12 @@ const SecurePaymentForm = createReactClass( {
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
+				<QueryPaymentCountries />
 				<CreditCardPaymentBox
 					cards={ this.props.cards }
 					transaction={ this.props.transaction }
 					cart={ this.props.cart }
-					countriesList={ countriesListForPayments }
+					countriesList={ this.props.countriesList }
 					initialCard={ this.getInitialCard() }
 					selectedSite={ this.props.selectedSite }
 					onSubmit={ this.handlePaymentBoxSubmit }
@@ -251,10 +254,11 @@ const SecurePaymentForm = createReactClass( {
 				currentPaymentMethod="paypal"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
+				<QueryPaymentCountries />
 				<PayPalPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
-					countriesList={ countriesListForPayments }
+					countriesList={ this.props.countriesList }
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
@@ -274,10 +278,11 @@ const SecurePaymentForm = createReactClass( {
 				currentPaymentMethod={ paymentType }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
+				<QueryPaymentCountries />
 				<RedirectPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
-					countriesList={ countriesListForPayments }
+					countriesList={ this.props.countriesList }
 					selectedSite={ this.props.selectedSite }
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
@@ -404,8 +409,12 @@ const SecurePaymentForm = createReactClass( {
 	},
 } );
 
-export default connect( state => {
-	return {
-		presaleChatAvailable: isPresalesChatAvailable( state ),
-	};
-}, null )( localize( SecurePaymentForm ) );
+export default connect(
+	state => {
+		return {
+			countriesList: getCountries( state, 'payments' ),
+			presaleChatAvailable: isPresalesChatAvailable( state ),
+		};
+	},
+	null
+)( localize( SecurePaymentForm ) );

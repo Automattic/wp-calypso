@@ -43,11 +43,11 @@
 	}
 
 	& del {
-		background-color: lighten($alert-red, 20%);
+		background-color: lighten( $alert-red, 20% );
 		text-decoration: none;
 	}
 
 	& ins {
-		background-color: lighten($alert-green, 20%);
+		background-color: lighten( $alert-green, 20% );
 	}
 }

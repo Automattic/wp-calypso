@@ -26,7 +26,10 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
+import {
+	connectGoogleMyBusinessLocation,
+	connectGoogleMyBusinessAccount,
+} from 'state/google-my-business/actions';
 import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
@@ -58,10 +61,14 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
-	handleConnect = () => {
-		this.props.recordTracksEventWithLocationCounts(
-			'calypso_google_my_business_select_location_connect'
-		);
+	handleConnect = keyringConnection => {
+		const { siteId } = this.props;
+
+		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
+			this.props.recordTracksEventWithLocationCounts(
+				'calypso_google_my_business_select_location_connect'
+			);
+		} );
 	};
 
 	trackUseAnotherGoogleAccountClick = () => {
@@ -146,8 +153,12 @@ export default connect(
 	},
 	{
 		connectGoogleMyBusinessLocation,
+		connectGoogleMyBusinessAccount,
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [enhanceWithLocationCounts, enhanceWithSiteType] ),
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+			enhanceWithLocationCounts,
+			enhanceWithSiteType,
+		] ),
 		requestKeyringConnections,
 	}
 )( localize( GoogleMyBusinessSelectLocation ) );

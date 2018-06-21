@@ -83,16 +83,23 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         value="osso@buco.com"
       />
     </div>
+    <Connect(QueryCountries) />
     <div
       className="contact-details-form-fields__container phone"
     >
       <FormPhoneMediaInput
         additionalClasses="contact-details-form-fields__field"
         countriesList={
-          DomainRegistrationCountriesList {
-            "initialized": false,
-            "key": "DomainRegistrationCountriesList",
-          }
+          Array [
+            Object {
+              "code": "AU",
+              "name": "Australia",
+            },
+            Object {
+              "code": "BR",
+              "name": "Brazil",
+            },
+          ]
         }
         countryCode="US"
         disabled={false}
@@ -114,10 +121,16 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       <CountrySelect
         additionalClasses="contact-details-form-fields__field"
         countriesList={
-          DomainRegistrationCountriesList {
-            "initialized": false,
-            "key": "DomainRegistrationCountriesList",
-          }
+          Array [
+            Object {
+              "code": "AU",
+              "name": "Australia",
+            },
+            Object {
+              "code": "BR",
+              "name": "Brazil",
+            },
+          ]
         }
         disabled={false}
         errorMessage=""

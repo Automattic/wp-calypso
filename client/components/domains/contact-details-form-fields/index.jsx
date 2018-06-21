@@ -31,7 +31,6 @@ import FormFooter from 'my-sites/domains/domain-management/components/form-foote
 import FormButton from 'components/forms/form-button';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { countries } from 'components/phone-input/data';
-import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import formState from 'lib/form-state';
 import analytics from 'lib/analytics';
 import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
@@ -41,6 +40,8 @@ import GAppsFieldset from 'components/domains/contact-details-form-fields/custom
 import RegionAddressFieldsets from 'components/domains/contact-details-form-fields/custom-form-fieldsets/region-address-fieldsets';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
+import getCountries from 'state/selectors/get-countries';
+import QueryDomainCountries from 'components/data/query-countries/domains';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -70,6 +71,7 @@ export class ContactDetailsFormFields extends Component {
 				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
 			)
 		).isRequired,
+		countriesList: PropTypes.array.isRequired,
 		needsFax: PropTypes.bool,
 		getIsFieldDisabled: PropTypes.func,
 		onContactDetailsChange: PropTypes.func,
@@ -120,10 +122,14 @@ export class ContactDetailsFormFields extends Component {
 		this.shouldAutoFocusAddressField = false;
 	}
 
+	// `formState` forces multiple updates to `this.state`
+	// This is an attempt limit the redraws to only what we need.
 	shouldComponentUpdate( nextProps, nextState ) {
 		return (
+			nextState.phoneCountryCode !== this.state.phoneCountryCode ||
 			! isEqual( nextState.form, this.state.form ) ||
 			! isEqual( nextProps.labelTexts, this.props.labelTexts ) ||
+			! isEqual( nextProps.countriesList, this.props.countriesList ) ||
 			! isEqual( nextProps.hasCountryStates, this.props.hasCountryStates ) ||
 			( nextProps.needsFax !== this.props.needsFax ||
 				nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
@@ -371,10 +377,11 @@ export class ContactDetailsFormFields extends Component {
 					label: translate( 'Email' ),
 				} ) }
 
+				<QueryDomainCountries />
 				{ this.createField( 'phone', FormPhoneMediaInput, {
 					label: translate( 'Phone' ),
 					onChange: this.handlePhoneChange,
-					countriesList,
+					countriesList: this.props.countriesList,
 					countryCode: this.state.phoneCountryCode,
 					enableStickyCountry: false,
 				} ) }
@@ -389,7 +396,7 @@ export class ContactDetailsFormFields extends Component {
 					CountrySelect,
 					{
 						label: translate( 'Country' ),
-						countriesList,
+						countriesList: this.props.countriesList,
 					},
 					true
 				) }
@@ -462,6 +469,7 @@ export default connect( ( state, props ) => {
 			: false;
 	return {
 		countryCode,
+		countriesList: getCountries( state, 'domains' ),
 		hasCountryStates,
 	};
 } )( localize( ContactDetailsFormFields ) );

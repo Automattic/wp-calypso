@@ -50,8 +50,14 @@ function transformData( props ) {
 
 	return data.metricValues.map( metric => {
 		return metric.dimensionalValues.map( datum => {
+			const datumDate = new Date( datum.time );
+			/* lock date to midnight for all values to better align with ticks */
+			datumDate.setHours( 0 );
+			datumDate.setMinutes( 0 );
+			datumDate.setSeconds( 0 );
+			datumDate.setMilliseconds( 0 );
 			return {
-				date: Date.parse( datum.time ),
+				date: datumDate.getTime(),
 				value: datum.value || 0,
 			};
 		} );
@@ -161,8 +167,8 @@ class GoogleMyBusinessStatsChart extends Component {
 		if ( ! transformedData ) {
 			return (
 				<Fragment>
-					<PieChartPlaceholder title={ !! chartTitle } />
-					<PieChartLegendPlaceholder numLegendElements={ Object.keys( dataSeriesInfo ).length } />
+					<PieChartPlaceholder title={ chartTitle } />
+					<PieChartLegendPlaceholder dataSeriesInfo={ Object.values( dataSeriesInfo ) } />
 				</Fragment>
 			);
 		}
@@ -288,9 +294,6 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 	}
 }
-/* eslint-enable wpcalypso/jsx-classname-namespace */
-/* eslint-enable jsx-a11y/no-onchange */
-
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 /* eslint-enable jsx-a11y/no-onchange */
 

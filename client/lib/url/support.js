@@ -24,6 +24,7 @@ export const DESIGNATED_AGENT = `${ root }/designated-agent/`;
 export const DOMAIN_HELPER_PREFIX = `${ root }/domain-helper/?host=`;
 export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agreements/`;
 export const DOMAINS = `${ root }/domains`;
+export const DOMAIN_CONNECT = `${ root }/domain-connect`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_PENDING_CONFIRMATION = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#confirmation`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#pending`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#failed`;

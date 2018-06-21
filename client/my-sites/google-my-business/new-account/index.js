@@ -21,10 +21,11 @@ import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { dismissNudge } from 'blocks/google-my-business-stats-nudge/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
+import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
 
 class GoogleMyBusinessNewAccount extends Component {
 	static propTypes = {
@@ -50,10 +51,15 @@ class GoogleMyBusinessNewAccount extends Component {
 		);
 	};
 
-	handleConnect = () => {
-		this.props.recordTracksEventWithLocationCounts( 'calypso_google_my_business_new_account_connect' );
+	handleConnect = keyringConnection => {
+		const { siteId } = this.props;
 
-		page.redirect( `/google-my-business/${ this.props.siteSlug }` );
+		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
+			this.props.recordTracksEventWithLocationCounts(
+				'calypso_google_my_business_new_account_connect'
+			);
+			page.redirect( `/google-my-business/${ this.props.siteSlug }` );
+		} );
 	};
 
 	handleNoThanksClick = () => {
@@ -125,11 +131,16 @@ class GoogleMyBusinessNewAccount extends Component {
 
 export default connect(
 	state => ( {
+		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
+		connectGoogleMyBusinessAccount,
 		dismissNudge,
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [ enhanceWithLocationCounts, enhanceWithSiteType ] ),
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+			enhanceWithLocationCounts,
+			enhanceWithSiteType,
+		] ),
 	}
 )( localize( GoogleMyBusinessNewAccount ) );

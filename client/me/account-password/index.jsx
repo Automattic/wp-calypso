@@ -199,6 +199,10 @@ const AccountPassword = createReactClass( {
 	},
 } );
 
-export default compose( connect( null, { errorNotice, recordGoogleEvent } ), localize )(
-	AccountPassword
-);
+export default compose(
+	connect(
+		null,
+		{ errorNotice, recordGoogleEvent }
+	),
+	localize
+)( AccountPassword );

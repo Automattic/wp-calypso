@@ -82,4 +82,7 @@ const connectComponent = connect(
 	{ saveSettings }
 );
 
-export default flowRight( connectComponent, localize )( Settings );
+export default flowRight(
+	connectComponent,
+	localize
+)( Settings );

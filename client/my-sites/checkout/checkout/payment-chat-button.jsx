@@ -32,4 +32,7 @@ export class PaymentChatButton extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( PaymentChatButton ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( PaymentChatButton ) );

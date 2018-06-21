@@ -90,7 +90,9 @@ describe( 'index', () => {
 			VALUE = 'value',
 			state = { test: 3 },
 			store = createReducerStore( ( oldState, payload ) => {
-				const { action: { type, key } } = payload;
+				const {
+					action: { type, key },
+				} = payload;
 
 				if ( type === TEST ) {
 					return {

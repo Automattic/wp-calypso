@@ -6,14 +6,13 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { defer, noop } from 'lodash';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
-import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
 
 export default class extends React.Component {
@@ -29,8 +28,6 @@ export default class extends React.Component {
 
 	state = {
 		image: null,
-		onImageChange: noop,
-		showEditIcon: false,
 	};
 
 	componentDidMount() {
@@ -72,21 +69,8 @@ export default class extends React.Component {
 		} );
 
 		defer( () => {
-			if ( this.props.onImageChange ) {
-				// When used in Simple Payments button we only want to update the
-				// ID field of parent form instead of sending post actions bellow
-				if ( image && image.ID ) {
-					this.props.onImageChange( image.ID );
-					MediaActions.setLibrarySelectedItems( this.props.siteId, [ image ] );
-				}
-				return;
-			}
-
-			if ( image && image.ID !== this.props.itemId ) {
-				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				PostActions.edit( {
-					featured_image: image.ID,
-				} );
+			if ( this.props.onImageChange && image && image.ID ) {
+				this.props.onImageChange( image.ID );
 			}
 		} );
 	};

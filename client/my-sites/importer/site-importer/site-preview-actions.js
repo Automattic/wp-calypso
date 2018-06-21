@@ -1,10 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import request from 'superagent';
 import { noop } from 'lodash';
 
-const querymShotsEndpoint = ( options ) => {
+const querymShotsEndpoint = options => {
 	const maxRetries = options.maxRetries || 1;
 	const retryTimeout = options.retryTimeout || 1000;
 	const currentRetries = options.currentRetries || 0;
@@ -13,7 +14,7 @@ const querymShotsEndpoint = ( options ) => {
 	const resolve = options.resolve || noop;
 	const reject = options.reject || noop;
 
-	const mShotsEndpointUrl = `https://s0.wp.com/mshots/v1/${url}`;
+	const mShotsEndpointUrl = `https://s0.wp.com/mshots/v1/${ url }`;
 
 	if ( ! url ) {
 		// TODO translate
@@ -31,21 +32,21 @@ const querymShotsEndpoint = ( options ) => {
 				currentRetries < maxRetries
 			) {
 				// Still generating the preview or something failed in mShots
-				setTimeout( querymShotsEndpoint.bind( this, {
-					...options,
-					currentRetries: currentRetries + 1
-				} ), retryTimeout );
-			}
-			else if ( res.type === 'image/jpeg' ) {
+				setTimeout(
+					querymShotsEndpoint.bind( this, {
+						...options,
+						currentRetries: currentRetries + 1,
+					} ),
+					retryTimeout
+				);
+			} else if ( res.type === 'image/jpeg' ) {
 				// Successfully generated the preview
 				try {
 					resolve( window.URL.createObjectURL( res.xhr.response ) );
-				}
-				catch ( e ) {
+				} catch ( e ) {
 					resolve( mShotsEndpointUrl );
 				}
-			}
-			else {
+			} else {
 				reject();
 			}
 		} )

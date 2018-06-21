@@ -232,13 +232,17 @@ export class PluginMeta extends Component {
 			'advanced-database-cleaner',
 			'advanced-reset-wp',
 			'advanced-wp-reset',
+			'armember-membership',
 			'autoptimize',
 			'better-wp-security',
+			'cf7-pipedrive-integration',
 			'duplicator',
+			'extended-wp-reset',
 			'google-captcha',
 			'file-manager-advanced',
 			'file-manager',
 			'reset-wp',
+			'wd-youtube',
 			'wordpress-database-reset',
 			'wordpress-reset',
 			'wp-automatic',
@@ -268,16 +272,23 @@ export class PluginMeta extends Component {
 
 			// sql heavy
 			'another-wordpress-classifieds-plugin',
+			'leads',
 			'native-ads-adnow',
+			'ol_scrapes',
 			'page-visit-counter',
 			'post-views-counter',
 			'tokenad',
 			'top-10',
 			'wordpress-popular-posts',
 			'wp-cerber',
+			'wp-inject',
 			'wp-postviews',
+			'wp-rss-aggregator',
+			'wp-rss-feed-to-post',
+			'wp-rss-wordai',
 			'wp-statistics',
 			'wp-ulike',
+			'WPRobot5',
 
 			// security
 			'wordfence',
@@ -422,13 +433,13 @@ export class PluginMeta extends Component {
 									newPluginVersion: this.props.plugin.version,
 								},
 							}
-						)
+					  )
 					: i18n.translate( 'Version %(newPluginVersion)s is available for %(siteName)s', {
 							args: {
 								siteName: newVersions[ 0 ].title,
 								newPluginVersion: this.props.plugin.version,
 							},
-						} );
+					  } );
 			const noticeActionMessage =
 				newVersions.length > 1 ? i18n.translate( 'Update all' ) : i18n.translate( 'Update' );
 			return (

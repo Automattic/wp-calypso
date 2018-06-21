@@ -66,8 +66,9 @@ class OrderEvent extends Component {
 				icon: 'time',
 				content: (
 					<div>
-						{ translate( 'Label #%(labelNum)d refund requested (%(amount)s)', {
+						{ translate( '%(service)s label (#%(labelNum)d) refund requested (%(amount)s)', {
 							args: {
+								service: event.serviceName,
 								labelNum: event.labelIndex + 1,
 								amount: formatCurrency( event.amount, event.currency ),
 							},
@@ -83,8 +84,9 @@ class OrderEvent extends Component {
 				icon: 'refund',
 				content: (
 					<div>
-						{ translate( 'Label #%(labelNum)d refunded (%(amount)s)', {
+						{ translate( '%(service)s label (#%(labelNum)d) refunded (%(amount)s)', {
 							args: {
+								service: event.serviceName,
 								labelNum: event.labelIndex + 1,
 								amount: formatCurrency( event.amount, event.currency ),
 							},
@@ -100,7 +102,8 @@ class OrderEvent extends Component {
 				icon: 'cross-small',
 				content: (
 					<div>
-						{ translate( 'Label #%(labelNum)d refund rejected', {
+						{ translate( '%(service)s label (#%(labelNum)d) refund rejected', {
+							service: event.serviceName,
 							args: { labelNum: event.labelIndex + 1 },
 						} ) }
 					</div>

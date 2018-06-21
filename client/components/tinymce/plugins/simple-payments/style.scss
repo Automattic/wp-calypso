@@ -116,7 +116,7 @@
 		justify-content: center;
 		flex-direction: column;
 		background-color: $gray-light;
-		box-shadow: inset 0 0 0 1px lighten($gray, 25%);
+		box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
 		font-size: 14px;
 		overflow: hidden;
 
@@ -198,7 +198,7 @@
 	justify-content: center;
 	margin-bottom: 24px;
 	background-color: $gray-light;
-	box-shadow: inset 0 0 0 1px lighten($gray, 25%);
+	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
 
 	@include breakpoint( '>660px' ) {
 		flex: none;

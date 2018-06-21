@@ -80,9 +80,10 @@ function setup( io ) {
 			changedFiles = updateChangedCssFiles();
 			if ( 0 !== changedFiles.length ) {
 				debug( chalk.green( 'css reload' ) );
-				io
-					.of( '/css-hot-reload' )
-					.emit( 'css-hot-reload', { status: 'reload', changedFiles: changedFiles } );
+				io.of( '/css-hot-reload' ).emit( 'css-hot-reload', {
+					status: 'reload',
+					changedFiles: changedFiles,
+				} );
 			} else {
 				debug( chalk.green( 'css up to date' ) );
 				io.of( '/css-hot-reload' ).emit( 'css-hot-reload', { status: 'up-to-date' } );
@@ -90,9 +91,10 @@ function setup( io ) {
 		} else {
 			// 'make build-css' failed
 			debug( chalk.red( 'css build failed' ) );
-			io
-				.of( '/css-hot-reload' )
-				.emit( 'css-hot-reload', { status: 'build-failed', error: errors } );
+			io.of( '/css-hot-reload' ).emit( 'css-hot-reload', {
+				status: 'build-failed',
+				error: errors,
+			} );
 		}
 	}
 

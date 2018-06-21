@@ -121,4 +121,7 @@ const connectComponent = connect(
 	{ recordGoogleEvent: recordGoogleEventAction }
 );
 
-export default flowRight( connectComponent, localize )( StatsPeriodNavigation );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsPeriodNavigation );

@@ -1,3 +1,10 @@
+/** @format */
+
+/**
+ * Internal dependencies
+ */
+import { domForHtml } from 'lib/post-normalizer/utils';
+
 /**
  * Given a string, attempts to generate the equivalent HTMLElement
  *
@@ -11,9 +18,9 @@ export default function( string ) {
 	let wrapper;
 	if ( document.implementation && document.implementation.createHTMLDocument ) {
 		wrapper = document.implementation.createHTMLDocument( '' ).body;
-	} else if ( 'undefined' !== typeof DOMParser ) {
+	} else {
 		try {
-			return new DOMParser().parseFromString( string, 'text/html' ).body.firstChild;
+			return domForHtml( string ).firstChild;
 		} catch ( e ) {} // eslint-disable-line no-empty
 	}
 

@@ -46,7 +46,7 @@ class ZoneLockWarningNotice extends PureComponent {
 		isBlocked
 			? this.props.translate(
 					'This zone is currently being edited by another user. Try again in a moment.'
-				)
+			  )
 			: this.props.translate( 'You have reached the maximum idle limit. Refresh to continue.' );
 
 	render() {
@@ -67,4 +67,7 @@ const connectComponent = connect(
 	{ requestFeed, requestLock, requestZones, resetLock }
 );
 
-export default flowRight( connectComponent, localize )( ZoneLockWarningNotice );
+export default flowRight(
+	connectComponent,
+	localize
+)( ZoneLockWarningNotice );

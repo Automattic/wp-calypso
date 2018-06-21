@@ -168,4 +168,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ReviewReplyCreate ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ReviewReplyCreate ) );

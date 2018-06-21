@@ -13,27 +13,40 @@ import { isEqual } from 'lodash';
 import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
-import { requestSiteKeyrings, saveSiteKeyring } from 'state/site-keyrings/actions';
-import { getSiteKeyringsForService, isRequestingSiteKeyrings } from 'state/site-keyrings/selectors';
+import { requestSiteKeyrings } from 'state/site-keyrings/actions';
+import { isRequestingSiteKeyrings } from 'state/site-keyrings/selectors';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import getSiteUserConnectionsForGoogleMyBusiness from 'state/selectors/get-site-user-connections-for-google-my-business';
 import {
+	connectGoogleMyBusinessAccount,
 	connectGoogleMyBusinessLocation,
-	disconnectGoogleMyBusinessLocation,
+	disconnectAllGoogleMyBusinessAccounts,
 } from 'state/google-my-business/actions';
 
 export class GoogleMyBusiness extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
-		saveSiteKeyring: PropTypes.func,
 		saveRequests: PropTypes.object,
 		siteSettings: PropTypes.object,
+		connectGoogleMyBusinessAccount: PropTypes.func,
+		disconnectGoogleMyBusinessAccount: PropTypes.func,
 		deleteStoredKeyringConnection: PropTypes.func,
 	};
 
 	static defaultProps = {
 		...SharingService.defaultProps,
 		deleteStoredKeyringConnection: () => {},
+	};
+
+	externalAccessProvided = keyringConnectionId => {
+		if ( ! keyringConnectionId ) {
+			this.setState( {
+				isAwaitingConnections: false,
+				isConnecting: false,
+			} );
+			return;
+		}
+		this.props.connectGoogleMyBusinessAccount( this.props.siteId, keyringConnectionId );
 	};
 
 	// override `createOrUpdateConnection` to ignore connection update, this is only useful for publicize services
@@ -55,14 +68,9 @@ export class GoogleMyBusiness extends SharingService {
 	// override `removeConnection` to remove the keyring connection instead of the publicize one
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
-		this.props
-			.disconnectGoogleMyBusinessLocation(
-				this.props.siteId,
-				this.props.siteKeyrings[ 0 ].keyring_id
-			)
-			.finally( () => {
-				this.setState( { isDisconnecting: false } );
-			} );
+		this.props.disconnectAllGoogleMyBusinessAccounts( this.props.siteId ).finally( () => {
+			this.setState( { isDisconnecting: false } );
+		} );
 	};
 
 	componentWillMount() {
@@ -129,7 +137,6 @@ export default connectFor(
 	( state, props ) => ( {
 		...props,
 		availableExternalAccounts: getGoogleMyBusinessLocations( state, props.siteId ),
-		siteKeyrings: getSiteKeyringsForService( state, props.siteId, 'google_my_business' ),
 		requestingSiteKeyrings: isRequestingSiteKeyrings( state, props.siteId ),
 		saveRequests: state.siteSettings.saveRequests,
 		removableConnections: props.keyringConnections,
@@ -137,10 +144,10 @@ export default connectFor(
 		siteUserConnections: getSiteUserConnectionsForGoogleMyBusiness( state, props.siteId ),
 	} ),
 	{
+		connectGoogleMyBusinessAccount,
 		connectGoogleMyBusinessLocation,
-		disconnectGoogleMyBusinessLocation,
+		disconnectAllGoogleMyBusinessAccounts,
 		deleteStoredKeyringConnection,
 		requestSiteKeyrings,
-		saveSiteKeyring,
 	}
 );

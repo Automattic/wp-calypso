@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -30,7 +29,7 @@ const wpcom = wp.undocumented();
 
 class DomainConnectMapping extends React.Component {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};

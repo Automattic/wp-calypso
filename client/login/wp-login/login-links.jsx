@@ -207,4 +207,7 @@ const mapDispatch = {
 	resetMagicLoginRequestForm,
 };
 
-export default connect( mapState, mapDispatch )( localize( LoginLinks ) );
+export default connect(
+	mapState,
+	mapDispatch
+)( localize( LoginLinks ) );

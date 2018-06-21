@@ -68,4 +68,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, redirectToPo
 	},
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDeleteWarning ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CommentDeleteWarning ) );

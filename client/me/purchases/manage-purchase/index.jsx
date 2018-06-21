@@ -342,7 +342,7 @@ class ManagePurchase extends Component {
 
 	renderPlaceholder() {
 		return (
-			<div>
+			<Fragment>
 				<PurchaseSiteHeader isPlaceholder />
 				<Card className="manage-purchase__info is-placeholder">
 					<header className="manage-purchase__header">
@@ -362,7 +362,7 @@ class ManagePurchase extends Component {
 
 				<VerticalNavItem isPlaceholder />
 				<VerticalNavItem isPlaceholder />
-			</div>
+			</Fragment>
 		);
 	}
 
@@ -382,7 +382,7 @@ class ManagePurchase extends Component {
 		const siteDomain = purchase.domain;
 
 		return (
-			<div>
+			<Fragment>
 				<PurchaseSiteHeader siteId={ selectedSiteId } name={ siteName } domain={ siteDomain } />
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
@@ -412,7 +412,7 @@ class ManagePurchase extends Component {
 					selectedSite={ selectedSite }
 					purchase={ purchase }
 				/>
-			</div>
+			</Fragment>
 		);
 	}
 

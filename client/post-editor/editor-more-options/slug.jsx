@@ -28,10 +28,14 @@ class EditorMoreOptionsSlug extends PureComponent {
 	getPopoverLabel() {
 		const { translate, postType } = this.props;
 		if ( 'page' === postType ) {
-			return translate( 'The slug is the URL-friendly version of the page title.' );
+			return translate(
+				"The slug is the part of a web address that identifies a specific page within a site. It's often based on the page title."
+			);
 		}
 
-		return translate( 'The slug is the URL-friendly version of the post title.' );
+		return translate(
+			"The slug is the part of a web address that identifies a specific post within a site. It's often based on the post title."
+		);
 	}
 
 	render() {

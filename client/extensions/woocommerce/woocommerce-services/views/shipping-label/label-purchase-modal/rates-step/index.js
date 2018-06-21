@@ -126,7 +126,9 @@ const showCheckoutShippingInfo = props => {
 
 		return (
 			<div className="rates-step__shipping-info">
-				<Notice showDismiss={ false }>{ shippingInfo }</Notice>
+				<Notice status="is-info" showDismiss={ false }>
+					{ shippingInfo }
+				</Notice>
 			</div>
 		);
 	}
@@ -206,4 +208,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { toggleStep, updateRate }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( RatesStep ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( RatesStep ) );

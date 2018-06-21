@@ -68,7 +68,7 @@ class CurrentPlan extends Component {
 			? planConstObj.getTagline()
 			: translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
-				);
+			  );
 
 		return {
 			title: title,

@@ -270,7 +270,7 @@ export function normalizePostForState( post ) {
 			...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] ),
 		],
 		( memo, path ) => {
-			unset( memo, path.concat( 'meta' ) );
+			unset( memo, path.concat( 'meta', 'links' ) );
 			return memo;
 		},
 		normalizedPost
@@ -383,7 +383,7 @@ export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
 }
 
 export function isDateEqual( localDateEdit, savedDate ) {
-	return moment( localDateEdit ).isSame( savedDate );
+	return localDateEdit && moment( localDateEdit ).isSame( savedDate );
 }
 
 export function isStatusEqual( localStatusEdit, savedStatus ) {

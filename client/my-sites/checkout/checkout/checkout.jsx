@@ -70,6 +70,7 @@ import { getProductsList, isProductsListFetching } from 'state/products-list/sel
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class Checkout extends React.Component {
 	static propTypes = {
@@ -296,7 +297,13 @@ export class Checkout extends React.Component {
 
 	getCheckoutCompleteRedirectPath = () => {
 		let renewalItem;
-		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
+		const {
+			cart,
+			selectedSiteSlug,
+			transaction: {
+				step: { data: receipt },
+			},
+		} = this.props;
 		const domainReceiptId = get(
 			cartItems.getGoogleApps( cart ),
 			'[0].extra.receipt_for_domain',
@@ -364,7 +371,7 @@ export class Checkout extends React.Component {
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${
 					this.props.selectedFeature
-				}/${ selectedSiteSlug }/${ receiptId }`
+			  }/${ selectedSiteSlug }/${ receiptId }`
 			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	};
 
@@ -380,7 +387,9 @@ export class Checkout extends React.Component {
 			isDomainOnly,
 			reduxStore,
 			selectedSiteId,
-			transaction: { step: { data: receipt } },
+			transaction: {
+				step: { data: receipt },
+			},
 			translate,
 		} = this.props;
 		const redirectPath = this.getCheckoutCompleteRedirectPath();
@@ -599,6 +608,28 @@ export class Checkout extends React.Component {
 	}
 
 	render() {
+		const { plan, product, purchaseId, selectedFeature, selectedSiteSlug } = this.props;
+		let analyticsPath = '';
+		let analyticsProps = {};
+		if ( purchaseId && product ) {
+			analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
+			analyticsProps = { product, purchase_id: purchaseId, site: selectedSiteSlug };
+		} else if ( selectedFeature && plan ) {
+			analyticsPath = '/checkout/features/:feature/:site/:plan';
+			analyticsProps = { feature: selectedFeature, plan, site: selectedSiteSlug };
+		} else if ( selectedFeature && ! plan ) {
+			analyticsPath = '/checkout/features/:feature/:site';
+			analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
+		} else if ( product && ! purchaseId ) {
+			analyticsPath = '/checkout/:site/:product';
+			analyticsProps = { product, site: selectedSiteSlug };
+		} else if ( selectedSiteSlug ) {
+			analyticsPath = '/checkout/:site';
+			analyticsProps = { site: selectedSiteSlug };
+		} else {
+			analyticsPath = '/checkout/no-site';
+		}
+
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
@@ -607,6 +638,8 @@ export class Checkout extends React.Component {
 					<QueryProducts />
 					<QueryContactDetailsCache />
 					<QueryStoredCards />
+
+					<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 
 					{ this.content() }
 				</div>

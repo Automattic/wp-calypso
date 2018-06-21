@@ -46,7 +46,7 @@ const interceptConsole = ( consoleObject, updater ) => {
 				updater( buildState );
 			}
 
-			unwrapped( msg, ...args );
+			unwrapped.apply( console, [ msg, ...args ] );
 		};
 	} );
 };

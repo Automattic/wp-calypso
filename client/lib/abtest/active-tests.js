@@ -83,15 +83,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	mobilePlansTablesOnSignup: {
-		datestamp: '20180330',
-		variations: {
-			original: 50,
-			vertical: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
 	jetpackSignupGoogleTop: {
 		datestamp: '20180427',
 		variations: {
@@ -117,5 +108,13 @@ export default {
 			aboveFeatured: 50,
 		},
 		defaultVariation: 'belowFeatured',
+	},
+	staleCartNotice: {
+		datestamp: '20180618',
+		variations: {
+			siteDeservesBoost: 50,
+			cartAwaitingPayment: 50,
+		},
+		defaultVariation: 'siteDeservesBoost',
 	},
 };

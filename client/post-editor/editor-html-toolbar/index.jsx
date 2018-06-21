@@ -163,7 +163,9 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	splitEditorContent() {
-		const { content: { selectionEnd, selectionStart, value } } = this.props;
+		const {
+			content: { selectionEnd, selectionStart, value },
+		} = this.props;
 		return {
 			before: value.substring( 0, selectionStart ),
 			inner: value.substring( selectionStart, selectionEnd ),
@@ -205,7 +207,11 @@ export class EditorHtmlToolbar extends Component {
 
 	updateEditorContentFirefox( before, newContent, after ) {
 		const fullContent = before + newContent + after;
-		const { content, content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
+		const {
+			content,
+			content: { selectionEnd, value },
+			onToolbarChangeContent,
+		} = this.props;
 		this.props.content.value = fullContent;
 		content.focus();
 		document.execCommand( 'insertText', false, newContent );
@@ -216,7 +222,10 @@ export class EditorHtmlToolbar extends Component {
 
 	updateEditorContentIE11( before, newContent, after ) {
 		const fullContent = before + newContent + after;
-		const { content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
+		const {
+			content: { selectionEnd, value },
+			onToolbarChangeContent,
+		} = this.props;
 		this.props.content.value = fullContent;
 		onToolbarChangeContent( fullContent );
 		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
@@ -288,7 +297,9 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	insertHtmlTag( tag ) {
-		const { content: { selectionEnd, selectionStart } } = this.props;
+		const {
+			content: { selectionEnd, selectionStart },
+		} = this.props;
 		if ( selectionEnd === selectionStart ) {
 			this.isTagOpen( tag.name ) ? this.insertHtmlTagClose( tag ) : this.insertHtmlTagOpen( tag );
 		} else {
@@ -706,4 +717,7 @@ const mapDispatchToProps = {
 	settingsUpdate,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorHtmlToolbar ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( EditorHtmlToolbar ) );

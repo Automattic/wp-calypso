@@ -18,7 +18,7 @@ import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
 export class EbanxPaymentFields extends Component {
 	static propTypes = {
 		countryCode: PropTypes.string.isRequired,
-		countriesList: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		getErrorMessage: PropTypes.func.isRequired,
 		getFieldValue: PropTypes.func.isRequired,
 		handleFieldChange: PropTypes.func.isRequired,
@@ -86,7 +86,7 @@ export class EbanxPaymentFields extends Component {
 	render() {
 		const { translate, countriesList, countryCode } = this.props;
 		const { userSelectedPhoneCountryCode } = this.state;
-		const countryData = find( countriesList.get(), { code: countryCode } );
+		const countryData = find( countriesList, { code: countryCode } );
 		const countryName = countryData && countryData.name ? countryData.name : '';
 		const containerClassName = classNames(
 			'checkout__ebanx-payment-fields',

@@ -147,6 +147,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_COMPLETED,
 							timestamp: label.refund.refund_date,
+							serviceName: label.service_name,
 							labelIndex,
 							amount: parseFloat( label.refund.amount ) || label.refundable_amount,
 							currency: label.currency,
@@ -157,6 +158,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REJECTED,
 							timestamp: label.refund.refund_date,
+							serviceName: label.service_name,
 							labelIndex,
 						} );
 						break;
@@ -166,6 +168,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REQUESTED,
 							timestamp: label.refund.request_date,
+							serviceName: label.service_name,
 							labelIndex,
 							amount: parseFloat( label.refund.amount ) || label.refundable_amount,
 							currency: label.currency,

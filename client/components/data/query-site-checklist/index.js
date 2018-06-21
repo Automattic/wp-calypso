@@ -42,4 +42,7 @@ class QuerySiteChecklist extends Component {
 	}
 }
 
-export default connect( null, { requestSiteChecklist } )( QuerySiteChecklist );
+export default connect(
+	null,
+	{ requestSiteChecklist }
+)( QuerySiteChecklist );

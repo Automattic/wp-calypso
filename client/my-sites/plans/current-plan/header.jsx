@@ -49,10 +49,10 @@ export class CurrentPlanHeader extends Component {
 						{ hasAutoRenew && currentPlan.autoRenewDateMoment
 							? translate( 'Set to auto-renew on %s.', {
 									args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ),
-								} )
+							  } )
 							: translate( 'Expires on %s.', {
 									args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
-								} ) }
+							  } ) }
 					</span>
 					{ currentPlan.userIsOwner && (
 						<Button compact href={ managePurchase( selectedSite.slug, currentPlan.id ) }>

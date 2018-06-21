@@ -153,11 +153,11 @@ export class JetpackSignup extends Component {
 							'The email address "%(email)s" is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.',
 							{ args: { email: error.data.email } }
-						)
+					  )
 					: translate(
 							'The email address is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.'
-						);
+					  );
 
 			warningNotice( text, {
 				button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,
@@ -229,10 +229,13 @@ export class JetpackSignup extends Component {
 		);
 	}
 }
-export default connect( null, {
-	createAccount: createAccountAction,
-	createSocialAccount: createSocialAccountAction,
-	errorNotice: errorNoticeAction,
-	warningNotice: warningNoticeAction,
-	recordTracksEvent: recordTracksEventAction,
-} )( localize( JetpackSignup ) );
+export default connect(
+	null,
+	{
+		createAccount: createAccountAction,
+		createSocialAccount: createSocialAccountAction,
+		errorNotice: errorNoticeAction,
+		warningNotice: warningNoticeAction,
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( localize( JetpackSignup ) );

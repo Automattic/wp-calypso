@@ -11,6 +11,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
+const threadLoader = require( 'thread-loader' );
 
 /**
  * Internal dependencies
@@ -75,6 +76,8 @@ const babelLoader = {
 	},
 };
 
+threadLoader.warmup( {}, [ 'babel-loader' ] );
+
 const webpackConfig = {
 	devtool: 'source-map',
 	entry: './index.js',
@@ -102,13 +105,7 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				use: [
-					{
-						loader: 'thread-loader',
-						options: { workers: 3 },
-					},
-					babelLoader,
-				],
+				use: [ 'thread-loader', babelLoader ],
 			},
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,

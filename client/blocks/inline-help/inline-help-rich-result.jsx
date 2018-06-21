@@ -27,6 +27,9 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSearchQuery } from 'state/inline-help/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
+const amendYouTubeLink = ( link = '' ) =>
+	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
+
 class InlineHelpRichResult extends Component {
 	static propTypes = {
 		result: PropTypes.object,
@@ -95,7 +98,7 @@ class InlineHelpRichResult extends Component {
 		const { translate, result } = this.props;
 		const title = get( result, RESULT_TITLE );
 		const description = get( result, RESULT_DESCRIPTION );
-		const link = get( result, RESULT_LINK );
+		const link = amendYouTubeLink( get( result, RESULT_LINK ) );
 		const classes = classNames( 'inline-help__richresult__title' );
 		return (
 			<div>
@@ -124,4 +127,7 @@ const mapDispatchToProps = {
 	requestGuidedTour,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( InlineHelpRichResult ) );

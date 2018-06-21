@@ -306,4 +306,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 const mapDispatchToProps = {
 	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 };
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ThemeShowcase ) );

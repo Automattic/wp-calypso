@@ -639,4 +639,10 @@ const mapDispatch = {
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 };
 
-export default flow( localize, connect( mapState, mapDispatch ) )( Page );
+export default flow(
+	localize,
+	connect(
+		mapState,
+		mapDispatch
+	)
+)( Page );

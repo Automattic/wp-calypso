@@ -404,7 +404,7 @@ export const isEditedPostDirty = createSelector(
 		const post = getSitePost( state, siteId, postId );
 		const edits = getPostEdits( state, siteId, postId );
 
-		return some( edits, ( value, key ) => {
+		const editsDirty = some( edits, ( value, key ) => {
 			if ( key === 'type' ) {
 				return false;
 			}
@@ -437,8 +437,12 @@ export const isEditedPostDirty = createSelector(
 				! DEFAULT_NEW_POST_VALUES.hasOwnProperty( key ) || value !== DEFAULT_NEW_POST_VALUES[ key ]
 			);
 		} );
+
+		const { initial, current } = state.ui.editor.rawContent;
+		const rawContentDirty = initial !== current;
+		return editsDirty || rawContentDirty;
 	},
-	state => [ state.posts.queries, state.posts.edits ]
+	state => [ state.posts.queries, state.posts.edits, state.ui.editor.rawContent ]
 );
 
 /**

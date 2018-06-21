@@ -20,6 +20,7 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import EditorFeaturedImagePreviewContainer from 'post-editor/editor-featured-image/preview-container';
 import RemoveButton from 'components/remove-button';
 import { requestMediaItem } from 'state/media/actions';
+import MediaActions from 'lib/media/actions';
 
 class ProductImagePicker extends Component {
 	static propTypes = {
@@ -61,6 +62,12 @@ class ProductImagePicker extends Component {
 		this.props.input.onChange( false );
 	};
 
+	onImageChange = imageId => {
+		this.props.input.onChange( imageId );
+		// the action cares only about the ID -- that allows us to construct a 'valid' item
+		MediaActions.setLibrarySelectedItems( this.props.siteId, [ { ID: imageId } ] );
+	};
+
 	getImagePlaceholder() {
 		return (
 			<div
@@ -90,7 +97,7 @@ class ProductImagePicker extends Component {
 				<EditorFeaturedImagePreviewContainer
 					siteId={ siteId }
 					itemId={ this.props.input.value }
-					onImageChange={ this.props.input.onChange }
+					onImageChange={ this.onImageChange }
 					showEditIcon
 				/>
 				<RemoveButton onRemove={ this.removeCurrentImage } />
@@ -135,6 +142,7 @@ class ProductImagePicker extends Component {
 	}
 }
 
-export default connect( state => ( { siteId: getSelectedSiteId( state ) } ), { requestMediaItem } )(
-	localize( ProductImagePicker )
-);
+export default connect(
+	state => ( { siteId: getSelectedSiteId( state ) } ),
+	{ requestMediaItem }
+)( localize( ProductImagePicker ) );

@@ -119,4 +119,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, newStatus } 
 		),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ModerateComment ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ModerateComment ) );

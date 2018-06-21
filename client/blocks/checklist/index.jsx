@@ -107,4 +107,7 @@ export class Checklist extends Component {
 	}
 }
 
-export default connect( null, { loadTrackingTool } )( Checklist );
+export default connect(
+	null,
+	{ loadTrackingTool }
+)( Checklist );

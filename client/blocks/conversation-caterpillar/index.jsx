@@ -94,7 +94,11 @@ class ConversationCaterpillarComponent extends React.Component {
 
 		return (
 			<div className="conversation-caterpillar">
-				<div className="conversation-caterpillar__gravatars" onClick={ this.handleTickle }>
+				<div
+					className="conversation-caterpillar__gravatars"
+					onClick={ this.handleTickle }
+					aria-hidden="true"
+				>
 					{ map( displayedAuthors, ( author, index ) => {
 						let gravClasses = 'conversation-caterpillar__gravatar';
 						// If we have more than 5 gravs,
@@ -112,7 +116,6 @@ class ConversationCaterpillarComponent extends React.Component {
 								key={ author.email }
 								user={ author }
 								size={ 32 }
-								aria-hidden="true"
 							/>
 						);
 					} ) }
@@ -120,16 +123,19 @@ class ConversationCaterpillarComponent extends React.Component {
 				<button
 					className="conversation-caterpillar__count"
 					onClick={ this.handleTickle }
-					title={ translate(
-						'View %(count)s comment for this post',
-						'View %(count)s comments for this post',
-						{
-							count: +commentCount,
-							args: {
-								count: commentCount,
-							},
-						}
-					) }
+					title={
+						commentCount > 0 &&
+						translate(
+							'View %(count)s comment for this post',
+							'View %(count)s comments for this post',
+							{
+								count: +commentCount,
+								args: {
+									count: commentCount,
+								},
+							}
+						)
+					}
 				>
 					{ commentCount > 1 &&
 						uniqueAuthorsCount > 1 &&

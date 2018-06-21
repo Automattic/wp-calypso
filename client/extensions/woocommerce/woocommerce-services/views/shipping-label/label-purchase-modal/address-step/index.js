@@ -139,4 +139,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { toggleStep }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AddressStep ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( AddressStep ) );

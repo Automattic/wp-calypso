@@ -6,7 +6,7 @@
 	display: flex;
 	height: 51px; // same as .search
 	transition: 0.1s all linear;
-	z-index: z-index('root', '.search');
+	z-index: z-index( 'root', '.search' );
 
 	.button {
 		align-items: center;
@@ -45,7 +45,7 @@
 
 	// Use increased specificty to override default z-index for popovers
 	&.popover {
-		z-index: z-index('.popover', '.search-filters__popover');
+		z-index: z-index( '.popover', '.search-filters__popover' );
 	}
 
 	.popover__inner {
@@ -89,7 +89,7 @@
 	}
 
 	&.search-filters__tld-filter-bar--is-domain-management
-		.search-filters__tld-button:nth-child(n + 6) {
+		.search-filters__tld-button:nth-child( n + 6 ) {
 		display: none;
 	}
 
@@ -102,25 +102,25 @@
 			margin-bottom: 0.5em;
 		}
 
-		.search-filters__tld-button:nth-child(n + 7) {
+		.search-filters__tld-button:nth-child( n + 7 ) {
 			display: none;
 		}
 	}
 
 	@include breakpoint( '<800px' ) {
-		.search-filters__tld-button:nth-child(n + 5) {
+		.search-filters__tld-button:nth-child( n + 5 ) {
 			display: none;
 		}
 	}
 
 	@include breakpoint( '<660px' ) {
-		.search-filters__tld-button:nth-child(n + 4) {
+		.search-filters__tld-button:nth-child( n + 4 ) {
 			display: none;
 		}
 	}
 
 	@include breakpoint( '<480px' ) {
-		.search-filters__tld-button:nth-child(n + 2) {
+		.search-filters__tld-button:nth-child( n + 2 ) {
 			display: none;
 		}
 	}

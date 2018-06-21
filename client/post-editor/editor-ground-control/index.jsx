@@ -225,4 +225,7 @@ const mapDispatchToProps = {
 	recordCloseButtonClick: () => recordTracksEvent( 'calypso_editor_close_button_click' ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorGroundControl ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( EditorGroundControl ) );

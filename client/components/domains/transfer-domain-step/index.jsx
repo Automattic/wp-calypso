@@ -40,7 +40,7 @@ import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
-import { fetchDomains } from 'lib/upgrades/actions';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
 import { domainManagementTransferIn } from 'my-sites/domains/paths';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
@@ -243,7 +243,7 @@ class TransferDomainStep extends React.Component {
 
 		startInboundTransfer( selectedSite.ID, domain, authCode, ( error, result ) => {
 			if ( result ) {
-				fetchDomains( domain );
+				this.props.fetchSiteDomains( selectedSite.ID );
 				page( domainManagementTransferIn( selectedSite.slug, domain ) );
 			} else {
 				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
@@ -594,6 +594,7 @@ export default connect(
 	} ),
 	{
 		errorNotice,
+		fetchSiteDomains,
 		recordAddDomainButtonClickInTransferDomain,
 		recordFormSubmitInTransferDomain,
 		recordInputFocusInTransferDomain,

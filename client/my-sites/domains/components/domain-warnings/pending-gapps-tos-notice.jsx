@@ -285,8 +285,11 @@ const fixPendingEmailSiteNoticeClick = siteSlug =>
 		} )
 	);
 
-export default connect( null, {
-	fixPendingEmailSiteNoticeClick,
-	pendingAccountLogInClick,
-	showPendingAccountNotice,
-} )( localize( PendingGappsTosNotice ) );
+export default connect(
+	null,
+	{
+		fixPendingEmailSiteNoticeClick,
+		pendingAccountLogInClick,
+		showPendingAccountNotice,
+	}
+)( localize( PendingGappsTosNotice ) );

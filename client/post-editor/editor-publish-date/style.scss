@@ -17,14 +17,14 @@
 	width: 100%;
 
 	.editor-publish-date.is-open & {
-		z-index: z-index('root', '.editor-publish-date.is-open .editor-publish-date__wrapper');
+		z-index: z-index( 'root', '.editor-publish-date.is-open .editor-publish-date__wrapper' );
 	}
 }
 
 .editor-publish-date__header {
 	padding: 0 36px 0 16px;
-	height: #{ $option-height }px;
-	line-height: #{ $option-height }px;
+	height: #{$option-height}px;
+	line-height: #{$option-height}px;
 
 	color: $gray-dark;
 	font-size: 14px;
@@ -34,7 +34,7 @@
 	cursor: pointer;
 
 	.gridicon.editor-publish-date__header-icon {
-		margin-right: #{ ($side-margin / 2) }px;
+		margin-right: #{( $side-margin / 2 )}px;
 		vertical-align: text-bottom;
 	}
 
@@ -57,10 +57,10 @@
 		top: 11px;
 		right: 16px;
 		vertical-align: text-bottom;
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 		.editor-publish-date.is-open & {
-			transform: rotate(180deg);
+			transform: rotate( 180deg );
 		}
 	}
 
@@ -75,8 +75,8 @@
 .editor-publish-date__header-wrapper {
 	vertical-align: text-top;
 	display: inline-block;
-	line-height: #{ $option-height }px;
-	height: #{ $option-height }px;
+	line-height: #{$option-height}px;
+	height: #{$option-height}px;
 }
 
 .editor-publish-date__header-description {

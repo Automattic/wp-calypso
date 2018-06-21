@@ -95,6 +95,9 @@ class ClipboardButtonInputExport extends React.Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( ClipboardButtonInputExport ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( ClipboardButtonInputExport ) );

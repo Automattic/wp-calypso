@@ -84,7 +84,7 @@ class SiteOwnership extends Component {
 		return (
 			<Card>
 				<FormFieldset>
-					<FormLegend>{ translate( 'Connection owner' ) }</FormLegend>
+					<FormLegend>{ translate( 'Site owner' ) }</FormLegend>
 					{ this.renderConnectionDetails() }
 				</FormFieldset>
 			</Card>

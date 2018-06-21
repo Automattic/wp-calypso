@@ -34,7 +34,7 @@ export default class extends React.Component {
 				? {
 						title: i18n.translate( 'Social Login' ),
 						path: '/me/security/social-login',
-					}
+				  }
 				: null,
 			{
 				title: i18n.translate( 'Two-Step Authentication' ),
@@ -43,7 +43,7 @@ export default class extends React.Component {
 			{
 				title: config.isEnabled( 'signup/social-management' )
 					? // This was shortened from 'Connected Applications' due to space constraints.
-						i18n.translate( 'Connected Apps' )
+					  i18n.translate( 'Connected Apps' )
 					: i18n.translate( 'Connected Applications' ),
 				path: '/me/security/connected-applications',
 			},

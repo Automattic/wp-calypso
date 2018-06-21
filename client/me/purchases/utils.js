@@ -31,7 +31,9 @@ function canEditPaymentDetails( purchase ) {
 
 function getEditCardDetailsPath( siteSlug, purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
-		const { payment: { creditCard } } = purchase;
+		const {
+			payment: { creditCard },
+		} = purchase;
 
 		return editCardDetails( siteSlug, purchase.id, creditCard.id );
 	}

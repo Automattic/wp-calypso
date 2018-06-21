@@ -21,7 +21,10 @@ import { getLanguageSlugs } from 'lib/i18n-utils';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 
 const enhanceContextWithLogin = context => {
-	const { params: { flow, isJetpack, socialService, twoFactorAuthType }, path } = context;
+	const {
+		params: { flow, isJetpack, socialService, twoFactorAuthType },
+		path,
+	} = context;
 
 	context.cacheQueryKeys = [ 'client_id', 'signup_flow' ];
 
@@ -44,7 +47,9 @@ const enhanceContextWithLogin = context => {
 export const lang = `:lang(${ getLanguageSlugs().join( '|' ) })?`;
 
 export function login( context, next ) {
-	const { query: { client_id, redirect_to } } = context;
+	const {
+		query: { client_id, redirect_to },
+	} = context;
 
 	if ( client_id ) {
 		if ( ! redirect_to ) {

@@ -12,7 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import DetailsDialog from './label-details-modal';
@@ -37,18 +38,14 @@ class LabelItem extends Component {
 			return null;
 		}
 
-		const openDialog = e => {
-			e.preventDefault();
+		const openDialog = () => {
 			this.props.openRefundDialog( orderId, siteId, label.labelId );
 		};
 
 		return (
-			<span>
-				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<Button onClick={ openDialog } borderless className="shipping-label__button">
-					{ translate( 'Request refund' ) }
-				</Button>
-			</span>
+			<PopoverMenuItem onClick={ openDialog } icon="refund">
+				{ translate( 'Request refund' ) }
+			</PopoverMenuItem>
 		);
 	};
 
@@ -64,65 +61,61 @@ class LabelItem extends Component {
 
 		const { orderId, siteId, translate } = this.props;
 
-		const openDialog = e => {
-			e.preventDefault();
+		const openDialog = () => {
 			this.props.openReprintDialog( orderId, siteId, label.labelId );
 		};
 
 		return (
-			<span>
-				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<Button onClick={ openDialog } borderless className="shipping-label__button">
-					{ translate( 'Reprint' ) }
-				</Button>
-			</span>
+			<PopoverMenuItem onClick={ openDialog } icon="print">
+				{ translate( 'Reprint' ) }
+			</PopoverMenuItem>
 		);
 	};
 
 	renderLabelDetails = label => {
 		const { orderId, siteId, translate } = this.props;
 
-		const openDialog = e => {
-			e.preventDefault();
+		const openDialog = () => {
 			this.props.openDetailsDialog( orderId, siteId, label.labelId );
 		};
 
 		return (
-			<span>
-				<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<Button onClick={ openDialog } borderless className="shipping-label__button">
-					{ translate( 'View details' ) }
-				</Button>
-			</span>
+			<PopoverMenuItem onClick={ openDialog } icon="info-outline">
+				{ translate( 'View details' ) }
+			</PopoverMenuItem>
 		);
 	};
 
 	render() {
-		const { label, translate } = this.props;
+		const { siteId, orderId, label, translate } = this.props;
 
 		return (
 			<div key={ label.labelId } className="shipping-label__item">
 				<p className="shipping-label__item-detail">
-					<span>
-						{ translate( 'Label #%(labelIndex)s printed', {
-							args: {
-								labelIndex: label.labelIndex + 1,
-							},
-						} ) }
-					</span>
-					{ label.showDetails && this.renderLabelDetails( label ) }
+					{ translate( '%(service)s label (#%(labelIndex)d) printed', {
+						args: {
+							service: label.serviceName,
+							labelIndex: label.labelIndex + 1,
+						},
+					} ) }
+					{ label.showDetails && (
+						<span>
+							<EllipsisMenu position="bottom left">
+								{ this.renderLabelDetails( label ) }
+								{ this.renderRefund( label ) }
+								{ this.renderReprint( label ) }
+							</EllipsisMenu>
+							<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
+							<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
+							<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
+						</span>
+					) }
 				</p>
 				{ label.showDetails && (
 					<p className="shipping-label__item-tracking">
 						{ translate( 'Tracking #: {{trackingLink/}}', {
 							components: { trackingLink: <TrackingLink { ...label } /> },
 						} ) }
-					</p>
-				) }
-				{ label.showDetails && (
-					<p className="shipping-label__item-actions">
-						{ this.renderRefund( label ) }
-						{ this.renderReprint( label ) }
 					</p>
 				) }
 			</div>
@@ -143,4 +136,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch );
 };
 
-export default connect( null, mapDispatchToProps )( localize( LabelItem ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( LabelItem ) );

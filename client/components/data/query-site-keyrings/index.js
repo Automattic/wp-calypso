@@ -33,8 +33,8 @@ class QuerySiteKeyrings extends Component {
 		return { siteId: nextProps.siteId };
 	}
 
-	shouldComponentUpdate( nextProps, nextState ) {
-		return nextProps.siteId !== nextState.siteId;
+	shouldComponentUpdate( nextProps ) {
+		return this.state.siteId !== nextProps.siteId;
 	}
 
 	componentDidMount() {

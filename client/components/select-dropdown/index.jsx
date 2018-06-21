@@ -389,7 +389,7 @@ class SelectDropdown extends Component {
 					? this.focused
 					: findIndex( items, function( item ) {
 							return item.props.selected;
-						} );
+					  } );
 		}
 
 		const increment = direction === 'previous' ? -1 : 1;

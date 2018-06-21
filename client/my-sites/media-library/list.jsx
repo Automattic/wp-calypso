@@ -82,19 +82,16 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	getMediaItemStyle = index => {
-		let itemsPerRow = this.getItemsPerRow(),
-			isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale,
-			isLastInRow = 0 === ( index + 1 ) % itemsPerRow,
-			style,
-			marginValue;
-
-		style = {
+		const itemsPerRow = this.getItemsPerRow();
+		const isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale;
+		const isLastInRow = 0 === ( index + 1 ) % itemsPerRow;
+		const style = {
 			paddingBottom: this.props.rowPadding,
 			fontSize: this.props.mediaScale * 225,
 		};
 
 		if ( ! isFillingEntireRow && ! isLastInRow ) {
-			marginValue = ( 1 % this.props.mediaScale ) / ( itemsPerRow - 1 ) * 100 + '%';
+			const marginValue = ( ( 1 % this.props.mediaScale ) / ( itemsPerRow - 1 ) ) * 100 + '%';
 
 			const { isRtl } = this.props;
 
@@ -170,13 +167,12 @@ export class MediaLibraryList extends React.Component {
 		min( [ item.date.slice( 0, 10 ), moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
 
 	renderItem = item => {
-		let index = findIndex( this.props.media, { ID: item.ID } ),
-			selectedItems = this.props.mediaLibrarySelectedItems,
-			selectedIndex = findIndex( selectedItems, { ID: item.ID } ),
-			ref = this.getItemRef( item ),
-			showGalleryHelp;
+		const index = findIndex( this.props.media, { ID: item.ID } );
+		const selectedItems = this.props.mediaLibrarySelectedItems;
+		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
+		const ref = this.getItemRef( item );
 
-		showGalleryHelp =
+		const showGalleryHelp =
 			! this.props.single &&
 			selectedIndex !== -1 &&
 			selectedItems.length === 1 &&
@@ -199,9 +195,9 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	renderLoadingPlaceholders = () => {
-		let itemsPerRow = this.getItemsPerRow(),
-			itemsVisible = ( this.props.media || [] ).length,
-			placeholders = itemsPerRow - itemsVisible % itemsPerRow;
+		const itemsPerRow = this.getItemsPerRow();
+		const itemsVisible = ( this.props.media || [] ).length;
+		const placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
 
 		// We render enough placeholders to occupy the remainder of the row
 		return Array.apply( null, new Array( placeholders ) ).map( function( value, i ) {
@@ -240,7 +236,6 @@ export class MediaLibraryList extends React.Component {
 	}
 
 	render() {
-		let onFetchNextPage;
 		let getItemGroup = this.getItemGroup;
 		let getGroupLabel = this.getGroupLabel;
 
@@ -257,7 +252,7 @@ export class MediaLibraryList extends React.Component {
 			} );
 		}
 
-		onFetchNextPage = function() {
+		const onFetchNextPage = function() {
 			// InfiniteList passes its own parameter which would interfere
 			// with the optional parameters expected by mediaOnFetchNextPage
 			this.props.mediaOnFetchNextPage();

@@ -36,6 +36,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SELECT_NORMALIZED_ADDRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_ADDRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_UNVERIFIABLE_ADDRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE,
@@ -160,6 +161,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_ADDRESS_VALUE ] = (
 					[ name ]: value,
 				},
 				isNormalized: false,
+				isUnverifiable: false,
 				normalized: null,
 			},
 		},
@@ -243,6 +245,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED ] 
 				isNormalized: completed,
 				normalizationInProgress: false,
 				fieldErrors,
+				selectNormalized: ! fieldErrors,
 			},
 		},
 	};
@@ -274,6 +277,26 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_ADDRESS ] = ( state, { group 
 				selectNormalized: false,
 				normalized: null,
 				isNormalized: false,
+				isUnverifiable: false,
+			},
+		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_UNVERIFIABLE_ADDRESS ] = (
+	state,
+	{ group }
+) => {
+	return {
+		...state,
+		form: {
+			...state.form,
+			[ group ]: {
+				...state.form[ group ],
+				selectNormalized: false,
+				normalized: null,
+				isNormalized: false,
+				isUnverifiable: true,
 			},
 		},
 	};
@@ -943,7 +966,8 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_ERROR ] = ( state, 
 	if ( get( state, 'reprintDialog.labelId' ) !== labelId ) {
 		return state;
 	}
-	return { ...state,
+	return {
+		...state,
 		reprintDialog: {
 			labelId,
 			isFetching: false,

@@ -91,7 +91,10 @@ class CredsPermissionStep extends Component {
 	}
 }
 
-export default connect( null, {
-	autoConfigCredentials,
-	recordTracksEvent,
-} )( localize( CredsPermissionStep ) );
+export default connect(
+	null,
+	{
+		autoConfigCredentials,
+		recordTracksEvent,
+	}
+)( localize( CredsPermissionStep ) );

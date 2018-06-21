@@ -172,23 +172,30 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'normalizePostForState()', () => {
-		test( 'should deeply unset all meta', () => {
+		test( 'should deeply unset all meta links', () => {
 			const original = deepFreeze( {
 				ID: 814,
-				meta: {},
+				meta: {
+					links: {},
+					data: { autosave: true },
+				},
 				terms: {
 					category: {
 						meta: {
 							ID: 171,
 							name: 'meta',
-							meta: {},
+							meta: {
+								links: {},
+							},
 						},
 					},
 					post_tag: {
 						meta: {
 							ID: 171,
 							name: 'meta',
-							meta: {},
+							meta: {
+								links: {},
+							},
 						},
 					},
 				},
@@ -196,20 +203,26 @@ describe( 'utils', () => {
 					meta: {
 						ID: 171,
 						name: 'meta',
-						meta: {},
+						meta: {
+							links: {},
+						},
 					},
 				},
 				tags: {
 					meta: {
 						ID: 171,
 						name: 'meta',
-						meta: {},
+						meta: {
+							links: {},
+						},
 					},
 				},
 				attachments: {
 					14209: {
 						ID: 14209,
-						meta: {},
+						meta: {
+							links: {},
+						},
 					},
 				},
 			} );
@@ -218,17 +231,22 @@ describe( 'utils', () => {
 			expect( revised ).to.not.equal( original );
 			expect( revised ).to.eql( {
 				ID: 814,
+				meta: {
+					data: { autosave: true },
+				},
 				terms: {
 					category: {
 						meta: {
 							ID: 171,
 							name: 'meta',
+							meta: {},
 						},
 					},
 					post_tag: {
 						meta: {
 							ID: 171,
 							name: 'meta',
+							meta: {},
 						},
 					},
 				},
@@ -236,17 +254,20 @@ describe( 'utils', () => {
 					meta: {
 						ID: 171,
 						name: 'meta',
+						meta: {},
 					},
 				},
 				tags: {
 					meta: {
 						ID: 171,
 						name: 'meta',
+						meta: {},
 					},
 				},
 				attachments: {
 					14209: {
 						ID: 14209,
+						meta: {},
 					},
 				},
 			} );

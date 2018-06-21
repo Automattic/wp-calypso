@@ -109,4 +109,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { closePreview } )( SitePreview );
+export default connect(
+	mapStateToProps,
+	{ closePreview }
+)( SitePreview );

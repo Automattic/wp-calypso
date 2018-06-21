@@ -191,4 +191,7 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( SharingButtonsAppearance );
+export default flowRight(
+	connectComponent,
+	localize
+)( SharingButtonsAppearance );

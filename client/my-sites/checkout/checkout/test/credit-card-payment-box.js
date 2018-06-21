@@ -61,6 +61,9 @@ jest.mock( 'lib/cart-values', () => ( {
 	},
 } ) );
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 jest.useFakeTimers();
 
 describe( 'Credit Card Payment Box', () => {
@@ -68,7 +71,7 @@ describe( 'Credit Card Payment Box', () => {
 		cards: [],
 		transaction: {},
 		cart: {},
-		countriesList: {},
+		countriesList: [],
 		initialCard: {},
 		transactionStep: {},
 		onSubmit: noop,

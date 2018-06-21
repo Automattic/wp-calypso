@@ -157,6 +157,9 @@ class EditorMediaModalGallery extends React.Component {
 	}
 }
 
-export default connect( null, {
-	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-} )( localize( EditorMediaModalGallery ) );
+export default connect(
+	null,
+	{
+		onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+	}
+)( localize( EditorMediaModalGallery ) );

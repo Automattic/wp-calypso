@@ -27,7 +27,7 @@
 		}
 
 		.comment-navigation__bulk-count {
-			width: calc(100% - 70px);
+			width: calc( 100% - 70px );
 		}
 
 		.comment-navigation__close-bulk {
@@ -79,7 +79,7 @@
 	overflow: visible;
 
 	&.is-sticky .header-cake {
-		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 56px rgba(0, 0, 0, 0.075);
+		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	}
 }
 

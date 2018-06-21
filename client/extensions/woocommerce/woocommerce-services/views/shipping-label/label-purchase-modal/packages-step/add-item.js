@@ -52,7 +52,7 @@ const AddItemDialog = props => {
 			? translate( '%(item)s from {{pckg/}}', {
 					args: { item: item.name },
 					components: { pckg: getPackageNameElement( pckgId ) },
-				} )
+			  } )
 			: item;
 
 		const onChange = event =>
@@ -146,4 +146,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeAddItem, setAddedItem, addItems }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AddItemDialog ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( AddItemDialog ) );

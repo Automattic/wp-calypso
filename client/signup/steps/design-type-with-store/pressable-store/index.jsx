@@ -197,4 +197,7 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect( null, mapDispatchToProps )( localize( PressableStoreStep ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( PressableStoreStep ) );

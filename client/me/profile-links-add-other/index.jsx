@@ -139,7 +139,10 @@ class ProfileLinksAddOther extends React.Component {
 	}
 }
 
-export default connect( null, {
-	addUserProfileLinks,
-	recordGoogleEvent,
-} )( localize( ProfileLinksAddOther ) );
+export default connect(
+	null,
+	{
+		addUserProfileLinks,
+		recordGoogleEvent,
+	}
+)( localize( ProfileLinksAddOther ) );

@@ -200,7 +200,7 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 		site && site.name
 			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
 					args: { siteName: site.name },
-				} )
+			  } )
 			: translate( 'Failed to retrieve comments for your site' );
 
 	dispatch( errorNotice( error ) );
@@ -220,7 +220,7 @@ export const editComment = ( { dispatch, getState }, action ) => {
 					author: comment.authorDisplayName,
 					author_url: comment.authorUrl,
 					content: comment.commentContent,
-				}
+			  }
 			: comment;
 
 	dispatch(

@@ -119,7 +119,6 @@ describe( 'cart-coupon', () => {
 			expect( applyCoupon.mock.calls[ 0 ][ 0 ] ).toBe( 'CODE15' );
 		} );
 
-
 		test( 'Should disallow submission when form is currently being submitted', () => {
 			const component = shallow(
 				<CartCoupon

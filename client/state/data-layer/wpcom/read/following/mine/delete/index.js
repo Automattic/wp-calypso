@@ -19,7 +19,9 @@ import { getSiteName } from 'reader/get-helpers';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestUnfollow( { dispatch }, action ) {
-	const { payload: { feedUrl } } = action;
+	const {
+		payload: { feedUrl },
+	} = action;
 	dispatch(
 		http( {
 			method: 'POST',

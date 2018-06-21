@@ -41,7 +41,7 @@
 	}
 
 	.list-header {
-		background: lighten($gray, 35%);
+		background: lighten( $gray, 35% );
 	}
 
 	.list-header + .list-item {
@@ -70,7 +70,7 @@
 		pointer-events: none;
 		background: $white;
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten($gray, 25%);
+		background-color: lighten( $gray, 25% );
 		color: transparent;
 		cursor: default;
 		&::placeholder {

@@ -422,6 +422,7 @@ const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 		),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	localize( UrlSearch( CommentNavigation ) )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( UrlSearch( CommentNavigation ) ) );

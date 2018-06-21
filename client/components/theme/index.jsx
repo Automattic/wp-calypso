@@ -265,4 +265,7 @@ export class Theme extends Component {
 const mapStateToProps = null;
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Theme ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( Theme ) );

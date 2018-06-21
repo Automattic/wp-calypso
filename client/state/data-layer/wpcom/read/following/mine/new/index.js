@@ -17,7 +17,9 @@ import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/
 import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestFollow( { dispatch }, action ) {
-	const { payload: { feedUrl } } = action;
+	const {
+		payload: { feedUrl },
+	} = action;
 
 	dispatch(
 		http( {

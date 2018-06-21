@@ -223,7 +223,10 @@ class ReaderStream extends React.Component {
 	selectNextItem = () => {
 		// note that we grab the items directly from the stream because we don't want the transformed
 		// one with combined cards
-		const { streamKey, stream: { items } } = this.props;
+		const {
+			streamKey,
+			stream: { items },
+		} = this.props;
 
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey ) {
@@ -283,7 +286,11 @@ class ReaderStream extends React.Component {
 	selectPrevItem = () => {
 		// note that we grab the items directly from the stream because we don't want the transformed
 		// one with combined cards
-		const { streamKey, selectedPostKey, stream: { items } } = this.props;
+		const {
+			streamKey,
+			selectedPostKey,
+			stream: { items },
+		} = this.props;
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.

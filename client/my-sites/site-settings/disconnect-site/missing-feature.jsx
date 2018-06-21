@@ -65,7 +65,7 @@ class MissingFeature extends PureComponent {
 											text: this.state.tokens.map( this.normalizeToken ).sort(),
 										},
 										confirmHref
-									)
+								  )
 								: null
 						}
 						primary

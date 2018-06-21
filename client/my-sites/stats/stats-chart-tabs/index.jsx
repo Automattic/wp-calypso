@@ -337,4 +337,7 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( localize, connectComponent )( StatModuleChartTabs );
+export default flowRight(
+	localize,
+	connectComponent
+)( StatModuleChartTabs );

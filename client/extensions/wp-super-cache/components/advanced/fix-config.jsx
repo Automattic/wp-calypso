@@ -65,4 +65,7 @@ const connectComponent = connect(
 	{ restoreSettings }
 );
 
-export default flowRight( connectComponent, localize )( FixConfig );
+export default flowRight(
+	connectComponent,
+	localize
+)( FixConfig );

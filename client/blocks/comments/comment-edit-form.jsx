@@ -37,20 +37,6 @@ class PostCommentForm extends Component {
 		} );
 	}
 
-	componentDidUpdate() {
-		const commentTextNode = this.refs.commentText;
-
-		if ( ! commentTextNode ) {
-			return;
-		}
-
-		const commentText = this.getCommentText();
-		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
-		commentTextNode.style.height = commentText.length
-			? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px'
-			: null;
-	}
-
 	handleSubmit = event => {
 		event.preventDefault();
 		this.submit();
@@ -162,34 +148,31 @@ class PostCommentForm extends Component {
 		return (
 			<form className="comments__edit-form">
 				<fieldset>
-					<label>
-						<div className={ expandingAreaClasses }>
-							<pre>
-								<span>{ this.state.commentText }</span>
-								<br />
-							</pre>
-							<AutoDirection>
-								<PostCommentFormTextarea
-									value={ this.state.commentText }
-									onKeyUp={ this.handleKeyUp }
-									onKeyDown={ this.handleKeyDown }
-									onFocus={ this.handleFocus }
-									onBlur={ this.handleBlur }
-									onChange={ this.handleTextChange }
-									enableAutoFocus={ isReply }
-								/>
-							</AutoDirection>
-						</div>
-						<button
-							ref="commentButton"
-							className={ buttonClasses }
-							disabled={ this.state.commentText.length === 0 }
-							onClick={ this.handleSubmit }
-						>
-							{ translate( 'Send' ) }
-						</button>
-						{ this.renderError() }
-					</label>
+					<div className={ expandingAreaClasses }>
+						<pre>
+							<span>{ this.state.commentText }</span>
+							<br />
+						</pre>
+						<AutoDirection>
+							<PostCommentFormTextarea
+								value={ this.state.commentText }
+								onKeyUp={ this.handleKeyUp }
+								onKeyDown={ this.handleKeyDown }
+								onFocus={ this.handleFocus }
+								onBlur={ this.handleBlur }
+								onChange={ this.handleTextChange }
+								enableAutoFocus={ isReply }
+							/>
+						</AutoDirection>
+					</div>
+					<button
+						className={ buttonClasses }
+						disabled={ this.state.commentText.length === 0 }
+						onClick={ this.handleSubmit }
+					>
+						{ translate( 'Send' ) }
+					</button>
+					{ this.renderError() }
 				</fieldset>
 			</form>
 		);
@@ -212,4 +195,7 @@ PostCommentForm.defaultProps = {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { editComment }, dispatch );
 
-export default connect( null, mapDispatchToProps )( PostCommentForm );
+export default connect(
+	null,
+	mapDispatchToProps
+)( PostCommentForm );

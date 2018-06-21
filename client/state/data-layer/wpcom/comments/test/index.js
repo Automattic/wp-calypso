@@ -1,11 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
  * Internal dependencies
  */
 import {
@@ -34,7 +28,7 @@ describe( 'wpcom-api', () => {
 					postId: '1010',
 					query,
 				};
-				const dispatch = spy();
+				const dispatch = jest.fn();
 				const getState = () => ( {
 					comments: {
 						items: {
@@ -43,10 +37,10 @@ describe( 'wpcom-api', () => {
 					},
 				} );
 
-				fetchPostComments( { dispatch, getState }, action );
+				fetchPostComments( action )( dispatch, getState );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					http(
 						{
 							apiVersion: '1.1',
@@ -72,7 +66,7 @@ describe( 'wpcom-api', () => {
 					query,
 					direction: 'before',
 				};
-				const dispatch = spy();
+				const dispatch = jest.fn();
 				const getState = () => ( {
 					comments: {
 						items: {
@@ -86,10 +80,10 @@ describe( 'wpcom-api', () => {
 					},
 				} );
 
-				fetchPostComments( { dispatch, getState }, action );
+				fetchPostComments( action )( dispatch, getState );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					http(
 						{
 							apiVersion: '1.1',
@@ -108,7 +102,6 @@ describe( 'wpcom-api', () => {
 
 		describe( '#addComments', () => {
 			test( 'should dispatch a comments receive action', () => {
-				const dispatch = spy();
 				const action = {
 					siteId: 2916284,
 					postId: 1010,
@@ -119,10 +112,7 @@ describe( 'wpcom-api', () => {
 					found: -1,
 				};
 
-				addComments( { dispatch }, action, data );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( {
+				expect( addComments( action, data ) ).toEqual( {
 					type: COMMENTS_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
@@ -132,7 +122,6 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should dispatch a comments receive action and a count receive action when comments found', () => {
-				const dispatch = spy();
 				const action = {
 					siteId: 2916284,
 					postId: 1010,
@@ -143,10 +132,7 @@ describe( 'wpcom-api', () => {
 					found: 2,
 				};
 
-				addComments( { dispatch }, action, data );
-
-				expect( dispatch ).to.have.been.calledTwice;
-				expect( dispatch ).to.have.been.calledWith( {
+				expect( addComments( action, data ) ).toContainEqual( {
 					type: COMMENTS_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
@@ -154,7 +140,7 @@ describe( 'wpcom-api', () => {
 					direction: 'before',
 				} );
 
-				expect( dispatch ).to.have.been.calledWith( {
+				expect( addComments( action, data ) ).toContainEqual( {
 					type: COMMENTS_COUNT_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
@@ -166,7 +152,7 @@ describe( 'wpcom-api', () => {
 		describe( 'commentsFromApi', () => {
 			test( 'should decode author name entities', () => {
 				const comments = [ { author: { name: 'joe' } }, { author: { name: '&#9829;' } } ];
-				expect( commentsFromApi( comments ) ).eql( [
+				expect( commentsFromApi( comments ) ).toEqual( [
 					{ author: { name: 'joe' } },
 					{ author: { name: '♥' } },
 				] );
@@ -175,51 +161,46 @@ describe( 'wpcom-api', () => {
 
 		describe( '#announceFailure', () => {
 			test( 'should dispatch an error notice', () => {
-				const dispatch = spy();
+				const dispatch = jest.fn();
 				const getState = () => ( {
 					posts: {
 						queries: {},
 					},
 				} );
 
-				announceFailure( { dispatch, getState }, { siteId: 2916284, postId: 1010 } );
+				announceFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-error',
-						text: 'Could not retrieve comments for requested post',
-					},
-				} );
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						type: NOTICE_CREATE,
+						notice: expect.objectContaining( {
+							status: 'is-error',
+							text: 'Could not retrieve comments for requested post',
+						} ),
+					} )
+				);
 			} );
 		} );
 
 		describe( '#handleDeleteSuccess', () => {
 			test( 'should not do anything when no options are set', () => {
-				const dispatch = spy();
-				handleDeleteSuccess( { dispatch }, {} );
-				expect( dispatch ).to.not.have.been.called;
+				expect( handleDeleteSuccess( {} ) ).toEqual( [] );
 			} );
 
 			test( 'should show a success notice if the related option is set', () => {
-				const dispatch = spy();
-				handleDeleteSuccess( { dispatch }, { options: { showSuccessNotice: true } } );
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWithMatch( {
+				expect( handleDeleteSuccess( { options: { showSuccessNotice: true } } ) ).toContainEqual( {
 					type: NOTICE_CREATE,
-					notice: {
+					notice: expect.objectContaining( {
 						status: 'is-success',
 						text: 'Comment deleted permanently.',
-					},
+					} ),
 				} );
 			} );
 
 			test( 'should request a fresh copy of a comments page when the query object is filled', () => {
-				const dispatch = spy();
-				handleDeleteSuccess(
-					{ dispatch },
-					{
+				expect(
+					handleDeleteSuccess( {
 						options: { showSuccessNotice: true },
 						refreshCommentListQuery: {
 							listType: 'site',
@@ -229,10 +210,8 @@ describe( 'wpcom-api', () => {
 							status: 'all',
 							type: 'any',
 						},
-					}
-				);
-				expect( dispatch ).to.have.been.calledTwice;
-				expect( dispatch.lastCall ).to.have.been.calledWithExactly( {
+					} )
+				).toContainEqual( {
 					type: 'COMMENTS_LIST_REQUEST',
 					query: {
 						listType: 'site',

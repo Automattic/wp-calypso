@@ -59,7 +59,7 @@ module.exports = {
 		// - url because we use it all over the place to parse and build urls
 		// - events because we use it for some event emitters
 		// - path because we use it quite a bit
-		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path' ] } ],
+		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
 
 		// Disallow importing or requiring packages that are not listed in package.json
 		// This prevents us from depending on transitive dependencies, which could break in unexpected ways.

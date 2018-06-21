@@ -161,4 +161,7 @@ const connectComponent = connect( ( state, { page, perPage } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatModuleFollowersPage );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatModuleFollowersPage );

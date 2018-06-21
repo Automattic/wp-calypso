@@ -355,4 +355,7 @@ WebPreviewContent.defaultProps = {
 	isModalWindow: false,
 };
 
-export default connect( null, { recordTracksEvent } )( localize( WebPreviewContent ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( WebPreviewContent ) );

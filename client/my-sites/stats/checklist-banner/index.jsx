@@ -152,7 +152,7 @@ export class ChecklistBanner extends Component {
 	render() {
 		const { completed, total, translate, siteId } = this.props;
 		const task = this.getNextTask();
-		const percentage = Math.round( completed / total * 100 ) || 0;
+		const percentage = Math.round( ( completed / total ) * 100 ) || 0;
 
 		if ( ! this.canShow() ) {
 			return null;
@@ -229,4 +229,7 @@ const mapDispatchToProps = {
 	requestTour: requestGuidedTour,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistBanner ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ChecklistBanner ) );

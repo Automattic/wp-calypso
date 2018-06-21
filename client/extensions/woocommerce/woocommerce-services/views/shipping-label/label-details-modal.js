@@ -104,4 +104,7 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeDetailsDialog }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( DetailsDialog ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( DetailsDialog ) );
