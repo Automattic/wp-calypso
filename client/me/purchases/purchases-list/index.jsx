@@ -65,6 +65,7 @@ class PurchasesList extends Component {
 								this.props.recordTracksEvent( 'calypso_purchases_concierge_banner_click' );
 							} }
 							compact={ false }
+							illustration="/calypso/images/illustrations/illustration-start.svg"
 						/>
 					) }
 

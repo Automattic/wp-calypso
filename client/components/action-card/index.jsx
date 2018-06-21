@@ -24,8 +24,16 @@ const ActionCard = ( {
 	buttonOnClick,
 	children,
 	compact = true,
+	illustration,
 } ) => (
 	<Card className="action-card" compact={ compact }>
+		{ illustration && (
+			<img
+				className="action-card__illustration"
+				alt="concierge session signup form header"
+				src={ illustration }
+			/>
+		) }
 		<div className="action-card__main">
 			<h2 className="action-card__heading">{ headerText }</h2>
 			<p>{ mainText }</p>
@@ -56,6 +64,7 @@ ActionCard.propTypes = {
 	buttonTarget: PropTypes.string,
 	children: PropTypes.any,
 	compact: PropTypes.bool,
+	illustration: PropTypes.string,
 };
 
 export default ActionCard;

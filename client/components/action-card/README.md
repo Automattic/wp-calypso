@@ -85,3 +85,10 @@ Button onClick handler
   - **Default:** `true`
 
 Determines whether or not this is a compact card
+
+### `illustration`
+  - **Type:** `String`
+  - **Required:** `no`
+  - **Default:** `undefined`
+
+An illustration to show on the card
