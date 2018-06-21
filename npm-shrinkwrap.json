@@ -19087,9 +19087,9 @@
       }
     },
     "superagent": {
-      "version": "2.1.0",
-      "resolved": "https://registry.npmjs.org/superagent/-/superagent-2.1.0.tgz",
-      "integrity": "sha1-cfOYNnx1jyFlysb9kI1JwrmpFxo=",
+      "version": "2.3.0",
+      "resolved": "https://registry.npmjs.org/superagent/-/superagent-2.3.0.tgz",
+      "integrity": "sha1-cDUpoHFOV+EjlZ3e+84ZOy5Q0RU=",
       "requires": {
         "component-emitter": "^1.2.0",
         "cookiejar": "^2.0.6",
