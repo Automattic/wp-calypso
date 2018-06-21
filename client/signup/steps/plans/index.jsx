@@ -16,7 +16,9 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getSiteBySlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
@@ -83,7 +85,7 @@ class PlansStep extends Component {
 	};
 
 	plansFeaturesList() {
-		const { hideFreePlan, selectedSite } = this.props;
+		const { hideFreePlan, isDomainOnly, selectedSite } = this.props;
 
 		return (
 			<div>
@@ -103,6 +105,7 @@ class PlansStep extends Component {
 				   * unless we've already selected an option that implies a paid plan.
 				   * This is in particular true for domain names. */
 				hideFreePlan &&
+					! isDomainOnly &&
 					! this.getDomainName() && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
 			</div>
 		);
@@ -151,5 +154,6 @@ export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
 	// This step could be used to set up an existing site, in which case
 	// some descendants of this component may display discounted prices if
 	// they apply to the given site.
+	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 } ) )( localize( PlansStep ) );
