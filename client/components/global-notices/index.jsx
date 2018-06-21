@@ -6,7 +6,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import debugModule from 'debug';
 
 /**
  * Internal Dependencies
@@ -19,8 +18,6 @@ import observe from 'lib/mixins/data-observe';
 import { connect } from 'react-redux';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
-
-const debug = debugModule( 'calypso:notices' );
 
 // eslint-disable-next-line react/prefer-es6-class
 export const NoticesList = createReactClass( {
@@ -42,10 +39,6 @@ export const NoticesList = createReactClass( {
 			id: 'overlay-notices',
 			notices: Object.freeze( [] ),
 		};
-	},
-
-	componentWillMount() {
-		debug( 'Mounting Global Notices React component.' );
 	},
 
 	removeNoticeStoreNotice: notice => () => {
