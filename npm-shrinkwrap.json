@@ -9436,9 +9436,9 @@
       "integrity": "sha1-xg7taebY/bazEEofy8ocGS3FtQE="
     },
     "ignore": {
-      "version": "3.3.8",
-      "resolved": "https://registry.npmjs.org/ignore/-/ignore-3.3.8.tgz",
-      "integrity": "sha512-pUh+xUQQhQzevjRHHFqqcTy0/dP/kS9I8HSrUydhihjuD09W6ldVWFtIrwhXdUJHis3i2rZNqEHpZH/cbinFbg=="
+      "version": "3.3.10",
+      "resolved": "https://registry.npmjs.org/ignore/-/ignore-3.3.10.tgz",
+      "integrity": "sha512-Pgs951kaMm5GXP7MOvxERINe3gsaVjUWFm+UZPSq9xYriQAksyhg0csnS0KXSNRD5NmNdapXEpjxG49+AKh/ug=="
     },
     "immediate": {
       "version": "3.0.6",
