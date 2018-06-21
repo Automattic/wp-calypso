@@ -41,6 +41,7 @@
 		"jetpack/checklist": true,
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
+		"jetpack/ownership-change": true,
 		"jitms": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,
