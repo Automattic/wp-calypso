@@ -26,6 +26,7 @@ import { changeOwner } from 'state/jetpack/connection/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import isJetpackSiteConnected from 'state/selectors/is-jetpack-site-connected';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
@@ -57,7 +58,12 @@ class SiteOwnership extends Component {
 
 		accept(
 			translate( 'Are you sure you want to transfer ownership?' ),
-			accepted => accepted && this.props.changeOwner( this.props.siteId, user.ID, user.name ),
+			accepted => {
+				if ( accepted ) {
+					this.props.changeOwner( this.props.siteId, user.ID, user.name );
+					this.props.recordTracksEvent( 'calypso_jetpack_connection_ownership_changed' );
+				}
+			},
 			translate( 'Transfer ownership' ),
 			translate( 'Keep ownership' ),
 			{ isScary: true }
@@ -161,5 +167,5 @@ export default connect(
 			userIsMaster: isJetpackUserMaster( state, siteId ),
 		};
 	},
-	{ changeOwner }
+	{ changeOwner, recordTracksEvent }
 )( localize( SiteOwnership ) );
