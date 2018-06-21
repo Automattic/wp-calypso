@@ -61,6 +61,7 @@ class PurchasesList extends Component {
 							buttonHref="/me/concierge"
 							buttonTarget={ null }
 							buttonOnClick={ null }
+							compact={ false }
 						/>
 					) }
 
