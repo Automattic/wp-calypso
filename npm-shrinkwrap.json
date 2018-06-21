@@ -20541,11 +20541,11 @@
       }
     },
     "walk": {
-      "version": "2.3.4",
-      "resolved": "https://registry.npmjs.org/walk/-/walk-2.3.4.tgz",
-      "integrity": "sha1-Bs4VQVNTE+iswo6S60Jem2T0xQA=",
+      "version": "2.3.13",
+      "resolved": "https://registry.npmjs.org/walk/-/walk-2.3.13.tgz",
+      "integrity": "sha512-78SMe7To9U7kqVhSoGho3GfspA089ZDBIj2f8jElg2hi6lUCoagtDJ8sSMFNlpAh5Ib8Jt1gQ6Y7gh9mzHtFng==",
       "requires": {
-        "foreachasync": "3.x"
+        "foreachasync": "^3.0.0"
       }
     },
     "walker": {
