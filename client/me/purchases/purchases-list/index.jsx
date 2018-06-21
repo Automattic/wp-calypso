@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import ActionCard from 'components/action-card';
 import CompactCard from 'components/card';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
@@ -45,16 +46,33 @@ class PurchasesList extends Component {
 		}
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
-			content = getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
-				<PurchasesSite
-					key={ site.id }
-					siteId={ site.id }
-					name={ site.name }
-					domain={ site.domain }
-					slug={ site.slug }
-					purchases={ site.purchases }
-				/>
-			) );
+			content = (
+				<div>
+					<ActionCard
+						headerText={ this.props.translate( 'Looking for Expert Help?' ) }
+						mainText={ this.props.translate(
+							'Shedule your free 1-1 concierge session with a Happiness Engineer today and get 30 minutes dedicated to the success of your site!'
+						) }
+						buttonText="Get Started"
+						buttonIcon={ null }
+						buttonPrimary={ true }
+						buttonHref="/me/concierge"
+						buttonTarget={ null }
+						buttonOnClick={ null }
+					/>
+
+					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
+						<PurchasesSite
+							key={ site.id }
+							siteId={ site.id }
+							name={ site.name }
+							domain={ site.domain }
+							slug={ site.slug }
+							purchases={ site.purchases }
+						/>
+					) ) }
+				</div>
+			);
 		}
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
