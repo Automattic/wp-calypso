@@ -412,7 +412,7 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
-	renderGAppFieldset() {
+	renderGAppsFieldset() {
 		const countryCode = this.getCountryCode();
 		return (
 			<div className="contact-details-form-fields__g-apps g-apps-fieldset">
@@ -445,7 +445,7 @@ export class ContactDetailsFormFields extends Component {
 				} ) }
 
 				{ this.props.needsOnlyGoogleAppsDetails
-					? this.renderGAppFieldset()
+					? this.renderGAppsFieldset()
 					: this.renderContactDetailsFields() }
 
 				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
