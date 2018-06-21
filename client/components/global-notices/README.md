@@ -32,13 +32,15 @@ It's unlikely you'll need to render GlobalNotices, because that will be handled 
 Rendering GlobalNotices is straightforward:
 
 ```js
-import GlobalNotices from 'components/global-notices'
+import GlobalNotices from 'components/global-notices';
 
-function Layout () => (
-  <div>
-    <GlobalNotices />
-  </div>
-);
+function Layout() {
+  return (
+    <div>
+      <GlobalNotices />
+    </div>
+  );
+}
 ```
 
 Unlike other components, Global Notices aren't implemented by referencing a specific component. Instead you call a function which creates the notice.
