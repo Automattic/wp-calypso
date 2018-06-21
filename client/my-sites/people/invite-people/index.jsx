@@ -45,7 +45,7 @@ import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-mod
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
  * Module variables
@@ -87,7 +87,7 @@ class InvitePeople extends React.Component {
 
 		if ( sendInvitesSuccess ) {
 			this.setState( this.resetState() );
-			this.props.recordTracksEvent( 'calypso_invite_people_form_refresh_initial' );
+			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_initial' );
 			debug( 'Submit successful. Resetting form.' );
 		} else {
 			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId ),
@@ -105,7 +105,7 @@ class InvitePeople extends React.Component {
 			debug( 'Submit errored. Updating state to:  ' + JSON.stringify( updatedState ) );
 
 			this.setState( updatedState );
-			this.props.recordTracksEvent( 'calypso_invite_people_form_refresh_retry' );
+			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_retry' );
 		}
 	};
 
@@ -135,9 +135,9 @@ class InvitePeople extends React.Component {
 		createInviteValidation( this.props.siteId, filteredTokens, role );
 
 		if ( filteredTokens.length > usernamesOrEmails.length ) {
-			this.props.recordTracksEvent( 'calypso_invite_people_token_added' );
+			this.props.recordTracksEventAction( 'calypso_invite_people_token_added' );
 		} else {
-			this.props.recordTracksEvent( 'calypso_invite_people_token_removed' );
+			this.props.recordTracksEventAction( 'calypso_invite_people_token_removed' );
 		}
 	};
 
@@ -148,21 +148,6 @@ class InvitePeople extends React.Component {
 		this.setState( { role } );
 		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
 	};
-
-	onFocusTokenField = () =>
-		this.props.recordTracksEvent( 'calypso_invite_people_token_field_focus' );
-
-	onFocusRoleSelect = () =>
-		this.props.recordTracksEvent( 'calypso_invite_people_role_select_focus' );
-
-	onFocusCustomMessage = () =>
-		this.props.recordTracksEvent( 'calypso_invite_people_custom_message_focus' );
-
-	onClickSendInvites = () =>
-		this.props.recordTracksEvent( 'calypso_invite_people_send_invite_button_click' );
-
-	onClickRoleExplanation = () =>
-		this.props.recordTracksEvent( 'calypso_invite_people_role_explanation_link_click' );
 
 	refreshValidation = () => {
 		const errors =
@@ -178,7 +163,7 @@ class InvitePeople extends React.Component {
 		} );
 
 		if ( errorsKeys.length ) {
-			this.props.recordTracksEvent( 'calypso_invite_people_validation_refreshed_with_error' );
+			this.props.recordTracksEventAction( 'calypso_invite_people_validation_refreshed_with_error' );
 		}
 	};
 
@@ -233,7 +218,7 @@ class InvitePeople extends React.Component {
 			return includes( invitee, '@' ) ? 'email' : 'username';
 		} );
 
-		this.props.recordTracksEvent( 'calypso_invite_people_form_submit', {
+		this.props.recordTracksEventAction( 'calypso_invite_people_form_submit', {
 			role,
 			number_invitees: usernamesOrEmails.length,
 			number_username_invitees: groupedInvitees.username ? groupedInvitees.username.length : 0,
@@ -278,13 +263,13 @@ class InvitePeople extends React.Component {
 	};
 
 	renderRoleExplanation = () => {
-		const { translate } = this.props;
+		const { translate, onClickRoleExplanation } = this.props;
 		return (
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
 				href="http://en.support.wordpress.com/user-roles/"
-				onClick={ this.onClickRoleExplanation }
+				onClick={ onClickRoleExplanation }
 			>
 				{ translate( 'Learn more about roles' ) }
 			</a>
@@ -294,7 +279,17 @@ class InvitePeople extends React.Component {
 	enableSSO = () => this.props.activateModule( this.props.siteId, 'sso' );
 
 	renderInviteForm = () => {
-		const { site, translate, needsVerification, isJetpack, showSSONotice } = this.props;
+		const {
+			site,
+			translate,
+			needsVerification,
+			isJetpack,
+			showSSONotice,
+			onFocusTokenField,
+			onFocusRoleSelect,
+			onFocusCustomMessage,
+			onClickSendInvites,
+		} = this.props;
 
 		const inviteForm = (
 			<Card>
@@ -315,7 +310,7 @@ class InvitePeople extends React.Component {
 								maxLength={ 10 }
 								value={ this.getTokensWithStatus() }
 								onChange={ this.onTokensChange }
-								onFocus={ this.onFocusTokenField }
+								onFocus={ onFocusTokenField }
 								disabled={ this.state.sendingInvites }
 							/>
 							<FormSettingExplanation>
@@ -333,7 +328,7 @@ class InvitePeople extends React.Component {
 							includeFollower
 							siteId={ this.props.siteId }
 							onChange={ this.onRoleChange }
-							onFocus={ this.onFocusRoleSelect }
+							onFocus={ onFocusRoleSelect }
 							value={ this.state.role }
 							disabled={ this.state.sendingInvites }
 							explanation={ this.renderRoleExplanation() }
@@ -348,7 +343,7 @@ class InvitePeople extends React.Component {
 								maxLength={ 500 }
 								acceptableLength={ 500 }
 								onChange={ this.onMessageChange }
-								onFocus={ this.onFocusCustomMessage }
+								onFocus={ onFocusCustomMessage }
 								value={ this.state.message }
 								disabled={ this.state.sendingInvites }
 							/>
@@ -360,7 +355,7 @@ class InvitePeople extends React.Component {
 							</FormSettingExplanation>
 						</FormFieldset>
 
-						<FormButton disabled={ this.isSubmitDisabled() } onClick={ this.onClickSendInvites }>
+						<FormButton disabled={ this.isSubmitDisabled() } onClick={ onClickSendInvites }>
 							{ translate( 'Send Invitation', 'Send Invitations', {
 								count: this.state.usernamesOrEmails.length || 1,
 								context: 'Button label',
@@ -454,5 +449,24 @@ export default connect(
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
-	dispatch => bindActionCreators( { sendInvites, activateModule, recordTracksEvent }, dispatch )
+	dispatch => ( {
+		...bindActionCreators(
+			{
+				sendInvites,
+				activateModule,
+			},
+			dispatch
+		),
+		recordTracksEventAction,
+		onFocusTokenField: () =>
+			dispatch( recordTracksEventAction( 'calypso_invite_people_token_field_focus' ) ),
+		onFocusRoleSelect: () =>
+			dispatch( recordTracksEventAction( 'calypso_invite_people_role_select_focus' ) ),
+		onFocusCustomMessage: () =>
+			dispatch( recordTracksEventAction( 'calypso_invite_people_custom_message_focus' ) ),
+		onClickSendInvites: () =>
+			dispatch( recordTracksEventAction( 'calypso_invite_people_send_invite_button_click' ) ),
+		onClickRoleExplanation: () =>
+			dispatch( recordTracksEventAction( 'calypso_invite_people_role_explanation_link_click' ) ),
+	} )
 )( localize( InvitePeople ) );
