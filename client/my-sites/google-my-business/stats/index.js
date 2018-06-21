@@ -80,17 +80,15 @@ class GoogleMyBusinessStats extends Component {
 					},
 				}
 			);
-		} else if ( interval === 'week' ) {
-			return this.props.translate( '%(value)d view on %(day)s', '%(value)d views on %(day)s', {
-				count: viewCount,
-				args: {
-					value: viewCount,
-					day: moment( date ).format( 'LL' ),
-				},
-			} );
 		}
 
-		return viewCount;
+		return this.props.translate( '%(value)d view on %(day)s', '%(value)d views on %(day)s', {
+			count: viewCount,
+			args: {
+				value: viewCount,
+				day: moment( date ).format( 'LL' ),
+			},
+		} );
 	};
 
 	renderActionsTooltipForDatanum = ( datanum, interval ) => {
@@ -107,17 +105,15 @@ class GoogleMyBusinessStats extends Component {
 					},
 				}
 			);
-		} else if ( interval === 'week' ) {
-			return this.props.translate( '%(value)d action on %(day)s', '%(value)d actions on %(day)s', {
-				count: actionCount,
-				args: {
-					value: actionCount,
-					day: moment( date ).format( 'LL' ),
-				},
-			} );
 		}
 
-		return actionCount;
+		return this.props.translate( '%(value)d action on %(day)s', '%(value)d actions on %(day)s', {
+			count: actionCount,
+			args: {
+				value: actionCount,
+				day: moment( date ).format( 'LL' ),
+			},
+		} );
 	};
 
 	renderStats() {
