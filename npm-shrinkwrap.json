@@ -18529,9 +18529,9 @@
       "dev": true
     },
     "store": {
-      "version": "1.3.16",
-      "resolved": "https://registry.npmjs.org/store/-/store-1.3.16.tgz",
-      "integrity": "sha1-Tc/RiVRjfNrExqBF4DX1Y2E103Y="
+      "version": "1.3.20",
+      "resolved": "https://registry.npmjs.org/store/-/store-1.3.20.tgz",
+      "integrity": "sha1-E+p+P7LWwjmGgmXWhrHYTpnFvj4="
     },
     "stream-browserify": {
       "version": "2.0.1",
