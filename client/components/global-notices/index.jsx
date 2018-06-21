@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
+import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 
 /**
  * Internal Dependencies
@@ -13,11 +13,10 @@ import createReactClass from 'create-react-class';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
-// eslint-disable-next-line no-restricted-imports
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
 import { connect } from 'react-redux';
-import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
+import { removeNotice } from 'state/notices/actions';
 
 // eslint-disable-next-line react/prefer-es6-class
 export const GlobalNotices = createReactClass( {
