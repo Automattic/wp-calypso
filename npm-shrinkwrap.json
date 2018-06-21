@@ -2055,9 +2055,9 @@
       }
     },
     "autosize": {
-      "version": "3.0.21",
-      "resolved": "https://registry.npmjs.org/autosize/-/autosize-3.0.21.tgz",
-      "integrity": "sha1-8YL0DRd1fZeKE5pMnKQMTA5EhgM="
+      "version": "4.0.2",
+      "resolved": "https://registry.npmjs.org/autosize/-/autosize-4.0.2.tgz",
+      "integrity": "sha512-jnSyH2d+qdfPGpWlcuhGiHmqBJ6g3X+8T+iRwFrHPLVcdoGJE/x6Qicm6aDHfTsbgZKxyV8UU/YB2p4cjKDRRA=="
     },
     "aws-sign2": {
       "version": "0.6.0",
