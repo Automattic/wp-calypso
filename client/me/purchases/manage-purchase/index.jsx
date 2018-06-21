@@ -344,7 +344,7 @@ class ManagePurchase extends Component {
 						<span className="manage-purchase__settings-link" />
 					</div>
 
-					<PurchaseMeta purchaseId={ false } />
+					<PurchaseMeta purchaseId={ false } siteSlug={ this.props.siteSlug } />
 				</Card>
 				<PurchasePlanDetails />
 				<VerticalNavItem isPlaceholder />
@@ -382,7 +382,7 @@ class ManagePurchase extends Component {
 					</header>
 					{ this.renderPlanDescription() }
 
-					<PurchaseMeta purchaseId={ purchase.id } />
+					<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
 
 					{ this.renderRenewButton() }
 				</Card>
