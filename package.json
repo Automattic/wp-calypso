@@ -141,7 +141,7 @@
     "react-virtualized": "9.19.1",
     "redux": "4.0.0",
     "redux-form": "7.0.2",
-    "redux-thunk": "1.0.0",
+    "redux-thunk": "1.0.3",
     "rtlcss": "2.2.1",
     "semver": "5.5.0",
     "social-logos": "2.0.0",
