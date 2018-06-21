@@ -563,6 +563,7 @@ div[ng-show='busyIndicator'] {
 	max-height: 200px;
 	overflow-x: hidden;
 	margin-top: -1px;
+	position: inherit !important;
 }
 
 body > .ui-select-bootstrap.open {
