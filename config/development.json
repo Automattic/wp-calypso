@@ -76,7 +76,7 @@
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
 		"jetpack/google-analytics-for-stores-enhanced": true,
-		"jetpack/plan-ownership-change": true,
+		"jetpack/ownership-change": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"login/magic-login": true,
