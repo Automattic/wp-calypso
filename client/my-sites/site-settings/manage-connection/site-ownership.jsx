@@ -15,6 +15,7 @@ import { includes } from 'lodash';
 import accept from 'lib/accept';
 import AuthorSelector from 'blocks/author-selector';
 import Card from 'components/card';
+import config from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -75,9 +76,24 @@ class SiteOwnership extends Component {
 	};
 
 	renderCurrentUser() {
+		const { currentUser } = this.props;
+
+		return (
+			<div className="manage-connection__user">
+				<Gravatar user={ currentUser } size={ 24 } />
+				<span className="manage-connection__user-name">{ currentUser.display_name }</span>
+			</div>
+		);
+	}
+
+	renderCurrentUserDropdown() {
 		const { currentUser, siteId } = this.props;
 		if ( ! currentUser ) {
 			return;
+		}
+
+		if ( ! config.isEnabled( 'jetpack/ownership-change' ) ) {
+			return this.renderCurrentUser();
 		}
 
 		return (
@@ -89,10 +105,7 @@ class SiteOwnership extends Component {
 					allowSingleUser
 					onSelect={ this.onSelect }
 				>
-					<div className="manage-connection__user">
-						<Gravatar user={ currentUser } size={ 24 } />
-						<span className="manage-connection__user-name">{ currentUser.display_name }</span>
-					</div>
+					{ this.renderCurrentUser() }
 				</AuthorSelector>
 			</div>
 		);
@@ -124,7 +137,7 @@ class SiteOwnership extends Component {
 							: translate( "Somebody else owns this site's connection to WordPress.com." ) }
 					</FormSettingExplanation>
 				) }
-				{ userIsMaster && this.renderCurrentUser() }
+				{ userIsMaster && this.renderCurrentUserDropdown() }
 			</Fragment>
 		);
 	}
