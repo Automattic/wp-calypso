@@ -4808,7 +4808,8 @@
     "deep-equal": {
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/deep-equal/-/deep-equal-1.0.1.tgz",
-      "integrity": "sha1-9dJgKStmDghO/0zbyfCK0yR0SLU="
+      "integrity": "sha1-9dJgKStmDghO/0zbyfCK0yR0SLU=",
+      "dev": true
     },
     "deep-extend": {
       "version": "0.5.1",
@@ -14568,18 +14569,18 @@
       }
     },
     "redux-form": {
-      "version": "7.0.2",
-      "resolved": "https://registry.npmjs.org/redux-form/-/redux-form-7.0.2.tgz",
-      "integrity": "sha512-R1H9APwnBiJE31FWS2vBlM6NplH7AQb+3FJ3Z2e5B1flbgAZbFr7S0R9yrL8P4yy1liIAJcLreI1Ji4KA6KMtA==",
+      "version": "7.4.2",
+      "resolved": "https://registry.npmjs.org/redux-form/-/redux-form-7.4.2.tgz",
+      "integrity": "sha512-QxC36s4Lelx5Cr8dbpxqvl23dwYOydeAX8c6YPmgkz/Dhj053C16S2qoyZN6LO6HJ2oUF00rKsAyE94GwOUhFA==",
       "requires": {
-        "deep-equal": "^1.0.1",
-        "es6-error": "^4.0.0",
-        "hoist-non-react-statics": "^2.2.0",
-        "invariant": "^2.2.2",
+        "es6-error": "^4.1.1",
+        "hoist-non-react-statics": "^2.5.4",
+        "invariant": "^2.2.4",
         "is-promise": "^2.1.0",
-        "lodash": "^4.17.3",
-        "lodash-es": "^4.17.3",
-        "prop-types": "^15.5.9"
+        "lodash": "^4.17.10",
+        "lodash-es": "^4.17.10",
+        "prop-types": "^15.6.1",
+        "react-lifecycles-compat": "^3.0.4"
       },
       "dependencies": {
         "hoist-non-react-statics": {
