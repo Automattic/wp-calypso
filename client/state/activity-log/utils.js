@@ -19,6 +19,6 @@ export const queryToFilterState = query =>
 		{},
 		query.page && query.page > 0 && { page: query.page },
 		query.group && {
-			group: Object.assign( {}, { includes: query.group.split( ',' ) } ),
+			group: Object.assign( {}, { includes: decodeURI( query.group ).split( ',' ) } ),
 		}
 	);
