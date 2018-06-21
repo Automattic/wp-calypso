@@ -79,7 +79,7 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should not render GAppsFieldset in place of the default contact fields by default', () => {
 			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( wrapper.find( 'Connect(GAppsFieldset)' ) ).toHaveLength( 0 );
+			expect( wrapper.find( '.contact-details-form-fields__g-apps' ) ).toHaveLength( 0 );
 			expect( wrapper.find( 'RegionAddressFieldsets' ) ).toHaveLength( 1 );
 		} );
 
@@ -88,7 +88,7 @@ describe( 'ContactDetailsFormFields', () => {
 				<ContactDetailsFormFields { ...defaultProps } needsOnlyGoogleAppsDetails={ true } />
 			);
 
-			expect( wrapper.find( 'Connect(GAppsFieldset)' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '.contact-details-form-fields__g-apps' ) ).toHaveLength( 1 );
 			expect( wrapper.find( 'RegionAddressFieldsets' ) ).toHaveLength( 0 );
 		} );
 	} );

@@ -52,23 +52,6 @@ Overrides the constants check. Informs the component whether the country code is
 
 Default: `false`. 
 
-## g-apps-fieldset.jsx
-
-Renders the fieldset for when the user's cart contains a Google app only (and no domain items)
-
-Usage:
-
-```
-    const getFieldProps = () => {
-        return {
-            // ...form props
-        }
-    };
-    
-    // render
-    <GAppsFieldset countryCode={ countryCode } getFieldProps={ this.getFieldProps } />
-```
-
 #### Props
 
 `getFieldProps` _{Function}_ 

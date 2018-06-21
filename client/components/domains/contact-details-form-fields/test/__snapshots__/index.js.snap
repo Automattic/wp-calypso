@@ -83,7 +83,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         value="osso@buco.com"
       />
     </div>
-    <Connect(QueryCountries) />
     <div
       className="contact-details-form-fields__container phone"
     >
@@ -168,5 +167,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       Submit
     </FormButton>
   </DomainManagementFormFooter>
+  <Connect(QueryCountries) />
 </FormFieldset>
 `;
