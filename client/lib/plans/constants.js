@@ -161,18 +161,14 @@ export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 
 const WPComGetBillingTimeframe = abtest => {
 	if ( abtest ) {
-		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
-			return i18n.translate( '/month, billed annually or every two years' );
-		}
+		return i18n.translate( '/month, billed annually or every two years' );
 	}
 	return i18n.translate( 'per month, billed yearly' );
 };
 
 const WPComGetBiennialBillingTimeframe = abtest => {
 	if ( abtest ) {
-		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
-			return i18n.translate( '/month, billed every two years' );
-		}
+		return i18n.translate( '/month, billed every two years' );
 	}
 
 	return WPComGetBillingTimeframe( abtest );

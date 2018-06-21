@@ -789,7 +789,7 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 		{
 			path: '/sites/' + siteDomain + '/plans',
 			method: 'get',
-			apiVersion: config.isEnabled( 'upgrades/2-year-plans' ) ? '1.3' : '1.1',
+			apiVersion: '1.3',
 		},
 		fn
 	);

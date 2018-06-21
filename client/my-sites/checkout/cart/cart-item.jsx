@@ -11,7 +11,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { isEnabled } from 'config';
 import { canRemoveFromCart, cartItems } from 'lib/cart-values';
 import {
 	isCredits,
@@ -122,7 +121,7 @@ export class CartItem extends React.Component {
 		if ( cartItem && cartItem.product_cost ) {
 			return (
 				<span>
-					{ ! ( isEnabled( 'upgrades/2-year-plans' ) && this.isDomainProductDiscountedTo0() ) ? (
+					{ ! this.isDomainProductDiscountedTo0() ? (
 						<span className="cart__free-with-plan">
 							{ cartItem.product_cost } { cartItem.currency }
 						</span>
@@ -203,7 +202,7 @@ export class CartItem extends React.Component {
 
 	getSubscriptionLength() {
 		const { cartItem, translate } = this.props;
-		if ( isEnabled( 'upgrades/2-year-plans' ) && this.isDomainProductDiscountedTo0() ) {
+		if ( this.isDomainProductDiscountedTo0() ) {
 			return false;
 		}
 
