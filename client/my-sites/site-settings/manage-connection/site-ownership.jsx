@@ -57,9 +57,7 @@ class SiteOwnership extends Component {
 
 		accept(
 			translate( 'Are you sure you want to transfer ownership?' ),
-			accepted => {
-				accepted && this.props.changeOwner( this.props.siteId, user.ID, user.name );
-			},
+			accepted => accepted && this.props.changeOwner( this.props.siteId, user.ID, user.name ),
 			translate( 'Yes' ),
 			translate( 'No' ),
 			{ isScary: true }
