@@ -132,9 +132,11 @@ PackageRow.propTypes = {
 	restrictionExplanation: PropTypes.string,
 	abandonOnNonDelivery: PropTypes.bool,
 	itn: PropTypes.string,
-	items: PropTypes.shape( {
-		product_id: PropTypes.number.isRequired,
-	} ).isRequired,
+	items: PropTypes.arrayOf(
+		PropTypes.shape( {
+			product_id: PropTypes.number.isRequired,
+		} )
+	).isRequired,
 	setContentsType: PropTypes.func.isRequired,
 	setContentsExplanation: PropTypes.func.isRequired,
 	setRestrictionType: PropTypes.func.isRequired,
