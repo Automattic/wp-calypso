@@ -44,7 +44,7 @@ import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
 import { getFormValues } from 'redux-form';
@@ -256,14 +256,35 @@ class SimplePaymentsDialog extends Component {
 
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
+		} else if (
+			config.isEnabled( 'memberships' ) &&
+			this.props.currentlyEditedIsMembershipSubscription
+		) {
+			// This is memberships business.
+			productId = dispatch( createMembershipButton( siteId ) ).then( newProduct => {
+				dispatch(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_memberships_button_create', {
+							price: newProduct.price,
+							currency: newProduct.currency,
+							id: newProduct.ID,
+						} ),
+						bumpStat( 'calypso_memberships', 'button_created' )
+					)
+				);
+				return newProduct.ID;
+			} );
 		} else {
 			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => {
 				dispatch(
-					recordTracksEvent( 'calypso_simple_payments_button_create', {
-						price: newProduct.price,
-						currency: newProduct.currency,
-						id: newProduct.ID,
-					} )
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_create', {
+							price: newProduct.price,
+							currency: newProduct.currency,
+							id: newProduct.ID,
+						} ),
+						bumpStat( 'calypso_simple_payments', 'button_created' )
+					)
 				);
 				return newProduct.ID;
 			} );
@@ -276,7 +297,10 @@ class SimplePaymentsDialog extends Component {
 			.then( product => {
 				this.props.onInsert( { id: product.ID } );
 				dispatch(
-					recordTracksEvent( 'calypso_simple_payments_button_insert', { id: product.ID } )
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_insert', { id: product.ID } ),
+						bumpStat( 'calypso_simple_payments', 'button_inserted' )
+					)
 				);
 			} )
 			.catch( () => this.showError( translate( 'The payment button could not be inserted.' ) ) )
@@ -323,7 +347,12 @@ class SimplePaymentsDialog extends Component {
 
 				const { siteId, dispatch } = this.props;
 
-				dispatch( recordTracksEvent( 'calypso_simple_payments_button_delete', { id: paymentId } ) );
+				dispatch(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_delete', { id: paymentId } ),
+						bumpStat( 'calypso_simple_payments', 'button_deleted' )
+					)
+				);
 				dispatch( trashPaymentButton( siteId, paymentId ) )
 					.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
 					.then( () => this.setIsSubmitting( false ) );
