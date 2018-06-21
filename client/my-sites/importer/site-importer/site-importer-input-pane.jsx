@@ -110,6 +110,10 @@ class SiteImporterInputPane extends React.Component {
 		this.setState( { siteURLInput: event.target.value } );
 	};
 
+	validateOnEnter = event => {
+		event.key === 'Enter' && this.validateSite();
+	};
+
 	validateSite = () => {
 		const siteURL = this.state.siteURLInput;
 
@@ -200,6 +204,7 @@ class SiteImporterInputPane extends React.Component {
 							<TextInput
 								disabled={ this.state.loading }
 								onChange={ this.setUrl }
+								onKeyPress={ this.validateOnEnter }
 								value={ this.state.siteURLInput }
 							/>
 							<Button
