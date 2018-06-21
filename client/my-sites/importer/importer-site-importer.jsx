@@ -16,13 +16,6 @@ import SiteImporter from './site-importer/site-importer';
 class ImporterSiteImporter extends React.PureComponent {
 	static displayName = 'ImporterSiteImporter';
 
-	importerData = {
-		title: 'Site Importer (Beta)',
-		icon: 'site-importer',
-		description: this.props.translate( 'Import posts, pages, and media from your existing site!' ),
-		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
-	};
-
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
 			filename: PropTypes.string,
@@ -35,6 +28,13 @@ class ImporterSiteImporter extends React.PureComponent {
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 		} ),
+	};
+
+	importerData = {
+		title: 'Site Importer (Beta)',
+		icon: 'site-importer',
+		description: this.props.translate( 'Import posts, pages, and media from your existing site!' ),
+		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
 	};
 
 	render() {
