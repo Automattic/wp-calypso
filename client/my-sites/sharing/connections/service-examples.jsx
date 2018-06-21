@@ -210,11 +210,11 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/google-my-business/phone-screenshot-cropped.png',
+					src: '/calypso/images/google-my-business/stats-screenshot-cropped.png',
 					alt: this.props.translate( 'Manage Google My Business locations', { textOnly: true } ),
 				},
 				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to view stats and other useful information from your' +
+					'{{strong}}Connect{{/strong}} to view stats and other useful information from your ' +
 						'Google My Business account inside WordPress.com.',
 					{
 						components: {
