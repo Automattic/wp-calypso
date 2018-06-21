@@ -4338,9 +4338,9 @@
       }
     },
     "clipboard": {
-      "version": "1.7.1",
-      "resolved": "https://registry.npmjs.org/clipboard/-/clipboard-1.7.1.tgz",
-      "integrity": "sha1-Ng1taUbpmnof7zleQrqStem1oWs=",
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/clipboard/-/clipboard-2.0.1.tgz",
+      "integrity": "sha512-7yhQBmtN+uYZmfRjjVjKa0dZdWuabzpSKGtyQZN+9C8xlC788SSJjOHWh7tzurfwTqTD5UDYAhIv5fRJg3sHjQ==",
       "requires": {
         "good-listener": "^1.2.2",
         "select": "^1.1.2",
@@ -7947,7 +7947,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -8312,7 +8313,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -8360,6 +8362,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -8398,11 +8401,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
