@@ -6,14 +6,15 @@
 
 import React from 'react';
 import { isEmpty, trim } from 'lodash';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import analytics from 'lib/analytics';
-import { applyCoupon } from 'lib/upgrades/actions';
+import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
+import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
 
 export class CartCoupon extends React.Component {
 	static displayName = 'CartCoupon';
@@ -115,9 +116,9 @@ export class CartCoupon extends React.Component {
 		this.setState( { isCouponFormShowing: ! this.state.isCouponFormShowing } );
 
 		if ( this.state.isCouponFormShowing ) {
-			analytics.ga.recordEvent( 'Upgrades', 'Clicked Hide Coupon Code Link' );
+			this.props.recordGoogleEvent( 'Upgrades', 'Clicked Hide Coupon Code Link' );
 		} else {
-			analytics.ga.recordEvent( 'Upgrades', 'Clicked Show Coupon Code Link' );
+			this.props.recordGoogleEvent( 'Upgrades', 'Clicked Show Coupon Code Link' );
 		}
 	};
 
@@ -130,22 +131,29 @@ export class CartCoupon extends React.Component {
 				isCouponFormShowing: false,
 			},
 			() => {
-				this.applyCoupon( event );
+				this.removeCoupon( event );
 			}
 		);
 	};
 
 	applyCoupon = event => {
 		event.preventDefault();
+
 		if ( this.isSubmitting ) {
 			return;
 		}
 
-		analytics.tracks.recordEvent( 'calypso_checkout_coupon_submit', {
-			coupon_code: this.state.couponInputValue,
-		} );
+		this.props.applyCoupon( this.state.couponInputValue );
+	};
 
-		applyCoupon( this.state.couponInputValue );
+	removeCoupon = event => {
+		event.preventDefault();
+
+		if ( this.isSubmitting ) {
+			return;
+		}
+
+		this.props.removeCoupon();
 	};
 
 	handleCouponInputChange = event => {
@@ -156,4 +164,19 @@ export class CartCoupon extends React.Component {
 	};
 }
 
-export default localize( CartCoupon );
+const mapDispatchToProps = dispatch => ( {
+	recordGoogleEvent,
+	applyCoupon: coupon_code => {
+		dispatch( recordTracksEvent( 'calypso_checkout_coupon_submit', { coupon_code } ) );
+		applyCoupon( coupon_code );
+	},
+	removeCoupon: () => {
+		dispatch( recordTracksEvent( 'calypso_checkout_coupon_submit', { coupon_code: '' } ) );
+		removeCoupon();
+	},
+} );
+
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( CartCoupon ) );

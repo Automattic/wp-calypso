@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import url from 'url';
 import { extend, isArray } from 'lodash';
 import update from 'immutability-helper';
 import i18n from 'i18n-calypso';
@@ -15,6 +15,53 @@ import config from 'config';
 import cartItems from './cart-items';
 import productsValues from 'lib/products-values';
 import { requestGeoLocation } from 'state/data-getters';
+
+/**
+ * Preprocesses cart for server.
+ *
+ * @param {Object} cart Cart object.
+ * @returns {Object} A new cart object.
+ */
+function preprocessCartForServer( {
+	coupon,
+	is_coupon_applied,
+	is_coupon_removed,
+	currency,
+	temporary,
+	extra,
+	products,
+} ) {
+	const needsUrlCoupon = ! (
+		coupon ||
+		is_coupon_applied ||
+		is_coupon_removed ||
+		typeof document === 'undefined'
+	);
+	const urlCoupon = needsUrlCoupon ? url.parse( document.URL, true ).query.coupon : '';
+
+	return Object.assign(
+		{
+			coupon,
+			is_coupon_applied,
+			is_coupon_removed,
+			currency,
+			temporary,
+			extra,
+			products: products.map( ( { product_id, meta, free_trial, volume, _extra } ) => ( {
+				product_id,
+				meta,
+				free_trial,
+				volume,
+				extra: _extra,
+			} ) ),
+		},
+		needsUrlCoupon &&
+			urlCoupon && {
+				coupon: urlCoupon,
+				is_coupon_applied: false,
+			}
+	);
+}
 
 /**
  * Create a new empty cart.
@@ -37,6 +84,17 @@ function applyCoupon( coupon ) {
 		return update( cart, {
 			coupon: { $set: coupon },
 			is_coupon_applied: { $set: false },
+			$unset: [ 'is_coupon_removed' ],
+		} );
+	};
+}
+
+function removeCoupon() {
+	return function( cart ) {
+		return update( cart, {
+			coupon: { $set: '' },
+			is_coupon_applied: { $set: false },
+			$merge: { is_coupon_removed: true },
 		} );
 	};
 }
@@ -237,9 +295,11 @@ function getLocationOrigin( l ) {
 
 export {
 	applyCoupon,
+	removeCoupon,
 	canRemoveFromCart,
 	cartItems,
 	emptyCart,
+	preprocessCartForServer,
 	fillInAllCartItemAttributes,
 	fillInSingleCartItemAttributes,
 	getNewMessages,
@@ -254,6 +314,7 @@ export {
 
 export default {
 	applyCoupon,
+	removeCoupon,
 	cartItems,
 	emptyCart,
 	isPaymentMethodEnabled,
