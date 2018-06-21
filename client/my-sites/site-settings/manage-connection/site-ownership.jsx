@@ -19,17 +19,17 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
-import SectionHeader from 'components/section-header';
+import isJetpackSiteConnected from 'state/selectors/is-jetpack-site-connected';
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
+import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
+import SectionHeader from 'components/section-header';
 import { changeOwner } from 'state/jetpack/connection/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import isJetpackSiteConnected from 'state/selectors/is-jetpack-site-connected';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
 
 class SiteOwnership extends Component {
 	renderPlaceholder() {
