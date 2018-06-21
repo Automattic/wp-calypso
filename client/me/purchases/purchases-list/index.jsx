@@ -29,6 +29,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 } from 'state/purchases/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -60,7 +61,9 @@ class PurchasesList extends Component {
 							buttonPrimary={ true }
 							buttonHref="/me/concierge"
 							buttonTarget={ null }
-							buttonOnClick={ null }
+							buttonOnClick={ () => {
+								this.props.recordTracksEvent( 'calypso_purchases_concierge_banner_click' );
+							} }
 							compact={ false }
 						/>
 					) }
@@ -115,14 +118,17 @@ PurchasesList.propTypes = {
 	userId: PropTypes.number.isRequired,
 };
 
-export default connect( state => {
-	const userId = getCurrentUserId( state );
-	return {
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		isBusinessPlanUser: isBusinessPlanUser( state ),
-		isFetchingUserPurchases: isFetchingUserPurchases( state ),
-		purchases: getUserPurchases( state, userId ),
-		sites: getSites( state ),
-		userId,
-	};
-} )( localize( PurchasesList ) );
+export default connect(
+	state => {
+		const userId = getCurrentUserId( state );
+		return {
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+			isBusinessPlanUser: isBusinessPlanUser( state ),
+			isFetchingUserPurchases: isFetchingUserPurchases( state ),
+			purchases: getUserPurchases( state, userId ),
+			sites: getSites( state ),
+			userId,
+		};
+	},
+	{ recordTracksEvent }
+)( localize( PurchasesList ) );
