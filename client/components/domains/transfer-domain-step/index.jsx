@@ -8,7 +8,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
-import Gridicon from 'gridicons';
 import page from 'page';
 import { stringify } from 'qs';
 
@@ -31,12 +30,11 @@ import { getAvailabilityNotice } from 'lib/domains/registration/availability-mes
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import Notice from 'components/notice';
-import Card from 'components/card';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import TransferDomainPrecheck from './transfer-domain-precheck';
-import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
+import { INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
@@ -139,6 +137,32 @@ class TransferDomainStep extends React.Component {
 		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
 
 		page( this.getMapDomainUrl() );
+	};
+
+	getProductPriceText = () => {
+		const {
+			cart,
+			currencyCode,
+			translate,
+			domainsWithPlansOnly,
+			isSignupStep,
+			productsList,
+			selectedSite,
+		} = this.props;
+		const { searchQuery } = this.state;
+		const productSlug = getDomainProductSlug( searchQuery );
+		const domainsWithPlansOnlyButNoPlan =
+			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+
+		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
+
+		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+			domainProductPrice = translate( 'Free with your plan' );
+		} else if ( domainsWithPlansOnlyButNoPlan ) {
+			domainProductPrice = translate( 'Included in paid plans' );
+		}
+
+		return domainProductPrice;
 	};
 
 	addTransfer() {
@@ -298,174 +322,174 @@ class TransferDomainStep extends React.Component {
 		}
 	};
 
-	getProductPriceText = () => {
-		const {
-			cart,
-			currencyCode,
-			translate,
-			domainsWithPlansOnly,
-			isSignupStep,
-			productsList,
-			selectedSite,
-		} = this.props;
-		const { searchQuery } = this.state;
-		const productSlug = getDomainProductSlug( searchQuery );
-		const domainsWithPlansOnlyButNoPlan =
-			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+	// getProductPriceText = () => {
+	// 	const {
+	// 		cart,
+	// 		currencyCode,
+	// 		translate,
+	// 		domainsWithPlansOnly,
+	// 		isSignupStep,
+	// 		productsList,
+	// 		selectedSite,
+	// 	} = this.props;
+	// 	const { searchQuery } = this.state;
+	// 	const productSlug = getDomainProductSlug( searchQuery );
+	// 	const domainsWithPlansOnlyButNoPlan =
+	// 		domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 
-		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
+	// 	let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
 
-		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
-			domainProductPrice = translate( 'Free with your plan' );
-		} else if ( domainsWithPlansOnlyButNoPlan ) {
-			domainProductPrice = translate( 'Included in paid plans' );
-		}
+	// 	if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+	// 		domainProductPrice = translate( 'Free with your plan' );
+	// 	} else if ( domainsWithPlansOnlyButNoPlan ) {
+	// 		domainProductPrice = translate( 'Included in paid plans' );
+	// 	}
 
-		return domainProductPrice;
-	};
+	// 	return domainProductPrice;
+	// };
 
-	renderIllustration = image => {
-		return (
-			<div className="use-your-domain__option-illustration">
-				<img src={ image } alt="" />
-			</div>
-		);
-	};
+	// renderIllustration = image => {
+	// 	return (
+	// 		<div className="use-your-domain__option-illustration">
+	// 			<img src={ image } alt="" />
+	// 		</div>
+	// 	);
+	// };
 
-	renderOptionTitle = optionTitle => {
-		return <h3 className="use-your-domain__option-title">{ optionTitle }</h3>;
-	};
+	// renderOptionTitle = optionTitle => {
+	// 	return <h3 className="use-your-domain__option-title">{ optionTitle }</h3>;
+	// };
 
-	renderOptionReasons = optionReasons => {
-		return (
-			<div className="use-your-domain__option-reasons">
-				{ optionReasons.map( ( phrase, index ) => {
-					if ( isEmpty( phrase ) ) {
-						return;
-					}
+	// renderOptionReasons = optionReasons => {
+	// 	return (
+	// 		<div className="use-your-domain__option-reasons">
+	// 			{ optionReasons.map( ( phrase, index ) => {
+	// 				if ( isEmpty( phrase ) ) {
+	// 					return;
+	// 				}
 
-					return (
-						<div className="use-your-domain__option-reason" key={ index }>
-							<Gridicon icon="checkmark" size={ 18 } />
-							{ phrase }
-						</div>
-					);
-				} ) }
-			</div>
-		);
-	};
+	// 				return (
+	// 					<div className="use-your-domain__option-reason" key={ index }>
+	// 						<Gridicon icon="checkmark" size={ 18 } />
+	// 						{ phrase }
+	// 					</div>
+	// 				);
+	// 			} ) }
+	// 		</div>
+	// 	);
+	// };
 
-	renderOptionContent = content => {
-		const { image, title, reasons, onClick, buttonText, isPrimary, learnMore } = content;
-		return (
-			<Card className="use-your-domain__option" compact>
-				<div className="use-your-domain__option-inner-wrap">
-					<div className="use-your-domain__option-content">
-						{ this.renderIllustration( image ) }
-						{ this.renderOptionTitle( title ) }
-						{ this.renderOptionReasons( reasons ) }
-					</div>
-					<div className="use-your-domain__option-action">
-						{ this.renderOptionButton( { onClick, buttonText, isPrimary } ) }
-						<div className="use-your-domain__learn-more">{ learnMore }</div>
-					</div>
-				</div>
-			</Card>
-		);
-	};
+	// renderOptionContent = content => {
+	// 	const { image, title, reasons, onClick, buttonText, isPrimary, learnMore } = content;
+	// 	return (
+	// 		<Card className="use-your-domain__option" compact>
+	// 			<div className="use-your-domain__option-inner-wrap">
+	// 				<div className="use-your-domain__option-content">
+	// 					{ this.renderIllustration( image ) }
+	// 					{ this.renderOptionTitle( title ) }
+	// 					{ this.renderOptionReasons( reasons ) }
+	// 				</div>
+	// 				<div className="use-your-domain__option-action">
+	// 					{ this.renderOptionButton( { onClick, buttonText, isPrimary } ) }
+	// 					<div className="use-your-domain__learn-more">{ learnMore }</div>
+	// 				</div>
+	// 			</div>
+	// 		</Card>
+	// 	);
+	// };
 
-	renderOptionButton = buttonOptions => {
-		const { buttonText, onClick, isPrimary } = buttonOptions;
-		const { submittingAvailability, submittingWhois } = this.state;
-		const submitting = submittingAvailability || submittingWhois;
-		return (
-			<Button
-				className="use-your-domain__option-button"
-				primary={ isPrimary }
-				onClick={ onClick }
-				busy={ submitting }
-			>
-				{ buttonText }
-			</Button>
-		);
-	};
+	// renderOptionButton = buttonOptions => {
+	// 	const { buttonText, onClick, isPrimary } = buttonOptions;
+	// 	const { submittingAvailability, submittingWhois } = this.state;
+	// 	const submitting = submittingAvailability || submittingWhois;
+	// 	return (
+	// 		<Button
+	// 			className="use-your-domain__option-button"
+	// 			primary={ isPrimary }
+	// 			onClick={ onClick }
+	// 			busy={ submitting }
+	// 		>
+	// 			{ buttonText }
+	// 		</Button>
+	// 	);
+	// };
 
-	renderSelectTransfer = () => {
-		const { translate } = this.props;
+	// renderSelectTransfer = () => {
+	// 	const { translate } = this.props;
 
-		const image = '/calypso/images/illustrations/migrating-host-diy.svg';
-		const title = translate( 'Transfer your domain away from your current registrar.' );
-		const reasons = [
-			translate( 'Manage domain settings in your WordPress.com dashboard' ),
-			translate( 'Extends registration by 1 year' ),
-			translate( 'Can take several days to transfer' ),
-			this.getProductPriceText(),
-		];
-		const buttonText = translate( 'Transfer to WordPress.com' );
-		const learnMore = translate( '{{a}}Learn more about domain transfers{{/a}}', {
-			components: {
-				a: <a href={ INCOMING_DOMAIN_TRANSFER } />,
-			},
-		} );
+	// 	const image = '/calypso/images/illustrations/migrating-host-diy.svg';
+	// 	const title = translate( 'Transfer your domain away from your current registrar.' );
+	// 	const reasons = [
+	// 		translate( 'Manage domain settings in your WordPress.com dashboard' ),
+	// 		translate( 'Extends registration by 1 year' ),
+	// 		translate( 'Can take several days to transfer' ),
+	// 		this.getProductPriceText(),
+	// 	];
+	// 	const buttonText = translate( 'Transfer to WordPress.com' );
+	// 	const learnMore = translate( '{{a}}Learn more about domain transfers{{/a}}', {
+	// 		components: {
+	// 			a: <a href={ INCOMING_DOMAIN_TRANSFER } />,
+	// 		},
+	// 	} );
 
-		return this.renderOptionContent( {
-			image,
-			title,
-			reasons,
-			onClick: this.handleFormSubmit,
-			buttonText,
-			isPrimary: true,
-			learnMore,
-		} );
-	};
+	// 	return this.renderOptionContent( {
+	// 		image,
+	// 		title,
+	// 		reasons,
+	// 		onClick: this.handleFormSubmit,
+	// 		buttonText,
+	// 		isPrimary: true,
+	// 		learnMore,
+	// 	} );
+	// };
 
-	renderSelectMapping = () => {
-		const { translate } = this.props;
-		const image = '/calypso/images/illustrations/jetpack-themes.svg';
-		const title = translate( 'Map your domain without moving it from your current registrar.' );
-		const reasons = [
-			translate( 'Manage domain settings at your current domain provider' ),
-			translate( 'Additional costs' ),
-			translate( 'Limited waiting period for changes' ),
-		];
-		const buttonText = translate( 'Buy Domain Mapping' );
-		const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
-			components: {
-				a: <a href={ MAP_EXISTING_DOMAIN } />,
-			},
-		} );
+	// renderSelectMapping = () => {
+	// 	const { translate } = this.props;
+	// 	const image = '/calypso/images/illustrations/jetpack-themes.svg';
+	// 	const title = translate( 'Map your domain without moving it from your current registrar.' );
+	// 	const reasons = [
+	// 		translate( 'Manage domain settings at your current domain provider' ),
+	// 		translate( 'Additional costs' ),
+	// 		translate( 'Limited waiting period for changes' ),
+	// 	];
+	// 	const buttonText = translate( 'Buy Domain Mapping' );
+	// 	const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
+	// 		components: {
+	// 			a: <a href={ MAP_EXISTING_DOMAIN } />,
+	// 		},
+	// 	} );
 
-		return this.renderOptionContent( {
-			image,
-			title,
-			reasons,
-			onClick: this.goToMapDomainStep,
-			buttonText,
-			isPrimary: false,
-			learnMore,
-		} );
-	};
+	// 	return this.renderOptionContent( {
+	// 		image,
+	// 		title,
+	// 		reasons,
+	// 		onClick: this.goToMapDomainStep,
+	// 		buttonText,
+	// 		isPrimary: false,
+	// 		learnMore,
+	// 	} );
+	// };
 
-	useYourDomain = () => {
-		const { translate } = this.props;
+	// useYourDomain = () => {
+	// 	const { translate } = this.props;
 
-		return (
-			<div>
-				<QueryProducts />
-				<div className="use-your-domain__content">
-					{ this.renderSelectTransfer() }
-					{ this.renderSelectMapping() }
-				</div>
-				<p className="use-your-domain__footer">
-					{ translate( "Not sure what works best for you? {{a}}We're happy to help!{{/a}}", {
-						components: {
-							a: <a href={ CALYPSO_CONTACT } />,
-						},
-					} ) }
-				</p>
-			</div>
-		);
-	};
+	// 	return (
+	// 		<div>
+	// 			<QueryProducts />
+	// 			<div className="use-your-domain__content">
+	// 				{ this.renderSelectTransfer() }
+	// 				{ this.renderSelectMapping() }
+	// 			</div>
+	// 			<p className="use-your-domain__footer">
+	// 				{ translate( "Not sure what works best for you? {{a}}We're happy to help!{{/a}}", {
+	// 					components: {
+	// 						a: <a href={ CALYPSO_CONTACT } />,
+	// 					},
+	// 				} ) }
+	// 			</p>
+	// 		</div>
+	// 	);
+	// };
 
 	render() {
 		let content;
@@ -477,10 +501,8 @@ class TransferDomainStep extends React.Component {
 			content = this.getTransferRestrictionMessage();
 		} else if ( precheck && ! isSignupStep ) {
 			content = this.getTransferDomainPrecheck();
-		} else if ( transferSelected ) {
-			content = this.addTransfer();
 		} else {
-			content = this.useYourDomain();
+			content = this.addTransfer();
 		}
 
 		const header = ! isSignupStep && (

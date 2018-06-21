@@ -1,97 +1,97 @@
 /** @format */
 
-.use-your-domain__content {
-	display: flex;
+// .use-your-domain__content {
+// 	display: flex;
 
-	&.use-your-domain__option {
-		.use-your-domain__option-reasons {
-			min-height: 26px;
-		}
-	}
-}
+// 	&.use-your-domain__option {
+// 		.use-your-domain__option-reasons {
+// 			min-height: 26px;
+// 		}
+// 	}
+// }
 
-.use-your-domain__option {
-	display: flex;
-	width: 100%;
-	margin-top: 0;
+// .use-your-domain__option {
+// 	display: flex;
+// 	width: 100%;
+// 	margin-top: 0;
 
-	.use-your-domain__option-inner-wrap {
-		display: flex;
-		justify-content: space-between;
-		flex-direction: column;
-	}
+// 	.use-your-domain__option-inner-wrap {
+// 		display: flex;
+// 		justify-content: space-between;
+// 		flex-direction: column;
+// 	}
 
-	.use-your-domain__option-content {
-		flex-direction: column;
-		margin-top: 0;
-	}
+// 	.use-your-domain__option-content {
+// 		flex-direction: column;
+// 		margin-top: 0;
+// 	}
 
-	.use-your-domain__option-action {
-		flex-direction: column;
-		margin-top: 0;
-	}
+// 	.use-your-domain__option-action {
+// 		flex-direction: column;
+// 		margin-top: 0;
+// 	}
 
-	.use-your-domain__option-illustration {
-		display: flex;
-		justify-content: center;
-		margin: 1em 0;
-	}
+// 	.use-your-domain__option-illustration {
+// 		display: flex;
+// 		justify-content: center;
+// 		margin: 1em 0;
+// 	}
 
-	.use-your-domain__option-title,
-	.use-your-domain__option-reasons {
-		flex: 0 0 auto;
-		align-self: flex-start;
-		width: 100%;
-	}
+// 	.use-your-domain__option-title,
+// 	.use-your-domain__option-reasons {
+// 		flex: 0 0 auto;
+// 		align-self: flex-start;
+// 		width: 100%;
+// 	}
 
-	.use-your-domain__option-title {
-		font-size: 1.4em;
-		font-weight: 400;
-		line-height: 1.4;
-		margin-bottom: 0.25em;
-	}
+// 	.use-your-domain__option-title {
+// 		font-size: 1.4em;
+// 		font-weight: 400;
+// 		line-height: 1.4;
+// 		margin-bottom: 0.25em;
+// 	}
 
-	.use-your-domain__option-reasons {
-		margin-bottom: 1em;
-	}
+// 	.use-your-domain__option-reasons {
+// 		margin-bottom: 1em;
+// 	}
 
-	.use-your-domain__option-reason {
-		color: $gray-text-min;
-		padding: 0.25em 0;
-		display: flex;
-		align-items: baseline;
+// 	.use-your-domain__option-reason {
+// 		color: $gray-text-min;
+// 		padding: 0.25em 0;
+// 		display: flex;
+// 		align-items: baseline;
 
-		.gridicon {
-			color: $blue-wordpress;
-			margin-right: 0.5em;
-			flex-shrink: 0;
-			position: relative;
-			top: 0.25em;
-		}
-	}
+// 		.gridicon {
+// 			color: $blue-wordpress;
+// 			margin-right: 0.5em;
+// 			flex-shrink: 0;
+// 			position: relative;
+// 			top: 0.25em;
+// 		}
+// 	}
 
-	.use-your-domain__option-button {
-		margin-top: 1em;
-		width: 100%;
-	}
+// 	.use-your-domain__option-button {
+// 		margin-top: 1em;
+// 		width: 100%;
+// 	}
 
-	.use-your-domain__learn-more {
-		margin: 1em 0;
-		text-align: center;
-	}
-}
+// 	.use-your-domain__learn-more {
+// 		margin: 1em 0;
+// 		text-align: center;
+// 	}
+// }
 
-.use-your-domain__footer {
-	margin-top: 1em;
-	text-align: center;
-	color: $gray-text;
-}
+// .use-your-domain__footer {
+// 	margin-top: 1em;
+// 	text-align: center;
+// 	color: $gray-text;
+// }
 
-@include breakpoint( '<660px' ) {
-	.use-your-domain__content {
-		flex-flow: wrap;
-	}
-}
+// @include breakpoint( '<660px' ) {
+// 	.use-your-domain__content {
+// 		flex-flow: wrap;
+// 	}
+// }
 
 .transfer-domain-step {
 	padding: 0;

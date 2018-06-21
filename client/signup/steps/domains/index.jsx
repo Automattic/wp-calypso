@@ -15,6 +15,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
  */
 import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
+import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import productsListFactory from 'lib/products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import SignupActions from 'lib/signup/actions';
@@ -28,6 +29,7 @@ import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
+	recordAddDomainButtonClickInUseYourDomain,
 } from 'state/domains/actions';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
@@ -70,6 +72,16 @@ class DomainsStep extends React.Component {
 
 	getTransferDomainUrl = () => {
 		return getStepUrl( this.props.flowName, this.props.stepName, 'transfer', this.props.locale );
+	};
+
+	getUseYourDomainUrl = () => {
+		const url = getStepUrl(
+			this.props.flowName,
+			this.props.stepName,
+			'use-your-domain',
+			this.props.locale
+		);
+		return url;
 	};
 
 	componentDidMount() {
@@ -324,6 +336,26 @@ class DomainsStep extends React.Component {
 		);
 	};
 
+	useYourDomainForm = () => {
+		const initialQuery =
+			this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
+
+		return (
+			<div className="domains__step-section-wrapper" key="useYourDomainForm">
+				<UseYourDomainStep
+					analyticsSection="signup"
+					basePath={ this.props.path }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					initialQuery={ initialQuery }
+					isSignupStep
+					mapDomainUrl={ this.getMapDomainUrl() }
+					transferDomainUrl={ this.getTransferDomainUrl() }
+					products={ productsList.get() }
+				/>
+			</div>
+		);
+	};
+
 	getSubHeaderText() {
 		const { translate } = this.props;
 		return 'transfer' === this.props.stepSectionName
@@ -343,6 +375,10 @@ class DomainsStep extends React.Component {
 
 		if ( 'transfer' === this.props.stepSectionName ) {
 			content = this.transferForm();
+		}
+
+		if ( 'use-your-domain' === this.props.stepSectionName ) {
+			content = this.useYourDomainForm();
 		}
 
 		if ( ! this.props.stepSectionName ) {
@@ -440,6 +476,7 @@ export default connect(
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,
 		recordAddDomainButtonClickInTransferDomain,
+		recordAddDomainButtonClickInUseYourDomain,
 		submitDomainStepSelection,
 		setDesignType,
 	}

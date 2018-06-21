@@ -74,7 +74,7 @@ import {
 	recordSearchResultsReceive,
 	recordShowMoreResults,
 	recordTransferDomainButtonClick,
-	// recordUseYourDomainButtonClick,
+	recordUseYourDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
 // import { domainUseYourDomain } from 'my-sites/domains/paths';
@@ -947,7 +947,7 @@ class RegisterDomainStep extends React.Component {
 
 			domainUnavailableSuggestion = (
 				<DomainTransferSuggestion
-					onButtonClick={ this.goToTransferDomainStep }
+					onButtonClick={ this.goToUseYourDomainStep }
 					tracksButtonClickSource="initial-suggestions-bottom"
 				/>
 			);
@@ -968,7 +968,7 @@ class RegisterDomainStep extends React.Component {
 		return (
 			<ExampleDomainSuggestions
 				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				url={ this.getTransferDomainUrl() }
+				url={ this.getUseYourDomainUrl() }
 				path={ this.props.path }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				products={ this.props.products }
@@ -1018,7 +1018,7 @@ class RegisterDomainStep extends React.Component {
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickTransfer={ this.goToTransferDomainStep }
-				// onClickUseYourDomain={ this.goToUseYourDomain }
+				onClickUseYourDomain={ this.goToUseYourDomainStep }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				isLoadingSuggestions={ this.state.loadingResults }
@@ -1079,21 +1079,21 @@ class RegisterDomainStep extends React.Component {
 		return transferDomainUrl;
 	}
 
-	// getUseYourDomainUrl() {
-	// 	let useYourDomainUrl;
+	getUseYourDomainUrl() {
+		let useYourDomainUrl;
 
-	// 	if ( this.props.useYourDomainUrl ) {
-	// 		useYourDomainUrl = this.props.useYourDomainUrl;
-	// 	} else {
-	// 		const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
-	// 		useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
-	// 		if ( this.props.selectedSite ) {
-	// 			useYourDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
-	// 		}
-	// 	}
+		if ( this.props.useYourDomainUrl ) {
+			useYourDomainUrl = this.props.useYourDomainUrl;
+		} else {
+			const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
+			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
+			if ( this.props.selectedSite ) {
+				useYourDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
+			}
+		}
 
-	// 	return useYourDomainUrl;
-	// }
+		return useYourDomainUrl;
+	}
 
 	goToMapDomainStep = event => {
 		event.preventDefault();
@@ -1113,13 +1113,13 @@ class RegisterDomainStep extends React.Component {
 		page( this.getTransferDomainUrl() );
 	};
 
-	// goToUseYourDomain = event => {
-	// 	event.preventDefault();
+	goToUseYourDomainStep = event => {
+		event.preventDefault();
 
-	// 	this.props.recordUseYourDomainButtonClick( this.props.analyticsSection );
+		this.props.recordUseYourDomainButtonClick( this.props.analyticsSection );
 
-	// 	page( this.getUseYourDomainUrl() );
-	// };
+		page( this.getUseYourDomainUrl() );
+	};
 
 	showValidationErrorMessage( domain, error, errorData ) {
 		const { TRANSFERRABLE } = domainAvailability;
@@ -1149,6 +1149,6 @@ export default connect(
 		recordSearchResultsReceive,
 		recordShowMoreResults,
 		recordTransferDomainButtonClick,
-		// recordUseYourDomainButtonClick,
+		recordUseYourDomainButtonClick,
 	}
 )( localize( RegisterDomainStep ) );

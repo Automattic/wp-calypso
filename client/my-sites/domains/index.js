@@ -315,16 +315,16 @@ export default function() {
 			clientRender
 		);
 
-		// page(
-		// 	paths.domainUseYourDomain( ':site' ),
-		// 	siteSelection,
-		// 	navigation,
-		// 	domainsController.redirectIfNoSite( '/domains/add/use-your-domain' ),
-		// 	domainsController.jetpackNoDomainsWarning,
-		// 	domainsController.useYourDomain,
-		// 	makeLayout,
-		// 	clientRender
-		// );
+		page(
+			paths.domainUseYourDomain( ':site' ),
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.useYourDomain,
+			makeLayout,
+			clientRender
+		);
 
 		page(
 			paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
