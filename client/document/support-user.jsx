@@ -22,7 +22,11 @@ function supportUserFn( { user, token, path, authorized } ) {
 		window.sessionStorage.setItem( 'boot_support_user', window.JSON.stringify( { user, token } ) );
 	}
 
-	window.location.replace( path ? decodeURIComponent( path ) : '/' );
+	// Only redirect to same-domain
+	const redirectUrl = new URL( url );
+	redirectUrl.pathname = path ? decodeURIComponent( path ) : '/';
+	redirectUrl.search = '';
+	window.location.replace( redirectUrl.href );
 }
 
 function SupportUser( { supportUser, supportToken, supportPath, authorized = false } ) {
