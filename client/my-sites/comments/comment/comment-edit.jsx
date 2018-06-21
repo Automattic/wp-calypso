@@ -186,7 +186,8 @@ export class CommentEdit extends Component {
 							ref={ this.datePopoverButtonRef }
 							onClick={ this.toggleDatePopover }
 						>
-							{ moment( commentDate ).format( 'll LT' ) }
+							<Gridicon icon="calendar" />
+							<span>{ moment( commentDate ).format( 'lll' ) }</span>
 						</Button>
 						<Popover
 							className="comment__edit-date-popover"
