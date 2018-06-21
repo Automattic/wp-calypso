@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -43,20 +43,15 @@ export class CommentEdit extends Component {
 	};
 
 	state = {
-		authorDisplayName: '',
-		authorUrl: '',
-		commentContent: '',
-		commentDate: '',
+		authorDisplayName: this.props.authorDisplayName || '',
+		authorUrl: this.props.authorUrl || '',
+		commentContent: this.props.commentContent || '',
+		commentDate: this.props.commentDate || '',
 		isDatePopoverVisible: false,
 		tmpCommentDate: '',
 	};
 
-	componentWillMount() {
-		const { authorDisplayName, authorUrl, commentContent, commentDate } = this.props;
-		this.setState( { authorDisplayName, authorUrl, commentContent, commentDate } );
-	}
-
-	storeDatePopoverButtonRef = button => ( this.datePopoverButtonRef = button );
+	datePopoverButtonRef = createRef();
 
 	toggleDatePopover = () =>
 		this.setState( ( { commentDate, isDatePopoverVisible } ) => ( {
@@ -188,14 +183,14 @@ export class CommentEdit extends Component {
 						<FormLabel htmlFor="date">{ translate( 'Submitted on' ) }</FormLabel>
 						<Button
 							className="comment__edit-date-button"
-							ref={ this.storeDatePopoverButtonRef }
+							ref={ this.datePopoverButtonRef }
 							onClick={ this.toggleDatePopover }
 						>
 							{ moment( commentDate ).format( 'll LT' ) }
 						</Button>
 						<Popover
 							className="comment__edit-date-popover"
-							context={ this.datePopoverButtonRef }
+							context={ this.datePopoverButtonRef.current }
 							isVisible={ isDatePopoverVisible }
 							onClose={ this.cancelCommentDataValueChange }
 							position="bottom"
