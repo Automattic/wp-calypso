@@ -38,7 +38,7 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
 			expect( newState.currentlyEditingChanges.title ).to.equal( 'Flat rate' );
 			// Check that the method was initialized:
-			expect( newState.currentlyEditingChanges.cost ).to.be.a.number;
+			expect( newState.currentlyEditingChanges.cost ).to.be.a( 'number' );
 		} );
 	} );
 
@@ -254,7 +254,7 @@ describe( 'reducer', () => {
 				expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
 				expect( newState.creates[ 0 ]._originalId ).to.equal( 7 );
 				// Check that the method was initialized:
-				expect( newState.creates[ 0 ].cost ).to.be.a.number;
+				expect( newState.creates[ 0 ].cost ).to.be.a( 'number' );
 			}
 		);
 
@@ -280,7 +280,7 @@ describe( 'reducer', () => {
 				expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
 				expect( newState.creates[ 0 ]._originalId ).to.deep.equal( { index: 0 } );
 				// Check that the method was initialized:
-				expect( newState.creates[ 0 ].cost ).to.be.a.number;
+				expect( newState.creates[ 0 ].cost ).to.be.a( 'number' );
 			}
 		);
 

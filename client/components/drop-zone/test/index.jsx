@@ -266,7 +266,7 @@ describe( 'index', () => {
 		const dragEnterEvent = new window.MouseEvent( 'dragenter' );
 		window.dispatchEvent( dragEnterEvent );
 
-		expect( rendered ).to.have.length.of( 2 );
+		expect( rendered ).to.have.lengthOf( 2 );
 		rendered.forEach( function( zone ) {
 			expect( zone.state.isDraggingOverDocument ).to.be.ok;
 			expect( zone.state.isDraggingOverElement ).to.not.be.ok;

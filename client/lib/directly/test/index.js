@@ -151,7 +151,7 @@ describe( 'index', () => {
 				directly
 					.initialize()
 					.catch( () => {
-						expect( loadScript.loadScript ).not.to.have.beenCalled;
+						expect( loadScript.loadScript ).not.to.have.been.called;
 					} )
 					.then( () => done() );
 			} );
