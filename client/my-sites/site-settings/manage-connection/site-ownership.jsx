@@ -57,7 +57,7 @@ class SiteOwnership extends Component {
 		const { translate } = this.props;
 
 		accept(
-			translate( 'Are you sure you want to transfer ownership to {{user /}}?', {
+			translate( 'Are you sure you want to transfer site ownership to {{user /}}?', {
 				components: {
 					user: <strong>{ user.display_name || user.name }</strong>,
 				},
