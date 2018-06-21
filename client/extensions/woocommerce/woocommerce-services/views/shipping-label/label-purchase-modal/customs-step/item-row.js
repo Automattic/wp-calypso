@@ -22,7 +22,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import CountryDropdown from 'woocommerce/woocommerce-services/components/country-dropdown';
 
-const TariffCodeHeader = localize( ( { translate } ) =>
+const TariffCodeTitle = localize( ( { translate } ) =>
 	<span>{ translate( 'Tariff Code' ) } (<a href="https://hts.usitc.gov/"
 		target="_blank" rel="noopener noreferrer">{ translate( 'look up' ) }</a>)</span>
 );
@@ -59,7 +59,7 @@ const ItemRow = ( props ) => {
 		<TextField
 			id={ packageId + '_' + productId + '_tariffNumber' }
 			className="customs-step__item-code-column"
-			title={ <TariffCodeHeader /> }
+			title={ <TariffCodeTitle /> }
 			value={ tariffNumber }
 			updateValue={ props.setCustomsItemTariffNumber }
 			error={ errors.tariffNumber } />
@@ -106,6 +106,6 @@ export const Header = localize( ( { translate } ) => (
 	<div className="customs-step__item-rows-header">
 		<span className="customs-step__item-description-column">{ translate( 'Description' ) }</span>
 		<span className="customs-step__item-country-column">{ translate( 'Origin country' ) }</span>
-		<span className="customs-step__item-code-column">{ <TariffCodeHeader /> }</span>
+		<span className="customs-step__item-code-column">{ <TariffCodeTitle /> }</span>
 	</div>
 ) );
