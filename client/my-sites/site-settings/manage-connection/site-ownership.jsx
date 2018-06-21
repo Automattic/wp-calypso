@@ -29,7 +29,7 @@ import SectionHeader from 'components/section-header';
 import { changeOwner } from 'state/jetpack/connection/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteOwnership extends Component {
@@ -87,12 +87,12 @@ class SiteOwnership extends Component {
 	}
 
 	renderCurrentUserDropdown() {
-		const { currentUser, siteId } = this.props;
+		const { currentUser, isConnectionTransferSupported, siteId } = this.props;
 		if ( ! currentUser ) {
 			return;
 		}
 
-		if ( ! config.isEnabled( 'jetpack/ownership-change' ) ) {
+		if ( ! config.isEnabled( 'jetpack/ownership-change' ) || ! isConnectionTransferSupported ) {
 			return this.renderCurrentUser();
 		}
 
@@ -177,6 +177,7 @@ export default connect(
 
 		return {
 			currentUser: getCurrentUser( state ),
+			isConnectionTransferSupported: isJetpackMinimumVersion( state, siteId, '6.2' ),
 			siteId,
 			siteIsConnected: isJetpackSiteConnected( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
