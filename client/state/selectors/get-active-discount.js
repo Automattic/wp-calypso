@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { isPlainObject } from 'lodash';
+import { isArray, isPlainObject, map, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +34,15 @@ export const isDiscountActive = ( discount, state ) => {
 		const selectedSitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 
 		return planMatches( selectedSitePlanSlug, discount.targetPlan );
+	}
+
+	if ( isArray( discount.targetPlans ) ) {
+		const selectedSiteId = getSelectedSiteId( state );
+		const selectedSitePlanSlug = getSitePlanSlug( state, selectedSiteId );
+
+		return some(
+			map( discount.targetPlans, criteria => planMatches( selectedSitePlanSlug, criteria ) )
+		);
 	}
 
 	if ( ! discount.abTestName ) {
