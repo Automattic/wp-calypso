@@ -7947,7 +7947,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -8312,7 +8313,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -8360,6 +8362,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -8398,11 +8401,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -17398,9 +17403,9 @@
       "dev": true
     },
     "rtlcss": {
-      "version": "2.2.1",
-      "resolved": "https://registry.npmjs.org/rtlcss/-/rtlcss-2.2.1.tgz",
-      "integrity": "sha512-JjQ5DlrmwiItAjlmhoxrJq5ihgZcE0wMFxt7S17bIrt4Lw0WwKKFk+viRhvodB/0falyG/5fiO043ZDh6/aqTw==",
+      "version": "2.4.0",
+      "resolved": "https://registry.npmjs.org/rtlcss/-/rtlcss-2.4.0.tgz",
+      "integrity": "sha512-hdjFhZ5FCI0ABOfyXOMOhBtwPWtANLCG7rOiOcRf+yi5eDdxmDjqBruWouEnwVdzfh/TWF6NNncIEsigOCFZOA==",
       "requires": {
         "chalk": "^2.3.0",
         "findup": "^0.1.5",
