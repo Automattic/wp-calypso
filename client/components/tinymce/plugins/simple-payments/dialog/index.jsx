@@ -14,8 +14,7 @@ import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import getSimplePayments from 'state/selectors/get-simple-payments';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -136,13 +135,13 @@ class SimplePaymentsDialog extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		// When transitioning from hidden to visible, show and initialize the form
-		if ( nextProps.showDialog && ! this.props.showDialog ) {
-			if ( nextProps.editPaymentId ) {
+		if ( this.props.showDialog && ! prevProps.showDialog ) {
+			if ( this.props.editPaymentId ) {
 				// Explicitly ordered to edit a particular button
-				this.showButtonForm( nextProps.editPaymentId );
-			} else if ( isEmptyArray( nextProps.paymentButtons ) ) {
+				this.showButtonForm( this.props.editPaymentId );
+			} else if ( isEmptyArray( this.props.paymentButtons ) ) {
 				// If the button list is loaded and empty, show the "Add New" form
 				this.showButtonForm( null );
 			} else {
@@ -152,7 +151,7 @@ class SimplePaymentsDialog extends Component {
 		}
 
 		// If the list has finished loading and is empty, switch from list to the "Add New" form
-		if ( this.props.paymentButtons === null && isEmptyArray( nextProps.paymentButtons ) ) {
+		if ( prevProps.paymentButtons === null && isEmptyArray( this.props.paymentButtons ) ) {
 			this.showButtonForm( null );
 		}
 	}
