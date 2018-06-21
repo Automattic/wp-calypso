@@ -73,17 +73,28 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
+		undefined,
 	].forEach( productSlug => {
-		test( `False for plan ${ productSlug }`, () => {
+		test( `False for plan ${ JSON.stringify( productSlug ) }`, () => {
 			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( false );
 		} );
 	} );
 
 	[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( productSlug => {
-		test( `True for plan ${ productSlug }`, () => {
+		test( `True for plan ${ JSON.stringify( productSlug ) }`, () => {
 			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
 		} );
+	} );
+
+	test( 'Should be false for purchases not loaded', () => {
+		purchasesSelectors.getUserPurchases.mockImplementation( () => null );
+		expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( false );
+	} );
+
+	test( 'Should be false for no purchases', () => {
+		purchasesSelectors.getUserPurchases.mockImplementation( () => [] );
+		expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( false );
 	} );
 } );
