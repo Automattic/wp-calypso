@@ -262,7 +262,17 @@ export const requestEmergentPaywallConfiguration = ( cart, domainDetails, countr
 			body: { cart, domainDetails, country },
 		} ),
 		{
-			fromApi: () => config => [ [ 'config', config ] ],
+			fromApi: () => ( { paywall_url, payload, charge_id, signature } ) => [
+				[
+					emergentPaywallLookupKey,
+					{
+						paywall_url,
+						payload,
+						charge_id,
+						signature,
+					},
+				],
+			],
 			freshness: -Infinity,
 		}
 	);
