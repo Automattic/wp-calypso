@@ -31,7 +31,7 @@ const changeConnectionOwner = action =>
 
 const handleSuccess = ( { newOwnerWpcomDisplayName, siteId } ) => [
 	successNotice(
-		translate( 'Connection owner changed to %(user)s.', {
+		translate( 'Site owner changed to %(user)s.', {
 			args: { user: newOwnerWpcomDisplayName },
 		} )
 	),
@@ -40,7 +40,7 @@ const handleSuccess = ( { newOwnerWpcomDisplayName, siteId } ) => [
 
 const handleError = ( { newOwnerWpcomDisplayName } ) =>
 	errorNotice(
-		translate( 'Connection owner could not be changed to %(user)s. Please contact support.', {
+		translate( 'Site owner could not be changed to %(user)s. Please contact support.', {
 			args: { user: newOwnerWpcomDisplayName },
 		} )
 	);
