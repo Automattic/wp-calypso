@@ -29,7 +29,7 @@ describe( '<NoticesList />', () => {
 		expect( wrapper.type() ).toBeNull();
 	} );
 
-	test( 'should render notices with expected HTML', () => {
+	test( 'should render notices with the expected structure', () => {
 		const notices = [
 			{
 				noticeId: 'testing-notice',
