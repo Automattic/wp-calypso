@@ -210,7 +210,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/google-my-business/phone-screenshot-cropped.png',
+					src: '/calypso/images/google-my-business/stats-screenshot-cropped.png',
 					alt: this.props.translate( 'Manage Google My Business locations', { textOnly: true } ),
 				},
 				label: this.props.translate(
