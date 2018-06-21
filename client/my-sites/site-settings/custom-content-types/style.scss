@@ -8,16 +8,13 @@
 	.custom-content-types__label {
 		margin-bottom: 5px;
 	}
-}
 
-.custom-content-types__label,
-.custom-content-types__module-settings .form-toggle__label-content {
-	font-weight: 600;
-}
+	.custom-content-types__label {
+		font-weight: 600;
+		display: inline-block;
+	}
 
-html:not( [lang='de'] ) .custom-content-types__indented-form-field {
-	text-transform: lowercase;
-	&::first-letter {
-		text-transform: capitalize;
+	.form-toggle__wrapper {
+		display: inline-block;
 	}
 }
