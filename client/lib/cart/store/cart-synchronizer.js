@@ -163,7 +163,7 @@ CartSynchronizer.prototype._processQueuedChanges = function() {
 };
 
 CartSynchronizer.prototype._postToServer = function( callback ) {
-	this._wpcom.cart( this._cartKey, 'POST', preprocessCartForServer( this._latestValue ), function(
+	this._wpcom.setCart( this._cartKey, preprocessCartForServer( this._latestValue ), function(
 		error,
 		newValue
 	) {
@@ -185,7 +185,7 @@ CartSynchronizer.prototype.fetch = function() {
 };
 
 CartSynchronizer.prototype._getFromServer = function( callback ) {
-	this._wpcom.cart( this._cartKey, 'GET', function( error, newValue ) {
+	this._wpcom.getCart( this._cartKey, function( error, newValue ) {
 		if ( error ) {
 			callback( error );
 			return;
