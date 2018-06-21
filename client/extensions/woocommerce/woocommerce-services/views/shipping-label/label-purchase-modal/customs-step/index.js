@@ -66,7 +66,7 @@ CustomsStep.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
 	packageDescriptions: PropTypes.objectOf( PropTypes.string ).isRequired,
-	expanded: PropTypes.bool.isRequired,
+	expanded: PropTypes.bool,
 	isSubmitted: PropTypes.bool.isRequired,
 	errors: PropTypes.object,
 	toggleStep: PropTypes.func.isRequired,
