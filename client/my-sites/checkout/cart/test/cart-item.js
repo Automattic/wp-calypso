@@ -261,25 +261,17 @@ describe( 'cart-item', () => {
 
 		const instance = new CartItem( { ...props, cartItem: { cost: 0, bill_period: 1 } } );
 
-		test( 'Returns false for bundled domains - if 2 year plans are enabled', () => {
+		test( 'Returns false for bundled domains', () => {
 			isEnabled.mockImplementation( () => true );
 			isDomainProduct.mockImplementation( () => true );
 			isBundled.mockImplementation( () => true );
 			expect( instance.getSubscriptionLength() ).toEqual( false );
 		} );
 
-		test( 'Returns "annual subscription" for non-bundled domains - if 2 year plans are enabled', () => {
+		test( 'Returns "annual subscription" for non-bundled domains', () => {
 			isEnabled.mockImplementation( () => true );
 			isDomainProduct.mockImplementation( () => true );
 			isBundled.mockImplementation( () => false );
-
-			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
-		} );
-
-		test( 'Returns "annual subscription" for bundled domains - if 2 year plans are disabled', () => {
-			isEnabled.mockImplementation( () => false );
-			isDomainProduct.mockImplementation( () => true );
-			isBundled.mockImplementation( () => true );
 
 			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
 		} );
