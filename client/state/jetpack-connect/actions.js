@@ -379,7 +379,7 @@ export function authorize( queryObject ) {
 					} )
 				);
 				debug( 'Site updated', data );
-				receiveSite( data );
+				dispatch( receiveSite( data ) );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 				} );
