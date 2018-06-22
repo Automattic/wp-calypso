@@ -4,7 +4,7 @@ jobs:
     parallelism: 6
     working_directory: ~/wp-calypso
     docker:
-      - image: circleci/node:10.4.1-browsers
+      - image: circleci/node:10.5.0-browsers
         environment:
           CIRCLE_ARTIFACTS: /tmp/artifacts
           CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -35,8 +35,9 @@ jobs:
 
       - restore_cache:
           name: "Restoring npm cache"
-          key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-          key: v1-npmcache-{{ checksum ".nvmrc" }}
+          keys:
+             - v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+             - v1-npmcache-{{ checksum ".nvmrc" }}
 
       - run: npm ci
 
