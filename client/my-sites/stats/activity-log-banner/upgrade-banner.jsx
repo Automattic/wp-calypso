@@ -11,47 +11,29 @@ import { localize } from 'i18n-calypso';
  */
 import { isJetpackSite } from 'state/sites/selectors';
 import Banner from 'components/banner';
-import {
-	PLAN_PERSONAL,
-	PLAN_JETPACK_PERSONAL,
-	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-	FEATURE_NO_ADS,
-} from 'lib/plans/constants';
+import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
 
 class UpgradeBanner extends Component {
 	render() {
-		const { isJetpack, translate } = this.props;
+		const { translate, isJetpack } = this.props;
+		if ( isJetpack ) {
+			return null;
+		}
 		return (
 			<div className="activity-log-banner__upgrade">
-				{ isJetpack ? (
-					<Banner
-						callToAction={ translate( 'Get daily backups' ) }
-						dismissPreferenceName="activity-upgrade-banner-jetpack"
-						event="activity_log_upgrade_click_jetpack"
-						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
-						list={ [
-							translate( 'See all site activity over the past month' ),
-							translate( 'Rewind your site back to any point' ),
-							translate( 'Automatic threat scanning' ),
-						] }
-						plan={ PLAN_JETPACK_PERSONAL }
-						title={ translate( 'Secure your site with daily backups' ) }
-					/>
-				) : (
-					<Banner
-						callToAction={ translate( 'Upgrade' ) }
-						dismissPreferenceName="activity-upgrade-banner-simple"
-						event="activity_log_upgrade_click_wpcom"
-						feature={ FEATURE_NO_ADS }
-						list={ [
-							translate( 'Get a custom domain name' ),
-							translate( 'Remove WordPress.com ads' ),
-							translate( 'See 30 days of past activity' ),
-						] }
-						plan={ PLAN_PERSONAL }
-						title={ translate( 'Upgrade your WordPress.com experience' ) }
-					/>
-				) }
+				<Banner
+					callToAction={ translate( 'Upgrade' ) }
+					dismissPreferenceName="activity-upgrade-banner-simple"
+					event="activity_log_upgrade_click_wpcom"
+					feature={ FEATURE_NO_ADS }
+					list={ [
+						translate( 'Get a custom domain name' ),
+						translate( 'Remove WordPress.com ads' ),
+						translate( 'See 30 days of past activity' ),
+					] }
+					plan={ PLAN_PERSONAL }
+					title={ translate( 'Upgrade your WordPress.com experience' ) }
+				/>
 			</div>
 		);
 	}
