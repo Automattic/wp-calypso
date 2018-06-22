@@ -20,7 +20,6 @@ import {
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import {
 	areLabelsFullyLoaded,
-	getCountriesData,
 	getLabels,
 	isLabelDataFetchError,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
@@ -145,30 +144,23 @@ class OrderFulfillment extends Component {
 
 	isAddressValidForLabels( address, type ) {
 		if ( isEnabled( 'woocommerce/extension-wcservices/international-labels' ) ) {
+			// If international labels is enabled, origin must be a country with a USPS office, destination can be anywhere in the world
 			return (
 				'destination' === type || includes( ACCEPTED_USPS_ORIGIN_COUNTRY_CODES, address.country )
 			);
 		}
 
-		const { labelCountriesData } = this.props;
-		if ( ! labelCountriesData ) {
+		// If international labels is disabled, restrict origin and destination to "domestic", that is, US, Puerto Rico and Virgin Islands
+		if ( ! [ 'US', 'PR', 'VI' ].includes( address.country ) ) {
 			return false;
 		}
 
-		const countryData = labelCountriesData[ address.country ];
-
-		//country not supported
-		if ( ! countryData ) {
+		// Disable US military addresses too, since they require customs form
+		if ( 'US' === address.country && [ 'AA', 'AE', 'AP' ].includes( address.state ) ) {
 			return false;
 		}
 
-		//supported country doesn't have a states data
-		if ( ! countryData.states ) {
-			return true;
-		}
-
-		//check if the address state is supported
-		return Boolean( countryData.states[ address.state ] );
+		return true;
 	}
 
 	shouldShowLabels() {
@@ -309,7 +301,6 @@ export default connect(
 		const hasLabelsPaymentMethod =
 			wcsEnabled && labelsLoaded && getSelectedPaymentMethodId( state, site.ID );
 		const storeAddress = labelsLoaded && getStoreLocation( state );
-		const labelCountriesData = getCountriesData( state, order.id, site.ID );
 		const isSaving = isOrderUpdating( state, order.id );
 
 		return {
@@ -321,7 +312,6 @@ export default connect(
 			labels: getLabels( state, order.id, site.ID ),
 			hasLabelsPaymentMethod,
 			storeAddress,
-			labelCountriesData,
 		};
 	},
 	dispatch => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
