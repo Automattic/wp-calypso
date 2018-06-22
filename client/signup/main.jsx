@@ -100,6 +100,7 @@ class Signup extends React.Component {
 			hasCartItems: false,
 			plans: false,
 			previousFlowName: null,
+			resumedAfterLogin: false,
 		};
 	}
 
@@ -227,6 +228,7 @@ class Signup extends React.Component {
 	loadProgressFromStore = () => {
 		const newProgress = SignupProgressStore.get(),
 			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
+			// skipLoadingScreen = some( newProgress, matchesProperty( '', '' ) ),
 			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
 			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
 
@@ -372,10 +374,17 @@ class Signup extends React.Component {
 		flows.resumingFlow = true;
 
 		const firstUnsubmittedStep = this.firstUnsubmittedStepName(),
+			hasResumedAfterLogin = some( SignupProgressStore.get(), { resumeAfterLogin: true } ),
 			stepSectionName = firstUnsubmittedStep.stepSectionName;
 
 		// set `resumingStep` so we don't render/animate anything until we have mounted this step
 		this.setState( { firstUnsubmittedStep } );
+
+		// Reset loadingScreenStartTime only once when the flow resumed after login
+		// in order to prevent the flow from getting stuck in the processing screen.
+		if ( hasResumedAfterLogin && ! this.state.resumedAfterLogin ) {
+			this.setState( { resumedAfterLogin: true, loadingScreenStartTime: undefined } );
+		}
 
 		return page.redirect(
 			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
