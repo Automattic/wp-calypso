@@ -95,7 +95,7 @@ const webpackConfig = {
 		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 		namedModules: true,
 		namedChunks: isDevelopment,
-		minimize: shouldMinify,
+		minimize: false && shouldMinify,
 		minimizer: [
 			new UglifyJsPlugin( {
 				cache: 'docker' !== process.env.CONTAINER,
@@ -252,7 +252,7 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 	);
 }
 
-if ( shouldMinify ) {
+if ( false && shouldMinify ) {
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
 			cache: 'docker' !== process.env.CONTAINER,
