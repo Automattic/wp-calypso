@@ -552,7 +552,8 @@ export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId
 	return (
 		isLoaded( state, orderId, siteId ) &&
 		areSettingsLoaded( state, siteId ) &&
-		arePackagesLoaded( state, siteId )
+		arePackagesLoaded( state, siteId ) &&
+		areLocationsLoaded( state, siteId )
 	);
 };
 
@@ -561,5 +562,6 @@ export const isLabelDataFetchError = ( state, orderId, siteId = getSelectedSiteI
 		isError( state, orderId, siteId ) ||
 		areSettingsErrored( state, siteId ) ||
 		arePackagesErrored( state, siteId )
+		// TODO: Handle locations fetch error
 	);
 };
