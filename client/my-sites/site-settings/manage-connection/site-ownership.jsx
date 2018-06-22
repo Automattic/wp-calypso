@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -67,14 +67,14 @@ class SiteOwnership extends Component {
 		}
 
 		return (
-			<div>
+			<Fragment>
 				<FormSettingExplanation>
 					{ userIsMaster
 						? translate( "You are the owner of this site's connection to WordPress.com." )
 						: translate( "Somebody else owns this site's connection to WordPress.com." ) }
 				</FormSettingExplanation>
 				{ userIsMaster && this.renderCurrentUser() }
-			</div>
+			</Fragment>
 		);
 	}
 
@@ -95,14 +95,14 @@ class SiteOwnership extends Component {
 		const { siteId, siteIsConnected, siteIsJetpack, translate } = this.props;
 
 		return (
-			<div>
+			<Fragment>
 				{ siteIsJetpack && <QueryJetpackConnection siteId={ siteId } /> }
 				{ siteIsJetpack && <QueryJetpackUserConnection siteId={ siteId } /> }
 
 				<SectionHeader label={ translate( 'Site ownership' ) } />
 
 				{ siteIsConnected === null ? this.renderPlaceholder() : this.renderCardContent() }
-			</div>
+			</Fragment>
 		);
 	}
 }
