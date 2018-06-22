@@ -44,7 +44,7 @@ describe( 'Audio Middleware', () => {
 
 		middleware( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.beenCalled;
+		expect( store.dispatch ).to.not.have.been.called;
 		expect( next ).to.have.been.calledWith( action );
 	} );
 
@@ -60,9 +60,9 @@ describe( 'Audio Middleware', () => {
 
 		middleware( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.beenCalled;
+		expect( store.dispatch ).to.not.have.been.called;
 		expect( next ).to.have.been.calledWith( action );
-		expect( play ).to.not.have.beenCalled;
+		expect( play ).to.not.have.been.called;
 	} );
 
 	test( 'should play sound when receiving a new message from the operator', () => {
@@ -75,7 +75,7 @@ describe( 'Audio Middleware', () => {
 
 		middleware( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.beenCalled;
+		expect( store.dispatch ).to.not.have.been.called;
 		expect( next ).to.have.been.calledWith( action );
 		expect( window.Audio ).to.have.been.calledWith( '/calypso/audio/chat-pling.wav' );
 		expect( play ).to.have.been.calledWith();

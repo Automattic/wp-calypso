@@ -433,7 +433,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].creates ).to.exist;
 			expect( variationEditsAfter[ 0 ].creates.length ).to.equal( 2 );
 			expect( variationEditsAfter[ 0 ].creates[ 0 ] ).to.eql( variationBlackNew );
-			expect( variationEditsAfter[ 0 ].creates[ 1 ].id ).to.be.an.Object;
+			expect( variationEditsAfter[ 0 ].creates[ 1 ].id ).to.be.an( 'object' );
 			expect( variationEditsAfter[ 0 ].creates[ 1 ].attributes[ 0 ].name ).to.eql( 'Color' );
 			expect( variationEditsAfter[ 0 ].creates[ 1 ].attributes[ 0 ].option ).to.eql( 'Blue' );
 			expect( variationEditsAfter[ 0 ].creates[ 1 ].sku ).to.exist;
@@ -486,7 +486,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].updates[ 0 ].regular_price ).to.eql( '5.99' );
 			expect( variationEditsAfter[ 0 ].creates ).to.exist;
 			expect( variationEditsAfter[ 0 ].creates.length ).to.equal( 1 );
-			expect( variationEditsAfter[ 0 ].creates[ 0 ].id ).to.be.an.Object;
+			expect( variationEditsAfter[ 0 ].creates[ 0 ].id ).to.be.an( 'object' );
 			expect( variationEditsAfter[ 0 ].creates[ 0 ].attributes[ 0 ].name ).to.eql( 'Color' );
 			expect( variationEditsAfter[ 0 ].creates[ 0 ].attributes[ 0 ].option ).to.eql( 'Blue' );
 			expect( variationEditsAfter[ 0 ].creates[ 0 ].sku ).to.exist;

@@ -36,7 +36,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getShippingMethods( state, 123 ) ).to.be.falsey;
+			expect( getShippingMethods( state, 123 ) ).to.be.undefined;
 			expect( areShippingMethodsLoaded( state, 123 ) ).to.be.false;
 			expect( areShippingMethodsLoading( state, 123 ) ).to.be.false;
 		} );
@@ -90,7 +90,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getShippingMethods( state, 456 ) ).to.be.falsey;
+			expect( getShippingMethods( state, 456 ) ).to.be.undefined;
 			expect( areShippingMethodsLoaded( state, 456 ) ).to.be.false;
 			expect( areShippingMethodsLoading( state, 456 ) ).to.be.false;
 		} );

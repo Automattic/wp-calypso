@@ -92,9 +92,12 @@ class SuccessBanner extends PureComponent {
 					track: (
 						<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
 					),
-					taskFinished: translate( 'We successfully created a backup of your site at %s!', {
-						args: date,
-					} ),
+					taskFinished: translate(
+						'We successfully created a backup of your site as of %(date)s!',
+						{
+							args: { date },
+						}
+					),
 					actionButton: (
 						<Button href={ backupUrl } onClick={ this.trackDownload } primary>
 							{ translate( 'Download' ) }
@@ -116,8 +119,12 @@ class SuccessBanner extends PureComponent {
 					),
 					taskFinished:
 						'alternate' === context
-							? translate( 'We successfully cloned your site to %s!', { args: date } )
-							: translate( 'We successfully restored your site back to %s!', { args: date } ),
+							? translate( 'We successfully cloned your site to the state as of %(date)s!', {
+									args: { date },
+							  } )
+							: translate( 'We successfully restored your site back to %(date)s!', {
+									args: { date },
+							  } ),
 					actionButton: (
 						<Button href={ siteUrl } primary>
 							{ translate( 'View site' ) }

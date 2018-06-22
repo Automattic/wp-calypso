@@ -262,7 +262,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should be false when notes are loaded but labels are not.', () => {
-			expect( isActivityLogLoaded( labelsLoadingState, 45, 123 ) ).to.be.falsy;
+			expect( isActivityLogLoaded( labelsLoadingState, 45, 123 ) ).to.not.be.ok;
 		} );
 
 		it( 'should be true when notes are loaded and the WooCommerce Services extension is disabled.', () => {
@@ -326,11 +326,11 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should be false when notes are loading only for a different order.', () => {
-			expect( isActivityLogLoading( notesLoadingState, 20, 123 ) ).to.be.falsy;
+			expect( isActivityLogLoading( notesLoadingState, 20, 123 ) ).to.not.be.ok;
 		} );
 
 		it( 'should be false when notes are loading only for a different site.', () => {
-			expect( isActivityLogLoading( notesLoadingState, 45, 456 ) ).to.be.falsy;
+			expect( isActivityLogLoading( notesLoadingState, 45, 456 ) ).to.not.be.ok;
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {

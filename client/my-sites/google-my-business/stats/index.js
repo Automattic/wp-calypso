@@ -66,36 +66,54 @@ class GoogleMyBusinessStats extends Component {
 		} );
 	};
 
-	renderViewsTooltipForDatanum = ( datanum, dataSeries ) => {
-		const { value: valueCount, date } = datanum;
-		if ( dataSeries.length > 20 ) {
-			return this.props.translate( '%(value)d view on %(day)s', '%(value)d views on %(day)s', {
-				count: valueCount,
-				args: {
-					value: valueCount,
-					day: moment( date ).format( 'D MMMM YYYY' ),
-				},
-				comment: 'How many views per day for a Google My Business location with date.',
-			} );
+	renderViewsTooltipForDatanum = ( datanum, interval ) => {
+		const { value: viewCount, date } = datanum;
+		if ( interval === 'quarter' ) {
+			return this.props.translate(
+				'%(value)d view on the week of %(monday)s',
+				'%(value)d views on the week of %(monday)s',
+				{
+					count: viewCount,
+					args: {
+						value: viewCount,
+						monday: moment( date ).format( 'LL' ),
+					},
+				}
+			);
 		}
 
-		return valueCount;
+		return this.props.translate( '%(value)d view on %(day)s', '%(value)d views on %(day)s', {
+			count: viewCount,
+			args: {
+				value: viewCount,
+				day: moment( date ).format( 'LL' ),
+			},
+		} );
 	};
 
-	renderActionsTooltipForDatanum = ( datanum, dataSeries ) => {
-		const { value: valueCount, date } = datanum;
-		if ( dataSeries.length > 20 ) {
-			return this.props.translate( '%(value)d action on %(day)s', '%(value)d actions on %(day)s', {
-				count: valueCount,
-				args: {
-					value: valueCount,
-					day: moment( date ).format( 'D MMMM YYYY' ),
-				},
-				comment: 'How many actions per day for a Google My Business location with date.',
-			} );
+	renderActionsTooltipForDatanum = ( datanum, interval ) => {
+		const { value: actionCount, date } = datanum;
+		if ( interval === 'quarter' ) {
+			return this.props.translate(
+				'%(value)d action on the week of %(monday)s',
+				'%(value)d action on the week of %(monday)s',
+				{
+					count: actionCount,
+					args: {
+						value: actionCount,
+						monday: moment( date ).format( 'LL' ),
+					},
+				}
+			);
 		}
 
-		return valueCount;
+		return this.props.translate( '%(value)d action on %(day)s', '%(value)d actions on %(day)s', {
+			count: actionCount,
+			args: {
+				value: actionCount,
+				day: moment( date ).format( 'LL' ),
+			},
+		} );
 	};
 
 	renderStats() {

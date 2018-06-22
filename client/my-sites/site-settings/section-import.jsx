@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { find } from 'lodash';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,10 +30,39 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
 
-const hasActiveImports = imports =>
-	!! find( imports, ( { importerState } ) => {
-		return importerState !== appStates.INACTIVE && importerState !== appStates.READY_FOR_UPLOAD;
-	} );
+/**
+ * Configuration for each of the importers to be rendered in this section. If
+ * you're adding a new importer, add it here. Importers will be rendered in the
+ * order they are listed in this array.
+ *
+ * @type {Array}
+ */
+const importers = [
+	{
+		type: WORDPRESS,
+		isImporterEnabled: true,
+		component: WordPressImporter,
+	},
+	{
+		type: MEDIUM,
+		isImporterEnabled: isEnabled( 'manage/import/medium' ),
+		component: MediumImporter,
+	},
+	{
+		type: BLOGGER,
+		isImporterEnabled: isEnabled( 'manage/import/blogger' ),
+		component: BloggerImporter,
+	},
+	{
+		type: SITE_IMPORTER,
+		isImporterEnabled: isEnabled( 'manage/import/site-importer' ),
+		component: SiteImporter,
+	},
+];
+
+const filterImportsForSite = ( siteID, imports ) => {
+	return filter( imports, importItem => importItem.site.ID === siteID );
+};
 
 class SiteSettingsImport extends Component {
 	static propTypes = {
@@ -52,35 +81,107 @@ class SiteSettingsImport extends Component {
 	}
 
 	/**
-	 * Finds the import status objects for a
-	 * particular type of importer
+	 * Renders each enabled importer at the provided `state`
 	 *
-	 * @param {enum} type ImportConstants.IMPORT_TYPE_*
-	 * @returns {Array<Object>} ImportStatus objects
+	 * @param {object} site Data for the currently active site
+	 * @param {string} siteTitle The site's title
+	 * @param {string} state The state constant for the importer components
+	 * @returns {Array} A list of react elements for each enabled importer
 	 */
-	getImports( type ) {
+	renderIdleImporters( site, siteTitle, state ) {
+		const importerElements = importers.map( importer => {
+			const { type, isImporterEnabled, component: ImporterComponent } = importer;
+
+			if ( ! isImporterEnabled ) {
+				return;
+			}
+
+			return (
+				<ImporterComponent
+					key={ type }
+					site={ site }
+					importerStatus={ {
+						importerState: state,
+						siteTitle,
+						type,
+					} }
+				/>
+			);
+		} );
+
+		// add the 'other importers' card to the end of the list of importers
+		const {
+			options: { admin_url: adminUrl },
+		} = site;
+
+		const otherImportersCard = (
+			<CompactCard
+				key="other-importers-card"
+				href={ adminUrl + 'import.php' }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{ this.props.translate( 'Other importers' ) }
+			</CompactCard>
+		);
+
+		return [ ...importerElements, otherImportersCard ];
+	}
+
+	/**
+	 * Receives import jobs data (`importsForSite`) and maps this to return a
+	 * list of importer elements for active import jobs
+	 *
+	 * @param {Array} importsForSite The list of active import jobs
+	 * @returns {Array} Importer react elements for the active import jobs
+	 */
+	renderActiveImporters( importsForSite ) {
+		return importers.map( importer => {
+			const { type, isImporterEnabled, component: ImporterComponent } = importer;
+
+			if ( ! isImporterEnabled ) {
+				return;
+			}
+
+			return importsForSite
+				.filter( importItem => importItem.type === type )
+				.map( ( importItem, idx ) => (
+					<ImporterComponent
+						key={ type + idx }
+						site={ importItem.site }
+						importerStatus={ importItem }
+					/>
+				) );
+		} );
+	}
+
+	/**
+	 * Return rendered importer elements
+	 *
+	 * @returns {Array} Importer react elements
+	 */
+	renderImporters() {
 		const {
 			api: { isHydrated },
-			importers,
+			importers: imports,
 		} = this.state;
 		const { site } = this.props;
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
 		if ( ! isHydrated ) {
-			return [ { importerState: appStates.DISABLED, type, siteTitle } ];
+			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
 		}
 
-		const status = Object.keys( importers )
-			.map( id => importers[ id ] )
-			.filter( importer => site.ID === importer.site.ID )
-			.filter( importer => type === importer.type );
+		const importsForSite = filterImportsForSite( site.ID, imports )
+			// Add in the 'site' and 'siteTitle' properties to the import objects.
+			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
 
-		if ( 0 === status.length ) {
-			return [ { importerState: appStates.INACTIVE, type, siteTitle } ];
+		if ( 0 === importsForSite.length ) {
+			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
 		}
 
-		return status.map( item => Object.assign( {}, item, { site, siteTitle } ) );
+		return this.renderActiveImporters( importsForSite );
 	}
 
 	updateFromAPI = () => {
@@ -119,17 +220,6 @@ class SiteSettingsImport extends Component {
 			}
 		);
 
-		const wpImports = this.getImports( WORDPRESS );
-		const mediumImports = isEnabled( 'manage/import/medium' ) ? this.getImports( MEDIUM ) : [];
-		const bloggerImports = isEnabled( 'manage/import/blogger' ) ? this.getImports( BLOGGER ) : [];
-
-		const siteImporterImports = this.getImports( SITE_IMPORTER );
-
-		const hasWpActiveImports = hasActiveImports( wpImports );
-		const hasMediumActiveImports = hasActiveImports( mediumImports );
-		const hasBloggerActiveImports = hasActiveImports( bloggerImports );
-		const hasSiteImporterActiveImports = hasActiveImports( siteImporterImports );
-
 		return (
 			<Main>
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
@@ -156,39 +246,7 @@ class SiteSettingsImport extends Component {
 								<p className="importer__section-description">{ description }</p>
 							</header>
 						</CompactCard>
-
-						{ ( ( ! hasMediumActiveImports && ! hasBloggerActiveImports ) || hasWpActiveImports ) &&
-							wpImports.map( ( importerStatus, key ) => (
-								<WordPressImporter { ...{ key, site, importerStatus } } />
-							) ) }
-
-						{ ( ( ! hasWpActiveImports && ! hasBloggerActiveImports ) || hasMediumActiveImports ) &&
-							mediumImports.map( ( importerStatus, key ) => (
-								<MediumImporter { ...{ key, site, importerStatus } } />
-							) ) }
-
-						{ ( ( ! hasWpActiveImports && ! hasMediumActiveImports ) || hasBloggerActiveImports ) &&
-							bloggerImports.map( ( importerStatus, key ) => (
-								<BloggerImporter { ...{ key, site, importerStatus } } />
-							) ) }
-
-						{ isEnabled( 'manage/import/site-importer' ) &&
-							siteImporterImports.map( ( importerStatus, key ) => (
-								<SiteImporter { ...{ key, site, importerStatus } } />
-							) ) }
-
-						{ ! hasWpActiveImports &&
-							! hasBloggerActiveImports &&
-							! hasMediumActiveImports &&
-							! hasSiteImporterActiveImports && (
-								<CompactCard
-									href={ adminUrl + 'import.php' }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{ translate( 'Other importers' ) }
-								</CompactCard>
-							) }
+						{ this.renderImporters() }
 					</EmailVerificationGate>
 				) }
 			</Main>

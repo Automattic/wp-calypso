@@ -99,7 +99,7 @@ describe( '#receiveSuccess', () => {
 
 		receiveSuccess( { dispatch }, action, [ { id: 10 }, { id: 11 } ] );
 
-		expect( dispatch ).to.have.been.called.twice;
+		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith(
 			receiveUser( {
 				ID: 10,
