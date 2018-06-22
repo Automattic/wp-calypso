@@ -19,6 +19,8 @@ import Button from 'components/button';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
+import MediaDateRange from './media-date-range';
+import MediaFolderDropdown from './media-folder-dropdown';
 
 const DEBOUNCE_TIME = 250;
 
@@ -30,9 +32,12 @@ class MediaLibraryExternalHeader extends React.Component {
 		canCopy: PropTypes.bool,
 		selectedItems: PropTypes.array,
 		onSourceChange: PropTypes.func,
+		onFolderChange: PropTypes.func,
 		sticky: PropTypes.bool,
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
+		hasDateFilters: PropTypes.bool,
+		hasFolders: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -124,7 +129,15 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	renderCard() {
-		const { onMediaScaleChange, translate, canCopy, hasRefreshButton, hasAttribution } = this.props;
+		const {
+			onMediaScaleChange,
+			translate,
+			canCopy,
+			hasRefreshButton,
+			hasAttribution,
+			hasDateFilters,
+			hasFolders,
+		} = this.props;
 
 		return (
 			<Card className="media-library__header">
@@ -139,6 +152,10 @@ class MediaLibraryExternalHeader extends React.Component {
 				) }
 
 				{ canCopy && this.renderCopyButton() }
+
+				{ hasFolders && <MediaFolderDropdown onFolderChange={ this.props.onFolderChange } /> }
+
+				{ hasDateFilters && <MediaDateRange /> }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>
