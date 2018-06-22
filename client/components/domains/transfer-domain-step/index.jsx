@@ -81,7 +81,6 @@ class TransferDomainStep extends React.Component {
 			submittingAvailability: false,
 			submittingWhois: get( this.props, 'forcePrecheck', false ),
 			supportsPrivacy: false,
-			transferSelected: false,
 		};
 	}
 
@@ -324,11 +323,11 @@ class TransferDomainStep extends React.Component {
 
 	render() {
 		let content;
-		const { precheck, transferSelected } = this.state;
+		const { precheck } = this.state;
 		const { isSignupStep } = this.props;
 		const transferIsRestricted = this.transferIsRestricted();
 
-		if ( transferSelected && transferIsRestricted ) {
+		if ( transferIsRestricted ) {
 			content = this.getTransferRestrictionMessage();
 		} else if ( precheck && ! isSignupStep ) {
 			content = this.getTransferDomainPrecheck();
@@ -397,14 +396,10 @@ class TransferDomainStep extends React.Component {
 		event.preventDefault();
 
 		const { analyticsSection, searchQuery } = this.state;
-
-		if ( isEmpty( searchQuery ) ) {
-			this.setState( { transferSelected: true } );
-			return;
-		}
-
 		const domain = getFixedDomainSearch( searchQuery );
+
 		this.props.recordFormSubmitInTransferDomain( searchQuery );
+
 		this.setState( { notice: null, suggestion: null, submittingAvailability: true } );
 
 		this.props.recordGoButtonClickInTransferDomain( searchQuery, analyticsSection );
