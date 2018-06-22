@@ -257,7 +257,7 @@ class UseYourDomainStep extends React.Component {
 		const buttonText = translate( 'Transfer to WordPress.com' );
 		const learnMore = translate( '{{a}}Learn more about domain transfers{{/a}}', {
 			components: {
-				a: <a href={ INCOMING_DOMAIN_TRANSFER } />,
+				a: <a href={ INCOMING_DOMAIN_TRANSFER } rel="noopener noreferrer" target="_blank" />,
 			},
 		} );
 
@@ -285,7 +285,7 @@ class UseYourDomainStep extends React.Component {
 		const buttonText = translate( 'Buy Domain Mapping' );
 		const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
 			components: {
-				a: <a href={ MAP_EXISTING_DOMAIN } />,
+				a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
 			},
 		} );
 
@@ -313,7 +313,7 @@ class UseYourDomainStep extends React.Component {
 				<p className="use-your-domain-step__footer">
 					{ translate( "Not sure what works best for you? {{a}}We're happy to help!{{/a}}", {
 						components: {
-							a: <a href={ CALYPSO_CONTACT } />,
+							a: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" target="_blank" />,
 						},
 					} ) }
 				</p>
