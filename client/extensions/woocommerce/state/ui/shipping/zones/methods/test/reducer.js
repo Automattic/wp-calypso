@@ -241,7 +241,7 @@ describe( 'reducer', () => {
 					updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
 					deletes: [],
 					currentlyEditingId: 7,
-					currentlyEditingChanges: { id: 7, methodType: 'flat_rate' },
+					currentlyEditingChanges: { id: 7, methodType: 'flat_rate', cost: 12 },
 					currentlyEditingChangedType: true,
 				};
 
@@ -267,7 +267,7 @@ describe( 'reducer', () => {
 					updates: [],
 					deletes: [],
 					currentlyEditingId: { index: 0 },
-					currentlyEditingChanges: { id: { index: 0 }, methodType: 'flat_rate' },
+					currentlyEditingChanges: { id: { index: 0 }, methodType: 'flat_rate', cost: 12 },
 					currentlyEditingChangedType: true,
 				};
 
