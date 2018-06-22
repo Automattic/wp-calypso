@@ -47,13 +47,15 @@ function preprocessCartForServer( {
 			currency,
 			temporary,
 			extra,
-			products: products.map( ( { product_id, meta, free_trial, volume, _extra } ) => ( {
-				product_id,
-				meta,
-				free_trial,
-				volume,
-				extra: _extra,
-			} ) ),
+			products: products.map(
+				( { product_id, meta, free_trial, volume, extra: productExtra } ) => ( {
+					product_id,
+					meta,
+					free_trial,
+					volume,
+					extra: productExtra,
+				} )
+			),
 		},
 		needsUrlCoupon &&
 			urlCoupon && {
