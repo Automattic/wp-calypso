@@ -37,7 +37,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 	};
 
 	componentDidMount() {
-		if ( ! this.props.isDismissed ) {
+		if ( this.isVisible() ) {
 			this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_view' );
 		}
 	}
@@ -51,8 +51,12 @@ class GoogleMyBusinessStatsNudge extends Component {
 		this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_start_now_button_click' );
 	};
 
+	isVisible() {
+		return ! this.props.isDismissed && this.props.visible;
+	}
+
 	render() {
-		if ( this.props.isDismissed || ! this.props.visible ) {
+		if ( ! this.isVisible() ) {
 			return null;
 		}
 
