@@ -493,7 +493,8 @@ export default connect(
 		const requestedBackupId = getRequestedBackup( state, siteId );
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
-		const logs = siteId && requestActivityLogs( siteId, {} );
+		const filter = siteId && getActivityLogFilter( state, siteId );
+		const logs = siteId && requestActivityLogs( siteId, filter );
 		const siteIsOnFreePlan = isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) );
 
 		return {
@@ -502,7 +503,7 @@ export default connect(
 			enableRewind:
 				'active' === rewindState.state &&
 				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
-			filter: getActivityLogFilter( state, siteId ),
+			filter,
 			logs: ( siteId && logs.data ) || emptyList,
 			logLoadingState: logs.state,
 			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
