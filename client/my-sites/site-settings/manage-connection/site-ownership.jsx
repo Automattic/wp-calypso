@@ -68,11 +68,13 @@ class SiteOwnership extends Component {
 
 		return (
 			<div>
-				<FormSettingExplanation>
-					{ userIsMaster
-						? translate( "You are the owner of this site's connection to WordPress.com." )
-						: translate( "Somebody else owns this site's connection to WordPress.com." ) }
-				</FormSettingExplanation>
+				{ userIsMaster !== null && (
+					<FormSettingExplanation>
+						{ userIsMaster
+							? translate( "You are the owner of this site's connection to WordPress.com." )
+							: translate( "Somebody else owns this site's connection to WordPress.com." ) }
+					</FormSettingExplanation>
+				) }
 				{ userIsMaster && this.renderCurrentUser() }
 			</div>
 		);
