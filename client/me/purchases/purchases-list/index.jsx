@@ -54,9 +54,9 @@ class PurchasesList extends Component {
 						<ActionCard
 							headerText={ this.props.translate( 'Looking for Expert Help?' ) }
 							mainText={ this.props.translate(
-								'Shedule your free 1-1 concierge session with a Happiness Engineer today and get 30 minutes dedicated to the success of your site!'
+								'Get 30 minutes dedicated to the success of your site. Schedule your free 1-1 concierge session with a Happiness Engineer today!'
 							) }
-							buttonText="Get Started"
+							buttonText="Schedule Now"
 							buttonIcon={ null }
 							buttonPrimary={ true }
 							buttonHref="/me/concierge"

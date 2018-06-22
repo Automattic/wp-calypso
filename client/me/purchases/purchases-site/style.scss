@@ -46,10 +46,8 @@
 	}
 }
 
-@include breakpoint( ">960px" ) {
-	.purchases-list {
-		.action-card__illustration {
-			margin: -40px 20px 0 -20px;
-		}
+.purchases-list .action-card__illustration {
+	@include breakpoint( ">960px" ) {
+		margin: -40px 20px 0 -20px;
 	}
 }
