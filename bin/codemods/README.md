@@ -90,20 +90,6 @@ selecting your local Node process from the list. Refer to the
 
 ## List of available transformations
 
-### 5to6-codemod scripts ([docs](https://github.com/5to6/5to6-codemod#transforms))
-
-- commonjs-exports
-	- This codemod converts `module.exports` to `export` and `export default`.
-
-- commonjs-imports
-	- This transformation converts occurrences of `require( '...' )` to `import ... from '...'` occurring at the top level scope. It will ignore CommonJS imports inside block statements, like conditionals or function definitions.
-
-- commonjs-imports-hoist
-	- This transformation hoists all occurrences of `require( '...' )` inside if, loop, and function blocks. This can cause breakage! Use with caution.
-
-- named-exports-from-default
-	- This transformation generates named exports given a `default export { ... }`. This can be useful in transitioning away from namespace imports (`import * as blah from 'blah'`) to named imports (`import named from 'blah'`).
-
 ### React scripts ([docs](https://github.com/reactjs/react-codemod))
 
 - react-create-class

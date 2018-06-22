@@ -20,10 +20,6 @@ const recastOptions = {
 	}
 };
 const commonArgs = {
-	'5to6': [
-		// Recast options via 5to6
-		...recastArgs,
-	],
 	'react': [
 		// Recast options via react-codemod
 		`--printOptions=${ JSON.stringify( recastOptions ) }`,
