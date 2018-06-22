@@ -77,7 +77,6 @@ import {
 	recordUseYourDomainButtonClick,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
-// import { domainUseYourDomain } from 'my-sites/domains/paths';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
