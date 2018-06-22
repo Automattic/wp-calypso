@@ -759,6 +759,7 @@ module.exports = function() {
 					authorized: true,
 					supportUser: req.query.support_user,
 					supportToken: req.query._support_token,
+					supportPath: req.query.support_path,
 				} )
 			);
 		} );
