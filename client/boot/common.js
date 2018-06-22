@@ -76,6 +76,13 @@ const setupContextMiddleware = reduxStore => {
 
 		next();
 	} );
+
+	page.exit( '*', ( context, next ) => {
+		if ( ! context.store ) {
+			context.store = reduxStore;
+		}
+		next();
+	} );
 };
 
 // We need to require sections to load React with i18n mixin
