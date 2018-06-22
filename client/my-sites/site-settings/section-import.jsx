@@ -145,9 +145,9 @@ class SiteSettingsImport extends Component {
 
 			return importsForSite
 				.filter( importItem => importItem.type === type )
-				.map( importItem => (
+				.map( ( importItem, idx ) => (
 					<ImporterComponent
-						key={ importItem.importerId }
+						key={ type + idx }
 						site={ importItem.site }
 						importerStatus={ importItem }
 					/>
