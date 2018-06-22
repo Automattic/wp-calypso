@@ -148,7 +148,7 @@ describe( 'actions', () => {
 			} );
 			const dispatch = spy();
 			fetchEmailSettings( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.beenCalled;
+			expect( dispatch ).to.not.have.been.called;
 		} );
 
 		test( 'should not dispatch if settings are already fetched for this site', () => {
@@ -167,7 +167,7 @@ describe( 'actions', () => {
 			} );
 			const dispatch = spy();
 			fetchEmailSettings( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.beenCalled;
+			expect( dispatch ).to.not.have.been.called;
 		} );
 	} );
 

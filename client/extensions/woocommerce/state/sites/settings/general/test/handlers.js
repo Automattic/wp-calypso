@@ -86,7 +86,7 @@ describe( 'handlers', () => {
 			const action = fetchSettingsGeneral( siteId );
 
 			handleSettingsGeneral( { dispatch, getState }, action );
-			expect( dispatch ).to.not.have.beenCalled;
+			expect( dispatch ).to.not.have.been.called;
 		} );
 	} );
 	describe( '#handleSettingsGeneralSuccess()', () => {

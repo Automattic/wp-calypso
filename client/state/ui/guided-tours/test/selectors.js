@@ -192,7 +192,7 @@ describe( 'selectors', () => {
 					],
 				},
 			};
-			expect( hasTourJustBeenVisible( state, now ) ).to.be.falsey;
+			expect( hasTourJustBeenVisible( state, now ) ).to.not.be.ok;
 		} );
 	} );
 
