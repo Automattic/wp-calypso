@@ -19,7 +19,6 @@ import { appStates } from 'state/imports/constants';
 import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
 import { connectDispatcher } from './dispatcher-converter';
 import SiteImporterPlaceholderLogo from './site-importer/placeholder-logo';
-
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -155,6 +154,7 @@ const mapDispatchToProps = dispatch => ( {
 	),
 } );
 
-export default connect( null, { recordTracksEvent } )(
-	connectDispatcher( null, mapDispatchToProps )( localize( ImporterHeader ) )
-);
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( connectDispatcher( null, mapDispatchToProps )( localize( ImporterHeader ) ) );
