@@ -45,8 +45,8 @@ class DelegatingQuit extends Quit {
 		const container = targetForSlug( parentTarget );
 
 		if ( container && container.addEventListener ) {
-			container.addEventListener( 'click', this.onClick );
-			container.addEventListener( 'touchstart', this.onClick );
+			container.addEventListener( 'click', this.onParentClick );
+			container.addEventListener( 'touchstart', this.onParentClick );
 		}
 	};
 
@@ -55,12 +55,12 @@ class DelegatingQuit extends Quit {
 		const container = targetForSlug( parentTarget );
 
 		if ( container && container.addEventListener ) {
-			container.removeEventListener( 'click', this.onClick );
-			container.removeEventListener( 'touchstart', this.onClick );
+			container.removeEventListener( 'click', this.onParentClick );
+			container.removeEventListener( 'touchstart', this.onParentClick );
 		}
 	};
 
-	onClick = event => {
+	onParentClick = event => {
 		let eventTarget = event.target;
 		// Event delegation
 		while ( !! eventTarget && eventTarget !== event.currentTarget ) {
