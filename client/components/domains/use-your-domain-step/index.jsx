@@ -313,7 +313,7 @@ class UseYourDomainStep extends React.Component {
 				<p className="use-your-domain-step__footer">
 					{ translate( "Not sure what works best for you? {{a}}We're happy to help!{{/a}}", {
 						components: {
-							a: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" target="_blank" />,
+							a: <a href={ CALYPSO_CONTACT } />,
 						},
 					} ) }
 				</p>
