@@ -16,7 +16,7 @@ const config = {
 			{
 				modules,
 				targets: {
-					browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ],
+					browsers: [ '>0.25%', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ],
 				},
 				exclude: [ 'transform-classes', 'transform-template-literals' ], // transform-classes is added manually later.
 				useBuiltIns: 'entry',
