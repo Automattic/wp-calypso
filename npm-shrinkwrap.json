@@ -4257,9 +4257,9 @@
       }
     },
     "classnames": {
-      "version": "1.2.2",
-      "resolved": "https://registry.npmjs.org/classnames/-/classnames-1.2.2.tgz",
-      "integrity": "sha1-6WoqAiLYSSXdj62yBdZuEviI7fk="
+      "version": "2.2.6",
+      "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.2.6.tgz",
+      "integrity": "sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q=="
     },
     "clean-css": {
       "version": "4.1.11",
