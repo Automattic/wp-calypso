@@ -27,6 +27,17 @@ export const UnavailabilityNotice = ( {
 	}
 
 	switch ( reason ) {
+		case 'missing_plan':
+			return (
+				<Banner
+					plan="personal-bundle"
+					href={ `/plans/${ slug }` }
+					callToAction={ translate( 'Upgrade' ) }
+					title={ translate(
+						'Upgrade your Jetpack plan to restore your site to events in the past.'
+					) }
+				/>
+			);
 		case 'no_connected_jetpack':
 			return (
 				<Banner
