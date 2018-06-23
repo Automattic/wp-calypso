@@ -112,7 +112,13 @@ class MediaLibraryExternalHeader extends React.Component {
 		const { selectedItems, translate } = this.props;
 
 		return (
-			<Button compact disabled={ selectedItems.length === 0 } onClick={ this.onCopy } primary>
+			<Button
+				className="media-library__header-item"
+				compact
+				disabled={ selectedItems.length === 0 }
+				onClick={ this.onCopy }
+				primary
+			>
 				{ translate( 'Copy to media library' ) }
 			</Button>
 		);
@@ -144,7 +150,12 @@ class MediaLibraryExternalHeader extends React.Component {
 				{ hasAttribution && this.renderPexelsAttribution() }
 
 				{ hasRefreshButton && (
-					<Button compact disabled={ this.state.fetching } onClick={ this.handleClick }>
+					<Button
+						className="media-library__header-item"
+						compact
+						disabled={ this.state.fetching }
+						onClick={ this.handleClick }
+					>
 						<Gridicon icon="refresh" size={ 24 } />
 
 						{ translate( 'Refresh' ) }
@@ -155,6 +166,7 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ hasFolders && (
 					<MediaFolderDropdown
+						className="media-library__header-item"
 						disabled={ this.state.fetching }
 						onFolderChange={ this.props.onFolderChange }
 					/>
