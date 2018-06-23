@@ -62,6 +62,10 @@ Optional extra class(es) to be applied to the `.select-dropdown`.
 
 Optional tabIndex setting to override tab order via keyboard navigation. By default this is set to `0` which simply puts the element in the tabbing flow according to the component's placement in the document.
 
+`disabled`
+
+Used to determine whether the select dropdown is in a disabled state. When disabled it will not respond to interaction and will render to appear disabled.
+
 #### Dropdown Item
 
 `selected`
