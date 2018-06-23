@@ -23,6 +23,8 @@ class MediaFolderDropdown extends Component {
 	}
 
 	handleOnSelect( option ) {
+		if ( this.props.disabled ) return;
+
 		const folder = option.value;
 		this.setState( {
 			selectedFolder: folder,
@@ -56,7 +58,12 @@ class MediaFolderDropdown extends Component {
 
 		return (
 			<div className="media-library__folder-dropdown">
-				<SelectDropdown compact={ true } onSelect={ this.handleOnSelect } options={ options } />
+				<SelectDropdown
+					disabled={ this.props.disabled }
+					compact={ true }
+					onSelect={ this.handleOnSelect }
+					options={ options }
+				/>
 			</div>
 		);
 	}
