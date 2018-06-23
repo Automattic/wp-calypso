@@ -6,7 +6,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { bindAll } from 'lodash';
-
+import { DateUtils } from 'react-day-picker';
+import classNames from 'classnames';
 /**
  * Internal dependencies
  */
@@ -20,129 +21,156 @@ class MediaDateRange extends Component {
 		super( props );
 
 		this.state = {
-			dateStartPopoverVisible: false,
-			dateEndPopoverVisible: false,
-			startDate: moment(),
-			endDate: moment().add( 1, 'months' ),
+			popoverVisible: false,
+			oldStartDate: '',
+			oldEndDate: '',
+			startDate: moment().subtract( 1, 'months' ),
+			endDate: moment(),
+			oldDatesSaved: false,
 		};
 
 		bindAll( this, [
-			'toggleStartPopover',
-			'toggleEndPopover',
-			'closeStartPopover',
-			'closeEndPopover',
-			'onSelectStartDate',
-			'onSelectEndDate',
+			'togglePopover',
+			'closePopover',
+			'onSelectDate',
+			'revertDates',
+			'commitDates',
 		] );
 
 		this.startButtonRef = React.createRef();
-		this.endButtonRef = React.createRef();
 	}
 
-	toggleStartPopover() {
+	togglePopover() {
 		this.setState( {
-			dateStartPopoverVisible: ! this.state.dateStartPopoverVisible,
+			popoverVisible: ! this.state.popoverVisible,
 		} );
 	}
 
-	toggleEndPopover() {
+	closePopover() {
 		this.setState( {
-			dateEndPopoverVisible: ! this.state.dateEndPopoverVisible,
+			popoverVisible: false,
 		} );
 	}
 
-	closeStartPopover() {
-		this.setState( {
-			dateStartPopoverVisible: false,
-		} );
-	}
+	onSelectDate( date ) {
+		const range = {
+			from: this.state.startDate.toDate(),
+			to: this.state.endDate.toDate(),
+		};
 
-	closeEndPopover() {
-		this.setState( {
-			dateEndPopoverVisible: false,
-		} );
-	}
+		// Convert Moment to raw Date
+		const rawDay = date.toDate();
 
-	onSelectStartDate( date ) {
-		this.setState( {
-			startDate: date,
-		} );
-	}
+		// Calculate the new Date range
+		const newRange = DateUtils.addDayToRange( rawDay, range );
 
-	onSelectEndDate( date ) {
-		this.setState( {
-			endDate: date,
+		// Edge case: Range can sometimes be from: null, to: null
+		if ( ! newRange.from || ! newRange.to ) return;
+
+		this.setState( previousState => {
+			let newState = {
+				startDate: moment( newRange.from ),
+				endDate: moment( newRange.to ),
+			};
+
+			// For first date selection only: take a record of previous dates
+			// just in case user doesn't "Apply" and we need to revert
+			// to the original dates
+			if ( ! this.state.oldDatesSaved ) {
+				newState = Object.assign( {}, newState, {
+					oldStartDate: previousState.startDate,
+					oldEndDate: previousState.endDate,
+					oldDatesSaved: true, // marks that we have saved old dates
+				} );
+			}
+
+			return newState;
 		} );
 	}
 
 	formatDateForInput( date ) {
-		return moment( date ).format( 'MM/DD/YYYY' );
+		return moment( date ).format( 'DD/MM/YYYY' );
+	}
+
+	revertDates() {
+		this.setState( previousState => {
+			const newState = { oldDatesSaved: false };
+
+			if ( previousState.oldStartDate && previousState.oldEndDate ) {
+				newState.startDate = previousState.oldStartDate;
+				newState.endDate = previousState.oldEndDate;
+			}
+
+			return newState;
+		} );
+
+		// Close the popover
+		this.togglePopover();
+	}
+
+	commitDates() {
+		this.setState( {
+			oldStartDate: this.state.startDate, // update cached old dates
+			oldEndDate: this.state.endDate, // update cached old dates
+			oldDatesSaved: false,
+		} );
+
+		// Close the popover
+		this.togglePopover();
 	}
 
 	render() {
+		const rootClassNames = classNames( {
+			'media-library__date-range': true,
+			'toggle-visible': this.state.popoverVisible,
+		} );
+
 		return (
-			<div className="media-library__date-range">
+			<div className={ rootClassNames }>
 				<Button
 					ref={ this.startButtonRef }
-					onClick={ this.toggleStartPopover }
+					onClick={ this.togglePopover }
 					className="media-library__date-range-btn"
 					compact
 				>
 					<Gridicon className="media-library__date-range-icon" icon="calendar" />
-					{ this.formatDateForInput( this.state.startDate ) }
+					<span>
+						{ this.formatDateForInput( this.state.startDate ) }
+						-
+						{ this.formatDateForInput( this.state.endDate ) }
+					</span>
+					<Gridicon icon="chevron-down" />
 				</Button>
 
 				<Popover
 					className="media-library__date-range-popover is-dialog-visible"
-					isVisible={ this.state.dateStartPopoverVisible }
+					isVisible={ this.state.popoverVisible }
 					context={ this.startButtonRef.current }
 					position="bottom"
-					onClose={ this.closeStartPopover }
+					onClose={ this.revertDates }
 				>
 					<div className="media-library__date-range-popover-inner">
+						<div className="media-library__date-range-popover-header">
+							<Button onClick={ this.revertDates } compact>
+								Cancel
+							</Button>
+							<Button primary onClick={ this.commitDates } compact>
+								<Gridicon icon="checkmark" />
+								Apply Dates
+							</Button>
+						</div>
 						<DatePicker
-							selectedDay={ this.state.startDate }
-							onSelectDay={ this.onSelectStartDate }
+							onSelectDay={ this.onSelectDate }
+							selectedDays={ {
+								from: this.state.startDate.toDate(),
+								to: this.state.endDate.toDate(),
+							} }
+							numberOfMonths={ 2 }
+							calendarViewDate={ this.state.startDate.toDate() }
+							className="media-library__date-range-popover-date-picker"
 							disabledDays={ [
 								{
-									after: moment( this.state.endDate )
-										.subtract( 1, 'days' )
-										.toDate(),
-								},
-							] }
-						/>
-					</div>
-				</Popover>
-
-				<span className="media-library__date-range-span">to</span>
-
-				<Button
-					ref={ this.endButtonRef }
-					onClick={ this.toggleEndPopover }
-					className="media-library__date-range-btn"
-					compact
-				>
-					<Gridicon className="media-library__date-range-icon" icon="calendar" />
-					{ this.formatDateForInput( this.state.endDate ) }
-				</Button>
-
-				<Popover
-					className="media-library__date-range-popover is-dialog-visible"
-					isVisible={ this.state.dateEndPopoverVisible }
-					context={ this.endButtonRef.current }
-					position="bottom"
-					onClose={ this.closeEndPopover }
-				>
-					<div className="media-library__date-range-popover-inner">
-						<DatePicker
-							selectedDay={ this.state.endDate }
-							onSelectDay={ this.onSelectEndDate }
-							calendarViewDate={ this.state.endDate.toDate() }
-							disabledDays={ [
-								{
-									before: moment( this.state.startDate )
-										.add( 1, 'days' )
-										.toDate(),
+									after: new Date(), // you can't look at photos from the future!
 								},
 							] }
 						/>

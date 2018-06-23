@@ -11,6 +11,25 @@
 }
 
 .media-library__date-range-btn {
+	.toggle-visible & {
+		box-shadow: none;
+		background-color: $gray-light;
+	}
+
+	.gridicons-chevron-down {
+		fill: $gray-darken-20;
+		margin: 0 0 0 5px;
+		flex-shrink: 0;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+
+		.is-disabled & {
+			fill: $gray-lighten-30;
+		}
+
+		.toggle-visible & {
+			transform: rotate( -180deg );
+		}
+	}
 }
 
 .media-library__date-range-icon {
@@ -21,4 +40,29 @@
 	padding: 15px;
 	width: 400px;
 	max-width: 100%;
+}
+
+.media-library__date-range-popover-header {
+	.button {
+		margin: 0 0.5em;
+	}
+}
+
+.media-library__date-range-popover {
+	.DayPicker-Months {
+		display: flex;
+	}
+
+	.DayPicker-Month {
+		margin-right: 1em;
+
+		&:last-child {
+			margin-left: 1em;
+			margin-right: 0;
+		}
+	}
+
+	.DayPicker-Caption {
+		font-size: 12px;
+	}
 }

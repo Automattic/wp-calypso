@@ -228,9 +228,19 @@ class DatePicker extends PureComponent {
 				this.getDateInstance( event.date )
 			);
 		}
+	    
+	    const numMonths = this.props.numberOfMonths || 1;
+        const rangeSelected = modifiers.start && modifiers.end;
 
-		const numMonths = this.props.numberOfMonths || 1;
-		const rangeSelected = modifiers.start && modifiers.end;
+		if ( this.props.selectedDays ) {
+
+            modifiers[ 'range-start' ] = this.props.selectedDays.from;
+			modifiers[ 'range-end' ] = this.props.selectedDays.to;
+			modifiers.range = {
+				from: this.props.selectedDays.from,
+				to: this.props.selectedDays.to,
+			};
+		}
 
 		const rootClassNames = classNames( {
 			'date-picker': true,
@@ -243,6 +253,7 @@ class DatePicker extends PureComponent {
 		return (
 			<DayPicker
 				modifiers={ modifiers }
+				ref="daypicker"
 				className={ rootClassNames }
 				disabledDays={ this.props.disabledDays }
 				initialMonth={ this.props.calendarInitialDate }
