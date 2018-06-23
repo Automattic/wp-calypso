@@ -5,6 +5,7 @@
  */
 import React, { Component } from 'react';
 import { bindAll } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -33,7 +34,18 @@ class MediaFolderDropdown extends Component {
 	}
 
 	render() {
-		const options = [
+		const rootClassNames = classNames( this.props.className, {
+			'media-library__folder-dropdown': true,
+		} );
+
+		const separator = null;
+
+		const folderOptions = [
+			{
+				value: '',
+				label: 'All Photos',
+			},
+			separator,
 			{
 				value: 'album-1',
 				label: 'Album 1',
@@ -57,12 +69,12 @@ class MediaFolderDropdown extends Component {
 		];
 
 		return (
-			<div className="media-library__folder-dropdown">
+			<div className={ rootClassNames }>
 				<SelectDropdown
 					disabled={ this.props.disabled }
 					compact={ true }
 					onSelect={ this.handleOnSelect }
-					options={ options }
+					options={ folderOptions }
 				/>
 			</div>
 		);
