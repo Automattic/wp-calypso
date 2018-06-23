@@ -153,7 +153,12 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ canCopy && this.renderCopyButton() }
 
-				{ hasFolders && <MediaFolderDropdown onFolderChange={ this.props.onFolderChange } /> }
+				{ hasFolders && (
+					<MediaFolderDropdown
+						disabled={ this.state.fetching }
+						onFolderChange={ this.props.onFolderChange }
+					/>
+				) }
 
 				{ hasDateFilters && <MediaDateRange /> }
 
