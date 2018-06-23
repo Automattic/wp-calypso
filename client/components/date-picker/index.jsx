@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import DayPicker from 'react-day-picker';
 import { noop, merge, map, filter, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
+import classNames from 'classnames';
 /**
  * Internal dependencies
  */
@@ -22,6 +22,7 @@ class DatePicker extends PureComponent {
 	static propTypes = {
 		calendarViewDate: PropTypes.object,
 		enableOutsideDays: PropTypes.bool,
+		numberOfMonths: PropTypes.number,
 		events: PropTypes.array,
 		locale: PropTypes.object,
 		modifiers: PropTypes.object,
@@ -183,11 +184,25 @@ class DatePicker extends PureComponent {
 			);
 		}
 
+		if ( this.props.selectedDays ) {
+			modifiers[ 'range-start' ] = this.props.selectedDays.from;
+			modifiers[ 'range-end' ] = this.props.selectedDays.to;
+			modifiers.range = {
+				from: this.props.selectedDays.from,
+				to: this.props.selectedDays.to,
+			};
+		}
+
+		const rootClassNames = classNames( {
+			'date-picker': true,
+			'date-picker--has-range': this.props.selectedDays,
+		} );
+
 		return (
 			<DayPicker
 				modifiers={ modifiers }
 				ref="daypicker"
-				className="date-picker"
+				className={ rootClassNames }
 				disabledDays={ this.props.disabledDays }
 				month={ this.props.calendarViewDate }
 				onDayClick={ this.setCalendarDay }
@@ -197,6 +212,8 @@ class DatePicker extends PureComponent {
 				enableOutsideDays={ this.props.enableOutsideDays }
 				onCaptionClick={ this.setCalendarMonth }
 				navbarElement={ <DatePickerNavBar /> }
+				selectedDays={ this.props.selectedDays }
+				numberOfMonths={ this.props.numberOfMonths }
 			/>
 		);
 	}
