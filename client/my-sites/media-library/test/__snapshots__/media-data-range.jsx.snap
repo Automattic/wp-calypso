@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MediaDateRange should render 1`] = `
+<div
+  className="media-library__date-range"
+>
+  <Button
+    className="media-library__date-range-btn"
+    compact={true}
+    onClick={[Function]}
+    type="button"
+  >
+    <t
+      className="media-library__date-range-icon"
+      icon="calendar"
+      size={24}
+    />
+    <span>
+      01/05/2018
+      -
+      01/06/2018
+    </span>
+    <t
+      icon="chevron-down"
+      size={24}
+    />
+  </Button>
+  <Connect(Popover)
+    className="media-library__date-range-popover is-dialog-visible"
+    context={null}
+    isVisible={false}
+    onClose={[Function]}
+    position="bottom"
+  >
+    <div
+      className="media-library__date-range-popover-inner"
+    >
+      <div
+        className="media-library__date-range-popover-header"
+      >
+        <Button
+          className="media-library__date-range-popover-cancel-btn"
+          compact={true}
+          onClick={[Function]}
+          type="button"
+        >
+          Cancel
+        </Button>
+        <Button
+          className="media-library__date-range-popover-apply-btn"
+          compact={true}
+          onClick={[Function]}
+          primary={true}
+          type="button"
+        >
+          <t
+            icon="checkmark"
+            size={24}
+          />
+          Apply Dates
+        </Button>
+      </div>
+      <Localized(DatePicker)
+        calendarViewDate={2018-04-30T23:00:00.000Z}
+        className="media-library__date-range-popover-date-picker"
+        disabledDays={
+          Array [
+            Object {
+              "after": 2018-05-31T23:00:00.000Z,
+            },
+          ]
+        }
+        enableOutsideDays={false}
+        numberOfMonths={2}
+        onSelectDay={[Function]}
+        selectedDays={
+          Object {
+            "from": 2018-04-30T23:00:00.000Z,
+            "to": 2018-05-31T23:00:00.000Z,
+          }
+        }
+        toMonth={2018-05-31T23:00:00.000Z}
+      />
+    </div>
+  </Connect(Popover)>
+</div>
+`;

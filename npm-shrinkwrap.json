@@ -12531,6 +12531,11 @@
         "minimist": "0.0.8"
       }
     },
+    "mockdate": {
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/mockdate/-/mockdate-2.0.2.tgz",
+      "integrity": "sha1-WuDA6vj+I+AJzQH5iJtCxPY0rxI="
+    },
     "moment": {
       "version": "2.22.2",
       "resolved": "https://registry.npmjs.org/moment/-/moment-2.22.2.tgz",
