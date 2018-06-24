@@ -54,7 +54,7 @@ class DatePicker extends PureComponent {
 		onDayMouseLeave: PropTypes.func,
 		toMonth: PropTypes.object,
 		fromMonth: PropTypes.object,
-		onDayTouchStart: PropTypes.func,
+        onDayTouchStart: PropTypes.func,
 		onDayTouchEnd: PropTypes.func,
 		onDayTouchMove: PropTypes.func,
 		rootClassNames: PropTypes.object,
@@ -232,7 +232,7 @@ class DatePicker extends PureComponent {
 	    const numMonths = this.props.numberOfMonths || 1;
         const rangeSelected = modifiers.start && modifiers.end;
 
-		if ( this.props.selectedDays ) {
+		if ( this.props.selectedDays.from && this.props.selectedDays.to ) {
 
             modifiers[ 'range-start' ] = this.props.selectedDays.from;
 			modifiers[ 'range-end' ] = this.props.selectedDays.to;
