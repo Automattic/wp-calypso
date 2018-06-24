@@ -24,8 +24,8 @@ class MediaDateRange extends Component {
 			popoverVisible: false,
 			oldStartDate: '',
 			oldEndDate: '',
-			startDate: moment().subtract( 1, 'months' ),
-			endDate: moment(),
+			startDate: this.props.startDate || moment().subtract( 1, 'months' ),
+			endDate: this.props.endDate || moment(),
 			oldDatesSaved: false,
 		};
 
@@ -44,6 +44,9 @@ class MediaDateRange extends Component {
 		this.setState( {
 			popoverVisible: ! this.state.popoverVisible,
 		} );
+
+		// Close the popover
+		this.revertDates();
 	}
 
 	closePopover() {
@@ -52,14 +55,22 @@ class MediaDateRange extends Component {
 		} );
 	}
 
+	momentDateToNative( momentDate ) {
+		return momentDate.toDate();
+	}
+
+	nativeDateToMoment( nativeDate ) {
+		return moment( nativeDate );
+	}
+
 	onSelectDate( date ) {
+		// DateUtils requires a range object with this shape
 		const range = {
-			from: this.state.startDate.toDate(),
-			to: this.state.endDate.toDate(),
+			from: this.momentDateToNative( this.state.startDate ),
+			to: this.momentDateToNative( this.state.endDate ),
 		};
 
-		// Convert Moment to raw Date
-		const rawDay = date.toDate();
+		const rawDay = this.momentDateToNative( date );
 
 		// Calculate the new Date range
 		const newRange = DateUtils.addDayToRange( rawDay, range );
@@ -69,8 +80,8 @@ class MediaDateRange extends Component {
 
 		this.setState( previousState => {
 			let newState = {
-				startDate: moment( newRange.from ),
-				endDate: moment( newRange.to ),
+				startDate: this.nativeDateToMoment( newRange.from ),
+				endDate: this.nativeDateToMoment( newRange.to ),
 			};
 
 			// For first date selection only: take a record of previous dates
@@ -88,7 +99,7 @@ class MediaDateRange extends Component {
 		} );
 	}
 
-	formatDateForInput( date ) {
+	dateToHumanReadable( date ) {
 		return moment( date ).format( 'DD/MM/YYYY' );
 	}
 
@@ -103,9 +114,6 @@ class MediaDateRange extends Component {
 
 			return newState;
 		} );
-
-		// Close the popover
-		this.togglePopover();
 	}
 
 	commitDates() {
@@ -119,6 +127,94 @@ class MediaDateRange extends Component {
 		this.togglePopover();
 	}
 
+	renderDatePicker() {
+		const now = new Date();
+
+		return (
+			<DatePicker
+				className="media-library__date-range-popover-date-picker"
+				enableOutsideDays={ false }
+				toMonth={ now }
+				onSelectDay={ this.onSelectDate }
+				selectedDays={ {
+					from: this.momentDateToNative( this.state.startDate ),
+					to: this.momentDateToNative( this.state.endDate ),
+				} }
+				numberOfMonths={ 2 }
+				calendarViewDate={ this.momentDateToNative( this.state.startDate ) }
+				disabledDays={ [
+					{
+						after: now, // you can't look at photos from the future!
+					},
+				] }
+			/>
+		);
+	}
+
+	renderPopoverHeader() {
+		return (
+			<div className="media-library__date-range-popover-header">
+				<Button
+					className="media-library__date-range-popover-cancel-btn"
+					onClick={ this.togglePopover }
+					compact
+				>
+					Cancel
+				</Button>
+				<Button
+					className="media-library__date-range-popover-apply-btn"
+					primary
+					onClick={ this.commitDates }
+					compact
+				>
+					<Gridicon icon="checkmark" />
+					Apply Dates
+				</Button>
+			</div>
+		);
+	}
+
+	renderTriggerButton() {
+		return (
+			<Button
+				className="media-library__date-range-btn"
+				ref={ this.startButtonRef }
+				onClick={ this.togglePopover }
+				compact
+			>
+				<Gridicon className="media-library__date-range-icon" icon="calendar" />
+				<span>
+					{ this.dateToHumanReadable( this.state.startDate ) }
+					-
+					{ this.dateToHumanReadable( this.state.endDate ) }
+				</span>
+				<Gridicon icon="chevron-down" />
+			</Button>
+		);
+	}
+
+	renderPopover() {
+		const popoverClassNames = classNames( {
+			'media-library__date-range-popover': true,
+			'is-dialog-visible': true, // forces to render when inside a modal. Is there a way to detect this from global state?
+		} );
+
+		return (
+			<Popover
+				className={ popoverClassNames }
+				isVisible={ this.state.popoverVisible }
+				context={ this.startButtonRef.current }
+				position="bottom"
+				onClose={ this.togglePopover }
+			>
+				<div className="media-library__date-range-popover-inner">
+					{ this.renderPopoverHeader() }
+					{ this.renderDatePicker() }
+				</div>
+			</Popover>
+		);
+	}
+
 	render() {
 		const rootClassNames = classNames( {
 			'media-library__date-range': true,
@@ -127,55 +223,8 @@ class MediaDateRange extends Component {
 
 		return (
 			<div className={ rootClassNames }>
-				<Button
-					ref={ this.startButtonRef }
-					onClick={ this.togglePopover }
-					className="media-library__date-range-btn"
-					compact
-				>
-					<Gridicon className="media-library__date-range-icon" icon="calendar" />
-					<span>
-						{ this.formatDateForInput( this.state.startDate ) }
-						-
-						{ this.formatDateForInput( this.state.endDate ) }
-					</span>
-					<Gridicon icon="chevron-down" />
-				</Button>
-
-				<Popover
-					className="media-library__date-range-popover is-dialog-visible"
-					isVisible={ this.state.popoverVisible }
-					context={ this.startButtonRef.current }
-					position="bottom"
-					onClose={ this.revertDates }
-				>
-					<div className="media-library__date-range-popover-inner">
-						<div className="media-library__date-range-popover-header">
-							<Button onClick={ this.revertDates } compact>
-								Cancel
-							</Button>
-							<Button primary onClick={ this.commitDates } compact>
-								<Gridicon icon="checkmark" />
-								Apply Dates
-							</Button>
-						</div>
-						<DatePicker
-							onSelectDay={ this.onSelectDate }
-							selectedDays={ {
-								from: this.state.startDate.toDate(),
-								to: this.state.endDate.toDate(),
-							} }
-							numberOfMonths={ 2 }
-							calendarViewDate={ this.state.startDate.toDate() }
-							className="media-library__date-range-popover-date-picker"
-							disabledDays={ [
-								{
-									after: new Date(), // you can't look at photos from the future!
-								},
-							] }
-						/>
-					</div>
-				</Popover>
+				{ this.renderTriggerButton() }
+				{ this.renderPopover() }
 			</div>
 		);
 	}
