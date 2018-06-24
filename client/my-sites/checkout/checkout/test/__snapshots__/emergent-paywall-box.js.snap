@@ -20,7 +20,6 @@ exports[`<EmergentPaywallBox /> should render 1`] = `
       className="checkout__emergent-paywall-frame-container"
     >
       <form
-        action=""
         className="checkout__emergent-paywall-form"
         method="POST"
         name="emergent-paywall-get-iframe-contents"
@@ -30,12 +29,10 @@ exports[`<EmergentPaywallBox /> should render 1`] = `
         <input
           name="payload"
           type="hidden"
-          value=""
         />
         <input
           name="signature"
           type="hidden"
-          value=""
         />
       </form>
       <iframe
