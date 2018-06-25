@@ -8,13 +8,12 @@ import deepfreeze from 'deep-freeze';
  * Internal Dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestPage, handlePage, handleError, INITIAL_FETCH, PER_FETCH, QUERY_META } from '../';
+import { requestPage, handlePage, INITIAL_FETCH, PER_FETCH, QUERY_META } from '../';
 import {
 	requestPage as requestPageAction,
 	receivePage,
 	receiveUpdates,
 } from 'state/reader/streams/actions';
-import { errorNotice } from 'state/notices/actions';
 
 jest.mock( 'lib/analytics', () => ( {
 	tracks: { recordEvent: jest.fn() },
@@ -240,16 +239,6 @@ describe( 'streams', () => {
 					pageHandle: { before: '2018' },
 				} ),
 			] );
-		} );
-	} );
-
-	describe( 'handleError', () => {
-		const error = { error: true };
-
-		it( 'should dispatch a notice about the error', () => {
-			const notice = errorNotice( 'Could not fetch the next page of posts' );
-			delete notice.notice.noticeId;
-			expect( handleError( action, error ) ).toMatchObject( notice );
 		} );
 	} );
 } );
