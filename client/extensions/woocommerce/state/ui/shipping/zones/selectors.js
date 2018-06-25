@@ -21,7 +21,6 @@ import {
 	getCurrentlyEditingShippingZoneLocationsList,
 	getShippingZoneLocationsList,
 } from './locations/selectors';
-import { decodeEntities } from 'lib/formatting';
 
 export const getShippingZonesEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );
@@ -141,8 +140,8 @@ const generateZoneNameFromLocations = locations => {
 		return translate( 'New shipping zone' );
 	}
 
-	const locationNames = locations.map( ( { name, postcodeFilter } ) =>
-		decodeEntities( postcodeFilter ? `${ name } (${ postcodeFilter })` : name )
+	const locationNames = locations.map(
+		( { name, postcodeFilter } ) => ( postcodeFilter ? `${ name } (${ postcodeFilter })` : name )
 	);
 
 	if ( locationNames.length > 10 ) {
