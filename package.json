@@ -39,7 +39,7 @@
     "body-parser": "1.18.3",
     "bounding-client-rect": "1.0.5",
     "browser-filesaver": "1.1.1",
-    "chalk": "1.1.3",
+    "chalk": "2.4.1",
     "check-node-version": "2.1.0",
     "chokidar": "2.0.4",
     "chrono-node": "1.3.5",
