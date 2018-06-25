@@ -62,7 +62,9 @@ class PurchasesList extends Component {
 							buttonHref="/me/concierge"
 							buttonTarget={ null }
 							buttonOnClick={ () => {
-								this.props.recordTracksEvent( 'calypso_purchases_concierge_banner_click' );
+								this.props.recordTracksEvent( 'calypso_purchases_concierge_banner_click', {
+									referer: '/me/purchases',
+								} );
 							} }
 							compact={ false }
 							illustration="/calypso/images/illustrations/illustration-start.svg"
