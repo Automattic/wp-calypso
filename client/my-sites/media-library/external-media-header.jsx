@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import MediaLibraryScale from './scale';
 import Card from 'components/card';
 import Button from 'components/button';
@@ -161,13 +162,14 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ canCopy && this.renderCopyButton() }
 
-				{ hasFolders && (
-					<MediaFolderDropdown
-						className="media-library__header-item"
-						disabled={ this.state.fetching }
-						onFolderChange={ this.props.onFolderChange }
-					/>
-				) }
+				{ config.isEnabled( 'external-media/google-photos/folder-dropdown' ) &&
+					hasFolders && (
+						<MediaFolderDropdown
+							className="media-library__header-item"
+							disabled={ this.state.fetching }
+							onFolderChange={ this.props.onFolderChange }
+						/>
+					) }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>
