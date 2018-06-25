@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEqual, isObject, pick, size } from 'lodash';
+import { isEqual, isObject, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,8 +16,7 @@ import { isEqual, isObject, pick, size } from 'lodash';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import Notice from 'components/notice';
 import StepConfirmationButton from '../step-confirmation-button';
-import CountryDropdown from 'woocommerce/woocommerce-services/components/country-dropdown';
-import StateDropdown from 'woocommerce/woocommerce-services/components/state-dropdown';
+import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
 import UnverifiedAddress from './unverified';
@@ -34,9 +33,11 @@ import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
-	getCountriesData,
+	getOriginCountryNames,
+	getDestinationCountryNames,
+	getStateNames,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import { ACCEPTED_USPS_ORIGIN_COUNTRY_CODES } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
+import { getCountryName } from 'woocommerce/state/sites/data/locations/selectors';
 
 const AddressFields = props => {
 	const {
@@ -49,7 +50,8 @@ const AddressFields = props => {
 		normalizationInProgress,
 		allowChangeCountry,
 		group,
-		countriesData,
+		countryNames,
+		stateNames,
 		errors,
 		translate,
 	} = props;
@@ -76,7 +78,7 @@ const AddressFields = props => {
 					selectNormalizedAddress={ selectNormalizedAddressHandler }
 					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
 					editAddress={ editAddressHandler }
-					countriesData={ countriesData }
+					countryNames={ countryNames }
 				/>
 			);
 		}
@@ -90,7 +92,7 @@ const AddressFields = props => {
 					values={ values }
 					confirmAddressSuggestion={ confirmAddressSuggestionHandler }
 					editUnverifiableAddress={ editUnverifiableAddressHandler }
-					countriesData={ countriesData }
+					countryNames={ countryNames }
 					fieldErrors={ fieldErrors }
 				/>
 			);
@@ -163,16 +165,26 @@ const AddressFields = props => {
 					className="address-step__city"
 					error={ fieldErrors.city || generalErrorOnly }
 				/>
-				<StateDropdown
-					id={ getId( 'state' ) }
-					title={ translate( 'State' ) }
-					value={ getValue( 'state' ) }
-					countryCode={ getValue( 'country' ) }
-					countriesData={ countriesData }
-					updateValue={ updateValue( 'state' ) }
-					className="address-step__state"
-					error={ fieldErrors.state || generalErrorOnly }
-				/>
+				{ stateNames ? (
+					<Dropdown
+						id={ getId( 'state' ) }
+						title={ translate( 'State' ) }
+						value={ getValue( 'state' ) }
+						valuesMap={ { '': props.translate( 'Select one…' ), ...stateNames } }
+						updateValue={ updateValue( 'state' ) }
+						className="address-step__state"
+						error={ fieldErrors.state || generalErrorOnly }
+					/>
+				) : (
+					<TextField
+						id={ getId( 'state' ) }
+						title={ translate( 'State' ) }
+						value={ getValue( 'state' ) }
+						updateValue={ updateValue( 'state' ) }
+						className="address-step__state"
+						error={ fieldErrors.state || generalErrorOnly }
+					/>
+				) }
 				<TextField
 					id={ getId( 'postcode' ) }
 					title={ translate( 'Postal code' ) }
@@ -182,12 +194,12 @@ const AddressFields = props => {
 					error={ fieldErrors.postcode || generalErrorOnly }
 				/>
 			</div>
-			<CountryDropdown
+			<Dropdown
 				id={ getId( 'country' ) }
 				title={ translate( 'Country' ) }
 				value={ getValue( 'country' ) }
 				disabled={ ! allowChangeCountry }
-				countriesData={ countriesData }
+				valuesMap={ countryNames }
 				updateValue={ updateValue( 'country' ) }
 				error={ fieldErrors.country || generalErrorOnly }
 			/>
@@ -211,20 +223,32 @@ AddressFields.propTypes = {
 	allowChangeCountry: PropTypes.bool.isRequired,
 	errors: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	group: PropTypes.string.isRequired,
-	countriesData: PropTypes.object.isRequired,
+	countryNames: PropTypes.object.isRequired,
+	stateNames: PropTypes.object,
 };
 
 const mapStateToProps = ( state, { group, orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	let countriesData = getCountriesData( state, orderId, siteId );
-	if ( 'origin' === group ) {
-		countriesData = pick( countriesData, ACCEPTED_USPS_ORIGIN_COUNTRY_CODES );
+	const formData = shippingLabel.form[ group ];
+
+	let countryNames =
+		'origin' === group
+			? getOriginCountryNames( state, siteId )
+			: getDestinationCountryNames( state, siteId );
+	if ( ! countryNames[ formData.values.country ] ) {
+		// If the selected country is not supported but the user managed to select it, add it to the list
+		countryNames = {
+			[ formData.values.country ]: getCountryName( state, formData.values.country, siteId ),
+			...countryNames,
+		};
 	}
+
 	return {
-		...shippingLabel.form[ group ],
+		...formData,
 		errors: loaded && getFormErrors( state, orderId, siteId )[ group ],
-		countriesData,
+		countryNames,
+		stateNames: getStateNames( state, formData.values.country, siteId ),
 	};
 };
 

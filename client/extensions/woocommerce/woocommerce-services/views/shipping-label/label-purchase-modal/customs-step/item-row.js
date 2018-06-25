@@ -19,8 +19,9 @@ import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
+	getAllCountryNames,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import CountryDropdown from 'woocommerce/woocommerce-services/components/country-dropdown';
+import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 
 const TariffCodeTitle = localize( ( { translate } ) =>
 	<span>{ translate( 'Tariff Code' ) } (<a href="https://hts.usitc.gov/"
@@ -37,7 +38,7 @@ const ItemRow = ( props ) => {
 		defaultDescription,
 		tariffNumber,
 		originCountry,
-		countriesData,
+		countryNames,
 	} = props;
 
 	return <div className="customs-step__item-row">
@@ -49,13 +50,13 @@ const ItemRow = ( props ) => {
 			placeholder={ defaultDescription }
 			updateValue={ props.setCustomsItemDescription }
 			error={ errors.description } />
-		<CountryDropdown
+		<Dropdown
 			id={ packageId + '_' + productId + '_originCountry' }
 			className="customs-step__item-country-column"
 			title={ translate( 'Origin country' ) }
 			value={ originCountry }
 			updateValue={ props.setCustomsItemOriginCountry }
-			countriesData={ countriesData } />
+			valuesMap={ countryNames } />
 		<TextField
 			id={ packageId + '_' + productId + '_tariffNumber' }
 			className="customs-step__item-code-column"
@@ -76,7 +77,7 @@ ItemRow.propTypes = {
 	tariffNumber: PropTypes.string.isRequired,
 	originCountry: PropTypes.string.isRequired,
 	errors: PropTypes.object,
-	countriesData: PropTypes.object.isRequired,
+	countryNames: PropTypes.object.isRequired,
 	setCustomsItemDescription: PropTypes.func.isRequired,
 	setCustomsItemTariffNumber: PropTypes.func.isRequired,
 	setCustomsItemOriginCountry: PropTypes.func.isRequired,
@@ -85,7 +86,6 @@ ItemRow.propTypes = {
 const mapStateToProps = ( state, { orderId, siteId, productId } ) => {
 	const isShippingLabelLoaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	const storeOptions = isShippingLabelLoaded ? shippingLabel.storeOptions : {};
 	const { description, defaultDescription, tariffNumber, originCountry } = shippingLabel.form.customs.items[ productId ];
 
 	return {
@@ -94,7 +94,7 @@ const mapStateToProps = ( state, { orderId, siteId, productId } ) => {
 		tariffNumber,
 		originCountry,
 		errors: isShippingLabelLoaded ? getFormErrors( state, orderId, siteId ).customs.items[ productId ] : {},
-		countriesData: storeOptions.countriesData || {},
+		countryNames: getAllCountryNames( state, siteId ),
 	};
 };
 

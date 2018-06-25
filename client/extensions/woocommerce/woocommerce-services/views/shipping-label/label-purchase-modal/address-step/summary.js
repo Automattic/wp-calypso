@@ -5,16 +5,22 @@
  */
 import React from 'react';
 
-const AddressSummary = ( { values, originalValues, countriesData, expandStateName = false } ) => {
+const AddressSummary = ( {
+	values,
+	originalValues,
+	countryNames,
+	stateNames,
+	expandStateName = false,
+} ) => {
 	originalValues = originalValues || {};
 	const { state, country } = values;
 
 	let stateStr = '';
 	if ( state ) {
-		const statesMap = ( expandStateName && ( countriesData[ country ] || {} ).states ) || {};
+		const statesMap = ( expandStateName && stateNames ) || {};
 		stateStr = statesMap[ state ] || state;
 	}
-	const countryStr = countriesData[ country ] ? countriesData[ country ].name : country;
+	const countryStr = countryNames[ country ] || country;
 
 	const getValue = fieldName => {
 		const rawValue = values[ fieldName ];

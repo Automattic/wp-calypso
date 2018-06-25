@@ -19,7 +19,7 @@ import AddressSummary from './summary';
 
 const UnverifiedAddress = ( {
 	values,
-	countriesData,
+	countryNames,
 	editUnverifiableAddress,
 	confirmAddressSuggestion,
 	translate,
@@ -99,7 +99,7 @@ const UnverifiedAddress = ( {
 					<span className="address-step__unverifiable-title">
 						{ translate( 'Address entered' ) }
 					</span>
-					<AddressSummary values={ values } countriesData={ countriesData } />
+					<AddressSummary values={ values } countryNames={ countryNames } />
 				</div>
 				<div className="address-step__unverifiable-info">
 					<p>
@@ -132,7 +132,7 @@ UnverifiedAddress.propTypes = {
 	values: PropTypes.object.isRequired,
 	confirmAddressSuggestion: PropTypes.func.isRequired,
 	editUnverifiableAddress: PropTypes.func.isRequired,
-	countriesData: PropTypes.object.isRequired,
+	countryNames: PropTypes.object.isRequired,
 };
 
 export default localize( UnverifiedAddress );

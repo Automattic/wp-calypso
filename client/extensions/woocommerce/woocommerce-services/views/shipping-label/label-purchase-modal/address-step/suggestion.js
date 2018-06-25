@@ -37,7 +37,7 @@ const AddressSuggestion = ( {
 	selectNormalizedAddress,
 	editAddress,
 	confirmAddressSuggestion,
-	countriesData,
+	countryNames,
 	translate,
 } ) => {
 	const onToggleSelectNormalizedAddress = value => () => selectNormalizedAddress( value );
@@ -56,7 +56,7 @@ const AddressSuggestion = ( {
 					onChange={ onToggleSelectNormalizedAddress( false ) }
 				>
 					<span className="address-step__suggestion-title">{ translate( 'Address entered' ) }</span>
-					<AddressSummary values={ values } countriesData={ countriesData } />
+					<AddressSummary values={ values } countryNames={ countryNames } />
 					<Button borderless className="address-step__suggestion-edit" onClick={ editAddress }>
 						{ translate( 'Edit address' ) }
 					</Button>
@@ -71,7 +71,7 @@ const AddressSuggestion = ( {
 					<AddressSummary
 						values={ normalized }
 						originalValues={ values }
-						countriesData={ countriesData }
+						countryNames={ countryNames }
 					/>
 				</RadioButton>
 			</div>
@@ -89,7 +89,7 @@ AddressSuggestion.propTypes = {
 	selectNormalizedAddress: PropTypes.func.isRequired,
 	confirmAddressSuggestion: PropTypes.func.isRequired,
 	editAddress: PropTypes.func.isRequired,
-	countriesData: PropTypes.object.isRequired,
+	countryNames: PropTypes.object.isRequired,
 };
 
 export default localize( AddressSuggestion );

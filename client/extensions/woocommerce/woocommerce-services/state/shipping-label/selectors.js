@@ -41,6 +41,13 @@ import {
 import { isEnabled } from 'config';
 import { ACCEPTED_USPS_ORIGIN_COUNTRY_CODES } from './constants';
 import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
+import {
+	areLocationsLoaded,
+	_getSelectorDependants,
+	getAllCountries,
+	getStates,
+	hasStates,
+} from 'woocommerce/state/sites/data/locations/selectors';
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -546,6 +553,77 @@ export const canPurchase = createSelector(
 		getForm( state, orderId, siteId ),
 		getFirstErroneousStep( state, orderId, siteId ),
 	]
+);
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} Map with the pairs { countryCode: countryName } of all the countries in the world
+ */
+export const getAllCountryNames = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const countries = getAllCountries( state, siteId );
+		const names = {};
+		countries.forEach( ( { code, name } ) => names[ code ] = name );
+		return names;
+	},
+	_getSelectorDependants
+);
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} Map with the pairs { countryCode: countryName } of countries that are available as origin to print shipping labels
+ */
+export const getOriginCountryNames = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const allNames = getAllCountryNames( state, siteId );
+		return isEnabled( 'woocommerce/extension-wcservices/international-labels' )
+			? pick( allNames, ACCEPTED_USPS_ORIGIN_COUNTRY_CODES )
+			: pick( allNames, [ 'US', 'PR', 'VI' ] );
+	},
+	_getSelectorDependants
+);
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} Map with the pairs { countryCode: countryName } of countries that are available as destination to print shipping labels
+ */
+export const getDestinationCountryNames = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const allNames = getAllCountryNames( state, siteId );
+		return isEnabled( 'woocommerce/extension-wcservices/international-labels' )
+			? allNames
+			: pick( allNames, [ 'US', 'PR', 'VI' ] );
+	},
+	_getSelectorDependants
+);
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {String} countryCode 2-letter ISO country code
+ * @param {String} stateCode 2-letter code of the country's state
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object|null} Map with the form { stateCode: stateName } with all the states of the given country, or null if
+ * the country doesn't have a list of states
+ */
+export const getStateNames = createSelector(
+	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! hasStates( state, countryCode, siteId ) ) {
+			return null;
+		}
+		const states = getStates( state, countryCode, siteId );
+		const names = {};
+		states.forEach( ( { code, name } ) => names[ code ] = name );
+
+		if ( 'US' === countryCode && ! isEnabled( 'woocommerce/extension-wcservices/international-labels' ) ) {
+			// Filter out military addresses
+			return omit( names, [ 'AA', 'AE', 'AP' ] );
+		}
+		return names;
+	},
+	_getSelectorDependants
 );
 
 export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
