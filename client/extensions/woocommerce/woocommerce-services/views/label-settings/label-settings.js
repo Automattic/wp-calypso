@@ -162,7 +162,7 @@ class ShippingLabels extends Component {
 		return (
 			<p>
 				{ translate(
-					'Credit cards are retrieved from the following WordPress.com account: %(wpcomLogin)s (%(wpcomEmail)s)',
+					'Credit cards are retrieved from the following WordPress.com account: %(wpcomLogin)s <%(wpcomEmail)s>',
 					{
 						args: {
 							wpcomLogin: masterUserWpcomLogin,
@@ -294,7 +294,7 @@ class ShippingLabels extends Component {
 				<Button className="label-settings__internal" onClick={ openDialog } compact>
 					{ buttonLabel }
 				</Button>
-				<div className="label-settings__credit-card-description">
+				<div className="label-settings__credit-card-description label-settings__external">
 					{ this.renderAddCardExternalInfo() }
 					<Button onClick={ onAddCardExternal } compact>
 						{ buttonLabel } <Gridicon icon="external" />
