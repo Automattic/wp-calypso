@@ -15,10 +15,9 @@ import { includes } from 'lodash';
 import accept from 'lib/accept';
 import AuthorSelector from 'blocks/author-selector';
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import config from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
 import isJetpackSiteConnected from 'state/selectors/is-jetpack-site-connected';
@@ -209,26 +208,21 @@ class SiteOwnership extends Component {
 	renderCardContent() {
 		const { isPaidPlan, translate } = this.props;
 		const showPlanSection = config.isEnabled( 'jetpack/ownership-change' ) && isPaidPlan;
-		const ConnectionCardComponent = showPlanSection ? CompactCard : Card;
 
 		return (
-			<Fragment>
-				<ConnectionCardComponent>
-					<FormFieldset>
-						<FormLegend>{ translate( 'Site owner' ) }</FormLegend>
-						{ this.renderConnectionDetails() }
-					</FormFieldset>
-				</ConnectionCardComponent>
+			<Card>
+				<FormFieldset className="manage-connection__formfieldset">
+					<FormLabel>{ translate( 'Site owner' ) }</FormLabel>
+					{ this.renderConnectionDetails() }
+				</FormFieldset>
 
 				{ showPlanSection && (
-					<Card>
-						<FormFieldset>
-							<FormLegend>{ translate( 'Plan purchaser' ) }</FormLegend>
-							{ this.renderPlanDetails() }
-						</FormFieldset>
-					</Card>
+					<FormFieldset className="manage-connection__formfieldset has-divider is-top-only">
+						<FormLabel>{ translate( 'Plan purchaser' ) }</FormLabel>
+						{ this.renderPlanDetails() }
+					</FormFieldset>
 				) }
-			</Fragment>
+			</Card>
 		);
 	}
 
