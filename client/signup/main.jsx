@@ -463,7 +463,6 @@ class Signup extends React.Component {
 	}
 
 	renderCurrentStep() {
-		const userIsLoggedIn = this.props.isLoggedIn;
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
@@ -471,7 +470,6 @@ class Signup extends React.Component {
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
 			flow = flows.getFlow( this.props.flowName ),
 			hideFreePlan = !! (
-				! userIsLoggedIn ||
 				this.state.plans ||
 				( ( isDomainRegistration( domainItem ) ||
 					isDomainTransfer( domainItem ) ||
