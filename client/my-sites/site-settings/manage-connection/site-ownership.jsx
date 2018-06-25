@@ -15,6 +15,7 @@ import { includes } from 'lodash';
 import accept from 'lib/accept';
 import AuthorSelector from 'blocks/author-selector';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import config from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
@@ -29,7 +30,8 @@ import SectionHeader from 'components/section-header';
 import { changeOwner } from 'state/jetpack/connection/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
+import { isCurrentPlanPaid, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteOwnership extends Component {
@@ -142,16 +144,50 @@ class SiteOwnership extends Component {
 		);
 	}
 
-	renderCardContent() {
-		const { translate } = this.props;
+	renderPlanOwnerDropdown() {}
+
+	renderPlanDetails() {
+		const { currentUser, isCurrentPlanOwner, translate } = this.props;
+		if ( ! currentUser ) {
+			return;
+		}
 
 		return (
-			<Card>
-				<FormFieldset>
-					<FormLegend>{ translate( 'Site owner' ) }</FormLegend>
-					{ this.renderConnectionDetails() }
-				</FormFieldset>
-			</Card>
+			<Fragment>
+				{ isCurrentPlanOwner ? (
+					this.renderPlanOwnerDropdown()
+				) : (
+					<FormSettingExplanation>
+						{ translate( 'Somebody else is the plan purchaser for this site.' ) }
+					</FormSettingExplanation>
+				) }
+			</Fragment>
+		);
+	}
+
+	renderCardContent() {
+		const { isPaidPlan, translate } = this.props;
+		const showPlanSection = config.isEnabled( 'jetpack/ownership-change' ) && isPaidPlan;
+		const ConnectionCardComponent = showPlanSection ? CompactCard : Card;
+
+		return (
+			<Fragment>
+				<ConnectionCardComponent>
+					<FormFieldset>
+						<FormLegend>{ translate( 'Site owner' ) }</FormLegend>
+						{ this.renderConnectionDetails() }
+					</FormFieldset>
+				</ConnectionCardComponent>
+
+				{ showPlanSection && (
+					<Card>
+						<FormFieldset>
+							<FormLegend>{ translate( 'Plan purchaser' ) }</FormLegend>
+							{ this.renderPlanDetails() }
+						</FormFieldset>
+					</Card>
+				) }
+			</Fragment>
 		);
 	}
 
@@ -174,10 +210,14 @@ class SiteOwnership extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const isPaidPlan = isCurrentPlanPaid( state, siteId );
+		const isCurrentPlanOwner = isPaidPlan && isCurrentUserCurrentPlanOwner( state, siteId );
 
 		return {
 			currentUser: getCurrentUser( state ),
 			isConnectionTransferSupported: isJetpackMinimumVersion( state, siteId, '6.2' ),
+			isCurrentPlanOwner,
+			isPaidPlan,
 			siteId,
 			siteIsConnected: isJetpackSiteConnected( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
