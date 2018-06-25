@@ -9,7 +9,7 @@ import { WOOCOMMERCE_LOCATIONS_REQUEST } from 'woocommerce/state/action-types';
 
 export const fetch = action => {
 	const { siteId } = action;
-	return request( siteId, action, 'wc/v3' ).get( 'data/continents' );
+	return request( siteId, action, '/wc/v3' ).get( 'data/continents' );
 };
 
 export const onSuccess = ( { siteId }, { data } ) => locationsReceive( siteId, data );
