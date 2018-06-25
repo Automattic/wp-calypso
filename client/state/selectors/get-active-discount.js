@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { isArray, isPlainObject, map, some } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { activeDiscounts } from 'lib/discounts';
@@ -29,20 +24,10 @@ export const isDiscountActive = ( discount, state ) => {
 		return false;
 	}
 
-	if ( isPlainObject( discount.targetPlan ) ) {
-		const selectedSiteId = getSelectedSiteId( state );
-		const selectedSitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-
-		return planMatches( selectedSitePlanSlug, discount.targetPlan );
-	}
-
-	if ( isArray( discount.targetPlans ) ) {
-		const selectedSiteId = getSelectedSiteId( state );
-		const selectedSitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-
-		return some(
-			map( discount.targetPlans, criteria => planMatches( selectedSitePlanSlug, criteria ) )
-		);
+	if ( discount.targetPlans ) {
+		const targetPlans = Array.isArray( discount.targetPlans ) ? discount.targetPlans : [];
+		const selectedSitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
+		return targetPlans.some( plan => planMatches( selectedSitePlanSlug, plan ) );
 	}
 
 	if ( ! discount.abTestName ) {

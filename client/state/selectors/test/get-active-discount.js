@@ -153,13 +153,13 @@ describe( 'isDiscountActive()', () => {
 		} );
 	} );
 
-	describe( 'Target plan checks', () => {
+	describe( 'Target plans check', () => {
 		beforeEach( () => {
 			hasActivePromotion.mockImplementation( () => true );
 			abtest.mockImplementation( () => 'upsell' );
 		} );
 
-		test( 'should return true if there is no target plan', () => {
+		test( 'should return true if there are no target plans', () => {
 			expect(
 				isDiscountActive( {
 					startsAt: DatePlusTime( -10 ),
@@ -175,7 +175,7 @@ describe( 'isDiscountActive()', () => {
 				isDiscountActive( {
 					startsAt: DatePlusTime( -10 ),
 					endsAt: DatePlusTime( 100 ),
-					targetPlan: { type: TYPE_PREMIUM },
+					targetPlans: [ { type: TYPE_PREMIUM } ],
 				} )
 			).toBe( true );
 
@@ -183,19 +183,19 @@ describe( 'isDiscountActive()', () => {
 				isDiscountActive( {
 					startsAt: DatePlusTime( -10 ),
 					endsAt: DatePlusTime( 100 ),
-					targetPlan: { type: TYPE_PREMIUM, term: TERM_BIENNIALLY },
+					targetPlans: [ { type: TYPE_PREMIUM, term: TERM_BIENNIALLY } ],
 				} )
 			).toBe( true );
 		} );
 
-		test( 'should return false if target plan does not match the selected site plan', () => {
+		test( 'should return false if target plans do not match the selected site plan', () => {
 			getSitePlanSlug.mockImplementation( () => PLAN_PREMIUM_2_YEARS );
 
 			expect(
 				isDiscountActive( {
 					startsAt: DatePlusTime( -10 ),
 					endsAt: DatePlusTime( 100 ),
-					targetPlan: { type: TYPE_FREE },
+					targetPlans: [ { type: TYPE_FREE } ],
 				} )
 			).toBe( false );
 
@@ -203,7 +203,7 @@ describe( 'isDiscountActive()', () => {
 				isDiscountActive( {
 					startsAt: DatePlusTime( -10 ),
 					endsAt: DatePlusTime( 100 ),
-					targetPlan: { type: TYPE_PREMIUM, term: TERM_ANNUALLY },
+					targetPlans: [ { type: TYPE_PREMIUM, term: TERM_ANNUALLY } ],
 				} )
 			).toBe( false );
 		} );
