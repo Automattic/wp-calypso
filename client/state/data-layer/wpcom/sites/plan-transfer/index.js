@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { refreshSitePlans } from 'state/sites/plans/actions';
 import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'state/action-types';
 
 const noticeOptions = siteId => ( {
@@ -43,11 +44,13 @@ export const requestPlanOwnershipTransfer = action =>
  * @param   {Object} action Redux action
  * @returns {Object} Success notice action
  */
-export const handleTransferSuccess = ( { siteId } ) =>
+export const handleTransferSuccess = ( { siteId } ) => [
 	successNotice(
 		translate( 'Plan purchaser has been changed successfully.' ),
 		noticeOptions( siteId )
-	);
+	),
+	refreshSitePlans( siteId ),
+];
 
 /**
  * Dispatches an error notice when the request failed.
