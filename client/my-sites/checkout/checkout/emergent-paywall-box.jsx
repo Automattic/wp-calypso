@@ -15,12 +15,12 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import notices from 'notices';
 import TermsOfService from './terms-of-service';
 import wp from 'lib/wp';
 import { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const wpcom = wp.undocumented();
 const log = debug( 'calypso:checkout:payment:emergent-payall' );
@@ -125,13 +125,11 @@ export class EmergentPaywallBox extends Component {
 			.then( result => {
 				if ( result.order_id ) {
 					log( 'Order created. Order ID is: ' + result.order_id );
-					const successPath = `/checkout/thank-you/${ this.state.siteSlug }/pending/${
-						result.order_id
-					}`;
-					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
-						payment_method: this.state.paymentMethod,
+					this.props.onOrderCreated( {
+						orderId: result.order_id,
+						paymentMethod: this.state.paymentMethod,
+						siteSlug: this.state.siteSlug,
 					} );
-					page.redirect( successPath );
 				}
 			} )
 			.catch( error => {
@@ -242,5 +240,12 @@ export default connect(
 	state => ( {
 		userCountryCode: getCurrentUserCountryCode( state ),
 	} ),
-	null
+	dispatch => ( {
+		onOrderCreated: ( { orderId, paymentMethod, siteSlug } ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_checkout_form_submit', { payment_method: paymentMethod } )
+			);
+			page.redirect( `/checkout/thank-you/${ siteSlug }/pending/${ orderId }` );
+		},
+	} )
 )( localize( EmergentPaywallBox ) );
