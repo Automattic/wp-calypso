@@ -57,6 +57,7 @@
 		"domains/kracken-ui/pagination": true,
 		"external-media": true,
 		"external-media/google-photos": true,
+		"external-media/google-photos/date-filters": true,
 		"external-media/free-photo-library": true,
 		"gdpr-banner": false,
 		"google-my-business": true,
