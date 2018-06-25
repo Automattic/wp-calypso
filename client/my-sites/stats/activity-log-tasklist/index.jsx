@@ -281,7 +281,7 @@ class ActivityLogTasklist extends Component {
 							duration: 3000,
 						}
 					);
-					this.dismiss( slug );
+					this.dismiss( item );
 					this.dequeue();
 					break;
 			}
