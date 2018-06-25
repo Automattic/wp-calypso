@@ -32,11 +32,31 @@ class GoogleMyBusinessStatsNudge extends Component {
 		visible: PropTypes.bool,
 	};
 
+	state = {
+		siteSwitch: false,
+	};
+
 	static defaultProps = {
 		visible: true,
 	};
 
 	componentDidMount() {
+		this.recordView();
+	}
+
+	componentWillReceiveProps( newProps ) {
+		if ( this.props.siteId && newProps.siteId && this.props.siteId !== newProps.siteId ) {
+			this.setState( { siteSwitch: true } );
+			return;
+		}
+
+		if ( this.state.siteSwitch ) {
+			this.recordView();
+			this.setState( { siteSwitch: false } );
+		}
+	}
+
+	recordView() {
 		if ( this.isVisible() ) {
 			this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_view' );
 		}
