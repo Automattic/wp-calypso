@@ -16,8 +16,6 @@ import React from 'react';
  */
 import { EditPostStatus } from '../';
 
-jest.mock( 'lib/user', () => () => {} );
-
 describe( 'EditPostStatus', () => {
 	test( 'should hide sticky option for password protected posts', () => {
 		const wrapper = shallow(

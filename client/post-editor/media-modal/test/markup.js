@@ -14,8 +14,6 @@ import ReactDomServer from 'react-dom/server';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 
-jest.mock( 'lib/user', () => () => {} );
-
 describe( 'markup', () => {
 	let sandbox, markup, site;
 

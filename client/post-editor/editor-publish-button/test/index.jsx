@@ -21,7 +21,6 @@ import { EditorPublishButton } from '../';
 jest.mock( 'lib/posts/stats', () => ( {
 	recordEvent: () => {},
 } ) );
-jest.mock( 'lib/user', () => () => {} );
 
 /**
  * Module variables
