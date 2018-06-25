@@ -32,11 +32,6 @@ class GoogleMyBusinessStatsNudge extends Component {
 		visible: PropTypes.bool,
 	};
 
-	state = {
-		siteSwitch: false,
-		siteId: null,
-	};
-
 	static defaultProps = {
 		visible: true,
 	};
@@ -45,23 +40,8 @@ class GoogleMyBusinessStatsNudge extends Component {
 		this.recordView();
 	}
 
-	static getDerivedStateFromProps( props, state ) {
-		if ( props.siteId !== state.siteId ) {
-			return {
-				siteId: props.siteId,
-				siteSwitch: !! ( state.siteId && props.siteId ),
-			};
-		}
-
-		if ( state.siteSwitch ) {
-			return {
-				siteSwitch: false,
-			};
-		}
-	}
-
-	componentDidUpdate() {
-		if ( this.state.siteSwitch ) {
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId ) {
 			this.recordView();
 		}
 	}
