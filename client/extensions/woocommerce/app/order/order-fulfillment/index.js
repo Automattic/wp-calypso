@@ -23,7 +23,11 @@ import {
 	getLabels,
 	isLabelDataFetchError,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import { ACCEPTED_USPS_ORIGIN_COUNTRY_CODES } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
+import {
+	ACCEPTED_USPS_ORIGIN_COUNTRY_CODES,
+	US_MILITARY_STATES,
+	DOMESTIC_US_TERRITORIES,
+} from 'woocommerce/woocommerce-services/state/shipping-label/constants';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
@@ -151,12 +155,12 @@ class OrderFulfillment extends Component {
 		}
 
 		// If international labels is disabled, restrict origin and destination to "domestic", that is, US, Puerto Rico and Virgin Islands
-		if ( ! [ 'US', 'PR', 'VI' ].includes( address.country ) ) {
+		if ( ! DOMESTIC_US_TERRITORIES.includes( address.country ) ) {
 			return false;
 		}
 
 		// Disable US military addresses too, since they require customs form
-		if ( 'US' === address.country && [ 'AA', 'AE', 'AP' ].includes( address.state ) ) {
+		if ( 'US' === address.country && US_MILITARY_STATES.includes( address.state ) ) {
 			return false;
 		}
 

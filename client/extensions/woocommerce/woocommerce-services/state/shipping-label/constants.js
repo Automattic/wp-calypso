@@ -10,3 +10,10 @@ export const ACCEPTED_USPS_ORIGIN_COUNTRY_CODES = [
 	'FM', // Micronesia
 	'MP', // Northern Mariana Islands
 ];
+
+// Packages shipping to or from the US, Puerto Rico and Virgin Islands don't need a Customs form
+export const DOMESTIC_US_TERRITORIES = [ 'US', 'PR', 'VI' ];
+
+// These US states are a special case because they represent military bases. They're considered "domestic",
+// but they require a Customs form to ship from/to them.
+export const US_MILITARY_STATES = [ 'AA', 'AE', 'AP' ];

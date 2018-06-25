@@ -39,8 +39,12 @@ import {
 	isFetchError as arePackagesErrored,
 } from 'woocommerce/woocommerce-services/state/packages/selectors';
 import { isEnabled } from 'config';
-import { ACCEPTED_USPS_ORIGIN_COUNTRY_CODES } from './constants';
 import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
+import {
+	ACCEPTED_USPS_ORIGIN_COUNTRY_CODES,
+	US_MILITARY_STATES,
+	DOMESTIC_US_TERRITORIES,
+} from './constants';
 import {
 	areLocationsLoaded,
 	areLocationsErrored,
@@ -160,10 +164,10 @@ export const isCustomsFormRequired = createSelector(
 		const destination = getAddressValues( form.destination );
 
 		// Special case: Any shipment from/to military addresses must have Customs
-		if ( 'US' === origin.country && includes( [ 'AA', 'AE', 'AP' ], origin.state ) ) {
+		if ( 'US' === origin.country && includes( US_MILITARY_STATES, origin.state ) ) {
 			return true;
 		}
-		if ( 'US' === destination.country && includes( [ 'AA', 'AE', 'AP' ], destination.state ) ) {
+		if ( 'US' === destination.country && includes( US_MILITARY_STATES, destination.state ) ) {
 			return true;
 		}
 		// No need to have Customs if shipping inside the same territory (for example, from Guam to Guam)
@@ -172,8 +176,8 @@ export const isCustomsFormRequired = createSelector(
 		}
 		// Shipments between US, Puerto Rico and Virgin Islands don't need Customs, everything else does
 		return (
-			! includes( [ 'US', 'PR', 'VI' ], origin.country ) ||
-			! includes( [ 'US', 'PR', 'VI' ], destination.country )
+			! includes( DOMESTIC_US_TERRITORIES, origin.country ) ||
+			! includes( DOMESTIC_US_TERRITORIES, destination.country )
 		);
 	},
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => [ getForm( state, orderId, siteId ) ]
@@ -557,7 +561,7 @@ export const getOriginCountryNames = createSelector(
 		const allNames = getAllCountryNames( state, siteId );
 		return isEnabled( 'woocommerce/extension-wcservices/international-labels' )
 			? pick( allNames, ACCEPTED_USPS_ORIGIN_COUNTRY_CODES )
-			: pick( allNames, [ 'US', 'PR', 'VI' ] );
+			: pick( allNames, DOMESTIC_US_TERRITORIES );
 	},
 	_getSelectorDependants
 );
@@ -572,7 +576,7 @@ export const getDestinationCountryNames = createSelector(
 		const allNames = getAllCountryNames( state, siteId );
 		return isEnabled( 'woocommerce/extension-wcservices/international-labels' )
 			? allNames
-			: pick( allNames, [ 'US', 'PR', 'VI' ] );
+			: pick( allNames, DOMESTIC_US_TERRITORIES );
 	},
 	_getSelectorDependants
 );
@@ -599,7 +603,7 @@ export const getStateNames = createSelector(
 			! isEnabled( 'woocommerce/extension-wcservices/international-labels' )
 		) {
 			// Filter out military addresses
-			return omit( names, [ 'AA', 'AE', 'AP' ] );
+			return omit( names, US_MILITARY_STATES );
 		}
 		return names;
 	},
