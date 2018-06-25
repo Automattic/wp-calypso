@@ -505,7 +505,7 @@ export default connect(
 				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
 			filter,
 			logs: ( siteId && logs.data ) || emptyList,
-			logLoadingState: logs.state,
+			logLoadingState: logs && logs.state,
 			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
 			requestedRestoreId,
 			requestedBackup: find( logs, { activityId: requestedBackupId } ),
