@@ -99,6 +99,15 @@ is called.
 
 This function will be executed when the popover is shown.
 
+### Usage notes
+
+#### Within modals / dialogs
+
+When using a popover within a modal applying the class `is-dialog-visible` to the `Popover` component will cause it to gain the correct `z-index` to allow it to display correctly within the modal.
+
+```jsx
+<Popover className="is-dialog-visible" />
+```
 
 PopoverMenu
 ===========
