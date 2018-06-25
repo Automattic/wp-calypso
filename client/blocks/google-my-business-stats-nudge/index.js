@@ -37,6 +37,16 @@ class GoogleMyBusinessStatsNudge extends Component {
 	};
 
 	componentDidMount() {
+		this.recordView();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId ) {
+			this.recordView();
+		}
+	}
+
+	recordView() {
 		if ( this.isVisible() ) {
 			this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_view' );
 		}
