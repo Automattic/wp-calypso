@@ -28,7 +28,6 @@ import {
 	getTotalPriceBreakdown,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getOrderShippingTotal } from 'woocommerce/lib/order-values/totals';
 import { getOrderShippingMethod } from 'woocommerce/lib/order-values';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
@@ -93,7 +92,7 @@ const getRatesStatus = ( { retrievalInProgress, errors, available, form } ) => {
 };
 
 const showCheckoutShippingInfo = props => {
-	const { shippingMethod, shippingCost, currency, translate } = props;
+	const { shippingMethod, shippingCost, translate } = props;
 
 	if ( shippingMethod ) {
 		let shippingInfo;
@@ -108,7 +107,7 @@ const showCheckoutShippingInfo = props => {
 						),
 						shippingCost: (
 							<span className="rates-step__shipping-info-cost">
-								{ formatCurrency( shippingCost, currency ) }
+								{ formatCurrency( shippingCost, 'USD' ) }
 							</span>
 						),
 					},
@@ -198,7 +197,6 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		errors: loaded && getFormErrors( state, orderId, siteId ).rates,
 		ratesTotal: priceBreakdown ? priceBreakdown.total : 0,
 		allPackages: getAllPackageDefinitions( state, siteId ),
-		currency: getPaymentCurrencySettings( state, siteId ),
 		shippingCost: getOrderShippingTotal( order ),
 		shippingMethod: getOrderShippingMethod( order ),
 	};
