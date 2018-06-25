@@ -3,14 +3,13 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { noop, omitBy, isUndefined } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import FollowButton from './button';
 import isFollowing from 'state/selectors/is-following';
