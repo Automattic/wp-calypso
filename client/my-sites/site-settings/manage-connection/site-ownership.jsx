@@ -56,7 +56,7 @@ class SiteOwnership extends Component {
 		return { ...user.linked_user_info, ...{ ID: user.ID } };
 	}
 
-	onSelect = user => {
+	onSelectConnectionOwner = user => {
 		const { translate } = this.props;
 
 		accept(
@@ -105,7 +105,7 @@ class SiteOwnership extends Component {
 					exclude={ this.isUserExcludedFromSelector }
 					transformAuthor={ this.transformUser }
 					allowSingleUser
-					onSelect={ this.onSelect }
+					onSelect={ this.onSelectConnectionOwner }
 				>
 					{ this.renderCurrentUser() }
 				</AuthorSelector>
