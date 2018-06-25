@@ -11,7 +11,7 @@ import { find, filter, flatMap, get, isArray, isEmpty, omit, sortBy } from 'loda
  */
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING, ERROR } from 'woocommerce/state/constants';
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -39,6 +39,15 @@ export const areLocationsLoaded = ( state, siteId = getSelectedSiteId( state ) )
  */
 export const areLocationsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return LOADING === getRawLocations( state, siteId );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether the locations data fetch has resulted in an error
+ */
+export const areLocationsErrored = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return ERROR === getRawLocations( state, siteId );
 };
 
 /**

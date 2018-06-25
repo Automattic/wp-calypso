@@ -8,11 +8,10 @@ import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_LOCATIONS_REQUEST,
 	WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
+	WOOCOMMERCE_ERROR_SET,
 } from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING, ERROR } from 'woocommerce/state/constants';
 import { decodeEntities } from 'lib/formatting';
-
-// TODO: Handle error
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_LOCATIONS_REQUEST ]: () => {
@@ -32,5 +31,9 @@ export default createReducer( null, {
 				} ) ),
 			} ) ),
 		} ) );
+	},
+
+	[ WOOCOMMERCE_ERROR_SET ]: ( state, { originalAction: { type } } ) => {
+		return WOOCOMMERCE_LOCATIONS_REQUEST === type ? ERROR : state;
 	},
 } );

@@ -43,6 +43,8 @@ import { ACCEPTED_USPS_ORIGIN_COUNTRY_CODES } from './constants';
 import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 import {
 	areLocationsLoaded,
+	areLocationsErrored,
+	getCountryName,
 	_getSelectorDependants,
 	getAllCountries,
 	getStates,
@@ -617,7 +619,7 @@ export const isLabelDataFetchError = ( state, orderId, siteId = getSelectedSiteI
 	return (
 		isError( state, orderId, siteId ) ||
 		areSettingsErrored( state, siteId ) ||
-		arePackagesErrored( state, siteId )
-		// TODO: Handle locations fetch error
+		arePackagesErrored( state, siteId ) ||
+		areLocationsErrored( state, siteId )
 	);
 };
