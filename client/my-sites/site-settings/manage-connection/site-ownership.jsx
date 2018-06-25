@@ -33,6 +33,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { transferPlanOwnership } from 'state/sites/plans/actions';
 
 class SiteOwnership extends Component {
 	renderPlaceholder() {
@@ -73,6 +74,30 @@ class SiteOwnership extends Component {
 			},
 			translate( 'Transfer ownership' ),
 			translate( 'Keep ownership' ),
+			{ isScary: true }
+		);
+	};
+
+	onSelectPlanOwner = user => {
+		const { translate } = this.props;
+
+		accept(
+			translate(
+				'Are you absolutely sure you want to change the plan purchaser for this site to {{user /}}?',
+				{
+					components: {
+						user: <strong>{ user.display_name || user.name }</strong>,
+					},
+				}
+			),
+			accepted => {
+				if ( accepted ) {
+					this.props.transferPlanOwnership( this.props.siteId, user.ID );
+					this.props.recordTracksEvent( 'calypso_jetpack_plan_ownership_changed' );
+				}
+			},
+			translate( 'Yes, change the plan purchaser' ),
+			translate( 'Cancel' ),
 			{ isScary: true }
 		);
 	};
@@ -144,7 +169,23 @@ class SiteOwnership extends Component {
 		);
 	}
 
-	renderPlanOwnerDropdown() {}
+	renderPlanOwnerDropdown() {
+		const { siteId } = this.props;
+
+		return (
+			<div className="manage-connection__user-dropdown">
+				<AuthorSelector
+					siteId={ siteId }
+					exclude={ this.isUserExcludedFromSelector }
+					transformAuthor={ this.transformUser }
+					allowSingleUser
+					onSelect={ this.onSelectPlanOwner }
+				>
+					{ this.renderCurrentUser() }
+				</AuthorSelector>
+			</div>
+		);
+	}
 
 	renderPlanDetails() {
 		const { currentUser, isCurrentPlanOwner, translate } = this.props;
@@ -225,5 +266,5 @@ export default connect(
 			userIsMaster: isJetpackUserMaster( state, siteId ),
 		};
 	},
-	{ changeOwner, recordTracksEvent }
+	{ changeOwner, recordTracksEvent, transferPlanOwnership }
 )( localize( SiteOwnership ) );
