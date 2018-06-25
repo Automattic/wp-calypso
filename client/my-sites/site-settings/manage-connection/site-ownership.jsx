@@ -91,7 +91,7 @@ class SiteOwnership extends Component {
 			),
 			accepted => {
 				if ( accepted ) {
-					this.props.transferPlanOwnership( this.props.siteId, user.ID );
+					this.props.transferPlanOwnership( this.props.siteId, user.linked_user_ID );
 					this.props.recordTracksEvent( 'calypso_jetpack_plan_ownership_changed' );
 				}
 			},
@@ -176,7 +176,6 @@ class SiteOwnership extends Component {
 				<AuthorSelector
 					siteId={ siteId }
 					exclude={ this.isUserExcludedFromSelector }
-					transformAuthor={ this.transformUser }
 					allowSingleUser
 					onSelect={ this.onSelectPlanOwner }
 				>
