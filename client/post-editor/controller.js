@@ -17,15 +17,13 @@ import { startsWith } from 'lodash';
  */
 import { startEditingPostCopy, startEditingExistingPost } from 'lib/posts/actions';
 import { addSiteFragment } from 'lib/route';
-import User from 'lib/user';
 import PostEditor from './post-editor';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'lib/posts/utils';
-
-const user = User();
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -239,13 +237,13 @@ export default {
 			return next();
 		}
 
-		const currentUser = user.get();
+		const  { primarySiteSlug } = getCurrentUser( context.store.getState() );
 
-		if ( ! currentUser.primarySiteSlug ) {
+		if ( ! primarySiteSlug ) {
 			return next();
 		}
 
-		const redirectPath = addSiteFragment( context.pathname, currentUser.primarySiteSlug );
+		const redirectPath = addSiteFragment( context.pathname, primarySiteSlug );
 		const queryString = stringify( context.query );
 		const redirectWithParams = [ redirectPath, queryString ].join( '?' );
 
