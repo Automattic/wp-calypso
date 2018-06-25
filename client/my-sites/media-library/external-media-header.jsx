@@ -20,6 +20,8 @@ import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
 
+import MediaDateRange from './media-date-range';
+
 const DEBOUNCE_TIME = 250;
 
 class MediaLibraryExternalHeader extends React.Component {
@@ -139,6 +141,8 @@ class MediaLibraryExternalHeader extends React.Component {
 				) }
 
 				{ canCopy && this.renderCopyButton() }
+
+				<MediaDateRange />
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>
