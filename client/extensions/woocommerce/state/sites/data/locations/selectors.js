@@ -52,13 +52,12 @@ export const areLocationsErrored = ( state, siteId = getSelectedSiteId( state ) 
 
 /**
  * Common "getDependants" logic for all the selectors that operate on a site's locations data.
- * @param {Object} state Whole Redux state tree
- * @param {*} args Rest of the arguments
- * @return {Array} List of dependants for the selector
+ * @param {number} numArgs Number of arguments the selector takes, excluding the Redux state tree and the site ID
+ * @return {function} Function, as expected by the "createSelector" library
  */
-export const _getSelectorDependants = ( state, ...args ) => {
+export const _getSelectorDependants = numArgs => ( state, ...args ) => {
 	// First argument is always "state", last argument is always "siteId"
-	const siteId = args.pop();
+	const siteId = args[ numArgs ];
 	const loaded = areLocationsLoaded( state, siteId );
 	return [ loaded, loaded && getRawLocations( state, siteId ) ];
 };
@@ -76,7 +75,7 @@ export const getContinents = createSelector( ( state, siteId = getSelectedSiteId
 		omit( continent, 'countries' )
 	);
 	return sortBy( continents, 'name' );
-}, _getSelectorDependants );
+}, _getSelectorDependants( 0 ) );
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -110,7 +109,7 @@ export const getCountriesByContinent = createSelector(
 		const countries = continent.countries.map( country => omit( country, 'states' ) );
 		return sortBy( countries, 'name' );
 	},
-	_getSelectorDependants
+	_getSelectorDependants( 1 )
 );
 
 /**
@@ -132,7 +131,7 @@ export const getCountryName = createSelector(
 		}
 		return country.name;
 	},
-	_getSelectorDependants
+	_getSelectorDependants( 1 )
 );
 
 /**
@@ -172,7 +171,7 @@ export const getStates = createSelector(
 		}
 		return sortBy( country.states, 'name' );
 	},
-	_getSelectorDependants
+	_getSelectorDependants( 1 )
 );
 
 /**
@@ -196,7 +195,7 @@ export const getStateName = createSelector(
 		const stateData = find( country.states, { code: stateCode } );
 		return stateData ? stateData.name : stateCode;
 	},
-	_getSelectorDependants
+	_getSelectorDependants( 2 )
 );
 
 /**
