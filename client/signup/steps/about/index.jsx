@@ -46,6 +46,7 @@ import Suggestions from 'components/suggestions';
 class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
+		this._isMounted = false;
 		this.state = {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
@@ -55,7 +56,8 @@ class AboutStep extends Component {
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
+		this._isMounted = true;
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle', 'siteGoals', 'siteTopic' ],
 			validatorFunction: noop,
@@ -73,12 +75,15 @@ class AboutStep extends Component {
 				},
 			},
 		} );
-
 		this.setFormState( this.formStateController.getInitialState() );
 	}
 
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+
 	setFormState = state => {
-		this.setState( { form: state } );
+		this._isMounted && this.setState( { form: state } );
 	};
 
 	setPressableStore = ref => {
