@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import { random, map, includes, get } from 'lodash';
-import { translate } from 'i18n-calypso';
+import { random, map, includes, get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +13,6 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import warn from 'lib/warn';
 import { READER_STREAMS_PAGE_REQUEST } from 'state/action-types';
 import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
-import { errorNotice } from 'state/notices/actions';
 import { receivePosts } from 'state/reader/posts/actions';
 import { keyForPost } from 'reader/post-key';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -242,17 +240,12 @@ export function handlePage( action, data ) {
 	return actions;
 }
 
-export function handleError( action, err ) {
-	warn( 'Could not fetch next page of posts:', action, err );
-	return errorNotice( translate( 'Could not fetch the next page of posts' ) );
-}
-
 export default {
 	[ READER_STREAMS_PAGE_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestPage,
 			onSuccess: handlePage,
-			onError: handleError,
+			onError: noop,
 		} ),
 	],
 };
