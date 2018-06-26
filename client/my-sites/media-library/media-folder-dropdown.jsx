@@ -17,11 +17,15 @@ class MediaFolderDropdown extends Component {
 	static propTypes = {
 		initialSelected: PropTypes.string,
 		folders: PropTypes.array,
+		onFolderChange: PropTypes.func,
+		disabled: PropTypes.bool,
+		compact: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		initialSelected: '__all__',
 		folders: [],
+		compact: true,
 	};
 
 	constructor( props ) {
@@ -57,15 +61,15 @@ class MediaFolderDropdown extends Component {
 
 		const folderOptions = this.getDropDownOptions( this.props.folders );
 
-		// No need to show folders if we only have the default option
-		if ( folderOptions.length <= 1 ) return;
+		// No need to show folders if we only have the default option + seperator
+		if ( folderOptions.length <= 2 ) return;
 
 		return (
 			<div className={ rootClassNames }>
 				<SelectDropdown
 					initialSelected={ this.props.initialSelected }
 					disabled={ this.props.disabled }
-					compact={ true }
+					compact={ this.props.compact }
 					onSelect={ this.handleOnSelect }
 					options={ folderOptions }
 				/>

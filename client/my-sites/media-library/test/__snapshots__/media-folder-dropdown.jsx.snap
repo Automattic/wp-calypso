@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MediaFolderDropdown default rendering 1`] = `
+<div
+  className="media-library__folder-dropdown"
+>
+  <SelectDropdown
+    compact={true}
+    initialSelected="__all__"
+    onSelect={[Function]}
+    onToggle={[Function]}
+    options={
+      Array [
+        Object {
+          "label": "All Photos",
+          "value": "__all__",
+        },
+        null,
+        Object {
+          "count": 9,
+          "label": "Album 1",
+          "value": "album-1",
+        },
+        Object {
+          "count": 29,
+          "label": "Album 2",
+          "value": "album-2",
+        },
+        Object {
+          "count": 52,
+          "label": "Album 3",
+          "value": "album-3",
+        },
+        Object {
+          "count": 18,
+          "label": "Album 4",
+          "value": "album-4",
+        },
+      ]
+    }
+    style={Object {}}
+  />
+</div>
+`;
