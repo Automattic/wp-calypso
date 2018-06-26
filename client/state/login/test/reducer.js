@@ -494,7 +494,10 @@ describe( 'reducer', () => {
 				data,
 			} );
 
-			expect( state ).to.eql( { ...data } );
+			expect( state ).to.eql( {
+				two_step_id: 12345678,
+				two_step_nonce: 'abcdefgh1234',
+			} );
 		} );
 
 		test( 'should set twoFactorAuth to null value if a request is unsuccessful', () => {
@@ -516,7 +519,10 @@ describe( 'reducer', () => {
 				data,
 			} );
 
-			expect( state ).to.eql( { ...data } );
+			expect( state ).to.eql( {
+				two_step_id: 12345678,
+				two_step_nonce: 'abcdefgh1234',
+			} );
 		} );
 
 		test( 'should set twoFactorAuth to null value if a social request is unsuccessful', () => {
