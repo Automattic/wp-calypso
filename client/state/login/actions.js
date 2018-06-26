@@ -53,6 +53,21 @@ import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 /**
+ * Fetch all remote login urls
+ *
+ * @param  {Array}   loginLinks     Array of urls
+ * @return {Promise}                A promise that always resolve
+ */
+export const remoteLoginUser = loginLinks => {
+	return Promise.all(
+		loginLinks
+			.map( loginLink => fetch( loginLink ) )
+			// make sure we continue even when a remote login fails
+			.map( promise => promise.catch( () => Promise.resolve() ) )
+	);
+};
+
+/**
  * Logs a user in.
  *
  * @param  {String}   usernameOrEmail Username or email of the user
@@ -84,11 +99,6 @@ export const loginUser = ( usernameOrEmail, password, redirectTo ) => dispatch =
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( response => {
-			dispatch( {
-				type: LOGIN_REQUEST_SUCCESS,
-				data: response.body && response.body.data,
-			} );
-
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -99,6 +109,20 @@ export const loginUser = ( usernameOrEmail, password, redirectTo ) => dispatch =
 					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
 				} );
 			}
+
+			if ( get( response, 'body.data.token_links', null ) ) {
+				return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+					dispatch( {
+						type: LOGIN_REQUEST_SUCCESS,
+						data: response.body && response.body.data,
+					} );
+				} );
+			}
+
+			dispatch( {
+				type: LOGIN_REQUEST_SUCCESS,
+				data: response.body && response.body.data,
+			} );
 		} )
 		.catch( httpError => {
 			const error = getErrorFromHTTPError( httpError );
