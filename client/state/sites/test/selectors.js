@@ -3883,7 +3883,7 @@ describe( 'selectors', () => {
 				},
 			};
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
-			expect( computedAttributes ).to.be.null;
+			expect( computedAttributes ).toBeNull();
 		} );
 
 		test( 'should return the "mandatory" attributes', () => {
@@ -3902,7 +3902,7 @@ describe( 'selectors', () => {
 			};
 
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
-			expect( computedAttributes ).to.eql( {
+			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
 				is_previewable: false,
 				is_customizable: false,
@@ -3942,7 +3942,7 @@ describe( 'selectors', () => {
 			};
 
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
-			expect( computedAttributes ).to.eql( {
+			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
 				is_previewable: false,
 				is_customizable: false,
