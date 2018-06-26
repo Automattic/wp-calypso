@@ -362,7 +362,6 @@ class RegisterDomainStep extends React.Component {
 			: {};
 		const showTldFilterBar =
 			( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) &&
-			config.isEnabled( 'domains/kracken-ui/tld-filter' ) &&
 			abtest( 'domainSearchTLDFilterPlacement' ) === 'aboveFeatured';
 		return (
 			<div className="register-domain-step">
@@ -998,9 +997,7 @@ class RegisterDomainStep extends React.Component {
 			return this.renderExampleSuggestions();
 		}
 
-		const showTldFilterBar =
-			config.isEnabled( 'domains/kracken-ui/tld-filter' ) &&
-			abtest( 'domainSearchTLDFilterPlacement' ) === 'belowFeatured';
+		const showTldFilterBar = abtest( 'domainSearchTLDFilterPlacement' ) === 'belowFeatured';
 
 		return (
 			<DomainSearchResults
