@@ -110,7 +110,7 @@ export const loginUser = ( usernameOrEmail, password, redirectTo ) => dispatch =
 				} );
 			}
 
-			remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 				dispatch( {
 					type: LOGIN_REQUEST_SUCCESS,
 					data: response.body && response.body.data,
@@ -162,7 +162,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( response => {
-			remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 			} );
 		} )
@@ -218,13 +218,6 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( response => {
-			remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
-				dispatch( {
-					type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-					data: get( response, 'body.data' ),
-				} );
-			} );
-
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -235,6 +228,13 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
 				} );
 			}
+
+			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+				dispatch( {
+					type: SOCIAL_LOGIN_REQUEST_SUCCESS,
+					data: get( response, 'body.data' ),
+				} );
+			} );
 		} )
 		.catch( httpError => {
 			const error = getErrorFromHTTPError( httpError );
