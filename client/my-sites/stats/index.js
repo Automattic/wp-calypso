@@ -14,6 +14,8 @@ import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
+	page( '/stats/activity', siteSelection, sites, makeLayout, clientRender );
+
 	page(
 		'/stats/activity/:site_id',
 		siteSelection,
