@@ -91,4 +91,4 @@ Determines whether or not this is a compact card
   - **Required:** `no`
   - **Default:** `undefined`
 
-An illustration to show on the card
+The URL of an illustration to show on the card
