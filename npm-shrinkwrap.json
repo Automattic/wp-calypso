@@ -12746,11 +12746,11 @@
       "integrity": "sha512-9JX3YwoIt3kS237scmSSOpEv7vCukVzLfwK0I0XhocDSHUANid8ZHnLEULbbSkfeMn98B2y5kphIWzZUylESRQ==",
       "dev": true,
       "requires": {
-        "@sinonjs/formatio": "2.0.0",
-        "just-extend": "1.1.27",
-        "lolex": "2.7.0",
-        "path-to-regexp": "1.7.0",
-        "text-encoding": "0.6.4"
+        "@sinonjs/formatio": "^2.0.0",
+        "just-extend": "^1.1.27",
+        "lolex": "^2.3.2",
+        "path-to-regexp": "^1.7.0",
+        "text-encoding": "^0.6.4"
       },
       "dependencies": {
         "isarray": {
@@ -17737,13 +17737,13 @@
       "integrity": "sha512-mKJCMMwRKAPEbM48tgT7rea9+Dos5xugEpVXGwMDCSRtPxF6ZjIBO+WrbixxJ0xcYJ6ZMS3/veTAI7XTW010yA==",
       "dev": true,
       "requires": {
-        "@sinonjs/formatio": "2.0.0",
-        "diff": "3.5.0",
-        "lodash.get": "4.4.2",
-        "lolex": "2.7.0",
-        "nise": "1.4.1",
-        "supports-color": "5.4.0",
-        "type-detect": "4.0.8"
+        "@sinonjs/formatio": "^2.0.0",
+        "diff": "^3.5.0",
+        "lodash.get": "^4.4.2",
+        "lolex": "^2.4.2",
+        "nise": "^1.3.3",
+        "supports-color": "^5.4.0",
+        "type-detect": "^4.0.8"
       },
       "dependencies": {
         "diff": {
@@ -17761,9 +17761,9 @@
       }
     },
     "sinon-chai": {
-      "version": "2.8.0",
-      "resolved": "https://registry.npmjs.org/sinon-chai/-/sinon-chai-2.8.0.tgz",
-      "integrity": "sha1-Qyqbv9Uab8AHmPTSUmqCnAYGh6w=",
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/sinon-chai/-/sinon-chai-3.2.0.tgz",
+      "integrity": "sha512-Z72B4a0l0IQe5uWi9yzcqX/Ml6K9e1Hp03NmkjJnRG3gDsKTX7KvLFZsVUmCaz0eqeXLLK089mwTsP1P1W+DUQ==",
       "dev": true
     },
     "slash": {
