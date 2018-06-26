@@ -46,12 +46,16 @@
 	.button.is-borderless {
 		vertical-align: middle;
 		line-height: 1;
+		color: $gray-dark;
 	}
 }
 
-.activity-log-tasklist__update-version,
-.activity-log-tasklist__update-type,
-.activity-log-tasklist__update-bullet {
+.activity-log-tasklist__update-version {
+	color: $gray-text-min;
+}
+
+.activity-log-tasklist__update-bullet,
+.activity-log-tasklist__update-type {
 	color: $gray;
 }
 
