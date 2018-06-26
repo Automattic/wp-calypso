@@ -168,8 +168,8 @@
     "wpcom-xhr-request": "1.1.1"
   },
   "engines": {
-    "node": "10.5.0",
-    "npm": "6.1.0"
+    "node": "^10.5.0",
+    "npm": "^6.1.0"
   },
   "scripts": {
     "preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true npm run -s build-client",
@@ -216,7 +216,7 @@
     "precommit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
     "prepush": "npm run -s install-if-no-packages && node bin/pre-push-hook.js",
     "rm": "node bin/rm.js",
-    "prestart:check-version": "npx check-node-version --node \"^10.5\" --npm \"~6\"",
+    "prestart:check-version": "npx check-node-version --package",
     "prestart:welcome": "node bin/welcome.js",
     "prestart": "run-s prestart:check-version install-if-deps-outdated prestart:welcome",
     "start": "npm run -s build",
@@ -245,7 +245,6 @@
     "babel-eslint": "8.2.3",
     "chai": "4.1.2",
     "chai-enzyme": "1.0.0-beta.1",
-    "check-node-version": "3.2.0",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
     "enzyme-to-json": "3.3.4",
