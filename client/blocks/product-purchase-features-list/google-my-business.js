@@ -19,9 +19,9 @@ export default localize( ( { selectedSite, translate } ) => {
 				icon={ <img alt="" src="/calypso/images/illustrations/google-my-business-feature.svg" /> }
 				title={ translate( 'Google My Business' ) }
 				description={ translate(
-					'View how customers find your business and what action they take by connecting to a Google My Business location.'
+					'See how customers find you on Google -- and whether they visited your site and looked for more info on your business -- by connecting to a Google My Business location.'
 				) }
-				buttonText={ translate( 'Connect Google My Business' ) }
+				buttonText={ translate( 'Connect to Google My Business' ) }
 				href={ '/google-my-business/' + selectedSite.slug }
 			/>
 		</div>
