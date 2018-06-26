@@ -360,7 +360,12 @@ class RegisterDomainStep extends React.Component {
 		const { message, severity } = showNotice
 			? getAvailabilityNotice( lastDomainSearched, error, errorData )
 			: {};
-		const showTldFilterBar = Array.isArray( this.state.searchResults ) || this.state.loadingResults;
+		const showTldFilterBar =
+			( Array.isArray( this.state.searchResults ) &&
+				this.state.searchResults.length > 0 &&
+				Array.isArray( this.state.availableTlds ) &&
+				this.state.availableTlds.length > 0 ) ||
+			this.state.loadingResults;
 		return (
 			<div className="register-domain-step">
 				<StickyPanel className="register-domain-step__search">
