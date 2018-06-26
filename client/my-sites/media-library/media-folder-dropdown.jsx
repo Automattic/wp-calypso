@@ -6,6 +6,7 @@
 import React, { Component } from 'react';
 import { bindAll } from 'lodash';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -13,12 +14,18 @@ import classNames from 'classnames';
 import SelectDropdown from 'components/select-dropdown';
 
 class MediaFolderDropdown extends Component {
+	static propTypes = {
+		initialSelected: PropTypes.string,
+		folders: PropTypes.array,
+	};
+
+	static defaultProps = {
+		initialSelected: '__all__',
+		folders: [],
+	};
+
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			selectedFolder: '',
-		};
 
 		bindAll( this, [ 'handleOnSelect' ] );
 	}
@@ -27,10 +34,20 @@ class MediaFolderDropdown extends Component {
 		if ( this.props.disabled ) return;
 
 		const folder = option.value;
-		this.setState( {
-			selectedFolder: folder,
-		} );
+
 		this.props.onFolderChange( folder );
+	}
+
+	getDropDownOptions( folderData ) {
+		const separator = null;
+
+		return [
+			{
+				value: '__all__',
+				label: 'All Photos',
+			},
+			separator,
+		].concat( folderData );
 	}
 
 	render() {
@@ -38,39 +55,15 @@ class MediaFolderDropdown extends Component {
 			'media-library__folder-dropdown': true,
 		} );
 
-		const separator = null;
+		const folderOptions = this.getDropDownOptions( this.props.folders );
 
-		const folderOptions = [
-			{
-				value: '',
-				label: 'All Photos',
-			},
-			separator,
-			{
-				value: 'album-1',
-				label: 'Album 1',
-				count: 9,
-			},
-			{
-				value: 'album-2',
-				label: 'Album 2',
-				count: 29,
-			},
-			{
-				value: 'album-3',
-				label: 'Album 3',
-				count: 52,
-			},
-			{
-				value: 'album-4',
-				label: 'Album 4',
-				count: 18,
-			},
-		];
+		// No need to show folders if we only have the default option
+		if ( folderOptions.length <= 1 ) return;
 
 		return (
 			<div className={ rootClassNames }>
 				<SelectDropdown
+					initialSelected={ this.props.initialSelected }
 					disabled={ this.props.disabled }
 					compact={ true }
 					onSelect={ this.handleOnSelect }

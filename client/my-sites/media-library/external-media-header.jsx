@@ -168,6 +168,28 @@ class MediaLibraryExternalHeader extends React.Component {
 							className="media-library__header-item"
 							disabled={ this.state.fetching }
 							onFolderChange={ this.props.onFolderChange }
+							folders={ [
+								{
+									value: 'album-1',
+									label: 'Album 1',
+									count: 9,
+								},
+								{
+									value: 'album-2',
+									label: 'Album 2',
+									count: 29,
+								},
+								{
+									value: 'album-3',
+									label: 'Album 3',
+									count: 52,
+								},
+								{
+									value: 'album-4',
+									label: 'Album 4',
+									count: 18,
+								},
+							] }
 						/>
 					) }
 
