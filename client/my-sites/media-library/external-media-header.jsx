@@ -13,12 +13,14 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import MediaLibraryScale from './scale';
 import Card from 'components/card';
 import Button from 'components/button';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
+import MediaFolderDropdown from './media-folder-dropdown';
 
 const DEBOUNCE_TIME = 250;
 
@@ -30,9 +32,11 @@ class MediaLibraryExternalHeader extends React.Component {
 		canCopy: PropTypes.bool,
 		selectedItems: PropTypes.array,
 		onSourceChange: PropTypes.func,
+		onFolderChange: PropTypes.func,
 		sticky: PropTypes.bool,
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
+		hasFolders: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -107,7 +111,13 @@ class MediaLibraryExternalHeader extends React.Component {
 		const { selectedItems, translate } = this.props;
 
 		return (
-			<Button compact disabled={ selectedItems.length === 0 } onClick={ this.onCopy } primary>
+			<Button
+				className="media-library__header-item"
+				compact
+				disabled={ selectedItems.length === 0 }
+				onClick={ this.onCopy }
+				primary
+			>
 				{ translate( 'Copy to media library' ) }
 			</Button>
 		);
@@ -124,14 +134,26 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	renderCard() {
-		const { onMediaScaleChange, translate, canCopy, hasRefreshButton, hasAttribution } = this.props;
+		const {
+			onMediaScaleChange,
+			translate,
+			canCopy,
+			hasRefreshButton,
+			hasAttribution,
+			hasFolders,
+		} = this.props;
 
 		return (
 			<Card className="media-library__header">
 				{ hasAttribution && this.renderPexelsAttribution() }
 
 				{ hasRefreshButton && (
-					<Button compact disabled={ this.state.fetching } onClick={ this.handleClick }>
+					<Button
+						className="media-library__header-item"
+						compact
+						disabled={ this.state.fetching }
+						onClick={ this.handleClick }
+					>
 						<Gridicon icon="refresh" size={ 24 } />
 
 						{ translate( 'Refresh' ) }
@@ -139,6 +161,15 @@ class MediaLibraryExternalHeader extends React.Component {
 				) }
 
 				{ canCopy && this.renderCopyButton() }
+
+				{ config.isEnabled( 'external-media/google-photos/folder-dropdown' ) &&
+					hasFolders && (
+						<MediaFolderDropdown
+							className="media-library__header-item"
+							disabled={ this.state.fetching }
+							onFolderChange={ this.props.onFolderChange }
+						/>
+					) }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>

@@ -51,6 +51,31 @@ describe( 'index', () => {
 			toggleDropdownStub.restore();
 		} );
 
+		test( 'should not respond when clicked when disabled', () => {
+			const toggleDropdownSpy = sinon.spy( SelectDropdown.prototype, 'toggleDropdown' );
+
+			const dropdown = shallowRenderDropdown( {
+				disabled: true,
+			} );
+
+			expect( dropdown.find( '.select-dropdown.is-disabled' ) ).to.have.lengthOf( 1 );
+
+			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
+
+			sinon.assert.called( toggleDropdownSpy );
+
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
+
+			// Repeat to be sure
+			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
+
+			sinon.assert.called( toggleDropdownSpy );
+
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
+
+			toggleDropdownSpy.restore();
+		} );
+
 		test( 'should be possible to control the dropdown via keyboard', () => {
 			const navigateItemStub = sinon.stub( SelectDropdown.prototype, 'navigateItem' );
 
@@ -134,6 +159,30 @@ describe( 'index', () => {
 			sinon.assert.calledWith( setStateStub, { selected: newSelectedOption.value } );
 
 			setStateStub.restore();
+		} );
+	} );
+
+	describe( 'disabled', () => {
+		test( 'should ignore all toggling when disabled', () => {
+			function runToggleDropdownTest( isCurrentlyOpen ) {
+				const setStateSpy = sinon.spy();
+				const fakeContext = {
+					setState: setStateSpy,
+					props: {
+						disabled: true,
+					},
+					state: {
+						isOpen: isCurrentlyOpen,
+					},
+				};
+
+				SelectDropdown.prototype.toggleDropdown.call( fakeContext );
+
+				sinon.assert.notCalled( setStateSpy );
+			}
+
+			runToggleDropdownTest( true );
+			runToggleDropdownTest( false );
 		} );
 	} );
 

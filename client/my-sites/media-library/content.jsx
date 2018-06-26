@@ -43,6 +43,7 @@ class MediaLibraryContent extends React.Component {
 		filterRequiresUpgrade: PropTypes.bool,
 		search: PropTypes.string,
 		source: PropTypes.string,
+		folder: PropTypes.string,
 		containerWidth: PropTypes.number,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
@@ -266,6 +267,7 @@ class MediaLibraryContent extends React.Component {
 				filter={ this.props.filter }
 				search={ this.props.search }
 				source={ this.props.source }
+				folder={ this.props.folder }
 			>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
@@ -299,10 +301,13 @@ class MediaLibraryContent extends React.Component {
 					canCopy={ this.props.postId === undefined }
 					source={ this.props.source }
 					onSourceChange={ this.props.onSourceChange }
+					onFolderChange={ this.props.onFolderChange }
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
 					hasRefreshButton={ 'pexels' !== this.props.source }
+					hasDateFilters={ 'google_photos' === this.props.source }
+					hasFolders={ 'google_photos' === this.props.source }
 				/>
 			);
 		}

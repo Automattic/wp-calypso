@@ -33,6 +33,7 @@ export default class extends React.Component {
 		postId: PropTypes.number,
 		filter: PropTypes.string,
 		search: PropTypes.string,
+		folder: PropTypes.string,
 	};
 
 	state = getStateData( this.props.siteId );
@@ -78,6 +79,10 @@ export default class extends React.Component {
 		if ( props.source ) {
 			query.source = props.source;
 			query.path = 'recent';
+		}
+
+		if ( props.folder ) {
+			query.folder = props.folder;
 		}
 
 		return query;

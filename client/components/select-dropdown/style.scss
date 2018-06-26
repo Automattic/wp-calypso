@@ -8,14 +8,14 @@ $side-margin: 16;
 $compact-header-height: 35;
 
 .select-dropdown {
-	height: #{ $header-height }px;
+	height: #{$header-height}px;
 
 	&.is-open {
 		overflow: visible;
 	}
 
 	&.is-compact {
-		height: #{ $compact-header-height }px;
+		height: #{$compact-header-height}px;
 	}
 }
 
@@ -30,7 +30,10 @@ $compact-header-height: 35;
 
 	.accessible-focus &:focus,
 	.accessible-focus .select-dropdown.is-open & {
-		z-index: z-index( 'root', '.accessible-focus .select-dropdown.is-open .select-dropdown__container' );
+		z-index: z-index(
+			'root',
+			'.accessible-focus .select-dropdown.is-open .select-dropdown__container'
+		);
 		.select-dropdown__header {
 			border-color: $blue-wordpress;
 		}
@@ -51,9 +54,9 @@ $compact-header-height: 35;
 }
 
 .select-dropdown__header {
-	height: #{ $header-height }px;
-	line-height: #{ $header-height - 3 }px;
-	padding: 0 #{ $side-margin }px 0 #{ $side-margin }px;
+	height: #{$header-height}px;
+	line-height: #{$header-height - 3}px;
+	padding: 0 #{$side-margin}px 0 #{$side-margin}px;
 	box-sizing: border-box;
 	display: flex;
 	justify-content: space-between;
@@ -76,18 +79,34 @@ $compact-header-height: 35;
 		margin: 0;
 		flex-shrink: 0;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+
+		.is-disabled & {
+			fill: $gray-lighten-30;
+		}
 	}
 
 	.is-compact & {
-		height: #{$compact-header-height }px;
-		line-height: #{$compact-header-height - 3 }px;
-		padding-right: #{ $side-margin / 2 }px;
+		height: #{$compact-header-height}px;
+		line-height: #{$compact-header-height - 3}px;
+		padding-right: #{$side-margin / 2}px;
 		font-size: 12px;
 
 		.count {
 			border-width: 0;
 			right: 25px;
-			top: #{ ( $compact-header-height - 18 ) / 2 }px;
+			top: #{( $compact-header-height - 18 ) / 2}px;
+		}
+	}
+
+	.is-disabled & {
+		color: $gray-lighten-30;
+		background: $white;
+		border-color: $gray-lighten-30;
+		cursor: default;
+
+		&:active,
+		&.is-active {
+			border-width: 1px 1px 2px;
 		}
 	}
 
@@ -101,14 +120,14 @@ $compact-header-height: 35;
 		}
 	}
 
-	.accessible-focus .select-dropdown:not(.is-open) .select-dropdown__container:focus & {
+	.accessible-focus .select-dropdown:not( .is-open ) .select-dropdown__container:focus & {
 		box-shadow: 0 0 0 2px $blue-light;
 	}
 
 	.count {
 		position: absolute;
 		right: 40px;
-		top: #{ ( $header-height - 18 - 2 ) / 2 }px;
+		top: #{( $header-height - 18 - 2 ) / 2}px;
 	}
 }
 
@@ -123,7 +142,7 @@ $compact-header-height: 35;
 	}
 
 	.gridicon {
-		margin-right: #{ ( $side-margin / 2 ) }px;
+		margin-right: #{( $side-margin / 2 )}px;
 		vertical-align: text-bottom;
 
 		.is-compact & {
@@ -160,7 +179,7 @@ $compact-header-height: 35;
 }
 
 .select-dropdown__option {
-	height: #{ $option-height }px;
+	height: #{$option-height}px;
 
 	&:last-child .select-dropdown__item {
 		border-radius: 0 0 4px 4px;
@@ -170,9 +189,9 @@ $compact-header-height: 35;
 .select-dropdown__item {
 	display: block;
 	position: relative;
-	height: #{ $option-height }px;
-	line-height: #{ $option-height }px;
-	padding: 0 #{ $side-margin + 46 }px 0 #{ $side-margin }px;
+	height: #{$option-height}px;
+	line-height: #{$option-height}px;
+	padding: 0 #{$side-margin + 46}px 0 #{$side-margin}px;
 
 	color: $gray-dark;
 	font-size: 14px;
@@ -207,7 +226,7 @@ $compact-header-height: 35;
 		background-color: $white;
 		color: $gray;
 		cursor: default;
-		opacity: .5;
+		opacity: 0.5;
 	}
 
 	.notouch & {
@@ -222,7 +241,7 @@ $compact-header-height: 35;
 	}
 
 	.gridicon {
-		margin-right: #{ ( $side-margin / 2 ) }px;
+		margin-right: #{( $side-margin / 2 )}px;
 		vertical-align: text-bottom;
 	}
 }
@@ -235,8 +254,8 @@ $compact-header-height: 35;
 
 	.count {
 		position: absolute;
-			top: #{ ( $option-height - 18 ) / 2 }px;
-			right: #{ $side-margin }px;
+		top: #{( $option-height - 18 ) / 2}px;
+		right: #{$side-margin}px;
 	}
 }
 
@@ -248,8 +267,8 @@ $compact-header-height: 35;
 	display: inline-block;
 	max-width: 100%;
 	position: absolute;
-		left: #{ $side-margin }px;
-		right: #{ $side-margin }px;
+	left: #{$side-margin}px;
+	right: #{$side-margin}px;
 }
 
 .select-dropdown__separator {
@@ -265,6 +284,6 @@ $compact-header-height: 35;
 
 	label {
 		font-size: 12px;
-		padding: 0px #{ $side-margin }px;
+		padding: 0px #{$side-margin}px;
 	}
 }
