@@ -48,7 +48,7 @@ export class CommentEdit extends Component {
 		commentContent: this.props.commentContent || '',
 		commentDate: this.props.commentDate || '',
 		isDatePopoverVisible: false,
-		tmpCommentDate: '',
+		storedCommentDate: '',
 	};
 
 	datePopoverButtonRef = createRef();
@@ -56,14 +56,14 @@ export class CommentEdit extends Component {
 	toggleDatePopover = () =>
 		this.setState( ( { commentDate, isDatePopoverVisible } ) => ( {
 			isDatePopoverVisible: ! isDatePopoverVisible,
-			tmpCommentDate: isDatePopoverVisible ? '' : commentDate,
+			storedCommentDate: isDatePopoverVisible ? '' : commentDate,
 		} ) );
 
 	cancelCommentDataValueChange = () =>
-		this.setState( ( { tmpCommentDate } ) => ( {
-			commentDate: tmpCommentDate,
+		this.setState( ( { storedCommentDate } ) => ( {
+			commentDate: storedCommentDate,
 			isDatePopoverVisible: false,
-			tmpCommentDate: '',
+			storedCommentDate: '',
 		} ) );
 
 	getTimezoneForPostSchedule = () => ( {
