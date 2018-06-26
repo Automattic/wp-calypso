@@ -36,6 +36,7 @@ import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
+import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 
 const productsList = productsListFactory();
 
@@ -258,9 +259,27 @@ class DomainsStep extends React.Component {
 		return this.props.designType;
 	};
 
+	shouldIncludeDotBlogSubdomain() {
+		const { flowName, siteGoals } = this.props;
+		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
+
+		return (
+			// 'subdomain' flow coming from .blog landing pages
+			flowName === 'subdomain' ||
+			// User picked only 'share' on the `about` step
+			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 )
+		);
+	}
+
 	domainForm = () => {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
+		const includeDotBlogSubdomain = this.shouldIncludeDotBlogSubdomain();
+
+		// Default to `home` vertical if we should include .blog subdomain but no vertical set
+		let vertical = this.props.surveyVertical;
+		if ( includeDotBlogSubdomain && ! vertical ) {
+			vertical = 'a8c.10';
+		}
 
 		return (
 			<RegisterDomainStep
@@ -278,10 +297,10 @@ class DomainsStep extends React.Component {
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom={ ! this.props.isDomainOnly && ! this.isDomainForAtomicSite() }
-				includeDotBlogSubdomain={ includeDotBlogSubdomain }
+				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions
-				surveyVertical={ this.props.surveyVertical }
+				surveyVertical={ vertical }
 				suggestion={ get( this.props, 'queryObject.new', '' ) }
 				designType={ this.getDesignType() }
 			/>
@@ -465,12 +484,13 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 
 export default connect(
 	state => ( {
+		designType: getDesignType( state ),
 		// no user = DOMAINS_WITH_PLANS_ONLY
 		domainsWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
+		siteGoals: getSiteGoals( state ),
 		surveyVertical: getSurveyVertical( state ),
-		designType: getDesignType( state ),
 	} ),
 	{
 		recordAddDomainButtonClick,
