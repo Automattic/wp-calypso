@@ -231,7 +231,7 @@ class RegisterDomainStep extends React.Component {
 			.substring( 1 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if (
 			nextProps.selectedSite &&
@@ -268,7 +268,7 @@ class RegisterDomainStep extends React.Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		searchCount = 0; // reset the counter
 
 		if ( this.props.initialState ) {
