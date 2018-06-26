@@ -5,13 +5,13 @@
  */
 import { getLanguage, getLanguageSlugs } from 'lib/i18n-utils';
 
-const lang = `:lang(${ getLanguageSlugs().join( '|' ) })`;
+const lang = `(${ getLanguageSlugs().join( '|' ) })`;
 
 export default function( router ) {
-	router( `/start/:flowName/:stepName/:stepSectionName/${ lang }`, setUpLocale );
-	router( `/start/:flowName/:stepName/${ lang }`, setUpLocale );
-	router( `/start/:flowName/${ lang }`, setUpLocale );
-	router( `/start/${ lang }`, setUpLocale );
+	router( `/start/:lang${ lang }?`, setUpLocale );
+	router( `/start/:flowName/:lang${ lang }?`, setUpLocale );
+	router( `/start/:flowName/:stepName/:lang${ lang }?`, setUpLocale );
+	router( `/start/:flowName/:stepName/:stepSectionName/:lang${ lang }?`, setUpLocale );
 }
 
 // Set up the locale if there is one
