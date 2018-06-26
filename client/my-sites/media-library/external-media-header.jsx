@@ -37,6 +37,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
 		hasFolders: PropTypes.bool,
+		folder: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -168,6 +169,7 @@ class MediaLibraryExternalHeader extends React.Component {
 							className="media-library__header-item"
 							disabled={ this.state.fetching }
 							onFolderChange={ this.props.onFolderChange }
+							initialSelected={ this.props.folder }
 							folders={ [
 								{
 									value: 'album-1',

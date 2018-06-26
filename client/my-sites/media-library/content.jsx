@@ -300,6 +300,7 @@ class MediaLibraryContent extends React.Component {
 					visible={ ! this.props.isRequesting }
 					canCopy={ this.props.postId === undefined }
 					source={ this.props.source }
+					folder={ this.props.folder }
 					onSourceChange={ this.props.onSourceChange }
 					onFolderChange={ this.props.onFolderChange }
 					selectedItems={ this.props.selectedItems }
