@@ -138,8 +138,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.NOT_REGISTRABLE:
 			if ( tld ) {
 				message = translate(
-					'To use a domain ending with {{strong}}.%(tld)s{{/strong}} on your site, ' +
-						'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
+					'To use this domain on your site, you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
 					{
 						args: { tld },
 						components: {
