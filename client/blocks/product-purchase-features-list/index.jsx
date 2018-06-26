@@ -31,6 +31,7 @@ import MonetizeSite from './monetize-site';
 import BusinessOnboarding from './business-onboarding';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
+import GoogleMyBusiness from './google-my-business';
 import HappinessSupportCard from './happiness-support-card';
 import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackPublicize from './jetpack-publicize';
@@ -78,6 +79,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackSearch selectedSite={ selectedSite } />
 				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
@@ -223,6 +225,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackSearch selectedSite={ selectedSite } />
 				<MonetizeSite selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<FindNewTheme selectedSite={ selectedSite } />
 				<JetpackVideo selectedSite={ selectedSite } />
