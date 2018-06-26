@@ -69,4 +69,17 @@ describe( 'EditorMediaModal', () => {
 
 		expect( result ).to.eql( { path: 'recent', source: 'anything' } );
 	} );
+
+	test( 'should pass folder parameter to media query', () => {
+		const expected = '__all__';
+		const tree = shallow(
+			<MediaListData siteId={ DUMMY_SITE_ID }>
+				<EMPTY_COMPONENT />
+			</MediaListData>
+		).instance();
+		const query = { folder: expected };
+		const result = tree.getQuery( query );
+
+		expect( result ).to.eql( { folder: expected } );
+	} );
 } );
