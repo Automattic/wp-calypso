@@ -196,8 +196,12 @@ export class MediaLibraryList extends React.Component {
 
 	renderLoadingPlaceholders = () => {
 		const itemsPerRow = this.getItemsPerRow();
+		// Factor is added in response to users reporting that photos appeared
+		// to take a long time to load. More indicators are loaded than are necessary
+		// as this improves the perception of speed for the user
+		const factor = 4;
 		const itemsVisible = ( this.props.media || [] ).length;
-		const placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
+		const placeholders = itemsPerRow * factor - ( itemsVisible % itemsPerRow );
 
 		// We render enough placeholders to occupy the remainder of the row
 		return Array.apply( null, new Array( placeholders ) ).map( function( value, i ) {
