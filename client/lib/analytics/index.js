@@ -42,6 +42,7 @@ const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
+const statsdDebug = debug( 'calypso:analytics:statsd' );
 
 let _superProps, _user, _selectedSite, _siteCount, _dispatch, _loadTracksError;
 
@@ -442,7 +443,17 @@ const analytics = {
 					featureSlug = 'read_post_id__id';
 				} else if ( ( matched = featureSlug.match( /^start_(.*)_(..)$/ ) ) != null ) {
 					featureSlug = `start_${ matched[ 1 ] }`;
+				} else if ( startsWith( featureSlug, 'page__' ) ) {
+					// Fold post editor routes for page, post and CPT into one generic 'post__*' one
+					featureSlug = featureSlug.replace( /^page__/, 'post__' );
+				} else if ( startsWith( featureSlug, 'edit_' ) ) {
+					// use non-greedy +? operator to match the custom post type slug
+					featureSlug = featureSlug.replace( /^edit_.+?__/, 'post__' );
 				}
+
+				statsdDebug(
+					`Recording timing: path=${ featureSlug } event=${ eventType } duration=${ duration }ms`
+				);
 
 				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
 				new Image().src = imgUrl;
