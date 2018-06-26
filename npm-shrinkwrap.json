@@ -1762,16 +1762,23 @@
       "integrity": "sha1-ri1acpR38onWDdf5amMUoi3Wwio="
     },
     "autoprefixer": {
-      "version": "8.6.3",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-8.6.3.tgz",
-      "integrity": "sha512-KkQyCHBxma7R2eoEkjja/RHUBw+Fc1nY46LdV62fzJI5D7i8mLLCtAZ/AVR3UbXhDZ8mUz4C/PF4lZrbiHa1ZQ==",
+      "version": "8.6.4",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-8.6.4.tgz",
+      "integrity": "sha512-9D0OoxWCqq9Okp9wD+igaCf6ZaNjYNFSCKxgMLAxAGqXwpapaZ+D0PBv265VHQLgam8a7gld4E6KgJJM6SKfQQ==",
       "requires": {
         "browserslist": "^3.2.8",
-        "caniuse-lite": "^1.0.30000856",
+        "caniuse-lite": "^1.0.30000859",
         "normalize-range": "^0.1.2",
         "num2fraction": "^1.2.2",
-        "postcss": "^6.0.22",
+        "postcss": "^6.0.23",
         "postcss-value-parser": "^3.2.3"
+      },
+      "dependencies": {
+        "caniuse-lite": {
+          "version": "1.0.30000859",
+          "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30000859.tgz",
+          "integrity": "sha512-BucSdVZocKyKAdThos0fx7Ds941M1jddFazv7U3stFqxyWOc2JrxVn87Qo02DzP9Txb4lw9jIQddh9IT4WA3dQ=="
+        }
       }
     },
     "autosize": {
