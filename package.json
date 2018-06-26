@@ -79,7 +79,7 @@
     "express-useragent": "1.0.12",
     "filesize": "3.6.1",
     "flag-icon-css": "3.0.0",
-    "flux": "2.1.1",
+    "flux": "3.1.3",
     "fuse.js": "2.7.4",
     "get-video-id": "3.1.0",
     "globby": "6.1.0",
