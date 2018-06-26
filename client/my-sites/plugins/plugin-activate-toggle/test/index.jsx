@@ -34,8 +34,8 @@ describe( 'PluginActivateToggle', () => {
 	};
 
 	afterEach( () => {
-		mockedActions.togglePluginActivation.reset();
-		analyticsMock.recordGoogleEvent.reset();
+		mockedActions.togglePluginActivation.resetHistory();
+		analyticsMock.recordGoogleEvent.resetHistory();
 	} );
 
 	test( 'should render the component', () => {

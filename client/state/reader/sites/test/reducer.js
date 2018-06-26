@@ -4,7 +4,6 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -154,14 +153,12 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test(
-			'should reject deserializing entries it cannot validate',
-			sinon.test( function() {
-				const unvalidatedObject = deepFreeze( { hi: 'there' } );
-				this.stub( console, 'warn' ); // stub warn to suppress the warning that validation failure emits
-				expect( items( unvalidatedObject, { type: DESERIALIZE } ) ).to.deep.equal( {} );
-			} )
-		);
+		test( 'should reject deserializing entries it cannot validate', () => {
+			const consoleSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+			const unvalidatedObject = deepFreeze( { hi: 'there' } );
+			expect( items( unvalidatedObject, { type: DESERIALIZE } ) ).to.deep.equal( {} );
+			consoleSpy.mockRestore();
+		} );
 
 		test( 'should deserialize good things', () => {
 			const validState = deepFreeze( {

@@ -12,7 +12,7 @@ describe( 'ButtonGroup', () => {
 	let sandbox, ButtonGroup, Button;
 
 	beforeEach( () => {
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		sandbox.stub( console, 'error' );
 		sandbox.stub( console, 'log' );
 

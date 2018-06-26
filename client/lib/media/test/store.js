@@ -25,7 +25,7 @@ describe( 'MediaStore', () => {
 	beforeAll( function() {
 		Dispatcher = require( 'dispatcher' );
 
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
 

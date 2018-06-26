@@ -26,20 +26,14 @@ import {
 	setActiveReply,
 } from '../actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
-import config from 'config';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { setFeatureFlag } from 'test/helpers/config';
 
 const SITE_ID = 91750058;
 const POST_ID = 287;
 
 describe( 'actions', () => {
 	describe( '#requestPostComments()', () => {
-		useSandbox( sandbox => {
-			sandbox
-				.stub( config, 'isEnabled' )
-				.withArgs( 'comments/filters-in-posts' )
-				.returns( true );
-		} );
+		setFeatureFlag( 'comments/filters-in-posts', true );
 
 		test( 'should return a comment request action', () => {
 			const action = requestPostComments( { siteId: SITE_ID, postId: POST_ID, status: 'trash' } );

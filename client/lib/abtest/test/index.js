@@ -94,7 +94,7 @@ describe( 'abtest', () => {
 	describe( 'stored value', () => {
 		beforeEach( () => {
 			getStoreStub.mockReturnValueOnce( { mockedTest_20160627: 'show' } );
-			setSpy.reset();
+			setSpy.resetHistory();
 		} );
 		test( 'should return stored value and skip store.set for existing users', () => {
 			getUserStub.mockReturnValueOnce( {
@@ -126,7 +126,7 @@ describe( 'abtest', () => {
 	describe( 'no stored value', () => {
 		beforeEach( () => {
 			getStoreStub.mockReturnValue( {} );
-			setSpy.reset();
+			setSpy.resetHistory();
 		} );
 		describe( 'existing users', () => {
 			beforeEach( () => {
@@ -280,7 +280,7 @@ describe( 'abtest', () => {
 		describe( 'logged-out users', () => {
 			beforeEach( () => {
 				getUserStub.mockReturnValue( false );
-				setSpy.reset();
+				setSpy.resetHistory();
 			} );
 			test( 'should call store.set for logged-out users with English locale', () => {
 				global.navigator.__defineGetter__( 'language', () => 'en' );

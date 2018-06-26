@@ -68,8 +68,8 @@ describe( 'PreferencesActions', () => {
 	} );
 
 	afterEach( () => {
-		getSettings.reset();
-		postSettings.reset();
+		getSettings.resetHistory();
+		postSettings.resetHistory();
 	} );
 
 	describe( '#fetch()', () => {

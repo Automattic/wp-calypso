@@ -28,7 +28,7 @@ describe( 'actions', () => {
 	const spy = sinon.spy();
 
 	beforeEach( () => {
-		spy.reset();
+		spy.resetHistory();
 	} );
 
 	const sampleSiteId = 100658273;

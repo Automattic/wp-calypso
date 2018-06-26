@@ -12,7 +12,7 @@ import sinon from 'sinon';
 
 jest.mock( 'lib/user', () => () => {} );
 
-let DUMMY_SITE_ID = 1,
+const DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {
 		100: { ID: 100, title: 'Image', guid: 'https://example.files.wordpress.com/2017/05/g1001.png' },
 		'media-1': {
@@ -29,13 +29,13 @@ describe( 'MediaLibrarySelectedStore', () => {
 	let Dispatcher, sandbox, MediaLibrarySelectedStore, handler, MediaStore;
 
 	beforeAll( function() {
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		Dispatcher = require( 'dispatcher' );
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
 
 		MediaStore = require( '../store' );
-		sandbox.stub( MediaStore, 'get', function( siteId, itemId ) {
+		sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, itemId ) {
 			if ( siteId === DUMMY_SITE_ID ) {
 				return DUMMY_OBJECTS[ itemId ];
 			}

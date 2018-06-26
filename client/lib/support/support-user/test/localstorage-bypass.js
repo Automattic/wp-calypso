@@ -19,9 +19,9 @@ describe( 'localstorage-bypass', () => {
 	let db = {};
 
 	beforeEach( () => {
-		_setItem.reset();
-		_getItem.reset();
-		_removeItem.reset();
+		_setItem.resetHistory();
+		_getItem.resetHistory();
+		_removeItem.resetHistory();
 		db = {};
 	} );
 

@@ -32,7 +32,8 @@ describe( '#preloadImage()', () => {
 		preloadImage( src );
 
 		expect( Image ).to.have.been.calledOnce;
-		expect( Image.thisValues[ 0 ].src ).to.equal( src );
+		expect( Image ).to.have.been.calledWithNew;
+		expect( Image.returnValues[ 0 ].src ).to.equal( src );
 	} );
 
 	test( 'should only load an image once per `src`', () => {

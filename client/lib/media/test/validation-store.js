@@ -26,7 +26,7 @@ describe( 'MediaValidationStore', () => {
 		MediaValidationErrors = require( '../constants' ).ValidationErrors;
 
 		// Sinon
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		sandbox.spy( Dispatcher, 'register' );
 
 		// Load store
