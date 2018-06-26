@@ -78,6 +78,9 @@ export const Sites = createReactClass( {
 		switch ( path ) {
 			case 'stats':
 				path = i18n.translate( 'Insights' );
+				if ( '/stats/activity' === this.props.path ) {
+					path = i18n.translate( 'Activity' );
+				}
 				break;
 			case 'plans':
 				path = i18n.translate( 'Plans' );
