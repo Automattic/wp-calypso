@@ -283,22 +283,8 @@ const bulkChangeCommentStatus = action => {
 	);
 };
 
-const handleBulkChangeCommentStatusSuccess = (
-	{ comments, siteId, status, refreshCommentListQuery },
-	{ results }
-) => dispatch => {
-	if ( !! refreshCommentListQuery ) {
-		dispatch( requestCommentsList( refreshCommentListQuery ) );
-	}
-
-	dispatch( removeNotice( 'comment-notice-bulk-error' ) );
-
-	const updatedComments = filter( comments, ( { commentId } ) => includes( results, commentId ) );
-	forEach( updatedComments, ( { commentId, postId } ) =>
-		dispatch( bypassDataLayer( changeCommentStatusAction( siteId, postId, commentId, status ) ) )
-	);
-
-	const message = get(
+const getBulkChangeCommentStatusSuccessMessage = status =>
+	get(
 		{
 			approved: translate( 'All selected comments approved.' ),
 			unapproved: translate( 'All selected comments unapproved.' ),
@@ -308,17 +294,34 @@ const handleBulkChangeCommentStatusSuccess = (
 		},
 		status
 	);
-	dispatch(
-		successNotice( message, {
+
+const handleBulkChangeCommentStatusSuccess = (
+	{ comments, siteId, status, refreshCommentListQuery },
+	{ results }
+) => {
+	const updateCommentList = !! refreshCommentListQuery
+		? [ requestCommentsList( refreshCommentListQuery ) ]
+		: [];
+
+	const updateComments = map(
+		filter( comments, ( { commentId } ) => includes( results, commentId ) ),
+		( { commentId, postId } ) =>
+			bypassDataLayer( changeCommentStatusAction( siteId, postId, commentId, status ) )
+	);
+
+	return [
+		removeNotice( 'comment-notice-bulk-error' ),
+		...updateCommentList,
+		...updateComments,
+		successNotice( getBulkChangeCommentStatusSuccessMessage( status ), {
 			id: 'comment-notice-bulk',
 			isPersistent: true,
-		} )
-	);
+		} ),
+	];
 };
 
-const handleBulkChangeCommentStatusError = ( { status } ) => dispatch => {
-	dispatch( removeNotice( 'comment-notice-bulk' ) );
-	const message = get(
+const getBulkChangeCommentStatusErrorMessage = status =>
+	get(
 		{
 			approved: translate( "We couldn't approve the selected comments." ),
 			unapproved: translate( "We couldn't unapprove the selected comments." ),
@@ -328,7 +331,14 @@ const handleBulkChangeCommentStatusError = ( { status } ) => dispatch => {
 		},
 		status
 	);
-	dispatch( errorNotice( message, { id: 'comment-notice-bulk-error' } ) );
+
+const handleBulkChangeCommentStatusError = ( { status } ) => {
+	return [
+		removeNotice( 'comment-notice-bulk' ),
+		errorNotice( getBulkChangeCommentStatusErrorMessage( status ), {
+			id: 'comment-notice-bulk-error',
+		} ),
+	];
 };
 
 export const fetchHandler = {
