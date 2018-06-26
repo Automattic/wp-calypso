@@ -23,6 +23,7 @@ import Gravatar from 'components/gravatar';
 import isJetpackSiteConnected from 'state/selectors/is-jetpack-site-connected';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
+import OwnershipInformation from './ownership-information';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
 import SectionHeader from 'components/section-header';
@@ -212,10 +213,14 @@ class SiteOwnership extends Component {
 				</FormFieldset>
 
 				{ showPlanSection && (
-					<FormFieldset className="manage-connection__formfieldset has-divider is-top-only">
-						<FormLabel>{ translate( 'Plan purchaser' ) }</FormLabel>
-						{ this.renderPlanDetails() }
-					</FormFieldset>
+					<Fragment>
+						<FormFieldset className="manage-connection__formfieldset has-divider is-top-only">
+							<FormLabel>{ translate( 'Plan purchaser' ) }</FormLabel>
+							{ this.renderPlanDetails() }
+						</FormFieldset>
+
+						<OwnershipInformation />
+					</Fragment>
 				) }
 			</Card>
 		);
