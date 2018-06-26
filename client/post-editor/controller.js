@@ -15,6 +15,7 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
+import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'lib/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import User from 'lib/user';
@@ -141,6 +142,8 @@ export default {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 		const postToCopyId = context.query.copy;
+
+		recordPlaceholdersTiming();
 
 		function startEditing( siteId ) {
 			if ( maybeRedirect( context ) ) {
