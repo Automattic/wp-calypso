@@ -383,6 +383,14 @@ class RegisterDomainStep extends React.Component {
 						{ this.renderSearchFilters() }
 					</CompactCard>
 				</StickyPanel>
+				{ message && (
+					<Notice
+						className="register-domain-step__notice"
+						text={ message }
+						status={ `is-${ severity }` }
+						showDismiss={ false }
+					/>
+				) }
 				{ showTldFilterBar && (
 					<TldFilterBar
 						availableTlds={ this.state.availableTlds }
@@ -394,9 +402,6 @@ class RegisterDomainStep extends React.Component {
 						onSubmit={ this.onFiltersSubmit }
 						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
 					/>
-				) }
-				{ message && (
-					<Notice text={ message } status={ `is-${ severity }` } showDismiss={ false } />
 				) }
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
