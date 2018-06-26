@@ -46,7 +46,7 @@ class AuthCodeButton extends React.Component {
 		);
 
 		if ( status === requestState.REQUESTING ) {
-			message = this.props.translate( 'Requesting code.' );
+			message = this.props.translate( 'Requesting code...' );
 		}
 
 		if ( status === requestState.COMPLETE ) {
