@@ -299,6 +299,15 @@ sections.push( {
 
 sections.push( {
 	name: 'reader',
+	paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c' ],
+	module: 'reader',
+	secondary: true,
+	group: 'reader',
+	enableLoggedOut: true,
+} );
+
+sections.push( {
+	name: 'reader',
 	paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 	module: 'reader/full-post',
 	secondary: false,
