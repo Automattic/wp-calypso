@@ -13,8 +13,10 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { folders } from './fixtures';
-import MediaFolderDropdown from '../media-folder-dropdown';
+import { MediaFolderDropdown } from '../media-folder-dropdown';
 import SelectDropdown from 'components/select-dropdown';
+
+const noop = rtn => rtn;
 
 describe( 'MediaFolderDropdown', () => {
 	let wrapper;
@@ -26,25 +28,27 @@ describe( 'MediaFolderDropdown', () => {
 	} );
 
 	test( 'default rendering', () => {
-		wrapper = shallow( <MediaFolderDropdown folders={ folders } /> );
+		wrapper = shallow( <MediaFolderDropdown translate={ noop } folders={ folders } /> );
 		expect( wrapper.find( '.media-library__folder-dropdown' ) ).toMatchSnapshot();
 	} );
 
 	test( 'does not render if no folders are provided', () => {
-		wrapper = shallow( <MediaFolderDropdown /> );
+		wrapper = shallow( <MediaFolderDropdown translate={ noop } /> );
 		expect( wrapper.find( '.media-library__folder-dropdown' ) ).toHaveLength( 0 );
 	} );
 
 	describe( 'initial folder selection', () => {
 		test( 'initial folder is correctly defaulted to all folders', () => {
-			wrapper = shallow( <MediaFolderDropdown folders={ folders } /> );
+			wrapper = shallow( <MediaFolderDropdown translate={ noop } folders={ folders } /> );
 			expect( wrapper.find( SelectDropdown ).props().initialSelected ).toBe( '__all__' );
 		} );
 
 		test( 'initial folder can be overidden via props', () => {
 			const expected = folders[ 0 ].value;
 
-			wrapper = shallow( <MediaFolderDropdown folders={ folders } initialSelected={ expected } /> );
+			wrapper = shallow(
+				<MediaFolderDropdown translate={ noop } folders={ folders } initialSelected={ expected } />
+			);
 
 			expect( wrapper.find( SelectDropdown ).props().initialSelected ).toBe( expected );
 		} );
@@ -59,7 +63,7 @@ describe( 'MediaFolderDropdown', () => {
 			null,
 		].concat( folders );
 
-		wrapper = shallow( <MediaFolderDropdown folders={ folders } /> );
+		wrapper = shallow( <MediaFolderDropdown translate={ noop } folders={ folders } /> );
 
 		expect( wrapper.find( SelectDropdown ).props().options ).toEqual( expected );
 	} );
@@ -69,7 +73,9 @@ describe( 'MediaFolderDropdown', () => {
 		const selectedOption = folders[ 0 ];
 		const expected = selectedOption.value;
 
-		wrapper = shallow( <MediaFolderDropdown folders={ folders } onFolderChange={ spy } /> );
+		wrapper = shallow(
+			<MediaFolderDropdown translate={ noop } folders={ folders } onFolderChange={ spy } />
+		);
 		const cb = wrapper.find( SelectDropdown ).props().onSelect;
 
 		// Call the spy
@@ -79,7 +85,9 @@ describe( 'MediaFolderDropdown', () => {
 	} );
 
 	test( 'correctly forwards disabled prop to SelectDropdown', () => {
-		wrapper = shallow( <MediaFolderDropdown folders={ folders } disabled={ true } /> );
+		wrapper = shallow(
+			<MediaFolderDropdown translate={ noop } folders={ folders } disabled={ true } />
+		);
 
 		expect( wrapper.find( SelectDropdown ).props().disabled ).toBe( true );
 

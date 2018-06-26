@@ -7,13 +7,13 @@ import React, { Component } from 'react';
 import { bindAll } from 'lodash';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-
+import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
 import SelectDropdown from 'components/select-dropdown';
 
-class MediaFolderDropdown extends Component {
+export class MediaFolderDropdown extends Component {
 	static propTypes = {
 		initialSelected: PropTypes.string,
 		folders: PropTypes.array,
@@ -48,7 +48,7 @@ class MediaFolderDropdown extends Component {
 		return [
 			{
 				value: '__all__',
-				label: 'All Photos',
+				label: this.props.translate( 'All Photos' ),
 			},
 			separator,
 		].concat( folderData );
@@ -78,4 +78,4 @@ class MediaFolderDropdown extends Component {
 	}
 }
 
-export default MediaFolderDropdown;
+export default localize( MediaFolderDropdown );
