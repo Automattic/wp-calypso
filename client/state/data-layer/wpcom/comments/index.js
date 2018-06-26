@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { compact, get, isDate, startsWith, pickBy, map } from 'lodash';
+import { compact, get, isDate, startsWith, pickBy, map, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +17,6 @@ import {
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { getSitePost } from 'state/posts/selectors';
 import { requestCommentsList } from 'state/comments/actions';
 import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
@@ -102,23 +101,6 @@ export const addComments = ( action, { comments, found } ) => {
 	return receiveAction;
 };
 
-export const announceFailure = ( { siteId, postId } ) => ( dispatch, getState ) => {
-	const post = getSitePost( getState(), siteId, postId );
-	const postTitle =
-		post &&
-		post.title &&
-		post.title
-			.trim()
-			.slice( 0, 20 )
-			.trim()
-			.concat( '…' );
-	const error = postTitle
-		? translate( 'Could not retrieve comments for “%(postTitle)s”', { args: { postTitle } } )
-		: translate( 'Could not retrieve comments for requested post' );
-
-	dispatch( errorNotice( error ) );
-};
-
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/
 export const deleteComment = action => ( dispatch, getState ) => {
 	const { siteId, commentId } = action;
@@ -192,7 +174,7 @@ export default {
 		dispatchRequestEx( {
 			fetch: fetchPostComments,
 			onSuccess: addComments,
-			onError: announceFailure,
+			onError: noop,
 		} ),
 	],
 	[ COMMENTS_DELETE ]: [

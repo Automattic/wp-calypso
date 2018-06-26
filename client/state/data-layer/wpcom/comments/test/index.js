@@ -2,13 +2,7 @@
 /**
  * Internal dependencies
  */
-import {
-	fetchPostComments,
-	addComments,
-	announceFailure,
-	commentsFromApi,
-	handleDeleteSuccess,
-} from '../';
+import { fetchPostComments, addComments, commentsFromApi, handleDeleteSuccess } from '../';
 import { COMMENTS_RECEIVE, COMMENTS_COUNT_RECEIVE, NOTICE_CREATE } from 'state/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -156,30 +150,6 @@ describe( 'wpcom-api', () => {
 					{ author: { name: 'joe' } },
 					{ author: { name: '♥' } },
 				] );
-			} );
-		} );
-
-		describe( '#announceFailure', () => {
-			test( 'should dispatch an error notice', () => {
-				const dispatch = jest.fn();
-				const getState = () => ( {
-					posts: {
-						queries: {},
-					},
-				} );
-
-				announceFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
-
-				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith(
-					expect.objectContaining( {
-						type: NOTICE_CREATE,
-						notice: expect.objectContaining( {
-							status: 'is-error',
-							text: 'Could not retrieve comments for requested post',
-						} ),
-					} )
-				);
 			} );
 		} );
 
