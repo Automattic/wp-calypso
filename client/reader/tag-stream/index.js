@@ -10,7 +10,7 @@ import { startsWith } from 'lodash';
  */
 import { tagListing } from './controller';
 import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
 	if ( context.hashstring && startsWith( context.pathname, '/tag/#' ) ) {
@@ -21,5 +21,13 @@ const redirectHashtaggedTags = ( context, next ) => {
 
 export default function() {
 	page( '/tag/*', preloadReaderBundle, redirectHashtaggedTags, initAbTests );
-	page( '/tag/:tag', updateLastRoute, sidebar, tagListing, makeLayout, clientRender );
+	page(
+		'/tag/:tag',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		tagListing,
+		makeLayout,
+		clientRender
+	);
 }

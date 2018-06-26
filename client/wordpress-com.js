@@ -329,6 +329,7 @@ sections.push( {
 	module: 'reader/tag-stream',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
