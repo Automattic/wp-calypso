@@ -1185,14 +1185,24 @@ Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
  *
  * @returns {Promise} promise
  */
-Undocumented.prototype.emergentPaywallConfiguration = function( countryCode, cart, fn ) {
+Undocumented.prototype.emergentPaywallConfiguration = function(
+	countryCode,
+	cart,
+	domainDetails,
+	fn
+) {
 	debug( '/me/emergent-paywall-configuration query' );
 
-	return this.wpcom.req.post(
-		'/me/emergent-paywall-configuration',
-		{ country: countryCode, cart },
-		fn
+	const data = mapKeysRecursively(
+		{
+			country: countryCode,
+			cart,
+			domainDetails,
+		},
+		snakeCase
 	);
+
+	return this.wpcom.req.post( '/me/emergent-paywall-configuration', data, fn );
 };
 
 /**

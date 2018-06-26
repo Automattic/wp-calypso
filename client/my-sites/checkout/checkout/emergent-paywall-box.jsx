@@ -164,6 +164,7 @@ export class EmergentPaywallBox extends Component {
 		wpcom.emergentPaywallConfiguration(
 			this.props.userCountryCode,
 			this.props.cart,
+			this.props.transaction.domainDetails,
 			this.loadIframe
 		);
 	};
