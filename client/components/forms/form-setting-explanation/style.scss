@@ -9,4 +9,17 @@
 	&.is-indented {
 		margin-left: 24px;
 	}
+
+	button.is-borderless {
+		color: $blue-wordpress;
+		font-size: inherit;
+		font-style: inherit;
+		font-weight: inherit;
+		line-height: inherit;
+		padding: 0;
+	}
+
+	button.is-borderless:hover {
+		color: $link-highlight;
+	}
 }
