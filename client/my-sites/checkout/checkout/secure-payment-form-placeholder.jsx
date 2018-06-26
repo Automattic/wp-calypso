@@ -5,12 +5,10 @@
  */
 
 import React from 'react';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import PaymentBox from './payment-box.jsx';
 
 const SecurePaymentFormPlaceholder = () => {
@@ -31,17 +29,14 @@ const SecurePaymentFormPlaceholder = () => {
 				</div>
 				<div className="placeholder-row placeholder" />
 			</div>
-			{ config.isEnabled( 'upgrades/2-year-plans' ) &&
-				abtest( 'multiyearSubscriptions' ) === 'show' && (
-					<div className="payment-box-section">
-						<div className="placeholder-col-narrow placeholder-inline-pad">
-							<div className="placeholder" />
-						</div>
-						<div className="placeholder-col-narrow">
-							<div className="placeholder" />
-						</div>
-					</div>
-				) }
+			<div className="payment-box-section">
+				<div className="placeholder-col-narrow placeholder-inline-pad">
+					<div className="placeholder" />
+				</div>
+				<div className="placeholder-col-narrow">
+					<div className="placeholder" />
+				</div>
+			</div>
 			<div className="payment-box-hr" />
 			<div className="placeholder-button-container">
 				<div className="placeholder-col-narrow">

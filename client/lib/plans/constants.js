@@ -159,24 +159,9 @@ export const TYPE_PERSONAL = 'TYPE_PERSONAL';
 export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 
-const WPComGetBillingTimeframe = abtest => {
-	if ( abtest ) {
-		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
-			return i18n.translate( '/month, billed annually or every two years' );
-		}
-	}
-	return i18n.translate( 'per month, billed yearly' );
-};
-
-const WPComGetBiennialBillingTimeframe = abtest => {
-	if ( abtest ) {
-		if ( isEnabled( 'upgrades/2-year-plans' ) && abtest( 'multiyearSubscriptions' ) === 'show' ) {
-			return i18n.translate( '/month, billed every two years' );
-		}
-	}
-
-	return WPComGetBillingTimeframe( abtest );
-};
+const WPComGetBillingTimeframe = () =>
+	i18n.translate( '/month, billed annually or every two years' );
+const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
 
 const getPlanPersonalDetails = () => ( {
 	group: GROUP_WPCOM,

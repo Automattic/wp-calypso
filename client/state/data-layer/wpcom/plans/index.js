@@ -3,7 +3,6 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { PLANS_REQUEST } from 'state/action-types';
@@ -26,7 +25,7 @@ import {
 export const requestPlans = action =>
 	http(
 		{
-			apiVersion: config.isEnabled( 'upgrades/2-year-plans' ) ? '1.5' : '1.4',
+			apiVersion: '1.5',
 			method: 'GET',
 			path: '/plans',
 		},

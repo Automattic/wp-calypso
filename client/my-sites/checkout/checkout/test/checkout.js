@@ -55,7 +55,9 @@ jest.mock( 'lib/cart-values', () => ( {
 describe( 'Checkout', () => {
 	const defaultProps = {
 		cards: [],
-		cart: {},
+		cart: {
+			products: [],
+		},
 		translate: identity,
 		loadTrackingTool: identity,
 		recordApplePayStatus: identity,
@@ -81,33 +83,37 @@ describe( 'Checkout', () => {
 	test( 'should set state.cartSettled to false', () => {
 		let checkout;
 
-		checkout = shallow( <Checkout { ...defaultProps } cart={ { hasLoadedFromServer: false } } /> );
+		checkout = shallow(
+			<Checkout { ...defaultProps } cart={ { hasLoadedFromServer: false, products: [] } } />
+		);
 		expect( checkout.state().cartSettled ).toBe( false );
 
-		checkout = shallow( <Checkout { ...defaultProps } cart={ { hasLoadedFromServer: true } } /> );
+		checkout = shallow(
+			<Checkout { ...defaultProps } cart={ { hasLoadedFromServer: true, products: [] } } />
+		);
 		expect( checkout.state().cartSettled ).toBe( false );
 	} );
 
 	test( 'should set state.cartSettled to true after cart has loaded', () => {
 		const checkout = shallow(
-			<Checkout { ...defaultProps } cart={ { hasLoadedFromServer: false } } />
+			<Checkout { ...defaultProps } cart={ { hasLoadedFromServer: false, products: [] } } />
 		);
 		expect( checkout.state().cartSettled ).toBe( false );
 
-		checkout.setProps( { cart: { hasLoadedFromServer: true } } );
+		checkout.setProps( { cart: { hasLoadedFromServer: true, products: [] } } );
 		expect( checkout.state().cartSettled ).toBe( true );
 	} );
 
 	test( 'should keep state.cartSettled as true even after cart reloads', () => {
 		const checkout = shallow(
-			<Checkout { ...defaultProps } cart={ { hasLoadedFromServer: false } } />
+			<Checkout { ...defaultProps } cart={ { hasLoadedFromServer: false, products: [] } } />
 		);
 		expect( checkout.state().cartSettled ).toBe( false );
 
-		checkout.setProps( { cart: { hasLoadedFromServer: true } } );
+		checkout.setProps( { cart: { hasLoadedFromServer: true, products: [] } } );
 		expect( checkout.state().cartSettled ).toBe( true );
 
-		checkout.setProps( { cart: { hasLoadedFromServer: false } } );
+		checkout.setProps( { cart: { hasLoadedFromServer: false, products: [] } } );
 		expect( checkout.state().cartSettled ).toBe( true );
 	} );
 } );
