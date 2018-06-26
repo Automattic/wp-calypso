@@ -81,13 +81,14 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSuggestionKrakenV321: {
-		datestamp: '20180524',
+	domainSuggestionKrakenV322: {
+		datestamp: '20180621',
 		variations: {
 			domainsbot: 0,
-			group_1: 10000,
-			group_3: 10000,
-			group_4: 10000,
+			group_1: 36600,
+			group_3: 36600,
+			group_4: 36600,
+			group_6: 1000,
 		},
 		defaultVariation: 'domainsbot',
 	},
