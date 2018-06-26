@@ -320,6 +320,7 @@ sections.push( {
 	module: 'reader/following',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
