@@ -2,13 +2,13 @@
 /**
  * Exernal dependencies
  */
-import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
+import { filter, find, includes, indexOf, isEmpty, merge, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getLanguage } from 'lib/i18n-utils';
-import steps from 'signup/config/steps';
+import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
@@ -189,12 +189,16 @@ export function getSiteTypeForSiteGoals( siteGoals, flow ) {
 	return 'blog';
 }
 
+export function getCompletedSteps( flowName, progress ) {
+	const flow = flows.getFlow( flowName );
+	return filter(
+		progress,
+		step => includes( flow.steps, step.stepName ) && 'in-progress' !== step.status
+	);
+}
+
 export function canResumeFlow( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
-	const flowStepsInProgressStore = filter(
-		progress,
-		step => -1 !== flow.steps.indexOf( step.stepName )
-	);
-
+	const flowStepsInProgressStore = getCompletedSteps( flowName, progress );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }

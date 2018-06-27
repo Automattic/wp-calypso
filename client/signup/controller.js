@@ -84,7 +84,7 @@ export default {
 			! user.get() &&
 			! localeFromParams &&
 			localeFromStore &&
-			canResumeFlow( flowName, SignupProgressStore.getFromCache() )
+			canResumeFlow( flowName, SignupProgressStore.get() )
 		) {
 			window.location =
 				getStepUrl(

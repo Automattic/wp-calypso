@@ -6,7 +6,7 @@
 
 import { defer } from 'lodash';
 
-export default {
+const steps = {
 	stepA: {
 		stepName: 'stepA',
 	},
@@ -70,3 +70,4 @@ export default {
 		},
 	},
 };
+export default steps;
