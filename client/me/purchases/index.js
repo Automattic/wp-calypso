@@ -59,7 +59,7 @@ export default function( router ) {
 	);
 
 	/**
-	 * The siteSelection middleware has been removed from this root.
+	 * The siteSelection middleware has been removed from this route.
 	 * No selected site!
 	 */
 	router(
