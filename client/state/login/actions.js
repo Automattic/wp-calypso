@@ -110,11 +110,19 @@ export const loginUser = ( usernameOrEmail, password, redirectTo ) => dispatch =
 				} );
 			}
 
-			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
-				dispatch( {
-					type: LOGIN_REQUEST_SUCCESS,
-					data: response.body && response.body.data,
+			// if the user has 2FA, in this stage he's not yet logged in.
+			if ( ! get( response, 'body.data.two_step_notification_sent' ) ) {
+				return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+					dispatch( {
+						type: LOGIN_REQUEST_SUCCESS,
+						data: response.body && response.body.data,
+					} );
 				} );
+			}
+
+			return dispatch( {
+				type: LOGIN_REQUEST_SUCCESS,
+				data: response.body && response.body.data,
 			} );
 		} )
 		.catch( httpError => {
