@@ -173,6 +173,14 @@ describe( 'streams.pendingItems reducer', () => {
 
 		expect( nextState ).toBe( prevState );
 	} );
+
+	it( 'should return the original state with empty changes', () => {
+		const prevState = deepfreeze( { items: [], lastUpdated: moment( TIME2 ) } );
+		const action = receiveUpdates( { streamItems: [] } );
+		const nextState = pendingItems( prevState, action );
+
+		expect( nextState ).toBe( prevState );
+	} );
 } );
 
 describe( 'streams.selected reducer', () => {
