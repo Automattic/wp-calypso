@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter } from 'lodash';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -185,7 +185,8 @@ class SiteSettingsImport extends Component {
 	}
 
 	updateFromAPI = () => {
-		fetchState( this.props.site.ID );
+		const siteID = get( this, 'props.site.ID' );
+		siteID && fetchState( siteID );
 	};
 
 	updateState = () => {
