@@ -116,7 +116,7 @@ export const announceFailure = ( { siteId, postId } ) => ( dispatch, getState ) 
 		? translate( 'Could not retrieve comments for “%(postTitle)s”', { args: { postTitle } } )
 		: translate( 'Could not retrieve comments for requested post' );
 
-	dispatch( errorNotice( error ) );
+	dispatch( errorNotice( error, { duration: 5000 } ) );
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/

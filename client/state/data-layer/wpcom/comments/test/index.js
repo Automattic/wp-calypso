@@ -177,6 +177,7 @@ describe( 'wpcom-api', () => {
 						notice: expect.objectContaining( {
 							status: 'is-error',
 							text: 'Could not retrieve comments for requested post',
+							duration: 5000,
 						} ),
 					} )
 				);
