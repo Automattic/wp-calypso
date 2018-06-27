@@ -37,5 +37,5 @@ export function geocode( address ) {
 }
 
 export function reverseGeocode( latitude, longitude ) {
-	return queryGoogleMapsApi( { latlng: latitude + ',' + longitude } );
+	return queryGoogleMapsApi( { latlng: latitude + ',' + longitude, key: GOOGLE_MAPS_API_KEY } );
 }
