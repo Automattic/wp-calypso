@@ -38,7 +38,6 @@ import {
 	isLoaded as arePackagesLoaded,
 	isFetchError as arePackagesErrored,
 } from 'woocommerce/woocommerce-services/state/packages/selectors';
-import { isEnabled } from 'config';
 import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 import {
 	ACCEPTED_USPS_ORIGIN_COUNTRIES,
@@ -54,6 +53,7 @@ import {
 	getStates,
 	hasStates,
 } from 'woocommerce/state/sites/data/locations/selectors';
+import { isWcsInternationalLabelsEnabled } from 'woocommerce/state/selectors/plugins';
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -564,7 +564,7 @@ export const getAllCountryNames = createSelector(
 export const getOriginCountryNames = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
 		const allNames = getAllCountryNames( state, siteId );
-		return isEnabled( 'woocommerce/extension-wcservices/international-labels' )
+		return isWcsInternationalLabelsEnabled( state, siteId )
 			? pick( allNames, ACCEPTED_USPS_ORIGIN_COUNTRIES )
 			: pick( allNames, DOMESTIC_US_TERRITORIES );
 	},
@@ -579,7 +579,7 @@ export const getOriginCountryNames = createSelector(
 export const getDestinationCountryNames = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
 		const allNames = getAllCountryNames( state, siteId );
-		return isEnabled( 'woocommerce/extension-wcservices/international-labels' )
+		return isWcsInternationalLabelsEnabled( state, siteId )
 			? allNames
 			: pick( allNames, DOMESTIC_US_TERRITORIES );
 	},
@@ -603,10 +603,7 @@ export const getStateNames = createSelector(
 		const names = {};
 		states.forEach( ( { code, name } ) => ( names[ code ] = name ) );
 
-		if (
-			'US' === countryCode &&
-			! isEnabled( 'woocommerce/extension-wcservices/international-labels' )
-		) {
+		if ( 'US' === countryCode && ! isWcsInternationalLabelsEnabled( state, siteId ) ) {
 			// Filter out military addresses
 			return omit( names, US_MILITARY_STATES );
 		}

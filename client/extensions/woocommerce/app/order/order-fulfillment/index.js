@@ -41,14 +41,13 @@ import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import { isOrderFinished } from 'woocommerce/lib/order-status';
 import { isOrderUpdating } from 'woocommerce/state/sites/orders/selectors';
-import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
+import { isWcsEnabled, isWcsInternationalLabelsEnabled } from 'woocommerce/state/selectors/plugins';
 import LabelPurchaseDialog from 'woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
 import Notice from 'components/notice';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
-import { isEnabled } from 'config';
 
 class OrderFulfillment extends Component {
 	static propTypes = {
@@ -147,7 +146,7 @@ class OrderFulfillment extends Component {
 	};
 
 	isAddressValidForLabels( address, type ) {
-		if ( isEnabled( 'woocommerce/extension-wcservices/international-labels' ) ) {
+		if ( this.props.internationalLabelsEnabled ) {
 			// If international labels is enabled, origin must be a country with a USPS office, destination can be anywhere in the world
 			return 'destination' === type || includes( ACCEPTED_USPS_ORIGIN_COUNTRIES, address.country );
 		}
@@ -307,6 +306,7 @@ export default connect(
 
 		return {
 			wcsEnabled,
+			internationalLabelsEnabled: isWcsInternationalLabelsEnabled( state, site.ID ),
 			isSaving,
 			labelsLoaded,
 			labelsError: isLabelDataFetchError( state, order.id, site.ID ),

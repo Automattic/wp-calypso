@@ -10,26 +10,50 @@ import config from 'config';
 import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
 import { getRequiredPluginsForCalypso } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import createSelector from 'lib/create-selector';
+
+const getWcsPluginData = createSelector(
+	( state, siteId ) => {
+		const siteIds = [ siteId ];
+		if ( isRequestingForSites( state, siteIds ) ) {
+			return null;
+		}
+
+		return find( getPlugins( state, siteIds, 'active' ), { slug: 'woocommerce-services' } );
+	},
+	( state, siteId ) => [ state.plugins.installed.plugins[ siteId ] ]
+);
 
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean|null} Whether the given site has woocommerce services installed & active
+ * @return {boolean} Whether the given site has woocommerce services installed & active
  */
-export const isWcsEnabled = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
-		return false;
-	}
+export const isWcsEnabled = ( state, siteId = getSelectedSiteId( state ) ) =>
+	config.isEnabled( 'woocommerce/extension-wcservices' ) &&
+	Boolean( getWcsPluginData( state, siteId ) );
 
-	const siteIds = [ siteId ];
-
-	if ( isRequestingForSites( state, siteIds ) ) {
-		return null;
-	}
-
-	const plugins = getPlugins( state, siteIds, 'active' );
-	return Boolean( find( plugins, { slug: 'woocommerce-services' } ) );
+const isVersionAtLeast = ( minimumVersion, pluginVersion ) => {
+	const [ major, minor, patch ] = minimumVersion.split( '.' ).map( x => parseInt( x, 10 ) );
+	const [ pluginMajor, pluginMinor, pluginPatch ] = pluginVersion
+		.split( '.' )
+		.map( x => parseInt( x, 10 ) );
+	return (
+		pluginMajor > major ||
+		( pluginMajor === major && pluginMinor > minor ) ||
+		( pluginMajor === major && pluginMinor === minor && pluginPatch >= patch )
+	);
 };
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether the given site has a version of WooCommerce Services new enough to support international labels
+ */
+export const isWcsInternationalLabelsEnabled = ( state, siteId = getSelectedSiteId( state ) ) =>
+	isWcsEnabled( state, siteId ) &&
+	config.isEnabled( 'woocommerce/extension-wcservices/international-labels' ) &&
+	isVersionAtLeast( '1.16.0', getWcsPluginData( state, siteId ).version );
 
 /**
  * @param {Object} state Whole Redux state tree
