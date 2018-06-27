@@ -36,27 +36,8 @@ import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SpeedUpYourSite from './speed-up-site-settings';
-import scrollTo from 'lib/scroll-to';
 
 class SiteSettingsFormWriting extends Component {
-	componentDidMount() {
-		// Wait for page.js to update the URL, then see if we are linking
-		// directly to a section of this page.
-		setTimeout( () => {
-			if ( ! window || ! window.location ) {
-				// This code breaks everything in the tests (they hang with no
-				// error message).
-				return;
-			}
-			const hash = window.location.hash;
-			const el = hash && document.getElementById( hash.substring( 1 ) );
-			if ( hash && el ) {
-				const y = el.offsetTop - document.getElementById( 'header' ).offsetHeight - 15;
-				scrollTo( { y } );
-			}
-		} );
-	}
-
 	renderSectionHeader( title, showButton = true ) {
 		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
 		return (
