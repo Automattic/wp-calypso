@@ -158,9 +158,9 @@ const navigateByHash = () => {
 			debug( 'navigateByHash', context.hashstring, { el } );
 			const header = document.getElementById( 'header' );
 			if ( el && header ) {
-				debug( 'navigateByHash', context.hashstring, { el, y } );
 				const y = el.offsetTop - header.offsetHeight - 15;
 				scrollTo( { y } );
+				debug( 'navigateByHash', context.hashstring, { el, y } );
 			}
 		}
 		next();
