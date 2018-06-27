@@ -50,15 +50,9 @@ class ActivityLogTaskUpdate extends Component {
 				<span className="activity-log-tasklist__update-item">
 					<div>
 						<span className="activity-log-tasklist__update-text">
-							{ translate( 'Update available for {{linked/}}', {
-								components: {
-									linked: (
-										<Button onClick={ this.handleNameClick } borderless>
-											{ name }
-										</Button>
-									),
-								},
-							} ) }
+							<Button borderless onClick={ this.handleNameClick }>
+								{ name }
+							</Button>
 						</span>
 						<span className="activity-log-tasklist__update-bullet">&bull;</span>
 						<span className="activity-log-tasklist__update-version">{ version }</span>
