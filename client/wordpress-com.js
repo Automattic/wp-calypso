@@ -313,6 +313,7 @@ sections.push( {
 	secondary: false,
 	group: 'reader',
 	css: 'reader-full-post',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
