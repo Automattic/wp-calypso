@@ -168,7 +168,10 @@ class EditorDrawer extends Component {
 	renderLocation() {
 		const { translate } = this.props;
 
-		if ( ! this.props.site || this.props.isJetpack ) {
+		if (
+			! this.props.site ||
+			( this.props.isJetpack && ! this.props.jetpackVersionSupportsLocation )
+		) {
 			return;
 		}
 
@@ -326,6 +329,7 @@ const enhance = flow(
 			isJetpack: isJetpackSite( state, siteId ),
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
+			jetpackVersionSupportsLocation: isJetpackMinimumVersion( state, siteId, '6.3-beta' ),
 			isRequestingPlugins: isRequesting( state, siteId ),
 			type,
 			typeObject: getPostType( state, siteId, type ),
