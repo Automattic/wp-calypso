@@ -10,6 +10,14 @@
 	flex: 2 1;
 }
 
+.action-card__illustration {
+	max-width: 200px;
+
+	@include breakpoint( '<960px' ) {
+		display: none;
+	}
+}
+
 .action-card__button-container {
 	align-self: center;
 	flex: 1;

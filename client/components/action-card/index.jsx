@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import Card from 'components/card';
 import Button from 'components/button';
 
 const ActionCard = ( {
@@ -23,8 +23,17 @@ const ActionCard = ( {
 	buttonHref,
 	buttonOnClick,
 	children,
+	compact = true,
+	illustration,
 } ) => (
-	<CompactCard className="action-card">
+	<Card className="action-card" compact={ compact }>
+		{ illustration && (
+			<img
+				className="action-card__illustration"
+				alt="concierge session signup form header"
+				src={ illustration }
+			/>
+		) }
 		<div className="action-card__main">
 			<h2 className="action-card__heading">{ headerText }</h2>
 			<p>{ mainText }</p>
@@ -41,7 +50,7 @@ const ActionCard = ( {
 				</Button>
 			) }
 		</div>
-	</CompactCard>
+	</Card>
 );
 
 ActionCard.propTypes = {
@@ -54,6 +63,8 @@ ActionCard.propTypes = {
 	buttonHref: PropTypes.string,
 	buttonTarget: PropTypes.string,
 	children: PropTypes.any,
+	compact: PropTypes.bool,
+	illustration: PropTypes.string,
 };
 
 export default ActionCard;
