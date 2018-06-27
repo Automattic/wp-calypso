@@ -66,16 +66,16 @@ function ProgressBanner( {
 						? translate( 'The cloning process will start in a moment.' )
 						: translate( "We're on it! Your site is being cloned." );
 			} else {
-				title = translate( 'Currently restoring your site' );
+				title = translate( 'Currently rewinding your site' );
 				description = translate(
-					"We're in the process of restoring your site back to %(dateTime)s. " +
+					"We're in the process of rewinding your site back to %(dateTime)s. " +
 						"You'll be notified once it's complete.",
 					{ args: { dateTime } }
 				);
 				statusMessage =
 					'queued' === status
-						? translate( 'Your restore will start in a moment.' )
-						: translate( "We're on it! Your site is being restored." );
+						? translate( 'Your rewind will start in a moment.' )
+						: translate( "We're on it! Your site is being rewound." );
 			}
 			break;
 
