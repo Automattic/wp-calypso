@@ -4061,11 +4061,11 @@
       "integrity": "sha1-AMYIq33Nk4l8AAllGx06jh5zu9E="
     },
     "component-closest": {
-      "version": "0.1.4",
-      "resolved": "https://registry.npmjs.org/component-closest/-/component-closest-0.1.4.tgz",
-      "integrity": "sha1-W3L8UtkGB+dRFcr9w7B+JzSN5xs=",
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/component-closest/-/component-closest-1.0.1.tgz",
+      "integrity": "sha1-HtBGQTL8iKNRCi2r7AeWlXifsbU=",
       "requires": {
-        "component-matches-selector": "~0.1.5"
+        "component-matches-selector": "~0.1.6"
       }
     },
     "component-emitter": {
