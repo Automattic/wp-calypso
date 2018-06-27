@@ -9,11 +9,12 @@ import page from 'page';
  */
 import { discover } from './controller';
 import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 
 export default function() {
 	page(
 		'/discover',
+		redirectLoggedOut,
 		preloadReaderBundle,
 		updateLastRoute,
 		initAbTests,

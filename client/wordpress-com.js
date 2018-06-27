@@ -322,6 +322,7 @@ sections.push( {
 	module: 'reader/discover',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
