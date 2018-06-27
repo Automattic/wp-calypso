@@ -61,7 +61,7 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 export const remoteLoginUser = loginLinks => {
 	return Promise.all(
 		loginLinks
-			.map( loginLink => fetch( loginLink ) )
+			.map( loginLink => fetch( loginLink, { credentials: 'include' } ) )
 			// make sure we continue even when a remote login fails
 			.map( promise => promise.catch( () => Promise.resolve() ) )
 	);
