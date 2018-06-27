@@ -113,6 +113,11 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			return { ...state, lastUpdated: maxDate };
 		case READER_STREAMS_UPDATES_RECEIVE:
 			streamItems = action.payload.streamItems;
+			if ( streamItems.length === 0 ) {
+				return state;
+			}
+
+			maxDate = moment( streamItems[ 0 ].date );
 			const minDate = moment( last( streamItems ).date );
 
 			// only retain posts that are newer than ones we already have
@@ -125,8 +130,6 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			if ( streamItems.length === 0 ) {
 				return state;
 			}
-
-			maxDate = moment( streamItems[ 0 ].date );
 
 			const newItems = [ ...streamItems ];
 
