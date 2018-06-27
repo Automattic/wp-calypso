@@ -273,13 +273,6 @@ class DomainsStep extends React.Component {
 
 	domainForm = () => {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-		const includeDotBlogSubdomain = this.shouldIncludeDotBlogSubdomain();
-
-		// Default to `home` vertical if we should include .blog subdomain but no vertical set
-		let vertical = this.props.surveyVertical;
-		if ( includeDotBlogSubdomain && ! vertical ) {
-			vertical = 'a8c.10';
-		}
 
 		return (
 			<RegisterDomainStep
@@ -300,7 +293,7 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions
-				surveyVertical={ vertical }
+				surveyVertical={ this.props.surveyVertical }
 				suggestion={ get( this.props, 'queryObject.new', '' ) }
 				designType={ this.getDesignType() }
 			/>
