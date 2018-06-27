@@ -258,7 +258,6 @@ textarea {
 					background-color: $white;
 					transition: all 150ms ease-in-out;
 					box-sizing: border-box;
-					min-height: 38px;
 
 					&[name='accountHolder'],
 					&[name='email'],
@@ -282,10 +281,10 @@ textarea {
 						width: 120px;
 						margin-right: 20px;
 					}
+				}
 
-					&[type=search] {
-
-					}
+				.ui-select-match > .form-control {
+					min-height: 38px;
 				}
 
 				// Error label below each field
