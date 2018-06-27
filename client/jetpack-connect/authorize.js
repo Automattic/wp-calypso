@@ -272,6 +272,13 @@ export class JetpackAuthorize extends Component {
 		userUtilities.logout( window.location.href );
 	};
 
+	handleBackToSite = () => {
+		const { recordTracksEvent } = this.props;
+		const { redirectAfterAuth } = this.props.authQuery;
+		recordTracksEvent( 'calypso_jpc_cancel_authorize_click' );
+		this.externalRedirect( redirectAfterAuth );
+	};
+
 	handleResolve = () => {
 		const { site, recordTracksEvent } = this.props;
 		this.retryingAuth = false;
@@ -552,9 +559,9 @@ export class JetpackAuthorize extends Component {
 	renderFooterLinks() {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
-		const { blogname, redirectAfterAuth } = this.props.authQuery;
+		const { blogname } = this.props.authQuery;
 		const backToWpAdminLink = (
-			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
+			<LoggedOutFormLinkItem onClick={ this.handleBackToSite }>
 				<Gridicon size={ 18 } icon="arrow-left" />{' '}
 				{ translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) },
