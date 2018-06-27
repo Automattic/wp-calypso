@@ -13,7 +13,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 /**
  * Internal dependencies
  */
-import abtest from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
