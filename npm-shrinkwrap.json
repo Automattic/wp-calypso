@@ -3311,6 +3311,29 @@
       "integrity": "sha1-V00xLt2Iu13YkS6Sht1sCu1KrII=",
       "dev": true
     },
+    "check-node-version": {
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/check-node-version/-/check-node-version-3.2.0.tgz",
+      "integrity": "sha512-mJu4dADRf+NUeOyGgFTXaLtjyyffD3Eej2RA9IEk1CdHmoVurErLD++e/Ps6uKfsB273ky+0Z9NlOiuplxuNdw==",
+      "dev": true,
+      "requires": {
+        "chalk": "^2.3.0",
+        "map-values": "^1.0.1",
+        "minimist": "^1.2.0",
+        "object-filter": "^1.0.2",
+        "object.assign": "^4.0.4",
+        "run-parallel": "^1.1.4",
+        "semver": "^5.0.3"
+      },
+      "dependencies": {
+        "minimist": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz",
+          "integrity": "sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=",
+          "dev": true
+        }
+      }
+    },
     "check-types": {
       "version": "7.4.0",
       "resolved": "https://registry.npmjs.org/check-types/-/check-types-7.4.0.tgz",
@@ -11222,6 +11245,12 @@
       "resolved": "https://registry.npmjs.org/map-stream/-/map-stream-0.1.0.tgz",
       "integrity": "sha1-5WqpTEyAVaFkBKBnS3jyFffI4ZQ="
     },
+    "map-values": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/map-values/-/map-values-1.0.1.tgz",
+      "integrity": "sha1-douOecAJvytk/ugG4ip7HEGQyZA=",
+      "dev": true
+    },
     "map-visit": {
       "version": "1.0.0",
       "resolved": "https://registry.npmjs.org/map-visit/-/map-visit-1.0.0.tgz",
@@ -12630,6 +12659,12 @@
           }
         }
       }
+    },
+    "object-filter": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/object-filter/-/object-filter-1.0.2.tgz",
+      "integrity": "sha1-rwt5f/6+r4pSxmN87b6IFs/sG8g=",
+      "dev": true
     },
     "object-inspect": {
       "version": "1.6.0",
@@ -14915,6 +14950,12 @@
       "requires": {
         "is-promise": "^2.1.0"
       }
+    },
+    "run-parallel": {
+      "version": "1.1.9",
+      "resolved": "https://registry.npmjs.org/run-parallel/-/run-parallel-1.1.9.tgz",
+      "integrity": "sha512-DEqnSRTDw/Tc3FXf49zedI638Z9onwUotBMiUFKmrO2sdFKIbXamXGQ3Axd4qgphxKB4kw/qP1w5kTxnfU1B9Q==",
+      "dev": true
     },
     "run-queue": {
       "version": "1.0.3",
