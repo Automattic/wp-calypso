@@ -13,6 +13,7 @@ import Banner from 'components/banner';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getRewindState from 'state/selectors/get-rewind-state';
+import { PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 
 export const UnavailabilityNotice = ( {
 	adminUrl,
@@ -30,7 +31,7 @@ export const UnavailabilityNotice = ( {
 		case 'missing_plan':
 			return (
 				<Banner
-					plan="personal-bundle"
+					plan={ PLAN_JETPACK_BUSINESS }
 					href={ `/plans/${ slug }` }
 					callToAction={ translate( 'Upgrade' ) }
 					title={ translate(
