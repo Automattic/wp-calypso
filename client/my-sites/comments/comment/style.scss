@@ -506,8 +506,11 @@
 .comment__edit-date-button {
 	display: block;
 }
-.comment__edit-date-popover .popover__inner {
-	padding: 0 8px;
+.comment__edit-date-popover {
+	min-width: 300px;
+	.popover__inner {
+		padding: 0 8px;
+	}
 }
 .comment__edit-date-popover-buttons {
 	display: flex;
