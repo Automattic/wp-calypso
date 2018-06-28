@@ -440,6 +440,10 @@
 	.form-fieldset {
 		padding: 0 8px;
 		width: 50%;
+
+		@include breakpoint( '>1280px' ) {
+			width: 33%;
+		}
 	}
 
 	.form-textarea {
@@ -497,6 +501,26 @@
 .comment__edit-buttons {
 	padding: 0 8px 16px 8px;
 	width: 100%;
+}
+
+.comment__edit-date-button {
+	display: block;
+}
+.comment__edit-date-popover {
+	min-width: 300px;
+	.popover__inner {
+		padding: 0 8px;
+	}
+}
+.comment__edit-date-popover-buttons {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-start;
+	padding-bottom: 8px;
+
+	.button {
+		margin-left: 10px;
+	}
 }
 
 // HTML Editor

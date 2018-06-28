@@ -215,11 +215,12 @@ export const editComment = ( { dispatch, getState }, action ) => {
 	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
 	// This ternary matches the updated fields sent by Comment Management's Edit form to the fields expected by the API.
 	const body =
-		comment.authorDisplayName || comment.authorUrl || comment.commentContent
+		comment.authorDisplayName || comment.authorUrl || comment.commentContent || comment.commentDate
 			? {
 					author: comment.authorDisplayName,
 					author_url: comment.authorUrl,
 					content: comment.commentContent,
+					date: comment.commentDate,
 			  }
 			: comment;
 
