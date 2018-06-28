@@ -333,13 +333,28 @@ export function siteSelection( context, next ) {
 	 * If the user has only one site, redirect to the single site
 	 * context instead of rendering the all-site views.
 	 *
+	 * IsSiteSelectionPath check we are in a page with only site picker.
+	 * If we are, should redirect even with siteFragment because it's the same page.
+	 *
 	 * If the /me/sites API endpoint hasn't returned yet, postpone the redirect until
 	 * after the sites data are available by scheduling a `SITES_ONCE_CHANGED` callback.
 	 */
-	if ( hasOneSite && ! siteFragment ) {
+	const isSiteSelectionPath = basePath === '/sites' || basePath === '/settings';
+	if ( hasOneSite && ( ! siteFragment || isSiteSelectionPath ) ) {
 		const redirectToPrimary = () => {
 			const primarySiteSlug = getPrimarySiteSlug( getState() );
-			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
+
+			let pathname = context.pathname;
+			switch ( basePath ) {
+				case '/sites':
+					pathname = '/stats/insights';
+					break;
+				case '/settings':
+					pathname = '/settings/general';
+					break;
+			}
+
+			let redirectPath = `${ pathname }/${ primarySiteSlug }`;
 
 			redirectPath = context.querystring
 				? `${ redirectPath }?${ context.querystring }`

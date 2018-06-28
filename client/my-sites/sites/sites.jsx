@@ -18,7 +18,7 @@ import Card from 'components/card';
 import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
-import { addSiteFragment } from 'lib/route';
+import { addSiteFragment, sectionify } from 'lib/route';
 import getSites from 'state/selectors/get-sites';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -131,7 +131,19 @@ export const Sites = createReactClass( {
 } );
 
 const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
-	const path = rawPath === '/sites' ? '/stats/insights' : rawPath;
+	const basePath = sectionify( rawPath );
+
+	let path = rawPath;
+
+	switch ( basePath ) {
+		case '/sites':
+			path = '/stats/insights';
+			break;
+		case '/settings':
+			path = '/settings/general';
+			break;
+	}
+
 	page( addSiteFragment( path, getSiteSlug( getState(), siteId ) ) );
 };
 
