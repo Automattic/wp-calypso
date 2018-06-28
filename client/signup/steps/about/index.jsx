@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey } from 'lodash';
+import { invoke, noop, findKey, escapeRegExp } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -168,7 +168,10 @@ class AboutStep extends Component {
 
 	getSuggestions() {
 		return Object.values( hints )
-			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
+			.filter(
+				hint =>
+					this.state.query && hint.match( new RegExp( escapeRegExp( this.state.query ), 'i' ) )
+			)
 			.map( hint => ( { label: hint } ) );
 	}
 
