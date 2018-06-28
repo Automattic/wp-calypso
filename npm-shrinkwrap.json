@@ -15578,9 +15578,9 @@
       "dev": true
     },
     "sinon": {
-      "version": "5.1.0",
-      "resolved": "https://registry.npmjs.org/sinon/-/sinon-5.1.0.tgz",
-      "integrity": "sha512-mKJCMMwRKAPEbM48tgT7rea9+Dos5xugEpVXGwMDCSRtPxF6ZjIBO+WrbixxJ0xcYJ6ZMS3/veTAI7XTW010yA==",
+      "version": "5.1.1",
+      "resolved": "https://registry.npmjs.org/sinon/-/sinon-5.1.1.tgz",
+      "integrity": "sha512-h/3uHscbt5pQNxkf7Y/Lb9/OM44YNCicHakcq73ncbrIS8lXg+ZGOZbtuU+/km4YnyiCYfQQEwANaReJz7KDfw==",
       "dev": true,
       "requires": {
         "@sinonjs/formatio": "^2.0.0",
