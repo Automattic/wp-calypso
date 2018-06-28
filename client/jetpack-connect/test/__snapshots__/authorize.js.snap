@@ -70,6 +70,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
       <LoggedOutFormLinks>
         <LoggedOutFormLinkItem
           href="http://an.example.site/wp-admin/admin.php?page=jetpack"
+          onClick={[Function]}
         >
           <t
             icon="arrow-left"
