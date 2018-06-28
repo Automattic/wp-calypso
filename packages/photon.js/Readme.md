@@ -64,7 +64,7 @@ Node.js instructions above).
 
 ## License
 
-MIT – Copyright 2014-2017 Automattic
+MIT – Copyright 2014-2018 Automattic
 
 [Node.js]: http://nodejs.org
 [WordPress.com]: http://www.wordpress.com
