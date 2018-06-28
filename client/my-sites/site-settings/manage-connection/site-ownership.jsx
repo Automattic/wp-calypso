@@ -191,16 +191,12 @@ class SiteOwnership extends Component {
 			return;
 		}
 
-		return (
-			<Fragment>
-				{ isCurrentPlanOwner ? (
-					this.renderPlanOwnerDropdown()
-				) : (
-					<FormSettingExplanation>
-						{ translate( 'Somebody else is the plan purchaser for this site.' ) }
-					</FormSettingExplanation>
-				) }
-			</Fragment>
+		return isCurrentPlanOwner ? (
+			this.renderPlanOwnerDropdown()
+		) : (
+			<FormSettingExplanation>
+				{ translate( 'Somebody else is the plan purchaser for this site.' ) }
+			</FormSettingExplanation>
 		);
 	}
 
