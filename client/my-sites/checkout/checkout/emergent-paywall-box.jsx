@@ -21,6 +21,7 @@ import wp from 'lib/wp';
 import { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const wpcom = wp.undocumented();
 const log = debug( 'calypso:checkout:payment:emergent-payall' );
@@ -75,6 +76,17 @@ export class EmergentPaywallBox extends Component {
 		};
 	}
 
+	errorMessage = () => {
+		const contactLink = <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
+
+		return translate(
+			'Oops! Something went wrong and your request could not be ' +
+				'processed. Please try again or {{contactLink}}Contact Support{{/contactLink}} if ' +
+				'you continue to have trouble.',
+			{ components: { contactLink } }
+		);
+	};
+
 	/**
 	 * Determines what to do after a `PURCHASE_STATUS` message
 	 *
@@ -96,7 +108,14 @@ export class EmergentPaywallBox extends Component {
 
 		if ( isBoolean( purchaseStatus.close ) ) {
 			log( 'User has closed the iframe' );
-			return page.redirect( `/plans/${ this.state.siteSlug }` );
+
+			// Resize the iframe to prevent Emergent's error message from showing.
+			this.setState( {
+				iframeHeight: 1,
+				iframeWidth: 1,
+			} );
+			// Reload the iframe contents
+			this.formRef.current.submit();
 		}
 	}
 
@@ -133,13 +152,10 @@ export class EmergentPaywallBox extends Component {
 				}
 			} )
 			.catch( error => {
-				log(
-					'Error creating order: ',
-					error,
-					error.message || translate( "We've encountered a problem. Please try again later." )
-				);
-				// TODO: This shouldn't happen, but if it does, what can we do?
-				page.redirect( `/checkout/${ this.state.siteSlug }` );
+				log( 'Error creating order: ', error, error.message || '' );
+
+				notices.error( this.errorMessage() );
+				this.fetchIframeConfiguration();
 			} );
 	}
 
@@ -160,7 +176,6 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	fetchIframeConfiguration = () => {
-		notices.clearNotices( 'notices' );
 		wpcom.emergentPaywallConfiguration(
 			this.props.userCountryCode,
 			this.props.cart,
@@ -171,7 +186,7 @@ export class EmergentPaywallBox extends Component {
 
 	loadIframe = ( error, iframeConfig ) => {
 		if ( error ) {
-			notices.error( this.props.translate( "There's been an error. Please try again later." ) );
+			notices.error( this.errorMessage() );
 			this.setState( this.getInitialState() );
 			return;
 		}

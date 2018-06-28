@@ -378,6 +378,13 @@ textarea {
 			font-weight: 300;
 		}
 
+		form[ng-init='link=page.links.customerFormSubmit'] {
+			// Back button on initial page load
+			a.btn {
+				display: none;
+			}
+		}
+
 	}
 
 
