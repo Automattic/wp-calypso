@@ -27,6 +27,7 @@ import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/
 import { getSiteSlug } from 'state/sites/selectors';
 import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
 import getRewindState from 'state/selectors/get-rewind-state';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class RewindCredentialsForm extends Component {
 	static propTypes = {
@@ -114,6 +115,15 @@ export class RewindCredentialsForm extends Component {
 				! payload.kpri && { pass: translate( 'Please enter your server password.' ) },
 			! payload.path && requirePath && { path: translate( 'Please enter a server path.' ) }
 		);
+
+		const eventName =
+			'main' === payload.role
+				? 'calypso_rewind_credentials_save_main'
+				: 'calypso_rewind_credentials_save_alternate';
+
+		const eventData = isEmpty( errors ) ? {} : { errors: Object.keys( errors ).join( ',' ) };
+
+		this.props.recordTracksEvent( eventName, eventData );
 
 		return isEmpty( errors )
 			? updateCredentials( siteId, payload )
@@ -328,5 +338,5 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 
 export default connect(
 	mapStateToProps,
-	{ deleteCredentials, updateCredentials }
+	{ deleteCredentials, updateCredentials, recordTracksEvent }
 )( localize( RewindCredentialsForm ) );
