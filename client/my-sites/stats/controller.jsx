@@ -130,7 +130,7 @@ export default {
 	},
 
 	redirectToDefaultModulePage: function( context ) {
-		page.redirect( `/stats/day/${ context.params.module }/${ context.params.site_id }` );
+		page.redirect( `/stats/day/${ context.params.module }/${ context.params.site }` );
 	},
 
 	insights: function( context, next ) {
@@ -181,7 +181,7 @@ export default {
 
 	site: function( context, next ) {
 		const {
-			params: { site_id: givenSiteId },
+			params: { site: givenSiteId },
 			query: queryOptions,
 			store,
 		} = context;
@@ -248,7 +248,7 @@ export default {
 	},
 
 	summary: function( context, next ) {
-		let siteId = context.params.site_id;
+		let siteId = context.params.site;
 		const siteFragment = getSiteFragment( context.path );
 		const queryOptions = context.query;
 		const contextModule = context.params.module;
@@ -334,7 +334,7 @@ export default {
 	},
 
 	post: function( context, next ) {
-		let siteId = context.params.site_id;
+		let siteId = context.params.site;
 		const postId = parseInt( context.params.post_id, 10 );
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
@@ -352,7 +352,7 @@ export default {
 	},
 
 	follows: function( context, next ) {
-		let siteId = context.params.site_id;
+		let siteId = context.params.site;
 		let pageNum = context.params.page_num;
 		const followList = new FollowList();
 

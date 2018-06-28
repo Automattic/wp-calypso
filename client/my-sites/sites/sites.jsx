@@ -41,12 +41,6 @@ export const Sites = createReactClass( {
 			path = '/sites';
 		}
 
-		// Filters sites based on public or private nature
-		// for paths `/public` and `/private` only
-		if ( path === '/sites/private' ) {
-			return site.is_private;
-		}
-
 		// Filter out jetpack sites when on particular routes
 		if ( /^\/customize/.test( path ) ) {
 			return ! site.jetpack;
