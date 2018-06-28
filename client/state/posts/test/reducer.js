@@ -1356,6 +1356,38 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should consider date not edited after resetting draft date', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						842: {
+							title: 'I like turtles',
+							date: false,
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 842,
+							site_ID: 2916284,
+							title: 'I like turtles!',
+							date: '2018-06-14T16:47:21+00:00',
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					842: {
+						title: 'I like turtles',
+					},
+				},
+			} );
+		} );
+
 		test( 'should remove status edits after they are saved', () => {
 			const emptyEditsState = {
 				2916284: {
@@ -1437,34 +1469,6 @@ describe( 'reducer', () => {
 					841: {
 						title: 'Ribs & Chicken',
 					},
-					842: {
-						title: 'I like turtles',
-					},
-				},
-			} );
-		} );
-
-		test( 'should consider date not edited after resetting draft date', () => {
-			const original = deepFreeze( {
-				2916284: {
-					842: {
-						title: 'I like turtles',
-						date: false,
-					},
-				},
-			} );
-			const state = edits( original, {
-				type: POST_SAVE_SUCCESS,
-				siteId: 2916284,
-				postId: 842,
-				savedPost: {
-					ID: 842,
-					title: 'I like turtles',
-					date: '2018-06-14T16:47:21+00:00',
-				},
-			} );
-			expect( state ).to.eql( {
-				2916284: {
 					842: {
 						title: 'I like turtles',
 					},
