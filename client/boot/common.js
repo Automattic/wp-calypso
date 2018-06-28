@@ -110,11 +110,15 @@ const loggedOutMiddleware = currentUser => {
 	const validSections = getSections().reduce( ( acc, section ) => {
 		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
 	}, [] );
+
 	const isValidSection = sectionPath =>
-		some( validSections, validPath => startsWith( sectionPath, validPath ) );
+		some(
+			validSections,
+			validPath => startsWith( sectionPath, validPath ) || sectionPath.match( validPath )
+		);
 
 	page( '*', ( context, next ) => {
-		if ( isValidSection( context.path ) ) {
+		if ( context.path && isValidSection( context.path ) ) {
 			// redirect to login page if we're not on it already, only for stats for now
 			if ( startsWith( context.path, '/stats' ) ) {
 				return page.redirect( '/log-in/?redirect_to=' + encodeURIComponent( context.path ) );
