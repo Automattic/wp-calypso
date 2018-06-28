@@ -62,7 +62,7 @@ jobs:
       - run:
           name: Build New Strings .pot
           command: |
-            git clone --depth=1 --single-branch https://github.com/Automattic/gp-localci-client.git
+            git clone --branch update/use-npx --depth=1 --single-branch https://github.com/Automattic/gp-localci-client.git
             bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
             rm -rf gp-localci-client
 
