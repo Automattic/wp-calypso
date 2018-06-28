@@ -3,21 +3,21 @@
 /**
  * External dependencies
  */
-import request from 'superagent';
-import { head, find, get } from 'lodash';
+import request from "superagent";
+import { head, find, get } from "lodash";
 
 /**
  * Internal dependencies
  */
-import userSettings from 'lib/user-settings';
-import { isMobile } from 'lib/viewport';
+import userSettings from "lib/user-settings";
+import { isMobile } from "lib/viewport";
 import {
-	GP_PROJECT,
-	GP_BASE_URL,
-	GP_PROJECT_TRANSLATION_SET_SLUGS,
-	ENABLE_TRANSLATOR_KEY,
-} from './constants';
-import { canBeTranslated } from 'lib/i18n-utils';
+  GP_PROJECT,
+  GP_BASE_URL,
+  GP_PROJECT_TRANSLATION_SET_SLUGS,
+  ENABLE_TRANSLATOR_KEY
+} from "./constants";
+import { canBeTranslated } from "lib/i18n-utils";
 
 /**
  * Checks whether the CT can be displayed, that is, if the chosen locale and device allow it
@@ -26,25 +26,25 @@ import { canBeTranslated } from 'lib/i18n-utils';
  * @returns {Boolean} whether the CT can be displayed
  */
 export function canDisplayCommunityTranslator(
-	locale = userSettings.getSetting( 'language' ),
-	localeVariant = userSettings.getSetting( 'locale_variant' )
+  locale = userSettings.getSetting("language"),
+  localeVariant = userSettings.getSetting("locale_variant")
 ) {
-	// restrict mobile devices from translator for now while we refine touch interactions
-	if ( isMobile() ) {
-		return false;
-	}
+  // restrict mobile devices from translator for now while we refine touch interactions
+  if (isMobile()) {
+    return false;
+  }
 
-	// disable for locales with no official GP translation sets.
-	if ( ! locale || ! canBeTranslated( locale ) ) {
-		return false;
-	}
+  // disable for locales with no official GP translation sets.
+  if (!locale || !canBeTranslated(locale)) {
+    return false;
+  }
 
-	// likewise, disable for locale variants with no official GP translation sets
-	if ( localeVariant && ! canBeTranslated( localeVariant ) ) {
-		return false;
-	}
+  // likewise, disable for locale variants with no official GP translation sets
+  if (localeVariant && !canBeTranslated(localeVariant)) {
+    return false;
+  }
 
-	return true;
+  return true;
 }
 
 /**
@@ -54,18 +54,18 @@ export function canDisplayCommunityTranslator(
  * @returns {Bool} whether the CT should be enabled
  */
 export function isCommunityTranslatorEnabled() {
-	if (
-		! userSettings.getSettings() ||
-		! userSettings.getOriginalSetting( ENABLE_TRANSLATOR_KEY )
-	) {
-		return false;
-	}
+  if (
+    !userSettings.getSettings() ||
+    !userSettings.getOriginalSetting(ENABLE_TRANSLATOR_KEY)
+  ) {
+    return false;
+  }
 
-	if ( ! canDisplayCommunityTranslator() ) {
-		return false;
-	}
+  if (!canDisplayCommunityTranslator()) {
+    return false;
+  }
 
-	return true;
+  return true;
 }
 
 /**
@@ -74,18 +74,18 @@ export function isCommunityTranslatorEnabled() {
  * @param {String} postFormData post data url param string
  * @returns {Object} request object
  */
-export function postRequest( glotPressUrl, postFormData ) {
-	return (
-		request
-			.post( glotPressUrl )
-			.withCredentials()
-			.send( postFormData )
-			// .then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
-			.then( response => response.body )
-			.catch( error => {
-				throw error; // pass on the error so the call sites can handle it accordingly.
-			} )
-	);
+export function postRequest(glotPressUrl, postFormData) {
+  return (
+    request
+      .post(glotPressUrl)
+      .withCredentials()
+      .send(postFormData)
+      // .then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
+      .then(response => response.body)
+      .catch(error => {
+        throw error; // pass on the error so the call sites can handle it accordingly.
+      })
+  );
 }
 
 /**
@@ -98,23 +98,27 @@ export function postRequest( glotPressUrl, postFormData ) {
  * @returns {Object} request object
  */
 export function getSingleTranslationData(
-	locale,
-	originalStringData,
-	apiBaseUrl = GP_BASE_URL + '/api',
-	project = GP_PROJECT,
-	post = postRequest
+  locale,
+  originalStringData,
+  apiBaseUrl = GP_BASE_URL + "/api",
+  project = GP_PROJECT,
+  post = postRequest
 ) {
-	const glotPressUrl = `${ apiBaseUrl }/translations/-query-by-originals`;
-	const postFormData = [
-		`project=${ project }`,
-		`&locale_slug=${ locale.parentLangSlug || locale.langSlug }`,
-		`&translation_set_slug=${ GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default' }`,
-		`&original_strings=${ encodeURIComponent( JSON.stringify( [ originalStringData ] ) ) }`,
-	];
+  const glotPressUrl = `${apiBaseUrl}/translations/-query-by-originals`;
+  const postFormData = [
+    `project=${project}`,
+    `&locale_slug=${locale.parentLangSlug || locale.langSlug}`,
+    `&translation_set_slug=${GP_PROJECT_TRANSLATION_SET_SLUGS[
+      locale.langSlug
+    ] || "default"}`,
+    `&original_strings=${encodeURIComponent(
+      JSON.stringify([originalStringData])
+    )}`
+  ];
 
-	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressDataEntries =>
-		normalizeDetailsFromTranslationData( head( glotPressDataEntries ) )
-	);
+  return post(glotPressUrl, postFormData.join("")).then(glotPressDataEntries =>
+    normalizeDetailsFromTranslationData(head(glotPressDataEntries))
+  );
 }
 
 /**
@@ -128,28 +132,32 @@ export function getSingleTranslationData(
  * @returns {Object} request object
  */
 export function submitTranslation(
-	originalId,
-	translationObject,
-	locale,
-	apiBaseUrl = GP_BASE_URL + '/api',
-	project = GP_PROJECT,
-	post = postRequest
+  originalId,
+  translationObject,
+  locale,
+  apiBaseUrl = GP_BASE_URL + "/api",
+  project = GP_PROJECT,
+  post = postRequest
 ) {
-	const glotPressUrl = `${ apiBaseUrl }/translations/-new`;
-	const postFormData = [
-		`project=${ project }`,
-		`&locale_slug=${ locale.parentLangSlug || locale.langSlug }`,
-		`&translation_set_slug=${ GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default' }`,
-		...Object.keys( translationObject ).map(
-			key =>
-				translationObject[ key ] &&
-				`&translation[${ originalId }][]=${ encodeURIComponent( translationObject[ key ] ) }`
-		),
-	];
+  const glotPressUrl = `${apiBaseUrl}/translations/-new`;
+  const postFormData = [
+    `project=${project}`,
+    `&locale_slug=${locale.parentLangSlug || locale.langSlug}`,
+    `&translation_set_slug=${GP_PROJECT_TRANSLATION_SET_SLUGS[
+      locale.langSlug
+    ] || "default"}`,
+    ...Object.keys(translationObject).map(
+      key =>
+        translationObject[key] &&
+        `&translation[${originalId}][]=${encodeURIComponent(
+          translationObject[key]
+        )}`
+    )
+  ];
 
-	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressData =>
-		normalizeDetailsFromTranslationData( glotPressData )
-	);
+  return post(glotPressUrl, postFormData.join("")).then(glotPressData =>
+    normalizeDetailsFromTranslationData(glotPressData)
+  );
 }
 
 /**
@@ -157,18 +165,18 @@ export function submitTranslation(
  * @param {Object} glotPressData raw API response
  * @returns {Object} normalized data
  */
-export function normalizeDetailsFromTranslationData( glotPressData ) {
-	const translationDetails = find( glotPressData.translations, {
-		original_id: glotPressData.original_id,
-	} );
+export function normalizeDetailsFromTranslationData(glotPressData) {
+  const translationDetails = find(glotPressData.translations, {
+    original_id: glotPressData.original_id
+  });
 
-	return {
-		originalId: glotPressData.original_id,
-		comment: glotPressData.original_comment,
-		translatedSingular: get( translationDetails, 'translation_0', '' ),
-		translatedPlural: get( translationDetails, 'translation_1', '' ),
-		lastModified: get( translationDetails, 'date_modified', '' ),
-	};
+  return {
+    originalId: glotPressData.original_id,
+    comment: glotPressData.original_comment,
+    translatedSingular: get(translationDetails, "translation_0", ""),
+    translatedPlural: get(translationDetails, "translation_1", ""),
+    lastModified: get(translationDetails, "date_modified", "")
+  };
 }
 
 /**
@@ -178,12 +186,17 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
  * @param {String} project GP project
  * @returns {String} the permalink to the translation on GlotPress
  */
-export function getTranslationPermaLink( originalId, locale, project = GP_PROJECT ) {
-	if ( ! originalId || ! locale ) {
-		return null;
-	}
-	const urlBase = GP_BASE_URL + '/projects';
-	const localeSlug = locale.parentLangSlug || locale.langSlug;
-	const translationSetSlug = GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default';
-	return `${ urlBase }/${ project }/${ localeSlug }/${ translationSetSlug }?filters[original_id]=${ originalId }`;
+export function getTranslationPermaLink(
+  originalId,
+  locale,
+  project = GP_PROJECT
+) {
+  if (!originalId || !locale) {
+    return null;
+  }
+  const urlBase = GP_BASE_URL + "/projects";
+  const localeSlug = locale.parentLangSlug || locale.langSlug;
+  const translationSetSlug =
+    GP_PROJECT_TRANSLATION_SET_SLUGS[locale.langSlug] || "default";
+  return `${urlBase}/${project}/${localeSlug}/${translationSetSlug}?filters[original_id]=${originalId}`;
 }

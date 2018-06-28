@@ -4,13 +4,13 @@
  * External dependencies
  */
 
-import React from 'react';
+import React from "react";
 
 /**
  * Internal Dependencies
  */
-import Main from 'components/main';
-import SyncReaderFollows from 'components/data/sync-reader-follows';
+import Main from "components/main";
+import SyncReaderFollows from "components/data/sync-reader-follows";
 
 /*
  * We ref-count number of ReaderMains on screen in order to avoid a race condition
@@ -26,11 +26,11 @@ import SyncReaderFollows from 'components/data/sync-reader-follows';
  */
 let activeReaderMainRefCount = 0;
 const setIsReaderPage = add => {
-	if ( add ) {
-		document.querySelector( 'body' ).classList.add( 'is-reader-page' );
-	} else if ( activeReaderMainRefCount === 0 ) {
-		document.querySelector( 'body' ).classList.remove( 'is-reader-page' );
-	}
+  if (add) {
+    document.querySelector("body").classList.add("is-reader-page");
+  } else if (activeReaderMainRefCount === 0) {
+    document.querySelector("body").classList.remove("is-reader-page");
+  }
 };
 
 /**
@@ -40,23 +40,23 @@ const setIsReaderPage = add => {
  * Notably, this overrides the background color of the document and is used as a hook by other parts to override styles.
  */
 export default class ReaderMain extends React.Component {
-	componentWillMount() {
-		activeReaderMainRefCount++;
-		setIsReaderPage( true );
-	}
+  componentWillMount() {
+    activeReaderMainRefCount++;
+    setIsReaderPage(true);
+  }
 
-	componentWillUnmount() {
-		activeReaderMainRefCount--;
-		setIsReaderPage( false );
-	}
+  componentWillUnmount() {
+    activeReaderMainRefCount--;
+    setIsReaderPage(false);
+  }
 
-	render() {
-		const { children, ...props } = this.props;
-		return (
-			<Main { ...props }>
-				<SyncReaderFollows key="syncReaderFollows" />
-				{ children }
-			</Main>
-		);
-	}
+  render() {
+    const { children, ...props } = this.props;
+    return (
+      <Main {...props}>
+        <SyncReaderFollows key="syncReaderFollows" />
+        {children}
+      </Main>
+    );
+  }
 }

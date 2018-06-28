@@ -3,66 +3,66 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import PropTypes from "prop-types";
+import React, { PureComponent } from "react";
+import { connect } from "react-redux";
+import { get, noop } from "lodash";
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import EmbedDialog from '../dialog';
-import { getCurrentUser } from 'state/current-user/selectors';
+import Button from "components/button";
+import Card from "components/card";
+import EmbedDialog from "../dialog";
+import { getCurrentUser } from "state/current-user/selectors";
 
 class EmbedDialogExample extends PureComponent {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-	};
+  static propTypes = {
+    siteId: PropTypes.number.isRequired
+  };
 
-	state = {
-		embedUrl: 'https://www.youtube.com/watch?v=R54QEvTyqO4',
-		showDialog: false,
-	};
+  state = {
+    embedUrl: "https://www.youtube.com/watch?v=R54QEvTyqO4",
+    showDialog: false
+  };
 
-	openDialog = () => this.setState( { showDialog: true } );
+  openDialog = () => this.setState({ showDialog: true });
 
-	onCancel = () => {
-		this.setState( { showDialog: false } );
-	};
+  onCancel = () => {
+    this.setState({ showDialog: false });
+  };
 
-	onUpdate = newUrl => {
-		this.setState( {
-			embedUrl: newUrl,
-			showDialog: false,
-		} );
-	};
+  onUpdate = newUrl => {
+    this.setState({
+      embedUrl: newUrl,
+      showDialog: false
+    });
+  };
 
-	render() {
-		return (
-			<Card>
-				<Button onClick={ this.openDialog }>Open Embed Dialog</Button>
+  render() {
+    return (
+      <Card>
+        <Button onClick={this.openDialog}>Open Embed Dialog</Button>
 
-				<EmbedDialog
-					embedUrl={ this.state.embedUrl }
-					isVisible={ this.state.showDialog }
-					onCancel={ this.onCancel }
-					onUpdate={ this.onUpdate }
-					siteId={ this.props.siteId }
-				/>
-			</Card>
-		);
-	}
+        <EmbedDialog
+          embedUrl={this.state.embedUrl}
+          isVisible={this.state.showDialog}
+          onCancel={this.onCancel}
+          onUpdate={this.onUpdate}
+          siteId={this.props.siteId}
+        />
+      </Card>
+    );
+  }
 }
 
-const connectedEmbedDialogExample = connect( state => {
-	return {
-		siteId: get( getCurrentUser( state ), 'primary_blog' ),
-	};
-} )( EmbedDialogExample );
+const connectedEmbedDialogExample = connect(state => {
+  return {
+    siteId: get(getCurrentUser(state), "primary_blog")
+  };
+})(EmbedDialogExample);
 
-connectedEmbedDialogExample.displayName = 'EmbedDialogExample';
+connectedEmbedDialogExample.displayName = "EmbedDialogExample";
 
 // todo
 // connecting this component feels wrong. it's an example, so shouldn't it instantiate EmbedDialog with renderWithReduxStore

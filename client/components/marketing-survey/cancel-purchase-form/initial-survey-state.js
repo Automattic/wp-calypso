@@ -6,8 +6,8 @@
  * @return {Object} The initial state of the survey.
  */
 export default function initialSurveyState() {
-	return {
-		questionOneRadio: null,
-		questionTwoRadio: null,
-	};
+  return {
+    questionOneRadio: null,
+    questionTwoRadio: null
+  };
 }

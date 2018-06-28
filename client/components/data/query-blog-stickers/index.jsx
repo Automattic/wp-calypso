@@ -4,34 +4,34 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { Component } from "react";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import { listBlogStickers } from 'state/sites/blog-stickers/actions';
+import { listBlogStickers } from "state/sites/blog-stickers/actions";
 
 class QueryBlogStickers extends Component {
-	static propTypes = {
-		blogId: PropTypes.number.isRequired,
-	};
+  static propTypes = {
+    blogId: PropTypes.number.isRequired
+  };
 
-	componentWillMount() {
-		this.props.listBlogStickers( this.props.blogId );
-	}
+  componentWillMount() {
+    this.props.listBlogStickers(this.props.blogId);
+  }
 
-	componentWillReceiveProps( nextProps ) {
-		this.props.listBlogStickers( nextProps.blogId );
-	}
+  componentWillReceiveProps(nextProps) {
+    this.props.listBlogStickers(nextProps.blogId);
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 export default connect(
-	null,
-	{ listBlogStickers }
-)( QueryBlogStickers );
+  null,
+  { listBlogStickers }
+)(QueryBlogStickers);

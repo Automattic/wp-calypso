@@ -3,51 +3,51 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
-import { requestJetpackSettings } from 'state/jetpack/settings/actions';
+import isRequestingJetpackSettings from "state/selectors/is-requesting-jetpack-settings";
+import { requestJetpackSettings } from "state/jetpack/settings/actions";
 
 class QueryJetpackSettings extends Component {
-	static propTypes = {
-		query: PropTypes.object,
-		siteId: PropTypes.number,
-		// Connected props
-		requestingSettings: PropTypes.bool,
-		requestJetpackSettings: PropTypes.func,
-	};
+  static propTypes = {
+    query: PropTypes.object,
+    siteId: PropTypes.number,
+    // Connected props
+    requestingSettings: PropTypes.bool,
+    requestJetpackSettings: PropTypes.func
+  };
 
-	componentWillMount() {
-		this.request( this.props );
-	}
+  componentWillMount() {
+    this.request(this.props);
+  }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
-		}
-	}
+  componentWillReceiveProps(nextProps) {
+    if (this.props.siteId !== nextProps.siteId) {
+      this.request(nextProps);
+    }
+  }
 
-	request( props ) {
-		if ( props.requestingSettings || ! props.siteId ) {
-			return;
-		}
+  request(props) {
+    if (props.requestingSettings || !props.siteId) {
+      return;
+    }
 
-		props.requestJetpackSettings( props.siteId, props.query );
-	}
+    props.requestJetpackSettings(props.siteId, props.query);
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 export default connect(
-	( state, { query, siteId } ) => ( {
-		requestingSettings: isRequestingJetpackSettings( state, siteId, query ),
-	} ),
-	{ requestJetpackSettings }
-)( QueryJetpackSettings );
+  (state, { query, siteId }) => ({
+    requestingSettings: isRequestingJetpackSettings(state, siteId, query)
+  }),
+  { requestJetpackSettings }
+)(QueryJetpackSettings);
