@@ -3313,10 +3313,11 @@
       "dev": true
     },
     "check-node-version": {
-      "version": "2.1.0",
-      "resolved": "https://registry.npmjs.org/check-node-version/-/check-node-version-2.1.0.tgz",
-      "integrity": "sha1-hVZYQs95oJ36jiZnIFde4K7BmD0=",
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/check-node-version/-/check-node-version-3.2.0.tgz",
+      "integrity": "sha512-mJu4dADRf+NUeOyGgFTXaLtjyyffD3Eej2RA9IEk1CdHmoVurErLD++e/Ps6uKfsB273ky+0Z9NlOiuplxuNdw==",
       "requires": {
+        "chalk": "^2.3.0",
         "map-values": "^1.0.1",
         "minimist": "^1.2.0",
         "object-filter": "^1.0.2",
