@@ -53,6 +53,50 @@ import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 /**
+ * Creates a promise that will be rejected after a given timeout
+ *
+ * @param {int} ms amount of milliseconds till reject the promise
+ * @returns {Promise} a promise that will be rejected after ms milliseconds
+ */
+export const createTimingOutPromise = ms =>
+	new Promise( ( _, reject ) => {
+		setTimeout( () => reject( new Error( `timeout of ${ ms } reached` ) ), ms );
+	} );
+
+/**
+ * Makes a request to a given link in an iframe
+ *
+ * @param {string} loginLink the login link to load
+ * @param {int} requestTimeout amount of time to allow the link to load, default 5000ms
+ * @returns {Promise} a promise that will be resolved if the link was successfully loaded
+ */
+export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 5 * 1000 ) => {
+	let iframe;
+	const iframeLoadPromise = new Promise( resolve => {
+		iframe = document.createElement( 'iframe' );
+		iframe.style.display = 'none';
+		iframe.setAttribute( 'scrolling', 'no' );
+		iframe.src = loginLink;
+		iframe.onload = () => resolve( { loginLink, iframe } );
+
+		document.body.appendChild( iframe );
+	} );
+
+	const cleanupIframe = () => {
+		document.body.removeChild( iframe );
+		iframe = null;
+	};
+
+	return Promise.race( iframeLoadPromise, createTimingOutPromise( requestTimeout ) ).then(
+		cleanupIframe,
+		error => {
+			cleanupIframe();
+			return Promise.reject( error );
+		}
+	);
+};
+
+/**
  * Fetch all remote login urls
  *
  * @param  {Array}   loginLinks     Array of urls
@@ -61,7 +105,7 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 export const remoteLoginUser = loginLinks => {
 	return Promise.all(
 		loginLinks
-			.map( loginLink => fetch( loginLink, { credentials: 'include' } ) )
+			.map( loginLink => makeRemoteLoginRequest( loginLink ) )
 			// make sure we continue even when a remote login fails
 			.map( promise => promise.catch( () => Promise.resolve() ) )
 	);
