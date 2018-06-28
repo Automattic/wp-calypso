@@ -6032,9 +6032,9 @@
       }
     },
     "eslint-plugin-import": {
-      "version": "2.12.0",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.12.0.tgz",
-      "integrity": "sha1-2tMXgSktZmSyUxf9BJ0uKy8CIF0=",
+      "version": "2.13.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.13.0.tgz",
+      "integrity": "sha512-t6hGKQDMIt9N8R7vLepsYXgDfeuhp6ZJSgtrLEDxonpSubyxUZHjhm6LsAaZX8q6GYVxkbT3kTsV9G5mBCFR6A==",
       "dev": true,
       "requires": {
         "contains-path": "^0.1.0",
