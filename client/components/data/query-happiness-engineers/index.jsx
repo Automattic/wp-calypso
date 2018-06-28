@@ -4,42 +4,42 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { Component } from "react";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import { isRequestingHappinessEngineers } from 'state/happiness-engineers/selectors';
-import { fetchHappinessEngineers } from 'state/happiness-engineers/actions';
+import { isRequestingHappinessEngineers } from "state/happiness-engineers/selectors";
+import { fetchHappinessEngineers } from "state/happiness-engineers/actions";
 
 class QueryHappinessEngineers extends Component {
-	componentWillMount() {
-		if ( ! this.props.isRequestingHappinessEngineers ) {
-			this.props.fetchHappinessEngineers();
-		}
-	}
+  componentWillMount() {
+    if (!this.props.isRequestingHappinessEngineers) {
+      this.props.fetchHappinessEngineers();
+    }
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 QueryHappinessEngineers.propTypes = {
-	isRequestingHappinessEngineers: PropTypes.bool,
-	fetchHappinessEngineers: PropTypes.func,
+  isRequestingHappinessEngineers: PropTypes.bool,
+  fetchHappinessEngineers: PropTypes.func
 };
 
 QueryHappinessEngineers.defaultProps = {
-	fetchHappinessEngineers: () => {},
+  fetchHappinessEngineers: () => {}
 };
 
 export default connect(
-	state => {
-		return {
-			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state ),
-		};
-	},
-	{ fetchHappinessEngineers }
-)( QueryHappinessEngineers );
+  state => {
+    return {
+      isRequestingHappinessEngineers: isRequestingHappinessEngineers(state)
+    };
+  },
+  { fetchHappinessEngineers }
+)(QueryHappinessEngineers);

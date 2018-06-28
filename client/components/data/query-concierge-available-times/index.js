@@ -3,25 +3,25 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { Component } from "react";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import { requestConciergeAvailableTimes } from 'state/concierge/actions';
+import { requestConciergeAvailableTimes } from "state/concierge/actions";
 
 class QueryConciergeAvailableTimes extends Component {
-	componentWillMount() {
-		this.props.requestConciergeAvailableTimes( this.props.scheduleId );
-	}
+  componentWillMount() {
+    this.props.requestConciergeAvailableTimes(this.props.scheduleId);
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 export default connect(
-	state => state,
-	{ requestConciergeAvailableTimes }
-)( QueryConciergeAvailableTimes );
+  state => state,
+  { requestConciergeAvailableTimes }
+)(QueryConciergeAvailableTimes);

@@ -7,12 +7,12 @@
  * @param {Array}  steps The array of step names for the current survey
  * @return {String} The name of the last (or last) step
  */
-export default function nextStep( currentStep, steps ) {
-	const index = steps.indexOf( currentStep );
+export default function nextStep(currentStep, steps) {
+  const index = steps.indexOf(currentStep);
 
-	if ( index >= 0 && index < steps.length - 1 ) {
-		return steps[ index + 1 ];
-	}
+  if (index >= 0 && index < steps.length - 1) {
+    return steps[index + 1];
+  }
 
-	return steps[ steps.length - 1 ];
+  return steps[steps.length - 1];
 }

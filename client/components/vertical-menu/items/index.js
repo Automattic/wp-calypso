@@ -1,2 +1,2 @@
 /** @format */
-export SocialItem from './social-item';
+export SocialItem from "./social-item";
