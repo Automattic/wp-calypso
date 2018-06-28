@@ -70,7 +70,7 @@ export class MySitesSidebar extends Component {
 		currentUser: PropTypes.object,
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
-		isSiteAutomatedTransfer: PropTypes.bool,
+		isAtomicSite: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -342,7 +342,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
+		if ( this.props.isJetpack && ! this.props.isAtomicSite ) {
 			return null;
 		}
 
@@ -438,6 +438,7 @@ export class MySitesSidebar extends Component {
 			) {
 				return this.storeUpsellSidebarItem();
 			}
+
 			return null;
 		}
 
@@ -600,7 +601,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.useWPAdminFlows() && ! this.props.isSiteAutomatedTransfer ) {
+		if ( ! this.useWPAdminFlows() && ! this.props.isAtomicSite ) {
 			return null;
 		}
 
@@ -791,7 +792,7 @@ function mapStateToProps( state ) {
 		isJetpack,
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		isSharingEnabledOnJetpackSite,
-		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',

@@ -191,7 +191,7 @@ form.sidebar__button input {
 
 // Selected Menu
 @include breakpoint( ">660px" ) {
-	.sidebar__menu .selected {
+	.sidebar__menu .selected:not(.sidebar__plugins-item) {
 		background-color: var( --sidebar-menu-selected-background-color );
 
 		a {
