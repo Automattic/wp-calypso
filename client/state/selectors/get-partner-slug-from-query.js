@@ -23,8 +23,8 @@ export const getPartnerSlugFromQuery = function( state ) {
 		case 57152:
 		case 57733:
 			return 'milesweb';
-		case 41986:
-		case 42000:
+		case 58712:
+		case 58713:
 			return 'bluehost';
 		case 51652: // Clients used for testing.
 			return 'dreamhost';
