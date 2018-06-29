@@ -18,7 +18,7 @@ class ActivityLogDemo extends Component {
 
 		const demoContents = [
 			{
-				activityTs: new Date( '2018-06-29T18:38:00.000Z' ).getTime(),
+				activityTs: new Date( '2018-06-28T18:38:00.000Z' ).getTime(),
 				activityDescription: [ translate( 'My journey through Asia' ) ],
 				activityIcon: 'posts',
 				activityStatus: 'success',
@@ -27,7 +27,7 @@ class ActivityLogDemo extends Component {
 				actorRole: 'administrator',
 			},
 			{
-				activityTs: new Date( '2018-06-28T00:20:00.000Z' ).getTime(),
+				activityTs: new Date( '2018-06-28T15:10:00.000Z' ).getTime(),
 				activityDescription: [ translate( 'Lovely summer photos' ) ],
 				activityIcon: 'comment',
 				activityStatus: 'warning',
@@ -35,7 +35,7 @@ class ActivityLogDemo extends Component {
 				actorName: 'Filippa',
 			},
 			{
-				activityTs: new Date( '2018-06-27T15:10:00.000Z' ).getTime(),
+				activityTs: new Date( '2018-06-28T00:20:00.000Z' ).getTime(),
 				activityDescription: [ translate( 'My journey through Asia' ) ],
 				activityIcon: 'posts',
 				activityTitle: translate( 'Post draft modified' ),
