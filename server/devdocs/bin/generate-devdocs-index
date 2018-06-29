@@ -44,23 +44,23 @@ function writeSearchIndex( documents, searchIndexPath ) {
 	const idx = lunr( function() {
 		this.field( 'title', { boost: 10 } );
 		this.field( 'body' );
-	} );
 
-	documents.forEach( ( doc, index ) => {
-		/*
-		 * we use the array index as the document id
-		 * so that we can look the preprocessed contents
-		 * up out of the "documents" array also exported below
-		 */
+		documents.forEach( ( doc, index ) => {
+			/*
+			 * we use the array index as the document id
+			 * so that we can look the preprocessed contents
+			 * up out of the "documents" array also exported below
+			 */
 
-		const indexDoc = {};
-		indexDoc.id = index;
-		indexDoc.title = doc.title;
+			const indexDoc = {};
+			indexDoc.id = index;
+			indexDoc.title = doc.title;
 
-		//preprocess body to remove non-word characters, e.g. <optgroup> becomes optgroup
-		indexDoc.body = doc.body.replace(/<>\/="/, ' ');
+			//preprocess body to remove non-word characters, e.g. <optgroup> becomes optgroup
+			indexDoc.body = doc.body.replace(/<>\/="/, ' ');
 
-		idx.add( indexDoc );
+			this.add( indexDoc );
+		} );
 	} );
 
 	const searchIndexJS = 'module.exports.index = ' + jsFromJSON( JSON.stringify( idx ) ) + ';' +
