@@ -3,6 +3,7 @@
  * External dependencies
  */
 import url from 'url';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,5 +56,5 @@ export default exported;
 export const { getXPostMetadata } = exported;
 
 export function isXPost( post ) {
-	return post && post.display_type & X_POST;
+	return post && ( post.display_type & X_POST || has( post, [ 'tags', 'p2-xpost' ] ) );
 }
