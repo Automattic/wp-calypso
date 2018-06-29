@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,8 +14,11 @@ import { localize } from 'i18n-calypso';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import HappychatButton from 'components/happychat/button';
+import HappychatConnection from 'components/happychat/connection-connected';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 
-const OwnershipInformation = ( { translate } ) => (
+const OwnershipInformation = ( { isChatActive, isChatAvailable, translate } ) => (
 	<FormFieldset className="manage-connection__formfieldset has-divider is-top-only">
 		<div className="manage-connection__ownership-info">
 			<Gridicon
@@ -50,11 +54,20 @@ const OwnershipInformation = ( { translate } ) => (
 							'their clients may be Plan purchasers who use their billing information to purchase the plan ' +
 							'for the site.'
 					) }
-					<HappychatButton>{ translate( 'Need help? Chat with us' ) }</HappychatButton>
 				</FormSettingExplanation>
+
+				<HappychatConnection />
+				{ ( isChatActive || isChatAvailable ) && (
+					<FormSettingExplanation>
+						<HappychatButton>{ translate( 'Need help? Chat with us' ) }</HappychatButton>
+					</FormSettingExplanation>
+				) }
 			</div>
 		</div>
 	</FormFieldset>
 );
 
-export default localize( OwnershipInformation );
+export default connect( state => ( {
+	isChatAvailable: isHappychatAvailable( state ),
+	isChatActive: hasActiveHappychatSession( state ),
+} ) )( localize( OwnershipInformation ) );
