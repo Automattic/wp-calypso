@@ -56,6 +56,7 @@
 		"manage/export/guided-transfer": true,
 		"manage/import/medium": true,
 		"manage/import/blogger": false,
+		"manage/import/site-importer": true,
 		"manage/media": true,
 		"manage/pages": true,
 		"manage/payment-methods": true,
