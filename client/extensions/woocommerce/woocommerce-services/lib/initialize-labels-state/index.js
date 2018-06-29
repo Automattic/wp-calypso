@@ -52,7 +52,7 @@ export default data => {
 				attributes,
 				description,
 				value,
-				hs_tariff_code,
+				hs_tariff_number,
 				origin_country,
 				parent_product_id,
 			} ) => {
@@ -63,7 +63,7 @@ export default data => {
 					description: description || defaultDescription,
 					weight,
 					value,
-					tariffNumber: hs_tariff_code || '',
+					tariffNumber: hs_tariff_number || '',
 					originCountry: origin_country || formData.origin.country,
 					parentProductId: parent_product_id,
 				};
