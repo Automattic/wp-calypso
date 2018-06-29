@@ -8,7 +8,7 @@
 	z-index: 1; // Put the viewer above the action-buttons:before overlay gradient. -shaun
 
 	.editor-diff-viewer__scrollable {
-		padding: 24px 32px 32px 32px;
+		padding: 24px 32px 32px;
 		height: 100%;
 		overflow-y: auto;
 		box-sizing: border-box;
@@ -20,10 +20,37 @@
 		font-size: 32px;
 		color: $gray-dark;
 		font-weight: 600;
-		margin: 0 0 24px 0;
+		margin: 0 0 24px;
 		height: auto;
 		line-height: 1.425;
 	}
+
+	@include breakpoint( '>1040px' ) {
+		&.is-split {
+			.editor-diff-viewer__scrollable {
+				display: flex;
+			}
+			.editor-diff-viewer__main-pane {
+				width: 50%;
+				padding-right: 16px;
+				.text-diff__additions {
+					display: none;
+				}
+			}
+			.editor-diff-viewer__secondary-pane {
+				display: block;
+				width: 50%;
+				padding-left: 16px;
+				.text-diff__deletions {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
+.editor-diff-viewer__secondary-pane {
+	display: none;
 }
 
 .editor-diff-viewer__hint-above,
@@ -74,7 +101,7 @@
 	word-wrap: break-word;
 	padding: 0;
 	background: transparent;
-	overflow-y: hidden;
+	overflow: hidden;
 }
 
 .editor-diff-viewer.is-loading .editor-diff-viewer__content {
