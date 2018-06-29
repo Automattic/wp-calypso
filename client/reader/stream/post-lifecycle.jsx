@@ -14,6 +14,7 @@ import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
 import ListGap from 'reader/list-gap';
 import CrossPost from './x-post';
+import CombinedCrossPost from './x-post-combined';
 import { shallowEquals } from 'reader/utils';
 import RecommendedPosts from './recommended-posts';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
@@ -55,6 +56,18 @@ class PostLifecycle extends React.Component {
 		} else if ( postKey.isCombination ) {
 			return (
 				<CombinedCard
+					postKey={ postKey }
+					index={ this.props.index }
+					onClick={ this.props.handleClick }
+					selectedPostKey={ this.props.selectedPostKey }
+					followSource={ followSource }
+					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
+					blockedSites={ this.props.blockedSites }
+				/>
+			);
+		} else if ( postKey.isCombinationXPost ) {
+			return (
+				<CombinedCrossPost
 					postKey={ postKey }
 					index={ this.props.index }
 					onClick={ this.props.handleClick }

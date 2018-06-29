@@ -38,6 +38,19 @@ export function sameDay( postKey1, postKey2 ) {
 	return moment( postKey1.date ).isSame( postKey2.date, 'day' );
 }
 
+export function sameXPost( postKey1, postKey2 ) {
+	return (
+		postKey1 &&
+		postKey2 &&
+		postKey1.xPostMetadata &&
+		postKey2.xPostMetadata &&
+		( postKey1.xPostMetadata.blogId &&
+			postKey1.xPostMetadata.blogId === postKey2.xPostMetadata.blogId ) &&
+		( postKey1.xPostMetadata.postId &&
+			postKey1.xPostMetadata.postId === postKey2.xPostMetadata.postId )
+	);
+}
+
 /**
  * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
  * Note: This only makes sense for postKeys from the same site
@@ -68,6 +81,30 @@ export function combine( postKey1, postKey2 ) {
 	return combined;
 }
 
+export function combineXPostPair( postKey1, postKey2 ) {
+	if ( ! postKey1 || ! postKey2 ) {
+		return null;
+	}
+
+	const combined = {
+		isCombinationXPost: true,
+		date:
+			postKey1.date && postKey1.date < postKey2.date // keep the earliest moment
+				? postKey1.date
+				: postKey2.date,
+		postIds: [
+			...( postKey1.postIds || [ postKey1.postId ] ),
+			...( postKey2.postIds || [ postKey2.postId ] ),
+		],
+		xPostMetadata: postKey1.xPostMetadata,
+	};
+
+	postKey1.blogId && ( combined.blogId = postKey1.blogId );
+	postKey1.feedId && ( combined.feedId = postKey1.feedId );
+
+	return combined;
+}
+
 export const combineCards = postKeys =>
 	postKeys.reduce( ( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
@@ -77,6 +114,17 @@ export const combineCards = postKeys =>
 			! isDiscoverPostKey( postKey )
 		) {
 			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
+		} else {
+			accumulator.push( postKey );
+		}
+		return accumulator;
+	}, [] );
+
+export const combineXPosts = postKeys =>
+	postKeys.reduce( ( accumulator, postKey ) => {
+		const lastPostKey = last( accumulator );
+		if ( sameXPost( lastPostKey, postKey ) ) {
+			accumulator[ accumulator.length - 1 ] = combineXPostPair( last( accumulator ), postKey );
 		} else {
 			accumulator.push( postKey );
 		}

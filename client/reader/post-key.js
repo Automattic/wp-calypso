@@ -50,7 +50,7 @@ export function keyToString( postKey ) {
 		return null;
 	}
 
-	if ( postKey.isCombination ) {
+	if ( postKey.isCombination || postKey.isCombinationXPost ) {
 		const feedId = postKey.feedId ? `&feedId=${ postKey.feedId }` : '';
 		const blogId = postKey.blogId ? `&feedId=${ postKey.blogId }` : '';
 		const postIds = postKey.postIds.join( ',' );
