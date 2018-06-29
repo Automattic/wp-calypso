@@ -213,7 +213,7 @@ const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems ) => {
 			quantity: sumBy( filter( pckg.items, { product_id } ), 'quantity' ),
 			value: getProductValue( product_id ),
 			weight: customsItems[ product_id ].weight,
-			hs_tariff_code: customsItems[ product_id ].tariffNumber,
+			hs_tariff_number: customsItems[ product_id ].tariffNumber,
 			origin_country: customsItems[ product_id ].originCountry,
 			product_id,
 		} ) );
