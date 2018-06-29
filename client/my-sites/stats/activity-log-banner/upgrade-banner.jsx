@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { isJetpackSite } from 'state/sites/selectors';
 import Banner from 'components/banner';
-import ActivityLogDemo from '../activity-log/demo.jsx';
+import ActivityLogExample from '../activity-log-example';
 import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
 
 class UpgradeBanner extends Component {
@@ -22,7 +22,7 @@ class UpgradeBanner extends Component {
 		}
 		return (
 			<div>
-				<ActivityLogDemo siteId={ siteId } />
+				<ActivityLogExample siteId={ siteId } />
 				<div className="activity-log-banner__upgrade">
 					<Banner
 						callToAction={ translate( 'Upgrade' ) }

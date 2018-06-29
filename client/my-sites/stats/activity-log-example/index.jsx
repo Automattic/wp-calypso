@@ -12,11 +12,11 @@ import { localize } from 'i18n-calypso';
 import ActivityLogItem from '../activity-log-item';
 import FeatureExample from 'components/feature-example';
 
-class ActivityLogDemo extends Component {
+class ActivityLogExample extends Component {
 	render() {
 		const { translate, siteId } = this.props;
 
-		const demoContents = [
+		const exampleContents = [
 			{
 				activityTs: new Date( '2018-06-28T18:38:00.000Z' ).getTime(),
 				activityDescription: [ translate( 'My journey through Asia' ) ],
@@ -44,7 +44,7 @@ class ActivityLogDemo extends Component {
 			},
 		];
 
-		const demoItems = demoContents.map( content => {
+		const exampleItems = exampleContents.map( example => {
 			return Object.assign(
 				{
 					activityMeta: {},
@@ -52,16 +52,16 @@ class ActivityLogDemo extends Component {
 					actorRole: '',
 					actorType: 'Person',
 				},
-				content
+				example
 			);
 		} );
 
 		return (
-			<div className="activity-log__demo">
+			<div className="activity-log-example">
 				<FeatureExample>
-					{ demoItems.map( log => (
+					{ exampleItems.map( log => (
 						<ActivityLogItem
-							key={ `activity-log-demo-${ log.activityTs }` }
+							key={ `activity-log-example-${ log.activityTs }` }
 							activity={ log }
 							disableRestore={ true }
 							disableBackup={ true }
@@ -77,4 +77,4 @@ class ActivityLogDemo extends Component {
 
 export default connect( ( state, { siteId } ) => ( {
 	siteId: siteId,
-} ) )( localize( ActivityLogDemo ) );
+} ) )( localize( ActivityLogExample ) );
