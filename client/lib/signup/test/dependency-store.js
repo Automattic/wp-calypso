@@ -15,6 +15,7 @@ import { reducer } from 'state';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'dependency-store', () => {
 	let SignupProgressStore, SignupDependencyStore, SignupActions;

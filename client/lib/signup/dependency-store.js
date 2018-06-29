@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { keys, difference, isEmpty } from 'lodash';
+import { get, keys, difference, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import { keys, difference, isEmpty } from 'lodash';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { updateDependencies, resetDependencies } from 'state/signup/dependency-store/actions';
 import Dispatcher from 'dispatcher';
-import steps from 'signup/config/steps';
+import steps from 'signup/config/steps-pure';
 
 const SignupDependencyStore = {
 	get() {
@@ -30,8 +30,8 @@ const SignupDependencyStore = {
 };
 
 function assertValidDependencies( action ) {
-	const providesDependencies = steps[ action.data.stepName ].providesDependencies || [],
-		extraDependencies = difference( keys( action.providedDependencies ), providesDependencies );
+	const providesDependencies = get( steps, [ action.data.stepName, 'providesDependencies' ], [] );
+	const extraDependencies = difference( keys( action.providedDependencies ), providesDependencies );
 
 	if ( ! isEmpty( extraDependencies ) ) {
 		throw new Error(
@@ -40,7 +40,7 @@ function assertValidDependencies( action ) {
 				') provides an unspecified dependency [' +
 				extraDependencies.join( ', ' ) +
 				'].' +
-				' Make sure to specify it in /signup/config/steps.js, using the providesDependencies property.'
+				' Make sure to specify it in /signup/config/steps-pure.js, using the providesDependencies property.'
 		);
 	}
 

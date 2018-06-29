@@ -17,7 +17,7 @@ import Dispatcher from 'dispatcher';
 import flows from 'signup/config/flows';
 
 jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'signup/config/flows', () => ( {
 	getFlow: jest.fn(),
 } ) );
