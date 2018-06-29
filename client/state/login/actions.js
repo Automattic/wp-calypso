@@ -70,28 +70,20 @@ export const createTimingOutPromise = ms =>
  * @param {int} requestTimeout amount of time to allow the link to load, default 5000ms
  * @returns {Promise} a promise that will be resolved if the link was successfully loaded
  */
-export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 5 * 1000 ) => {
+export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 5000 ) => {
 	let iframe;
 	const iframeLoadPromise = new Promise( resolve => {
 		iframe = document.createElement( 'iframe' );
 		iframe.style.display = 'none';
 		iframe.setAttribute( 'scrolling', 'no' );
+		iframe.onload = resolve;
 		iframe.src = loginLink;
-		iframe.onload = () => resolve( { loginLink, iframe } );
-
 		document.body.appendChild( iframe );
 	} );
 
-	const cleanupIframe = () => {
-		document.body.removeChild( iframe );
-		iframe = null;
-	};
-
-	return Promise.race( iframeLoadPromise, createTimingOutPromise( requestTimeout ) ).then(
-		cleanupIframe,
-		error => {
-			cleanupIframe();
-			return Promise.reject( error );
+	return Promise.race( [ iframeLoadPromise, createTimingOutPromise( requestTimeout ) ] ).finally(
+		() => {
+			iframe.parentElement.removeChild( iframe );
 		}
 	);
 };
@@ -107,7 +99,7 @@ export const remoteLoginUser = loginLinks => {
 		loginLinks
 			.map( loginLink => makeRemoteLoginRequest( loginLink ) )
 			// make sure we continue even when a remote login fails
-			.map( promise => promise.catch( () => Promise.resolve() ) )
+			.map( promise => promise.catch( () => {} ) )
 	);
 };
 
