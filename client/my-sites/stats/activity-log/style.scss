@@ -204,3 +204,13 @@
 		content: '\00b7\2004';
 	}
 }
+
+.activity-log__demo {
+	margin-bottom: 1px;
+
+	.feature-example {
+		// Make overflowing border visible
+		margin-right: -1px;
+		padding-right: 1px;
+	}
+}
