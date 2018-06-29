@@ -141,7 +141,7 @@ describe( 'get follow subscriptions', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				receiveFollowsAction( {
 					follows: [],
-					totalCount: 10,
+					totalCount: null,
 				} )
 			);
 			expect( dispatch ).to.have.been.calledWith(
@@ -185,7 +185,7 @@ describe( 'get follow subscriptions', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				receiveFollowsAction( {
 					follows: [],
-					totalCount: 10,
+					totalCount: null,
 				} )
 			);
 
