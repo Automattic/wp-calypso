@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
+import React from 'react';
+import { connect } from 'react-redux';
 import Dispatcher from 'dispatcher';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { noop, every, has, defer, get } from 'lodash';
 
 /**
@@ -31,6 +32,8 @@ import { connectDispatcher } from '../dispatcher-converter';
 
 import { loadmShotsPreview } from './site-preview-actions';
 
+import { recordTracksEvent } from 'state/analytics/actions';
+
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
 
@@ -42,6 +45,7 @@ class SiteImporterInputPane extends React.Component {
 		} ),
 		onStartImport: PropTypes.func,
 		disabled: PropTypes.bool,
+		site: PropTypes.object,
 	};
 
 	static defaultProps = { description: null, onStartImport: noop };
@@ -80,6 +84,11 @@ class SiteImporterInputPane extends React.Component {
 				}, nextProps );
 			} else {
 				defer( props => startMappingAuthors( props.importerStatus.importerId ), nextProps );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+				} );
 			}
 
 			// Do not continue execution of the function as the rest should be executed on the next update.
@@ -95,6 +104,11 @@ class SiteImporterInputPane extends React.Component {
 				defer( props => {
 					startImporting( props.importerStatus );
 				}, nextProps );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_map_authors_single', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+				} );
 			}
 		}
 	};
@@ -118,6 +132,11 @@ class SiteImporterInputPane extends React.Component {
 		const siteURL = this.state.siteURLInput;
 
 		this.setState( { loading: true }, this.resetErrors );
+
+		this.props.recordTracksEvent( 'calypso_site_importer_validate_site', {
+			blog_id: this.props.site.ID,
+			site_url: siteURL,
+		} );
 
 		loadmShotsPreview( {
 			url: siteURL,
@@ -144,6 +163,20 @@ class SiteImporterInputPane extends React.Component {
 					loading: false,
 					importSiteURL: siteURL,
 				} );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_done', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+					supported_content: resp.supported_content
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					unsupported_content: resp.unsupported_content
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					site_engine: resp.engine,
+				} );
 			} )
 			.catch( err => {
 				this.setState( {
@@ -151,11 +184,30 @@ class SiteImporterInputPane extends React.Component {
 					error: true,
 					errorMessage: `${ err.message }`,
 				} );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+				} );
 			} );
 	};
 
 	importSite = () => {
 		this.setState( { loading: true }, this.resetErrors );
+
+		this.props.recordTracksEvent( 'calypso_site_importer_start_import', {
+			blog_id: this.props.site.ID,
+			site_url: this.state.importSiteURL,
+			supported_content: this.state.importData.supported
+				.slice( 0 )
+				.sort()
+				.join( ', ' ),
+			unsupported_content: this.state.importData.unsupported
+				.slice( 0 )
+				.sort()
+				.join( ', ' ),
+			site_engine: this.state.importData.engine,
+		} );
 
 		wpcom.wpcom.req
 			.post( {
@@ -169,6 +221,20 @@ class SiteImporterInputPane extends React.Component {
 			.then( resp => {
 				this.setState( { loading: false } );
 
+				this.props.recordTracksEvent( 'calypso_site_importer_start_import_done', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+					supported_content: this.state.importData.supported
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					unsupported_content: this.state.importData.unsupported
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					site_engine: this.state.importData.engine,
+				} );
+
 				const data = fromApi( resp );
 				const action = finishUpload( this.props.importerStatus.importerId )( data );
 				defer( () => {
@@ -176,6 +242,20 @@ class SiteImporterInputPane extends React.Component {
 				} );
 			} )
 			.catch( err => {
+				this.props.recordTracksEvent( 'calypso_site_importer_start_import_fail', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+					supported_content: this.state.importData.supported
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					unsupported_content: this.state.importData.unsupported
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					site_engine: this.state.importData.engine,
+				} );
+
 				this.setState( {
 					loading: false,
 					error: true,
@@ -185,6 +265,12 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	resetImport = () => {
+		this.props.recordTracksEvent( 'calypso_site_importer_reset_import', {
+			blog_id: this.props.site.ID,
+			site_url: this.state.importSiteURL || this.state.siteURLInput,
+			previous_stage: this.state.importStage,
+		} );
+
 		this.setState(
 			{
 				loading: false,
@@ -225,6 +311,7 @@ class SiteImporterInputPane extends React.Component {
 							isLoading={ this.state.loading }
 							resetImport={ this.resetImport }
 							startImport={ this.importSite }
+							site={ this.props.site }
 						/>
 					</div>
 				) }
@@ -243,4 +330,7 @@ const mapDispatchToProps = dispatch => ( {
 		} ),
 } );
 
-export default connectDispatcher( null, mapDispatchToProps )( localize( SiteImporterInputPane ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( connectDispatcher( null, mapDispatchToProps )( localize( SiteImporterInputPane ) ) );
