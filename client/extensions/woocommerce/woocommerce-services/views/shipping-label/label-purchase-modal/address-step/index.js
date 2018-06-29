@@ -26,19 +26,16 @@ import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-add
 import { getCountryName, getStateName } from 'woocommerce/state/sites/data/locations/selectors';
 
 const renderSummary = (
-	{
-		isNormalized,
-		normalizationInProgress,
-		normalized,
-		selectNormalized,
-		errors,
-		translate,
-		expandStateName = false,
-	},
-	showCountry,
+	addressData,
 	reduxState,
-	siteId
+	siteId,
+	errors,
+	translate,
+	showCountry,
+	expandStateName = false
 ) => {
+	const { isNormalized, normalizationInProgress, normalized } = addressData;
+
 	if ( normalizationInProgress ) {
 		return translate( 'Validating address…' );
 	}
@@ -48,7 +45,7 @@ const renderSummary = (
 	if ( ! isNormalized ) {
 		return translate( "You've edited the address, please revalidate it for accurate rates" );
 	}
-	const { city, postcode, state, country } = getAddressValues( props );
+	const { city, postcode, state, country } = getAddressValues( addressData );
 	// Summary format: "city, state  postcode [, country]"
 	let str = city + ', ';
 	if ( state ) {
@@ -124,16 +121,7 @@ const mapStateToProps = ( state, { orderId, siteId, type, translate } ) => {
 		showCountryInSummary,
 		expanded: form.expanded,
 		normalizationStatus: getNormalizationStatus( { ...form, errors } ),
-		summary: renderSummary(
-			{
-				...form,
-				errors,
-				translate,
-			},
-			showCountryInSummary,
-			state,
-			siteId
-		),
+		summary: renderSummary( form, state, siteId, errors, translate, showCountryInSummary ),
 	};
 };
 
