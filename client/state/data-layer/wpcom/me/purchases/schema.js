@@ -22,17 +22,10 @@ export default {
 			/**
 			 * More expected types
 			 */
-
-			// definitions: {
-			// 	integerish: {
-			// 		oneOf: [ { type: 'string', pattern: '^\\d+$' }, { type: 'integer' } ],
-			// 	},
-			// },
-
-			// ID: { $ref: '#/definitions/integerish' },
-			// blog_id: { $ref: '#/definitions/integerish' },
-			// user_id: { $ref: '#/definitions/integerish' },
-			// product_id: { $ref: '#/definitions/integerish' },
+			// ID: { oneOf: [ { type: 'string', pattern: '^\\d+$' }, { type: 'integer' } ] },
+			// blog_id: { oneOf: [ { type: 'string', pattern: '^\\d+$' }, { type: 'integer' } ] },
+			// user_id: { oneOf: [ { type: 'string', pattern: '^\\d+$' }, { type: 'integer' } ] },
+			// product_id: { oneOf: [ { type: 'string', pattern: '^\\d+$' }, { type: 'integer' } ] },
 
 			// active: {},
 			// amount: {},
