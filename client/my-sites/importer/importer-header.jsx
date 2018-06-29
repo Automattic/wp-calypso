@@ -18,7 +18,7 @@ import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
 import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
 import { connectDispatcher } from './dispatcher-converter';
-import SiteImporterPlaceholderLogo from './site-importer/placeholder-logo';
+import SiteImporterLogo from './site-importer/logo';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -106,7 +106,7 @@ class ImporterHeader extends React.PureComponent {
 		}
 
 		if ( includes( [ 'site-importer' ], icon ) ) {
-			return <SiteImporterPlaceholderLogo />;
+			return <SiteImporterLogo />;
 		}
 		return (
 			<svg

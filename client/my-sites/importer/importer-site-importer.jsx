@@ -17,9 +17,9 @@ class ImporterSiteImporter extends React.PureComponent {
 	static displayName = 'ImporterSiteImporter';
 
 	importerData = {
-		title: 'Site Importer (Beta)',
+		title: 'Wix.com (Beta)',
 		icon: 'site-importer',
-		description: this.props.translate( 'Import posts, pages, and media from your existing site!' ),
+		description: this.props.translate( 'Import posts, pages, and media from your Wix.com site.' ),
 		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
 	};
 
