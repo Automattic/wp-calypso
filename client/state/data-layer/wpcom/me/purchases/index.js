@@ -10,14 +10,13 @@ import { translate } from 'i18n-calypso';
  */
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	PURCHASES_USER_FETCH,
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH_FAILED,
 } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import {} from 'state/purchases/actions';
 
 /**
  * Dispatches a request to fetch connected applications of the current user

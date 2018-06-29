@@ -12,26 +12,28 @@
  */
 
 export default {
-	definitions: {
-		integerish: {
-			oneOf: [ { type: 'string', pattern: '^\\d+$' }, { type: 'integer' } ],
-		},
-	},
 	type: 'array',
 	items: {
 		type: 'object',
 		required: [ 'ID', 'blog_id', 'user_id', 'product_id', 'product_slug' ],
 		properties: {
-			ID: { $ref: '#/definitions/integerish' },
-			blog_id: { $ref: '#/definitions/integerish' },
-			user_id: { $ref: '#/definitions/integerish' },
-
-			product_id: { $ref: '#/definitions/integerish' },
 			product_slug: { type: 'string' },
 
 			/**
 			 * More expected types
 			 */
+
+			// definitions: {
+			// 	integerish: {
+			// 		oneOf: [ { type: 'string', pattern: '^\\d+$' }, { type: 'integer' } ],
+			// 	},
+			// },
+
+			// ID: { $ref: '#/definitions/integerish' },
+			// blog_id: { $ref: '#/definitions/integerish' },
+			// user_id: { $ref: '#/definitions/integerish' },
+			// product_id: { $ref: '#/definitions/integerish' },
+
 			// active: {},
 			// amount: {},
 			// attached_to_purchase_id: {},
