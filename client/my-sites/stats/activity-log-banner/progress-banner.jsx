@@ -51,43 +51,41 @@ function ProgressBanner( {
 	let statusMessage = '';
 
 	const dateTime = applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' );
+	const statusText = translate( 'Away we go!' );
+	const notifiedText = translate( "You'll be notified once it's complete." );
 
 	switch ( action ) {
 		case 'restore':
 			if ( 'alternate' === context ) {
 				title = translate( 'Currently cloning your site' );
-				description = translate(
-					"We're cloning your site to %(dateTime)s. " + "You'll be notified once it's complete.",
-					{ args: { dateTime } }
-				);
+				description = translate( "We're cloning your site to %(dateTime)s.", {
+					args: { dateTime },
+				} );
 				statusMessage =
 					'queued' === status
 						? translate( 'The cloning process will start in a moment.' )
-						: translate( 'Away we go! Your site is being cloned.' );
+						: statusText + ' ' + translate( 'Your site is being cloned.' );
 			} else {
 				title = translate( 'Currently rewinding your site' );
-				description = translate(
-					"We're rewinding your site back to %(dateTime)s. " +
-						"You'll be notified once it's complete.",
-					{ args: { dateTime } }
-				);
+				description = translate( "We're rewinding your site back to %(dateTime)s.", {
+					args: { dateTime },
+				} );
 				statusMessage =
 					'queued' === status
 						? translate( 'Your rewind will start in a moment.' )
-						: translate( 'Away we go! Your site is being rewound.' );
+						: statusText + ' ' + translate( 'Your site is being rewound.' );
 			}
 			break;
 
 		case 'backup':
 			title = translate( 'Currently creating a downloadable backup of your site' );
 			description = translate(
-				"We're creating a downloadable backup of your site at %(dateTime)s. " +
-					"You'll be notified once it's complete.",
+				"We're creating a downloadable backup of your site at %(dateTime)s.",
 				{ args: { dateTime } }
 			);
 			statusMessage =
 				0 < percent
-					? translate( 'Away we go! Your download is being created.' )
+					? statusText + ' ' + translate( 'Your download is being created.' )
 					: translate( 'The creation of your backup will start in a moment.' );
 			break;
 	}
@@ -101,7 +99,7 @@ function ProgressBanner( {
 				{ 'backup' === action && (
 					<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
 				) }
-				<p>{ description }</p>
+				<p>{ description + ' ' + notifiedText }</p>
 				<em>{ statusMessage }</em>
 			</div>
 			{ ( 'running' === status || ( 0 <= percent && percent <= 100 ) ) && (
