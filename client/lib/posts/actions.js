@@ -5,7 +5,7 @@
  */
 
 import store from 'store';
-import { assign, clone, includes, isEmpty, pick, reduce } from 'lodash';
+import { assign, clone, get, includes, isEmpty, pick, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -215,7 +215,7 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 	// when toggling editor modes, it is possible for the post to be dirty
 	// even though the content hasn't changed. To avoid a confusing UX
 	// let's just pass the content through and save it anyway
-	if ( ! changedAttributes.content && rawContent !== initialRawContent ) {
+	if ( ! get( changedAttributes, 'content' ) && rawContent !== initialRawContent ) {
 		changedAttributes = {
 			...changedAttributes,
 			content: post.content,
