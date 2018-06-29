@@ -33,15 +33,17 @@ describe( 'requestPlanOwnershipTransfer()', () => {
 } );
 
 describe( 'handleTransferSuccess()', () => {
-	test( 'should return a success notice action', () => {
-		const action = handleTransferSuccess( { siteId } );
+	test( 'should return a success notice action and a function', () => {
+		const actions = handleTransferSuccess( { siteId } );
 
-		expect( action ).toMatchObject(
+		expect( actions ).toHaveLength( 2 );
+		expect( actions[ 0 ] ).toMatchObject(
 			successNotice( 'Plan purchaser has been changed successfully.', {
 				duration: 8000,
 				id: `sites-plan-transfer-notice-${ siteId }`,
 			} )
 		);
+		expect( actions[ 1 ] ).toBeInstanceOf( Function );
 	} );
 } );
 
