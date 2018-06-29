@@ -130,8 +130,8 @@
 	text-align: center;
 	color: $blue-medium;
 	margin-top: 0.5em;
-	padding-left: 3em;
-	padding-right: 3em;
+	padding: 0.25em 3em;
+	float: right;
 
 	&.is-primary {
 		color: $white;
@@ -145,8 +145,6 @@
 		@include breakpoint( '>480px' ) {
 			margin-left: 1em;
 			margin-top: 0;
-			padding-top: 0.25em;
-			padding-bottom: 0.25em;
 		}
 	}
 
@@ -162,6 +160,19 @@
 
 	@include breakpoint( '>480px' ) {
 		flex: 1 0 auto;
+		float: none;
+	}
+}
+
+.domain-transfer-suggestion {
+	display: flex;
+	align-items: center;
+
+	.button.domain-suggestion__action {
+		flex: 1 0 auto;
+		margin: 0;
+		padding-left: 0;
+		padding-right: 0;
 	}
 }
 
