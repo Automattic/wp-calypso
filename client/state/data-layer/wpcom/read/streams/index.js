@@ -16,6 +16,7 @@ import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
 import { receivePosts } from 'state/reader/posts/actions';
 import { keyForPost } from 'reader/post-key';
 import { recordTracksEvent } from 'state/analytics/actions';
+import XPostHelper, { isXPost } from 'reader/xpost-helper';
 
 /**
  * Pull the suffix off of a stream key
@@ -228,6 +229,7 @@ export function handlePage( action, data ) {
 		...keyForPost( post ),
 		date: post[ dateProperty ],
 		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
+		xPostMetadata: isXPost( post ) ? XPostHelper.getXPostMetadata( post ) : null,
 	} ) );
 
 	if ( isPoll ) {
