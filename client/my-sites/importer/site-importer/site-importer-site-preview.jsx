@@ -26,6 +26,7 @@ class SiteImporterSitePreview extends React.Component {
 		isLoading: PropTypes.bool,
 		startImport: PropTypes.func,
 		resetImport: PropTypes.func,
+		site: PropTypes.object,
 	};
 
 	state = {
@@ -57,6 +58,7 @@ class SiteImporterSitePreview extends React.Component {
 				} );
 
 				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_done', {
+					blog_id: this.props.site.ID,
 					site_url: this.state.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
 				} );
@@ -69,6 +71,7 @@ class SiteImporterSitePreview extends React.Component {
 				} );
 
 				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_failed', {
+					blog_id: this.props.site.ID,
 					site_url: this.state.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
 				} );
@@ -155,4 +158,7 @@ class SiteImporterSitePreview extends React.Component {
 	};
 }
 
-export default connect( null, { recordTracksEvent } )( localize( SiteImporterSitePreview ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( SiteImporterSitePreview ) );

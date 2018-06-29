@@ -60,18 +60,21 @@ class ImporterHeader extends React.PureComponent {
 			cancelImport( siteId, importerId );
 
 			this.props.recordTracksEvent( 'calypso_importer_main_cancel_import', {
+				blog_id: siteId,
 				importer_id: type,
 			} );
 		} else if ( includes( startStates, importerState ) ) {
 			startImport( siteId, type );
 
 			this.props.recordTracksEvent( 'calypso_importer_main_start_import', {
+				blog_id: siteId,
 				importer_id: type,
 			} );
 		} else if ( includes( doneStates, importerState ) ) {
 			resetImport( siteId, importerId );
 
 			this.props.recordTracksEvent( 'calypso_importer_main_done_import', {
+				blog_id: siteId,
 				importer_id: type,
 			} );
 		}
