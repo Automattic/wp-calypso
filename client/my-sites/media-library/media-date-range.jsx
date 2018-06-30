@@ -21,10 +21,12 @@ import { localize } from 'i18n-calypso';
 export class MediaDateRange extends Component {
 	static propTypes = {
 		onDateSelect: PropTypes.func,
+		onDateCommit: PropTypes.func,
 	};
 
 	static defaultProps = {
 		onDateSelect: noop,
+		onDateCommit: noop,
 	};
 
 	constructor( props ) {
@@ -127,11 +129,14 @@ export class MediaDateRange extends Component {
 	}
 
 	commitDates() {
-		this.setState( {
-			oldStartDate: this.state.startDate, // update cached old dates
-			oldEndDate: this.state.endDate, // update cached old dates
-			oldDatesSaved: false,
-		} );
+		this.setState(
+			previousState => ( {
+				oldStartDate: previousState.startDate, // update cached old dates
+				oldEndDate: previousState.endDate, // update cached old dates
+				oldDatesSaved: false,
+			} ),
+			this.props.onDateCommit
+		);
 
 		// Close the popover
 		this.togglePopover();

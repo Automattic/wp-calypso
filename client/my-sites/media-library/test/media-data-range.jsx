@@ -174,19 +174,39 @@ describe( 'MediaDateRange', () => {
 		);
 	} );
 
-	test( 'should call onDateSelect function when a date is selected', () => {
-		const callback = jest.fn();
+	describe( 'callbacks', () => {
+		test( 'should call onDateSelect function when a date is selected', () => {
+			const callback = jest.fn();
 
-		const wrapper = shallow( <MediaDateRange moment={ moment } onDateSelect={ callback } /> );
+			const wrapper = shallow( <MediaDateRange moment={ moment } onDateSelect={ callback } /> );
 
-		const newStartDate = moment( '01/04/2018', 'DD/MM/YYYY' );
-		const newEndDate = moment( '29/04/2018', 'DD/MM/YYYY' );
+			const newStartDate = moment( '01/04/2018', 'DD/MM/YYYY' );
+			const newEndDate = moment( '29/04/2018', 'DD/MM/YYYY' );
 
-		// Select dates using API
-		wrapper.instance().onSelectDate( newStartDate );
-		wrapper.instance().onSelectDate( newEndDate );
+			// Select dates using API
+			wrapper.instance().onSelectDate( newStartDate );
+			wrapper.instance().onSelectDate( newEndDate );
 
-		expect( callback ).toHaveBeenCalledTimes( 2 );
+			expect( callback ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		test( 'should call onDateCommit function when a date is committed/applied', () => {
+			const callback = jest.fn();
+
+			const wrapper = shallow( <MediaDateRange moment={ moment } onDateCommit={ callback } /> );
+
+			const newStartDate = moment( '01/04/2018', 'DD/MM/YYYY' );
+			const newEndDate = moment( '29/04/2018', 'DD/MM/YYYY' );
+
+			// Select dates using API
+			wrapper.instance().onSelectDate( newStartDate );
+			wrapper.instance().onSelectDate( newEndDate );
+
+			// Commit/apply those dates
+			wrapper.instance().commitDates();
+
+			expect( callback ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 
 	afterEach( () => {
