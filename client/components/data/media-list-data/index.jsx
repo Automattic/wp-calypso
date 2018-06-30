@@ -7,6 +7,7 @@
 import { assign, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -33,6 +34,16 @@ export default class extends React.Component {
 		postId: PropTypes.number,
 		filter: PropTypes.string,
 		search: PropTypes.string,
+		dateRange: function( props, propName, componentName ) {
+			if (
+				! moment.isMoment( props[ propName ].from ) ||
+				! moment.isMoment( props[ propName ].to )
+			) {
+				return new Error(
+					`Invalid prop ${ propName } supplied to ${ componentName }. Must be a valid momentJS object (https://momentjs.com/docs/#/query/is-a-moment/)`
+				);
+			}
+		},
 	};
 
 	state = getStateData( this.props.siteId );
@@ -78,6 +89,11 @@ export default class extends React.Component {
 		if ( props.source ) {
 			query.source = props.source;
 			query.path = 'recent';
+		}
+
+		if ( props.dateRange && props.dateRange.from && props.dateRange.to ) {
+			query.dateFrom = props.dateRange.from.unix();
+			query.dateTo = props.dateRange.to.unix();
 		}
 
 		return query;

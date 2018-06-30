@@ -27,6 +27,7 @@ const DEBOUNCE_TIME = 250;
 class MediaLibraryExternalHeader extends React.Component {
 	static propTypes = {
 		onMediaScaleChange: PropTypes.func,
+		onDateChange: PropTypes.func,
 		site: PropTypes.object.isRequired,
 		visible: PropTypes.bool.isRequired,
 		canCopy: PropTypes.bool,
@@ -162,7 +163,7 @@ class MediaLibraryExternalHeader extends React.Component {
 				{ canCopy && this.renderCopyButton() }
 
 				{ config.isEnabled( 'external-media/google-photos/date-filters' ) &&
-					hasDateFilters && <MediaDateRange /> }
+					hasDateFilters && <MediaDateRange onDateCommit={ this.props.onDateChange } /> }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>
