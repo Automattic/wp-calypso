@@ -90,25 +90,28 @@ export class MediaDateRange extends Component {
 		// Edge case: Range can sometimes be from: null, to: null
 		if ( ! newRange.from || ! newRange.to ) return;
 
-		this.setState( previousState => {
-			let newState = {
-				startDate: this.nativeDateToMoment( newRange.from ),
-				endDate: this.nativeDateToMoment( newRange.to ),
-			};
+		this.setState(
+			previousState => {
+				let newState = {
+					startDate: this.nativeDateToMoment( newRange.from ),
+					endDate: this.nativeDateToMoment( newRange.to ),
+				};
 
-			// For first date selection only: take a record of previous dates
-			// just in case user doesn't "Apply" and we need to revert
-			// to the original dates
-			if ( ! this.state.oldDatesSaved ) {
-				newState = Object.assign( {}, newState, {
-					oldStartDate: previousState.startDate,
-					oldEndDate: previousState.endDate,
-					oldDatesSaved: true, // marks that we have saved old dates
-				} );
-			}
+				// For first date selection only: take a record of previous dates
+				// just in case user doesn't "Apply" and we need to revert
+				// to the original dates
+				if ( ! this.state.oldDatesSaved ) {
+					newState = Object.assign( {}, newState, {
+						oldStartDate: previousState.startDate,
+						oldEndDate: previousState.endDate,
+						oldDatesSaved: true, // marks that we have saved old dates
+					} );
+				}
 
-			return newState;
-		}, this.props.onDateSelect );
+				return newState;
+			},
+			() => this.props.onDateSelect( this.state.startDate, this.state.endDate )
+		);
 	}
 
 	dateToHumanReadable( date ) {
@@ -135,7 +138,7 @@ export class MediaDateRange extends Component {
 				oldEndDate: previousState.endDate, // update cached old dates
 				oldDatesSaved: false,
 			} ),
-			this.props.onDateCommit
+			() => this.props.onDateCommit( this.state.startDate, this.state.endDate )
 		);
 
 		// Close the popover

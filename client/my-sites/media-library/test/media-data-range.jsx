@@ -188,6 +188,13 @@ describe( 'MediaDateRange', () => {
 			wrapper.instance().onSelectDate( newEndDate );
 
 			expect( callback ).toHaveBeenCalledTimes( 2 );
+
+			expect( callback.mock.calls[ 0 ][ 0 ].format( 'DD/MM/YYYY' ) ).toEqual(
+				newStartDate.format( 'DD/MM/YYYY' )
+			);
+			expect( callback.mock.calls[ 1 ][ 1 ].format( 'DD/MM/YYYY' ) ).toEqual(
+				newEndDate.format( 'DD/MM/YYYY' )
+			);
 		} );
 
 		test( 'should call onDateCommit function when a date is committed/applied', () => {
@@ -206,6 +213,12 @@ describe( 'MediaDateRange', () => {
 			wrapper.instance().commitDates();
 
 			expect( callback ).toHaveBeenCalledTimes( 1 );
+			expect( callback.mock.calls[ 0 ][ 0 ].format( 'DD/MM/YYYY' ) ).toEqual(
+				newStartDate.format( 'DD/MM/YYYY' )
+			);
+			expect( callback.mock.calls[ 0 ][ 1 ].format( 'DD/MM/YYYY' ) ).toEqual(
+				newEndDate.format( 'DD/MM/YYYY' )
+			);
 		} );
 	} );
 
