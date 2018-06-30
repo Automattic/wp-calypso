@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import moment from 'moment';
 import { bindAll } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
@@ -15,8 +14,9 @@ import Button from 'components/button';
 import Popover from 'components/popover';
 import DatePicker from 'components/date-picker';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
-class MediaDateRange extends Component {
+export class MediaDateRange extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -24,8 +24,8 @@ class MediaDateRange extends Component {
 			popoverVisible: false,
 			oldStartDate: '',
 			oldEndDate: '',
-			startDate: this.props.startDate || moment().subtract( 1, 'months' ),
-			endDate: this.props.endDate || moment(),
+			startDate: this.props.startDate || this.props.moment().subtract( 1, 'months' ),
+			endDate: this.props.endDate || this.props.moment(),
 			oldDatesSaved: false,
 		};
 
@@ -60,7 +60,7 @@ class MediaDateRange extends Component {
 	}
 
 	nativeDateToMoment( nativeDate ) {
-		return moment( nativeDate );
+		return this.props.moment( nativeDate );
 	}
 
 	onSelectDate( date ) {
@@ -100,7 +100,7 @@ class MediaDateRange extends Component {
 	}
 
 	dateToHumanReadable( date ) {
-		return moment( date ).format( 'DD/MM/YYYY' );
+		return this.props.moment( date ).format( 'DD/MM/YYYY' );
 	}
 
 	revertDates() {
@@ -230,4 +230,4 @@ class MediaDateRange extends Component {
 	}
 }
 
-export default MediaDateRange;
+export default localize( MediaDateRange );
