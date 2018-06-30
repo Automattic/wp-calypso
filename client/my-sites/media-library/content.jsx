@@ -52,6 +52,7 @@ class MediaLibraryContent extends React.Component {
 		source: PropTypes.string,
 		dateRange: function( props, propName, componentName ) {
 			if (
+				! props[ propName ] ||
 				! moment.isMoment( props[ propName ].from ) ||
 				! moment.isMoment( props[ propName ].to )
 			) {

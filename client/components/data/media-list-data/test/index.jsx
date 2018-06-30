@@ -9,6 +9,7 @@
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -68,5 +69,25 @@ describe( 'EditorMediaModal', () => {
 		const result = tree.getQuery( query );
 
 		expect( result ).to.eql( { path: 'recent', source: 'anything' } );
+	} );
+
+	test( 'should pass dateRange prop to media query as dateFrom and dateTo unix timestamps', () => {
+		const dateRange = {
+			from: moment().subtract( '1 month' ),
+			to: moment(),
+		};
+
+		const tree = shallow(
+			<MediaListData siteId={ DUMMY_SITE_ID } dateRange={ dateRange }>
+				<EMPTY_COMPONENT />
+			</MediaListData>
+		).instance();
+
+		const result = tree.getQuery();
+
+		expect( result ).to.eql( {
+			dateFrom: dateRange.from.unix(),
+			dateTo: dateRange.to.unix(),
+		} );
 	} );
 } );
