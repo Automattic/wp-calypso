@@ -100,7 +100,7 @@ export class MediaDateRange extends Component {
 	}
 
 	dateToHumanReadable( date ) {
-		return this.props.moment( date ).format( 'DD/MM/YYYY' );
+		return this.props.moment( date ).format( 'L' );
 	}
 
 	revertDates() {

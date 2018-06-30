@@ -152,8 +152,6 @@ describe( 'MediaDateRange', () => {
 		const datePicker = wrapper.find( DatePicker );
 		const today = new Date();
 
-		// console.log( wrapper.onSelectDate );
-		// console.log( datePicker.props() );
 		expect( datePicker.props() ).toEqual(
 			expect.objectContaining( {
 				selectedDays: {
