@@ -8,7 +8,7 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { translate } from 'i18n-calypso';
+import { translate, moment } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -83,6 +83,7 @@ describe( 'EditorMediaModal', () => {
 				site={ DUMMY_SITE }
 				view={ null }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
+				moment={ moment }
 			/>
 		).instance();
 		tree.componentWillMount();
@@ -98,6 +99,7 @@ describe( 'EditorMediaModal', () => {
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ media }
 				translate={ translate }
+				moment={ moment }
 			/>
 		).instance();
 		tree.deleteMedia();
@@ -119,6 +121,7 @@ describe( 'EditorMediaModal', () => {
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				translate={ translate }
+				moment={ moment }
 			/>
 		).instance();
 		tree.deleteMedia();
@@ -143,6 +146,7 @@ describe( 'EditorMediaModal', () => {
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ [ media ] }
 				view={ ModalViews.DETAIL }
+				moment={ moment }
 			/>
 		).instance();
 		tree.deleteMedia();
@@ -164,6 +168,7 @@ describe( 'EditorMediaModal', () => {
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				view={ ModalViews.DETAIL }
+				moment={ moment }
 			/>
 		).instance();
 		tree.deleteMedia();
@@ -186,6 +191,7 @@ describe( 'EditorMediaModal', () => {
 				mediaLibrarySelectedItems={ DUMMY_MEDIA.slice( 0, 1 ) }
 				view={ ModalViews.DETAIL }
 				setView={ spy }
+				moment={ moment }
 			/>
 		).instance();
 
@@ -204,6 +210,7 @@ describe( 'EditorMediaModal', () => {
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				view={ ModalViews.DETAIL }
 				setView={ spy }
+				moment={ moment }
 			/>
 		).instance();
 		tree.setDetailSelectedIndex( 1 );
@@ -223,6 +230,7 @@ describe( 'EditorMediaModal', () => {
 				mediaLibrarySelectedItems={ [] }
 				view={ ModalViews.IMAGE_EDITOR }
 				setView={ spy }
+				moment={ moment }
 			/>
 		).instance();
 
@@ -233,7 +241,12 @@ describe( 'EditorMediaModal', () => {
 
 	test( 'should show an insert button when viewing external media (no selection)', () => {
 		const tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } view={ ModalViews.DETAIL } setView={ spy } />
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				view={ ModalViews.DETAIL }
+				setView={ spy }
+				moment={ moment }
+			/>
 		).instance();
 
 		tree.setState( { source: 'external' } );
@@ -250,6 +263,7 @@ describe( 'EditorMediaModal', () => {
 				view={ ModalViews.DETAIL }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA.slice( 0, 1 ) }
 				setView={ spy }
+				moment={ moment }
 			/>
 		).instance();
 
@@ -267,6 +281,7 @@ describe( 'EditorMediaModal', () => {
 				view={ ModalViews.DETAIL }
 				mediaLibrarySelectedItems={ DUMMY_VIDEO_MEDIA }
 				setView={ spy }
+				moment={ moment }
 			/>
 		).instance();
 
@@ -284,6 +299,7 @@ describe( 'EditorMediaModal', () => {
 				view={ ModalViews.DETAIL }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				setView={ spy }
+				moment={ moment }
 			/>
 		).instance();
 
@@ -301,6 +317,7 @@ describe( 'EditorMediaModal', () => {
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				view={ ModalViews.DETAIL }
 				setView={ spy }
+				moment={ moment }
 			/>
 		).instance();
 
@@ -311,7 +328,12 @@ describe( 'EditorMediaModal', () => {
 
 	test( 'should show an insert button if none or one local items are selected', () => {
 		const tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } view={ ModalViews.DETAIL } setView={ spy } />
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				view={ ModalViews.DETAIL }
+				setView={ spy }
+				moment={ moment }
+			/>
 		).instance();
 
 		const buttons = tree.getModalButtons();
@@ -344,6 +366,7 @@ describe( 'EditorMediaModal', () => {
 					onClose={ onClose }
 					view={ ModalViews.DETAIL }
 					setView={ spy }
+					moment={ moment }
 				/>
 			).instance();
 
@@ -367,6 +390,7 @@ describe( 'EditorMediaModal', () => {
 					mediaLibrarySelectedItems={ DUMMY_MEDIA }
 					view={ ModalViews.DETAIL }
 					setView={ spy }
+					moment={ moment }
 				/>
 			).instance();
 
@@ -394,6 +418,7 @@ describe( 'EditorMediaModal', () => {
 					mediaLibrarySelectedItems={ SINGLE_ITEM_MEDIA }
 					view={ ModalViews.DETAIL }
 					setView={ spy }
+					moment={ moment }
 				/>
 			).instance();
 
@@ -419,6 +444,7 @@ describe( 'EditorMediaModal', () => {
 					mediaLibrarySelectedItems={ DUMMY_VIDEO_MEDIA }
 					view={ ModalViews.DETAIL }
 					setView={ spy }
+					moment={ moment }
 				/>
 			).instance();
 
