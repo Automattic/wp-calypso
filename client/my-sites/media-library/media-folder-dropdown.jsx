@@ -15,15 +15,25 @@ import SelectDropdown from 'components/select-dropdown';
 
 export class MediaFolderDropdown extends Component {
 	static propTypes = {
-		initialSelected: PropTypes.string,
-		folders: PropTypes.array,
+		initialSelected: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		folders: PropTypes.arrayOf(
+			PropTypes.shape( {
+				ID: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+				title: PropTypes.string.isRequired,
+				summary: PropTypes.string,
+				thumbnail: PropTypes.string,
+				numphotos: PropTypes.number,
+				date: PropTypes.string,
+			} )
+		),
 		onFolderChange: PropTypes.func,
 		disabled: PropTypes.bool,
 		compact: PropTypes.bool,
+		defaultOption: PropTypes.object,
 	};
 
 	static defaultProps = {
-		initialSelected: '__all__',
+		initialSelected: 'all',
 		folders: [],
 		compact: true,
 	};
@@ -47,11 +57,18 @@ export class MediaFolderDropdown extends Component {
 
 		return [
 			{
-				value: '__all__',
+				value: 'all',
 				label: this.props.translate( 'All Photos' ),
 			},
 			separator,
-		].concat( folderData );
+		].concat(
+			folderData.map( folder => {
+				return {
+					value: '' + folder.ID, // convert to string if number
+					label: folder.title,
+				};
+			} )
+		);
 	}
 
 	render() {
@@ -67,7 +84,7 @@ export class MediaFolderDropdown extends Component {
 		return (
 			<div className={ rootClassNames }>
 				<SelectDropdown
-					initialSelected={ this.props.initialSelected }
+					initialSelected={ '' + this.props.initialSelected } // convert to string if number
 					disabled={ this.props.disabled }
 					compact={ this.props.compact }
 					onSelect={ this.handleOnSelect }

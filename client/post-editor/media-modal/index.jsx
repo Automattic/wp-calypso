@@ -155,7 +155,7 @@ export class EditorMediaModal extends Component {
 			filter: '',
 			detailSelectedIndex: 0,
 			source: props.source ? props.source : '',
-			folder: '__all__',
+			folder: 'all',
 			gallerySettings: props.initialGallerySettings,
 		};
 	}

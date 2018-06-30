@@ -71,7 +71,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should pass folder parameter to media query', () => {
-		const expected = '__all__';
+		const expected = 'all';
 		const tree = shallow(
 			<MediaListData siteId={ DUMMY_SITE_ID }>
 				<EMPTY_COMPONENT />
