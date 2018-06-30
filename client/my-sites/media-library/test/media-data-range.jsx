@@ -14,13 +14,17 @@ import MockDate from 'mockdate';
 /**
  * Internal dependencies
  */
-import MediaDateRange from '../media-date-range';
+import { MediaDateRange } from '../media-date-range';
 import DatePicker from 'components/date-picker';
 
 describe( 'MediaDateRange', () => {
 	let fixedEndDate;
 
 	beforeEach( () => {
+		// Note: forces locale to UK date format to make
+		// test easier to assert again
+		moment.locale( [ 'en-GB' ] );
+
 		fixedEndDate = moment( '01-06-2018', 'DD-MM-YYYY' );
 
 		// Set the clock for our test assertions so that new Date()
@@ -31,12 +35,12 @@ describe( 'MediaDateRange', () => {
 	} );
 
 	test( 'should render', () => {
-		const wrapper = shallow( <MediaDateRange /> );
+		const wrapper = shallow( <MediaDateRange moment={ moment } /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
 	test( "should render button text with date range of minus one month from today's date", () => {
-		const wrapper = shallow( <MediaDateRange /> );
+		const wrapper = shallow( <MediaDateRange moment={ moment } /> );
 
 		const triggerText = wrapper.find( '.media-library__date-range-btn span' ).text();
 		const expectedText = '01/05/2018-01/06/2018';
@@ -44,7 +48,7 @@ describe( 'MediaDateRange', () => {
 	} );
 
 	test( 'should update trigger button text to match currently selected dates', () => {
-		const wrapper = shallow( <MediaDateRange /> );
+		const wrapper = shallow( <MediaDateRange moment={ moment } /> );
 
 		const expectedStartDate = '01/04/2018';
 		const expectedEndDate = '29/04/2018';
@@ -64,7 +68,7 @@ describe( 'MediaDateRange', () => {
 	} );
 
 	test( 'should toggle Popover visibility on trigger button click', () => {
-		const wrapper = shallow( <MediaDateRange /> );
+		const wrapper = shallow( <MediaDateRange moment={ moment } /> );
 		const triggerBtn = wrapper.find( '.media-library__date-range-btn' );
 		expect( wrapper.state().popoverVisible ).toBe( false );
 
@@ -78,7 +82,7 @@ describe( 'MediaDateRange', () => {
 	} );
 
 	test( 'should only persist date selection when user clicks "Apply" button', () => {
-		const wrapper = shallow( <MediaDateRange /> );
+		const wrapper = shallow( <MediaDateRange moment={ moment } /> );
 		const triggerBtn = wrapper.find( '.media-library__date-range-btn' );
 		const cancelBtn = wrapper.find( '.media-library__date-range-popover-cancel-btn' );
 		const applyBtn = wrapper.find( '.media-library__date-range-popover-apply-btn' );
@@ -146,7 +150,7 @@ describe( 'MediaDateRange', () => {
 	} );
 
 	test( 'should pass correct props to DatePicker', () => {
-		const wrapper = shallow( <MediaDateRange /> );
+		const wrapper = shallow( <MediaDateRange moment={ moment } /> );
 		const instance = wrapper.instance();
 		const state = wrapper.state();
 		const datePicker = wrapper.find( DatePicker );
@@ -168,6 +172,21 @@ describe( 'MediaDateRange', () => {
 				],
 			} )
 		);
+	} );
+
+	test( 'should call onDateSelect function when a date is selected', () => {
+		const callback = jest.fn();
+
+		const wrapper = shallow( <MediaDateRange moment={ moment } onDateSelect={ callback } /> );
+
+		const newStartDate = moment( '01/04/2018', 'DD/MM/YYYY' );
+		const newEndDate = moment( '29/04/2018', 'DD/MM/YYYY' );
+
+		// Select dates using API
+		wrapper.instance().onSelectDate( newStartDate );
+		wrapper.instance().onSelectDate( newEndDate );
+
+		expect( callback ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	afterEach( () => {

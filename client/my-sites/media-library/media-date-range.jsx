@@ -4,9 +4,11 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { bindAll } from 'lodash';
+import { bindAll, noop } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+
 /**
  * Internal dependencies
  */
@@ -17,6 +19,14 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
 export class MediaDateRange extends Component {
+	static propTypes = {
+		onDateSelect: PropTypes.func,
+	};
+
+	static defaultProps = {
+		onDateSelect: noop,
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -96,7 +106,7 @@ export class MediaDateRange extends Component {
 			}
 
 			return newState;
-		} );
+		}, this.props.onDateSelect );
 	}
 
 	dateToHumanReadable( date ) {
