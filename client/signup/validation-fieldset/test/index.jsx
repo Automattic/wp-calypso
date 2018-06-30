@@ -22,7 +22,7 @@ describe( 'ValidationFieldset', () => {
 	test( 'should include a FormInputValidation only when errorMessages prop is set.', () => {
 		const wrapper = shallow( <ValidationFieldset /> );
 
-		expect( wrapper.find( 'FormInputValidation' ).isEmpty() ).to.be.true;
+		expect( wrapper.find( 'FormInputValidation' ).exists() ).to.be.false;
 
 		wrapper.setProps( { errorMessages: [ 'error', 'message' ] } );
 		expect( wrapper.find( 'FormInputValidation' ) ).to.have.length( 1 );
@@ -33,9 +33,9 @@ describe( 'ValidationFieldset', () => {
 		).to.equal( 'error' );
 
 		expect(
-			wrapper.find( '.validation-fieldset__validation-message' ).isEmpty(),
+			wrapper.find( '.validation-fieldset__validation-message' ).exists(),
 			'Is the meesage container empty?'
-		).to.be.false;
+		).to.be.true;
 	} );
 
 	test( 'should render the children within a FormFieldset', () => {
