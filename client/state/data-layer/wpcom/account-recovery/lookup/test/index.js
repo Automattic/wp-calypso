@@ -1,15 +1,8 @@
 /** @format */
-
-/**
- * External dependencies
- */
-import { assert } from 'chai';
-import sinon from 'sinon';
-
 /**
  * Internal dependencies
  */
-import { fromApi, validate, requestResetOptionsSuccess, requestResetOptionsError } from '../';
+import { fromApi, onSuccess, onError } from '../';
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
@@ -23,114 +16,55 @@ const validResponse = {
 	secondary_sms: '+8*******456',
 };
 
-describe( 'validate()', () => {
+describe( 'fromApi()', () => {
 	test( 'should validate successfully and throw nothing.', () => {
-		assert.doesNotThrow( () => validate( validResponse ) );
+		expect( () => fromApi( validResponse ) ).not.toThrow();
 	} );
 
 	test( 'should invalidate missing keys and throw an error.', () => {
-		assert.throws(
-			() =>
-				validate( {
-					primary_email: 'foo@example.com',
-				} ),
-			Error
-		);
+		expect( () => fromApi( { primary_email: 'foo@example.com' } ) ).toThrow();
 	} );
 
 	test( 'should invalidate unexpected value type and throw an error', () => {
-		assert.throws(
-			() =>
-				validate( {
-					primary_email: 'foo@example.com',
-					primary_sms: '123456',
-					secondary_email: 'bar@example.com',
-					secondary_sms: 123456,
-				} ),
-			Error
-		);
+		expect( () =>
+			fromApi( {
+				primary_email: 'foo@example.com',
+				primary_sms: '123456',
+				secondary_email: 'bar@example.com',
+				secondary_sms: 123456,
+			} )
+		).toThrow();
 	} );
 } );
 
 describe( 'handleRequestResetOptions()', () => {
-	const userData = {
-		user: 'foo',
-	};
+	const userData = { user: 'foo' };
 
 	describe( 'success', () => {
-		test( 'should dispatch RECEIVE action on success', done => {
-			const dispatch = sinon.spy( action => {
-				if ( action.type === ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ) {
-					assert.isTrue(
-						dispatch.calledWith( {
-							type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-							items: fromApi( validResponse ),
-						} )
-					);
-
-					done();
-				}
-			} );
-
-			requestResetOptionsSuccess( { dispatch }, { userData }, validResponse );
-		} );
-
-		test( 'should dispatch UPDATE_USER_DATA action on success', done => {
-			const dispatch = sinon.spy( action => {
-				if ( action.type === ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA ) {
-					assert.isTrue(
-						dispatch.calledWith( {
-							type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-							userData,
-						} )
-					);
-
-					done();
-				}
-			} );
-
-			requestResetOptionsSuccess( { dispatch }, { userData }, validResponse );
+		test( 'should dispatch appropriate actions on success', () => {
+			expect( onSuccess( { userData }, fromApi( validResponse ) ) ).toEqual(
+				expect.arrayContaining( [
+					{
+						type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+						items: fromApi( validResponse ),
+					},
+					{
+						type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
+						userData,
+					},
+				] )
+			);
 		} );
 	} );
 
 	describe( 'failure', () => {
-		const errorResponse = {
-			status: 400,
-			message: 'Something wrong!',
-		};
+		const errorResponse = { status: 400, message: 'Something wrong!' };
 
-		test( 'should dispatch ERROR action on failure', done => {
-			const dispatch = sinon.spy( () => {
-				assert.isTrue(
-					dispatch.calledWithMatch( {
-						type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-						error: errorResponse,
-					} )
-				);
-
-				done();
+		test( 'should dispatch ERROR action on failure', () => {
+			expect( onError( { userData }, errorResponse ) ).toEqual( {
+				type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+				error: errorResponse,
 			} );
-
-			requestResetOptionsError( { dispatch }, { userData }, errorResponse );
-		} );
-
-		test( 'should dispatch ERROR action on validation failure', done => {
-			const invalidResponse = {
-				primary_email: 'foo@example.com',
-			};
-
-			const dispatch = sinon.spy( () => {
-				assert.isTrue(
-					dispatch.calledWithMatch( {
-						type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-						error: { message: 'Unexpected response format from /account-recovery/lookup' },
-					} )
-				);
-
-				done();
-			} );
-
-			requestResetOptionsSuccess( { dispatch }, { userData }, invalidResponse );
 		} );
 	} );
 } );
