@@ -49,6 +49,11 @@
 }
 
 .media-library__date-range-popover {
+	.DayPicker {
+		margin-top: 12px;
+		border-top: 1px solid #d9e3ea;
+	}
+
 	.DayPicker-wrapper {
 		display: flex;
 	}
@@ -65,4 +70,33 @@
 	.DayPicker-Caption {
 		font-size: 12px;
 	}
+}
+
+.media-library__date-range-popover-inputs {
+	display: flex;
+	text-align: left;
+	padding-top: 10px;
+}
+
+.media-library__date-range-popover-input {
+	flex: 1;
+
+	.form-label {
+		font-size: 10px;
+		text-transform: uppercase;
+		margin-bottom: 0;
+	}
+
+	input {
+		font-size: 13px;
+		padding: 3px 10px;
+	}
+}
+
+.media-library__date-range-popover-input--from {
+	margin-right: 1em;
+}
+
+.media-library__date-range-popover-input--to {
+	margin-left: 1em;
 }

@@ -174,6 +174,132 @@ describe( 'MediaDateRange', () => {
 		);
 	} );
 
+	describe( 'text inputs', () => {
+		let startDate;
+		let endDate;
+		let momentStartDate;
+		let momentEndDate;
+		let startDateEvent;
+		let endDateEvent;
+
+		beforeEach( () => {
+			startDate = '01/04/2018';
+			endDate = '01/05/2018';
+			momentStartDate = moment( startDate );
+			momentEndDate = moment( endDate );
+
+			startDateEvent = {
+				target: {
+					value: startDate,
+					id: 'startDate',
+				},
+			};
+
+			endDateEvent = {
+				target: {
+					value: endDate,
+					id: 'endDate',
+				},
+			};
+		} );
+
+		test( 'should allow date selection via inputs', () => {
+			const wrapper = shallow( <MediaDateRange moment={ moment } /> );
+
+			const startDateInput = wrapper.find( '#startDate' );
+			startDateInput.simulate( 'change', startDateEvent );
+			startDateInput.simulate( 'blur', startDateEvent );
+
+			const endDateInput = wrapper.find( '#endDate' );
+			endDateInput.simulate( 'change', endDateEvent );
+			endDateInput.simulate( 'blur', endDateEvent );
+
+			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).toEqual(
+				momentStartDate.format( 'DD/MM/YYYY' )
+			);
+
+			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).toEqual(
+				momentEndDate.format( 'DD/MM/YYYY' )
+			);
+		} );
+
+		test( 'should not update date selection before input is blurred', () => {
+			const wrapper = shallow( <MediaDateRange moment={ moment } /> );
+
+			const startDateInput = wrapper.find( '#startDate' );
+			startDateInput.simulate( 'change', startDateEvent );
+
+			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual(
+				momentStartDate.format( 'DD/MM/YYYY' )
+			);
+		} );
+
+		test( 'should not update start/end dates if input date is invalid', () => {
+			const wrapper = shallow( <MediaDateRange moment={ moment } /> );
+			const invalidDateString = '01/04/invaliddatestring';
+
+			const invalidStartDateEvent = Object.assign( {}, startDateEvent, {
+				value: invalidDateString,
+			} );
+
+			const startDateInput = wrapper.find( '#startDate' );
+			startDateInput.simulate( 'change', invalidStartDateEvent );
+
+			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual( invalidDateString );
+		} );
+
+		test( 'should not update start/end dates if input date is in the future', () => {
+			const wrapper = shallow( <MediaDateRange moment={ moment } /> );
+			const invalidDateString = '01/04/2154';
+
+			const invalidEndDateEvent = Object.assign( {}, endDateEvent, {
+				value: invalidDateString,
+			} );
+
+			const endDateInput = wrapper.find( '#endDate' );
+			endDateInput.simulate( 'blur', invalidEndDateEvent );
+
+			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).not.toEqual( invalidDateString );
+		} );
+
+		test( 'should not update start/end dates if input date is before Epoch date (1970)', () => {
+			const wrapper = shallow( <MediaDateRange moment={ moment } /> );
+			const invalidDateString = '01/04/1969';
+
+			const invalidStartDateEvent = Object.assign( {}, startDateEvent, {
+				value: invalidDateString,
+			} );
+
+			const startDateInput = wrapper.find( '#startDate' );
+			startDateInput.simulate( 'blur', invalidStartDateEvent );
+
+			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual( invalidDateString );
+		} );
+
+		test( 'should see inputs reflect date picker selection', () => {
+			const wrapper = shallow( <MediaDateRange moment={ moment } /> );
+
+			const expectedStart = '03/04/2018';
+			const expectedEnd = '29/04/2018';
+
+			const newStartDate = moment( expectedStart, 'DD/MM/YYYY' );
+			const newEndDate = moment( expectedEnd, 'DD/MM/YYYY' );
+
+			// Select dates using API
+			wrapper.instance().onSelectDate( newStartDate );
+			wrapper.instance().onSelectDate( newEndDate );
+
+			// Force update
+			wrapper.update();
+
+			const startDateInput = wrapper.find( '#startDate' );
+			const endDateInput = wrapper.find( '#endDate' );
+
+			expect( startDateInput.props().value ).toBe( expectedStart );
+			expect( endDateInput.props().value ).toBe( expectedEnd );
+		} );
+	} );
+
 	describe( 'callbacks', () => {
 		test( 'should call onDateSelect function when a date is selected', () => {
 			const callback = jest.fn();

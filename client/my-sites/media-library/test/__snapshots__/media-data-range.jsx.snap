@@ -60,6 +60,42 @@ exports[`MediaDateRange should render 1`] = `
           Apply Dates
         </Button>
       </div>
+      <div
+        className="media-library__date-range-popover-inputs"
+      >
+        <div
+          className="media-library__date-range-popover-input media-library__date-range-popover-input--from"
+        >
+          <Localized(FormLabel)
+            htmlFor="startDate"
+          >
+            From
+          </Localized(FormLabel)>
+          <FormTextInput
+            id="startDate"
+            name="startDate"
+            onBlur={[Function]}
+            onChange={[Function]}
+            value="01/06/2018"
+          />
+        </div>
+        <div
+          className="media-library__date-range-popover-input media-library__date-range-popover-input--to"
+        >
+          <Localized(FormLabel)
+            htmlFor="endDate"
+          >
+            To
+          </Localized(FormLabel)>
+          <FormTextInput
+            id="endDate"
+            name="endDate"
+            onBlur={[Function]}
+            onChange={[Function]}
+            value="01/06/2018"
+          />
+        </div>
+      </div>
       <Localized(DatePicker)
         calendarViewDate={2018-04-30T23:00:00.000Z}
         className="media-library__date-range-popover-date-picker"

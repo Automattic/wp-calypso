@@ -17,6 +17,8 @@ import Popover from 'components/popover';
 import DatePicker from 'components/date-picker';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 
 export class MediaDateRange extends Component {
 	static propTypes = {
@@ -39,6 +41,12 @@ export class MediaDateRange extends Component {
 			startDate: this.props.startDate || this.props.moment().subtract( 1, 'months' ),
 			endDate: this.props.endDate || this.props.moment(),
 			oldDatesSaved: false,
+			inputFromDate:
+				this.dateToHumanReadable( this.props.startDate ) ||
+				this.dateToHumanReadable( this.props.moment().subtract( 1, 'months' ) ),
+			inputToDate:
+				this.dateToHumanReadable( this.props.endDate ) ||
+				this.dateToHumanReadable( this.props.moment() ),
 		};
 
 		bindAll( this, [
@@ -47,6 +55,8 @@ export class MediaDateRange extends Component {
 			'onSelectDate',
 			'revertDates',
 			'commitDates',
+			'handleInputChange',
+			'handleInputBlur',
 		] );
 
 		this.startButtonRef = React.createRef();
@@ -55,6 +65,8 @@ export class MediaDateRange extends Component {
 	togglePopover() {
 		this.setState( {
 			popoverVisible: ! this.state.popoverVisible,
+			inputFromDate: this.dateToHumanReadable( this.state.startDate ),
+			inputToDate: this.dateToHumanReadable( this.state.endDate ),
 		} );
 
 		// Close the popover
@@ -67,12 +79,47 @@ export class MediaDateRange extends Component {
 		} );
 	}
 
-	momentDateToNative( momentDate ) {
-		return momentDate.toDate();
+	handleInputChange( e ) {
+		const val = e.target.value;
+
+		const fromOrTo = e.target.id.includes( 'start' ) ? 'From' : 'To';
+
+		this.setState( {
+			[ `input${ fromOrTo }Date` ]: val,
+		} );
 	}
 
-	nativeDateToMoment( nativeDate ) {
-		return this.props.moment( nativeDate );
+	handleInputBlur( e ) {
+		const val = e.target.value;
+		const date = this.props.moment( val );
+		const today = this.props.moment();
+		const epoch = this.props.moment( '01/01/1970' );
+		const fromDate = this.props.moment( this.state.inputFromDate );
+		const toDate = this.props.moment( this.state.inputToDate );
+
+		// Ensure dates are:
+		// i) valid
+		// ii) after 01/01/1970 (avoids bugs when really old dates are treated as valid)
+		// iii) before today (don't allow inputs to select dates that calendar is not allowed to show)
+		const isValidFrom =
+			fromDate.isValid() && fromDate.isSameOrAfter( epoch ) && fromDate.isSameOrBefore( today );
+
+		const isValidTo =
+			toDate.isValid() && toDate.isSameOrAfter( epoch ) && toDate.isSameOrBefore( today );
+
+		// If either of the date inputs are invalid then revert
+		// to current start/end date from state
+		if ( ! isValidFrom || ! isValidTo ) {
+			this.setState( {
+				inputFromDate: this.dateToHumanReadable( this.state.startDate ),
+				inputToDate: this.dateToHumanReadable( this.state.endDate ),
+			} );
+		}
+
+		// If the new date in the blurred input is valid...
+		if ( date.isValid() && date.isSameOrAfter( epoch ) && date.isSameOrBefore( today ) ) {
+			this.onSelectDate( date );
+		}
 	}
 
 	onSelectDate( date ) {
@@ -95,6 +142,8 @@ export class MediaDateRange extends Component {
 				let newState = {
 					startDate: this.nativeDateToMoment( newRange.from ),
 					endDate: this.nativeDateToMoment( newRange.to ),
+					inputFromDate: this.nativeDateToMoment( newRange.from ).format( 'L' ),
+					inputToDate: this.nativeDateToMoment( newRange.to ).format( 'L' ),
 				};
 
 				// For first date selection only: take a record of previous dates
@@ -112,10 +161,6 @@ export class MediaDateRange extends Component {
 			},
 			() => this.props.onDateSelect( this.state.startDate, this.state.endDate )
 		);
-	}
-
-	dateToHumanReadable( date ) {
-		return this.props.moment( date ).format( 'L' );
 	}
 
 	revertDates() {
@@ -138,11 +183,23 @@ export class MediaDateRange extends Component {
 				oldEndDate: previousState.endDate, // update cached old dates
 				oldDatesSaved: false,
 			} ),
-			() => this.props.onDateCommit( this.state.startDate, this.state.endDate )
+			() => {
+				this.props.onDateCommit( this.state.startDate, this.state.endDate );
+				this.togglePopover();
+			}
 		);
+	}
 
-		// Close the popover
-		this.togglePopover();
+	momentDateToNative( momentDate ) {
+		return momentDate.toDate();
+	}
+
+	nativeDateToMoment( nativeDate ) {
+		return this.props.moment( nativeDate );
+	}
+
+	dateToHumanReadable( date ) {
+		return this.props.moment( date ).format( 'L' );
 	}
 
 	renderDatePicker() {
@@ -211,6 +268,33 @@ export class MediaDateRange extends Component {
 		);
 	}
 
+	renderPopoverInputs() {
+		return (
+			<div className="media-library__date-range-popover-inputs">
+				<div className="media-library__date-range-popover-input media-library__date-range-popover-input--from">
+					<FormLabel htmlFor="startDate">From</FormLabel>
+					<FormTextInput
+						id="startDate"
+						name="startDate"
+						value={ this.state.inputFromDate }
+						onChange={ this.handleInputChange }
+						onBlur={ this.handleInputBlur }
+					/>
+				</div>
+				<div className="media-library__date-range-popover-input media-library__date-range-popover-input--to">
+					<FormLabel htmlFor="endDate">To</FormLabel>
+					<FormTextInput
+						id="endDate"
+						name="endDate"
+						value={ this.state.inputToDate }
+						onChange={ this.handleInputChange }
+						onBlur={ this.handleInputBlur }
+					/>
+				</div>
+			</div>
+		);
+	}
+
 	renderPopover() {
 		const popoverClassNames = classNames( {
 			'media-library__date-range-popover': true,
@@ -227,6 +311,7 @@ export class MediaDateRange extends Component {
 			>
 				<div className="media-library__date-range-popover-inner">
 					{ this.renderPopoverHeader() }
+					{ this.renderPopoverInputs() }
 					{ this.renderDatePicker() }
 				</div>
 			</Popover>
