@@ -40,6 +40,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -583,3 +584,19 @@ export const getAuthAccountType = usernameOrEmail => dispatch => {
 export const resetAuthAccountType = () => ( {
 	type: LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 } );
+
+/**
+ * Creates an action that indicates that the push poll is completed
+ *
+ * @param {Array<String>} tokenLinks token links array
+ * @returns {Function} a thunk
+ */
+export const receivedTwoFactorPushNotificationApproved = tokenLinks => dispatch => {
+	if ( ! Array.isArray( tokenLinks ) ) {
+		return dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
+	}
+
+	remoteLoginUser( tokenLinks ).then( () =>
+		dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } )
+	);
+};
