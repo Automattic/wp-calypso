@@ -91,6 +91,7 @@ export class MediaDateRange extends Component {
 
 	handleInputBlur( e ) {
 		const val = e.target.value;
+		const startOrEnd = e.target.id;
 		const date = this.props.moment( val );
 		const today = this.props.moment();
 		const epoch = this.props.moment( '01/01/1970' );
@@ -117,7 +118,13 @@ export class MediaDateRange extends Component {
 		}
 
 		// If the new date in the blurred input is valid...
-		if ( date.isValid() && date.isSameOrAfter( epoch ) && date.isSameOrBefore( today ) ) {
+		// ...and it's
+		if (
+			date.isValid() &&
+			date.isSameOrAfter( epoch ) &&
+			date.isSameOrBefore( today ) &&
+			! this.state[ startOrEnd ].isSame( date, 'day' )
+		) {
 			this.onSelectDate( date );
 		}
 	}
@@ -146,7 +153,7 @@ export class MediaDateRange extends Component {
 					inputToDate: this.nativeDateToMoment( newRange.to ).format( 'L' ),
 				};
 
-				// For first date selection only: take a record of previous dates
+				// For first date selection only: "cache" previous dates
 				// just in case user doesn't "Apply" and we need to revert
 				// to the original dates
 				if ( ! this.state.oldDatesSaved ) {

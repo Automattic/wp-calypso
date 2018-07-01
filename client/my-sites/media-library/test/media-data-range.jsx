@@ -234,6 +234,23 @@ describe( 'MediaDateRange', () => {
 			);
 		} );
 
+		test( 'should not update start/end date selection if the new input date value is the same as that stored in state', () => {
+			const wrapper = shallow(
+				<MediaDateRange startDate={ momentStartDate } endDate={ momentEndDate } moment={ moment } />
+			);
+
+			const startDateInput = wrapper.find( '#startDate' );
+			startDateInput.simulate( 'blur', startDateEvent );
+
+			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).toEqual(
+				momentStartDate.format( 'DD/MM/YYYY' )
+			);
+
+			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).toEqual(
+				momentEndDate.format( 'DD/MM/YYYY' )
+			);
+		} );
+
 		test( 'should not update start/end dates if input date is invalid', () => {
 			const wrapper = shallow( <MediaDateRange moment={ moment } /> );
 			const invalidDateString = '01/04/invaliddatestring';
