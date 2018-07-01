@@ -1,54 +1,48 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 } from 'state/action-types';
 import { setResetMethod } from 'state/account-recovery/reset/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-export const requestReset = ( { dispatch }, action ) => {
-	const { userData, method } = action;
-
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				path: '/account-recovery/request-reset',
-				body: {
-					...userData,
-					method,
-				},
+export const fetch = action =>
+	http(
+		{
+			method: 'POST',
+			apiNamespace: 'wpcom/v2',
+			path: '/account-recovery/request-reset',
+			body: {
+				...action.userData,
+				method: action.method,
 			},
-			action
-		)
+		},
+		action
 	);
-};
 
-export const handleError = ( { dispatch }, action, rawError ) => {
-	dispatch( {
-		type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-		error: rawError.message,
-	} );
-};
+export const onError = ( action, rawError ) => ( {
+	type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+	error: rawError.message,
+} );
 
-export const handleSuccess = ( { dispatch }, action ) => {
-	const { method } = action;
-	dispatch( setResetMethod( method ) );
-	dispatch( {
+export const onSuccess = action => [
+	setResetMethod( action.method ),
+	{
 		type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
-	} );
-};
+	},
+];
 
 export default {
 	[ ACCOUNT_RECOVERY_RESET_REQUEST ]: [
-		dispatchRequest( requestReset, handleSuccess, handleError ),
+		dispatchRequestEx( {
+			fetch,
+			onSuccess,
+			onError,
+		} ),
 	],
 };
