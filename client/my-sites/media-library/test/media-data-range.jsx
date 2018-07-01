@@ -21,6 +21,12 @@ describe( 'MediaDateRange', () => {
 	let fixedEndDate;
 
 	beforeEach( () => {
+		Object.defineProperty( window, 'matchMedia', {
+			value: jest.fn( () => {
+				return { matches: true };
+			} ),
+		} );
+
 		// Note: forces locale to UK date format to make
 		// test easier to assert again
 		moment.locale( [ 'en-GB' ] );
@@ -172,6 +178,19 @@ describe( 'MediaDateRange', () => {
 				],
 			} )
 		);
+	} );
+
+	test( 'should show 1 month calendar view on screens <480px', () => {
+		Object.defineProperty( window, 'matchMedia', {
+			value: jest.fn( () => {
+				return { matches: false };
+			} ),
+		} );
+
+		const wrapper = shallow( <MediaDateRange moment={ moment } /> );
+		const datePicker = wrapper.find( DatePicker );
+
+		expect( datePicker.props().numberOfMonths ).toEqual( 1 );
 	} );
 
 	describe( 'text inputs', () => {

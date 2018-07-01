@@ -32,14 +32,29 @@
 	}
 }
 
-.media-library__date-range-icon {
+.media-library__date-range-btn-icon {
 	margin-right: 5px;
+}
+
+.media-library__date-range-btn-text {
+	@include hide-content-accessibly;
+
+	@include breakpoint( '>480px' ) {
+		clip: default;
+		height: auto;
+		overflow: visible;
+		position: static;
+		width: auto;
+	}
 }
 
 .media-library__date-range-popover-inner {
 	padding: 15px;
-	width: 400px;
-	max-width: 100%;
+	max-width: 90%;
+
+	@include breakpoint( '>480px' ) {
+		width: 400px;
+	}
 }
 
 .media-library__date-range-popover-header {
@@ -56,14 +71,21 @@
 
 	.DayPicker-wrapper {
 		display: flex;
+		flex-direction: column;
+
+		@include breakpoint( '>480px' ) {
+			flex-direction: row;
+		}
 	}
 
 	.DayPicker-Month {
 		margin-right: 1em;
 
-		&:last-child {
-			margin-left: 1em;
-			margin-right: 0;
+		@include breakpoint( '>480px' ) {
+			&:last-child {
+				margin-left: 1em;
+				margin-right: 0;
+			}
 		}
 	}
 

@@ -222,7 +222,7 @@ export class MediaDateRange extends Component {
 					from: this.momentDateToNative( this.state.startDate ),
 					to: this.momentDateToNative( this.state.endDate ),
 				} }
-				numberOfMonths={ 2 }
+				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
 				calendarViewDate={ this.momentDateToNative( this.state.startDate ) }
 				disabledDays={ [
 					{
@@ -264,8 +264,8 @@ export class MediaDateRange extends Component {
 				onClick={ this.togglePopover }
 				compact
 			>
-				<Gridicon className="media-library__date-range-icon" icon="calendar" />
-				<span>
+				<Gridicon className="media-library__date-range-btn-icon" icon="calendar" />
+				<span className="media-library__date-range-btn-text">
 					{ this.dateToHumanReadable( this.state.startDate ) }
 					-
 					{ this.dateToHumanReadable( this.state.endDate ) }
