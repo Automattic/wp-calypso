@@ -85,7 +85,7 @@ if ( config.isEnabled( 'simple-payments' ) ) {
 
 if ( config.isEnabled( 'memberships' ) ) {
 	menuItems.push( {
-		name: 'insert_payment_button',
+		name: 'insert_memberships_button',
 		item: (
 			<GridiconButton
 				icon="money"
