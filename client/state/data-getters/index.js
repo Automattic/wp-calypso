@@ -1,5 +1,10 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import { omit } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { http as rawHttp } from 'state/http/actions';
@@ -9,7 +14,7 @@ import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 
 export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
-	const id = `activity-log-${ siteId }`;
+	const id = `activity-log-${ siteId }-${ JSON.stringify( omit( filter, 'page' ) ) }`;
 
 	return requestHttpData(
 		id,
