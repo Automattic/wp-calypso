@@ -82,15 +82,15 @@ class Team extends React.Component {
 					ref="infiniteList"
 					fetchingNextPage={ this.props.fetchingUsers }
 					lastPage={ this.isLastPage() }
-					fetchNextPage={ this._fetchNextPage }
-					getItemRef={ this._getPersonRef }
-					renderLoadingPlaceholders={ this._renderLoadingPeople }
-					renderItem={ this._renderPerson }
+					fetchNextPage={ this.fetchNextPage }
+					getItemRef={ this.getPersonRef }
+					renderLoadingPlaceholders={ this.renderLoadingPeople }
+					renderItem={ this.renderPerson }
 					guessedItemHeight={ 126 }
 				/>
 			);
 		} else {
-			people = this._renderLoadingPeople();
+			people = this.renderLoadingPeople();
 		}
 
 		return (
@@ -110,7 +110,7 @@ class Team extends React.Component {
 		);
 	}
 
-	_renderPerson = user => {
+	renderPerson = user => {
 		return (
 			<PeopleListItem
 				key={ user.ID }
@@ -122,7 +122,7 @@ class Team extends React.Component {
 		);
 	};
 
-	_fetchNextPage = () => {
+	fetchNextPage = () => {
 		const offset = this.props.users.length;
 		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
 		this.props.recordGoogleEvent(
@@ -135,9 +135,9 @@ class Team extends React.Component {
 		fetchUsers( fetchOptions );
 	};
 
-	_getPersonRef = user => 'user-' + user.ID;
+	getPersonRef = user => 'user-' + user.ID;
 
-	_renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
+	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 }
 
 export default connect(
