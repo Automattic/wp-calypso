@@ -7,7 +7,6 @@
 import React, { Component } from 'react';
 import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import emailValidator from 'email-validator';
 import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
 
@@ -20,15 +19,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
-import FormSelect from 'components/forms/form-select';
 import { getCurrencyDefaults } from 'lib/format-currency';
-import QueryMembershipsConnectedAccounts from 'components/data/query-memberships-connected-accounts';
-import config from 'config';
-import Button from 'components/button';
-import { authorizeStripeAccount } from 'state/memberships/connected-accounts/actions';
-import isEditedSimplePaymentsRecurring from 'state/selectors/is-edited-simple-payments-recurring';
-import getEditedSimplePaymentsStripeAccount from 'state/selectors/get-edited-simple-payments-stripe-account';
-import getMembershipsConnectedAccounts from 'state/selectors/get-memberships-connected-accounts';
 import ProductImagePicker from './product-image-picker';
 
 export const REDUX_FORM_NAME = 'simplePaymentsForm';
@@ -134,22 +125,6 @@ const validate = ( values, props ) => {
 		} );
 	}
 
-	// Checks for 'Memberships' only
-	if ( props.isRecurringSubscription ) {
-		if ( ! values.renewal_schedule ) {
-			errors.renewal_schedule = 'Please choose a renewal schedule';
-		}
-
-		if ( ! values.stripe_account ) {
-			errors.stripe_account = 'Choose or connect a new Stripe Account.';
-		}
-
-		if ( values.stripe_account === 'create' && ! values.email ) {
-			errors.email = translate(
-				'If you want us to create a Stripe account for you, you need to provide an email address.'
-			);
-		}
-	}
 	return errors;
 };
 
@@ -204,93 +179,28 @@ class ProductForm extends Component {
 						label={ translate( 'Price' ) }
 						component={ renderPriceField }
 					/>
-					{ config.isEnabled( 'memberships' ) && (
-						<ReduxFormFieldset name="recurring" type="checkbox" component={ CompactFormToggle }>
-							{ translate( 'Make this product a recurring subscription.' ) }
-						</ReduxFormFieldset>
-					) }
-					{ ! this.props.isRecurringSubscription && (
-						<div>
-							<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
-								{ translate( 'Allow people to buy more than one item at a time.' ) }
-							</ReduxFormFieldset>
-							<ReduxFormFieldset
-								name="email"
-								label={ translate( 'Email' ) }
-								explanation={ translate(
-									'This is where PayPal will send your money.' +
-										" To claim a payment, you'll need a {{paypalLink}}PayPal account{{/paypalLink}}" +
-										' connected to a bank account.',
-									{
-										components: {
-											paypalLink: <ExternalLink href="https://paypal.com" target="_blank" />,
-										},
-									}
-								) }
-								component={ FormTextInput }
-							/>
-						</div>
-					) }
-					{ this.props.isRecurringSubscription && this.renderRecurringFields() }
-				</div>
-			</form>
-		);
-	}
-
-	renderRecurringFields() {
-		const { translate } = this.props;
-		return (
-			<div>
-				<QueryMembershipsConnectedAccounts />
-				<ReduxFormFieldset
-					name="stripe_account"
-					explanation={ translate( 'This is the Stripe account where the funds will end up.' ) }
-					label={ translate( 'Stripe account' ) }
-					component={ FormSelect }
-					children={ Object.values( this.props.membershipsConnectedAccounts )
-						.map( acct => (
-							<option
-								value={ acct.connected_destination_account_id }
-								key={ acct.connected_destination_account_id }
-							>
-								{ acct.payment_partner_account_id }
-							</option>
-						) )
-						.concat( [
-							<option value="create" key="create">
-								{ translate( 'Create Stripe account for me' ) }
-							</option>,
-							<option value="authorize" key="authorize">
-								{ translate( 'I already have a Stripe account' ) }
-							</option>,
-						] ) }
-				/>
-				{ this.props.isChoosingToAuthorizeStripeAccount && (
-					<Button onClick={ this.props.authorizeStripeAccount }>
-						{ translate( 'Authorize Stripe account' ) }
-					</Button>
-				) }
-				{ this.props.isChoosingToCreateStripeAccount && (
 					<div>
+						<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
+							{ translate( 'Allow people to buy more than one item at a time.' ) }
+						</ReduxFormFieldset>
 						<ReduxFormFieldset
 							name="email"
 							label={ translate( 'Email' ) }
-							explanation={ translate( 'New Stripe account will be tied to this email address.' ) }
+							explanation={ translate(
+								'This is where PayPal will send your money.' +
+									" To claim a payment, you'll need a {{paypalLink}}PayPal account{{/paypalLink}}" +
+									' connected to a bank account.',
+								{
+									components: {
+										paypalLink: <ExternalLink href="https://paypal.com" target="_blank" />,
+									},
+								}
+							) }
 							component={ FormTextInput }
 						/>
 					</div>
-				) }
-				<ReduxFormFieldset
-					name="renewal_schedule"
-					explanation={ translate( 'After what time should the subscription renew?' ) }
-					label={ translate( 'Renewal Schedule' ) }
-					component={ FormSelect }
-				>
-					<option value="1 week">{ translate( '1 Week' ) }</option>
-					<option value="1 month">{ translate( '1 Month' ) }</option>
-					<option value="1 year">{ translate( '1 Year' ) }</option>
-				</ReduxFormFieldset>
-			</div>
+				</div>
+			</form>
 		);
 	}
 }
@@ -301,20 +211,5 @@ export default compose(
 		form: REDUX_FORM_NAME,
 		enableReinitialize: true,
 		validate,
-	} ),
-	connect(
-		state => {
-			return {
-				isRecurringSubscription:
-					config.isEnabled( 'memberships' ) &&
-					isEditedSimplePaymentsRecurring( state, REDUX_FORM_NAME ),
-				isChoosingToAuthorizeStripeAccount:
-					getEditedSimplePaymentsStripeAccount( state, REDUX_FORM_NAME ) === 'authorize',
-				isChoosingToCreateStripeAccount:
-					getEditedSimplePaymentsStripeAccount( state, REDUX_FORM_NAME ) === 'create',
-				membershipsConnectedAccounts: getMembershipsConnectedAccounts( state ),
-			};
-		},
-		{ authorizeStripeAccount }
-	)
+	} )
 )( ProductForm );
