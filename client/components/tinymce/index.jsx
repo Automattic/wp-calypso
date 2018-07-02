@@ -49,6 +49,7 @@ import embedPlugin from './plugins/embed/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 import mentionsPlugin from './plugins/mentions/plugin';
+import membershipsPlugin from './plugins/simple-payments/memberships-plugin';
 import markdownPlugin from './plugins/markdown/plugin';
 import wpEmojiPlugin from './plugins/wpemoji/plugin';
 
@@ -78,6 +79,7 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 	markdownPlugin,
 	wpEmojiPlugin,
 	simplePaymentsPlugin,
+	membershipsPlugin,
 ].forEach( initializePlugin => initializePlugin() );
 
 /**
@@ -153,6 +155,10 @@ const PLUGINS = [
 	'wpcom/markdown',
 	'wpcom/simplepayments',
 ];
+
+if ( config.isEnabled( 'memberships' ) ) {
+	PLUGINS.push( 'wpcom/memberships' );
+}
 
 mentionsPlugin();
 PLUGINS.push( 'wpcom/mentions' );
