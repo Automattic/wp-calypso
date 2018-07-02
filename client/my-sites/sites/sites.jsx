@@ -16,7 +16,6 @@ import i18n from 'i18n-calypso';
  */
 import Card from 'components/card';
 import Main from 'components/main';
-import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
 import getSites from 'state/selectors/get-sites';
@@ -25,8 +24,6 @@ import { getSelectedSite } from 'state/ui/selectors';
 
 export const Sites = createReactClass( {
 	displayName: 'Sites',
-
-	mixins: [ observe( 'user' ) ],
 
 	propTypes: {
 		path: PropTypes.string.isRequired,
