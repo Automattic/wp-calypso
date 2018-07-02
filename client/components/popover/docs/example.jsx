@@ -4,133 +4,156 @@
  * External dependencies
  */
 
-import React, { PureComponent } from 'react';
+import React, { PureComponent } from "react";
 
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import Popover from "components/popover";
+import PopoverMenu from "components/popover/menu";
+import PopoverMenuItem from "components/popover/menu-item";
 
 const customPosition = { top: 300, left: 500 };
 
 class PopoverExample extends PureComponent {
-	constructor( props ) {
-		super( props );
+  constructor(props) {
+    super(props);
 
-		this.changePopoverPosition = this.changePopoverPosition.bind( this );
-		this.swapPopoverVisibility = this.swapPopoverVisibility.bind( this );
-		this.closePopover = this.closePopover.bind( this );
-		this.showPopoverMenu = this.showPopoverMenu.bind( this );
-		this.closePopoverMenu = this.closePopoverMenu.bind( this );
+    this.changePopoverPosition = this.changePopoverPosition.bind(this);
+    this.swapPopoverVisibility = this.swapPopoverVisibility.bind(this);
+    this.closePopover = this.closePopover.bind(this);
+    this.showPopoverMenu = this.showPopoverMenu.bind(this);
+    this.closePopoverMenu = this.closePopoverMenu.bind(this);
 
-		this.state = {
-			popoverPosition: 'bottom left',
-			showPopover: false,
-			showPopoverMenu: false,
-		};
-	}
+    this.state = {
+      popoverPosition: "bottom left",
+      showPopover: false,
+      showPopoverMenu: false
+    };
+  }
 
-	// set position for all popovers
-	changePopoverPosition( event ) {
-		this.setState( { popoverPosition: event.target.value } );
-	}
+  // set position for all popovers
+  changePopoverPosition(event) {
+    this.setState({ popoverPosition: event.target.value });
+  }
 
-	swapPopoverVisibility() {
-		this.setState( { showPopover: ! this.state.showPopover } );
-	}
+  swapPopoverVisibility() {
+    this.setState({ showPopover: !this.state.showPopover });
+  }
 
-	closePopover() {
-		this.setState( { showPopover: false } );
-	}
+  closePopover() {
+    this.setState({ showPopover: false });
+  }
 
-	showPopoverMenu() {
-		this.setState( {
-			showPopoverMenu: ! this.state.showPopoverMenu,
-		} );
-	}
+  showPopoverMenu() {
+    this.setState({
+      showPopoverMenu: !this.state.showPopoverMenu
+    });
+  }
 
-	closePopoverMenu() {
-		this.setState( { showPopoverMenu: false } );
-	}
+  closePopoverMenu() {
+    this.setState({ showPopoverMenu: false });
+  }
 
-	renderPopover() {
-		return (
-			<div>
-				<button className="button" ref="popoverButton" onClick={ this.swapPopoverVisibility }>
-					Show Popover
-				</button>
+  renderPopover() {
+    return (
+      <div>
+        <button
+          className="button"
+          ref="popoverButton"
+          onClick={this.swapPopoverVisibility}
+        >
+          Show Popover
+        </button>
 
-				<Popover
-					id="popover__basic-example"
-					isVisible={ this.state.showPopover }
-					onClose={ this.closePopover }
-					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
-					context={ this.refs && this.refs.popoverButton }
-					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
-				>
-					<div style={ { padding: '10px' } }>Simple Popover Instance</div>
-				</Popover>
-			</div>
-		);
-	}
+        <Popover
+          id="popover__basic-example"
+          isVisible={this.state.showPopover}
+          onClose={this.closePopover}
+          position={
+            this.state.popoverPosition !== "custom"
+              ? this.state.popoverPosition
+              : null
+          }
+          context={this.refs && this.refs.popoverButton}
+          customPosition={
+            this.state.popoverPosition === "custom" ? customPosition : null
+          }
+        >
+          <div style={{ padding: "10px" }}>Simple Popover Instance</div>
+        </Popover>
+      </div>
+    );
+  }
 
-	renderMenuPopover() {
-		return (
-			<div>
-				<button className="button" ref="popoverMenuButton" onClick={ this.showPopoverMenu }>
-					Show Popover Menu
-				</button>
+  renderMenuPopover() {
+    return (
+      <div>
+        <button
+          className="button"
+          ref="popoverMenuButton"
+          onClick={this.showPopoverMenu}
+        >
+          Show Popover Menu
+        </button>
 
-				<br />
+        <br />
 
-				<PopoverMenu
-					id="popover__menu-example"
-					isVisible={ this.state.showPopoverMenu }
-					onClose={ this.closePopoverMenu }
-					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
-					context={ this.refs && this.refs.popoverMenuButton }
-					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
-				>
-					<PopoverMenuItem action="A">Item A</PopoverMenuItem>
-					<PopoverMenuItem action="B">Item B</PopoverMenuItem>
-					<PopoverMenuItem action="C">Item C</PopoverMenuItem>
-				</PopoverMenu>
-			</div>
-		);
-	}
+        <PopoverMenu
+          id="popover__menu-example"
+          isVisible={this.state.showPopoverMenu}
+          onClose={this.closePopoverMenu}
+          position={
+            this.state.popoverPosition !== "custom"
+              ? this.state.popoverPosition
+              : null
+          }
+          context={this.refs && this.refs.popoverMenuButton}
+          customPosition={
+            this.state.popoverPosition === "custom" ? customPosition : null
+          }
+        >
+          <PopoverMenuItem action="A">Item A</PopoverMenuItem>
+          <PopoverMenuItem action="B">Item B</PopoverMenuItem>
+          <PopoverMenuItem action="C">Item C</PopoverMenuItem>
+        </PopoverMenu>
+      </div>
+    );
+  }
 
-	render() {
-		return (
-			<div>
-				<label>
-					Position
-					<select value={ this.state.popoverPosition } onChange={ this.changePopoverPosition }>
-						<option value="top">top</option>
-						<option value="top left">top left</option>
-						<option value="top right">top right</option>
-						<option value="left">left</option>
-						<option value="right">right</option>
-						<option value="bottom">bottom</option>
-						<option value="bottom left">bottom left</option>
-						<option value="bottom right">bottom right</option>
-						<option value="custom">custom</option>
-					</select>
-				</label>
+  render() {
+    return (
+      <div>
+        <label>
+          Position
+          <select
+            value={this.state.popoverPosition}
+            onChange={this.changePopoverPosition}
+          >
+            <option value="top">top</option>
+            <option value="top left">top left</option>
+            <option value="top right">top right</option>
+            <option value="left">left</option>
+            <option value="right">right</option>
+            <option value="bottom">bottom</option>
+            <option value="bottom left">bottom left</option>
+            <option value="bottom right">bottom right</option>
+            <option value="custom">custom</option>
+          </select>
+        </label>
 
-				<hr />
+        <hr />
 
-				{ this.renderPopover() }
+        {this.renderPopover()}
 
-				<hr />
+        <hr />
 
-				{ this.renderMenuPopover() }
-			</div>
-		);
-	}
+        {this.renderMenuPopover()}
+      </div>
+    );
+  }
 }
 
-PopoverExample.displayName = 'Popover';
+PopoverExample.displayName = "Popover";
 
 export default PopoverExample;

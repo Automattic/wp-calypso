@@ -2,21 +2,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React from "react";
 
 /**
  * Internal dependencies
  */
-import MarkedLines from '../index';
+import MarkedLines from "../index";
 
-MarkedLines.displayName = 'MarkedLines';
+MarkedLines.displayName = "MarkedLines";
 
-const MarkedLinesExample = ( { exampleCode } ) => exampleCode;
+const MarkedLinesExample = ({ exampleCode }) => exampleCode;
 
-MarkedLinesExample.displayName = 'MarkedLines';
+MarkedLinesExample.displayName = "MarkedLines";
 
 MarkedLinesExample.defaultProps = {
-	exampleCode: `
+  exampleCode: `
 		<MarkedLines
 			context={ {
 				1: 'add :: Num a => a -> a -> a',
@@ -35,7 +35,7 @@ MarkedLinesExample.defaultProps = {
 				},
 			} }
 		/>
-	`,
+	`
 };
 
 export default MarkedLinesExample;

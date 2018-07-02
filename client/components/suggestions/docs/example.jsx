@@ -4,57 +4,60 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
-import { noop } from 'lodash';
+import React, { Component } from "react";
+import { noop } from "lodash";
 
 /**
  * Internal dependencies
  */
-import SearchCard from 'components/search-card';
-import Suggestions from 'components/suggestions';
+import SearchCard from "components/search-card";
+import Suggestions from "components/suggestions";
 
 class SuggestionsExample extends Component {
-	static displayName = 'Suggestions';
+  static displayName = "Suggestions";
 
-	static hints = [ 'Foo', 'Bar', 'Baz' ];
+  static hints = ["Foo", "Bar", "Baz"];
 
-	state = {
-		query: '',
-	};
+  state = {
+    query: ""
+  };
 
-	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
+  setSuggestionsRef = ref => (this.suggestionsRef = ref);
 
-	hideSuggestions = () => this.setState( { query: '' } );
+  hideSuggestions = () => this.setState({ query: "" });
 
-	handleSearch = query => this.setState( { query: query } );
+  handleSearch = query => this.setState({ query: query });
 
-	handleKeyDown = event => this.suggestionsRef.handleKeyEvent( event );
+  handleKeyDown = event => this.suggestionsRef.handleKeyEvent(event);
 
-	getSuggestions() {
-		return SuggestionsExample.hints
-			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
-			.map( hint => ( { label: hint } ) );
-	}
+  getSuggestions() {
+    return SuggestionsExample.hints
+      .filter(
+        hint =>
+          this.state.query && hint.match(new RegExp(this.state.query, "i"))
+      )
+      .map(hint => ({ label: hint }));
+  }
 
-	render() {
-		return (
-			<div className="docs__suggestions-container">
-				<SearchCard
-					disableAutocorrect
-					onSearch={ this.handleSearch }
-					onBlur={ this.hideSuggestions }
-					onKeyDown={ this.handleKeyDown }
-					placeholder="Type Foo, Bar or Baz..."
-				/>
-				<Suggestions
-					ref={ this.setSuggestionsRef }
-					query={ this.state.query }
-					suggestions={ this.getSuggestions() }
-					suggest={ noop }
-				/>
-			</div>
-		);
-	}
+  render() {
+    return (
+      <div className="docs__suggestions-container">
+        <SearchCard
+          disableAutocorrect
+          onSearch={this.handleSearch}
+          onBlur={this.hideSuggestions}
+          onKeyDown={this.handleKeyDown}
+          placeholder="Type Foo, Bar or Baz..."
+        />
+        <Suggestions
+          ref={this.setSuggestionsRef}
+          query={this.state.query}
+          suggestions={this.getSuggestions()}
+          suggest={noop}
+        />
+      </div>
+    );
+  }
 }
 
 export default SuggestionsExample;

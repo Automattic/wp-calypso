@@ -4,21 +4,21 @@
  * External dependencies
  */
 
-import React from 'react';
+import React from "react";
 
 /**
  * Internal dependencies
  */
-import ClipboardButtonInput from '../';
+import ClipboardButtonInput from "../";
 
 export default class extends React.PureComponent {
-	static displayName = 'ClipboardButtonInput';
+  static displayName = "ClipboardButtonInput";
 
-	render() {
-		return (
-			<div>
-				<ClipboardButtonInput value="https://example.wordpress.com/" />
-			</div>
-		);
-	}
+  render() {
+    return (
+      <div>
+        <ClipboardButtonInput value="https://example.wordpress.com/" />
+      </div>
+    );
+  }
 }

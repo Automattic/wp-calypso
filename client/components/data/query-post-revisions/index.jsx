@@ -4,54 +4,57 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { Component } from "react";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import { requestPostRevisions } from 'state/posts/revisions/actions';
-import { getEditedPostValue } from 'state/posts/selectors';
+import { requestPostRevisions } from "state/posts/revisions/actions";
+import { getEditedPostValue } from "state/posts/selectors";
 
 class QueryPostRevisions extends Component {
-	componentWillMount() {
-		this.request();
-	}
+  componentWillMount() {
+    this.request();
+  }
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.siteId === prevProps.siteId && this.props.postId === prevProps.postId ) {
-			return;
-		}
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.siteId === prevProps.siteId &&
+      this.props.postId === prevProps.postId
+    ) {
+      return;
+    }
 
-		this.request();
-	}
+    this.request();
+  }
 
-	request() {
-		const { comparisons, postId, postType, siteId } = this.props;
-		this.props.requestPostRevisions( siteId, postId, postType, comparisons );
-	}
+  request() {
+    const { comparisons, postId, postType, siteId } = this.props;
+    this.props.requestPostRevisions(siteId, postId, postType, comparisons);
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 QueryPostRevisions.propTypes = {
-	comparisons: PropTypes.array,
-	postId: PropTypes.number,
-	siteId: PropTypes.number,
+  comparisons: PropTypes.array,
+  postId: PropTypes.number,
+  siteId: PropTypes.number,
 
-	// connected to state
-	postType: PropTypes.string,
+  // connected to state
+  postType: PropTypes.string,
 
-	// connected to dispatch
-	requestPostRevisions: PropTypes.func,
+  // connected to dispatch
+  requestPostRevisions: PropTypes.func
 };
 
 export default connect(
-	( state, { postId, siteId } ) => ( {
-		postType: getEditedPostValue( state, siteId, postId, 'type' ),
-	} ),
-	{ requestPostRevisions }
-)( QueryPostRevisions );
+  (state, { postId, siteId }) => ({
+    postType: getEditedPostValue(state, siteId, postId, "type")
+  }),
+  { requestPostRevisions }
+)(QueryPostRevisions);

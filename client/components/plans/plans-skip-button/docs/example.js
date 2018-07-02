@@ -3,23 +3,23 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent } from "react";
 
 /**
  * Internal dependencies
  */
-import PlansSkipButton from 'components/plans/plans-skip-button';
+import PlansSkipButton from "components/plans/plans-skip-button";
 
 class PlansSkipButtonExample extends PureComponent {
-	static displayName = 'PlansSkipButton';
+  static displayName = "PlansSkipButton";
 
-	handleClick = () => {
-		console.log( 'PlansSkipButton was clicked' );
-	};
+  handleClick = () => {
+    console.log("PlansSkipButton was clicked");
+  };
 
-	render() {
-		return <PlansSkipButton onClick={ this.handleClick } />;
-	}
+  render() {
+    return <PlansSkipButton onClick={this.handleClick} />;
+  }
 }
 
 export default PlansSkipButtonExample;

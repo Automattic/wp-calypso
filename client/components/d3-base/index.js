@@ -3,11 +3,11 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { isEmpty } from 'lodash';
-import { select as d3Select } from 'd3-selection';
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import { isEmpty } from "lodash";
+import { select as d3Select } from "d3-selection";
 
 /**
  * Provides foundation to use D3 within React.
@@ -21,112 +21,115 @@ import { select as d3Select } from 'd3-selection';
  * phase' (i.e. in 'componentDidMount' and 'componentDidUpdate' methods).
  */
 export default class D3Base extends Component {
-	static propTypes = {
-		className: PropTypes.string,
-		data: PropTypes.any, // required to detect changes in data
-		drawChart: PropTypes.func.isRequired,
-		getParams: PropTypes.func.isRequired,
-	};
+  static propTypes = {
+    className: PropTypes.string,
+    data: PropTypes.any, // required to detect changes in data
+    drawChart: PropTypes.func.isRequired,
+    getParams: PropTypes.func.isRequired
+  };
 
-	state = {
-		data: null,
-		params: null,
-		drawChart: null,
-		getParams: null,
-	};
+  state = {
+    data: null,
+    params: null,
+    drawChart: null,
+    getParams: null
+  };
 
-	chartRef = React.createRef();
+  chartRef = React.createRef();
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		let state = {};
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let state = {};
 
-		if ( nextProps.data !== prevState.data ) {
-			state = { ...state, data: nextProps.data };
-		}
+    if (nextProps.data !== prevState.data) {
+      state = { ...state, data: nextProps.data };
+    }
 
-		if ( nextProps.drawChart !== prevState.drawChart ) {
-			state = { ...state, drawChart: nextProps.drawChart };
-		}
+    if (nextProps.drawChart !== prevState.drawChart) {
+      state = { ...state, drawChart: nextProps.drawChart };
+    }
 
-		if ( nextProps.getParams !== prevState.getParams ) {
-			state = { ...state, getParams: nextProps.getParams };
-		}
+    if (nextProps.getParams !== prevState.getParams) {
+      state = { ...state, getParams: nextProps.getParams };
+    }
 
-		if ( ! isEmpty( state ) ) {
-			return { ...state, params: null };
-		}
+    if (!isEmpty(state)) {
+      return { ...state, params: null };
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	componentDidMount() {
-		window.addEventListener( 'resize', this.updateParams );
+  componentDidMount() {
+    window.addEventListener("resize", this.updateParams);
 
-		this.drawChart();
-	}
+    this.drawChart();
+  }
 
-	shouldComponentUpdate( nextProps, nextState ) {
-		return (
-			( nextState.params !== null && this.state.params !== nextState.params ) ||
-			this.state.data !== nextState.data
-		);
-	}
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      (nextState.params !== null && this.state.params !== nextState.params) ||
+      this.state.data !== nextState.data
+    );
+  }
 
-	componentDidUpdate() {
-		this.drawChart();
-	}
+  componentDidUpdate() {
+    this.drawChart();
+  }
 
-	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.updateParams );
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateParams);
 
-		this.deleteChart();
-	}
+    this.deleteChart();
+  }
 
-	deleteChart() {
-		d3Select( this.chartRef.current )
-			.selectAll( 'svg' )
-			.remove();
-	}
+  deleteChart() {
+    d3Select(this.chartRef.current)
+      .selectAll("svg")
+      .remove();
+  }
 
-	/**
-	 * Renders the chart, or triggers a rendering by updating the list of params.
-	 */
-	drawChart() {
-		if ( ! this.state.params ) {
-			this.updateParams();
-			return;
-		}
+  /**
+   * Renders the chart, or triggers a rendering by updating the list of params.
+   */
+  drawChart() {
+    if (!this.state.params) {
+      this.updateParams();
+      return;
+    }
 
-		const svg = this.getContainer();
-		this.props.drawChart( svg, this.state.params );
-	}
+    const svg = this.getContainer();
+    this.props.drawChart(svg, this.state.params);
+  }
 
-	getContainer() {
-		const { className } = this.props;
-		const { width, height } = this.state.params;
+  getContainer() {
+    const { className } = this.props;
+    const { width, height } = this.state.params;
 
-		this.deleteChart();
+    this.deleteChart();
 
-		const svg = d3Select( this.chartRef.current )
-			.append( 'svg' )
-			.attr( 'viewBox', `0 0 ${ width } ${ height }` )
-			.attr( 'preserveAspectRatio', 'xMidYMid meet' );
+    const svg = d3Select(this.chartRef.current)
+      .append("svg")
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("preserveAspectRatio", "xMidYMid meet");
 
-		if ( className ) {
-			svg.attr( 'class', `${ className }__viewbox` );
-		}
+    if (className) {
+      svg.attr("class", `${className}__viewbox`);
+    }
 
-		return svg.append( 'g' );
-	}
+    return svg.append("g");
+  }
 
-	updateParams = () => {
-		const params = this.state.getParams( this.chartRef.current );
-		this.setState( { params } );
-	};
+  updateParams = () => {
+    const params = this.state.getParams(this.chartRef.current);
+    this.setState({ params });
+  };
 
-	render() {
-		return (
-			<div className={ classNames( 'd3-base', this.props.className ) } ref={ this.chartRef } />
-		);
-	}
+  render() {
+    return (
+      <div
+        className={classNames("d3-base", this.props.className)}
+        ref={this.chartRef}
+      />
+    );
+  }
 }

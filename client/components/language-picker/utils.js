@@ -5,8 +5,8 @@
 /**
  * External dependencies
  */
-import { find, get, includes, isArray } from 'lodash';
-import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
+import { find, get, includes, isArray } from "lodash";
+import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from "./constants";
 
 /**
  * Returns territory slug from constant: LANGUAGE_GROUPS
@@ -15,8 +15,8 @@ import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
  * @param {Array} languageGroups collection of territory data
  * @returns {String} territory slug
  */
-export function getLanguageGroupById( id, languageGroups = LANGUAGE_GROUPS ) {
-	return find( languageGroups, l => l.id === id );
+export function getLanguageGroupById(id, languageGroups = LANGUAGE_GROUPS) {
+  return find(languageGroups, l => l.id === id);
 }
 
 /**
@@ -28,12 +28,14 @@ export function getLanguageGroupById( id, languageGroups = LANGUAGE_GROUPS ) {
  * @returns {String} language group id
  */
 export function getLanguageGroupFromTerritoryId(
-	territoryId,
-	languageGroups = LANGUAGE_GROUPS,
-	defaultLanguageGroup = DEFAULT_LANGUAGE_GROUP
+  territoryId,
+  languageGroups = LANGUAGE_GROUPS,
+  defaultLanguageGroup = DEFAULT_LANGUAGE_GROUP
 ) {
-	const languageGroup = find( languageGroups, t => includes( t.subTerritories, territoryId ) );
-	return languageGroup ? languageGroup.id : defaultLanguageGroup;
+  const languageGroup = find(languageGroups, t =>
+    includes(t.subTerritories, territoryId)
+  );
+  return languageGroup ? languageGroup.id : defaultLanguageGroup;
 }
 
 /**
@@ -44,13 +46,17 @@ export function getLanguageGroupFromTerritoryId(
  * @param {Boolean} openInPopular  if langSlug is popular return popular language group id
  * @returns {String} language group id
  */
-export function getLanguageGroupByLangSlug( langSlug, languages, openInPopular = false ) {
-	const language = find( languages, l => l.langSlug === langSlug );
-	const territoryId =
-		language && isArray( language.territories ) ? language.territories[ 0 ] : null;
-	return get( language, 'popular', null ) && openInPopular === true
-		? 'popular'
-		: getLanguageGroupFromTerritoryId( territoryId );
+export function getLanguageGroupByLangSlug(
+  langSlug,
+  languages,
+  openInPopular = false
+) {
+  const language = find(languages, l => l.langSlug === langSlug);
+  const territoryId =
+    language && isArray(language.territories) ? language.territories[0] : null;
+  return get(language, "popular", null) && openInPopular === true
+    ? "popular"
+    : getLanguageGroupFromTerritoryId(territoryId);
 }
 
 /**
@@ -62,12 +68,14 @@ export function getLanguageGroupByLangSlug( langSlug, languages, openInPopular =
  * @returns {String} language group id
  */
 export function getLanguageGroupByCountryCode(
-	countryCode,
-	languageGroups = LANGUAGE_GROUPS,
-	defaultLanguageGroup = DEFAULT_LANGUAGE_GROUP
+  countryCode,
+  languageGroups = LANGUAGE_GROUPS,
+  defaultLanguageGroup = DEFAULT_LANGUAGE_GROUP
 ) {
-	const languageGroup = find( languageGroups, t => includes( t.countries, countryCode ) );
-	return languageGroup ? languageGroup.id : defaultLanguageGroup;
+  const languageGroup = find(languageGroups, t =>
+    includes(t.countries, countryCode)
+  );
+  return languageGroup ? languageGroup.id : defaultLanguageGroup;
 }
 
 /**
@@ -77,19 +85,20 @@ export function getLanguageGroupByCountryCode(
  * @param {String} langSlug value of config.language[ langSlug ].langSlug
  * @returns {Object} { langCode: 'xx', langSubcode: 'xx' } | {}
  */
-export function getLanguageCodeLabels( langSlug ) {
-	const languageCodeLabels = {};
+export function getLanguageCodeLabels(langSlug) {
+  const languageCodeLabels = {};
 
-	if ( ! langSlug ) {
-		return languageCodeLabels;
-	}
+  if (!langSlug) {
+    return languageCodeLabels;
+  }
 
-	const languageCodes = langSlug.split( /[_-]+/ );
+  const languageCodes = langSlug.split(/[_-]+/);
 
-	languageCodeLabels.langCode = languageCodes[ 0 ];
-	languageCodeLabels.langSubcode = langSlug.indexOf( '-' ) > -1 ? languageCodes[ 1 ] : undefined;
+  languageCodeLabels.langCode = languageCodes[0];
+  languageCodeLabels.langSubcode =
+    langSlug.indexOf("-") > -1 ? languageCodes[1] : undefined;
 
-	return {
-		...languageCodeLabels,
-	};
+  return {
+    ...languageCodeLabels
+  };
 }
