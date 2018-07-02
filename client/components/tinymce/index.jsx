@@ -79,7 +79,6 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 	markdownPlugin,
 	wpEmojiPlugin,
 	simplePaymentsPlugin,
-	membershipsPlugin,
 ].forEach( initializePlugin => initializePlugin() );
 
 /**
@@ -157,6 +156,7 @@ const PLUGINS = [
 ];
 
 if ( config.isEnabled( 'memberships' ) ) {
+	membershipsPlugin();
 	PLUGINS.push( 'wpcom/memberships' );
 }
 
