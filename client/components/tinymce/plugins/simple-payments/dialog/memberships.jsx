@@ -16,7 +16,8 @@ import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
 import getSimplePayments from 'state/selectors/get-simple-payments';
-import QuerySimplePayments from 'components/data/query-simple-payments';
+import getMemberships from 'state/selectors/get-memberships';
+import QueryMemberships from 'components/data/query-memberships';
 import QuerySitePlans from 'components/data/query-site-plans';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
@@ -577,7 +578,7 @@ class MembershipsDialog extends Component {
 				additionalClassNames="editor-simple-payments-modal"
 			>
 				<TrackComponentView eventName="calypso_simple_payments_dialog_view" />
-				<QuerySimplePayments siteId={ siteId } />
+				<QueryMemberships siteId={ siteId } />
 
 				{ ( ! currencyCode || shouldQuerySitePlans ) && <QuerySitePlans siteId={ siteId } /> }
 
@@ -620,7 +621,7 @@ export default connect( ( state, { siteId } ) => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		paymentButtons: getSimplePayments( state, siteId ),
+		paymentButtons: getMemberships( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
 		currentlyEditedIsMembershipSubscription: isEditedSimplePaymentsRecurring(
