@@ -44,29 +44,6 @@ function castProductIDsToNumbers( cartItems ) {
 	} );
 }
 
-
-function preprocessCartForServer( cart ) {
-	let newCart;
-
-	newCart = pick(
-		cart,
-		'products',
-		'coupon',
-		'is_coupon_applied',
-		'installments',
-		'currency',
-		'temporary',
-		'extra'
-	);
-
-	const newCartItems = cart.products.map( function( cartItem ) {
-		return pick( cartItem, 'product_id', 'meta', 'free_trial', 'volume', 'extra' );
-	} );
-	newCart = assign( {}, newCart, { products: newCartItems } );
-
-	return newCart;
-}
-
 function CartSynchronizer( cartKey, wpcom ) {
 	if ( ! ( this instanceof CartSynchronizer ) ) {
 		return new CartSynchronizer( cartKey, wpcom );
