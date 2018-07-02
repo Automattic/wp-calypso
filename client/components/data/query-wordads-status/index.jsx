@@ -15,19 +15,23 @@ import { isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { requestWordadsStatus } from 'state/wordads/status/actions';
 
 class QueryWordadsStatus extends Component {
-	componentWillMount() {
-		this.refreshSite( this.props.siteId );
+	static propTypes = {
+		isRequestingWordadsStatus: PropTypes.bool,
+		requestWordadsStatus: PropTypes.func,
+		siteId: PropTypes.number,
+	};
+
+	static defaultProps = {
+		requestWordadsStatus: () => {},
+	};
+
+	componentDidMount() {
+		this.props.requestWordadsStatus( this.props.siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId ) {
-			this.refreshSite( nextProps.siteId );
-		}
-	}
-
-	refreshSite( siteId ) {
-		if ( ! this.props.isRequestingWordadsStatus ) {
-			this.props.requestWordadsStatus( siteId );
+	componentDidUpdate( prevProps ) {
+		if ( this.props.siteId !== prevProps.siteId ) {
+			this.props.requestWordadsStatus( this.props.siteId );
 		}
 	}
 
@@ -35,16 +39,6 @@ class QueryWordadsStatus extends Component {
 		return null;
 	}
 }
-
-QueryWordadsStatus.propTypes = {
-	isRequestingWordadsStatus: PropTypes.bool,
-	requestWordadsStatus: PropTypes.func,
-	siteId: PropTypes.number,
-};
-
-QueryWordadsStatus.defaultProps = {
-	requestWordadsStatus: () => {},
-};
 
 export default connect(
 	( state, props ) => ( {

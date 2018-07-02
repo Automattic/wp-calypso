@@ -15,19 +15,23 @@ import { isRequestingWordadsEarnings } from 'state/wordads/earnings/selectors';
 import { requestWordadsEarnings } from 'state/wordads/earnings/actions';
 
 class QueryWordadsEarnings extends Component {
-	componentWillMount() {
-		this.refreshSite( this.props.siteId );
+	static propTypes = {
+		isRequestingWordadsEarnings: PropTypes.bool,
+		requestWordadsEarnings: PropTypes.func,
+		siteId: PropTypes.number,
+	};
+
+	static defaultProps = {
+		requestWordadsEarnings: () => {},
+	};
+
+	componentDidMount() {
+		this.props.requestWordadsEarnings( this.props.siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId ) {
-			this.refreshSite( nextProps.siteId );
-		}
-	}
-
-	refreshSite( siteId ) {
-		if ( ! this.props.isRequestingWordadsEarnings ) {
-			this.props.requestWordadsEarnings( siteId );
+	componentDidUpdate( prevProps ) {
+		if ( this.props.siteId !== prevProps.siteId ) {
+			this.props.requestWordadsEarnings( this.props.siteId );
 		}
 	}
 
@@ -35,16 +39,6 @@ class QueryWordadsEarnings extends Component {
 		return null;
 	}
 }
-
-QueryWordadsEarnings.propTypes = {
-	isRequestingWordadsEarnings: PropTypes.bool,
-	requestWordadsEarnings: PropTypes.func,
-	siteId: PropTypes.number,
-};
-
-QueryWordadsEarnings.defaultProps = {
-	requestWordadsEarnings: () => {},
-};
 
 export default connect(
 	( state, props ) => ( {
