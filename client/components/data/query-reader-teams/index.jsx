@@ -4,30 +4,30 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { Component } from "react";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import { requestTeams } from 'state/reader/teams/actions';
+import { requestTeams } from "state/reader/teams/actions";
 
 class QueryReaderTeams extends Component {
-	componentWillMount() {
-		this.props.requestTeams();
-	}
+  componentWillMount() {
+    this.props.requestTeams();
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 QueryReaderTeams.propTypes = {
-	request: PropTypes.func,
+  request: PropTypes.func
 };
 
 export default connect(
-	null,
-	{ requestTeams }
-)( QueryReaderTeams );
+  null,
+  { requestTeams }
+)(QueryReaderTeams);

@@ -4,48 +4,51 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { Component } from "react";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import isRequestingSiteMonitorSettings from 'state/selectors/is-requesting-site-monitor-settings';
-import { requestSiteMonitorSettings } from 'state/sites/monitor/actions';
+import isRequestingSiteMonitorSettings from "state/selectors/is-requesting-site-monitor-settings";
+import { requestSiteMonitorSettings } from "state/sites/monitor/actions";
 
 class QuerySiteMonitorSettings extends Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		// Connected props
-		requestingSiteMonitorSettings: PropTypes.bool,
-		requestSiteMonitorSettings: PropTypes.func,
-	};
+  static propTypes = {
+    siteId: PropTypes.number.isRequired,
+    // Connected props
+    requestingSiteMonitorSettings: PropTypes.bool,
+    requestSiteMonitorSettings: PropTypes.func
+  };
 
-	componentDidMount() {
-		this.request( this.props );
-	}
+  componentDidMount() {
+    this.request(this.props);
+  }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
-		}
-	}
+  componentWillReceiveProps(nextProps) {
+    if (this.props.siteId !== nextProps.siteId) {
+      this.request(nextProps);
+    }
+  }
 
-	request( props ) {
-		if ( props.siteId && ! props.requestingSiteMonitorSettings ) {
-			props.requestSiteMonitorSettings( props.siteId );
-		}
-	}
+  request(props) {
+    if (props.siteId && !props.requestingSiteMonitorSettings) {
+      props.requestSiteMonitorSettings(props.siteId);
+    }
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		requestingSiteMonitorSettings: isRequestingSiteMonitorSettings( state, siteId ),
-	} ),
-	{ requestSiteMonitorSettings }
-)( QuerySiteMonitorSettings );
+  (state, { siteId }) => ({
+    requestingSiteMonitorSettings: isRequestingSiteMonitorSettings(
+      state,
+      siteId
+    )
+  }),
+  { requestSiteMonitorSettings }
+)(QuerySiteMonitorSettings);

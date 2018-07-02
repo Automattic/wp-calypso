@@ -4,47 +4,49 @@
  * External dependencies
  */
 
-import React from 'react';
+import React from "react";
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import Card from "components/card";
+import CompactCard from "components/card/compact";
 
-Card.displayName = 'Card';
-CompactCard.displayName = 'CompactCard';
+Card.displayName = "Card";
+CompactCard.displayName = "CompactCard";
 
 class Cards extends React.Component {
-	static displayName = 'Card';
+  static displayName = "Card";
 
-	state = {
-		compactCards: false,
-	};
+  state = {
+    compactCards: false
+  };
 
-	static defaultProps = {
-		exampleCode: (
-			<div>
-				<Card>I am a Card.</Card>
-				<Card>I am another Card.</Card>
-				<Card className="awesome sauce">I am a third Card with custom classes!</Card>
-				<Card href="#cards">I am a linkable Card</Card>
-				<Card href="#cards" target="_blank" rel="noopener noreferrer">
-					I am a externally linked Card
-				</Card>
-				<Card highlight="info">I am a Card, highlighted as info</Card>
-				<Card highlight="success">I am a Card, highlighted as success</Card>
-				<Card highlight="error">I am a Card, highlighted as error</Card>
-				<Card highlight="warning">I am a Card, highlighted as warning</Card>
-				<CompactCard>I am a CompactCard.</CompactCard>
-				<CompactCard>I am another CompactCard.</CompactCard>
-			</div>
-		),
-	};
+  static defaultProps = {
+    exampleCode: (
+      <div>
+        <Card>I am a Card.</Card>
+        <Card>I am another Card.</Card>
+        <Card className="awesome sauce">
+          I am a third Card with custom classes!
+        </Card>
+        <Card href="#cards">I am a linkable Card</Card>
+        <Card href="#cards" target="_blank" rel="noopener noreferrer">
+          I am a externally linked Card
+        </Card>
+        <Card highlight="info">I am a Card, highlighted as info</Card>
+        <Card highlight="success">I am a Card, highlighted as success</Card>
+        <Card highlight="error">I am a Card, highlighted as error</Card>
+        <Card highlight="warning">I am a Card, highlighted as warning</Card>
+        <CompactCard>I am a CompactCard.</CompactCard>
+        <CompactCard>I am another CompactCard.</CompactCard>
+      </div>
+    )
+  };
 
-	render() {
-		return this.props.exampleCode;
-	}
+  render() {
+    return this.props.exampleCode;
+  }
 }
 
 export default Cards;

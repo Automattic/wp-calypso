@@ -3,26 +3,27 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React from "react";
 
 /**
  * Internal dependencies
  */
-import Animate from '../index';
+import Animate from "../index";
 
-function AnimateExample( props ) {
-	return props.exampleCode;
+function AnimateExample(props) {
+  return props.exampleCode;
 }
 
-Animate.displayName = 'Animate';
-AnimateExample.displayName = 'Animate';
+Animate.displayName = "Animate";
+AnimateExample.displayName = "Animate";
 
 AnimateExample.defaultProps = {
-	exampleCode: (
-		<Animate type="appear">
-			This content will animate on rendering. You may have to reload the page to see the effect.
-		</Animate>
-	),
+  exampleCode: (
+    <Animate type="appear">
+      This content will animate on rendering. You may have to reload the page to
+      see the effect.
+    </Animate>
+  )
 };
 
 export default AnimateExample;

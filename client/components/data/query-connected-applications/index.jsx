@@ -3,30 +3,30 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { Component } from "react";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import { requestConnectedApplications } from 'state/connected-applications/actions';
+import { requestConnectedApplications } from "state/connected-applications/actions";
 
 class QueryConnectedApplications extends Component {
-	static propTypes = {
-		requestConnectedApplications: PropTypes.func,
-	};
+  static propTypes = {
+    requestConnectedApplications: PropTypes.func
+  };
 
-	componentDidMount() {
-		this.props.requestConnectedApplications();
-	}
+  componentDidMount() {
+    this.props.requestConnectedApplications();
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 export default connect(
-	null,
-	{ requestConnectedApplications }
-)( QueryConnectedApplications );
+  null,
+  { requestConnectedApplications }
+)(QueryConnectedApplications);

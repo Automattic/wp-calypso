@@ -1,19 +1,19 @@
 /** @format */
 /**
-* External dependencies
-*/
-import React from 'react';
+ * External dependencies
+ */
+import React from "react";
 
 /**
  * Internal dependencies
  */
-import JetpackColophon from 'components/jetpack-colophon';
+import JetpackColophon from "components/jetpack-colophon";
 
 export default function JetpackColophonExample() {
-	return (
-		<div style={ { fontSize: '15px' } }>
-			<JetpackColophon />
-		</div>
-	);
+  return (
+    <div style={{ fontSize: "15px" }}>
+      <JetpackColophon />
+    </div>
+  );
 }
-JetpackColophonExample.displayName = 'JetpackColophonExample';
+JetpackColophonExample.displayName = "JetpackColophonExample";

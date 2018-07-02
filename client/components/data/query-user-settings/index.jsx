@@ -4,25 +4,25 @@
  * External dependencies
  */
 
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { Component } from "react";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import { fetchUserSettings } from 'state/user-settings/actions';
+import { fetchUserSettings } from "state/user-settings/actions";
 
 class QueryUserSettings extends Component {
-	componentWillMount() {
-		this.props.fetchUserSettings();
-	}
+  componentWillMount() {
+    this.props.fetchUserSettings();
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 export default connect(
-	null,
-	{ fetchUserSettings }
-)( QueryUserSettings );
+  null,
+  { fetchUserSettings }
+)(QueryUserSettings);

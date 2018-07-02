@@ -4,61 +4,65 @@
  * External dependencies
  */
 
-import tinymce from 'tinymce/tinymce';
-import { createElement } from 'react';
-import { unmountComponentAtNode } from 'react-dom';
+import tinymce from "tinymce/tinymce";
+import { createElement } from "react";
+import { unmountComponentAtNode } from "react-dom";
 
 /**
  * Internal Dependencies
  */
-import SimplePaymentsDialog from './dialog';
-import { serialize, deserialize } from './shortcode-utils';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import SimplePaymentsDialog from "./dialog";
+import { serialize, deserialize } from "./shortcode-utils";
+import { renderWithReduxStore } from "lib/react-helpers";
 
 const simplePayments = editor => {
-	let node;
-	const store = editor.getParam( 'redux_store' );
+  let node;
+  const store = editor.getParam("redux_store");
 
-	editor.on( 'init', () => {
-		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
-	} );
+  editor.on("init", () => {
+    node = editor.getContainer().appendChild(document.createElement("div"));
+  });
 
-	editor.on( 'remove', () => {
-		unmountComponentAtNode( node );
-		node.parentNode.removeChild( node );
-		node = null;
-	} );
+  editor.on("remove", () => {
+    unmountComponentAtNode(node);
+    node.parentNode.removeChild(node);
+    node = null;
+  });
 
-	editor.addCommand( 'simplePaymentsButton', content => {
-		let editPaymentId = null;
-		if ( content ) {
-			const shortCodeData = deserialize( content );
-			editPaymentId = shortCodeData.id || null;
-		}
+  editor.addCommand("simplePaymentsButton", content => {
+    let editPaymentId = null;
+    if (content) {
+      const shortCodeData = deserialize(content);
+      editPaymentId = shortCodeData.id || null;
+    }
 
-		function renderModal( visibility = 'show' ) {
-			renderWithReduxStore(
-				createElement( SimplePaymentsDialog, {
-					showDialog: visibility === 'show',
-					editPaymentId,
-					onInsert( productData ) {
-						editor.execCommand( 'mceInsertContent', false, serialize( productData ) );
-						renderModal( 'hide' );
-					},
-					onClose() {
-						editor.focus();
-						renderModal( 'hide' );
-					},
-				} ),
-				node,
-				store
-			);
-		}
+    function renderModal(visibility = "show") {
+      renderWithReduxStore(
+        createElement(SimplePaymentsDialog, {
+          showDialog: visibility === "show",
+          editPaymentId,
+          onInsert(productData) {
+            editor.execCommand(
+              "mceInsertContent",
+              false,
+              serialize(productData)
+            );
+            renderModal("hide");
+          },
+          onClose() {
+            editor.focus();
+            renderModal("hide");
+          }
+        }),
+        node,
+        store
+      );
+    }
 
-		renderModal();
-	} );
+    renderModal();
+  });
 };
 
 export default () => {
-	tinymce.PluginManager.add( 'wpcom/simplepayments', simplePayments );
+  tinymce.PluginManager.add("wpcom/simplepayments", simplePayments);
 };

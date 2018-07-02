@@ -4,38 +4,38 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { Component } from "react";
+import { connect } from "react-redux";
 
 /**
  * Internal dependencies
  */
-import isRequestingBillingTransactions from 'state/selectors/is-requesting-billing-transactions';
-import { requestBillingTransactions } from 'state/billing-transactions/actions';
+import isRequestingBillingTransactions from "state/selectors/is-requesting-billing-transactions";
+import { requestBillingTransactions } from "state/billing-transactions/actions";
 
 class QueryBillingTransactions extends Component {
-	static propTypes = {
-		requestingBillingTransactions: PropTypes.bool,
-		requestBillingTransactions: PropTypes.func,
-	};
+  static propTypes = {
+    requestingBillingTransactions: PropTypes.bool,
+    requestBillingTransactions: PropTypes.func
+  };
 
-	componentDidMount() {
-		if ( this.props.requestingBillingTransactions ) {
-			return;
-		}
+  componentDidMount() {
+    if (this.props.requestingBillingTransactions) {
+      return;
+    }
 
-		this.props.requestBillingTransactions();
-	}
+    this.props.requestBillingTransactions();
+  }
 
-	render() {
-		return null;
-	}
+  render() {
+    return null;
+  }
 }
 
 export default connect(
-	state => ( {
-		requestingBillingTransactions: isRequestingBillingTransactions( state ),
-	} ),
-	{ requestBillingTransactions }
-)( QueryBillingTransactions );
+  state => ({
+    requestingBillingTransactions: isRequestingBillingTransactions(state)
+  }),
+  { requestBillingTransactions }
+)(QueryBillingTransactions);

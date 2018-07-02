@@ -2,21 +2,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React from "react";
 
 /**
  * Internal dependencies
  */
-import DiffViewer from '../index';
+import DiffViewer from "../index";
 
-DiffViewer.displayName = 'DiffViewer';
+DiffViewer.displayName = "DiffViewer";
 
-const DiffViewerExample = ( { exampleCode } ) => exampleCode;
+const DiffViewerExample = ({ exampleCode }) => exampleCode;
 
-DiffViewerExample.displayName = 'DiffViewer';
+DiffViewerExample.displayName = "DiffViewer";
 
 DiffViewerExample.defaultProps = {
-	exampleCode: `<DiffViewer diff={ \`diff --git a/circle.yml b/circle.yml
+  exampleCode: `<DiffViewer diff={ \`diff --git a/circle.yml b/circle.yml
 index 51455bdb14..bc0622d001 100644
 --- a/circle.yml
 +++ b/circle.yml
@@ -28,7 +28,7 @@ index 51455bdb14..bc0622d001 100644
  test:
    pre:
      - ? |
-\` } />`,
+\` } />`
 };
 
 export default DiffViewerExample;

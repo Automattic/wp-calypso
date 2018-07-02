@@ -4,17 +4,17 @@
  * External dependencies
  */
 
-import React from 'react';
+import React from "react";
 
 /**
  * Internal dependencies
  */
-import SitesDropdown from 'components/sites-dropdown';
+import SitesDropdown from "components/sites-dropdown";
 
 export default class extends React.Component {
-	static displayName = 'SitesDropdown';
+  static displayName = "SitesDropdown";
 
-	render() {
-		return <SitesDropdown />;
-	}
+  render() {
+    return <SitesDropdown />;
+  }
 }
