@@ -42,6 +42,7 @@ import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
+import { isSavingSiteSettings, isSiteSettingsSaveSuccessful } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
@@ -179,7 +180,14 @@ class PodcastingDetails extends Component {
 	}
 
 	render() {
-		const { handleSubmitForm, siteSlug, siteId, translate, isPodcastingEnabled } = this.props;
+		const {
+			handleSubmitForm,
+			siteSlug,
+			siteId,
+			translate,
+			isPodcastingEnabled,
+			isSavingSettings,
+		} = this.props;
 		if ( ! siteId ) {
 			return null;
 		}
@@ -213,7 +221,7 @@ class PodcastingDetails extends Component {
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
 					{ isPodcastingEnabled && (
 						<div className="podcasting-details__disable-podcasting">
-							<Button onClick={ this.onCategoryCleared } scary>
+							<Button onClick={ this.onCategoryCleared } scary busy={ isSavingSettings }>
 								{ translate( 'Disable Podcast' ) }
 							</Button>
 							<p>
@@ -350,16 +358,23 @@ class PodcastingDetails extends Component {
 	};
 
 	onCategoryCleared = () => {
-		const { updateFields, clearDirtyFields, submitForm, siteSlug } = this.props;
+		const {
+			updateFields,
+			clearDirtyFields,
+			submitForm,
+			siteSlug,
+			isSaveRequestSuccessful,
+		} = this.props;
 
 		updateFields( { podcasting_category_id: '0' }, () => {
 			submitForm();
 		} );
 
-		// Save changed fields and allow redirect
-		clearDirtyFields();
-
-		page.redirect( '/settings/writing/' + siteSlug );
+		if ( isSaveRequestSuccessful ) {
+			// Save changed fields and allow redirect
+			clearDirtyFields();
+			page.redirect( '/settings/writing/' + siteSlug );
+		}
 	};
 
 	onCoverImageRemoved = () => {
@@ -424,6 +439,8 @@ const connectComponent = connect( ( state, ownProps ) => {
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
+		isSavingSettings: isSavingSiteSettings( state, siteId ),
+		isSaveRequestSuccessful: isSiteSettingsSaveSuccessful( state, siteId ),
 	};
 } );
 
