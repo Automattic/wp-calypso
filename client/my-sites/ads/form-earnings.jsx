@@ -15,13 +15,12 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import Card from 'components/card';
 import Gridicon from 'gridicons';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getWordAdsEarningsForSite } from 'state/wordads/earnings/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getWordAdsEarnings } from 'state/wordads/earnings/selectors';
 import QueryWordadsEarnings from 'components/data/query-wordads-earnings';
 
 class AdsFormEarnings extends Component {
 	static propTypes = {
-		site: PropTypes.object,
 		siteId: PropTypes.number,
 		earnings: PropTypes.object,
 	};
@@ -351,12 +350,10 @@ class AdsFormEarnings extends Component {
 }
 
 export default connect( state => {
-	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		site,
 		siteId,
-		earnings: getWordAdsEarningsForSite( state, site ),
+		earnings: getWordAdsEarnings( state, siteId ),
 	};
 } )( localize( AdsFormEarnings ) );
