@@ -158,8 +158,8 @@ function removeUnneededStep( flowName ) {
 }
 
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
-	let action = payload.action,
-		step = addTimestamp( action.data );
+	const action = payload.action;
+	const step = addTimestamp( action.data );
 
 	Dispatcher.waitFor( [ SignupDependencyStore.dispatchToken ] );
 
