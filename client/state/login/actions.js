@@ -68,10 +68,10 @@ export const createTimingOutPromise = ms =>
  * Makes a request to a given link in an iframe
  *
  * @param {string} loginLink the login link to load
- * @param {int} requestTimeout amount of time to allow the link to load, default 5000ms
+ * @param {int} requestTimeout amount of time to allow the link to load, default 25s
  * @returns {Promise} a promise that will be resolved if the link was successfully loaded
  */
-export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 5000 ) => {
+export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
 	let iframe;
 	const iframeLoadPromise = new Promise( resolve => {
 		iframe = document.createElement( 'iframe' );
