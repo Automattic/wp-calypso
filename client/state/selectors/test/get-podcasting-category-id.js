@@ -5,7 +5,6 @@
  */
 import { expect } from 'chai';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
-import TermQueryManager from 'lib/query-manager/term';
 
 describe( 'getPodcastingCategoryId', () => {
 	test( 'returns null if settings are missing', () => {
