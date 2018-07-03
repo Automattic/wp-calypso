@@ -12,6 +12,7 @@ import {
 	redirectJetpack,
 	redirectDefaultLocale,
 } from './controller';
+import { setShouldServerSideRenderLogin } from './ssr';
 import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
 
 export default router => {
@@ -40,6 +41,7 @@ export default router => {
 			redirectDefaultLocale,
 			setUpLocale,
 			login,
+			setShouldServerSideRenderLogin,
 			makeLayout
 		);
 	}
