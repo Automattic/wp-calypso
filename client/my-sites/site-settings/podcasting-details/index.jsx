@@ -42,7 +42,7 @@ import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
-import { isSavingSiteSettings, isSiteSettingsSaveSuccessful } from 'state/site-settings/selectors';
+import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
@@ -87,6 +87,7 @@ class PodcastingDetails extends Component {
 				primary={ true }
 				type="submit"
 				disabled={ isRequestingSettings || isSavingSettings || isRequestingCategories }
+				busy={ isSavingSettings }
 			>
 				{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 			</Button>
@@ -429,7 +430,6 @@ const connectComponent = connect( ( state, ownProps ) => {
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
 		isSavingSettings: isSavingSiteSettings( state, siteId ),
-		isSaveRequestSuccessful: isSiteSettingsSaveSuccessful( state, siteId ),
 	};
 } );
 
