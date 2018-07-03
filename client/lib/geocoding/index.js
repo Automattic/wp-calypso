@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import request from 'superagent';
+import { loadScript } from 'lib/load-script';
 
 /**
 + * Internal dependencies
@@ -14,28 +14,38 @@ import config from 'config';
 /**
  * Module variables
  */
-const GOOGLE_MAPS_API_BASE_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
+const GOOGLE_MAPS_API_BASE_URL = 'https://maps.googleapis.com/maps/api/js';
 const GOOGLE_MAPS_API_KEY = config( 'google_maps_and_places_api_key' );
+
+let geocoder;
 
 function queryGoogleMapsApi( queryParams ) {
 	return new Promise( ( resolve, reject ) => {
-		request
-			.get( GOOGLE_MAPS_API_BASE_URL )
-			.query( queryParams )
-			.end( ( error, response ) => {
-				if ( error || ! response.ok || 'OK' !== response.body.status ) {
-					return reject( error );
-				}
+		if ( geocoder ) {
+			return queryGeocoder( queryParams, resolve, reject );
+		}
 
-				resolve( response.body.results );
-			} );
+		loadScript( GOOGLE_MAPS_API_BASE_URL + '?key=' + GOOGLE_MAPS_API_KEY, function() {
+			// eslint-disable-next-line no-undef
+			geocoder = new google.maps.Geocoder();
+			return queryGeocoder( queryParams, resolve, reject );
+		} );
+	} );
+}
+
+function queryGeocoder( queryParams, resolve, reject ) {
+	geocode.geocode( queryParams, function( results, status ) {
+		if ( status === 'OK' ) {
+			return resolve( results );
+		}
+		reject( status );
 	} );
 }
 
 export function geocode( address ) {
-	return queryGoogleMapsApi( { address, key: GOOGLE_MAPS_API_KEY } );
+	return queryGoogleMapsApi( { address } );
 }
 
 export function reverseGeocode( latitude, longitude ) {
-	return queryGoogleMapsApi( { latlng: latitude + ',' + longitude, key: GOOGLE_MAPS_API_KEY } );
+	return queryGoogleMapsApi( { location: { lat: latitude, lng: longitude } } );
 }
