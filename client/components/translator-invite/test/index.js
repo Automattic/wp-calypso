@@ -46,18 +46,12 @@ describe( 'TranslatorInvite', () => {
 	} );
 
 	describe( 'TranslatorInvite with browser locales', () => {
-		let _navigator;
 		const browserLanguages = [ 'en-GB', 'en', 'en-US', 'en-AU', 'mt' ];
 		beforeEach( () => {
-			_navigator = global.navigator;
 			Object.defineProperty( global.navigator, 'languages', {
 				get: () => browserLanguages,
 				configurable: true,
 			} );
-		} );
-
-		afterEach( () => {
-			global.navigator = _navigator;
 		} );
 
 		test( 'should render using browser locales', () => {
@@ -88,7 +82,7 @@ describe( 'TranslatorInvite', () => {
 			expect( wrapper.find( '.translator-invite__content a' ).text() ).toBe( 'Ukrainian' );
 		} );
 
-		test( 'should render using path when pth is default', () => {
+		test( 'should render using path when path is default', () => {
 			const wrapper = shallow( <TranslatorInvite path="/log-in/en" { ...defaultProps } /> );
 			expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 1 );
 			expect( wrapper.find( '.translator-invite__content a' ).text() ).toBe( 'Maltese' );

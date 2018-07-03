@@ -86,8 +86,7 @@ export class TranslatorInvite extends Component {
 							rel="noopener noreferrer"
 						>
 							{ localizedLanguageNames[ locale ].en }
-						</a>{' '}
-						?
+						</a>?
 					</div>
 				</Notice>
 			);
