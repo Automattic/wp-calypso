@@ -96,6 +96,10 @@ export function combineXPostPair( postKey1, postKey2 ) {
 			...( postKey1.postIds || [ postKey1.postId ] ),
 			...( postKey2.postIds || [ postKey2.postId ] ),
 		],
+		feedIds: [
+			...( postKey1.feedIds || [ postKey1.feedId ] ),
+			...( postKey2.feedIds || [ postKey2.feedId ] ),
+		],
 		xPostMetadata: postKey1.xPostMetadata,
 	};
 
