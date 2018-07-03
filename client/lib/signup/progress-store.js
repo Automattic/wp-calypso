@@ -187,7 +187,7 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 		case 'CHANGE_SIGNUP_FLOW':
 			debug( 'change flow' );
-			removeUnneededStep( action.flow );
+			removeUnneededStep( action.flowName );
 			break;
 	}
 } );

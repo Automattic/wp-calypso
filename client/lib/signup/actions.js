@@ -74,10 +74,10 @@ const SignupActions = {
 		} );
 	},
 
-	changeSignupFlow( flow ) {
+	changeSignupFlow( flowName ) {
 		Dispatcher.handleViewAction( {
 			type: 'CHANGE_SIGNUP_FLOW',
-			flow,
+			flowName,
 		} );
 	},
 };
