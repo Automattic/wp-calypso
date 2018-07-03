@@ -167,7 +167,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
 			}
 
-			return this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
+			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
 		};
 
 		handleRadio = event => {
