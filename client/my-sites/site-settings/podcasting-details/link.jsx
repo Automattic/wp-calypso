@@ -20,6 +20,7 @@ import SectionHeader from 'components/section-header';
 import PodcastingPrivateSiteMessage from './private-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
+import { getTerm } from 'state/terms/selectors';
 import { getSupportSiteLocale } from 'lib/i18n-utils';
 
 class PodcastingLink extends Component {
@@ -39,7 +40,14 @@ class PodcastingLink extends Component {
 	}
 
 	renderCardBody() {
-		const { isPrivate, isPodcastingEnabled, detailsLink, translate } = this.props;
+		const {
+			isPrivate,
+			isPodcastingEnabled,
+			categoryName,
+			feedUrl,
+			detailsLink,
+			translate,
+		} = this.props;
 
 		if ( isPrivate ) {
 			return <PodcastingPrivateSiteMessage />;
@@ -71,7 +79,7 @@ class PodcastingLink extends Component {
 							{ translate(
 								'Publish blog posts in the {{strong}}%s{{/strong}} category to add new episodes.',
 								{
-									args: 'CATEGORY NAME',
+									args: categoryName,
 									components: { strong: <strong /> },
 								}
 							) }
@@ -83,15 +91,11 @@ class PodcastingLink extends Component {
 				</div>
 				<div className="podcasting-details__link-feed">
 					<div className="podcasting-details__link-feed-label">{ translate( 'RSS Feed' ) }</div>
-					<ClipboardButtonInput
-						className="podcasting-details__link-feed-url"
-						value="FEED URL HERE"
-					/>
+					<ClipboardButtonInput className="podcasting-details__link-feed-url" value={ feedUrl } />
 					<div className="podcasting-details__link-feed-info">
 						{ translate(
 							'Copy your feed URL and submit it to Apple Podcasts and other podcasting services.'
-						) }
-						{ ' ' }
+						) }{' '}
 						{ this.renderSupportLink() }
 					</div>
 				</div>
@@ -113,11 +117,12 @@ class PodcastingLink extends Component {
 export default connect( ( state, ownProps ) => {
 	const { fields } = ownProps;
 
-	const podcastingCategoryId = Number( fields && fields.podcasting_category_id );
-	const isPodcastingEnabled = podcastingCategoryId > 0;
-
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
+
+	const podcastingCategoryId = Number( fields && fields.podcasting_category_id );
+	const podcastingCategory =
+		podcastingCategoryId > 0 && getTerm( state, siteId, 'category', podcastingCategoryId );
 
 	const detailsLink = `/settings/podcasting/${ siteSlug }`;
 	const supportLink =
@@ -126,7 +131,9 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteSlug,
 		isPrivate: isPrivateSite( state, siteId ),
-		isPodcastingEnabled,
+		isPodcastingEnabled: !! podcastingCategory,
+		categoryName: podcastingCategory && podcastingCategory.name,
+		feedUrl: podcastingCategory && podcastingCategory.feed_url,
 		detailsLink,
 		supportLink,
 	};
