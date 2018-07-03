@@ -46,6 +46,7 @@ import Suggestions from 'components/suggestions';
 class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
+		this._isMounted = false;
 		this.state = {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
@@ -55,7 +56,8 @@ class AboutStep extends Component {
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
+		this._isMounted = true;
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle', 'siteGoals', 'siteTopic' ],
 			validatorFunction: noop,
@@ -73,12 +75,15 @@ class AboutStep extends Component {
 				},
 			},
 		} );
-
 		this.setFormState( this.formStateController.getInitialState() );
 	}
 
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+
 	setFormState = state => {
-		this.setState( { form: state } );
+		this._isMounted && this.setState( { form: state } );
 	};
 
 	setPressableStore = ref => {
@@ -93,14 +98,13 @@ class AboutStep extends Component {
 		this.setState( { query: '' } );
 	};
 
-	handleSuggestionChangeEvent = event => {
-		this.setState( { query: event.target.value } );
-		this.setState( { siteTopicValue: event.target.value } );
+	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
+		this.setState( { query: value } );
+		this.setState( { siteTopicValue: value } );
 
-		this.formStateController.handleFieldChange( {
-			name: event.target.name,
-			value: event.target.value,
-		} );
+		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
+
+		this.formStateController.handleFieldChange( { name, value } );
 	};
 
 	handleSuggestionKeyDown = event => {
@@ -167,11 +171,19 @@ class AboutStep extends Component {
 	};
 
 	getSuggestions() {
+		const query = this.state.query && escapeRegExp( this.state.query ).toLowerCase();
+		const regex = new RegExp( query, 'i' );
+
+		// Prioritize suggestions starting with query input first
+		const sortFunction = ( a, b ) =>
+			abtest( 'aboutSuggestionMatches' ) === 'enhancedSort'
+				? a.localeCompare( b ) -
+				  2 * ( b.toLowerCase().indexOf( query ) - a.toLowerCase().indexOf( query ) )
+				: a.localeCompare( b );
+
 		return Object.values( hints )
-			.filter(
-				hint =>
-					this.state.query && hint.match( new RegExp( escapeRegExp( this.state.query ), 'i' ) )
-			)
+			.filter( hint => query && hint.match( regex ) )
+			.sort( sortFunction )
 			.map( hint => ( { label: hint } ) );
 	}
 
@@ -274,6 +286,9 @@ class AboutStep extends Component {
 			findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
 
 		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
+			value: eventAttributes.site_topic,
+		} );
 
 		this.props.setSurvey( {
 			vertical: englishSiteTopicInput,
