@@ -15,7 +15,6 @@ import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
-import getSimplePayments from 'state/selectors/get-simple-payments';
 import getMemberships from 'state/selectors/get-memberships';
 import QueryMemberships from 'components/data/query-memberships';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -28,20 +27,13 @@ import ProductForm, {
 	isProductFormValid,
 	isProductFormDirty,
 	REDUX_FORM_NAME,
-} from './form';
+} from './membershipProductForm';
 import ProductList from './list';
 import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
 import accept from 'lib/accept';
-import {
-	customPostToProduct,
-	productToCustomPost,
-} from 'state/data-layer/wpcom/sites/simple-payments/index.js';
 import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/memberships/index.js';
-import {
-	receiveUpdateProduct,
-	receiveDeleteProduct,
-} from 'state/simple-payments/product-list/actions';
+import { receiveUpdateProduct, receiveDeleteProduct } from 'state/memberships/product-list/actions';
 import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
@@ -49,16 +41,10 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
-import config from 'config';
-import isEditedSimplePaymentsRecurring from 'state/selectors/is-edited-simple-payments-recurring';
 import { getFormValues } from 'redux-form';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
-
-// Selector to get the form values and convert them to a custom post data structure
-// ready to be passed to `wpcom` API.
-const productFormToCustomPost = state => productToCustomPost( getProductFormValues( state ) );
 
 const createMembershipButton = siteId => ( dispatch, getState ) => {
 	// This is a memberships submission.
@@ -93,35 +79,6 @@ const createMembershipButton = siteId => ( dispatch, getState ) => {
 	}
 
 	return createProduct( values );
-};
-
-// Thunk action creator to create a new button
-const createPaymentButton = siteId => ( dispatch, getState ) => {
-	const productCustomPost = productFormToCustomPost( getState() );
-
-	return wpcom
-		.site( siteId )
-		.addPost( productCustomPost )
-		.then( newPost => {
-			const newProduct = customPostToProduct( newPost );
-			dispatch( receiveUpdateProduct( siteId, newProduct ) );
-			return newProduct;
-		} );
-};
-
-// Thunk action creator to update an existing button
-const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
-	const productCustomPost = productFormToCustomPost( getState() );
-
-	return wpcom
-		.site( siteId )
-		.post( paymentId )
-		.update( productCustomPost )
-		.then( updatedPost => {
-			const updatedProduct = customPostToProduct( updatedPost );
-			dispatch( receiveUpdateProduct( siteId, updatedProduct ) );
-			return updatedProduct;
-		} );
 };
 
 const updateMembershipButton = ( siteId, productId ) => ( dispatch, getState ) => {
@@ -170,14 +127,10 @@ class MembershipsDialog extends Component {
 		description: '',
 		price: '',
 		currency: 'USD',
-		multiple: false,
 		email: '',
-		featuredImageId: null,
-		...( config.isEnabled( 'memberships' ) && {
-			recurring: false,
-			stripe_account: '',
-			renewal_schedule: '1 year',
-		} ),
+		recurring: false,
+		stripe_account: '',
+		renewal_schedule: '1 year',
 	};
 
 	constructor( props ) {
@@ -319,10 +272,7 @@ class MembershipsDialog extends Component {
 
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
-		} else if (
-			config.isEnabled( 'memberships' ) &&
-			this.props.currentlyEditedIsMembershipSubscription
-		) {
+		} else {
 			// This is memberships business.
 			productId = dispatch( createMembershipButton( siteId ) ).then( newProduct => {
 				dispatch(
@@ -334,25 +284,14 @@ class MembershipsDialog extends Component {
 				);
 				return newProduct.ID;
 			} );
-		} else {
-			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => {
-				dispatch(
-					recordTracksEvent( 'calypso_simple_payments_button_create', {
-						price: newProduct.price,
-						currency: newProduct.currency,
-						id: newProduct.ID,
-					} )
-				);
-				return newProduct.ID;
-			} );
 		}
 
 		productId
 			.then( id =>
-				dispatch( ( d, getState ) => getSimplePayments( getState(), this.props.siteId, id ) )
+				dispatch( ( d, getState ) => getMemberships( getState(), this.props.siteId, id ) )
 			)
 			.then( product => {
-				this.props.onInsert( { id: product.ID, isMembership: !! product.recurring } );
+				this.props.onInsert( { id: product.ID, isMembership: true } );
 				dispatch(
 					recordTracksEvent( 'calypso_simple_payments_button_insert', { id: product.ID } )
 				);
@@ -369,13 +308,8 @@ class MembershipsDialog extends Component {
 
 		// On successful update, finish the edit (by going back to list or closing the dialog).
 		// On save error, show error notice and keep the form displayed.
-		let updateAction = null;
-		if ( config.isEnabled( 'memberships' ) && this.props.currentlyEditedIsMembershipSubscription ) {
-			updateAction = updateMembershipButton( siteId, editedPaymentId );
-		} else {
-			updateAction = updatePaymentButton( siteId, editedPaymentId );
-		}
-		dispatch( updateAction )
+
+		dispatch( updateMembershipButton( siteId, editedPaymentId ) )
 			.then( this.handleFormClose )
 			.catch( () => this.showError( translate( 'The payment button could not be updated.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
@@ -624,10 +558,6 @@ export default connect( ( state, { siteId } ) => {
 		paymentButtons: getMemberships( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
-		currentlyEditedIsMembershipSubscription: isEditedSimplePaymentsRecurring(
-			state,
-			REDUX_FORM_NAME
-		),
 		isJetpackNotSupported:
 			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),

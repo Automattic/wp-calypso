@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestProduct, requestProducts } from 'state/memberships/product-list/actions';
+import { requestProducts } from 'state/memberships/product-list/actions';
 
 class QueryMemberships extends Component {
 	static propTypes = {
@@ -47,12 +47,6 @@ class QueryMemberships extends Component {
 			return;
 		}
 
-		if ( productId ) {
-			props.requestProduct( siteId, productId );
-
-			return;
-		}
-
 		props.requestProducts( siteId );
 	}
 
@@ -63,5 +57,5 @@ class QueryMemberships extends Component {
 
 export default connect(
 	null,
-	{ requestProduct, requestProducts }
+	{ requestProducts }
 )( QueryMemberships );
