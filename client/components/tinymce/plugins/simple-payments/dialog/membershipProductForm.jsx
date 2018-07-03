@@ -5,10 +5,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
+import { reduxForm, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import emailValidator from 'email-validator';
 import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
 
 /**
@@ -25,9 +24,8 @@ import Button from 'components/button';
 import { authorizeStripeAccount } from 'state/memberships/connected-accounts/actions';
 import getEditedSimplePaymentsStripeAccount from 'state/selectors/get-edited-simple-payments-stripe-account';
 import getMembershipsConnectedAccounts from 'state/selectors/get-memberships-connected-accounts';
-import ProductImagePicker from './product-image-picker';
 
-export const REDUX_FORM_NAME = 'simplePaymentsForm';
+export const REDUX_FORM_NAME = 'membershipsForm';
 
 // Export some selectors that are needed by the code that submits the form
 export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( state );
@@ -120,16 +118,6 @@ const validate = ( values, props ) => {
 		}
 	}
 
-	if ( ! values.email ) {
-		errors.email = translate(
-			'We want to make sure payments reach you, so please add an email address.'
-		);
-	} else if ( ! emailValidator.validate( values.email ) ) {
-		errors.email = translate( '%(email)s is not a valid email address.', {
-			args: { email: values.email },
-		} );
-	}
-
 	if ( ! values.renewal_schedule ) {
 		errors.renewal_schedule = 'Please choose a renewal schedule';
 	}
@@ -169,15 +157,10 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 
 class ProductForm extends Component {
 	render() {
-		const { translate, makeDirtyAfterImageEdit } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<form className="editor-simple-payments-modal__form">
-				<Field
-					name="featuredImageId"
-					component={ ProductImagePicker }
-					makeDirtyAfterImageEdit={ makeDirtyAfterImageEdit }
-				/>
 				<div className="editor-simple-payments-modal__form-fields">
 					<ReduxFormFieldset
 						name="title"

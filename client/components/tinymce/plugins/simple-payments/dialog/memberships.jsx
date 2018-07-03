@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
+import { find, isNumber, pick, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +26,6 @@ import ProductForm, {
 	getProductFormValues,
 	isProductFormValid,
 	isProductFormDirty,
-	REDUX_FORM_NAME,
 } from './membershipProductForm';
 import ProductList from './list';
 import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
@@ -41,7 +40,6 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
-import { getFormValues } from 'redux-form';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -147,7 +145,6 @@ class MembershipsDialog extends Component {
 			selectedPaymentId: null,
 			isSubmitting: false,
 			errorMessage: null,
-			isDirtyAfterImageEdit: false,
 		};
 	}
 
@@ -354,18 +351,11 @@ class MembershipsDialog extends Component {
 		);
 	};
 
-	// The only thing we track about image in Simple Payments product form is its media id.
-	// However this doesn't change when the image is edited, and as a result redux form
-	// isDirty selector is not detecting any update, so it's not possible to submit changes
-	// after editing the image (even though they are saved behind the scenes in Media library).
-	// This allows us to force re-enabling of the save button in that case.
-	makeDirtyAfterImageEdit = () => this.setState( { isDirtyAfterImageEdit: true } );
-
 	getActionButtons() {
-		const { formIsValid, formIsDirty, translate, featuredImageId } = this.props;
-		const { activeTab, editedPaymentId, isSubmitting, isDirtyAfterImageEdit } = this.state;
+		const { formIsValid, formIsDirty, translate } = this.props;
+		const { activeTab, editedPaymentId, isSubmitting } = this.state;
 
-		const formCanBeSubmitted = formIsValid && ( formIsDirty || isDirtyAfterImageEdit );
+		const formCanBeSubmitted = formIsValid && formIsDirty;
 
 		let cancelHandler, finishHandler, finishDisabled, finishLabel;
 		if ( activeTab === 'form' && isNumber( editedPaymentId ) ) {
@@ -388,12 +378,6 @@ class MembershipsDialog extends Component {
 			finishLabel = translate( 'Insert' );
 		}
 
-		// Already uploaded images have numeric ids (eg. 11) while the ones that are
-		// still being uploaded use strings instead (eg. 'media-41')
-		// We are relying on that here to determine if we should disable the form
-		// save button until the image is ready.
-		const isUploadingImage = ! isEmpty( featuredImageId ) && ! isNumber( featuredImageId );
-
 		return [
 			<Button onClick={ cancelHandler } disabled={ isSubmitting }>
 				{ translate( 'Cancel' ) }
@@ -401,7 +385,7 @@ class MembershipsDialog extends Component {
 			<Button
 				onClick={ finishHandler }
 				busy={ isSubmitting }
-				disabled={ isSubmitting || finishDisabled || isUploadingImage }
+				disabled={ isSubmitting || finishDisabled }
 				primary
 			>
 				{ isSubmitting ? translate( 'Saving…' ) : finishLabel }
@@ -527,11 +511,7 @@ class MembershipsDialog extends Component {
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } />
 				) }
 				{ activeTab === 'form' ? (
-					<ProductForm
-						initialValues={ initialFormValues }
-						showError={ this.showError }
-						makeDirtyAfterImageEdit={ this.makeDirtyAfterImageEdit }
-					/>
+					<ProductForm initialValues={ initialFormValues } showError={ this.showError } />
 				) : (
 					<ProductList
 						siteId={ siteId }
@@ -564,6 +544,5 @@ export default connect( ( state, { siteId } ) => {
 		formIsValid: isProductFormValid( state ),
 		formIsDirty: isProductFormDirty( state ),
 		currentUserEmail: getCurrentUserEmail( state ),
-		featuredImageId: get( getFormValues( REDUX_FORM_NAME )( state ), 'featuredImageId' ),
 	};
 } )( localize( MembershipsDialog ) );
