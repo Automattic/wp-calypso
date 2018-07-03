@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
-import page from 'page';
 import i18n from 'i18n-calypso';
 
 /**
@@ -17,7 +16,6 @@ import i18n from 'i18n-calypso';
 import Card from 'components/card';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
-import { addSiteFragment } from 'lib/route';
 
 export const Sites = createReactClass( {
 	displayName: 'Sites',
@@ -27,7 +25,7 @@ export const Sites = createReactClass( {
 	},
 
 	filterSites( site ) {
-		let path = this.props.path;
+		const path = this.props.path;
 
 		// Filter out jetpack sites when on particular routes
 		if ( /^\/customize/.test( path ) ) {
@@ -95,7 +93,6 @@ export const Sites = createReactClass( {
 				<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
 				<Card className="sites__selector-wrapper">
 					<SiteSelector
-						autoFocus={ true }
 						filter={ this.filterSites }
 						siteBasePath={ this.props.siteBasePath }
 						groups={ true }
