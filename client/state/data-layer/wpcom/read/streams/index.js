@@ -229,6 +229,7 @@ export function handlePage( action, data ) {
 		...keyForPost( post ),
 		date: post[ dateProperty ],
 		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
+		url: post.URL,
 		xPostMetadata: isXPost( post ) ? XPostHelper.getXPostMetadata( post ) : null,
 	} ) );
 

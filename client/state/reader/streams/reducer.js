@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { findIndex, last, takeRightWhile, takeWhile, filter, forEach } from 'lodash';
+import { findIndex, last, takeRightWhile, takeWhile, filter, forEach, map } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -62,30 +62,19 @@ export const items = ( state = [], action ) => {
 			const newState = [ ...state, ...streamItems ];
 
 			// Find any x-posts and see if they match existing x-posts
-			const newXPosts = filter( streamItems, postKey => postKey.xPostMetadata );
+			// const newXPosts = filter( streamItems, postKey => postKey.xPostMetadata );
 
-			if ( ! newXPosts ) {
-				return newState;
-			}
+			// if ( ! newXPosts ) {
+			// 	return newState;
+			// }
 
-			// For each x-post, try and find an index for a matching x-post
-			forEach( newXPosts, postKey => {
-				// See if the x-post already exists
-				const existingIndex = findIndex( newState, item => sameXPost( item, postKey ) );
-
-				if ( existingIndex ) {
-					// If the x-post already exists, add the feed ID to the existing post key
-					if ( ! Array.isArray( newState[ existingIndex ].xPostFeedIds ) ) {
-						newState[ existingIndex ].xPostFeedIds = [];
-					}
-					newState[ existingIndex ].xPostFeedIds.push( postKey.feedId );
-
-					// @todo Remove the duplicate x-post from state
-					// - create an array of indexes to omit?
+			// Filter out duplicate x-posts
+			return filter( newState, ( postKey, index, collection ) => {
+				// @todo currently removes all x-posts 🙃
+				if ( findIndex( collection, item => sameXPost( item, postKey ) ) === -1 ) {
+					return postKey;
 				}
 			} );
-
-			return newState;
 
 		case READER_STREAMS_SHOW_UPDATES:
 			return [ ...action.payload.items, ...state ];
