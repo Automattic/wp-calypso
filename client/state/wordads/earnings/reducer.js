@@ -9,31 +9,15 @@ import {
 	WORDADS_EARNINGS_REQUEST_SUCCESS,
 	WORDADS_EARNINGS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { keyedReducer } from 'state/utils';
 
-export const items = createReducer(
-	{},
-	{
-		[ WORDADS_EARNINGS_REQUEST_SUCCESS ]: ( state, action ) =>
-			Object.assign( {}, state, {
-				[ action.siteId ]: action.earnings,
-			} ),
+export const items = keyedReducer( 'siteId', ( state, action ) => {
+	switch ( action.type ) {
+		case WORDADS_EARNINGS_REQUEST_SUCCESS:
+			return action.earnings;
+		default:
+			return state;
 	}
-);
-
-export const fetchingItems = createReducer(
-	{},
-	{
-		[ WORDADS_EARNINGS_REQUEST ]: ( state, action ) =>
-			Object.assign( {}, state, { [ action.siteId ]: true } ),
-		[ WORDADS_EARNINGS_REQUEST_SUCCESS ]: ( state, action ) =>
-			Object.assign( {}, state, { [ action.siteId ]: false } ),
-		[ WORDADS_EARNINGS_REQUEST_FAILURE ]: ( state, action ) =>
-			Object.assign( {}, state, { [ action.siteId ]: false } ),
-	}
-);
-
-export default combineReducers( {
-	items,
-	fetchingItems,
 } );
+
+export default items;

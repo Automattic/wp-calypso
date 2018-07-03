@@ -6,17 +6,14 @@
 
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingWordadsEarnings } from 'state/wordads/earnings/selectors';
 import { requestWordadsEarnings } from 'state/wordads/earnings/actions';
 
 class QueryWordadsEarnings extends Component {
 	static propTypes = {
-		isRequestingWordadsEarnings: PropTypes.bool,
 		requestWordadsEarnings: PropTypes.func,
 		siteId: PropTypes.number,
 	};
@@ -40,9 +37,4 @@ class QueryWordadsEarnings extends Component {
 	}
 }
 
-export default connect(
-	( state, props ) => ( {
-		isRequestingWordadsEarnings: isRequestingWordadsEarnings( state, props.siteId ),
-	} ),
-	{ requestWordadsEarnings }
-)( QueryWordadsEarnings );
+export default QueryWordadsEarnings;
