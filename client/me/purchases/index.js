@@ -58,11 +58,14 @@ export default function( router ) {
 		clientRender
 	);
 
+	/**
+	 * The siteSelection middleware has been removed from this route.
+	 * No selected site!
+	 */
 	router(
 		paths.managePurchase( ':site', ':purchaseId' ),
 		redirectLoggedOut,
 		sidebar,
-		siteSelection,
 		controller.managePurchase,
 		makeLayout,
 		clientRender
