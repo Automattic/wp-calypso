@@ -79,7 +79,7 @@ export class MediaFolderDropdown extends Component {
 		const folderOptions = this.getDropDownOptions( this.props.folders );
 
 		// No need to show folders if we only have the default option + seperator
-		if ( folderOptions.length <= 2 ) return;
+		if ( folderOptions.length <= 2 ) return null;
 
 		return (
 			<div className={ rootClassNames }>
