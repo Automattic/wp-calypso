@@ -40,6 +40,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -51,6 +52,57 @@ import { getErrorFromHTTPError, getErrorFromWPCOMError, getSMSMessageFromRespons
 import wpcom from 'lib/wp';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Creates a promise that will be rejected after a given timeout
+ *
+ * @param {int} ms amount of milliseconds till reject the promise
+ * @returns {Promise} a promise that will be rejected after ms milliseconds
+ */
+export const createTimingOutPromise = ms =>
+	new Promise( ( _, reject ) => {
+		setTimeout( () => reject( new Error( `timeout of ${ ms } reached` ) ), ms );
+	} );
+
+/**
+ * Makes a request to a given link in an iframe
+ *
+ * @param {string} loginLink the login link to load
+ * @param {int} requestTimeout amount of time to allow the link to load, default 25s
+ * @returns {Promise} a promise that will be resolved if the link was successfully loaded
+ */
+export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
+	let iframe;
+	const iframeLoadPromise = new Promise( resolve => {
+		iframe = document.createElement( 'iframe' );
+		iframe.style.display = 'none';
+		iframe.setAttribute( 'scrolling', 'no' );
+		iframe.onload = resolve;
+		iframe.src = loginLink;
+		document.body.appendChild( iframe );
+	} );
+
+	return Promise.race( [ iframeLoadPromise, createTimingOutPromise( requestTimeout ) ] ).finally(
+		() => {
+			iframe.parentElement.removeChild( iframe );
+		}
+	);
+};
+
+/**
+ * Fetch all remote login urls
+ *
+ * @param  {Array}   loginLinks     Array of urls
+ * @return {Promise}                A promise that always resolve
+ */
+export const remoteLoginUser = loginLinks => {
+	return Promise.all(
+		loginLinks
+			.map( loginLink => makeRemoteLoginRequest( loginLink ) )
+			// make sure we continue even when a remote login fails
+			.map( promise => promise.catch( () => {} ) )
+	);
+};
 
 /**
  * Logs a user in.
@@ -84,11 +136,6 @@ export const loginUser = ( usernameOrEmail, password, redirectTo ) => dispatch =
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( response => {
-			dispatch( {
-				type: LOGIN_REQUEST_SUCCESS,
-				data: response.body && response.body.data,
-			} );
-
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -99,6 +146,21 @@ export const loginUser = ( usernameOrEmail, password, redirectTo ) => dispatch =
 					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
 				} );
 			}
+
+			// if the user has 2FA, in this stage he's not yet logged in.
+			if ( ! get( response, 'body.data.two_step_notification_sent' ) ) {
+				return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+					dispatch( {
+						type: LOGIN_REQUEST_SUCCESS,
+						data: response.body && response.body.data,
+					} );
+				} );
+			}
+
+			return dispatch( {
+				type: LOGIN_REQUEST_SUCCESS,
+				data: response.body && response.body.data,
+			} );
 		} )
 		.catch( httpError => {
 			const error = getErrorFromHTTPError( httpError );
@@ -144,8 +206,10 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
-		.then( () => {
-			dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
+		.then( response => {
+			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
+			} );
 		} )
 		.catch( httpError => {
 			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
@@ -199,11 +263,6 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( response => {
-			dispatch( {
-				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-				data: get( response, 'body.data' ),
-			} );
-
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -214,6 +273,13 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
 				} );
 			}
+
+			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+				dispatch( {
+					type: SOCIAL_LOGIN_REQUEST_SUCCESS,
+					data: get( response, 'body.data' ),
+				} );
+			} );
 		} )
 		.catch( httpError => {
 			const error = getErrorFromHTTPError( httpError );
@@ -518,3 +584,19 @@ export const getAuthAccountType = usernameOrEmail => dispatch => {
 export const resetAuthAccountType = () => ( {
 	type: LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 } );
+
+/**
+ * Creates an action that indicates that the push poll is completed
+ *
+ * @param {Array<String>} tokenLinks token links array
+ * @returns {Function} a thunk
+ */
+export const receivedTwoFactorPushNotificationApproved = tokenLinks => dispatch => {
+	if ( ! Array.isArray( tokenLinks ) ) {
+		return dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
+	}
+
+	remoteLoginUser( tokenLinks ).then( () =>
+		dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } )
+	);
+};
