@@ -68,16 +68,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					this.props.isSaveRequestSuccessful &&
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.jetpackSettingsUISupported )
 				) {
-					let successNoticeText = this.props.translate( 'Settings saved!' );
-
-					if (
-						this.props.dirtyFields.includes( 'podcasting_category_id' ) &&
-						this.props.fields.podcasting_category_id === '0'
-					) {
-						successNoticeText = this.props.translate( 'Podcasting disabled.' );
-					}
-
-					this.props.successNotice( successNoticeText, {
+					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
 						id: 'site-settings-save',
 					} );
 					// Upon failure to save Jetpack Settings, don't show an error message,
