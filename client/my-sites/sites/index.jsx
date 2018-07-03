@@ -36,7 +36,7 @@ export const Sites = createReactClass( {
 
 		// Filter out sites with no upgrades on particular routes
 		if ( /^\/domains/.test( path ) || /^\/plans/.test( this.props.basePath ) ) {
-			return ! site.isJetpack || site.isSiteUpgradable;
+			return ! site.jetpack || site.isSiteUpgradable;
 		}
 
 		return site;
