@@ -18,7 +18,6 @@ import Card from 'components/card';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
-import { getSelectedSite } from 'state/ui/selectors';
 
 export const Sites = createReactClass( {
 	displayName: 'Sites',
@@ -29,12 +28,6 @@ export const Sites = createReactClass( {
 
 	filterSites( site ) {
 		let path = this.props.path;
-
-		// Override the path to be /sites so that when a site is
-		// selected the filterbar operates as if we're on /sites
-		if ( this.props.selectedSite ) {
-			path = '/sites';
-		}
 
 		// Filter out jetpack sites when on particular routes
 		if ( /^\/customize/.test( path ) ) {
@@ -113,8 +106,4 @@ export const Sites = createReactClass( {
 	},
 } );
 
-export default connect( state => {
-	return {
-		selectedSite: getSelectedSite( state ),
-	};
-} )( Sites );
+export default connect()( Sites );
