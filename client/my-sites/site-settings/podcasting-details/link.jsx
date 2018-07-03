@@ -20,7 +20,7 @@ import SectionHeader from 'components/section-header';
 import PodcastingPrivateSiteMessage from './private-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
-import getPodcastingCategory from 'state/selectors/get-podcasting-category';
+import { getTerm } from 'state/terms/selectors';
 import { getSupportSiteLocale } from 'lib/i18n-utils';
 
 class PodcastingLink extends Component {
@@ -114,11 +114,15 @@ class PodcastingLink extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state, ownProps ) => {
+	const { fields } = ownProps;
+
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 
-	const podcastingCategory = getPodcastingCategory( state, siteId );
+	const podcastingCategoryId = Number( fields && fields.podcasting_category_id );
+	const podcastingCategory =
+		podcastingCategoryId > 0 && getTerm( state, siteId, 'category', podcastingCategoryId );
 
 	const detailsLink = `/settings/podcasting/${ siteSlug }`;
 	const supportLink =
