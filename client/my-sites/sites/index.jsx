@@ -18,7 +18,6 @@ import Card from 'components/card';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
-import getSites from 'state/selectors/get-sites';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export const Sites = createReactClass( {
@@ -106,7 +105,6 @@ export const Sites = createReactClass( {
 						autoFocus={ true }
 						filter={ this.filterSites }
 						siteBasePath={ this.props.siteBasePath }
-						sites={ this.props.sites }
 						groups={ true }
 					/>
 				</Card>
@@ -118,6 +116,5 @@ export const Sites = createReactClass( {
 export default connect( state => {
 	return {
 		selectedSite: getSelectedSite( state ),
-		sites: getSites( state ),
 	};
 } )( Sites );
