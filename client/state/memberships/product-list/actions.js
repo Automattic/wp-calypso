@@ -26,10 +26,3 @@ export function receiveDeleteProduct( siteId, productId ) {
 		type: 'MEMBERSHIPS_PRODUCT_DELETE',
 	};
 }
-// export function receiveProduct( siteId, product ) {
-// 	return {
-// 		siteId,
-// 		product,
-// 		type: SIMPLE_PAYMENTS_PRODUCT_RECEIVE,
-// 	};
-// }
