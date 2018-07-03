@@ -24,6 +24,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormSelect from 'components/forms/form-select';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
+import scrollTo from 'lib/scroll-to';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
@@ -361,6 +362,7 @@ class PodcastingDetails extends Component {
 
 		updateFields( { podcasting_category_id: '0' }, () => {
 			submitForm();
+			scrollTo( { y: 0 } );
 		} );
 	};
 
