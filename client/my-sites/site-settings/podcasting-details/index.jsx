@@ -24,6 +24,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormSelect from 'components/forms/form-select';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
+import scrollTo from 'lib/scroll-to';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
@@ -41,6 +42,7 @@ import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
+import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
@@ -85,6 +87,7 @@ class PodcastingDetails extends Component {
 				primary={ true }
 				type="submit"
 				disabled={ isRequestingSettings || isSavingSettings || isRequestingCategories }
+				busy={ isSavingSettings }
 			>
 				{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 			</Button>
@@ -178,7 +181,14 @@ class PodcastingDetails extends Component {
 	}
 
 	render() {
-		const { handleSubmitForm, siteSlug, siteId, translate, isPodcastingEnabled } = this.props;
+		const {
+			handleSubmitForm,
+			siteSlug,
+			siteId,
+			translate,
+			isPodcastingEnabled,
+			isSavingSettings,
+		} = this.props;
 		if ( ! siteId ) {
 			return null;
 		}
@@ -212,7 +222,7 @@ class PodcastingDetails extends Component {
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
 					{ isPodcastingEnabled && (
 						<div className="podcasting-details__disable-podcasting">
-							<Button onClick={ this.onCategoryCleared } scary>
+							<Button onClick={ this.onCategoryCleared } scary busy={ isSavingSettings }>
 								{ translate( 'Disable Podcast' ) }
 							</Button>
 							<p>
@@ -349,7 +359,12 @@ class PodcastingDetails extends Component {
 	};
 
 	onCategoryCleared = () => {
-		this.props.updateFields( { podcasting_category_id: '0' } );
+		const { updateFields, submitForm } = this.props;
+
+		updateFields( { podcasting_category_id: '0' }, () => {
+			submitForm();
+			scrollTo( { y: 0 } );
+		} );
 	};
 
 	onCoverImageRemoved = () => {
@@ -414,6 +429,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
+		isSavingSettings: isSavingSiteSettings( state, siteId ),
 	};
 } );
 

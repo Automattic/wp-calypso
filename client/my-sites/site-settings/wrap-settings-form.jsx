@@ -162,10 +162,12 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Support site settings for older Jetpacks as needed
 			const siteFields = pick( fields, settingsFields.site );
 			const apiVersion = siteIsJetpack ? jetpackSiteSettingsAPIVersion : '1.4';
-			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
+
 			if ( jetpackSettingsUISupported ) {
 				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
 			}
+
+			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
 		};
 
 		handleRadio = event => {
