@@ -8,16 +8,15 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
+import { find, isNumber, pick, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import getSimplePayments from 'state/selectors/get-simple-payments';
-import QuerySimplePayments from 'components/data/query-simple-payments';
+import { isJetpackSite, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
+import getMemberships from 'state/selectors/get-memberships';
+import QueryMemberships from 'components/data/query-memberships';
 import QuerySitePlans from 'components/data/query-site-plans';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
@@ -27,20 +26,13 @@ import ProductForm, {
 	getProductFormValues,
 	isProductFormValid,
 	isProductFormDirty,
-	REDUX_FORM_NAME,
-} from './form';
+} from './membershipProductForm';
 import ProductList from './list';
 import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
 import accept from 'lib/accept';
-import {
-	customPostToProduct,
-	productToCustomPost,
-} from 'state/data-layer/wpcom/sites/simple-payments/index.js';
-import {
-	receiveUpdateProduct,
-	receiveDeleteProduct,
-} from 'state/simple-payments/product-list/actions';
+import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/memberships/index.js';
+import { receiveUpdateProduct, receiveDeleteProduct } from 'state/memberships/product-list/actions';
 import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
@@ -48,41 +40,61 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
-import { getFormValues } from 'redux-form';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
 
-// Selector to get the form values and convert them to a custom post data structure
-// ready to be passed to `wpcom` API.
-const productFormToCustomPost = state => productToCustomPost( getProductFormValues( state ) );
+const createMembershipButton = siteId => ( dispatch, getState ) => {
+	// This is a memberships submission.
+	const values = getProductFormValues( getState() );
+	const createProduct = product =>
+		wpcom.req
+			.post( `/sites/${ siteId }/memberships/product`, {
+				title: product.title,
+				description: product.description,
+				connected_destination_account_id: product.stripe_account,
+				interval: product.renewal_schedule,
+				price: product.price,
+				currency: product.currency,
+			} )
+			.then( newProduct => {
+				const membershipProduct = membershipProductFromApi( newProduct.product );
+				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
+				return membershipProduct;
+			} );
 
-// Thunk action creator to create a new button
-const createPaymentButton = siteId => ( dispatch, getState ) => {
-	const productCustomPost = productFormToCustomPost( getState() );
+	if ( values.stripe_account === 'create' && values.email ) {
+		// We need to create Stripe Account.
+		return wpcom.req
+			.post( '/me/stripe_connect/create', {
+				country: 'US', // FOR NOW
+				email: values.email,
+			} )
+			.then( newAccount => {
+				values.stripe_account = newAccount.result.account.connected_destination_account_id;
+				return createProduct( values );
+			} );
+	}
 
-	return wpcom
-		.site( siteId )
-		.addPost( productCustomPost )
-		.then( newPost => {
-			const newProduct = customPostToProduct( newPost );
-			dispatch( receiveUpdateProduct( siteId, newProduct ) );
-			return newProduct;
-		} );
+	return createProduct( values );
 };
 
-// Thunk action creator to update an existing button
-const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
-	const productCustomPost = productFormToCustomPost( getState() );
-
-	return wpcom
-		.site( siteId )
-		.post( paymentId )
-		.update( productCustomPost )
-		.then( updatedPost => {
-			const updatedProduct = customPostToProduct( updatedPost );
-			dispatch( receiveUpdateProduct( siteId, updatedProduct ) );
-			return updatedProduct;
+const updateMembershipButton = ( siteId, productId ) => ( dispatch, getState ) => {
+	// This is a memberships submission.
+	const values = getProductFormValues( getState() );
+	return wpcom.req
+		.post( `/sites/${ siteId }/memberships/product/${ productId }`, {
+			title: values.title,
+			description: values.description,
+			connected_destination_account_id: values.stripe_account,
+			interval: values.renewal_schedule,
+			price: values.price,
+			currency: values.currency,
+		} )
+		.then( newProduct => {
+			const product = membershipProductFromApi( newProduct.product );
+			dispatch( receiveUpdateProduct( siteId, product ) );
+			return product;
 		} );
 };
 
@@ -97,7 +109,7 @@ const trashPaymentButton = ( siteId, paymentId ) => dispatch => {
 		.then( () => dispatch( receiveDeleteProduct( siteId, paymentId ) ) );
 };
 
-class SimplePaymentsDialog extends Component {
+class MembershipsDialog extends Component {
 	static propTypes = {
 		showDialog: PropTypes.bool.isRequired,
 		// If not null and is a valid payment button ID, start editing the button.
@@ -113,9 +125,10 @@ class SimplePaymentsDialog extends Component {
 		description: '',
 		price: '',
 		currency: 'USD',
-		multiple: false,
 		email: '',
-		featuredImageId: null,
+		recurring: false,
+		stripe_account: '',
+		renewal_schedule: '1 year',
 	};
 
 	constructor( props ) {
@@ -132,11 +145,10 @@ class SimplePaymentsDialog extends Component {
 			selectedPaymentId: null,
 			isSubmitting: false,
 			errorMessage: null,
-			isDirtyAfterImageEdit: false,
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// When transitioning from hidden to visible, show and initialize the form
 		if ( nextProps.showDialog && ! this.props.showDialog ) {
 			if ( nextProps.editPaymentId ) {
@@ -258,9 +270,10 @@ class SimplePaymentsDialog extends Component {
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
 		} else {
-			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => {
+			// This is memberships business.
+			productId = dispatch( createMembershipButton( siteId ) ).then( newProduct => {
 				dispatch(
-					recordTracksEvent( 'calypso_simple_payments_button_create', {
+					recordTracksEvent( 'calypso_memberships_button_create', {
 						price: newProduct.price,
 						currency: newProduct.currency,
 						id: newProduct.ID,
@@ -272,10 +285,10 @@ class SimplePaymentsDialog extends Component {
 
 		productId
 			.then( id =>
-				dispatch( ( d, getState ) => getSimplePayments( getState(), this.props.siteId, id ) )
+				dispatch( ( d, getState ) => getMemberships( getState(), this.props.siteId, id ) )
 			)
 			.then( product => {
-				this.props.onInsert( { id: product.ID } );
+				this.props.onInsert( { id: product.ID, isMembership: true } );
 				dispatch(
 					recordTracksEvent( 'calypso_simple_payments_button_insert', { id: product.ID } )
 				);
@@ -292,7 +305,8 @@ class SimplePaymentsDialog extends Component {
 
 		// On successful update, finish the edit (by going back to list or closing the dialog).
 		// On save error, show error notice and keep the form displayed.
-		dispatch( updatePaymentButton( siteId, editedPaymentId ) )
+
+		dispatch( updateMembershipButton( siteId, editedPaymentId ) )
 			.then( this.handleFormClose )
 			.catch( () => this.showError( translate( 'The payment button could not be updated.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
@@ -337,18 +351,11 @@ class SimplePaymentsDialog extends Component {
 		);
 	};
 
-	// The only thing we track about image in Simple Payments product form is its media id.
-	// However this doesn't change when the image is edited, and as a result redux form
-	// isDirty selector is not detecting any update, so it's not possible to submit changes
-	// after editing the image (even though they are saved behind the scenes in Media library).
-	// This allows us to force re-enabling of the save button in that case.
-	makeDirtyAfterImageEdit = () => this.setState( { isDirtyAfterImageEdit: true } );
-
 	getActionButtons() {
-		const { formIsValid, formIsDirty, translate, featuredImageId } = this.props;
-		const { activeTab, editedPaymentId, isSubmitting, isDirtyAfterImageEdit } = this.state;
+		const { formIsValid, formIsDirty, translate } = this.props;
+		const { activeTab, editedPaymentId, isSubmitting } = this.state;
 
-		const formCanBeSubmitted = formIsValid && ( formIsDirty || isDirtyAfterImageEdit );
+		const formCanBeSubmitted = formIsValid && formIsDirty;
 
 		let cancelHandler, finishHandler, finishDisabled, finishLabel;
 		if ( activeTab === 'form' && isNumber( editedPaymentId ) ) {
@@ -371,12 +378,6 @@ class SimplePaymentsDialog extends Component {
 			finishLabel = translate( 'Insert' );
 		}
 
-		// Already uploaded images have numeric ids (eg. 11) while the ones that are
-		// still being uploaded use strings instead (eg. 'media-41')
-		// We are relying on that here to determine if we should disable the form
-		// save button until the image is ready.
-		const isUploadingImage = ! isEmpty( featuredImageId ) && ! isNumber( featuredImageId );
-
 		return [
 			<Button onClick={ cancelHandler } disabled={ isSubmitting }>
 				{ translate( 'Cancel' ) }
@@ -384,7 +385,7 @@ class SimplePaymentsDialog extends Component {
 			<Button
 				onClick={ finishHandler }
 				busy={ isSubmitting }
-				disabled={ isSubmitting || finishDisabled || isUploadingImage }
+				disabled={ isSubmitting || finishDisabled }
 				primary
 			>
 				{ isSubmitting ? translate( 'Saving…' ) : finishLabel }
@@ -495,7 +496,7 @@ class SimplePaymentsDialog extends Component {
 				additionalClassNames="editor-simple-payments-modal"
 			>
 				<TrackComponentView eventName="calypso_simple_payments_dialog_view" />
-				<QuerySimplePayments siteId={ siteId } />
+				<QueryMemberships siteId={ siteId } />
 
 				{ ( ! currencyCode || shouldQuerySitePlans ) && <QuerySitePlans siteId={ siteId } /> }
 
@@ -510,11 +511,7 @@ class SimplePaymentsDialog extends Component {
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } />
 				) }
 				{ activeTab === 'form' ? (
-					<ProductForm
-						initialValues={ initialFormValues }
-						showError={ this.showError }
-						makeDirtyAfterImageEdit={ this.makeDirtyAfterImageEdit }
-					/>
+					<ProductForm initialValues={ initialFormValues } showError={ this.showError } />
 				) : (
 					<ProductList
 						siteId={ siteId }
@@ -538,7 +535,7 @@ export default connect( ( state, { siteId } ) => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		paymentButtons: getSimplePayments( state, siteId ),
+		paymentButtons: getMemberships( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
 		isJetpackNotSupported:
@@ -547,6 +544,5 @@ export default connect( ( state, { siteId } ) => {
 		formIsValid: isProductFormValid( state ),
 		formIsDirty: isProductFormDirty( state ),
 		currentUserEmail: getCurrentUserEmail( state ),
-		featuredImageId: get( getFormValues( REDUX_FORM_NAME )( state ), 'featuredImageId' ),
 	};
-} )( localize( SimplePaymentsDialog ) );
+} )( localize( MembershipsDialog ) );

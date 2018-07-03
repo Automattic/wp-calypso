@@ -6,12 +6,7 @@
 
 import productListSchema from './schema';
 import { combineReducers, createReducer } from 'state/utils';
-import {
-	SIMPLE_PAYMENTS_PRODUCT_RECEIVE,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE,
-} from 'state/action-types';
+import { MEMBERSHIPS_PRODUCTS_RECEIVE, MEMBERSHIPS_PRODUCT_RECEIVE } from 'state/action-types';
 
 /**
  * Edits existing product if one with matching ID found.
@@ -34,7 +29,6 @@ function addOrEditProduct( list = [], newProduct ) {
 	}
 	return products;
 }
-
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID keys to an object that contains the site roles.
@@ -46,21 +40,13 @@ function addOrEditProduct( list = [], newProduct ) {
 export const items = createReducer(
 	{},
 	{
-		[ SIMPLE_PAYMENTS_PRODUCT_RECEIVE ]: ( state, { siteId, product } ) => ( {
-			...state,
-			[ siteId ]: addOrEditProduct( state[ siteId ], product ),
-		} ),
-		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE ]: ( state, { siteId, products } ) => ( {
+		[ MEMBERSHIPS_PRODUCTS_RECEIVE ]: ( state, { siteId, products } ) => ( {
 			...state,
 			[ siteId ]: products,
 		} ),
-		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE ]: ( state, { siteId, product } ) => ( {
+		[ MEMBERSHIPS_PRODUCT_RECEIVE ]: ( state, { siteId, product } ) => ( {
 			...state,
 			[ siteId ]: addOrEditProduct( state[ siteId ], product ),
-		} ),
-		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE ]: ( state, { siteId, productId } ) => ( {
-			...state,
-			[ siteId ]: state[ siteId ].filter( product => product.ID !== productId ),
 		} ),
 	},
 	productListSchema

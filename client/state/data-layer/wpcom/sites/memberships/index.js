@@ -9,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SIMPLE_PAYMENTS_PRODUCTS_LIST, MEMBERSHIPS_PRODUCTS_RECEIVE } from 'state/action-types';
+import { MEMBERSHIPS_PRODUCTS_RECEIVE, MEMBERSHIPS_PRODUCTS_LIST } from 'state/action-types';
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
@@ -58,5 +58,5 @@ export const handleMembershipsList = dispatchRequestEx( {
 } );
 
 export default {
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST ]: [ handleMembershipsList ],
+	[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipsList ],
 };
