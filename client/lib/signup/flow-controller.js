@@ -20,7 +20,6 @@ import {
 } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:signup:flow-controller' ); // eslint-disable-line no-unused-vars
-import store from 'store';
 import page from 'page';
 
 /**
@@ -36,40 +35,29 @@ import userFactory from 'lib/user';
 const user = userFactory();
 import { getStepUrl } from 'signup/utils';
 
-/**
- * Constants
- */
-const STORAGE_KEY = 'signupFlowName';
-
 function SignupFlowController( options ) {
 	if ( ! ( this instanceof SignupFlowController ) ) {
 		return new SignupFlowController( options );
 	}
 
-	this._flowName = options.flowName;
-	this._flow = flows.getFlow( options.flowName );
 	this._onComplete = options.onComplete;
-	this._processingSteps = {};
+	this._processingSteps = new Set();
 
-	this._boundProcess = this._process.bind( this );
+	this._reduxStore = options.reduxStore;
+	SignupProgressStore.setReduxStore( this._reduxStore );
+	SignupDependencyStore.setReduxStore( this._reduxStore );
+
+	this.changeFlowName( options.flowName );
 
 	this._assertFlowHasValidDependencies();
 
-	this._reduxStore = options.reduxStore;
+	SignupProgressStore.on( 'change', this._process.bind( this ) );
 
-	SignupProgressStore.on( 'change', this._boundProcess );
-
-	if ( options.flowName === store.get( STORAGE_KEY ) ) {
-		SignupActions.fetchCachedSignup( options.flowName );
-
-		// reset the stores if the cached progress contained a processing step
-		this._resetStoresIfProcessing();
-		this._resetStoresIfUserHasLoggedIn();
-	}
+	this._resetStoresIfProcessing(); // reset the stores if the cached progress contained a processing step
+	this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 
 	if ( this._flow.providesDependenciesInQuery ) {
 		this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
-
 		SignupActions.provideDependencies( options.providedDependencies );
 	} else {
 		const storedDependencies = this._getStoredDependencies();
@@ -77,8 +65,6 @@ function SignupFlowController( options ) {
 			SignupActions.provideDependencies( storedDependencies );
 		}
 	}
-
-	store.set( STORAGE_KEY, options.flowName );
 }
 
 assign( SignupFlowController.prototype, {
@@ -195,7 +181,7 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_process: function() {
-		let currentSteps = this._flow.steps,
+		const currentSteps = this._flow.steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
 				step => -1 !== currentSteps.indexOf( step.stepName )
@@ -241,7 +227,7 @@ assign( SignupFlowController.prototype, {
 
 		return (
 			dependenciesSatisfied &&
-			! this._processingSteps[ step.stepName ] &&
+			! this._processingSteps.has( step.stepName ) &&
 			( providesToken || this._canMakeAuthenticatedRequests() ) &&
 			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted )
 		);
@@ -252,15 +238,14 @@ assign( SignupFlowController.prototype, {
 		const dependenciesFound = pick( SignupDependencyStore.get(), dependencies );
 
 		if ( this._canProcessStep( step ) ) {
-			this._processingSteps[ step.stepName ] = true;
+			this._processingSteps.add( step.stepName );
 
 			SignupActions.processSignupStep( step );
 
 			const apiFunction = steps[ step.stepName ].apiRequestFunction;
-
 			apiFunction(
 				( errors, providedDependencies ) => {
-					this._processingSteps[ step.stepName ] = false;
+					this._processingSteps.delete( step.stepName );
 					SignupActions.processedSignupStep( step, errors, providedDependencies );
 				},
 				dependenciesFound,
@@ -297,9 +282,7 @@ assign( SignupFlowController.prototype, {
 		return !! this._flow.autoContinue;
 	},
 
-	reset: function() {
-		SignupProgressStore.off( 'change', this._boundProcess );
-
+	reset() {
 		SignupProgressStore.reset();
 		SignupDependencyStore.reset();
 	},
@@ -307,7 +290,7 @@ assign( SignupFlowController.prototype, {
 	changeFlowName( flowName ) {
 		this._flowName = flowName;
 		this._flow = flows.getFlow( flowName );
-		store.set( STORAGE_KEY, flowName );
+		SignupActions.changeSignupFlow( this._flowName );
 	},
 } );
 
