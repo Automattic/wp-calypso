@@ -166,7 +166,7 @@ class PeopleProfile extends React.PureComponent {
 
 		if ( login ) {
 			login = (
-				<div className="people-profile__login">
+				<div className="people-profile__login" data-e2e-login={ login }>
 					<span>@{ login }</span>
 				</div>
 			);
