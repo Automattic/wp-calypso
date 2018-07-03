@@ -226,9 +226,8 @@ class SiteOwnership extends Component {
 	}
 
 	renderCardContent() {
-		const { canManageOptions, isPaidPlan, translate } = this.props;
-		const showPlanSection =
-			config.isEnabled( 'jetpack/ownership-change' ) && isPaidPlan && canManageOptions;
+		const { isPaidPlan, translate } = this.props;
+		const showPlanSection = config.isEnabled( 'jetpack/ownership-change' ) && isPaidPlan;
 
 		return (
 			<Card>
@@ -252,7 +251,15 @@ class SiteOwnership extends Component {
 	}
 
 	render() {
-		const { siteId, siteIsConnected, siteIsJetpack, translate } = this.props;
+		const { canManageOptions, siteId, siteIsConnected, siteIsJetpack, translate } = this.props;
+
+		if ( canManageOptions === false ) {
+			return null;
+		}
+
+		if ( ! canManageOptions ) {
+			return this.renderPlaceholder();
+		}
 
 		return (
 			<Fragment>
