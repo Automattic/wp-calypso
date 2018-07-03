@@ -142,7 +142,7 @@
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": false,
 		"signup/wpcc": true,
-		"memberships": false,
+		"memberships": true,
 		"support-user": true,
 		"try/preconnect": true,
 		"try/preload": true,
