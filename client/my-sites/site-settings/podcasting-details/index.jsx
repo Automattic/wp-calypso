@@ -358,23 +358,15 @@ class PodcastingDetails extends Component {
 	};
 
 	onCategoryCleared = () => {
-		const {
-			updateFields,
-			clearDirtyFields,
-			submitForm,
-			siteSlug,
-			isSaveRequestSuccessful,
-		} = this.props;
+		const { updateFields, clearDirtyFields, submitForm, siteSlug } = this.props;
 
 		updateFields( { podcasting_category_id: '0' }, () => {
-			submitForm();
+			submitForm().then( () => {
+				// Save changed fields and allow redirect
+				clearDirtyFields();
+				page.redirect( '/settings/writing/' + siteSlug );
+			} );
 		} );
-
-		if ( isSaveRequestSuccessful ) {
-			// Save changed fields and allow redirect
-			clearDirtyFields();
-			page.redirect( '/settings/writing/' + siteSlug );
-		}
 	};
 
 	onCoverImageRemoved = () => {

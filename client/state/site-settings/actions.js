@@ -113,7 +113,7 @@ export function saveSiteSettings( siteId, settings ) {
 					error,
 				} );
 
-				return error;
+				return Promise.reject( error );
 			} );
 	};
 }
