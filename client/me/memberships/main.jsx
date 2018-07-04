@@ -18,6 +18,7 @@ import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
 import formatCurrency from 'lib/format-currency';
+import SectionHeader from 'components/section-header';
 
 const MembershipsHistory = ( { translate, subscriptions, moment } ) => (
 	<Main className="billing-history">
@@ -26,6 +27,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => (
 		<MeSidebarNavigation />
 		<QueryMembershipsSubscriptions />
 		<PurchasesHeader section={ 'memberships' } />
+		<SectionHeader label={ translate( 'Active Membership plans' ) } />
 		<Card className="billing-history__receipts">
 			<table className="billing-history__transactions">
 				<tbody>
