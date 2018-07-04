@@ -52,6 +52,7 @@ class ActivityLogTasklist extends Component {
 		siteSlug: PropTypes.string,
 		plugins: PropTypes.arrayOf( PropTypes.object ), // Plugins updated and those with pending updates
 		themes: PropTypes.arrayOf( PropTypes.object ), // Themes to update
+		core: PropTypes.object, // New WP core version
 
 		// Connected props
 		siteName: PropTypes.string.isRequired,

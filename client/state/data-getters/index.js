@@ -87,6 +87,7 @@ export const requestSiteAlerts = siteId => {
 								type: theme.type,
 								version: theme.version,
 							} ) ),
+							core: updates.core,
 						},
 					},
 				],

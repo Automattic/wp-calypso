@@ -24,6 +24,7 @@ export default WrappedComponent => {
 			// Connected
 			plugins: PropTypes.arrayOf( PropTypes.object ),
 			themes: PropTypes.arrayOf( PropTypes.object ),
+			core: PropTypes.arrayOf( PropTypes.object ),
 		};
 
 		state = {
@@ -49,14 +50,17 @@ export default WrappedComponent => {
 					siteId={ this.props.siteId }
 					plugins={ this.state.plugins }
 					themes={ this.props.themes }
+					core={ this.props.core }
 				/>
 			);
 		}
 	}
 	return connect( ( state, { siteId } ) => {
+		const alertsData = requestSiteAlerts( siteId );
 		return {
 			plugins: getPluginsWithUpdates( state, [ siteId ] ),
-			themes: get( requestSiteAlerts( siteId ), 'data.updates.themes', emptyList ),
+			themes: get( alertsData, 'data.updates.themes', emptyList ),
+			core: get( alertsData, 'data.updates.core', emptyList ),
 		};
 	} )( ToUpdate );
 };
