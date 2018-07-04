@@ -10,6 +10,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import * as billingController from 'me/billing-history/controller';
+import * as membershipsController from 'me/memberships/controller';
 import * as controller from './controller';
 import * as paths from './paths';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
@@ -39,6 +40,17 @@ export default function( router ) {
 		makeLayout,
 		clientRender
 	);
+
+	if ( config.isEnabled( 'memberships' ) ) {
+		router(
+			paths.purchasesRoot + '/memberships',
+			redirectLoggedOut,
+			sidebar,
+			membershipsController.myMemberships,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	router(
 		paths.billingHistoryReceipt( ':receiptId' ),
