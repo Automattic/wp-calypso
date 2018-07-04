@@ -70,13 +70,13 @@ class GoogleMyBusinessStats extends Component {
 		const { value: viewCount, date } = datanum;
 		if ( interval === 'quarter' ) {
 			return this.props.translate(
-				'%(value)d view on the week of %(monday)s',
-				'%(value)d views on the week of %(monday)s',
+				'%(number)d view during the week of %(date)s',
+				'%(number)d views during the week of %(date)s',
 				{
 					count: viewCount,
 					args: {
-						value: viewCount,
-						monday: moment( date ).format( 'LL' ),
+						number: viewCount,
+						date: moment( date ).format( 'LL' ),
 					},
 				}
 			);
@@ -95,13 +95,13 @@ class GoogleMyBusinessStats extends Component {
 		const { value: actionCount, date } = datanum;
 		if ( interval === 'quarter' ) {
 			return this.props.translate(
-				'%(value)d action on the week of %(monday)s',
-				'%(value)d action on the week of %(monday)s',
+				'%(number)d action during the week of %(date)s',
+				'%(number)d actions during the week of %(date)s',
 				{
 					count: actionCount,
 					args: {
-						value: actionCount,
-						monday: moment( date ).format( 'LL' ),
+						number: actionCount,
+						date: moment( date ).format( 'LL' ),
 					},
 				}
 			);
