@@ -74,6 +74,10 @@
 		line-height: 2em;
 		margin-bottom: .5em;
 	}
+
+	p:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .dialog__action-buttons {
