@@ -1,12 +1,12 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import deepfreeze from 'deep-freeze';
 import moment from 'moment';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import {
 	receivePage,
@@ -35,6 +35,7 @@ jest.mock( 'lib/wp', () => ( {
 		} ),
 	} ),
 } ) );
+jest.mock( 'lib/user', () => () => {} );
 
 const TIME1 = '2018-01-01T00:00:00.000Z';
 const TIME2 = '2018-01-02T00:00:00.000Z';
