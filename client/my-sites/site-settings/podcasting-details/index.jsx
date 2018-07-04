@@ -46,8 +46,6 @@ import {
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
-	state = { showChangeNotice: false };
-
 	renderExplicitContent() {
 		const {
 			fields,
@@ -241,7 +239,7 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const { siteId, podcastingCategoryId, translate } = this.props;
+		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
 
 		return (
 			<Fragment>
@@ -262,7 +260,7 @@ class PodcastingDetails extends Component {
 						onAddTermSuccess={ this.onCategorySelected }
 						height={ 200 }
 					/>
-					{ this.state.showChangeNotice && (
+					{ isCategoryChanging && (
 						<Notice
 							isCompact
 							status="is-info"
@@ -354,17 +352,6 @@ class PodcastingDetails extends Component {
 
 		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
 
-		if ( category.ID === settings.podcasting_category_id ) {
-			this.setState( { showChangeNotice: false } );
-		}
-
-		if (
-			category.ID !== settings.podcasting_category_id &&
-			fieldsToUpdate.podcasting_category_id !== fields.podcasting_category_id
-		) {
-			this.setState( { showChangeNotice: true } );
-		}
-
 		if ( ! isPodcastingEnabled ) {
 			// If we are newly enabling podcasting, and no podcast title is set,
 			// use the site title.
@@ -439,6 +426,8 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const selectedCategory = categories && head( filter( categories, { ID: podcastingCategoryId } ) );
 	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
 
+	const isCategoryChanging = podcastingCategoryId !== ownProps.settings.podcasting_category_id;
+
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 
@@ -448,6 +437,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isPrivate: isPrivateSite( state, siteId ),
 		podcastingCategoryId,
 		isPodcastingEnabled,
+		isCategoryChanging,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
