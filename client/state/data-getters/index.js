@@ -87,7 +87,12 @@ export const requestSiteAlerts = siteId => {
 								type: theme.type,
 								version: theme.version,
 							} ) ),
-							core: updates.core,
+							core: updates.core.map( theme => ( {
+								name: theme.name,
+								slug: theme.slug,
+								type: theme.type,
+								version: theme.version,
+							} ) ),
 						},
 					},
 				],

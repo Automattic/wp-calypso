@@ -25,6 +25,7 @@ class ActivityLogTaskUpdate extends Component {
 		type: PropTypes.string,
 		updateType: PropTypes.string,
 
+		linked: PropTypes.bool,
 		goToPage: PropTypes.func,
 		enqueueTheme: PropTypes.func,
 		dismissTheme: PropTypes.func,
@@ -42,17 +43,27 @@ class ActivityLogTaskUpdate extends Component {
 	handleNameClick = () => this.props.goToPage( this.props.slug, this.props.type );
 
 	render() {
-		const { translate, name, version, type, updateType, disable } = this.props;
+		const { translate, name, version, type, updateType, disable, linked } = this.props;
 
 		return (
 			<Card className="activity-log-tasklist__task" compact>
-				<ActivityIcon activityIcon={ `${ type }s` } activityStatus="warning" />
+				<ActivityIcon
+					activityIcon={ 'plugin' === type || 'theme' === type ? `${ type }s` : 'my-sites' }
+					activityStatus="warning"
+				/>
 				<span className="activity-log-tasklist__update-item">
 					<div>
 						<span className="activity-log-tasklist__update-text">
-							<Button borderless onClick={ this.handleNameClick }>
-								{ name }
-							</Button>
+							{ linked ? (
+								<Button borderless onClick={ this.handleNameClick }>
+									{ name }
+								</Button>
+							) : (
+								// Add button classes so unlinked names look the same.
+								<span className="activity-log-tasklist__unlinked button is-borderless">
+									{ name }
+								</span>
+							) }
 						</span>
 						<span className="activity-log-tasklist__update-bullet">&bull;</span>
 						<span className="activity-log-tasklist__update-version">{ version }</span>
