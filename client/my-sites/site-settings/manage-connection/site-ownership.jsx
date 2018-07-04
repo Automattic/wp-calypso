@@ -59,13 +59,26 @@ class SiteOwnership extends Component {
 
 	onSelectConnectionOwner = user => {
 		const { translate } = this.props;
+		const message = (
+			<Fragment>
+				<p>
+					{ translate( 'Are you sure you want to transfer site ownership to {{user /}}?', {
+						components: {
+							user: <strong>{ user.display_name || user.name }</strong>,
+						},
+					} ) }
+				</p>
+				<p>
+					{ translate(
+						'Note: you cannot undo this action. ' +
+							'Going forward, only the new Site Owner can initiate a transfer.'
+					) }
+				</p>
+			</Fragment>
+		);
 
 		accept(
-			translate( 'Are you sure you want to transfer site ownership to {{user /}}?', {
-				components: {
-					user: <strong>{ user.display_name || user.name }</strong>,
-				},
-			} ),
+			message,
 			accepted => {
 				if ( accepted ) {
 					this.props.changeOwner( this.props.siteId, user.ID, user.name );
@@ -80,16 +93,26 @@ class SiteOwnership extends Component {
 
 	onSelectPlanOwner = user => {
 		const { translate } = this.props;
+		const message = (
+			<Fragment>
+				<p>
+					{ translate( 'Are you sure you want to change the Plan Purchaser to {{user /}}?', {
+						components: {
+							user: <strong>{ user.display_name || user.name }</strong>,
+						},
+					} ) }
+				</p>
+				<p>
+					{ translate(
+						'Note: you cannot undo this action. ' +
+							'Going forward, only the new Plan Purchaser can initiate a change.'
+					) }
+				</p>
+			</Fragment>
+		);
 
 		accept(
-			translate(
-				'Are you absolutely sure you want to change the plan purchaser for this site to {{user /}}?',
-				{
-					components: {
-						user: <strong>{ user.display_name || user.name }</strong>,
-					},
-				}
-			),
+			message,
 			accepted => {
 				if ( accepted ) {
 					this.props.transferPlanOwnership( this.props.siteId, user.linked_user_ID );
