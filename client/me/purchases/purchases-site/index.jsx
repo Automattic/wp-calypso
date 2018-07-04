@@ -32,8 +32,6 @@ const PurchasesSite = ( {
 } ) => {
 	let items;
 
-	const isJetpack = ! isPlaceholder && some( purchases, purchase => isJetpackPlan( purchase ) );
-
 	if ( isPlaceholder ) {
 		items = times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
 	} else {
@@ -43,10 +41,11 @@ const PurchasesSite = ( {
 				slug={ slug }
 				isDisconnectedSite={ ! site }
 				purchase={ purchase }
-				isJetpack={ isJetpack }
 			/>
 		) );
 	}
+
+	const isJetpack = some( purchases, purchase => isJetpackPlan( purchase ) );
 
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
@@ -60,9 +59,9 @@ const PurchasesSite = ( {
 
 			{ items }
 
-			{ ! isPlaceholder &&
-				hasLoadedSite &&
-				! site && <PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } /> }
+			{ ! isPlaceholder && hasLoadedSite && ! site ? (
+				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } domain={ domain } />
+			) : null }
 		</div>
 	);
 };

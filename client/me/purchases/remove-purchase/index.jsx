@@ -28,13 +28,7 @@ import previousStep from 'components/marketing-survey/cancel-purchase-form/previ
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { isDataLoading } from '../utils';
-import {
-	isBusiness,
-	isDomainRegistration,
-	isGoogleApps,
-	isJetpackPlan,
-	isPlan,
-} from 'lib/products-values';
+import { isDomainRegistration, isPlan, isBusiness, isGoogleApps } from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -64,7 +58,7 @@ class RemovePurchase extends Component {
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
-		site: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
 	};
@@ -162,12 +156,12 @@ class RemovePurchase extends Component {
 	removePurchase = closeDialog => {
 		this.setState( { isRemoving: true } );
 
-		const { isDomainOnlySite, purchase, site, translate } = this.props;
+		const { isDomainOnlySite, purchase, selectedSite, translate } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom
 				.marketing()
-				.survey( 'calypso-remove-purchase', this.props.purchase.siteId );
+				.survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
 			const surveyData = {
 				'why-cancel': {
 					response: this.state.survey.questionOneRadio,
@@ -181,7 +175,7 @@ class RemovePurchase extends Component {
 				type: 'remove',
 			};
 
-			survey.addResponses( enrichedSurveyData( surveyData, moment(), site, purchase ) );
+			survey.addResponses( enrichedSurveyData( surveyData, moment(), selectedSite, purchase ) );
 
 			debug( 'Survey responses', survey );
 			survey
@@ -210,7 +204,7 @@ class RemovePurchase extends Component {
 			} else {
 				if ( isDomainRegistration( purchase ) ) {
 					if ( isDomainOnlySite ) {
-						this.props.receiveDeletedSite( purchase.siteId );
+						this.props.receiveDeletedSite( selectedSite.ID );
 						this.props.setAllSitesSelected();
 					}
 
@@ -224,7 +218,7 @@ class RemovePurchase extends Component {
 					notices.success(
 						translate( '%(productName)s was removed from {{siteName/}}.', {
 							args: { productName },
-							components: { siteName: <em>{ purchase.domain }</em> },
+							components: { siteName: <em>{ selectedSite.domain }</em> },
 						} ),
 						{ persistent: true }
 					);
@@ -299,7 +293,7 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { purchase, site, translate } = this.props;
+		const { purchase, selectedSite, translate } = this.props;
 		const buttons = {
 			cancel: {
 				action: 'cancel',
@@ -358,7 +352,7 @@ class RemovePurchase extends Component {
 					defaultContent={ this.renderPlanDialogText() }
 					onInputChange={ this.onSurveyChange }
 					purchase={ purchase }
-					selectedSite={ site }
+					selectedSite={ selectedSite }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					surveyStep={ this.state.surveyStep }
 				/>
@@ -384,7 +378,7 @@ class RemovePurchase extends Component {
 				<p>
 					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
 						args: { productName },
-						components: { siteName: <em>{ purchase.domain }</em> },
+						components: { siteName: <em>{ this.props.selectedSite.domain }</em> },
 					} ) }{' '}
 					{ isGoogleApps( purchase )
 						? translate(
@@ -456,12 +450,7 @@ class RemovePurchase extends Component {
 	}
 
 	render() {
-		if ( isDataLoading( this.props ) ) {
-			return null;
-		}
-
-		// If we have a disconnected site that is _not_ a Jetpack purchase, no removal allowed.
-		if ( ! this.props.site && ! this.props.isJetpack ) {
+		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -486,19 +475,15 @@ class RemovePurchase extends Component {
 }
 
 export default connect(
-	( state, { purchase } ) => {
-		const isJetpack = purchase && isJetpackPlan( purchase );
-		return {
-			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-			isAutomatedTransferSite: isSiteAutomatedTransfer( state, purchase.siteId ),
-			isChatAvailable: isHappychatAvailable( state ),
-			isChatActive: hasActiveHappychatSession( state ),
-			isJetpack,
-			purchasesError: getPurchasesError( state ),
-			precancellationChatAvailable: isPrecancellationChatAvailable( state ),
-			userId: getCurrentUserId( state ),
-		};
-	},
+	( state, { selectedSite } ) => ( {
+		isDomainOnlySite: selectedSite && isDomainOnly( state, selectedSite.ID ),
+		isAutomatedTransferSite: selectedSite && isSiteAutomatedTransfer( state, selectedSite.ID ),
+		isChatAvailable: isHappychatAvailable( state ),
+		isChatActive: hasActiveHappychatSession( state ),
+		purchasesError: getPurchasesError( state ),
+		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
+		userId: getCurrentUserId( state ),
+	} ),
 	{
 		receiveDeletedSite,
 		recordTracksEvent,
