@@ -21,7 +21,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
-import FormTelInput from 'components/forms/form-tel-input';
+import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
@@ -207,7 +207,8 @@ const ReauthRequired = createReactClass( {
 				<form onSubmit={ this.submitForm }>
 					<FormFieldset>
 						<FormLabel htmlFor="code">{ this.props.translate( 'Verification Code' ) }</FormLabel>
-						<FormTelInput
+						<FormTextInput
+							type="tel"
 							autoComplete="off"
 							autoFocus={ true }
 							id="code"
