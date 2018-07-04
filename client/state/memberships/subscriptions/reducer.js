@@ -20,12 +20,9 @@ import { combineReducers, createReducer } from 'state/utils';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
-	{},
-	{
-		[ MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE ]: ( state, { subscriptions } ) => subscriptions,
-	}
-);
+export const items = createReducer( [], {
+	[ MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE ]: ( state, { subscriptions } ) => subscriptions,
+} );
 
 /**
  * Returns the updated requests state after an action has been dispatched.
