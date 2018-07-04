@@ -25,6 +25,7 @@ import FormSelect from 'components/forms/form-select';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
 import scrollTo from 'lib/scroll-to';
+import Notice from 'components/notice';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
@@ -238,7 +239,7 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const { siteId, podcastingCategoryId, translate } = this.props;
+		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
 
 		return (
 			<Fragment>
@@ -259,6 +260,15 @@ class PodcastingDetails extends Component {
 						onAddTermSuccess={ this.onCategorySelected }
 						height={ 200 }
 					/>
+					{ isCategoryChanging && (
+						<Notice
+							isCompact
+							status="is-info"
+							text={ translate(
+								"If you change categories, you'll need to resubmit your feed to any podcast service."
+							) }
+						/>
+					) }
 				</FormFieldset>
 				{ this.renderFeedUrl() }
 			</Fragment>
@@ -416,6 +426,8 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const selectedCategory = categories && head( filter( categories, { ID: podcastingCategoryId } ) );
 	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
 
+	const isCategoryChanging = podcastingCategoryId !== ownProps.settings.podcasting_category_id;
+
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 
@@ -425,6 +437,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isPrivate: isPrivateSite( state, siteId ),
 		podcastingCategoryId,
 		isPodcastingEnabled,
+		isCategoryChanging,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
