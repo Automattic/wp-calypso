@@ -93,23 +93,31 @@ describe( 'streams.items reducer', () => {
 			xPostMetadata,
 		};
 
-		// Third post
+		// Third x-post (should also merge into first x-post)
 		const postKey3 = {
 			...time2PostKey,
 			postId: 3,
 			url: 'http://example.com/posts/three',
+			xPostMetadata,
+		};
+
+		const postKey4 = {
+			...time2PostKey,
+			postId: 4,
+			url: 'http://example.com/posts/four',
+			xPostMetadata: null,
 		};
 
 		const prevState = deepfreeze( [] );
-		const action = receivePage( { streamItems: [ postKey1, postKey2, postKey3 ] } );
+		const action = receivePage( { streamItems: [ postKey1, postKey2, postKey3, postKey4 ] } );
 		const nextState = items( prevState, action );
 
 		expect( nextState ).toEqual( [
 			{
 				...postKey1,
-				xPostUrls: [ postKey2.url ],
+				xPostUrls: [ postKey2.url, postKey3.url ],
 			},
-			postKey3,
+			postKey4,
 		] );
 	} );
 } );

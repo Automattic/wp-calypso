@@ -22,7 +22,7 @@ export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
 		...postKey1,
 		// Add the URL from the second post key
 		xPostUrls: Array.isArray( postKey1.xPostUrls )
-			? postKey1.xPostUrls.push( postKey2.url )
+			? [ ...postKey1.xPostUrls, postKey2.url ]
 			: [ postKey2.url ],
 	};
 };
