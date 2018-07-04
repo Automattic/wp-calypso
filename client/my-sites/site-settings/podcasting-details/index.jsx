@@ -25,6 +25,7 @@ import FormSelect from 'components/forms/form-select';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
 import scrollTo from 'lib/scroll-to';
+import Notice from 'components/notice';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
@@ -45,6 +46,8 @@ import {
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
+	state = { showChangeNotice: false };
+
 	renderExplicitContent() {
 		const {
 			fields,
@@ -259,6 +262,15 @@ class PodcastingDetails extends Component {
 						onAddTermSuccess={ this.onCategorySelected }
 						height={ 200 }
 					/>
+					{ this.state.showChangeNotice && (
+						<Notice
+							isCompact
+							status="is-info"
+							text={ translate(
+								"If you change categories, you'll need to resubmit your feed to any podcast service."
+							) }
+						/>
+					) }
 				</FormFieldset>
 				{ this.renderFeedUrl() }
 			</Fragment>
@@ -341,6 +353,10 @@ class PodcastingDetails extends Component {
 		const { settings, fields, isPodcastingEnabled } = this.props;
 
 		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
+
+		if ( fieldsToUpdate.podcasting_category_id !== fields.podcasting_category_id ) {
+			this.setState( { showChangeNotice: true } );
+		}
 
 		if ( ! isPodcastingEnabled ) {
 			// If we are newly enabling podcasting, and no podcast title is set,
