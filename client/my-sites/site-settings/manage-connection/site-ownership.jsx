@@ -61,17 +61,19 @@ class SiteOwnership extends Component {
 		const { translate } = this.props;
 		const message = (
 			<Fragment>
-				{ translate( 'Are you sure you want to transfer site ownership to {{user /}}?', {
-					components: {
-						user: <strong>{ user.display_name || user.name }</strong>,
-					},
-				} ) }
-				<br />
-				<br />
-				{ translate(
-					'Note: you cannot undo this action. ' +
-						'Going forward, only the new Site Owner can initiate a transfer.'
-				) }
+				<p>
+					{ translate( 'Are you sure you want to transfer site ownership to {{user /}}?', {
+						components: {
+							user: <strong>{ user.display_name || user.name }</strong>,
+						},
+					} ) }
+				</p>
+				<p>
+					{ translate(
+						'Note: you cannot undo this action. ' +
+							'Going forward, only the new Site Owner can initiate a transfer.'
+					) }
+				</p>
 			</Fragment>
 		);
 
@@ -93,17 +95,19 @@ class SiteOwnership extends Component {
 		const { translate } = this.props;
 		const message = (
 			<Fragment>
-				{ translate( 'Are you sure you want to change the Plan Purchaser to {{user /}}?', {
-					components: {
-						user: <strong>{ user.display_name || user.name }</strong>,
-					},
-				} ) }
-				<br />
-				<br />
-				{ translate(
-					'Note: you cannot undo this action. ' +
-						'Going forward, only the new Plan Purchaser can initiate a change.'
-				) }
+				<p>
+					{ translate( 'Are you sure you want to change the Plan Purchaser to {{user /}}?', {
+						components: {
+							user: <strong>{ user.display_name || user.name }</strong>,
+						},
+					} ) }
+				</p>
+				<p>
+					{ translate(
+						'Note: you cannot undo this action. ' +
+							'Going forward, only the new Plan Purchaser can initiate a change.'
+					) }
+				</p>
 			</Fragment>
 		);
 
