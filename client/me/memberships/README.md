@@ -1,11 +1,11 @@
-Billing History
+Memberships Subscriptions list
 ======
 
-This is the Billing History React component that renders the /me/purchases/billing/ route.
+This is the React component that renders the /me/purchases/memberships/ route.
+This represents a list of all subscribed membership plans for the user.
 
 Supported routes:
 
 ```
-/me/purchases/billing
-/me/purchases/billing/:receiptId
+/me/purchases/memberships
 ```
