@@ -23,7 +23,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 	<Tour name="jetpackPluginUpdates" version="20180611">
 		<Step
 			name="init"
-			target="#plugin-jetpack .form-toggle__switch"
+			target=".plugin-item-jetpack .form-toggle__switch"
 			arrow="top-left"
 			placement="below"
 			style={ {
@@ -40,7 +40,12 @@ export const JetpackPluginUpdatesTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Continue target="#plugin-jetpack .form-toggle__switch" step="finish" click hidden />
+						<Continue
+							target=".plugin-item-jetpack .form-toggle__switch"
+							step="finish"
+							click
+							hidden
+						/>
 						<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 					</ButtonRow>
 				</Fragment>

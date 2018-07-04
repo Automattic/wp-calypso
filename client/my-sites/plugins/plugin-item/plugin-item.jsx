@@ -343,10 +343,12 @@ class PluginItem extends Component {
 			pluginActions = this.renderActions();
 		}
 
-		const pluginItemClasses = classNames( 'plugin-item', { disabled } );
+		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug, {
+			disabled,
+		} );
 
 		return (
-			<CompactCard id={ 'plugin-' + plugin.slug } className={ pluginItemClasses }>
+			<CompactCard className={ pluginItemClasses }>
 				{ disabled || ! this.props.isSelectable ? null : (
 					<input
 						className="plugin-item__checkbox"
