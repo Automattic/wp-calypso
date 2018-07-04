@@ -16,12 +16,14 @@ import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
+import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
 
 const MembershipsHistory = ( { translate } ) => (
 	<Main className="billing-history">
 		<DocumentHead title={ translate( 'My Memberships' ) } />
 		<PageViewTracker path="/me/purchases/memberships" title="Me > My Memberships" />
 		<MeSidebarNavigation />
+		<QueryMembershipsSubscriptions />
 		<PurchasesHeader section={ 'memberships' } />
 		<Card className="billing-history__receipts" />
 	</Main>
