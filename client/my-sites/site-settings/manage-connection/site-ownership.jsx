@@ -253,12 +253,12 @@ class SiteOwnership extends Component {
 	render() {
 		const { canManageOptions, siteId, siteIsConnected, siteIsJetpack, translate } = this.props;
 
-		if ( canManageOptions === false ) {
-			return null;
+		if ( ! siteId ) {
+			return this.renderPlaceholder();
 		}
 
 		if ( ! canManageOptions ) {
-			return this.renderPlaceholder();
+			return null;
 		}
 
 		return (
