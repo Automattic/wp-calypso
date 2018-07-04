@@ -14,6 +14,7 @@ import { includes } from 'lodash';
  */
 import accept from 'lib/accept';
 import AuthorSelector from 'blocks/author-selector';
+import canCurrentUser from 'state/selectors/can-current-user';
 import Card from 'components/card';
 import config from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -250,7 +251,15 @@ class SiteOwnership extends Component {
 	}
 
 	render() {
-		const { siteId, siteIsConnected, siteIsJetpack, translate } = this.props;
+		const { canManageOptions, siteId, siteIsConnected, siteIsJetpack, translate } = this.props;
+
+		if ( ! siteId ) {
+			return this.renderPlaceholder();
+		}
+
+		if ( ! canManageOptions ) {
+			return null;
+		}
 
 		return (
 			<Fragment>
@@ -272,6 +281,7 @@ export default connect(
 		const isCurrentPlanOwner = isPaidPlan && isCurrentUserCurrentPlanOwner( state, siteId );
 
 		return {
+			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 			currentUser: getCurrentUser( state ),
 			isConnectionTransferSupported: isJetpackMinimumVersion( state, siteId, '6.2' ),
 			isCurrentPlanOwner,
