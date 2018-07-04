@@ -6,18 +6,17 @@
 
 import React from 'react';
 import BillingHistoryComponent from './main';
-// import Receipt from './receipt';
 
 export function myMemberships( context, next ) {
 	context.primary = React.createElement( BillingHistoryComponent );
 	next();
 }
 
-// export function transaction( context, next ) {
-// 	const receiptId = context.params.receiptId;
+// export function subscription( context, next ) {
+// 	const subscriptionId = context.params.subscriptionId;
 //
-// 	if ( receiptId ) {
-// 		context.primary = React.createElement( Receipt, { transactionId: receiptId } );
+// 	if ( subscriptionId ) {
+// 		context.primary = React.createElement( Receipt, { subscriptionId } );
 // 	}
 // 	next();
 // }
