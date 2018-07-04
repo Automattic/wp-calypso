@@ -354,7 +354,14 @@ class PodcastingDetails extends Component {
 
 		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
 
-		if ( fieldsToUpdate.podcasting_category_id !== fields.podcasting_category_id ) {
+		if ( category.ID === settings.podcasting_category_id ) {
+			this.setState( { showChangeNotice: false } );
+		}
+
+		if (
+			category.ID !== settings.podcasting_category_id &&
+			fieldsToUpdate.podcasting_category_id !== fields.podcasting_category_id
+		) {
 			this.setState( { showChangeNotice: true } );
 		}
 
