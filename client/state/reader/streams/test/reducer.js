@@ -72,6 +72,46 @@ describe( 'streams.items reducer', () => {
 
 		expect( nextState ).toEqual( [ lastKey, time2PostKey ] );
 	} );
+
+	it( 'should combine consecutive x-posts for the same original post', () => {
+		const xPostMetadata = {
+			blogId: 123,
+			postId: 1,
+		};
+
+		// First x-post
+		const postKey1 = {
+			...time1PostKey,
+			url: 'http://example.com/posts/one',
+			xPostMetadata,
+		};
+
+		// Second x-post (should merge into first x-post)
+		const postKey2 = {
+			...time2PostKey,
+			url: 'http://example.com/posts/two',
+			xPostMetadata,
+		};
+
+		// Third post
+		const postKey3 = {
+			...time2PostKey,
+			postId: 3,
+			url: 'http://example.com/posts/three',
+		};
+
+		const prevState = deepfreeze( [] );
+		const action = receivePage( { streamItems: [ postKey1, postKey2, postKey3 ] } );
+		const nextState = items( prevState, action );
+
+		expect( nextState ).toEqual( [
+			{
+				...postKey1,
+				xPostUrls: [ postKey2.url ],
+			},
+			postKey3,
+		] );
+	} );
 } );
 
 describe( 'streams.pendingItems reducer', () => {
