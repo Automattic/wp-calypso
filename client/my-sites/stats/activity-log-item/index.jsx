@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import scrollTo from 'lib/scroll-to';
 import { localize } from 'i18n-calypso';
-import { get, map, forEach, every, includes, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,10 +38,6 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { adjustMoment } from '../activity-log/utils';
 import { getSite } from 'state/sites/selectors';
-import { updatePlugin } from 'state/plugins/installed/actions';
-import { getPluginOnSite, getStatusForPlugin } from 'state/plugins/installed/selectors';
-import PluginNotices from 'lib/plugins/notices';
-import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
 
 class ActivityLogItem extends Component {
 	static propTypes = {
@@ -55,87 +50,9 @@ class ActivityLogItem extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		// keyed by plugin id, like "hello-dolly/hello"
-		pluginUpdateNotice: null,
-	};
-
 	confirmBackup = () => this.props.confirmBackup( this.props.activity.rewindId );
 
 	confirmRewind = () => this.props.confirmRewind( this.props.activity.rewindId );
-
-	updatePlugins = ( singlePlugin = false ) => {
-		const { showInfoNotice, site, updateSinglePlugin } = this.props;
-		const noticesToShow = {};
-
-		forEach( singlePlugin.id ? [ singlePlugin ] : this.props.pluginsToUpdate, plugin => {
-			// Use id: "hello-dolly/hello", slug: "hello-dolly", name: "Hello Dolly", updateStatus: bool|object,
-			updateSinglePlugin( plugin );
-
-			showInfoNotice(
-				PluginNotices.inProgressMessage( 'UPDATE_PLUGIN', '1 site 1 plugin', {
-					plugin: plugin.name,
-					site: site.name,
-				} ),
-				{
-					id: `alitemupdate-${ plugin.slug }`,
-					showDismiss: false,
-				}
-			);
-		} );
-
-		if ( ! isEmpty( noticesToShow ) ) {
-			this.setState( {
-				pluginUpdateNotice: { ...this.state.pluginUpdateNotice, ...noticesToShow },
-			} );
-		}
-	};
-
-	componentDidUpdate() {
-		forEach( this.props.pluginsToUpdate, ( plugin, key ) => {
-			if (
-				get( this.props.pluginsToUpdate, [ key, 'updateStatus', 'status' ], false ) ===
-					plugin.updateStatus.status ||
-				'inProgress' === plugin.updateStatus.status
-			) {
-				return;
-			}
-
-			const updateStatus = plugin.updateStatus;
-
-			const { showErrorNotice, showSuccessNotice, site, translate } = this.props;
-
-			// If it errored, clear and show error notice
-			const pluginData = {
-				plugin: plugin.name,
-				site: site.name,
-			};
-
-			switch ( updateStatus.status ) {
-				case 'error':
-					showErrorNotice(
-						PluginNotices.singleErrorMessage( 'UPDATE_PLUGIN', pluginData, {
-							error: updateStatus,
-						} ),
-						{
-							id: `alitemupdate-${ plugin.slug }`,
-							button: translate( 'Try again' ),
-							onClick: () => this.updatePlugins( plugin ),
-						}
-					);
-					break;
-				case 'completed':
-					showSuccessNotice(
-						PluginNotices.successMessage( 'UPDATE_PLUGIN', '1 site 1 plugin', pluginData ),
-						{
-							id: `alitemupdate-${ plugin.slug }`,
-							duration: 3000,
-						}
-					);
-					break;
-			}
-		} );
-	}
 
 	renderHeader() {
 		const { activityTitle, actorAvatarUrl, actorName, actorRole, actorType } = this.props.activity;
@@ -190,9 +107,6 @@ class ActivityLogItem extends Component {
 			enableClone,
 			hideRestore,
 			activity: { activityIsRewindable, activityName, activityMeta },
-			plugin,
-			translate,
-			pluginsToUpdate,
 		} = this.props;
 
 		if ( enableClone ) {
@@ -200,29 +114,6 @@ class ActivityLogItem extends Component {
 		}
 
 		switch ( activityName ) {
-			case 'plugin__update_available':
-				// If every plugin is either still updating or finished successfully, hide the button.
-				if (
-					every( map( pluginsToUpdate, ( { updateStatus } ) => updateStatus.status ), status =>
-						includes( [ 'inProgress', 'completed' ], status )
-					)
-				) {
-					return null;
-				}
-				return (
-					plugin &&
-					plugin.update && (
-						<Button
-							primary
-							compact
-							className="activity-log-item__action"
-							onClick={ this.updatePlugins }
-						>
-							{ translate( 'Update plugin', 'Update plugins', { count: pluginsToUpdate.length } ) }
-						</Button>
-					)
-				);
-			case 'plugin__update_failed':
 			case 'rewind__scan_result_found':
 				return this.renderHelpAction();
 			case 'rewind__backup_error':
@@ -414,30 +305,8 @@ class ActivityLogItem extends Component {
 	}
 }
 
-/**
- * Creates a numeric indexed array of objects with props
- * {
- * 		pluginId   string       Plugin directory and base file name without extension
- * 		pluginSlug string       Plugin directory
- * 		status     object|false Current update status
- * }
- * @param {array}  plugins List of plugins that will be updated
- * @param {object} state   Progress of plugin update as found in status.plugins.installed.state.
- * @param {number} siteId  ID of the site where the plugin is installed
- *
- * @returns {array} List of plugins to update with their status.
- */
-const makeListPluginsToUpdate = ( plugins, state, siteId ) =>
-	plugins.map( plugin => ( {
-		updateStatus: getStatusForPlugin( state, siteId, plugin.pluginId ),
-		...getPluginOnSite( state, siteId, plugin.pluginSlug ),
-	} ) );
-
 const mapStateToProps = ( state, { activity, siteId } ) => {
 	const rewindState = getRewindState( state, siteId );
-	const pluginSlug = activity.activityMeta.pluginSlug;
-	const pluginId = activity.activityMeta.pluginId;
-	const plugins = activity.activityMeta.pluginsToUpdate;
 	const site = getSite( state, siteId );
 
 	return {
@@ -450,9 +319,6 @@ const mapStateToProps = ( state, { activity, siteId } ) => {
 		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
 		canAutoconfigure: rewindState.canAutoconfigure,
 		site,
-		plugin: pluginSlug && getPluginOnSite( state, siteId, pluginSlug ),
-		pluginStatus: pluginId && getStatusForPlugin( state, siteId, pluginId ),
-		pluginsToUpdate: plugins && makeListPluginsToUpdate( plugins, state, siteId ),
 	};
 };
 
@@ -508,10 +374,6 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
 		),
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
-	updateSinglePlugin: plugin => dispatch( updatePlugin( siteId, plugin ) ),
-	showErrorNotice: ( error, options ) => dispatch( errorNotice( error, options ) ),
-	showInfoNotice: ( info, options ) => dispatch( infoNotice( info, options ) ),
-	showSuccessNotice: ( success, options ) => dispatch( successNotice( success, options ) ),
 } );
 
 export default connect(
