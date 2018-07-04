@@ -120,7 +120,7 @@ export default {
 		defaultVariation: 'control',
 	},
 	includeDotBlogSubdomain: {
-		datestamp: '20180702',
+		datestamp: '20180716',
 		variations: {
 			yes: 50,
 			no: 50,
