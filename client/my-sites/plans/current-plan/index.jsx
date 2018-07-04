@@ -34,6 +34,7 @@ import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import ChecklistShow from 'my-sites/checklist/checklist-show';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -83,11 +84,12 @@ class CurrentPlan extends Component {
 			domains,
 			context,
 			currentPlan,
-			isExpiring,
-			shouldShowDomainWarnings,
 			hasDomainsLoaded,
-			translate,
 			isAutomatedTransfer,
+			isExpiring,
+			isJetpack,
+			shouldShowDomainWarnings,
+			translate,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
@@ -141,6 +143,7 @@ class CurrentPlan extends Component {
 						isAutomatedTransfer={ isAutomatedTransfer }
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
+					{ isJetpack && <ChecklistShow /> }
 					<div
 						className={ classNames( 'current-plan__header-text current-plan__text', {
 							'is-placeholder': { isLoading },
@@ -176,5 +179,6 @@ export default connect( ( state, ownProps ) => {
 		shouldShowDomainWarnings: isWpcom || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		isJetpack: isJetpackSite( state, selectedSiteId ),
 	};
 } )( localize( CurrentPlan ) );
