@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { findIndex, last, takeRightWhile, takeWhile, filter, forEach, map } from 'lodash';
+import { findIndex, last, takeRightWhile, takeWhile, filter } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -21,7 +21,7 @@ import {
 	READER_STREAMS_DISMISS_POST,
 } from 'state/action-types';
 import { keysAreEqual } from 'reader/post-key';
-import { sameXPost } from 'reader/stream/utils';
+import { combineXPosts } from './utils';
 
 /*
  * Contains a list of post-keys representing the items of a stream.
@@ -61,20 +61,15 @@ export const items = ( state = [], action ) => {
 
 			const newState = [ ...state, ...streamItems ];
 
-			// Find any x-posts and see if they match existing x-posts
-			// const newXPosts = filter( streamItems, postKey => postKey.xPostMetadata );
+			// Find any x-posts
+			const newXPosts = filter( streamItems, postKey => postKey.xPostMetadata );
 
-			// if ( ! newXPosts ) {
-			// 	return newState;
-			// }
+			if ( ! newXPosts ) {
+				return newState;
+			}
 
 			// Filter out duplicate x-posts
-			return filter( newState, ( postKey, index, collection ) => {
-				// @todo currently removes all x-posts 🙃
-				if ( findIndex( collection, item => sameXPost( item, postKey ) ) === -1 ) {
-					return postKey;
-				}
-			} );
+			return combineXPosts( newState );
 
 		case READER_STREAMS_SHOW_UPDATES:
 			return [ ...action.payload.items, ...state ];
