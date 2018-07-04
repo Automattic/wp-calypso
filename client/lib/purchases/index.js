@@ -11,13 +11,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	isDomainRegistration,
-	isDomainTransfer,
-	isJetpackPlan,
-	isPlan,
-	isTheme,
-} from 'lib/products-values';
+import { isDomainRegistration, isDomainTransfer, isPlan, isTheme } from 'lib/products-values';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -179,7 +173,6 @@ function isRemovable( purchase ) {
 	}
 
 	return (
-		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
 		isExpired( purchase ) ||
 		( isDomainTransfer( purchase ) &&
