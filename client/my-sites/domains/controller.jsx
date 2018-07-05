@@ -25,12 +25,14 @@ import SiteRedirect from './domain-search/site-redirect';
 import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
+import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import GoogleApps from 'components/upgrades/google-apps';
 import {
 	domainManagementTransferIn,
 	domainManagementTransferInPrecheck,
 	domainMapping,
 	domainTransferIn,
+	domainUseYourDomain,
 } from 'my-sites/domains/paths';
 import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
@@ -123,6 +125,34 @@ const transferDomain = ( context, next ) => {
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+				/>
+			</CartData>
+		</Main>
+	);
+	next();
+};
+
+const useYourDomain = ( context, next ) => {
+	const handleGoBack = () => {
+		let path = `/domains/add/${ context.params.site }`;
+		if ( context.query.initialQuery ) {
+			path += `?suggestion=${ context.query.initialQuery }`;
+		}
+
+		page( path );
+	};
+	context.primary = (
+		<Main>
+			<PageViewTracker
+				path={ domainUseYourDomain( ':site' ) }
+				title="Domain Search > Use Your Own Domain"
+			/>
+			<DocumentHead title={ translate( 'Use Your Own Domain' ) } />
+			<CartData>
+				<UseYourDomainStep
+					basePath={ sectionify( context.path ) }
+					initialQuery={ context.query.initialQuery }
+					goBack={ handleGoBack }
 				/>
 			</CartData>
 		</Main>
@@ -268,4 +298,5 @@ export default {
 	redirectToDomainSearchSuggestion,
 	transferDomain,
 	transferDomainPrecheck,
+	useYourDomain,
 };

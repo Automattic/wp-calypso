@@ -8,7 +8,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
-import Gridicon from 'gridicons';
 import page from 'page';
 import { stringify } from 'qs';
 
@@ -31,12 +30,11 @@ import { getAvailabilityNotice } from 'lib/domains/registration/availability-mes
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import Notice from 'components/notice';
-import Card from 'components/card';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import TransferDomainPrecheck from './transfer-domain-precheck';
-import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
+import { INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
@@ -140,25 +138,37 @@ class TransferDomainStep extends React.Component {
 		page( this.getMapDomainUrl() );
 	};
 
-	addTransfer() {
-		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, translate } = this.props;
-		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
-		const submitting = submittingAvailability || submittingWhois;
+	getProductPriceText = () => {
+		const {
+			cart,
+			currencyCode,
+			translate,
+			domainsWithPlansOnly,
+			isSignupStep,
+			productsList,
+			selectedSite,
+		} = this.props;
+		const { searchQuery } = this.state;
 		const productSlug = getDomainProductSlug( searchQuery );
 		const domainsWithPlansOnlyButNoPlan =
 			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 
-		let domainProductPrice = getDomainPrice(
-			productSlug,
-			this.props.productsList,
-			this.props.currencyCode
-		);
+		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
 
 		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
 			domainProductPrice = translate( 'Free with your plan' );
 		} else if ( domainsWithPlansOnlyButNoPlan ) {
 			domainProductPrice = translate( 'Included in paid plans' );
 		}
+
+		return domainProductPrice;
+	};
+
+	addTransfer() {
+		const { translate } = this.props;
+		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
+		const submitting = submittingAvailability || submittingWhois;
+		const domainProductPrice = this.getProductPriceText();
 
 		return (
 			<div>
@@ -212,28 +222,6 @@ class TransferDomainStep extends React.Component {
 					</Button>
 					{ this.domainRegistrationUpsell() }
 				</form>
-
-				<Card className="transfer-domain-step__map-option">
-					<strong>{ translate( 'Manage your domain and site separately.' ) }</strong>
-					<p>
-						{ translate(
-							'Leave the domain at your current provider and {{a}}manually connect it{{/a}} to ' +
-								"your WordPress.com site. You'll still need to continue paying your current " +
-								'provider to renew and manage any domain settings.',
-							{
-								components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
-							}
-						) }
-						<a
-							className="transfer-domain-step__map-help"
-							href={ MAP_EXISTING_DOMAIN }
-							rel="noopener noreferrer"
-							target="_blank"
-						>
-							<Gridicon icon="help" size={ 18 } />
-						</a>
-					</p>
-				</Card>
 			</div>
 		);
 	}
@@ -407,14 +395,14 @@ class TransferDomainStep extends React.Component {
 	handleFormSubmit = event => {
 		event.preventDefault();
 
-		const domain = getFixedDomainSearch( this.state.searchQuery );
-		this.props.recordFormSubmitInTransferDomain( this.state.searchQuery );
+		const { analyticsSection, searchQuery } = this.state;
+		const domain = getFixedDomainSearch( searchQuery );
+
+		this.props.recordFormSubmitInTransferDomain( searchQuery );
+
 		this.setState( { notice: null, suggestion: null, submittingAvailability: true } );
 
-		this.props.recordGoButtonClickInTransferDomain(
-			this.state.searchQuery,
-			this.props.analyticsSection
-		);
+		this.props.recordGoButtonClickInTransferDomain( searchQuery, analyticsSection );
 
 		Promise.all( [ this.getInboundTransferStatus(), this.getAvailability() ] ).then( () => {
 			this.setState( prevState => {
