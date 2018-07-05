@@ -1,0 +1,25 @@
+.gravatar-caterpillar {
+	display: flex;
+	flex-shrink: 0;
+}
+
+.gravatar-caterpillar__gravatar {
+	cursor: pointer;
+	border: 2px solid $white;
+	height: 24px;
+	margin-left: -8px;
+	vertical-align: middle;
+	width: 24px;
+
+	&:first-child {
+		margin-left: -2px;
+	}
+
+	&.is-hidden-on-small-screens {
+		display: none;
+
+		@include breakpoint( ">660px" ) {
+   			display: inline;
+   		}
+	}
+}
