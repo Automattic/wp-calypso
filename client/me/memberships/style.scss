@@ -137,3 +137,22 @@
 	white-space: nowrap;
 	text-align:center;
 }
+
+.memberships__subscription-remove {
+	color: $alert-red;
+	text-align: left;
+	width: 100%;
+	cursor: hand;
+
+	&:active,
+	&:focus,
+	&:hover {
+		color: $link-highlight;
+	}
+
+	.gridicon {
+		margin-top: -2px;
+		margin-right: 4px;
+		vertical-align: middle;
+	}
+}
