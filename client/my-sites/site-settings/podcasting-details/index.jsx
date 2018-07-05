@@ -16,6 +16,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import DocumentHead from 'components/data/document-head';
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
 import { decodeEntities } from 'lib/formatting';
@@ -44,6 +45,7 @@ import {
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
+import { getSupportSiteLocale } from '../../../lib/i18n-utils';
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
@@ -178,10 +180,21 @@ class PodcastingDetails extends Component {
 				<FormSettingExplanation>
 					{ translate(
 						'Copy your feed URL and submit it to Apple Podcasts and other podcasting services.'
-					) }
+					) }{' '}
+					{ this.renderSupportLink() }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
+	}
+
+	renderSupportLink() {
+		const { supportLink, translate } = this.props;
+
+		return translate( '{{a}}Learn more{{/a}}', {
+			components: {
+				a: <ExternalLink href={ supportLink } target="_blank" icon iconSize={ 14 } />,
+			},
+		} );
 	}
 
 	render() {
@@ -434,6 +447,9 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 
+	const supportLink =
+		'https://' + getSupportSiteLocale() + '.support.wordpress.com/audio/podcasting/';
+
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
@@ -446,6 +462,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
 		isSavingSettings: isSavingSiteSettings( state, siteId ),
+		supportLink,
 	};
 } );
 
