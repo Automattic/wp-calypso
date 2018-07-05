@@ -17,7 +17,9 @@ import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
 import formatCurrency from 'lib/format-currency';
-import SectionHeader from 'components/section-header';
+import HeaderCake from 'components/header-cake';
+import { purchasesRoot } from '../purchases/paths';
+import Site from 'blocks/site';
 
 const Subscription = ( { translate, subscription, moment } ) => (
 	<Main className="memberships__subscription">
@@ -27,9 +29,10 @@ const Subscription = ( { translate, subscription, moment } ) => (
 		<PurchasesHeader section={ 'memberships' } />
 		{ subscription && (
 			<div>
-				<SectionHeader label={ subscription.title } />
-				<Card>{ subscription.title }</Card>
+				<HeaderCake backHref={ purchasesRoot + '/memberships' }>{ subscription.title }</HeaderCake>
 				<Card className="memberships__subscription-meta">
+					<Site siteId={ subscription.site_id } href={ subscription.site_url } />
+					<div className="memberships__subscription-title">{ subscription.title }</div>
 					<Fragment>
 						<ul className="memberships__subscription-inner-meta">
 							<li>
