@@ -43,6 +43,51 @@ import { isRequestingTermsForQueryIgnoringPage, getTerm } from 'state/terms/sele
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
+	constructor() {
+		super();
+		this.state = {
+			previousSelectedCategory: null,
+		};
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { podcastingCategoryId, selectedCategory } = this.props;
+		const { previousSelectedCategory } = this.state;
+
+		if ( ! podcastingCategoryId ) {
+			return;
+		}
+
+		if ( selectedCategory && ! previousSelectedCategory ) {
+			// Set the initial podcasting category
+			this.setState( {
+				previousSelectedCategory: selectedCategory,
+				hasCategoryChanged: false,
+			} );
+			return;
+		}
+
+		if ( podcastingCategoryId !== prevProps.podcastingCategoryId && prevProps.selectedCategory ) {
+			// The podcasting category has changed
+			this.setState( {
+				previousSelectedCategory: prevProps.selectedCategory,
+				hasCategoryChanged: this.hasCategoryChanged( prevProps.selectedCategory ),
+			} );
+		}
+	}
+
+	hasCategoryChanged( previousSelectedCategory ) {
+		const { isSavingSettings, isRequestingSettings, podcastingCategoryId } = this.props;
+
+		return (
+			! isSavingSettings &&
+			! isRequestingSettings &&
+			podcastingCategoryId &&
+			previousSelectedCategory &&
+			podcastingCategoryId !== previousSelectedCategory.ID
+		);
+	}
+
 	renderExplicitContent() {
 		const {
 			fields,
@@ -236,7 +281,23 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
+		const {
+			siteId,
+			podcastingCategoryId,
+			selectedCategory,
+			isCategoryChanging,
+			isSavingSettings,
+			translate,
+		} = this.props;
+
+		const { hasCategoryChanged, previousSelectedCategory } = this.state;
+
+		const showCategoryChangedNotice =
+			hasCategoryChanged &&
+			! isCategoryChanging &&
+			! isSavingSettings &&
+			previousSelectedCategory &&
+			selectedCategory;
 
 		return (
 			<Fragment>
@@ -265,6 +326,22 @@ class PodcastingDetails extends Component {
 								"If you change categories, you'll need to resubmit your feed to any podcast service."
 							) }
 						/>
+					) }
+					{ showCategoryChangedNotice && (
+						<Notice isCompact status="is-info">
+							{ translate(
+								"You have changed the podcasting category from {{strong}}%(previous)s{{/strong}} to {{strong}}%(current)s{{/strong}}. You'll need to resubmit your feed to any podcast service.",
+								{
+									args: {
+										current: selectedCategory.name,
+										previous: previousSelectedCategory.name,
+									},
+									components: {
+										strong: <strong />,
+									},
+								}
+							) }
+						</Notice>
 					) }
 				</FormFieldset>
 				{ this.renderFeedUrl() }
@@ -438,6 +515,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		siteSlug: getSelectedSiteSlug( state ),
 		isPrivate: isPrivateSite( state, siteId ),
 		podcastingCategoryId,
+		selectedCategory,
 		isPodcastingEnabled,
 		isCategoryChanging,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
