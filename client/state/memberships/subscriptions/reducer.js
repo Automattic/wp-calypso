@@ -9,6 +9,9 @@ import {
 	MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE,
 	MEMBERSHIPS_SUBSCRIPTIONS_LIST_SUCCESS,
 	MEMBERSHIPS_SUBSCRIPTIONS_LIST_FAILURE,
+	MEMBERSHIPS_SUBSCRIPTION_STOP,
+	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
+	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 
@@ -22,6 +25,8 @@ import { combineReducers, createReducer } from 'state/utils';
  */
 export const items = createReducer( [], {
 	[ MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE ]: ( state, { subscriptions } ) => subscriptions,
+	[ MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS ]: ( state, { subscriptionId } ) =>
+		state.filter( sub => sub.ID !== subscriptionId ),
 } );
 
 /**
@@ -38,7 +43,23 @@ export const requesting = createReducer( false, {
 	[ MEMBERSHIPS_SUBSCRIPTIONS_LIST_FAILURE ]: () => false,
 } );
 
+export const stoppingSubscription = createReducer( [], {
+	[ MEMBERSHIPS_SUBSCRIPTION_STOP ]: ( state, { subscriptionId } ) => ( {
+		...state,
+		[ subscriptionId ]: 'start',
+	} ),
+	[ MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS ]: ( state, { subscriptionId } ) => ( {
+		...state,
+		[ subscriptionId ]: 'success',
+	} ),
+	[ MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE ]: ( state, { subscriptionId } ) => ( {
+		...state,
+		[ subscriptionId ]: 'fail',
+	} ),
+} );
+
 export default combineReducers( {
 	items,
 	requesting,
+	stoppingSubscription,
 } );

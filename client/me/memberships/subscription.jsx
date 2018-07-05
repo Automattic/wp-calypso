@@ -22,21 +22,47 @@ import { purchasesRoot } from '../purchases/paths';
 import Site from 'blocks/site';
 import Gridicon from 'gridicons';
 import CompactCard from 'components/card/compact';
+import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
+import Notice from 'components/notice';
 
 class Subscription extends React.Component {
+	constructor() {
+		super();
+		this.stopSubscription = () => this.props.requestSubscriptionStop( this.props.subscription.ID );
+	}
 	render() {
-		const { translate, subscription, moment } = this.props;
+		const { translate, subscription, moment, stoppingStatus } = this.props;
 		return (
 			<Main className="memberships__subscription">
 				<DocumentHead title={ translate( 'My Memberships' ) } />
 				<MeSidebarNavigation />
 				<QueryMembershipsSubscriptions />
 				<PurchasesHeader section={ 'memberships' } />
+				<HeaderCake backHref={ purchasesRoot + '/memberships' }>
+					{ subscription ? subscription.title : translate( 'All subscriptions' ) }
+				</HeaderCake>
+				{ stoppingStatus === 'start' && (
+					<Notice
+						status="is-info"
+						isLoading={ true }
+						text={ translate( 'Stopping this subscription' ) }
+					/>
+				) }
+				{ stoppingStatus === 'fail' && (
+					<Notice
+						status="is-error"
+						text={ translate( 'There was a problem while stopping your subscription' ) }
+					/>
+				) }
+				{ stoppingStatus === 'success' && (
+					<Notice
+						status="is-success"
+						text={ translate( 'This subscription has been stopped. You will not be charged.' ) }
+					/>
+				) }
+
 				{ subscription && (
 					<div>
-						<HeaderCake backHref={ purchasesRoot + '/memberships' }>
-							{ subscription.title }
-						</HeaderCake>
 						<Card className="memberships__subscription-meta">
 							<Site siteId={ subscription.site_id } href={ subscription.site_url } />
 							<div className="memberships__subscription-title">{ subscription.title }</div>
@@ -77,7 +103,11 @@ class Subscription extends React.Component {
 								</ul>
 							</Fragment>
 						</Card>
-						<CompactCard tagName="button" className="memberships__subscription-remove">
+						<CompactCard
+							tagName="button"
+							className="memberships__subscription-remove"
+							onClick={ this.stopSubscription }
+						>
 							<Gridicon icon="trash" />
 							{ translate( 'Stop %s subscription.', { args: subscription.title } ) }
 						</CompactCard>
@@ -93,6 +123,16 @@ const getSubscription = ( state, subscriptionId ) =>
 		.filter( sub => sub.ID === subscriptionId )
 		.pop();
 
-export default connect( ( state, props ) => ( {
-	subscription: getSubscription( state, props.subscriptionId ),
-} ) )( localize( Subscription ) );
+export default connect(
+	( state, props ) => ( {
+		subscription: getSubscription( state, props.subscriptionId ),
+		stoppingStatus: get(
+			state,
+			[ 'memberships', 'subscriptions', 'stoppingSubscription', props.subscriptionId ],
+			false
+		),
+	} ),
+	{
+		requestSubscriptionStop,
+	}
+)( localize( Subscription ) );
