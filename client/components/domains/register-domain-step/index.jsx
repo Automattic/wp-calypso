@@ -360,12 +360,6 @@ class RegisterDomainStep extends React.Component {
 		const { message, severity } = showNotice
 			? getAvailabilityNotice( lastDomainSearched, error, errorData )
 			: {};
-		const showTldFilterBar =
-			( Array.isArray( this.state.searchResults ) &&
-				this.state.searchResults.length > 0 &&
-				Array.isArray( this.state.availableTlds ) &&
-				this.state.availableTlds.length > 0 ) ||
-			this.state.loadingResults;
 		return (
 			<div className="register-domain-step">
 				<StickyPanel className="register-domain-step__search">
@@ -394,18 +388,6 @@ class RegisterDomainStep extends React.Component {
 						text={ message }
 						status={ `is-${ severity }` }
 						showDismiss={ false }
-					/>
-				) }
-				{ showTldFilterBar && (
-					<TldFilterBar
-						availableTlds={ this.state.availableTlds }
-						filters={ this.state.filters }
-						isSignupStep={ this.props.isSignupStep }
-						lastFilters={ this.state.lastFilters }
-						onChange={ this.onFiltersChange }
-						onReset={ this.onFiltersReset }
-						onSubmit={ this.onFiltersSubmit }
-						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
 					/>
 				) }
 				{ this.renderContent() }
@@ -1005,6 +987,13 @@ class RegisterDomainStep extends React.Component {
 			return this.renderExampleSuggestions();
 		}
 
+		const showTldFilterBar =
+			( Array.isArray( this.state.searchResults ) &&
+				this.state.searchResults.length > 0 &&
+				Array.isArray( this.state.availableTlds ) &&
+				this.state.availableTlds.length > 0 ) ||
+			this.state.loadingResults;
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1029,7 +1018,20 @@ class RegisterDomainStep extends React.Component {
 				railcarSeed={ this.state.railcarSeed }
 				fetchAlgo={ searchVendor + '/v1' }
 				cart={ this.props.cart }
-			/>
+			>
+				{ showTldFilterBar && (
+					<TldFilterBar
+						availableTlds={ this.state.availableTlds }
+						filters={ this.state.filters }
+						isSignupStep={ this.props.isSignupStep }
+						lastFilters={ this.state.lastFilters }
+						onChange={ this.onFiltersChange }
+						onReset={ this.onFiltersReset }
+						onSubmit={ this.onFiltersSubmit }
+						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+					/>
+				) }
+			</DomainSearchResults>
 		);
 	}
 
