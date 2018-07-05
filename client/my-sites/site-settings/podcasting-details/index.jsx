@@ -14,9 +14,7 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import ClipboardButtonInput from 'components/clipboard-button-input';
 import DocumentHead from 'components/data/document-head';
-import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
 import { decodeEntities } from 'lib/formatting';
@@ -30,6 +28,7 @@ import Notice from 'components/notice';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
+import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
@@ -167,34 +166,13 @@ class PodcastingDetails extends Component {
 	}
 
 	renderFeedUrl() {
-		const { podcastingFeedUrl, translate } = this.props;
+		const { podcastingFeedUrl } = this.props;
 
 		if ( ! podcastingFeedUrl ) {
 			return;
 		}
 
-		return (
-			<FormFieldset>
-				<FormLabel>{ translate( 'RSS Feed' ) }</FormLabel>
-				<ClipboardButtonInput value={ podcastingFeedUrl } />
-				<FormSettingExplanation>
-					{ translate(
-						'Copy your feed URL and submit it to Apple Podcasts and other podcasting services.'
-					) }{' '}
-					{ this.renderSupportLink() }
-				</FormSettingExplanation>
-			</FormFieldset>
-		);
-	}
-
-	renderSupportLink() {
-		const { supportLink, translate } = this.props;
-
-		return translate( '{{a}}Learn more{{/a}}', {
-			components: {
-				a: <ExternalLink href={ supportLink } target="_blank" icon iconSize={ 14 } />,
-			},
-		} );
+		return <PodcastFeedUrl feedUrl={ podcastingFeedUrl } />;
 	}
 
 	render() {
@@ -255,7 +233,13 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
+		const {
+			siteId,
+			podcastingCategoryId,
+			podcastingFeedUrl,
+			isCategoryChanging,
+			translate,
+		} = this.props;
 
 		return (
 			<Fragment>
@@ -286,7 +270,7 @@ class PodcastingDetails extends Component {
 						/>
 					) }
 				</FormFieldset>
-				{ this.renderFeedUrl() }
+				{ podcastingFeedUrl && <PodcastFeedUrl feedUrl={ podcastingFeedUrl } /> }
 			</Fragment>
 		);
 	}
