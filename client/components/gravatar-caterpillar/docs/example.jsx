@@ -9,10 +9,10 @@ import React from 'react';
  * Internal dependencies
  */
 import GravatarCaterpillar from 'components/gravatar-caterpillar';
-import { authors } from './fixtures';
+import { users } from './fixtures';
 
 function GravatarCaterpillarExample() {
-	return <GravatarCaterpillar authors={ authors } />;
+	return <GravatarCaterpillar users={ users } />;
 }
 
 export default GravatarCaterpillarExample;

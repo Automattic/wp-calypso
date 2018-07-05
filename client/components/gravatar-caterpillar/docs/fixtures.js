@@ -1,6 +1,6 @@
 /** @format */
 
-export const authors = [
+export const users = [
 	{
 		ID: 1,
 		name: 'Christophe',

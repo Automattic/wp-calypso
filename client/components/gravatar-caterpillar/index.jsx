@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop, map, size } from 'lodash';
+import { noop, map, size, takeRight, filter, uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,31 +17,36 @@ class GravatarCaterpillar extends React.Component {
 	};
 
 	render() {
-		const { authors, onClick, maxGravatarsToDisplay } = this.props;
+		const { users, onClick, maxGravatarsToDisplay } = this.props;
 
-		const displayedAuthorsCount = size( authors );
-
-		if ( displayedAuthorsCount < 1 ) {
+		if ( size( users ) < 1 ) {
 			return null;
 		}
 
 		const gravatarSmallScreenThreshold = maxGravatarsToDisplay / 2;
 
+		// Only display authors with a gravatar, and only display each author once
+		const displayedUsers = takeRight(
+			filter( uniqBy( users, 'email' ), 'avatar_URL' ),
+			maxGravatarsToDisplay
+		);
+		const displayedUsersCount = size( displayedUsers );
+
 		return (
 			<div className="gravatar-caterpillar" onClick={ onClick } aria-hidden="true">
-				{ map( authors, ( author, index ) => {
+				{ map( displayedUsers, ( user, index ) => {
 					let gravClasses = 'gravatar-caterpillar__gravatar';
 					// If we have more than x gravs,
 					// add a additional class so we can hide some on small screens
 					if (
-						displayedAuthorsCount > gravatarSmallScreenThreshold &&
-						index < displayedAuthorsCount - gravatarSmallScreenThreshold
+						displayedUsersCount > gravatarSmallScreenThreshold &&
+						index < displayedUsersCount - gravatarSmallScreenThreshold
 					) {
 						gravClasses += ' is-hidden-on-small-screens';
 					}
 
 					return (
-						<Gravatar className={ gravClasses } key={ author.email } user={ author } size={ 32 } />
+						<Gravatar className={ gravClasses } key={ user.email } user={ user } size={ 32 } />
 					);
 				} ) }
 			</div>
