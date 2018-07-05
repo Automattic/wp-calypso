@@ -148,6 +148,7 @@ class UseYourDomainStep extends React.Component {
 			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 
 		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
+		domainProductPrice += ' per year';
 
 		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
 			domainProductPrice = translate( 'Free with your plan' );
@@ -167,11 +168,13 @@ class UseYourDomainStep extends React.Component {
 		const price = get( productsList, [ 'domain_map', 'cost' ], null );
 		if ( price ) {
 			mappingProductPrice = formatCurrency( price, currencyCode );
-			mappingProductPrice += '/year';
+			mappingProductPrice += ' per year plus registration costs at your current provider';
 		}
 
 		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
-			mappingProductPrice = translate( 'Free with your plan' );
+			mappingProductPrice = translate(
+				'Free with your plan, but registration costs at your current provider still apply'
+			);
 		}
 
 		return mappingProductPrice;
@@ -249,9 +252,12 @@ class UseYourDomainStep extends React.Component {
 		const image = '/calypso/images/illustrations/migrating-host-diy.svg';
 		const title = translate( 'Transfer your domain away from your current registrar.' );
 		const reasons = [
-			translate( 'Manage domain settings in your WordPress.com dashboard' ),
-			translate( 'Extends registration by 1 year' ),
-			translate( 'Can take several days to transfer' ),
+			translate(
+				'Domain registration and billing will be moved from your current provider to WordPress.com'
+			),
+			translate( 'Manage your domain and site from your WordPress.com dashboard' ),
+			translate( 'Extends registration by one year' ),
+			translate( 'Can take several days to complete the transfer' ),
 			this.getTransferPriceText(),
 		];
 		const buttonText = translate( 'Transfer to WordPress.com' );
@@ -277,9 +283,10 @@ class UseYourDomainStep extends React.Component {
 		const image = '/calypso/images/illustrations/jetpack-themes.svg';
 		const title = translate( 'Map your domain without moving it from your current registrar.' );
 		const reasons = [
-			translate( 'Manage domain settings at your current domain provider' ),
-			translate( 'Continue paying for your domain at your current provider' ),
-			translate( 'Limited waiting period for changes' ),
+			translate( 'Domain registration and billing will remain at your current provider' ),
+			translate( 'Manage some domain settings at your current provider and some at WordPress.com' ),
+			// translate( 'Continue paying for your domain registration at your current provider' ),
+			translate( "Requires changes to the domain's DNS" ),
 			this.getMappingPriceText(),
 		];
 		const buttonText = translate( 'Buy Domain Mapping' );
