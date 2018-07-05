@@ -2,7 +2,6 @@
 .memberships__list-subscription {
 	display:flex;
 	flex-direction: row;
-	justify-content: space-between;
 }
 
 .memberships__service-name {
@@ -24,4 +23,14 @@
 	color: $gray;
 }
 
+.memberships__list-date {
+	flex-basis: 170px;
+}
 
+.memberships__list-renewal-price {
+	flex-basis: 100px;
+}
+
+.memberships__service-description {
+	flex-grow: 1;
+}
