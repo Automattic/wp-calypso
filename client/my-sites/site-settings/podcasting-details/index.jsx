@@ -426,7 +426,12 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const selectedCategory = categories && head( filter( categories, { ID: podcastingCategoryId } ) );
 	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
 
-	const isCategoryChanging = podcastingCategoryId !== ownProps.settings.podcasting_category_id;
+	const isSavingSettings = isSavingSiteSettings( state, siteId );
+	const isCategoryChanging =
+		! isSavingSettings &&
+		! ownProps.isRequestingSettings &&
+		Number( ownProps.settings.podcasting_category_id ) > 0 &&
+		podcastingCategoryId !== Number( ownProps.settings.podcasting_category_id );
 
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
@@ -442,7 +447,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
-		isSavingSettings: isSavingSiteSettings( state, siteId ),
+		isSavingSettings,
 	};
 } );
 
