@@ -62,6 +62,7 @@ import FormFields from 'components/forms/docs/example';
 import Gauge from 'components/gauge/docs/example';
 import GlobalNotices from 'components/global-notices/docs/example';
 import Gravatar from 'components/gravatar/docs/example';
+import GravatarCaterpillar from 'components/gravatar-caterpillar/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
@@ -202,6 +203,7 @@ class DesignAssets extends React.Component {
 					<Gauge readmeFilePath="gauge" />
 					<GlobalNotices readmeFilePath="global-notices" />
 					<Gravatar readmeFilePath="gravatar" />
+					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
 					<Gridicons />
 					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
