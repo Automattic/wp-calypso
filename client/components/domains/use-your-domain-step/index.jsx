@@ -148,7 +148,9 @@ class UseYourDomainStep extends React.Component {
 			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 
 		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
-		domainProductPrice += ' per year';
+		if ( domainProductPrice ) {
+			domainProductPrice += ' per year';
+		}
 
 		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
 			domainProductPrice = translate( 'Free with your plan' );
