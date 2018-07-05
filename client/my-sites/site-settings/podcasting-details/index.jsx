@@ -6,7 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map, toPairs, pick, flowRight, filter, head } from 'lodash';
+import { map, toPairs, pick, flowRight } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -39,10 +39,7 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
-import {
-	isRequestingTermsForQueryIgnoringPage,
-	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
+import { isRequestingTermsForQueryIgnoringPage, getTerm } from 'state/terms/selectors';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
@@ -422,8 +419,8 @@ const connectComponent = connect( ( state, ownProps ) => {
 		Number( ownProps.fields.podcasting_category_id );
 	const isPodcastingEnabled = podcastingCategoryId > 0;
 
-	const categories = getTermsForQueryIgnoringPage( state, siteId, 'category', {} );
-	const selectedCategory = categories && head( filter( categories, { ID: podcastingCategoryId } ) );
+	const selectedCategory =
+		isPodcastingEnabled && getTerm( state, siteId, 'category', podcastingCategoryId );
 	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
 
 	const isSavingSettings = isSavingSiteSettings( state, siteId );
