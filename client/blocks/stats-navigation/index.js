@@ -16,6 +16,7 @@ import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
 import isGoogleMyBusinessLocationConnectedSelector from 'state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'state/selectors/is-site-store';
+import { getSite } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from 'config';
 
@@ -24,15 +25,19 @@ class StatsNavigation extends Component {
 		interval: PropTypes.oneOf( intervalConstants.map( i => i.value ) ),
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
+		isWordAds: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
 	};
 
 	isValidItem = item => {
-		const { isGoogleMyBusinessLocationConnected, isStore, siteId } = this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
+			case 'wordads':
+				return isWordAds;
+
 			case 'store':
 				return isStore;
 
@@ -88,12 +93,15 @@ class StatsNavigation extends Component {
 }
 
 export default connect( ( state, { siteId } ) => {
+	const site = getSite( state, siteId );
+
 	return {
 		isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
 			state,
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
+		isWordAds: site && site.options.wordads,
 		siteId,
 	};
 } )( StatsNavigation );

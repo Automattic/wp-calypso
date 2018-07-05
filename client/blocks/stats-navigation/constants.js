@@ -28,6 +28,11 @@ export const navItems = {
 		path: '/store/stats/orders',
 		showIntervals: true,
 	},
+	wordads: {
+		label: translate( 'WordAds' ),
+		path: '/wordads/stats',
+		showIntervals: true,
+	},
 	googleMyBusiness: {
 		label: translate( 'Google My Business' ),
 		path: '/google-my-business/stats',
