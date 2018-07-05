@@ -1,83 +1,8 @@
-// Transactions Table
-.memberships__transactions {
-	border-collapse: collapse;
-	margin: 0;
-}
 
-.memberships__no-results {
-	display: table-row;
-}
-
-.memberships__no-results-cell {
-	color: $gray;
-	padding: 24px;
-}
-
-.memberships__transactions thead {
-	border-bottom: 1px solid $gray-lighten-30;
-}
-
-.memberships__transactions thead .header-row {
-	vertical-align: top;
-	height: 40px;
-}
-
-.memberships__transactions thead .header-column {
-	vertical-align: top;
-	padding-top: 4px;
-}
-
-
-// Table Body
-.memberships__transaction {
-	color: $gray-dark;
-	font-size: 14px;
-	height: 66px;
-	border-bottom: 1px solid $gray-lighten-30;
-
-	&:last-child {
-		border-bottom: none;
-	}
-
-	&.is-placeholder {
-		height: auto;
-
-		td {
-			padding: 24px;
-		}
-
-		.memberships__transaction-text {
-			@include placeholder();
-		}
-	}
-}
-
-.memberships__header-row {
-	height: 59px;
-}
-
-.memberships__transaction td {
-	vertical-align: top;
-	padding: 16px 24px;
-}
-
-.memberships__transactions tbody .memberships__date {
-	width: 140px;
-	padding: 12px;
-}
-
-.memberships__transactions tbody .memberships__trans-app {
-	padding-left: 12px;
-	padding-right: 12px;
-}
-
-.memberships__transactions tbody .memberships__amount {
-	text-align: right;
-	width: 110px;
-}
-
-.memberships__trans-wrap {
-	@include clear-fix;
+.memberships__list-subscription {
+	display:flex;
+	flex-direction: row;
+	justify-content: space-between;
 }
 
 .memberships__service-name {
@@ -93,46 +18,10 @@
 	}
 }
 
-.memberships__service-description {
-	float: left;
-}
-
-.memberships__transaction-links {
+.memberships__list-sub {
 	font-size: 12px;
 	margin: 4px 0 0 0;
-
-	a {
-		padding-right: 8px;
-	}
+	color: $gray;
 }
 
-.memberships__receipt-card.card.is-compact {
-	padding: 16px 0;
-}
-
-.memberships__receipts.card,
-.memberships__upcoming-charges.card {
-	padding: 0;
-}
-
-.memberships .search-card.card {
-	margin: 0;
-}
-
-
-
-@media print {
-	.is-section-billing {
-		#secondary,
-		.masterbar,
-		.memberships__receipt-links,
-		.header-cake.card {
-			display: none;
-		}
-	}
-}
-
-.memberships__date {
-	width: 170px;
-}
 
