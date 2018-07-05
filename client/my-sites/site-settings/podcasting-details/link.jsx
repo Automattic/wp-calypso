@@ -15,8 +15,8 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
-import ClipboardButtonInput from 'components/clipboard-button-input';
 import SectionHeader from 'components/section-header';
+import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -90,14 +90,7 @@ class PodcastingLink extends Component {
 					</Button>
 				</div>
 				<div className="podcasting-details__link-feed">
-					<div className="podcasting-details__link-feed-label">{ translate( 'RSS Feed' ) }</div>
-					<ClipboardButtonInput className="podcasting-details__link-feed-url" value={ feedUrl } />
-					<div className="podcasting-details__link-feed-info">
-						{ translate(
-							'Copy your feed URL and submit it to Apple Podcasts and other podcasting services.'
-						) }{' '}
-						{ this.renderSupportLink() }
-					</div>
+					<PodcastFeedUrl feedUrl={ feedUrl } />
 				</div>
 			</Fragment>
 		);

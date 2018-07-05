@@ -70,13 +70,6 @@
 	.podcasting-details__link-feed {
 		margin-top: 20px;
 	}
-
-	.podcasting-details__link-feed-url input {
-		color: $gray-text-min;
-		font-size: 14px;
-		padding: 6px 10px;
-		margin-bottom: 5px;
-	}
 }
 
 @include breakpoint( "<800px" ) {
