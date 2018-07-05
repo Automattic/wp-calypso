@@ -17,7 +17,13 @@ function PodcastingSupportLink( { translate } ) {
 		'https://' + getSupportSiteLocale() + '.support.wordpress.com/audio/podcasting/';
 
 	return (
-		<ExternalLink href={ supportLink } target="_blank" icon iconSize={ 14 }>
+		<ExternalLink
+			href={ supportLink }
+			target="_blank"
+			icon
+			iconSize={ 14 }
+			className="podcasting-details__support-link"
+		>
 			{ translate( 'Learn more' ) }
 		</ExternalLink>
 	);
