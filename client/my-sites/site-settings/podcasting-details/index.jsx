@@ -430,6 +430,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const isCategoryChanging =
 		! isSavingSettings &&
 		! ownProps.isRequestingSettings &&
+		ownProps.settings &&
 		Number( ownProps.settings.podcasting_category_id ) > 0 &&
 		podcastingCategoryId !== Number( ownProps.settings.podcasting_category_id );
 
