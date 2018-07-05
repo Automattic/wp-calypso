@@ -267,28 +267,18 @@ class PodcastingDetails extends Component {
 						height={ 200 }
 					/>
 					{ isDefaultCategorySelected && (
-						<Notice isCompact status="is-info">
-							<p>
-								{ translate(
-									'Using this category (the {{strong}}default category{{/strong}} for the site) is not recommended.',
-									{
-										components: {
-											strong: <strong />,
-										},
-									}
-								) }
-							</p>
-							<p>
-								{ translate(
-									'Try creating a category named {{strong}}Podcast{{/strong}} instead.',
-									{
-										components: {
-											strong: <strong />,
-										},
-									}
-								) }
-							</p>
-						</Notice>
+						<Notice
+							isCompact
+							status="is-info"
+							text={ translate(
+								'We recommend creating a category named {{strong}}Podcast{{/strong}} instead of using the default category for the site.',
+								{
+									components: {
+										strong: <strong />,
+									},
+								}
+							) }
+						/>
 					) }
 					{ isCategoryChanging && (
 						<Notice
