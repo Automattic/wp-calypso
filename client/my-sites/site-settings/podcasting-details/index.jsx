@@ -176,7 +176,9 @@ class PodcastingDetails extends Component {
 				<FormLabel>{ translate( 'RSS Feed' ) }</FormLabel>
 				<ClipboardButtonInput value={ podcastingFeedUrl } />
 				<FormSettingExplanation>
-					{ translate( 'Copy your feed URL and submit it to Apple Podcasts or another service.' ) }
+					{ translate(
+						'Copy your feed URL and submit it to Apple Podcasts and other podcasting services.'
+					) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
