@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -15,7 +15,6 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
 import formatCurrency from 'lib/format-currency';
 import SectionHeader from 'components/section-header';
@@ -26,11 +25,57 @@ const Subscription = ( { translate, subscription, moment } ) => (
 		<MeSidebarNavigation />
 		<QueryMembershipsSubscriptions />
 		<PurchasesHeader section={ 'memberships' } />
-		<SectionHeader label={ translate( 'My Subscription' ) } />
-		<Card className="memberships__receipts">{ 'potato' }</Card>
+		{ subscription && (
+			<div>
+				<SectionHeader label={ subscription.title } />
+				<Card>{ subscription.title }</Card>
+				<Card className="memberships__subscription-meta">
+					<Fragment>
+						<ul className="memberships__subscription-inner-meta">
+							<li>
+								<em className="memberships__subscription-inner-detail-label">
+									{ translate( 'Price' ) }
+								</em>
+								<span className="memberships__subscription-inner-detail">
+									{ formatCurrency( subscription.renewal_price, subscription.currency ) }
+								</span>
+							</li>
+							<li>
+								<em className="memberships__subscription-inner-detail-label">
+									{ translate( 'Renew interval' ) }
+								</em>
+								<span className="memberships__subscription-inner-detail">
+									{ subscription.renew_interval }
+								</span>
+							</li>
+							<li>
+								<em className="memberships__subscription-inner-detail-label">
+									{ translate( 'Subscribed on' ) }
+								</em>
+								<span className="memberships__subscription-inner-detail">
+									{ moment( subscription.start_date ).format( 'll' ) }
+								</span>
+							</li>
+							<li>
+								<em className="memberships__subscription-inner-detail-label">
+									{ translate( 'Renews on' ) }
+								</em>
+								<span className="memberships__subscription-inner-detail">
+									{ moment( subscription.end_date ).format( 'll' ) }
+								</span>
+							</li>
+						</ul>
+					</Fragment>
+				</Card>
+			</div>
+		) }
 	</Main>
 );
+const getSubscription = ( state, subscriptionId ) =>
+	get( state, 'memberships.subscriptions.items', [] )
+		.filter( sub => sub.ID === subscriptionId )
+		.pop();
 
-export default connect( state => ( {
-	// subscription: get( state, 'memberships.subscriptions.items', [] ),
+export default connect( ( state, props ) => ( {
+	subscription: getSubscription( state, props.subscriptionId ),
 } ) )( localize( Subscription ) );
