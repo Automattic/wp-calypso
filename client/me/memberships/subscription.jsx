@@ -86,7 +86,7 @@ class Subscription extends React.Component {
 									</li>
 									<li>
 										<em className="memberships__subscription-inner-detail-label">
-											{ translate( 'Subscribed on' ) }
+											{ translate( 'Subscribed On' ) }
 										</em>
 										<span className="memberships__subscription-inner-detail">
 											{ moment( subscription.start_date ).format( 'll' ) }
