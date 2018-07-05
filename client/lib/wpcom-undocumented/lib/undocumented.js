@@ -2489,15 +2489,6 @@ Undocumented.prototype.dismissNPSSurvey = function( surveyName, fn ) {
 };
 
 /**
- * Check the eligibility status for the NPS Survey.
- * @param {Function}   fn             The callback function
- * @returns {Promise}
- */
-Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
-	return this.wpcom.req.get( { path: '/nps' }, { apiVersion: '1.2' }, {}, fn );
-};
-
-/**
  * Send the optional feedback for the NPS Survey.
  * @param {string}   surveyName   The name of the NPS survey being submitted
  * @param {string}   feedback     The content

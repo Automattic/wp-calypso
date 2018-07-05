@@ -12,6 +12,7 @@ import wpcom from 'lib/wp';
  */
 import analytics from 'lib/analytics';
 import {
+	NPS_SURVEY_CHECK_ELIGIBILITY,
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
@@ -34,21 +35,21 @@ export function setNpsSurveyEligibility( isEligible ) {
 	};
 }
 
+// Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
+// 	return this.wpcom.req.get( { path: '/nps' }, { apiVersion: '1.2' }, {}, fn );
+// };
 export function setupNpsSurveyEligibility() {
+	// how is this different from return( dispatch ) => { ??
 	return dispatch => {
 		debug( 'Checking NPS eligibility...' );
 
-		return wpcom
-			.undocumented()
-			.checkNPSSurveyEligibility()
-			.then( data => {
-				debug( '...Eligibility returned from endpoint.', data );
-				dispatch( setNpsSurveyEligibility( data.display_survey ) );
-			} )
-			.catch( err => {
-				debug( '...Error querying NPS survey eligibility.', err );
-				dispatch( setNpsSurveyEligibility( false ) );
-			} );
+		// as per slide 96:
+		// "instead of calling wpcom client directly, we dispatch another action"
+		// "another handler in wpcom-http does this for us"
+		// the actual API call then happens in the data layer
+		dispatch( {
+			type: NPS_SURVEY_CHECK_ELIGIBILITY
+		} );
 	};
 }
 
