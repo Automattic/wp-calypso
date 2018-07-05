@@ -27,14 +27,13 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 						className="account-dialog-account__input"
 					/>
 				) }
-				{ account.picture && (
+				{ account.picture ? (
 					<img
 						src={ account.picture }
 						alt={ account.name }
 						className="account-dialog-account__picture"
 					/>
-				) }
-				{ ! account.picture && (
+				) : (
 					<Gridicon icon={ defaultIcon } className="account-dialog-account__picture" />
 				) }
 				<span className="account-dialog-account__content">
