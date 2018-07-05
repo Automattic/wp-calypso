@@ -115,6 +115,8 @@ class AccountDialog extends Component {
 
 	getAccountElements( accounts ) {
 		const selectedAccount = this.getSelectedAccount();
+		const defaultAccountIcon =
+			this.props.service.ID === 'google_my_business' ? 'institution' : null;
 
 		return accounts.map( account => (
 			<AccountDialogAccount
@@ -127,6 +129,7 @@ class AccountDialog extends Component {
 					this.areAccountsConflicting( account, selectedAccount )
 				}
 				onChange={ this.onSelectedAccountChanged.bind( null, account ) }
+				defaultIcon={ defaultAccountIcon }
 			/>
 		) );
 	}
