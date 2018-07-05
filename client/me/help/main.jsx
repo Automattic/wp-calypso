@@ -41,6 +41,14 @@ class Help extends React.PureComponent {
 	getHelpfulArticles = () => {
 		const helpfulResults = [
 			{
+				link:
+					'https://en.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/',
+				title: this.props.translate( 'Do I Need a Website, a Blog, or a Website with a Blog?' ),
+				description: this.props.translate(
+					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
+				),
+			},
+			{
 				link: 'https://en.support.wordpress.com/business-plan/',
 				title: this.props.translate( 'Uploading custom plugins and themes' ),
 				description: this.props.translate(
