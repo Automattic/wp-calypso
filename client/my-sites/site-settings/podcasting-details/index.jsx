@@ -239,7 +239,13 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
+		const {
+			siteId,
+			podcastingCategoryId,
+			isCategoryChanging,
+			isDefaultCategorySelected,
+			translate,
+		} = this.props;
 
 		return (
 			<Fragment>
@@ -260,6 +266,30 @@ class PodcastingDetails extends Component {
 						onAddTermSuccess={ this.onCategorySelected }
 						height={ 200 }
 					/>
+					{ isDefaultCategorySelected && (
+						<Notice isCompact status="is-info">
+							<p>
+								{ translate(
+									'Using this category (the {{strong}}default category{{/strong}} for the site) is not recommended.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									'Try creating a category named {{strong}}Podcast{{/strong}} instead.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+						</Notice>
+					) }
 					{ isCategoryChanging && (
 						<Notice
 							isCompact
@@ -427,6 +457,9 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
 
 	const isCategoryChanging = podcastingCategoryId !== ownProps.settings.podcasting_category_id;
+	const isDefaultCategorySelected =
+		typeof ownProps.settings.default_category === 'number' &&
+		podcastingCategoryId === ownProps.settings.default_category;
 
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
@@ -438,6 +471,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		podcastingCategoryId,
 		isPodcastingEnabled,
 		isCategoryChanging,
+		isDefaultCategorySelected,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),

@@ -284,4 +284,8 @@ a.notice__action {
 			opacity: 1;
 		}
 	}
+
+	& + & {
+		margin-top: 8px;
+	}
 }
