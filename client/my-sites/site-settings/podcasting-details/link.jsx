@@ -14,14 +14,13 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import Button from 'components/button';
-import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
+import PodcastingSupportLink from './support-link';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
 import { getTerm } from 'state/terms/selectors';
-import { getSupportSiteLocale } from 'lib/i18n-utils';
 
 class PodcastingLink extends Component {
 	render() {
@@ -61,7 +60,7 @@ class PodcastingLink extends Component {
 							'Publish a podcast feed to Apple Podcasts and other podcasting services.'
 						) }
 						<br />
-						{ this.renderSupportLink() }
+						<PodcastingSupportLink />
 					</div>
 					<Button className="podcasting-details__link-button" href={ detailsLink }>
 						{ translate( 'Set Up' ) }
@@ -95,16 +94,6 @@ class PodcastingLink extends Component {
 			</Fragment>
 		);
 	}
-
-	renderSupportLink() {
-		const { supportLink, translate } = this.props;
-
-		return translate( '{{a}}Learn more{{/a}}', {
-			components: {
-				a: <ExternalLink href={ supportLink } target="_blank" icon iconSize={ 14 } />,
-			},
-		} );
-	}
 }
 
 export default connect( ( state, ownProps ) => {
@@ -118,8 +107,6 @@ export default connect( ( state, ownProps ) => {
 		podcastingCategoryId > 0 && getTerm( state, siteId, 'category', podcastingCategoryId );
 
 	const detailsLink = `/settings/podcasting/${ siteSlug }`;
-	const supportLink =
-		'https://' + getSupportSiteLocale() + '.support.wordpress.com/audio/podcasting/';
 
 	return {
 		siteSlug,
@@ -128,6 +115,5 @@ export default connect( ( state, ownProps ) => {
 		categoryName: podcastingCategory && podcastingCategory.name,
 		feedUrl: podcastingCategory && podcastingCategory.feed_url,
 		detailsLink,
-		supportLink,
 	};
 } )( localize( PodcastingLink ) );
