@@ -82,7 +82,7 @@ class ConversationCaterpillarComponent extends React.Component {
 			: size( allExpandableComments );
 
 		// Only display each author once
-		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'email' );
+		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'avatar_URL' );
 		const uniqueAuthorsCount = size( uniqueAuthors );
 		const lastAuthorName = get( last( uniqueAuthors ), 'name' );
 
