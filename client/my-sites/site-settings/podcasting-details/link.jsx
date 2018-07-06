@@ -42,8 +42,8 @@ class PodcastingLink extends Component {
 		const {
 			isPrivate,
 			isPodcastingEnabled,
-			categoryName,
-			feedUrl,
+			podcastingCategoryId,
+			podcastingCategoryName,
 			detailsLink,
 			translate,
 		} = this.props;
@@ -78,7 +78,7 @@ class PodcastingLink extends Component {
 							{ translate(
 								'Publish blog posts in the {{strong}}%s{{/strong}} category to add new episodes.',
 								{
-									args: categoryName,
+									args: podcastingCategoryName,
 									components: { strong: <strong /> },
 								}
 							) }
@@ -89,7 +89,7 @@ class PodcastingLink extends Component {
 					</Button>
 				</div>
 				<div className="podcasting-details__link-feed">
-					<PodcastFeedUrl feedUrl={ feedUrl } />
+					<PodcastFeedUrl categoryId={ podcastingCategoryId } />
 				</div>
 			</Fragment>
 		);
@@ -112,8 +112,8 @@ export default connect( ( state, ownProps ) => {
 		siteSlug,
 		isPrivate: isPrivateSite( state, siteId ),
 		isPodcastingEnabled: !! podcastingCategory,
-		categoryName: podcastingCategory && podcastingCategory.name,
-		feedUrl: podcastingCategory && podcastingCategory.feed_url,
+		podcastingCategoryId,
+		podcastingCategoryName: podcastingCategory && podcastingCategory.name,
 		detailsLink,
 	};
 } )( localize( PodcastingLink ) );

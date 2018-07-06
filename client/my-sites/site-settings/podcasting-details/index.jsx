@@ -39,7 +39,7 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isRequestingTermsForQueryIgnoringPage, getTerm } from 'state/terms/selectors';
+import { isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
@@ -219,13 +219,7 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const {
-			siteId,
-			podcastingCategoryId,
-			podcastingFeedUrl,
-			isCategoryChanging,
-			translate,
-		} = this.props;
+		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
 
 		return (
 			<Fragment>
@@ -256,7 +250,7 @@ class PodcastingDetails extends Component {
 						/>
 					) }
 				</FormFieldset>
-				{ podcastingFeedUrl && <PodcastFeedUrl feedUrl={ podcastingFeedUrl } /> }
+				<PodcastFeedUrl categoryId={ podcastingCategoryId } />
 			</Fragment>
 		);
 	}
@@ -408,10 +402,6 @@ const connectComponent = connect( ( state, ownProps ) => {
 		Number( ownProps.fields.podcasting_category_id );
 	const isPodcastingEnabled = podcastingCategoryId > 0;
 
-	const selectedCategory =
-		isPodcastingEnabled && getTerm( state, siteId, 'category', podcastingCategoryId );
-	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
-
 	const isSavingSettings = isSavingSiteSettings( state, siteId );
 	const isCategoryChanging =
 		! isSavingSettings &&
@@ -427,11 +417,10 @@ const connectComponent = connect( ( state, ownProps ) => {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		isPrivate: isPrivateSite( state, siteId ),
-		podcastingCategoryId,
 		isPodcastingEnabled,
+		podcastingCategoryId,
 		isCategoryChanging,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
-		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
 		isSavingSettings,
