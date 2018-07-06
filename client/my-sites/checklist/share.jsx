@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
