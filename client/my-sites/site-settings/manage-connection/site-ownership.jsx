@@ -16,7 +16,6 @@ import accept from 'lib/accept';
 import AuthorSelector from 'blocks/author-selector';
 import canCurrentUser from 'state/selectors/can-current-user';
 import Card from 'components/card';
-import config from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -143,7 +142,7 @@ class SiteOwnership extends Component {
 			return;
 		}
 
-		if ( ! config.isEnabled( 'jetpack/ownership-change' ) || ! isConnectionTransferSupported ) {
+		if ( ! isConnectionTransferSupported ) {
 			return this.renderCurrentUser();
 		}
 
@@ -227,7 +226,6 @@ class SiteOwnership extends Component {
 
 	renderCardContent() {
 		const { isPaidPlan, translate } = this.props;
-		const showPlanSection = config.isEnabled( 'jetpack/ownership-change' ) && isPaidPlan;
 
 		return (
 			<Card>
@@ -236,7 +234,7 @@ class SiteOwnership extends Component {
 					{ this.renderConnectionDetails() }
 				</FormFieldset>
 
-				{ showPlanSection && (
+				{ isPaidPlan && (
 					<Fragment>
 						<FormFieldset className="manage-connection__formfieldset has-divider is-top-only">
 							<FormLabel>{ translate( 'Plan purchaser' ) }</FormLabel>
