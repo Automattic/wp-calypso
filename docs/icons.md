@@ -4,6 +4,8 @@ This document will cover how to use icons in Calypso, as well as how to create i
 
 ## Gridicons
 
+![Gridicons Preview](https://dotcombrand.files.wordpress.com/2018/05/gridicons-preview.png)
+
 [Gridicons](https://github.com/automattic/gridicons) is the icon set designed for Calypso. There's a gallery with all the available icons at https://automattic.github.io/gridicons/.
 
 Gridicons are born with a 24px base grid. Strokes are 2px thick and icons are solid. If an icon is hollow, it generally means the "inactive" version of that icon. For example an outline bookmark icon becomes solid once clicked.
@@ -17,6 +19,16 @@ import Gridicon from 'gridicons';
 //...
 render() {
   return <Gridicon icon="add-image" />;
+}
+```
+
+If your project is using a small number of icons, the recommendation is to import them individually. By doing so, your JavaScript bundle will be smaller because only the icons you actually use will be added to your bundle.
+
+```
+import GridiconExternal from 'gridicons/dist/external';
+//...
+render() {
+	<GridiconExternal />
 }
 ```
 

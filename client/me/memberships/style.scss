@@ -1,83 +1,7 @@
-// Transactions Table
-.memberships__transactions {
-	border-collapse: collapse;
-	margin: 0;
-}
 
-.memberships__no-results {
-	display: table-row;
-}
-
-.memberships__no-results-cell {
-	color: $gray;
-	padding: 24px;
-}
-
-.memberships__transactions thead {
-	border-bottom: 1px solid $gray-lighten-30;
-}
-
-.memberships__transactions thead .header-row {
-	vertical-align: top;
-	height: 40px;
-}
-
-.memberships__transactions thead .header-column {
-	vertical-align: top;
-	padding-top: 4px;
-}
-
-
-// Table Body
-.memberships__transaction {
-	color: $gray-dark;
-	font-size: 14px;
-	height: 66px;
-	border-bottom: 1px solid $gray-lighten-30;
-
-	&:last-child {
-		border-bottom: none;
-	}
-
-	&.is-placeholder {
-		height: auto;
-
-		td {
-			padding: 24px;
-		}
-
-		.memberships__transaction-text {
-			@include placeholder();
-		}
-	}
-}
-
-.memberships__header-row {
-	height: 59px;
-}
-
-.memberships__transaction td {
-	vertical-align: top;
-	padding: 16px 24px;
-}
-
-.memberships__transactions tbody .memberships__date {
-	width: 140px;
-	padding: 12px;
-}
-
-.memberships__transactions tbody .memberships__trans-app {
-	padding-left: 12px;
-	padding-right: 12px;
-}
-
-.memberships__transactions tbody .memberships__amount {
-	text-align: right;
-	width: 110px;
-}
-
-.memberships__trans-wrap {
-	@include clear-fix;
+.memberships__list-subscription {
+	display:flex;
+	flex-direction: row;
 }
 
 .memberships__service-name {
@@ -93,46 +17,142 @@
 	}
 }
 
-.memberships__service-description {
-	float: left;
-}
-
-.memberships__transaction-links {
+.memberships__list-sub {
 	font-size: 12px;
 	margin: 4px 0 0 0;
-
-	a {
-		padding-right: 8px;
-	}
+	color: $gray;
 }
 
-.memberships__receipt-card.card.is-compact {
-	padding: 16px 0;
+.memberships__list-date {
+	flex-basis: 170px;
 }
 
-.memberships__receipts.card,
-.memberships__upcoming-charges.card {
+.memberships__list-renewal-price {
+	flex-basis: 100px;
+}
+
+.memberships__service-description {
+	flex-grow: 1;
+}
+
+.memberships__subscription-meta {
 	padding: 0;
+	font-size:13px;
 }
 
-.memberships .search-card.card {
+.memberships__subscription-inner-meta {
+	display: flex;
 	margin: 0;
-}
+	list-style: none;
+	overflow: auto;
+	padding: 0 24px;
+	border-top: 1px solid $gray-lighten-30;
 
+	@include breakpoint( '<660px' ) {
+		flex-direction: column;
+		padding: 0 16px 16px;
+	}
 
+	li {
+		color: $gray-darken-30;
+		font-size: 13px;
 
-@media print {
-	.is-section-billing {
-		#secondary,
-		.masterbar,
-		.memberships__receipt-links,
-		.header-cake.card {
-			display: none;
+		@include breakpoint( '<660px' ) {
+			clear: both;
+			overflow: auto;
+			margin-top: 15px;
+		}
+
+		@include breakpoint( '>660px' ) {
+			box-sizing: border-box;
+			flex: 1 1 auto;
+			font-size: 14px;
+			text-align: center;
+			padding: 15px 8px 12px;
+
+			&:first-child {
+				padding-left: 0;
+			}
+			&:last-child {
+				padding-right: 0;
+			}
+		}
+
+		+ li {
+			@include breakpoint( '>660px' ) {
+				border-left: 1px solid $gray-lighten-30;
+			}
+		}
+
+		> a {
+			color: $gray-darken-30;
+			display: block;
+			text-decoration: none;
 		}
 	}
 }
 
-.memberships__date {
-	width: 170px;
+.memberships__subscription-inner-detail-label {
+	font-style: normal;
+	font-weight: 600;
+
+	@include breakpoint( '<660px' ) {
+		flex-direction: row;
+		float: left;
+	}
+
+	@include breakpoint( '>660px' ) {
+		color: $gray-text-min;
+		display: block;
+		font-family: $sans;
+		font-size: 12px;
+		font-weight: 400;
+		margin: 0 0 12px;
+	}
 }
 
+.memberships__subscription-inner-detail {
+	@include breakpoint( '<660px' ) {
+		display: block;
+		float: right;
+		text-align: right;
+	}
+
+	.payment-logo {
+		margin-right: 5px;
+	}
+
+	a {
+		display: block;
+		cursor: pointer;
+	}
+}
+
+.memberships__subscription-title {
+	color: $blue-wordpress;
+	display: block;
+	font-size: 18px;
+	line-height: 1.2em;
+	margin: 20px;
+	white-space: nowrap;
+	text-align:center;
+}
+
+.memberships__subscription-remove {
+	color: $alert-red;
+	text-align: left;
+	width: 100%;
+	cursor: hand;
+
+	&:active,
+	&:focus,
+	&:hover {
+		color: $link-highlight;
+	}
+
+	.gridicon {
+		margin-top: -2px;
+		margin-right: 4px;
+		vertical-align: middle;
+	}
+}

@@ -88,9 +88,20 @@ class LabelItem extends Component {
 
 	render() {
 		const { siteId, orderId, label, translate } = this.props;
+		const {
+			labelIndex,
+			serviceName,
+			packageName,
+			productNames,
+			receiptId,
+			labelId,
+			createdDate,
+			refundableAmount,
+			currency,
+		} = label;
 
 		return (
-			<div key={ label.labelId } className="shipping-label__item">
+			<div className="shipping-label__item">
 				<p className="shipping-label__item-detail">
 					{ translate( '%(service)s label (#%(labelIndex)d) printed', {
 						args: {
@@ -105,9 +116,25 @@ class LabelItem extends Component {
 								{ this.renderRefund( label ) }
 								{ this.renderReprint( label ) }
 							</EllipsisMenu>
-							<DetailsDialog siteId={ siteId } orderId={ orderId } { ...label } />
-							<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-							<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
+							<DetailsDialog
+								siteId={ siteId }
+								orderId={ orderId }
+								labelIndex={ labelIndex }
+								serviceName={ serviceName }
+								packageName={ packageName }
+								productNames={ productNames }
+								receiptId={ receiptId }
+								labelId={ labelId }
+							/>
+							<RefundDialog
+								siteId={ siteId }
+								orderId={ orderId }
+								createdDate={ createdDate }
+								refundableAmount={ refundableAmount }
+								currency={ currency }
+								labelId={ labelId }
+							/>
+							<ReprintDialog siteId={ siteId } orderId={ orderId } labelId={ labelId } />
 						</span>
 					) }
 				</p>

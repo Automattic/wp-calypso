@@ -1,3 +1,5 @@
+/** @format */
+
 .transfer-domain-step {
 	padding: 0;
 
@@ -15,7 +17,7 @@
 		margin-bottom: 20px;
 		min-width: 0;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			float: right;
 			margin-bottom: 0;
 		}
@@ -179,7 +181,8 @@
 		color: $gray;
 	}
 
-	&.transfer-domain-step__unlocked, &.transfer-domain-step__auth-code-valid {
+	&.transfer-domain-step__unlocked,
+	&.transfer-domain-step__auth-code-valid {
 		color: $alert-green;
 	}
 

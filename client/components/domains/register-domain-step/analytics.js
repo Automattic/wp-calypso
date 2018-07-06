@@ -22,6 +22,15 @@ export const recordTransferDomainButtonClick = ( section, source ) =>
 		recordTracksEvent( 'calypso_domain_search_results_transfer_button_click', { section, source } )
 	);
 
+export const recordUseYourDomainButtonClick = ( section, source ) =>
+	composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
+		recordTracksEvent( 'calypso_domain_search_results_use_my_domain_button_click', {
+			section,
+			source,
+		} )
+	);
+
 export const recordSearchFormSubmit = (
 	searchBoxValue,
 	section,

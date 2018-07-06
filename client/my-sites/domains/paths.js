@@ -134,6 +134,15 @@ export function domainTransferIn( siteName, domain ) {
 	return path;
 }
 
+export function domainUseYourDomain( siteName, domain ) {
+	let path = `/domains/add/use-your-domain/${ siteName }`;
+	if ( domain ) {
+		path += `?initialQuery=${ domain }`;
+	}
+
+	return path;
+}
+
 export function getSectionName( pathname ) {
 	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' );
 	const matches = regExp.exec( pathname );

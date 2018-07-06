@@ -10,7 +10,6 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import Main from 'components/main';
@@ -19,6 +18,36 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
 import formatCurrency from 'lib/format-currency';
 import SectionHeader from 'components/section-header';
+import CompactCard from 'components/card/compact';
+
+const MembershipItem = ( { translate, subscription, moment } ) => (
+	<CompactCard key={ subscription.ID } href={ '/me/purchases/memberships/' + subscription.ID }>
+		<div className="memberships__list-subscription">
+			<div className="memberships__list-date">
+				<div>{ moment( subscription.end_date ).format( 'll' ) }</div>
+				<div className="memberships__list-sub">
+					{ translate( 'Renews %s', { args: moment( subscription.end_date ).fromNow() } ) }
+				</div>
+			</div>
+			<div className="memberships__service-description">
+				<div className="memberships__service-name">{ subscription.title }</div>
+				<div className="memberships__list-sub">
+					<a href={ subscription.site_url }>
+						{ translate( 'On %s »', { args: subscription.site_title } ) }
+					</a>
+				</div>
+			</div>
+			<div className="memberships__list-renewal-price">
+				<div className="memberships__list-amount">
+					{ formatCurrency( subscription.renewal_price, subscription.currency ) }
+				</div>
+				<div className="memberships__list-sub">
+					{ translate( 'Every %s', { args: subscription.renew_interval } ) }
+				</div>
+			</div>
+		</div>
+	</CompactCard>
+);
 
 const MembershipsHistory = ( { translate, subscriptions, moment } ) => (
 	<Main className="memberships">
@@ -28,37 +57,13 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => (
 		<QueryMembershipsSubscriptions />
 		<PurchasesHeader section={ 'memberships' } />
 		<SectionHeader label={ translate( 'Active Membership plans' ) } />
-		<Card className="memberships__receipts">
-			<table className="memberships__transactions">
-				<tbody>
-					{ subscriptions &&
-						subscriptions.map( subscription => {
-							const endDate = moment( subscription.end_date ).format( 'll' );
-
-							return (
-								<tr key={ subscription.ID } className="memberships__transaction">
-									<td>{ endDate }</td>
-									<td className="memberships__trans-app">
-										<div className="memberships__trans-wrap">
-											<div className="memberships__service-description">
-												<div className="memberships__service-name">{ subscription.title }</div>
-												<div className="memberships__transaction-links">
-													<a className="memberships__view-receipt" href={ subscription.site_url }>
-														on { subscription.site_title } &raquo;
-													</a>
-												</div>
-											</div>
-										</div>
-									</td>
-									<td className="memberships__amount">
-										{ formatCurrency( subscription.renewal_price, subscription.currency ) }
-									</td>
-								</tr>
-							);
-						}, this ) }
-				</tbody>
-			</table>
-		</Card>
+		{ subscriptions &&
+			subscriptions.map(
+				subscription => (
+					<MembershipItem translate={ translate } subscription={ subscription } moment={ moment } />
+				),
+				this
+			) }
 	</Main>
 );
 

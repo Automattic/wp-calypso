@@ -50,6 +50,14 @@ export default function( router ) {
 			makeLayout,
 			clientRender
 		);
+		router(
+			paths.purchasesRoot + '/memberships/:subscriptionId',
+			redirectLoggedOut,
+			sidebar,
+			membershipsController.subscription,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	router(

@@ -6,7 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map, toPairs, pick, flowRight, filter, head } from 'lodash';
+import { map, toPairs, pick, flowRight } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -39,12 +39,8 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
-import {
-	isRequestingTermsForQueryIgnoringPage,
-	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
+import { isRequestingTermsForQueryIgnoringPage, getTerm } from 'state/terms/selectors';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
-import { getSupportSiteLocale } from '../../../lib/i18n-utils';
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
@@ -422,17 +418,20 @@ const connectComponent = connect( ( state, ownProps ) => {
 		Number( ownProps.fields.podcasting_category_id );
 	const isPodcastingEnabled = podcastingCategoryId > 0;
 
-	const categories = getTermsForQueryIgnoringPage( state, siteId, 'category', {} );
-	const selectedCategory = categories && head( filter( categories, { ID: podcastingCategoryId } ) );
+	const selectedCategory =
+		isPodcastingEnabled && getTerm( state, siteId, 'category', podcastingCategoryId );
 	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
 
-	const isCategoryChanging = podcastingCategoryId !== ownProps.settings.podcasting_category_id;
+	const isSavingSettings = isSavingSiteSettings( state, siteId );
+	const isCategoryChanging =
+		! isSavingSettings &&
+		! ownProps.isRequestingSettings &&
+		ownProps.settings &&
+		Number( ownProps.settings.podcasting_category_id ) > 0 &&
+		podcastingCategoryId !== Number( ownProps.settings.podcasting_category_id );
 
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
-
-	const supportLink =
-		'https://' + getSupportSiteLocale() + '.support.wordpress.com/audio/podcasting/';
 
 	return {
 		siteId,
@@ -445,8 +444,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
-		isSavingSettings: isSavingSiteSettings( state, siteId ),
-		supportLink,
+		isSavingSettings,
 	};
 } );
 

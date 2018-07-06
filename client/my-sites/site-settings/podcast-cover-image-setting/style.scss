@@ -1,6 +1,5 @@
 .podcast-cover-image-setting__preview {
 	position: relative;
-	overflow: hidden;
 	display: flex;
 	float: left;
 	margin: 0;
@@ -24,6 +23,9 @@
 	align-self: center;
 	background: $transparent;
 	position: relative;
+	max-height: 100%;
+	max-width: 100%;
+	margin: 0 auto;
 
 	.is-disabled & {
 		opacity: 0.3;
