@@ -23,7 +23,7 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
-import ChecklistShowShare from 'my-sites/checklist/checklist-show/share';
+import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getABTestVariation } from 'lib/abtest';
