@@ -32,16 +32,20 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class ChecklistMain extends PureComponent {
 	getHeaderTitle( displayMode ) {
+		const { translate } = this.props;
+
 		if ( displayMode === 'free' ) {
-			return 'Your site has been created!';
+			return translate( 'Your site has been created!' );
 		}
 
-		return 'Thank you for your purchase!';
+		return translate( 'Thank you for your purchase!' );
 	}
 
 	getSubHeaderText( displayMode ) {
+		const { translate } = this.props;
+
 		if ( displayMode === 'gsuite' ) {
-			return this.props.translate(
+			return translate(
 				'We emailed %(email)s with instructions to complete your G Suite setup. ' +
 					'In the mean time, let’s get your new site ready for you to share. ' +
 					'We’ve prepared a list of things that will help you get there quickly.',
@@ -53,13 +57,15 @@ class ChecklistMain extends PureComponent {
 			);
 		}
 
-		return (
+		return translate(
 			"Now that your site has been created, it's time to get it ready for you to share. " +
-			"We've prepared a list of things that will help you get there quickly."
+				"We've prepared a list of things that will help you get there quickly."
 		);
 	}
 
 	renderHeader( completed, displayMode ) {
+		const { translate } = this.props;
+
 		if ( completed ) {
 			return (
 				<Fragment>
@@ -70,8 +76,10 @@ class ChecklistMain extends PureComponent {
 						alt=""
 					/>
 					<FormattedHeader
-						headerText="Congratulations!"
-						subHeaderText="You have completed all your tasks. Now let's tell people about it. Share your site."
+						headerText={ translate( 'Congratulations!' ) }
+						subHeaderText={ translate(
+							"You have completed all your tasks. Now let's tell people about it. Share your site."
+						) }
 					/>
 					<ChecklistShowShare
 						className="checklist__share"
@@ -101,8 +109,10 @@ class ChecklistMain extends PureComponent {
 
 		return (
 			<FormattedHeader
-				headerText="Welcome back!"
-				subHeaderText="Let’s get your site ready for its debut with a few quick setup steps."
+				headerText={ translate( 'Welcome back!' ) }
+				subHeaderText={ translate(
+					'Let’s get your site ready for its debut with a few quick setup steps.'
+				) }
 			/>
 		);
 	}
@@ -123,9 +133,11 @@ class ChecklistMain extends PureComponent {
 	render() {
 		const { checklistAvailable, displayMode, translate } = this.props;
 
+		let translatedTitle = translate( 'Site Checklist' );
 		let title = 'Site Checklist';
 		let path = '/checklist/:site';
 		if ( displayMode ) {
+			translatedTitle = translate( 'Thank You' );
 			title = 'Thank You';
 			path += `?d=${ displayMode }`;
 		}
@@ -134,7 +146,7 @@ class ChecklistMain extends PureComponent {
 			<Main className="checklist">
 				<PageViewTracker path={ path } title={ title } />
 				<SidebarNavigation />
-				<DocumentHead title={ title } />
+				<DocumentHead title={ translatedTitle } />
 				{ checklistAvailable ? (
 					this.renderChecklist()
 				) : (
