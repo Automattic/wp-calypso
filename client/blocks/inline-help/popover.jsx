@@ -111,9 +111,9 @@ class InlineHelpPopover extends Component {
 		return (
 			<div className="inline-help__checklist-progress">
 				<Button className="inline-help__checklist-button" href={ href }>
-					<p className="inline-help__checklist-progress-label">
+					<span className="inline-help__checklist-progress-label">
 						{ translate( 'Site Checklist Progress' ) }
-					</p>
+					</span>
 					<ProgressBar compact total={ totalTasks } value={ numComplete } />
 					<span className="inline-help__checklist-icon-wrapper">
 						<Gridicon icon="checkmark" className="inline-help__gridicon-checkmark" />

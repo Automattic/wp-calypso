@@ -416,21 +416,24 @@
 		width: 100%;
 		border-color: transparent;
 		&:hover {
-			border-color: inherit;
+			border-color: #a8bece; /* @TODO var */
 		}
 
 		.inline-help__checklist-progress-label {
-			font-size: 8px;
-			margin: 1px 10px;
+			font-size: 12px;
+			margin: 0;
 		}
 		.progress-bar {
-			color: $alert-green;
+			.progress-bar__progress {
+				background-color: $alert-green;
+			}
 			width: 75%;
 			margin-right: 10px;
 		}
 
 		.inline-help__checklist-icon-wrapper {
-			background: $alert-green;
+			color: white;
+			background-color: $alert-green;
 			border-radius: 100%;
 			display: inline-block;
 			margin-right: 10px;
