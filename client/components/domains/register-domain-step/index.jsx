@@ -614,8 +614,8 @@ class RegisterDomainStep extends React.Component {
 		);
 	};
 
-	getAvailableTlds = ( domain = undefined ) => {
-		return getAvailableTlds( domain ? { search: domain } : {} )
+	getAvailableTlds = ( domain = undefined, vendor = undefined ) => {
+		return getAvailableTlds( { vendor, search: domain } )
 			.then( availableTlds => {
 				this.setState( { availableTlds } );
 			} )
@@ -880,7 +880,7 @@ class RegisterDomainStep extends React.Component {
 
 		const timestamp = Date.now();
 
-		this.getAvailableTlds( domain );
+		this.getAvailableTlds( domain, searchVendor );
 		const domainSuggestions = Promise.all( [
 			this.checkDomainAvailability( domain, timestamp ),
 			this.getDomainsSuggestions( domain, timestamp ),
