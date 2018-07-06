@@ -239,7 +239,13 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
+		const {
+			siteId,
+			podcastingCategoryId,
+			isCategoryChanging,
+			isDefaultCategorySelected,
+			translate,
+		} = this.props;
 
 		return (
 			<Fragment>
@@ -260,6 +266,20 @@ class PodcastingDetails extends Component {
 						onAddTermSuccess={ this.onCategorySelected }
 						height={ 200 }
 					/>
+					{ isDefaultCategorySelected && (
+						<Notice
+							isCompact
+							status="is-info"
+							text={ translate(
+								'We recommend creating a category named {{strong}}Podcast{{/strong}} instead of using the default category for the site.',
+								{
+									components: {
+										strong: <strong />,
+									},
+								}
+							) }
+						/>
+					) }
 					{ isCategoryChanging && (
 						<Notice
 							isCompact
@@ -427,6 +447,9 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
 
 	const isCategoryChanging = podcastingCategoryId !== ownProps.settings.podcasting_category_id;
+	const isDefaultCategorySelected =
+		typeof ownProps.settings.default_category === 'number' &&
+		podcastingCategoryId === ownProps.settings.default_category;
 
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
@@ -438,6 +461,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		podcastingCategoryId,
 		isPodcastingEnabled,
 		isCategoryChanging,
+		isDefaultCategorySelected,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
