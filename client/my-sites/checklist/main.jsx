@@ -11,24 +11,24 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
+import ChecklistShow from './checklist-show';
+import ChecklistShowShare from './share';
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import FormattedHeader from 'components/formatted-header';
-import ChecklistShow from './checklist-show';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { createNotice } from 'state/notices/actions';
-import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import ChecklistShowShare from './share';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QuerySiteChecklist from 'components/data/query-site-checklist';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { createNotice } from 'state/notices/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 
 class ChecklistMain extends PureComponent {
 	getHeaderTitle( displayMode ) {
