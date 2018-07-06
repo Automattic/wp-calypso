@@ -411,6 +411,35 @@
 	}
 }
 
+.inline-help__checklist-progress {
+	.inline-help__checklist-button {
+		width: 100%;
+		border-color: transparent;
+		&:hover {
+			border-color: inherit;
+		}
+
+		.inline-help__checklist-progress-label {
+			font-size: 8px;
+			margin: 1px 10px;
+		}
+		.progress-bar {
+			color: $alert-green;
+			width: 75%;
+			margin-right: 10px;
+		}
+
+		.inline-help__checklist-icon-wrapper {
+			background: $alert-green;
+			border-radius: 100%;
+			display: inline-block;
+			margin-right: 10px;
+			width: 25px;
+			height: 25px;
+		}
+	}
+}
+
 .inline-help__empty-results {
 	padding: 16px 0 0;
 	margin: 0;
