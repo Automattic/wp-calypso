@@ -382,4 +382,34 @@ export default {
 
 		next();
 	},
+
+	wordAds: function( context, next ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const siteHasWpcomFreePlan = isWpComFreePlan(
+			get( getCurrentPlan( state, siteId ), 'productSlug' )
+		);
+		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
+			? context.query.startDate
+			: undefined;
+
+		if ( siteId && siteHasWpcomFreePlan && ! config.isEnabled( 'activity-log-wpcom-free' ) ) {
+			page.redirect( '/broken' );
+			return next();
+		}
+
+		const filter = getActivityLogFilter( state, siteId );
+		const queryFilter = queryToFilterState( context.query );
+
+		if ( ! isEqual( filter, queryFilter ) ) {
+			context.store.dispatch( {
+				...setFilter( siteId, queryFilter ),
+				meta: { skipUrlUpdate: true },
+			} );
+		}
+
+		context.primary = <span>Test for site { siteId }</span>;
+
+		next();
+	},
 };

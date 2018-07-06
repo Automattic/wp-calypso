@@ -30,8 +30,8 @@ export const navItems = {
 	},
 	wordads: {
 		label: translate( 'WordAds' ),
-		path: '/wordads/stats',
-		showIntervals: true,
+		path: '/stats/wordads',
+		showIntervals: false,
 	},
 	googleMyBusiness: {
 		label: translate( 'Google My Business' ),

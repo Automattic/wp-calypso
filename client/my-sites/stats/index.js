@@ -15,6 +15,16 @@ import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
+
+	page(
+		'/stats/wordads/:site',
+		siteSelection,
+		navigation,
+		statsController.wordAds,
+		makeLayout,
+		clientRender
+	);
+
 	if ( config.isEnabled( 'manage/stats' ) ) {
 		// Redirect this to default /stats/day/ view in order to keep
 		// the paths and page view reporting consistent.
