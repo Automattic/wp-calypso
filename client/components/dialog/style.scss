@@ -113,6 +113,11 @@
 		margin-left: 0;
 		margin-right: 10px;
 	}
+
+	@include breakpoint( "<480px" ) {
+		margin-top: 2px;
+		margin-bottom: 2px;
+	}
 }
 
 .dialog__action-buttons .is-left-aligned {
