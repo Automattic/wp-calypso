@@ -27,20 +27,6 @@
 		}
 	}
 
-	a.external-link {
-		text-decoration: underline;
-		white-space: nowrap;
-
-		&:hover, &:focus, &:active {
-			color: $link-highlight;
-		}
-
-		.gridicons-external {
-			margin-left: 5px;
-			color: $gray-text-min;
-		}
-	}
-
 	.podcasting-details__link-feed-label {
 		font-weight: 600;
 		margin-bottom: 5px;
@@ -70,16 +56,9 @@
 	.podcasting-details__link-feed {
 		margin-top: 20px;
 	}
-
-	.podcasting-details__link-feed-url input {
-		color: $gray-text-min;
-		font-size: 14px;
-		padding: 6px 10px;
-		margin-bottom: 5px;
-	}
 }
 
-@include breakpoint( "<800px" ) {
+@include breakpoint( '<800px' ) {
 	.podcasting-details__link.is-enabled {
 		.podcasting-details__link-action-container {
 			display: block;
@@ -171,4 +150,9 @@
 	.button {
 		margin: 12px 0 6px;
 	}
+}
+
+.podcasting-details__support-link {
+	text-decoration: underline;
+	white-space: nowrap;
 }

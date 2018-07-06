@@ -14,7 +14,6 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import ClipboardButtonInput from 'components/clipboard-button-input';
 import DocumentHead from 'components/data/document-head';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
@@ -29,6 +28,7 @@ import Notice from 'components/notice';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
+import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
@@ -162,20 +162,13 @@ class PodcastingDetails extends Component {
 	}
 
 	renderFeedUrl() {
-		const { podcastingFeedUrl, translate } = this.props;
+		const { podcastingFeedUrl } = this.props;
 
 		if ( ! podcastingFeedUrl ) {
 			return;
 		}
 
-		return (
-			<FormFieldset>
-				<ClipboardButtonInput value={ podcastingFeedUrl } />
-				<FormSettingExplanation>
-					{ translate( 'Copy your feed URL and submit it to Apple Podcasts or another service.' ) }
-				</FormSettingExplanation>
-			</FormFieldset>
-		);
+		return <PodcastFeedUrl feedUrl={ podcastingFeedUrl } />;
 	}
 
 	render() {
@@ -236,7 +229,13 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
+		const {
+			siteId,
+			podcastingCategoryId,
+			podcastingFeedUrl,
+			isCategoryChanging,
+			translate,
+		} = this.props;
 
 		return (
 			<Fragment>
@@ -262,12 +261,12 @@ class PodcastingDetails extends Component {
 							isCompact
 							status="is-info"
 							text={ translate(
-								"If you change categories, you'll need to resubmit your feed to any podcast service."
+								"If you change categories, you'll need to resubmit your feed to Apple Podcasts and any other podcasting services."
 							) }
 						/>
 					) }
 				</FormFieldset>
-				{ this.renderFeedUrl() }
+				{ podcastingFeedUrl && <PodcastFeedUrl feedUrl={ podcastingFeedUrl } /> }
 			</Fragment>
 		);
 	}
