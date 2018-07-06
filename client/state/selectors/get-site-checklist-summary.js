@@ -11,6 +11,7 @@ import { get, groupBy, map } from 'lodash';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import { onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
 
 /**
  * Returns the checklist for the specified site ID
@@ -25,7 +26,7 @@ const getSiteChecklistSummary = createSelector(
 			siteId = getSelectedSiteId( state );
 		}
 		const checklist = getSiteChecklist( state, siteId );
-		const tasks = get( checklist, 'tasks', {} );
+		const tasks = onboardingTasks( checklist );
 
 		const tasksByComplete = groupBy(
 			map( tasks, ( task, taskName ) => ( { ...task, task: taskName } ) ),
