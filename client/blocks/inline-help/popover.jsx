@@ -99,10 +99,15 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderChecklistProgress = () => {
-		const { checklistSummary, selectedSiteSlug, translate } = this.props;
+		/**
+		 * @TODO hide on checklist page?
+		 * @TODO move to own component
+		 * @TODO close Inline Help UI on click
+		 */
+		const { checklistSummary, searchQuery, selectedSiteSlug, translate } = this.props;
 		const { numComplete, totalTasks } = checklistSummary;
 
-		if ( ! totalTasks || this.state.showSecondaryView ) {
+		if ( searchQuery || ! totalTasks || this.state.showSecondaryView ) {
 			return false;
 		}
 
@@ -110,7 +115,14 @@ class InlineHelpPopover extends Component {
 
 		return (
 			<div className="inline-help__checklist-progress">
-				<Button className="inline-help__checklist-button" href={ href }>
+				<Button
+					href={ href }
+					className="inline-help__checklist-button"
+					onClick={ e => {
+						console.log( 'close' );
+						// @TODO close
+					} }
+				>
 					<span className="inline-help__checklist-progress-label">
 						{ translate( 'Site Checklist Progress' ) }
 					</span>
