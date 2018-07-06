@@ -261,7 +261,7 @@ class PodcastingDetails extends Component {
 							isCompact
 							status="is-info"
 							text={ translate(
-								"If you change categories, you'll need to resubmit your feed to any podcast service."
+								"If you change categories, you'll need to resubmit your feed to Apple Podcasts and any other podcasting services."
 							) }
 						/>
 					) }
