@@ -34,11 +34,7 @@ import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Checklist from 'blocks/checklist';
-import { isEnabled } from 'config';
-import { jetpackTasks } from 'my-sites/checklist/jetpack-checklist';
-import { launchTask } from 'my-sites/checklist/onboardingChecklist';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
+import ChecklistShow from 'my-sites/checklist/checklist-show';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -81,42 +77,18 @@ class CurrentPlan extends Component {
 		};
 	}
 
-	handleAction = id => {
-		const { requestTour, siteSlug, tasks, track } = this.props;
-		const task = find( tasks, { id } );
-
-		launchTask( {
-			task,
-			location: 'checklist_show',
-			requestTour,
-			siteSlug,
-			track,
-		} );
-	};
-
-	handleToggle = id => {
-		const { notify, siteId, tasks, update } = this.props;
-		const task = find( tasks, { id } );
-
-		if ( task && ! task.completed ) {
-			notify( 'is-success', 'You completed a task!' );
-			update( siteId, id );
-		}
-	};
-
 	render() {
 		const {
+			selectedSite,
+			selectedSiteId,
+			domains,
 			context,
 			currentPlan,
-			domains,
 			hasDomainsLoaded,
 			isAutomatedTransfer,
 			isExpiring,
 			isJetpack,
-			selectedSite,
-			selectedSiteId,
 			shouldShowDomainWarnings,
-			tasks,
 			translate,
 		} = this.props;
 
@@ -171,14 +143,7 @@ class CurrentPlan extends Component {
 						isAutomatedTransfer={ isAutomatedTransfer }
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
-					{ isJetpack && (
-						<Checklist
-							isLoading={ ! tasks }
-							tasks={ tasks }
-							onAction={ this.handleAction }
-							onToggle={ this.handleToggle }
-						/>
-					) }
+					{ isJetpack && <ChecklistShow /> }
 					<div
 						className={ classNames( 'current-plan__header-text current-plan__text', {
 							'is-placeholder': { isLoading },
@@ -195,31 +160,25 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( ( state, { context } ) => {
+export default connect( ( state, ownProps ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
-	const siteChecklist = getSiteChecklist( state, selectedSiteId );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
 
-	const isJetpack = isJetpackSite( state, selectedSiteId );
+	const isWpcom = ! isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
-	const tasks = isJetpack ? jetpackTasks( siteChecklist ) : [];
-
 	return {
-		checklistAvailable:
-			! isAutomatedTransfer && ( isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
-		context,
-		currentPlan: getCurrentPlan( state, selectedSiteId ),
-		domains,
-		hasDomainsLoaded: !! domains,
-		isAutomatedTransfer,
-		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
-		isJetpack,
-		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		selectedSite,
 		selectedSiteId,
-		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
-		tasks,
+		domains,
+		isAutomatedTransfer,
+		context: ownProps.context,
+		currentPlan: getCurrentPlan( state, selectedSiteId ),
+		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
+		shouldShowDomainWarnings: isWpcom || isAutomatedTransfer,
+		hasDomainsLoaded: !! domains,
+		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		isJetpack: isJetpackSite( state, selectedSiteId ),
 	};
 } )( localize( CurrentPlan ) );
