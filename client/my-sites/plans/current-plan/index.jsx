@@ -35,6 +35,7 @@ import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ChecklistShow from 'my-sites/checklist/checklist-show';
+import { isEnabled } from 'config';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -143,7 +144,7 @@ class CurrentPlan extends Component {
 						isAutomatedTransfer={ isAutomatedTransfer }
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
-					{ isJetpack && <ChecklistShow /> }
+					{ isEnabled( 'jetpack/checklist' ) && isJetpack && <ChecklistShow /> }
 					<div
 						className={ classNames( 'current-plan__header-text current-plan__text', {
 							'is-placeholder': { isLoading },
