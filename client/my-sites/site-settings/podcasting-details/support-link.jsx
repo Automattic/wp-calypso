@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
-import { getSupportSiteLocale } from '../../../lib/i18n-utils';
+import { getSupportSiteLocale } from 'lib/i18n-utils';
 
 function PodcastingSupportLink( { translate } ) {
 	const supportLink =
