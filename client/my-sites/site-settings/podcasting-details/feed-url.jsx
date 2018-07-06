@@ -17,6 +17,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import PodcastingSupportLink from './support-link';
 import { getTerm } from 'state/terms/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 function PodcastFeedUrl( { feedUrl, translate } ) {
 	if ( ! feedUrl ) {
@@ -45,7 +46,12 @@ export default connect( ( state, ownProps ) => {
 	const podcastingCategory =
 		categoryId && getTerm( state, siteId, 'category', categoryId );
 
-	const feedUrl = podcastingCategory && podcastingCategory.feed_url;
+	let feedUrl = podcastingCategory && podcastingCategory.feed_url;
+
+	if ( feedUrl && ! isJetpackSite( state, siteId ) ) {
+		// Feed URLs for WP.com Simple sites may incorrectly show up as http:
+		feedUrl = feedUrl.replace( /^http:/, 'https:' );
+	}
 
 	return { feedUrl };
 } )( localize( PodcastFeedUrl ) );
