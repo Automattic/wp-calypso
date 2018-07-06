@@ -58,7 +58,8 @@ export const JetpackSignInTour = makeTour(
 					</h1>
 					<p>
 						{ translate(
-							'You can now sign into your Jetpack site with your WordPress.com account. Would you like to continue setting up the security essential features for your site?'
+							'You can now sign into your Jetpack site with your WordPress.com account. ' +
+								'Would you like to continue setting up the security essential features for your site?'
 						) }
 					</p>
 					<ButtonRow>
