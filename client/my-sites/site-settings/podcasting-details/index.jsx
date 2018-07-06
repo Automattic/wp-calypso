@@ -161,16 +161,6 @@ class PodcastingDetails extends Component {
 		);
 	}
 
-	renderFeedUrl() {
-		const { podcastingFeedUrl } = this.props;
-
-		if ( ! podcastingFeedUrl ) {
-			return;
-		}
-
-		return <PodcastFeedUrl feedUrl={ podcastingFeedUrl } />;
-	}
-
 	render() {
 		const {
 			handleSubmitForm,
