@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 
@@ -17,9 +16,15 @@ import MediaListData from 'components/data/media-list-data';
 
 jest.mock( 'lib/media/actions', () => ( { setQuery: () => {}, fetchNextPage: () => {} } ) );
 jest.mock( 'lib/media/list-store', () => ( {
-	getAll: () => {},
-	hasNextPage: () => {},
-	isFetchingNextPage: () => {},
+	getAll: () => {
+		return [];
+	},
+	hasNextPage: () => {
+		return true;
+	},
+	isFetchingNextPage: () => {
+		return false;
+	},
 	on: () => {},
 } ) );
 
@@ -43,7 +48,7 @@ describe( 'EditorMediaModal', () => {
 		const query = { search: true };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( query );
+		expect( result ).toEqual( query );
 	} );
 
 	test( 'should pass and process filter parameter to media query', () => {
@@ -55,7 +60,7 @@ describe( 'EditorMediaModal', () => {
 		const query = { filter: 'images' };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( { mime_type: 'image/' } );
+		expect( result ).toEqual( { mime_type: 'image/' } );
 	} );
 
 	test( 'should pass source parameter and set recent path to media query', () => {
@@ -67,19 +72,37 @@ describe( 'EditorMediaModal', () => {
 		const query = { source: 'anything' };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( { path: 'recent', source: 'anything' } );
+		expect( result ).toEqual( { path: 'recent', source: 'anything' } );
 	} );
 
 	test( 'should pass folder parameter to media query', () => {
-		const expected = 'all';
+		const expected = '/';
 		const tree = shallow(
-			<MediaListData siteId={ DUMMY_SITE_ID }>
+			<MediaListData siteId={ DUMMY_SITE_ID } folder={ expected }>
 				<EMPTY_COMPONENT />
 			</MediaListData>
 		).instance();
-		const query = { folder: expected };
-		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( { folder: expected } );
+		const result = tree.getQuery();
+		expect( result ).toEqual( { folder: expected } );
+	} );
+
+	test( 'should call onGetData callback prop with Media data', () => {
+		const mock = jest.fn();
+
+		shallow(
+			<MediaListData siteId={ DUMMY_SITE_ID } onGetData={ mock }>
+				<EMPTY_COMPONENT />
+			</MediaListData>
+		);
+
+		expect( mock ).toHaveBeenCalledTimes( 2 );
+		expect( mock ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				media: expect.any( Array ),
+				mediaHasNextPage: expect.any( Boolean ),
+				mediaFetchingNextPage: expect.any( Boolean ),
+			} )
+		);
 	} );
 } );
