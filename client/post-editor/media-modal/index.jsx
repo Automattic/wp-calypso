@@ -22,6 +22,7 @@ import {
 	some,
 	uniqueId,
 	values,
+	isString,
 } from 'lodash';
 
 /**
@@ -434,9 +435,11 @@ export class EditorMediaModal extends Component {
 		this.setState( { source, search: undefined } );
 	};
 
-	onFolderChange = folder => {
+	onFolderChange = folderId => {
+		if ( ! folderId || ! isString( folderId ) ) return;
+
 		this.setState( {
-			folder: folder.ID,
+			folder: folderId,
 			search: undefined,
 		} );
 	};

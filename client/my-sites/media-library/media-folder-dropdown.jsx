@@ -19,13 +19,17 @@ export class MediaFolderDropdown extends Component {
 		folders: PropTypes.arrayOf(
 			PropTypes.shape( {
 				ID: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
-				title: PropTypes.string.isRequired,
-				summary: PropTypes.string,
-				thumbnail: PropTypes.string,
-				numphotos: PropTypes.number,
+				URL: PropTypes.string,
+				children: PropTypes.number.isRequired,
 				date: PropTypes.string,
+				file: PropTypes.string,
+				name: PropTypes.string.isRequired,
+				path: PropTypes.string.isRequired,
+				thumbnails: PropTypes.object,
+				type: PropTypes.string,
 			} )
 		),
+		folder: PropTypes.string,
 		onFolderChange: PropTypes.func,
 		disabled: PropTypes.bool,
 		compact: PropTypes.bool,
@@ -33,7 +37,7 @@ export class MediaFolderDropdown extends Component {
 	};
 
 	static defaultProps = {
-		initialSelected: 'all',
+		initialSelected: '/',
 		folders: [],
 		compact: true,
 	};
@@ -57,15 +61,15 @@ export class MediaFolderDropdown extends Component {
 
 		return [
 			{
-				value: 'all',
-				label: this.props.translate( 'All Photos' ),
+				value: '/',
+				label: this.props.translate( 'All Albums' ),
 			},
 			separator,
 		].concat(
 			folderData.map( folder => {
 				return {
 					value: '' + folder.ID, // convert to string if number
-					label: folder.title,
+					label: folder.name,
 				};
 			} )
 		);
@@ -84,7 +88,7 @@ export class MediaFolderDropdown extends Component {
 		return (
 			<div className={ rootClassNames }>
 				<SelectDropdown
-					initialSelected={ '' + this.props.initialSelected } // convert to string if number
+					initialSelected={ this.props.folder } // convert to string if number
 					disabled={ this.props.disabled }
 					compact={ this.props.compact }
 					onSelect={ this.handleOnSelect }

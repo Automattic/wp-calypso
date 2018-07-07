@@ -99,10 +99,10 @@ class MediaLibraryExternalHeader extends React.Component {
 	handleBackClick( event ) {
 		event.preventDefault();
 
-		if ( this.props.folder !== '/' ) {
-			this.props.onFolderChange( {
-				ID: '/',
-			} );
+		const rootIdentifier = '/';
+
+		if ( this.props.folder !== rootIdentifier ) {
+			this.props.onFolderChange( rootIdentifier );
 		}
 	}
 
@@ -192,16 +192,15 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ canCopy && this.renderCopyButton() }
 
-				{ config.isEnabled( 'external-media/google-photos/folder-dropdown' ) &&
-					hasFolders && (
-						<MediaFolderDropdown
-							className="media-library__header-item"
-							disabled={ this.state.fetching }
-							onFolderChange={ this.props.onFolderChange }
-							initialSelected={ this.props.folder }
-							folders={ this.props.folders }
-						/>
-					) }
+				{ config.isEnabled( 'external-media/google-photos/folder-dropdown' ) && (
+					<MediaFolderDropdown
+						className="media-library__header-item"
+						disabled={ this.state.fetching }
+						onFolderChange={ this.props.onFolderChange }
+						folders={ this.props.folders }
+						folder={ this.props.folder }
+					/>
+				) }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>

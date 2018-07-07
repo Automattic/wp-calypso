@@ -60,6 +60,31 @@ class MediaLibraryContent extends React.Component {
 		source: '',
 	};
 
+	constructor( props ) {
+		super( props );
+
+		this.state = { folders: [] };
+
+		this.parseFolders = this.parseFolders.bind( this );
+	}
+
+	parseFolders( { media } ) {
+		let folders = false;
+
+		if ( media && media.length ) {
+			folders = media.filter( mediaItem => {
+				return mediaItem.type === 'folder';
+			} );
+		}
+
+		if ( ! folders || ! folders.length ) return;
+
+		// Only update the folders if we've got some new results
+		this.setState( {
+			folders,
+		} );
+	}
+
 	renderErrors() {
 		const errorTypes = values( this.props.mediaValidationErrors ).map( head );
 		return map( groupBy( errorTypes ), ( occurrences, errorType ) => {
@@ -268,6 +293,7 @@ class MediaLibraryContent extends React.Component {
 				search={ this.props.search }
 				source={ this.props.source }
 				folder={ this.props.folder }
+				onGetData={ this.parseFolders }
 			>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
@@ -288,55 +314,6 @@ class MediaLibraryContent extends React.Component {
 		);
 	}
 
-	getFolders() {
-		return [
-			{
-				ID: 1000,
-				title: 'Album 1',
-				summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
-				thumbnail: 'http://example.files.wordpress.com/2015/05/g1000.gif',
-				numphotos: 278,
-				date: '2017-05-01',
-			},
-			{
-				ID: 1001,
-				title: 'Album 2',
-				summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
-				thumbnail: 'http://example.files.wordpress.com/2015/05/g1000.gif',
-				numphotos: 23,
-				date: '2012-09-04',
-			},
-			{
-				ID: 1002,
-				title: 'Album 3',
-				summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
-				thumbnail: 'http://example.files.wordpress.com/2015/05/g1000.gif',
-				numphotos: 2,
-				date: '2015-09-04',
-			},
-			{
-				ID: 1003,
-				title: 'Album 4',
-				summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
-				thumbnail: 'http://example.files.wordpress.com/2015/05/g1000.gif',
-				numphotos: 1000,
-				date: '2017-09-27',
-			},
-			{
-				ID: 1004,
-				title: 'Album 5',
-				summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
-				thumbnail: 'http://example.files.wordpress.com/2015/05/g1000.gif',
-				numphotos: 485,
-				date: '2017-10-04',
-			},
-		].map( folder => {
-			return Object.assign( {}, folder, {
-				ID: folder.ID.toString(),
-			} );
-		} );
-	}
-
 	renderHeader() {
 		if ( ! this.props.isConnected && this.needsToBeConnected() ) {
 			return null;
@@ -351,7 +328,7 @@ class MediaLibraryContent extends React.Component {
 					canCopy={ this.props.postId === undefined }
 					source={ this.props.source }
 					folder={ this.props.folder }
-					folders={ this.getFolders() }
+					folders={ this.state.folders }
 					onSourceChange={ this.props.onSourceChange }
 					onFolderChange={ this.props.onFolderChange }
 					selectedItems={ this.props.selectedItems }

@@ -168,6 +168,14 @@ export class MediaLibraryList extends React.Component {
 	getItemGroup = item =>
 		min( [ item.date.slice( 0, 10 ), moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
 
+	handleEnter = media => {
+		if ( media.type !== 'folder' ) return;
+
+		// onFolderChange in client/my-sites/media-library/list.jsx
+		// requires an ID only
+		this.props.onHandleEnter( media.ID );
+	};
+
 	renderItem = item => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
 		const selectedItems = this.props.mediaLibrarySelectedItems;
@@ -182,8 +190,6 @@ export class MediaLibraryList extends React.Component {
 
 		const handleToggle = item.type !== 'folder' ? this.toggleItem : noop;
 
-		const handleEnter = item.type === 'folder' ? this.props.onHandleEnter : noop;
-
 		return (
 			<ListItem
 				ref={ ref }
@@ -195,7 +201,7 @@ export class MediaLibraryList extends React.Component {
 				showGalleryHelp={ showGalleryHelp }
 				selectedIndex={ selectedIndex }
 				onToggle={ handleToggle }
-				onEnter={ handleEnter }
+				onEnter={ this.handleEnter }
 				onEditItem={ this.props.onEditItem }
 			/>
 		);
