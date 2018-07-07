@@ -18,9 +18,15 @@ import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
+import ListItemFolder from './list-item-folder';
 import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
+
+// Double click handling
+let doubleClickPrevent = false;
+let doubleClicktimer = 0;
+const DOUBLE_CLICK_DELAY = 200;
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryListItem';
@@ -35,6 +41,7 @@ export default class extends React.Component {
 		onToggle: PropTypes.func,
 		onEditItem: PropTypes.func,
 		style: PropTypes.object,
+		onEnter: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -43,6 +50,7 @@ export default class extends React.Component {
 		selectedIndex: -1,
 		onToggle: noop,
 		onEditItem: noop,
+		onEnter: noop,
 	};
 
 	shouldComponentUpdate( nextProps ) {
@@ -56,8 +64,50 @@ export default class extends React.Component {
 		);
 	}
 
-	clickItem = event => {
-		this.props.onToggle( this.props.media, event.shiftKey );
+	toggleHandler = ( media, shiftKey ) => {
+		this.props.onToggle( media, shiftKey );
+	};
+
+	clickItem = e => {
+		// Avoid reusing reference to Synthetic event
+		// https://reactjs.org/docs/events.html#event-pooling
+		const synthEvent = Object.assign( {}, e );
+
+		doubleClicktimer = setTimeout( () => {
+			if ( ! doubleClickPrevent ) {
+				this.toggleHandler( this.props.media, synthEvent.shiftKey );
+			}
+			doubleClickPrevent = false;
+		}, DOUBLE_CLICK_DELAY );
+	};
+
+	doubleClickItem = () => {
+		clearTimeout( doubleClicktimer );
+		doubleClickPrevent = true;
+		this.props.onEnter( this.props.media );
+	};
+
+	handleKeyPress = e => {
+		// Avoid reusing reference to Synthetic event
+		// https://reactjs.org/docs/events.html#event-pooling
+		const synthEvent = Object.assign( {}, e );
+		const isEnterKey = synthEvent.keyCode === 13;
+		const isSpacebarKey = synthEvent.keyCode === 32;
+		const isKeyboardActionKey = isEnterKey || isSpacebarKey;
+		const targetHasFocus = document.activeElement && document.activeElement === synthEvent.target;
+		const isShiftPressed = synthEvent.shiftKey;
+
+		if ( isKeyboardActionKey && targetHasFocus ) {
+			// Required because space or enter have default
+			// functionality in browsers (eg: scroll down)
+			e.preventDefault();
+
+			if ( isShiftPressed ) {
+				this.toggleHandler( this.props.media, synthEvent.shiftKey );
+			} else {
+				this.props.onEnter( this.props.media );
+			}
+		}
 	};
 
 	renderItem = () => {
@@ -67,19 +117,23 @@ export default class extends React.Component {
 			return;
 		}
 
-		switch ( getMimePrefix( this.props.media ) ) {
-			case 'image':
-				component = ListItemImage;
-				break;
-			case 'video':
-				component = ListItemVideo;
-				break;
-			case 'audio':
-				component = ListItemAudio;
-				break;
-			default:
-				component = ListItemDocument;
-				break;
+		if ( this.props.media.type === 'folder' ) {
+			component = ListItemFolder;
+		} else {
+			switch ( getMimePrefix( this.props.media ) ) {
+				case 'image':
+					component = ListItemImage;
+					break;
+				case 'video':
+					component = ListItemVideo;
+					break;
+				case 'audio':
+					component = ListItemAudio;
+					break;
+				default:
+					component = ListItemDocument;
+					break;
+			}
 		}
 
 		return React.createElement( component, this.props );
@@ -126,7 +180,17 @@ export default class extends React.Component {
 		}
 
 		return (
-			<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
+			<div
+				className={ classes }
+				style={ style }
+				onClick={ this.clickItem }
+				onDoubleClick={ this.doubleClickItem }
+				onKeyDown={ this.handleKeyPress }
+				tabIndex="0" // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
+				{ ...props }
+				role="button"
+				aria-pressed={ -1 !== this.props.selectedIndex }
+			>
 				<span className="media-library__list-item-selected-icon">
 					<Gridicon icon="checkmark" size={ 20 } />
 				</span>

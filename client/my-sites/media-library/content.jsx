@@ -281,6 +281,7 @@ class MediaLibraryContent extends React.Component {
 						single={ this.props.single }
 						scrollable={ this.props.scrollable }
 						onEditItem={ this.props.onEditItem }
+						onHandleEnter={ this.props.onFolderChange }
 					/>
 				</MediaLibrarySelectedData>
 			</MediaListData>

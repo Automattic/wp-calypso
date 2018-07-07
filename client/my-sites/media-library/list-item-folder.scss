@@ -1,0 +1,46 @@
+.media-library__list-item-folder {
+}
+
+.media-library__list-item-folder-name {
+	font-size: 16px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	padding: 10px;
+	background-color: $gray-light;
+
+	.gridicon {
+		margin-right: 0.2em;
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.count {
+		background-color: #fff;
+	}
+}
+
+.media-library__list-item-folder-name-text {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.media-library__list-item-folder-thumbnail {
+	.gridicon {
+		position: absolute;
+		top: 40%;
+		left: 50%;
+		fill: #fff;
+		opacity: 0.2;
+		transform: translate( -50%, -50% );
+	}
+}
+
+.media-library__list-item-folder-count {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 1000;
+	background-color: #fff;
+}

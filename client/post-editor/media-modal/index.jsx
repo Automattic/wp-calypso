@@ -155,7 +155,7 @@ export class EditorMediaModal extends Component {
 			filter: '',
 			detailSelectedIndex: 0,
 			source: props.source ? props.source : '',
-			folder: 'all',
+			folder: '/',
 			gallerySettings: props.initialGallerySettings,
 		};
 	}
@@ -435,7 +435,10 @@ export class EditorMediaModal extends Component {
 	};
 
 	onFolderChange = folder => {
-		this.setState( { folder, search: undefined } );
+		this.setState( {
+			folder: folder.ID,
+			search: undefined,
+		} );
 	};
 
 	onClose = () => {

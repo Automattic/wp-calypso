@@ -47,6 +47,7 @@ export class MediaLibraryList extends React.Component {
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
 		onEditItem: PropTypes.func,
+		onHandleEnter: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -59,6 +60,7 @@ export class MediaLibraryList extends React.Component {
 		single: false,
 		scrollable: false,
 		onEditItem: noop,
+		onHandleEnter: noop,
 	};
 
 	state = {};
@@ -178,6 +180,10 @@ export class MediaLibraryList extends React.Component {
 			selectedItems.length === 1 &&
 			'image' === getMimePrefix( item );
 
+		const handleToggle = item.type !== 'folder' ? this.toggleItem : noop;
+
+		const handleEnter = item.type === 'folder' ? this.props.onHandleEnter : noop;
+
 		return (
 			<ListItem
 				ref={ ref }
@@ -188,7 +194,8 @@ export class MediaLibraryList extends React.Component {
 				thumbnailType={ this.props.thumbnailType }
 				showGalleryHelp={ showGalleryHelp }
 				selectedIndex={ selectedIndex }
-				onToggle={ this.toggleItem }
+				onToggle={ handleToggle }
+				onEnter={ handleEnter }
 				onEditItem={ this.props.onEditItem }
 			/>
 		);
@@ -262,6 +269,11 @@ export class MediaLibraryList extends React.Component {
 		// getItemGroup function to return the source, and no label.
 		if ( this.sourceIsUngrouped( this.props.source ) ) {
 			getItemGroup = () => this.props.source;
+			getGroupLabel = () => '';
+		}
+
+		if ( this.props.folder === '/' ) {
+			getItemGroup = () => '';
 			getGroupLabel = () => '';
 		}
 

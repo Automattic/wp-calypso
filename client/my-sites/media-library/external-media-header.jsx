@@ -44,8 +44,10 @@ class MediaLibraryExternalHeader extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.handleClick = this.onClick.bind( this );
+		this.handleRefreshClick = this.onRefreshClick.bind( this );
 		this.handleMedia = this.onUpdateState.bind( this );
+
+		this.handleBackClick = this.handleBackClick.bind( this );
 
 		// The MediaListStore fetching state can bounce between true and false quickly.
 		// We disable the refresh button if fetching and rather than have the button flicker
@@ -94,7 +96,17 @@ class MediaLibraryExternalHeader extends React.Component {
 		};
 	}
 
-	onClick() {
+	handleBackClick( event ) {
+		event.preventDefault();
+
+		if ( this.props.folder !== '/' ) {
+			this.props.onFolderChange( {
+				ID: '/',
+			} );
+		}
+	}
+
+	onRefreshClick() {
 		const { ID } = this.props.site;
 
 		MediaActions.sourceChanged( ID );
@@ -143,18 +155,34 @@ class MediaLibraryExternalHeader extends React.Component {
 			hasRefreshButton,
 			hasAttribution,
 			hasFolders,
+			folder,
 		} = this.props;
+
+		const showBackButton = hasFolders && folder !== '/';
 
 		return (
 			<Card className="media-library__header">
 				{ hasAttribution && this.renderPexelsAttribution() }
+
+				{ showBackButton && (
+					<Button
+						className="media-library__header-item is-primary"
+						compact
+						disabled={ this.state.fetching }
+						onClick={ this.handleBackClick }
+					>
+						<Gridicon icon="arrow-left" size={ 24 } />
+
+						{ translate( 'Back to Folders' ) }
+					</Button>
+				) }
 
 				{ hasRefreshButton && (
 					<Button
 						className="media-library__header-item"
 						compact
 						disabled={ this.state.fetching }
-						onClick={ this.handleClick }
+						onClick={ this.handleRefreshClick }
 					>
 						<Gridicon icon="refresh" size={ 24 } />
 

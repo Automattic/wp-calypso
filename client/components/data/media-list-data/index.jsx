@@ -78,7 +78,7 @@ export default class extends React.Component {
 
 		if ( props.source ) {
 			query.source = props.source;
-			query.path = 'recent';
+			query.path = props.folder || 'recent';
 		}
 
 		if ( props.folder ) {
