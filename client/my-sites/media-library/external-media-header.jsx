@@ -199,6 +199,10 @@ class MediaLibraryExternalHeader extends React.Component {
 						onFolderChange={ this.props.onFolderChange }
 						folders={ this.props.folders }
 						folder={ this.props.folder }
+						defaultOption={ {
+							value: '/',
+							label: 'All Albums',
+						} }
 					/>
 				) }
 

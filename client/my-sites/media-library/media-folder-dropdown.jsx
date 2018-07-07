@@ -33,7 +33,10 @@ export class MediaFolderDropdown extends Component {
 		onFolderChange: PropTypes.func,
 		disabled: PropTypes.bool,
 		compact: PropTypes.bool,
-		defaultOption: PropTypes.object,
+		defaultOption: PropTypes.shape( {
+			value: PropTypes.string,
+			label: PropTypes.string,
+		} ),
 	};
 
 	static defaultProps = {
@@ -58,14 +61,13 @@ export class MediaFolderDropdown extends Component {
 
 	getDropDownOptions( folderData ) {
 		const separator = null;
+		let initial = [];
 
-		return [
-			{
-				value: '/',
-				label: this.props.translate( 'All Albums' ),
-			},
-			separator,
-		].concat(
+		if ( this.props.defaultOption ) {
+			initial = [ this.props.defaultOption, separator ];
+		}
+
+		return initial.concat(
 			folderData.map( folder => {
 				return {
 					value: '' + folder.ID, // convert to string if number
@@ -85,10 +87,12 @@ export class MediaFolderDropdown extends Component {
 		// No need to show folders if we only have the default option + seperator
 		if ( folderOptions.length <= 2 ) return null;
 
+		const initial = this.props.folder ? this.props.folder : folderOptions[ 0 ].value;
+
 		return (
 			<div className={ rootClassNames }>
 				<SelectDropdown
-					initialSelected={ this.props.folder } // convert to string if number
+					initialSelected={ initial }
 					disabled={ this.props.disabled }
 					compact={ this.props.compact }
 					onSelect={ this.handleOnSelect }

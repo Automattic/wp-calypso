@@ -35,7 +35,7 @@ describe( 'MediaFolderDropdown', () => {
 		FIXTURE_FOLDERS_OPTIONS = FIXTURE_FOLDERS_DATA.map( folder => {
 			return {
 				value: folder.ID.toString(),
-				label: folder.title,
+				label: folder.name,
 			};
 		} );
 	} );
@@ -54,21 +54,24 @@ describe( 'MediaFolderDropdown', () => {
 	} );
 
 	describe( 'initial folder selection', () => {
-		test( 'initial folder is correctly defaulted to all folders', () => {
+		test( 'initial folder is correctly defaulted to first', () => {
+			const expected = FIXTURE_FOLDERS_DATA[ 0 ].ID;
+
 			wrapper = shallow(
 				<MediaFolderDropdown translate={ noop } folders={ FIXTURE_FOLDERS_DATA } />
 			);
-			expect( wrapper.find( SelectDropdown ).props().initialSelected ).toBe( 'all' );
+
+			expect( wrapper.find( SelectDropdown ).props().initialSelected ).toBe( expected );
 		} );
 
-		test( 'initial folder can be overidden via props', () => {
-			const expected = FIXTURE_FOLDERS_DATA[ 0 ].ID.toString();
+		test( 'initial folder can be set via folder prop', () => {
+			const expected = FIXTURE_FOLDERS_DATA[ 1 ].ID;
 
 			wrapper = shallow(
 				<MediaFolderDropdown
 					translate={ noop }
 					folders={ FIXTURE_FOLDERS_DATA }
-					initialSelected={ expected }
+					folder={ expected }
 				/>
 			);
 
@@ -76,23 +79,26 @@ describe( 'MediaFolderDropdown', () => {
 		} );
 	} );
 
-	test( 'folder options correctly merge with default items', () => {
-		const expected = [
-			{
-				value: 'all',
-				label: 'All Photos',
-			},
-			null, // seperator
-		].concat( FIXTURE_FOLDERS_OPTIONS );
+	test( 'folder options correctly merge with default option', () => {
+		const defaultOption = {
+			value: '/',
+			label: 'All Albums',
+		};
+
+		const expected = [ defaultOption, null ].concat( FIXTURE_FOLDERS_OPTIONS );
 
 		wrapper = shallow(
-			<MediaFolderDropdown translate={ noop } folders={ FIXTURE_FOLDERS_DATA } />
+			<MediaFolderDropdown
+				translate={ noop }
+				folders={ FIXTURE_FOLDERS_DATA }
+				defaultOption={ defaultOption }
+			/>
 		);
 
 		expect( wrapper.find( SelectDropdown ).props().options ).toEqual( expected );
 	} );
 
-	test( 'selected folder option value is correctly passed as argument to onFolderChange prop', () => {
+	test( 'the selected option value is correctly passed as argument to onFolderChange prop', () => {
 		const spy = jest.fn();
 		const selectedOption = FIXTURE_FOLDERS_DATA[ 0 ];
 		const expected = selectedOption.value;
