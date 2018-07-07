@@ -19,7 +19,6 @@ import { getMimePrefix } from 'lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
-import Notice from 'components/notice';
 
 import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
@@ -220,21 +219,6 @@ export class MediaLibraryList extends React.Component {
 	renderTrailingItems = () => {
 		const { media, source } = this.props;
 
-		if ( ! this.props.mediaHasNextPage ) {
-			const message = translate( 'There are no more photos available.' );
-
-			return (
-				<Notice
-					showDismiss={ false }
-					className="media-library__list-trailing-notification"
-					status="is-info"
-					icon="image-remove"
-				>
-					{ message }
-				</Notice>
-			);
-		}
-
 		if ( source === 'google_photos' && media && media.length >= GOOGLE_MAX_RESULTS ) {
 			// Google Photos won't return more than 1000 photos - suggest ways round this to the user
 			const message = translate(
@@ -242,14 +226,9 @@ export class MediaLibraryList extends React.Component {
 			);
 
 			return (
-				<Notice
-					showDismiss={ false }
-					className="media-library__list-trailing-notification"
-					status="is-warning"
-					icon="image-remove"
-				>
-					{ message }
-				</Notice>
+				<p>
+					<em>{ message }</em>
+				</p>
 			);
 		}
 
