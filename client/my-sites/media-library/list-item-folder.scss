@@ -1,6 +1,12 @@
 .media-library__list-item-folder {
 }
 
+.media-library__list-item-folder-thumbnail {
+	img {
+		width: 100%;
+	}
+}
+
 .media-library__list-item-folder-name {
 	font-size: 16px;
 	position: absolute;
@@ -9,6 +15,7 @@
 	width: 100%;
 	padding: 10px;
 	background-color: $gray-light;
+	box-sizing: border-box;
 
 	.gridicon {
 		margin-right: 0.2em;

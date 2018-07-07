@@ -58,6 +58,20 @@
 	font-size: 14px;
 }
 
+.media-library__header-btn {
+	span {
+		@include hide-content-accessibly;
+
+		@include breakpoint( '>480px' ) {
+			clip: default;
+			height: auto;
+			overflow: visible;
+			position: static;
+			width: auto;
+		}
+	}
+}
+
 .media-library__filter-bar {
 	display: flex;
 	flex-flow: row nowrap;

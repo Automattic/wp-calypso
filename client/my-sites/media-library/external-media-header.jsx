@@ -166,27 +166,27 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ showBackButton && (
 					<Button
-						className="media-library__header-item is-primary"
+						className="media-library__header-item media-library__header-btn is-primary"
 						compact
 						disabled={ this.state.fetching }
 						onClick={ this.handleBackClick }
 					>
 						<Gridicon icon="arrow-left" size={ 24 } />
 
-						{ translate( 'Back to Folders' ) }
+						<span>{ translate( 'Back to Folders' ) }</span>
 					</Button>
 				) }
 
 				{ hasRefreshButton && (
 					<Button
-						className="media-library__header-item"
+						className="media-library__header-item media-library__header-btn"
 						compact
 						disabled={ this.state.fetching }
 						onClick={ this.handleRefreshClick }
 					>
 						<Gridicon icon="refresh" size={ 24 } />
 
-						{ translate( 'Refresh' ) }
+						<span>{ translate( 'Refresh' ) }</span>
 					</Button>
 				) }
 
