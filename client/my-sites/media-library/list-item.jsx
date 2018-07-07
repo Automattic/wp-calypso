@@ -64,6 +64,10 @@ export default class extends React.Component {
 		);
 	}
 
+	isFocused( el ) {
+		return document.activeElement && document.activeElement === el;
+	}
+
 	toggleHandler = ( media, shiftKey ) => {
 		this.props.onToggle( media, shiftKey );
 	};
@@ -73,6 +77,9 @@ export default class extends React.Component {
 		// https://reactjs.org/docs/events.html#event-pooling
 		const synthEvent = Object.assign( {}, e );
 
+		// Wait for doubleClick - if this doesn't
+		// happen then proceed as per a normal
+		// single click event
 		doubleClicktimer = setTimeout( () => {
 			if ( ! doubleClickPrevent ) {
 				this.toggleHandler( this.props.media, synthEvent.shiftKey );
@@ -94,7 +101,7 @@ export default class extends React.Component {
 		const isEnterKey = synthEvent.keyCode === 13;
 		const isSpacebarKey = synthEvent.keyCode === 32;
 		const isKeyboardActionKey = isEnterKey || isSpacebarKey;
-		const targetHasFocus = document.activeElement && document.activeElement === synthEvent.target;
+		const targetHasFocus = this.isFocused( synthEvent.target );
 		const isShiftPressed = synthEvent.shiftKey;
 
 		if ( isKeyboardActionKey && targetHasFocus ) {
