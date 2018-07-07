@@ -110,6 +110,11 @@ class InlineHelpPopover extends Component {
 			return false;
 		}
 
+		if ( numComplete === totalTasks ) {
+			// @TODO show something else instead and / or kick off the next level of checklist
+			return false;
+		}
+
 		const href = '/checklist' + ( selectedSiteSlug ? `/${ selectedSiteSlug }` : '' );
 
 		return (
