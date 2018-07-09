@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, noop, pickBy, times } from 'lodash';
+import { map, noop, pickBy, size, times } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -93,8 +93,8 @@ export class Checklist extends Component {
 		return (
 			<div className={ classNames( 'checklist', { 'is-expanded': ! this.state.hideCompleted } ) }>
 				<ChecklistHeader
-					total={ tasks.length }
-					completed={ this.getCompletedTasks().length }
+					total={ size( tasks ) }
+					completed={ size( this.getCompletedTasks() ) }
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
 				/>
