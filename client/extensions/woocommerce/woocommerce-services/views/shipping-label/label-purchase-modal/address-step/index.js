@@ -112,16 +112,15 @@ const mapStateToProps = ( state, { orderId, siteId, type, translate } ) => {
 	const form = shippingLabel.form[ type ];
 	const errors = loaded && getFormErrors( state, orderId, siteId )[ type ];
 
-	const showCountryInSummary =
+	const shouldShowCountryInSummary =
 		type === 'destination' && shippingLabel.form.origin.values.country !== form.values.country;
 
 	return {
 		errors,
 		form,
-		showCountryInSummary,
 		expanded: form.expanded,
 		normalizationStatus: getNormalizationStatus( { ...form, errors } ),
-		summary: renderSummary( form, state, siteId, errors, translate, showCountryInSummary ),
+		summary: renderSummary( form, state, siteId, errors, translate, shouldShowCountryInSummary ),
 	};
 };
 
