@@ -23,10 +23,10 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import AuthorSelector from 'blocks/author-selector';
 import { deleteUser } from 'lib/users/actions';
 import accept from 'lib/accept';
-import analytics from 'lib/analytics';
 import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class DeleteUser extends React.Component {
 	static displayName = 'DeleteUser';
@@ -79,18 +79,12 @@ class DeleteUser extends React.Component {
 		updateObj[ name ] = value;
 
 		this.setState( updateObj );
-		analytics.ga.recordEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
+		this.props.recordGoogleEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
 	};
 
-	setReassignLabel = label => {
-		this.reassignLabel = label;
-	};
+	setReassignLabel = label => ( this.reassignLabel = label );
 
-	onSelectAuthor = author => {
-		this.setState( {
-			reassignUser: author,
-		} );
-	};
+	onSelectAuthor = author => this.setState( { reassignUser: author } );
 
 	removeUser = () => {
 		const { translate } = this.props;
@@ -116,13 +110,13 @@ class DeleteUser extends React.Component {
 			</div>,
 			accepted => {
 				if ( accepted ) {
-					analytics.ga.recordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
 					deleteUser( this.props.siteId, this.props.user.ID );
 				} else {
-					analytics.ga.recordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Cancel Remove User on Edit User Network Site'
 					);
@@ -130,7 +124,7 @@ class DeleteUser extends React.Component {
 			},
 			translate( 'Remove' )
 		);
-		analytics.ga.recordEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
+		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
 	};
 
 	deleteUser = event => {
@@ -145,7 +139,7 @@ class DeleteUser extends React.Component {
 		}
 
 		deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
-		analytics.ga.recordEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
+		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
 	getAuthorSelectPlaceholder = () => {
@@ -282,5 +276,10 @@ class DeleteUser extends React.Component {
 }
 
 export default localize(
-	connect( state => ( { currentUser: getCurrentUser( state ) } ) )( DeleteUser )
+	connect(
+		state => ( {
+			currentUser: getCurrentUser( state ),
+		} ),
+		{ recordGoogleEvent }
+	)( DeleteUser )
 );

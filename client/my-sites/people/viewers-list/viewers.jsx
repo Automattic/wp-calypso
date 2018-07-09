@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -15,9 +16,9 @@ import ViewersActions from 'lib/viewers/actions';
 import ViewersStore from 'lib/viewers/store';
 import InfiniteList from 'components/infinite-list';
 import EmptyContent from 'components/empty-content';
-import analytics from 'lib/analytics';
 import accept from 'lib/accept';
 import ListEnd from 'components/list-end';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class Viewers extends React.PureComponent {
 	static displayName = 'Viewers';
@@ -26,21 +27,24 @@ class Viewers extends React.PureComponent {
 		bulkEditing: false,
 	};
 
-	renderPlaceholders = () => {
-		return <PeopleListItem key="people-list-item-placeholder" />;
-	};
+	renderPlaceholders = () => <PeopleListItem key="people-list-item-placeholder" />;
 
 	fetchNextPage = () => {
-		let paginationData = ViewersStore.getPaginationData( this.props.siteId ),
-			currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0,
-			page = currentPage + 1;
+		const paginationData = ViewersStore.getPaginationData( this.props.siteId );
+		const currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0;
+		const page = currentPage + 1;
 
-		analytics.ga.recordEvent( 'People', 'Fetched more viewers with infinite list', 'page', page );
+		this.props.recordGoogleEvent(
+			'People',
+			'Fetched more viewers with infinite list',
+			'page',
+			page
+		);
 		ViewersActions.fetch( this.props.siteId, page );
 	};
 
 	removeViewer = viewer => {
-		analytics.ga.recordEvent( 'People', 'Clicked Remove Viewer Button On Viewers List' );
+		this.props.recordGoogleEvent( 'People', 'Clicked Remove Viewer Button On Viewers List' );
 		accept(
 			<div>
 				<p>
@@ -52,13 +56,13 @@ class Viewers extends React.PureComponent {
 			</div>,
 			accepted => {
 				if ( accepted ) {
-					analytics.ga.recordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Remove Button In Remove Viewer Confirmation'
 					);
 					ViewersActions.remove( this.props.site.ID, viewer );
 				} else {
-					analytics.ga.recordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Cancel Button In Remove Viewer Confirmation'
 					);
@@ -85,27 +89,19 @@ class Viewers extends React.PureComponent {
 		);
 	};
 
-	getViewerRef = viewer => {
-		return 'viewer-' + viewer.ID;
-	};
+	getViewerRef = viewer => 'viewer-' + viewer.ID;
 
-	onClickSiteSettings = () => {
-		analytics.ga.recordEvent( 'People', 'Clicked Site Settings Link On Empty Viewers' );
-	};
-
-	isLastPage = () => {
-		return this.props.totalViewers <= this.props.viewers.length;
-	};
+	isLastPage = () => this.props.totalViewers <= this.props.viewers.length;
 
 	render() {
-		let viewers,
-			emptyContentArgs = {
-				title:
-					this.props.site && this.props.site.jetpack
-						? this.props.translate( "Oops, Jetpack sites don't support viewers." )
-						: this.props.translate( "You don't have any viewers yet." ),
-			},
-			listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+		let viewers;
+		let emptyContentArgs = {
+			title:
+				this.props.site && this.props.site.jetpack
+					? this.props.translate( "Oops, Jetpack sites don't support viewers." )
+					: this.props.translate( "You don't have any viewers yet." ),
+		};
 
 		if ( ! this.props.viewers.length && ! this.props.fetching ) {
 			if ( this.props.site && ! this.props.site.jetpack && ! this.props.site.is_private ) {
@@ -156,4 +152,7 @@ class Viewers extends React.PureComponent {
 	}
 }
 
-export default localize( Viewers );
+export default connect(
+	null,
+	{ recordGoogleEvent }
+)( localize( Viewers ) );

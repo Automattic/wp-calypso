@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,9 +17,9 @@ import PeopleListItem from 'my-sites/people/people-list-item';
 import { fetchUsers } from 'lib/users/actions';
 import InfiniteList from 'components/infinite-list';
 import NoResults from 'my-sites/no-results';
-import analytics from 'lib/analytics';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import ListEnd from 'components/list-end';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
@@ -29,15 +30,14 @@ class Team extends React.Component {
 		bulkEditing: false,
 	};
 
-	isLastPage = () => {
-		return this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
-	};
+	isLastPage = () =>
+		this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 
 	render() {
-		let key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-			headerText = this.props.translate( 'Team', { context: 'A navigation label.' } ),
-			listClass = this.state.bulkEditing ? 'bulk-editing' : null,
-			people;
+		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) );
+		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+		let headerText = this.props.translate( 'Team', { context: 'A navigation label.' } );
+		let people;
 
 		if (
 			this.props.fetchInitialized &&
@@ -82,15 +82,15 @@ class Team extends React.Component {
 					ref="infiniteList"
 					fetchingNextPage={ this.props.fetchingUsers }
 					lastPage={ this.isLastPage() }
-					fetchNextPage={ this._fetchNextPage }
-					getItemRef={ this._getPersonRef }
-					renderLoadingPlaceholders={ this._renderLoadingPeople }
-					renderItem={ this._renderPerson }
+					fetchNextPage={ this.fetchNextPage }
+					getItemRef={ this.getPersonRef }
+					renderLoadingPlaceholders={ this.renderLoadingPeople }
+					renderItem={ this.renderPerson }
 					guessedItemHeight={ 126 }
 				/>
 			);
 		} else {
-			people = this._renderLoadingPeople();
+			people = this.renderLoadingPeople();
 		}
 
 		return (
@@ -110,7 +110,7 @@ class Team extends React.Component {
 		);
 	}
 
-	_renderPerson = user => {
+	renderPerson = user => {
 		return (
 			<PeopleListItem
 				key={ user.ID }
@@ -122,21 +122,25 @@ class Team extends React.Component {
 		);
 	};
 
-	_fetchNextPage = () => {
+	fetchNextPage = () => {
 		const offset = this.props.users.length;
 		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
-		analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
+		this.props.recordGoogleEvent(
+			'People',
+			'Fetched more users with infinite list',
+			'offset',
+			offset
+		);
 		debug( 'fetching next batch of users' );
 		fetchUsers( fetchOptions );
 	};
 
-	_getPersonRef = user => {
-		return 'user-' + user.ID;
-	};
+	getPersonRef = user => 'user-' + user.ID;
 
-	_renderLoadingPeople = () => {
-		return <PeopleListItem key="people-list-item-placeholder" />;
-	};
+	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 }
 
-export default localize( Team );
+export default connect(
+	null,
+	{ recordGoogleEvent }
+)( localize( Team ) );

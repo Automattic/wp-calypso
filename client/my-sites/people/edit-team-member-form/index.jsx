@@ -21,12 +21,12 @@ import { fetchUser } from 'lib/users/actions';
 import { protectForm } from 'lib/protect-form';
 import DeleteUser from 'my-sites/people/delete-user';
 import PeopleNotices from 'my-sites/people/people-notices';
-import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PeopleLogStore from 'lib/people/log-store';
 import { isJetpackSiteMultiSite, isJetpackSite } from 'state/sites/selectors';
 import EditUserForm from './edit-user-form';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 export class EditTeamMemberForm extends Component {
 	constructor( props ) {
@@ -127,7 +127,7 @@ export class EditTeamMemberForm extends Component {
 	};
 
 	goBack = () => {
-		analytics.ga.recordEvent( 'People', 'Clicked Back Button on User Edit' );
+		this.props.recordGoogleEvent( 'People', 'Clicked Back Button on User Edit' );
 		if ( this.props.siteSlug ) {
 			const teamBack = '/people/team/' + this.props.siteSlug,
 				readersBack = '/people/readers/' + this.props.siteSlug;
@@ -178,13 +178,16 @@ export class EditTeamMemberForm extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
 
-	return {
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-		isJetpack: isJetpackSite( state, siteId ),
-		isMultisite: isJetpackSiteMultiSite( state, siteId ),
-	};
-} )( protectForm( EditTeamMemberForm ) );
+		return {
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+		};
+	},
+	{ recordGoogleEvent }
+)( protectForm( EditTeamMemberForm ) );

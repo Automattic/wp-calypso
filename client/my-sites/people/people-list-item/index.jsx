@@ -16,7 +16,6 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
-import analytics from 'lib/analytics';
 import config from 'config';
 import {
 	isRequestingInviteResend,
@@ -24,6 +23,7 @@ import {
 	didInviteDeletionSucceed,
 } from 'state/invites/selectors';
 import { resendInvite } from 'state/invites/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class PeopleListItem extends React.PureComponent {
 	static displayName = 'PeopleListItem';
@@ -35,7 +35,7 @@ class PeopleListItem extends React.PureComponent {
 
 	navigateToUser = () => {
 		window.scrollTo( 0, 0 );
-		analytics.ga.recordEvent( 'People', 'Clicked User Profile From Team List' );
+		this.props.recordGoogleEvent( 'People', 'Clicked User Profile From Team List' );
 	};
 
 	userHasPromoteCapability = () => {
@@ -194,5 +194,5 @@ export default connect(
 			inviteWasDeleted,
 		};
 	},
-	{ resendInvite }
+	{ resendInvite, recordGoogleEvent }
 )( localize( PeopleListItem ) );

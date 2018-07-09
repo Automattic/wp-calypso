@@ -16,10 +16,10 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import analytics from 'lib/analytics';
 import { updateUser } from 'lib/users/actions';
 import RoleSelect from 'my-sites/people/role-select';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
  * Module Variables
@@ -103,20 +103,13 @@ class EditUserForm extends React.Component {
 				? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
 				: changedSettings
 		);
-		analytics.ga.recordEvent( 'People', 'Clicked Save Changes Button on User Edit' );
+		this.props.recordGoogleEvent( 'People', 'Clicked Save Changes Button on User Edit' );
 	};
 
-	recordFieldFocus( fieldId ) {
-		return () => {
-			analytics.ga.recordEvent( 'People', 'Focused on field on User Edit', 'Field', fieldId );
-		};
-	}
+	recordFieldFocus = fieldId => () =>
+		this.props.recordGoogleEvent( 'People', 'Focused on field on User Edit', 'Field', fieldId );
 
-	handleChange = event => {
-		this.setState( {
-			[ event.target.name ]: event.target.value,
-		} );
-	};
+	handleChange = event => this.setState( { [ event.target.name ]: event.target.value } );
 
 	renderField( fieldId ) {
 		let returnField = null;
@@ -230,5 +223,10 @@ class EditUserForm extends React.Component {
 }
 
 export default localize(
-	connect( state => ( { currentUser: getCurrentUser( state ) } ) )( EditUserForm )
+	connect(
+		state => ( {
+			currentUser: getCurrentUser( state ),
+		} ),
+		{ recordGoogleEvent }
+	)( EditUserForm )
 );
