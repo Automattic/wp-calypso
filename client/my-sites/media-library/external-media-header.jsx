@@ -21,6 +21,7 @@ import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
 import MediaFolderDropdown from './media-folder-dropdown';
+import FormToggle from 'components/forms/form-toggle';
 
 const DEBOUNCE_TIME = 250;
 
@@ -46,8 +47,8 @@ class MediaLibraryExternalHeader extends React.Component {
 
 		this.handleRefreshClick = this.onRefreshClick.bind( this );
 		this.handleMedia = this.onUpdateState.bind( this );
-
 		this.handleBackClick = this.handleBackClick.bind( this );
+		this.onToggleChange = this.onToggleChange.bind( this );
 
 		// The MediaListStore fetching state can bounce between true and false quickly.
 		// We disable the refresh button if fetching and rather than have the button flicker
@@ -93,6 +94,7 @@ class MediaLibraryExternalHeader extends React.Component {
 	getState() {
 		return {
 			fetching: MediaListStore.isFetchingNextPage( this.props.site.ID ),
+			folderViewToggle: false,
 		};
 	}
 
@@ -147,6 +149,15 @@ class MediaLibraryExternalHeader extends React.Component {
 		return <span className="media-library__pexels-attribution">{ attribution }</span>;
 	}
 
+	onToggleChange( value ) {
+		this.setState( {
+			folderViewToggle: value,
+		} );
+
+		const folder = value ? '/' : 'recent';
+		this.props.onFolderChange( folder );
+	}
+
 	renderCard() {
 		const {
 			onMediaScaleChange,
@@ -158,12 +169,28 @@ class MediaLibraryExternalHeader extends React.Component {
 			folder,
 		} = this.props;
 
-		const showBackButton = hasFolders && folder !== '/';
+		const folderViewActive = this.state.folderViewToggle;
+
+		const showBackButton = hasFolders && folderViewActive && folder !== '/' && folder !== 'recent';
 		const foldersWithPhotos = this.props.folders.filter( folderItem => folderItem.children );
 
 		return (
 			<Card className="media-library__header">
 				{ hasAttribution && this.renderPexelsAttribution() }
+
+				{ hasFolders && (
+					<FormToggle
+						onChange={ this.onToggleChange }
+						onKeyDown={ this.onToggleChange }
+						checked={ this.state.folderViewToggle }
+						disabled={ false }
+						id="media-folder-view-toggle"
+						wrapperClassName="media-library__header-item media-library__header-folder-toggle"
+						aria-label={ translate( 'Browse Folders' ) }
+					>
+						{ translate( 'Browse Folders' ) }
+					</FormToggle>
+				) }
 
 				{ showBackButton && (
 					<Button
@@ -193,19 +220,20 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ canCopy && this.renderCopyButton() }
 
-				{ config.isEnabled( 'external-media/google-photos/folder-dropdown' ) && (
-					<MediaFolderDropdown
-						className="media-library__header-item"
-						disabled={ this.state.fetching }
-						onFolderChange={ this.props.onFolderChange }
-						folders={ foldersWithPhotos }
-						folder={ this.props.folder }
-						defaultOption={ {
-							ID: '/',
-							name: 'All Albums',
-						} }
-					/>
-				) }
+				{ folderViewActive &&
+					config.isEnabled( 'external-media/google-photos/folder-dropdown' ) && (
+						<MediaFolderDropdown
+							className="media-library__header-item"
+							disabled={ this.state.fetching }
+							onFolderChange={ this.props.onFolderChange }
+							folders={ foldersWithPhotos }
+							folder={ this.props.folder }
+							defaultOption={ {
+								ID: '/',
+								name: 'All Albums',
+							} }
+						/>
+					) }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>

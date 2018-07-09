@@ -72,6 +72,22 @@
 	}
 }
 
+.media-library__header-folder-toggle {
+	display: flex;
+	align-items: center;
+	margin-right: 13px;
+
+	.form-toggle__label {
+	}
+
+	.form-toggle__label-content {
+		margin-left: 6px;
+		color: $gray-text-min;
+		font-size: 12px;
+		font-weight: 500;
+	}
+}
+
 .media-library__filter-bar {
 	display: flex;
 	flex-flow: row nowrap;
