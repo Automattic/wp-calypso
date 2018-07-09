@@ -1,4 +1,7 @@
 /** @format */
+/**
+ * External dependencies
+ */
 import percentageFactory from 'percentage-regex';
 
 const percentageRegex = percentageFactory( { exact: true } );
@@ -7,7 +10,8 @@ const isPercentage = val => percentageRegex.test( val );
 const embedsConfig = {
 	default: {
 		sizingFunction: function defaultEmbedSizingFunction( embed, availableWidth ) {
-			let { aspectRatio, width, height } = embed;
+			const { aspectRatio } = embed;
+			let { width, height } = embed;
 
 			if ( ! isNaN( aspectRatio ) ) {
 				// width and height were numbers, so grab the aspect ratio
@@ -51,8 +55,8 @@ const embedsConfig = {
 	},
 	soundcloud: {
 		sizingFunction: function soundcloudEmbedSizingFunction( embed, availableWidth ) {
-			let aspectRatio = embed.aspectRatio || 1,
-				height = '100%';
+			const aspectRatio = embed.aspectRatio || 1;
+			let height = '100%';
 
 			if ( embed.iframe.indexOf( 'visual=true' ) > -1 ) {
 				height = Math.floor( availableWidth / aspectRatio ) + 'px';
@@ -68,14 +72,14 @@ const embedsConfig = {
 };
 
 function extractUrlFromIframe( iframeHtml ) {
-	let urlRegex = new RegExp( 'src="([^"]+)"' ),
+	const urlRegex = new RegExp( 'src="([^"]+)"' ),
 		res = urlRegex.exec( iframeHtml );
 
 	return res.length > 1 ? res[ 1 ] : null;
 }
 
 function resolveEmbedConfig( embed ) {
-	let embedType, url;
+	let embedType;
 
 	// if there's type, easiest way just to use it
 	if ( embedsConfig.hasOwnProperty( embed.type ) ) {
@@ -83,7 +87,7 @@ function resolveEmbedConfig( embed ) {
 	}
 
 	// if no type, check everyone by their url regex
-	url = extractUrlFromIframe( embed.iframe );
+	const url = extractUrlFromIframe( embed.iframe );
 
 	if ( url ) {
 		for ( embedType in embedsConfig ) {

@@ -51,9 +51,10 @@ export class RecommendedPosts extends React.PureComponent {
 		recommendations: PropTypes.array,
 	};
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	/* eslint-disable wpcalypso/jsx-classname-namespace wpcalypso/jsx-gridicon-size */
 	render() {
 		const { posts, recommendations } = this.props;
+
 		return (
 			<div className="reader-stream__recommended-posts">
 				<QueryReaderPost postKey={ recommendations[ 0 ] } />
@@ -98,6 +99,7 @@ export class RecommendedPosts extends React.PureComponent {
 				</ul>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace wpcalypso/jsx-gridicon-size */
 	}
 }
 

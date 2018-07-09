@@ -30,7 +30,7 @@ class ListEmptyContent extends React.Component {
 	};
 
 	render() {
-		let action = (
+		const action = (
 				<a
 					className="empty-content__action button is-primary"
 					onClick={ this.recordAction }

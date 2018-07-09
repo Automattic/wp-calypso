@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -12,12 +11,14 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';
-
 import getReaderFeedsForQuery from 'state/selectors/get-reader-feeds-for-query';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
-import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import ReaderInfiniteStream from 'components/reader-infinite-stream';
-import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
+import {
+	requestFeedSearch,
+	SORT_BY_RELEVANCE,
+	SORT_BY_LAST_UPDATED,
+} from 'state/reader/feed-searches/actions';
 import { SEARCH_RESULTS_SITES } from 'reader/follow-sources';
 import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
 import withDimensions from 'lib/with-dimensions';
@@ -56,7 +57,10 @@ class SiteResults extends React.Component {
 					fetchNextPage={ this.fetchNextPage }
 					hasNextPage={ this.hasNextPage }
 					rowRenderer={ siteRowRenderer }
-					extraRenderItemProps={ { showLastUpdatedDate, followSource: SEARCH_RESULTS_SITES } }
+					extraRenderItemProps={ {
+						showLastUpdatedDate,
+						followSource: SEARCH_RESULTS_SITES,
+					} }
 				/>
 			</div>
 		);
