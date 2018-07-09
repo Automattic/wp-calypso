@@ -30,6 +30,7 @@ class TagEmptyContent extends React.Component {
 	};
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
 				<a
 					className="empty-content__action button is-primary"
@@ -59,6 +60,7 @@ class TagEmptyContent extends React.Component {
 				illustrationWidth={ 400 }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

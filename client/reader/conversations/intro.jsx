@@ -93,11 +93,10 @@ class ConversationsIntro extends React.Component {
 					</div>
 					<div className="conversations__intro-character" />
 
-					<div
+					<button
 						className="conversations__intro-close"
 						onClick={ this.dismiss }
 						title={ translate( 'Close' ) }
-						role="button"
 						aria-label={ translate( 'Close' ) }
 					>
 						<Gridicon
@@ -105,7 +104,7 @@ class ConversationsIntro extends React.Component {
 							className="conversations__intro-close-icon"
 							title={ translate( 'Close' ) }
 						/>
-					</div>
+					</button>
 				</div>
 			</header>
 		);

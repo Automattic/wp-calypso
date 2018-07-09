@@ -63,14 +63,14 @@ class FeedFeatured extends React.PureComponent {
 					};
 
 					return (
-						<div
+						<button
 							key={ post.ID }
 							className="reader__featured-post"
 							onClick={ this.handleClick.bind( this, postData ) }
 						>
 							<div className="reader__featured-post-image" style={ style } />
 							<h2 className="reader__featured-post-title">{ post.title }</h2>
-						</div>
+						</button>
 					);
 			}
 		} );
