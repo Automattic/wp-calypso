@@ -15,7 +15,7 @@ import { sameXPost } from 'reader/stream/utils';
  *
  * @param {object} postKey1 First post key
  * @param {object} postKey2 Second (duplicate) post key
- * @return {array} Array of post key objects
+ * @return {object} Post key
  */
 export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
 	return {
