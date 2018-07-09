@@ -46,7 +46,6 @@ const FollowingStream = props => {
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
-					autoFocus={ false }
 					delaySearch={ true }
 					delayTimeout={ 500 }
 					placeholder={ props.translate( 'Search billions of WordPress posts…' ) }

@@ -190,6 +190,7 @@ class FollowingManage extends Component {
 			includes( blockedSites, site.blogId )
 		);
 
+		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<ReaderMain className="following-manage">
 				<DocumentHead title={ 'Manage Following' } />
@@ -226,8 +227,12 @@ class FollowingManage extends Component {
 					{ showFollowByUrl && (
 						<div className="following-manage__url-follow">
 							<FollowButton
-								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
-								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
+								followLabel={ translate( 'Follow %s', {
+									args: sitesQueryWithoutProtocol,
+								} ) }
+								followingLabel={ translate( 'Following %s', {
+									args: sitesQueryWithoutProtocol,
+								} ) }
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
@@ -262,6 +267,7 @@ class FollowingManage extends Component {
 				{ ! hasFollows && <FollowingManageEmptyContent /> }
 			</ReaderMain>
 		);
+		/* eslint-enable jsx-a11y/no-autofocus */
 	}
 }
 

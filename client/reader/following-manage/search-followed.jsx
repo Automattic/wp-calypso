@@ -27,7 +27,6 @@ class FollowingManageSearchFollowed extends Component {
 			<SearchCard
 				compact={ true }
 				pinned={ false }
-				autoFocus={ false }
 				className="following-manage__search-followed"
 				additionalClasses="following-manage__search-followed-input"
 				placeholder={ this.props.translate( 'Search Followed Sites…' ) }
