@@ -13,9 +13,9 @@ export default class ChecklistExample extends Component {
 
 	state = {
 		showPlaceholder: false,
-		tasks: [
+		tasks: {
 			{
-				id: 'first-completed-task',
+			'first-completed-task': {
 				title: 'A completed task',
 				completedTitle: 'You completed the first task',
 				completedButtonText: 'View',
@@ -24,8 +24,7 @@ export default class ChecklistExample extends Component {
 				url: 'https://wordpress.com/url-to-the-first-task',
 				completed: true,
 			},
-			{
-				id: 'second-completed-task',
+			'second-completed-task': {
 				title: 'A second completed task',
 				completedTitle: 'You completed the second task',
 				description: 'This row shows how completed tasks look.',
@@ -33,8 +32,7 @@ export default class ChecklistExample extends Component {
 				url: 'https://wordpress.com/url-to-the-second-task',
 				completed: true,
 			},
-			{
-				id: 'site-name',
+			'site-name': {
 				title: "Add your site's name or logo",
 				completedTitle: "You chose your site's name",
 				completedButtonText: 'Change',
@@ -43,19 +41,19 @@ export default class ChecklistExample extends Component {
 				url: 'https://wordpress.com/url-to-site-name',
 				completed: false,
 			},
-		],
+		},
 	};
 
 	handleAction = id => {
-		const theTask = find( this.state.tasks, { id } );
+		const theTask = this.state.tasks[ id ];
 		console.log( `You will move to ${ theTask.url }.` );
 	};
 
 	handleToggle = id => {
-		const theTask = find( this.state.tasks, { id } );
-		theTask.completed = ! theTask.completed;
-
-		this.setState( { tasks: [ ...this.state.tasks ] } );
+		const theTask = this.state.tasks[ id ];
+		this.setState( {
+			tasks: { ...this.state.tasks, [ id ]: { ...theTask, completed: ! theTask.completed } },
+		} );
 	};
 
 	render() {
@@ -76,8 +74,8 @@ export default class ChecklistExample extends Component {
 
 #### Props
 
-* `tasks`: (array) A set of task objects, passed to `ChecklistItem`s
-* `onAction`: (function) Points the user to the given item's action URL. Takes the item's `id`.
-* `onToggle`: (function) Changes the state of the given item, toggled on or off. Takes the item's `id`.
+* `tasks`: (object) A set of task objects, passed to `ChecklistItem`s
+* `onAction`: (function) Points the user to the given item's action URL. Takes the item's key in `tasks`.
+* `onToggle`: (function) Changes the state of the given item, toggled on or off. Takes the item's key in `tasks`.
 * `isLoading`: (boolean) Whether to show the placeholder or not.
 * `placeholderCount`: (number) The number of placeholder items to show.
