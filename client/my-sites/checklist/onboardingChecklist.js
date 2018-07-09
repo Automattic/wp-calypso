@@ -8,17 +8,19 @@ import { isDesktop } from 'lib/viewport';
 /**
  * Internal dependencies
  */
-const unorderedTasks = {
-	avatar_uploaded: {
-		title: 'Upload your profile picture',
-		description:
-			'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.',
-		duration: '2 mins',
-		completedTitle: 'You uploaded a profile picture',
-		completedButtonText: 'Change',
-		url: '/me',
-		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
-		tour: 'checklistUserAvatar',
+export const wpcomTasks = {
+	site_created: {
+		title: 'Create your site',
+		description: 'This is where your adventure begins.',
+		completedTitle: 'You created your site',
+		completed: true,
+	},
+	domain_selected: {
+		title: 'Pick a website address',
+		description: 'Choose an address so people can find you on the internet.',
+		completedTitle: 'You picked a website address',
+		completed: true,
+		image: '/calypso/images/stats/tasks/domains.svg',
 	},
 	blogname_set: {
 		title: 'Give your site a name',
@@ -30,6 +32,16 @@ const unorderedTasks = {
 		image: '/calypso/images/stats/tasks/personalize-your-site.svg',
 		tour: 'checklistSiteTitle',
 	},
+	site_icon_set: {
+		title: 'Upload a site icon',
+		description: 'Help people recognize your site in browser tabs — just like the WordPress.com W!',
+		duration: '1 min',
+		completedTitle: 'You uploaded a site icon',
+		completedButtonText: 'Change',
+		url: '/settings/general/$siteSlug',
+		image: '/calypso/images/stats/tasks/upload-icon.svg',
+		tour: 'checklistSiteIcon',
+	},
 	blogdescription_set: {
 		title: 'Create a tagline',
 		description: 'Pique readers’ interest with a little more detail about your site.',
@@ -39,6 +51,17 @@ const unorderedTasks = {
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/create-tagline.svg',
 		tour: 'checklistSiteTagline',
+	},
+	avatar_uploaded: {
+		title: 'Upload your profile picture',
+		description:
+			'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.',
+		duration: '2 mins',
+		completedTitle: 'You uploaded a profile picture',
+		completedButtonText: 'Change',
+		url: '/me',
+		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
+		tour: 'checklistUserAvatar',
 	},
 	contact_page_updated: {
 		title: 'Personalize your Contact page',
@@ -50,13 +73,6 @@ const unorderedTasks = {
 		url: '/post/$siteSlug/2',
 		tour: 'checklistContactPage',
 	},
-	domain_selected: {
-		title: 'Pick a website address',
-		description: 'Choose an address so people can find you on the internet.',
-		completedTitle: 'You picked a website address',
-		completed: true,
-		image: '/calypso/images/stats/tasks/domains.svg',
-	},
 	post_published: {
 		title: 'Publish your first blog post',
 		description: 'Introduce yourself to the world! That’s why you’re here.',
@@ -67,38 +83,7 @@ const unorderedTasks = {
 		image: '/calypso/images/stats/tasks/first-post.svg',
 		tour: 'checklistPublishPost',
 	},
-	site_created: {
-		title: 'Create your site',
-		description: 'This is where your adventure begins.',
-		completedTitle: 'You created your site',
-		completed: true,
-	},
-	site_icon_set: {
-		title: 'Upload a site icon',
-		description: 'Help people recognize your site in browser tabs — just like the WordPress.com W!',
-		duration: '1 min',
-		completedTitle: 'You uploaded a site icon',
-		completedButtonText: 'Change',
-		url: '/settings/general/$siteSlug',
-		image: '/calypso/images/stats/tasks/upload-icon.svg',
-		tour: 'checklistSiteIcon',
-	},
 };
-
-const sequence = [
-	'site_created',
-	'domain_selected',
-	'blogname_set',
-	'site_icon_set',
-	'blogdescription_set',
-	'avatar_uploaded',
-	'contact_page_updated',
-	'post_published',
-];
-
-export const wpcomTasks = sequence.map( id => ( {
-	[ id ]: unorderedTasks[ id ],
-} ) );
 
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
