@@ -44,6 +44,7 @@ const tasks = {
 		completedTitle: translate( 'You completed your sign in preferences.' ),
 		completedButtonText: 'Change',
 		duration: translate( '3 min' ),
+		tour: 'jetpackSignIn',
 		url: '/settings/security/$siteSlug',
 	},
 };
