@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import url from 'url';
 import { localize } from 'i18n-calypso';
 import closest from 'component-closest';
-import { get } from 'lodash';
+import { get, forEach } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -122,15 +122,25 @@ class CrossPost extends PureComponent {
 	};
 
 	getXPostedToContent = () => {
-		let xPostedToList = this.props.xPostedTo;
-		if ( ! xPostedToList || xPostedToList.length === 0 ) {
-			xPostedToList = [
-				{
-					siteURL: this.props.post.site_URL,
-					siteName: this.getSiteNameFromURL( this.props.post.site_URL ),
-				},
-			];
+		const { postKey, translate } = this.props;
+
+		const xPostedToList = [
+			{
+				siteURL: this.props.post.site_URL,
+				siteName: this.getSiteNameFromURL( this.props.post.site_URL ),
+			},
+		];
+
+		// Add any other x-post URLs we know about
+		if ( postKey.xPostUrls ) {
+			forEach( postKey.xPostUrls, xPostUrl => {
+				xPostedToList.push( {
+					siteURL: xPostUrl,
+					siteName: this.getSiteNameFromURL( xPostUrl ),
+				} );
+			} );
 		}
+
 		return xPostedToList.map( ( xPostedTo, index, array ) => {
 			return (
 				<span className="reader__x-post-site" key={ xPostedTo.siteURL + '-' + index }>
@@ -139,7 +149,7 @@ class CrossPost extends PureComponent {
 					{ index + 2 === array.length && (
 						<span>
 							{' '}
-							{ this.props.translate( 'and', {
+							{ translate( 'and', {
 								comment:
 									'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
 							} ) }{' '}

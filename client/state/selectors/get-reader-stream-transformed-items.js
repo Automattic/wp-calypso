@@ -33,6 +33,7 @@ export const getTransformedStreamItems = treeSelect(
 		if ( shouldCombine ) {
 			items = combineCards( items );
 		}
+
 		return items;
 	},
 	{

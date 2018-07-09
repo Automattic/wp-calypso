@@ -3,6 +3,7 @@
  * External dependencies
  */
 import url from 'url';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +12,10 @@ import displayTypes from 'state/reader/posts/display-types';
 
 const { X_POST } = displayTypes;
 
+export function isXPost( post ) {
+	return post && ( post.display_type & X_POST || has( post, [ 'tags', 'p2-xpost' ] ) );
+}
+
 const exported = {
 	/**
 	 * Examines the post metadata, and returns metadata related to cross posts.
@@ -18,6 +23,10 @@ const exported = {
 	 * @returns {object} - urls of site and post url
 	 */
 	getXPostMetadata( post ) {
+		if ( ! isXPost( post ) ) {
+			return null;
+		}
+
 		const xPostMetadata = {
 			siteURL: null,
 			postURL: null,
@@ -53,7 +62,3 @@ const exported = {
 export default exported;
 
 export const { getXPostMetadata } = exported;
-
-export function isXPost( post ) {
-	return post && post.display_type & X_POST;
-}

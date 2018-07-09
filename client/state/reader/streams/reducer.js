@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { findIndex, last, takeRightWhile, takeWhile } from 'lodash';
+import { findIndex, last, takeRightWhile, takeWhile, filter } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -21,6 +21,7 @@ import {
 	READER_STREAMS_DISMISS_POST,
 } from 'state/action-types';
 import { keysAreEqual } from 'reader/post-key';
+import { combineXPosts } from './utils';
 
 /*
  * Contains a list of post-keys representing the items of a stream.
@@ -57,7 +58,18 @@ export const items = ( state = [], action ) => {
 
 				return [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ];
 			}
-			return [ ...state, ...streamItems ];
+
+			const newState = [ ...state, ...streamItems ];
+
+			// Find any x-posts
+			const newXPosts = filter( streamItems, postKey => postKey.xPostMetadata );
+
+			if ( ! newXPosts ) {
+				return newState;
+			}
+
+			// Filter out duplicate x-posts
+			return combineXPosts( newState );
 
 		case READER_STREAMS_SHOW_UPDATES:
 			return [ ...action.payload.items, ...state ];
