@@ -20,7 +20,6 @@ import Notice from 'components/notice';
 import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 export class SignupProcessingScreen extends Component {
@@ -286,7 +285,7 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	showChecklistAfterLogin = () => {
-		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }?d=free` } );
+		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }` } );
 	};
 
 	shouldShowChecklist() {
@@ -312,12 +311,7 @@ export class SignupProcessingScreen extends Component {
 			);
 		}
 
-		let clickHandler;
-		if ( this.shouldShowChecklist() && 'show' === abtest( 'checklistThankYouForFreeUser' ) ) {
-			clickHandler = this.showChecklistAfterLogin;
-		} else {
-			clickHandler = loginHandler;
-		}
+		const clickHandler = this.shouldShowChecklist() ? this.showChecklistAfterLogin : loginHandler;
 
 		return (
 			<Button primary className="email-confirmation__button" onClick={ clickHandler }>
@@ -332,8 +326,7 @@ export class SignupProcessingScreen extends Component {
 			! this.props.useOAuth2Layout &&
 			this.props.flowSteps.indexOf( 'domains' ) !== -1 &&
 			this.props.flowSteps.indexOf( 'plans' ) !== -1 &&
-			! this.shouldShowChecklist() &&
-			'show' !== abtest( 'checklistThankYouForFreeUser' )
+			! this.shouldShowChecklist()
 		) {
 			return this.renderUpgradeScreen();
 		}

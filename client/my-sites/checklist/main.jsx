@@ -24,8 +24,9 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
+import { isJetpackSite, isNewSite, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 
 class ChecklistMain extends PureComponent {
 	componentDidMount() {
@@ -61,10 +62,10 @@ class ChecklistMain extends PureComponent {
 		}
 	}
 
-	getHeaderTitle( displayMode ) {
-		const { translate } = this.props;
+	getHeaderTitle() {
+		const { translate, siteHasFreePlan } = this.props;
 
-		if ( displayMode === 'free' ) {
+		if ( siteHasFreePlan ) {
 			return translate( 'Your site has been created!' );
 		}
 
@@ -94,7 +95,7 @@ class ChecklistMain extends PureComponent {
 	}
 
 	renderHeader( completed, displayMode ) {
-		const { translate } = this.props;
+		const { translate, isNewlyCreatedSite } = this.props;
 
 		if ( completed ) {
 			return (
@@ -120,7 +121,7 @@ class ChecklistMain extends PureComponent {
 			);
 		}
 
-		if ( displayMode ) {
+		if ( isNewlyCreatedSite ) {
 			return (
 				<Fragment>
 					<img
@@ -130,7 +131,7 @@ class ChecklistMain extends PureComponent {
 						alt=""
 					/>
 					<FormattedHeader
-						headerText={ this.getHeaderTitle( displayMode ) }
+						headerText={ this.getHeaderTitle() }
 						subHeaderText={ this.getSubHeaderText( displayMode ) }
 					/>
 				</Fragment>
@@ -190,14 +191,18 @@ class ChecklistMain extends PureComponent {
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
+	const siteHasFreePlan = isSiteOnFreePlan( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
+	const isNewlyCreatedSite = isNewSite( state, siteId );
 	return {
 		checklistAvailable: ! isAtomic && ( config.isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
 		isAtomic,
 		isJetpack,
+		isNewlyCreatedSite,
 		siteId,
 		siteSlug,
+		siteHasFreePlan,
 		user: getCurrentUser( state ),
 	};
 };
