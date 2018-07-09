@@ -1,7 +1,6 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 import page from 'page';
 import { isDesktop } from 'lib/viewport';
@@ -9,7 +8,7 @@ import { isDesktop } from 'lib/viewport';
 /**
  * Internal dependencies
  */
-const tasks = {
+const unorderedTasks = {
 	about_page_updated: {
 		title: 'Create your About page',
 		description:
@@ -127,6 +126,8 @@ const sequence = [
 	'post_published',
 ];
 
+export const wpcomTasks = sequence.map( id => unorderedTasks[ id ] );
+
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
 	const url = task.url && task.url.replace( '$siteSlug', siteSlug );
@@ -156,17 +157,4 @@ export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
-}
-
-export function onboardingTasks( checklist ) {
-	if ( ! checklist || ! checklist.tasks ) {
-		return null;
-	}
-
-	return sequence.map( id => {
-		const task = tasks[ id ];
-		const taskFromServer = checklist.tasks[ id ];
-
-		return { id, ...task, ...taskFromServer };
-	} );
 }

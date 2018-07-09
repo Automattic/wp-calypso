@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { countBy, find, get, noop } from 'lodash';
+import { countBy, find, get, merge, noop } from 'lodash';
 import Gridicon from 'gridicons';
 import store from 'store';
 
@@ -22,7 +22,7 @@ import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
+import { launchTask, wpcomTasks } from 'my-sites/checklist/onboardingChecklist';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -209,7 +209,8 @@ export class ChecklistBanner extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => {
-	const tasks = onboardingTasks( getSiteChecklist( state, siteId ) );
+	const tasksFromServer = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
+	const tasks = tasksFromServer ? merge( {}, wpcomTasks, tasksFromServer ) : null;
 	const task = find( tasks, { completed: false } );
 	const { true: completed } = countBy( tasks, 'completed' );
 	const siteSlug = getSiteSlug( state, siteId );
