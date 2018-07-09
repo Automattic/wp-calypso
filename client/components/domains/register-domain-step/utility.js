@@ -16,7 +16,12 @@ function moveArrayElement( array, from, to ) {
 	}
 }
 
-export function markFeaturedSuggestions( suggestions, exactMatchDomain, strippedDomainBase ) {
+export function markFeaturedSuggestions(
+	suggestions,
+	exactMatchDomain,
+	strippedDomainBase,
+	featuredSuggestionsAtTop = false
+) {
 	function isExactMatchBeforeTld( suggestion ) {
 		return (
 			suggestion.domain_name === exactMatchDomain ||
@@ -29,8 +34,12 @@ export function markFeaturedSuggestions( suggestions, exactMatchDomain, stripped
 	}
 
 	const output = [ ...suggestions ];
-	const recommendedSuggestion = find( output, isExactMatchBeforeTld );
-	const bestAlternativeSuggestion = find( output, isBestAlternative );
+	const recommendedSuggestion = featuredSuggestionsAtTop
+		? null
+		: find( output, isExactMatchBeforeTld );
+	const bestAlternativeSuggestion = featuredSuggestionsAtTop
+		? null
+		: find( output, isBestAlternative );
 
 	if ( recommendedSuggestion ) {
 		recommendedSuggestion.isRecommended = true;
