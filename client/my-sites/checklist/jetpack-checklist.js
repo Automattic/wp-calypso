@@ -15,6 +15,16 @@ const unorderedTasks = {
 		completedTitle: translate( "We've automatically turned on spam filtering." ),
 		completed: true,
 	},
+	jetpack_backups: {
+		title: translate( 'Backups & Scanning' ),
+		description: translate(
+			"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
+		),
+		completedTitle: translate( 'You turned on backups and scanning.' ),
+		completedButtonText: 'Change',
+		duration: translate( '2 min' ),
+		url: '/stats/activity/$siteSlug',
+	},
 	jetpack_monitor: {
 		title: translate( 'Jetpack Monitor' ),
 		description: translate(
@@ -51,6 +61,7 @@ const unorderedTasks = {
 const sequence = [
 	'jetpack_brute_force',
 	'jetpack_spam_filtering',
+	'jetpack_backups',
 	'jetpack_monitor',
 	'jetpack_plugin_updates',
 	'jetpack_sign_in',
