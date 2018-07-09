@@ -43,6 +43,13 @@ import { isRequestingTermsForQueryIgnoringPage, getTerm } from 'state/terms/sele
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
+	constructor() {
+		super();
+		this.state = {
+			isCoverImageUploading: false,
+		};
+	}
+
 	renderExplicitContent() {
 		const {
 			fields,
@@ -78,16 +85,29 @@ class PodcastingDetails extends Component {
 			isRequestingCategories,
 			translate,
 		} = this.props;
+		const { isCoverImageUploading } = this.state;
+
+		const saveButtonDisabled =
+			isRequestingSettings || isSavingSettings || isRequestingCategories || isCoverImageUploading;
+		let saveButtonText;
+		if ( isCoverImageUploading ) {
+			saveButtonText = translate( 'Uploading image…' );
+		} else if ( isSavingSettings ) {
+			saveButtonText = translate( 'Saving…' );
+		} else {
+			saveButtonText = translate( 'Save Settings' );
+		}
+
 		return (
 			<Button
 				compact={ true }
 				onClick={ handleSubmitForm }
 				primary={ true }
 				type="submit"
-				disabled={ isRequestingSettings || isSavingSettings || isRequestingCategories }
+				disabled={ saveButtonDisabled }
 				busy={ isSavingSettings }
 			>
-				{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+				{ saveButtonText }
 			</Button>
 		);
 	}
@@ -281,6 +301,7 @@ class PodcastingDetails extends Component {
 					coverImageUrl={ fields.podcasting_image }
 					onRemove={ this.onCoverImageRemoved }
 					onSelect={ this.onCoverImageSelected }
+					onUploadStateChange={ this.onCoverImageUploadStateChanged }
 					isDisabled={ ! isPodcastingEnabled }
 				/>
 				<div className="podcasting-details__title-subtitle-wrapper">
@@ -384,6 +405,12 @@ class PodcastingDetails extends Component {
 		this.props.updateFields( {
 			podcasting_image_id: String( coverId ),
 			podcasting_image: coverUrl,
+		} );
+	};
+
+	onCoverImageUploadStateChanged = isUploading => {
+		this.setState( {
+			isCoverImageUploading: isUploading,
 		} );
 	};
 }
