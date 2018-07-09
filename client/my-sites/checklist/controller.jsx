@@ -1,9 +1,8 @@
-/**
- * External Dependencies
- *
- * @format
- */
+/** @format */
 
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { get } from 'lodash';
 
@@ -11,10 +10,10 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 
-import ChecklistShow from '../checklist-show';
+import ChecklistMain from './main';
 
 export function show( context, next ) {
 	const displayMode = get( context, 'query.d' );
-	context.primary = <ChecklistShow displayMode={ displayMode } />;
+	context.primary = <ChecklistMain displayMode={ displayMode } />;
 	next();
 }
