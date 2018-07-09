@@ -159,6 +159,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		} = this.props;
 
 		const showBackButton = hasFolders && folder !== '/';
+		const foldersWithPhotos = this.props.folders.filter( folderItem => folderItem.children );
 
 		return (
 			<Card className="media-library__header">
@@ -197,7 +198,7 @@ class MediaLibraryExternalHeader extends React.Component {
 						className="media-library__header-item"
 						disabled={ this.state.fetching }
 						onFolderChange={ this.props.onFolderChange }
-						folders={ this.props.folders }
+						folders={ foldersWithPhotos }
 						folder={ this.props.folder }
 						defaultOption={ {
 							value: '/',
