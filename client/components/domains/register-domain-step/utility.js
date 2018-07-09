@@ -34,12 +34,10 @@ export function markFeaturedSuggestions(
 	}
 
 	const output = [ ...suggestions ];
+
 	const recommendedSuggestion = featuredSuggestionsAtTop
 		? null
 		: find( output, isExactMatchBeforeTld );
-	const bestAlternativeSuggestion = featuredSuggestionsAtTop
-		? null
-		: find( output, isBestAlternative );
 
 	if ( recommendedSuggestion ) {
 		recommendedSuggestion.isRecommended = true;
@@ -47,6 +45,10 @@ export function markFeaturedSuggestions(
 	} else if ( output.length > 0 ) {
 		output[ 0 ].isRecommended = true;
 	}
+
+	const bestAlternativeSuggestion = featuredSuggestionsAtTop
+		? null
+		: find( output, isBestAlternative );
 
 	if ( bestAlternativeSuggestion ) {
 		bestAlternativeSuggestion.isBestAlternative = true;
