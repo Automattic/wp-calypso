@@ -9,14 +9,28 @@ import { SchemaError } from 'lib/make-json-schema-parser';
 describe( 'fromApi()', () => {
 	test( 'should validate and transform the data successfully.', () => {
 		const validResponse = {
-			available_times: [
-				1483264800, // unix timestamp of 2017-01-01 10:00:00 UTC
-				1483266600, // unix timestamp of 2017-01-01 10:30:00 UTC
-				1483268400, // unix timestamp of 2017-01-01 11:00:00 UTC
-			],
+			available_times: [ 1483264800, 1483266600, 1483268400 ],
+			next_appointment: { begin_timestamp: 1, end_timestamp: 2, schedule_id: 3 },
 		};
 
-		const expectedResult = { availableTimes: [ 1483264800000, 1483266600000, 1483268400000 ] };
+		const expectedResult = {
+			availableTimes: [ 1483264800000, 1483266600000, 1483268400000 ],
+			nextAppointment: { beginTimestamp: 1000, endTimestamp: 2000, scheduleId: 3 },
+		};
+
+		expect( fromApi( validResponse ) ).toEqual( expectedResult );
+	} );
+
+	test( 'should leave a null next_appointment as null.', () => {
+		const validResponse = {
+			available_times: [ 1483264800, 1483266600, 1483268400 ],
+			next_appointment: null,
+		};
+
+		const expectedResult = {
+			availableTimes: [ 1483264800000, 1483266600000, 1483268400000 ],
+			nextAppointment: null,
+		};
 
 		expect( fromApi( validResponse ) ).toEqual( expectedResult );
 	} );
