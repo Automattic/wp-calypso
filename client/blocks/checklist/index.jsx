@@ -69,18 +69,18 @@ export class Checklist extends Component {
 	renderTask = task => {
 		return (
 			<ChecklistTask
-				key={ task.id }
-				id={ task.id }
-				title={ task.title }
 				buttonPrimary={ task.buttonPrimary }
 				buttonText={ task.buttonText }
-				completedTitle={ task.completedTitle }
+				completed={ task.completed }
 				completedButtonText={ task.completedButtonText }
+				completedTitle={ task.completedTitle }
 				description={ task.description }
 				duration={ task.duration }
-				completed={ task.completed }
+				id={ task.id }
+				key={ task.id }
 				onAction={ this.props.onAction }
 				onToggle={ this.props.onToggle }
+				title={ task.title }
 			/>
 		);
 	};
