@@ -74,6 +74,7 @@ import { addItems } from 'lib/upgrades/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import CartStore from 'lib/cart/store';
 
 class ManagePurchase extends Component {
 	static propTypes = {
@@ -94,10 +95,22 @@ class ManagePurchase extends Component {
 		}
 	}
 
+	componentDidMount() {
+		if ( this.props.siteId ) {
+			CartStore.setSelectedSiteId( this.props.siteId );
+		}
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			page.redirect( purchasesRoot );
 			return;
+		}
+	}
+
+	componentDidUpdate( { siteId } ) {
+		if ( this.props.siteId && siteId !== this.props.siteId ) {
+			CartStore.setSelectedSiteId( this.props.siteId );
 		}
 	}
 
