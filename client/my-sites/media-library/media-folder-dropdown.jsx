@@ -11,7 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SelectDropdown from 'components/select-dropdown';
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
 
 export class MediaFolderDropdown extends Component {
 	static propTypes = {
@@ -34,8 +35,8 @@ export class MediaFolderDropdown extends Component {
 		disabled: PropTypes.bool,
 		compact: PropTypes.bool,
 		defaultOption: PropTypes.shape( {
-			value: PropTypes.string,
-			label: PropTypes.string,
+			ID: PropTypes.string,
+			name: PropTypes.string,
 		} ),
 	};
 
@@ -51,30 +52,34 @@ export class MediaFolderDropdown extends Component {
 		bindAll( this, [ 'handleOnSelect' ] );
 	}
 
-	handleOnSelect( option ) {
+	handleOnSelect( event ) {
 		if ( this.props.disabled ) return;
 
-		const folder = option.value;
+		const { value } = event.target;
 
-		this.props.onFolderChange( folder );
+		this.props.onFolderChange( value );
 	}
 
 	getDropDownOptions( folderData ) {
-		const separator = null;
 		let initial = [];
 
 		if ( this.props.defaultOption ) {
-			initial = [ this.props.defaultOption, separator ];
+			initial = [ this.props.defaultOption ];
 		}
 
-		return initial.concat(
-			folderData.map( folder => {
-				return {
-					value: '' + folder.ID, // convert to string if number
-					label: folder.name,
-				};
-			} )
-		);
+		return initial.concat( folderData ).map( folder => {
+			const folderId = '' + folder.ID;
+			const folderChildren = folder.children ? ` (${ folder.children })` : ``;
+
+			const isSelected = folder.ID === this.props.folder ? 'selected' : '';
+
+			return (
+				<option value={ folderId } key={ folderId } selected={ isSelected }>
+					{ folder.name }
+					{ folderChildren }
+				</option>
+			);
+		} );
 	}
 
 	render() {
@@ -84,20 +89,24 @@ export class MediaFolderDropdown extends Component {
 
 		const folderOptions = this.getDropDownOptions( this.props.folders );
 
-		// No need to show folders if we only have the default option + seperator
-		if ( folderOptions.length <= 2 ) return null;
-
-		const initial = this.props.folder ? this.props.folder : folderOptions[ 0 ].value;
+		// No need to show folders if we only have the default option
+		if ( folderOptions.length <= 1 ) return null;
 
 		return (
 			<div className={ rootClassNames }>
-				<SelectDropdown
-					initialSelected={ initial }
+				<FormLabel htmlFor="media-library-folders" className="media-library__folder-dropdown-label">
+					Select Folder
+				</FormLabel>
+				<FormSelect
+					id="media-library-folders"
+					name="media-library-folders"
+					value={ this.folder }
+					className="media-library__folder-dropdown-field"
+					onChange={ this.handleOnSelect }
 					disabled={ this.props.disabled }
-					compact={ this.props.compact }
-					onSelect={ this.handleOnSelect }
-					options={ folderOptions }
-				/>
+				>
+					{ folderOptions }
+				</FormSelect>
 			</div>
 		);
 	}

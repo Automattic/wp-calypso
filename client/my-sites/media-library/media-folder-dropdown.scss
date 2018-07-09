@@ -1,2 +1,22 @@
 .media-library__folder-dropdown {
 }
+
+.media-library__folder-dropdown-label {
+	@include hide-content-accessibly();
+}
+
+.media-library__folder-dropdown-field {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	color: $gray-text-min;
+	font-size: 12px;
+	width: 140px;
+	min-width: initial;
+	font-weight: 500;
+
+	&[disabled] {
+		color: $gray-lighten-30;
+		border-color: $gray-lighten-30;
+		cursor: default;
+	}
+}
