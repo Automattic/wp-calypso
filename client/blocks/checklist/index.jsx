@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { filter, noop, times } from 'lodash';
+import { map, noop, pickBy, times } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -20,7 +20,7 @@ import { loadTrackingTool } from 'state/analytics/actions';
 
 export class Checklist extends Component {
 	static propTypes = {
-		tasks: PropTypes.array,
+		tasks: PropTypes.object,
 		onAction: PropTypes.func,
 		onToggle: PropTypes.func,
 		isLoading: PropTypes.bool,
@@ -28,7 +28,7 @@ export class Checklist extends Component {
 	};
 
 	static defaultProps = {
-		tasks: [],
+		tasks: {},
 		onAction: noop,
 		onToggle: noop,
 		isLoading: true,
@@ -48,11 +48,11 @@ export class Checklist extends Component {
 	};
 
 	getCompletedTasks() {
-		return filter( this.props.tasks, task => task.completed );
+		return pickBy( this.props.tasks, task => task.completed );
 	}
 
 	getUncompletedTasks() {
-		return filter( this.props.tasks, task => ! task.completed );
+		return pickBy( this.props.tasks, task => ! task.completed );
 	}
 
 	renderPlaceholder() {
@@ -64,7 +64,7 @@ export class Checklist extends Component {
 		);
 	}
 
-	renderTask = task => {
+	renderTask = ( task, id ) => {
 		return (
 			<ChecklistTask
 				buttonPrimary={ task.buttonPrimary }
@@ -74,8 +74,8 @@ export class Checklist extends Component {
 				completedTitle={ task.completedTitle }
 				description={ task.description }
 				duration={ task.duration }
-				id={ task.id }
-				key={ task.id }
+				id={ id }
+				key={ id }
 				onAction={ this.props.onAction }
 				onToggle={ this.props.onToggle }
 				title={ task.title }
@@ -98,8 +98,8 @@ export class Checklist extends Component {
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
 				/>
-				{ ! this.state.hideCompleted && this.getCompletedTasks().map( this.renderTask ) }
-				{ this.getUncompletedTasks().map( this.renderTask ) }
+				{ ! this.state.hideCompleted && map( this.getCompletedTasks(), this.renderTask ) }
+				{ map( this.getUncompletedTasks(), this.renderTask ) }
 			</div>
 		);
 	}

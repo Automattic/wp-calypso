@@ -6,7 +6,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, merge } from 'lodash';
+import { get, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 class ChecklistShow extends PureComponent {
 	handleAction = id => {
 		const { requestTour, siteSlug, tasks, track } = this.props;
-		const task = find( tasks, { id } );
+		const task = tasks[ id ];
 
 		launchTask( {
 			task,
@@ -41,7 +41,7 @@ class ChecklistShow extends PureComponent {
 
 	handleToggle = id => {
 		const { notify, siteId, tasks, update } = this.props;
-		const task = find( tasks, { id } );
+		const task = tasks[ id ];
 
 		if ( task && ! task.completed ) {
 			notify( 'is-success', 'You completed a task!' );
