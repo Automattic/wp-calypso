@@ -233,7 +233,7 @@ class RegisterDomainStep extends React.Component {
 			.substring( 1 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if (
 			nextProps.selectedSite &&
@@ -270,7 +270,7 @@ class RegisterDomainStep extends React.Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		searchCount = 0; // reset the counter
 
 		if ( this.props.initialState ) {
@@ -362,10 +362,6 @@ class RegisterDomainStep extends React.Component {
 		const { message, severity } = showNotice
 			? getAvailabilityNotice( lastDomainSearched, error, errorData )
 			: {};
-		const showTldFilterBar =
-			( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) &&
-			config.isEnabled( 'domains/kracken-ui/tld-filter' ) &&
-			abtest( 'domainSearchTLDFilterPlacement' ) === 'aboveFeatured';
 		return (
 			<div className="register-domain-step">
 				<StickyPanel className="register-domain-step__search">
@@ -388,20 +384,13 @@ class RegisterDomainStep extends React.Component {
 						{ this.renderSearchFilters() }
 					</CompactCard>
 				</StickyPanel>
-				{ showTldFilterBar && (
-					<TldFilterBar
-						availableTlds={ this.state.availableTlds }
-						filters={ this.state.filters }
-						isSignupStep={ this.props.isSignupStep }
-						lastFilters={ this.state.lastFilters }
-						onChange={ this.onFiltersChange }
-						onReset={ this.onFiltersReset }
-						onSubmit={ this.onFiltersSubmit }
-						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
-					/>
-				) }
 				{ message && (
-					<Notice text={ message } status={ `is-${ severity }` } showDismiss={ false } />
+					<Notice
+						className="register-domain-step__notice"
+						text={ message }
+						status={ `is-${ severity }` }
+						showDismiss={ false }
+					/>
 				) }
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
@@ -1002,8 +991,11 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		const showTldFilterBar =
-			config.isEnabled( 'domains/kracken-ui/tld-filter' ) &&
-			abtest( 'domainSearchTLDFilterPlacement' ) === 'belowFeatured';
+			( Array.isArray( this.state.searchResults ) &&
+				this.state.searchResults.length > 0 &&
+				Array.isArray( this.state.availableTlds ) &&
+				this.state.availableTlds.length > 0 ) ||
+			this.state.loadingResults;
 
 		return (
 			<DomainSearchResults
@@ -1040,7 +1032,7 @@ class RegisterDomainStep extends React.Component {
 						onChange={ this.onFiltersChange }
 						onReset={ this.onFiltersReset }
 						onSubmit={ this.onFiltersSubmit }
-						showPlaceholder={ this.state.loadingResults || ! suggestions }
+						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
 					/>
 				) }
 			</DomainSearchResults>

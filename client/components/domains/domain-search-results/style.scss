@@ -1,4 +1,5 @@
-.domain-search-results__domain-availability, .transfer-domain-step__domain-availability {
+.domain-search-results__domain-availability,
+.transfer-domain-step__domain-availability {
 	.notice.is-success {
 		margin: 0;
 	}
@@ -27,6 +28,7 @@
 .domain-search-results__transfer-card {
 	display: flex;
 	flex-direction: column;
+	margin-bottom: 12px;
 
 	@include breakpoint( '>480px' ) {
 		align-items: center;
