@@ -56,8 +56,8 @@ export class ChecklistTask extends PureComponent {
 			duration,
 			title,
 			translate,
+			buttonText,
 		} = this.props;
-		const { buttonText = translate( 'Do it!' ) } = this.props;
 		const hasActionlink = completed && completedButtonText;
 
 		return (
@@ -86,8 +86,11 @@ export class ChecklistTask extends PureComponent {
 						className="checklist__task-action"
 						onClick={ this.handleClick }
 						primary={ buttonPrimary }
+						title={ buttonText }
 					>
-						{ hasActionlink ? completedButtonText : buttonText }
+						{ hasActionlink
+							? completedButtonText
+							: translate( '%(buttonText)s!', { args: { buttonText: buttonText } } ) }
 					</Button>
 					{ duration && (
 						<small className="checklist__task-duration">
