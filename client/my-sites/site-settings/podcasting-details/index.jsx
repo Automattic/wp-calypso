@@ -200,6 +200,8 @@ class PodcastingDetails extends Component {
 			isPodcastingEnabled,
 			isSavingSettings,
 		} = this.props;
+		const { isCoverImageUploading } = this.state;
+
 		if ( ! siteId ) {
 			return null;
 		}
@@ -233,7 +235,12 @@ class PodcastingDetails extends Component {
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
 					{ isPodcastingEnabled && (
 						<div className="podcasting-details__disable-podcasting">
-							<Button onClick={ this.onCategoryCleared } scary busy={ isSavingSettings }>
+							<Button
+								onClick={ this.onCategoryCleared }
+								scary
+								busy={ isSavingSettings }
+								disabled={ isCoverImageUploading }
+							>
 								{ translate( 'Disable Podcast' ) }
 							</Button>
 							<p>
