@@ -5,13 +5,10 @@
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
 import { rewindStatus } from './schema';
 import { transformApi } from './api-transformer';
-
-import downloads from './downloads';
 
 const getType = o => ( o && o.constructor && o.constructor.name ) || typeof o;
 
@@ -101,7 +98,7 @@ const setUnknownState = ( { siteId }, error ) => {
 
 export const handlers = [
 	'state/data-layer/wpcom/sites/rewind',
-	mergeHandlers( downloads, {
+	{
 		[ REWIND_STATE_REQUEST ]: [
 			dispatchRequestEx( {
 				fetch: fetchRewindState,
@@ -110,5 +107,5 @@ export const handlers = [
 				fromApi: makeJsonSchemaParser( rewindStatus, transformApi ),
 			} ),
 		],
-	} ),
+	},
 ];

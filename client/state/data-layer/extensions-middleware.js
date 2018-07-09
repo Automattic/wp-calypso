@@ -5,7 +5,7 @@
  */
 
 import { mergeHandlers } from 'state/action-watchers/utils';
-import { middleware } from './wpcom-api-middleware';
+import { middleware } from 'state/data-layer/wpcom-api-middleware';
 
 const configuration = configureMiddleware( Object.create( null ), Object.create( null ) );
 
@@ -58,7 +58,7 @@ export function removeHandlers( name, config = configuration ) {
 export function buildMiddleware( handlersByExtension ) {
 	const allHandlers = mergeHandlers( ...Object.values( handlersByExtension ) ) || [];
 
-	return middleware( allHandlers );
+	return middleware( { handlers: allHandlers } );
 }
 
 /**

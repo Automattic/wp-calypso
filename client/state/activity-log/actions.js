@@ -2,8 +2,8 @@
 /**
  * Internal dependencies
  */
-import { requireHandlers } from 'state/data-layer/wpcom-api-middleware';
-import { handlers } from 'state/data-layer/wpcom/sites/rewind';
+import { requireHandlers } from 'state/data-layer/handler-loading';
+import { handlers } from 'state/data-layer/wpcom/sites/rewind/downloads';
 import {
 	ACTIVITY_LOG_FILTER_SET,
 	ACTIVITY_LOG_FILTER_UPDATE,

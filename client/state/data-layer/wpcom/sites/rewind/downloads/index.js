@@ -151,20 +151,23 @@ const fromBackupDismiss = data => ( {
 	dismissed: data.is_dismissed,
 } );
 
-export default {
-	[ REWIND_BACKUP_PROGRESS_REQUEST ]: [
-		dispatchRequestEx( {
-			fetch: fetchProgress,
-			onSuccess: updateProgress,
-			onError: announceError,
-		} ),
-	],
-	[ REWIND_BACKUP_DISMISS_PROGRESS ]: [
-		dispatchRequestEx( {
-			fetch: dismissBackup,
-			onSuccess: backupSilentlyDismissed,
-			onError: backupDismissFailed,
-			fromApi: fromBackupDismiss,
-		} ),
-	],
-};
+export const handlers = [
+	'state/data-layer/wpcom/sites/rewind/downloads',
+	{
+		[ REWIND_BACKUP_PROGRESS_REQUEST ]: [
+			dispatchRequestEx( {
+				fetch: fetchProgress,
+				onSuccess: updateProgress,
+				onError: announceError,
+			} ),
+		],
+		[ REWIND_BACKUP_DISMISS_PROGRESS ]: [
+			dispatchRequestEx( {
+				fetch: dismissBackup,
+				onSuccess: backupSilentlyDismissed,
+				onError: backupDismissFailed,
+				fromApi: fromBackupDismiss,
+			} ),
+		],
+	},
+];
