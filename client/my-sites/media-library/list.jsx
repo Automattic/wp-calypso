@@ -61,6 +61,7 @@ export class MediaLibraryList extends React.Component {
 		scrollable: false,
 		onEditItem: noop,
 		onHandleEnter: noop,
+		media: [],
 	};
 
 	state = {};
@@ -248,15 +249,28 @@ export class MediaLibraryList extends React.Component {
 		return -1 !== ungroupedSources.indexOf( source );
 	}
 
+	filterEmptyFolders( mediaItems ) {
+		return mediaItems.filter( item => item.children );
+	}
+
+	isRootFolder( folder ) {
+		return folder === '/';
+	}
+
 	render() {
 		let getItemGroup = this.getItemGroup;
 		let getGroupLabel = this.getGroupLabel;
+		let mediaItems = this.props.media;
+
+		if ( this.isRootFolder( this.props.folder ) ) {
+			mediaItems = this.filterEmptyFolders( mediaItems );
+		}
 
 		if ( this.props.filterRequiresUpgrade ) {
 			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
 		}
 
-		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
+		if ( ! this.props.mediaHasNextPage && mediaItems && 0 === mediaItems.length ) {
 			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
 				site: this.props.site,
 				filter: this.props.filter,
@@ -278,7 +292,9 @@ export class MediaLibraryList extends React.Component {
 			getGroupLabel = () => '';
 		}
 
-		if ( this.props.folder === '/' ) {
+		// If we're on the base folder (ie: looking at Albums)
+		// then don't add Groups/Labels
+		if ( this.isRootFolder( this.props.folder ) ) {
 			getItemGroup = () => '';
 			getGroupLabel = () => '';
 		}
@@ -289,7 +305,7 @@ export class MediaLibraryList extends React.Component {
 				getItemGroup={ getItemGroup }
 				getGroupLabel={ getGroupLabel }
 				context={ this.props.scrollable ? this.state.listContext : false }
-				items={ this.props.media || [] }
+				items={ mediaItems }
 				itemsPerRow={ this.getItemsPerRow() }
 				lastPage={ ! this.props.mediaHasNextPage }
 				fetchingNextPage={ this.props.mediaFetchingNextPage }
