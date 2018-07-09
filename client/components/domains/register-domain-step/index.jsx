@@ -91,6 +91,7 @@ const PAGE_SIZE = 10;
 const MAX_PAGES = 3;
 const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
 
+const FEATURED_SUGGESTIONS_AT_TOP = [ 'group_7', 'group_8' ];
 let searchVendor = 'domainsbot';
 
 let searchQueue = [];
@@ -771,7 +772,8 @@ class RegisterDomainStep extends React.Component {
 		const markedSuggestions = markFeaturedSuggestions(
 			suggestions,
 			this.state.exactMatchDomain,
-			getStrippedDomainBase( domain )
+			getStrippedDomainBase( domain ),
+			includes( FEATURED_SUGGESTIONS_AT_TOP, searchVendor )
 		);
 
 		this.setState(
