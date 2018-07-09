@@ -20,6 +20,7 @@ const unorderedTasks = {
 		description: translate(
 			"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
 		),
+		completed: true,
 		completedTitle: translate( 'You turned on backups and scanning.' ),
 		completedButtonText: 'Change',
 		duration: translate( '2 min' ),
