@@ -91,7 +91,7 @@ class PodcastingDetails extends Component {
 			isRequestingSettings || isSavingSettings || isRequestingCategories || isCoverImageUploading;
 		let saveButtonText;
 		if ( isCoverImageUploading ) {
-			saveButtonText = translate( 'Uploading image…' );
+			saveButtonText = translate( 'Image uploading…' );
 		} else if ( isSavingSettings ) {
 			saveButtonText = translate( 'Saving…' );
 		} else {
