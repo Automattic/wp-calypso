@@ -4,7 +4,7 @@
  */
 import { translate } from 'i18n-calypso';
 
-const unorderedTasks = {
+export const jetpackTasks = {
 	jetpack_brute_force: {
 		completedTitle: translate(
 			"We've automatically protected you from brute force login attacks."
@@ -21,7 +21,7 @@ const unorderedTasks = {
 			"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
 		),
 		completed: true,
-		completedTitle: translate( 'You turned on backups and scanning.' ),
+		completedTitle: translate( "We've automatically set up backups and scanning for you." ),
 		completedButtonText: 'Change',
 		duration: translate( '2 min' ),
 		url: '/stats/activity/$siteSlug',
@@ -58,14 +58,3 @@ const unorderedTasks = {
 		url: '/settings/security/$siteSlug',
 	},
 };
-
-const sequence = [
-	'jetpack_brute_force',
-	'jetpack_spam_filtering',
-	'jetpack_backups',
-	'jetpack_monitor',
-	'jetpack_plugin_updates',
-	'jetpack_sign_in',
-];
-
-export const jetpackTasks = sequence.map( id => unorderedTasks[ id ] );

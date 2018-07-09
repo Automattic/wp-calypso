@@ -126,7 +126,9 @@ const sequence = [
 	'post_published',
 ];
 
-export const wpcomTasks = sequence.map( id => unorderedTasks[ id ] );
+export const wpcomTasks = sequence.map( id => ( {
+	[ id ]: unorderedTasks[ id ],
+} ) );
 
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
