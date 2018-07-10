@@ -305,7 +305,7 @@ class ActivityLog extends Component {
 	getActivityLog() {
 		const {
 			enableRewind,
-			filter: { page: requestedPage } = {},
+			filter: { page: requestedPage },
 			logs,
 			logLoadingState,
 			moment,
