@@ -7085,35 +7085,12 @@
       }
     },
     "flux": {
-      "version": "2.1.1",
-      "resolved": "https://registry.npmjs.org/flux/-/flux-2.1.1.tgz",
-      "integrity": "sha1-LGrGUtQzdIiWhInGWG86/yajjqQ=",
+      "version": "3.1.3",
+      "resolved": "https://registry.npmjs.org/flux/-/flux-3.1.3.tgz",
+      "integrity": "sha1-0jvtUVp5oi2TOrU6tK2hnQWy8Io=",
       "requires": {
         "fbemitter": "^2.0.0",
-        "fbjs": "0.1.0-alpha.7",
-        "immutable": "^3.7.4"
-      },
-      "dependencies": {
-        "core-js": {
-          "version": "1.2.7",
-          "resolved": "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz",
-          "integrity": "sha1-ZSKUwUZR2yj6k70tX/KYOk8IxjY="
-        },
-        "fbjs": {
-          "version": "0.1.0-alpha.7",
-          "resolved": "https://registry.npmjs.org/fbjs/-/fbjs-0.1.0-alpha.7.tgz",
-          "integrity": "sha1-rUMIuPIy+zxzYDNJ6nJdHpw5Mjw=",
-          "requires": {
-            "core-js": "^1.0.0",
-            "promise": "^7.0.3",
-            "whatwg-fetch": "^0.9.0"
-          }
-        },
-        "whatwg-fetch": {
-          "version": "0.9.0",
-          "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-0.9.0.tgz",
-          "integrity": "sha1-DjaExsuZlbQ+/J3wPkw2XZX9nMA="
-        }
+        "fbjs": "^0.8.0"
       }
     },
     "for-in": {
