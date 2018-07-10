@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/spotify",
+        "attrs": {
+            "url": "https://spotify.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-spotify wp-block-embed\">\n    https://spotify.com/\n    <figcaption>Embedded content from spotify</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

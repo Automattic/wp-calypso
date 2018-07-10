@@ -1,0 +1,111 @@
+// Link input
+$input-padding: 8px;
+$input-size: 230px;
+
+.editor-block-list__block .editor-url-input,
+.components-popover .editor-url-input,
+.editor-url-input {
+	width: 100%;
+	flex-grow: 1;
+	position: relative;
+	padding: 1px;
+
+	input[type=text] {
+		width: 100%;
+		padding: $input-padding;
+		border: none;
+
+		&::-ms-clear {
+			display: none;
+		}
+	}
+
+	.spinner {
+		position: absolute;
+		right: 0;
+		top: $input-padding;
+		margin: 0;
+	}
+}
+
+// Suggestions
+.editor-url-input__suggestions {
+	max-height: 200px;
+	transition: all .15s ease-in-out;
+	list-style: none;
+	padding: 4px 0;
+}
+
+// Hide suggestions on mobile until we @todo find a better way to show them
+.editor-url-input__suggestions,
+.editor-url-input .spinner {
+	display: none;
+	@include break-small() {
+		display: inherit;
+	}
+}
+
+.editor-url-input__suggestion {
+	padding: 4px #{ $icon-button-size + $input-padding } 4px $input-padding;
+	color: $dark-gray-300; // lightest we can use for contrast
+	display: block;
+	font-size: $default-font-size;
+	cursor: pointer;
+	background: $white;
+	width: 100%;
+	border: none;
+	text-align: left;
+	@include menu-style__neutral();
+
+	&:hover {
+		background: $light-gray-500;
+	}
+
+	&:focus,
+	&.is-selected {
+		background: color( theme( primary ) shade(15%) );
+		color: $white;
+		outline: none;
+	}
+}
+
+// Toolbar button
+.components-toolbar > .editor-url-input__button {
+	position: inherit;	// let the dialog position according to parent
+}
+
+.editor-url-input__button .editor-url-input__back {
+	margin-right: 4px;
+	overflow: visible;
+
+	&::after {
+		content: '';
+		position: absolute;
+		display: block;
+		width: 1px;
+		height: 24px;
+		right: -1px;
+		background: $light-gray-500;
+	}
+}
+
+.editor-url-input__button-modal {
+	box-shadow: $shadow-popover;
+	border: 1px solid $light-gray-500;
+	background: $white;
+}
+
+.editor-url-input__button-modal-line {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+	flex-shrink: 1;
+	min-width: 0;
+	align-items: flex-start;
+
+	.components-button {
+		flex-shrink: 0;
+		width: $icon-button-size;
+		height: $icon-button-size;
+	}
+}

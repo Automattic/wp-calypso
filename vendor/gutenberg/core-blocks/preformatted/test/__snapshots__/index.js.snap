@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/preformatted block edit matches snapshot 1`] = `
+<div
+  class="wp-block-preformatted editor-rich-text"
+>
+  <div>
+    <div>
+      <div
+        class="components-autocomplete"
+      >
+        <pre
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-label="Write preformatted text…"
+          aria-multiline="true"
+          class="editor-rich-text__tinymce"
+          contenteditable="true"
+          data-is-placeholder-visible="true"
+          role="textbox"
+        />
+        <pre
+          class="editor-rich-text__tinymce"
+        >
+          Write preformatted text…
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+`;

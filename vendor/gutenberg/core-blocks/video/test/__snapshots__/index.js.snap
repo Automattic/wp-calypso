@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/video block edit matches snapshot 1`] = `
+<div
+  class="components-placeholder editor-media-placeholder wp-block-video"
+>
+  <div
+    class="components-placeholder__label"
+  >
+    <svg
+      aria-hidden="true"
+      class="dashicon dashicons-media-video"
+      focusable="false"
+      height="20"
+      role="img"
+      viewBox="0 0 20 20"
+      width="20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 2l4 4v12H4V2h8zm0 4h3l-3-3v3zm-1 8v-3c0-.27-.1-.51-.29-.71-.2-.19-.44-.29-.71-.29H7c-.27 0-.51.1-.71.29-.19.2-.29.44-.29.71v3c0 .27.1.51.29.71.2.19.44.29.71.29h3c.27 0 .51-.1.71-.29.19-.2.29-.44.29-.71zm3 1v-5l-2 2v1z"
+      />
+    </svg>
+    Video
+  </div>
+  <div
+    class="components-placeholder__instructions"
+  >
+    Drag a video, upload a new one or select a file from your library.
+  </div>
+  <div
+    class="components-placeholder__fieldset"
+  >
+    <div
+      class="components-drop-zone"
+    >
+      <div
+        class="components-drop-zone__content"
+      >
+        <svg
+          aria-hidden="true"
+          class="dashicon dashicons-upload components-drop-zone__content-icon"
+          focusable="false"
+          height="40"
+          role="img"
+          viewBox="0 0 20 20"
+          width="40"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8 14V8H5l5-6 5 6h-3v6H8zm-2 2v-6H4v8h12.01v-8H14v6H6z"
+          />
+        </svg>
+        <span
+          class="components-drop-zone__content-text"
+        >
+          Drop files to upload
+        </span>
+      </div>
+    </div>
+    <form>
+      <input
+        class="components-placeholder__input"
+        placeholder="Enter URL here…"
+        type="url"
+        value=""
+      />
+      <button
+        class="components-button is-button is-default is-large"
+        type="submit"
+      >
+        Use URL
+      </button>
+    </form>
+    <div
+      class="components-form-file-upload"
+    >
+      <button
+        class="components-button components-icon-button editor-media-placeholder__upload-button is-button is-default is-large"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="dashicon dashicons-upload"
+          focusable="false"
+          height="20"
+          role="img"
+          viewBox="0 0 20 20"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8 14V8H5l5-6 5 6h-3v6H8zm-2 2v-6H4v8h12.01v-8H14v6H6z"
+          />
+        </svg>
+        Upload
+      </button>
+      <input
+        accept="video/*"
+        style="display:none"
+        type="file"
+      />
+    </div>
+  </div>
+</div>
+`;

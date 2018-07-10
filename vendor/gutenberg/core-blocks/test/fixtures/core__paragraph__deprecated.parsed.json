@@ -1,0 +1,12 @@
+[
+    {
+        "blockName": "core/paragraph",
+        "attrs": null,
+        "innerBlocks": [],
+        "innerHTML": "\nUnwrapped is <em>still</em> valid.\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

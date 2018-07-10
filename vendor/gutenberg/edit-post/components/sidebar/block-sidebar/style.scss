@@ -1,0 +1,21 @@
+.edit-post-block-sidebar__panel .components-panel__body {
+	border: none;
+	margin: 0 -16px;
+
+	.components-base-control {
+		margin: 0 0 1em 0;
+	}
+
+	.components-panel__body-toggle {
+		color: $dark-gray-500;
+	}
+
+	&:first-child {
+		border-top: 1px solid $light-gray-500;
+		margin-top: 16px;
+	}
+
+	&:last-child {
+		margin-bottom: -16px;
+	}
+}

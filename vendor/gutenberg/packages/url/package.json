@@ -1,0 +1,24 @@
+{
+	"name": "@wordpress/url",
+	"version": "1.1.0",
+	"description": "WordPress URL utilities",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"url"
+	],
+	"homepage": "https://github.com/WordPress/gutenberg/tree/master/packages/url/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WordPress/gutenberg.git"
+	},
+	"bugs": {
+		"url": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"main": "build/index.js",
+	"module": "build-module/index.js",
+	"publishConfig": {
+		"access": "public"
+	}
+}

@@ -1,0 +1,52 @@
+--- ext/openssl/xp_ssl.c
++++ ext/openssl/xp_ssl.c
+@@ -328,10 +328,12 @@ static inline int php_openssl_setup_cryp
+ 			sslsock->is_client = 1;
+ 			method = SSLv23_client_method();
+ 			break;
++#ifndef OPENSSL_NO_SSL2
+ 		case STREAM_CRYPTO_METHOD_SSLv2_CLIENT:
+ 			sslsock->is_client = 1;
+ 			method = SSLv2_client_method();
+ 			break;
++#endif
+ 		case STREAM_CRYPTO_METHOD_SSLv3_CLIENT:
+ 			sslsock->is_client = 1;
+ 			method = SSLv3_client_method();
+@@ -348,10 +350,12 @@ static inline int php_openssl_setup_cryp
+ 			sslsock->is_client = 0;
+ 			method = SSLv3_server_method();
+ 			break;
++#ifndef OPENSSL_NO_SSL2
+ 		case STREAM_CRYPTO_METHOD_SSLv2_SERVER:
+ 			sslsock->is_client = 0;
+ 			method = SSLv2_server_method();
+ 			break;
++#endif
+ 		case STREAM_CRYPTO_METHOD_TLS_SERVER:
+ 			sslsock->is_client = 0;
+ 			method = TLSv1_server_method();
+@@ -629,9 +633,11 @@ static inline int php_openssl_tcp_sockop
+ 				case STREAM_CRYPTO_METHOD_SSLv23_CLIENT:
+ 					sock->method = STREAM_CRYPTO_METHOD_SSLv23_SERVER;
+ 					break;
++#ifndef OPENSSL_NO_SSL2
+ 				case STREAM_CRYPTO_METHOD_SSLv2_CLIENT:
+ 					sock->method = STREAM_CRYPTO_METHOD_SSLv2_SERVER;
+ 					break;
++#endif
+ 				case STREAM_CRYPTO_METHOD_SSLv3_CLIENT:
+ 					sock->method = STREAM_CRYPTO_METHOD_SSLv3_SERVER;
+ 					break;
+@@ -911,9 +917,11 @@ php_stream *php_openssl_ssl_socket_facto
+ 	if (strncmp(proto, "ssl", protolen) == 0) {
+ 		sslsock->enable_on_connect = 1;
+ 		sslsock->method = STREAM_CRYPTO_METHOD_SSLv23_CLIENT;
++#ifndef OPENSSL_NO_SSL2
+ 	} else if (strncmp(proto, "sslv2", protolen) == 0) {
+ 		sslsock->enable_on_connect = 1;
+ 		sslsock->method = STREAM_CRYPTO_METHOD_SSLv2_CLIENT;
++#endif
+ 	} else if (strncmp(proto, "sslv3", protolen) == 0) {
+ 		sslsock->enable_on_connect = 1;
+ 		sslsock->method = STREAM_CRYPTO_METHOD_SSLv3_CLIENT;

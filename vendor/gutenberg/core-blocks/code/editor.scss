@@ -1,0 +1,62 @@
+.wp-block-code .editor-plain-text {
+	font-family: $editor-html-font;
+	font-size: $text-editor-font-size;
+	color: $dark-gray-800;
+	padding: .8em 1.6em;
+	border: 1px solid $light-gray-500;
+	border-radius: 4px;
+}
+
+// We should extract this to a separate components-toolbar
+.components-tab-button {
+	display: inline-flex;
+	align-items: flex-end;
+	margin: 0;
+	padding: 3px;
+	background: none;
+	outline: none;
+	color: $dark-gray-500;
+	cursor: pointer;
+	position: relative;
+	height: $icon-button-size;
+	font-family: $default-font;
+	font-size: $default-font-size;
+	font-weight: 500;
+	border: 0;
+
+	&.is-active,
+	&.is-active:hover {
+		color: $white;
+	}
+
+	&:disabled {
+		cursor: default;
+	}
+
+	&> span {
+		border: 1px solid transparent;
+		padding: 0 6px;
+		box-sizing: content-box;
+		height: 28px;
+		line-height: 28px;
+	}
+
+	&:hover > span,
+	&:focus > span {
+		color: $dark-gray-500;
+	}
+
+	&:not(:disabled) {
+		&.is-active > span,
+		&:hover > span,
+		&:focus > span {
+			border: 1px solid $dark-gray-500;
+		}
+	}
+
+	&.is-active > span,
+	&.is-active:hover > span {
+		background-color: $dark-gray-500;
+		color: $white;
+	}
+}

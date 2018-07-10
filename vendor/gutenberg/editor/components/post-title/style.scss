@@ -1,0 +1,66 @@
+.editor-post-title__block {
+	position: relative;
+	padding: 5px 0;
+	
+	@include break-small() {
+		padding: 5px $block-parent-side-ui-clearance;
+	}
+
+	.editor-post-title__input {
+		display: block;
+		width: 100%;
+		margin: 0;
+		box-shadow: none;
+		background: transparent;
+		font-family: $editor-font;
+		line-height: $default-line-height;
+		transition: border .1s ease-out;
+
+		// Show wider parent padding on Desktop breakpoints.
+		padding: #{ $block-padding + 5px } $block-padding;
+
+		@include break-small() {
+			padding: #{ $block-padding + 5px } $parent-block-padding;
+		}
+
+		// Stack borders on mobile.
+		border: 1px solid transparent;
+		border-left-width: 0;
+		border-right-width: 0;
+
+		@include break-small() {
+			border-width: 1px;
+		}
+
+		// Match h1 heading
+		font-size: 2.441em;
+		font-weight: 600;
+	}
+
+	&.is-selected .editor-post-title__input {
+		// use opacity to work in various editor styles
+		border-color: $dark-opacity-light-500;
+
+		.is-dark-theme & {
+			border-color: $light-opacity-light-500;
+		}
+	}
+
+	.editor-post-title__input:hover {
+		border-color: theme( outlines );
+	}
+}
+
+.editor-post-title .editor-post-permalink {
+	font-size: $default-font-size;
+	color: $dark-gray-900;
+	position: absolute;
+	top: -$block-toolbar-height + 1px + 1px; // Shift this element upward the same height as the block toolbar, minus the border size
+	left: 0;
+	right: 0;
+
+	@include break-small() {
+		left: $block-parent-side-ui-clearance;
+		right: $block-parent-side-ui-clearance;
+	}
+}

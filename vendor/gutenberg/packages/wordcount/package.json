@@ -1,0 +1,27 @@
+{
+	"name": "@wordpress/wordcount",
+	"version": "1.0.3",
+	"description": "WordPress Word Count Utility",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"wordcount"
+	],
+	"homepage": "https://github.com/WordPress/gutenberg/tree/master/packages/wordcount/README.md",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/WordPress/gutenberg.git"
+	},
+	"bugs": {
+		"url": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"main": "build/index.js",
+	"module": "build-module/index.js",
+	"dependencies": {
+		"lodash": "^4.17.10"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

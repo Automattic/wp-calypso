@@ -1,0 +1,35 @@
+.editor-block-preview {
+	pointer-events: none;
+	padding: 10px;
+	overflow: hidden;
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+
+	.editor-block-preview__content {
+		padding: $block-padding;
+		border: 1px solid $light-gray-500;
+		font-family: $editor-font;
+
+		> div {
+			transform: scale( 0.9 );
+			transform-origin: center top;
+			font-family: $editor-font;
+		}
+
+		> div section {
+			height: auto;
+		}
+
+		> .shared-block-indicator {
+			display: none;
+		}
+	}
+}
+
+.editor-block-preview__title {
+	margin-bottom: 10px;
+	color: $dark-gray-300;
+}

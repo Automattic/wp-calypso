@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DotTip should render correctly 1`] = `
+<Popover
+  aria-label="Gutenberg tips"
+  className="nux-dot-tip"
+  focusOnMount="container"
+  noArrow={true}
+  onClick={[Function]}
+  position="middle right"
+  role="dialog"
+>
+  <p>
+    It looks like you’re writing a letter. Would you like help?
+  </p>
+  <p>
+    <Button
+      isLink={true}
+    >
+      Got it
+    </Button>
+  </p>
+  <IconButton
+    className="nux-dot-tip__disable"
+    icon="no-alt"
+    label="Disable tips"
+  />
+</Popover>
+`;

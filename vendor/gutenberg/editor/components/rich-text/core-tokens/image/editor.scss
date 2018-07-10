@@ -1,0 +1,11 @@
+.mce-content-body div.mce-resizehandle {
+	border-radius: 50%;
+	border: 2px solid $white;
+	width: 15px !important;
+	height: 15px !important;
+	position: absolute;
+	background: theme( primary );
+	padding: 0 3px 3px 0;
+	box-sizing: border-box;
+	cursor: se-resize;
+}

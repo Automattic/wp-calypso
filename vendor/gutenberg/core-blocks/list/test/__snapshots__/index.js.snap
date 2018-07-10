@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/list block edit matches snapshot 1`] = `
+<div
+  class="core-blocks-list editor-rich-text"
+>
+  <div>
+    <div>
+      <div
+        class="components-autocomplete"
+      >
+        <ul
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-label="Write list…"
+          aria-multiline="true"
+          class="editor-rich-text__tinymce"
+          contenteditable="true"
+          data-is-placeholder-visible="true"
+          role="textbox"
+        />
+        <ul
+          class="editor-rich-text__tinymce"
+        >
+          <li>
+            Write list…
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+`;

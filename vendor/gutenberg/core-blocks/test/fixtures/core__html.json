@@ -1,0 +1,12 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/html",
+        "isValid": true,
+        "attributes": {
+            "content": "<h1>Some HTML code</h1>\n<marquee>This text will scroll from right to left</marquee>"
+        },
+        "innerBlocks": [],
+        "originalContent": "<h1>Some HTML code</h1>\n<marquee>This text will scroll from right to left</marquee>"
+    }
+]

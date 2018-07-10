@@ -1,0 +1,150 @@
+.edit-post-visual-editor {
+	position: relative;
+	padding: 50px 0;
+
+	input[type="text"].editor-default-block-appender__content, // The default appender should match a single paragraph. Needs specificity.
+	&,
+	& p {
+		font-family: $editor-font;
+		font-size: $editor-font-size;
+		line-height: $editor-line-height;
+	}
+
+	&,
+	& p {
+		color: $dark-gray-700;
+	}
+
+	& ul,
+	& ol {
+		margin: 0;
+		padding: 0;
+	}
+
+	& ul:not(.wp-block-gallery) {
+		list-style-type: disc;
+	}
+
+	& ol {
+		list-style-type: decimal;
+	}
+
+	& .components-button {
+		font-family: $default-font;
+	}
+}
+
+.edit-post-visual-editor .editor-writing-flow__click-redirect {
+	// Collapse to minimum height of 50px, to fully occupy editor bottom pad.
+	height: 50px;
+	width: 100%;
+	max-width: $content-width;
+	// Offset for: Visual editor padding, block (default appender) margin.
+	margin: #{ -1 * $block-spacing } auto -50px;
+}
+
+// The base width of blocks
+.edit-post-visual-editor .editor-block-list__block {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: $content-width;
+
+	@include break-small() {
+		.editor-block-list__block-edit {
+			margin-left: -$block-side-ui-width;
+			margin-right: -$block-side-ui-width;
+		}
+
+		// Center the block toolbar on wide and full-wide blocks.
+		// Use specific selector to not affect nested block toolbars.
+		&[data-align="wide"] > .editor-block-contextual-toolbar,
+		&[data-align="full"] > .editor-block-contextual-toolbar {
+			width: calc( 100% + #{ ( $parent-block-padding * 4 ) + $border-width + $border-width } ); // Matches the negative margins applied to parent blocks.
+			height: 0px; // This collapses the container to an invisible element without margin.
+			text-align: center;
+
+			.editor-block-toolbar {
+				max-width: $content-width + $block-padding + $block-padding;
+				width: 100%;
+				position: relative;
+			}
+		}
+
+		// The centering math changes when a fullwide image doesn't have block padding.
+		&[data-align="full"] > .editor-block-contextual-toolbar {
+			width: calc( 100% + #{ ( $parent-block-padding * 2 ) + ( $block-padding * 2 ) } ); // Matches the negative margins applied to non-parent blocks, except for borders which are gone in fullwide.
+		
+			.editor-block-toolbar {
+				max-width: $content-width - $border-width - $border-width;
+			}
+		}
+	}
+
+	&[data-align="wide"] {
+		max-width: 1100px;
+	}
+
+	&[data-align="full"] {
+		max-width: none;
+	}
+}
+
+// The base width of the title should match that of blocks even if it isn't a block
+.editor-post-title {
+	@include break-small() {
+		padding-left: $block-container-side-padding;
+		padding-right: $block-container-side-padding;
+	}
+}
+.edit-post-visual-editor .editor-post-title__block {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: $content-width;
+
+	// Stack borders.
+	> div {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	// Include space for side UI on desktops.
+	@include break-small() {
+		> div {
+			margin-left: -$block-side-ui-width;
+			margin-right: -$block-side-ui-width;
+		}
+	}
+}
+
+// This is a focus style shown for blocks that need an indicator even when in an isEditing state
+// like for example an image block that receives arrowkey focus.
+.edit-post-visual-editor .editor-block-list__block:not( .is-selected ) {
+	.editor-block-list__block-edit {
+		box-shadow: 0 0 0 0 $white, 0 0 0 0 $dark-gray-900;
+		transition: .1s box-shadow .05s;
+	}
+
+	&:focus .editor-block-list__block-edit {
+		box-shadow: 0 0 0 1px $white, 0 0 0 3px $dark-gray-900;
+	}
+}
+
+.edit-post-visual-editor .editor-default-block-appender {
+	// Default to centered and content-width, like blocks
+	max-width: $content-width;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+
+	&[data-root-uid=""] .editor-default-block-appender__content:hover {
+		// Outline on root-level default block appender is redundant with the
+		// WritingFlow click redirector.
+		outline: 1px solid transparent;
+	}
+
+	@include break-small() {
+		.editor-default-block-appender__content {
+			padding: 0 $block-padding;
+		}
+	}
+}

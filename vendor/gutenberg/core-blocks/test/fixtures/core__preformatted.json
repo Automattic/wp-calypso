@@ -1,0 +1,23 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/preformatted",
+        "isValid": true,
+        "attributes": {
+            "content": [
+                "Some ",
+                {
+                    "type": "em",
+                    "children": "preformatted"
+                },
+                " text...",
+                {
+                    "type": "br"
+                },
+                "And more!"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<pre class=\"wp-block-preformatted\">Some <em>preformatted</em> text...<br>And more!</pre>"
+    }
+]

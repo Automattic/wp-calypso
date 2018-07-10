@@ -1,0 +1,151 @@
+$color-palette-circle-size: 28px;
+$color-palette-circle-spacing: 14px;
+
+.components-color-palette {
+	margin-right: -14px;
+
+	.components-color-palette__clear {
+		float: right;
+		margin-right: 20px;
+	}
+}
+
+.components-color-palette__item-wrapper {
+	display: inline-block;
+	height: $color-palette-circle-size;
+	width: $color-palette-circle-size;
+	margin-right: $color-palette-circle-spacing;
+	margin-bottom: $color-palette-circle-spacing;
+	vertical-align: top;
+	transform: scale( 1 );
+	transition: 100ms transform ease;
+	&:hover {
+		transform: scale( 1.2 );
+	}
+
+	// Ensure that the <div> that <Dropdown> wraps our toggle button with is full height
+	& > div {
+		height: 100%;
+		width: 100%;
+	}
+}
+
+.components-color-palette__item {
+	display: inline-block;
+	vertical-align: top;
+	height: 100%;
+	width: 100%;
+	border: none;
+	border-radius: 50%;
+	background: transparent;
+	box-shadow: inset 0 0 0 ( $color-palette-circle-size / 2 );
+	transition: 100ms box-shadow ease;
+	cursor: pointer;
+
+	&.is-active {
+		box-shadow: inset 0 0 0 4px;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .2);
+	}
+
+	&:focus {
+		outline: none;
+		&::after {
+			content: '';
+			border: 1px solid $dark-gray-400;
+			width: 32px;
+			height: 32px;
+			position: absolute;
+			top: -3px;
+			left: -3px;
+			border-radius: 50%;
+		}
+	}
+}
+
+.components-color-palette__clear-color .components-color-palette__item {
+	color: $white;
+	background: $white;
+}
+
+.components-color-palette__clear-color-line {
+	display: block;
+	position: absolute;
+	border: 2px solid $alert-red;
+	border-radius: 50%;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	&:before {
+		position: absolute;
+		top: 0;
+		left: 0;
+		content: '';
+		width: 100%;
+		height: 100%;
+		border-bottom: 2px solid $alert-red;
+		transform:
+			rotate(45deg)
+			translateY( - $color-palette-circle-size / 2 + 1px )
+			translateX( - 1px );
+	}
+}
+
+.components-color-palette__custom-color .components-color-palette__item {
+	position: relative;
+	box-shadow: none;
+}
+
+.components-color-palette__custom-color .components-color-palette__custom-color-gradient {
+	display: block;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.components-color-palette__custom-color .components-color-palette__custom-color-gradient:before {
+	box-sizing: border-box;
+	content: '';
+	filter: blur( 6px ) saturate( 0.7 ) brightness( 1.1 );
+	display: block;
+	width: 200%;
+	height: 200%;
+	position: absolute;
+	top: -50%;
+	left: -50%;
+	padding-top: 100%;
+	transform: scale( 1 );
+	background-image: linear-gradient(330deg, transparent 50%, #ff8100 50%),
+					linear-gradient(300deg, transparent 50%, #ff5800 50%),
+					linear-gradient(270deg, transparent 50%, #c92323 50%),
+					linear-gradient(240deg, transparent 50%, #cc42a2 50%),
+					linear-gradient(210deg, transparent 50%, #9f49ac 50%),
+					linear-gradient(180deg, transparent 50%, #306cd3 50%),
+					linear-gradient(150deg, transparent 50%, #179067 50%),
+					linear-gradient(120deg, transparent 50%, #0eb5d6 50%),
+					linear-gradient(90deg, transparent 50%, #50b517 50%),
+					linear-gradient(60deg, transparent 50%, #ede604 50%),
+					linear-gradient(30deg, transparent 50%, #ffcc00 50%),
+					linear-gradient(0deg, transparent 50%, #feac00 50%);
+
+	background-clip: content-box, content-box, content-box, content-box, content-box, content-box, padding-box, padding-box, padding-box, padding-box, padding-box, padding-box;
+}
+
+.components-color-palette__picker:not(.is-mobile) .components-popover__content {
+	// ChromePicker has a hardcoded width of 225px, so we need to override the popover min-width.
+	min-width: 225px;
+}

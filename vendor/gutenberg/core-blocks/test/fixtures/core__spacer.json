@@ -1,0 +1,12 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/spacer",
+        "isValid": true,
+        "attributes": {
+            "height": 100
+        },
+        "innerBlocks": [],
+        "originalContent": "<div style=\"height:100px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>"
+    }
+]

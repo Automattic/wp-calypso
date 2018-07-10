@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/more block edit matches snapshot 1`] = `
+<div
+  class="wp-block-more"
+>
+  <input
+    size="10"
+    type="text"
+    value="Read more"
+  />
+</div>
+`;

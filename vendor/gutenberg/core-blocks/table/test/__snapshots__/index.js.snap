@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/embed block edit matches snapshot 1`] = `
+<div
+  class="wp-block-table editor-rich-text"
+>
+  <div>
+    <div>
+      <div
+        class="components-autocomplete"
+      >
+        <table
+          aria-autocomplete="list"
+          aria-expanded="false"
+          class="editor-rich-text__tinymce"
+          contenteditable="true"
+        >
+          <tbody>
+            <tr>
+              <td>
+                <br />
+              </td>
+              <td>
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <br />
+              </td>
+              <td>
+                <br />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;

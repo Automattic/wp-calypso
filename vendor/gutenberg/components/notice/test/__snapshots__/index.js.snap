@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Notice should match snapshot 1`] = `
+<div
+  className="notice notice-alt notice-example is-dismissible"
+>
+  <button
+    className="notice-dismiss"
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="screen-reader-text"
+    >
+      Dismiss this notice
+    </span>
+  </button>
+</div>
+`;

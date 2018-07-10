@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/funnyordie",
+        "isValid": true,
+        "attributes": {
+            "url": "https://funnyordie.com/",
+            "caption": [
+                "Embedded content from funnyordie"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-funnyordie wp-block-embed\">\n    https://funnyordie.com/\n    <figcaption>Embedded content from funnyordie</figcaption>\n</figure>"
+    }
+]

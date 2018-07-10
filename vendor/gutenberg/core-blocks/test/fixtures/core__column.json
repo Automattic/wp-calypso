@@ -1,0 +1,37 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/column",
+        "isValid": true,
+        "attributes": {},
+        "innerBlocks": [
+            {
+                "uid": "_uid_0",
+                "name": "core/paragraph",
+                "isValid": true,
+                "attributes": {
+                    "content": [
+                        "Column One, Paragraph One"
+                    ],
+                    "dropCap": false
+                },
+                "innerBlocks": [],
+                "originalContent": "<p>Column One, Paragraph One</p>"
+            },
+            {
+                "uid": "_uid_1",
+                "name": "core/paragraph",
+                "isValid": true,
+                "attributes": {
+                    "content": [
+                        "Column One, Paragraph Two"
+                    ],
+                    "dropCap": false
+                },
+                "innerBlocks": [],
+                "originalContent": "<p>Column One, Paragraph Two</p>"
+            }
+        ],
+        "originalContent": "<div class=\"wp-block-column\">\n\t\n\t\n</div>"
+    }
+]

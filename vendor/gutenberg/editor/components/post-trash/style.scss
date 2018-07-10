@@ -1,0 +1,16 @@
+.editor-post-trash.components-button {
+	margin-left: auto !important;
+	text-decoration: underline;
+	color: #a00;
+
+	.dashicon {
+		display: inline-block;
+		vertical-align: middle;
+		margin: -3px -4px 0 10px;
+	}
+
+	&:hover,
+	&:focus {
+		color: #dc3232;
+	}
+}

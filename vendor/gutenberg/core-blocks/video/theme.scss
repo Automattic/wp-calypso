@@ -1,0 +1,5 @@
+.wp-block-video {
+	figcaption {
+		@include caption-style();
+	}
+}

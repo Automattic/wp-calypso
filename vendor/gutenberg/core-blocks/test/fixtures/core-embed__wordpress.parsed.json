@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/wordpress",
+        "attrs": {
+            "url": "https://wordpress.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-wordpress wp-block-embed\">\n    https://wordpress.com/\n    <figcaption>Embedded content from WordPress</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

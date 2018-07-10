@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/imgur",
+        "attrs": {
+            "url": "https://imgur.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-imgur wp-block-embed\">\n    https://imgur.com/\n    <figcaption>Embedded content from imgur</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

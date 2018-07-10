@@ -1,0 +1,46 @@
+{
+	"name": "@wordpress/scripts",
+	"version": "1.2.0",
+	"description": "Collection of JS scripts for WordPress development",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"scripts",
+		"reusable-scripts",
+		"wordpress-scripts"
+	],
+	"homepage": "https://github.com/WordPress/gutenberg/tree/master/packages/scripts/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WordPress/gutenberg.git"
+	},
+	"bugs": {
+		"url": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"engines": {
+		"node": ">=8"
+	},
+	"files": [
+		"bin",
+		"config",
+		"scripts",
+		"utils"
+	],
+	"bin": {
+		"wp-scripts": "./bin/wp-scripts.js"
+	},
+	"dependencies": {
+		"@wordpress/babel-preset-default": "file:../babel-preset-default",
+		"@wordpress/jest-preset-default": "file:../jest-preset-default",
+		"@wordpress/npm-package-json-lint-config": "file:../npm-package-json-lint-config",
+		"cross-spawn": "^5.1.0",
+		"jest": "^23.3.0",
+		"npm-package-json-lint": "^3.0.1",
+		"read-pkg-up": "^4.0.0",
+		"resolve-bin": "^0.4.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

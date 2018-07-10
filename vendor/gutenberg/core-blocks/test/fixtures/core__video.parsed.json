@@ -1,0 +1,12 @@
+[
+    {
+        "blockName": "core/video",
+        "attrs": null,
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-video\"><video src=\"https://awesome-fake.video/file.mp4\" controls=\"\"></video></figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

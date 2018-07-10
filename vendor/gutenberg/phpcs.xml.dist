@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards for Gutenberg Plugin">
+	<description>Sniffs for WordPress plugins, with minor modifications for Gutenberg</description>
+
+	<rule ref="PHPCompatibility"/>
+	<config name="testVersion" value="5.2-"/>
+
+	<rule ref="WordPress-Core"/>
+	<rule ref="WordPress-Docs"/>
+	<rule ref="WordPress.WP.I18n"/>
+	<config name="text_domain" value="gutenberg,default"/>
+
+	<arg value="ps"/>
+	<arg name="extensions" value="php"/>
+
+	<file>./bin</file>
+	<file>./core-blocks</file>
+	<file>./lib</file>
+	<exclude-pattern>./lib/parser.php</exclude-pattern>
+	<file>./phpunit</file>
+	<file>gutenberg.php</file>
+
+	<rule ref="PHPCompatibility.PHP.NewKeywords.t_namespaceFound">
+		<exclude-pattern>lib/class-wp-rest-block-renderer-controller.php</exclude-pattern>
+	</rule>
+	<!-- These special comments are markers for the build process -->
+	<rule ref="Squiz.Commenting.InlineComment.WrongStyle">
+		<exclude-pattern>gutenberg.php</exclude-pattern>
+	</rule>
+
+	<!-- Do not require docblocks for unit tests -->
+	<rule ref="Squiz.Commenting.FunctionComment.Missing">
+		<exclude-pattern>phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.FileComment.Missing">
+		<exclude-pattern>phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.ClassComment.Missing">
+		<exclude-pattern>phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.ClassComment.SpacingAfter">
+		<exclude-pattern>phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.FunctionComment.MissingParamTag">
+		<exclude-pattern>phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="Generic.Commenting.DocComment.MissingShort">
+		<exclude-pattern>phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.VariableComment.Missing">
+		<exclude-pattern>phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.FunctionCommentThrowTag.Missing">
+		<exclude-pattern>phpunit/*</exclude-pattern>
+	</rule>
+</ruleset>

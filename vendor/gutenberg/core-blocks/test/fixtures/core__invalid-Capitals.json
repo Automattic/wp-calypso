@@ -1,0 +1,12 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/freeform",
+        "isValid": true,
+        "attributes": {
+            "content": "<p><!-- wp:core/invalid-Capitals /--></p>"
+        },
+        "innerBlocks": [],
+        "originalContent": "<p><!-- wp:core/invalid-Capitals /--></p>"
+    }
+]

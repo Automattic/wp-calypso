@@ -1,0 +1,38 @@
+# This is a heading with *italic*
+
+This is a paragraph with a [link](https://w.org/), **bold**, and ~~strikethrough~~.
+
+Preserve
+line breaks please.
+
+## Lists
+
+* A
+* Bulleted
+    * Indented
+* List
+
+1. One
+2. Two
+3. Three
+
+## Table
+
+First Header | Second Header
+------------ | -------------
+Content from cell 1 | Content from cell 2
+Content in the first column | Content in the second column
+
+## Quote
+
+> First
+>
+> Second
+
+## Code
+
+Inline `code` tags should work.
+
+```html
+This is a code block.
+```

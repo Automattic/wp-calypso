@@ -1,0 +1,37 @@
+{
+	"name": "@wordpress/jest-console",
+	"version": "1.0.7",
+	"description": "Custom Jest matchers for the Console object",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"jest",
+		"matchers",
+		"console"
+	],
+	"homepage": "https://github.com/WordPress/gutenberg/tree/master/packages/jest-console/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WordPress/gutenberg.git"
+	},
+	"bugs": {
+		"url": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"files": [
+		"build",
+		"build-module"
+	],
+	"main": "build/index.js",
+	"module": "build-module/index.js",
+	"dependencies": {
+		"jest-matcher-utils": "^22.4.3",
+		"lodash": "^4.17.10"
+	},
+	"peerDependencies": {
+		"jest": ">=22"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

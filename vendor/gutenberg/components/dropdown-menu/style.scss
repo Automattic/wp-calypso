@@ -1,0 +1,67 @@
+.components-dropdown-menu {
+	padding: 3px;
+	display: flex;
+
+	.components-dropdown-menu__toggle {
+		width: auto;
+		margin: 0;
+		padding: 4px;
+		border: 1px solid transparent;
+		border-radius: 0;
+		display: flex;
+		flex-direction: row;
+
+		&.is-active,
+		&.is-active:hover {
+			background-color: $dark-gray-500;
+			color: $white;
+		}
+
+		&:focus:before {
+			top: -3px;
+			right: -3px;
+			bottom: -3px;
+			left: -3px;
+		}
+
+		&:hover,
+		&:focus,
+		&:not(:disabled):hover {
+			box-shadow: none;
+			outline: none;
+			color: $dark-gray-500;
+			border-color: $dark-gray-500;
+		}
+
+		&.is-active > svg,
+		&.is-active:hover > svg {
+			background-color: $dark-gray-500;
+			color: $white;
+		}
+	}
+}
+.components-dropdown-menu__popover .components-popover__content {
+	width: 200px;
+}
+
+.components-dropdown-menu__menu {
+	// note that left is set by react in a style attribute
+	width: 100%;
+	padding: 3px 3px 0;
+	font-family: $default-font;
+	font-size: $default-font-size;
+	line-height: $default-line-height;
+
+	.components-dropdown-menu__menu-item {
+		width: 100%;
+		padding: 6px;
+		border-radius: 0;
+		outline: none;
+		cursor: pointer;
+
+		.dashicon {
+			margin-right: 8px;
+		}
+	}
+}
+

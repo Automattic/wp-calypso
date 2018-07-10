@@ -1,0 +1,60 @@
+.edit-post-text-editor__body {
+	padding-top: 40px;
+
+	@include break-small() {
+		padding-top: 40px + $admin-bar-height-big;
+	}
+
+	@include break-medium() {
+		padding-top: 40px + $admin-bar-height;
+	}
+}
+
+// Use padding to center text in the textarea, this allows you to click anywhere to focus it
+.edit-post-text-editor {
+	padding-left: 20px;
+	padding-right: 20px;
+
+	@include break-large() {
+		padding-left: calc( 50% - #{ $content-width / 2 } );
+		padding-right: calc( 50% - #{ $content-width / 2 } );
+	}
+
+	.edit-post-post-text-editor__toolbar {
+		width: 100%;
+		max-width: $content-width;
+		margin: 0 auto;
+	}
+
+	// Always show outlines in code editor
+	.editor-post-title__block {
+		textarea {
+			border: 1px solid $light-gray-500;
+			margin-bottom: 4px;
+		}
+
+		textarea:hover,
+		&.is-selected textarea {
+			box-shadow: 0 0 0 1px $light-gray-500;
+		}
+	}
+
+	.editor-post-permalink {
+		left: 0;
+		right: 0;
+		margin-top: -6px;
+	}
+
+	@include break-small() {
+		.editor-post-title,
+		.editor-post-title__block {
+			padding: 0;
+		}
+	}
+
+	.editor-post-text-editor {
+		padding: $block-padding;
+		min-height: 200px;
+		line-height: 1.8;
+	}
+}

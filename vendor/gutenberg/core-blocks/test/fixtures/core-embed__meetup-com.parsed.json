@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/meetup-com",
+        "attrs": {
+            "url": "https://meetup.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-meetup-com wp-block-embed\">\n    https://meetup.com/\n    <figcaption>Embedded content from meetup-com</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

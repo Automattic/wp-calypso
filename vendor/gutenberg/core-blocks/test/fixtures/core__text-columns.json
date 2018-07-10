@@ -1,0 +1,25 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/text-columns",
+        "isValid": true,
+        "attributes": {
+            "content": [
+                {
+                    "children": [
+                        "One"
+                    ]
+                },
+                {
+                    "children": [
+                        "Two"
+                    ]
+                }
+            ],
+            "columns": 2,
+            "width": "center"
+        },
+        "innerBlocks": [],
+        "originalContent": "<div class=\"wp-block-text-columns aligncenter columns-2\">\n    <div class=\"wp-block-column\">\n        <p>One</p>\n    </div>\n    <div class=\"wp-block-column\">\n        <p>Two</p>\n    </div>\n</div>"
+    }
+]

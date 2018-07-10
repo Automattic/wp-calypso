@@ -1,0 +1,33 @@
+{
+	"name": "@wordpress/npm-package-json-lint-config",
+	"version": "1.0.0",
+	"description": "WordPress npm-package-json-lint shareable config",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"npm-package-json-lint",
+		"npm-package-json-lint-config"
+	],
+	"homepage": "https://github.com/WordPress/gutenberg/tree/master/packages/npm-package-json-lint-config/README.md",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/WordPress/gutenberg.git"
+	},
+	"bugs": {
+		"url": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"main": "index.js",
+	"devDependencies": {
+		"is-plain-obj": "^1.1.0"
+	},
+	"peerDependencies": {
+		"npm-package-json-lint": ">= 3.0.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"test": "echo \"Error: run tests from root\" && exit 1"
+	}
+}

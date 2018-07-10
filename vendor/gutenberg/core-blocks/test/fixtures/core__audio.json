@@ -1,0 +1,16 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/audio",
+        "isValid": true,
+        "attributes": {
+            "src": "https://media.simplecast.com/episodes/audio/80564/draft-podcast-51-livePublish2.mp3",
+            "caption": [],
+            "align": "right",
+            "autoplay": false,
+            "loop": false
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-audio alignright\">\n    <audio controls=\"\" src=\"https://media.simplecast.com/episodes/audio/80564/draft-podcast-51-livePublish2.mp3\"></audio>\n</figure>"
+    }
+]

@@ -1,0 +1,35 @@
+.wp-block-file {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0;
+
+	&.is-transient {
+		@include loading_fade;
+	}
+
+	&__textlink {
+		color: $blue-medium-700;
+		min-width: 1em;
+		text-decoration: underline;
+
+		&:focus {
+			box-shadow: none;
+			color: $blue-medium-700;
+		}
+	}
+
+	&__textlink-placeholder {
+		opacity: .5;
+		text-decoration: underline;
+	}
+
+	&__button-richtext-wrapper {
+		display: inline-block;
+		margin-left: 0.75em;
+	}
+
+	&__copy-url-button {
+		margin-left: 1em;
+	}
+}

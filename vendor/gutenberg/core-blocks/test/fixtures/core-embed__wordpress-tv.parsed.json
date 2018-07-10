@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/wordpress-tv",
+        "attrs": {
+            "url": "https://wordpress.tv/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-wordpress-tv wp-block-embed\">\n    https://wordpress.tv/\n    <figcaption>Embedded content from wordpress-tv</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

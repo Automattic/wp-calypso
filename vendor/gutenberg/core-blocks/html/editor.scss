@@ -1,0 +1,25 @@
+.gutenberg .wp-block-html {
+	iframe {
+		display: block;
+
+		// Disable pointer events so that we can click on the block to select it
+		pointer-events: none;
+	}
+
+	.CodeMirror {
+		border-radius: 4px;
+		border: 1px solid $light-gray-500;
+		font-family: $editor-html-font;
+		font-size: $text-editor-font-size;
+		height: auto;
+	}
+
+	.CodeMirror-gutters {
+		background: $white;
+		border-right: none;
+	}
+
+	.CodeMirror-lines {
+		padding: 8px 8px 8px 0;
+	}
+}

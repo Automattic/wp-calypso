@@ -1,0 +1,24 @@
+{
+	"name": "@wordpress/blob",
+	"version": "1.0.0-alpha.2",
+	"description": "Blob utils for WordPress",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"blob"
+	],
+	"homepage": "https://github.com/WordPress/gutenberg/tree/master/packages/blob/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WordPress/gutenberg.git"
+	},
+	"bugs": {
+		"url": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"main": "build/index.js",
+	"module": "build-module/index.js",
+	"publishConfig": {
+		"access": "public"
+	}
+}

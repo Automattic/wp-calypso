@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/gallery block edit matches snapshot 1`] = `
+<div
+  class="components-placeholder editor-media-placeholder wp-block-gallery"
+>
+  <div
+    class="components-placeholder__label"
+  >
+    <svg
+      aria-hidden="true"
+      class="dashicon dashicons-format-gallery"
+      focusable="false"
+      height="20"
+      role="img"
+      viewBox="0 0 20 20"
+      width="20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M16 4h1.96c.57 0 1.04.47 1.04 1.04v12.92c0 .57-.47 1.04-1.04 1.04H5.04C4.47 19 4 18.53 4 17.96V16H2.04C1.47 16 1 15.53 1 14.96V2.04C1 1.47 1.47 1 2.04 1h12.92c.57 0 1.04.47 1.04 1.04V4zM3 14h11V3H3v11zm5-8.5C8 4.67 7.33 4 6.5 4S5 4.67 5 5.5 5.67 7 6.5 7 8 6.33 8 5.5zm2 4.5s1-5 3-5v8H4V7c2 0 2 3 2 3s.33-2 2-2 2 2 2 2zm7 7V6h-1v8.96c0 .57-.47 1.04-1.04 1.04H6v1h11z"
+      />
+    </svg>
+    Gallery
+  </div>
+  <div
+    class="components-placeholder__instructions"
+  >
+    Drag images, upload a new one or select a file from your library.
+  </div>
+  <div
+    class="components-placeholder__fieldset"
+  >
+    <div
+      class="components-drop-zone"
+    >
+      <div
+        class="components-drop-zone__content"
+      >
+        <svg
+          aria-hidden="true"
+          class="dashicon dashicons-upload components-drop-zone__content-icon"
+          focusable="false"
+          height="40"
+          role="img"
+          viewBox="0 0 20 20"
+          width="40"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8 14V8H5l5-6 5 6h-3v6H8zm-2 2v-6H4v8h12.01v-8H14v6H6z"
+          />
+        </svg>
+        <span
+          class="components-drop-zone__content-text"
+        >
+          Drop files to upload
+        </span>
+      </div>
+    </div>
+    <div
+      class="components-form-file-upload"
+    >
+      <button
+        class="components-button components-icon-button editor-media-placeholder__upload-button is-button is-default is-large"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="dashicon dashicons-upload"
+          focusable="false"
+          height="20"
+          role="img"
+          viewBox="0 0 20 20"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8 14V8H5l5-6 5 6h-3v6H8zm-2 2v-6H4v8h12.01v-8H14v6H6z"
+          />
+        </svg>
+        Upload
+      </button>
+      <input
+        accept="image/*"
+        multiple=""
+        style="display:none"
+        type="file"
+      />
+    </div>
+  </div>
+</div>
+`;

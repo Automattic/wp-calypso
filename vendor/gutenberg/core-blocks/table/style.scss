@@ -1,0 +1,6 @@
+.wp-block-table {
+	// Fixed layout toggle
+	&.has-fixed-layout tbody {
+		table-layout: fixed;
+	}
+}

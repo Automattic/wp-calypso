@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocumentOutline header blocks present should match snapshot 1`] = `
+<div
+  className="document-outline"
+>
+  <ul>
+    <TableOfContentsItem
+      isValid={true}
+      key="0"
+      level="H2"
+      onClick={[Function]}
+      path={Array []}
+    >
+      Heading parent
+    </TableOfContentsItem>
+    <TableOfContentsItem
+      isValid={true}
+      key="1"
+      level="H3"
+      onClick={[Function]}
+      path={Array []}
+    >
+      Heading child
+    </TableOfContentsItem>
+  </ul>
+</div>
+`;
+
+exports[`DocumentOutline header blocks present should render warnings for multiple h1 headings 1`] = `
+<div
+  className="document-outline"
+>
+  <ul>
+    <TableOfContentsItem
+      isValid={false}
+      key="0"
+      level="H1"
+      onClick={[Function]}
+      path={Array []}
+    >
+      Heading 1
+      <br
+        key="incorrect-break-multiple-h1"
+      />
+      <em
+        key="incorrect-message-multiple-h1"
+      >
+        (Multiple H1 headings are not recommended)
+      </em>
+    </TableOfContentsItem>
+    <TableOfContentsItem
+      isValid={false}
+      key="1"
+      level="H1"
+      onClick={[Function]}
+      path={Array []}
+    >
+      Heading 1
+      <br
+        key="incorrect-break-multiple-h1"
+      />
+      <em
+        key="incorrect-message-multiple-h1"
+      >
+        (Multiple H1 headings are not recommended)
+      </em>
+    </TableOfContentsItem>
+  </ul>
+</div>
+`;

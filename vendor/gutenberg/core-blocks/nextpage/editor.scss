@@ -1,0 +1,35 @@
+.editor-visual-editor__block[data-type="core/nextpage"] {
+	max-width: 100%;
+}
+
+.wp-block-nextpage {
+	display: block;
+	text-align: center;
+	white-space: nowrap;
+
+	// Label
+	> span {
+		font-size: $default-font-size;
+		position: relative;
+		display: inline-block;
+		text-transform: uppercase;
+		font-weight: 600;
+		font-family: $default-font;
+		color: $dark-gray-300;
+		border-radius: 4px;
+		background: $white;
+		padding: 6px 8px;
+		height: $icon-button-size-small;
+	}
+
+	// Dashed line
+	&:before {
+		content: '';
+		position: absolute;
+		top: calc( 50% );
+		left: 0;
+		right: 0;
+		border-top: 3px dashed $light-gray-700;
+		z-index: z-index( '.editor-block-list__block .wp-block-more:before' );
+	}
+}

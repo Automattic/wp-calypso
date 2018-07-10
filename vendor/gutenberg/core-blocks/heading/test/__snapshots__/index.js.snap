@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/heading block edit matches snapshot 1`] = `
+<div
+  class="wp-block-heading editor-rich-text"
+>
+  <div>
+    <div>
+      <div
+        class="components-autocomplete"
+      >
+        <h2
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-label="Write heading…"
+          aria-multiline="true"
+          class="editor-rich-text__tinymce"
+          contenteditable="true"
+          data-is-placeholder-visible="true"
+          role="textbox"
+        />
+        <h2
+          class="editor-rich-text__tinymce"
+        >
+          Write heading…
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+`;

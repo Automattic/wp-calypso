@@ -1,0 +1,7 @@
+{
+	"rootDir": "../../",
+	"preset": "@wordpress/jest-preset-default",
+	"setupFiles": [],
+	"testMatch": [ "<rootDir>/test/e2e/specs/**/(*.)(spec|test).js?(x)" ],
+	"timers": "real"
+}

@@ -1,0 +1,45 @@
+.editor-block-inspector__no-blocks,
+.editor-block-inspector__multi-blocks {
+	display: block;
+	font-size: $default-font-size;
+	background: $white;
+	padding: ( $panel-padding * 2 ) $panel-padding;
+	text-align: center;
+}
+
+.editor-block-inspector__multi-blocks {
+	border-bottom: 1px solid $light-gray-500;
+}
+
+.editor-block-inspector__card {
+	display: flex;
+	align-items: flex-start;
+	margin: -16px;
+	padding: 16px;
+}
+
+.editor-block-inspector__card-icon {
+	border: 1px solid $light-gray-700;
+	padding: 7px;
+	margin-right: 10px;
+	height: 36px;
+	width: 36px;
+}
+
+.editor-block-inspector__card-content {
+	flex-grow: 1;
+}
+
+.editor-block-inspector__card-title {
+	font-weight: 500;
+	margin-bottom: 5px;
+}
+
+.editor-block-inspector__card-description {
+	font-size: $default-font-size;
+}
+
+.editor-block-inspector__card .editor-block-icon__colors {
+	margin-left: -2px;
+	margin-right: 10px;
+}

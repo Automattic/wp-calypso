@@ -1,0 +1,120 @@
+.wp-block-gallery.components-placeholder {
+	margin: 0px;
+}
+
+// Allow gallery items to go edge to edge.
+.gutenberg .wp-block-gallery:not( .components-placeholder ) {
+	margin-left: -8px;
+	margin-right: -8px;
+}
+
+// Don't use negative margins when full-wide.
+.gutenberg [data-align="full"] .wp-block-gallery:not( .components-placeholder ) {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.blocks-gallery-item {
+
+	.is-selected {
+		outline: 4px solid theme( primary );
+		outline-offset: -4px;
+	}
+
+	&.is-transient img {
+		@include loading_fade;
+	}
+
+	.editor-rich-text {
+		position: absolute;
+		width: 100%;
+		max-height: 100%;
+		overflow-y: auto;
+	}
+
+	.editor-rich-text figcaption:not( [data-is-placeholder-visible="true"] ) {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.is-selected .editor-rich-text {
+		width: calc( 100% - 8px );
+		left: 4px;
+		margin-top: -4px;
+
+		// Override negative margins so this toolbar isn't hidden by overflow. Overflow is needed for long captions.
+		.editor-rich-text__inline-toolbar {
+			top: 0;
+		}
+
+		// Make extra space for the inline toolbar.
+		.editor-rich-text__tinymce {
+			padding-top: 48px;
+		}
+	}
+
+	.components-form-file-upload,
+	.components-button.core-blocks-gallery-add-item-button {
+		width: 100%;
+		height: 100%;
+	}
+
+	.components-button.core-blocks-gallery-add-item-button {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		box-shadow: none;
+		border: none;
+		border-radius: 0;
+		min-height: 100px;
+
+		& .dashicon {
+			margin-top: 10px;
+		}
+
+		&:hover,
+		&:focus {
+			border: 1px solid #999;
+		}
+	}
+}
+
+.core-blocks-gallery-item__inline-menu {
+	padding: 2px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: theme( primary );
+	display: inline-flex;
+	z-index: z-index( '.core-blocks-gallery-item__inline-menu' );
+
+	.components-button {
+		color: $white;
+		&:hover,
+		&:focus {
+			color: $white;
+		}
+	}
+}
+
+.blocks-gallery-item__remove {
+	padding: 0;
+}
+
+.blocks-gallery-item .spinner {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+}
+
+// IE11 doesn't support object-fit or flex very well, so we inline-block.
+@media all and ( -ms-high-contrast: none ) {
+	*::-ms-backdrop, .blocks-gallery-item {
+		display: inline-block;
+	}
+
+	*::-ms-backdrop, .blocks-gallery-item img {
+		width: 100%;
+	}
+}

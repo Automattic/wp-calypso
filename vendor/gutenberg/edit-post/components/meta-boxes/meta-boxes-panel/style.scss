@@ -1,0 +1,26 @@
+ .edit-post-meta-boxes-panel {
+	border: 0;
+
+	// don't show unless sidebar is also opened
+	display: none;
+	.is-sidebar-opened & {
+		display: block;
+	}
+
+	.edit-post-meta-boxes-panel__toggle .components-panel__header {
+		position: inherit;
+	}
+}
+
+.edit-post-meta-boxes-panel__body {
+	display: none;
+	&.is-opened {
+		display: block;
+	}
+}
+
+.edit-post-meta-boxes-panel__toggle {
+	display: block;
+	padding: 0;
+	width: 100%;
+}

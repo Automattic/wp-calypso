@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/html block edit matches snapshot 1`] = `
+<div
+  class="wp-block-html"
+>
+  <div
+    class="components-placeholder"
+  >
+    <div
+      class="components-placeholder__label"
+    />
+    <div
+      class="components-placeholder__fieldset"
+    >
+      <span
+        class="spinner is-active"
+      />
+    </div>
+  </div>
+</div>
+`;

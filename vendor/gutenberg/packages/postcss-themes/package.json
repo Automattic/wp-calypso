@@ -1,0 +1,34 @@
+{
+	"name": "@wordpress/postcss-themes",
+	"version": "1.0.0-alpha.2",
+	"description": "PostCSS plugin to generate theme colors",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"postcss",
+		"css",
+		"postcss-plugin",
+		"colors",
+		"themes"
+	],
+	"homepage": "https://github.com/WordPress/gutenberg/tree/master/packages/postcss-themes/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WordPress/gutenberg.git"
+	},
+	"bugs": {
+		"url": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"files": [
+		"build",
+		"build-module"
+	],
+	"main": "build/index.js",
+	"dependencies": {
+		"postcss": "^6.0.16"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

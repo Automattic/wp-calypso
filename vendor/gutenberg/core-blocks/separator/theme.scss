@@ -1,0 +1,10 @@
+.wp-block-separator {
+	border: none;
+	border-bottom: 2px solid $dark-gray-100;
+	margin: 1.65em auto;
+
+	// Default, thin style
+	&:not( .is-style-wide ):not( .is-style-dots ) {
+		max-width: 100px;
+	}
+}

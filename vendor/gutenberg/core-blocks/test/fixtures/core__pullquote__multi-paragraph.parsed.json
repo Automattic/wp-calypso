@@ -1,0 +1,12 @@
+[
+    {
+        "blockName": "core/pullquote",
+        "attrs": null,
+        "innerBlocks": [],
+        "innerHTML": "\n<blockquote class=\"wp-block-pullquote alignnone\">\n    <p>Paragraph <strong>one</strong></p>\n    <p>Paragraph two</p>\n    <cite>by whomever</cite>\n</blockquote>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

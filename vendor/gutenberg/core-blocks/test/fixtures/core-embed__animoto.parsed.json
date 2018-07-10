@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/animoto",
+        "attrs": {
+            "url": "https://animoto.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-animoto wp-block-embed\">\n    https://animoto.com/\n    <figcaption>Embedded content from animoto</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

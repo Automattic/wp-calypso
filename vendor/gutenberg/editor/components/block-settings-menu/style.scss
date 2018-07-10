@@ -1,0 +1,101 @@
+.editor-block-settings-menu {
+	min-height: $empty-paragraph-height;
+
+	line-height: 1;
+}
+
+// The Blocks "More" Menu ellipsis icon button, and trash button
+.editor-block-settings-remove,
+.editor-block-settings-menu__toggle {
+	justify-content: center;
+	padding: 0;
+	width: $block-side-ui-width;
+	height: $block-side-ui-width;
+	border-radius: $button-style__radius-roundrect;
+	opacity: 0;
+
+	// use opacity to work in various editor styles
+	color: $dark-opacity-500;
+
+	&.is-visible {
+		@include fade_in;
+	}
+
+	.is-dark-theme & {
+		color: $light-opacity-500;
+	}
+
+	// Apply a background in nested contexts, only on desktop
+	@include break-small() {
+		.editor-block-list__layout .editor-block-list__layout & {
+			background: $white;
+			box-shadow: inset 0 0 0 1px $light-gray-500;
+			color: $dark-gray-500; // always show dark gray in nested contexts
+
+			&:first-child {
+				margin-bottom: -1px;
+			}
+
+			&:hover,
+			&:active,
+			&:focus {
+				z-index: z-index( '.editor-block-settings-remove' );
+			}
+		}
+	}
+}
+
+.editor-block-settings-menu__toggle .dashicon {
+	transform: rotate( 90deg );
+}
+
+// Popout menu
+.editor-block-settings-menu__popover {
+	&:before,
+	&:after {
+		margin-left: 2px;
+	}
+
+	.components-popover__content {
+		width: 182px;
+	}
+
+	.editor-block-settings-menu__content {
+		width: 100%;
+	}
+
+	.editor-block-settings-menu__separator {
+		margin-top: $item-spacing;
+		margin-bottom: $item-spacing;
+		border-top: 1px solid $light-gray-500;
+	}
+
+	.editor-block-settings-menu__title {
+		display: block;
+		padding: 6px;
+		color: $dark-gray-300;
+	}
+
+	// Menu items
+	.editor-block-settings-menu__control {
+		width: 100%;
+		justify-content: flex-start;
+		padding: 8px;
+		background: none;
+		outline: none;
+		border-radius: 0;
+		color: $dark-gray-500;
+		text-align: left;
+		cursor: pointer;
+		@include menu-style__neutral;
+
+		&:hover:not(:disabled):not([aria-disabled="true"]),
+		&:focus:not(:disabled):not([aria-disabled="true"]) {
+			@include menu-style__focus;
+		}
+
+		.dashicon {
+			margin-right: 5px;
+		}
+	}
+}

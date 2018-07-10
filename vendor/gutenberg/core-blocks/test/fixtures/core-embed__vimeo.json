@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/vimeo",
+        "isValid": true,
+        "attributes": {
+            "url": "https://vimeo.com/",
+            "caption": [
+                "Embedded content from vimeo"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-vimeo wp-block-embed\">\n    https://vimeo.com/\n    <figcaption>Embedded content from vimeo</figcaption>\n</figure>"
+    }
+]

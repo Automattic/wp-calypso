@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/screencast",
+        "attrs": {
+            "url": "https://screencast.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-screencast wp-block-embed\">\n    https://screencast.com/\n    <figcaption>Embedded content from screencast</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

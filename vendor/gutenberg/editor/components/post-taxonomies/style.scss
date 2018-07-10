@@ -1,0 +1,27 @@
+.editor-post-taxonomies__hierarchical-terms-choice {
+	margin-bottom: 5px;
+}
+
+.editor-post-taxonomies__hierarchical-terms-input[type=checkbox] {
+	margin-top: 0;
+}
+
+.editor-post-taxonomies__hierarchical-terms-subchoices {
+	margin-top: 5px;
+	margin-left: $panel-padding;
+}
+
+.components-button.editor-post-taxonomies__hierarchical-terms-submit,
+.components-button.editor-post-taxonomies__hierarchical-terms-add {
+	margin-top: 10px;
+}
+
+.editor-post-taxonomies__hierarchical-terms-label {
+	display: inline-block;
+	margin-top: 10px;
+}
+
+.editor-post-taxonomies__hierarchical-terms-input {
+	margin-top: 5px;
+	width: 100%;
+}

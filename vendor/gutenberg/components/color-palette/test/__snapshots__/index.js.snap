@@ -1,0 +1,221 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColorPalette Dropdown .renderContent should render dropdown content 1`] = `
+<Chrome
+  color="#f00"
+  disableAlpha={true}
+  hex="#ff0000"
+  hsl={
+    Object {
+      "a": 1,
+      "h": 0,
+      "l": 0.5,
+      "s": 1,
+    }
+  }
+  hsv={
+    Object {
+      "a": 1,
+      "h": 0,
+      "s": 1,
+      "v": 1,
+    }
+  }
+  oldHue={0}
+  onChange={[Function]}
+  onChangeComplete={[Function]}
+  rgb={
+    Object {
+      "a": 1,
+      "b": 0,
+      "g": 0,
+      "r": 255,
+    }
+  }
+/>
+`;
+
+exports[`ColorPalette Dropdown .renderToggle should render dropdown content 1`] = `
+<button
+  aria-expanded={true}
+  aria-label="Custom color picker"
+  className="components-color-palette__item"
+  onClick={[MockFunction]}
+  type="button"
+>
+  <span
+    className="components-color-palette__custom-color-gradient"
+  />
+</button>
+`;
+
+exports[`ColorPalette Dropdown should render it correctly 1`] = `
+<Dropdown
+  className="components-color-palette__item-wrapper components-color-palette__custom-color"
+  contentClassName="components-color-palette__picker"
+  renderContent={[Function]}
+  renderToggle={[Function]}
+/>
+`;
+
+exports[`ColorPalette should allow disabling custom color picker 1`] = `
+<div
+  className="components-color-palette"
+>
+  <div
+    className="components-color-palette__item-wrapper"
+    key="#f00"
+  >
+    <Tooltip
+      text="red"
+    >
+      <button
+        aria-label="Color: red"
+        aria-pressed={true}
+        className="components-color-palette__item is-active"
+        onClick={[Function]}
+        style={
+          Object {
+            "color": "#f00",
+          }
+        }
+        type="button"
+      />
+    </Tooltip>
+  </div>
+  <div
+    className="components-color-palette__item-wrapper"
+    key="#fff"
+  >
+    <Tooltip
+      text="white"
+    >
+      <button
+        aria-label="Color: white"
+        aria-pressed={false}
+        className="components-color-palette__item"
+        onClick={[Function]}
+        style={
+          Object {
+            "color": "#fff",
+          }
+        }
+        type="button"
+      />
+    </Tooltip>
+  </div>
+  <div
+    className="components-color-palette__item-wrapper"
+    key="#00f"
+  >
+    <Tooltip
+      text="blue"
+    >
+      <button
+        aria-label="Color: blue"
+        aria-pressed={false}
+        className="components-color-palette__item"
+        onClick={[Function]}
+        style={
+          Object {
+            "color": "#00f",
+          }
+        }
+        type="button"
+      />
+    </Tooltip>
+  </div>
+  <Button
+    className="components-color-palette__clear"
+    isLink={true}
+    onClick={[Function]}
+    type="button"
+  >
+    Clear
+  </Button>
+</div>
+`;
+
+exports[`ColorPalette should render a dynamic toolbar of colors 1`] = `
+<div
+  className="components-color-palette"
+>
+  <div
+    className="components-color-palette__item-wrapper"
+    key="#f00"
+  >
+    <Tooltip
+      text="red"
+    >
+      <button
+        aria-label="Color: red"
+        aria-pressed={true}
+        className="components-color-palette__item is-active"
+        onClick={[Function]}
+        style={
+          Object {
+            "color": "#f00",
+          }
+        }
+        type="button"
+      />
+    </Tooltip>
+  </div>
+  <div
+    className="components-color-palette__item-wrapper"
+    key="#fff"
+  >
+    <Tooltip
+      text="white"
+    >
+      <button
+        aria-label="Color: white"
+        aria-pressed={false}
+        className="components-color-palette__item"
+        onClick={[Function]}
+        style={
+          Object {
+            "color": "#fff",
+          }
+        }
+        type="button"
+      />
+    </Tooltip>
+  </div>
+  <div
+    className="components-color-palette__item-wrapper"
+    key="#00f"
+  >
+    <Tooltip
+      text="blue"
+    >
+      <button
+        aria-label="Color: blue"
+        aria-pressed={false}
+        className="components-color-palette__item"
+        onClick={[Function]}
+        style={
+          Object {
+            "color": "#00f",
+          }
+        }
+        type="button"
+      />
+    </Tooltip>
+  </div>
+  <Dropdown
+    className="components-color-palette__item-wrapper components-color-palette__custom-color"
+    contentClassName="components-color-palette__picker"
+    renderContent={[Function]}
+    renderToggle={[Function]}
+  />
+  <Button
+    className="components-color-palette__clear"
+    isLink={true}
+    onClick={[Function]}
+    type="button"
+  >
+    Clear
+  </Button>
+</div>
+`;

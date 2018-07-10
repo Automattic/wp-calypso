@@ -1,0 +1,97 @@
+.wp-block-gallery {
+	display: flex;
+	flex-wrap: wrap;
+	list-style-type: none;
+	padding: 0px;
+	// allow gallery items to go edge to edge
+	margin: 0 -8px 0 -8px;
+
+	.blocks-gallery-image,
+	.blocks-gallery-item {
+		margin: 8px;
+		display: flex;
+		flex-grow: 1;
+		flex-direction: column;
+		justify-content: center;
+		position: relative;
+
+		figure {
+			margin: 0;
+			height: 100%;
+			display: flex;
+			align-items: flex-end;
+		}
+
+		img {
+			display: block;
+			max-width: 100%;
+			height: auto;
+		}
+
+		figcaption {
+			position: absolute;
+			width: 100%;
+			max-height: 100%;
+			overflow: auto;
+			padding: 40px 10px 5px;
+			color: $white;
+			text-align: center;
+			font-size: $default-font-size;
+			background: linear-gradient( 0deg, rgba( $color: $black, $alpha: 0.7 ) 0, rgba($color: $black, $alpha: 0.3) 60%, transparent );
+	
+			img {
+				display: inline;
+			}
+		}
+	}
+
+	// Cropped
+	&.is-cropped .blocks-gallery-image,
+	&.is-cropped .blocks-gallery-item {
+		a,
+		img {
+			flex: 1;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+
+		}
+	}
+
+	// Responsive fallback value, 2 columns
+	& .blocks-gallery-image,
+	& .blocks-gallery-item {
+		width: calc( 100% / 2 - 16px );
+	}
+
+	&.columns-1 .blocks-gallery-image,
+	&.columns-1 .blocks-gallery-item {
+		width: calc(100% / 1 - 16px);
+	}
+
+	@include break-small {
+		@for $i from 3 through 8 {
+			&.columns-#{ $i } .blocks-gallery-image,
+			&.columns-#{ $i } .blocks-gallery-item {
+				width: calc(100% / #{ $i } - 16px );
+			}
+		}
+	}
+
+	// Make the "Add new Gallery item" button full-width (so it always appears
+	// below other items).
+	.blocks-gallery-item {
+		&.has-add-item-button {
+			width: 100%;
+		}
+	}
+
+	// Apply max-width to floated items that have no intrinsic width
+	[data-align="left"] &,
+	[data-align="right"] &,
+	&.alignleft,
+	&.alignright {
+		max-width: $content-width / 2;
+		width: 100%;
+	}
+}

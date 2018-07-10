@@ -1,0 +1,179 @@
+.components-form-token-field {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: $white;
+	border: 1px solid $light-gray-700;
+	color: $dark-gray-700;
+	cursor: text;
+
+	@include input-style__neutral();
+
+	&.is-disabled {
+		background: $light-gray-500;
+		border-color: $light-gray-700;
+	}
+
+	&.is-active {
+		@include input-style__focus();
+	}
+}
+
+.components-form-token-field__input-container {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	padding: 4px;
+
+	// Token input
+	input[type="text"].components-form-token-field__input {
+		display: inline-block;
+		width: auto;
+		max-width: 100%;
+		margin: 2px 0 2px 8px;
+		padding: 0;
+		line-height: 24px;
+		background: inherit;
+		border: 0;
+		font-size: $default-font-size;
+		color: $dark-gray-800;
+		box-shadow: none;
+
+		&:focus,
+		.components-form-token-field.is-active & {
+			outline: none;
+			box-shadow: none;
+		}
+	}
+}
+
+// Tokens
+.components-form-token-field__token {
+	font-size: $default-font-size;
+	display: flex;
+	margin: 2px 4px 2px 0;
+	color: $dark-gray-700;
+	overflow: hidden;
+
+	&.is-success {
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token {
+			background: $alert-green;
+		}
+	}
+
+	&.is-error {
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token {
+			background: $alert-red;
+		}
+	}
+
+	&.is-validating {
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token {
+			color: $dark-gray-500;
+		}
+	}
+
+	&.is-borderless {
+		position: relative;
+		padding: 0 16px 0 0;
+
+		.components-form-token-field__token-text {
+			background: transparent;
+			color: theme( secondary );
+		}
+
+		.components-form-token-field__remove-token {
+			background: transparent;
+			color: $dark-gray-500;
+			position: absolute;
+			top: 1px;
+			right: 0;
+		}
+
+		&.is-success {
+			.components-form-token-field__token-text {
+				color: $alert-green;
+			}
+		}
+
+		&.is-error {
+			.components-form-token-field__token-text {
+				color: $alert-red;
+				border-radius: 4px 0 0 4px;
+				padding: 0 4px 0 6px;
+			}
+		}
+
+		&.is-validating {
+			.components-form-token-field__token-text {
+				color: $dark-gray-800;
+			}
+		}
+	}
+
+	&.is-disabled {
+		.components-form-token-field__remove-token {
+			cursor: default;
+		}
+	}
+}
+
+.components-form-token-field__token-text,
+.components-form-token-field__remove-token.components-icon-button {
+	display: inline-block;
+	line-height: 24px;
+	background: $light-gray-500;
+	transition: all .2s cubic-bezier( .4, 1, .4, 1 );
+}
+
+.components-form-token-field__token-text {
+	border-radius: 12px 0 0 12px;
+	padding: 0 4px 0 8px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.components-form-token-field__remove-token.components-icon-button {
+	cursor: pointer;
+	border-radius: 0 12px 12px 0;
+	padding: 0 2px;
+	color: $dark-gray-500;
+	line-height: 10px;
+
+	&:hover {
+		color: $dark-gray-700;
+	}
+}
+
+// Suggestion list
+.components-form-token-field__suggestions-list {
+	background: $white;
+	max-height: 9em;
+	overflow-y: scroll;
+	transition: all .15s ease-in-out;
+	list-style: none;
+	border-top: 1px solid $dark-gray-300;
+	margin: 0;
+	padding-top: 3px;
+}
+
+.components-form-token-field__suggestion {
+	color: $dark-gray-500;
+	display: block;
+	font-size: $default-font-size;
+	padding: 4px 8px;
+	cursor: pointer;
+
+	&.is-selected {
+		background: $blue-dark-900;
+		color: $white;
+	}
+}
+
+.components-form-token-field__suggestion-match {
+	text-decoration: underline;
+}

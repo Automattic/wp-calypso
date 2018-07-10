@@ -1,0 +1,17 @@
+.editor-post-format {
+	flex-direction: column;
+	align-items: stretch;
+	width: 100%;
+}
+
+.editor-post-format__content {
+	display: inline-flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.editor-post-format__suggestion {
+	text-align: right;
+	font-size: $default-font-size;
+}

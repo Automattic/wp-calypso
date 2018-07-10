@@ -1,0 +1,36 @@
+.components-autocomplete__popover .components-popover__content {
+	min-width: 200px;
+}
+
+.components-autocomplete__popover .components-autocomplete__results {
+	padding: 3px;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+
+	&:empty {
+		display: none;
+	}
+}
+
+.components-autocomplete__result.components-button {
+	margin-bottom: 0;
+	font-family: $default-font;
+	font-size: $default-font-size;
+	color: $dark-gray-500;
+	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+	flex-shrink: 0;
+	align-items: center;
+	padding: 6px;
+	text-align: left;
+
+	&.is-selected {
+		@include button-style__focus-active;
+	}
+
+	&:hover {
+		@include button-style__hover;
+	}
+}

@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/youtube",
+        "attrs": {
+            "url": "https://youtube.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-youtube wp-block-embed\">\n    https://youtube.com/\n    <figcaption>Embedded content from youtube</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

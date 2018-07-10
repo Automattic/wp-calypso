@@ -1,0 +1,126 @@
+
+.components-range-control {
+	.components-base-control__field {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	.dashicon {
+		flex-shrink: 0;
+		margin-right: 10px;
+	}
+
+	.components-base-control__label {
+		width: 100%;
+	}
+
+	.components-range-control__slider {
+		margin-left: 0;
+		flex: 1;
+	}
+}
+
+// creating mixin because we can't do multiline variables, and we can't comma-group the selectors for styling the range slider
+@mixin range-thumb() {
+	height: 18px;
+	width: 18px;
+	border-radius: 50%;
+	cursor: pointer;
+	background: $dark-gray-500;
+	border: 4px solid transparent;
+	background-clip: padding-box;
+	box-sizing: border-box;
+}
+
+@mixin range-track() {
+	height: 3px;
+	cursor: pointer;
+	background: $light-gray-500;
+	border-radius: 1.5px;
+}
+
+.components-range-control__slider {
+	width: 100%;
+	margin-left: $item-spacing;
+	padding: 0;
+	-webkit-appearance: none;
+	background: transparent;
+
+	/**
+ 	 * Thumb
+ 	 */
+
+	// webkit
+	&::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		@include range-thumb();
+		margin-top: -7px;	// necessary for chrome
+	}
+
+	// moz
+	&::-moz-range-thumb {
+		@include range-thumb();
+	}
+
+	// ie
+	&::-ms-thumb {
+		@include range-thumb();
+		margin-top: 0;	// necessary because edge inherits from chrome
+		height: 14px;
+		width: 14px;
+		border: 2px solid transparent;
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	// webkit
+	&:focus::-webkit-slider-thumb {
+		@include button-style__focus-active;
+	}
+
+	// moz
+	&:focus::-moz-range-thumb {
+		@include button-style__focus-active;
+	}
+
+	// ie
+	&:focus::-ms-thumb {
+		@include button-style__focus-active;
+	}
+
+	/**
+ 	 * Track
+ 	 */
+
+	 // webkit
+	&::-webkit-slider-runnable-track {
+		@include range-track();
+		margin-top: -4px;
+	}
+
+	// moz
+	&::-moz-range-track {
+		@include range-track();
+	}
+
+	// ie
+	&::-ms-track {
+		margin-top: -4px;
+		background: transparent;
+		border-color: transparent;
+		color: transparent;
+		@include range-track();
+	}
+}
+
+.components-range-control__number {
+	display: inline-block;
+	margin-left: $item-spacing;
+	font-weight: 500;
+	width: 50px;
+	padding: 3px 5px !important;
+}

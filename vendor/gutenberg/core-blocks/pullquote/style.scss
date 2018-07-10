@@ -1,0 +1,23 @@
+.wp-block-pullquote {
+	padding: 3em 0;
+	text-align: center;
+
+	&.alignleft,
+	&.alignright {
+		max-width: 400px;
+
+		> p {
+			font-size: 20px;
+		}
+	}
+
+	> p {
+		font-size: 24px;
+		line-height: 1.6;
+	}
+
+	cite,
+	footer {
+		position: relative;
+	}
+}

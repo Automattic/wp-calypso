@@ -1,0 +1,53 @@
+.editor-format-toolbar {
+	display: inline-flex;
+}
+
+.editor-format-toolbar__link-container {
+	position: absolute;
+	transform: translateX( -50% );
+}
+
+.editor-format-toolbar__link-modal-line {
+	display: flex;
+	flex-direction: row;
+	min-width: 0;
+	align-items: flex-start;
+
+	.components-button {
+		flex-shrink: 0;
+		width: $icon-button-size;
+		height: $icon-button-size;
+	}
+
+	.editor-url-input {
+		flex-grow: 1;
+	}
+}
+
+.editor-format-toolbar__link-settings-toggle .dashicon {
+	transform: rotate(90deg);
+}
+
+.editor-format-toolbar__link-value {
+	margin: $item-spacing - 1px; // subtract border
+	flex-grow: 1;
+	flex-shrink: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+	white-space: nowrap;
+	min-width: 150px;
+	max-width: 500px;
+}
+
+.editor-format-toolbar__link-settings {
+	padding: 7px 8px;
+	border-top: 1px solid $light-gray-500;
+	padding-top: 8px; // add 1px for the border
+
+	.components-base-control {
+		margin: 0;
+		flex-grow: 1;
+		flex-shrink: 1;
+	}
+}

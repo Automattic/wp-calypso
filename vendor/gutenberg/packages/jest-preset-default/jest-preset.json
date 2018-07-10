@@ -1,0 +1,28 @@
+{
+	"coverageDirectory": "coverage",
+	"coveragePathIgnorePatterns": [
+		"/node_modules/",
+		"<rootDir>/.*/build/",
+		"<rootDir>/.*/build-module/"
+	],
+	"moduleNameMapper": {
+		"\\.(scss|css)$": "<rootDir>/node_modules/@wordpress/jest-preset-default/scripts/style-mock.js"
+	},
+	"modulePaths": [
+		"<rootDir>"
+	],
+	"setupFiles": [
+		"<rootDir>/node_modules/@wordpress/jest-preset-default/scripts/setup-globals.js"
+	],
+	"setupTestFrameworkScriptFile": "<rootDir>/node_modules/@wordpress/jest-preset-default/scripts/setup-test-framework.js",
+	"testMatch": [
+		"**/__tests__/**/*.js",
+		"**/?(*.)(spec|test).js",
+		"**/test/*.js"
+	],
+	"timers": "fake",
+	"transform": {
+		"^.+\\.jsx?$": "babel-jest"
+	},
+	"verbose": true
+}

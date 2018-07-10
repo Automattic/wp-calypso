@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BlockSwitcher should render switcher with blocks 1`] = `
+<Dropdown
+  className="editor-block-switcher"
+  contentClassName="editor-block-switcher__popover"
+  position="bottom right"
+  renderContent={[Function]}
+  renderToggle={[Function]}
+/>
+`;

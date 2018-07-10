@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/twitter",
+        "isValid": true,
+        "attributes": {
+            "url": "https://twitter.com/automattic",
+            "caption": [
+                "We are Automattic"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-twitter wp-block-embed\">\n    https://twitter.com/automattic\n    <figcaption>We are Automattic</figcaption>\n</figure>"
+    }
+]

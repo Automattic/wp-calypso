@@ -1,0 +1,89 @@
+// The scrim behind the modal window.
+.components-modal__screen-overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color: rgba( $white, .4 );
+	z-index: z-index( '.components-modal__screen-overlay' );
+}
+
+// The modal window element.
+.components-modal__frame {
+	// In small screens the content needs to be full width.
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: 0;
+
+	// Show slightly bigger on small screens.
+	@include break-small() {
+		position: absolute;
+		right: auto;
+		bottom: auto;
+		max-width: calc( 100% - #{ $panel-padding } - #{ $panel-padding } );
+		margin-right: -50%;
+		transform: translate( -50%, 0 );
+		top: $panel-padding;
+		left: 50%;
+		height: 90%;
+	}
+
+	// Show pretty big on desktop breakpoints.
+	@include break-medium () {
+		max-width: calc( #{ $break-medium } - #{ $panel-padding } - #{ $panel-padding } );
+		transform: translate( -50%, -30% );
+		top: 30%;
+		left: 50%;
+		height: 70%;
+	}
+
+	border: 1px solid $light-gray-500;
+	background-color: $white;
+	box-shadow: $shadow-modal;
+	outline: none;
+}
+
+.components-modal__header {
+	box-sizing: border-box;
+	height: $header-height;
+	border-bottom: 1px solid $light-gray-500;
+	padding: $item-spacing $item-spacing $item-spacing $panel-padding;
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	justify-content: space-between;
+}
+
+.components-modal__header-heading-container {
+	align-items: center;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+}
+
+.components-modal__header-heading {
+	font-size: 1em;
+	font-weight: normal;
+}
+
+.components-modal__header-icon-container {
+	display: inline-block;
+
+	svg {
+		max-width: $icon-button-size;
+		max-height: $icon-button-size;
+		padding: 8px;
+	}
+}
+
+.components-modal__content {
+	// The height of the content is the height of it's parent, minus the header. after that, the offset was 3px.
+	height: calc( 100% - #{ $header-height } - #{ $admin-bar-height } );
+	overflow: auto;
+	padding: $panel-padding;
+}

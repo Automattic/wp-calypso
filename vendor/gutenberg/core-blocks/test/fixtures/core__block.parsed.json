@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core/block",
+        "attrs": {
+            "ref": 123
+        },
+        "innerBlocks": [],
+        "innerHTML": ""
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

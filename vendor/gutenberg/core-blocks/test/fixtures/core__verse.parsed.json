@@ -1,0 +1,12 @@
+[
+    {
+        "blockName": "core/verse",
+        "attrs": null,
+        "innerBlocks": [],
+        "innerHTML": "\n<pre class=\"wp-block-verse\">A <em>verse</em>…<br>And more!</pre>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

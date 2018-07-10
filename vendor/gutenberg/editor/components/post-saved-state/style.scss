@@ -1,0 +1,36 @@
+.editor-post-saved-state {
+	display: flex;
+	align-items: center;
+	color: $dark-gray-500;
+	overflow: hidden;
+
+	&.is-saving {
+		animation: loading_fade .5s infinite;
+	}
+
+	.dashicon {
+		display: inline-block;
+	    flex: 0 0 auto;
+	}
+}
+
+.editor-post-saved-state,
+.editor-post-save-draft {
+	white-space: nowrap;
+	padding: 8px 4px;
+	width: $icon-button-size - 8px;
+
+	.dashicon {
+		margin-right: 8px;
+	}
+
+	@include break-small() {
+		padding: 8px;
+		width: auto;
+		text-indent: inherit;
+
+		.dashicon {
+			margin-right: 4px;
+		}
+	}
+}

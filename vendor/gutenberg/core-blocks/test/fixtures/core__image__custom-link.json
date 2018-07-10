@@ -1,0 +1,16 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/image",
+        "isValid": true,
+        "attributes": {
+            "url": "https://cldup.com/uuUqE_dXzy.jpg",
+            "alt": "",
+            "caption": [],
+            "href": "https://wordpress.org/",
+            "linkDestination": "custom"
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-image\"><a href=\"https://wordpress.org/\"><img src=\"https://cldup.com/uuUqE_dXzy.jpg\" alt=\"\" /></a></figure>"
+    }
+]

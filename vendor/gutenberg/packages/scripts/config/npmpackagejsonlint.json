@@ -1,0 +1,3 @@
+{
+	"extends": "@wordpress/npm-package-json-lint-config"
+}

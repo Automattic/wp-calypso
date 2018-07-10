@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/tumblr",
+        "isValid": true,
+        "attributes": {
+            "url": "https://tumblr.com/",
+            "caption": [
+                "Embedded content from tumblr"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-tumblr wp-block-embed\">\n    https://tumblr.com/\n    <figcaption>Embedded content from tumblr</figcaption>\n</figure>"
+    }
+]

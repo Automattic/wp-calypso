@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/freeform block edit matches snapshot 1`] = `
+Array [
+  <div
+    class="freeform-toolbar"
+    data-placeholder="Classic"
+    id="toolbar-undefined"
+  />,
+  <div
+    class="wp-block-freeform core-blocks-rich-text__tinymce"
+    id="editor-undefined"
+  />,
+]
+`;

@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/photobucket",
+        "attrs": {
+            "url": "https://photobucket.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-photobucket wp-block-embed\">\n    https://photobucket.com/\n    <figcaption>Embedded content from photobucket</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

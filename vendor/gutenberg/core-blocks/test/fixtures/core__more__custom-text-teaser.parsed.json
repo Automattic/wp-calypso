@@ -1,0 +1,15 @@
+[
+    {
+        "blockName": "core/more",
+        "attrs": {
+            "customText": "Continue Reading",
+            "noTeaser": true
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<!--more Continue Reading-->\n<!--noteaser-->\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

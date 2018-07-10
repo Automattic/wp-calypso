@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/instagram",
+        "isValid": true,
+        "attributes": {
+            "url": "https://instagram.com/",
+            "caption": [
+                "Embedded content from instagram"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-instagram wp-block-embed\">\n    https://instagram.com/\n    <figcaption>Embedded content from instagram</figcaption>\n</figure>"
+    }
+]

@@ -1,0 +1,37 @@
+.components-icon-button {
+	display: flex;
+	align-items: center;
+	padding: 8px;
+	margin: 0;
+	border: none;
+	background: none;
+	color: $dark-gray-500;
+	position: relative;
+	overflow: hidden;
+	text-indent: 4px;
+
+	.dashicon {
+		display: inline-block;
+		flex: 0 0 auto;
+	}
+
+	// Ensure that even SVG icons that don't include the .dashicon class are colored
+	svg {
+		fill: currentColor;
+		outline: none;
+	}
+
+	&:not( :disabled ):not( [aria-disabled="true"] ):not( .is-default ):hover {
+		@include button-style__hover;
+	}
+
+	&:not( :disabled ):not( [aria-disabled="true"] ):active {
+		@include button-style__active;
+	}
+
+	&[aria-disabled=true]:focus,
+	&:disabled:focus {
+		box-shadow: none;
+	}
+
+}

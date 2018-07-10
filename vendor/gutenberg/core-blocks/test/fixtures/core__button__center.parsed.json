@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core/button",
+        "attrs": {
+            "align": "center"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<div class=\"wp-block-button aligncenter\"><a class=\"wp-block-button__link\" href=\"https://github.com/WordPress/gutenberg\">Help build Gutenberg</a></div>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

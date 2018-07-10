@@ -1,0 +1,82 @@
+.editor-post-permalink {
+	display: inline-flex;
+	align-items: center;
+	background: $white;
+	padding: 5px;
+	font-family: $default-font;
+	font-size: $default-font-size;
+	height: 40px;
+	white-space: nowrap;
+
+	// use opacity to work in various editor styles
+	border: 1px solid $dark-opacity-light-500;
+	border-bottom: none;
+	background-clip: padding-box;
+	box-sizing: padding-box;
+
+	// put toolbar snugly to edge on mobile
+	margin-left: -$block-padding - 1px;	// stack borders
+	margin-right: -$block-padding - 1px;
+	@include break-small() {
+		margin-left: -1px;
+		margin-right: -1px;
+	}
+}
+
+.editor-post-permalink__copy {
+	border-radius: 4px;
+	padding: 6px;
+}
+
+.editor-post-permalink__copy.is-copied {
+	opacity: 0.3;
+}
+
+.editor-post-permalink__label {
+	margin: 0 10px 0 5px;
+}
+
+.editor-post-permalink__link {
+	color: $dark-gray-200;
+	text-decoration: underline;
+	margin-right: 10px;
+	width: 100%;
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+
+	&:after {
+		@include long-content-fade( $size: 20%, $edge: 1px );
+	}
+}
+
+.editor-post-permalink-editor {
+	width: 100%;
+	min-width: 20%;
+	display: inline-flex;
+	align-items: center;
+
+	// Higher specificity required to override core margin styles
+	.editor-post-permalink-editor__save {
+		margin-left: auto;
+	}
+}
+
+.editor-post-permalink-editor__prefix {
+	color: $dark-gray-300;
+	min-width: 20%;
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.editor-post-permalink-editor__edit {
+	min-width: 20%;
+	margin: 0 5px;
+}
+
+.editor-post-permalink-editor__suffix {
+	color: $dark-gray-300;
+	margin-right: 10px;
+}

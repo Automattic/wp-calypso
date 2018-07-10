@@ -1,0 +1,17 @@
+.wp-block-table {
+	table {
+		border-collapse: collapse;
+		width: 100%;
+	}
+
+	td,
+	th {
+		padding: 0.5em;
+		border: 1px solid currentColor;
+	}
+
+	td[data-mce-selected="1"],
+	th[data-mce-selected="1"] {
+		background-color: $light-gray-300;
+	}
+}

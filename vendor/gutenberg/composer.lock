@@ -1,0 +1,347 @@
+{
+	"_readme": [
+		"This file locks the dependencies of your project to a known state",
+		"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+		"This file is @generated automatically"
+	],
+	"content-hash": "6294e908cbc6a7c0e62e92f44e7a428c",
+	"packages": [
+		{
+			"name": "composer/installers",
+			"version": "v1.4.0",
+			"source": {
+				"type": "git",
+				"url": "https://github.com/composer/installers.git",
+				"reference": "9ce17fb70e9a38dd8acff0636a29f5cf4d575c1b"
+			},
+			"dist": {
+				"type": "zip",
+				"url": "https://api.github.com/repos/composer/installers/zipball/9ce17fb70e9a38dd8acff0636a29f5cf4d575c1b",
+				"reference": "9ce17fb70e9a38dd8acff0636a29f5cf4d575c1b",
+				"shasum": ""
+			},
+			"require": {
+				"composer-plugin-api": "^1.0"
+			},
+			"replace": {
+				"roundcube/plugin-installer": "*",
+				"shama/baton": "*"
+			},
+			"require-dev": {
+				"composer/composer": "1.0.*@dev",
+				"phpunit/phpunit": "4.1.*"
+			},
+			"type": "composer-plugin",
+			"extra": {
+				"class": "Composer\\Installers\\Plugin",
+				"branch-alias": {
+					"dev-master": "1.0-dev"
+				}
+			},
+			"autoload": {
+				"psr-4": {
+					"Composer\\Installers\\": "src/Composer/Installers"
+				}
+			},
+			"notification-url": "https://packagist.org/downloads/",
+			"license": [
+				"MIT"
+			],
+			"authors": [
+				{
+					"name": "Kyle Robinson Young",
+					"email": "kyle@dontkry.com",
+					"homepage": "https://github.com/shama"
+				}
+			],
+			"description": "A multi-framework Composer library installer",
+			"homepage": "https://composer.github.io/installers/",
+			"keywords": [
+				"Craft",
+				"Dolibarr",
+				"Eliasis",
+				"Hurad",
+				"ImageCMS",
+				"Kanboard",
+				"Lan Management System",
+				"MODX Evo",
+				"Mautic",
+				"Maya",
+				"OXID",
+				"Plentymarkets",
+				"Porto",
+				"RadPHP",
+				"SMF",
+				"Thelia",
+				"WolfCMS",
+				"agl",
+				"aimeos",
+				"annotatecms",
+				"attogram",
+				"bitrix",
+				"cakephp",
+				"chef",
+				"cockpit",
+				"codeigniter",
+				"concrete5",
+				"croogo",
+				"dokuwiki",
+				"drupal",
+				"eZ Platform",
+				"elgg",
+				"expressionengine",
+				"fuelphp",
+				"grav",
+				"installer",
+				"itop",
+				"joomla",
+				"kohana",
+				"laravel",
+				"lavalite",
+				"lithium",
+				"magento",
+				"mako",
+				"mediawiki",
+				"modulework",
+				"moodle",
+				"osclass",
+				"phpbb",
+				"piwik",
+				"ppi",
+				"puppet",
+				"reindex",
+				"roundcube",
+				"shopware",
+				"silverstripe",
+				"sydes",
+				"symfony",
+				"typo3",
+				"wordpress",
+				"yawik",
+				"zend",
+				"zikula"
+			],
+			"time": "2017-08-09T07:53:48+00:00"
+		}
+	],
+	"packages-dev": [
+		{
+			"name": "dealerdirect/phpcodesniffer-composer-installer",
+			"version": "v0.4.3",
+			"source": {
+				"type": "git",
+				"url": "https://github.com/DealerDirect/phpcodesniffer-composer-installer.git",
+				"reference": "63c0ec0ac286d31651d3c70e5bf76ad87db3ba23"
+			},
+			"dist": {
+				"type": "zip",
+				"url": "https://api.github.com/repos/DealerDirect/phpcodesniffer-composer-installer/zipball/63c0ec0ac286d31651d3c70e5bf76ad87db3ba23",
+				"reference": "63c0ec0ac286d31651d3c70e5bf76ad87db3ba23",
+				"shasum": ""
+			},
+			"require": {
+				"composer-plugin-api": "^1.0",
+				"php": "^5.3|^7",
+				"squizlabs/php_codesniffer": "*"
+			},
+			"require-dev": {
+				"composer/composer": "*",
+				"wimg/php-compatibility": "^8.0"
+			},
+			"suggest": {
+				"dealerdirect/qa-tools": "All the PHP QA tools you'll need"
+			},
+			"type": "composer-plugin",
+			"extra": {
+				"class": "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin"
+			},
+			"autoload": {
+				"psr-4": {
+					"Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\": "src/"
+				}
+			},
+			"notification-url": "https://packagist.org/downloads/",
+			"license": [
+				"MIT"
+			],
+			"authors": [
+				{
+					"name": "Franck Nijhof",
+					"email": "f.nijhof@dealerdirect.nl",
+					"homepage": "http://workingatdealerdirect.eu",
+					"role": "Developer"
+				}
+			],
+			"description": "PHP_CodeSniffer Standards Composer Installer Plugin",
+			"homepage": "http://workingatdealerdirect.eu",
+			"keywords": [
+				"PHPCodeSniffer",
+				"PHP_CodeSniffer",
+				"code quality",
+				"codesniffer",
+				"composer",
+				"installer",
+				"phpcs",
+				"plugin",
+				"qa",
+				"quality",
+				"standard",
+				"standards",
+				"style guide",
+				"stylecheck",
+				"tests"
+			],
+			"time": "2017-09-18T07:49:36+00:00"
+		},
+		{
+			"name": "squizlabs/php_codesniffer",
+			"version": "3.1.1",
+			"source": {
+				"type": "git",
+				"url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
+				"reference": "d667e245d5dcd4d7bf80f26f2c947d476b66213e"
+			},
+			"dist": {
+				"type": "zip",
+				"url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/d667e245d5dcd4d7bf80f26f2c947d476b66213e",
+				"reference": "d667e245d5dcd4d7bf80f26f2c947d476b66213e",
+				"shasum": ""
+			},
+			"require": {
+				"ext-simplexml": "*",
+				"ext-tokenizer": "*",
+				"ext-xmlwriter": "*",
+				"php": ">=5.4.0"
+			},
+			"require-dev": {
+				"phpunit/phpunit": "^4.0 || ^5.0 || ^6.0"
+			},
+			"bin": [
+				"bin/phpcs",
+				"bin/phpcbf"
+			],
+			"type": "library",
+			"extra": {
+				"branch-alias": {
+					"dev-master": "3.x-dev"
+				}
+			},
+			"notification-url": "https://packagist.org/downloads/",
+			"license": [
+				"BSD-3-Clause"
+			],
+			"authors": [
+				{
+					"name": "Greg Sherwood",
+					"role": "lead"
+				}
+			],
+			"description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+			"homepage": "http://www.squizlabs.com/php-codesniffer",
+			"keywords": [
+				"phpcs",
+				"standards"
+			],
+			"time": "2017-10-16T22:40:25+00:00"
+		},
+		{
+			"name": "wimg/php-compatibility",
+			"version": "8.0.1",
+			"source": {
+				"type": "git",
+				"url": "https://github.com/wimg/PHPCompatibility.git",
+				"reference": "4c4385fb891dff0501009670f988d4fe36785249"
+			},
+			"dist": {
+				"type": "zip",
+				"url": "https://api.github.com/repos/wimg/PHPCompatibility/zipball/4c4385fb891dff0501009670f988d4fe36785249",
+				"reference": "4c4385fb891dff0501009670f988d4fe36785249",
+				"shasum": ""
+			},
+			"require": {
+				"php": ">=5.3",
+				"squizlabs/php_codesniffer": "^2.2 || ^3.0.2"
+			},
+			"conflict": {
+				"squizlabs/php_codesniffer": "2.6.2"
+			},
+			"require-dev": {
+				"phpunit/phpunit": "^4.0 || ^5.0 || ^6.0"
+			},
+			"suggest": {
+				"dealerdirect/phpcodesniffer-composer-installer": "^0.4.1"
+			},
+			"type": "phpcodesniffer-standard",
+			"autoload": {
+				"psr-4": {
+					"PHPCompatibility\\": "PHPCompatibility/"
+				}
+			},
+			"notification-url": "https://packagist.org/downloads/",
+			"license": [
+				"LGPL-3.0"
+			],
+			"authors": [
+				{
+					"name": "Wim Godden",
+					"role": "lead"
+				}
+			],
+			"description": "A set of sniffs for PHP_CodeSniffer that checks for PHP version compatibility.",
+			"homepage": "http://techblog.wimgodden.be/tag/codesniffer/",
+			"keywords": [
+				"compatibility",
+				"phpcs",
+				"standards"
+			],
+			"time": "2017-08-07T19:39:05+00:00"
+		},
+		{
+			"name": "wp-coding-standards/wpcs",
+			"version": "0.14.0",
+			"source": {
+				"type": "git",
+				"url": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git",
+				"reference": "8cadf48fa1c70b2381988e0a79e029e011a8f41c"
+			},
+			"dist": {
+				"type": "zip",
+				"url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/8cadf48fa1c70b2381988e0a79e029e011a8f41c",
+				"reference": "8cadf48fa1c70b2381988e0a79e029e011a8f41c",
+				"shasum": ""
+			},
+			"require": {
+				"php": ">=5.3",
+				"squizlabs/php_codesniffer": "^2.9.0 || ^3.0.2"
+			},
+			"suggest": {
+				"dealerdirect/phpcodesniffer-composer-installer": "^0.4.3"
+			},
+			"type": "phpcodesniffer-standard",
+			"notification-url": "https://packagist.org/downloads/",
+			"license": [
+				"MIT"
+			],
+			"authors": [
+				{
+					"name": "Contributors",
+					"homepage": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/graphs/contributors"
+				}
+			],
+			"description": "PHP_CodeSniffer rules (sniffs) to enforce WordPress coding conventions",
+			"keywords": [
+				"phpcs",
+				"standards",
+				"wordpress"
+			],
+			"time": "2017-11-01T15:10:46+00:00"
+		}
+	],
+	"aliases": [],
+	"minimum-stability": "stable",
+	"stability-flags": [],
+	"prefer-stable": false,
+	"prefer-lowest": false,
+	"platform": [],
+	"platform-dev": []
+}

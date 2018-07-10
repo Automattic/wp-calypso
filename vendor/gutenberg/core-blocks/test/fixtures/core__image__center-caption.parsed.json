@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core/image",
+        "attrs": {
+            "align": "center"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-image aligncenter\"><img src=\"https://cldup.com/YLYhpou2oq.jpg\" alt=\"\" /><figcaption>Give it a try. Press the &quot;really wide&quot; button on the image toolbar.</figcaption></figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

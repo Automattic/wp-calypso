@@ -1,0 +1,17 @@
+.wp-block-quote {
+	margin: 20px 0;
+
+	cite,
+	footer {
+		color: $dark-gray-300;
+		font-size: $default-font-size;
+		margin-top: 1em;
+		position: relative;
+		font-style: normal;
+	}
+}
+
+.wp-block-quote:not(.is-large):not(.is-style-large) {
+	border-left: 4px solid $black;
+	padding-left: 1em;
+}

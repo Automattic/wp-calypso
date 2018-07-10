@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AlignmentToolbar should match snapshot 1`] = `
+<Toolbar
+  controls={
+    Array [
+      Object {
+        "align": "left",
+        "icon": "editor-alignleft",
+        "isActive": true,
+        "onClick": [Function],
+        "title": "Align left",
+      },
+      Object {
+        "align": "center",
+        "icon": "editor-aligncenter",
+        "isActive": false,
+        "onClick": [Function],
+        "title": "Align center",
+      },
+      Object {
+        "align": "right",
+        "icon": "editor-alignright",
+        "isActive": false,
+        "onClick": [Function],
+        "title": "Align right",
+      },
+    ]
+  }
+/>
+`;

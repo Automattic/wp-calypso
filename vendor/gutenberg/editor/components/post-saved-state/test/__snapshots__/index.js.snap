@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PostSavedState returns a switch to draft link if the post is published 1`] = `<WithSelect(WithDispatch(PostSwitchToDraftButton)) />`;

@@ -1,0 +1,34 @@
+.editor-block-toolbar {
+	display: inline-flex;
+	flex-grow: 1;
+	width: 100%;
+	overflow: auto; // Allow horizontal scrolling on mobile.
+	position: relative;
+
+	// Allow overflow on desktop.
+	@include break-small() {
+		overflow: inherit;
+	}
+
+	// Show a left border on the parent container.
+	border-left: $border-width solid $light-gray-500;
+
+	// The component is born with a border, but we only need some of them.
+	.components-toolbar {
+		border: 0; 
+		border-top: $border-width solid $light-gray-500;
+		border-bottom: $border-width solid $light-gray-500;
+
+		// Add a right border to show as separator in the block toolbar.
+		border-right: $border-width solid $light-gray-500;
+	}
+
+	// This should be refactored to have its own class to target.
+	> div {
+		// IE11 does not support `position: sticky`, or Flex very well, so use block.
+		display: block;
+		@supports ( position: sticky ) {
+			display: flex;
+		}
+	}
+}

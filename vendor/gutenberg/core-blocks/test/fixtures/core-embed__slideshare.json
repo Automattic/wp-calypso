@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/slideshare",
+        "isValid": true,
+        "attributes": {
+            "url": "https://slideshare.com/",
+            "caption": [
+                "Embedded content from slideshare"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-slideshare wp-block-embed\">\n    https://slideshare.com/\n    <figcaption>Embedded content from slideshare</figcaption>\n</figure>"
+    }
+]

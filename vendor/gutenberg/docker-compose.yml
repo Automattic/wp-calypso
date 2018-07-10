@@ -1,0 +1,45 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    image: wordpress
+    ports:
+      - 8888:80
+    environment:
+      WORDPRESS_DB_PASSWORD: example
+      ABSPATH: /usr/src/wordpress/
+    volumes:
+      - wordpress:/var/www/html
+      - .:/var/www/html/wp-content/plugins/gutenberg
+      - ./test/e2e/test-plugins:/var/www/html/wp-content/plugins/gutenberg-test-plugins
+      - ./test/e2e/test-mu-plugins:/var/www/html/wp-content/mu-plugins
+
+  cli:
+    image: wordpress:cli
+    volumes:
+      - wordpress:/var/www/html
+      - .:/var/www/html/wp-content/plugins/gutenberg
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: wordpress_test
+
+  wordpress_phpunit:
+    image: chriszarate/wordpress-phpunit
+    environment:
+      PHPUNIT_DB_HOST: mysql
+    volumes:
+      - .:/app
+      - testsuite:/tmp
+
+  composer:
+    image: composer
+    volumes:
+      - .:/app
+
+volumes:
+  testsuite:
+  wordpress:

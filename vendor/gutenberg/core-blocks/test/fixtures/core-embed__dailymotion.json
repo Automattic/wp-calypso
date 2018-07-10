@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/dailymotion",
+        "isValid": true,
+        "attributes": {
+            "url": "https://dailymotion.com/",
+            "caption": [
+                "Embedded content from dailymotion"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-dailymotion wp-block-embed\">\n    https://dailymotion.com/\n    <figcaption>Embedded content from dailymotion</figcaption>\n</figure>"
+    }
+]

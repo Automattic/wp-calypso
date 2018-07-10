@@ -1,0 +1,51 @@
+.components-menu-item__button,
+.components-menu-item__button.components-icon-button {
+	width: 100%;
+	padding: 8px;
+	text-align: left;
+	padding-left: 25px;
+	color: $dark-gray-500;
+
+	// Target plugin icons that can have arbitrary classes by using an aggressive selector.
+	.dashicon,
+	.components-menu-items__item-icon,
+	> span > svg {
+		margin-right: 4px;
+	}
+
+	.components-menu-items__item-icon {
+		display: inline-block;
+		flex: 0 0 auto;
+	}
+
+	&.has-icon {
+		padding-left: 0;
+	}
+
+	&:hover:not(:disabled):not([aria-disabled="true"]) {
+		@include menu-style__neutral;
+	}
+
+	&:focus:not(:disabled):not([aria-disabled="true"]) {
+		@include menu-style__focus;
+	}
+
+	// Colorize plugin icons to ensure contrast and cohesion, but allow plugin developers to override.
+	svg,
+	svg * {
+		stroke: $dark-gray-500;
+		fill: $dark-gray-500;
+	}
+
+	&:hover svg,
+	&:hover svg * {
+		stroke: $dark-gray-900 !important;
+		fill: $dark-gray-900 !important;
+	}
+}
+
+.components-menu-item__shortcut {
+	opacity: .5;
+	margin-right: 0;
+	margin-left: auto;
+}

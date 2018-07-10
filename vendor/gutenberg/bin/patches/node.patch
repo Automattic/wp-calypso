@@ -1,0 +1,51 @@
+--- ext/dom/node.c	2012-08-06 17:49:48.826716692 +0800
++++ ext/dom/node.c	2012-08-06 17:52:47.633484660 +0800
+@@ -1895,9 +1895,17 @@ static void dom_canonicalization(INTERNA
+         RETVAL_FALSE;
+     } else {
+ 		if (mode == 0) {
++#ifdef LIBXML2_NEW_BUFFER
++            ret = xmlOutputBufferGetSize(buf);
++#else
+ 			ret = buf->buffer->use;
++#endif
+ 			if (ret > 0) {
++#ifdef LIBXML2_NEW_BUFFER
++                RETVAL_STRINGL((char *) xmlOutputBufferGetContent(buf), ret, 1);
++#else
+ 				RETVAL_STRINGL((char *) buf->buffer->content, ret, 1);
++#endif
+ 			} else {
+ 				RETVAL_EMPTY_STRING();
+ 			}
+--- ext/dom/documenttype.c	2012-08-06 18:02:16.019640870 +0800
++++ ext/dom/documenttype.c	2012-08-06 18:06:16.612228905 +0800
+@@ -205,7 +205,13 @@ int dom_documenttype_internal_subset_rea
+ 		if (buff != NULL) {
+ 			xmlNodeDumpOutput (buff, NULL, (xmlNodePtr) intsubset, 0, 0, NULL);
+ 			xmlOutputBufferFlush(buff);
++
++#ifdef LIBXML2_NEW_BUFFER
++			ZVAL_STRINGL(*retval, xmlOutputBufferGetContent(buff),
++			             xmlOutputBufferGetSize(buff), 1);
++#else
+ 			ZVAL_STRINGL(*retval, buff->buffer->content, buff->buffer->use, 1);
++#endif
+ 			(void)xmlOutputBufferClose(buff);
+ 			return SUCCESS;
+ 		}
+--- ext/simplexml/simplexml.c	2012-08-06 18:10:44.621017026 +0800
++++ ext/simplexml/simplexml.c	2012-08-06 18:12:48.016270419 +0800
+@@ -1417,7 +1417,12 @@ SXE_METHOD(asXML)
+ 
+ 			xmlNodeDumpOutput(outbuf, (xmlDocPtr) sxe->document->ptr, node, 0, 0, ((xmlDocPtr) sxe->document->ptr)->encoding);
+ 			xmlOutputBufferFlush(outbuf);
++#ifdef LIBXML2_NEW_BUFFER
++			RETVAL_STRINGL((char *)xmlOutputBufferGetContent(outbuf),
++			               xmlOutputBufferGetSize(outbuf), 1);
++#else
+ 			RETVAL_STRINGL((char *)outbuf->buffer->content, outbuf->buffer->use, 1);
++#endif
+ 			xmlOutputBufferClose(outbuf);
+ 		}
+ 	} else {

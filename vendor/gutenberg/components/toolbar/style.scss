@@ -1,0 +1,116 @@
+.components-toolbar {
+	margin: 0;
+	border: 1px solid $light-gray-500;
+	background-color: $white;
+	display: inline-flex;
+}
+
+div.components-toolbar {
+	&> div {
+		// IE11 does not support `position: sticky`, or Flex very well, so use block.
+		display: inline-block;
+		@supports ( position: sticky ) {
+			display: inline-flex;
+		}
+
+		margin: 0;
+	}
+
+	&> div + div {
+		margin-left: -3px;
+
+		&.has-left-divider {
+			margin-left: 6px;
+			position: relative;
+			overflow: visible;
+		}
+
+		&.has-left-divider:before {
+			display: inline-block;
+			content: '';
+			box-sizing: content-box;
+			background-color: $light-gray-500;
+			position: absolute;
+			top: 8px;
+			left: -3px;
+			width: 1px;
+			height: $icon-button-size - 16px;
+		}
+	}
+}
+
+.components-toolbar__control.components-button {
+	display: inline-flex;
+	align-items: flex-end;
+	margin: 0;
+	padding: 3px;
+	outline: none;
+	cursor: pointer;
+	position: relative;
+	width: $icon-button-size;
+	height: $icon-button-size;
+
+	// Unset icon button styles
+	&:active,
+	&:not( [aria-disabled="true"] ):hover,
+	&:not( [aria-disabled="true"] ):focus {
+		outline: none;
+		box-shadow: none;
+		background: none;
+		border: none;
+	}
+
+	// Disabled
+	&:disabled {
+		cursor: default;
+	}
+
+	& > svg {
+		padding: 5px;
+		box-sizing: content-box;
+		border-radius: $button-style__radius-roundrect;
+	}
+
+	// Subscript for numbered icon buttons, like headings
+	&[data-subscript] svg {
+		padding: 4px 8px 4px 0;
+	}
+
+	&[data-subscript]:after {
+		content: attr( data-subscript );
+		font-family: $default-font;
+		font-size: $default-font-size;
+		font-weight: 600;
+		position: absolute;
+		right: 8px;
+		bottom: 8px;
+	}
+
+	// Assign hover style to child element, not the button itself
+	&:not( :disabled ):not([aria-disabled="true"]):hover {
+		box-shadow: none;
+	}
+
+	&:not( :disabled ).is-active > svg,
+	&:not( :disabled ):hover > svg {
+		@include formatting-button-style__hover;
+	}
+
+	// Active & toggled style
+	&:not(:disabled).is-active > svg {
+		@include formatting-button-style__active;
+	}
+
+	&:not(:disabled).is-active[data-subscript]:after {
+		color: $white;
+	}
+
+	// Focus style
+	&:not(:disabled):focus > svg {
+		@include formatting-button-style__focus;
+	}
+}
+
+.components-toolbar__control .dashicon {
+	display: block;
+}

@@ -1,0 +1,25 @@
+{
+	"name": "wordpress/gutenberg",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"description": "Prototyping since 1440. Development hub for the editor focus in core.",
+	"homepage": "https://wordpress.github.io/gutenberg/",
+	"keywords": [
+		"gutenberg", "wordpress", "editor", "wp", "react", "javascript"
+	],
+	"support": {
+		"issues": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.4.3",
+		"squizlabs/php_codesniffer": "^3.1",
+		"wimg/php-compatibility": "^8",
+		"wp-coding-standards/wpcs": "^0.14.0"
+	},
+	"require": {
+		"composer/installers": "~1.0"
+	},
+	"scripts": {
+		"lint": "phpcs"
+	}
+}

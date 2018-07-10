@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/audio block edit matches snapshot 1`] = `
+<div
+  class="components-placeholder editor-media-placeholder wp-block-audio"
+>
+  <div
+    class="components-placeholder__label"
+  >
+    <svg
+      aria-hidden="true"
+      class="dashicon dashicons-media-audio"
+      focusable="false"
+      height="20"
+      role="img"
+      viewBox="0 0 20 20"
+      width="20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 2l4 4v12H4V2h8zm0 4h3l-3-3v3zm1 7.26V8.09c0-.11-.04-.21-.12-.29-.07-.08-.16-.11-.27-.1 0 0-3.97.71-4.25.78C8.07 8.54 8 8.8 8 9v3.37c-.2-.09-.42-.07-.6-.07-.38 0-.7.13-.96.39-.26.27-.4.58-.4.96 0 .37.14.69.4.95.26.27.58.4.96.4.34 0 .7-.04.96-.26.26-.23.64-.65.64-1.12V10.3l3-.6V12c-.67-.2-1.17.04-1.44.31-.26.26-.39.58-.39.95 0 .38.13.69.39.96.27.26.71.39 1.08.39.38 0 .7-.13.96-.39.26-.27.4-.58.4-.96z"
+      />
+    </svg>
+    Audio
+  </div>
+  <div
+    class="components-placeholder__instructions"
+  >
+    Drag an audio, upload a new one or select a file from your library.
+  </div>
+  <div
+    class="components-placeholder__fieldset"
+  >
+    <div
+      class="components-drop-zone"
+    >
+      <div
+        class="components-drop-zone__content"
+      >
+        <svg
+          aria-hidden="true"
+          class="dashicon dashicons-upload components-drop-zone__content-icon"
+          focusable="false"
+          height="40"
+          role="img"
+          viewBox="0 0 20 20"
+          width="40"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8 14V8H5l5-6 5 6h-3v6H8zm-2 2v-6H4v8h12.01v-8H14v6H6z"
+          />
+        </svg>
+        <span
+          class="components-drop-zone__content-text"
+        >
+          Drop files to upload
+        </span>
+      </div>
+    </div>
+    <form>
+      <input
+        class="components-placeholder__input"
+        placeholder="Enter URL here…"
+        type="url"
+        value=""
+      />
+      <button
+        class="components-button is-button is-default is-large"
+        type="submit"
+      >
+        Use URL
+      </button>
+    </form>
+    <div
+      class="components-form-file-upload"
+    >
+      <button
+        class="components-button components-icon-button editor-media-placeholder__upload-button is-button is-default is-large"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="dashicon dashicons-upload"
+          focusable="false"
+          height="20"
+          role="img"
+          viewBox="0 0 20 20"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8 14V8H5l5-6 5 6h-3v6H8zm-2 2v-6H4v8h12.01v-8H14v6H6z"
+          />
+        </svg>
+        Upload
+      </button>
+      <input
+        accept="audio/*"
+        style="display:none"
+        type="file"
+      />
+    </div>
+  </div>
+</div>
+`;

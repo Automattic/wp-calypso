@@ -1,0 +1,45 @@
+.editor-post-featured-image {
+	padding: 0;
+
+	.spinner {
+		margin: 0;
+	}
+
+	// Space consecutive buttons evenly.
+	.components-button + .components-button {
+		margin-top: 1em;
+		margin-right: 8px;
+	}
+
+	// This keeps images at their intrinsic size (eg. a 50px
+	// image will never be wider than 50px).
+	.components-responsive-wrapper__content {
+		max-width: 100%;
+		width: auto;
+	}
+}
+
+.editor-post-featured-image__toggle,
+.editor-post-featured-image__preview {
+	display: block;
+	width: 100%;
+	padding: 0;
+	transition: all .1s ease-out;
+	box-shadow: 0 0 0 0 $blue-medium-500;
+}
+
+.editor-post-featured-image__preview:not(:disabled):not([aria-disabled="true"]):focus {
+	box-shadow: 0 0 0 4px $blue-medium-500;
+}
+
+.editor-post-featured-image__toggle {
+	border: 1px dashed $light-gray-900;
+	background-color: $light-gray-300;
+	line-height: 20px;
+	padding: $item-spacing 0;
+	text-align: center;
+
+	&:hover {
+		background-color: $light-gray-100;
+	}
+}

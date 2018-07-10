@@ -1,0 +1,29 @@
+	// Dropzones
+.editor-block-drop-zone {
+	border: none;
+	border-radius: 0;
+
+	.components-drop-zone__content {
+		display: none;
+	}
+
+	&.is-close-to-bottom {
+		background: none;
+		border-bottom: 3px solid theme( primary );
+	}
+
+	&.is-close-to-top,
+	&.is-appender.is-close-to-top,
+	&.is-appender.is-close-to-bottom {
+		background: none;
+		border-top: 3px solid theme( primary );
+		border-bottom: none;
+	}
+
+	&.is-dragging-html,
+	&.is-dragging-default {
+		.components-drop-zone__content {
+			display: none;
+		}
+	}
+}

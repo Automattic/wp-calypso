@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core/image",
+        "attrs": {
+            "linkDestination": "attachment"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-image\"><a href=\"http://localhost:8888/?attachment_id=7\"><img src=\"https://cldup.com/uuUqE_dXzy.jpg\" alt=\"\" /></a></figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

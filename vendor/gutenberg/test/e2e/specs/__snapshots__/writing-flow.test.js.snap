@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`adding blocks Should navigate inner blocks with arrow keys 1`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:columns -->
+<div class=\\"wp-block-columns has-2-columns\\">
+	<!-- wp:column -->
+	<div class=\\"wp-block-column\\">
+		<!-- wp:paragraph -->
+		<p>First column paragraph</p>
+		<!-- /wp:paragraph -->
+	</div>
+	<!-- /wp:column -->
+
+	<!-- wp:column -->
+	<div class=\\"wp-block-column\\">
+		<!-- wp:paragraph -->
+		<p>Second column paragraph</p>
+		<!-- /wp:paragraph -->
+	</div>
+	<!-- /wp:column -->
+</div>
+<!-- /wp:columns -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`adding blocks should navigate around inline boundaries 1`] = `
+"<!-- wp:paragraph -->
+<p>FirstAfter</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Before<strong>InsideSecondInside</strong>After</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>BeforeThird</p>
+<!-- /wp:paragraph -->"
+`;

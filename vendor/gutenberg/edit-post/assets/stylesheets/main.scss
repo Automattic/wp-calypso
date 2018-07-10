@@ -1,0 +1,215 @@
+// Fade animations
+@keyframes animate_fade {
+	from {
+		opacity: 0;
+		transform: translateY( 4px );
+	}
+	to {
+		opacity: 1;
+		transform: translateY( 0px );
+	}
+}
+
+@keyframes move_background {
+	from {
+		background-position: 0 0;
+	}
+	to {
+		background-position: 28px 0;
+	}
+}
+
+@keyframes loading_fade {
+	0% {
+		opacity: .5;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: .5;
+	}
+}
+
+@keyframes slide_in_right {
+	100% {
+		transform: translateX( 0% );
+	}
+}
+
+// In order to use mix-blend-mode, this element needs to have an explicitly set background-color
+// We scope it to .wp-toolbar to be wp-admin only, to prevent bleed into other implementations
+html.wp-toolbar {
+	background: $white;
+}
+
+body.gutenberg-editor-page {
+	background: $white;
+
+	#wpcontent {
+		padding-left: 0;
+	}
+
+	#wpbody-content {
+		padding-bottom: 0;
+	}
+
+	/* We hide legacy notices in Gutenberg, because they were not designed in a way that scaled well.
+	   Plugins can use Gutenberg notices if they need to pass on information to the user when they are editing. */
+	#wpbody-content > div:not( .gutenberg ):not( #screen-meta ) {
+		display: none;
+	}
+
+	#wpfooter {
+		display: none;
+	}
+
+	.a11y-speak-region {
+		left: -1px;
+		top: -1px;
+	}
+
+	ul#adminmenu a.wp-has-current-submenu:after,
+	ul#adminmenu>li.current>a.current:after {
+		border-right-color: $white;
+	}
+}
+
+.gutenberg {
+	* {
+		box-sizing: border-box;
+	}
+
+	select {
+		font-size: $default-font-size;
+		color: $dark-gray-500;
+	}
+}
+
+.gutenberg__editor {
+	// on mobile the main content area has to scroll
+	// otherwise you can invoke the overscroll bounce on the non-scrolling container, causing (ノಠ益ಠ)ノ彡┻━┻
+	@include break-small {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		min-height: calc( 100vh - #{ $admin-bar-height-big } );
+	}
+
+	// The WP header height changes at this breakpoint
+	@include break-medium {
+		min-height: calc( 100vh - #{ $admin-bar-height } );
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	iframe {
+		width: 100%;
+	}
+
+	.components-navigate-regions {
+		height: 100%;
+	}
+}
+
+// Override core input styles to provide ones consistent with Gutenberg
+// @todo submit as upstream patch as well
+.edit-post-sidebar,
+.editor-post-publish-panel,
+.editor-block-list__block,
+.components-popover {
+	.input-control, // upstream name is .regular-text
+	input[type=text],
+	input[type=search],
+	input[type=radio],
+	input[type=tel],
+	input[type=time],
+	input[type=url],
+	input[type=week],
+	input[type=password],
+	input[type=checkbox],
+	input[type=color],
+	input[type=date],
+	input[type=datetime],
+	input[type=datetime-local],
+	input[type=email],
+	input[type=month],
+	input[type=number],
+	select,
+	textarea {
+		border: 1px solid $light-gray-700;
+		font-family: $default-font;
+		font-size: $default-font-size;
+		padding: 6px 8px;
+		@include input-style__neutral();
+
+		&:focus {
+			@include input-style__focus();
+		}
+	}
+
+	select {
+		padding: 2px;
+
+		&:focus {
+			border-color: $blue-medium-600;
+			// Windows High Contrast mode will show this outline
+			outline: 2px solid transparent;
+			outline-offset: 0;
+		}
+	}
+}
+
+// Placeholder colors
+.editor-post-title,
+.editor-block-list__block {
+	input,
+	textarea {
+		// use opacity to work in various editor styles
+		&::-webkit-input-placeholder {
+			color: $dark-opacity-100;
+		}
+		&::-moz-placeholder {
+			color: $dark-opacity-100;
+		}
+		&:-ms-input-placeholder {
+			color: $dark-opacity-100;
+		}
+		&:-moz-placeholder {
+			color: $dark-opacity-100;
+		}
+
+		.is-dark-theme & {
+			&::-webkit-input-placeholder {
+				color: $light-opacity-300;
+			}
+			&::-moz-placeholder {
+				color: $light-opacity-300;
+			}
+			&:-ms-input-placeholder {
+				color: $light-opacity-300;
+			}
+			&:-moz-placeholder {
+				color: $light-opacity-300;
+			}
+		}
+	}
+}
+
+// Style the TinyMCE table resize handles
+.ephox-snooker-resizer-rows {
+	cursor: row-resize;
+}
+
+.ephox-snooker-resizer-cols {
+	cursor: col-resize;
+}
+
+.ephox-snooker-resizer-bar-dragging {
+	background: $blue-medium-500;
+}

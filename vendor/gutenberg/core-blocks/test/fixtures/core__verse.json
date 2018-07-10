@@ -1,0 +1,23 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/verse",
+        "isValid": true,
+        "attributes": {
+            "content": [
+                "A ",
+                {
+                    "type": "em",
+                    "children": "verse"
+                },
+                "…",
+                {
+                    "type": "br"
+                },
+                "And more!"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<pre class=\"wp-block-verse\">A <em>verse</em>…<br>And more!</pre>"
+    }
+]

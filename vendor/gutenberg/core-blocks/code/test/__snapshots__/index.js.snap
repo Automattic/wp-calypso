@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/code block edit matches snapshot 1`] = `
+<div
+  class="wp-block-code"
+>
+  <textarea
+    aria-label="Code"
+    class="editor-plain-text"
+    placeholder="Write code…"
+    rows="1"
+  />
+</div>
+`;

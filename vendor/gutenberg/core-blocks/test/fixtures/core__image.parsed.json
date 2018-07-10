@@ -1,0 +1,12 @@
+[
+    {
+        "blockName": "core/image",
+        "attrs": null,
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-image\"><img src=\"https://cldup.com/uuUqE_dXzy.jpg\" alt=\"\" /></figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

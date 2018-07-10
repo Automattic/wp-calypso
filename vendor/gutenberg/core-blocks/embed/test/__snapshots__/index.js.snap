@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/embed block edit matches snapshot 1`] = `
+<div
+  class="components-placeholder wp-block-embed"
+>
+  <div
+    class="components-placeholder__label"
+  >
+    <svg
+      aria-hidden="true"
+      class="dashicon dashicons-embed-generic"
+      focusable="false"
+      height="20"
+      role="img"
+      viewBox="0 0 20 20"
+      width="20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M17 4H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-3 6.5L12.5 12l1.5 1.5V15l-3-3 3-3v1.5zm1 4.5v-1.5l1.5-1.5-1.5-1.5V9l3 3-3 3z"
+      />
+    </svg>
+    Embed URL
+  </div>
+  <div
+    class="components-placeholder__fieldset"
+  >
+    <form>
+      <input
+        aria-label="Embed URL"
+        class="components-placeholder__input"
+        placeholder="Enter URL to embed here…"
+        type="url"
+        value=""
+      />
+      <button
+        class="components-button is-button is-default is-large"
+        type="submit"
+      >
+        Embed
+      </button>
+    </form>
+  </div>
+</div>
+`;

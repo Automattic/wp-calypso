@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/ted",
+        "isValid": true,
+        "attributes": {
+            "url": "https://ted.com/",
+            "caption": [
+                "Embedded content from ted"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-ted wp-block-embed\">\n    https://ted.com/\n    <figcaption>Embedded content from ted</figcaption>\n</figure>"
+    }
+]

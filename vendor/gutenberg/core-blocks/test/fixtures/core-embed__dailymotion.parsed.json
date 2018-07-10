@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/dailymotion",
+        "attrs": {
+            "url": "https://dailymotion.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-dailymotion wp-block-embed\">\n    https://dailymotion.com/\n    <figcaption>Embedded content from dailymotion</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/issuu",
+        "attrs": {
+            "url": "https://issuu.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-issuu wp-block-embed\">\n    https://issuu.com/\n    <figcaption>Embedded content from issuu</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

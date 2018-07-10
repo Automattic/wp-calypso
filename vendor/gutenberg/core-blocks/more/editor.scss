@@ -1,0 +1,43 @@
+.editor-block-list__block[data-type="core/more"] {
+	max-width: 100%;
+	text-align: center;
+}
+
+.gutenberg .wp-block-more { // needs specificity
+	display: block;
+	text-align: center;
+	white-space: nowrap;
+
+	// Label
+	input[type=text] {
+		font-size: $default-font-size;
+		text-transform: uppercase;
+		font-weight: 600;
+		font-family: $default-font;
+		color: $dark-gray-300;
+		border: none;
+		box-shadow: none;
+		white-space: nowrap;
+		text-align: center;
+		margin: 0;
+		border-radius: 4px;
+		background: $white;
+		padding: 6px 8px;
+		height: $icon-button-size-small;
+
+		&:focus {
+			box-shadow: none;
+		}
+	}
+
+	// Dashed line
+	&:before {
+		content: '';
+		position: absolute;
+		top: calc( 50% );
+		left: 0;
+		right: 0;
+		border-top: 3px dashed $light-gray-700;
+		z-index: z-index( '.editor-block-list__block .wp-block-more:before' );
+	}
+}

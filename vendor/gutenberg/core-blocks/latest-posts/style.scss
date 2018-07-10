@@ -1,0 +1,34 @@
+.wp-block-latest-posts {
+	&.alignleft {
+		margin-right: 2em;
+	}
+	&.alignright {
+		margin-left: 2em;
+	}
+	&.is-grid {
+		display: flex;
+		flex-wrap: wrap;
+		padding: 0;
+		list-style: none;
+
+		li {
+			margin: 0 16px 16px 0;
+			width: 100%;
+		}
+	}
+
+	@include break-small {
+		@for $i from 2 through 6 {
+			&.columns-#{ $i } li {
+				width: calc( ( 100% / #{ $i } ) - 16px );
+			}
+		}
+	}
+}
+
+.wp-block-latest-posts__post-date {
+	display: block;
+	color: $dark-gray-300;
+	font-size: $default-font-size;
+}
+

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`postcss-themes add the prefix selector to all subselectors 1`] = `
+"a, span{ color: #ccc }
+body.light a, body.light span{ color: #FFF }
+body.dark a, body.dark span{ color: #000 }"
+`;
+
+exports[`postcss-themes gather several declaration in a unique rule 1`] = `
+"a{ color: #ccc; background: red; }
+body.light a{ color: #FFF; background: green; }
+body.dark a{ color: #000; background: blue; }"
+`;
+
+exports[`postcss-themes replaces multiple rules in the same declaration 1`] = `
+"a{ background: linear-gradient( -45deg, #ccc 50%, red 50% ) }
+body.light a{ background: linear-gradient( -45deg, #FFF 50%, green 50% ) }
+body.dark a{ background: linear-gradient( -45deg, #000 50%, blue 50% ) }"
+`;
+
+exports[`postcss-themes replaces the default color and generate theme colors 1`] = `
+"a{ color: #ccc }
+body.light a{ color: #FFF }
+body.dark a{ color: #000 }"
+`;

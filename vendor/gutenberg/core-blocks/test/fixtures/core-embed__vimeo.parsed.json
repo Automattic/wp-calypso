@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/vimeo",
+        "attrs": {
+            "url": "https://vimeo.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-vimeo wp-block-embed\">\n    https://vimeo.com/\n    <figcaption>Embedded content from vimeo</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

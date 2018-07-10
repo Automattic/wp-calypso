@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/collegehumor",
+        "isValid": true,
+        "attributes": {
+            "url": "https://collegehumor.com/",
+            "caption": [
+                "Embedded content from collegehumor"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-collegehumor wp-block-embed\">\n    https://collegehumor.com/\n    <figcaption>Embedded content from collegehumor</figcaption>\n</figure>"
+    }
+]

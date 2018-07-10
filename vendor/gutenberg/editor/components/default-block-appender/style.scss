@@ -1,0 +1,120 @@
+.editor-default-block-appender {
+	input[type=text].editor-default-block-appender__content { // needs specificity
+		border: none;
+		background: none;
+		box-shadow: none;
+		display: block;
+		margin-left: 0;
+		margin-right: 0;
+		max-width: none; // fixes a bleed issue from the admin
+		cursor: text;
+		width: 100%;
+		outline: 1px solid transparent;
+		transition: 0.2s outline;
+
+		// Emulate the dimensions of a paragraph block.
+		padding: 0 #{ $block-padding + $border-width };
+
+		// use opacity to work in various editor styles
+		color: $dark-opacity-300;
+
+		.is-dark-theme & {
+			color: $light-opacity-300;
+		}
+	}
+
+	// Show quick insertion icons faded until hover.
+	.editor-inserter-with-shortcuts {
+		opacity: .5;
+		transition: opacity 0.2s;
+
+		.components-icon-button:not( :hover ) {
+			// use opacity to work in various editor styles
+			color: $dark-opacity-500;
+
+			.is-dark-theme & {
+				color: $light-opacity-500;
+			}
+		}
+	}
+
+	&:hover .editor-inserter-with-shortcuts {
+		opacity: 1;
+	}
+
+	// Show the inserter if mousing over or there is a tip.
+	&:not( .has-tip ) {
+		.editor-inserter__toggle:not( [aria-expanded="true"] ) {
+			opacity: 0;
+		}
+
+		&:hover .editor-inserter__toggle {
+			opacity: 1;
+		}
+	}
+
+	// Dropzone.
+	.components-drop-zone__content-icon {
+		display: none;
+	}
+}
+
+// Quick shortcuts, left and right.
+.editor-block-list__empty-block-inserter, // Empty paragraph
+.editor-default-block-appender .editor-inserter, // Empty appender
+.editor-inserter-with-shortcuts { // Right side quick shortcuts
+	position: absolute;
+	top: 0;
+
+	// Change the size of the buttons to match that of the default paragraph height.
+	.components-icon-button {
+		width: $block-side-ui-width;
+		height: $block-side-ui-width;
+		padding: 4px;
+		margin-right: 12px;
+	}
+}
+
+// Left side.
+.editor-block-list__empty-block-inserter,
+.editor-default-block-appender .editor-inserter {
+	right: $item-spacing; // Show to the right on mobile.
+
+	@include break-small {
+		left: -$block-side-ui-width - $block-padding - $block-side-ui-clearance;
+		right: auto;
+	}
+
+	&:disabled {
+		display: none;
+	}
+
+	.editor-inserter__toggle {
+		transition: opacity 0.2s;
+		border-radius: 50%;
+		width: $block-side-ui-width;
+		height: $block-side-ui-width;
+		padding: 4px;
+
+		// use opacity to work in various editor styles
+		&:not( :hover ) {
+			color: $dark-opacity-500;
+
+			.is-dark-theme & {
+				color: $light-opacity-500;
+			}
+		}
+	}
+}
+
+// Quick block insertion icons on the right side.
+.editor-inserter-with-shortcuts {
+	right: $block-padding;
+	display: none; // Don't show on mobile.
+	z-index: z-index( '.editor-inserter-with-shortcuts' ); // Elevate above the sibling inserter.
+
+	@include break-small {
+		right: 0;
+		display: flex;
+	}
+}

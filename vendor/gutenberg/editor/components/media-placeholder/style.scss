@@ -1,0 +1,30 @@
+.editor-media-placeholder {
+	.components-placeholder__input {
+		margin-top: 0.5em;
+	}
+
+	.components-button.is-large {
+		margin-top: 0.5em;
+	}
+
+	.components-placeholder__fieldset {
+		max-width: 400px;
+
+		form {
+			max-width: none;
+		}
+	}
+}
+
+.editor-media-placeholder__upload-button.components-button {
+	margin-right: 5px;
+
+	.dashicon {
+		vertical-align: middle;
+		margin-bottom: 3px;
+	}
+
+	&:hover {
+		color: $dark-gray-800;
+	}
+}

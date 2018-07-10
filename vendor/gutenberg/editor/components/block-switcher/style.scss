@@ -1,0 +1,73 @@
+.editor-block-switcher {
+	position: relative;
+}
+
+// Style this the same as the block buttons in the library.
+// Needs specificiity to override the icon button.
+.components-icon-button.editor-block-switcher__toggle {
+	width: auto;
+	margin: 0;
+	padding: 6px;
+
+	// Unset icon button styles.
+	&:active,
+	&:not( :disabled ):not( [aria-disabled="true"] ):hover,
+	&:not( [aria-disabled="true"] ):focus {
+		outline: none;
+		box-shadow: none;
+		background: none;
+		border: none;
+	}
+
+	// Block hover style.
+	&:not( :disabled ):hover .editor-block-icon__colors {
+		@include block-style__hover();
+	}
+
+	// Block focus style.
+	&:not(:disabled):focus .editor-block-icon__colors {
+		@include block-style__focus-active();
+	}
+}
+
+.editor-block-switcher__popover .components-popover__content {
+	width: 300px;
+
+	@include break-medium {
+		position: relative;
+
+		.editor-block-preview {
+			border: 1px solid $light-gray-500;
+			box-shadow: $shadow-popover;
+			background: $white;
+			position: absolute;
+			left: 100%;
+			top: -1px;
+			bottom: -1px;
+			width: 300px;
+			height: auto;
+		}
+	}
+
+	// Hide the bottom border on the last panel so it stacks with the popover.
+	.components-panel__body {
+		border: 0;
+	}
+
+	.components-panel__body + .components-panel__body {
+		border-top: 1px solid $light-gray-500;
+	}
+}
+
+.editor-block-switcher__popover:not(.is-mobile) > .components-popover__content {
+	// Reset overflow to allow showing the preview on the left once an item is hovered.
+	overflow-y: initial;
+}
+
+.editor-block-switcher__popover .editor-block-styles {
+	margin: 0 -3px; // Remove the panel body padding while keeping it for the title.
+}
+
+.editor-block-switcher__popover .editor-block-types-list {
+	margin: 8px -8px -8px;
+}

@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/ted",
+        "attrs": {
+            "url": "https://ted.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-ted wp-block-embed\">\n    https://ted.com/\n    <figcaption>Embedded content from ted</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

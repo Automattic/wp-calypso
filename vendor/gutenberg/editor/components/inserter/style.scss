@@ -1,0 +1,125 @@
+$block-inserter-content-height: 350px;
+$block-inserter-tabs-height: 44px;
+$block-inserter-search-height: 38px;
+
+.editor-inserter {
+	display: inline-block;
+	background: none;
+	border: none;
+	padding: 0;
+	font-family: $default-font;
+	font-size: $default-font-size;
+	line-height: $default-line-height;
+
+	@include break-medium {
+		position: relative;
+	}
+}
+
+.editor-inserter__popover:not(.is-mobile) > .components-popover__content {
+	@include break-medium {
+		overflow-y: initial;
+		height: $block-inserter-content-height + $block-inserter-tabs-height + $block-inserter-search-height;
+	}
+}
+
+.editor-inserter__toggle {
+	display: inline-flex;
+	align-items: center;
+	color: $dark-gray-500;
+	background: none;
+	cursor: pointer;
+	border: none;
+	outline: none;
+	transition: color .2s ease;
+}
+
+.editor-inserter__menu {
+	width: auto;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	@include break-medium {
+		width: 350px;
+		position: relative;
+
+		.editor-block-preview {
+			border: 1px solid $light-gray-500;
+			box-shadow: $shadow-popover;
+			background: $white;
+			position: absolute;
+			left: 100%;
+			top: -1px;
+			bottom: -1px;
+			width: 300px;
+		}
+	}
+}
+
+.editor-inserter__menu.is-bottom:after {
+	border-bottom-color: $white;
+}
+
+.components-popover input[type="search"].editor-inserter__search {
+	display: block;
+	margin: 0;
+	padding: 11px 16px;
+	position: relative;
+	z-index: 1;
+	border: none;
+	border-bottom: 1px solid $light-gray-500;
+
+	// fonts smaller than 16px causes mobile safari to zoom
+	font-size: $mobile-text-min-font-size;
+	@include break-small {
+		font-size: $default-font-size;
+	}
+}
+
+.editor-inserter__results {
+	flex-grow: 1;
+	overflow: auto;
+	position: relative;
+	z-index: 1; // Necessary for the stacked card below parent blocks to show up.
+
+	&:focus {
+		outline: 1px dotted $dark-gray-500;
+	}
+
+	@include break-medium {
+		height: $block-inserter-content-height + $block-inserter-tabs-height;
+	}
+
+	// Don't show the top border on the first panel, let the Search border be the border.
+	.components-panel__body:first-child {
+		border-top: none;
+	}
+
+	// Don't show the bottom border on the last panel, let the library itself show the border.
+	.components-panel__body:last-child {
+		border-bottom: none;
+	}
+}
+
+.editor-inserter__popover .editor-block-types-list {
+	margin: 0 -8px;
+}
+
+.editor-inserter__no-results {
+	font-style: italic;
+	padding: 24px;
+	text-align: center;
+}
+
+.editor-inserter__child-blocks {
+	padding: 0 16px;
+}
+
+.editor-inserter__parent-block-header {
+	display: flex;
+	align-items: center;
+
+	h2 {
+		font-size: 13px;
+	}
+}

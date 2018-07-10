@@ -1,0 +1,25 @@
+[
+    {
+        "blockName": "core/column",
+        "attrs": null,
+        "innerBlocks": [
+            {
+                "blockName": "core/paragraph",
+                "attrs": null,
+                "innerBlocks": [],
+                "innerHTML": "\n\t<p>Column One, Paragraph One</p>\n\t"
+            },
+            {
+                "blockName": "core/paragraph",
+                "attrs": null,
+                "innerBlocks": [],
+                "innerHTML": "\n\t<p>Column One, Paragraph Two</p>\n\t"
+            }
+        ],
+        "innerHTML": "\n<div class=\"wp-block-column\">\n\t\n\t\n</div>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

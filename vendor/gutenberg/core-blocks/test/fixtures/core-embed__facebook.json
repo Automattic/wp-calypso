@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/facebook",
+        "isValid": true,
+        "attributes": {
+            "url": "https://facebook.com/",
+            "caption": [
+                "Embedded content from facebook"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-facebook wp-block-embed\">\n    https://facebook.com/\n    <figcaption>Embedded content from facebook</figcaption>\n</figure>"
+    }
+]

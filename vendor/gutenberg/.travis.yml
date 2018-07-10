@@ -1,0 +1,65 @@
+sudo: required
+
+dist: trusty
+
+language: php
+
+services:
+  - docker
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.phpbrew
+    - $HOME/.npm
+
+before_install:
+  - nvm install && nvm use
+  - npm install npm -g
+
+branches:
+  only:
+    - master
+
+jobs:
+  include:
+    - stage: test
+      script:
+        - npm install || exit 1
+        - npm run ci || exit 1
+
+    - stage: test
+      env: WP_VERSION=latest DOCKER=true
+      script:
+        - ./bin/run-wp-unit-tests.sh
+
+    - stage: test
+      php: 5.6
+      env: WP_VERSION=latest
+      script:
+        - ./bin/run-wp-unit-tests.sh
+      if: branch = master and type != "pull_request"
+
+    - stage: test
+      php: 7.1
+      env: WP_VERSION=latest SWITCH_TO_PHP=5.3
+      script:
+        - ./bin/run-wp-unit-tests.sh
+      if: branch = master and type != "pull_request"
+
+    - stage: test
+      php: 7.1
+      env: WP_VERSION=latest SWITCH_TO_PHP=5.2
+      script:
+        - ./bin/run-wp-unit-tests.sh
+
+    - stage: test
+      script:
+        - npm install || exit 1
+        - npm run build || exit 1
+        - ./bin/run-e2e-tests.sh || exit 1

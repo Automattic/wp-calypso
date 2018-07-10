@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/mixcloud",
+        "isValid": true,
+        "attributes": {
+            "url": "https://mixcloud.com/",
+            "caption": [
+                "Embedded content from mixcloud"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-mixcloud wp-block-embed\">\n    https://mixcloud.com/\n    <figcaption>Embedded content from mixcloud</figcaption>\n</figure>"
+    }
+]

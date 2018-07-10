@@ -1,0 +1,20 @@
+body.is-dragging-components-draggable {
+	cursor: move;/* Fallback for IE/Edge < 14 */
+	cursor: grabbing !important;
+}
+
+.components-draggable__invisible-drag-image {
+	position: fixed;
+	left: -1000px;
+	height: 50px;
+	width: 50px;
+}
+
+.components-draggable__clone {
+	position: fixed;
+	padding: 20px;
+	background: transparent;
+	pointer-events: none;
+	z-index: z-index( '.components-draggable__clone' );
+	opacity: 0.8;
+}

@@ -1,0 +1,17 @@
+// Apply max-width to floated items that have no intrinsic width
+.editor-block-list__block[data-type="core/embed"][data-align="left"] .editor-block-list__block-edit,
+.editor-block-list__block[data-type="core/embed"][data-align="right"] .editor-block-list__block-edit,
+.wp-block-embed.alignleft,
+.wp-block-embed.alignright {
+	max-width: $content-width / 2;
+	width: 100%;
+}
+
+.wp-block-embed {
+	// Supply caption styles to images, even if the theme hasn't opted in.
+	// Reason being: the new markup, figcaptions, are not likely to be styled in the majority of existing themes,
+	// so we supply the styles so as to not appear broken or unstyled in those.
+	figcaption {
+		@include caption-style();
+	}
+}

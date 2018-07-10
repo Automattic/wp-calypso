@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InnerBlocks should force serialize for invalid block with inner blocks 1`] = `
+"<!-- wp:test-block -->
+<p>Invalid
+	<!-- wp:test-block -->
+	<p></p>
+	<!-- /wp:test-block -->
+</p>
+<!-- /wp:test-block -->"
+`;
+
+exports[`InnerBlocks should return element as string, with inner blocks 1`] = `
+"<div>Bananas<!-- wp:fruit {\\"fruit\\":\\"Apples\\"} -->
+<div>Apples</div>
+<!-- /wp:fruit --></div>"
+`;

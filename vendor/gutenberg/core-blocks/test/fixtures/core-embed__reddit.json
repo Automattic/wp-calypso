@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/reddit",
+        "isValid": true,
+        "attributes": {
+            "url": "https://reddit.com/",
+            "caption": [
+                "Embedded content from reddit"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-reddit wp-block-embed\">\n    https://reddit.com/\n    <figcaption>Embedded content from reddit</figcaption>\n</figure>"
+    }
+]

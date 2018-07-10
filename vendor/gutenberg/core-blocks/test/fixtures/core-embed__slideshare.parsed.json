@@ -1,0 +1,14 @@
+[
+    {
+        "blockName": "core-embed/slideshare",
+        "attrs": {
+            "url": "https://slideshare.com/"
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<figure class=\"wp-block-embed-slideshare wp-block-embed\">\n    https://slideshare.com/\n    <figcaption>Embedded content from slideshare</figcaption>\n</figure>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

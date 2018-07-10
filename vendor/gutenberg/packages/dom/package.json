@@ -1,0 +1,30 @@
+{
+	"name": "@wordpress/dom",
+	"version": "1.0.0-alpha.2",
+	"description": "DOM utils module for WordPress",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"dom",
+		"utils"
+	],
+	"homepage": "https://github.com/WordPress/gutenberg/tree/master/packages/dom/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WordPress/gutenberg.git"
+	},
+	"bugs": {
+		"url": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"main": "build/index.js",
+	"module": "build-module/index.js",
+	"dependencies": {
+		"element-closest": "^2.0.2",
+		"lodash": "^4.17.10",
+		"tinymce": "^4.7.2"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

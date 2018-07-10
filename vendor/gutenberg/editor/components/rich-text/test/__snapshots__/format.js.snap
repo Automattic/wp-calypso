@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createTinyMCEElement should render a TinyMCE element 1`] = `
+<div
+  data-prop="hi"
+>
+  <p>
+    Child
+  </p>
+</div>
+`;
+
+exports[`domToElement should return the corresponding element  1`] = `
+Array [
+  <div
+    className="container"
+  >
+    <strong>
+      content
+    </strong>
+  </div>,
+]
+`;

@@ -1,0 +1,12 @@
+[
+    {
+        "blockName": "core/spacer",
+        "attrs": null,
+        "innerBlocks": [],
+        "innerHTML": "\n<div style=\"height:100px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

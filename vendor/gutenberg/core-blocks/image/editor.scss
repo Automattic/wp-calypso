@@ -1,0 +1,106 @@
+.wp-block-image {
+	position: relative;
+	margin: 0;
+
+	img {
+		display: block;
+		width: 100%;
+	}
+
+	&.is-resized img {
+		height: 100%;
+	}
+
+	&.is-transient img {
+		@include loading_fade;
+	}
+
+	figcaption img {
+		display: inline;
+	}
+}
+
+.wp-block-image__resize-handler-right,
+.wp-block-image__resize-handler-bottom,
+.wp-block-image__resize-handler-left {
+	display: none;
+	border-radius: 50%;
+	border: 2px solid $white;
+	width: 16px !important;
+	height: 16px !important;
+	position: absolute;
+	background: theme( primary );
+	box-sizing: border-box;
+
+	.wp-block-image.is-focused & {
+		display: block;
+		z-index: z-index( '.wp-block-image__resize-handlers' );
+	}
+}
+
+/*!rtl:begin:ignore*/
+.wp-block-image__resize-handler-right {
+	top: calc(50% - 9px) !important;
+	right: -8px !important;
+}
+
+.wp-block-image__resize-handler-left {
+	top: calc(50% - 9px) !important;
+	left: -8px !important;
+}
+
+.wp-block-image__resize-handler-bottom {
+	bottom: -8px !important;
+	left: calc(50% - 9px) !important;
+}
+/*!rtl:end:ignore*/
+
+.editor-block-list__block[data-type="core/image"][data-align="center"] {
+	.wp-block-image {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	&[data-resized="false"] .wp-block-image > div {
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+.edit-post-sidebar .core-blocks-image__dimensions {
+	margin-bottom: 1em;
+
+	.core-blocks-image__dimensions__row {
+		display: flex;
+		justify-content: space-between;
+
+		.core-blocks-image__dimensions__width,
+		.core-blocks-image__dimensions__height {
+			margin-bottom: 0.5em;
+
+			// Fix the text and placeholder text being misaligned in Safari
+			input {
+				line-height: 1.25;
+			}
+		}
+
+		.core-blocks-image__dimensions__width {
+			margin-right: 5px;
+		}
+
+		.core-blocks-image__dimensions__height {
+			margin-left: 5px;
+		}
+	}
+}
+
+.editor-block-list__block[data-type="core/image"] .editor-block-toolbar .editor-url-input__button-modal {
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin: -1px 0;
+
+	@include break-small() {
+		margin: -1px;
+	}
+}

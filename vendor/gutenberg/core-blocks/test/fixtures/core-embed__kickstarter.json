@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/kickstarter",
+        "isValid": true,
+        "attributes": {
+            "url": "https://kickstarter.com/",
+            "caption": [
+                "Embedded content from kickstarter"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-kickstarter wp-block-embed\">\n    https://kickstarter.com/\n    <figcaption>Embedded content from kickstarter</figcaption>\n</figure>"
+    }
+]

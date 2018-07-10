@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SharedBlockDeleteButton matches the snapshot 1`] = `
+<IconButton
+  className="editor-block-settings-menu__control"
+  icon="no"
+  onClick={[Function]}
+>
+  Delete Shared Block
+</IconButton>
+`;

@@ -1,0 +1,27 @@
+.editor-warning {
+	z-index: z-index( '.editor-warning' );
+	position: absolute;
+	top: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	max-width: 780px;
+	width: calc( 100% - #{ $parent-block-padding * 2 + $block-padding * 2 } );
+	padding: 20px;
+	background-color: $white;
+	border: 1px solid $light-gray-500;
+	text-align: center;
+	line-height: $default-line-height;
+	font-family: $default-font;
+	font-size: $default-font-size;
+}
+
+.editor-warning__actions {
+	display: flex;
+	margin-top: 20px;
+}
+
+.editor-warning__action {
+	margin: 0 #{ $item-spacing / 2 } 5px;
+}

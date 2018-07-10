@@ -1,0 +1,22 @@
+.editor-inserter-with-shortcuts {
+	display: flex;
+	align-items: center;
+
+	.components-icon-button {
+		border-radius: $button-style__radius-roundrect;
+	}
+}
+
+.editor-inserter-with-shortcuts__block {
+	margin-right: $block-spacing;
+	width: $icon-button-size;
+	height: $icon-button-size;
+	padding-top: 8px;
+
+	// use opacity to work in various editor styles
+	color: $dark-opacity-light-700;
+
+	.is-dark-theme & {
+		color: $light-opacity-light-700;
+	}
+}

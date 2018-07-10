@@ -1,0 +1,49 @@
+.editor-block-styles {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: $item-spacing;
+}
+
+.editor-block-styles__item {
+	cursor: pointer;
+	overflow: hidden;
+
+	&:focus,
+	&.is-active {
+		.editor-block-styles__item-preview {
+			@include block-style__focus-active();
+		}
+	}
+
+	&:hover {
+		.editor-block-styles__item-preview {
+			@include block-style__hover;
+		}
+	}
+}
+
+.editor-block-styles__item-preview {
+	outline: 1px solid transparent; // Shown in Windows High Contrast mode.
+	box-shadow: inset 0 0 0 1px rgba( $dark-gray-900, .2 );
+	overflow: hidden;
+	padding: 0;
+	text-align: initial;
+	border-radius: $button-style__radius-roundrect;
+	display: flex;
+	height: 60px;
+
+	> * {
+		transform: scale( 0.7 );
+		transform-origin: center center;
+		font-family: $editor-font;
+	}
+
+	.editor-block-preview__content {
+		width: 100%;
+	}
+}
+
+.editor-block-styles__item-label {
+	text-align: center;
+	padding: 4px 2px;
+}

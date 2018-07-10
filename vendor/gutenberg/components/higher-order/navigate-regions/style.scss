@@ -1,0 +1,13 @@
+.components-navigate-regions.is-focusing-regions [role="region"] {
+	&:focus:after {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		pointer-events: none;
+		outline: 4px solid transparent; // Shown in Windows High Contrast mode.
+		@include region_focus( .1s );
+	}
+}

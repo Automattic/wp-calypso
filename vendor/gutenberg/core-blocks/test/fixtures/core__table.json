@@ -1,0 +1,203 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/table",
+        "isValid": true,
+        "attributes": {
+            "content": [
+                {
+                    "type": "thead",
+                    "children": {
+                        "type": "tr",
+                        "children": [
+                            {
+                                "type": "th",
+                                "children": "Version"
+                            },
+                            {
+                                "type": "th",
+                                "children": "Musician"
+                            },
+                            {
+                                "type": "th",
+                                "children": "Date"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "tbody",
+                    "children": [
+                        {
+                            "type": "tr",
+                            "children": [
+                                {
+                                    "type": "td",
+                                    "children": {
+                                        "type": "a",
+                                        "attributes": {
+                                            "href": "https://wordpress.org/news/2003/05/wordpress-now-available/"
+                                        },
+                                        "children": ".70"
+                                    }
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "No musician chosen."
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "May 27, 2003"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tr",
+                            "children": [
+                                {
+                                    "type": "td",
+                                    "children": {
+                                        "type": "a",
+                                        "attributes": {
+                                            "href": "https://wordpress.org/news/2004/01/wordpress-10/"
+                                        },
+                                        "children": "1.0"
+                                    }
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "Miles Davis"
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "January 3, 2004"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tr",
+                            "children": [
+                                {
+                                    "type": "td",
+                                    "children": [
+                                        "Lots of versions skipped, see ",
+                                        {
+                                            "type": "a",
+                                            "attributes": {
+                                                "href": "https://codex.wordpress.org/WordPress_Versions"
+                                            },
+                                            "children": "the full list"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "…"
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "…"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tr",
+                            "children": [
+                                {
+                                    "type": "td",
+                                    "children": {
+                                        "type": "a",
+                                        "attributes": {
+                                            "href": "https://wordpress.org/news/2015/12/clifford/"
+                                        },
+                                        "children": "4.4"
+                                    }
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "Clifford Brown"
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "December 8, 2015"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tr",
+                            "children": [
+                                {
+                                    "type": "td",
+                                    "children": {
+                                        "type": "a",
+                                        "attributes": {
+                                            "href": "https://wordpress.org/news/2016/04/coleman/"
+                                        },
+                                        "children": "4.5"
+                                    }
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "Coleman Hawkins"
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "April 12, 2016"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tr",
+                            "children": [
+                                {
+                                    "type": "td",
+                                    "children": {
+                                        "type": "a",
+                                        "attributes": {
+                                            "href": "https://wordpress.org/news/2016/08/pepper/"
+                                        },
+                                        "children": "4.6"
+                                    }
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "Pepper Adams"
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "August 16, 2016"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tr",
+                            "children": [
+                                {
+                                    "type": "td",
+                                    "children": {
+                                        "type": "a",
+                                        "attributes": {
+                                            "href": "https://wordpress.org/news/2016/12/vaughan/"
+                                        },
+                                        "children": "4.7"
+                                    }
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "Sarah Vaughan"
+                                },
+                                {
+                                    "type": "td",
+                                    "children": "December 6, 2016"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "hasFixedLayout": false
+        },
+        "innerBlocks": [],
+        "originalContent": "<table class=\"wp-block-table\"><thead><tr><th>Version</th><th>Musician</th><th>Date</th></tr></thead><tbody><tr><td><a href=\"https://wordpress.org/news/2003/05/wordpress-now-available/\">.70</a></td><td>No musician chosen.</td><td>May 27, 2003</td></tr><tr><td><a href=\"https://wordpress.org/news/2004/01/wordpress-10/\">1.0</a></td><td>Miles Davis</td><td>January 3, 2004</td></tr><tr><td>Lots of versions skipped, see <a href=\"https://codex.wordpress.org/WordPress_Versions\">the full list</a></td><td>&hellip;</td><td>&hellip;</td></tr><tr><td><a href=\"https://wordpress.org/news/2015/12/clifford/\">4.4</a></td><td>Clifford Brown</td><td>December 8, 2015</td></tr><tr><td><a href=\"https://wordpress.org/news/2016/04/coleman/\">4.5</a></td><td>Coleman Hawkins</td><td>April 12, 2016</td></tr><tr><td><a href=\"https://wordpress.org/news/2016/08/pepper/\">4.6</a></td><td>Pepper Adams</td><td>August 16, 2016</td></tr><tr><td><a href=\"https://wordpress.org/news/2016/12/vaughan/\">4.7</a></td><td>Sarah Vaughan</td><td>December 6, 2016</td></tr></tbody></table>"
+    }
+]

@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/youtube",
+        "isValid": true,
+        "attributes": {
+            "url": "https://youtube.com/",
+            "caption": [
+                "Embedded content from youtube"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-youtube wp-block-embed\">\n    https://youtube.com/\n    <figcaption>Embedded content from youtube</figcaption>\n</figure>"
+    }
+]

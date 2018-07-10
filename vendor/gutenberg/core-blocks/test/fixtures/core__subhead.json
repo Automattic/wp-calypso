@@ -1,0 +1,19 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/subhead",
+        "isValid": true,
+        "attributes": {
+            "content": [
+                "This is a ",
+                {
+                    "type": "em",
+                    "children": "subhead"
+                },
+                "."
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<p class=\"wp-block-subhead\">This is a <em>subhead</em>.</p>"
+    }
+]

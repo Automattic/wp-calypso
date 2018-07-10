@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/verse block edit matches snapshot 1`] = `
+<div
+  class="wp-block-verse editor-rich-text"
+>
+  <div>
+    <div>
+      <div
+        class="components-autocomplete"
+      >
+        <pre
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-label="Write…"
+          aria-multiline="true"
+          class="editor-rich-text__tinymce"
+          contenteditable="true"
+          data-is-placeholder-visible="true"
+          role="textbox"
+        />
+        <pre
+          class="editor-rich-text__tinymce"
+        >
+          Write…
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+`;

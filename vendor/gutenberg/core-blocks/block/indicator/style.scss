@@ -1,0 +1,17 @@
+.editor-block-list__layout .shared-block-indicator {
+	background: $white;
+	border-left: 1px dashed $light-gray-500;
+	color: $dark-gray-500;
+	border-top: 1px dashed $light-gray-500;
+	bottom: -$block-padding;
+	height: 30px;
+	padding: 5px;
+	position: absolute;
+	width: 30px;
+	right: -$parent-block-padding;
+
+	// Show less offset in nested contexts.
+	.editor-block-list__layout & {
+		right: -$block-padding;
+	}
+}

@@ -1,0 +1,9 @@
+pre.wp-block-verse,
+.wp-block-verse pre {
+	color: $dark-gray-900;
+	white-space: nowrap;
+	font-family: inherit;
+	font-size: inherit;
+	padding: 1em;
+	overflow: auto;
+}

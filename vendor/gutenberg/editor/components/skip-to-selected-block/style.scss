@@ -1,0 +1,20 @@
+.editor-skip-to-selected-block {
+	position: absolute;
+	top: -9999em;
+
+	&:focus {
+		height: auto;
+		width: auto;
+		display: block;
+		font-size: 14px;
+		font-weight: 600;
+		padding: 15px 23px 14px;
+		background: #f1f1f1;
+		color: theme( secondary );
+		line-height: normal;
+		box-shadow: 0 0 2px 2px rgba(0,0,0,.6);
+		text-decoration: none;
+		outline: none;
+		z-index: z-index( '.skip-to-selected-block' );
+	}
+}

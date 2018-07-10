@@ -1,0 +1,36 @@
+{
+	"name": "@wordpress/i18n",
+	"version": "1.1.1",
+	"description": "WordPress i18n library",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"i18n"
+	],
+	"homepage": "https://github.com/WordPress/gutenberg/tree/master/packages/i18n/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WordPress/gutenberg.git"
+	},
+	"bugs": {
+		"url": "https://github.com/WordPress/gutenberg/issues"
+	},
+	"main": "build/index.js",
+	"module": "build-module/index.js",
+	"bin": {
+		"pot-to-php": "./tools/pot-to-php.js"
+	},
+	"dependencies": {
+		"gettext-parser": "^1.3.1",
+		"jed": "^1.1.1",
+		"lodash": "^4.17.10",
+		"memize": "^1.0.5"
+	},
+	"devDependencies": {
+		"benchmark": "^2.1.4"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

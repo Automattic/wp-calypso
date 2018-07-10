@@ -1,0 +1,33 @@
+.wp-block-image {
+	width: fit-content;
+
+	&.aligncenter {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		text-align: center;
+	}
+
+	&.is-resized {
+		width: min-content;
+
+		// Emulate min-content for Edge and IE11
+		display: -ms-inline-grid;
+		-ms-grid-columns: min-content;
+
+		figcaption {
+			-ms-grid-row: 2;
+		}
+
+		img {
+			max-width: none;
+		}
+	}
+
+	// Supply caption styles to images, even if the theme hasn't opted in.
+	// Reason being: the new markup, figcaptions, are not likely to be styled in the majority of existing themes,
+	// so we supply the styles so as to not appear broken or unstyled in those.
+	figcaption {
+		@include caption-style();
+	}
+}

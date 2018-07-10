@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ContrastChecker should render component when the colors do not meet AA WCAG guidelines. 1`] = `
+<ContrastChecker
+  backgroundColor="#666"
+  fallbackBackgroundColor="#fff"
+  fallbackTextColor="#000"
+  isLargeText={true}
+  textColor="#666"
+>
+  <div
+    className="editor-contrast-checker"
+  >
+    <Notice
+      isDismissible={false}
+      status="warning"
+    >
+      <div
+        className="notice notice-alt notice-warning"
+      >
+        <p>
+          This color combination may be hard for people to read. Try using a brighter background color and/or a darker text color.
+        </p>
+      </div>
+    </Notice>
+  </div>
+</ContrastChecker>
+`;
+
+exports[`ContrastChecker should render different message matching snapshot when background color has less brightness than text color. 1`] = `
+<ContrastChecker
+  backgroundColor="#555"
+  fallbackBackgroundColor="#fff"
+  fallbackTextColor="#000"
+  isLargeText={false}
+  textColor="#666"
+>
+  <div
+    className="editor-contrast-checker"
+  >
+    <Notice
+      isDismissible={false}
+      status="warning"
+    >
+      <div
+        className="notice notice-alt notice-warning"
+      >
+        <p>
+          This color combination may be hard for people to read. Try using a darker background color and/or a brighter text color.
+        </p>
+      </div>
+    </Notice>
+  </div>
+</ContrastChecker>
+`;
+
+exports[`ContrastChecker should render messages when the textColor is valid, but the fallback backgroundColor conflicts. 1`] = `
+<ContrastChecker
+  fallbackBackgroundColor="#000000"
+  textColor="#000000"
+>
+  <div
+    className="editor-contrast-checker"
+  >
+    <Notice
+      isDismissible={false}
+      status="warning"
+    >
+      <div
+        className="notice notice-alt notice-warning"
+      >
+        <p>
+          This color combination may be hard for people to read. Try using a brighter background color and/or a darker text color.
+        </p>
+      </div>
+    </Notice>
+  </div>
+</ContrastChecker>
+`;

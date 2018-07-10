@@ -1,0 +1,122 @@
+$toggle-width: 36px;
+$toggle-height: 18px;
+$toggle-border-width: 2px;
+
+.components-form-toggle {
+	position: relative;
+
+	// On/Off icon indicators
+	.components-form-toggle__on,
+	.components-form-toggle__off {
+		position: absolute;
+		top: $toggle-border-width * 3;
+	}
+
+	.components-form-toggle__off {
+		color: $dark-gray-300;
+		fill: currentColor;
+		right: $toggle-border-width * 3;
+	}
+
+	.components-form-toggle__on {
+		left: $toggle-border-width * 3 + 2px; // indent 2px extra because icon is thinner
+	}
+
+	// unchecked state
+	.components-form-toggle__track {
+		content: '';
+		display: inline-block;
+		vertical-align: top;
+		box-sizing: border-box;
+		background-color: $white;
+		border: $toggle-border-width solid $dark-gray-300;
+		width: $toggle-width;
+		height: $toggle-height;
+		border-radius: $toggle-height / 2;
+		transition: 0.2s background ease;
+	}
+
+	.components-form-toggle__thumb {
+		display: block;
+		position: absolute;
+		top: $toggle-border-width * 2;
+		left: $toggle-border-width * 2;
+		width: $toggle-height - ( $toggle-border-width * 4 );
+		height: $toggle-height - ( $toggle-border-width * 4 );
+		border-radius: 50%;
+		transition: 0.1s transform ease;
+		background-color: $dark-gray-300;
+		border: 5px solid $dark-gray-300; // has explicit border to act as a fill in Windows High Contrast Mode
+	}
+
+	&:hover {
+		.components-form-toggle__track {
+			border: $toggle-border-width solid $dark-gray-500;
+		}
+
+		.components-form-toggle__thumb {
+			background-color: $dark-gray-500;
+			border: 5px solid $dark-gray-300; // has explicit border to act as a fill in Windows High Contrast Mode
+		}
+
+		.components-form-toggle__off {
+			color: $dark-gray-500;
+		}
+	}
+
+	// checked state
+	&.is-checked .components-form-toggle__track {
+		background-color: theme( toggle );
+		border: $toggle-border-width solid theme( toggle );
+		border: #{ $toggle-height / 2 } solid transparent; // expand the border to fake a solid in Windows High Contrast Mode
+	}
+
+	&__input:focus + .components-form-toggle__track {
+		@include switch-style__focus-active();
+	}
+
+	&.is-checked {
+		.components-form-toggle__thumb {
+			background-color: $white;
+			border-width: 0; // zero out the border color to make the thumb invisible in Windows High Contrast Mode
+			transform: translateX( $toggle-width - ( $toggle-border-width * 4 ) - ( $toggle-height - ( $toggle-border-width * 4 ) ) );
+		}
+
+		&:before {
+			background-color: theme( toggle );
+			border: $toggle-border-width solid theme( toggle );
+		}
+	}
+}
+
+.components-form-toggle__input[type=checkbox] {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	margin: 0;
+	padding: 0;
+	z-index: z-index( '.components-form-toggle__input' );
+}
+
+// Ensure on indicator works in normal and Windows high contrast mode both
+.components-form-toggle .components-form-toggle__on {
+	// outlines show up in windows high contrast mode
+	outline: 1px solid transparent;
+	outline-offset: -1px;
+
+	// this colors the indicator black, then inverts it for normal mode
+	border: 1px solid $black;
+	filter: invert( 100% ) contrast( 500% ); // this makes the icon white for normal mode, and it makes it dark blue in Windows High Contrast Mode
+}
+
+@supports ( -ms-high-contrast-adjust: auto ) {
+	// Edge stacks outlines on top of the SVG itself, and when showing them in high contrast mode it means they get inverted again
+	// Therefore, show a different style for the on indicator only in Edge and IE11
+	.components-form-toggle .components-form-toggle__on {
+		filter: none;
+		border: 1px solid $white;
+	}
+}

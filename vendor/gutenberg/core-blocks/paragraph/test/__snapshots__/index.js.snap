@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/paragraph block edit matches snapshot 1`] = `
+<div>
+   
+  <div
+    class="editor-rich-text"
+  >
+    <div>
+      <div>
+        <div
+          class="components-autocomplete"
+        >
+          <p
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-label="Add text or type / to add content"
+            aria-multiline="true"
+            class="wp-block-paragraph editor-rich-text__tinymce"
+            contenteditable="true"
+            data-is-placeholder-visible="true"
+            role="textbox"
+          />
+          <p
+            class="editor-rich-text__tinymce wp-block-paragraph"
+          >
+            Add text or type / to add content
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+</div>
+`;

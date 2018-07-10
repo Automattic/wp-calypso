@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BlockRemoveButton matches the snapshot 1`] = `
+<IconButton
+  className="editor-block-settings-menu__control"
+  icon="trash"
+  label="Remove Block"
+  onClick={[Function]}
+  role="menuitem"
+>
+  Remove Block
+</IconButton>
+`;

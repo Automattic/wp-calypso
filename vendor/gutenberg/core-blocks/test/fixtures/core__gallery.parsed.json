@@ -1,0 +1,12 @@
+[
+    {
+        "blockName": "core/gallery",
+        "attrs": null,
+        "innerBlocks": [],
+        "innerHTML": "\n<ul class=\"wp-block-gallery alignnone columns-2 is-cropped\">\n\t<li class=\"blocks-gallery-item\">\n\t\t<figure>\n\t\t\t<img src=\"https://cldup.com/uuUqE_dXzy.jpg\" alt=\"title\" />\n\t\t</figure>\n\t</li>\n\t<li class=\"blocks-gallery-item\">\n\t\t<figure>\n\t\t\t<img src=\"http://google.com/hi.png\" alt=\"title\" />\n\t\t</figure>\n\t</li>\n</ul>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

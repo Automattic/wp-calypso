@@ -1,0 +1,19 @@
+.components-button-group {
+	display: inline-block;
+
+	.components-button.is-button {
+		border-radius: 0;
+
+		& + .components-button.is-button {
+			margin-left: -1px;
+		}
+
+		&:first-child {
+			border-radius: 3px 0 0 3px;
+		}
+
+		&:last-child {
+			border-radius: 0 3px 3px 0;
+		}
+	}
+}

@@ -1,0 +1,55 @@
+.components-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 1em;
+	min-height: 200px;
+	width: 100%;
+	text-align: center;
+	font-family: $default-font;
+	font-size: $default-font-size;
+
+	// use opacity to work in various editor styles
+	background: $dark-opacity-light-200;
+
+	.is-dark-theme & {
+		background: $light-opacity-light-200;
+	}
+}
+
+.components-placeholder__label {
+	display: flex;
+	justify-content: center;
+	font-weight: 600;
+	margin-bottom: 1em;
+
+	.dashicon {
+		margin-right: 1ch;
+	}
+}
+
+.components-placeholder__fieldset,
+.components-placeholder__fieldset form {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	width: 100%;
+	max-width: 280px;
+	flex-wrap: wrap;
+	z-index: z-index( '.components-placeholder__fieldset' );
+
+	p {
+		font-family: $default-font;
+		font-size: $default-font-size;
+	}
+}
+
+.components-placeholder__input {
+	margin-right: 8px;
+	flex: 1 1 auto;
+}
+
+.components-placeholder__instructions {
+	margin-bottom: 1em;
+}

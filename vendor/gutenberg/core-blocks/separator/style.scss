@@ -1,0 +1,26 @@
+.wp-block-separator {
+	// Default, thin style, is stored in theme.scss so it can be opted out of
+
+	// Wide style
+	&.is-style-wide {
+		border-bottom-width: 1px;
+	}
+
+	// Dots style
+	&.is-style-dots {
+		border: none;
+		text-align: center;
+		max-width: none;
+		line-height: 1;
+		height: auto;
+
+		&:before {
+			content: '\00b7 \00b7 \00b7';
+			color: $dark-gray-700;
+			font-size: 20px;
+			letter-spacing: 2em;
+			padding-left: 2em;
+			font-family: serif;
+		}
+	}
+}

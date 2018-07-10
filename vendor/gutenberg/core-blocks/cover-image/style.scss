@@ -1,0 +1,83 @@
+.wp-block-cover-image {
+	position: relative;
+	background-size: cover;
+	background-position: center center;
+	min-height: 430px;
+	width: 100%;
+	margin: 0 0 1.5em 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&.has-left-content {
+		justify-content: flex-start;
+
+		h2,
+		.wp-block-cover-image-text {
+			margin-left: 0;
+			text-align: left;
+		}
+	}
+
+	&.has-right-content {
+		justify-content: flex-end;
+
+		h2,
+		.wp-block-cover-image-text {
+			margin-right: 0;
+			text-align: right;
+		}
+	}
+
+	h2,
+	.wp-block-cover-image-text {
+		color: $white;
+		font-size: 2em;
+		line-height: 1.25;
+		z-index: 1;
+		margin-bottom: 0;
+		max-width: $content-width;
+		padding: $block-padding;
+		text-align: center;
+
+		a,
+		a:hover,
+		a:focus,
+		a:active {
+			color: $white;
+		}
+	}
+
+	&.has-parallax {
+		background-attachment: fixed;
+	}
+
+	&.has-background-dim:before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		background-color: rgba( $black, 0.5 );
+	}
+
+	@for $i from 1 through 10 {
+		&.has-background-dim.has-background-dim-#{ $i * 10 }:before {
+			background-color: rgba( $black, $i * 0.1 );
+		}
+	}
+
+	&.components-placeholder {
+		height: inherit;
+	}
+
+	// Apply max-width to floated items that have no intrinsic width
+	[data-align="left"] &,
+	[data-align="right"] &,
+	&.alignleft,
+	&.alignright {
+		max-width: $content-width / 2;
+		width: 100%;
+	}
+}

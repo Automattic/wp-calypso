@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`core/button block edit matches snapshot 1`] = `
+<span
+  class="wp-block-button"
+>
+  <div
+    class="editor-rich-text"
+  >
+    <div>
+      <div>
+        <div
+          class="components-autocomplete"
+        >
+          <span
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-label="Add text…"
+            aria-multiline="true"
+            class="wp-block-button__link editor-rich-text__tinymce"
+            contenteditable="true"
+            data-is-placeholder-visible="true"
+            role="textbox"
+          />
+          <span
+            class="editor-rich-text__tinymce wp-block-button__link"
+          >
+            Add text…
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</span>
+`;

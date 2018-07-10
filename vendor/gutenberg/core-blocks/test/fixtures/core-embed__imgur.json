@@ -1,0 +1,15 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core-embed/imgur",
+        "isValid": true,
+        "attributes": {
+            "url": "https://imgur.com/",
+            "caption": [
+                "Embedded content from imgur"
+            ]
+        },
+        "innerBlocks": [],
+        "originalContent": "<figure class=\"wp-block-embed-imgur wp-block-embed\">\n    https://imgur.com/\n    <figcaption>Embedded content from imgur</figcaption>\n</figure>"
+    }
+]

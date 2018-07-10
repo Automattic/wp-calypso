@@ -1,0 +1,31 @@
+.wp-block-text-columns {
+	display: flex;
+
+	&.aligncenter {
+		display: flex;
+	}
+
+	.wp-block-column {
+		box-sizing: border-box;
+		margin: 0 16px;
+		padding: 0;
+
+		&:first-child {
+			margin-left: 0;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+
+	&.columns-2 .wp-block-column {
+		width: calc( 100% / 2 );
+	}
+	&.columns-3 .wp-block-column {
+		width: calc( 100% / 3 );
+	}
+	&.columns-4 .wp-block-column {
+		width: calc( 100% / 4 );
+	}
+}

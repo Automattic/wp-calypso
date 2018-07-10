@@ -1,0 +1,16 @@
+[
+    {
+        "blockName": "core/file",
+        "attrs": {
+            "href": "http://localhost:8888/wp-content/uploads/2018/05/keycodes.js",
+            "showDownloadButton": true,
+            "id": 176
+        },
+        "innerBlocks": [],
+        "innerHTML": "\n<div class=\"wp-block-file\"><a href=\"http://localhost:8888/wp-content/uploads/2018/05/keycodes.js\" class=\"wp-block-file__button\" download=\"\">Download</a></div>\n"
+    },
+    {
+        "attrs": {},
+        "innerHTML": "\n"
+    }
+]

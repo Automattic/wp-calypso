@@ -1,0 +1,56 @@
+.editor-block-list__layout .shared-block-edit-panel {
+	align-items: center;
+	background: $light-gray-100;
+	color: $dark-gray-500;
+	display: flex;
+	flex-wrap: wrap;
+	font-family: $default-font;
+	font-size: $default-font-size;
+	position: relative;
+	top: $block-padding;
+	margin: 0 (-$parent-block-padding);
+	padding: 10px $parent-block-padding;
+
+	// Show a smaller padding when nested.
+	.editor-block-list__layout & {
+		margin: 0 (-$block-padding);
+		padding: 10px $block-padding;
+	}
+
+	.shared-block-edit-panel__spinner {
+		margin: 0 5px;
+	}
+
+	.shared-block-edit-panel__info {
+		margin-right: auto;
+	}
+
+	.shared-block-edit-panel__label {
+		margin-right: $item-spacing;
+		white-space: nowrap;
+		font-weight: 600;
+	}
+
+	.shared-block-edit-panel__title {
+		flex: 1 1 100%;
+		font-size: 14px;
+		height: 30px;
+		margin: #{ $item-spacing / 2 } 0 $item-spacing;
+	}
+
+	.components-button.shared-block-edit-panel__button {
+		margin: 0 5px 0 0;
+	}
+
+	@include break-large() {
+		flex-wrap: nowrap;
+
+		.shared-block-edit-panel__title {
+			margin: 0;
+		}
+
+		.components-button.shared-block-edit-panel__button {
+			margin: 0 0 0 5px;
+		}
+	}
+}

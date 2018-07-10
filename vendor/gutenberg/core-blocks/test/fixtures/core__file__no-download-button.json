@@ -1,0 +1,17 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/file",
+        "isValid": true,
+        "attributes": {
+            "href": "http://localhost:8888/wp-content/uploads/2018/05/keycodes.js",
+            "fileName": "lkjfijwef",
+            "textLinkHref": "http://localhost:8888/?attachment_id=176",
+            "showDownloadButton": false,
+            "downloadButtonText": "Download",
+            "id": 176
+        },
+        "innerBlocks": [],
+        "originalContent": "<div class=\"wp-block-file\"><a href=\"http://localhost:8888/?attachment_id=176\">lkjfijwef</a></div>"
+    }
+]

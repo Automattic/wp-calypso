@@ -1,0 +1,23 @@
+[
+    {
+        "uid": "_uid_0",
+        "name": "core/paragraph",
+        "isValid": true,
+        "attributes": {
+            "content": [
+                {
+                    "key": "html",
+                    "ref": null,
+                    "props": {
+                        "children": "Unwrapped is <em>still</em> valid."
+                    },
+                    "_owner": null,
+                    "_store": {}
+                }
+            ],
+            "dropCap": false
+        },
+        "innerBlocks": [],
+        "originalContent": "Unwrapped is <em>still</em> valid."
+    }
+]

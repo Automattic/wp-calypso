@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BlockControls Should render a dynamic toolbar of controls 1`] = `
+<Fill
+  name="Block.Toolbar"
+>
+  <Toolbar
+    controls={
+      Array [
+        Object {
+          "align": "left",
+          "icon": "editor-alignleft",
+          "title": "Align left",
+        },
+        Object {
+          "align": "center",
+          "icon": "editor-aligncenter",
+          "title": "Align center",
+        },
+        Object {
+          "align": "right",
+          "icon": "editor-alignright",
+          "title": "Align right",
+        },
+      ]
+    }
+  />
+  <p>
+    Child
+  </p>
+</Fill>
+`;
