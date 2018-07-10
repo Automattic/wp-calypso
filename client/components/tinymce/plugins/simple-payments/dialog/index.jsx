@@ -61,53 +61,6 @@ const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
 // ready to be passed to `wpcom` API.
 const productFormToCustomPost = state => productToCustomPost( getProductFormValues( state ) );
 
-const createMembershipButton = siteId => ( dispatch, getState ) => {
-	// This is a memberships submission.
-	const values = getProductFormValues( getState() );
-	const createProduct = product =>
-		wpcom.req
-			.post( `/sites/${ siteId }/memberships/product`, {
-				title: product.title,
-				description: product.description,
-				connected_destination_account_id: product.stripe_account,
-				interval: product.renewal_schedule,
-				price: product.price,
-				currency: product.currency,
-			} )
-			.then( newProduct => {
-				const membershipProduct = membershipProductFromApi( newProduct.product );
-				dispatch(
-					withAnalytics(
-						composeAnalytics(
-							recordTracksEvent( 'calypso_memberships_button_create', {
-								price: membershipProduct.price,
-								currency: membershipProduct.currency,
-								id: membershipProduct.ID,
-							} ),
-							bumpStat( 'calypso_memberships', 'button_created' )
-						),
-						receiveUpdateProduct( siteId, membershipProduct )
-					)
-				);
-				return membershipProduct;
-			} );
-
-	if ( values.stripe_account === 'create' && values.email ) {
-		// We need to create Stripe Account.
-		return wpcom.req
-			.post( '/me/stripe_connect/create', {
-				country: 'US', // FOR NOW
-				email: values.email,
-			} )
-			.then( newAccount => {
-				values.stripe_account = newAccount.result.account.connected_destination_account_id;
-				return createProduct( values );
-			} );
-	}
-
-	return createProduct( values );
-};
-
 // Thunk action creator to create a new button
 const createPaymentButton = siteId => ( dispatch, getState ) => {
 	const productCustomPost = productFormToCustomPost( getState() );
@@ -158,37 +111,6 @@ const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
 				)
 			);
 			return updatedProduct;
-		} );
-};
-
-const updateMembershipButton = ( siteId, productId ) => ( dispatch, getState ) => {
-	// This is a memberships submission.
-	const values = getProductFormValues( getState() );
-	return wpcom.req
-		.post( `/sites/${ siteId }/memberships/product/${ productId }`, {
-			title: values.title,
-			description: values.description,
-			connected_destination_account_id: values.stripe_account,
-			interval: values.renewal_schedule,
-			price: values.price,
-			currency: values.currency,
-		} )
-		.then( newProduct => {
-			const product = membershipProductFromApi( newProduct.product );
-			dispatch(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_memberships_button_update', {
-							id: productId,
-							currency: values.currency,
-							price: values.price,
-						} ),
-						bumpStat( 'calypso_memberships', 'button_updated' )
-					),
-					receiveUpdateProduct( siteId, product )
-				)
-			);
-			return product;
 		} );
 };
 
@@ -373,12 +295,6 @@ class SimplePaymentsDialog extends Component {
 
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
-		} else if (
-			config.isEnabled( 'memberships' ) &&
-			this.props.currentlyEditedIsMembershipSubscription
-		) {
-			// This is memberships business.
-			productId = dispatch( createMembershipButton( siteId ) ).then( newProduct => newProduct.ID );
 		} else {
 			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => newProduct.ID );
 		}
