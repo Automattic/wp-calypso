@@ -35,7 +35,6 @@ export default class extends React.Component {
 		onToggle: PropTypes.func,
 		onEditItem: PropTypes.func,
 		style: PropTypes.object,
-		source: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -108,9 +107,7 @@ export default class extends React.Component {
 			'is-small': this.props.scale <= 0.125,
 		} );
 
-		const propsToOmit = Object.keys( this.constructor.propTypes ).concat( [ 'showIcon' ] );
-
-		const props = omit( this.props, propsToOmit );
+		const props = omit( this.props, Object.keys( this.constructor.propTypes ) );
 
 		const style = assign(
 			{

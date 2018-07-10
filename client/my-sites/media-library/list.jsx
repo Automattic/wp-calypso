@@ -190,7 +190,6 @@ export class MediaLibraryList extends React.Component {
 				selectedIndex={ selectedIndex }
 				onToggle={ this.toggleItem }
 				onEditItem={ this.props.onEditItem }
-				showIcon={ this.props.source !== 'google_photos' }
 			/>
 		);
 	};
@@ -287,7 +286,6 @@ export class MediaLibraryList extends React.Component {
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				renderTrailingItems={ this.renderTrailingItems }
 				className="media-library__list"
-				source={ this.props.source }
 			/>
 		);
 	}
