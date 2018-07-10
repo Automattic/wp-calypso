@@ -56,6 +56,10 @@ export default class extends React.Component {
 		);
 	}
 
+	isFocused( el ) {
+		return document.activeElement && document.activeElement === el;
+	}
+
 	toggleHandler = ( media, shiftKey ) => {
 		this.props.onToggle( media, shiftKey );
 	};
@@ -75,7 +79,7 @@ export default class extends React.Component {
 		const isEnterKey = synthEvent.keyCode === 13;
 		const isSpacebarKey = synthEvent.keyCode === 32;
 		const isKeyboardActionKey = isEnterKey || isSpacebarKey;
-		const targetHasFocus = document.activeElement && document.activeElement === synthEvent.target;
+		const targetHasFocus = this.isFocused( synthEvent.target );
 
 		if ( isKeyboardActionKey && targetHasFocus ) {
 			// Required because space or enter have default
