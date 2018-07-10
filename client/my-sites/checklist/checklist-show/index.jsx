@@ -71,10 +71,10 @@ const mapStateToProps = state => {
 	const siteSlug = getSiteSlug( state, siteId );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
-	const isJetpack = isJetpackSite( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomic;
 	const tasks = isJetpack ? jetpackTasks( siteChecklist ) : onboardingTasks( siteChecklist );
 	return {
-		checklistAvailable: ! isAtomic && ( config.isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
+		checklistAvailable: config.isEnabled( 'jetpack/checklist' ) || ! isJetpack,
 		siteId,
 		siteSlug,
 		tasks,
