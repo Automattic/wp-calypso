@@ -12,30 +12,30 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import ChecklistShow from 'my-sites/checklist/checklist-show';
+import CurrentPlanHeader from './header';
+import DocumentHead from 'components/data/document-head';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import Main from 'components/main';
+import PlansNavigation from 'my-sites/domains/navigation';
+import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
+import QuerySiteDomains from 'components/data/query-site-domains';
+import QuerySitePlans from 'components/data/query-site-plans';
+import QuerySites from 'components/data/query-sites';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import {
 	getCurrentPlan,
 	isCurrentPlanExpiring,
 	isRequestingSitePlans,
 } from 'state/sites/plans/selectors';
-import { isFreeJetpackPlan } from 'lib/products-values';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import DocumentHead from 'components/data/document-head';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import PlansNavigation from 'my-sites/domains/navigation';
-import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
-import CurrentPlanHeader from './header';
-import QuerySites from 'components/data/query-sites';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getPlan } from 'lib/plans';
-import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import ChecklistShow from 'my-sites/checklist/checklist-show';
+import { getPlan } from 'lib/plans';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isEnabled } from 'config';
+import { isFreeJetpackPlan } from 'lib/products-values';
+import { isJetpackSite } from 'state/sites/selectors';
 
 class CurrentPlan extends Component {
 	static propTypes = {
