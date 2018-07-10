@@ -23,11 +23,13 @@ export default class extends React.Component {
 		media: PropTypes.object,
 		maxImageWidth: PropTypes.number,
 		thumbnailType: PropTypes.string,
+		showIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		maxImageWidth: 450,
 		thumbnailType: MEDIA_IMAGE_PHOTON,
+		showIcon: true,
 	};
 
 	getHighestQualityThumbnail = () => {
@@ -50,13 +52,15 @@ export default class extends React.Component {
 					? thumbnail
 					: photon( thumbnail, { width: this.props.maxImageWidth } );
 
+			const maybeIcon = this.props.showIcon ? <Gridicon icon="video-camera" /> : null;
+
 			return (
 				<div
 					className="media-library__list-item-video"
 					style={ { backgroundImage: 'url(' + url + ')' } }
 				>
 					<span className="media-library__list-item-icon media-library__list-item-centered">
-						<Gridicon icon="video-camera" />
+						{ maybeIcon }
 					</span>
 				</div>
 			);
