@@ -117,10 +117,15 @@ class SiteNotice extends React.Component {
 
 		const { site, activeDiscount } = this.props;
 		const { nudgeText, nudgeEndsTodayText, ctaText, name } = activeDiscount;
+
 		const bannerText =
 			nudgeEndsTodayText && this.promotionEndsToday( activeDiscount )
 				? nudgeEndsTodayText
 				: nudgeText;
+
+		if ( ! bannerText ) {
+			return null;
+		}
 
 		return (
 			<SidebarBanner
