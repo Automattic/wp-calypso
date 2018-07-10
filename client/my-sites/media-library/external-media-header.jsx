@@ -186,9 +186,9 @@ class MediaLibraryExternalHeader extends React.Component {
 						disabled={ false }
 						id="media-folder-view-toggle"
 						wrapperClassName="media-library__header-item media-library__header-folder-toggle"
-						aria-label={ translate( 'Browse Folders' ) }
+						aria-label={ translate( 'Browse Albums' ) }
 					>
-						{ translate( 'Browse Folders' ) }
+						{ translate( 'Browse Albums' ) }
 					</FormToggle>
 				) }
 
@@ -201,7 +201,7 @@ class MediaLibraryExternalHeader extends React.Component {
 					>
 						<Gridicon icon="arrow-left" size={ 24 } />
 
-						<span>{ translate( 'Back to Folders' ) }</span>
+						<span>{ translate( 'Back to Albums' ) }</span>
 					</Button>
 				) }
 
