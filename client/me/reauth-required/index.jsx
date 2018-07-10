@@ -21,7 +21,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
-import FormTelInput from 'components/forms/form-tel-input';
+import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
 import Notice from 'components/notice';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
@@ -207,9 +207,8 @@ const ReauthRequired = createReactClass( {
 				<form onSubmit={ this.submitForm }>
 					<FormFieldset>
 						<FormLabel htmlFor="code">{ this.props.translate( 'Verification Code' ) }</FormLabel>
-						<FormTelInput
-							autoComplete="off"
-							autoFocus={ true }
+						<FormVerificationCodeInput
+							autoFocus
 							id="code"
 							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
 							name="code"
