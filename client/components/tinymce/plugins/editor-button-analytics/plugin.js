@@ -15,7 +15,7 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 function editorButtonAnalytics( editor ) {
 	function editorEventAncestor( event, selector ) {
-		return closest( event.target, selector, true, editor.container );
+		return closest( event.target, selector, editor.container );
 	}
 
 	/**
@@ -70,14 +70,14 @@ function editorButtonAnalytics( editor ) {
 		} else if ( editorEventAncestor( event, '.mce-listbox' ) ) {
 			// This is a click on the format dropdown button
 			recordTinyMCEButtonClick( 'format_dropdown' );
-		} else if ( closest( event.target, '.mce-menu-item', true ) ) {
+		} else if ( closest( event.target, '.mce-menu-item' ) ) {
 			// This is a menu item in the format dropdown.  Only track which
 			// specific item is clicked for english interfaces - the easiest
 			// way to determine which item is selected is by UI text.
 			const reduxStore = editor.getParam( 'redux_store' );
 			const locale = reduxStore ? getCurrentUserLocale( reduxStore.getState() ) : 'en';
 			if ( locale === 'en' ) {
-				const text = closest( event.target, '.mce-menu-item', true ).textContent;
+				const text = closest( event.target, '.mce-menu-item' ).textContent;
 				const menuItemName = text
 					.toLowerCase()
 					.trim()

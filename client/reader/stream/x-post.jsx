@@ -48,20 +48,20 @@ class CrossPost extends PureComponent {
 	handleCardClick = event => {
 		const rootNode = ReactDom.findDOMNode( this );
 
-		if ( closest( event.target, '.should-scroll', true, rootNode ) ) {
+		if ( closest( event.target, '.should-scroll', rootNode ) ) {
 			setTimeout( function() {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
 
-		if ( closest( event.target, '.ignore-click', true, rootNode ) ) {
+		if ( closest( event.target, '.ignore-click', rootNode ) ) {
 			return;
 		}
 
 		// ignore clicks on anchors inside inline content
 		if (
-			closest( event.target, 'a', true, rootNode ) &&
-			closest( event.target, '.reader__x-post', true, rootNode )
+			closest( event.target, 'a', rootNode ) &&
+			closest( event.target, '.reader__x-post', rootNode )
 		) {
 			return;
 		}
