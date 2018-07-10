@@ -144,7 +144,9 @@ class CurrentPlan extends Component {
 						isAutomatedTransfer={ isAutomatedTransfer }
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
-					{ isEnabled( 'jetpack/checklist' ) && isJetpack && <ChecklistShow /> }
+					{ isEnabled( 'jetpack/checklist' ) &&
+						isJetpack &&
+						! isAutomatedTransfer && <ChecklistShow /> }
 					<div
 						className={ classNames( 'current-plan__header-text current-plan__text', {
 							'is-placeholder': { isLoading },
