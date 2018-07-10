@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { GROUP_JETPACK, GROUP_WPCOM, TYPE_FREE, TYPE_PREMIUM } from 'lib/plans/constants';
+import { GROUP_JETPACK, GROUP_WPCOM, TYPE_FREE, TYPE_PERSONAL } from 'lib/plans/constants';
 
 /**
  * No translate() used in this file since we're launching those promotions just for the EN audience
@@ -17,7 +17,7 @@ export default [
 			'Upgrade to a Premium or Business plan today and start collecting payments with the Simple Payments button!',
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_WPCOM },
-			{ type: TYPE_PREMIUM, group: GROUP_WPCOM },
+			{ type: TYPE_PERSONAL, group: GROUP_WPCOM },
 		],
 	},
 	{
@@ -28,7 +28,7 @@ export default [
 			'Upgrade to a Premium or Professional plan today and start collecting payments with the Simple Payments button!',
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_JETPACK },
-			{ type: TYPE_PREMIUM, group: GROUP_JETPACK },
+			{ type: TYPE_PERSONAL, group: GROUP_JETPACK },
 		],
 	},
 ];
