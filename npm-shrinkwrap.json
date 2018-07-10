@@ -1407,6 +1407,7 @@
       "resolved": "https://registry.npmjs.org/align-text/-/align-text-0.1.4.tgz",
       "integrity": "sha1-DNkKVhCT810KmSVsIrcGlDP60Rc=",
       "dev": true,
+      "optional": true,
       "requires": {
         "kind-of": "^3.0.2",
         "longest": "^1.0.1",
@@ -1726,12 +1727,12 @@
       "integrity": "sha1-ri1acpR38onWDdf5amMUoi3Wwio="
     },
     "autoprefixer": {
-      "version": "8.6.4",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-8.6.4.tgz",
-      "integrity": "sha512-9D0OoxWCqq9Okp9wD+igaCf6ZaNjYNFSCKxgMLAxAGqXwpapaZ+D0PBv265VHQLgam8a7gld4E6KgJJM6SKfQQ==",
+      "version": "8.6.5",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-8.6.5.tgz",
+      "integrity": "sha512-PLWJN3Xo/rycNkx+mp8iBDMTm3FeWe4VmYaZDSqL5QQB9sLsQkG5k8n+LNDFnhh9kdq2K+egL/icpctOmDHwig==",
       "requires": {
         "browserslist": "^3.2.8",
-        "caniuse-lite": "^1.0.30000859",
+        "caniuse-lite": "^1.0.30000864",
         "normalize-range": "^0.1.2",
         "num2fraction": "^1.2.2",
         "postcss": "^6.0.23",
@@ -11138,7 +11139,8 @@
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/longest/-/longest-1.0.1.tgz",
       "integrity": "sha1-MKCy2jj3N3DoKUoNIuZiXtd9AJc=",
-      "dev": true
+      "dev": true,
+      "optional": true
     },
     "loose-envify": {
       "version": "1.3.1",
