@@ -12184,9 +12184,12 @@
       }
     },
     "notifications-panel": {
-      "version": "2.1.10",
-      "resolved": "https://registry.npmjs.org/notifications-panel/-/notifications-panel-2.1.10.tgz",
-      "integrity": "sha512-lGQocN7VDL5aue1SMwLifFe88UT1zqcLJ6v0x+QtL3Ws5yYfLC3sM+qaHVGrRdqFh3GZsc4PG4gzt+oGZgX+7Q=="
+      "version": "2.2.1",
+      "resolved": "https://registry.npmjs.org/notifications-panel/-/notifications-panel-2.2.1.tgz",
+      "integrity": "sha512-cRnohjy0ysfB7EWbkeDO5bLGC9Q3a9OKVtJpkXmbzPqBQjVpGCAmOYW5Ax/CLcdy+clNvqXpjNTVmeHM4Nr5dQ==",
+      "requires": {
+        "ajv": "^6.5.1"
+      }
     },
     "npm-merge-driver": {
       "version": "2.3.5",
