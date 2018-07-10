@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { filter, noop, range } from 'lodash';
+import { filter, noop, times } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -59,9 +59,7 @@ export class Checklist extends Component {
 		return (
 			<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
 				<ChecklistHeader total={ 0 } completed={ 0 } hideCompleted={ false } />
-				{ range( this.props.placeholderCount ).map( index => (
-					<ChecklistPlaceholder key={ index } />
-				) ) }
+				{ times( this.props.placeholderCount, index => <ChecklistPlaceholder key={ index } /> ) }
 			</div>
 		);
 	}
@@ -69,18 +67,18 @@ export class Checklist extends Component {
 	renderTask = task => {
 		return (
 			<ChecklistTask
-				key={ task.id }
-				id={ task.id }
-				title={ task.title }
 				buttonPrimary={ task.buttonPrimary }
 				buttonText={ task.buttonText }
-				completedTitle={ task.completedTitle }
+				completed={ task.completed }
 				completedButtonText={ task.completedButtonText }
+				completedTitle={ task.completedTitle }
 				description={ task.description }
 				duration={ task.duration }
-				completed={ task.completed }
+				id={ task.id }
+				key={ task.id }
 				onAction={ this.props.onAction }
 				onToggle={ this.props.onToggle }
+				title={ task.title }
 			/>
 		);
 	};
