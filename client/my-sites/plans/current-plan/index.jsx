@@ -172,16 +172,16 @@ export default connect( ( state, ownProps ) => {
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 	return {
-		selectedSite,
-		selectedSiteId,
-		domains,
-		isAutomatedTransfer,
 		context: ownProps.context,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
-		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
-		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
+		domains,
 		hasDomainsLoaded: !! domains,
-		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		isAutomatedTransfer,
+		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		isJetpack,
+		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		selectedSite,
+		selectedSiteId,
+		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 	};
 } )( localize( CurrentPlan ) );
