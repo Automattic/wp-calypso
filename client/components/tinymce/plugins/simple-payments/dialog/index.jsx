@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { getFormValues } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
 
@@ -52,7 +53,6 @@ import {
 } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
-import { getFormValues } from 'redux-form';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
