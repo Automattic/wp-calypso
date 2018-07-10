@@ -6,18 +6,17 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ChecklistShow from './checklist-show';
 import ChecklistShowShare from './share';
-import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import FormattedHeader from 'components/formatted-header';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
@@ -25,7 +24,9 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
+import { mergeObjectIntoArrayById } from 'my-sites/checklist/util';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { tasks as wpcomTasks } from './onboardingChecklist';
 
 class ChecklistMain extends PureComponent {
 	getHeaderTitle( displayMode ) {
@@ -122,7 +123,7 @@ class ChecklistMain extends PureComponent {
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ this.renderHeader( completed, displayMode ) }
-				<ChecklistShow />
+				<ChecklistShow tasks={ tasks } />
 			</Fragment>
 		);
 	}
@@ -157,12 +158,20 @@ class ChecklistMain extends PureComponent {
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
-	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
+
+	let tasks;
+	if ( ! isJetpack ) {
+		const tasksFromServer = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
+
+		tasks = tasksFromServer ? mergeObjectIntoArrayById( wpcomTasks, tasksFromServer ) : null;
+	}
+
 	return {
-		checklistAvailable: ! isAtomic && ( config.isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
+		checklistAvailable: ! isJetpack,
 		siteId,
 		siteSlug,
+		tasks,
 		user: getCurrentUser( state ),
 	};
 };

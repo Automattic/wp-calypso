@@ -7,6 +7,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,6 +17,7 @@ import ChecklistShow from 'my-sites/checklist/checklist-show';
 import CurrentPlanHeader from './header';
 import DocumentHead from 'components/data/document-head';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import Main from 'components/main';
 import PlansNavigation from 'my-sites/domains/navigation';
@@ -36,6 +38,8 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { isFreeJetpackPlan } from 'lib/products-values';
 import { isJetpackSite } from 'state/sites/selectors';
+import { mergeObjectIntoArrayById } from 'my-sites/checklist/util';
+import { tasks as jetpackTasks } from 'my-sites/checklist/jetpack-checklist';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -80,6 +84,7 @@ class CurrentPlan extends Component {
 
 	render() {
 		const {
+			checklistTasks,
 			context,
 			currentPlan,
 			domains,
@@ -146,7 +151,7 @@ class CurrentPlan extends Component {
 					/>
 					{ isEnabled( 'jetpack/checklist' ) &&
 						isJetpack &&
-						! isAutomatedTransfer && <ChecklistShow /> }
+						! isAutomatedTransfer && <ChecklistShow tasks={ checklistTasks } /> }
 					<div
 						className={ classNames( 'current-plan__header-text current-plan__text', {
 							'is-placeholder': { isLoading },
@@ -171,7 +176,17 @@ export default connect( ( state, { context } ) => {
 	const isJetpack = isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
+	let checklistTasks;
+	if ( isEnabled( 'jetpack/checklist' ) && isJetpack && ! isAutomatedTransfer ) {
+		const tasksFromServer = get( getSiteChecklist( state, selectedSiteId ), [ 'tasks' ] );
+
+		checklistTasks = tasksFromServer
+			? mergeObjectIntoArrayById( jetpackTasks, tasksFromServer )
+			: null;
+	}
+
 	return {
+		checklistTasks,
 		context,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		domains,
