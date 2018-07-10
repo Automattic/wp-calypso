@@ -67,7 +67,11 @@ export class MediaFolderDropdown extends Component {
 			initial = [ this.props.defaultOption ];
 		}
 
-		return initial.concat( folderData ).map( folder => {
+		return initial.concat( folderData );
+	}
+
+	renderOptions( optionData ) {
+		return optionData.map( folder => {
 			const folderId = '' + folder.ID;
 			const folderChildren = folder.children ? ` (${ folder.children })` : ``;
 
@@ -100,12 +104,12 @@ export class MediaFolderDropdown extends Component {
 				<FormSelect
 					id="media-library-folders"
 					name="media-library-folders"
-					value={ this.folder }
+					value={ this.props.folder }
 					className="media-library__folder-dropdown-field"
 					onChange={ this.handleOnSelect }
 					disabled={ this.props.disabled }
 				>
-					{ folderOptions }
+					{ this.renderOptions( folderOptions ) }
 				</FormSelect>
 			</div>
 		);

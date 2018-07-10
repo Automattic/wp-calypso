@@ -14,14 +14,13 @@ import { shallow } from 'enzyme';
  */
 import { folders } from './fixtures';
 import { MediaFolderDropdown } from '../media-folder-dropdown';
-import SelectDropdown from 'components/select-dropdown';
+import FormSelect from 'components/forms/form-select';
 
 const noop = rtn => rtn;
 
 describe( 'MediaFolderDropdown', () => {
 	let wrapper;
 	let FIXTURE_FOLDERS_DATA;
-	let FIXTURE_FOLDERS_OPTIONS;
 
 	beforeEach( () => {
 		if ( wrapper ) {
@@ -29,15 +28,6 @@ describe( 'MediaFolderDropdown', () => {
 		}
 
 		FIXTURE_FOLDERS_DATA = folders;
-
-		// Convert raw API folder data to the label/value key pairs
-		// expected
-		FIXTURE_FOLDERS_OPTIONS = FIXTURE_FOLDERS_DATA.map( folder => {
-			return {
-				value: folder.ID.toString(),
-				label: folder.name,
-			};
-		} );
 	} );
 
 	test( 'default rendering', () => {
@@ -45,7 +35,7 @@ describe( 'MediaFolderDropdown', () => {
 			<MediaFolderDropdown translate={ noop } folders={ FIXTURE_FOLDERS_DATA } />
 		);
 		expect( wrapper.find( '.media-library__folder-dropdown' ).exists() ).toBe( true );
-		expect( wrapper.find( SelectDropdown ).exists() ).toBe( true );
+		expect( wrapper.find( FormSelect ).exists() ).toBe( true );
 	} );
 
 	test( 'does not render if no folders are provided', () => {
@@ -54,16 +44,6 @@ describe( 'MediaFolderDropdown', () => {
 	} );
 
 	describe( 'initial folder selection', () => {
-		test( 'initial folder is correctly defaulted to first', () => {
-			const expected = FIXTURE_FOLDERS_DATA[ 0 ].ID;
-
-			wrapper = shallow(
-				<MediaFolderDropdown translate={ noop } folders={ FIXTURE_FOLDERS_DATA } />
-			);
-
-			expect( wrapper.find( SelectDropdown ).props().initialSelected ).toBe( expected );
-		} );
-
 		test( 'initial folder can be set via folder prop', () => {
 			const expected = FIXTURE_FOLDERS_DATA[ 1 ].ID;
 
@@ -75,17 +55,17 @@ describe( 'MediaFolderDropdown', () => {
 				/>
 			);
 
-			expect( wrapper.find( SelectDropdown ).props().initialSelected ).toBe( expected );
+			expect( wrapper.find( FormSelect ).props().value ).toBe( expected );
 		} );
 	} );
 
 	test( 'folder options correctly merge with default option', () => {
 		const defaultOption = {
-			value: '/',
-			label: 'All Albums',
+			ID: '/',
+			name: 'All Albums',
 		};
 
-		const expected = [ defaultOption, null ].concat( FIXTURE_FOLDERS_OPTIONS );
+		const expected = [ defaultOption ].concat( FIXTURE_FOLDERS_DATA );
 
 		wrapper = shallow(
 			<MediaFolderDropdown
@@ -95,10 +75,10 @@ describe( 'MediaFolderDropdown', () => {
 			/>
 		);
 
-		expect( wrapper.find( SelectDropdown ).props().options ).toEqual( expected );
+		expect( wrapper.instance().getDropDownOptions( FIXTURE_FOLDERS_DATA ) ).toEqual( expected );
 	} );
 
-	test( 'the selected option value is correctly passed as argument to onFolderChange prop', () => {
+	test( "the onFolderChange prop is called with folder ID when FormSelect's onChange prop is triggered", () => {
 		const spy = jest.fn();
 		const selectedOption = FIXTURE_FOLDERS_DATA[ 0 ];
 		const expected = selectedOption.value;
@@ -110,23 +90,27 @@ describe( 'MediaFolderDropdown', () => {
 				onFolderChange={ spy }
 			/>
 		);
-		const cb = wrapper.find( SelectDropdown ).props().onSelect;
+		const cb = wrapper.find( FormSelect ).props().onChange;
 
 		// Call the spy
-		cb( selectedOption );
+		cb( {
+			target: {
+				value: expected,
+			},
+		} );
 
-		expect( spy ).toBeCalledWith( expected );
+		expect( spy ).toHaveBeenCalledWith( expected );
 	} );
 
-	test( 'correctly forwards disabled prop to SelectDropdown', () => {
+	test( 'correctly forwards disabled prop to FormSelect', () => {
 		wrapper = shallow(
 			<MediaFolderDropdown translate={ noop } folders={ FIXTURE_FOLDERS_DATA } disabled={ true } />
 		);
 
-		expect( wrapper.find( SelectDropdown ).props().disabled ).toBe( true );
+		expect( wrapper.find( FormSelect ).props().disabled ).toBe( true );
 
 		wrapper.setProps( { disabled: false } );
 
-		expect( wrapper.find( SelectDropdown ).props().disabled ).toBe( false );
+		expect( wrapper.find( FormSelect ).props().disabled ).toBe( false );
 	} );
 } );
