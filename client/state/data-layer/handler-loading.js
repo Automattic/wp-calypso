@@ -10,7 +10,7 @@ export const state = {
 
 const requiredHandlers = new Set();
 
-export const requireHandlers = ( ...requires ) => {
+export const registerHandlers = ( ...requires ) => {
 	let nextHandlers = state.handlers;
 
 	requires.forEach( ( [ id, handlers ] ) => {

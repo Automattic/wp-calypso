@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { requireHandlers } from 'state/data-layer/handler-loading';
+import { registerHandlers } from 'state/data-layer/handler-loading';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { PLANS_REQUEST } from 'state/action-types';
@@ -61,7 +61,7 @@ export const dispatchPlansRequest = dispatchRequestEx( {
 	onError: receiveError,
 } );
 
-requireHandlers( [
+registerHandlers( [
 	'state/data-layer/wpcom/plans',
 	{
 		[ PLANS_REQUEST ]: [ dispatchPlansRequest ],

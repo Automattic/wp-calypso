@@ -4,14 +4,14 @@
  * Internal dependencies
  */
 import { bypassDataLayer } from './utils';
-import { requireHandlers, state } from 'state/data-layer/handler-loading';
+import { registerHandlers, state } from 'state/data-layer/handler-loading';
 import wpcomHttpHandlers from './wpcom-http';
 import httpData from './http-data';
 import httpHandlers from 'state/http';
 import thirdPartyHandlers from './third-party';
 import wpcomHandlers from './wpcom';
 
-requireHandlers(
+registerHandlers(
 	[ 'httpData', httpData ],
 	[ 'httpHandlers', httpHandlers ],
 	[ 'wpcomHttpHandlers', wpcomHttpHandlers ],

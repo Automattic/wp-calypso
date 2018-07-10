@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
-import { requireHandlers } from 'state/data-layer/handler-loading';
+import { registerHandlers } from 'state/data-layer/handler-loading';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
@@ -91,7 +91,7 @@ const setUnknownState = ( { siteId }, error ) => {
 	);
 };
 
-requireHandlers( [
+registerHandlers( [
 	'state/data-layer/wpcom/sites/rewind',
 	{
 		[ REWIND_STATE_REQUEST ]: [
