@@ -137,7 +137,6 @@ export class AddLinkDialog extends Component {
 
 		return (
 			<Dialog
-				autoFocus={ false }
 				isVisible={ shouldDisplay }
 				buttons={ buttons }
 				onClose={ this.onCloseDialog }
@@ -146,6 +145,7 @@ export class AddLinkDialog extends Component {
 				<FormFieldset>
 					<FormLabel htmlFor="link_url">{ translate( 'URL' ) }</FormLabel>
 					<FormTextInput
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						name="link_url"
 						onChange={ this.setLinkUrl }
 						ref={ this.bindLinkUrlRef }
