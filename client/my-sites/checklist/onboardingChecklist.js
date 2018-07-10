@@ -9,7 +9,7 @@ import { isDesktop } from 'lib/viewport';
 /**
  * Internal dependencies
  */
-const tasks = {
+const unorderedTasks = {
 	avatar_uploaded: {
 		title: 'Upload your profile picture',
 		description:
@@ -97,6 +97,8 @@ const sequence = [
 	'post_published',
 ];
 
+export const tasks = sequence.map( id => ( { id, ...unorderedTasks[ id ] } ) );
+
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
 	const url = task.url && task.url.replace( '$siteSlug', siteSlug );
@@ -126,17 +128,4 @@ export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
-}
-
-export function onboardingTasks( checklist ) {
-	if ( ! checklist || ! checklist.tasks ) {
-		return null;
-	}
-
-	return sequence.map( id => {
-		const task = tasks[ id ];
-		const taskFromServer = checklist.tasks[ id ];
-
-		return { id, ...task, ...taskFromServer };
-	} );
 }

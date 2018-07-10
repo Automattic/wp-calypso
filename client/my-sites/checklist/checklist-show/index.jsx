@@ -6,19 +6,20 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Checklist from 'blocks/checklist';
-import { jetpackTasks } from '../jetpack-checklist';
+import { tasks as jetpackTasks } from '../jetpack-checklist';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { launchTask, onboardingTasks } from '../onboardingChecklist';
+import { launchTask, tasks as wpcomTasks } from '../onboardingChecklist';
+import { mergeObjectIntoArrayById } from '../util';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -69,11 +70,13 @@ const mapStateToProps = state => {
 	const siteSlug = getSiteSlug( state, siteId );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
-	const tasks = isJetpack ? jetpackTasks( siteChecklist ) : onboardingTasks( siteChecklist );
+	const tasks = isJetpack ? jetpackTasks : wpcomTasks;
+	const tasksFromServer = get( siteChecklist, [ 'tasks' ] );
+
 	return {
 		siteId,
 		siteSlug,
-		tasks,
+		tasks: tasksFromServer ? mergeObjectIntoArrayById( tasks, tasksFromServer ) : null,
 	};
 };
 

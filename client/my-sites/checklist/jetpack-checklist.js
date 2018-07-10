@@ -4,7 +4,7 @@
  */
 import { translate } from 'i18n-calypso';
 
-const tasks = {
+const unorderedTasks = {
 	jetpack_brute_force: {
 		completedTitle: translate(
 			"We've automatically protected you from brute force login attacks."
@@ -69,15 +69,4 @@ const sequence = [
 	'jetpack_sign_in',
 ];
 
-export function jetpackTasks( checklist ) {
-	if ( ! checklist || ! checklist.tasks ) {
-		return null;
-	}
-
-	return sequence.map( id => {
-		const task = tasks[ id ];
-		const taskFromServer = checklist.tasks[ id ];
-
-		return { id, ...task, ...taskFromServer };
-	} );
-}
+export const tasks = sequence.map( id => ( { id, ...unorderedTasks[ id ] } ) );

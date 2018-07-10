@@ -22,7 +22,8 @@ import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
+import { launchTask, tasks as onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
+import { mergeObjectIntoArrayById } from 'my-sites/checklist/util';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -209,7 +210,10 @@ export class ChecklistBanner extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => {
-	const tasks = onboardingTasks( getSiteChecklist( state, siteId ) );
+	const tasksFromServer = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
+	const tasks = tasksFromServer
+		? mergeObjectIntoArrayById( onboardingTasks, tasksFromServer )
+		: null;
 	const task = find( tasks, { completed: false } );
 	const { true: completed } = countBy( tasks, 'completed' );
 	const siteSlug = getSiteSlug( state, siteId );
