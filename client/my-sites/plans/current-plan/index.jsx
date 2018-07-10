@@ -163,7 +163,7 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect( ( state, { context } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
@@ -172,7 +172,7 @@ export default connect( ( state, ownProps ) => {
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 	return {
-		context: ownProps.context,
+		context,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		domains,
 		hasDomainsLoaded: !! domains,
