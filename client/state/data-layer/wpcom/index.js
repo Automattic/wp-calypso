@@ -22,7 +22,6 @@ import login2fa from './login-2fa';
 import logstash from './logstash';
 import me from './me';
 import meta from './meta';
-import plans from './plans';
 import posts from './posts';
 import privacyPolicy from './privacy-policy';
 import read from './read';
@@ -50,7 +49,6 @@ export const handlers = mergeHandlers(
 	logstash,
 	me,
 	meta,
-	plans,
 	posts,
 	privacyPolicy,
 	read,

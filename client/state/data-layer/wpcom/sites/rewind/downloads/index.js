@@ -9,6 +9,7 @@ import { isEmpty, get } from 'lodash';
  * Internal dependencies
  */
 import { errorNotice } from 'state/notices/actions';
+import { requireHandlers } from 'state/data-layer/handler-loading';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_BACKUP_PROGRESS_REQUEST, REWIND_BACKUP_DISMISS_PROGRESS } from 'state/action-types';
@@ -151,7 +152,7 @@ const fromBackupDismiss = data => ( {
 	dismissed: data.is_dismissed,
 } );
 
-export const handlers = [
+requireHandlers( [
 	'state/data-layer/wpcom/sites/rewind/downloads',
 	{
 		[ REWIND_BACKUP_PROGRESS_REQUEST ]: [
@@ -170,4 +171,4 @@ export const handlers = [
 			} ),
 		],
 	},
-];
+] );

@@ -3,9 +3,11 @@
  * Internal dependencies
  */
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import { requireHandlers } from 'state/data-layer/handler-loading';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { requestRewindState } from 'state/rewind/actions';
 import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
 import { rewindStatus } from './schema';
 import { transformApi } from './api-transformer';
@@ -40,14 +42,7 @@ const updateRewindState = ( { siteId }, data ) => {
 	}
 
 	const delayedStateRequest = dispatch =>
-		setTimeout(
-			() =>
-				dispatch( {
-					type: REWIND_STATE_REQUEST,
-					siteId,
-				} ),
-			3000
-		);
+		setTimeout( () => dispatch( requestRewindState( siteId ) ), 3000 );
 
 	return [ stateUpdate, delayedStateRequest ];
 };
@@ -96,7 +91,7 @@ const setUnknownState = ( { siteId }, error ) => {
 	);
 };
 
-export const handlers = [
+requireHandlers( [
 	'state/data-layer/wpcom/sites/rewind',
 	{
 		[ REWIND_STATE_REQUEST ]: [
@@ -108,4 +103,4 @@ export const handlers = [
 			} ),
 		],
 	},
-];
+] );

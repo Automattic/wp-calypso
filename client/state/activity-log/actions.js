@@ -2,8 +2,6 @@
 /**
  * Internal dependencies
  */
-import { requireHandlers } from 'state/data-layer/handler-loading';
-import { handlers } from 'state/data-layer/wpcom/sites/rewind/downloads';
 import {
 	ACTIVITY_LOG_FILTER_SET,
 	ACTIVITY_LOG_FILTER_UPDATE,
@@ -29,7 +27,7 @@ import {
 	REWIND_BACKUP_DISMISS_PROGRESS,
 } from 'state/action-types';
 
-requireHandlers( handlers );
+import 'state/data-layer/wpcom/sites/rewind/downloads';
 
 /**
  * Turn the 'rewind' feature on for a site.
