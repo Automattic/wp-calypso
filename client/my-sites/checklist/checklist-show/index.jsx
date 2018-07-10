@@ -6,7 +6,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { get, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { launchTask, onboardingTasks } from '../onboardingChecklist';
+import { launchTask, wpcomTasks } from '../onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -28,7 +28,7 @@ import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 class ChecklistShow extends PureComponent {
 	handleAction = id => {
 		const { requestTour, siteSlug, tasks, track } = this.props;
-		const task = find( tasks, { id } );
+		const task = tasks[ id ];
 
 		launchTask( {
 			task,
@@ -41,7 +41,7 @@ class ChecklistShow extends PureComponent {
 
 	handleToggle = id => {
 		const { notify, siteId, tasks, update } = this.props;
-		const task = find( tasks, { id } );
+		const task = tasks[ id ];
 
 		if ( task && ! task.completed ) {
 			notify( 'is-success', 'You completed a task!' );
@@ -72,12 +72,14 @@ const mapStateToProps = state => {
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
-	const tasks = isJetpack ? jetpackTasks( siteChecklist ) : onboardingTasks( siteChecklist );
+	const tasks = isJetpack ? jetpackTasks : wpcomTasks;
+	const tasksFromServer = get( siteChecklist, [ 'tasks' ] );
+
 	return {
 		checklistAvailable: ! isAtomic && ( config.isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
 		siteId,
 		siteSlug,
-		tasks,
+		tasks: tasksFromServer ? merge( {}, tasks, tasksFromServer ) : null,
 	};
 };
 

@@ -1,11 +1,8 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { Component } from 'react';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,9 +15,8 @@ export default class ChecklistExample extends Component {
 
 	state = {
 		showPlaceholder: false,
-		tasks: [
-			{
-				id: 'first-completed-task',
+		tasks: {
+			'first-completed-task': {
 				title: 'A completed task',
 				completedTitle: 'You completed the first task',
 				completedButtonText: 'View',
@@ -29,8 +25,7 @@ export default class ChecklistExample extends Component {
 				url: 'https://wordpress.com/url-to-the-first-task',
 				completed: true,
 			},
-			{
-				id: 'second-completed-task',
+			'second-completed-task': {
 				title: 'A second completed task',
 				completedTitle: 'You completed the second task',
 				description: 'This row shows how completed tasks look.',
@@ -38,8 +33,7 @@ export default class ChecklistExample extends Component {
 				url: 'https://wordpress.com/url-to-the-second-task',
 				completed: true,
 			},
-			{
-				id: 'site-name',
+			'site-name': {
 				title: "Add your site's name or logo",
 				completedTitle: "You chose your site's name",
 				completedButtonText: 'Change',
@@ -48,8 +42,7 @@ export default class ChecklistExample extends Component {
 				url: 'https://wordpress.com/url-to-site-name',
 				completed: false,
 			},
-			{
-				id: 'site-colors',
+			'site-colors': {
 				title: "Pick your site's colors",
 				completedTitle: "You picked your site's colors",
 				completedButtonText: 'Change',
@@ -58,8 +51,7 @@ export default class ChecklistExample extends Component {
 				url: 'https://wordpress.com/url-to-site-colors',
 				completed: false,
 			},
-			{
-				id: 'site-fonts',
+			'site-fonts': {
 				title: "Pick your site's fonts",
 				completedTitle: "You picked your site's fonts",
 				description: 'Add your personal touch to your site by picking your fonts.',
@@ -67,8 +59,7 @@ export default class ChecklistExample extends Component {
 				url: 'https://wordpress.com/url-to-site-fonts',
 				completed: false,
 			},
-			{
-				id: 'header-image',
+			'header-image': {
 				title: 'Change your header image',
 				completedTitle: 'You changed your header image',
 				description: 'Personalize your site with a custom image or background color.',
@@ -76,7 +67,7 @@ export default class ChecklistExample extends Component {
 				url: 'https://wordpress.com/url-to-header-image',
 				completed: false,
 			},
-		],
+		},
 	};
 
 	togglePlaceholder = () => {
@@ -84,15 +75,15 @@ export default class ChecklistExample extends Component {
 	};
 
 	handleAction = id => {
-		const theTask = find( this.state.tasks, { id } );
+		const theTask = this.state.tasks[ id ];
 		console.log( `You will move to ${ theTask.url }.` );
 	};
 
 	handleToggle = id => {
-		const theTask = find( this.state.tasks, { id } );
-		theTask.completed = ! theTask.completed;
-
-		this.setState( { tasks: [ ...this.state.tasks ] } );
+		const theTask = this.state.tasks[ id ];
+		this.setState( {
+			tasks: { ...this.state.tasks, [ id ]: { ...theTask, completed: ! theTask.completed } },
+		} );
 	};
 
 	render() {

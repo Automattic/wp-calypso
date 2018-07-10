@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { filter, noop, range } from 'lodash';
+import { map, noop, pickBy, size, times } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -20,7 +20,7 @@ import { loadTrackingTool } from 'state/analytics/actions';
 
 export class Checklist extends Component {
 	static propTypes = {
-		tasks: PropTypes.array,
+		tasks: PropTypes.object,
 		onAction: PropTypes.func,
 		onToggle: PropTypes.func,
 		isLoading: PropTypes.bool,
@@ -28,7 +28,7 @@ export class Checklist extends Component {
 	};
 
 	static defaultProps = {
-		tasks: [],
+		tasks: {},
 		onAction: noop,
 		onToggle: noop,
 		isLoading: true,
@@ -48,39 +48,37 @@ export class Checklist extends Component {
 	};
 
 	getCompletedTasks() {
-		return filter( this.props.tasks, task => task.completed );
+		return pickBy( this.props.tasks, task => task.completed );
 	}
 
 	getUncompletedTasks() {
-		return filter( this.props.tasks, task => ! task.completed );
+		return pickBy( this.props.tasks, task => ! task.completed );
 	}
 
 	renderPlaceholder() {
 		return (
 			<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
 				<ChecklistHeader total={ 0 } completed={ 0 } hideCompleted={ false } />
-				{ range( this.props.placeholderCount ).map( index => (
-					<ChecklistPlaceholder key={ index } />
-				) ) }
+				{ times( this.props.placeholderCount, index => <ChecklistPlaceholder key={ index } /> ) }
 			</div>
 		);
 	}
 
-	renderTask = task => {
+	renderTask = ( task, id ) => {
 		return (
 			<ChecklistTask
-				key={ task.id }
-				id={ task.id }
-				title={ task.title }
 				buttonPrimary={ task.buttonPrimary }
 				buttonText={ task.buttonText }
-				completedTitle={ task.completedTitle }
+				completed={ task.completed }
 				completedButtonText={ task.completedButtonText }
+				completedTitle={ task.completedTitle }
 				description={ task.description }
 				duration={ task.duration }
-				completed={ task.completed }
+				id={ id }
+				key={ id }
 				onAction={ this.props.onAction }
 				onToggle={ this.props.onToggle }
+				title={ task.title }
 			/>
 		);
 	};
@@ -95,13 +93,13 @@ export class Checklist extends Component {
 		return (
 			<div className={ classNames( 'checklist', { 'is-expanded': ! this.state.hideCompleted } ) }>
 				<ChecklistHeader
-					total={ tasks.length }
-					completed={ this.getCompletedTasks().length }
+					total={ size( tasks ) }
+					completed={ size( this.getCompletedTasks() ) }
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
 				/>
-				{ ! this.state.hideCompleted && this.getCompletedTasks().map( this.renderTask ) }
-				{ this.getUncompletedTasks().map( this.renderTask ) }
+				{ ! this.state.hideCompleted && map( this.getCompletedTasks(), this.renderTask ) }
+				{ map( this.getUncompletedTasks(), this.renderTask ) }
 			</div>
 		);
 	}

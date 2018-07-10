@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import page from 'page';
 
 /**
@@ -80,9 +79,8 @@ class SetupTasks extends Component {
 			site
 		);
 
-		return [
-			{
-				id: 'add-product',
+		return {
+			'add-product': {
 				title: translate( 'Add a product' ),
 				buttonText: translate( 'Add a product' ),
 				buttonPrimary: true,
@@ -93,8 +91,7 @@ class SetupTasks extends Component {
 				url: getLink( '/store/product/:site', site ),
 				completed: hasProducts,
 			},
-			{
-				id: 'set-up-shipping',
+			'set-up-shipping': {
 				title: translate( 'Review shipping' ),
 				buttonText: translate( 'Review shipping' ),
 				buttonPrimary: true,
@@ -105,8 +102,7 @@ class SetupTasks extends Component {
 				url: getLink( '/store/settings/shipping/:site', site ),
 				completed: shippingIsSetUp,
 			},
-			{
-				id: 'set-up-payments',
+			'set-up-payments': {
 				title: translate( 'Review payments' ),
 				buttonText: translate( 'Review payments' ),
 				buttonPrimary: true,
@@ -117,8 +113,7 @@ class SetupTasks extends Component {
 				url: getLink( '/store/settings/payments/:site', site ),
 				completed: paymentsAreSetUp,
 			},
-			{
-				id: 'set-up-taxes',
+			'set-up-taxes': {
 				title: translate( 'Review taxes' ),
 				buttonText: translate( 'Review taxes' ),
 				buttonPrimary: true,
@@ -129,8 +124,7 @@ class SetupTasks extends Component {
 				url: getLink( '/store/settings/taxes/:site', site ),
 				completed: taxesAreSetUp,
 			},
-			{
-				id: 'view-and-customize',
+			'view-and-customize': {
 				title: translate( 'View and customize' ),
 				buttonText: translate( 'Customize' ),
 				buttonPrimary: true,
@@ -143,11 +137,11 @@ class SetupTasks extends Component {
 				url: customizerUrl,
 				completed: triedCustomizer,
 			},
-		];
+		};
 	};
 
 	handleAction = id => {
-		const task = find( this.getSetupTasks(), { id } );
+		const task = this.getSetupTasks()[ id ];
 
 		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 			action: id,

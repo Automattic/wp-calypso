@@ -4,7 +4,7 @@
  */
 import { translate } from 'i18n-calypso';
 
-const tasks = {
+export const jetpackTasks = {
 	jetpack_brute_force: {
 		completedTitle: translate(
 			"We've automatically protected you from brute force login attacks."
@@ -14,6 +14,17 @@ const tasks = {
 	jetpack_spam_filtering: {
 		completedTitle: translate( "We've automatically turned on spam filtering." ),
 		completed: true,
+	},
+	jetpack_backups: {
+		title: translate( 'Backups & Scanning' ),
+		description: translate(
+			"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
+		),
+		completed: true,
+		completedTitle: translate( "We've automatically set up backups and scanning for you." ),
+		completedButtonText: 'Change',
+		duration: translate( '2 min' ),
+		url: '/stats/activity/$siteSlug',
 	},
 	jetpack_monitor: {
 		title: translate( 'Jetpack Monitor' ),
@@ -48,24 +59,3 @@ const tasks = {
 		url: '/settings/security/$siteSlug',
 	},
 };
-
-const sequence = [
-	'jetpack_brute_force',
-	'jetpack_spam_filtering',
-	'jetpack_monitor',
-	'jetpack_plugin_updates',
-	'jetpack_sign_in',
-];
-
-export function jetpackTasks( checklist ) {
-	if ( ! checklist || ! checklist.tasks ) {
-		return null;
-	}
-
-	return sequence.map( id => {
-		const task = tasks[ id ];
-		const taskFromServer = checklist.tasks[ id ];
-
-		return { id, ...task, ...taskFromServer };
-	} );
-}
