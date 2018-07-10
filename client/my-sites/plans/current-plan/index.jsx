@@ -80,15 +80,15 @@ class CurrentPlan extends Component {
 
 	render() {
 		const {
-			selectedSite,
-			selectedSiteId,
-			domains,
 			context,
 			currentPlan,
+			domains,
 			hasDomainsLoaded,
 			isAutomatedTransfer,
 			isExpiring,
 			isJetpack,
+			selectedSite,
+			selectedSiteId,
 			shouldShowDomainWarnings,
 			translate,
 		} = this.props;
