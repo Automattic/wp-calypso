@@ -10,13 +10,6 @@
 const execSync = require( 'child_process' ).execSync;
 const spawnSync = require( 'child_process' ).spawnSync;
 const chalk = require( 'chalk' );
-const fs = require( 'fs' );
-const prettier = require( 'prettier' );
-
-/**
- * Internal dependencies
- */
-const shouldFormat = require( './utils/should-format' );
 
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
@@ -34,45 +27,26 @@ require( '../server/config/validate-config-keys' );
  * @returns {Array}          Paths output from git command
  */
 function parseGitDiffToPathArray( command ) {
-	return execSync( command )
-		.toString()
+	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( name => name.trim() )
-		.filter(
-			name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) || name.endsWith( '.scss' )
-		);
+		.filter( name => /\.(jsx?|scss)$/.test( name ) )
 }
 
 const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --diff-filter=ACM' ) );
-
 const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
 
-// run prettier for any files in the commit that have @format within their first docblock
-files.forEach( file => {
-	const text = fs.readFileSync( file, 'utf8' );
-	if ( shouldFormat( text ) ) {
-		// File has unstaged changes. It's a bad idea to modify and add it before commit.
-		if ( dirtyFiles.has( file ) ) {
-			console.log(
+dirtyFiles.forEach( file => console.log(
 				chalk.red( `${ file } will not be auto-formatted because it has unstaged changes.` )
-			);
-			return;
-		}
+) );
 
-		const config = prettier.resolveConfig.sync( file );
-		config.filepath = file;
-		const formattedText = prettier.format( text, config );
+const toPrettify = files.filter( file => ! dirtyFiles.has( file ) );
+toPrettify.forEach( file => console.log( `Prettier formatting staged file: ${ file }` ) );
 
-		// No change required.
-		if ( text === formattedText ) {
-			return;
-		}
-
-		fs.writeFileSync( file, formattedText );
-		console.log( `Prettier formatting file: ${ file } because it contains the @format flag` );
-		execSync( `git add ${ file }` );
-	}
-} );
+if ( toPrettify.length ) {
+	execSync( `./node_modules/.bin/prettier --ignore-path .eslintignore --write --require-pragma ${ toPrettify.join( ' ' ) }` );
+	execSync( `git add ${ toPrettify.join( ' ' ) }` );
+}
 
 // linting should happen after formatting
 const lintResult = spawnSync(
