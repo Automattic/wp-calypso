@@ -6,7 +6,7 @@
 
 import { assign, isEqual, noop, omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -141,22 +141,19 @@ export default class extends React.Component {
 		}
 
 		return (
-			<div
-				className={ classes }
-				style={ style }
-				onClick={ this.clickItem }
-				onDoubleClick={ this.doubleClickItem }
-				{ ...props }
-			>
-				<span className="media-library__list-item-selected-icon">
-					<Gridicon icon="checkmark" size={ 20 } />
-				</span>
-				<figure className="media-library__list-item-figure" title={ title }>
-					{ this.renderItem() }
-					{ this.renderSpinner() }
-					{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
-				</figure>
-			</div>
+			<Fragment>
+				{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
+				<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
+					<span className="media-library__list-item-selected-icon">
+						<Gridicon icon="checkmark" size={ 24 } />
+					</span>
+					<figure className="media-library__list-item-figure" title={ title }>
+						{ this.renderItem() }
+						{ this.renderSpinner() }
+						{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
+					</figure>
+				</div>
+			</Fragment>
 		);
 	}
 }
