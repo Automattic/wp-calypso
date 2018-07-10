@@ -60,7 +60,6 @@ class ActivityLogTasklist extends Component {
 		goToPage: PropTypes.func.isRequired,
 		updateSingle: PropTypes.func.isRequired,
 		trackUpdate: PropTypes.func.isRequired,
-		trackUpdateFromError: PropTypes.func.isRequired,
 		trackDismissAll: PropTypes.func.isRequired,
 		trackDismiss: PropTypes.func.isRequired,
 
@@ -155,17 +154,13 @@ class ActivityLogTasklist extends Component {
 	};
 
 	/**
-	 * Add a plugin or theme to the update queue.
+	 * Add a plugin, theme, or core update to the update queue. Insert a prop to track enqueue origin later.
 	 *
-	 * @param {object} item Plugin or theme to enqueue.
-	 * @param {string} from   Send 'task' when this is called from the task list, 'notice' when it's called from error notice.
+	 * @param {object} item Plugin, theme, or core update to enqueue.
+	 * @param {string} from Pass '_from_error' when calling from error notice. Otherwise it's empty.
 	 */
-	enqueue = ( item, from = 'task' ) => {
-		if ( 'task' === from ) {
-			this.props.trackUpdate( item );
-		} else if ( 'notice' === from ) {
-			this.props.trackUpdateFromError( item );
-		}
+	enqueue = ( item, from = '' ) => {
+		item.from = from;
 		this.setState(
 			{
 				queued: union( this.state.queued, [ item ] ),
@@ -215,8 +210,9 @@ class ActivityLogTasklist extends Component {
 	 * }
 	 */
 	updateItem = item => {
-		const { showInfoNotice, siteName, updateSingle, translate } = this.props;
+		const { showInfoNotice, siteName, updateSingle, translate, trackUpdate } = this.props;
 
+		trackUpdate( item );
 		updateSingle( item );
 
 		showInfoNotice(
@@ -286,7 +282,7 @@ class ActivityLogTasklist extends Component {
 						{
 							id: `alitemupdate-${ slug }`,
 							button: translate( 'Try again' ),
-							onClick: () => this.enqueue( item, 'notice' ),
+							onClick: () => this.enqueue( item, '_from_error' ),
 						}
 					);
 					this.dequeue();
@@ -512,7 +508,6 @@ const updateCore = siteId =>
 		} ),
 		{
 			fromApi: () => corePackage => {
-				console.log( 'requestHttpData', corePackage );
 				return [ corePackage.version, true ];
 			},
 			freshness: -Infinity,
@@ -550,11 +545,9 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	showErrorNotice: ( error, options ) => dispatch( errorNotice( error, options ) ),
 	showInfoNotice: ( info, options ) => dispatch( infoNotice( info, options ) ),
 	showSuccessNotice: ( success, options ) => dispatch( successNotice( success, options ) ),
-	trackUpdate: ( { type, slug } ) =>
-		dispatch( recordTracksEvent( `calypso_activitylog_tasklist_update_${ type }`, { slug } ) ),
-	trackUpdateFromError: ( { type, slug } ) =>
+	trackUpdate: ( { type, slug, from } ) =>
 		dispatch(
-			recordTracksEvent( `calypso_activitylog_tasklist_update_${ type }_from_error`, { slug } )
+			recordTracksEvent( `calypso_activitylog_tasklist_update_${ type }${ from }`, { slug } )
 		),
 	trackUpdateAll: () => dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_update_all' ) ),
 	trackDismissAll: () =>
