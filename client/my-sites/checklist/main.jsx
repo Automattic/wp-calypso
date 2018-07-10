@@ -81,7 +81,7 @@ class ChecklistMain extends PureComponent {
 					<ChecklistShowShare
 						className="checklist__share"
 						siteSlug={ this.props.siteSlug }
-						recordTracksEvent={ this.props.track }
+						recordTracksEvent={ this.props.recordTracksEvent }
 					/>
 				</Fragment>
 			);
@@ -168,7 +168,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	track: recordTracksEvent,
+	recordTracksEvent,
 };
 
 export default connect(
