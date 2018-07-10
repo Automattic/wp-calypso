@@ -23,11 +23,6 @@ import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
-// Double click handling
-let doubleClickPrevent = false;
-let doubleClicktimer = 0;
-const DOUBLE_CLICK_DELAY = 200;
-
 export default class extends React.Component {
 	static displayName = 'MediaLibraryListItem';
 
@@ -77,21 +72,7 @@ export default class extends React.Component {
 		// https://reactjs.org/docs/events.html#event-pooling
 		const synthEvent = Object.assign( {}, e );
 
-		// Wait for doubleClick - if this doesn't
-		// happen then proceed as per a normal
-		// single click event
-		doubleClicktimer = setTimeout( () => {
-			if ( ! doubleClickPrevent ) {
-				this.toggleHandler( this.props.media, synthEvent.shiftKey );
-			}
-			doubleClickPrevent = false;
-		}, DOUBLE_CLICK_DELAY );
-	};
-
-	doubleClickItem = () => {
-		clearTimeout( doubleClicktimer );
-		doubleClickPrevent = true;
-		this.props.onEnter( this.props.media );
+		this.toggleHandler( this.props.media, synthEvent.shiftKey );
 	};
 
 	handleKeyPress = e => {
