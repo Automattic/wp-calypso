@@ -5,7 +5,6 @@
  */
 
 import debugFactory from 'debug';
-import ms from 'ms';
 import { difference, filter, matchesProperty, negate } from 'lodash';
 
 /**
@@ -152,9 +151,7 @@ export const cacheIndex = {
 	 * @return {Promise} promise
 	 */
 	pruneStaleRecords( lifetime = LIFETIME ) {
-		lifetime = typeof lifetime === 'number' ? lifetime : ms( lifetime );
-
-		debug( 'start to prune records older than %s', ms( lifetime, { long: true } ) );
+		debug( `start to prune records older than ${ lifetime }ms` );
 
 		return this.findStaleRecords( lifetime ).then( this.removeRecordsByList );
 	},

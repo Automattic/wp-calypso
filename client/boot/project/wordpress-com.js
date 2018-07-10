@@ -35,6 +35,7 @@ import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import * as controller from 'controller';
 
 const debug = debugFactory( 'calypso' );
+const TWO_DAYS_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 2;
 
 function renderLayout( reduxStore ) {
 	const Layout = controller.ReduxWrappedLayout;
@@ -51,8 +52,8 @@ function renderLayout( reduxStore ) {
 export function utils() {
 	debug( 'Executing WordPress.com utils.' );
 
-	// prune sync-handler records more than two days old
-	pruneStaleRecords( '2 days' );
+	// prune sync-handler records more than two days old ()
+	pruneStaleRecords( TWO_DAYS_IN_MILLISECONDS );
 }
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {
