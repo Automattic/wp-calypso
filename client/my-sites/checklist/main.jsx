@@ -27,7 +27,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 
 class ChecklistMain extends PureComponent {
 	getHeaderTitle( displayMode ) {
@@ -172,7 +171,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 	track: recordTracksEvent,
 	notify: createNotice,
-	update: requestSiteChecklistTaskUpdate,
 };
 
 export default connect(
