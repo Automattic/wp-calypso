@@ -63,7 +63,6 @@ const shouldNext = action => {
  * @returns {Function} middleware handler
  */
 export const middleware = handlerState => store => next => {
-	let lastHandlers;
 	/**
 	 * Middleware handler
 	 *
@@ -72,9 +71,6 @@ export const middleware = handlerState => store => next => {
 	 * @returns {undefined} please do not use
 	 */
 	return action => {
-		if ( handlerState.handlers !== lastHandlers ) {
-			lastHandlers = handlerState.handlers;
-		}
 		const handlerChain = handlerState.handlers[ action.type ];
 
 		// if no handler is defined for the action type
