@@ -167,11 +167,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = {
-	recordTracksEvent,
-};
-
 export default connect(
 	mapStateToProps,
-	mapDispatchToProps
+	{ recordTracksEvent }
 )( localize( ChecklistMain ) );
