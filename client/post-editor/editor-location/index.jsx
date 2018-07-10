@@ -25,6 +25,7 @@ import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSitePost, getEditedPost } from 'state/posts/selectors';
+import config from 'config';
 
 /**
  * Module variables
@@ -106,7 +107,6 @@ class EditorLocation extends React.Component {
 			error: error,
 			locating: false,
 		} );
-
 		recordStat( 'location_geolocate_failed' );
 	};
 
@@ -141,8 +141,8 @@ class EditorLocation extends React.Component {
 
 	onSearchSelect = result => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
-			geo_latitude: toGeoString( result.geometry.location.lat ),
-			geo_longitude: toGeoString( result.geometry.location.lng ),
+			geo_latitude: toGeoString( result.geometry.location.lat() ),
+			geo_longitude: toGeoString( result.geometry.location.lng() ),
 			geo_address: result.formatted_address,
 			geo_public: '1',
 		} );
@@ -159,6 +159,7 @@ class EditorLocation extends React.Component {
 				markers: this.props.coordinates.join( ',' ),
 				zoom: 8,
 				size: '400x300',
+				key: config( 'google_maps_and_places_api_key' ),
 			} );
 
 		return <img src={ src } className="editor-location__map" />;
