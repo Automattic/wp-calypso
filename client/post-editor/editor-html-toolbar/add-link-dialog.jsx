@@ -146,6 +146,7 @@ export class AddLinkDialog extends Component {
 					<FormLabel htmlFor="link_url">{ translate( 'URL' ) }</FormLabel>
 					<FormTextInput
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+						id="link_url"
 						name="link_url"
 						onChange={ this.setLinkUrl }
 						ref={ this.bindLinkUrlRef }
@@ -154,7 +155,12 @@ export class AddLinkDialog extends Component {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="link_text">{ translate( 'Link Text' ) }</FormLabel>
-					<FormTextInput name="link_text" onChange={ this.setLinkText } value={ linkText } />
+					<FormTextInput
+						id="link_text"
+						name="link_text"
+						onChange={ this.setLinkText }
+						value={ linkText }
+					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
