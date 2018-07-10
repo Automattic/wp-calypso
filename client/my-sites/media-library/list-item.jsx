@@ -56,8 +56,34 @@ export default class extends React.Component {
 		);
 	}
 
-	clickItem = event => {
-		this.props.onToggle( this.props.media, event.shiftKey );
+	toggleHandler = ( media, shiftKey ) => {
+		this.props.onToggle( media, shiftKey );
+	};
+
+	clickItem = e => {
+		// Avoid reusing reference to Synthetic event
+		// https://reactjs.org/docs/events.html#event-pooling
+		const synthEvent = Object.assign( {}, e );
+
+		this.toggleHandler( this.props.media, synthEvent.shiftKey );
+	};
+
+	handleKeyPress = e => {
+		// Avoid reusing reference to Synthetic event
+		// https://reactjs.org/docs/events.html#event-pooling
+		const synthEvent = Object.assign( {}, e );
+		const isEnterKey = synthEvent.keyCode === 13;
+		const isSpacebarKey = synthEvent.keyCode === 32;
+		const isKeyboardActionKey = isEnterKey || isSpacebarKey;
+		const targetHasFocus = document.activeElement && document.activeElement === synthEvent.target;
+
+		if ( isKeyboardActionKey && targetHasFocus ) {
+			// Required because space or enter have default
+			// functionality in browsers (eg: scroll down)
+			e.preventDefault();
+
+			this.toggleHandler( this.props.media, synthEvent.shiftKey );
+		}
 	};
 
 	renderItem = () => {
@@ -126,7 +152,16 @@ export default class extends React.Component {
 		}
 
 		return (
-			<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
+			<div
+				className={ classes }
+				style={ style }
+				onClick={ this.clickItem }
+				onKeyDown={ this.handleKeyPress }
+				tabIndex="0" // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
+				role="button"
+				aria-pressed={ -1 !== this.props.selectedIndex }
+				{ ...props }
+			>
 				<span className="media-library__list-item-selected-icon">
 					<Gridicon icon="checkmark" size={ 20 } />
 				</span>
