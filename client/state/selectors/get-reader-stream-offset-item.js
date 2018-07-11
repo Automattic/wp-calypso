@@ -35,13 +35,24 @@ function getOffsetItem( state, currentItem, offset ) {
 		index = findIndex( stream.items, item => keysAreEqual( item.xPostMetadata, currentItem ) );
 	}
 
-	const newIndex = index + offset;
-
-	if ( newIndex >= 0 && newIndex < stream.items.length ) {
-		return stream.items[ newIndex ];
+	if ( index < 0 ) {
+		return null;
 	}
 
-	return null;
+	const newIndex = index + offset;
+
+	if ( newIndex < 0 || newIndex >= stream.items.length ) {
+		return null;
+	}
+
+	const offsetItem = stream.items[ newIndex ];
+
+	// If the item is an x-post, return the original post details
+	if ( offsetItem && offsetItem.xPostMetadata ) {
+		return offsetItem.xPostMetadata;
+	}
+
+	return offsetItem;
 }
 
 export default getOffsetItem;

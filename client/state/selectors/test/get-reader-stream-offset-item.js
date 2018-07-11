@@ -58,4 +58,16 @@ describe( 'getOffsetItem', () => {
 		expect( getOffsetItem( state, xPostKey, 1 ) ).toBe( postKey5 );
 		expect( getOffsetItem( state, xPostKey, -1 ) ).toBe( postKey3 );
 	} );
+
+	test( 'should return the x-post details if the offset item is a x-post', () => {
+		const state = deepFreeze( {
+			reader: {
+				streams: {
+					following: { items: [ postKey1, postKey2, postKey3, postKey4, postKey5 ] },
+				},
+			},
+			...currentStream,
+		} );
+		expect( getOffsetItem( state, postKey3, 1 ) ).toEqual( postKey4.xPostMetadata );
+	} );
 } );
