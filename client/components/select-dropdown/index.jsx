@@ -226,7 +226,7 @@ class SelectDropdown extends Component {
 		const dropdownClassName = classNames( this.props.className, {
 			'select-dropdown': true,
 			'is-compact': this.props.compact,
-			'is-open': this.state.isOpen,
+			'is-open': this.state.isOpen && ! this.props.disabled,
 			'is-disabled': this.props.disabled,
 			'has-count': 'number' === typeof this.props.selectedCount,
 		} );
@@ -288,6 +288,9 @@ class SelectDropdown extends Component {
 	}
 
 	openDropdown() {
+		if ( this.props && this.props.disabled ) {
+			return;
+		}
 		this.setState( {
 			isOpen: true,
 		} );
