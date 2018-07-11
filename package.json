@@ -277,7 +277,7 @@
     "stacktrace-gps": "3.0.2",
     "stylelint": "6.9.0",
     "supertest": "2.0.1",
-    "terminal-kit": "1.17.11",
+    "terminal-kit": "1.17.12",
     "webpack-bundle-analyzer": "2.13.1",
     "webpack-hot-middleware": "2.22.2"
   },
