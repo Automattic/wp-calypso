@@ -13698,9 +13698,10 @@
       }
     },
     "pretty-bytes": {
-      "version": "4.0.2",
-      "resolved": "https://registry.npmjs.org/pretty-bytes/-/pretty-bytes-4.0.2.tgz",
-      "integrity": "sha1-sr+C5zUNZcbDOqlaqlpPYyf2HNk="
+      "version": "5.1.0",
+      "resolved": "https://registry.npmjs.org/pretty-bytes/-/pretty-bytes-5.1.0.tgz",
+      "integrity": "sha512-wa5+qGVg9Yt7PB6rYm3kXlKzgzgivYTLRandezh43jjRqgyDyP+9YxfJpJiLs9yKD1WeU8/OvtToWpW7255FtA==",
+      "dev": true
     },
     "pretty-format": {
       "version": "22.4.3",
@@ -19018,7 +19019,6 @@
         "make-dir": "^1.1.0",
         "mem-fs-editor": "^4.0.0",
         "minimist": "^1.2.0",
-        "pretty-bytes": "^4.0.2",
         "read-chunk": "^2.1.0",
         "read-pkg-up": "^3.0.0",
         "rimraf": "^2.6.2",
