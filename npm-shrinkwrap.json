@@ -8283,12 +8283,12 @@
       }
     },
     "hash.js": {
-      "version": "1.1.4",
-      "resolved": "https://registry.npmjs.org/hash.js/-/hash.js-1.1.4.tgz",
-      "integrity": "sha512-A6RlQvvZEtFS5fLU43IDu0QUmBy+fDO9VMdTXvufKwIkt/rFfvICAViCax5fbDO4zdNzaC3/27ZhKUok5bAJyw==",
+      "version": "1.1.5",
+      "resolved": "https://registry.npmjs.org/hash.js/-/hash.js-1.1.5.tgz",
+      "integrity": "sha512-eWI5HG9Np+eHV1KQhisXWwM+4EPPYe5dFX1UZZH7k/E3JzDEazVH+VGlZi6R94ZqImq+A3D1mCEtrFIfg/E7sA==",
       "requires": {
         "inherits": "^2.0.3",
-        "minimalistic-assert": "^1.0.0"
+        "minimalistic-assert": "^1.0.1"
       }
     },
     "hawk": {
