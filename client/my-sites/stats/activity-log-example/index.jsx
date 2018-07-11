@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityLogItem from '../activity-log-item';
 import FeatureExample from 'components/feature-example';
+import FormattedHeader from 'components/formatted-header';
 
 class ActivityLogExample extends Component {
 	render() {
@@ -58,7 +59,7 @@ class ActivityLogExample extends Component {
 
 		return (
 			<div className="activity-log-example">
-				<FeatureExample>
+				<FeatureExample role="presentation">
 					{ exampleItems.map( log => (
 						<ActivityLogItem
 							key={ `activity-log-example-${ log.activityTs }` }
@@ -70,6 +71,10 @@ class ActivityLogExample extends Component {
 						/>
 					) ) }
 				</FeatureExample>
+				<FormattedHeader
+					headerText="This is your activity log"
+					subHeaderText="Events happening at your site will appear here."
+				/>
 			</div>
 		);
 	}

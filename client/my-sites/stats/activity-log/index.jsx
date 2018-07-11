@@ -8,12 +8,13 @@ import PropTypes from 'prop-types';
 import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty } from 'lodash';
+import { find, get, includes, isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActivityLogBanner from 'my-sites/stats/activity-log-banner';
+import ActivityLogExample from '../activity-log-example';
 import ActivityLogItem from '../activity-log-item';
 import ActivityLogSwitch from '../activity-log-switch';
 import ActivityLogTasklist from '../activity-log-tasklist';
@@ -61,6 +62,7 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { requestActivityLogs } from 'state/data-getters';
+import { emptyFilter } from 'state/activity-log/reducer';
 
 const PAGE_SIZE = 20;
 
@@ -302,15 +304,47 @@ class ActivityLog extends Component {
 		);
 	}
 
+	renderNoLogsContent() {
+		const { filter, logLoadingState, siteId, translate } = this.props;
+
+		const isFilterEmpty = isEqual( emptyFilter, filter );
+
+		if ( logLoadingState === 'success' ) {
+			return isFilterEmpty ? (
+				<ActivityLogExample siteId={ siteId } />
+			) : (
+				<EmptyContent title={ translate( 'No matching events found.' ) } />
+			);
+		}
+
+		// The network request is still ongoing
+		return (
+			<section className="activity-log__wrapper">
+				{ [ 1, 2, 3 ].map( i => (
+					<FoldableCard
+						key={ i }
+						className="activity-log-day__placeholder"
+						header={
+							<div>
+								<div className="activity-log-day__day" />
+								<div className="activity-log-day__events" />
+							</div>
+						}
+					/>
+				) ) }
+			</section>
+		);
+	}
+
 	getActivityLog() {
 		const {
 			enableRewind,
 			filter: { page: requestedPage },
 			logs,
-			logLoadingState,
 			moment,
 			rewindState,
 			siteId,
+			siteIsOnFreePlan,
 			slug,
 			translate,
 		} = this.props;
@@ -326,28 +360,6 @@ class ActivityLog extends Component {
 			Math.min( requestedPage, Math.ceil( logs.length / PAGE_SIZE ) )
 		);
 		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
-
-		// Content shown when there are no logs.
-		// The network request either finished with no events or is still ongoing.
-		const noLogsContent =
-			logLoadingState === 'success' ? (
-				<EmptyContent title={ translate( 'No matching events found.' ) } />
-			) : (
-				<section className="activity-log__wrapper">
-					{ [ 1, 2, 3 ].map( i => (
-						<FoldableCard
-							key={ i }
-							className="activity-log-day__placeholder"
-							header={
-								<div>
-									<div className="activity-log-day__day" />
-									<div className="activity-log-day__events" />
-								</div>
-							}
-						/>
-					) ) }
-				</section>
-			);
 
 		const timePeriod = ( () => {
 			const today = this.applySiteOffset( moment.utc( Date.now() ) );
@@ -378,7 +390,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ this.props.siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
@@ -411,7 +423,7 @@ class ActivityLog extends Component {
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
 				{ isEmpty( logs ) ? (
-					noLogsContent
+					this.renderNoLogsContent()
 				) : (
 					<div>
 						<section className="activity-log__wrapper">
