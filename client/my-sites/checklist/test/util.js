@@ -65,4 +65,16 @@ describe( 'mergeObjectIntoArrayById', () => {
 			},
 		] );
 	} );
+
+	test( 'should ignore object keys not present in the array', () => {
+		const arr = [ { id: 'a', prop: 'prop' } ];
+		const obj = { c: { ignore: 'me' } };
+
+		expect( mergeObjectIntoArrayById( arr, obj ) ).toEqual( [
+			{
+				id: 'a',
+				prop: 'prop',
+			},
+		] );
+	} );
 } );
