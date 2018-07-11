@@ -118,7 +118,7 @@
     "percentage-regex": "3.0.0",
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.8",
     "photon": "2.0.1",
-    "postcss-cli": "2.6.0",
+    "postcss-cli": "5.0.1",
     "postcss-custom-properties": "6.3.1",
     "prismjs": "1.15.0",
     "prop-types": "15.6.2",
