@@ -124,7 +124,6 @@
 		"reader/paste-to-link": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
-		"reader/search": true,
 		"reader/high-watermark": true,
 		"reader/user-mention-suggestions": true,
 		"resume-editing": true,

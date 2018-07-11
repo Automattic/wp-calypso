@@ -233,18 +233,16 @@ export const ReaderSidebar = createReactClass( {
 								</li>
 							) : null }
 
-							{ config.isEnabled( 'reader/search' ) && (
-								<li
-									className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, {
-										'sidebar-streams__search': true,
-									} ) }
-								>
-									<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
-										<Gridicon icon="search" size={ 24 } />
-										<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
-									</a>
-								</li>
-							) }
+							<li
+								className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, {
+									'sidebar-streams__search': true,
+								} ) }
+							>
+								<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
+									<Gridicon icon="search" size={ 24 } />
+									<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
+								</a>
+							</li>
 
 							<li
 								className={ ReaderSidebarHelper.itemLinkClass(
