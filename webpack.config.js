@@ -95,8 +95,8 @@ const webpackConfig = {
 			maxInitialRequests: 5,
 		},
 		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
-		namedModules: true,
-		namedChunks: isDevelopment,
+		moduleIds: 'named',
+		chunkIds: isDevelopment ? 'named' : 'natural',
 		minimize: shouldMinify,
 		minimizer: [
 			new UglifyJsPlugin( {
