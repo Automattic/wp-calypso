@@ -12,6 +12,7 @@ const webpackConfig = require( 'webpack.config' );
 const config = require( 'config' );
 
 const port = process.env.PORT || config( 'port' );
+const shouldProfile = process.env.PROFILE === 'true';
 
 function middleware( app ) {
 	const compiler = webpack( webpackConfig );
@@ -23,11 +24,13 @@ function middleware( app ) {
 
 	app.set( 'compiler', compiler );
 
-	compiler.apply(
-		new webpack.ProgressPlugin( {
-			profile: true,
-		} )
-	);
+	if ( shouldProfile ) {
+		compiler.apply(
+			new webpack.ProgressPlugin( {
+				profile: true,
+			} )
+		);
+	}
 
 	compiler.plugin( 'done', function() {
 		built = true;
@@ -99,7 +102,7 @@ function middleware( app ) {
 				hash: true,
 				version: false,
 				timings: true,
-				assets: true,
+				assets: false,
 				chunks: false,
 				modules: false,
 				cached: false,
