@@ -1,8 +1,8 @@
 /** @format */
 
 /**
-+ * Internal dependencies
-+ */
+ * Internal dependencies
+ */
 import config from 'config';
 import { loadScript } from 'lib/load-script';
 
