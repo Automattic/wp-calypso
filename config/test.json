@@ -78,7 +78,7 @@
 		"me/trophies": false,
 		"network-connection": true,
 		"notifications2beta": true,
-		"onboarding-checklist": false,
+		"onboarding-checklist": true,
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,
