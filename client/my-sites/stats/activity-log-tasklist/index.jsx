@@ -433,12 +433,15 @@ const getStatusForTheme = ( siteId, themeId ) => {
 
 /**
  * Get data about the status of a core update.
- * @param {number} siteId  Site Id.
- * @returns {bool|Object} Status of update progress, normalized to a standard.
+ * @param {number} siteId      Site Id.
+ * @param {string} coreVersion Version of core that the WP installation will be updated to.
+ * @returns {bool|Object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
+ * the update is running, failed, or was successfully completed, respectively.
  */
-const getStatusForCore = siteId => {
+const getStatusForCore = ( siteId, coreVersion ) => {
 	const httpData = getHttpData( `core-update-${ siteId }` );
-	const isCoreUpdateComplete = false;
+	// When core is successfully updated, the response includes an array with the new version.
+	const isCoreUpdateComplete = coreVersion === get( httpData, 'data.version.0' );
 	return getNormalizedStatus( httpData.state, isCoreUpdateComplete );
 };
 
@@ -507,8 +510,8 @@ const updateCore = siteId =>
 			// No need to pass version: if it's missing, WP will be updated to latest core version.
 		} ),
 		{
-			fromApi: () => corePackage => {
-				return [ corePackage.version, true ];
+			fromApi: () => ( { version } ) => {
+				return [ [ version, true ] ];
 			},
 			freshness: -Infinity,
 		}
@@ -527,7 +530,7 @@ const mapStateToProps = ( state, { siteId, plugins, themes, core } ) => {
 			: [
 					{
 						...core[ 0 ],
-						updateStatus: getStatusForCore( siteId ),
+						updateStatus: getStatusForCore( siteId, core[ 0 ].version ),
 					},
 			  ],
 	};
