@@ -1,0 +1,82 @@
+.main.feature-upsell-store {
+	margin-top: 48px;
+}
+
+.feature-upsell-placeholder--cta {
+	animation: pulse-light 800ms ease-in-out infinite;
+	background: $gray-lighten-20;
+	display: inline-block;
+	width: 350px;
+	max-width: 80%;
+	height: 50px;
+}
+
+.feature-upsell-header {
+	text-align: center;
+
+	&__title {
+		font-size: 68px;
+		font-weight: 300;
+		line-height: 1;
+
+		@include breakpoint( '<1280px' ) {
+			font-size: 40px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			font-size: 30px;
+		}
+	}
+
+	&__subtitle {
+		margin-top: 15px;
+		font-size: 30px;
+		font-weight: 300;
+
+		@include breakpoint( '<1280px' ) {
+			font-size: 24px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			font-size: 18px;
+		}
+	}
+}
+
+.feature-upsell-cta {
+	margin-top: 30px;
+	text-align: center;
+
+	&__button {
+		font-size: 25px;
+		margin: 0 auto;
+		padding: 13px 20px;
+
+		@include breakpoint( '<1280px' ) {
+			font-size: 20px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			font-size: 18px;
+		}
+	}
+
+	&__guarantee {
+		display: block;
+		margin-top: 8px;
+		opacity: 0.8;
+	}
+}
+
+.feature-upsell-section-header {
+	margin: 40px 0 20px 0;
+	text-align: center;
+	font-size: 36px;
+	@include breakpoint( '<1280px' ) {
+		font-size: 26px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		font-size: 20px;
+	}
+}

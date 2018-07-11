@@ -14,6 +14,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
@@ -26,6 +27,7 @@ import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import JetpackLogo from 'components/jetpack-logo';
 import { isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -45,6 +47,7 @@ import {
 	isJetpackModuleActive,
 	isJetpackSite,
 	isSitePreviewable,
+	canCurrentUserUseStore,
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
@@ -380,37 +383,67 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
+	trackStoreUpsellClick = () => {
+		this.trackMenuItemClick( 'store' );
+		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'store_sidebar',
+		} );
+		this.onNavigate();
+	};
+
 	store() {
-		const {
-			canUserManageOptions,
-			site,
-			siteSuffix,
-			translate,
-			siteHasBackgroundTransfer,
-		} = this.props;
+		const { canUserManageOptions, site, canUserUseStore } = this.props;
 
 		if ( ! config.isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
 
-		const isPermittedSite = canUserManageOptions && this.props.isSiteAutomatedTransfer;
-
-		if (
-			! isPermittedSite &&
-			! ( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
-		) {
+		if ( ! canUserUseStore ) {
+			if (
+				config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+				canUserManageOptions &&
+				abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
+			) {
+				return this.storeUpsellSidebarItem();
+			}
 			return null;
 		}
 
-		const storeLink = '/store' + siteSuffix;
+		return this.storeSidebarItem();
+	}
 
+	storeSidebarItem() {
+		const { siteSuffix, translate } = this.props;
 		return (
 			<SidebarItem
 				label={ translate( 'Store' ) }
-				link={ storeLink }
+				link={ '/store' + siteSuffix }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
 			>
+				<div className="sidebar__chevron-right">
+					<Gridicon icon="chevron-right" />
+				</div>
+			</SidebarItem>
+		);
+	}
+
+	storeUpsellSidebarItem() {
+		const { siteSuffix, translate, path } = this.props;
+		return (
+			<SidebarItem
+				label={ translate( 'Store' ) }
+				link={ '/feature/store' + siteSuffix }
+				selected={ itemLinkMatches( '/feature/store', path ) }
+				onNavigate={ this.trackStoreUpsellClick }
+				icon="cart"
+			>
+				<TrackComponentView
+					eventName="calypso_upgrade_nudge_impression"
+					eventProperties={ {
+						cta_name: 'store_upsell',
+					} }
+				/>
 				<div className="sidebar__chevron-right">
 					<Gridicon icon="chevron-right" />
 				</div>
@@ -716,6 +749,7 @@ function mapStateToProps( state ) {
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
+		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
