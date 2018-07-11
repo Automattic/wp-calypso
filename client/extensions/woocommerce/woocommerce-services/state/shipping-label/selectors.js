@@ -341,7 +341,7 @@ export const getCustomsErrors = (
 			} );
 
 			if ( pckg.itn ) {
-				if ( ! /^AES X\d{14}$/.test( pckg.itn ) ) {
+				if ( ! /^(AES X\d{14})|(NOEEI 30\.\d{2}(\([a-z]\))?)$/.test( pckg.itn ) ) {
 					errors.itn = translate( 'Invalid format' );
 				}
 			} else if ( 'CA' !== destinationCountryCode ) {
