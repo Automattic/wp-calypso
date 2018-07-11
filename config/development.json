@@ -63,6 +63,7 @@
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
+		"gutenberg": true,
 		"help": true,
 		"help/courses": true,
 		"i18n/community-translator": false,
