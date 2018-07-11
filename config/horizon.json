@@ -83,7 +83,6 @@
 		"network-connection": true,
 		"notifications2beta": true,
 		"notifications/link-to-reader": true,
-		"onboarding-checklist": true,
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,

@@ -128,7 +128,6 @@
 		"notifications2beta": true,
 		"notifications/link-to-reader": true,
 		"oauth": false,
-		"onboarding-checklist": true,
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,

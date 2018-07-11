@@ -11,7 +11,6 @@ import { some } from 'lodash';
 import { getSiteOption, isNewSite } from 'state/sites/selectors';
 import { cartItems } from 'lib/cart-values';
 import { isBusiness, isJetpackPlan } from 'lib/products-values';
-import config from 'config';
 
 /**
  * @param {Object} state Global state tree
@@ -21,10 +20,6 @@ import config from 'config';
  */
 export default function isEligibleForCheckoutToChecklist( state, siteId, cart ) {
 	const designType = getSiteOption( state, siteId, 'design_type' );
-
-	if ( ! config.isEnabled( 'onboarding-checklist' ) ) {
-		return false;
-	}
 
 	if (
 		cartItems.hasDomainMapping( cart ) ||

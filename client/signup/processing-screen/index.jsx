@@ -19,7 +19,6 @@ import Button from 'components/button';
 import Notice from 'components/notice';
 import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
-import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 export class SignupProcessingScreen extends Component {
@@ -293,7 +292,6 @@ export class SignupProcessingScreen extends Component {
 		}, null );
 
 		return (
-			config.isEnabled( 'onboarding-checklist' ) &&
 			'blog' === designType &&
 			[ 'personal', 'premium', 'business' ].indexOf( this.props.flowName ) === -1
 		);
