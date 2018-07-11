@@ -1278,7 +1278,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
 		getDescription: () =>
-			i18n.translate( 'Live chat support to help you get started with Jetpack.' ),
+			i18n.translate( 'Live chat support to help you get started with your site.' ),
 	},
 
 	[ FEATURE_PREMIUM_SUPPORT ]: {
