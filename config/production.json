@@ -105,7 +105,6 @@
 		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/full-errors": false,
-		"reader/nesting-arrow": true,
 		"reader/related-posts": true,
 		"reader/search": true,
 		"reader/user-mention-suggestions": false,
