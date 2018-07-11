@@ -1365,6 +1365,7 @@
       "resolved": "https://registry.npmjs.org/align-text/-/align-text-0.1.4.tgz",
       "integrity": "sha1-DNkKVhCT810KmSVsIrcGlDP60Rc=",
       "dev": true,
+      "optional": true,
       "requires": {
         "kind-of": "^3.0.2",
         "longest": "^1.0.1",
@@ -7130,11 +7131,13 @@
         },
         "balanced-match": {
           "version": "1.0.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "brace-expansion": {
           "version": "1.1.11",
           "bundled": true,
+          "optional": true,
           "requires": {
             "balanced-match": "^1.0.0",
             "concat-map": "0.0.1"
@@ -7147,15 +7150,18 @@
         },
         "code-point-at": {
           "version": "1.1.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "concat-map": {
           "version": "0.0.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "console-control-strings": {
           "version": "1.1.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "core-util-is": {
           "version": "1.0.2",
@@ -7258,7 +7264,8 @@
         },
         "inherits": {
           "version": "2.0.3",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "ini": {
           "version": "1.3.5",
@@ -7268,6 +7275,7 @@
         "is-fullwidth-code-point": {
           "version": "1.0.0",
           "bundled": true,
+          "optional": true,
           "requires": {
             "number-is-nan": "^1.0.0"
           }
@@ -7280,17 +7288,20 @@
         "minimatch": {
           "version": "3.0.4",
           "bundled": true,
+          "optional": true,
           "requires": {
             "brace-expansion": "^1.1.7"
           }
         },
         "minimist": {
           "version": "0.0.8",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "minipass": {
           "version": "2.2.4",
           "bundled": true,
+          "optional": true,
           "requires": {
             "safe-buffer": "^5.1.1",
             "yallist": "^3.0.0"
@@ -7307,6 +7318,7 @@
         "mkdirp": {
           "version": "0.5.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "minimist": "0.0.8"
           }
@@ -7379,7 +7391,8 @@
         },
         "number-is-nan": {
           "version": "1.0.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "object-assign": {
           "version": "4.1.1",
@@ -7389,6 +7402,7 @@
         "once": {
           "version": "1.4.0",
           "bundled": true,
+          "optional": true,
           "requires": {
             "wrappy": "1"
           }
@@ -7494,6 +7508,7 @@
         "string-width": {
           "version": "1.0.2",
           "bundled": true,
+          "optional": true,
           "requires": {
             "code-point-at": "^1.0.0",
             "is-fullwidth-code-point": "^1.0.0",
@@ -10874,7 +10889,8 @@
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/longest/-/longest-1.0.1.tgz",
       "integrity": "sha1-MKCy2jj3N3DoKUoNIuZiXtd9AJc=",
-      "dev": true
+      "dev": true,
+      "optional": true
     },
     "loose-envify": {
       "version": "1.4.0",
@@ -14100,16 +14116,37 @@
       "integrity": "sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA=="
     },
     "react-live": {
-      "version": "1.10.1",
-      "resolved": "https://registry.npmjs.org/react-live/-/react-live-1.10.1.tgz",
-      "integrity": "sha1-Nza+PoKB5FWzzKeBUGgTxVq+0BE=",
+      "version": "1.11.0",
+      "resolved": "https://registry.npmjs.org/react-live/-/react-live-1.11.0.tgz",
+      "integrity": "sha512-Lx2SnR4Dj3hgPcoHPuOB7pUDp8yjxajyl38uJ3FbZ+8Pfa1Y7gqW3PMQuAUIzjsHACEPqjm4RrXPP0rzrlUKXg==",
       "requires": {
         "buble": "^0.19.3",
         "core-js": "^2.4.1",
         "dom-iterator": "^1.0.0",
-        "prismjs": "^1.6.0",
+        "prismjs": "1.6",
         "prop-types": "^15.5.8",
         "unescape": "^0.2.0"
+      },
+      "dependencies": {
+        "clipboard": {
+          "version": "1.7.1",
+          "resolved": "https://registry.npmjs.org/clipboard/-/clipboard-1.7.1.tgz",
+          "integrity": "sha1-Ng1taUbpmnof7zleQrqStem1oWs=",
+          "optional": true,
+          "requires": {
+            "good-listener": "^1.2.2",
+            "select": "^1.1.2",
+            "tiny-emitter": "^2.0.0"
+          }
+        },
+        "prismjs": {
+          "version": "1.6.0",
+          "resolved": "https://registry.npmjs.org/prismjs/-/prismjs-1.6.0.tgz",
+          "integrity": "sha1-EY2V+3pm26InLjQ7NF9SNmWds2U=",
+          "requires": {
+            "clipboard": "^1.5.5"
+          }
+        }
       }
     },
     "react-modal": {
