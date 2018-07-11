@@ -493,7 +493,7 @@ export default connect(
 		const requestedBackupId = getRequestedBackup( state, siteId );
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
-		const filter = siteId && getActivityLogFilter( state, siteId );
+		const filter = getActivityLogFilter( state, siteId );
 		const logs = siteId && requestActivityLogs( siteId, filter );
 		const siteIsOnFreePlan = isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) );
 
